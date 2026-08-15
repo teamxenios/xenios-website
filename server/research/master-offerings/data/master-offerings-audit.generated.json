@@ -1,0 +1,24 @@
+{
+ "schemaVersion": 1,
+ "generatedAt": "2026-08-15T04:25:10.389Z",
+ "sourceWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+ "sourceRowCount": 420,
+ "memberSafeCanonicalProducts": 420,
+ "memberSafeVariants": 420,
+ "familyCounts": {
+  "clinical_formulations_503a": 242,
+  "research_capsules": 16,
+  "research_peptides_materials": 135,
+  "research_supplies": 2,
+  "shipping_and_fulfillment": 2,
+  "supplements": 20,
+  "topicals_regenerative": 3
+ },
+ "displayStateCounts": {
+  "care_pathway": 244,
+  "request_access": 144,
+  "approval_required": 32
+ },
+ "privateColumnsExcluded": 22,
+ "confidentialTermsScanned": 212
+}

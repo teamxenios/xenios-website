@@ -100,7 +100,7 @@ import {
 import type { MasterOfferingCatalogViewer } from "./research/master-offerings/routes";
 import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
 import { mayViewMasterOfferings } from "./research/master-offerings/visibility-policy";
-import { masterOfferingNoProductionBindings } from "./research/master-offerings/production-bindings";
+import { masterOfferingProductionBindings } from "./research/master-offerings/production-bindings";
 import { requireSupabaseAdmin } from "./routes";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
@@ -512,13 +512,19 @@ registerPricingApi(app, {
 // The general member catalog (master offerings v2): the 420-row canonical
 // selection, display-only. Serving is dark until RESEARCH_MASTER_OFFERINGS_ENABLED
 // is exactly "true", and scope then fails closed to founder/admin until the
-// all-members decision. The composition carries ZERO commerce authority on
-// purpose: production holds no reviewed variant bindings yet, so every row
-// truthfully renders "Price on request", the request identity resolves to
-// null, and the selection authority is unreachable and throws if reached,
-// which the route's catch turns into a refusal, never a purchase. General
-// prices arrive later as Product Control DATA plus the durable binding store,
-// with no route change.
+// all-members decision. Prices are now REAL for bound variants: the reviewed
+// committed binding artifact joins each offering variant to its Product
+// Control identity, the request identity below carries the server-authorized
+// member audience, and the price a viewer sees is one approved in-window
+// Product Control row resolved by the same authoritative resolver the member
+// catalog uses. The three unbound rows (the shipping service row and the two
+// price-pending rows) truthfully render "Price on request". Purchase stays
+// OFF on this surface: the selection authority answers a truthful not-ok
+// (the general units carry no commerce approval), so a price view never
+// becomes a cart selection here.
+type MasterOfferingViewerWithGrant = MasterOfferingCatalogViewer & {
+  pricingGrant?: { sourceVersion: string };
+};
 const authorizeMasterOfferingViewer = async (
   req: Request,
 ): Promise<MasterOfferingCatalogViewer | null> => {
@@ -529,22 +535,39 @@ const authorizeMasterOfferingViewer = async (
   const audience: MasterOfferingCatalogViewer["audience"] =
     adminEmail !== "" && email === adminEmail ? "admin" : "member";
   if (!mayViewMasterOfferings({ audience, email })) return null;
-  return { audience, email };
+  // The viewer carries the pricing grant derived from the SAME member row the
+  // guard authenticated, so identityFor below never re-derives authorization
+  // from anything a browser could influence. Structural extra field: the lane
+  // treats the viewer as opaque and hands it back to identityFor unchanged.
+  const viewer: MasterOfferingViewerWithGrant = {
+    audience,
+    email,
+    pricingGrant: { sourceVersion: memberAudienceSourceVersion(member) },
+  };
+  return viewer;
 };
 const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencies(
   {
-    bindings: masterOfferingNoProductionBindings,
+    bindings: masterOfferingProductionBindings,
     selections: {
-      select() {
-        throw new Error(
-          "master offerings display-only composition has no selection authority",
-        );
-      },
+      // Truthful and inert: this display surface composes no purchase
+      // authority, and the general units are not commerce approved. Never a
+      // thrown error, so a page of cards does not pay exception churn.
+      select: () => ({ ok: false, code: "product_commerce_unapproved" }),
     },
     pricingSource: new CatalogPricingProductSource(
       createProductionProductControlReader(),
     ),
-    identityFor: () => null,
+    identityFor: (viewer) => {
+      const grant = (viewer as MasterOfferingViewerWithGrant).pricingGrant;
+      if (!grant) return null;
+      return {
+        audience: "member",
+        sourceVersion: grant.sourceVersion,
+        evaluatedAt: new Date().toISOString(),
+        currency: "USD",
+      };
+    },
   },
   authorizeMasterOfferingViewer,
 );

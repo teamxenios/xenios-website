@@ -1,0 +1,2958 @@
+{
+ "schemaVersion": 1,
+ "generatedAt": "2026-08-15T08:10:01.390Z",
+ "sourceWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+ "productionReadBack": {
+  "at": "2026-08-15T05:05:00.000Z",
+  "source": "production Supabase project yvzeduaxbwgcwllhywff, research_product_variants where sku like 'GEN-GRP-%', joined product_id; read back after the 11-chunk general Product Control initialization verified 217 products / 417 variants / 417 approved member prices"
+ },
+ "boundCount": 417,
+ "unboundCount": 3,
+ "invariants": {
+  "containsSupplierIdentity": false,
+  "containsWholesaleCost": false,
+  "containsPlanningPrice": false,
+  "containsMargin": false,
+  "containsInternalNotes": false,
+  "bindingAuthorizesPurchase": false,
+  "bindingCarriesPrice": false
+ },
+ "bindings": [
+  {
+   "offeringId": "mo_647abda42df8220b7caa",
+   "offeringVariantId": "mov_a8af22bc4d1d96266669",
+   "productControlSku": "GEN-GRP-0001",
+   "productId": "b4e50535-ec4b-4827-8339-2d0a202e945e",
+   "variantId": "15b13f74-e109-494b-8998-1202f33dc1aa"
+  },
+  {
+   "offeringId": "mo_28408f253a09df4cc6d8",
+   "offeringVariantId": "mov_82974ab2f9c652c2cb12",
+   "productControlSku": "GEN-GRP-0002",
+   "productId": "c93265b7-86c9-406f-9e95-35353f8ca46e",
+   "variantId": "8bd00b5d-d7f7-4518-a29b-5b629a5debba"
+  },
+  {
+   "offeringId": "mo_76ccee864784942d94bf",
+   "offeringVariantId": "mov_fce7784f2a27983462c2",
+   "productControlSku": "GEN-GRP-0003",
+   "productId": "c93265b7-86c9-406f-9e95-35353f8ca46e",
+   "variantId": "df71c281-559f-4131-ae92-e1defecc293c"
+  },
+  {
+   "offeringId": "mo_959f2da90c182628d171",
+   "offeringVariantId": "mov_f16bed144ebe7ec20b61",
+   "productControlSku": "GEN-GRP-0004",
+   "productId": "c93265b7-86c9-406f-9e95-35353f8ca46e",
+   "variantId": "c8b8c548-3f84-47ab-891f-bb7b873ca188"
+  },
+  {
+   "offeringId": "mo_575a315e40db433d731d",
+   "offeringVariantId": "mov_0599d5a40aa70a61481b",
+   "productControlSku": "GEN-GRP-0005",
+   "productId": "4262a6c0-db1a-4f7f-a903-22639026e3ad",
+   "variantId": "73658b9e-d159-4635-829f-18dffc33ba25"
+  },
+  {
+   "offeringId": "mo_49df7d5bf0502a0cb88f",
+   "offeringVariantId": "mov_2006e34fbd8f2b39c46a",
+   "productControlSku": "GEN-GRP-0006",
+   "productId": "9c9a810a-4272-4513-93e5-c9045e0794ca",
+   "variantId": "5d13517b-119f-48b7-80b5-83ae87933cfb"
+  },
+  {
+   "offeringId": "mo_7e78307400954139ac62",
+   "offeringVariantId": "mov_34d2979a224be8a574f4",
+   "productControlSku": "GEN-GRP-0007",
+   "productId": "9c9a810a-4272-4513-93e5-c9045e0794ca",
+   "variantId": "885736a5-0178-47b7-81e9-401752ced3d0"
+  },
+  {
+   "offeringId": "mo_18231f22d5471487f599",
+   "offeringVariantId": "mov_d6ddcf068903350cf948",
+   "productControlSku": "GEN-GRP-0008",
+   "productId": "998703a0-56ec-42ab-8026-eb89447ce70c",
+   "variantId": "d1bf729e-c57b-4b1f-ba89-c1d9da9dcaef"
+  },
+  {
+   "offeringId": "mo_c730f1f31b9e41c476b6",
+   "offeringVariantId": "mov_207ae3c3598581a1a4b5",
+   "productControlSku": "GEN-GRP-0009",
+   "productId": "f85c1ebc-46a0-4f64-8d7e-5fac0befc9a7",
+   "variantId": "4a3ba9b6-5de3-4ce1-a8b1-49e5e20b1832"
+  },
+  {
+   "offeringId": "mo_94a9cc1056bd619832ad",
+   "offeringVariantId": "mov_4b3417df465b8cbf0690",
+   "productControlSku": "GEN-GRP-0010",
+   "productId": "acb43c25-62b8-4f91-b0e3-c6097304fc3d",
+   "variantId": "1e6fc430-3840-40d3-b405-be7692ffa6f9"
+  },
+  {
+   "offeringId": "mo_9970858318e0c0947b31",
+   "offeringVariantId": "mov_0d6ca1ef7c59b4abaede",
+   "productControlSku": "GEN-GRP-0011",
+   "productId": "acb43c25-62b8-4f91-b0e3-c6097304fc3d",
+   "variantId": "d002dc60-44d7-4e2b-a295-817ead7b1d1d"
+  },
+  {
+   "offeringId": "mo_6e1a7f3233199bcd407e",
+   "offeringVariantId": "mov_b36510b5f969e35a01a9",
+   "productControlSku": "GEN-GRP-0012",
+   "productId": "81cf2941-7e0a-4f8a-8758-be82653ebb4a",
+   "variantId": "c6a31df4-135d-4af1-9a87-5fc0c28b2644"
+  },
+  {
+   "offeringId": "mo_a317ccc332c6b52c26b5",
+   "offeringVariantId": "mov_b9eda58c787ad7de3069",
+   "productControlSku": "GEN-GRP-0013",
+   "productId": "81cf2941-7e0a-4f8a-8758-be82653ebb4a",
+   "variantId": "99b4231e-239a-4afe-aa11-01c252ea20b6"
+  },
+  {
+   "offeringId": "mo_5f86f781abf4dcc05a4f",
+   "offeringVariantId": "mov_25a1cd02eb6cb9a7a07e",
+   "productControlSku": "GEN-GRP-0014",
+   "productId": "664bf309-9e3a-48bf-ad04-3450ddeb7cf9",
+   "variantId": "5f7c1a54-e02c-4b6b-9cd7-c3e507a17805"
+  },
+  {
+   "offeringId": "mo_6f5de65e6efe06649fe1",
+   "offeringVariantId": "mov_2c52bd3867d380a97a5e",
+   "productControlSku": "GEN-GRP-0015",
+   "productId": "1dd3d897-801a-42eb-9fa6-8a401ab59b1c",
+   "variantId": "cf33c1e9-c739-4c2a-ac6a-fbb154cfe42e"
+  },
+  {
+   "offeringId": "mo_1a00f73c22b0f04f9b2c",
+   "offeringVariantId": "mov_c0d8944f242c04c7fcc3",
+   "productControlSku": "GEN-GRP-0016",
+   "productId": "e52754a0-f269-4a2e-a20e-a7ce306d76d5",
+   "variantId": "fda8643e-c41c-4854-9e76-e5493d91d78d"
+  },
+  {
+   "offeringId": "mo_7939e71f3b1c005b5d0c",
+   "offeringVariantId": "mov_6965589a2e85194194e2",
+   "productControlSku": "GEN-GRP-0017",
+   "productId": "bd006ecf-678a-42aa-bc88-5b8ecb18658d",
+   "variantId": "f00d939a-fc35-4445-846c-cefcdca5a148"
+  },
+  {
+   "offeringId": "mo_c6a78bd97653d1a0d07a",
+   "offeringVariantId": "mov_d49dd5f366963d1c1b9f",
+   "productControlSku": "GEN-GRP-0018",
+   "productId": "376f9e35-7892-404d-8cd6-4878d6544e78",
+   "variantId": "54ce1e78-2569-4330-8a42-4af1d132126d"
+  },
+  {
+   "offeringId": "mo_52375140d27fb5ea05e5",
+   "offeringVariantId": "mov_6a5f8633445131bc8421",
+   "productControlSku": "GEN-GRP-0019",
+   "productId": "54a44521-1bc0-4e2b-a147-aeb50f68a0df",
+   "variantId": "2a409de4-bb82-4c54-89b2-493aa55341dc"
+  },
+  {
+   "offeringId": "mo_f090369236db025d4a9b",
+   "offeringVariantId": "mov_cc5b7fced81f23f7378f",
+   "productControlSku": "GEN-GRP-0020",
+   "productId": "ad444909-4b0c-4c32-be4a-5e570812c8df",
+   "variantId": "d54828dc-c188-4879-87c5-6db50366fd14"
+  },
+  {
+   "offeringId": "mo_d7a9409fb28a8c4623a1",
+   "offeringVariantId": "mov_e1a1bec56d74854fd435",
+   "productControlSku": "GEN-GRP-0021",
+   "productId": "ad444909-4b0c-4c32-be4a-5e570812c8df",
+   "variantId": "25ada6a4-7b53-46a9-bb3f-2c23f22dce66"
+  },
+  {
+   "offeringId": "mo_7e5b4f1628b4bc2f6078",
+   "offeringVariantId": "mov_d45176011a0fd2aa21b7",
+   "productControlSku": "GEN-GRP-0022",
+   "productId": "ad444909-4b0c-4c32-be4a-5e570812c8df",
+   "variantId": "89d57d8d-6c2a-4c18-afef-e95829e5b063"
+  },
+  {
+   "offeringId": "mo_2064240ea11f991b8cb4",
+   "offeringVariantId": "mov_a69bd4220917c3df075a",
+   "productControlSku": "GEN-GRP-0023",
+   "productId": "ad444909-4b0c-4c32-be4a-5e570812c8df",
+   "variantId": "5c457f7e-09cf-49a8-adc3-3db389905919"
+  },
+  {
+   "offeringId": "mo_b6019095f40863517855",
+   "offeringVariantId": "mov_bd54445f33fdbb0fb7a5",
+   "productControlSku": "GEN-GRP-0024",
+   "productId": "ad444909-4b0c-4c32-be4a-5e570812c8df",
+   "variantId": "b61be68c-7b15-42bc-8303-2f30e2a9fa07"
+  },
+  {
+   "offeringId": "mo_a795e8418c3d6a7a78b7",
+   "offeringVariantId": "mov_11a2d542bd5c9d262d33",
+   "productControlSku": "GEN-GRP-0025",
+   "productId": "273b4bc9-e49b-4871-a400-4e6c353d5609",
+   "variantId": "a634767a-373a-424e-b06e-7d05ac505597"
+  },
+  {
+   "offeringId": "mo_b7dcd84743d97b069cf5",
+   "offeringVariantId": "mov_33922aadda137c9d24d5",
+   "productControlSku": "GEN-GRP-0026",
+   "productId": "273b4bc9-e49b-4871-a400-4e6c353d5609",
+   "variantId": "e8b9eacf-143d-485e-b434-87c560c93f31"
+  },
+  {
+   "offeringId": "mo_6f038acdd134b7f91ef4",
+   "offeringVariantId": "mov_c03164465080ebb0f17b",
+   "productControlSku": "GEN-GRP-0027",
+   "productId": "6343a32c-3b0f-464f-8c13-30e0700653c0",
+   "variantId": "fb0869fd-2f81-499b-b748-60302c2f35a9"
+  },
+  {
+   "offeringId": "mo_3ce7a55d619cc3921800",
+   "offeringVariantId": "mov_214b4eb089035b252d07",
+   "productControlSku": "GEN-GRP-0028",
+   "productId": "6343a32c-3b0f-464f-8c13-30e0700653c0",
+   "variantId": "a0e1b7cd-a418-43d0-b257-69cb845fcdca"
+  },
+  {
+   "offeringId": "mo_4958d7ef84b43bc11df6",
+   "offeringVariantId": "mov_0770a6afb80c6564ad21",
+   "productControlSku": "GEN-GRP-0029",
+   "productId": "ff68c22c-96bb-464a-9ff9-bf089d7c2e25",
+   "variantId": "4a7791bc-7cc1-4199-9d52-305a57b2c017"
+  },
+  {
+   "offeringId": "mo_7b02c6c157d0dd81f9cd",
+   "offeringVariantId": "mov_25a060ad2d3a2f783068",
+   "productControlSku": "GEN-GRP-0030",
+   "productId": "72ddfbfe-c823-4156-b719-41c05a6f6934",
+   "variantId": "1d23c3fb-172b-48be-b5a9-2ac075d96918"
+  },
+  {
+   "offeringId": "mo_485ab8c53ce83a32bbb1",
+   "offeringVariantId": "mov_6001aa9dea1a19370ece",
+   "productControlSku": "GEN-GRP-0031",
+   "productId": "c8c8d974-6cf5-49df-aa79-90e3fa46f1e4",
+   "variantId": "a35ae601-72d5-4c57-b785-6d4b9627365b"
+  },
+  {
+   "offeringId": "mo_327138734a9410ce05d2",
+   "offeringVariantId": "mov_d2cc17167334831c9361",
+   "productControlSku": "GEN-GRP-0032",
+   "productId": "57ba09e8-3106-473d-b398-340ff66c4e35",
+   "variantId": "0b8c1a4f-08bb-495b-88eb-65657c1b8e87"
+  },
+  {
+   "offeringId": "mo_c861c9587b3a2f0e37c6",
+   "offeringVariantId": "mov_4160422806e2085948f1",
+   "productControlSku": "GEN-GRP-0033",
+   "productId": "f5ba1a61-7216-4195-98cd-9fae65253e0c",
+   "variantId": "0e59907e-42db-475f-bf70-96da92d5dc72"
+  },
+  {
+   "offeringId": "mo_57c25c9e9d07f83c0aac",
+   "offeringVariantId": "mov_083f7ccf9c4bd92d299f",
+   "productControlSku": "GEN-GRP-0034",
+   "productId": "8a237a78-aa7b-4fc0-b330-dd4da46afa80",
+   "variantId": "554449b8-4286-462d-9683-306d983ffe75"
+  },
+  {
+   "offeringId": "mo_5ae80eae05219c7ed007",
+   "offeringVariantId": "mov_d3773942eddcd7a25bff",
+   "productControlSku": "GEN-GRP-0035",
+   "productId": "8a237a78-aa7b-4fc0-b330-dd4da46afa80",
+   "variantId": "8e601f81-9ddd-40b5-93ff-7521eef87a3a"
+  },
+  {
+   "offeringId": "mo_8ee9f92bd687ef68748e",
+   "offeringVariantId": "mov_dbb6d5f4afbab86ad1c4",
+   "productControlSku": "GEN-GRP-0036",
+   "productId": "15913780-0066-4483-bba5-6de7e2462c04",
+   "variantId": "ee87d16c-e418-4d01-a1dd-132cb820916c"
+  },
+  {
+   "offeringId": "mo_d591d933e4e94f6a1724",
+   "offeringVariantId": "mov_020fdc809db231eb75be",
+   "productControlSku": "GEN-GRP-0037",
+   "productId": "15913780-0066-4483-bba5-6de7e2462c04",
+   "variantId": "8c9e6cc1-a475-4898-92f3-53081a45a63c"
+  },
+  {
+   "offeringId": "mo_84708fec51c5b88849c2",
+   "offeringVariantId": "mov_fdcdf9c3b5b5168b4ea4",
+   "productControlSku": "GEN-GRP-0038",
+   "productId": "15913780-0066-4483-bba5-6de7e2462c04",
+   "variantId": "4dcbe833-d664-43ce-8607-895a293b7e3b"
+  },
+  {
+   "offeringId": "mo_ff7b17c9bfb2405ddfed",
+   "offeringVariantId": "mov_5f586b1eccde2c968f93",
+   "productControlSku": "GEN-GRP-0039",
+   "productId": "023b58a2-faf1-417b-a266-9587d844401d",
+   "variantId": "cfbfb618-cdb2-4fad-8526-19cdeea4a03d"
+  },
+  {
+   "offeringId": "mo_b9495e37aaee2b1c290e",
+   "offeringVariantId": "mov_120042d931e6c04de5a7",
+   "productControlSku": "GEN-GRP-0040",
+   "productId": "023b58a2-faf1-417b-a266-9587d844401d",
+   "variantId": "9b3c8386-5020-4a4c-8fbd-22c468d7d826"
+  },
+  {
+   "offeringId": "mo_de8939c1b6ff7bf35e5f",
+   "offeringVariantId": "mov_d3e7a41afbedd44a48bc",
+   "productControlSku": "GEN-GRP-0041",
+   "productId": "7fb8da1d-2d5f-4fba-b166-0c33682520cf",
+   "variantId": "aa4c0b64-3970-479f-bb9d-71febf82c4f0"
+  },
+  {
+   "offeringId": "mo_5f905f5e5496d9df01a3",
+   "offeringVariantId": "mov_ff30e00f97f56347d9ee",
+   "productControlSku": "GEN-GRP-0042",
+   "productId": "9be1c3a6-6bfd-4da8-8fb3-3c407c6806ca",
+   "variantId": "034785e5-05bf-475e-bf4b-c479a90ec748"
+  },
+  {
+   "offeringId": "mo_22f24e6b7f11be51fc44",
+   "offeringVariantId": "mov_7f82640f5ac1adc9483f",
+   "productControlSku": "GEN-GRP-0043",
+   "productId": "682e47ee-d51e-4719-9c9e-ce72132ecc0d",
+   "variantId": "5f5e7e19-44f5-43e9-aafc-3df860e9076c"
+  },
+  {
+   "offeringId": "mo_3d63197d505782575b8c",
+   "offeringVariantId": "mov_501ff7009923315e60b0",
+   "productControlSku": "GEN-GRP-0044",
+   "productId": "682e47ee-d51e-4719-9c9e-ce72132ecc0d",
+   "variantId": "2320c1ca-7b25-4a71-a09b-611b47bf06b8"
+  },
+  {
+   "offeringId": "mo_4212e2161648af7f969a",
+   "offeringVariantId": "mov_b7bfd79381bccbb3f0bc",
+   "productControlSku": "GEN-GRP-0045",
+   "productId": "682e47ee-d51e-4719-9c9e-ce72132ecc0d",
+   "variantId": "89e58573-d052-4455-947e-023d75793afc"
+  },
+  {
+   "offeringId": "mo_4641752396f401452edd",
+   "offeringVariantId": "mov_e6848a7677ae36f77ba1",
+   "productControlSku": "GEN-GRP-0046",
+   "productId": "fd2ba226-e014-4705-9a83-6f8c12a15489",
+   "variantId": "cf6edd0e-70d9-4f80-876b-e8050279d28a"
+  },
+  {
+   "offeringId": "mo_b1dae271b377b0eff993",
+   "offeringVariantId": "mov_73282e0789c7bb46a652",
+   "productControlSku": "GEN-GRP-0047",
+   "productId": "fd2ba226-e014-4705-9a83-6f8c12a15489",
+   "variantId": "2fa20bed-313d-45cc-a660-2a0e5fa87c95"
+  },
+  {
+   "offeringId": "mo_e39eebc18fe8e7795adf",
+   "offeringVariantId": "mov_1257ce2cf99948f94deb",
+   "productControlSku": "GEN-GRP-0048",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "54b33f85-b6c6-4507-a32a-1d1722e244e3"
+  },
+  {
+   "offeringId": "mo_c640dc6db29f26b53e55",
+   "offeringVariantId": "mov_c540ba91fb1c51210f22",
+   "productControlSku": "GEN-GRP-0049",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "300314c3-1d49-4fa5-9fed-a11b2792899d"
+  },
+  {
+   "offeringId": "mo_df301126ddc3108dc6b4",
+   "offeringVariantId": "mov_1b1c6fad6fe643bae46f",
+   "productControlSku": "GEN-GRP-0050",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "faec751d-a25b-4e03-94ae-e2901578bc7d"
+  },
+  {
+   "offeringId": "mo_5ffbf1b43993ad6868b0",
+   "offeringVariantId": "mov_446a8e2fe9f0df430708",
+   "productControlSku": "GEN-GRP-0051",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "1db79343-8a14-48f2-b226-cb96cbd2a390"
+  },
+  {
+   "offeringId": "mo_3c7b42246b0c5b975f23",
+   "offeringVariantId": "mov_85b30027c9aab0079752",
+   "productControlSku": "GEN-GRP-0052",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "4c32cb67-a853-4b91-9258-d42e825d08b7"
+  },
+  {
+   "offeringId": "mo_aebdba8672b47fafeb70",
+   "offeringVariantId": "mov_413281c7f02b2e6855d9",
+   "productControlSku": "GEN-GRP-0053",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "d922d0e3-73e9-4e53-87e0-dd2081eb4052"
+  },
+  {
+   "offeringId": "mo_9c4e4a0e5ad273733807",
+   "offeringVariantId": "mov_e7761f3515fdd7679bc0",
+   "productControlSku": "GEN-GRP-0054",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "66b6840c-c063-4823-9069-88fbee9173c6"
+  },
+  {
+   "offeringId": "mo_51fe59c0f212ad68ca3f",
+   "offeringVariantId": "mov_0e4d058496289e517594",
+   "productControlSku": "GEN-GRP-0055",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "e766ccb3-1ad1-43c8-9da5-daa04c12311f"
+  },
+  {
+   "offeringId": "mo_cb9f8afab0a6228de0bb",
+   "offeringVariantId": "mov_f8127b7d800d59a87749",
+   "productControlSku": "GEN-GRP-0056",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "6aff1c35-4a3c-4556-b497-f3aeb9471ea2"
+  },
+  {
+   "offeringId": "mo_c100778b39a735f70686",
+   "offeringVariantId": "mov_90758b4e6a42d66e47f7",
+   "productControlSku": "GEN-GRP-0057",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "70cb14b4-0d1b-4445-bab6-532caee5e8ba"
+  },
+  {
+   "offeringId": "mo_ec8335d4636f1efe50b4",
+   "offeringVariantId": "mov_831a50352c3ea54cf4e7",
+   "productControlSku": "GEN-GRP-0058",
+   "productId": "c36b3763-2197-44b8-8bb7-4f4a14148eac",
+   "variantId": "5ad0dc0f-edaa-4e63-8abe-22bdd48b0c1d"
+  },
+  {
+   "offeringId": "mo_ee73386cbf5463478334",
+   "offeringVariantId": "mov_14a952b1a5b4951dc063",
+   "productControlSku": "GEN-GRP-0059",
+   "productId": "72c83814-f5d7-4a98-b9a8-5321ff095869",
+   "variantId": "8e6f4627-7766-4f0d-8663-f0cb44594c55"
+  },
+  {
+   "offeringId": "mo_ccf410e1df6931045e1f",
+   "offeringVariantId": "mov_a66e2af49da46a4c4ab1",
+   "productControlSku": "GEN-GRP-0060",
+   "productId": "72c83814-f5d7-4a98-b9a8-5321ff095869",
+   "variantId": "b8522721-e0a2-44e1-a78b-ab3d526d1b5a"
+  },
+  {
+   "offeringId": "mo_7894df52d83bbdd0aef7",
+   "offeringVariantId": "mov_865c8079b375e73ded35",
+   "productControlSku": "GEN-GRP-0061",
+   "productId": "18f48781-65e1-46c2-96d6-ad4495aedee8",
+   "variantId": "2529dd29-3943-4946-893b-cc2652de1b62"
+  },
+  {
+   "offeringId": "mo_6b21a4fe0ab1ec733d91",
+   "offeringVariantId": "mov_df401fc790214eed84c8",
+   "productControlSku": "GEN-GRP-0062",
+   "productId": "09f76612-7ff3-4bdb-8c6a-230cb5d2ed8b",
+   "variantId": "30ddc164-371c-4b56-bbbd-7cc7cf065079"
+  },
+  {
+   "offeringId": "mo_8ca205c9a3396be1b6a7",
+   "offeringVariantId": "mov_605189187511069b1df9",
+   "productControlSku": "GEN-GRP-0063",
+   "productId": "09f76612-7ff3-4bdb-8c6a-230cb5d2ed8b",
+   "variantId": "1032a0b9-b263-490e-b258-a479cd3ca582"
+  },
+  {
+   "offeringId": "mo_2129be196e4cfa4db478",
+   "offeringVariantId": "mov_93bfbdf802bda4de5731",
+   "productControlSku": "GEN-GRP-0064",
+   "productId": "1ef95546-7087-439c-ac5e-6778884a336c",
+   "variantId": "64b065bc-0e5b-4b61-9622-31d32bd3c200"
+  },
+  {
+   "offeringId": "mo_a1fcb7f19d45389c0881",
+   "offeringVariantId": "mov_d985257c3837f5268f9f",
+   "productControlSku": "GEN-GRP-0065",
+   "productId": "41b46bab-42a4-4627-9372-be420ae068f1",
+   "variantId": "6970d731-b175-4ea0-9628-60abe31a75d2"
+  },
+  {
+   "offeringId": "mo_2b828a36cdb0c41766b3",
+   "offeringVariantId": "mov_ad44eb6b82099b20eb94",
+   "productControlSku": "GEN-GRP-0066",
+   "productId": "65381093-6432-4fd0-b91c-e5b17a780c82",
+   "variantId": "46916b7a-67a7-4978-8d21-997dac41effc"
+  },
+  {
+   "offeringId": "mo_899dabe026510b4a5d8c",
+   "offeringVariantId": "mov_44bbd9b12e9d570f0765",
+   "productControlSku": "GEN-GRP-0067",
+   "productId": "7cbc009e-6a78-45c0-8cd5-2fbf10edcc63",
+   "variantId": "c7a26756-3ae9-46ad-ab7b-e42c190483c6"
+  },
+  {
+   "offeringId": "mo_c9c3aa9e5613ca970ef4",
+   "offeringVariantId": "mov_5375621d23911b130fd4",
+   "productControlSku": "GEN-GRP-0068",
+   "productId": "d00cdf63-ef60-4d4f-8511-1c24ca2276b2",
+   "variantId": "ad4bc3c4-9519-4dff-9155-1406ca6c5ff8"
+  },
+  {
+   "offeringId": "mo_e12b0e93d98d14ee9fed",
+   "offeringVariantId": "mov_0130087ca998e9b5e5ca",
+   "productControlSku": "GEN-GRP-0069",
+   "productId": "93832c37-05c0-4eb2-99c5-76f3ab9d792f",
+   "variantId": "98204099-b2b1-442b-8b44-92ad0ee174c9"
+  },
+  {
+   "offeringId": "mo_7028bf4bbb517b12de1a",
+   "offeringVariantId": "mov_b2d8d487c0104e5fbce5",
+   "productControlSku": "GEN-GRP-0070",
+   "productId": "93832c37-05c0-4eb2-99c5-76f3ab9d792f",
+   "variantId": "13f49324-7934-4cd0-aa96-688b2c44f897"
+  },
+  {
+   "offeringId": "mo_ee31bafef560781635e1",
+   "offeringVariantId": "mov_36f2d080eb4e68f37a29",
+   "productControlSku": "GEN-GRP-0071",
+   "productId": "3e62ea64-d7b4-499b-b84a-eba7c86acef8",
+   "variantId": "de61c434-0a36-407a-ac75-d0353888ecac"
+  },
+  {
+   "offeringId": "mo_39c2cf1305d4282c62ed",
+   "offeringVariantId": "mov_ae5b51214dd47733e450",
+   "productControlSku": "GEN-GRP-0072",
+   "productId": "8f3c02af-5438-41e6-8276-af6709d43dcc",
+   "variantId": "982e6429-a6ab-4dac-bd88-6bba3015aa94"
+  },
+  {
+   "offeringId": "mo_071c4b9f279557c52f15",
+   "offeringVariantId": "mov_711f953e5a7be900fb65",
+   "productControlSku": "GEN-GRP-0073",
+   "productId": "67e3d3c5-675a-4d3c-a6c0-1d559c18c2e2",
+   "variantId": "8d0ed67a-02c3-4eed-b054-a5fd944032c3"
+  },
+  {
+   "offeringId": "mo_ebfcba2708e8603fb96a",
+   "offeringVariantId": "mov_d8eb7bde501536d27911",
+   "productControlSku": "GEN-GRP-0074",
+   "productId": "63090f19-9af8-43b5-9bac-948a79b51b4c",
+   "variantId": "7bc0c850-b6fc-449c-8a7c-34048b8ce792"
+  },
+  {
+   "offeringId": "mo_da74a7e210b06e5614aa",
+   "offeringVariantId": "mov_a951f06b028846122b03",
+   "productControlSku": "GEN-GRP-0075",
+   "productId": "093de8ea-86c2-4ee4-8f4b-91aea896cf93",
+   "variantId": "82949ce3-6736-4249-913c-ec2e7539a428"
+  },
+  {
+   "offeringId": "mo_4dbae3e6051f6f7410bd",
+   "offeringVariantId": "mov_766e97f7685af83b8f7e",
+   "productControlSku": "GEN-GRP-0076",
+   "productId": "093de8ea-86c2-4ee4-8f4b-91aea896cf93",
+   "variantId": "dcb1f2c2-2fea-44e8-90a3-4863e4b6f7c5"
+  },
+  {
+   "offeringId": "mo_aa9e5754187361b07ce3",
+   "offeringVariantId": "mov_b6edf8e84ad31102991a",
+   "productControlSku": "GEN-GRP-0077",
+   "productId": "a75de219-8478-432f-bcdf-055deafb2f2c",
+   "variantId": "1a6a24d6-fed7-4ea3-bf5d-a4ee843d2d7d"
+  },
+  {
+   "offeringId": "mo_89913165683e004bc212",
+   "offeringVariantId": "mov_874168a9c2547434954b",
+   "productControlSku": "GEN-GRP-0078",
+   "productId": "d391b87c-c0bc-4ab6-9950-1aec61c68442",
+   "variantId": "9dce56ba-92f6-4f41-b9b2-5d19355e9033"
+  },
+  {
+   "offeringId": "mo_b7ebe0db8b401f515de0",
+   "offeringVariantId": "mov_1119581881eb8a50c333",
+   "productControlSku": "GEN-GRP-0079",
+   "productId": "fb29b66b-7ff4-47d9-917a-96afe25963f6",
+   "variantId": "8910f63b-7f26-4648-a31c-6c7b88756b93"
+  },
+  {
+   "offeringId": "mo_3d043e2a35ceaa045986",
+   "offeringVariantId": "mov_06beec21c59fe7842f18",
+   "productControlSku": "GEN-GRP-0080",
+   "productId": "246e714a-a444-405a-808f-c5e05d6f1e60",
+   "variantId": "34f03b1a-86b0-42d3-bbf8-c95d2819cf4f"
+  },
+  {
+   "offeringId": "mo_740df0000ec017ecab18",
+   "offeringVariantId": "mov_b29938eebdaf1935c8cc",
+   "productControlSku": "GEN-GRP-0081",
+   "productId": "ada16b4d-888f-416c-a21a-a584fde6789f",
+   "variantId": "ef112835-9347-462a-ad85-f3860c6ca3e5"
+  },
+  {
+   "offeringId": "mo_9fd892a721686eb78c3a",
+   "offeringVariantId": "mov_604b1bc047026ab63573",
+   "productControlSku": "GEN-GRP-0082",
+   "productId": "f4dac1a7-1023-4849-a9e2-040780d95aa6",
+   "variantId": "64e112db-42c7-4003-be14-5ac9a7cb977c"
+  },
+  {
+   "offeringId": "mo_997e24688ac7d4eafe54",
+   "offeringVariantId": "mov_0513bbc222e4f0c5a177",
+   "productControlSku": "GEN-GRP-0083",
+   "productId": "f4dac1a7-1023-4849-a9e2-040780d95aa6",
+   "variantId": "46a230c1-bf01-4a66-ac7c-bbd2e5209bd2"
+  },
+  {
+   "offeringId": "mo_d0778841c3e3bb7d118b",
+   "offeringVariantId": "mov_6098cdbc2380cf999512",
+   "productControlSku": "GEN-GRP-0084",
+   "productId": "9c21981d-f2c2-4727-9ccc-f73af12c107d",
+   "variantId": "40a7c5d6-a729-427c-9c29-a8d531d5b58f"
+  },
+  {
+   "offeringId": "mo_ddfac143bec7ba76663c",
+   "offeringVariantId": "mov_3d76ec41b628237167a8",
+   "productControlSku": "GEN-GRP-0085",
+   "productId": "98d418f2-d5e3-4b37-a4a6-14864ff0da51",
+   "variantId": "b2f48978-bc35-4779-a648-1694f5361cc4"
+  },
+  {
+   "offeringId": "mo_a0d07fd81da710a95e3b",
+   "offeringVariantId": "mov_4a9d3e6bbd76bfa50d15",
+   "productControlSku": "GEN-GRP-0086",
+   "productId": "98d418f2-d5e3-4b37-a4a6-14864ff0da51",
+   "variantId": "e0009e84-51e9-4b1d-8249-4efa558c46ec"
+  },
+  {
+   "offeringId": "mo_597123caca97b0680a1d",
+   "offeringVariantId": "mov_c155002075aeaa1b29b1",
+   "productControlSku": "GEN-GRP-0087",
+   "productId": "98d418f2-d5e3-4b37-a4a6-14864ff0da51",
+   "variantId": "7be1923a-7f65-4236-85f2-72a02ae54f10"
+  },
+  {
+   "offeringId": "mo_e06b78bda06b0eb046ee",
+   "offeringVariantId": "mov_92a9e34a7ee0402c096a",
+   "productControlSku": "GEN-GRP-0088",
+   "productId": "9d2ef1f2-f19d-47d1-abe9-b5686d0c4011",
+   "variantId": "b8f90455-4859-42ba-ab2a-17148b962de4"
+  },
+  {
+   "offeringId": "mo_4a94e7d0778b10bff7c9",
+   "offeringVariantId": "mov_3f1723408696198377fc",
+   "productControlSku": "GEN-GRP-0089",
+   "productId": "a69035ab-42f4-4c11-96cb-ae12517a1932",
+   "variantId": "35dbe7eb-33be-427b-8346-6d4f6c350bd3"
+  },
+  {
+   "offeringId": "mo_b921da33c0430303f46f",
+   "offeringVariantId": "mov_c3a5f9fdcb1adfd3b4a8",
+   "productControlSku": "GEN-GRP-0090",
+   "productId": "6dfa69d4-f089-4196-8df0-a38a81926b58",
+   "variantId": "d1945e31-674a-411a-8db9-b95ddef54260"
+  },
+  {
+   "offeringId": "mo_6462cb4aee9e7583d839",
+   "offeringVariantId": "mov_e5b24db4e56bf2b69b37",
+   "productControlSku": "GEN-GRP-0091",
+   "productId": "7d59e2d3-e66a-4800-b184-46ec38e8c1a7",
+   "variantId": "2a716d05-c2c9-42cf-b86a-2520ca0f5f80"
+  },
+  {
+   "offeringId": "mo_e85284c651d65690a90d",
+   "offeringVariantId": "mov_cda363a46b53964275df",
+   "productControlSku": "GEN-GRP-0092",
+   "productId": "7d5cecc6-0ade-47d5-96f5-0a323c3670ef",
+   "variantId": "b75e250a-e76e-4601-8b42-0288e62c2acd"
+  },
+  {
+   "offeringId": "mo_2f5fb2ac7ae3faca754c",
+   "offeringVariantId": "mov_d80acaaeb3cd32ee515e",
+   "productControlSku": "GEN-GRP-0093",
+   "productId": "723b89f6-7369-4142-9aa5-dec05e80b3fe",
+   "variantId": "6364b610-6903-4548-a66e-e6f43d842d17"
+  },
+  {
+   "offeringId": "mo_2a7d16014d529f3499e1",
+   "offeringVariantId": "mov_088296ed03af733becdc",
+   "productControlSku": "GEN-GRP-0094",
+   "productId": "723b89f6-7369-4142-9aa5-dec05e80b3fe",
+   "variantId": "fa402ebe-1845-4ab8-8f47-6b73752a68dd"
+  },
+  {
+   "offeringId": "mo_9b46a8704cf564734190",
+   "offeringVariantId": "mov_e6c2e63137540a5772ce",
+   "productControlSku": "GEN-GRP-0095",
+   "productId": "a51e04a3-4072-4db9-ab30-128b41614328",
+   "variantId": "6e0c560c-ec8b-4d3d-b6f8-b2de9241a365"
+  },
+  {
+   "offeringId": "mo_6ef101aaa428198b1aa2",
+   "offeringVariantId": "mov_be5e04f5ca9c0870837a",
+   "productControlSku": "GEN-GRP-0096",
+   "productId": "a51e04a3-4072-4db9-ab30-128b41614328",
+   "variantId": "b7357f66-5067-4dbd-8072-3c8c95e872d0"
+  },
+  {
+   "offeringId": "mo_fa81dfe11f956fbe6b4d",
+   "offeringVariantId": "mov_3b7dbf989dec76e6a671",
+   "productControlSku": "GEN-GRP-0097",
+   "productId": "fcdbc7bd-a6c3-4949-80b3-24b02ee67556",
+   "variantId": "d75b8682-ef37-44c0-a996-3d7177c47cdf"
+  },
+  {
+   "offeringId": "mo_cd39fd71f66a0935b86b",
+   "offeringVariantId": "mov_f4021f331425d385220d",
+   "productControlSku": "GEN-GRP-0098",
+   "productId": "624d2ac9-dec6-45bd-a2f5-6da05bce6959",
+   "variantId": "551e24fb-5436-46a9-a938-22809085fe72"
+  },
+  {
+   "offeringId": "mo_1a1322bbf0026b9f48ba",
+   "offeringVariantId": "mov_8b5397cde4ee58ec1e07",
+   "productControlSku": "GEN-GRP-0099",
+   "productId": "20cb985d-0344-4a8e-b1a1-1ef47a2d4a13",
+   "variantId": "7935091f-6713-4f5a-8bb1-66c3e57263c0"
+  },
+  {
+   "offeringId": "mo_a86493b9d16bbdf413fc",
+   "offeringVariantId": "mov_59e2c67cd424c10da631",
+   "productControlSku": "GEN-GRP-0100",
+   "productId": "20cb985d-0344-4a8e-b1a1-1ef47a2d4a13",
+   "variantId": "5f208d28-805d-4b3c-a09a-bf130082a18c"
+  },
+  {
+   "offeringId": "mo_c0112c450a6e71d64e87",
+   "offeringVariantId": "mov_ecb762819fd1adedf67b",
+   "productControlSku": "GEN-GRP-0101",
+   "productId": "c60a0230-de6c-4485-b8ef-6c9ed964c3a4",
+   "variantId": "45915241-223e-4955-a18e-6f0f1f07acb7"
+  },
+  {
+   "offeringId": "mo_06462e2fb8d73f8a9073",
+   "offeringVariantId": "mov_34cbeded6517f298752f",
+   "productControlSku": "GEN-GRP-0102",
+   "productId": "c60a0230-de6c-4485-b8ef-6c9ed964c3a4",
+   "variantId": "dca0558d-0570-4ee7-8bd7-7e644d2a09d9"
+  },
+  {
+   "offeringId": "mo_f834d950f34643f7ba63",
+   "offeringVariantId": "mov_fd3adb2c68e7a0e73082",
+   "productControlSku": "GEN-GRP-0103",
+   "productId": "bbd49731-9c07-4315-a08c-4a37989058af",
+   "variantId": "e552a1cf-a150-4eec-9217-8e50f0f293f3"
+  },
+  {
+   "offeringId": "mo_0fb4e44e1ea7cfead2fe",
+   "offeringVariantId": "mov_e85bb022ffa9419a8aeb",
+   "productControlSku": "GEN-GRP-0104",
+   "productId": "bbd49731-9c07-4315-a08c-4a37989058af",
+   "variantId": "2e93b6ad-db7b-4003-9784-b09143c45b00"
+  },
+  {
+   "offeringId": "mo_e8845bf58c5e0a256d2a",
+   "offeringVariantId": "mov_ba2c2b656d77472973a8",
+   "productControlSku": "GEN-GRP-0105",
+   "productId": "bbd49731-9c07-4315-a08c-4a37989058af",
+   "variantId": "48c3f5c0-3332-43d6-8c45-48e43c96497f"
+  },
+  {
+   "offeringId": "mo_d8bb4d1adcb0d49d45e6",
+   "offeringVariantId": "mov_733714050d78aabb611b",
+   "productControlSku": "GEN-GRP-0106",
+   "productId": "bbd49731-9c07-4315-a08c-4a37989058af",
+   "variantId": "949e0d80-9e1b-4990-8921-8a2a05a8b47c"
+  },
+  {
+   "offeringId": "mo_85333819f0419b09c591",
+   "offeringVariantId": "mov_71799025c4b9af0971a9",
+   "productControlSku": "GEN-GRP-0107",
+   "productId": "7399a981-1d15-4254-9dc2-80e0e7303a2d",
+   "variantId": "de30959c-c26d-4603-a5eb-55baf4de7cd4"
+  },
+  {
+   "offeringId": "mo_b11b15656e48a07633d7",
+   "offeringVariantId": "mov_0c2ae18a59f6b2a23237",
+   "productControlSku": "GEN-GRP-0108",
+   "productId": "55a35c12-5e93-4bf5-9554-07fe1d6b2720",
+   "variantId": "aa527c1a-1c71-45b0-9769-f9673d39afe0"
+  },
+  {
+   "offeringId": "mo_f524eb1ffae9041d8b56",
+   "offeringVariantId": "mov_9fa662797891a14f0be9",
+   "productControlSku": "GEN-GRP-0109",
+   "productId": "55a35c12-5e93-4bf5-9554-07fe1d6b2720",
+   "variantId": "d01c534a-78c9-4caf-bde5-847a72b7a3e2"
+  },
+  {
+   "offeringId": "mo_7b97bb146bda0d0ea4ac",
+   "offeringVariantId": "mov_6a7975035b2f4714a9bf",
+   "productControlSku": "GEN-GRP-0110",
+   "productId": "55a35c12-5e93-4bf5-9554-07fe1d6b2720",
+   "variantId": "f37047ff-4b78-465c-bee6-d6154f2a1530"
+  },
+  {
+   "offeringId": "mo_1725f51379ac3797a082",
+   "offeringVariantId": "mov_65872ff528db6aab8ef3",
+   "productControlSku": "GEN-GRP-0111",
+   "productId": "d03c197c-e09f-46f7-8a9a-6df64a0eba32",
+   "variantId": "3abfb60a-18f5-482b-917f-55c5b4e5e559"
+  },
+  {
+   "offeringId": "mo_654fa6f9bcf54566093a",
+   "offeringVariantId": "mov_de7158dd9892e7e78e1f",
+   "productControlSku": "GEN-GRP-0112",
+   "productId": "d03c197c-e09f-46f7-8a9a-6df64a0eba32",
+   "variantId": "9e42b249-0837-497d-8ed6-c7b328631358"
+  },
+  {
+   "offeringId": "mo_13aa6db9214d74eae20a",
+   "offeringVariantId": "mov_5745f9c60e751c5beb5a",
+   "productControlSku": "GEN-GRP-0113",
+   "productId": "d7878cc5-c06c-42a7-a4ef-6cf774388864",
+   "variantId": "a68121c8-210b-493e-8a49-370352158f65"
+  },
+  {
+   "offeringId": "mo_a812c45672f8b41e9016",
+   "offeringVariantId": "mov_eebe141c6db26ce760ae",
+   "productControlSku": "GEN-GRP-0114",
+   "productId": "d7878cc5-c06c-42a7-a4ef-6cf774388864",
+   "variantId": "ee3577da-3297-400f-bbe4-1923561a3ebb"
+  },
+  {
+   "offeringId": "mo_7b708abc8ac204acccce",
+   "offeringVariantId": "mov_70ed47e636867f37e9d3",
+   "productControlSku": "GEN-GRP-0115",
+   "productId": "1261a198-79f2-42fe-9854-373201036367",
+   "variantId": "e096390a-9158-4609-a6cd-20ab6129cadb"
+  },
+  {
+   "offeringId": "mo_a18349a47453e1786c50",
+   "offeringVariantId": "mov_501c945615c2d707b54f",
+   "productControlSku": "GEN-GRP-0116",
+   "productId": "6e3c33bd-7541-42f0-b3f9-c4c24d2159ea",
+   "variantId": "325b2d19-7eba-4fea-901d-560d01b75c19"
+  },
+  {
+   "offeringId": "mo_45c754265490d023691d",
+   "offeringVariantId": "mov_ad59d7da55ab90677602",
+   "productControlSku": "GEN-GRP-0117",
+   "productId": "6e3c33bd-7541-42f0-b3f9-c4c24d2159ea",
+   "variantId": "0bcfb077-1069-42df-8db6-1486ff681c5b"
+  },
+  {
+   "offeringId": "mo_0dd9a7003cde0145405e",
+   "offeringVariantId": "mov_9e07ff94148f40c5696e",
+   "productControlSku": "GEN-GRP-0118",
+   "productId": "6e3c33bd-7541-42f0-b3f9-c4c24d2159ea",
+   "variantId": "9cca76c4-dc26-443a-917f-015717ce5c51"
+  },
+  {
+   "offeringId": "mo_92499f4f1bb3546f691b",
+   "offeringVariantId": "mov_a42926b88119a87e7adf",
+   "productControlSku": "GEN-GRP-0119",
+   "productId": "c2ee6a2c-8a89-454a-9da9-60d71094f84d",
+   "variantId": "a0c7fc6d-c214-4ac5-834b-ce168abd0f61"
+  },
+  {
+   "offeringId": "mo_d4dd7c2702ff34654d13",
+   "offeringVariantId": "mov_2631799a9d3ab0bbd690",
+   "productControlSku": "GEN-GRP-0120",
+   "productId": "c2ee6a2c-8a89-454a-9da9-60d71094f84d",
+   "variantId": "8a6a1652-42b1-46a1-a365-078d2507bd8a"
+  },
+  {
+   "offeringId": "mo_dc205da785a833f18c6a",
+   "offeringVariantId": "mov_a3e1de7953ea2638cdc7",
+   "productControlSku": "GEN-GRP-0121",
+   "productId": "32ec888b-714c-4ce7-90a8-3774b2afbd34",
+   "variantId": "8ce088d5-37a9-4d81-966a-e41f9c671477"
+  },
+  {
+   "offeringId": "mo_caf08c6e07fbae253963",
+   "offeringVariantId": "mov_99dfd47f74b9493e4baa",
+   "productControlSku": "GEN-GRP-0122",
+   "productId": "32ec888b-714c-4ce7-90a8-3774b2afbd34",
+   "variantId": "80bc357e-fb35-4e1b-bc5f-17bd7dcd8b4f"
+  },
+  {
+   "offeringId": "mo_0102ab46e2ba768c2e65",
+   "offeringVariantId": "mov_d1b20c7ac216a711ee60",
+   "productControlSku": "GEN-GRP-0123",
+   "productId": "001c38ed-2857-4908-8430-afd9029dcb3f",
+   "variantId": "fb094621-13dc-480b-a4ff-01e633abe0f9"
+  },
+  {
+   "offeringId": "mo_2c6a0fe86e302e0230bf",
+   "offeringVariantId": "mov_8ed9566bd266d00fff4e",
+   "productControlSku": "GEN-GRP-0124",
+   "productId": "001c38ed-2857-4908-8430-afd9029dcb3f",
+   "variantId": "686fef7d-2f23-4cec-9b77-c0ea6e692de7"
+  },
+  {
+   "offeringId": "mo_9f01cd4fd044bf92341e",
+   "offeringVariantId": "mov_9d2102e83a22a6f70bad",
+   "productControlSku": "GEN-GRP-0125",
+   "productId": "babb06de-eae2-419d-93d6-ee81be075bb1",
+   "variantId": "bacccb95-997b-4522-80d7-492b32e36092"
+  },
+  {
+   "offeringId": "mo_cbcc07c63ef522322254",
+   "offeringVariantId": "mov_fc8502227dcc0d508e25",
+   "productControlSku": "GEN-GRP-0126",
+   "productId": "5bc2d6cc-3567-43c4-8f86-219c557d463a",
+   "variantId": "63f41741-45f1-4c8b-a90a-edbbc5458dd1"
+  },
+  {
+   "offeringId": "mo_b2ecbab1b831fc2519ad",
+   "offeringVariantId": "mov_4a04f9b5609def65ae51",
+   "productControlSku": "GEN-GRP-0127",
+   "productId": "bbf85426-6fab-4bbf-9c01-df6c4fa88048",
+   "variantId": "98b866e4-ba2a-459b-bdc5-3971d2aa03b3"
+  },
+  {
+   "offeringId": "mo_8982282d9ae80cd15ec9",
+   "offeringVariantId": "mov_d0a30ff29c793447a5e6",
+   "productControlSku": "GEN-GRP-0128",
+   "productId": "5de0af8b-a77a-48fe-b852-254a7989f593",
+   "variantId": "45312545-365d-4bfb-b97f-0fbb972e7e83"
+  },
+  {
+   "offeringId": "mo_0c17cd2bf32ab3bdf7e8",
+   "offeringVariantId": "mov_5ff63ad318f8664617ef",
+   "productControlSku": "GEN-GRP-0129",
+   "productId": "5de0af8b-a77a-48fe-b852-254a7989f593",
+   "variantId": "ac97fa37-2d6a-4421-9c2c-29ee7c3e1aca"
+  },
+  {
+   "offeringId": "mo_7f613e77a9fbb975ad5e",
+   "offeringVariantId": "mov_f00c4d257410a68c5920",
+   "productControlSku": "GEN-GRP-0130",
+   "productId": "5de0af8b-a77a-48fe-b852-254a7989f593",
+   "variantId": "bff7a1fb-bb36-4326-afcc-a6544b6375dd"
+  },
+  {
+   "offeringId": "mo_ce6422f6e1cdb603e7f2",
+   "offeringVariantId": "mov_f3647c2c73ef2f697eeb",
+   "productControlSku": "GEN-GRP-0131",
+   "productId": "f89b1d5d-064f-4d81-a0a5-2f253761766b",
+   "variantId": "5d95e4d3-9c51-407b-9275-c8d94ab80a03"
+  },
+  {
+   "offeringId": "mo_3df9fa8657910de64efe",
+   "offeringVariantId": "mov_4471c6380ef3088ef647",
+   "productControlSku": "GEN-GRP-0132",
+   "productId": "f89b1d5d-064f-4d81-a0a5-2f253761766b",
+   "variantId": "81814f69-445c-428b-8e83-1c80d40ea2e8"
+  },
+  {
+   "offeringId": "mo_22704ce12559d10a4229",
+   "offeringVariantId": "mov_bf9fd06375edc6da01d5",
+   "productControlSku": "GEN-GRP-0133",
+   "productId": "3fa6118f-e0e1-4419-b490-cf1d9bbe3018",
+   "variantId": "acbf614e-7278-42dc-bab7-e90cd8b26452"
+  },
+  {
+   "offeringId": "mo_64c49ea66ef9b84b54c7",
+   "offeringVariantId": "mov_da50073bd180c9eedead",
+   "productControlSku": "GEN-GRP-0134",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "0ccd6061-2293-4cf4-9365-7cae7f0d48f9"
+  },
+  {
+   "offeringId": "mo_5261903feb1b3551d7ff",
+   "offeringVariantId": "mov_b56ef587dd6b17bf8b0c",
+   "productControlSku": "GEN-GRP-0135",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "9e5041a1-2d71-457a-9112-5f08dc94222f"
+  },
+  {
+   "offeringId": "mo_a455518e174020e345a1",
+   "offeringVariantId": "mov_dc95dfc0855b432bb8a3",
+   "productControlSku": "GEN-GRP-0136",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "e1174f22-2ed1-4863-8458-8ca2e27256db"
+  },
+  {
+   "offeringId": "mo_8ecd70a2d4731e48ba35",
+   "offeringVariantId": "mov_21534608574ca9d6fbd5",
+   "productControlSku": "GEN-GRP-0137",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "89b89064-9217-42a9-8782-66bf3218a7f5"
+  },
+  {
+   "offeringId": "mo_102c7bf21db99d3c4622",
+   "offeringVariantId": "mov_4f2d35bd4e81caefabe8",
+   "productControlSku": "GEN-GRP-0138",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "a7dafb88-c796-4251-a68f-9146cd2ef980"
+  },
+  {
+   "offeringId": "mo_6dd72b337df13c68232d",
+   "offeringVariantId": "mov_e4d2a9494b75d6af6ff2",
+   "productControlSku": "GEN-GRP-0139",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "398c7a43-1e26-40d2-9d52-e248e4035251"
+  },
+  {
+   "offeringId": "mo_9f6c9d3b8e8c2ee60ffe",
+   "offeringVariantId": "mov_c0c333d9892dd582a721",
+   "productControlSku": "GEN-GRP-0140",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "0b077410-a736-4948-8e87-946525495703"
+  },
+  {
+   "offeringId": "mo_b95ade79821018d8cd22",
+   "offeringVariantId": "mov_9244125895144bc27dc7",
+   "productControlSku": "GEN-GRP-0141",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "8e86f6e1-8b71-4a44-a326-9f4df53b8c54"
+  },
+  {
+   "offeringId": "mo_2d4c6bd9c04b27797c53",
+   "offeringVariantId": "mov_486a506935156d81ba02",
+   "productControlSku": "GEN-GRP-0142",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "850400e1-0d35-49aa-b5ca-5e310d3f7f4c"
+  },
+  {
+   "offeringId": "mo_4f81b4aaa77b1aea6041",
+   "offeringVariantId": "mov_908f0621f69df1349570",
+   "productControlSku": "GEN-GRP-0143",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "831be2e4-0fcc-4735-99d8-74d56130ffb1"
+  },
+  {
+   "offeringId": "mo_466c20dfa5a68bca9520",
+   "offeringVariantId": "mov_8fc79749268ceced7f51",
+   "productControlSku": "GEN-GRP-0144",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "b463fffd-3fca-42df-90bd-c0688e71431e"
+  },
+  {
+   "offeringId": "mo_95b724aa9a1b0cebaf02",
+   "offeringVariantId": "mov_0146c6b245d5f09247a8",
+   "productControlSku": "GEN-GRP-0145",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "dcdce884-7a5c-4141-9f79-936cf349c11d"
+  },
+  {
+   "offeringId": "mo_c35ba5fa200b86b340e0",
+   "offeringVariantId": "mov_6a7ce276b6726e5d0a90",
+   "productControlSku": "GEN-GRP-0146",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "68d5a749-dc7f-456f-b421-cf5f107033cf"
+  },
+  {
+   "offeringId": "mo_f4405d79b2c8feb650dc",
+   "offeringVariantId": "mov_3bb2af00aa17be6978cf",
+   "productControlSku": "GEN-GRP-0147",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "eece4811-5e1f-4542-957f-983bf2029ead"
+  },
+  {
+   "offeringId": "mo_a1c1549134223ad0c541",
+   "offeringVariantId": "mov_ba9acd2ddd6efbd40a18",
+   "productControlSku": "GEN-GRP-0148",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "1573a162-4e0f-4117-97f8-d3b58ac44ba4"
+  },
+  {
+   "offeringId": "mo_339e35d9e938ca7e0da1",
+   "offeringVariantId": "mov_189d42074e6b32a05462",
+   "productControlSku": "GEN-GRP-0149",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "3106669e-bea3-44fa-b513-d51e0fac2106"
+  },
+  {
+   "offeringId": "mo_a7da518e4103504ebdef",
+   "offeringVariantId": "mov_32f6214d6f971441ba65",
+   "productControlSku": "GEN-GRP-0150",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "7f48a191-d577-48d2-be23-e8cfa79a75dd"
+  },
+  {
+   "offeringId": "mo_99793af3a2ec5e6f704f",
+   "offeringVariantId": "mov_bf88614f97a61d969acd",
+   "productControlSku": "GEN-GRP-0151",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "7f97be9c-1011-42fc-a46c-126d88169497"
+  },
+  {
+   "offeringId": "mo_cd193eb5a09726090ad9",
+   "offeringVariantId": "mov_7db23839e0378f076ad5",
+   "productControlSku": "GEN-GRP-0152",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "202e5d9c-e745-4eed-8ab6-875b15a2bb2e"
+  },
+  {
+   "offeringId": "mo_be72c39f79aed473eeb4",
+   "offeringVariantId": "mov_e454956f77357ddec871",
+   "productControlSku": "GEN-GRP-0153",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "556b479d-da2a-460e-bdf1-a074958ba4b5"
+  },
+  {
+   "offeringId": "mo_142f893feea7dde2c738",
+   "offeringVariantId": "mov_f72cf2f324eb23e46646",
+   "productControlSku": "GEN-GRP-0154",
+   "productId": "72ea9946-0a9e-4bc0-96e2-51ae691681d4",
+   "variantId": "c2362304-8b54-487a-ac0b-d01aa85ba89b"
+  },
+  {
+   "offeringId": "mo_7cd457eab4c24a129688",
+   "offeringVariantId": "mov_4fcaab09d599d7b0b00d",
+   "productControlSku": "GEN-GRP-0155",
+   "productId": "c56ab34f-a80a-4e20-95a6-9f1e360df78d",
+   "variantId": "60c7f4e6-1382-43fb-95db-9c47b2c4d77f"
+  },
+  {
+   "offeringId": "mo_f2b239c78fcf28e367d8",
+   "offeringVariantId": "mov_03d3b84a967580d41b5e",
+   "productControlSku": "GEN-GRP-0156",
+   "productId": "122153ec-b200-4a43-aa24-bf808a769044",
+   "variantId": "8e794b35-8b71-4a32-aa6f-66419625dce8"
+  },
+  {
+   "offeringId": "mo_fa5c151a9e36d546f3b3",
+   "offeringVariantId": "mov_4f115024566d5ce16ec5",
+   "productControlSku": "GEN-GRP-0157",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "73e97762-54d3-4a02-9a0c-085cd444c613"
+  },
+  {
+   "offeringId": "mo_70bf7796665a2f46dd52",
+   "offeringVariantId": "mov_72e17e552c98845046a8",
+   "productControlSku": "GEN-GRP-0158",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "6dcd7cd4-6d61-4779-a4cd-740cbea3c93d"
+  },
+  {
+   "offeringId": "mo_d2d4ad6828a518ecc7bf",
+   "offeringVariantId": "mov_d7fd93e24c3f34b7c5cd",
+   "productControlSku": "GEN-GRP-0159",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "ebdc1088-e8b9-448b-a05a-8e118f63b072"
+  },
+  {
+   "offeringId": "mo_d91faa561e8eeec03b3e",
+   "offeringVariantId": "mov_b3ab2236ef6c69a31d69",
+   "productControlSku": "GEN-GRP-0160",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "d506f750-d5fc-4ac8-95ff-413cfe9918a6"
+  },
+  {
+   "offeringId": "mo_2503f1e03ceebb9ccd4f",
+   "offeringVariantId": "mov_d1a9e06120afca6f6372",
+   "productControlSku": "GEN-GRP-0161",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "a6c76b52-2a94-4e9d-9c0e-c17c2754dee9"
+  },
+  {
+   "offeringId": "mo_db0700e3225ab22a0dc3",
+   "offeringVariantId": "mov_142e69c895e4e9dfd108",
+   "productControlSku": "GEN-GRP-0162",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "f96cdc37-a164-411b-9747-cce71da27466"
+  },
+  {
+   "offeringId": "mo_a1c6ed67f3dac9f1fe96",
+   "offeringVariantId": "mov_6435ce73a40c29b2365f",
+   "productControlSku": "GEN-GRP-0163",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "7e478117-21b0-4f6e-9d17-9475a997b3ff"
+  },
+  {
+   "offeringId": "mo_914447c51171b5e2d64b",
+   "offeringVariantId": "mov_022a35a6bdaceb5366fd",
+   "productControlSku": "GEN-GRP-0164",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "6e0a63f7-1a57-4dfa-965b-7bc89584b978"
+  },
+  {
+   "offeringId": "mo_e4399e39702856b122ad",
+   "offeringVariantId": "mov_1d4475fa96d199f72b4b",
+   "productControlSku": "GEN-GRP-0165",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "c6208380-102d-411c-bc5c-2c9a77b9ed25"
+  },
+  {
+   "offeringId": "mo_512758c392ac4775acb8",
+   "offeringVariantId": "mov_b70d3fe84b66e6f7ed90",
+   "productControlSku": "GEN-GRP-0166",
+   "productId": "232b9324-db73-4e27-a542-e2c617caaa35",
+   "variantId": "7a2ebba4-5ad8-4698-9c7d-d6a3914c0fb5"
+  },
+  {
+   "offeringId": "mo_0e4077d63cc4037a6cc9",
+   "offeringVariantId": "mov_d79d9f58730e3ef24999",
+   "productControlSku": "GEN-GRP-0167",
+   "productId": "1a75d3bf-bce6-4a77-8671-87af0eb62ef0",
+   "variantId": "dc4cb57b-a741-429a-b253-016ee0677c84"
+  },
+  {
+   "offeringId": "mo_9d6082a31a3d4b5ec984",
+   "offeringVariantId": "mov_fe37a77ef2c2e7312ce6",
+   "productControlSku": "GEN-GRP-0168",
+   "productId": "1a75d3bf-bce6-4a77-8671-87af0eb62ef0",
+   "variantId": "f2282679-7473-443c-b5f2-a87208f00390"
+  },
+  {
+   "offeringId": "mo_8a207482e9e88656a747",
+   "offeringVariantId": "mov_7fc3aca6a879412d6576",
+   "productControlSku": "GEN-GRP-0169",
+   "productId": "27a9c00d-648b-4696-803b-317936dbcb72",
+   "variantId": "bee4944a-fa2b-4e2f-8f8c-9e3977dbf621"
+  },
+  {
+   "offeringId": "mo_5edab3b666c35c0c76ce",
+   "offeringVariantId": "mov_57305ac71a306d9bd16d",
+   "productControlSku": "GEN-GRP-0170",
+   "productId": "3a2e1c7b-e843-4ff3-9bd7-c47fd8ba7364",
+   "variantId": "3cb362cc-8d20-4b3c-8017-70e739a19cef"
+  },
+  {
+   "offeringId": "mo_ddf4b076727f1572662f",
+   "offeringVariantId": "mov_5dc037b1279e30b6ce47",
+   "productControlSku": "GEN-GRP-0171",
+   "productId": "fb7fd7ec-f5a3-4f86-8f14-b49d2b91ef28",
+   "variantId": "79a5b663-fdfa-42be-9b93-bd343ee65b31"
+  },
+  {
+   "offeringId": "mo_79a4ee26cea6c7ff0dcf",
+   "offeringVariantId": "mov_25ad4a66f23a5721d7bb",
+   "productControlSku": "GEN-GRP-0172",
+   "productId": "862d770e-6e40-4e76-9138-b2285360a6da",
+   "variantId": "3cc91662-4535-44e0-a0f2-27ae2782ad75"
+  },
+  {
+   "offeringId": "mo_e48d78fa7ebd33e081c9",
+   "offeringVariantId": "mov_c6abe9e1c6b987e29192",
+   "productControlSku": "GEN-GRP-0173",
+   "productId": "862d770e-6e40-4e76-9138-b2285360a6da",
+   "variantId": "f2e6e899-93bd-467e-9bcb-279448c74503"
+  },
+  {
+   "offeringId": "mo_c93c18f3a636a88d2bdd",
+   "offeringVariantId": "mov_0753f47d752e1c799a66",
+   "productControlSku": "GEN-GRP-0174",
+   "productId": "862d770e-6e40-4e76-9138-b2285360a6da",
+   "variantId": "94eeaae5-cae7-4e87-bef6-503fd1f1f75c"
+  },
+  {
+   "offeringId": "mo_d457e842bc771b91a571",
+   "offeringVariantId": "mov_86df1a74878cfd60f6c2",
+   "productControlSku": "GEN-GRP-0175",
+   "productId": "862d770e-6e40-4e76-9138-b2285360a6da",
+   "variantId": "e529a721-3d33-4209-b4a9-59acc8346751"
+  },
+  {
+   "offeringId": "mo_c7c531599a1de3a083a0",
+   "offeringVariantId": "mov_08f0c1f6459b4238952b",
+   "productControlSku": "GEN-GRP-0176",
+   "productId": "cd7abed6-f8f1-406c-a56d-eb31d9bf82bd",
+   "variantId": "effc156b-989e-4dee-b4db-ed7b21ceee0f"
+  },
+  {
+   "offeringId": "mo_55c79f62b104199c734b",
+   "offeringVariantId": "mov_7673a9b4ccaa340557f2",
+   "productControlSku": "GEN-GRP-0177",
+   "productId": "f54e1b05-0122-415c-9991-1aa3e3e53028",
+   "variantId": "d42fea48-3a31-42dd-8e59-186cd26b702b"
+  },
+  {
+   "offeringId": "mo_62935f6113d345b8eaef",
+   "offeringVariantId": "mov_032788e5244937ceca28",
+   "productControlSku": "GEN-GRP-0178",
+   "productId": "f54e1b05-0122-415c-9991-1aa3e3e53028",
+   "variantId": "e0c74700-9bd7-4f59-ba3f-7bb14a7c2733"
+  },
+  {
+   "offeringId": "mo_f16dab92434da8c1b715",
+   "offeringVariantId": "mov_56536dce04781fce3c09",
+   "productControlSku": "GEN-GRP-0179",
+   "productId": "f54e1b05-0122-415c-9991-1aa3e3e53028",
+   "variantId": "8b6bcd7f-3dde-4d34-8a4c-7aeace014e8a"
+  },
+  {
+   "offeringId": "mo_ca1bb5bbcb82035373c1",
+   "offeringVariantId": "mov_e40e7a99246a86038f67",
+   "productControlSku": "GEN-GRP-0180",
+   "productId": "f54e1b05-0122-415c-9991-1aa3e3e53028",
+   "variantId": "fbe89e16-4bb7-4b66-8dac-7a5e7ee8036f"
+  },
+  {
+   "offeringId": "mo_8754664779c38ffebf72",
+   "offeringVariantId": "mov_2e2f1b46c92d11a4bf52",
+   "productControlSku": "GEN-GRP-0181",
+   "productId": "e882c016-83b9-476f-9bd3-41a8677e384a",
+   "variantId": "fe52d5c2-2d09-4728-9f72-55145a1084a0"
+  },
+  {
+   "offeringId": "mo_6727b60b3f136b732ee1",
+   "offeringVariantId": "mov_5f3f1eed2571ae4dad88",
+   "productControlSku": "GEN-GRP-0182",
+   "productId": "e882c016-83b9-476f-9bd3-41a8677e384a",
+   "variantId": "48436904-b56e-4555-be79-3e944ca67f52"
+  },
+  {
+   "offeringId": "mo_bf16557322df1c7a4a68",
+   "offeringVariantId": "mov_5ac6b7fa2fe42bcb614d",
+   "productControlSku": "GEN-GRP-0183",
+   "productId": "e882c016-83b9-476f-9bd3-41a8677e384a",
+   "variantId": "8693e3e7-37ab-4770-b547-789d49492840"
+  },
+  {
+   "offeringId": "mo_619942d67da9c6db5e71",
+   "offeringVariantId": "mov_2bcb39d1057b8e1e977f",
+   "productControlSku": "GEN-GRP-0184",
+   "productId": "e882c016-83b9-476f-9bd3-41a8677e384a",
+   "variantId": "d1ef8c02-8f41-449c-a1b0-d2e19ffc914d"
+  },
+  {
+   "offeringId": "mo_cb76bb0a5e6936deb6be",
+   "offeringVariantId": "mov_c9cc0c819f1d0150ce0a",
+   "productControlSku": "GEN-GRP-0185",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "37e3aa6a-342a-4517-ab87-b1a8bf8ddf23"
+  },
+  {
+   "offeringId": "mo_35a7921b69b22151e7d1",
+   "offeringVariantId": "mov_bd2a02725bbd0f3ff49d",
+   "productControlSku": "GEN-GRP-0186",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "d0febc06-1638-4dd9-a3b3-03c151aa0537"
+  },
+  {
+   "offeringId": "mo_ca7f58585bdd1f385ccc",
+   "offeringVariantId": "mov_d9c1ca60e6c732f54002",
+   "productControlSku": "GEN-GRP-0187",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "5a4a3361-2ba9-499c-95a6-a79e6c3c5c79"
+  },
+  {
+   "offeringId": "mo_e1cc42a81f6d09fdaf31",
+   "offeringVariantId": "mov_c4f2fa86002933d62b8a",
+   "productControlSku": "GEN-GRP-0188",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "d2307a4b-79d2-4a2f-9348-c6ffed6a6858"
+  },
+  {
+   "offeringId": "mo_b2e273fd7992214adcc7",
+   "offeringVariantId": "mov_bb094c822d8aec5125d0",
+   "productControlSku": "GEN-GRP-0189",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "3a9536f6-1fef-4833-91af-6c3cb22faa3a"
+  },
+  {
+   "offeringId": "mo_01b1cc9d114718bbe385",
+   "offeringVariantId": "mov_e5366505d715e538f8dc",
+   "productControlSku": "GEN-GRP-0190",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "d2b53dde-37be-4fd9-be30-a68381d24016"
+  },
+  {
+   "offeringId": "mo_ec579d1a4b7149546141",
+   "offeringVariantId": "mov_9ba44985db0c90b04efe",
+   "productControlSku": "GEN-GRP-0191",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "f498e737-2e4b-4815-ab7d-5f085d7bfff4"
+  },
+  {
+   "offeringId": "mo_75409737f08c0f3f778e",
+   "offeringVariantId": "mov_44f5a6927157750fe913",
+   "productControlSku": "GEN-GRP-0192",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "6dffbfed-dc4f-43c5-966e-d3dbe5eb841d"
+  },
+  {
+   "offeringId": "mo_4226db08fb26cccadad0",
+   "offeringVariantId": "mov_41b49fab370e0087bcc0",
+   "productControlSku": "GEN-GRP-0193",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "5fcb66e8-bc35-45ad-9572-7ee5828faee8"
+  },
+  {
+   "offeringId": "mo_654379f9d2aac577242b",
+   "offeringVariantId": "mov_67677041b20e67446911",
+   "productControlSku": "GEN-GRP-0194",
+   "productId": "0052894e-f6b6-4211-955b-a8afb46458ca",
+   "variantId": "475fa152-5e68-4c7f-80fa-d9485490b1fa"
+  },
+  {
+   "offeringId": "mo_6ea962af58dadfcd943e",
+   "offeringVariantId": "mov_6fa1343c6cfe7cacc9e8",
+   "productControlSku": "GEN-GRP-0195",
+   "productId": "02f5837a-df7f-4aeb-ba9a-401e218bc9b0",
+   "variantId": "a4d6e158-b8d5-4a66-bb32-1e4f970e12cf"
+  },
+  {
+   "offeringId": "mo_cfdbc0f047dc06f6e1f4",
+   "offeringVariantId": "mov_028599999058c362cc84",
+   "productControlSku": "GEN-GRP-0196",
+   "productId": "02f5837a-df7f-4aeb-ba9a-401e218bc9b0",
+   "variantId": "50b7c9d0-9798-41b1-8000-07e07998f4d3"
+  },
+  {
+   "offeringId": "mo_71e2492004c64bf53988",
+   "offeringVariantId": "mov_6965dfbce32ee305eb45",
+   "productControlSku": "GEN-GRP-0197",
+   "productId": "02f5837a-df7f-4aeb-ba9a-401e218bc9b0",
+   "variantId": "44088e98-ce74-4a03-ac59-b723347d7463"
+  },
+  {
+   "offeringId": "mo_52fb8d64bf9d436c8b94",
+   "offeringVariantId": "mov_8d910726a1f47aada8b1",
+   "productControlSku": "GEN-GRP-0198",
+   "productId": "02f5837a-df7f-4aeb-ba9a-401e218bc9b0",
+   "variantId": "8ae4575c-f9e5-4200-802f-efcd1643de2b"
+  },
+  {
+   "offeringId": "mo_01aa8c629f0c4c030103",
+   "offeringVariantId": "mov_8916bc3cdec720be82c2",
+   "productControlSku": "GEN-GRP-0199",
+   "productId": "02f5837a-df7f-4aeb-ba9a-401e218bc9b0",
+   "variantId": "06f20f45-4ad1-44ac-974a-f82b2cb690a2"
+  },
+  {
+   "offeringId": "mo_4463fcdff81752545aec",
+   "offeringVariantId": "mov_806be6cd914c527fad37",
+   "productControlSku": "GEN-GRP-0200",
+   "productId": "1a577ada-b2e7-4d98-b127-eee80b0f7c8c",
+   "variantId": "985a9405-1987-4410-a609-544f1f97277a"
+  },
+  {
+   "offeringId": "mo_1a49c73846a526f4dafa",
+   "offeringVariantId": "mov_4e912c763e1dbbd2fc68",
+   "productControlSku": "GEN-GRP-0201",
+   "productId": "1a577ada-b2e7-4d98-b127-eee80b0f7c8c",
+   "variantId": "eda0726d-d734-4cad-9245-7743954e2f08"
+  },
+  {
+   "offeringId": "mo_456476cdb9ece08d4690",
+   "offeringVariantId": "mov_16d6440006e72819c033",
+   "productControlSku": "GEN-GRP-0202",
+   "productId": "1a577ada-b2e7-4d98-b127-eee80b0f7c8c",
+   "variantId": "f0f30574-e3ce-431a-9e9e-9e4bfac57a39"
+  },
+  {
+   "offeringId": "mo_c9eb5f65b71cc7896515",
+   "offeringVariantId": "mov_6195e2808bfe7028279c",
+   "productControlSku": "GEN-GRP-0203",
+   "productId": "1a577ada-b2e7-4d98-b127-eee80b0f7c8c",
+   "variantId": "1522a771-6581-4042-b92f-a8602ec63912"
+  },
+  {
+   "offeringId": "mo_bb24c4cae6b18541db17",
+   "offeringVariantId": "mov_65a56f5a4d64e1b6642d",
+   "productControlSku": "GEN-GRP-0204",
+   "productId": "1cc5b75c-5985-4786-aa2c-a240add96a69",
+   "variantId": "bf2af025-26f6-4653-aa06-d74c4b874448"
+  },
+  {
+   "offeringId": "mo_b745ef3cdaeee166dcd6",
+   "offeringVariantId": "mov_baf57ab8c9cc745ad5ac",
+   "productControlSku": "GEN-GRP-0205",
+   "productId": "1cc5b75c-5985-4786-aa2c-a240add96a69",
+   "variantId": "d46cf76c-3536-4105-926f-9c27e108189b"
+  },
+  {
+   "offeringId": "mo_167fa15a6b3f29edcad1",
+   "offeringVariantId": "mov_7a9f5490412704a83cb5",
+   "productControlSku": "GEN-GRP-0206",
+   "productId": "1285129b-9d0d-477e-b2f2-d5c79909d60b",
+   "variantId": "40f505e7-736e-4c47-a67c-7c4f03b0a850"
+  },
+  {
+   "offeringId": "mo_b3e2683e1021aec52109",
+   "offeringVariantId": "mov_fca88a97ef3ed5104fd3",
+   "productControlSku": "GEN-GRP-0207",
+   "productId": "103d4aa3-03c5-4a48-a02b-cef46c948f64",
+   "variantId": "41577ee1-689c-424d-a931-36af6b051343"
+  },
+  {
+   "offeringId": "mo_fd8c7c94b4772a6342e9",
+   "offeringVariantId": "mov_752e7861ef035dc39c9a",
+   "productControlSku": "GEN-GRP-0208",
+   "productId": "1f17772b-afba-432c-a7eb-d4103e9c6823",
+   "variantId": "97862aa8-1ba3-456e-a1f4-827b1a8ebe62"
+  },
+  {
+   "offeringId": "mo_23f1657b280c4d0d1843",
+   "offeringVariantId": "mov_d63ddb8ba5aa52668a52",
+   "productControlSku": "GEN-GRP-0209",
+   "productId": "1f17772b-afba-432c-a7eb-d4103e9c6823",
+   "variantId": "3f465b65-42f6-4928-86e1-16b560333bd5"
+  },
+  {
+   "offeringId": "mo_f48d4ca1310f3f97305d",
+   "offeringVariantId": "mov_47e649fb60889ebbf1d4",
+   "productControlSku": "GEN-GRP-0210",
+   "productId": "38914271-c034-4df1-a2eb-4a689b1431f7",
+   "variantId": "87971161-ec8a-4592-b0ac-f971b74039c8"
+  },
+  {
+   "offeringId": "mo_6dea87adb93b7a3d7960",
+   "offeringVariantId": "mov_85f31586f4ca4262ebb4",
+   "productControlSku": "GEN-GRP-0211",
+   "productId": "3705fe75-b610-4800-ae0a-856b14a2d894",
+   "variantId": "9a0076b1-55b9-41e6-90a1-2911064cdde6"
+  },
+  {
+   "offeringId": "mo_b1a47ddceb680dead7d1",
+   "offeringVariantId": "mov_bb171e1e99b202b19469",
+   "productControlSku": "GEN-GRP-0212",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "34ec2da8-092b-4b18-9b47-064855df8d5b"
+  },
+  {
+   "offeringId": "mo_493b3d5a7aeeaa81df5b",
+   "offeringVariantId": "mov_ff9faa14357676165e39",
+   "productControlSku": "GEN-GRP-0213",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "1158283b-16b6-4a95-a64d-369e0275b94d"
+  },
+  {
+   "offeringId": "mo_c50b5f1d259a7f6dea01",
+   "offeringVariantId": "mov_22f8ede1ff7f158b8c9b",
+   "productControlSku": "GEN-GRP-0214",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "16077876-a1e4-47f0-b4a6-21b906d3322f"
+  },
+  {
+   "offeringId": "mo_f3107dd5a39ed82eb00e",
+   "offeringVariantId": "mov_05e4dd8400058a9c51de",
+   "productControlSku": "GEN-GRP-0215",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "eb9d5062-c801-487f-bc1e-e96675893cf8"
+  },
+  {
+   "offeringId": "mo_90738c1f17934a557b28",
+   "offeringVariantId": "mov_6a9fbc4e6522db1b9478",
+   "productControlSku": "GEN-GRP-0216",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "f2b2861e-4baa-4c51-9fb2-cb0560e754ad"
+  },
+  {
+   "offeringId": "mo_b2c16be50b550aae5a41",
+   "offeringVariantId": "mov_1af9bddcc747b4b0390d",
+   "productControlSku": "GEN-GRP-0217",
+   "productId": "735ce92a-c273-4338-9ede-52c56e84ca67",
+   "variantId": "89500217-e0e4-4917-afdd-ba46677f017f"
+  },
+  {
+   "offeringId": "mo_a4da84624f592e5c410d",
+   "offeringVariantId": "mov_c2619837caf5d2ad4bec",
+   "productControlSku": "GEN-GRP-0218",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "13250ced-72c3-49e1-ae96-2db4f97eefc6"
+  },
+  {
+   "offeringId": "mo_87165aa999b84e1c3d5b",
+   "offeringVariantId": "mov_256f409fa7eaaa527e9d",
+   "productControlSku": "GEN-GRP-0219",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "48122fbf-cd64-406d-8923-72e438c143c2"
+  },
+  {
+   "offeringId": "mo_f7965d9d4656cdf8a0cc",
+   "offeringVariantId": "mov_f75653e3644d8141ed92",
+   "productControlSku": "GEN-GRP-0220",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "abf94d5c-e5ee-422f-9485-a33c4a03b9f4"
+  },
+  {
+   "offeringId": "mo_a97dab304199bf1de669",
+   "offeringVariantId": "mov_8f9c93d7bbd259a65618",
+   "productControlSku": "GEN-GRP-0221",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "93a6f23a-a57d-4245-933e-e772f4574aa5"
+  },
+  {
+   "offeringId": "mo_785a1aad2c04bcdddf4f",
+   "offeringVariantId": "mov_3535cf2424e315083e81",
+   "productControlSku": "GEN-GRP-0222",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "3e6290ca-fa1c-44c1-b1a1-aa60b1d4fae2"
+  },
+  {
+   "offeringId": "mo_2487b3f03cf4c1c23928",
+   "offeringVariantId": "mov_c5aa915e3b3ad6ae9f0b",
+   "productControlSku": "GEN-GRP-0223",
+   "productId": "33d55271-c765-4803-b793-5505c69d3e1c",
+   "variantId": "f250a337-6c82-4512-8640-fcdd057c396d"
+  },
+  {
+   "offeringId": "mo_69616b6e72656b0fb850",
+   "offeringVariantId": "mov_0eabaf76ceae3e87a64f",
+   "productControlSku": "GEN-GRP-0224",
+   "productId": "65bc0aae-b05f-4e20-ad92-f68c6a018404",
+   "variantId": "6d546e84-77b2-4bc0-8172-1630cc5c9cec"
+  },
+  {
+   "offeringId": "mo_d1f12aa7533cd106deb6",
+   "offeringVariantId": "mov_446e44fc4c64977ba9f9",
+   "productControlSku": "GEN-GRP-0225",
+   "productId": "fb1a55cf-901c-4def-a2e6-8238816e9180",
+   "variantId": "694cc2b6-770e-45ce-bd08-612e366fbb0b"
+  },
+  {
+   "offeringId": "mo_fd05226c97761b0533f5",
+   "offeringVariantId": "mov_c66a440ab740f61ad674",
+   "productControlSku": "GEN-GRP-0226",
+   "productId": "8f696f73-05c5-4205-8989-32d20dedca14",
+   "variantId": "b64dd8c1-c201-4930-b813-81d5fc43a46f"
+  },
+  {
+   "offeringId": "mo_231da18a4b523b7ba52d",
+   "offeringVariantId": "mov_f2bba077ccab5f665143",
+   "productControlSku": "GEN-GRP-0227",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "4ab2be9b-506a-42b5-8671-9bbf44df9b14"
+  },
+  {
+   "offeringId": "mo_fd6b1fa3f1d28e8c4b72",
+   "offeringVariantId": "mov_6e7b8674cb13d3043d5e",
+   "productControlSku": "GEN-GRP-0228",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "7a17c847-d76b-4c35-b7c2-f28d21ef7dd1"
+  },
+  {
+   "offeringId": "mo_d5a222cec701a73cd6a9",
+   "offeringVariantId": "mov_d053cb009060dae567d5",
+   "productControlSku": "GEN-GRP-0229",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "bfd8811a-32d6-44a7-8730-212281d42fec"
+  },
+  {
+   "offeringId": "mo_2b364e372adf3373e2af",
+   "offeringVariantId": "mov_925c987182d69e2c89dd",
+   "productControlSku": "GEN-GRP-0230",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "d877ebb5-04ec-4b5b-9237-ad4e588bb338"
+  },
+  {
+   "offeringId": "mo_1d7d3a4ee4161caa7d90",
+   "offeringVariantId": "mov_de4cb33b4741a2dd2342",
+   "productControlSku": "GEN-GRP-0231",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "e0c39675-44f3-4d62-a8bb-b97be9a7c803"
+  },
+  {
+   "offeringId": "mo_d467f4d3c166f51723d8",
+   "offeringVariantId": "mov_b08d21398772788f95f6",
+   "productControlSku": "GEN-GRP-0232",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "1ad3a8af-256d-4080-8f4c-90eef843e4ca"
+  },
+  {
+   "offeringId": "mo_ca7ec97882e7327626bd",
+   "offeringVariantId": "mov_8c56e30aba0c1e1b9823",
+   "productControlSku": "GEN-GRP-0233",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "4ff2edd2-f762-4950-bec1-2605de79d847"
+  },
+  {
+   "offeringId": "mo_410aa5d189bdbe58e89e",
+   "offeringVariantId": "mov_8c186c0019ff862aa8d0",
+   "productControlSku": "GEN-GRP-0234",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "a2da1e6d-8eb2-45eb-a4b0-52ff7c03a45c"
+  },
+  {
+   "offeringId": "mo_edc18921b4edce436dc5",
+   "offeringVariantId": "mov_c6a233a1c2fbc635930c",
+   "productControlSku": "GEN-GRP-0235",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "5a260f83-bbbb-4647-861a-9ed1bce0d4b8"
+  },
+  {
+   "offeringId": "mo_abe11a686532f5edd2fb",
+   "offeringVariantId": "mov_45ca9ef521018807384e",
+   "productControlSku": "GEN-GRP-0236",
+   "productId": "a9f6596c-895c-4d10-9670-a7dbc8a735a4",
+   "variantId": "80748e41-bc59-452c-a287-c06cafb6f156"
+  },
+  {
+   "offeringId": "mo_2cfdd8ac0285ab6fa94a",
+   "offeringVariantId": "mov_53827d2f649e8057a8fe",
+   "productControlSku": "GEN-GRP-0237",
+   "productId": "bf8f6f0e-e2da-4bbb-86d1-f8653b99f6eb",
+   "variantId": "d92d45d2-4f65-4d21-8c31-ceba0514ecfa"
+  },
+  {
+   "offeringId": "mo_0e02d031be52298cfb1e",
+   "offeringVariantId": "mov_d745d4d77478eca768bc",
+   "productControlSku": "GEN-GRP-0238",
+   "productId": "bf8f6f0e-e2da-4bbb-86d1-f8653b99f6eb",
+   "variantId": "4aa6e61b-3085-4dd0-b2f1-e90d9b966a4d"
+  },
+  {
+   "offeringId": "mo_680fa91e7dc5961aa30b",
+   "offeringVariantId": "mov_fdda4d40b1fdbb305d55",
+   "productControlSku": "GEN-GRP-0239",
+   "productId": "89743d5d-e45b-4025-9a9a-9f2a547bb6ec",
+   "variantId": "5f640ad7-53f4-4cff-8a9b-2e3a54b5e607"
+  },
+  {
+   "offeringId": "mo_89fe9b28f30b6b1b102b",
+   "offeringVariantId": "mov_f2e6a643b1e940ed8525",
+   "productControlSku": "GEN-GRP-0240",
+   "productId": "eef610ff-a178-47d8-a508-94c55bf65534",
+   "variantId": "2f639cb9-8aa7-46f1-8924-97ae1d954004"
+  },
+  {
+   "offeringId": "mo_e0deaee446f7a1615ce1",
+   "offeringVariantId": "mov_8c43d8049cba3bbc8938",
+   "productControlSku": "GEN-GRP-0241",
+   "productId": "1e7a166e-1b22-4499-82df-d2cd97c3a740",
+   "variantId": "ef2144a7-7474-4168-9163-b2492fb82fce"
+  },
+  {
+   "offeringId": "mo_93ef5e210632cb217415",
+   "offeringVariantId": "mov_5247438c659e5c5a06e9",
+   "productControlSku": "GEN-GRP-0242",
+   "productId": "3b0c0920-65c6-43f2-a129-2ef770d2dcba",
+   "variantId": "69093786-19fd-420b-98ef-530a2157ef49"
+  },
+  {
+   "offeringId": "mo_c600e7eb1c9f5fd03c80",
+   "offeringVariantId": "mov_2183aa9edb06f34ef3af",
+   "productControlSku": "GEN-GRP-0243",
+   "productId": "dcc384b5-a03f-4561-a2bc-3832d7ff2753",
+   "variantId": "050d029a-1b54-41bd-bfcb-282687852189"
+  },
+  {
+   "offeringId": "mo_7ba89975fb62ceb33b7b",
+   "offeringVariantId": "mov_753d3f94385adf791d1e",
+   "productControlSku": "GEN-GRP-0245",
+   "productId": "d5a5fbdd-9f9c-47f1-90ad-53cb7daa7ce1",
+   "variantId": "dec4c121-9d4a-46f5-938c-297885f803a5"
+  },
+  {
+   "offeringId": "mo_75bc8d1ad93b04865e6c",
+   "offeringVariantId": "mov_8293d0baa21eb4d561f8",
+   "productControlSku": "GEN-GRP-0246",
+   "productId": "becff017-6e17-4c84-b14d-758ab4418a67",
+   "variantId": "f08942ba-671f-43cf-8424-98d693832467"
+  },
+  {
+   "offeringId": "mo_5e454a6196e0a7defb77",
+   "offeringVariantId": "mov_aef099fb39b3fa062f45",
+   "productControlSku": "GEN-GRP-0247",
+   "productId": "4fc437bd-6bf7-49b5-a200-9e41d6768507",
+   "variantId": "f9b5cd13-e1e3-4599-8908-857bcd6f5966"
+  },
+  {
+   "offeringId": "mo_4668304296fb55b51280",
+   "offeringVariantId": "mov_a2d32f69681dca2b17fb",
+   "productControlSku": "GEN-GRP-0248",
+   "productId": "807dcbf1-f95f-47b1-b6f6-4633fbf2b24a",
+   "variantId": "9134e120-4f23-4741-be0a-a1d3bab272ab"
+  },
+  {
+   "offeringId": "mo_b2ebb969d48a20f9e680",
+   "offeringVariantId": "mov_fe292b5f03527ec13e5e",
+   "productControlSku": "GEN-GRP-0249",
+   "productId": "7d9516fe-ef49-4b14-bfd9-99cba352b3fe",
+   "variantId": "6c030960-937e-45c2-9392-10d3631629bb"
+  },
+  {
+   "offeringId": "mo_3c6f0d26e9df4bcb80c5",
+   "offeringVariantId": "mov_395e7047e013e2074f6a",
+   "productControlSku": "GEN-GRP-0250",
+   "productId": "ec89dea5-8671-42b9-8233-75ecc73d0554",
+   "variantId": "c4c1f15a-25aa-49c7-968f-fe53f0a2cffa"
+  },
+  {
+   "offeringId": "mo_34fa0d12f1effd156e61",
+   "offeringVariantId": "mov_c58b682a44514760a74f",
+   "productControlSku": "GEN-GRP-0251",
+   "productId": "ec89dea5-8671-42b9-8233-75ecc73d0554",
+   "variantId": "d2f6f962-2e65-4c7e-b88b-c9effaec0256"
+  },
+  {
+   "offeringId": "mo_143d09ffd9b13780f2d7",
+   "offeringVariantId": "mov_8e11e063f79d56a3a946",
+   "productControlSku": "GEN-GRP-0252",
+   "productId": "c377946e-52d7-4952-ad1c-48d761d41407",
+   "variantId": "b6c41e01-c70b-4ab8-adc6-2f95a20b88ed"
+  },
+  {
+   "offeringId": "mo_2923115827ca8fe37d2c",
+   "offeringVariantId": "mov_257fd9d66f6284e3570e",
+   "productControlSku": "GEN-GRP-0253",
+   "productId": "695bd22b-0ed4-4f6b-90c8-a431f54a0655",
+   "variantId": "bf51a656-7d07-437b-9eaf-a6a00f7dc03b"
+  },
+  {
+   "offeringId": "mo_a6f7f071ed946577ce56",
+   "offeringVariantId": "mov_9e34d0c1acde46249621",
+   "productControlSku": "GEN-GRP-0254",
+   "productId": "afcdb0fc-a186-4147-987c-6617e2036dea",
+   "variantId": "6da6da66-cc2a-4dd5-80e3-2a55c7523a0d"
+  },
+  {
+   "offeringId": "mo_aace3aded470921f6af2",
+   "offeringVariantId": "mov_120b19d12e869b0070ff",
+   "productControlSku": "GEN-GRP-0255",
+   "productId": "a3de200c-f5ab-44a7-bbe7-e9d9b313fc71",
+   "variantId": "ec45a66a-fe61-4027-b72c-58f3acccb8c9"
+  },
+  {
+   "offeringId": "mo_1d9d501ac84d6cd9d46d",
+   "offeringVariantId": "mov_0a8df59fa70328b1c1ca",
+   "productControlSku": "GEN-GRP-0395",
+   "productId": "34e8d637-1009-476e-b24a-3c9dc0067f73",
+   "variantId": "ce4eee4d-c293-4e86-aadd-d9e81ad3594f"
+  },
+  {
+   "offeringId": "mo_b01b90df2792becd9a75",
+   "offeringVariantId": "mov_862b99ce1c9f144086dd",
+   "productControlSku": "GEN-GRP-0418",
+   "productId": "afcdb0fc-a186-4147-987c-6617e2036dea",
+   "variantId": "a94d27d1-09b1-4415-b84e-63ce8a22d0fa"
+  },
+  {
+   "offeringId": "mo_87b00893d8f75a60b08f",
+   "offeringVariantId": "mov_235641a298fed1c2637e",
+   "productControlSku": "GEN-GRP-0419",
+   "productId": "afcdb0fc-a186-4147-987c-6617e2036dea",
+   "variantId": "b6526b90-c7b8-4402-9fa4-65d5425b5ac9"
+  },
+  {
+   "offeringId": "mo_afb0add32da0de7426f5",
+   "offeringVariantId": "mov_9262033fe69a14a50f1c",
+   "productControlSku": "GEN-GRP-0256",
+   "productId": "2e6e3e47-87dc-4b20-b9ee-a1f2a3eddbdd",
+   "variantId": "ed46f285-53da-444f-a585-5b388cf8da85"
+  },
+  {
+   "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
+   "offeringVariantId": "mov_e0ce4fde8a3393202bdc",
+   "productControlSku": "GEN-GRP-0261",
+   "productId": "c5b471c3-fadd-476d-94c6-b3213141ea63",
+   "variantId": "f51fe137-1784-4a3d-b093-39a9c42204c6"
+  },
+  {
+   "offeringId": "mo_0907a4d651019afed8ed",
+   "offeringVariantId": "mov_04f750af7277d98b7ad9",
+   "productControlSku": "GEN-GRP-0257",
+   "productId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "variantId": "fc0b0cfc-c023-48c8-b3df-e6ce98021dd3"
+  },
+  {
+   "offeringId": "mo_ca085a7994a6db594748",
+   "offeringVariantId": "mov_6509a8f595cfc3fc36bc",
+   "productControlSku": "GEN-GRP-0258",
+   "productId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "variantId": "ea5e40a2-360c-479d-98d9-21ba4c997c9a"
+  },
+  {
+   "offeringId": "mo_463212f23e8e3e39c57b",
+   "offeringVariantId": "mov_523c894b29954645c00a",
+   "productControlSku": "GEN-GRP-0259",
+   "productId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "variantId": "697708b2-299c-4749-b53c-2683ef4ea1b5"
+  },
+  {
+   "offeringId": "mo_216b3a5f02fb7724cd51",
+   "offeringVariantId": "mov_d25066629d9cbdbad552",
+   "productControlSku": "GEN-GRP-0260",
+   "productId": "c5b471c3-fadd-476d-94c6-b3213141ea63",
+   "variantId": "60661393-b16d-4860-af28-b0ab5023f756"
+  },
+  {
+   "offeringId": "mo_af289f611c02b3fcef01",
+   "offeringVariantId": "mov_ca3e45ae9712aee91430",
+   "productControlSku": "GEN-GRP-0262",
+   "productId": "92bd3921-c3c1-4568-86a5-6ef6c42b10f5",
+   "variantId": "6915bc89-2311-4d42-8c5c-61195489febd"
+  },
+  {
+   "offeringId": "mo_9a755fa72de0409cd937",
+   "offeringVariantId": "mov_257330ea83ecbfc45fae",
+   "productControlSku": "GEN-GRP-0263",
+   "productId": "92bd3921-c3c1-4568-86a5-6ef6c42b10f5",
+   "variantId": "7433d2e7-e7d7-4b42-b122-c8744d673b59"
+  },
+  {
+   "offeringId": "mo_e4de11c77d16c4c3b83d",
+   "offeringVariantId": "mov_09db3e866424b64994d3",
+   "productControlSku": "GEN-GRP-0264",
+   "productId": "92bd3921-c3c1-4568-86a5-6ef6c42b10f5",
+   "variantId": "911ae74c-1fac-4e52-942f-7af3e13125d7"
+  },
+  {
+   "offeringId": "mo_13c038b9250a2c8ac901",
+   "offeringVariantId": "mov_548802074a4f9ca45f5d",
+   "productControlSku": "GEN-GRP-0265",
+   "productId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "variantId": "245c11d1-76f9-41e5-8bbf-55b262c2e254"
+  },
+  {
+   "offeringId": "mo_53622a0c32300df8ec03",
+   "offeringVariantId": "mov_43ff04d9edfcdb5543a4",
+   "productControlSku": "GEN-GRP-0266",
+   "productId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "variantId": "cab69ca6-0fad-4610-ab5d-b7a23a112bc5"
+  },
+  {
+   "offeringId": "mo_178c8a4230f88f157d5d",
+   "offeringVariantId": "mov_457168650622c3647dc9",
+   "productControlSku": "GEN-GRP-0267",
+   "productId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "variantId": "8c5a2f43-bff7-409d-876d-b104b544f8fa"
+  },
+  {
+   "offeringId": "mo_8023384ab099bc55fa93",
+   "offeringVariantId": "mov_420ac197458ecbcddb9a",
+   "productControlSku": "GEN-GRP-0268",
+   "productId": "028ac4a9-a370-49fe-bf93-ac86e3a3a16a",
+   "variantId": "fedcdd74-65e6-44d0-b4f7-40c964b365c1"
+  },
+  {
+   "offeringId": "mo_ec5dad7fec0e0750fdbc",
+   "offeringVariantId": "mov_082a1d9c8a0d21e4a5c9",
+   "productControlSku": "GEN-GRP-0269",
+   "productId": "028ac4a9-a370-49fe-bf93-ac86e3a3a16a",
+   "variantId": "10287aac-44e7-4d43-b17d-90bd470f99f8"
+  },
+  {
+   "offeringId": "mo_c464ca523cda95adb8a6",
+   "offeringVariantId": "mov_0d00b80820b69cc39796",
+   "productControlSku": "GEN-GRP-0270",
+   "productId": "8dddcdef-0a61-4911-a5b7-ee9776218f88",
+   "variantId": "8ce25920-89c9-4ebe-98af-84fdede6f55a"
+  },
+  {
+   "offeringId": "mo_4bbd59b26b04e4265758",
+   "offeringVariantId": "mov_f7b635c1cc2be94922a0",
+   "productControlSku": "GEN-GRP-0271",
+   "productId": "8dddcdef-0a61-4911-a5b7-ee9776218f88",
+   "variantId": "6ff02991-89e3-4697-a517-5ee3c2f8583a"
+  },
+  {
+   "offeringId": "mo_023a54a623e28e84ffd5",
+   "offeringVariantId": "mov_9331f42ce573fb3f72e5",
+   "productControlSku": "GEN-GRP-0272",
+   "productId": "ea1d6bcc-93b5-4b8d-96dd-896a09a9853a",
+   "variantId": "e82ecce7-a789-49ba-bc4c-71b2d5d41b32"
+  },
+  {
+   "offeringId": "mo_be72c9fb4d708d8a3eee",
+   "offeringVariantId": "mov_6c559c89db938c58e815",
+   "productControlSku": "GEN-GRP-0273",
+   "productId": "ea1d6bcc-93b5-4b8d-96dd-896a09a9853a",
+   "variantId": "31bd3bdf-bd50-439e-8a1d-a43a96f508ac"
+  },
+  {
+   "offeringId": "mo_918fe6760c731934168d",
+   "offeringVariantId": "mov_bc725d0ad2a12e1ee57c",
+   "productControlSku": "GEN-GRP-0274",
+   "productId": "0eb35923-88be-4492-89ed-1cf5b200044d",
+   "variantId": "ee4b3610-9656-4288-87ed-cd7f5387a219"
+  },
+  {
+   "offeringId": "mo_4a4dd3014ea4cd85cb6e",
+   "offeringVariantId": "mov_19de1d73a1a3844c0190",
+   "productControlSku": "GEN-GRP-0275",
+   "productId": "0eb35923-88be-4492-89ed-1cf5b200044d",
+   "variantId": "883e1c77-06df-447c-97a0-9c7a0fc5ae17"
+  },
+  {
+   "offeringId": "mo_fbf99d262617562b9dbb",
+   "offeringVariantId": "mov_c7c5768303175886f6d1",
+   "productControlSku": "GEN-GRP-0276",
+   "productId": "56e4f05a-5a47-4db7-995f-afcb10a8b118",
+   "variantId": "bb8fb951-9f9f-43c9-8253-dc7b57923bae"
+  },
+  {
+   "offeringId": "mo_3b716f351a069264bd3d",
+   "offeringVariantId": "mov_30965a433abef7359a7b",
+   "productControlSku": "GEN-GRP-0277",
+   "productId": "56e4f05a-5a47-4db7-995f-afcb10a8b118",
+   "variantId": "dfaa62f5-147b-4889-b27b-e5e622244b78"
+  },
+  {
+   "offeringId": "mo_1c93e6c7c97d1e38167e",
+   "offeringVariantId": "mov_0efd31ea72138e78d999",
+   "productControlSku": "GEN-GRP-0278",
+   "productId": "efb533c4-c73d-481a-98e5-7a1533c785af",
+   "variantId": "901e3afb-69ef-426e-81d4-f98e3f673c54"
+  },
+  {
+   "offeringId": "mo_04d91e1cb01f09d3496e",
+   "offeringVariantId": "mov_7502e2415b8757cad0eb",
+   "productControlSku": "GEN-GRP-0279",
+   "productId": "c4c15df8-c50d-4349-953a-661c666cbe8b",
+   "variantId": "4cdc6089-6267-4e2e-8642-1728a9b327f0"
+  },
+  {
+   "offeringId": "mo_8a3829642d06ad3ca7c4",
+   "offeringVariantId": "mov_3f59629a005b238f4faa",
+   "productControlSku": "GEN-GRP-0280",
+   "productId": "0d628ff0-a4d1-4f7f-bd5c-49c74ba30155",
+   "variantId": "d540b4da-25cb-4143-8d5a-cdc065dc454f"
+  },
+  {
+   "offeringId": "mo_8cca713c2b203a712494",
+   "offeringVariantId": "mov_718e52d07396abd5b2dc",
+   "productControlSku": "GEN-GRP-0281",
+   "productId": "efb533c4-c73d-481a-98e5-7a1533c785af",
+   "variantId": "7eb18c07-d883-4ea9-a2a0-c6cb7e218ebd"
+  },
+  {
+   "offeringId": "mo_9c3a4dd1b38f6b9ebc54",
+   "offeringVariantId": "mov_9421188f57af62413a4c",
+   "productControlSku": "GEN-GRP-0282",
+   "productId": "7090c616-9566-4540-83d6-016648fdf641",
+   "variantId": "f0a57b0d-162e-46f5-a709-fc076a566f32"
+  },
+  {
+   "offeringId": "mo_9bd279e3ef84393cf793",
+   "offeringVariantId": "mov_017febfdb0edf96366f4",
+   "productControlSku": "GEN-GRP-0283",
+   "productId": "7090c616-9566-4540-83d6-016648fdf641",
+   "variantId": "613fa42f-9569-49bb-a723-c267fd3c53e5"
+  },
+  {
+   "offeringId": "mo_321599837d987cc36181",
+   "offeringVariantId": "mov_29d962312f3386b5dd3f",
+   "productControlSku": "GEN-GRP-0284",
+   "productId": "7090c616-9566-4540-83d6-016648fdf641",
+   "variantId": "72a60d03-efc8-4743-92f8-74c56198fdd1"
+  },
+  {
+   "offeringId": "mo_bf5e52e34a71bce9974e",
+   "offeringVariantId": "mov_7808f3ed26c4fa0f19f6",
+   "productControlSku": "GEN-GRP-0285",
+   "productId": "7090c616-9566-4540-83d6-016648fdf641",
+   "variantId": "4c9ad9ae-f503-4168-8e64-95e01ac84ae2"
+  },
+  {
+   "offeringId": "mo_c0b32b7549d7539af51e",
+   "offeringVariantId": "mov_c4e5006693c890563310",
+   "productControlSku": "GEN-GRP-0286",
+   "productId": "7090c616-9566-4540-83d6-016648fdf641",
+   "variantId": "f3a76db7-b6f6-4693-9c30-c382f8bdb889"
+  },
+  {
+   "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+   "offeringVariantId": "mov_35b19a790d7a247210c9",
+   "productControlSku": "GEN-GRP-0287",
+   "productId": "2eefd77a-4210-48f1-aabf-aa78c29fb06e",
+   "variantId": "dd6deb73-b1d3-49bc-a11d-6b91a0879e28"
+  },
+  {
+   "offeringId": "mo_fb02f804912e868b0a10",
+   "offeringVariantId": "mov_4522e672752616ff992d",
+   "productControlSku": "GEN-GRP-0288",
+   "productId": "2eefd77a-4210-48f1-aabf-aa78c29fb06e",
+   "variantId": "cf6e8347-caa3-49bc-97f6-bc756b78835d"
+  },
+  {
+   "offeringId": "mo_b75af573f3209d0710b1",
+   "offeringVariantId": "mov_8df703ff84f1bb8e1662",
+   "productControlSku": "GEN-GRP-0289",
+   "productId": "629443b1-6edf-49d2-89b8-b482abd2ac60",
+   "variantId": "bbb32eeb-c202-4962-b73d-a4487062d7a2"
+  },
+  {
+   "offeringId": "mo_65340dd542e68a0af5ab",
+   "offeringVariantId": "mov_9774e642bf4c6b799a8c",
+   "productControlSku": "GEN-GRP-0290",
+   "productId": "cb19e04c-6d29-4e2c-829a-8aa689ac2ce3",
+   "variantId": "6f9e838a-843d-4cbc-90c6-2e6dd1ec6730"
+  },
+  {
+   "offeringId": "mo_e948b9ac0d531ef744ae",
+   "offeringVariantId": "mov_a29c1130a8c45aff1f26",
+   "productControlSku": "GEN-GRP-0291",
+   "productId": "cb19e04c-6d29-4e2c-829a-8aa689ac2ce3",
+   "variantId": "02ddb0be-d521-48e0-a53f-caaad945f812"
+  },
+  {
+   "offeringId": "mo_849cdbb1463f8382f1f6",
+   "offeringVariantId": "mov_e21bffb0a8ad83a8137f",
+   "productControlSku": "GEN-GRP-0292",
+   "productId": "05d759c3-e219-4b7f-9137-0248e3b5ce9f",
+   "variantId": "e787729f-b708-4994-88a7-960cccdb476a"
+  },
+  {
+   "offeringId": "mo_f8e8d69d2068c9bb2de1",
+   "offeringVariantId": "mov_556cf3eb15555573aa54",
+   "productControlSku": "GEN-GRP-0293",
+   "productId": "05d759c3-e219-4b7f-9137-0248e3b5ce9f",
+   "variantId": "de803507-d633-4525-a1cb-4cbe934232a3"
+  },
+  {
+   "offeringId": "mo_a40fbe6a1890ff7176ed",
+   "offeringVariantId": "mov_4bcfb9614bef8b2c671e",
+   "productControlSku": "GEN-GRP-0294",
+   "productId": "f6f848f7-fc25-402f-bded-3cde23e71391",
+   "variantId": "b6052cdc-ab5c-46c2-b767-6e45c6526d3c"
+  },
+  {
+   "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+   "offeringVariantId": "mov_77837ac2575c8df8ac73",
+   "productControlSku": "GEN-GRP-0295",
+   "productId": "3d8285f3-6f49-49d1-bf20-01fe75954f93",
+   "variantId": "c7075a28-7835-4ab9-898e-9ded9c067e4f"
+  },
+  {
+   "offeringId": "mo_fa2070d7fd794ad0c245",
+   "offeringVariantId": "mov_77a80adce9e9cb1b93a0",
+   "productControlSku": "GEN-GRP-0296",
+   "productId": "3d8285f3-6f49-49d1-bf20-01fe75954f93",
+   "variantId": "90b86683-b583-44d7-9e54-b37117f52d1c"
+  },
+  {
+   "offeringId": "mo_5e145fbee8e39536b580",
+   "offeringVariantId": "mov_b36b64d987325dca8df4",
+   "productControlSku": "GEN-GRP-0297",
+   "productId": "e5efd144-4e33-44d5-b495-b9ed31bf7c49",
+   "variantId": "3f3cac85-d0e4-4918-8619-e53484afed35"
+  },
+  {
+   "offeringId": "mo_adf1037eceb9904e7d07",
+   "offeringVariantId": "mov_e218a4fead30388a55ff",
+   "productControlSku": "GEN-GRP-0298",
+   "productId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+   "variantId": "8fd2573c-4a6b-40dc-b11e-a9a5518b3ab9"
+  },
+  {
+   "offeringId": "mo_4223bdd3e6880240fc4a",
+   "offeringVariantId": "mov_b5c50d1bb9d8ad998062",
+   "productControlSku": "GEN-GRP-0299",
+   "productId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+   "variantId": "17b4ce9e-cb1d-4a13-8a77-e2ecb8e0066c"
+  },
+  {
+   "offeringId": "mo_5720466fd9388d2044ed",
+   "offeringVariantId": "mov_e562b76120d36c6ebf2d",
+   "productControlSku": "GEN-GRP-0300",
+   "productId": "3d9261e4-0428-4850-8b57-f4ca9f0e9472",
+   "variantId": "209b5fb8-c3bf-47ce-9992-89085dd54a12"
+  },
+  {
+   "offeringId": "mo_d3a60ea0a358aef218f8",
+   "offeringVariantId": "mov_50c16caf05daa93ef289",
+   "productControlSku": "GEN-GRP-0301",
+   "productId": "c0a0f111-ae29-453b-a35e-eb7798779d0f",
+   "variantId": "a3e8008a-c902-46a7-bd6b-5e45a02c7eb6"
+  },
+  {
+   "offeringId": "mo_e9e1c849f7549246cb89",
+   "offeringVariantId": "mov_80aaef9ddc11edab6c89",
+   "productControlSku": "GEN-GRP-0302",
+   "productId": "48375080-7a09-4c8c-8215-0a79598f19a5",
+   "variantId": "9c4bc2dc-4525-44bc-8338-ac61038d228a"
+  },
+  {
+   "offeringId": "mo_b2300ccf4ffd64e20ca2",
+   "offeringVariantId": "mov_cd50ffa15bc031572636",
+   "productControlSku": "GEN-GRP-0303",
+   "productId": "48375080-7a09-4c8c-8215-0a79598f19a5",
+   "variantId": "b91884da-63ac-44d8-999d-9a5943f3a29f"
+  },
+  {
+   "offeringId": "mo_d40ce6b09815282e14fa",
+   "offeringVariantId": "mov_644f912141d81a0199b0",
+   "productControlSku": "GEN-GRP-0305",
+   "productId": "706d9237-230a-4f49-b974-3edf15803b2e",
+   "variantId": "2fb3e008-d8e9-414a-a14d-6ee92ccc1ce2"
+  },
+  {
+   "offeringId": "mo_a8ea579b9329428591bd",
+   "offeringVariantId": "mov_ecd380609ace639d27a6",
+   "productControlSku": "GEN-GRP-0304",
+   "productId": "706d9237-230a-4f49-b974-3edf15803b2e",
+   "variantId": "5c02c32d-17f6-4a57-91c7-b01dff2a89fb"
+  },
+  {
+   "offeringId": "mo_bb39fc388cb58003b1f8",
+   "offeringVariantId": "mov_15eddad2da8035493bd6",
+   "productControlSku": "GEN-GRP-0306",
+   "productId": "cd6ded4d-a94c-4d56-8092-9262a83d6a8d",
+   "variantId": "8daded5c-f9f7-43ed-a55d-c460f8b2d0a5"
+  },
+  {
+   "offeringId": "mo_ffeecca340b02f400868",
+   "offeringVariantId": "mov_a4b4118c4d23b1546c8b",
+   "productControlSku": "GEN-GRP-0307",
+   "productId": "cd6ded4d-a94c-4d56-8092-9262a83d6a8d",
+   "variantId": "4d20bfac-fce8-4723-814c-02ecafda3c0d"
+  },
+  {
+   "offeringId": "mo_61e8c1f887725c9938ae",
+   "offeringVariantId": "mov_823a1410e1831e6d845f",
+   "productControlSku": "GEN-GRP-0308",
+   "productId": "d591dc7d-a587-429f-aadb-5abb02267553",
+   "variantId": "55b1eadd-514f-407f-b390-d202f11117ed"
+  },
+  {
+   "offeringId": "mo_6d5f244f45892249b132",
+   "offeringVariantId": "mov_4d4f3fc085df5aaf9ae8",
+   "productControlSku": "GEN-GRP-0309",
+   "productId": "d591dc7d-a587-429f-aadb-5abb02267553",
+   "variantId": "d08bb43f-7e10-4fde-9dbf-8d04a64637a6"
+  },
+  {
+   "offeringId": "mo_987ced2746afaa80e326",
+   "offeringVariantId": "mov_3e5e9840aea10ca2137e",
+   "productControlSku": "GEN-GRP-0310",
+   "productId": "55a15431-a119-4796-95ef-9deb8c3964fe",
+   "variantId": "34966062-d992-49ad-8025-d3f72c975172"
+  },
+  {
+   "offeringId": "mo_2fd34c733360f34e7a63",
+   "offeringVariantId": "mov_a75d9a7c5bfa0dec5ece",
+   "productControlSku": "GEN-GRP-0311",
+   "productId": "55a15431-a119-4796-95ef-9deb8c3964fe",
+   "variantId": "2bce6d18-03ad-45a2-b702-4a9b511aeef4"
+  },
+  {
+   "offeringId": "mo_839d9f0cb2ab74e094ee",
+   "offeringVariantId": "mov_95104bb0edee8e97a3a6",
+   "productControlSku": "GEN-GRP-0312",
+   "productId": "54614196-651d-47ae-9263-2cd131170247",
+   "variantId": "2dc3145e-50c9-4722-9bc9-74ecc6df608e"
+  },
+  {
+   "offeringId": "mo_33b6b3e982b2dc5113bb",
+   "offeringVariantId": "mov_72b54c1f1e71b4229c2a",
+   "productControlSku": "GEN-GRP-0313",
+   "productId": "1f2bbd9c-d1c5-44ca-98e3-129b3fa36446",
+   "variantId": "d1ffeb84-cfd2-4115-a5aa-e4fab5195e70"
+  },
+  {
+   "offeringId": "mo_b1b15717ae2e89a19981",
+   "offeringVariantId": "mov_fb757d24b8c1ae0e5efe",
+   "productControlSku": "GEN-GRP-0314",
+   "productId": "5235884c-a0b2-40d2-8b71-a903e55915f6",
+   "variantId": "88b9efe3-73a7-412d-b57c-f2982566da6d"
+  },
+  {
+   "offeringId": "mo_595ec28612674477e5aa",
+   "offeringVariantId": "mov_71e448565b155e87b979",
+   "productControlSku": "GEN-GRP-0315",
+   "productId": "32d8914d-6462-478a-86ea-f65b618561cf",
+   "variantId": "b5e22c3f-53fd-4baa-9345-30f21fb7516e"
+  },
+  {
+   "offeringId": "mo_dbed3adeeecd92ac1d41",
+   "offeringVariantId": "mov_557749e5f12e1d27e367",
+   "productControlSku": "GEN-GRP-0316",
+   "productId": "94560d4e-47bf-4b19-bef5-e11286d6697b",
+   "variantId": "d35b943c-ee73-429b-befd-7e309e0567da"
+  },
+  {
+   "offeringId": "mo_25463089835b0939dc4b",
+   "offeringVariantId": "mov_26ba2e0fb6498f8e96ac",
+   "productControlSku": "GEN-GRP-0317",
+   "productId": "f3406695-b225-4242-ac02-3fc4cac8c1aa",
+   "variantId": "f9ae8c72-9ed9-4356-8d02-3784487ce3a4"
+  },
+  {
+   "offeringId": "mo_4bf44c0afe1ae392ddf0",
+   "offeringVariantId": "mov_60e645f13e186042b62b",
+   "productControlSku": "GEN-GRP-0318",
+   "productId": "f3406695-b225-4242-ac02-3fc4cac8c1aa",
+   "variantId": "70588a66-1be4-4532-bfec-5b761360d2f1"
+  },
+  {
+   "offeringId": "mo_b785d68e84643da31a20",
+   "offeringVariantId": "mov_cf7635f44beb5898b8fe",
+   "productControlSku": "GEN-GRP-0319",
+   "productId": "a51871dd-cb32-4058-bde4-1f336b840cfa",
+   "variantId": "e8b2b017-5062-4176-b005-5080b7ff1170"
+  },
+  {
+   "offeringId": "mo_3ac83d28defd63915a71",
+   "offeringVariantId": "mov_12b96a21ca34f80cdb6a",
+   "productControlSku": "GEN-GRP-0320",
+   "productId": "a51871dd-cb32-4058-bde4-1f336b840cfa",
+   "variantId": "083689ea-b693-4194-bc9e-dfd1b8ff7484"
+  },
+  {
+   "offeringId": "mo_f66623171e193fc81edb",
+   "offeringVariantId": "mov_9cc6d7d3967d7507480b",
+   "productControlSku": "GEN-GRP-0321",
+   "productId": "69137dca-9a9f-4596-b992-e2d7ff209a16",
+   "variantId": "57df93f4-cd4b-49b4-b3d8-6a4a78abb107"
+  },
+  {
+   "offeringId": "mo_0784f8ad4fc471f8053e",
+   "offeringVariantId": "mov_2d03422d39648068a0e4",
+   "productControlSku": "GEN-GRP-0322",
+   "productId": "cfb6a348-b6be-412a-bc80-e7d19e9d3e9f",
+   "variantId": "24c7d953-f940-4a44-b87f-a43286e0b3bf"
+  },
+  {
+   "offeringId": "mo_f7fecc82508964efe3aa",
+   "offeringVariantId": "mov_0c4a5438cc87ab9d85b6",
+   "productControlSku": "GEN-GRP-0323",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "1c7b6e41-cdda-4f3f-b108-32993f57dfd6"
+  },
+  {
+   "offeringId": "mo_e230262ae1c41d2d7e18",
+   "offeringVariantId": "mov_8f14c1dd839544567d53",
+   "productControlSku": "GEN-GRP-0324",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "064468a2-a4aa-49bb-9295-414a6102e6b5"
+  },
+  {
+   "offeringId": "mo_90d6189c4ecf3875647e",
+   "offeringVariantId": "mov_e86aa92d94c61d407578",
+   "productControlSku": "GEN-GRP-0325",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "c4e06e39-8158-470b-b174-33e1b6da5ee9"
+  },
+  {
+   "offeringId": "mo_f293ba683340fcd926d9",
+   "offeringVariantId": "mov_7bd700ce0704d66e614e",
+   "productControlSku": "GEN-GRP-0326",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "bf7e58d0-c054-4caf-acf8-45aa18ed3872"
+  },
+  {
+   "offeringId": "mo_f9cf15e9c10861844ce4",
+   "offeringVariantId": "mov_0881f51f4947326bf1e0",
+   "productControlSku": "GEN-GRP-0327",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "91d1c225-3670-4a52-a6a0-d3af5610462e"
+  },
+  {
+   "offeringId": "mo_45db3e0f87d6d796d4b8",
+   "offeringVariantId": "mov_0db878384f6f3f42fc1a",
+   "productControlSku": "GEN-GRP-0329",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "93b206a0-218a-4b58-a4aa-b01edc322ce7"
+  },
+  {
+   "offeringId": "mo_cf224f8d2efb906334c0",
+   "offeringVariantId": "mov_469cd274fcf41edf3d8e",
+   "productControlSku": "GEN-GRP-0328",
+   "productId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "variantId": "2fe736d6-b165-4390-b542-8df06ea96046"
+  },
+  {
+   "offeringId": "mo_8cea67b7890cebf8eb52",
+   "offeringVariantId": "mov_d97f1f887a86b0c31947",
+   "productControlSku": "GEN-GRP-0330",
+   "productId": "1c3dc1f5-13fb-405a-8ce4-29af8931a1a0",
+   "variantId": "535eefa2-f09b-43a6-8a9c-2b6063539bc8"
+  },
+  {
+   "offeringId": "mo_d045624d6f5d00d2cda2",
+   "offeringVariantId": "mov_99e4c4e045d188c3026f",
+   "productControlSku": "GEN-GRP-0331",
+   "productId": "a21aebe9-9c38-4bd3-ad63-016086ece085",
+   "variantId": "8e205121-0057-4c09-8e8e-3e97716c9a81"
+  },
+  {
+   "offeringId": "mo_4df776b9fb9b2d4b7302",
+   "offeringVariantId": "mov_538e701ea3907d766c38",
+   "productControlSku": "GEN-GRP-0332",
+   "productId": "a21aebe9-9c38-4bd3-ad63-016086ece085",
+   "variantId": "4b164966-9172-4063-b230-f8c468dd5212"
+  },
+  {
+   "offeringId": "mo_a1d452a070c24e5f0033",
+   "offeringVariantId": "mov_0f9bee8bdfc89ec9c2d3",
+   "productControlSku": "GEN-GRP-0333",
+   "productId": "f207461b-7317-4bd5-8c73-cbbf68a67cdd",
+   "variantId": "873ff4bd-c8cc-466f-8304-75a6828b1984"
+  },
+  {
+   "offeringId": "mo_4e47d44fd3982b0b5e61",
+   "offeringVariantId": "mov_7b331364b57f9fdd335a",
+   "productControlSku": "GEN-GRP-0334",
+   "productId": "f207461b-7317-4bd5-8c73-cbbf68a67cdd",
+   "variantId": "8853644a-7365-48c8-9ff0-9524d357a128"
+  },
+  {
+   "offeringId": "mo_06babb8e374b38824ee8",
+   "offeringVariantId": "mov_ee0d20dec866e2090585",
+   "productControlSku": "GEN-GRP-0335",
+   "productId": "f207461b-7317-4bd5-8c73-cbbf68a67cdd",
+   "variantId": "11ff33ff-1dc1-4783-adbb-14f201379b07"
+  },
+  {
+   "offeringId": "mo_36fbcc90a698a8e7ada6",
+   "offeringVariantId": "mov_3ff3d97173e8a1f7645b",
+   "productControlSku": "GEN-GRP-0336",
+   "productId": "f207461b-7317-4bd5-8c73-cbbf68a67cdd",
+   "variantId": "a02563a4-9645-4883-a30e-ca19ba344af2"
+  },
+  {
+   "offeringId": "mo_ef095e8f7e8fe3a7f85d",
+   "offeringVariantId": "mov_50fc8d22f6777f3f0d4d",
+   "productControlSku": "GEN-GRP-0337",
+   "productId": "703eff0e-52a2-4f21-8298-0d0f2d28df6d",
+   "variantId": "5e1eb684-ddde-494a-a64b-aedbec7d7fb6"
+  },
+  {
+   "offeringId": "mo_42060e3ba6b7fa26b5a9",
+   "offeringVariantId": "mov_bd3ee913aa6fedf2c743",
+   "productControlSku": "GEN-GRP-0338",
+   "productId": "9e3cdfb0-ae8a-45e0-ba29-a6e4de7dd018",
+   "variantId": "18a0faf4-c4cd-41b8-9b96-f1a7de60b7e9"
+  },
+  {
+   "offeringId": "mo_c87f1a7cdcd50253c3e8",
+   "offeringVariantId": "mov_3e4c0914851a77ba8763",
+   "productControlSku": "GEN-GRP-0339",
+   "productId": "d25aa6d2-0a5f-4907-b965-27929be28dd8",
+   "variantId": "41443a67-e1e0-4d10-b10f-0d66bd5073f8"
+  },
+  {
+   "offeringId": "mo_005347c6204a94d3f7e2",
+   "offeringVariantId": "mov_6a43249c424441bf28bb",
+   "productControlSku": "GEN-GRP-0340",
+   "productId": "d4105afa-9e90-4df8-b24f-7e25577589ea",
+   "variantId": "0dda5d8f-68f8-4775-add6-ca6577e79117"
+  },
+  {
+   "offeringId": "mo_9c7083a0cfc2bfd2d525",
+   "offeringVariantId": "mov_e737e2f494af1ea61435",
+   "productControlSku": "GEN-GRP-0341",
+   "productId": "d4105afa-9e90-4df8-b24f-7e25577589ea",
+   "variantId": "1df2b9ff-b484-44bd-aa84-bfdfdf2fb1e4"
+  },
+  {
+   "offeringId": "mo_0693d8b85b10f7c34f2e",
+   "offeringVariantId": "mov_1981dac64e329b0bf2f8",
+   "productControlSku": "GEN-GRP-0342",
+   "productId": "2916fbe5-f73a-43d4-95b1-d66982713ee5",
+   "variantId": "c443743e-0728-4568-be92-4a857cef6c03"
+  },
+  {
+   "offeringId": "mo_e7bb199ac249b82eb17b",
+   "offeringVariantId": "mov_dd89c37657eb69bce04f",
+   "productControlSku": "GEN-GRP-0343",
+   "productId": "ed094a10-57c6-4f8b-95e2-fdc882cc4245",
+   "variantId": "b251a64c-4b42-4ef1-9493-240a940744fa"
+  },
+  {
+   "offeringId": "mo_f729b05046ef91543822",
+   "offeringVariantId": "mov_0d82ac64c7e39678212c",
+   "productControlSku": "GEN-GRP-0344",
+   "productId": "ed094a10-57c6-4f8b-95e2-fdc882cc4245",
+   "variantId": "959df3e3-6828-4349-9f25-b51742177524"
+  },
+  {
+   "offeringId": "mo_b33c802f4f7735fe986d",
+   "offeringVariantId": "mov_5d10608450270b22967f",
+   "productControlSku": "GEN-GRP-0345",
+   "productId": "92070192-32cf-4dd7-b549-b6d03cf2354e",
+   "variantId": "0bbe7505-e818-4f6a-b7db-485bcc6394f8"
+  },
+  {
+   "offeringId": "mo_9651dedf0c4086bc6e3d",
+   "offeringVariantId": "mov_3c9394000d1302336110",
+   "productControlSku": "GEN-GRP-0346",
+   "productId": "92070192-32cf-4dd7-b549-b6d03cf2354e",
+   "variantId": "e8a42ebb-2f6c-44e8-bf8f-add2482f7e85"
+  },
+  {
+   "offeringId": "mo_5da1ee7942bcff333ef6",
+   "offeringVariantId": "mov_b1fbc841c7fb09265cad",
+   "productControlSku": "GEN-GRP-0347",
+   "productId": "d24840ba-386e-4ee0-8680-21a1904b5cd4",
+   "variantId": "deca3ada-9960-420c-ab87-5d8e85d24484"
+  },
+  {
+   "offeringId": "mo_941e1192f6c03d88cb43",
+   "offeringVariantId": "mov_52fd0b8a213ee19e40e8",
+   "productControlSku": "GEN-GRP-0348",
+   "productId": "d24840ba-386e-4ee0-8680-21a1904b5cd4",
+   "variantId": "4ea2def0-6623-45b7-9a22-4839a0d45e03"
+  },
+  {
+   "offeringId": "mo_ca6143466abf3895672c",
+   "offeringVariantId": "mov_e813930dcd46c36e98e2",
+   "productControlSku": "GEN-GRP-0349",
+   "productId": "d05d9dae-5216-451a-b281-745925374d2d",
+   "variantId": "3bdcc859-48f6-4913-9b44-921b9565477b"
+  },
+  {
+   "offeringId": "mo_f23a8023a45df853f6e1",
+   "offeringVariantId": "mov_ba80c9a61870131db0cf",
+   "productControlSku": "GEN-GRP-0350",
+   "productId": "eecc1569-3529-4ce4-87a1-17837ab3195b",
+   "variantId": "9dad8f2a-c610-41e8-a384-b39f1a467398"
+  },
+  {
+   "offeringId": "mo_8fd0e604ab7719eded45",
+   "offeringVariantId": "mov_cacbbed2b1431c073e72",
+   "productControlSku": "GEN-GRP-0351",
+   "productId": "eecc1569-3529-4ce4-87a1-17837ab3195b",
+   "variantId": "737bf3c0-bf87-4347-93ad-bc3c89301aa4"
+  },
+  {
+   "offeringId": "mo_2e8194100fed7f7ca6ee",
+   "offeringVariantId": "mov_11b73649761a6d35f28c",
+   "productControlSku": "GEN-GRP-0352",
+   "productId": "09cb653e-a10c-4fc1-bed1-ce928b915163",
+   "variantId": "34f4e88e-e8c5-498c-9549-4223b5d685d5"
+  },
+  {
+   "offeringId": "mo_422f4a4ca7e34ce66416",
+   "offeringVariantId": "mov_971080f20e26e8775e2b",
+   "productControlSku": "GEN-GRP-0353",
+   "productId": "09cb653e-a10c-4fc1-bed1-ce928b915163",
+   "variantId": "d7cfeb41-bd3e-46bd-9e14-1a8b04a5e4e9"
+  },
+  {
+   "offeringId": "mo_17fe8edfd59d6a97260b",
+   "offeringVariantId": "mov_bb52e1ff1819c70d9db1",
+   "productControlSku": "GEN-GRP-0354",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "52ffd02b-fd78-45b7-91d4-e1b78cda4bd0"
+  },
+  {
+   "offeringId": "mo_c79fda8d9b5122d37137",
+   "offeringVariantId": "mov_c46129d04e61dd2a9722",
+   "productControlSku": "GEN-GRP-0355",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "ea6b486a-9bac-496a-9422-c3acde695651"
+  },
+  {
+   "offeringId": "mo_e28684442b78867c14ae",
+   "offeringVariantId": "mov_02ca369a8834ebeb0b3b",
+   "productControlSku": "GEN-GRP-0356",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "a4b42779-8779-461b-afaa-bd02b72135d5"
+  },
+  {
+   "offeringId": "mo_330de196b6297a7096d2",
+   "offeringVariantId": "mov_c6f57f9b117d418065ff",
+   "productControlSku": "GEN-GRP-0357",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "bb7117a3-fdfa-434e-9b78-1b07350d3aeb"
+  },
+  {
+   "offeringId": "mo_8f14a0f8f4f86e07fda8",
+   "offeringVariantId": "mov_20d811a3df0894211cbc",
+   "productControlSku": "GEN-GRP-0358",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "97c70f16-a571-4d00-a0a2-601fe0d637b7"
+  },
+  {
+   "offeringId": "mo_226c15232adfd35b3288",
+   "offeringVariantId": "mov_8615d2aea357b8241ba3",
+   "productControlSku": "GEN-GRP-0360",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "e59490fb-8d65-409f-a931-a1505057ca97"
+  },
+  {
+   "offeringId": "mo_25017e496277b4120dde",
+   "offeringVariantId": "mov_eb49bfc0ee44e7b83d52",
+   "productControlSku": "GEN-GRP-0359",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "b427616a-47b9-4d1b-954b-2c4887f806df"
+  },
+  {
+   "offeringId": "mo_3566952a7131123bd55f",
+   "offeringVariantId": "mov_645c8c707682a45abcaa",
+   "productControlSku": "GEN-GRP-0361",
+   "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+   "variantId": "2928724e-194b-4287-bb1b-15a594c62257"
+  },
+  {
+   "offeringId": "mo_598b143f4ffe06294832",
+   "offeringVariantId": "mov_554ae2758dbe92e4baa6",
+   "productControlSku": "GEN-GRP-0392",
+   "productId": "54f2a7c8-3b78-4863-83e1-9b3a323ee980",
+   "variantId": "b12c2f11-acd2-4a29-9254-f7cbad6989ce"
+  },
+  {
+   "offeringId": "mo_4c07e82051ba4c95297b",
+   "offeringVariantId": "mov_451f34fca5c1a293b145",
+   "productControlSku": "GEN-GRP-0393",
+   "productId": "92bd3921-c3c1-4568-86a5-6ef6c42b10f5",
+   "variantId": "d4c9ed0d-ecd1-405d-aca9-df0a5fbd5d81"
+  },
+  {
+   "offeringId": "mo_6d14f0bbb3bdfe5f900e",
+   "offeringVariantId": "mov_07317a1fe77fe228b793",
+   "productControlSku": "GEN-GRP-0394",
+   "productId": "ea1d6bcc-93b5-4b8d-96dd-896a09a9853a",
+   "variantId": "9c344edb-cae7-4292-9f7c-8349a4e57d8b"
+  },
+  {
+   "offeringId": "mo_a8ad050608013cf7d4b4",
+   "offeringVariantId": "mov_1f87878d1e95e525b15d",
+   "productControlSku": "GEN-GRP-0396",
+   "productId": "bf26a045-a352-4d1a-945c-13b547308bdf",
+   "variantId": "a724194c-d734-4ed2-8e21-91709f6c74e7"
+  },
+  {
+   "offeringId": "mo_761c9b0f8f19d9d2c3b5",
+   "offeringVariantId": "mov_b96d05f393b7e3fb6a3f",
+   "productControlSku": "GEN-GRP-0397",
+   "productId": "9ca2a8a6-400c-4a2d-be43-207392fd3474",
+   "variantId": "ff118f09-464c-475c-a7cf-5ddbfe113fcc"
+  },
+  {
+   "offeringId": "mo_d1a6493665b6ba628c2a",
+   "offeringVariantId": "mov_361af70608afc9c98ec0",
+   "productControlSku": "GEN-GRP-0398",
+   "productId": "2eefd77a-4210-48f1-aabf-aa78c29fb06e",
+   "variantId": "15291a3f-49e4-4bea-afee-9cfe43307097"
+  },
+  {
+   "offeringId": "mo_952b9a3bac3ac9f76438",
+   "offeringVariantId": "mov_b303ae9f0574c2d83337",
+   "productControlSku": "GEN-GRP-0391",
+   "productId": "2b399761-e1e4-43e5-a11e-131d79697c14",
+   "variantId": "e112953d-5816-4edd-ad09-22a08bb5207c"
+  },
+  {
+   "offeringId": "mo_69c6615ef3e615e76088",
+   "offeringVariantId": "mov_5e74aacac728cfcbd11f",
+   "productControlSku": "GEN-GRP-0399",
+   "productId": "a7b5b067-088e-43c3-be95-375d043d5e12",
+   "variantId": "5201dcd1-c1ec-4f43-b168-f32c28045eb7"
+  },
+  {
+   "offeringId": "mo_2fb4e0f567f434b55b20",
+   "offeringVariantId": "mov_9a217007a7fb93111200",
+   "productControlSku": "GEN-GRP-0400",
+   "productId": "e5efd144-4e33-44d5-b495-b9ed31bf7c49",
+   "variantId": "d1a3c84a-b6cd-4323-9296-69bbdc6dcc18"
+  },
+  {
+   "offeringId": "mo_2c3aec78638c9e2ff2a8",
+   "offeringVariantId": "mov_13073979f2da65f4e160",
+   "productControlSku": "GEN-GRP-0401",
+   "productId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+   "variantId": "d59ee344-a5b5-43cf-9b35-e99eda40c60d"
+  },
+  {
+   "offeringId": "mo_230a06a5ed15405e65b2",
+   "offeringVariantId": "mov_64db7bf766cd1d66694d",
+   "productControlSku": "GEN-GRP-0403",
+   "productId": "c96baacd-a319-4ca3-9740-32c68c21ceb1",
+   "variantId": "39b2c669-6f67-452e-b223-9c0dc8b9bca4"
+  },
+  {
+   "offeringId": "mo_2aaac3a06aa0dd6b2923",
+   "offeringVariantId": "mov_7c55d415a9574e9ebda7",
+   "productControlSku": "GEN-GRP-0402",
+   "productId": "3d9261e4-0428-4850-8b57-f4ca9f0e9472",
+   "variantId": "5c705967-53dc-4fd0-9a35-c3c51abf937a"
+  },
+  {
+   "offeringId": "mo_b223f1eabb29e09a69e9",
+   "offeringVariantId": "mov_69a9f7466c5385ab9811",
+   "productControlSku": "GEN-GRP-0404",
+   "productId": "42b68fc6-9a0b-45b1-9bed-06cc45002086",
+   "variantId": "688f1fbd-e629-4014-a8b6-33ceb09d17be"
+  },
+  {
+   "offeringId": "mo_f3a48e654e93b4f7d0b9",
+   "offeringVariantId": "mov_7871c059b8a970a5b3d1",
+   "productControlSku": "GEN-GRP-0405",
+   "productId": "11c30583-2964-49bb-8a72-012e12442e1d",
+   "variantId": "3e7cd5fb-d843-4e4a-88d5-5592621d5bab"
+  },
+  {
+   "offeringId": "mo_9138595ccf6417877896",
+   "offeringVariantId": "mov_d2bd32bf961854a033b1",
+   "productControlSku": "GEN-GRP-0406",
+   "productId": "94560d4e-47bf-4b19-bef5-e11286d6697b",
+   "variantId": "e35f648d-1303-4ae0-9886-020be7350e22"
+  },
+  {
+   "offeringId": "mo_1dd0658eb7bf15f91900",
+   "offeringVariantId": "mov_256cb0423eb6d2a77f65",
+   "productControlSku": "GEN-GRP-0407",
+   "productId": "a51871dd-cb32-4058-bde4-1f336b840cfa",
+   "variantId": "ed16b4d7-7a0e-4f34-a01f-b81966aac0b0"
+  },
+  {
+   "offeringId": "mo_f6e814a2e3224bb6b53d",
+   "offeringVariantId": "mov_0ba805e868711366428d",
+   "productControlSku": "GEN-GRP-0408",
+   "productId": "16e5730c-37ff-42c5-a152-2d29370e7b01",
+   "variantId": "a1a133ef-f4cc-4c93-8e00-9866e4288601"
+  },
+  {
+   "offeringId": "mo_f4298f80cc7aa9f1046a",
+   "offeringVariantId": "mov_dc6c3bf9bc23dd55adc1",
+   "productControlSku": "GEN-GRP-0409",
+   "productId": "69137dca-9a9f-4596-b992-e2d7ff209a16",
+   "variantId": "54a888e4-994e-4849-b332-49ec39d3b905"
+  },
+  {
+   "offeringId": "mo_73f7704a1cabe9b2f63a",
+   "offeringVariantId": "mov_973154f49c156dcf7a72",
+   "productControlSku": "GEN-GRP-0410",
+   "productId": "676bef05-f9a2-4aa5-98c6-a0f0ca237a4b",
+   "variantId": "bf8fd95b-f1c6-46fe-b59e-2570eeea1947"
+  },
+  {
+   "offeringId": "mo_1d2f33123a079af3786b",
+   "offeringVariantId": "mov_867e32ca427228fdd87e",
+   "productControlSku": "GEN-GRP-0411",
+   "productId": "676bef05-f9a2-4aa5-98c6-a0f0ca237a4b",
+   "variantId": "5d50df37-a43f-4b36-bbfd-545878e76f8d"
+  },
+  {
+   "offeringId": "mo_33c52b7e9611bf4e2527",
+   "offeringVariantId": "mov_b67ab9e8cd671273f3c1",
+   "productControlSku": "GEN-GRP-0414",
+   "productId": "ed094a10-57c6-4f8b-95e2-fdc882cc4245",
+   "variantId": "957f0f19-f074-45cc-aef6-8943a8995280"
+  },
+  {
+   "offeringId": "mo_364c9d00a30c0cfb197b",
+   "offeringVariantId": "mov_06849c26f971f74805ef",
+   "productControlSku": "GEN-GRP-0412",
+   "productId": "6e700726-2337-48b4-81d7-2f5749599f8c",
+   "variantId": "26c01244-fd63-43f7-a0e0-564b19f10ae8"
+  },
+  {
+   "offeringId": "mo_f35e748aed26af26e9e4",
+   "offeringVariantId": "mov_8bec8068d30d6f928040",
+   "productControlSku": "GEN-GRP-0413",
+   "productId": "9e3cdfb0-ae8a-45e0-ba29-a6e4de7dd018",
+   "variantId": "649c8713-f50a-4b6a-826b-01ba4068508d"
+  },
+  {
+   "offeringId": "mo_4645a385049d13824a66",
+   "offeringVariantId": "mov_32c1c33224d5fca42b1e",
+   "productControlSku": "GEN-GRP-0415",
+   "productId": "f411ad98-fc1c-4801-a9df-bc4c51077102",
+   "variantId": "66c7ce1d-e455-439f-965d-18b45dc50e27"
+  },
+  {
+   "offeringId": "mo_13553ad94844151cf7c5",
+   "offeringVariantId": "mov_96f011e65e7b6a72f8c9",
+   "productControlSku": "GEN-GRP-0416",
+   "productId": "d24840ba-386e-4ee0-8680-21a1904b5cd4",
+   "variantId": "cdd65920-c2ba-4c82-bf44-b3e5778d091f"
+  },
+  {
+   "offeringId": "mo_86fc6ac5138a0a0ddd54",
+   "offeringVariantId": "mov_287c60ca423250ef75d6",
+   "productControlSku": "GEN-GRP-0388",
+   "productId": "c5e0799a-7384-4e3b-930c-9288bae410e3",
+   "variantId": "ed31d6fe-e7b0-46ff-8c96-27e39f0c0f6d"
+  },
+  {
+   "offeringId": "mo_b36a2992242d2a55c145",
+   "offeringVariantId": "mov_dc26bcbba0510c5bb57b",
+   "productControlSku": "GEN-GRP-0389",
+   "productId": "c5e0799a-7384-4e3b-930c-9288bae410e3",
+   "variantId": "34993a54-0e7c-4da3-9cac-1f6814dfb6fc"
+  },
+  {
+   "offeringId": "mo_95489efcae6c13f8bf0d",
+   "offeringVariantId": "mov_dd8bb706cb498b40864d",
+   "productControlSku": "GEN-GRP-0390",
+   "productId": "801da714-3ffe-4d3a-a2ff-4289e27b0b36",
+   "variantId": "e8a5f21c-5d35-4f65-8753-03488d8f4455"
+  },
+  {
+   "offeringId": "mo_d1a47413d4b8e58bfd52",
+   "offeringVariantId": "mov_2a06e3a4fa8fb02b64cf",
+   "productControlSku": "GEN-GRP-0417",
+   "productId": "55d9fecd-c535-4246-92ca-f39eb4e176cd",
+   "variantId": "aaa0a335-629a-4289-8d01-5b05afa6e55b"
+  },
+  {
+   "offeringId": "mo_d5072d9cc26b1f898b6d",
+   "offeringVariantId": "mov_30d35dcbc0bc8d59ff5b",
+   "productControlSku": "GEN-GRP-0362",
+   "productId": "38312b97-a7ec-4c7a-87c6-eeb68944e218",
+   "variantId": "f0dd873f-1281-46cc-8de3-e92f4d6034c1"
+  },
+  {
+   "offeringId": "mo_b49627a2296975935e26",
+   "offeringVariantId": "mov_88fd1531d586cdebb896",
+   "productControlSku": "GEN-GRP-0363",
+   "productId": "814b834e-53b9-47ed-94d1-421454e10eba",
+   "variantId": "67922886-7af8-4385-9bfa-659722cee82a"
+  },
+  {
+   "offeringId": "mo_b126ee9235f0a810dc95",
+   "offeringVariantId": "mov_9813dabbc127f6b382fb",
+   "productControlSku": "GEN-GRP-0366",
+   "productId": "ac558e51-c071-4faa-b6bf-8ad393f9e530",
+   "variantId": "4366f43e-aacc-4957-bfe3-6f789d9e621d"
+  },
+  {
+   "offeringId": "mo_81f2af5cc04167a47413",
+   "offeringVariantId": "mov_845dc69ae9dd6cd6ba34",
+   "productControlSku": "GEN-GRP-0367",
+   "productId": "3f128bd5-1515-4476-8ca3-9c7bc4794f2a",
+   "variantId": "1a931ce5-af9f-49d9-a41a-68f1b2cba2cd"
+  },
+  {
+   "offeringId": "mo_7bc91b37c8c041f166dd",
+   "offeringVariantId": "mov_2de19f71e09e8bc3febb",
+   "productControlSku": "GEN-GRP-0368",
+   "productId": "585b528d-5139-4f95-8c82-b992432338bb",
+   "variantId": "97dfe0af-cc0c-48cd-996c-60479062451f"
+  },
+  {
+   "offeringId": "mo_db61126250f5fa3a3324",
+   "offeringVariantId": "mov_7c6e65b041ae3bfe5262",
+   "productControlSku": "GEN-GRP-0369",
+   "productId": "cd5a53ad-ae36-437b-8349-02c7891ebe40",
+   "variantId": "7bcecde8-cb68-435a-b5e3-52c7f45d8c26"
+  },
+  {
+   "offeringId": "mo_79376f449760149d1030",
+   "offeringVariantId": "mov_cdfb19499637f274f271",
+   "productControlSku": "GEN-GRP-0370",
+   "productId": "dee0ff25-dc25-4d27-bd12-52607da474a7",
+   "variantId": "b3a418eb-579b-4e34-9e56-ed81a4cf122d"
+  },
+  {
+   "offeringId": "mo_474aba04fff9d244c37b",
+   "offeringVariantId": "mov_6f2d07f881d861bf3991",
+   "productControlSku": "GEN-GRP-0371",
+   "productId": "93cbc227-b395-45d0-85c6-2061d1e35245",
+   "variantId": "4ffb9714-f4f0-4fdf-840c-6d74fb55d336"
+  },
+  {
+   "offeringId": "mo_a4cfc5396d714f879944",
+   "offeringVariantId": "mov_d6a8b2cd129bda39d8fa",
+   "productControlSku": "GEN-GRP-0372",
+   "productId": "27567ba8-fda0-42a0-a270-39ef8a23e154",
+   "variantId": "746b1fde-c9aa-47b8-8cc2-37bb04ef76ad"
+  },
+  {
+   "offeringId": "mo_eca326cdaae5d36cfae6",
+   "offeringVariantId": "mov_0f3fa003c76aadef763c",
+   "productControlSku": "GEN-GRP-0373",
+   "productId": "16ff1d8d-8477-4f67-8249-44ec3e590e0a",
+   "variantId": "2a201eed-479d-4280-b5df-371f6a5864e9"
+  },
+  {
+   "offeringId": "mo_edefaf4799bd53853d01",
+   "offeringVariantId": "mov_e74adec4c45f9c9db404",
+   "productControlSku": "GEN-GRP-0374",
+   "productId": "44865d11-4361-4003-a5fd-50f9caad2f95",
+   "variantId": "aaa8ae58-3643-4d8f-8025-c05fa0df18c2"
+  },
+  {
+   "offeringId": "mo_d82610b6fe7ebf3b4d63",
+   "offeringVariantId": "mov_f5d63d95caa3d6d0a7a0",
+   "productControlSku": "GEN-GRP-0375",
+   "productId": "93ca8799-311a-429a-85a3-0a39c8466ead",
+   "variantId": "0e853ed4-0aee-49a9-bee5-4bcf07529604"
+  },
+  {
+   "offeringId": "mo_5050cf525ec249ebf0bf",
+   "offeringVariantId": "mov_199a0126b086cc43cb1b",
+   "productControlSku": "GEN-GRP-0376",
+   "productId": "a0b7c728-4aaf-47f5-9743-2a096f158e69",
+   "variantId": "f7c00758-6e43-4917-a172-0882adfcc080"
+  },
+  {
+   "offeringId": "mo_381d77419fba80336299",
+   "offeringVariantId": "mov_b90f51978a7223e9fc58",
+   "productControlSku": "GEN-GRP-0377",
+   "productId": "54d6359a-a63e-484f-a9f0-357e84a9c7cf",
+   "variantId": "ca2a7143-3908-4ee2-9b9b-cc5c3ef0ba32"
+  },
+  {
+   "offeringId": "mo_453f612e1a8a3021d41c",
+   "offeringVariantId": "mov_ce2fc5bcfb622d8de591",
+   "productControlSku": "GEN-GRP-0378",
+   "productId": "bc8a8dc2-d7e7-4a5f-92eb-1c3e3c42ca51",
+   "variantId": "af3acdc0-fe57-4c97-92bb-a29265c9be09"
+  },
+  {
+   "offeringId": "mo_c875679cdaafb9cf7336",
+   "offeringVariantId": "mov_80916d9782f415a13ad3",
+   "productControlSku": "GEN-GRP-0379",
+   "productId": "bdcbdff6-27d4-49c1-8a7a-c065ffa124d1",
+   "variantId": "0546e96e-465f-4f31-8549-3aa959b2a3d5"
+  },
+  {
+   "offeringId": "mo_b48e883b4ada1469f824",
+   "offeringVariantId": "mov_904af0a54faddfe2f21f",
+   "productControlSku": "GEN-GRP-0380",
+   "productId": "c467b247-d9c0-4a74-b22a-eacdee7c5086",
+   "variantId": "3397c12d-ef86-4411-b488-7a2666944bfe"
+  },
+  {
+   "offeringId": "mo_62754736300e3e130eb5",
+   "offeringVariantId": "mov_8af22768144442c60424",
+   "productControlSku": "GEN-GRP-0381",
+   "productId": "2728b196-dab2-48f8-a84e-2f1aac654220",
+   "variantId": "5a8e6f63-617d-4ea2-a038-42900f818ecc"
+  },
+  {
+   "offeringId": "mo_5b122372a6ecdea51c52",
+   "offeringVariantId": "mov_ffe0eef7766200ac8c53",
+   "productControlSku": "GEN-GRP-0382",
+   "productId": "b4418b00-4c22-4577-9041-60053b33d90c",
+   "variantId": "85c1566f-789d-40f7-8a5b-5b4e41874a13"
+  },
+  {
+   "offeringId": "mo_2d42f72361aac15b6d5d",
+   "offeringVariantId": "mov_dbb59b83827a556051da",
+   "productControlSku": "GEN-GRP-0383",
+   "productId": "0dd03d1f-c6e5-4503-bfa1-30e16fd4b5d1",
+   "variantId": "866eda81-ab19-4a5d-80f7-7bcd740797af"
+  },
+  {
+   "offeringId": "mo_ad9795d751913350bdea",
+   "offeringVariantId": "mov_d91d7248ed06d7280a2d",
+   "productControlSku": "GEN-GRP-0384",
+   "productId": "efec806f-c5e1-412c-b305-df1b91529a77",
+   "variantId": "6f042e5a-b9bb-4093-88a9-48e8888825be"
+  },
+  {
+   "offeringId": "mo_85898714d8df5a3d2f10",
+   "offeringVariantId": "mov_4a105b161858064229f3",
+   "productControlSku": "GEN-GRP-0385",
+   "productId": "be1de635-a47f-48c1-a05d-548fc9aed376",
+   "variantId": "49b77c5d-e978-42bf-8f6a-1bc4a6597786"
+  },
+  {
+   "offeringId": "mo_8c30b8e7afa6f5aa08f7",
+   "offeringVariantId": "mov_a254cb6fc62c40bf975d",
+   "productControlSku": "GEN-GRP-0386",
+   "productId": "c56b859f-7b28-4f0a-8145-9dcbd368a808",
+   "variantId": "d3ded275-b92a-4f5e-afd1-ba6bdfca05ff"
+  },
+  {
+   "offeringId": "mo_510176c449623185709c",
+   "offeringVariantId": "mov_8578e13fb8475e39f618",
+   "productControlSku": "GEN-GRP-0387",
+   "productId": "4f852966-8f4d-4929-929f-1b0734e989dc",
+   "variantId": "f28f80a1-3640-4043-a154-28bdfc7b5f41"
+  },
+  {
+   "offeringId": "mo_0be4f713aeab92ee8a18",
+   "offeringVariantId": "mov_ea6077e070c07548c709",
+   "productControlSku": "GEN-GRP-0420",
+   "productId": "02513124-b192-4e91-a0a9-05506398e8ee",
+   "variantId": "0c5ff282-9454-4db1-8778-6188d1319f21"
+  }
+ ],
+ "unbound": [
+  {
+   "offeringId": "mo_401b85ce671d94672ba0",
+   "offeringVariantId": "mov_038386172c35c2ad8cca",
+   "reason": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists"
+  },
+  {
+   "offeringId": "mo_003b0c272099eeb1f114",
+   "offeringVariantId": "mov_9b65ad5bb184691e19e0",
+   "reason": "price pending: no approved base price exists yet, so no Product Control unit was initialized"
+  },
+  {
+   "offeringId": "mo_a7a7e307d58f24affb42",
+   "offeringVariantId": "mov_512ed6b875c04eee4753",
+   "reason": "price pending: no approved base price exists yet, so no Product Control unit was initialized"
+  }
+ ]
+}
