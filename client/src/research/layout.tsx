@@ -26,6 +26,7 @@ import { useResearch } from "./core";
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
   { label: "Products", href: "/research/member/products" },
+  { label: "Full catalog", href: "/research/member/catalog" },
   { label: "Requests", href: "/research/member/product-requests" },
   { label: "Guides", href: "/research/member/guides" },
   { label: "Cart", href: "/research/member/cart" },
@@ -267,11 +268,30 @@ function isResearchSignInPath(path: string): boolean {
   return normalizeResearchPath(path) === "/research/sign-in";
 }
 
+// Account credential entry and recovery: isolated chrome, own credentials,
+// no catalog or member data without a Bearer session.
+function isResearchAccountRecoveryPath(path: string): boolean {
+  const normalized = normalizeResearchPath(path);
+  return normalized === "/research/account/sign-in"
+    || normalized === "/research/account/security/initial-password"
+    || normalized === "/research/account/organization-invitations/accept";
+}
+
+function isResearchAccountWorkspacePath(path: string): boolean {
+  const normalized = normalizeResearchPath(path);
+  if (!normalized) return false;
+  return normalized === "/research/account"
+    || normalized === "/research/account/claim-history"
+    || /^\/research\/account\/organizations\/[0-9a-f-]{36}$/.test(normalized);
+}
+
 function isPublicResearchPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
   if (!normalized) return false;
 
   return normalized === "/research"
+    || normalized === "/research/access-hub"
+    || normalized === "/research/supplier-access"
     || normalized === "/research/apply"
     || normalized === "/research/apply/review"
     || normalized === "/research/apply/success"
@@ -299,11 +319,20 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   if (
     isResearchResetPasswordPath(location) ||
     isResearchSignInPath(location) ||
+    isResearchAccountRecoveryPath(location) ||
     isResearchActivatePath(location) ||
     isResearchAccessStatePath(location) ||
     isResearchApplicationStatusPath(location)
   ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
+  }
+  // Account and organization workspace pages own a stronger server-side
+  // Bearer boundary through the already-mounted account API, and an
+  // organization-only user has no member row at all. Do not shadow them with
+  // the legacy shared review password; without a valid session these pages
+  // render nothing but a redirect to account sign-in.
+  if (isResearchAccountWorkspacePath(location)) {
+    return <MinimalChrome>{children}</MinimalChrome>;
   }
   // The public Research journey must not depend on the legacy shared review
   // password. The gateway exposes only Apply and Member Login; application,

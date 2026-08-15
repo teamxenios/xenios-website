@@ -173,6 +173,14 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       // a session-bound email verification. It is an entry point to a lock,
       // which the catalog policy permits; a catalog CTA it is not.
       "/research/early-access",
+      // Access Hub door (link-gateway-access-hub). REVIEWED: Samuel's
+      // 2026-08-15 General Platform Foundation package adds this on the
+      // Gateway by name. The page behind it is a role chooser: it lists the
+      // access paths (membership, organization, partner, supplier, Care,
+      // Early Access) and links only to application, sign-in, and support
+      // doors. No product, no price, and no catalog data are reachable from
+      // it without a server-authorized session; a catalog CTA it is not.
+      "/research/access-hub",
     ]);
 
     const view = await renderGateway();

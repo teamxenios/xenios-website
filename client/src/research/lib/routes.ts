@@ -5,6 +5,8 @@
 
 export const ACCESS_ROUTES = {
   gateway: "/research",
+  accessHub: "/research/access-hub",
+  supplierAccess: "/research/supplier-access",
   apply: "/research/apply",
   applicationStatus: "/research/application-status",
   signIn: "/research/sign-in",
@@ -18,6 +20,19 @@ export const ACCESS_ROUTES = {
   // in ?code=; activation_required routes to `activate` instead.
   accessState: "/research/access-state",
   earlyAccess: "/research/early-access",
+} as const;
+
+// The unified personal and organization account family. One canonical
+// Supabase identity can carry a personal member profile and/or organization
+// roles; these pages authenticate through the account API's own Bearer
+// boundary, never through the legacy shared review password.
+export const ACCOUNT_ROUTES = {
+  signIn: "/research/account/sign-in",
+  home: "/research/account",
+  claimHistory: "/research/account/claim-history",
+  initialPassword: "/research/account/security/initial-password",
+  organizationInvitation: "/research/account/organization-invitations/accept",
+  organization: "/research/account/organizations/:organizationId",
 } as const;
 
 export const MEMBER_ROUTES = {
@@ -131,6 +146,7 @@ export const ADMIN_ROUTES = {
 
 export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
+  ...Object.values(ACCOUNT_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),
   ...Object.values(ADMIN_ROUTES),

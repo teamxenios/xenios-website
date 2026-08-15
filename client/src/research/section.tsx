@@ -28,6 +28,19 @@ const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
+const AccessHub = lazy(() => import("./pages/AccessHub"));
+const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
+// The unified personal and organization account family. One canonical
+// Supabase identity can carry a personal member profile and/or organization
+// roles. The API family is already mounted behind exact Bearer-authenticated
+// routes; these pages were previously present but unreachable from this
+// router.
+const AccountSignIn = lazy(() => import("./account/AccountSignIn"));
+const AccountHome = lazy(() => import("./account/AccountHome"));
+const ClaimOrderHistory = lazy(() => import("./account/ClaimOrderHistory"));
+const InitialPasswordChange = lazy(() => import("./account/InitialPasswordChange"));
+const OrganizationInvitation = lazy(() => import("./account/OrganizationInvitation"));
+const OrganizationDashboard = lazy(() => import("./account/OrganizationDashboard"));
 // The dynamic import itself sits behind the DEV flag, not just the route: a
 // top-level lazy() emits the gallery chunk even when the route is compiled
 // out, so the fixture code would still ship. With import.meta.env.DEV a
@@ -255,6 +268,8 @@ export default function ResearchSection() {
           <Route path="/research" component={Gateway} />
 
           {/* Access family */}
+          <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
+          <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
           <Route path="/research/early-access" component={EarlyAccessRoute} />
           <Route path="/research/apply" component={Apply} />
           <Route path="/research/apply/review" component={Apply} />
@@ -271,6 +286,18 @@ export default function ResearchSection() {
           <Route path="/research/privacy">{() => <L component={LegalPage} props={{ kind: "privacy" }} />}</Route>
           <Route path="/research/terms">{() => <L component={LegalPage} props={{ kind: "terms" }} />}</Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />
+
+          {/* The unified personal and organization account family. These
+              pages do not use the legacy review-password authorization
+              boundary: their API calls require the canonical Supabase Bearer
+              session, and the account service scopes every organization read
+              server-side. */}
+          <Route path="/research/account/organization-invitations/accept">{() => <L component={OrganizationInvitation} />}</Route>
+          <Route path="/research/account/security/initial-password">{() => <L component={InitialPasswordChange} />}</Route>
+          <Route path="/research/account/organizations/:organizationId">{() => <L component={OrganizationDashboard} />}</Route>
+          <Route path="/research/account/claim-history">{() => <L component={ClaimOrderHistory} />}</Route>
+          <Route path="/research/account/sign-in">{() => <L component={AccountSignIn} />}</Route>
+          <Route path="/research/account">{() => <L component={AccountHome} />}</Route>
 
           {/* Development-only visual gallery (fixture mode). The route is
               compiled out of production entirely: import.meta.env.DEV is a

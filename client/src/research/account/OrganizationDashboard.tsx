@@ -92,7 +92,7 @@ export function OrganizationDashboardView({ data, onProfileSaved }: { data: Orga
   }
 
   return (
-    <main className="container-x pb-20 grid gap-10">
+    <section className="container-x pb-20 grid gap-10">
       <section aria-labelledby="business-profile">
         <div className="flex flex-wrap justify-between gap-3"><h2 id="business-profile" className="body-l font-700">Business profile</h2>{canManage && <button type="button" className="btn btn-ghost" onClick={() => setEditing((value) => !value)}>{editing ? "Cancel" : "Edit profile"}</button>}</div>
         {editing ? (
@@ -126,7 +126,7 @@ export function OrganizationDashboardView({ data, onProfileSaved }: { data: Orga
         <div className="grid gap-3 mt-4">{data.users.map((user) => <div className="card flex flex-wrap justify-between gap-3" key={user.membershipId}><div><p className="body-s font-700">{user.email}</p><p className="body-s text-ink-2 mt-1">{user.roles.join(" · ")}</p></div><span className="mono-label text-ink-mute">{user.state}</span></div>)}</div>
         {canManage && <form onSubmit={invite} className="card mt-4 grid md:grid-cols-[1fr_220px_auto] gap-3 items-end"><div><label className="form-label" htmlFor="organization-invite-email">Add a user</label><input id="organization-invite-email" className="input-field" type="email" required value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} /></div><div><label className="form-label" htmlFor="organization-invite-role">Role</label><select id="organization-invite-role" className="input-field" value={inviteRole} onChange={(event) => setInviteRole(event.target.value as OrganizationRole)}><option value="business_buyer">Business buyer</option><option value="organization_admin">Organization admin</option><option value="billing_viewer">Billing viewer</option></select></div><button className="btn btn-secondary" type="submit">Send invite</button>{inviteNotice && <p role="status" className="body-s md:col-span-3">{inviteNotice}</p>}</form>}
       </section>
-    </main>
+    </section>
   );
 }
 
@@ -150,8 +150,8 @@ export default function OrganizationDashboard() {
   return (
     <>
       <PageIntro eyebrow="Business account" title={data?.organization.displayName ?? "Organization dashboard"} lead="Business profile, team access, orders, invoices, tracking, and request-again history." />
-      {!data && !error && <main className="container-x pb-20"><p role="status" className="body-s text-ink-mute">Loading organization…</p></main>}
-      {error && <main className="container-x pb-20"><p role="alert" className="body-s" style={{ color: "var(--error)" }}>{error}</p></main>}
+      {!data && !error && <section className="container-x pb-20"><p role="status" className="body-s text-ink-mute">Loading organization…</p></section>}
+      {error && <section className="container-x pb-20"><p role="alert" className="body-s" style={{ color: "var(--error)" }}>{error}</p></section>}
       {data && <OrganizationDashboardView data={data} onProfileSaved={(profile) => setData({ ...data, profile })} />}
     </>
   );
