@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import type { AccountContextDto } from "@shared/research/account-identity";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
-import { MEMBER_ROUTES } from "../lib/routes";
+import { ACCOUNT_ROUTES, MEMBER_ROUTES } from "../lib/routes";
 import { getAccountContext } from "./api";
 
 export default function AccountHome() {
@@ -37,7 +37,7 @@ export default function AccountHome() {
         return;
       }
       setContext(null);
-      navigate("/research/account/sign-in");
+      navigate(ACCOUNT_ROUTES.signIn);
     } catch {
       setError("Sign-out is not available right now.");
     } finally {
@@ -48,7 +48,7 @@ export default function AccountHome() {
   return (
     <>
       <PageIntro eyebrow="Accounts" title="Your Xenios accounts." lead="Personal and organization access use one verified Supabase sign-in." />
-      <main className="container-x pb-20">
+      <section className="container-x pb-20">
         {!context && !error && <p className="body-s text-ink-mute" role="status">Loading account access…</p>}
         {error && <p className="body-s" role="alert" style={{ color: "var(--error)" }}>{error}</p>}
         {context && (
@@ -74,7 +74,7 @@ export default function AccountHome() {
                 <h2 id="buyer-commerce" className="body-l font-700">Buyer commerce</h2>
                 <p className="body-s text-ink-2 mt-1">Your existing member catalog, cart, requests, and canonical order history.</p>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                  <Link className="card" href={MEMBER_ROUTES.products}><h3 className="body-m font-700">Full catalog</h3><p className="body-s text-ink-2 mt-2">See member-safe products and authoritative pricing.</p></Link>
+                  <Link className="card" href={MEMBER_ROUTES.fullCatalog}><h3 className="body-m font-700">Full catalog</h3><p className="body-s text-ink-2 mt-2">See the canonical member-safe master catalog and authoritative pricing.</p></Link>
                   <Link className="card" href={MEMBER_ROUTES.cart}><h3 className="body-m font-700">Cart</h3><p className="body-s text-ink-2 mt-2">Review quantities and directly purchasable items.</p></Link>
                   <Link className="card" href={MEMBER_ROUTES.productRequests}><h3 className="body-m font-700">Product requests</h3><p className="body-s text-ink-2 mt-2">Request other available research products.</p></Link>
                   <Link className="card" href={MEMBER_ROUTES.orders}><h3 className="body-m font-700">Order history</h3><p className="body-s text-ink-2 mt-2">Orders, payment status, shipment status, and tracking.</p></Link>
@@ -83,7 +83,7 @@ export default function AccountHome() {
             )}
           </div>
         )}
-      </main>
+      </section>
     </>
   );
 }

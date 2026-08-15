@@ -33,10 +33,10 @@ export default function AccountSignIn() {
       }
       if (context.data.security.passwordChangeRequired) {
         navigate("/research/account/security/initial-password");
-      } else if (context.data.organizations.length > 0) {
-        navigate(`/research/account/organizations/${context.data.organizations[0].id}`);
       } else {
-        navigate("/research/member");
+        // Never guess a role for a multi-role person. The account home is
+        // the canonical selector for personal and organization workspaces.
+        navigate("/research/account");
       }
     } catch {
       setError("Sign-in failed. Please try again.");
@@ -61,6 +61,7 @@ export default function AccountSignIn() {
           {error && <p role="alert" className="body-s" style={{ color: "var(--error)" }}>{error}</p>}
           <button className="btn btn-primary" type="submit" disabled={busy}>{busy ? "Signing in" : "Sign in"}</button>
           <p className="body-s text-ink-mute"><Link href="/research/reset-password" className="underline">Forgot your password?</Link></p>
+          <p className="body-s text-ink-mute"><Link href="/research/access-hub" className="underline">View all access options</Link></p>
         </form>
       </section>
     </>

@@ -64,7 +64,9 @@ describe("Pack 02 account sign-in", () => {
     reactEnvironment.IS_REACT_ACT_ENVIRONMENT = true;
     const { memory, root } = await mountAndSubmit();
     expect(signInWithPassword).toHaveBeenCalledWith({ email: "buyer@example.com", password: "not-stored-password" });
-    expect(memory.history?.at(-1)).toBe("/research/account/organizations/e26bc7de-86df-4e70-8e82-964e3671d71c");
+    // Never guess a role: even an organization-carrying identity lands on
+    // the account home, which is the canonical workspace selector.
+    expect(memory.history?.at(-1)).toBe("/research/account");
     expect(signOut).not.toHaveBeenCalled();
     await act(async () => root.unmount());
     delete reactEnvironment.IS_REACT_ACT_ENVIRONMENT;

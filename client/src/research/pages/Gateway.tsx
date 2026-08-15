@@ -98,6 +98,14 @@ export default function Gateway() {
             >
               Already approved through the Xenios network? Enter the private ordering experience.
             </p>
+            <p
+              className="body-s text-ink-mute mt-4"
+              style={{ marginLeft: "auto", marginRight: "auto" }}
+            >
+              <Link href="/research/access-hub" className="underline" data-testid="link-gateway-access-hub">
+                Business, affiliate, supplier, Care, and other access options
+              </Link>
+            </p>
           </div>
         </main>
         <footer style={{ padding: "0 24px 8px" }}>

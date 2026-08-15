@@ -139,3 +139,35 @@ docs/research/CATALOG_INGESTION_CONTRACT.md records the decision that
 supplier MOQ and quote basis are procurement data, never member-facing and
 never turned into an invented customer minimum. Battery 9472 passed, 0
 failed at the release SHA.
+
+## RESEARCH_PLATFORM_0_4: the Access Hub and the general member catalog rollout
+
+Founder direction (2026-08-15 General Platform Foundation package, verified
+sha-by-sha, 24 files): make the general platform the priority, mount the
+account/organization pages, add the Access Hub, and release the full master
+catalog to ordinary approved members.
+
+What shipped in 0_4:
+- The public Access Hub (/research/access-hub) and Supplier Access
+  (/research/supplier-access) pages, linked from the Gateway by one reviewed
+  text link (allowlisted in the Gateway catalog-guard with the policy doc
+  updated; the hub is a role chooser, not a catalog CTA).
+- "Full catalog" joined the member navigation, pointing at the canonical
+  master catalog (/research/member/catalog).
+- The founder-authorized scope flip to all approved members rode the same
+  deploy: RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY=false.
+
+What did NOT ship, and why (FOUNDER ACTION F7): the account and organization
+page family stayed unmounted. The Pack 02 account API is mounted server-side,
+but production holds only ONE of the eight Pack 02 tables
+(research_organizations; missing: organization_users, organization_invitations,
+account_claim_challenges, customer_account_bindings,
+organization_order_ownership, account_binding_events,
+organization_request_again), so the account context read itself fails against
+the live database and mounting the UI would ship a broken front door. The
+complete, tested mounting (including role-neutral login to the account home
+selector) is parked on branch fable/pack02-account-mount. F7: authorize the
+Pack 02 schema to land through the governed migration chain (registration,
+PG16/17 certification, apply); the parked branch then merges and organization
+login goes live with no further design work. The Access Hub's organization and
+supplier cards state the honest interim (contact business support) until then.

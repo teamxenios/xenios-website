@@ -26,6 +26,7 @@ import { useResearch } from "./core";
 const MEMBER_NAV = [
   { label: "Home", href: "/research/member" },
   { label: "Products", href: "/research/member/products" },
+  { label: "Full catalog", href: "/research/member/catalog" },
   { label: "Requests", href: "/research/member/product-requests" },
   { label: "Guides", href: "/research/member/guides" },
   { label: "Cart", href: "/research/member/cart" },
@@ -272,6 +273,8 @@ function isPublicResearchPath(path: string): boolean {
   if (!normalized) return false;
 
   return normalized === "/research"
+    || normalized === "/research/access-hub"
+    || normalized === "/research/supplier-access"
     || normalized === "/research/apply"
     || normalized === "/research/apply/review"
     || normalized === "/research/apply/success"

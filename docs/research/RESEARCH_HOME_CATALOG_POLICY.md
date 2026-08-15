@@ -8,12 +8,18 @@ tile, hero CTA, navigation CTA, or equivalent public catalog-entry control on th
 
 `/research` renders `client/src/research/pages/Gateway.tsx` (mounted at that path in
 `client/src/research/section.tsx`). Gateway is a private-membership gate for an
-unauthenticated visitor: a wordmark, an eyebrow, a headline, one sentence, exactly two
-actions ("Apply for Membership" to `/research/apply` and "Member Login" to
-`/research/sign-in`), and three small footer links (privacy, terms, support). Nothing
-else belongs there. No navigation, no product grid, no "browse before you apply" path,
-no way to see catalog contents, pricing, or SKUs without first applying and being
-approved, or signing in as an existing member.
+unauthenticated visitor: a wordmark, an eyebrow, a headline, one sentence, the
+actions ("Apply for Membership" to `/research/apply`, "Member Login" to
+`/research/sign-in`, the reviewed "Private Early Access" door to
+`/research/early-access`), one reviewed text link to the Access Hub
+(`/research/access-hub`, added by Samuel's 2026-08-15 General Platform Foundation
+package: a role chooser listing access paths for organizations, partners,
+suppliers, and Care, with no product, price, or SKU reachable from it without a
+server-authorized session), and three small footer links (privacy, terms,
+support). Nothing else belongs there. No navigation, no product grid, no
+"browse before you apply" path, no way to see catalog contents, pricing, or
+SKUs without first applying and being approved, or signing in as an existing
+member.
 
 As of this writing Gateway already matches that description. No catalog CTA was found
 on it; this policy and its guard tests exist to keep it that way, not to remove

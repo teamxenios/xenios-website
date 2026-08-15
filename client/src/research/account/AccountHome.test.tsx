@@ -47,7 +47,7 @@ describe("Pack 02 account home", () => {
     await act(async () => root.render(<Router hook={memory.hook}><AccountHome /></Router>));
     const hrefs = Array.from(container.querySelectorAll("a")).map((link) => link.getAttribute("href"));
     expect(hrefs).toEqual(expect.arrayContaining([
-      "/research/member/products",
+      "/research/member/catalog",
       "/research/member/cart",
       "/research/member/product-requests",
       "/research/member/orders",
@@ -66,7 +66,7 @@ describe("Pack 02 account home", () => {
     const container = document.createElement("div");
     const root = createRoot(container);
     await act(async () => root.render(<Router hook={memory.hook}><AccountHome /></Router>));
-    expect(container.querySelector('a[href="/research/member/products"]')).toBeNull();
+    expect(container.querySelector('a[href="/research/member/catalog"]')).toBeNull();
     expect(container.querySelector(`a[href="/research/account/organizations/${organization.id}"]`)).not.toBeNull();
     await act(async () => root.unmount());
     delete reactEnvironment.IS_REACT_ACT_ENVIRONMENT;

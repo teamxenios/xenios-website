@@ -28,6 +28,13 @@ const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
+const AccessHub = lazy(() => import("./pages/AccessHub"));
+const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
+// The unified account and organization page family stays UNMOUNTED here on
+// purpose: production holds only one of the eight Pack 02 tables, so the
+// account context read fails against the live database. The complete mounting
+// is parked on branch fable/pack02-account-mount and lands immediately after
+// the Pack 02 schema arrives through the governed migration chain.
 // The dynamic import itself sits behind the DEV flag, not just the route: a
 // top-level lazy() emits the gallery chunk even when the route is compiled
 // out, so the fixture code would still ship. With import.meta.env.DEV a
@@ -255,6 +262,8 @@ export default function ResearchSection() {
           <Route path="/research" component={Gateway} />
 
           {/* Access family */}
+          <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
+          <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
           <Route path="/research/early-access" component={EarlyAccessRoute} />
           <Route path="/research/apply" component={Apply} />
           <Route path="/research/apply/review" component={Apply} />
