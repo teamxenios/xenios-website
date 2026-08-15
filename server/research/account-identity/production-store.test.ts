@@ -74,7 +74,7 @@ describe("Pack02 Supabase AccountIdentityStore", () => {
   it("constrains organization access by auth user, organization and active state", async () => {
     const fake = client({
       research_organization_users: [{ data: MEMBERSHIP, error: null }],
-      research_organizations: [{ data: ORGANIZATION, error: null }],
+      research_account_organizations: [{ data: ORGANIZATION, error: null }],
     });
     const store = createSupabaseAccountIdentityStore(fake.client as never);
     const access = await store.getOrganizationAccess("auth-user-1", "org-1");

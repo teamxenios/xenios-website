@@ -1,12 +1,64 @@
--- PACK 02 CANDIDATE ONLY — DO NOT APPLY FROM THIS WORKER LANE.
--- Final-base recreation, DB review, grants review, and apply-twice proof are
--- required before this file may be promoted into supabase/migrations.
+-- M70 - the Pack 02 account and organization schema, under its own name.
 --
--- This is not another auth or order system. auth.users stays the credential
--- authority, research_members stays the personal member identity, and the
--- existing research_orders / research_early_access_* tables stay the order
--- authorities. These tables only add organization authorization, profile
--- data, progressive customerRef ownership, and request-again intents.
+-- WHY THE NAME public.research_account_organizations (decision D-004).
+-- Production already carries public.research_organizations, and it belongs to
+-- the PARTNER system (columns id, name, owner_partner_id, state, created_at).
+-- The account system's organizations table originally claimed the same name;
+-- a blind "create table if not exists" would have looked successful while
+-- silently keeping the partner shape, and the mounted account API would have
+-- kept failing column by column. The unshipped account table is therefore
+-- renamed to public.research_account_organizations, and this migration never
+-- reads, writes, alters, grants on, or depends on the partner table.
+--
+-- WHAT THIS ADDS. Eight tables (organizations, organization users,
+-- invitations, claim challenges, customer bindings, order ownership,
+-- binding events, request-again intents), their validation triggers, and
+-- three SECURITY DEFINER service_role-only functions. This is not another
+-- auth or order system: auth.users stays the credential authority,
+-- research_members stays the personal member identity, and research_orders
+-- stays the order authority. Everything here is additive; nothing existing
+-- is altered. Row level security is enabled on all eight tables and no
+-- table privilege is granted to anon or authenticated.
+--
+-- Source of truth: supabase/pack02-candidates/20260812_research_account_organizations.sql
+-- (the reviewed Pack 02 candidate, renamed in the same change as this file).
+-- Rollback: supabase/production/research-account-organizations-pack02-rollback-notes.md
+
+-- ---------------------------------------------------------------------------
+-- PREFLIGHT (fails closed; nothing below runs if any requirement is unmet)
+-- ---------------------------------------------------------------------------
+do $m70_preflight$
+begin
+  if to_regclass('auth.users') is null then
+    raise exception 'M70 requires auth.users (the Supabase credential authority) to exist';
+  end if;
+  if to_regclass('public.research_members') is null then
+    raise exception 'M70 requires public.research_members (the personal member identity) to exist';
+  end if;
+  if to_regclass('public.research_orders') is null then
+    raise exception 'M70 requires public.research_orders (the canonical order authority) to exist';
+  end if;
+  -- Refuse a foreign shape under our own name. A re-apply over the correct
+  -- Pack 02 shape passes; anything else (including a partner-shaped clone)
+  -- aborts before any statement runs.
+  if to_regclass('public.research_account_organizations') is not null then
+    if exists (select 1 from information_schema.columns
+                where table_schema = 'public'
+                  and table_name = 'research_account_organizations'
+                  and column_name = 'owner_partner_id')
+       or not exists (select 1 from information_schema.columns
+                       where table_schema = 'public'
+                         and table_name = 'research_account_organizations'
+                         and column_name = 'slug')
+       or not exists (select 1 from information_schema.columns
+                       where table_schema = 'public'
+                         and table_name = 'research_account_organizations'
+                         and column_name = 'purchasing_email') then
+      raise exception 'M70 requires public.research_account_organizations to be absent or already the Pack 02 account shape; a foreign shape occupies the name';
+    end if;
+  end if;
+end
+$m70_preflight$;
 
 create extension if not exists pgcrypto;
 
@@ -452,3 +504,96 @@ insert into public.research_account_organizations(
   'e26bc7de-86df-4e70-8e82-964e3671d71c','roman-digital','Roman Digital','Roman Digital',
   'info@romanhealthcollective.com','info@romanhealthcollective.com'
 ) on conflict (slug) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- POSTCONDITION (proves the end state; under a single-transaction apply a
+-- failure here rolls the whole migration back)
+-- ---------------------------------------------------------------------------
+do $m70_postcondition$
+declare
+  v_bad text;
+  v_count integer;
+begin
+  select string_agg(t.name, ', ') into v_bad
+    from (values
+      ('research_account_organizations'),
+      ('research_organization_users'),
+      ('research_organization_invitations'),
+      ('research_account_claim_challenges'),
+      ('research_customer_account_bindings'),
+      ('research_organization_order_ownership'),
+      ('research_account_binding_events'),
+      ('research_organization_request_again')
+    ) as t(name)
+   where to_regclass('public.' || t.name) is null
+      or not exists (
+        select 1 from pg_class c
+        join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'public' and c.relname = t.name and c.relrowsecurity
+      );
+  if v_bad is not null then
+    raise exception 'M70 postcondition: tables missing or without row level security: %', v_bad;
+  end if;
+
+  select count(*) into v_count
+    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.prosecdef
+     and p.proname in ('research_bind_verified_organization_user',
+                       'research_account_commit_customer_claim',
+                       'research_account_accept_organization_invitation');
+  if v_count <> 3 then
+    raise exception 'M70 postcondition: expected 3 security definer account functions, found %', v_count;
+  end if;
+
+  select count(*) into v_count
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace,
+    lateral unnest(array['anon','authenticated']) as r(role)
+   where n.nspname = 'public'
+     and p.proname in ('research_bind_verified_organization_user',
+                       'research_account_commit_customer_claim',
+                       'research_account_accept_organization_invitation')
+     and exists (select 1 from pg_roles where rolname = r.role)
+     and has_function_privilege(r.role, p.oid, 'EXECUTE');
+  if v_count <> 0 then
+    raise exception 'M70 postcondition: a public-facing role can execute an account function (% grants)', v_count;
+  end if;
+
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    select count(*) into v_count
+      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname in ('research_bind_verified_organization_user',
+                         'research_account_commit_customer_claim',
+                         'research_account_accept_organization_invitation')
+       and has_function_privilege('service_role', p.oid, 'EXECUTE');
+    if v_count <> 3 then
+      raise exception 'M70 postcondition: service_role cannot execute all 3 account functions (%)', v_count;
+    end if;
+  end if;
+
+  select count(*) into v_count
+    from information_schema.role_table_grants
+   where table_schema = 'public'
+     and table_name in ('research_account_organizations',
+                        'research_organization_users',
+                        'research_organization_invitations',
+                        'research_account_claim_challenges',
+                        'research_customer_account_bindings',
+                        'research_organization_order_ownership',
+                        'research_account_binding_events',
+                        'research_organization_request_again')
+     and grantee in ('anon', 'authenticated');
+  if v_count <> 0 then
+    raise exception 'M70 postcondition: the account table grant boundary is broken (% grants)', v_count;
+  end if;
+
+  if not exists (select 1 from public.research_account_organizations
+                  where slug = 'roman-digital'
+                    and purchasing_email = 'info@romanhealthcollective.com'
+                    and billing_email = 'info@romanhealthcollective.com') then
+    raise exception 'M70 postcondition: the roman-digital seed is missing or drifted';
+  end if;
+end
+$m70_postcondition$;
+

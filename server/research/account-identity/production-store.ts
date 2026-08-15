@@ -258,7 +258,7 @@ export function createSupabaseAccountIdentityStore(client: SupabaseStoreClient):
       const memberships = await rows(client, "research_organization_users", "id,organization_id,roles,password_change_required,password_change_required_at", (query) => query.eq("auth_user_id", userId).eq("state", "active"));
       if (memberships.length === 0) return [];
       const ids = memberships.map((membership) => text(membership.organization_id) ?? unavailable());
-      const organizations = await rows(client, "research_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.in("id", ids));
+      const organizations = await rows(client, "research_account_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.in("id", ids));
       const byId = new Map(organizations.map((organization) => [text(organization.id), organization]));
       return memberships.map((membership) => organizationAccess(membership, byId.get(text(membership.organization_id)) ?? unavailable()));
     },
@@ -266,7 +266,7 @@ export function createSupabaseAccountIdentityStore(client: SupabaseStoreClient):
     async getOrganizationAccess(userId, organizationId) {
       const membership = await maybeRow(client, "research_organization_users", "id,organization_id,roles,password_change_required,password_change_required_at", (query) => query.eq("auth_user_id", userId).eq("organization_id", organizationId).eq("state", "active"));
       if (!membership) return null;
-      const organization = await maybeRow(client, "research_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.eq("id", organizationId));
+      const organization = await maybeRow(client, "research_account_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.eq("id", organizationId));
       return organization ? organizationAccess(membership, organization) : unavailable();
     },
 
@@ -315,7 +315,7 @@ export function createSupabaseAccountIdentityStore(client: SupabaseStoreClient):
     },
 
     async getOrganizationDashboard(organizationId) {
-      const organization = await maybeRow(client, "research_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.eq("id", organizationId));
+      const organization = await maybeRow(client, "research_account_organizations", "id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address", (query) => query.eq("id", organizationId));
       if (!organization) unavailable();
       const usersRaw = await rows(client, "research_organization_users", "id,email_at_binding,roles,state,bound_at", (query) => query.eq("organization_id", organizationId));
       const users: OrganizationUserDto[] = usersRaw.map((user) => {
@@ -345,7 +345,7 @@ export function createSupabaseAccountIdentityStore(client: SupabaseStoreClient):
       const dbPatch: Record<string, unknown> = { updated_at: new Date().toISOString() };
       const names: Record<string, string> = { legalName: "legal_name", displayName: "display_name", purchasingEmail: "purchasing_email", billingEmail: "billing_email", phone: "phone", taxIdLast4: "tax_id_last4", purchaseOrderRequired: "purchase_order_required", billingAddress: "billing_address", shippingAddress: "shipping_address" };
       for (const [key, value] of Object.entries(patch)) dbPatch[names[key] ?? unavailable()] = value;
-      const updated = await result<unknown>(client.from("research_organizations").update(dbPatch).eq("id", organizationId).select("id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address").single());
+      const updated = await result<unknown>(client.from("research_account_organizations").update(dbPatch).eq("id", organizationId).select("id,slug,legal_name,display_name,status,purchasing_email,billing_email,phone,tax_id_last4,purchase_order_required,billing_address,shipping_address").single());
       const row = record(updated) ?? unavailable();
       return organizationAccess({ id: "projection", roles: ["organization_admin"], password_change_required: false, password_change_required_at: null }, row).profile;
     },
