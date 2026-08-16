@@ -307,3 +307,87 @@ describe("the operator routes are not the wall's business", () => {
     expect(res.body?.message).not.toBe(WALLED);
   });
 });
+
+// THE ASSISTED ORDER DOORS (founder directive 2026-08-15). Admitted door by
+// door in the same shape as the cart: two literal read paths, one literal
+// write path, and anchored regexes for the public reference and the two
+// document steps. These probes prove the anchors hold, because a prefix
+// exemption here would admit every future path under a namespace that carries
+// submissions and identity documents.
+describe("the assisted order admissions are exact", () => {
+  /** The generated public reference shape: XRR-<8 digits>-<10 upper hex>. */
+  const REFERENCE = "XRR-20260815-A1B2C3D4E5";
+  const UUID = "0f9c1a2b-3d4e-4f50-8a1b-2c3d4e5f6071";
+  const OTHER_UUID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d";
+
+  it.each([
+    "/api/research/early-access/assisted-orders/config",
+    "/api/research/early-access/assisted-orders/catalog",
+    `/api/research/early-access/assisted-orders/${REFERENCE}`,
+  ])("%s reaches its own handler rather than the wall", async (path) => {
+    const res = await request(makeApp()).get(path);
+    expect(res.body?.message).not.toBe(WALLED);
+  });
+
+  it("the submit door is admitted for POST", async () => {
+    const res = await request(makeApp())
+      .post("/api/research/early-access/assisted-orders")
+      .send({});
+    expect(res.body?.message).not.toBe(WALLED);
+  });
+
+  it.each([
+    `/api/research/early-access/assisted-orders/${UUID}/documents/upload-url`,
+    `/api/research/early-access/assisted-orders/${UUID}/documents/${OTHER_UUID}/complete`,
+  ])("%s is admitted for POST", async (path) => {
+    const res = await request(makeApp()).post(path).send({});
+    expect(res.body?.message).not.toBe(WALLED);
+  });
+
+  it.each([
+    // Not a public reference.
+    "/api/research/early-access/assisted-orders/not-a-reference",
+    "/api/research/early-access/assisted-orders/XRR-2026-A1B2C3D4E5",
+    // Lowercase hex fails the anchored upper-hex shape.
+    "/api/research/early-access/assisted-orders/XRR-20260815-a1b2c3d4e5",
+    // A real reference with a leaf nobody admitted.
+    `/api/research/early-access/assisted-orders/${REFERENCE}/documents`,
+    `/api/research/early-access/assisted-orders/${REFERENCE}/admin`,
+    // Sibling and traversal-shaped paths.
+    "/api/research/early-access/assisted-order/config",
+    "/api/research/early-access/assisted-orders/config/extra",
+    "/api/research/early-access/assisted-orders/catalog/../orders",
+  ])("%s is NOT admitted", async (path) => {
+    const res = await request(makeApp()).get(path);
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+
+  it("a read door is not admitted for a write method, or the reverse", async () => {
+    const app = makeApp();
+    const wrongMethodWrite = await request(app)
+      .post("/api/research/early-access/assisted-orders/config")
+      .send({});
+    expect(wrongMethodWrite.body?.message).toBe(WALLED);
+    const wrongMethodRead = await request(app).get(
+      `/api/research/early-access/assisted-orders/${UUID}/documents/upload-url`,
+    );
+    expect(wrongMethodRead.body?.message).toBe(WALLED);
+  });
+
+  it("a document write path with a non-uuid id stays walled", async () => {
+    const res = await request(makeApp())
+      .post("/api/research/early-access/assisted-orders/not-a-uuid/documents/upload-url")
+      .send({});
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+
+  it("no admin assisted-order door is admitted by this wall", async () => {
+    const res = await request(makeApp()).get(
+      "/api/research/early-access/assisted-orders/admin",
+    );
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+});
