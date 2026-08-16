@@ -164,7 +164,7 @@
       "id": "ASSISTED-ORDER-MOUNT",
       "title": "Mount the assisted-order bridge end to end behind the enable flag",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-main",
       "paths": [
         "server/research/assisted-order/**",
@@ -177,7 +177,13 @@
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-16T17:51:37.794Z"
+      "claimedAt": "2026-08-16T17:51:37.794Z",
+      "handoff": {
+        "session": "claude-fable-main",
+        "sha": "2ed32263bc3cb472096f94ce3421aaf0e5fde108",
+        "file": ".xenios/handoffs/2026-08-16T18-56-04-068Z-ASSISTED-ORDER-MOUNT-claude-fable-main.md",
+        "at": "2026-08-16T18:56:04.070Z"
+      }
     }
   ]
 }
