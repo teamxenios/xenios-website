@@ -59,6 +59,20 @@
       "state": "handoff",
       "claimedAt": "2026-08-16T17:51:37.796Z",
       "heartbeatAt": "2026-08-16T18:40:26.415Z"
+    },
+    {
+      "id": "ccbb6bd4-ea3e-438d-a5bc-880e4e5969b5",
+      "task": "M71-RELEASE-REGISTRATION",
+      "session": "claude-fable-main",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "supabase/verification/**",
+        "scripts/verify-assisted-order-bridge.sh"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-16T19:57:44.377Z",
+      "heartbeatAt": "2026-08-16T19:57:44.377Z"
     }
   ],
   "rules": [

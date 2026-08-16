@@ -139,6 +139,16 @@ const SEARCH_PATH_HARDENING_SOURCE_SHA =
   "b91d30de9db8033e53ccfe46ddb3e01e5e88fd42";
 const SEARCH_PATH_HARDENING_PATH =
   "supabase/migrations/20260814061500_research_function_search_path_hardening.sql";
+// The assisted order bridge (M71): pending, never applied to production, and
+// pinned to the commit that introduced the certified migration bytes. The
+// bytes at that commit hash to the DAG's recorded checksum and are unchanged
+// at HEAD, which is what this pin asserts. Without a branch here the node
+// falls to the fallback below and is asked to match the release baseline,
+// which it never can: it did not exist at the baseline.
+const ASSISTED_ORDER_BRIDGE_SOURCE_SHA =
+  "35b0fbe5b8c924a3ab6f4322b2f692871e801a17";
+const ASSISTED_ORDER_BRIDGE_PATH =
+  "supabase/migrations/20260815150000_research_assisted_order_bridge.sql";
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -839,6 +849,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(MEMBER_ORDER_HISTORY_SOURCE_SHA);
           } else if (path === SEARCH_PATH_HARDENING_PATH) {
             expect(sourceSha).toBe(SEARCH_PATH_HARDENING_SOURCE_SHA);
+          } else if (path === ASSISTED_ORDER_BRIDGE_PATH) {
+            expect(sourceSha).toBe(ASSISTED_ORDER_BRIDGE_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }

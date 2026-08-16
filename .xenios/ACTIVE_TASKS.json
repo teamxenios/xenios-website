@@ -184,6 +184,21 @@
         "file": ".xenios/handoffs/2026-08-16T18-56-04-068Z-ASSISTED-ORDER-MOUNT-claude-fable-main.md",
         "at": "2026-08-16T18:56:04.070Z"
       }
+    },
+    {
+      "id": "M71-RELEASE-REGISTRATION",
+      "title": "Correct the M71 DAG provenance so the Phase Zero release can clear its own gates",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-main",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "supabase/verification/**",
+        "scripts/verify-assisted-order-bridge.sh"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-16T19:57:44.365Z"
     }
   ]
 }
