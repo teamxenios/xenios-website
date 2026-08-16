@@ -1,0 +1,7 @@
+{
+  "id": "584591a9-12db-41d3-b1e2-c88d34ceacb4",
+  "from": "claude-fable-main",
+  "to": "all",
+  "text": "MOUNT NEXT EDIT (exact): extend registerPrivateEarlyAccessApi's onDoorSources observer (server/research/early-access/register.ts, options type ~577, call site ~801, consumed at server/index.ts:340/369/446) to ALSO expose a resolveSession(req) built from the register's own durable-session + cookie verification internals (verifyPrivateAccessSession via private-access-route machinery; never a second resolver). Then in server/index.ts: bridge viewer resolver = member via resolveActiveMemberSilently (line 295, stuff pricingGrant for the catalog identity) OR EA session via the new observer field; compose buildAssistedOrderProduction (production-deps.ts, pushed at 982dba3) with earlyAccessPersistence.options.requiredAgreements + masterOfferingCatalogDependencies.serviceForViewer + loadBindingIndex reverse map + getSupabaseAdmin as rpc/storage clients; register the 9 descriptors from createAssistedOrderRouteTable as literal app.get/post/patch (skip OPTIONS; admin 4 behind requireSupabaseAdmin from server/routes.ts:119, guard-first); recompute the server/index.ts seam hash in docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json; census pins at server/release-control-plane.test.ts:1628-1630 (callSites 366, routes 375) move by +9 measured; wall probes extend server/research/early-access-wall.test.ts. Client mounts + EA CTA after. All overlay work green at 982dba3 (44 tests, tsc clean).",
+  "createdAt": "2026-08-16T18:22:25.910Z"
+}
