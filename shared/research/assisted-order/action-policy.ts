@@ -49,15 +49,9 @@ export function decideAssistedOrderAction(
     });
   }
 
-  if (authority.unitPriceCents === null || authority.pricePending) {
-    return Object.freeze({
-      visible: true,
-      workflowMode: "request_pricing",
-      actionLabel: "Request pricing",
-      reason: "No approved customer price is currently available.",
-    });
-  }
-
+  // Pathway before price: a provider-only or classification-pending row must
+  // never present a pricing CTA to a general customer, priced or not. The
+  // pathway is what blocks it; pricing is downstream of the pathway.
   if (authority.providerWorkflowRequired) {
     return Object.freeze({
       visible: true,
@@ -73,6 +67,15 @@ export function decideAssistedOrderAction(
       workflowMode: "request_activation",
       actionLabel: "Request activation",
       reason: "Classification or documentation must be completed first.",
+    });
+  }
+
+  if (authority.unitPriceCents === null || authority.pricePending) {
+    return Object.freeze({
+      visible: true,
+      workflowMode: "request_pricing",
+      actionLabel: "Request pricing",
+      reason: "No approved customer price is currently available.",
     });
   }
 
