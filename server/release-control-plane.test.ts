@@ -1625,8 +1625,18 @@ describe("route uniqueness validator", () => {
     // launch scope, and the composition carries zero commerce authority
     // (no bindings, no identity, a throwing selection seam), so the census
     // records six reachable read doors and no new way to buy anything.
-    expect(result.callSites).toBe(366);
-    expect(result.routes).toHaveLength(375);
+    // +10 (the assisted order bridge, founder directive 2026-08-15): the ten
+    // real descriptors from the bridge's own route table, registered as
+    // literal paths in server/index.ts. Six customer doors (config, catalog,
+    // submit, status by public reference, and the two document steps) reach
+    // the research wall's method-exact assisted-order admissions; four admin
+    // doors sit behind requireSupabaseAdmin, outside that wall entirely. The
+    // table's OPTIONS descriptors are deliberately not registered, so the
+    // count is ten and not twenty. Serving stays dark behind
+    // RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED, and a missing dependency keeps
+    // the whole family unmounted with a named refusal in the log.
+    expect(result.callSites).toBe(376);
+    expect(result.routes).toHaveLength(385);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

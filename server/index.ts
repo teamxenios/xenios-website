@@ -1,4 +1,4 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { type Request, type RequestHandler, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
@@ -100,8 +100,22 @@ import {
 import type { MasterOfferingCatalogViewer } from "./research/master-offerings/routes";
 import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
 import { mayViewMasterOfferings } from "./research/master-offerings/visibility-policy";
-import { masterOfferingProductionBindings } from "./research/master-offerings/production-bindings";
+import {
+  loadBindingIndex,
+  masterOfferingProductionBindings,
+  MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
+} from "./research/master-offerings/production-bindings";
+import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
+import {
+  assistedOrderExpressHandler,
+  createAssistedOrderViewerResolvers,
+  type ExpressAssistedOrderRequest,
+} from "./research/assisted-order/express";
+import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
+import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
+import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
+import { getSupabaseAdmin, supabaseConfigured } from "./supabase";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
@@ -597,6 +611,115 @@ app.use(
   MASTER_OFFERING_CATALOG_ERROR_BASE_PATH,
   masterOfferingCatalogErrorHandler(masterOfferingCatalogDependencies),
 );
+
+// THE ASSISTED ORDER BRIDGE (founder directive 2026-08-15, dark by default).
+//
+// Composed over canonical authorities only: the same master-offerings service
+// and reviewed binding artifact the v2 doors serve, the Early Access required
+// agreements as the ONE legal authority, the certified M71 RPC persistence,
+// the private document bucket, and the one durable outbox. Every dependency is
+// fail-closed: without RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true, or with a
+// missing dependency, every door below answers the composition's named refusal
+// rather than serving a half-built feature.
+const assistedOrderBindingIndex = loadBindingIndex().index;
+const assistedOrderReverseBindings = new Map<string, string>();
+for (const binding of Array.from(assistedOrderBindingIndex.values())) {
+  assistedOrderReverseBindings.set(
+    `${binding.productId} ${binding.variantId}`,
+    binding.offeringVariantId,
+  );
+}
+const assistedOrderComposition = buildAssistedOrderProduction({
+  env: process.env,
+  requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
+  masterOfferingServiceFor: (viewer) => {
+    try {
+      const service = masterOfferingCatalogDependencies.serviceForViewer(
+        (viewer as { pricingViewer?: unknown }).pricingViewer as never,
+      );
+      // The composition's factory is synchronous today. A promise here would
+      // mean a future async factory, which this seam does not support, so
+      // refuse rather than hand the bridge a pending object.
+      return service instanceof Promise ? null : service;
+    } catch {
+      return null;
+    }
+  },
+  bindingFor: (offeringVariantId) => {
+    const binding = assistedOrderBindingIndex.get(offeringVariantId);
+    return binding
+      ? { productId: binding.productId, variantId: binding.variantId }
+      : null;
+  },
+  offeringVariantFor: (identity) =>
+    assistedOrderReverseBindings.get(
+      `${identity.productId} ${identity.variantId}`,
+    ) ?? null,
+  catalogVersion: MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
+  supabaseRpc: supabaseConfigured()
+    ? (getSupabaseAdmin() as unknown as AssistedOrderRpcClient)
+    : null,
+  supabaseStorage: supabaseConfigured()
+    ? (getSupabaseAdmin().storage as unknown as AssistedOrderStorageClient)
+    : null,
+  auditWrite: async (event) => {
+    log(`assisted-order audit ${JSON.stringify(event)}`, "assisted-order");
+  },
+  log,
+});
+if (assistedOrderComposition.service) {
+  const assistedOrderViewers = createAssistedOrderViewerResolvers({
+    resolveMember: async (req) => {
+      const member = await resolveActiveMemberSilently(req);
+      return member ? { id: member.id, email: member.email ?? null } : null;
+    },
+    earlyAccess: () => earlyAccessDoorSources.current,
+    adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),
+  });
+  const assistedOrderRoutes = createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
+    assistedOrderComposition.service,
+    assistedOrderViewers,
+  );
+  const assistedOrderDoor = (
+    method: "GET" | "POST" | "PATCH",
+    path: string,
+  ): RequestHandler => {
+    const descriptor = assistedOrderRoutes.find(
+      (candidate) => candidate.method === method && candidate.path === path,
+    );
+    if (!descriptor) {
+      throw new Error(`assisted order descriptor missing: ${method} ${path}`);
+    }
+    return assistedOrderExpressHandler(descriptor);
+  };
+  // Keep these nine registrations explicit and literal: the release scanner
+  // must see every reachable door, while their paths and handler bodies still
+  // come from the one authoritative descriptor table. Literal paths precede
+  // the parameterized ones so /config and /catalog can never be captured by
+  // :publicReference. OPTIONS descriptors are deliberately NOT registered:
+  // the wall admits GET/HEAD and POST only, so an OPTIONS door would be a
+  // dead registration on the customer side and an unguarded one on the admin
+  // side.
+  app.get("/api/research/early-access/assisted-orders/config", assistedOrderDoor("GET", "/api/research/early-access/assisted-orders/config"));
+  app.get("/api/research/early-access/assisted-orders/catalog", assistedOrderDoor("GET", "/api/research/early-access/assisted-orders/catalog"));
+  app.post("/api/research/early-access/assisted-orders", assistedOrderDoor("POST", "/api/research/early-access/assisted-orders"));
+  app.get("/api/research/early-access/assisted-orders/:publicReference", assistedOrderDoor("GET", "/api/research/early-access/assisted-orders/:publicReference"));
+  app.post("/api/research/early-access/assisted-orders/:requestId/documents/upload-url", assistedOrderDoor("POST", "/api/research/early-access/assisted-orders/:requestId/documents/upload-url"));
+  app.post("/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete", assistedOrderDoor("POST", "/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete"));
+  // The admin doors answer to requireSupabaseAdmin FIRST, outside the research
+  // wall entirely. The viewer resolver grants manage capabilities only because
+  // this guard has already verified the bearer against the configured admin.
+  app.get("/api/admin/research/assisted-orders", requireSupabaseAdmin, assistedOrderDoor("GET", "/api/admin/research/assisted-orders"));
+  app.get("/api/admin/research/assisted-orders/:requestId", requireSupabaseAdmin, assistedOrderDoor("GET", "/api/admin/research/assisted-orders/:requestId"));
+  app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
+  app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
+  log("assisted order bridge mounted", "assisted-order");
+} else {
+  log(
+    `assisted order bridge not mounted: ${assistedOrderComposition.refusalReason}`,
+    "assisted-order",
+  );
+}
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
 // canonical catalog readiness, canonical lot/quality tables, private Supabase
