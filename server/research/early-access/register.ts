@@ -452,6 +452,15 @@ export interface EarlyAccessRegistrationOptions {
   readonly onDoorSources?: (sources: {
     readonly catalog: EarlyAccessCatalogSource;
     readonly releases: EarlyAccessReleaseLedger;
+    /**
+     * The ONE composed identity directory and session-id reader, observed so
+     * a sibling feature (the assisted-order bridge) can resolve the same
+     * durable session to the same approved customer. Observation only: the
+     * observer must never wrap, cache, or re-derive identity, and the shared
+     * entry password still proves entry, never customer identity.
+     */
+    readonly identity: EarlyAccessIdentityDirectory;
+    readonly readSessionId: (cookieHeader: unknown) => string | null;
   }) => void;
 
   // The commerce seams. Every default that touches money, identity, or shipment
@@ -798,7 +807,7 @@ export function registerPrivateEarlyAccessApi(
         })
       : boundIdentity);
 
-  options.onDoorSources?.({ catalog, releases });
+  options.onDoorSources?.({ catalog, releases, identity, readSessionId });
 
   const routeDependencies = {
     resolveSession,

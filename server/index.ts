@@ -338,7 +338,12 @@ if (earlyAccessPersistence.reason !== null) {
 // registration so the Kris Buy Now handoff prices from the door's own
 // sources. Null until registration runs; Buy Now stays closed without it.
 const earlyAccessDoorSources: {
-  current: { catalog: KrisDoorCatalogSource; releases: KrisDoorReleaseLedger } | null;
+  current: {
+    catalog: KrisDoorCatalogSource;
+    releases: KrisDoorReleaseLedger;
+    identity: { resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<unknown> };
+    readSessionId: (cookieHeader: unknown) => string | null;
+  } | null;
 } = { current: null };
 // Buyer-scoped pricing (XENIOS_BUYER_SCOPED_PRICING = the exact profile name;
 // absent by default, so every deployment without the flag is byte-identical).
