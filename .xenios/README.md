@@ -34,3 +34,9 @@ node scripts/agentic/xenios-os.mjs handoff --session claude-main --task SUPPLIER
 ```
 
 `MASTER_CORPUS.md` is the primary human-readable continuity entry point. The JSON files are the machine-readable current state.
+
+## Permanent prompts
+
+- `prompts/UNIVERSAL_TAKEOVER_PROMPT.md`: paste into any fresh account to take over.
+- `prompts/PRE_SWITCH_CHECKPOINT_PROMPT.md`: run before an account hits its usage limit.
+- `prompts/EMERGENCY_RECOVERY_PROMPT.md`: run after an account dies unexpectedly.

@@ -26,6 +26,21 @@
       "state": "active",
       "claimedAt": "2026-08-15T21:55:26.572Z",
       "heartbeatAt": "2026-08-15T22:19:24.222Z"
+    },
+    {
+      "id": "f6efe5f6-d199-4dbf-b2aa-a4b6e5683ce4",
+      "task": "CONTINUITY-PROMPTS",
+      "session": "claude-fable-main",
+      "paths": [
+        ".xenios/prompts/**",
+        "scripts/agentic/Find-XeniosWebsiteRepo.ps1",
+        "scripts/agentic/Show-XeniosContinuationState.ps1",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-16T02:49:09.109Z",
+      "heartbeatAt": "2026-08-16T02:49:09.109Z"
     }
   ],
   "rules": [

@@ -14,3 +14,35 @@ Every Claude Code, Codex, ChatGPT, or human engineering session must begin here.
 8. Finish with a coherent commit and handoff. A new account must resume from repository state alone.
 9. One production writer. Production mutations require explicit authority, exact SHA, prechecks, postchecks, rollback, and smoke.
 10. Do not stop at planning while an unblocked implementation exists.
+
+## Multi-account continuity (permanent)
+
+This repository is developed through multiple interchangeable Claude Max,
+Claude Code, Codex, ChatGPT, and human sessions. Git and `.xenios/` are the
+shared memory; accounts are temporary workers.
+
+Every session MUST:
+
+1. Read the repository continuity corpus before editing.
+2. Register itself (`node scripts/agentic/xenios-os.mjs register ...`).
+3. Claim an exact task/path lease before writing.
+4. Use an isolated branch/worktree.
+5. Commit and push every coherent slice.
+6. Maintain a heartbeat while active.
+7. Write exact-SHA handoffs (the handoff references a PUSHED commit).
+8. Preserve stale dirty work before any takeover, never reset it away.
+9. Run `.xenios/prompts/PRE_SWITCH_CHECKPOINT_PROMPT.md` before usage or
+   context exhaustion.
+10. Never rely on chat history as the source of truth, and never ask Samuel
+    to repeat history the repository already records.
+
+Production mutations (deploy, migration apply, Render or Supabase writes)
+require Samuel's current, explicit approval every time. A session that cannot
+comply with this contract must remain read-only.
+
+Permanent prompts: `.xenios/prompts/UNIVERSAL_TAKEOVER_PROMPT.md` (fresh
+account start), `.xenios/prompts/PRE_SWITCH_CHECKPOINT_PROMPT.md` (before a
+usage limit), `.xenios/prompts/EMERGENCY_RECOVERY_PROMPT.md` (after an
+unexpected death). Locate the repository with
+`scripts/agentic/Find-XeniosWebsiteRepo.ps1`; inspect full continuation state
+with `scripts/agentic/Show-XeniosContinuationState.ps1`.

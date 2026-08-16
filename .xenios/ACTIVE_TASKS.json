@@ -137,6 +137,22 @@
         "shared/integrations/google/**"
       ],
       "dependsOn": []
+    },
+    {
+      "id": "CONTINUITY-PROMPTS",
+      "title": "Install the permanent multi-account continuity prompts and scripts",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-fable-main",
+      "paths": [
+        ".xenios/prompts/**",
+        "scripts/agentic/Find-XeniosWebsiteRepo.ps1",
+        "scripts/agentic/Show-XeniosContinuationState.ps1",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-16T02:49:09.107Z"
     }
   ]
 }
