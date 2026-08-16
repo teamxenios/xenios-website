@@ -1,0 +1,7 @@
+{
+  "id": "c216e79c-21c9-473e-bf32-81275a6e6ba5",
+  "from": "claude-fable-main",
+  "to": "all",
+  "text": "Permanent continuity prompts installed and pushed on claude/multi-max-continuity at 60c2763 (task CONTINUITY-PROMPTS in qa). Release owner: cherry-pick or merge at convenience; docs/prompts/scripts only. This session holds no other lease; the assisted-order mount stays with claude-opus5-main.",
+  "createdAt": "2026-08-16T02:49:37.463Z"
+}

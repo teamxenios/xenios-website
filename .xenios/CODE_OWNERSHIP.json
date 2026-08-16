@@ -38,7 +38,7 @@
         "AGENTS.md",
         "CLAUDE.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-16T02:49:09.109Z",
       "heartbeatAt": "2026-08-16T02:49:09.109Z"
     }

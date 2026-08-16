@@ -142,7 +142,7 @@
       "id": "CONTINUITY-PROMPTS",
       "title": "Install the permanent multi-account continuity prompts and scripts",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-main",
       "paths": [
         ".xenios/prompts/**",
@@ -152,7 +152,13 @@
         "CLAUDE.md"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-16T02:49:09.107Z"
+      "claimedAt": "2026-08-16T02:49:09.107Z",
+      "handoff": {
+        "session": "claude-fable-main",
+        "sha": "60c27637a34ee48c00947f7a97e2cafa8cd5d841",
+        "file": ".xenios/handoffs/2026-08-16T02-49-37-332Z-CONTINUITY-PROMPTS-claude-fable-main.md",
+        "at": "2026-08-16T02:49:37.334Z"
+      }
     }
   ]
 }
