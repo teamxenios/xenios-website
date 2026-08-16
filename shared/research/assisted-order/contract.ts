@@ -109,6 +109,8 @@ export type AssistedOrderConfigView = Readonly<{
   requiredAgreements: readonly Readonly<{ kind: string; version: string }>[];
   formAcknowledgments: readonly Readonly<{
     id: string;
+    /** "always", or the condition that makes this one required. */
+    scope: "always" | "research_use_only";
     kind: string;
     version: string;
     copy: string;

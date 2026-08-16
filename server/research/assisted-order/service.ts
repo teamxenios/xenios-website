@@ -26,6 +26,7 @@ import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   ASSISTED_ORDER_FORM_ID,
   assistedOrderFormPair,
+  requiredAssistedOrderFormAcknowledgments,
 } from "../../../shared/research/assisted-order/form";
 import type {
   AssistedOrderAdminListPage,
@@ -226,6 +227,7 @@ export class AssistedOrderService {
         const pair = assistedOrderFormPair(acknowledgment);
         return Object.freeze({
           id: acknowledgment.id,
+          scope: acknowledgment.scope,
           kind: pair.kind,
           version: pair.version,
           copy: acknowledgment.copy,
@@ -289,7 +291,6 @@ export class AssistedOrderService {
   ): Promise<AssistedOrderReceipt> {
     requireCapability(viewer, "assisted_orders:submit");
     const input = validateSubmitInput(rawInput);
-    await this.requireAgreements(input);
     const now = this.deps.clock.now();
     const nowIso = now.toISOString();
     const requestId = this.deps.ids.uuid();
@@ -351,6 +352,13 @@ export class AssistedOrderService {
       );
     }
 
+    // Agreements are checked AFTER resolution: whether the request carries a
+    // Research Use Only line is a fact of the authoritative catalog, never a
+    // claim the browser makes about itself.
+    await this.requireAgreements(
+      input,
+      resolvedLines.some((line) => line.researchUseOnly),
+    );
     const estimatedTotalCents = totalEstimate(resolvedLines);
     const requestFingerprint = this.deps.hasher.stableHash({
       contact: input.contact,
@@ -908,6 +916,7 @@ export class AssistedOrderService {
   // requirement because matching is exact.
   private async requireAgreements(
     input: AssistedOrderSubmitInput,
+    includesResearchUseOnly: boolean,
   ): Promise<void> {
     const legal = this.deps.legal ?? null;
     if (!legal) {
@@ -936,7 +945,9 @@ export class AssistedOrderService {
     // acknowledgment must be present at its exact copy hash, so a stale form
     // whose displayed copy drifted refuses with a refresh instead of
     // recording a confirmation the customer never saw.
-    for (const acknowledgment of ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS) {
+    for (const acknowledgment of requiredAssistedOrderFormAcknowledgments({
+      includesResearchUseOnly,
+    })) {
       const formPair = assistedOrderFormPair(acknowledgment);
       if (!acknowledged.has(JSON.stringify([formPair.kind, formPair.version]))) {
         throw new AssistedOrderValidationError(

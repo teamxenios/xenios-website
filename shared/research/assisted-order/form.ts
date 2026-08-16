@@ -17,28 +17,55 @@ export const ASSISTED_ORDER_FORM_ID = "assisted_order_form_v1";
 
 export type AssistedOrderFormAcknowledgment = Readonly<{
   id: string;
+  /** "always", or the condition that makes it required. */
+  scope: "always" | "research_use_only";
   copy: string;
   copyHash: string;
 }>;
+
+export type AssistedOrderFormAcknowledgmentScope = "always" | "research_use_only";
 
 export const ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS: readonly AssistedOrderFormAcknowledgment[] =
   Object.freeze([
     Object.freeze({
       id: "accuracy",
-      copy: "I confirm that the information I submitted is accurate.",
-      copyHash: "f545766759175b6f",
-    }),
-    Object.freeze({
-      id: "request_notice",
-      copy: "I understand this is an order request. Xenios will confirm availability, pricing, documentation requirements, and next steps before fulfillment.",
-      copyHash: "1df2384635b77cf5",
+      scope: "always" as const,
+      copy: "I confirm that the information I provided is accurate to the best of my knowledge.",
+      copyHash: "aeb2ba5a069dd3f4",
     }),
     Object.freeze({
       id: "contact_consent",
-      copy: "I agree to be contacted by Xenios about this request.",
-      copyHash: "e0faf435d0201e81",
+      scope: "always" as const,
+      copy: "I agree that Xenios may contact me regarding this request and the next steps.",
+      copyHash: "6da1cc70338029ed",
+    }),
+    Object.freeze({
+      id: "request_notice",
+      scope: "always" as const,
+      copy: "I understand that this submission is an order request, not an accepted order or completed purchase. Xenios will confirm availability, pricing, documentation requirements, and the next steps before fulfillment.",
+      copyHash: "22788ae1ac7cab44",
+    }),
+    // Conditional: required only when the request carries a Research Use Only
+    // line, so a customer requesting nothing RUO is never asked to confirm a
+    // limitation that does not apply to them.
+    Object.freeze({
+      id: "research_use_only",
+      scope: "research_use_only" as const,
+      copy: "For items identified as Research Use Only, I understand that they are offered solely for legitimate nonclinical research purposes and are not for human or veterinary use.",
+      copyHash: "d5150651ebd86b89",
     }),
   ]);
+
+/** The acknowledgments a request must carry, given what it actually contains. */
+export function requiredAssistedOrderFormAcknowledgments(input: {
+  readonly includesResearchUseOnly: boolean;
+}): readonly AssistedOrderFormAcknowledgment[] {
+  return ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.filter(
+    (acknowledgment) =>
+      acknowledgment.scope === "always" ||
+      (acknowledgment.scope === "research_use_only" && input.includesResearchUseOnly),
+  );
+}
 
 /** The exact (kind, version) pair a form acknowledgment persists as. */
 export function assistedOrderFormPair(

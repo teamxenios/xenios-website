@@ -21,6 +21,10 @@ const FORM_PAIRS = ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((a) => ({
   ...assistedOrderFormPair(a),
   acceptedAt: "2026-08-15T12:00:00.000Z",
 }));
+/** Only the always-required facts, for proving the conditional RUO rule. */
+const ALWAYS_PAIRS = ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.filter(
+  (a) => a.scope === "always",
+).map((a) => ({ ...assistedOrderFormPair(a), acceptedAt: "2026-08-15T12:00:00.000Z" }));
 import { InMemoryAssistedOrderRepository } from "./memory-repository";
 import {
   SupabaseAssistedOrderRepository,
@@ -681,9 +685,15 @@ describe("AssistedOrderService config (D-005)", () => {
     ]);
     expect(view.formAcknowledgments.map((a) => a.id)).toEqual([
       "accuracy",
-      "request_notice",
       "contact_consent",
+      "request_notice",
+      "research_use_only",
     ]);
+    // The RUO acknowledgment is published with its condition so the wizard
+    // can render it only when the request carries an RUO line.
+    expect(
+      view.formAcknowledgments.find((a) => a.id === "research_use_only")?.scope,
+    ).toBe("research_use_only");
     for (const acknowledgment of view.formAcknowledgments) {
       expect(acknowledgment.kind.startsWith("assisted_order_form_v1:")).toBe(true);
       expect(acknowledgment.copy.length).toBeGreaterThan(10);
@@ -749,5 +759,30 @@ describe("AssistedOrderService config (D-005)", () => {
         `${acknowledgment.id}:${expected}`,
       );
     }
+  });
+});
+
+describe("the research-use-only acknowledgment is conditional", () => {
+  it("refuses an RUO request that omits the RUO acknowledgment", async () => {
+    const h = harness(item({ researchUseOnly: true }));
+    await expect(
+      h.service.submit(memberViewer, input({
+        agreements: [
+          { kind: "assisted_order_request_notice", version: "v1", acceptedAt: "2026-08-15T12:00:00.000Z" },
+          ...ALWAYS_PAIRS,
+        ],
+      })),
+    ).rejects.toThrow(/research use only acknowledgment/);
+  });
+
+  it("accepts a non-RUO request without the RUO acknowledgment", async () => {
+    const h = harness(item({ researchUseOnly: false }));
+    const receipt = await h.service.submit(memberViewer, input({
+      agreements: [
+        { kind: "assisted_order_request_notice", version: "v1", acceptedAt: "2026-08-15T12:00:00.000Z" },
+        ...ALWAYS_PAIRS,
+      ],
+    }));
+    expect(receipt.status).toBe("submitted");
   });
 });
