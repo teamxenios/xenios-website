@@ -70,7 +70,7 @@
         "supabase/verification/**",
         "scripts/verify-assisted-order-bridge.sh"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-16T19:57:44.377Z",
       "heartbeatAt": "2026-08-16T19:57:44.377Z"
     }

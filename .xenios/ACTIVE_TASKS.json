@@ -189,7 +189,7 @@
       "id": "M71-RELEASE-REGISTRATION",
       "title": "Correct the M71 DAG provenance so the Phase Zero release can clear its own gates",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-main",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -198,7 +198,13 @@
         "scripts/verify-assisted-order-bridge.sh"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-16T19:57:44.365Z"
+      "claimedAt": "2026-08-16T19:57:44.365Z",
+      "handoff": {
+        "session": "claude-fable-main",
+        "sha": "32bbd7998e806d881590c9e9a32123c2b8ba8168",
+        "file": ".xenios/handoffs/2026-08-16T20-05-47-731Z-M71-RELEASE-REGISTRATION-claude-fable-main.md",
+        "at": "2026-08-16T20:05:47.733Z"
+      }
     }
   ]
 }
