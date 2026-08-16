@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createAssistedOrderMasterCatalogCallbacks } from "./production-catalog";
+import {
+  createAssistedOrderMasterCatalogCallbacks,
+  type AssistedOrderMasterCatalogService,
+} from "./production-catalog";
 import type { AssistedOrderViewer } from "./ports";
-import type { MasterOfferingCatalogService } from "../master-offerings/service";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
 
@@ -67,7 +69,7 @@ function callbacks(
       prices,
       page: { ok: true, page: 1, pageSize: 24, total: offerings.length, totalPages: 1, sort: "name", products: [], facets: {} },
     }),
-  } as unknown as MasterOfferingCatalogService;
+  } as unknown as AssistedOrderMasterCatalogService;
   return createAssistedOrderMasterCatalogCallbacks({
     serviceFor: () => service,
     bindingFor: (offeringVariantId) =>

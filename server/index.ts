@@ -625,7 +625,7 @@ const assistedOrderBindingIndex = loadBindingIndex().index;
 const assistedOrderReverseBindings = new Map<string, string>();
 for (const binding of Array.from(assistedOrderBindingIndex.values())) {
   assistedOrderReverseBindings.set(
-    `${binding.productId} ${binding.variantId}`,
+    `${binding.productId}\u0000${binding.variantId}`,
     binding.offeringVariantId,
   );
 }
@@ -653,7 +653,7 @@ const assistedOrderComposition = buildAssistedOrderProduction({
   },
   offeringVariantFor: (identity) =>
     assistedOrderReverseBindings.get(
-      `${identity.productId} ${identity.variantId}`,
+      `${identity.productId}\u0000${identity.variantId}`,
     ) ?? null,
   catalogVersion: MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
   supabaseRpc: supabaseConfigured()

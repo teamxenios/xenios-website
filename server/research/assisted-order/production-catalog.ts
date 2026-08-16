@@ -26,9 +26,26 @@ import {
   type AssistedOrderCatalogAuthority,
 } from "../../../shared/research/assisted-order/action-policy";
 import type { AssistedOrderViewer } from "./ports";
-import type { MasterOfferingCatalogService } from "../master-offerings/service";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
+
+/**
+ * The catalog reader this adapter needs, stated structurally so the
+ * master-offerings service type stays behind its own boundary (only the
+ * composition root may import it). The composition root passes the real
+ * service, which satisfies this shape.
+ */
+export type AssistedOrderMasterCatalogService = Readonly<{
+  select(query: {
+    q?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<{
+    offerings: readonly NormalizedMasterOffering[];
+    prices: ReadonlyMap<string, MasterOfferingPriceView>;
+    page: Readonly<{ total: number; page: number; pageSize: number }>;
+  }>;
+}>;
 
 export type AssistedOrderCommerceIdentity = Readonly<{
   productId: string;
@@ -37,7 +54,7 @@ export type AssistedOrderCommerceIdentity = Readonly<{
 
 export type AssistedOrderMasterCatalogInput = Readonly<{
   /** The per-viewer canonical service, or null when the viewer has none. */
-  serviceFor(viewer: AssistedOrderViewer): MasterOfferingCatalogService | null;
+  serviceFor(viewer: AssistedOrderViewer): AssistedOrderMasterCatalogService | null;
   /** offering variant id -> Product Control identity, from the reviewed artifact. */
   bindingFor(offeringVariantId: string): AssistedOrderCommerceIdentity | null;
   /** Product Control identity -> offering variant id (the reverse of the artifact). */

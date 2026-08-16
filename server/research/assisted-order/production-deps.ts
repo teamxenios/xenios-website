@@ -13,6 +13,7 @@ import { CallbackAssistedOrderCatalogAdapter } from "./catalog-adapter";
 import {
   createAssistedOrderMasterCatalogCallbacks,
   type AssistedOrderCommerceIdentity,
+  type AssistedOrderMasterCatalogService,
 } from "./production-catalog";
 import { SupabaseAssistedOrderRepository, type SupabaseRpcClient } from "./supabase-repository";
 import {
@@ -25,7 +26,6 @@ import type {
   AssistedOrderOutbox,
   AssistedOrderViewer,
 } from "./ports";
-import type { MasterOfferingCatalogService } from "../master-offerings/service";
 import { enqueueNotificationOnce } from "../outbox";
 
 export const ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR =
@@ -49,7 +49,7 @@ export type AssistedOrderProductionWiring = Readonly<{
   /** The per-viewer canonical master-offerings service, or null. */
   masterOfferingServiceFor(
     viewer: AssistedOrderViewer,
-  ): MasterOfferingCatalogService | null;
+  ): AssistedOrderMasterCatalogService | null;
   bindingFor(offeringVariantId: string): AssistedOrderCommerceIdentity | null;
   offeringVariantFor(identity: AssistedOrderCommerceIdentity): string | null;
   catalogVersion: string;
