@@ -95,6 +95,27 @@ export type AssistedOrderAgreementAcceptance = Readonly<{
 }>;
 
 /**
+ * The config the wizard renders from. When the canonical legal set cannot be
+ * resolved the feature reports itself disabled up front (D-005): the customer
+ * is told before filling the form, and submission stays refused server-side.
+ * requiredAgreements are exact published (kind, version) pairs from the legal
+ * authority; formAcknowledgments are the operational request facts persisted
+ * under the assisted_order_form_v1 namespace, never legal-registry entries.
+ */
+export type AssistedOrderConfigView = Readonly<{
+  enabled: boolean;
+  code: "legal_requirements_unavailable" | null;
+  formId: string;
+  requiredAgreements: readonly Readonly<{ kind: string; version: string }>[];
+  formAcknowledgments: readonly Readonly<{
+    id: string;
+    kind: string;
+    version: string;
+    copy: string;
+  }>[];
+}>;
+
+/**
  * The client sends product and variant identity plus quantity. Any client price
  * is advisory only and is never used as authority.
  */

@@ -22,6 +22,11 @@ import {
   validateSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
 import { quantityIsAllowed } from "../../../shared/research/assisted-order/action-policy";
+import {
+  ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
+  ASSISTED_ORDER_FORM_ID,
+  assistedOrderFormPair,
+} from "../../../shared/research/assisted-order/form";
 import type {
   AssistedOrderAdminListPage,
   AssistedOrderDependencies,
@@ -203,6 +208,72 @@ function customerStatusMessage(status: AssistedOrderStatus): string {
 
 export class AssistedOrderService {
   public constructor(private readonly deps: AssistedOrderDependencies) {}
+
+  /**
+   * The wizard's config. No capability is required beyond a resolved viewer:
+   * the response carries only the feature state, the exact published legal
+   * (kind, version) pairs, and the operational form acknowledgments, nothing
+   * personal. When the canonical legal set cannot resolve, the feature
+   * reports itself disabled up front (D-005) and submission stays refused
+   * server-side by the same missing dependency.
+   */
+  public async config(
+    viewer: AssistedOrderViewer,
+  ): Promise<import("../../../shared/research/assisted-order/contract").AssistedOrderConfigView> {
+    void viewer;
+    const formAcknowledgments = Object.freeze(
+      ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((acknowledgment) => {
+        const pair = assistedOrderFormPair(acknowledgment);
+        return Object.freeze({
+          id: acknowledgment.id,
+          kind: pair.kind,
+          version: pair.version,
+          copy: acknowledgment.copy,
+        });
+      }),
+    );
+    const legal = this.deps.legal ?? null;
+    if (!legal) {
+      return Object.freeze({
+        enabled: false,
+        code: "legal_requirements_unavailable" as const,
+        formId: ASSISTED_ORDER_FORM_ID,
+        requiredAgreements: Object.freeze([]),
+        formAcknowledgments,
+      });
+    }
+    try {
+      const required = await legal.requiredAgreements();
+      if (required.length === 0) {
+        return Object.freeze({
+          enabled: false,
+          code: "legal_requirements_unavailable" as const,
+          formId: ASSISTED_ORDER_FORM_ID,
+          requiredAgreements: Object.freeze([]),
+          formAcknowledgments,
+        });
+      }
+      return Object.freeze({
+        enabled: true,
+        code: null,
+        formId: ASSISTED_ORDER_FORM_ID,
+        requiredAgreements: Object.freeze(
+          required.map((requirement) =>
+            Object.freeze({ kind: requirement.kind, version: requirement.version }),
+          ),
+        ),
+        formAcknowledgments,
+      });
+    } catch {
+      return Object.freeze({
+        enabled: false,
+        code: "legal_requirements_unavailable" as const,
+        formId: ASSISTED_ORDER_FORM_ID,
+        requiredAgreements: Object.freeze([]),
+        formAcknowledgments,
+      });
+    }
+  }
 
   public async catalog(
     viewer: AssistedOrderViewer,
@@ -858,6 +929,19 @@ export class AssistedOrderService {
         throw new AssistedOrderValidationError(
           "agreements",
           `The agreement ${requirement.kind} (version ${requirement.version}) must be accepted before submitting.`,
+        );
+      }
+    }
+    // The operational form facts (D-005): every assisted_order_form_v1
+    // acknowledgment must be present at its exact copy hash, so a stale form
+    // whose displayed copy drifted refuses with a refresh instead of
+    // recording a confirmation the customer never saw.
+    for (const acknowledgment of ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS) {
+      const formPair = assistedOrderFormPair(acknowledgment);
+      if (!acknowledged.has(JSON.stringify([formPair.kind, formPair.version]))) {
+        throw new AssistedOrderValidationError(
+          "agreements",
+          `The ${acknowledgment.id.replace(/_/g, " ")} acknowledgment must be confirmed on the current form before submitting. Refresh the page if the form is stale.`,
         );
       }
     }

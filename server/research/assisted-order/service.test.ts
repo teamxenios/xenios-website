@@ -10,6 +10,17 @@ import type {
   AssistedOrderNotificationIntent,
   AssistedOrderViewer,
 } from "./ports";
+import {
+  ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
+  assistedOrderFormPair,
+} from "../../../shared/research/assisted-order/form";
+
+// Every submission must carry the operational form facts (D-005); the tests
+// build them once from the shared module so copy drift fails here too.
+const FORM_PAIRS = ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((a) => ({
+  ...assistedOrderFormPair(a),
+  acceptedAt: "2026-08-15T12:00:00.000Z",
+}));
 import { InMemoryAssistedOrderRepository } from "./memory-repository";
 import {
   SupabaseAssistedOrderRepository,
@@ -117,6 +128,7 @@ function input(overrides: Partial<AssistedOrderSubmitInput> = {}): AssistedOrder
         version: "v1",
         acceptedAt: "2026-08-15T12:00:00.000Z",
       },
+      ...FORM_PAIRS,
     ],
     lines: [
       {
@@ -357,6 +369,7 @@ describe("AssistedOrderService", () => {
             version: "current",
             acceptedAt: "2026-08-15T12:00:00.000Z",
           },
+          ...FORM_PAIRS,
         ],
       })),
     ).rejects.toThrow(/assisted_order_request_notice \(version v1\)/);
@@ -376,6 +389,7 @@ describe("AssistedOrderService", () => {
           version: "v7",
           acceptedAt: "2026-08-15T12:00:00.000Z",
         },
+        ...FORM_PAIRS,
       ],
     }));
     expect(receipt.status).toBe("submitted");
@@ -652,5 +666,88 @@ describe("SupabaseAssistedOrderRepository error mapping", () => {
     expect(stored.receipt.requestId).toBe(
       "33333333-3333-4333-8333-333333333333",
     );
+  });
+});
+
+describe("AssistedOrderService config (D-005)", () => {
+  it("publishes the legal set and form acknowledgments when legal resolves", async () => {
+    const h = harness();
+    const view = await h.service.config(memberViewer);
+    expect(view.enabled).toBe(true);
+    expect(view.code).toBeNull();
+    expect(view.formId).toBe("assisted_order_form_v1");
+    expect(view.requiredAgreements).toEqual([
+      { kind: "assisted_order_request_notice", version: "v1" },
+    ]);
+    expect(view.formAcknowledgments.map((a) => a.id)).toEqual([
+      "accuracy",
+      "request_notice",
+      "contact_consent",
+    ]);
+    for (const acknowledgment of view.formAcknowledgments) {
+      expect(acknowledgment.kind.startsWith("assisted_order_form_v1:")).toBe(true);
+      expect(acknowledgment.copy.length).toBeGreaterThan(10);
+    }
+  });
+
+  it("reports disabled up front when no legal source is configured", async () => {
+    const h = harness(item(), { legal: null });
+    const view = await h.service.config(memberViewer);
+    expect(view.enabled).toBe(false);
+    expect(view.code).toBe("legal_requirements_unavailable");
+    expect(view.requiredAgreements).toEqual([]);
+  });
+
+  it("reports disabled when the legal source resolves to an empty set", async () => {
+    const h = harness(item(), { legal: { requiredAgreements: async () => [] } });
+    const view = await h.service.config(memberViewer);
+    expect(view.enabled).toBe(false);
+    expect(view.code).toBe("legal_requirements_unavailable");
+  });
+
+  it("refuses a submission missing a form acknowledgment, naming it", async () => {
+    const h = harness();
+    await expect(
+      h.service.submit(memberViewer, input({
+        agreements: [
+          {
+            kind: "assisted_order_request_notice",
+            version: "v1",
+            acceptedAt: "2026-08-15T12:00:00.000Z",
+          },
+          ...FORM_PAIRS.slice(1),
+        ],
+      })),
+    ).rejects.toThrow(/accuracy acknowledgment/);
+  });
+
+  it("refuses a form acknowledgment at a drifted copy hash", async () => {
+    const h = harness();
+    await expect(
+      h.service.submit(memberViewer, input({
+        agreements: [
+          {
+            kind: "assisted_order_request_notice",
+            version: "v1",
+            acceptedAt: "2026-08-15T12:00:00.000Z",
+          },
+          { ...FORM_PAIRS[0], version: "deadbeefdeadbeef" },
+          ...FORM_PAIRS.slice(1),
+        ],
+      })),
+    ).rejects.toThrow(/accuracy acknowledgment/);
+  });
+
+  it("pins each precomputed copy hash to the actual copy", async () => {
+    const { createHash } = await import("node:crypto");
+    for (const acknowledgment of ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS) {
+      const expected = createHash("sha256")
+        .update(acknowledgment.copy, "utf8")
+        .digest("hex")
+        .slice(0, 16);
+      expect(`${acknowledgment.id}:${acknowledgment.copyHash}`).toBe(
+        `${acknowledgment.id}:${expected}`,
+      );
+    }
   });
 });

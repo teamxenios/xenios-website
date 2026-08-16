@@ -134,6 +134,20 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
 
   const routes: AssistedOrderRouteDescriptor[] = [
     {
+      // The wizard's first fetch. The wall admits it openly because it
+      // reports only the feature state, the published legal (kind, version)
+      // pairs, and the operational form copy; the D-005 disabled state is an
+      // up-front answer, not an error.
+      method: "GET",
+      path: "/api/research/early-access/assisted-orders/config",
+      auth: "early_access_or_member",
+      handler: (request) =>
+        handle(async () => {
+          const view = await service.config(await viewer(request));
+          return ok(200, view);
+        }),
+    },
+    {
       method: "GET",
       path: "/api/research/early-access/assisted-orders/catalog",
       auth: "early_access_or_member",
