@@ -30,6 +30,22 @@ const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
+// The assisted-order wizard family. Inside the gated Early Access experience:
+// every page's own fetches carry the Early Access session and are refused
+// without it, and the wall admits only the exact API shapes behind them.
+const AssistedOrderPage = lazy(() =>
+  import("./assisted-order/AssistedOrderPage").then((m) => ({ default: m.AssistedOrderPage })),
+);
+const AssistedOrderConfirmationPage = lazy(() =>
+  import("./assisted-order/AssistedOrderConfirmationPage").then((m) => ({
+    default: m.AssistedOrderConfirmationPage,
+  })),
+);
+const AssistedOrderStatusPage = lazy(() =>
+  import("./assisted-order/AssistedOrderStatusPage").then((m) => ({
+    default: m.AssistedOrderStatusPage,
+  })),
+);
 // The unified account and organization page family stays UNMOUNTED here on
 // purpose: production holds only one of the eight Pack 02 tables, so the
 // account context read fails against the live database. The complete mounting
@@ -265,6 +281,12 @@ export default function ResearchSection() {
           <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
           <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
           <Route path="/research/early-access" component={EarlyAccessRoute} />
+          {/* The assisted-order wizard, additive beside the existing Early
+              Access flow. Literal paths precede the parameterized status
+              path so confirmation can never be read as a public reference. */}
+          <Route path="/research/early-access/order-request">{() => <L component={AssistedOrderPage} />}</Route>
+          <Route path="/research/early-access/order-request/confirmation/:publicReference">{() => <L component={AssistedOrderConfirmationPage} />}</Route>
+          <Route path="/research/early-access/order-request/:publicReference">{() => <L component={AssistedOrderStatusPage} />}</Route>
           <Route path="/research/apply" component={Apply} />
           <Route path="/research/apply/review" component={Apply} />
           <Route path="/research/apply/success" component={Apply} />

@@ -10,6 +10,16 @@ import { ResearchLoadingState } from "./ui/kit";
 // state. Code-split per page.
 
 const AdminResearchHome = lazy(() => import("./pages/adminx/AdminResearchHome"));
+const AssistedOrderQueue = lazy(() =>
+  import("./assisted-order/AdminAssistedOrderQueue").then((m) => ({
+    default: m.AdminAssistedOrderQueue,
+  })),
+);
+const AssistedOrderDetail = lazy(() =>
+  import("./assisted-order/AdminAssistedOrderDetail").then((m) => ({
+    default: m.AdminAssistedOrderDetailPage,
+  })),
+);
 const Applications = lazy(() => import("./pages/adminx/Applications"));
 const ApplicationDetail = lazy(() => import("./pages/adminx/ApplicationDetail"));
 const Members = lazy(() => import("./pages/adminx/Members"));
@@ -142,6 +152,8 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/inventory">
         <Redirect to="/admin/research/inventory/lots" />
       </Route>
+      <Route path="/admin/research/assisted-orders">{() => <S><AssistedOrderQueue /></S>}</Route>
+      <Route path="/admin/research/assisted-orders/:requestId">{() => <S><AssistedOrderDetail /></S>}</Route>
       <Route path="/admin/research/orders">{() => <S><OrdersAdmin /></S>}</Route>
       <Route path="/admin/research/orders/:id">{() => <S><OrderAdminDetail /></S>}</Route>
       <Route path="/admin/research/fulfillment">{() => <S><Fulfillment /></S>}</Route>

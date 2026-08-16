@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
+import { AssistedOrderCta } from "../assisted-order/AssistedOrderCta";
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
@@ -324,6 +325,16 @@ export default function EarlyAccessRoute() {
                     <EarlyAccessOrderRecoveryCard orderNumber={rememberedOrder} />
                   </div>
                 )}
+                {/*
+                  The assisted-order door, additive and beside the existing
+                  catalogue rather than in front of it: the single-item flow,
+                  the cart, and checkout are untouched. The component asks the
+                  server whether the feature is open and renders nothing when
+                  it is absent, so a dark deployment shows no dead button.
+                */}
+                <div className="mb-4">
+                  <AssistedOrderCta />
+                </div>
                 <EarlyAccessCatalogSection
                   fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
                   reviewEnabled={agreed && blocked === null}
