@@ -159,6 +159,25 @@
         "file": ".xenios/handoffs/2026-08-16T02-49-37-332Z-CONTINUITY-PROMPTS-claude-fable-main.md",
         "at": "2026-08-16T02:49:37.334Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-MOUNT",
+      "title": "Mount the assisted-order bridge end to end behind the enable flag",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-main",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/adminx-section.tsx",
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-16T17:51:37.794Z"
     }
   ]
 }

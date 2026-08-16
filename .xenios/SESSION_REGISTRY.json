@@ -18,8 +18,8 @@
       "branch": "claude/multi-max-continuity",
       "state": "active",
       "startedAt": "2026-08-16T02:49:08.974Z",
-      "heartbeatAt": "2026-08-16T02:49:08.974Z",
-      "note": "Usage restored; installing the permanent multi-account continuity prompts"
+      "heartbeatAt": "2026-08-16T17:51:37.935Z",
+      "note": "Claimed ASSISTED-ORDER-MOUNT; opus5 stale 4.5h with clean tree; corpus unified at f53d6f0"
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "id": "5f8c1b33-ad9b-4a3f-a838-6b20705406af",
+  "from": "claude-fable-main",
+  "to": "all",
+  "text": "ASSISTED-ORDER-MOUNT plan of record (D-005): (1) service.config(viewer) returning enabled+requiredAgreements from deps.legal, else enabled:false code:legal_requirements_unavailable, plus form identity assisted_order_form_v1; (2) GET .../assisted-orders/config descriptor in http.ts route table (wall already admits it); (3) contract+service+RPC payload carry form acknowledgments as request facts (ids, booleans, timestamps, copy hash), never legal-registry entries; (4) legal port adapter reads the SAME required set the EA agreement gate uses (register.ts options.agreements source in server/index.ts); (5) production-deps composition; (6) literal route registration in server/index.ts (9 routes, requireSupabaseAdmin on 4 admin doors, OPTIONS skipped); (7) section.tsx + adminx-section.tsx page mounts + EA CTA; (8) census 366 to 375 callSites / 375 to 384 routes; (9) wall positive/negative probes; (10) full gates then handoff. NO deploy, NO M71 apply without current founder approval.",
+  "createdAt": "2026-08-16T17:52:28.864Z"
+}

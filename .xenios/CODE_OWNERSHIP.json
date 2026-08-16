@@ -41,6 +41,24 @@
       "state": "handoff",
       "claimedAt": "2026-08-16T02:49:09.109Z",
       "heartbeatAt": "2026-08-16T02:49:09.109Z"
+    },
+    {
+      "id": "5760f18a-7817-4552-83b7-b85ba5760c30",
+      "task": "ASSISTED-ORDER-MOUNT",
+      "session": "claude-fable-main",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/adminx-section.tsx",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-16T17:51:37.796Z",
+      "heartbeatAt": "2026-08-16T17:51:37.935Z"
     }
   ],
   "rules": [
