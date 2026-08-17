@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T17:11:07.994Z",
-      "note": "2026-08-17 Samuel designated THIS session sole Phase Zero executor; productionWriter seat claimed (was null). See PHASE_ZERO_EXECUTOR_DESIGNATION.md. Pre-flight re-verified read-only: frozen 32bbd799 resolves, M71 SHA256 matches, Render live b0fe396/dep-da07gcdbedkc73a3mka0, autoDeploy off, tracked HEAD 458e728 ancestor of frozen. Awaiting Supabase MCP auth (project-scoped .mcp.json, db-only), then final read-only preflight, then founder GO. No production mutation yet."
+      "heartbeatAt": "2026-08-17T17:26:14.751Z",
+      "note": "2026-08-17 Samuel chose OPTION 2: project-scoped MCP only. Local uncommitted .mcp.json key renamed supabase -> supabase-xenios-prod (URL unchanged: project_ref=yvzeduaxbwgcwllhywff&features=database). Account-level Supabase connector QUARANTINED for Phase Zero - do not use it. Preflight 2026-08-17 was green on ALL items except MCP scope: M71 unapplied (38 migrations, none assisted_order), zero assisted-order tables/routines, M71 SHA256 match, frozen 32bbd799 resolves, prod b0fe396/dep-da07gcdbedkc73a3mka0 live, autoDeploy off, tracked HEAD 458e728 ancestor. productionWriter=claude-fable-desktop. NEXT: restart Desktop session in same worktree, authenticate supabase-xenios-prod, re-run scoped preflight, then founder GO. Successor session must ADOPT this identity (heartbeat claude-fable-desktop), never register a second writer. No production mutation has occurred."
     }
   ]
 }
