@@ -20,6 +20,16 @@
       "startedAt": "2026-08-16T02:49:08.974Z",
       "heartbeatAt": "2026-08-16T18:40:26.415Z",
       "note": "server mount pushed 56d8501; next: assisted-order wall probes, then client mounts + EA CTA"
+    },
+    {
+      "id": "claude-fable-desktop",
+      "tool": "claude",
+      "lane": "phase-zero-production",
+      "branch": "claude/assisted-order-bridge",
+      "state": "active",
+      "startedAt": "2026-08-17T16:45:39.066Z",
+      "heartbeatAt": "2026-08-17T16:45:39.066Z",
+      "note": "2026-08-17 Desktop takeover. Full pre-flight re-verified read-only: repo, frozen SHA 32bbd799, M71 blob+SHA256, Render autoDeploy off, live deploy still b0fe396/dep-da07gcdbedkc73a3mka0. Tracked branch HEAD 458e728 is ancestor of frozen (clean FF path). BLOCKERS: this session has NO Supabase apply mechanism (no MCP/CLI/creds) and trigger_deploy pins no commit. Read-only until founder in-session GO."
     }
   ]
 }
