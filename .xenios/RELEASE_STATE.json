@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-15T15:10:00Z",
+  "updatedAt": "2026-08-17T17:10:42Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "17a8370a5a0cc7bdeab7793df8a9c01ff18ebf2b",
   "lastDocumentedProductionRelease": {
@@ -18,7 +18,7 @@
     ],
     "status": "blocked_on_migration_certification"
   },
-  "productionWriter": null,
+  "productionWriter": "claude-fable-desktop",
   "invariants": [
     "one production writer",
     "immutable release tags",

@@ -1,0 +1,7 @@
+{
+  "id": "225f8042-abf4-40bb-9026-6c5e2b5cd0e5",
+  "from": "claude-fable-desktop",
+  "to": "all",
+  "text": "FOUNDER EXECUTOR DESIGNATION (Samuel, 2026-08-17): claude-fable-desktop is the SOLE Phase Zero production executor and now holds productionWriter. ALL other sessions (including claude-opus5-main) are read-only/standby for this release: do NOT apply M71 or any migration, do NOT write Render env vars, do NOT trigger deploys, do NOT enable feature flags. Do not race the writer seat. Full record: .xenios/PHASE_ZERO_EXECUTOR_DESIGNATION.md",
+  "createdAt": "2026-08-17T17:11:13.235Z"
+}
