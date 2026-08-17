@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T18:50:08.954Z",
-      "note": "2026-08-17 preflight run under founder Phase Zero prompt: all local/Render/git checks green; scoped supabase-xenios-prod still exposes NO tools in this session (authentication did not carry over), so DB-side items 3-5 unverifiable; account-level Supabase connector left untouched; READY FOR FOUNDER GO: NO."
+      "heartbeatAt": "2026-08-17T19:20:25.102Z",
+      "note": "2026-08-17 manual-bearer FINAL preflight: scoped supabase-xenios-prod STILL exposes no tools (SUPABASE_ACCESS_TOKEN unset in session env; .mcp.json header wiring verified, no literal secret); DB items 2-4 unverifiable; account-level connector untouched. NEW DRIFT: manual deploy dep-da1lmgu417fc73elr8f0 of 458e7284 (release-branch head) went LIVE 2026-08-17T19:05:41Z replacing b0fe396 — packet pre-flight item 1 stale; autoDeploy still no/off. READY FOR FOUNDER GO: NO."
     }
   ]
 }
