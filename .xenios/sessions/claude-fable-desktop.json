@@ -5,6 +5,6 @@
   "branch": "claude/assisted-order-bridge",
   "state": "active",
   "startedAt": "2026-08-17T16:45:39.066Z",
-  "heartbeatAt": "2026-08-17T19:58:04.932Z",
-  "note": "2026-08-17 seated and holding per founder three-track directive: no build lane claimed; packet preserved; handoff 2026-08-17T19-58-00-000Z-PHASE-ZERO-SUCCESSOR-READY written for the post-restart successor. Awaiting founder env fix + app restart. Successor: adopt this identity, run the DB preflight, report, STOP; after Phase Zero completes, release the productionWriter seat."
+  "heartbeatAt": "2026-08-17T20:40:58.773Z",
+  "note": "2026-08-17 final pre-restart state: all three founder session prompts persisted verbatim to .xenios/prompts/ (PHASE_ZERO_SUCCESSOR_PROMPT, CASHFLOW_EXPANSION_LANE_PROMPT, FULL_VISION_DEMO_LANE_PROMPT, all -2026-08-17). Seat holds, nothing claimed, production untouched. Awaiting founder: Local env var + full Desktop restart; successor adopts this identity via the successor prompt file."
 }
