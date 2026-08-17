@@ -4,6 +4,7 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
+- After Phase Zero completes and the seat is released: REVOKE the temporary Supabase personal access token in the Supabase dashboard so the manual-bearer credential stops existing.
 - Unblock the Phase Zero DB preflight: add `SUPABASE_ACCESS_TOKEN` to the Claude Desktop Local environment (environment selector → Local → gear), fully quit and reopen Claude Desktop, then launch the successor Local Code session at the worktree with the recovery prompt. The scoped `supabase-xenios-prod` MCP cannot authenticate in any session started without that variable; every other Phase Zero preflight item is already green (see PHASE_ZERO_PRODUCTION_PACKET.md, baseline reconciled 2026-08-17). Identify or confirm the actor of manual Render deploy dep-da1lmgu417fc73elr8f0 while doing so.
 - Approve the exact legal versions required for the public membership application once counsel/version authority is ready.
 - Approve production application of the renamed and certified Pack 02 account schema.

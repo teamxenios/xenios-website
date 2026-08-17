@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T20:40:58.773Z",
-      "note": "2026-08-17 final pre-restart state: all three founder session prompts persisted verbatim to .xenios/prompts/ (PHASE_ZERO_SUCCESSOR_PROMPT, CASHFLOW_EXPANSION_LANE_PROMPT, FULL_VISION_DEMO_LANE_PROMPT, all -2026-08-17). Seat holds, nothing claimed, production untouched. Awaiting founder: Local env var + full Desktop restart; successor adopts this identity via the successor prompt file."
+      "heartbeatAt": "2026-08-17T20:49:07.160Z",
+      "note": "2026-08-17 launch-ready: lane worktrees pre-created at C:/xenios-wt/cashflow-conversion (lane/cashflow-conversion) and C:/xenios-wt/full-vision-demo (lane/full-vision-demo), both @ 82cf037 and pushed; SESSION_LAUNCH_RUNBOOK_2026-08-17.md persisted; PAT-revocation founder action recorded. Seat holds untouched. Remaining steps are founder-only: Local env var, full Desktop restart, three session creations per the runbook."
     }
   ]
 }
