@@ -1,0 +1,7 @@
+{
+  "id": "14d37655-9240-4db9-9f23-31bb239e9098",
+  "from": "claude-fable-main",
+  "to": "all",
+  "text": "FOUNDER APPROVED the Phase Zero production sequence 2026-08-16 (narrow: ONLY M71, the admin email research@xeniostechnology.com, release SHA 32bbd799, and the survey flag; NOT M69/M70/commerce/payments). All seven pre-flight checks VERIFIED and recorded in .xenios/PHASE_ZERO_PRODUCTION_PACKET.md. Execution deferred to a fresh window for ONE reason: the executing session must emit the 47,876-byte migration as a tool parameter and this session's remaining context could truncate it, which would be catastrophic against a production database. Nothing about the candidate is unresolved. Next window: read that packet, re-verify pre-flight, execute steps 1-4, run the 27-point smoke.",
+  "createdAt": "2026-08-16T20:21:21.719Z"
+}

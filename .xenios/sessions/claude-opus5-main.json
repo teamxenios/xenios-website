@@ -5,6 +5,6 @@
   "branch": "claude/assisted-order-bridge",
   "state": "active",
   "startedAt": "2026-08-15T21:55:26.479Z",
-  "heartbeatAt": "2026-08-15T22:19:24.222Z",
-  "note": "M71 certified PG16+17 and registered at 86c30c8. Next: mount routes + client pages + Early Access CTA."
+  "heartbeatAt": "2026-08-17T13:04:50.389Z",
+  "note": "2026-08-17 takeover. Phase Zero code is frozen at 32bbd799 and pre-flight re-verified. Blocked ONLY on in-session founder authorization to mutate production."
 }
