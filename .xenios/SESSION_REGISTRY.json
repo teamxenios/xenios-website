@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T18:06:21.336Z",
-      "note": "2026-08-17 18:06Z isolation VERIFIED from live Desktop session: /mcp registration shows ONLY supabase-xenios-prod (yvzeduaxbwgcwllhywff, database-only), unauthenticated; no broad account-level Supabase connector present; orchestrator confirmed isolation correct. OAuth impossible in that session (non-interactive) - restarting Desktop session in same worktree to authenticate. Local pre-checks re-verified green: M71 SHA256 exact, frozen 32bbd799 resolves, origin correct, branch in sync (only ?? .mcp.json, deliberately untracked). See handoff 2026-08-17T18-06-21-364Z-SCOPED-MCP-ISOLATION-VERIFIED. NEXT: successor ADOPTS claude-fable-desktop identity, authenticates supabase-xenios-prod, runs FINAL PROJECT-SCOPED DESKTOP PREFLIGHT, reports, STOPS before founder GO. No production mutation has occurred."
+      "heartbeatAt": "2026-08-17T18:50:08.954Z",
+      "note": "2026-08-17 preflight run under founder Phase Zero prompt: all local/Render/git checks green; scoped supabase-xenios-prod still exposes NO tools in this session (authentication did not carry over), so DB-side items 3-5 unverifiable; account-level Supabase connector left untouched; READY FOR FOUNDER GO: NO."
     }
   ]
 }

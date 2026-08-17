@@ -5,6 +5,6 @@
   "branch": "claude/assisted-order-bridge",
   "state": "active",
   "startedAt": "2026-08-17T16:45:39.066Z",
-  "heartbeatAt": "2026-08-17T17:26:14.751Z",
-  "note": "2026-08-17 Samuel chose OPTION 2: project-scoped MCP only. Local uncommitted .mcp.json key renamed supabase -> supabase-xenios-prod (URL unchanged: project_ref=yvzeduaxbwgcwllhywff&features=database). Account-level Supabase connector QUARANTINED for Phase Zero - do not use it. Preflight 2026-08-17 was green on ALL items except MCP scope: M71 unapplied (38 migrations, none assisted_order), zero assisted-order tables/routines, M71 SHA256 match, frozen 32bbd799 resolves, prod b0fe396/dep-da07gcdbedkc73a3mka0 live, autoDeploy off, tracked HEAD 458e728 ancestor. productionWriter=claude-fable-desktop. NEXT: restart Desktop session in same worktree, authenticate supabase-xenios-prod, re-run scoped preflight, then founder GO. Successor session must ADOPT this identity (heartbeat claude-fable-desktop), never register a second writer. No production mutation has occurred."
+  "heartbeatAt": "2026-08-17T18:50:08.954Z",
+  "note": "2026-08-17 preflight run under founder Phase Zero prompt: all local/Render/git checks green; scoped supabase-xenios-prod still exposes NO tools in this session (authentication did not carry over), so DB-side items 3-5 unverifiable; account-level Supabase connector left untouched; READY FOR FOUNDER GO: NO."
 }
