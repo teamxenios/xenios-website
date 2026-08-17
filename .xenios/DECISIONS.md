@@ -24,6 +24,33 @@ Provider-only clinical products route through Care. RUO materials remain researc
 ## D-008 — Progressive releases
 A coherent, verified slice ships before the entire future platform is complete. Every release is SHA-pinned, rollbackable, and smoke-tested.
 
+## D-009 — Two-lane build directive (2026-08-17, founder)
+
+Two parallel outputs, defined by the three overlay prompts stored in
+`.xenios/prompts/` (`XENIOS_CASHFLOW_FIRST_EXECUTION_OVERLAY_2026-08-17.md`,
+`XENIOS_FABLE5_FULL_VISION_END_TO_END_DEMO_PROMPT_2026-08-17.md`,
+`XENIOS_REAL_CUSTOMER_BUYING_FULL_SITE_OVERLAY_2026-08-17.md`), executed by
+new accounts after `UNIVERSAL_TAKEOVER_PROMPT.md`:
+
+1. REAL PRODUCTION COMMERCE — the company objective. Assisted order live,
+   then request-to-quote/order conversion, real cart and checkout, the
+   approved payment path, canonical orders, fulfillment and tracking, order
+   history and reorder, organization/B2B, affiliates, supplier workspace,
+   and Care. Cashflow first. Non-direct products route truthfully
+   (quote/pricing/provider/activation/availability) instead of dead-ending.
+   Never fabricate payment or provider facts; never show $0 for unknown
+   prices; RUO stays research-use only.
+2. FULL-VISION DEMO — a parallel validation lane: a production-isolated
+   clickable `/research/demo` covering every persona, impossible to activate
+   in production, never touching production Supabase, real payments, email,
+   SMS, suppliers, or prescriptions. The demo is not the goal, must not slow
+   the cashflow lane, and must not fork into a second application: when a
+   capability becomes production-ready, the canonical implementation
+   replaces its simulation.
+
+Lanes stay disjoint per ACTIVE_TASKS path leases. Phase Zero execution
+remains exclusively with the designated production writer.
+
 ## D-005: assisted-order acknowledgments are request facts, not legal documents
 
 2026-08-15, founder decision, unblocking the assisted-order mount.

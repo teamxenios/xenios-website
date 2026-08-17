@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-15T15:10:00Z",
+  "updatedAt": "2026-08-17T19:55:00Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -205,6 +205,91 @@
         "file": ".xenios/handoffs/2026-08-16T20-05-47-731Z-M71-RELEASE-REGISTRATION-claude-fable-main.md",
         "at": "2026-08-16T20:05:47.733Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-CONVERSION",
+      "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
+      "priority": "P0",
+      "state": "blocked",
+      "owner": null,
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "supabase/migrations/*assisted_order_quote*",
+        "server/research/commerce/persistence/admin-queues-store.ts"
+      ],
+      "dependsOn": [
+        "ASSISTED-ORDER-MOUNT"
+      ]
+    },
+    {
+      "id": "CATALOG-ACTION-UNIFICATION",
+      "title": "One buyer-scoped catalog pathway and price projection for every surface",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "shared/research/master-offerings/**",
+        "server/research/master-offerings/**",
+        "server/research/catalog/**",
+        "server/research/catalog-display/**",
+        "server/research/pricing/catalog-price-projection.ts"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "FULFILLMENT-MOUNT",
+      "title": "Mount the tested fulfillment engine over HTTP with its admin surface",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/research/fulfillment/**",
+        "server/research/operations/suppliers.ts",
+        "shared/research/fulfillment/**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "PAYMENT-PROVIDER-INTEGRATION",
+      "title": "Integrate the founder-approved payment provider behind its flag",
+      "priority": "P1",
+      "state": "blocked_external",
+      "owner": null,
+      "paths": [
+        "server/research/providers/payment.ts",
+        "server/research/commerce/webhooks.ts",
+        "server/research/commerce/persistence/webhooks-store.ts"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "CARE-DISCOVERY-BRIDGE",
+      "title": "Implement /api/care/discovery and the provider_request handoff into Care",
+      "priority": "P2",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/care/**",
+        "client/src/care/**",
+        "shared/care/**"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "FULL-VISION-DEMO",
+      "title": "Build the production-isolated multi-persona /research/demo lane with browser E2E",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/demo/**",
+        "server/research/demo/**",
+        "e2e/**",
+        "scripts/demo-seed.*"
+      ],
+      "dependsOn": []
     }
   ]
 }
