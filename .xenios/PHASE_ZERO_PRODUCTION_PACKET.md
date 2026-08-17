@@ -70,4 +70,31 @@ the truthful supported path afterwards.
 First containment on any release-blocking issue:
 RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=false, verify the doors refuse again,
 and only then debug. Preserve every committed request row. If needed, redeploy
-b0fe3963722665dcd7e8853f05f637bc09960a56.
+the verified production predecessor (458e7284 per the 2026-08-17
+reconciliation below; b0fe3963722665dcd7e8853f05f637bc09960a56 remains the
+next-older fallback).
+
+## Baseline reconciliation (2026-08-17, claude-fable-desktop)
+
+Production moved off this packet's b0fe396 baseline BEFORE Phase Zero began:
+a MANUAL deploy, dep-da1lmgu417fc73elr8f0, went live 2026-08-17T19:05:41Z
+with commit 458e7284c12cfbd95bd91371afb88cb8a6201454 (the head of
+release/early-access-code-session-checkout). Render deploy metadata records
+trigger "manual" and exposes no actor: UNKNOWN MANUAL DEPLOY ACTOR. The
+unexplained deploy authorizes no further mutation.
+
+Independent derivation by this session: b0fe396..458e7284 is a fast-forward
+of exactly three commits (7d6ef7a, 17a8370, 458e728) touching ONLY
+.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, and
+docs/research-launch/RESEARCH_PLATFORM_0_2_EVIDENCE.md. Zero changes under
+client/, server/, shared/, supabase/migrations/, or any build/runtime
+configuration. Drift type: NON-RUNTIME.
+
+Consequences:
+- Pre-flight item 1 above is superseded: production runs 458e7284
+  (dep-da1lmgu417fc73elr8f0), not b0fe396.
+- 458e7284 is the NEW verified Phase Zero production predecessor and the
+  first containment redeploy target.
+- The frozen candidate 32bbd7998e806d881590c9e9a32123c2b8ba8168 descends
+  from 458e7284 (verified ancestor), so the approved release SHA, M71, the
+  admin email, and the flag scope are UNCHANGED. The founder approval stands.

@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T17:10:42Z",
+  "updatedAt": "2026-08-17T19:25:00Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "17a8370a5a0cc7bdeab7793df8a9c01ff18ebf2b",
+  "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
   "lastDocumentedProductionRelease": {
     "tag": "RESEARCH_PLATFORM_0_4",
-    "sha": "b0fe396",
-    "rollback": "cfc83f4",
-    "deployId": "dep-da07gcdbedkc73a3mka0",
-    "status": "live"
+    "sha": "458e7284",
+    "rollback": "b0fe396",
+    "deployId": "dep-da1lmgu417fc73elr8f0",
+    "status": "live",
+    "note": "0_4 runtime plus the non-runtime continuity corpus; manual deploy live 2026-08-17T19:05:41Z, actor unknown; reconciled as the Phase Zero predecessor 2026-08-17"
   },
   "nextRelease": {
     "name": "RESEARCH_PLATFORM_0_5",

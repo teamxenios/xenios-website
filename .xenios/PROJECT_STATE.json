@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-15T15:10:00Z",
+  "updatedAt": "2026-08-17T19:25:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "17a8370a5a0cc7bdeab7793df8a9c01ff18ebf2b",
+  "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
   "currentRelease": {
     "tag": "RESEARCH_PLATFORM_0_4",
-    "sha": "b0fe396",
+    "sha": "458e7284",
     "status": "live",
-    "rollback": "cfc83f4",
-    "deployId": "dep-da07gcdbedkc73a3mka0"
+    "rollback": "b0fe396",
+    "deployId": "dep-da1lmgu417fc73elr8f0",
+    "note": "0_4 runtime plus the non-runtime continuity corpus (untagged branch head); manual deploy live 2026-08-17T19:05:41Z, actor unknown"
   },
   "catalog": {
     "workbookRows": 420,
@@ -54,6 +55,7 @@
   "notes": [
     "Kris/Roman is one buyer configuration, not the general architecture.",
     "Provider-only products remain in Care.",
-    "RUO products remain research-use only."
+    "RUO products remain research-use only.",
+    "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it."
   ]
 }

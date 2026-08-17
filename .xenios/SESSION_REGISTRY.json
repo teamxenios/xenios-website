@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T19:20:25.102Z",
-      "note": "2026-08-17 manual-bearer FINAL preflight: scoped supabase-xenios-prod STILL exposes no tools (SUPABASE_ACCESS_TOKEN unset in session env; .mcp.json header wiring verified, no literal secret); DB items 2-4 unverifiable; account-level connector untouched. NEW DRIFT: manual deploy dep-da1lmgu417fc73elr8f0 of 458e7284 (release-branch head) went LIVE 2026-08-17T19:05:41Z replacing b0fe396 — packet pre-flight item 1 stale; autoDeploy still no/off. READY FOR FOUNDER GO: NO."
+      "heartbeatAt": "2026-08-17T19:30:09.183Z",
+      "note": "2026-08-17 reconciled preflight: drift b0fe396->458e7284 independently derived as NON-RUNTIME (3 commits, corpus/docs/agentic only, fast-forward); 458e7284 recorded as verified Phase Zero predecessor in packet+PROJECT_STATE+RELEASE_STATE; deploy dep-da1lmgu417fc73elr8f0 actor UNKNOWN (Render exposes none); frozen 32bbd799 descends from predecessor; /api/health OK. Scoped supabase-xenios-prod STILL zero tools (SUPABASE_ACCESS_TOKEN unset in process); computer-use on Claude Desktop itself is platform-refused, so env-editor check and successor-session launch require Samuel. READY: NO, sole blocker is DB-side verification."
     }
   ]
 }
