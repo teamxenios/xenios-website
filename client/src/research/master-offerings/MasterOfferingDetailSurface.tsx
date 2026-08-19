@@ -39,6 +39,24 @@ const REFUSAL_COPY: Readonly<
   cart_refused: "The cart could not accept this right now. Please try again.",
 };
 
+/**
+ * Copy for specific cart refusal codes worth more than the generic sentence.
+ * `commerce_disabled` in particular must stay truthful: the cart is off, the
+ * request path still works, and "try again" would be a lie. Routed on the
+ * machine code, never on a message.
+ */
+const CART_REFUSAL_CODE_COPY: Readonly<Record<string, string>> = {
+  commerce_disabled:
+    "Direct checkout is not enabled yet. This variant can still be requested through the request option.",
+};
+
+function refusalCopy(outcome: Exclude<CatalogCartOutcome, { ok: true }>): string {
+  if (outcome.reason === "cart_refused" && outcome.code !== undefined) {
+    return CART_REFUSAL_CODE_COPY[outcome.code] ?? REFUSAL_COPY.cart_refused;
+  }
+  return REFUSAL_COPY[outcome.reason];
+}
+
 function DetailSkeleton() {
   return (
     <div className="grid min-w-0 gap-4" aria-hidden="true" data-testid="mo-detail-skeleton">
@@ -128,7 +146,7 @@ export function MasterOfferingDetailSurface({
           });
           return;
         }
-        setRefusal(REFUSAL_COPY[outcome.reason]);
+        setRefusal(refusalCopy(outcome));
       } finally {
         setAdding(false);
       }

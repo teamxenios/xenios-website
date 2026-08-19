@@ -62,6 +62,7 @@ const ADD_TO_CART = {
   label: "Add to Cart",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
   amount: { amountCents: 9900, currency: "USD" },
   evaluatedAt: "2026-08-13T12:00:00.000Z",
 } as const;

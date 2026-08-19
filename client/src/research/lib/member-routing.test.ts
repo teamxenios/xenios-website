@@ -31,6 +31,48 @@ describe("safeResearchReturnTo", () => {
       .toBe("/research/member/orders/order_123");
     expect(safeResearchReturnTo("/research/activate")).toBe("/research/activate");
   });
+
+  it("allows a v2 catalog product detail so Buy Now survives sign-in", () => {
+    expect(
+      safeResearchReturnTo(
+        "/research/member/catalog/research_vials/research-vials-bpc-157",
+      ),
+    ).toBe("/research/member/catalog/research_vials/research-vials-bpc-157");
+    expect(
+      safeResearchReturnTo(
+        "/research/member/catalog/clinical_formulations_503a/some-offering-1",
+      ),
+    ).toBe("/research/member/catalog/clinical_formulations_503a/some-offering-1");
+    // The list page was already a static member route and stays allowed.
+    expect(safeResearchReturnTo("/research/member/catalog"))
+      .toBe("/research/member/catalog");
+  });
+
+  it.each([
+    // Crafted external and protocol-relative destinations that merely mention
+    // the catalog path still refuse: the origin check and the leading-slash
+    // requirement run before any pattern does.
+    "https://evil.example/research/member/catalog/research_vials/bpc-157",
+    "//evil.example/research/member/catalog/research_vials/bpc-157",
+    "/\\evil.example/research/member/catalog/research_vials/bpc-157",
+    "javascript:alert(1)//research/member/catalog/research_vials/bpc-157",
+    // Traversal, encoded traversal, and double-encoded traversal inside the
+    // catalog segments. (Traversal that normalizes onto a registered member
+    // path is already covered by the shared normalization rules above; these
+    // are the ones that try to escape.)
+    "/research/member/catalog/research_vials/../../admin",
+    "/research/member/catalog/research_vials/%2e%2e",
+    "/research/member/catalog/research_vials/%252e%252e",
+    // Shape violations: a missing segment, an extra segment, an uppercase
+    // family, a slug with a dot, an overlong slug.
+    "/research/member/catalog/research_vials",
+    "/research/member/catalog/research_vials/bpc-157/extra",
+    "/research/member/catalog/Research_Vials/bpc-157",
+    "/research/member/catalog/research_vials/bpc.157",
+    `/research/member/catalog/research_vials/${"a".repeat(200)}`,
+  ])("refuses a crafted catalog returnTo: %s", (value) => {
+    expect(safeResearchReturnTo(value)).toBeNull();
+  });
 });
 
 describe("memberDestination", () => {

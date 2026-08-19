@@ -24,6 +24,7 @@ const ADD_TO_CART: MasterOfferingAction = {
   label: "Add to Cart",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
   amount: { amountCents: 9900, currency: "USD" },
   evaluatedAt: "2026-08-13T12:00:00.000Z",
 };
@@ -47,6 +48,7 @@ describe("catalog to cart handoff", () => {
       request: {
         productId: "pc_product_1",
         variantId: "pc_variant_1",
+        sku: "XEN-BPC-10",
         quantity: 7,
         amountCents: 9900,
         currency: "USD",
@@ -55,6 +57,18 @@ describe("catalog to cart handoff", () => {
           "catalog:pc_product_1:pc_variant_1:7:2026-08-13T12:00:00.000Z",
       },
     });
+  });
+
+  it("refuses an add_to_cart whose SKU arrived blank rather than guessing one", () => {
+    // The server validates the selection SKU non-blank before it can emit
+    // add_to_cart, so a blank one is a malformed wire value. The handoff
+    // refuses it; it never substitutes a variant id or an empty string the
+    // SKU-keyed cart would misread.
+    for (const sku of ["", "   "]) {
+      expect(
+        buildCatalogCartRequest({ ...ADD_TO_CART, sku }, 1, BAND),
+      ).toEqual({ ok: false, reason: "not_purchasable" });
+    }
   });
 
   it("accepts the whole 1 to 50 band and refuses 51 without clamping", () => {

@@ -60,6 +60,15 @@ function card(index: number, overrides: Partial<MasterOfferingCardView> = {}) {
         displayState: "available_now",
         displayLabel: "Available Now",
         price: priced(9900),
+        action: {
+          kind: "add_to_cart",
+          label: "Add to Cart",
+          productId: "pc_product_1",
+          variantId: "pc_variant_1",
+          sku: "XEN-BPC-05",
+          amount: { amountCents: 9900, currency: "USD" },
+          evaluatedAt: "2026-08-13T12:00:00.000Z",
+        },
       },
       {
         id: `mov_${index}_b`,
@@ -67,6 +76,11 @@ function card(index: number, overrides: Partial<MasterOfferingCardView> = {}) {
         displayState: "available_now",
         displayLabel: "Available Now",
         price: priced(18900),
+        action: {
+          kind: "request_access",
+          label: "Request Access",
+          href: "/research/member/product-requests/new",
+        },
       },
     ],
     priceSummary: {

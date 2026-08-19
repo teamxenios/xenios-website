@@ -61,6 +61,11 @@ function card(
           effectiveAt: "2026-08-01T00:00:00.000Z",
           expiresAt: null,
         },
+        action: {
+          kind: "request_access",
+          label: "Request Access",
+          href: "/research/member/product-requests/new",
+        },
       },
       {
         id: "mov_b",
@@ -68,6 +73,11 @@ function card(
         displayState: "coming_soon",
         displayLabel: "Coming Soon",
         price: MASTER_OFFERING_PRICE_ON_REQUEST,
+        action: {
+          kind: "join_waitlist",
+          label: "Join Waitlist",
+          href: "/research/member/product-requests/new",
+        },
       },
     ],
     priceSummary: {
@@ -134,7 +144,7 @@ describe("full catalog page", () => {
     unmount();
   });
 
-  it("never renders a purchase action or a zero price on a card", () => {
+  it("never renders a purchase action or a zero price on a non-purchasable card", () => {
     const { host, unmount } = render(
       <FullCatalogPage
         query={{}}
@@ -148,6 +158,11 @@ describe("full catalog page", () => {
                   displayState: "planned",
                   displayLabel: "Planned",
                   price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "get_updates",
+                    label: "Get Updates",
+                    href: "/research/member/product-requests/new",
+                  },
                 },
               ],
               priceSummary: {
@@ -165,16 +180,88 @@ describe("full catalog page", () => {
         onQueryChange={() => {}}
       />,
     );
+    // The card renders the server-resolved action and nothing stronger: a
+    // planned variant gets its request path, never a Buy button and never a
+    // zero standing in for a missing price.
     expect(host.textContent).not.toContain("Add to Cart");
+    expect(host.textContent).not.toContain("Buy Now");
     expect(host.textContent).not.toContain("$0.00");
-    // Scoped to the card. The page chrome around it has controls of its own
-    // (paging, the price-list download); a card has no action at all, because
-    // an exact variant action is resolved by the server on the detail surface.
     const card1 = host.querySelector('[data-testid="mo-card"]');
-    expect(card1?.querySelectorAll("button")).toHaveLength(0);
+    expect(card1?.querySelector('[data-testid="mo-card-buy-now"]')).toBeNull();
+    expect(
+      card1?.querySelector('[data-testid="mo-card-action"]')?.textContent,
+    ).toBe("Get Updates");
     expect(
       host.querySelector('[data-testid="mo-card-price"]')?.textContent,
     ).toBe("Price on request");
+    unmount();
+  });
+
+  it("renders Buy Now only for a server-resolved add_to_cart, linking the detail page", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{}}
+        page={page({
+          products: [
+            card({
+              variants: [
+                {
+                  id: "mov_a",
+                  label: "5 mg vial",
+                  displayState: "available_now",
+                  displayLabel: "Available Now",
+                  price: {
+                    state: "priced",
+                    basis: "exact_listed_unit",
+                    amountCents: 9900,
+                    currency: "USD",
+                    display: "$99.00",
+                    priceId: "price_1",
+                    priceVersion: 1,
+                    effectiveAt: "2026-08-01T00:00:00.000Z",
+                    expiresAt: null,
+                  },
+                  action: {
+                    kind: "add_to_cart",
+                    label: "Add to Cart",
+                    productId: "pc_product_1",
+                    variantId: "pc_variant_1",
+                    sku: "XEN-BPC-10",
+                    amount: { amountCents: 9900, currency: "USD" },
+                    evaluatedAt: "2026-08-13T12:00:00.000Z",
+                  },
+                },
+                {
+                  id: "mov_b",
+                  label: "10 mg vial",
+                  displayState: "available_now",
+                  displayLabel: "Available Now",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "request_access",
+                    label: "Request Access",
+                    href: "/research/member/product-requests/new",
+                  },
+                },
+              ],
+            }),
+          ],
+        })}
+        onQueryChange={() => {}}
+      />,
+    );
+    // Buy Now navigates to the exact-variant detail page, where the quantity
+    // band and the cart handoff live. The card adds nothing directly.
+    const buyNow = host.querySelectorAll('[data-testid="mo-card-buy-now"]');
+    expect(buyNow).toHaveLength(1);
+    expect(buyNow[0].textContent).toBe("Buy Now");
+    expect(buyNow[0].getAttribute("href")).toBe(
+      "/research/member/catalog/research_vials/research-vials-bpc-157",
+    );
+    // The unbound variant on the same card keeps its truthful request action.
+    expect(
+      host.querySelector('[data-testid="mo-card-action"]')?.textContent,
+    ).toBe("Request Access");
     unmount();
   });
 

@@ -54,6 +54,11 @@ const VARIANT_SUMMARY = {
   displayState: "available_now" as const,
   displayLabel: "Available Now",
   price: { state: "on_request" as const },
+  action: {
+    kind: "request_access" as const,
+    label: "Request Access" as const,
+    href: "/research/member/product-requests/new",
+  },
 };
 
 const CARD = {
