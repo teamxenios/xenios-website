@@ -295,6 +295,21 @@ export type AssistedOrderRouteViewerResolver<Request> = Readonly<{
   resolve(request: Request): Promise<AssistedOrderViewer>;
 }>;
 
+/**
+ * Verifies the signed affiliate attribution cookie on an inbound submit and
+ * yields the SERVER-derived attribution ref (the attributed partner id), or
+ * null. The ref never comes from the request body: the browser carries the
+ * HMAC-signed cookie the referral capture door set, but it cannot name a
+ * partner directly. The composition root builds this over
+ * verifiedAttributionRefFromCookieHeader (server/research/partners/
+ * attribution-cookie.ts) with the partner link secret; absent wiring or an
+ * absent secret both resolve to null, so attribution fails closed to
+ * "no partner" rather than trusting anything the client sent.
+ */
+export type AssistedOrderAttributionResolver = Readonly<{
+  resolve(cookieHeader: string | undefined): string | null;
+}>;
+
 export type AssistedOrderStatusTransition = Readonly<{
   from: AssistedOrderStatus;
   to: AssistedOrderStatus;
