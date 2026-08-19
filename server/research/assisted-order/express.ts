@@ -42,7 +42,17 @@ const ADMIN_CAPABILITIES: ReadonlySet<string> = new Set([
 ]);
 
 export type AssistedOrderViewerWiring = Readonly<{
-  resolveMember(req: Request): Promise<{ id: string; email: string | null } | null>;
+  resolveMember(req: Request): Promise<{
+    id: string;
+    email: string | null;
+    /**
+     * Opaque server-derived pricing viewer for the canonical master-offerings
+     * price authority, derived from the SAME member row as this identity —
+     * never from browser input. Absent means no price grant, and every price
+     * truthfully fails closed to "Price on request".
+     */
+    pricingViewer?: unknown;
+  } | null>;
   /** The observed Early Access door sources, or null before registration. */
   earlyAccess(): Readonly<{
     identity: { resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<unknown> };
@@ -74,6 +84,10 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
           earlyAccessSessionHash: null,
           normalizedEmail: member.email?.trim().toLowerCase() ?? null,
           capabilities: CUSTOMER_CAPABILITIES,
+          // Carried, never derived here: the wiring built this from the same
+          // member row it resolved above. Early Access and anonymous viewers
+          // below deliberately carry none, so their prices fail closed.
+          pricingViewer: member.pricingViewer ?? null,
         }) as AssistedOrderViewer;
       }
       const doors = wiring.earlyAccess();

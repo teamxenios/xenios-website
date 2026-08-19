@@ -101,6 +101,11 @@ import type { MasterOfferingCatalogViewer } from "./research/master-offerings/ro
 import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
 import { mayViewMasterOfferings } from "./research/master-offerings/visibility-policy";
 import {
+  masterOfferingViewerForMember,
+  pricingIdentityFromViewer,
+  type MasterOfferingViewerWithGrant,
+} from "./research/master-offerings/member-pricing-viewer";
+import {
   loadBindingIndex,
   masterOfferingProductionBindings,
   MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
@@ -541,28 +546,22 @@ registerPricingApi(app, {
 // OFF on this surface: the selection authority answers a truthful not-ok
 // (the general units carry no commerce approval), so a price view never
 // becomes a cart selection here.
-type MasterOfferingViewerWithGrant = MasterOfferingCatalogViewer & {
-  pricingGrant?: { sourceVersion: string };
-};
 const authorizeMasterOfferingViewer = async (
   req: Request,
 ): Promise<MasterOfferingCatalogViewer | null> => {
   const member = await resolveActiveMemberSilently(req);
   if (!member) return null;
-  const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-  const email = (member.email || "").toLowerCase().trim();
-  const audience: MasterOfferingCatalogViewer["audience"] =
-    adminEmail !== "" && email === adminEmail ? "admin" : "member";
-  if (!mayViewMasterOfferings({ audience, email })) return null;
   // The viewer carries the pricing grant derived from the SAME member row the
-  // guard authenticated, so identityFor below never re-derives authorization
-  // from anything a browser could influence. Structural extra field: the lane
-  // treats the viewer as opaque and hands it back to identityFor unchanged.
-  const viewer: MasterOfferingViewerWithGrant = {
-    audience,
-    email,
-    pricingGrant: { sourceVersion: memberAudienceSourceVersion(member) },
-  };
+  // guard authenticated, through the one shared derivation the assisted-order
+  // bridge also uses, so identityFor below never re-derives authorization
+  // from anything a browser could influence.
+  const viewer: MasterOfferingViewerWithGrant = masterOfferingViewerForMember(
+    member,
+    process.env.ADMIN_EMAIL || "",
+  );
+  if (!mayViewMasterOfferings({ audience: viewer.audience, email: viewer.email })) {
+    return null;
+  }
   return viewer;
 };
 const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencies(
@@ -577,16 +576,10 @@ const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencie
     pricingSource: new CatalogPricingProductSource(
       createProductionProductControlReader(),
     ),
-    identityFor: (viewer) => {
-      const grant = (viewer as MasterOfferingViewerWithGrant).pricingGrant;
-      if (!grant) return null;
-      return {
-        audience: "member",
-        sourceVersion: grant.sourceVersion,
-        evaluatedAt: new Date().toISOString(),
-        currency: "USD",
-      };
-    },
+    // Null-safe: a viewer without a grant (an Early Access session, an
+    // anonymous probe through the assisted-order seam) is a null identity and
+    // every price truthfully fails closed to "Price on request".
+    identityFor: (viewer) => pricingIdentityFromViewer(viewer),
   },
   authorizeMasterOfferingViewer,
 );
@@ -634,8 +627,12 @@ const assistedOrderComposition = buildAssistedOrderProduction({
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
   masterOfferingServiceFor: (viewer) => {
     try {
+      // The pricing viewer rides on the assisted-order viewer, set only by the
+      // member resolver below from the authenticated member row. A viewer
+      // without one (Early Access session, anonymous probe) still gets the
+      // catalog; identityFor resolves null and prices stay "Price on request".
       const service = masterOfferingCatalogDependencies.serviceForViewer(
-        (viewer as { pricingViewer?: unknown }).pricingViewer as never,
+        viewer.pricingViewer as MasterOfferingViewerWithGrant,
       );
       // The composition's factory is synchronous today. A promise here would
       // mean a future async factory, which this seam does not support, so
@@ -671,7 +668,17 @@ if (assistedOrderComposition.service) {
   const assistedOrderViewers = createAssistedOrderViewerResolvers({
     resolveMember: async (req) => {
       const member = await resolveActiveMemberSilently(req);
-      return member ? { id: member.id, email: member.email ?? null } : null;
+      if (!member) return null;
+      return {
+        id: member.id,
+        email: member.email ?? null,
+        // The SAME derivation the v2 catalog doors price through, from the
+        // SAME member row this resolver authenticated. Never browser input.
+        pricingViewer: masterOfferingViewerForMember(
+          member,
+          process.env.ADMIN_EMAIL || "",
+        ),
+      };
     },
     earlyAccess: () => earlyAccessDoorSources.current,
     adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),

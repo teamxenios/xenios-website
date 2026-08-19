@@ -10,6 +10,7 @@ import type {
   AssistedOrderCatalogPort,
   AssistedOrderDocumentStore,
   AssistedOrderGoogleMirrorQueue,
+  AssistedOrderLegalPort,
   AssistedOrderLogger,
   AssistedOrderOutbox,
   AssistedOrderRepository,
@@ -22,6 +23,15 @@ export type AssistedOrderProductionInputs = Readonly<{
   outbox: AssistedOrderOutbox | null;
   audit: AssistedOrderAuditSink | null;
   documents: AssistedOrderDocumentStore | null;
+  /**
+   * The canonical legal authority (the Early Access required-agreement list).
+   * Deliberately REQUIRED, not optional: the 2026-08-18 recovery packet found
+   * production composed without it because the field did not exist here, so a
+   * caller must now state it explicitly. Null still composes a service — the
+   * service reports the feature unavailable up front and refuses every
+   * submission (D-005 fail-closed); nothing here invents an agreement.
+   */
+  legal: AssistedOrderLegalPort | null;
   googleMirror?: AssistedOrderGoogleMirrorQueue | null;
   adminNotificationEmail: string | null;
   documentBucketName?: string | null;
@@ -67,6 +77,7 @@ export function createAssistedOrderProductionComposition(
   return Object.freeze({
     enabled: true,
     service: new AssistedOrderService({
+      legal: inputs.legal,
       catalog: inputs.catalog!,
       repository: inputs.repository!,
       outbox: inputs.outbox!,
