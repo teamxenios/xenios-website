@@ -11,10 +11,12 @@ import {
   runEarlyAccessCall,
   type EarlyAccessPersistenceQuery,
 } from "../persistence/executor";
+import type { EarlyAccessCommissionAccrual } from "../commerce/commission-event";
 import type {
   CartCommitResult,
   CartExternalProofCommit,
   CartSettlementCommit,
+  CartSettlementCommitInput,
   EarlyAccessCartQuoteRecord,
   EarlyAccessCartStorePorts,
 } from "./ports";
@@ -29,6 +31,7 @@ const RPC = Object.freeze({
   proofs: "research_early_access_cart_external_proofs",
   settlement: "research_early_access_cart_settlement",
   commitSettlement: "research_early_access_commit_cart_settlement",
+  commitSettlementWithCommission: "research_early_access_commit_cart_settlement_with_commission",
   settlementHardening: "research_early_access_cart_settlement_hardening",
   status: "research_early_access_cart_status",
 });
@@ -53,6 +56,7 @@ const SETTLEMENT_REASONS = [
   "checkout_superseded",
   "admin_confirmation_missing",
   "transaction_id_duplicate_canonical",
+  "commission_invalid",
   "input_invalid",
 ] as const;
 
@@ -213,35 +217,51 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
   /**
    * KNOWN GAP, NAMED RATHER THAN PAPERED OVER.
    *
-   * `canonicalTransactionId` is accepted here and is NOT yet passed to the RPC,
-   * because the deployed function's signature has no parameter for it and its
-   * duplicate check still compares `external_transaction_id` raw to raw. Adding
-   * the parameter, the column and the unique index on it is migration 62's
-   * work, recorded as `EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN`.
-   *
-   * Until that lands, canonical uniqueness holds at the service boundary and in
-   * the in-memory store but NOT in the database, so a caller reaching the RPC
-   * directly could still settle two spellings of one payment. Passing the
-   * canonical value in place of the raw one would close it today at the cost of
-   * destroying the operator's reconciliation view, which is the wrong trade.
-   * This is a gap to close, not a gap to hide.
+   * `canonicalTransactionId` is accepted here and is NOT yet passed to the RPC.
+   * The deployed M62 wrapper derives the same canonical form itself and keys
+   * `research_early_access_cart_transaction_ids.canonical_transaction_id`
+   * uniquely on it, so the sole GRANTED settlement door already refuses two
+   * spellings of one payment. What the database still lacks is the invariant on
+   * the settlements TABLE itself, recorded as
+   * `EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN`: a future routine
+   * writing `research_early_access_cart_settlements` directly would only be
+   * checked raw-to-raw. The founder-gated candidate
+   * `supabase/candidates/20260819_research_ea_cart_settlement_canonical_txn.sql`
+   * closes that with a stored generated column and a unique index, where no
+   * routine can forget to consult it.
    */
-  async commitSettlement(input: {
-    checkout: EarlyAccessCartCheckoutRecord;
-    evidenceRef: string;
-    externalTransactionId: string;
-    canonicalTransactionId: string;
-    verifiedAmountCents: number;
-    verifiedCurrency: "USD";
-    actorId: string;
-    confirmedFundsReceived: true;
-    confirmedAmountAndReference: true;
-    at: string;
-  }): Promise<CartSettlementCommit> {
+  async commitSettlement(input: CartSettlementCommitInput): Promise<CartSettlementCommit> {
+    return this.settle(RPC.commitSettlement, input, {});
+  }
+
+  /**
+   * Settlement AND commission accrual through the candidate RPC, which wraps
+   * the deployed M62 settlement function and inserts the commission event in
+   * the SAME transaction: both durable or neither.
+   *
+   * Until the founder applies
+   * `supabase/candidates/20260819_research_ea_cart_commission_settlement.sql`,
+   * the function is absent and this call throws the named persistence error —
+   * a refusal with nothing written, which is exactly the fail-closed behaviour
+   * the settlement service documents for an attributed checkout.
+   */
+  async commitSettlementWithCommission(
+    input: CartSettlementCommitInput & Readonly<{ commission: EarlyAccessCommissionAccrual }>,
+  ): Promise<CartSettlementCommit> {
+    return this.settle(RPC.commitSettlementWithCommission, input, {
+      p_commission: input.commission,
+    });
+  }
+
+  private async settle(
+    fn: string,
+    input: CartSettlementCommitInput,
+    extraArgs: Readonly<Record<string, unknown>>,
+  ): Promise<CartSettlementCommit> {
     const raw = expectObject(
-      RPC.commitSettlement,
+      fn,
       await runEarlyAccessCall(this.query, {
-        fn: RPC.commitSettlement,
+        fn,
         args: {
           p_checkout_number: input.checkout.cartCheckoutNumber,
           p_external_transaction_id: input.externalTransactionId,
@@ -252,10 +272,11 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
           p_confirmed_funds_received: input.confirmedFundsReceived,
           p_confirmed_amount_and_reference: input.confirmedAmountAndReference,
           p_at: input.at,
+          ...extraArgs,
         },
       }),
     );
-    const settlement = nullableObject(RPC.commitSettlement, raw.settlement);
+    const settlement = nullableObject(fn, raw.settlement);
     if (raw.committed === true && settlement !== null) {
       return Object.freeze({
         committed: true as const,
@@ -263,7 +284,7 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
       });
     }
     if (!isOneOf(raw.reason, SETTLEMENT_REASONS)) {
-      throw new EarlyAccessPersistenceError(RPC.commitSettlement);
+      throw new EarlyAccessPersistenceError(fn);
     }
     if (raw.reason === "already_settled") {
       if (settlement === null) {
@@ -273,7 +294,7 @@ export class SupabaseEarlyAccessCartStore implements EarlyAccessCartStorePorts {
         // supplierReleased all true, so a null settlement would assert three
         // facts the database just failed to show. An inconsistent durable
         // state is an error, not a success with a missing field.
-        throw new EarlyAccessPersistenceError(RPC.commitSettlement);
+        throw new EarlyAccessPersistenceError(fn);
       }
       const hardening = await this.settlementHardening(input.checkout.cartCheckoutNumber);
       return Object.freeze({

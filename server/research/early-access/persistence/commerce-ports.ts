@@ -9,6 +9,7 @@ import type {
 } from "../routes/ports";
 import { earlyAccessSupplierIdentifier } from "../ops/supplier-identity";
 import {
+  EarlyAccessPersistenceError,
   expectObject,
   runEarlyAccessCall,
   type EarlyAccessPersistenceQuery,
@@ -31,6 +32,7 @@ const RPC = {
   supplierForUnit: "research_early_access_supplier_for_unit",
   shippingServes: "research_early_access_shipping_serves",
   referralForCustomer: "research_early_access_referral_for_customer",
+  grantReferral: "research_early_access_grant_referral",
 } as const;
 
 export type EarlyAccessRequiredAgreement = Readonly<{ kind: string; version: string }>;
@@ -173,6 +175,93 @@ export class SupabaseEarlyAccessShippingPolicy implements EarlyAccessShippingPol
       args: { p_country: destination.country, p_region: destination.region },
     });
     return raw === true;
+  }
+}
+
+const REFERRAL_CUSTOMER_REF = /^eac_[a-f0-9]{32}$/;
+const REFERRAL_CODE = /^[A-Za-z0-9][A-Za-z0-9_.:-]{2,63}$/;
+const REFERRAL_AFFILIATE = /^[A-Za-z0-9][A-Za-z0-9_.:-]{2,127}$/;
+
+/**
+ * The rate ceiling the commission lane enforces, restated here so a grant this
+ * writer records can never carry a rate the settlement lane would then refuse.
+ * The table's own constraint allows up to 10000; the money lane caps holds at
+ * half the order, and a grant above that cap is a grant that can never pay, so
+ * it is refused at write time where the operator can still see why.
+ */
+const REFERRAL_MAX_HOLD_BASIS_POINTS = 5_000;
+
+export type EarlyAccessReferralGrantInput = Readonly<{
+  customerRef: string;
+  referralCode: string;
+  affiliateId: string;
+  affiliateCustomerRef: string;
+  holdBasisPoints: number;
+}>;
+
+export type EarlyAccessReferralGrantOutcome = "granted" | "input_invalid";
+
+/**
+ * Records how a customer arrived, through the RPC migration 20260804120000
+ * already created and which, until this class, had ZERO server callers.
+ *
+ * Every field is server-derived: the caller is the customer-bind seam, which
+ * hands this writer values it resolved from a server-verified partner referral,
+ * never anything a browser typed. The RPC is an upsert keyed on customer_ref
+ * (one grant per customer, re-recording replaces the attribution and clears any
+ * revocation), so calling this twice with the same facts is one grant, which is
+ * what makes the seam safe to retry.
+ *
+ * It is a separate class from the resolver on purpose, exactly as the agreement
+ * recorder is separate from the agreement gate: the resolver reads and this
+ * writer writes, through two different functions, so a fault in the write path
+ * can only ever fail to record a grant (which attributes nothing). It cannot
+ * make the resolver answer with a grant that was never made.
+ */
+export class SupabaseEarlyAccessReferralGrantWriter {
+  private readonly query: EarlyAccessPersistenceQuery;
+
+  constructor(query: EarlyAccessPersistenceQuery) {
+    this.query = query;
+  }
+
+  async grant(input: EarlyAccessReferralGrantInput): Promise<EarlyAccessReferralGrantOutcome> {
+    // Refused BEFORE the database sees it. The table has its own constraints,
+    // but a constraint violation surfaces as an opaque persistence error, and
+    // a malformed grant is not an infrastructure fault: it is bad input from a
+    // seam that should hear so by name.
+    if (
+      !REFERRAL_CUSTOMER_REF.test(input.customerRef) ||
+      !REFERRAL_CUSTOMER_REF.test(input.affiliateCustomerRef) ||
+      !REFERRAL_CODE.test(input.referralCode) ||
+      !REFERRAL_AFFILIATE.test(input.affiliateId) ||
+      !Number.isSafeInteger(input.holdBasisPoints) ||
+      input.holdBasisPoints < 1 ||
+      input.holdBasisPoints > REFERRAL_MAX_HOLD_BASIS_POINTS ||
+      // An affiliate cannot be granted their own arrival. The table refuses
+      // this too; refusing it here keeps the refusal named.
+      input.affiliateCustomerRef === input.customerRef
+    ) {
+      return "input_invalid";
+    }
+    const raw = await runEarlyAccessCall(this.query, {
+      fn: RPC.grantReferral,
+      args: {
+        p_customer_ref: input.customerRef,
+        p_referral_code: input.referralCode,
+        p_affiliate_id: input.affiliateId,
+        p_affiliate_customer_ref: input.affiliateCustomerRef,
+        p_hold_basis_points: input.holdBasisPoints,
+      },
+    });
+    // The RPC returns literal true on success and nothing else. Any other
+    // answer means the function is not the function this writer was built
+    // against, and a grant that may or may not exist must be a failure, not a
+    // shrug.
+    if (raw !== true) {
+      throw new EarlyAccessPersistenceError(RPC.grantReferral);
+    }
+    return "granted";
   }
 }
 

@@ -4,6 +4,8 @@ import type {
 } from "@shared/research/early-access-cart";
 import { createHash } from "node:crypto";
 import { canonicalTransactionId } from "../hardening-contract";
+import type { EarlyAccessReferralResolver } from "../routes/ports";
+import { decideCartCommission } from "./commission";
 import {
   isCartCheckoutNumber,
   newCartEvidenceRef,
@@ -11,6 +13,7 @@ import {
 import type {
   CartExternalProofCommit,
   CartSettlementCommit,
+  CartSettlementCommitInput,
   EarlyAccessCartCheckoutStore,
   EarlyAccessCartSettlementStore,
 } from "./ports";
@@ -47,6 +50,16 @@ export type EarlyAccessCartSettlementDeps = Readonly<{
   evidenceRef?: () => string;
   /** Bridges Session 5's accepted transient submission to M60's metadata proof row. */
   submissionEvidence?: EarlyAccessAcceptedSubmissionEvidencePort;
+  /**
+   * The durable referral grant, re-resolved at SETTLEMENT time so the rate and
+   * the affiliate handles come from the server's current record rather than
+   * from anything frozen at checkout. Optional because most checkouts carry no
+   * attribution and need no resolver — but an ATTRIBUTED checkout arriving at
+   * a settlement door with no resolver wired is a missing dependency, and
+   * missing dependencies refuse by name; they never quietly settle the money
+   * while dropping the commission.
+   */
+  referrals?: Pick<EarlyAccessReferralResolver, "forCustomer">;
 }>;
 
 export type EarlyAccessAcceptedSubmissionEvidence = Readonly<{
@@ -219,7 +232,8 @@ export async function settleEarlyAccessCart(
       settlement: null,
     });
   }
-  return deps.settlements.commitSettlement({
+
+  const commit: CartSettlementCommitInput = {
     checkout,
     evidenceRef: proof.evidenceRef,
     externalTransactionId: input.externalTransactionId.trim(),
@@ -235,7 +249,43 @@ export async function settleEarlyAccessCart(
     confirmedFundsReceived: true,
     confirmedAmountAndReference: true,
     at: input.at,
-  });
+  };
+
+  // THE COMMISSION, decided at the one service every settlement door goes
+  // through. An unattributed checkout takes the plain door unchanged. An
+  // attributed one re-resolves the durable grant and, when a hold computes,
+  // MUST persist settlement and accrual in one transaction — or refuse by
+  // name. A computed commission is never dropped silently and never written
+  // separately, because a separate write is a half-write waiting for a crash.
+  if (checkout.attribution !== null && checkout.attribution !== undefined) {
+    if (!deps.referrals) {
+      return Object.freeze({
+        committed: false as const,
+        reason: "commission_persistence_unavailable" as const,
+        settlement: null,
+      });
+    }
+    // A durable read failure here propagates: the door answers 503 honestly
+    // rather than settling attributed money on a grant it could not read.
+    const grant = await deps.referrals.forCustomer(checkout.customerRef);
+    const decision = decideCartCommission({ checkout, grant, settledAt: input.at });
+    if (decision.commission) {
+      const atomicDoor = deps.settlements.commitSettlementWithCommission;
+      if (typeof atomicDoor !== "function") {
+        return Object.freeze({
+          committed: false as const,
+          reason: "commission_persistence_unavailable" as const,
+          settlement: null,
+        });
+      }
+      return atomicDoor.call(deps.settlements, { ...commit, commission: decision.accrual });
+    }
+    // The grant is revoked, mismatched, self-referring, or rounds to nothing:
+    // the attribution cannot be credited and is recorded as absent, not as a
+    // failure. The money has arrived; refusing to record THAT because an
+    // affiliate credit did not compute would be the wrong failure to choose.
+  }
+  return deps.settlements.commitSettlement(commit);
 }
 
 export function settlementIsApplied(

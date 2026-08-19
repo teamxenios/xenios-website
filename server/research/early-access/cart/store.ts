@@ -7,10 +7,12 @@ import type {
 import { checkoutView } from "./model";
 import { canonicalTransactionId } from "../hardening-contract";
 import { earlyAccessShipByAt } from "@shared/research/early-access-hardening";
+import type { EarlyAccessCommissionAccrual } from "../commerce/commission-event";
 import type {
   CartCommitResult,
   CartExternalProofCommit,
   CartSettlementCommit,
+  CartSettlementCommitInput,
   EarlyAccessHardenedCartSettlement,
   EarlyAccessCartCheckoutStore,
   EarlyAccessCartQuoteRecord,
@@ -33,6 +35,7 @@ export class InMemoryEarlyAccessCartStore
   private readonly proofRefsByCheckout = new Map<string, string[]>();
   private readonly settlements = new Map<string, EarlyAccessHardenedCartSettlement>();
   private readonly transactionIds = new Set<string>();
+  private readonly commissionEventsById = new Map<string, EarlyAccessCommissionAccrual>();
 
   async put(record: EarlyAccessCartQuoteRecord): Promise<void> {
     this.quotes.set(record.publicQuote.quoteId, record);
@@ -299,6 +302,33 @@ export class InMemoryEarlyAccessCartStore
       Object.freeze({ ...input.checkout, paymentState: "payment_verified" as const }),
     );
     return Object.freeze({ committed: true as const, settlement });
+  }
+
+  /**
+   * The atomic settlement-plus-commission door, mirroring the candidate RPC:
+   * the accrual is appended ONLY on the commit that genuinely settled the
+   * checkout, so a replay (`already_settled`) and every refusal write nothing.
+   * The suite runs mostly against this store, so if it stayed permissive the
+   * tests would keep proving a double-accrual production refuses.
+   */
+  async commitSettlementWithCommission(
+    input: CartSettlementCommitInput & Readonly<{ commission: EarlyAccessCommissionAccrual }>,
+  ): Promise<CartSettlementCommit> {
+    const committed = await this.commitSettlement(input);
+    if (committed.committed) {
+      // Append-only ledger: one accrual per checkout, keyed by its derived id.
+      // The guard is unreachable while commitSettlement enforces one
+      // settlement per checkout, and stays anyway: two guards drift less.
+      if (!this.commissionEventsById.has(input.commission.accrualId)) {
+        this.commissionEventsById.set(input.commission.accrualId, input.commission);
+      }
+    }
+    return committed;
+  }
+
+  /** Every accrued commission, for tests asserting on durable money truth. */
+  commissionEvents(): readonly EarlyAccessCommissionAccrual[] {
+    return Object.freeze(Array.from(this.commissionEventsById.values()));
   }
 
   async status(checkoutNumber: string): Promise<EarlyAccessCartStatus | null> {

@@ -454,7 +454,14 @@ describe("an unreadable existing settlement is a failure, never a fabricated suc
   });
 });
 
-describe("F2: the cart settlement path emits ZERO affiliate commission events", () => {
+describe("F2: an UNATTRIBUTED cart settlement emits ZERO affiliate commission events", () => {
+  // F2's original claim was "the cart lane emits no commission, ever", locked
+  // while the lane had no attribution at all. The launch slice changed the
+  // contract deliberately: an ATTRIBUTED checkout now accrues a hold, atomically
+  // with its settlement, under settlement-commission.test.ts's own guards. What
+  // F2 still owns — and what this test keeps proving — is that a checkout
+  // WITHOUT attribution crosses the entire flow touching no commission surface:
+  // no event, no response field, no accidental default.
   it("a complete quote, checkout, proof and settlement records no commission event of any kind", async () => {
     const { app, audit } = await cartApp({ mixed: true });
     const cookie = await unlock(app);
@@ -490,7 +497,16 @@ describe("F2: the cart settlement path emits ZERO affiliate commission events", 
     expect(JSON.stringify(settled.body)).not.toMatch(/commission|affiliate|payout/i);
   });
 
-  it("no cart module imports the affiliate commission lane, so there is nothing to switch on by accident", async () => {
+  it("the cart lane's ONLY commission imports are the reviewed pure money module", async () => {
+    // The original guard forbade every commission-shaped import, which was
+    // right while the cart had no attribution. The launch slice narrowed it
+    // rather than deleting it: the cart may import the PURE, payout-free
+    // policy module the single-product lane already trusts
+    // (../commerce/commission-event) and its own pure decision module
+    // (./commission). The affiliate portal, the payout surfaces, and every
+    // other commission-shaped module remain unreachable from this directory,
+    // so there is still nothing to switch on by accident.
+    const allowed = /from\s+"(\.\.\/commerce\/commission-event|\.\/commission)"/;
     const { readdirSync, readFileSync } = await import("node:fs");
     const { join } = await import("node:path");
     const here = join(import.meta.dirname);
@@ -499,7 +515,11 @@ describe("F2: the cart settlement path emits ZERO affiliate commission events", 
       if (!/\.ts$/.test(entry) || /\.test\.ts$/.test(entry)) continue;
       const source = readFileSync(join(here, entry), "utf8");
       for (const line of source.split("\n")) {
-        if (/^\s*import\b/.test(line) && /commission|affiliate|payout/i.test(line)) {
+        if (
+          /^\s*import\b/.test(line) &&
+          /commission|affiliate|payout/i.test(line) &&
+          !allowed.test(line)
+        ) {
           offenders.push(`${entry}: ${line.trim()}`);
         }
       }
