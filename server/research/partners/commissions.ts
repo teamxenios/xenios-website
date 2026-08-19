@@ -213,6 +213,15 @@ export interface CommissionService {
     asOf: Date,
   ): Promise<CommissionResult<AccrualOutcome>>;
   hold(ledgerId: string, adminId: string, reason: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
+  /**
+   * The SYSTEM-actor maturation hold. The founder's rule holds every fresh
+   * accrual for a configured number of days after settled payment and
+   * fulfillment; that hold is applied by the settlement machinery, not by an
+   * admin, so it moves pending -> held as "system" (a move the transition
+   * table already permits) while still recording why. Releasing the hold
+   * stays an admin decision: there is no system path out of "held".
+   */
+  holdForMaturation(ledgerId: string, reason: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   approve(ledgerId: string, adminId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   markPayable(ledgerId: string, asOf: Date): Promise<CommissionResult<CommissionLedgerEntry>>;
   /**
@@ -515,6 +524,13 @@ export function createCommissionService(deps: CommissionServiceDeps): Commission
         return denied([{ code: "missing_reason", message: "A hold must record why." }]);
       }
       return move(ledgerId, "held", "admin", adminId, reason, asOf, null);
+    },
+
+    async holdForMaturation(ledgerId, reason, asOf) {
+      if (!reason.trim()) {
+        return denied([{ code: "missing_reason", message: "A hold must record why." }]);
+      }
+      return move(ledgerId, "held", "system", null, reason, asOf, null);
     },
 
     async approve(ledgerId, adminId, asOf) {

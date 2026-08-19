@@ -288,6 +288,11 @@ export class AssistedOrderService {
   public async submit(
     viewer: AssistedOrderViewer,
     rawInput: AssistedOrderSubmitInput,
+    // The ONLY source of a stored affiliate attribution ref: the transport
+    // layer's verification of the signed attribution cookie. A value the
+    // browser places in the body is ignored below, never stored, so no
+    // request payload can name the partner who gets paid.
+    verifiedAffiliateAttributionRef: string | null = null,
   ): Promise<AssistedOrderReceipt> {
     requireCapability(viewer, "assisted_orders:submit");
     const input = validateSubmitInput(rawInput);
@@ -370,7 +375,12 @@ export class AssistedOrderService {
         authoritativeFingerprint: line.authoritativeFingerprint,
       })),
       generalNotes: input.generalNotes ?? null,
-      affiliateAttributionRef: input.affiliateAttributionRef ?? null,
+      // Pinned null, deliberately, for two reasons: attribution is a fact
+      // about the visit, not the request, so a resubmission with a changed
+      // cookie state must still replay as the SAME request; and every
+      // fingerprint stored before the server-derived seam carried null here
+      // (the browser never sent the field), so replays keep matching.
+      affiliateAttributionRef: null,
     });
 
     const stored = await this.deps.repository.createOrReplay(
@@ -392,7 +402,10 @@ export class AssistedOrderService {
         ageConfirmed: true,
         agreements: input.agreements,
         generalNotes: input.generalNotes ?? null,
-        affiliateAttributionRef: input.affiliateAttributionRef ?? null,
+        // Server-derived or nothing. input.affiliateAttributionRef is
+        // deliberately never read: the browser must not be able to choose
+        // which partner an order pays.
+        affiliateAttributionRef: verifiedAffiliateAttributionRef,
         estimatedTotalCents,
         currency: ASSISTED_ORDER_CURRENCY,
         source: ASSISTED_ORDER_SOURCE,

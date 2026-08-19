@@ -14,6 +14,7 @@ import {
   AssistedOrderService,
 } from "./service";
 import type {
+  AssistedOrderAttributionResolver,
   AssistedOrderRouteViewerResolver,
   AssistedOrderViewer,
 } from "./ports";
@@ -128,6 +129,10 @@ async function handle(
 export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpRequest>(
   service: AssistedOrderService,
   viewerResolver: AssistedOrderRouteViewerResolver<Request>,
+  // Optional so existing composition compiles unchanged; absent means every
+  // submission records no affiliate attribution, never that a body value is
+  // trusted instead.
+  attribution?: AssistedOrderAttributionResolver | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -163,9 +168,15 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       auth: "early_access_or_member",
       handler: (request) =>
         handle(async () => {
+          // The affiliate ref is derived HERE, from the verified attribution
+          // cookie on the request headers, and nowhere else. The body cannot
+          // supply one: the service ignores any body-carried value outright.
+          const affiliateAttributionRef =
+            attribution?.resolve(request.headers.cookie) ?? null;
           const receipt = await service.submit(
             await viewer(request),
             request.body as AssistedOrderSubmitInput,
+            affiliateAttributionRef,
           );
           return ok(201, receipt);
         }),
