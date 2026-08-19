@@ -1076,15 +1076,19 @@ $$;
 -- ---------------------------------------------------------------------------
 -- Function privileges. EXECUTE for service_role on the eight service
 -- routines only; the projection helpers and the trigger function are
--- reachable by no role at all.
+-- reachable by no role at all. The internal revokes INCLUDE service_role
+-- because managed Supabase's default privileges grant new functions
+-- EXECUTE to the client roles at creation; the first production apply
+-- (2026-08-19) was refused by the post-condition for exactly this, with
+-- nothing committed - the fail-closed design working as stated.
 -- ---------------------------------------------------------------------------
 
-revoke all on function public.research_assisted_order_line_json(public.research_assisted_order_lines) from public, anon, authenticated;
-revoke all on function public.research_assisted_order_lines_json(uuid) from public, anon, authenticated;
-revoke all on function public.research_assisted_order_timeline_json(uuid) from public, anon, authenticated;
-revoke all on function public.research_assisted_order_documents_json(uuid) from public, anon, authenticated;
-revoke all on function public.research_assisted_order_admin_json(uuid) from public, anon, authenticated;
-revoke all on function public.research_assisted_order_events_block_mutation() from public, anon, authenticated;
+revoke all on function public.research_assisted_order_line_json(public.research_assisted_order_lines) from public, anon, authenticated, service_role;
+revoke all on function public.research_assisted_order_lines_json(uuid) from public, anon, authenticated, service_role;
+revoke all on function public.research_assisted_order_timeline_json(uuid) from public, anon, authenticated, service_role;
+revoke all on function public.research_assisted_order_documents_json(uuid) from public, anon, authenticated, service_role;
+revoke all on function public.research_assisted_order_admin_json(uuid) from public, anon, authenticated, service_role;
+revoke all on function public.research_assisted_order_events_block_mutation() from public, anon, authenticated, service_role;
 revoke all on function public.research_assisted_order_submit(jsonb) from public, anon, authenticated;
 revoke all on function public.research_assisted_order_status(text, uuid, text, text) from public, anon, authenticated;
 revoke all on function public.research_assisted_order_admin_get(uuid) from public, anon, authenticated;
