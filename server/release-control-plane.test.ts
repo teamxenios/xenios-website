@@ -145,8 +145,12 @@ const SEARCH_PATH_HARDENING_PATH =
 // at HEAD, which is what this pin asserts. Without a branch here the node
 // falls to the fallback below and is asked to match the release baseline,
 // which it never can: it did not exist at the baseline.
+// Moved 2026-08-19: the first production apply was refused by the
+// migration's own post-condition (managed Supabase default privileges
+// grant new functions to client roles), and the corrected artifact
+// revokes service_role on the six internal helpers.
 const ASSISTED_ORDER_BRIDGE_SOURCE_SHA =
-  "35b0fbe5b8c924a3ab6f4322b2f692871e801a17";
+  "310ef190fd7136828ee6fcace7ec3bfb7567896f";
 const ASSISTED_ORDER_BRIDGE_PATH =
   "supabase/migrations/20260815150000_research_assisted_order_bridge.sql";
 // The three 2026-08-19 launch cart migrations (commission settlement, member
