@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-19T15:33:23.547Z",
+ "generatedAt": "2026-08-19T15:42:23.045Z",
  "inputs": {
   "dataset": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
   "bindings": "server/research/master-offerings/data/master-offering-bindings.generated.json",

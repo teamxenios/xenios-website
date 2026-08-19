@@ -27,10 +27,10 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import {
-  decideAssistedOrderAction,
-  type AssistedOrderCatalogAuthority,
-} from "../../shared/research/assisted-order/action-policy";
+import { decideAssistedOrderAction } from "../../shared/research/assisted-order/action-policy";
+import { authorityFor } from "../../server/research/assisted-order/production-catalog";
+import type { NormalizedMasterOffering } from "../../server/research/master-offerings/model";
+import type { MasterOfferingPriceView } from "../../shared/research/master-offerings/pricing-contract";
 
 const ROOT = process.cwd();
 
@@ -221,47 +221,35 @@ for (const product of dataset.products) {
     const priced =
       price !== null && price.variant_status === "approved" && price.variant_active;
 
-    const providerWorkflowRequired =
-      variant.displayState === "care_pathway" ||
-      product.displayState === "care_pathway" ||
-      product.family === "clinical_formulations_503a";
-    const classificationPending =
-      variant.displayState === "approval_required" ||
-      product.displayState === "approval_required";
-
-    const authority: AssistedOrderCatalogAuthority = Object.freeze({
-      productId: binding?.productId ?? `unbound:${product.id}`,
-      variantId: binding?.variantId ?? `unbound:${variant.id}`,
-      productName: product.displayName,
-      family: product.family,
-      channel: product.category,
-      specification: variant.label || null,
-      format: null,
-      packBasis: null,
-      minimumQuantity: 1,
-      maximumQuantity: null,
-      quantityIncrement: 1,
-      unitPriceCents: priced && binding !== null ? price!.amount_cents : null,
-      currency: "USD",
-      catalogVersion: "launch-matrix",
-      priceVersion: priced && binding !== null ? price!.price_id : null,
-      visible: !INVISIBLE_STATES.has(variant.displayState),
-      directEligible:
-        priced && binding !== null && !providerWorkflowRequired && !classificationPending,
-      providerWorkflowRequired,
-      classificationPending,
-      pricePending:
-        (!priced || binding === null) &&
-        !providerWorkflowRequired &&
-        !classificationPending,
-      held: HELD_STATES.has(variant.displayState),
-      outOfStock: false,
-      researchUseOnly:
-        product.family === "research_peptides_materials" ||
-        product.family === "research_capsules" ||
-        product.family === "research_supplies",
-      accessNotice: product.stateExplanation ?? null,
-    });
+    const offeringShape = {
+      ...product,
+      brand: product.brand ?? null,
+      aliases: product.aliases ?? [],
+      sourceReferences: [],
+      variants: product.variants.map((entry) => ({
+        ...entry,
+        visibility: "member",
+        sourceReferences: [],
+      })),
+    } as unknown as NormalizedMasterOffering;
+    const variantShape = offeringShape.variants.find((entry) => entry.id === variant.id)!;
+    const priceView: MasterOfferingPriceView | undefined =
+      priced && binding !== null
+        ? ({
+            state: "priced",
+            amountCents: price!.amount_cents,
+            currency: "USD",
+            priceId: price!.price_id,
+          } as unknown as MasterOfferingPriceView)
+        : undefined;
+    // THE production derivation, imported — not replicated.
+    const authority = authorityFor(
+      offeringShape,
+      variantShape,
+      priceView,
+      binding ? { productId: binding.productId, variantId: binding.variantId } : null,
+      "launch-matrix",
+    );
 
     const decision = decideAssistedOrderAction(authority);
     const mode = decision.workflowMode;

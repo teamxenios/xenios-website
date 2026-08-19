@@ -63,7 +63,12 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
   catalogVersion: string;
 }>;
 
-function authorityFor(
+/**
+ * Exported for the launch-matrix generator (scripts/research-launch), which
+ * must resolve every variant through THIS derivation rather than a replica
+ * that could drift. Production callers stay inside this module.
+ */
+export function authorityFor(
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOffering["variants"][number],
   price: MasterOfferingPriceView | undefined,
