@@ -601,7 +601,7 @@
     {
       "id": "research_assisted_order_bridge",
       "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
-      "sourceSha": "PENDING_COMMIT",
+      "sourceSha": "310ef190fd7136828ee6fcace7ec3bfb7567896f",
       "dependsOn": [],
       "checksum": {
         "algorithm": "sha256",
