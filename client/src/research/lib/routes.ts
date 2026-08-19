@@ -137,6 +137,7 @@ export const ADMIN_ROUTES = {
   capabilities: "/admin/research/capabilities",
   requiredInputs: "/admin/research/required-inputs",
   commerceQueues: "/admin/research/commerce-queues",
+  assistedOrders: "/admin/research/assisted-orders",
   activationQueue: "/admin/research/activation-queue",
   activationBridge: "/admin/research/activation-bridge",
   activationChecklist: "/admin/research/activation-checklist",
@@ -144,6 +145,7 @@ export const ADMIN_ROUTES = {
   activationReadiness: "/admin/research/activation-readiness",
   esignDocuments: "/admin/research/esign",
   earlyAccessReleases: "/admin/research/early-access/releases",
+  earlyAccessFulfillment: "/admin/research/early-access/fulfillment",
   audit: "/admin/research/audit",
 } as const;
 

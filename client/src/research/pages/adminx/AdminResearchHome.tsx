@@ -1,6 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "wouter";
 import { getSystemStatus, listApplications, listReferralFraud } from "../../adapters/adminOps";
+import {
+  countAssistedOrdersSubmitted,
+  listEarlyAccessAdminExceptions,
+  listEarlyAccessFulfillmentQueue,
+  listEarlyAccessPaymentQueue,
+} from "../../adapters/earlyAccessAdminOrders";
 import { ResearchAdminShell } from "../../ui/shells";
 import {
   ResearchDenialNotice,
@@ -283,7 +289,7 @@ function OverviewBody({ token }: { token: string }) {
         <EmailDeliveryPanel resource={system} />
         <ReferralIntegrityPanel resource={fraud} />
       </div>
-      <CommercePlaceholders />
+      <CommerceOperationsTiles token={token} />
       <ResearchSecureNotice>
         Operations views show account and workflow metadata only. Member health data never renders in lists; it stays
         inside each member's own record.
@@ -506,49 +512,139 @@ function ReferralIntegrityPanel({
   );
 }
 
-function CommercePlaceholders() {
-  const placeholders: Array<{ label: string; body: string; href: string; linkLabel: string }> = [
-    {
-      label: "Revenue",
-      body: "Turns on with the commerce switch. No revenue figure is shown until real order data exists.",
-      href: ADMIN_ROUTES.orders,
-      linkLabel: "Orders",
-    },
-    {
-      label: "Orders",
-      body: "The order queue is built; it renders live data once commerce is switched on.",
-      href: ADMIN_ROUTES.orders,
-      linkLabel: "Orders",
-    },
-    {
-      label: "Renewals",
-      body: "Turns on with membership billing. The $25 thirty-day renewal periods will be listed here.",
-      href: ADMIN_ROUTES.members,
-      linkLabel: "Members",
-    },
-    {
-      label: "High-risk review",
-      body: "The review queues are built; items needing senior review surface here, never auto-actioned.",
-      href: ADMIN_ROUTES.security,
-      linkLabel: "Security",
-    },
-  ];
+// ---------------------------------------------------------------------------
+// The commerce cockpit: four tiles, each wired to a REAL source or rendering
+// its explicit unavailable state. No tile ever shows a number the server did
+// not report - a fake zero on "settled awaiting fulfillment" is exactly how
+// a paid order sits unshipped with every screen looking clean.
+// ---------------------------------------------------------------------------
+
+// Module-level loaders so each resource identity is stable across renders.
+const loadEaPaymentQueue = (t: string) => listEarlyAccessPaymentQueue(t);
+const loadEaFulfillmentQueue = (t: string) => listEarlyAccessFulfillmentQueue(t);
+const loadEaExceptions = (t: string) => listEarlyAccessAdminExceptions(t);
+const loadAssistedSubmitted = (t: string) => countAssistedOrdersSubmitted(t);
+
+/**
+ * One truthful count tile. The count renders ONLY from a live server answer;
+ * every other state names itself. `unavailableBody` states WHAT the tile
+ * publishes with, so "unavailable" reads as a fact about the deployment
+ * rather than a bug on this screen.
+ */
+function OperationalCountTile({
+  label,
+  count,
+  state,
+  summary,
+  unavailableBody,
+  onRetry,
+  href,
+  linkLabel,
+}: {
+  label: string;
+  count: number | null;
+  state: AdminResourceState;
+  summary: string;
+  unavailableBody: string;
+  onRetry: () => void;
+  href: string;
+  linkLabel: string;
+}) {
   return (
-    <section aria-label="Commerce overview, pending">
+    <div className="card" data-testid={`tile-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="mono-label text-ink-mute">{label}</p>
+        {state === "ok" ? (
+          <ResearchStatusBadge label="Live" tone="success" />
+        ) : state === "loading" ? (
+          <ResearchStatusBadge label="Loading" tone="neutral" />
+        ) : state === "unavailable" ? (
+          <ResearchStatusBadge label="Unavailable" tone="pending" />
+        ) : state === "error" ? (
+          <ResearchStatusBadge label="Error" tone="danger" />
+        ) : (
+          <ResearchStatusBadge label="Access denied" tone="danger" />
+        )}
+      </div>
+      {state === "ok" && count !== null ? (
+        <>
+          <p className="display-s tabular mt-1">{String(count)}</p>
+          <p className="body-s text-ink-2 mt-2">{summary}</p>
+        </>
+      ) : state === "unavailable" ? (
+        <p className="body-s text-ink-2 mt-2">{unavailableBody}</p>
+      ) : state === "error" ? (
+        <p className="body-s text-ink-2 mt-2">
+          The source did not answer.{" "}
+          <button type="button" className="underline" onClick={onRetry}>
+            Retry
+          </button>
+        </p>
+      ) : state === "loading" ? (
+        <p className="body-s text-ink-mute mt-2">Reading the live source…</p>
+      ) : (
+        <p className="body-s text-ink-2 mt-2">
+          This account is signed in but not authorized for this source. Authority is checked by the server on every
+          request.
+        </p>
+      )}
+      <Link href={href} className="body-s underline text-ink-mute mt-3 inline-block">
+        {linkLabel}
+      </Link>
+    </div>
+  );
+}
+
+function CommerceOperationsTiles({ token }: { token: string }) {
+  const payments = useAdminResource(token, loadEaPaymentQueue);
+  const fulfillment = useAdminResource(token, loadEaFulfillmentQueue);
+  const exceptions = useAdminResource(token, loadEaExceptions);
+  const assisted = useAdminResource(token, loadAssistedSubmitted);
+
+  return (
+    <section aria-label="Commerce operations">
       <h2 className="body-l font-700 mb-4">Commerce</h2>
       <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-        {placeholders.map((p) => (
-          <div key={p.label} className="card">
-            <div className="flex items-center justify-between gap-3">
-              <p className="mono-label text-ink-mute">{p.label}</p>
-              <ResearchStatusBadge label="Pending" tone="pending" />
-            </div>
-            <p className="body-s text-ink-2 mt-2">{p.body}</p>
-            <Link href={p.href} className="body-s underline text-ink-mute mt-3 inline-block">
-              {p.linkLabel}
-            </Link>
-          </div>
-        ))}
+        <OperationalCountTile
+          label="Payment review"
+          state={payments.state}
+          count={payments.data?.items.length ?? null}
+          summary="Orders whose submitted payment proof is waiting on a named human."
+          unavailableBody="The Early Access payments API is not responding in this environment."
+          onRetry={payments.reload}
+          href={ADMIN_ROUTES.earlyAccessFulfillment}
+          linkLabel="Open fulfillment operations"
+        />
+        <OperationalCountTile
+          label="Awaiting fulfillment"
+          state={fulfillment.state}
+          count={fulfillment.data?.items.length ?? null}
+          summary="Settled orders with verified payment and no recorded shipment."
+          unavailableBody="This list's read-only database function is a founder-gated candidate migration; the server refuses to invent the queue without it. Per-order dispatch works today from fulfillment operations."
+          onRetry={fulfillment.reload}
+          href={ADMIN_ROUTES.earlyAccessFulfillment}
+          linkLabel="Open fulfillment operations"
+        />
+        <OperationalCountTile
+          label="Assisted orders"
+          state={assisted.state}
+          count={assisted.data?.total ?? null}
+          summary="Submitted assisted-order requests waiting for review."
+          unavailableBody="Dark until the assisted-order bridge migration (M71) is applied and its routes are mounted. No request data exists to show."
+          onRetry={assisted.reload}
+          href={ADMIN_ROUTES.assistedOrders}
+          linkLabel="Open assisted orders"
+        />
+        <OperationalCountTile
+          label="Exceptions"
+          state={exceptions.state}
+          count={exceptions.data?.items.length ?? null}
+          summary="Open admin exceptions (overpayments and friends) awaiting a named human."
+          unavailableBody="The exceptions route is not mounted in this environment. The database function is deployed; the surface publishes with the fulfillment wiring."
+          onRetry={exceptions.reload}
+          href={ADMIN_ROUTES.earlyAccessFulfillment}
+          linkLabel="Open fulfillment operations"
+        />
       </div>
     </section>
   );

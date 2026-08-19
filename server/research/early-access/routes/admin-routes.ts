@@ -16,6 +16,7 @@ import type { EarlyAccessVerificationEntry } from "../commerce/verification-serv
 import { describeProofAttachment } from "../commerce/proof-service";
 import type { EarlyAccessProofRecord } from "../commerce/proof-service";
 import type { EarlyAccessLegacyOrderNotifier } from "../notifications/legacy-order-notifier";
+import type { EarlyAccessTrackingNotifier } from "../notifications/tracking-notifier";
 import { applyPrivateHeaders, fail, project, readInstant, send, stampOf, type ResponsePort } from "./http";
 import { isEarlyAccessOrderNumber } from "./order-number";
 import {
@@ -75,6 +76,31 @@ export interface EarlyAccessAdminRouteDependencies {
    * settlement into an error.
    */
   readonly notifications?: EarlyAccessLegacyOrderNotifier;
+  /**
+   * The customer tracking mail. Optional and separate from `notifications`
+   * for the same reason that interface is optional: existing constructions
+   * keep compiling, and an absent port is a no-op, never an error. Same
+   * fire-and-forget contract - a mail outage can never turn a committed
+   * tracking row into a failed request.
+   */
+  readonly trackingNotifications?: EarlyAccessTrackingNotifier;
+  /**
+   * The settled-awaiting-fulfillment list: every payment_verified placement
+   * with no recorded fulfillment, read through a read-only RPC that lives in
+   * the candidate migration chain. Optional because the RPC is founder-gated
+   * and may not exist yet; the route answers a NAMED 503 while it is absent
+   * rather than inventing an empty queue that reads as "nothing to ship".
+   */
+  readonly settledAwaitingFulfillment?: () => Promise<
+    readonly EarlyAccessSettledAwaitingFulfillmentRow[]
+  >;
+  /**
+   * The open admin exceptions, over the DEPLOYED RPC
+   * `research_early_access_open_admin_exceptions`. Optional so this file
+   * compiles for every existing construction; wiring the port is a
+   * register.ts concern. Absent answers a named 503, never an empty list.
+   */
+  readonly openExceptions?: () => Promise<readonly EarlyAccessAdminExceptionRow[]>;
 }
 
 type AdminCaller =
@@ -1139,6 +1165,17 @@ export function createEarlyAccessSupplierTrackingRoute(deps: EarlyAccessAdminRou
         detail: { carrier: described.value.carrier, sequence: described.value.sequence },
       });
 
+      // THE TRACKING MAIL, after the tracking row is durable and keyed by
+      // that row's identity (order number + sequence) inside the notifier.
+      // Fire-and-forget behind a try: the customer's email is a consequence
+      // of the tracking fact, never a precondition, so a notifier that
+      // throws synchronously must not turn a committed write into a 503.
+      try {
+        deps.trackingNotifications?.trackingPosted(found.placement, described.value);
+      } catch {
+        // A broken notifier changes nothing about a fact that is already durable.
+      }
+
       const after = await deps.store.dispatch(found.settlement.orderNumber);
       send(response, 201, {
         ok: true,
@@ -1426,6 +1463,109 @@ export function createEarlyAccessExternalProofRoute(deps: EarlyAccessAdminRouteD
           "received through the approved concierge channel and is NOT stored on this platform. " +
           "Payment remains unconfirmed until the confirmation door settles it.",
       });
+    } catch {
+      unavailable(response);
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// GET the settled-awaiting-fulfillment queue, and GET the open exceptions
+// ---------------------------------------------------------------------------
+
+/**
+ * The two fulfillment-operations reads, mounted by register.ts behind the
+ * same guard as everything above. The paths are exported from here (not
+ * register.ts) so the client adapter and the mounting snippet share one
+ * constant without this lane touching the register.
+ */
+export const EARLY_ACCESS_ADMIN_FULFILLMENT_QUEUE_PATH =
+  "/api/admin/research/early-access/fulfillment-queue";
+export const EARLY_ACCESS_ADMIN_EXCEPTIONS_PATH =
+  "/api/admin/research/early-access/exceptions";
+
+/**
+ * One order that a human has confirmed money for and nobody has shipped.
+ *
+ * A projection over durable rows only: placement (payment_verified), the
+ * settlement instant, the immutable order line, and how far dispatch has
+ * gone. No address and no contact: this is a QUEUE, and the supplier packet
+ * read is where the address lives, behind its own per-order door.
+ */
+export type EarlyAccessSettledAwaitingFulfillmentRow = Readonly<{
+  orderNumber: string;
+  settledAt: string;
+  sku: string;
+  quantity: number;
+  payableTotalCents: number;
+  currency: string;
+  /** How many tracking rows exist. Zero means "shipped" cannot even be pressed. */
+  trackingCount: number;
+  /** How many dispatch-trail events exist (notification, ack, packing). */
+  dispatchEventCount: number;
+}>;
+
+/** One open exception, exactly as the deployed RPC projects it. */
+export type EarlyAccessAdminExceptionRow = Readonly<{
+  id: number;
+  kind: string;
+  orderNumber: string | null;
+  detail: unknown;
+  raisedAt: string;
+}>;
+
+/**
+ * The list of settled orders still owed a shipment.
+ *
+ * FAILS CLOSED BY NAME. Until the candidate RPC
+ * (`research_early_access_settled_awaiting_fulfillment`, supabase/candidates)
+ * is founder-approved, deployed, and its port wired in register.ts, this
+ * answers 503 SETTLED_QUEUE_UNAVAILABLE. It never answers an empty list it
+ * did not read: an invented "nothing to ship" is exactly the lie that lets a
+ * paid order sit unshipped with every screen looking clean.
+ */
+export function createEarlyAccessSettledAwaitingFulfillmentRoute(
+  deps: EarlyAccessAdminRouteDependencies,
+) {
+  return async (request: { adminEmail?: unknown }, response: ResponsePort): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+      const caller = await resolveAdmin(deps, request?.adminEmail, response);
+      if (!caller.ok) return;
+
+      if (deps.settledAwaitingFulfillment === undefined) {
+        fail(response, 503, "SETTLED_QUEUE_UNAVAILABLE");
+        return;
+      }
+
+      const rows = await deps.settledAwaitingFulfillment();
+      send(response, 200, { ok: true, items: rows.map((row) => ({ ...row })) });
+    } catch {
+      unavailable(response);
+    }
+  };
+}
+
+/**
+ * The open admin exceptions (overpayments and friends), over the RPC the
+ * deployed schema already holds. Same fail-closed shape as the queue above:
+ * an absent port is a named 503, because "no exceptions surface" and "no
+ * open exceptions" must never look alike to an operator.
+ */
+export function createEarlyAccessAdminExceptionsRoute(deps: EarlyAccessAdminRouteDependencies) {
+  return async (request: { adminEmail?: unknown }, response: ResponsePort): Promise<void> => {
+    try {
+      applyPrivateHeaders(response);
+      const caller = await resolveAdmin(deps, request?.adminEmail, response);
+      if (!caller.ok) return;
+
+      if (deps.openExceptions === undefined) {
+        fail(response, 503, "EXCEPTIONS_UNAVAILABLE");
+        return;
+      }
+
+      const rows = await deps.openExceptions();
+      send(response, 200, { ok: true, items: rows.map((row) => ({ ...row })) });
     } catch {
       unavailable(response);
     }
