@@ -1,26 +1,25 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T15:05:00Z",
+  "updatedAt": "2026-08-19T20:45:00Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
+  "observedHead": "a66434d980c909303d3595382e5df77342fbc127",
   "lastDocumentedProductionRelease": {
-    "tag": "RESEARCH_PLATFORM_0_4",
-    "sha": "458e7284",
-    "rollback": "b0fe396",
-    "deployId": "dep-da1lmgu417fc73elr8f0",
+    "tag": "RESEARCH_PLATFORM_0_5_RELEASE_A_RC2",
+    "sha": "a66434d9",
+    "rollback": "458e7284",
+    "deployId": "dep-da31altg1s2s73f6tep0",
     "status": "live",
-    "note": "0_4 runtime plus the non-runtime continuity corpus; manual deploy live 2026-08-17T19:05:41Z, actor unknown; reconciled as the Phase Zero predecessor 2026-08-17"
+    "note": "Release A: assisted-order intake live, affiliate capture live, price release executed 2026-08-19T20:43Z; executed by claude-fable-desktop under the founder's 2026-08-19 unblock directive."
   },
   "nextRelease": {
-    "name": "RESEARCH_PLATFORM_0_5_ASSISTED_ORDER_RC2",
+    "name": "RESEARCH_PLATFORM_0_6_RELEASE_B_BUY_NOW",
     "scope": [
-      "Phase Zero assisted-order wiring repair (legal port carried, server-derived pricing viewer)",
-      "M71 apply + private document bucket creation + admin email + flag enablement per replacement packet"
+      "ready-subset Buy Now behind RESEARCH_MASTER_OFFERINGS_DIRECT_COMMERCE",
+      "cart migrations 72-74 apply",
+      "EA cart env chain",
+      "fleet lane integrations"
     ],
-    "status": "candidate_c318ec90_awaiting_review_ci_tag_and_founder_approval",
-    "candidateSha": "c318ec9029378bb2dfdc391226263f6414487260",
-    "candidateBranch": "fix/phase-zero-assisted-order-wiring-20260818",
-    "supersedes": "32bbd7998e806d881590c9e9a32123c2b8ba8168"
+    "status": "in_build"
   },
   "productionWriter": "claude-fable-desktop",
   "invariants": [

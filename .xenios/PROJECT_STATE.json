@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T15:05:00Z",
+  "updatedAt": "2026-08-19T20:45:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
+  "observedHead": "a66434d980c909303d3595382e5df77342fbc127",
   "currentRelease": {
-    "tag": "RESEARCH_PLATFORM_0_4",
-    "sha": "458e7284",
+    "tag": "RESEARCH_PLATFORM_0_5_RELEASE_A_RC2",
+    "sha": "a66434d9",
     "status": "live",
-    "rollback": "b0fe396",
-    "deployId": "dep-da1lmgu417fc73elr8f0",
-    "note": "0_4 runtime plus the non-runtime continuity corpus (untagged branch head); manual deploy live 2026-08-17T19:05:41Z, actor unknown"
+    "rollback": "458e7284",
+    "deployId": "dep-da31altg1s2s73f6tep0",
+    "note": "RELEASE A LIVE 2026-08-19T20:43:55Z per the founder's unblock directive: M71 applied (corrected artifact 3e59df26, own post-condition proved the boundary; first apply REFUSED on the managed default-privilege gap with nothing committed), private bucket created, assisted-order intake + referral capture + partner portal flags enabled, controlled price release executed (34 variants to the founder retail schedule via canonical RPCs, 68 audit rows, 417 active total unchanged)."
   },
   "catalog": {
     "workbookRows": 420,
@@ -57,6 +57,7 @@
     "Provider-only products remain in Care.",
     "RUO products remain research-use only.",
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
-    "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step)."
+    "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
+    "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284."
   ]
 }

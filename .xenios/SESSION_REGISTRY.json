@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-19T16:45:03.446Z",
-      "note": "2026-08-19 LEAD: fleet ownership registered at .xenios/LAUNCH_LANE_OWNERSHIP_2026-08-19.md; integration head pushed; 9 lanes branch from 026141e. Full-suite gate run next."
+      "heartbeatAt": "2026-08-19T20:45:00.311Z",
+      "note": "2026-08-19 RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0): M71 applied+verified, bucket private, intake+affiliate doors enabled, 34-variant price release executed. Fleet continues Release B."
     },
     {
       "id": "claude-fable-lane4-affiliate",
