@@ -132,6 +132,10 @@ export function resolveMasterOfferingAction(
       label: "Add to Cart",
       productId: selection.productId,
       variantId: selection.variantId,
+      // The selection's own SKU, already validated non-blank above. The
+      // SKU-keyed member cart needs it, and echoing the resolved value is the
+      // only way the browser can name a line without inventing identity.
+      sku: selection.sku,
       amount: {
         amountCents: selection.price.amountCents,
         currency: selection.price.currency,

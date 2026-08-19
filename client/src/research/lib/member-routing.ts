@@ -11,6 +11,14 @@ const DYNAMIC_MEMBER_PATHS = [
   /^\/research\/member\/products\/[a-z0-9][a-z0-9._-]*$/,
   /^\/research\/member\/guides\/[a-z0-9][a-z0-9._-]*$/,
   /^\/research\/member\/orders\/[a-z0-9][a-z0-9._-]*$/,
+  // One v2 catalog product: /research/member/catalog/:family/:slug. Both
+  // segments are the address (the detail API is keyed by family AND slug), so
+  // Buy Now -> sign-in -> return must carry both. Anchored, exactly two
+  // segments, and character classes matching the closed family vocabulary
+  // (lowercase words joined by underscores) and the server's own slug shape
+  // (lowercase, digits, hyphens). No dot, no slash beyond the two, no escape
+  // for a crafted returnTo to widen.
+  /^\/research\/member\/catalog\/[a-z0-9]+(?:_[a-z0-9]+)*\/[a-z0-9][a-z0-9-]{0,191}$/,
 ];
 
 function isRegisteredMemberPath(pathname: string): boolean {

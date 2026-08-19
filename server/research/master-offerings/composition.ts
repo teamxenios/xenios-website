@@ -163,6 +163,10 @@ export function createMasterOfferingCatalogDependencies(
                 audience: resolved.audience,
                 currency: resolved.currency,
                 evaluatedAt: resolved.evaluatedAt,
+                // The provenance of the authorization decision, so a real
+                // selection authority receives a complete audience fact
+                // instead of having to invent one it never read.
+                audienceSourceVersion: resolved.sourceVersion,
               };
         },
       });

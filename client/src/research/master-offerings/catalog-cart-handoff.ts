@@ -22,6 +22,13 @@ import {
 export interface CatalogCartRequest {
   productId: string;
   variantId: string;
+  /**
+   * The Product Control SKU the server's selection named inside the resolved
+   * action. The existing member cart is keyed by SKU; echoing the resolved
+   * value is the only way this handoff can name a line without inventing
+   * identity of its own.
+   */
+  sku: string;
   quantity: number;
   /** Echoed from the resolved action so the cart can detect a stale price. */
   amountCents: number;
@@ -86,6 +93,12 @@ export function buildCatalogCartRequest(
     // pathway rather than quietly becoming a checkout.
     return { ok: false, reason: "not_purchasable" };
   }
+  if (typeof action.sku !== "string" || action.sku.trim() === "") {
+    // The server validates the selection's SKU non-blank before it ever emits
+    // add_to_cart, so a blank one here is a malformed wire value, and a
+    // malformed purchase identity is refused rather than guessed at.
+    return { ok: false, reason: "not_purchasable" };
+  }
   const control = purchaseQuantityControl(action, capability);
   if (!control.visible) {
     // No accepted exact-variant capability means nobody has said how many of
@@ -106,6 +119,7 @@ export function buildCatalogCartRequest(
     request: {
       productId: action.productId,
       variantId: action.variantId,
+      sku: action.sku,
       quantity,
       amountCents: action.amount.amountCents,
       currency: action.amount.currency,

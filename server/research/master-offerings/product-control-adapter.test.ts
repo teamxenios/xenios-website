@@ -37,6 +37,61 @@ describe("master offering Product Control adapter", () => {
     ).toBe("add_to_cart");
   });
 
+  it("hands the session's audience fact through only when the composition resolved one", async () => {
+    const select = vi.fn(() => ({ ok: true as const, selection: cartSelection() }));
+    const resolver = createMasterOfferingProductControlResolver({
+      bindings: { readBinding: exactBinding },
+      selections: { select },
+      context: () => ({
+        audience: "member",
+        currency: "USD",
+        evaluatedAt: "2026-08-11T18:00:00.000Z",
+        audienceSourceVersion: "member-grant-v1",
+      }),
+    });
+    const product = offering();
+    await resolver(product, product.variants[0]);
+    expect(select).toHaveBeenCalledWith(
+      {
+        productId: "pc_product_1",
+        variantId: "pc_variant_1",
+        audience: "member",
+        currency: "USD",
+        evaluatedAt: "2026-08-11T18:00:00.000Z",
+      },
+      {
+        audienceEligibility: {
+          audience: "member",
+          state: "authorized",
+          sourceVersion: "member-grant-v1",
+          // The same instant as the request, never a second clock.
+          evaluatedAt: "2026-08-11T18:00:00.000Z",
+        },
+      },
+    );
+    // A blank fingerprint is no authorization: the session argument is omitted
+    // entirely rather than sent half-empty.
+    const bare = vi.fn(() => ({ ok: true as const, selection: cartSelection() }));
+    const bareResolver = createMasterOfferingProductControlResolver({
+      bindings: { readBinding: exactBinding },
+      selections: { select: bare },
+      context: () => ({
+        audience: "member",
+        currency: "USD",
+        evaluatedAt: "2026-08-11T18:00:00.000Z",
+        audienceSourceVersion: "   ",
+      }),
+    });
+    await bareResolver(product, product.variants[0]);
+    expect(bare).toHaveBeenCalledWith({
+      productId: "pc_product_1",
+      variantId: "pc_variant_1",
+      audience: "member",
+      currency: "USD",
+      evaluatedAt: "2026-08-11T18:00:00.000Z",
+    });
+  });
+
   it("fails closed without a binding and does not call Product Control", async () => {
     const select = vi.fn();
     const resolver = createMasterOfferingProductControlResolver({

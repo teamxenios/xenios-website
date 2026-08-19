@@ -19,6 +19,9 @@ describe("master offering action authority", () => {
       label: "Add to Cart",
       productId: selection.productId,
       variantId: selection.variantId,
+      // The selection's own SKU, echoed so the SKU-keyed cart can accept the
+      // line the server authorized. Never derived from catalog data.
+      sku: selection.sku,
       amount: { amountCents: 9900, currency: "USD" },
       evaluatedAt: selection.evaluatedAt,
     });

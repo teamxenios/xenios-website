@@ -50,6 +50,7 @@ const ADD_TO_CART = {
   label: "Add to Cart" as const,
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
   amount: { amountCents: 9900, currency: "USD" },
   evaluatedAt: "2026-08-13T12:00:00.000Z",
 };
@@ -224,6 +225,7 @@ describe("detail surface", () => {
       {
         productId: "pc_product_1",
         variantId: "pc_variant_1",
+        sku: "XEN-BPC-10",
         quantity: 1,
         amountCents: 9900,
         currency: "USD",
@@ -280,6 +282,38 @@ describe("detail surface", () => {
       "The cart could not accept this right now. Please try again.",
     );
     expect(refusal?.textContent).not.toContain("price_stale");
+    unmount();
+  });
+
+  it("tells the truth when the cart answers commerce_disabled", async () => {
+    // No fake success and no "try again" lie: the cart is off, the request
+    // path still works, and the copy says exactly that. Routed on the machine
+    // code, never on a message.
+    const cart: ExistingCart = {
+      addExactVariant: async () => ({ ok: false, code: "commerce_disabled" }),
+    };
+    const { host, unmount } = render(
+      <MasterOfferingDetailSurface
+        memberToken="token"
+        family="research_vials"
+        slug="research-vials-bpc-157"
+        fetchDetail={(async () => detailResponse()) as never}
+        capabilityFor={() => BAND}
+        cart={createCatalogCartHandoff(cart)}
+      />,
+    );
+    await settle();
+    click(host.querySelector('[data-testid="mo-cta"]'));
+    await settle();
+    const refusal = host.querySelector('[data-testid="mo-add-refusal"]');
+    expect(refusal?.textContent).toBe(
+      "Direct checkout is not enabled yet. This variant can still be requested through the request option.",
+    );
+    expect(refusal?.textContent).not.toContain("commerce_disabled");
+    // The button is not dead: it remains enabled for a retry after the state
+    // changes, and clicking it again re-answers the same truthful refusal.
+    const cta = host.querySelector('[data-testid="mo-cta"]');
+    expect(cta?.hasAttribute("disabled")).toBe(false);
     unmount();
   });
 
