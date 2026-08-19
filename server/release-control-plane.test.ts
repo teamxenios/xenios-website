@@ -1647,8 +1647,8 @@ describe("route uniqueness validator", () => {
     // count is ten and not twenty. Serving stays dark behind
     // RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED, and a missing dependency keeps
     // the whole family unmounted with a named refusal in the log.
-    expect(result.callSites).toBe(376);
-    expect(result.routes).toHaveLength(385);
+    expect(result.callSites).toBe(380);
+    expect(result.routes).toHaveLength(389);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

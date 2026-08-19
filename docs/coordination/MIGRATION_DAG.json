@@ -616,6 +616,71 @@
         "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 using scripts/verify-m71-assisted-order-bridge.sh, bootstrapped by supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql. Each run first proved the preflight fails closed on a database without the Supabase role set (where the revokes would bind to nothing and the boundary would exist only as intent), leaving zero relations behind. The 10-assertion behavioural suite was green after both passes on both engines: five tables with row level security ENABLED AND FORCED, zero direct table grants across all four principals including the PUBLIC pseudo-role read straight from the ACL, zero policies, service_role holding no SELECT on any of the five, eight SECURITY DEFINER RPCs executable by service_role alone, no anon or authenticated EXECUTE on any assisted-order routine, no PUBLIC EXECUTE with acldefault expanded so a null proacl cannot be mistaken for a locked one, six internal helpers reachable by no client role, and the append-only event log proven by a real row whose UPDATE and DELETE were both refused. The deliberate divergence from M67 and M70 was also rehearsed: a direct table grant on the identity-document table is REFUSED by both the preflight and the post-condition and left visibly in place rather than silently healed, because on customer identity data such a grant is evidence that something already went wrong. The suite then proves the migration applies cleanly once the breach is corrected, so the refusal is not a trap. Production was not connected to or mutated."
       },
       "notes": "M71 release candidate, the assisted-order intake bridge. Five additive tables (requests, lines, events, access tokens, documents), fourteen routines of which eight are the service_role RPC surface and six are internal helpers reachable by no role, and one append-only trigger on the event log. THE BOUNDARY IS RPC ONLY: forced row level security, zero policies and zero direct table grants mean the security definer routines are the only path to these rows. Alters no existing object and writes no business row. Explicitly NOT applied to production, and NOT yet mounted: as of this entry the route registry is never called and the client pages are not routed, so the schema is inert even if applied. LEDGER RECONCILIATION HAZARD: three branches each claim a ledger row and none is merged. Row 69 is the quantity-band-100 migration on fable/q100-dark, row 70 is the Pack 02 account schema on fable/f7-pack02-rename, and this is row 71 on claude/assisted-order-bridge, so this branch MIGRATIONS.md jumps from 68 to 71. Whoever merges these lines must reconcile the ledger and confirm no two migrations claim one number."
+    },
+    {
+      "id": "research_ea_cart_commission_settlement",
+      "path": "supabase/migrations/20260819170000_research_ea_cart_commission_settlement.sql",
+      "sourceSha": "3b07ecb773e885d2c385c2601eadde25fec6a8a8",
+      "dependsOn": [
+        "research_early_access_hardening",
+        "research_early_access_cart_checkout"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "d364055e6f99abdb5cd47ca03eb9b55daeeedc4e461946f87714952d633116d4"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_function_research_early_access_commit_cart_settlement_with_commission_and_validate_cart_commission_then_drop_the_commission_events_table_the_wrapper_and_ledger_are_the_only_additions_and_the_plain_M62_door_remains",
+        "procedure": "docs/research-launch/INTEGRATION-LANE-C.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-20260819-cart-migrations.sh (bootstrap supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql), over a replay of the REAL deployed migration chain 20260726143000..20260814061500 plus M71, Supabase role set NOLOGIN. 2026-08-19 rehearsal: A structural 7/7 x2 + behavioural 12/12 (forced RLS, zero direct grants across all four principals via aclexplode, service_role-only EXECUTE with acldefault expansion, malformed commission refuses with ZERO settlement rows, valid commission settles + holds atomically with held_at == payment_verified_at, replay answers already_settled with exactly one hold, append-only trigger refuses UPDATE and DELETE on a real row); B structural 4/4 x2 + behavioural 10/10 (STABLE secdef service_role-only, null/empty/unknown handles answer [], two-customer fixture proves per-handle containment, provenance carried, deterministic order); C structural 3/3 x2 + behavioural 3/3 (attgenerated='s', unique index refuses a canonically-equal raw-distinct transaction id by name, zero derivation disagreements) and on a separate pre-index database the precheck answered STOP_RECONCILE_DUPLICATES and the apply refused whole. Production never connected."
+      },
+      "notes": "Cart commission ledger (research_early_access_cart_commission_events, append-only, forced RLS, zero direct grants incl. service_role) + the atomic settlement-with-commission wrapper over the deployed M62 door: commission validated BEFORE settlement, both-or-neither in one transaction, replay short-circuits on already_settled. Adversarial review 2026-08-19: PASS. NOT applied to production; founder-gated apply order A->B->C per docs/research-launch/INTEGRATION-LANE-C.md section 5."
+    },
+    {
+      "id": "research_ea_cart_member_order_history",
+      "path": "supabase/migrations/20260819170100_research_ea_cart_member_order_history.sql",
+      "sourceSha": "3b07ecb773e885d2c385c2601eadde25fec6a8a8",
+      "dependsOn": [
+        "research_early_access_hardening",
+        "research_ea_cart_commission_settlement"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "62e7fc553fd763ead70255ba67e6d0d4138ee1a20f6629715fb96ad7201f1e60"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_function_research_early_access_cart_checkouts_for_customers_read_only_stable_security_definer_nothing_written",
+        "procedure": "docs/research-launch/INTEGRATION-LANE-C.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-20260819-cart-migrations.sh (bootstrap supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql), over a replay of the REAL deployed migration chain 20260726143000..20260814061500 plus M71, Supabase role set NOLOGIN. 2026-08-19 rehearsal: A structural 7/7 x2 + behavioural 12/12 (forced RLS, zero direct grants across all four principals via aclexplode, service_role-only EXECUTE with acldefault expansion, malformed commission refuses with ZERO settlement rows, valid commission settles + holds atomically with held_at == payment_verified_at, replay answers already_settled with exactly one hold, append-only trigger refuses UPDATE and DELETE on a real row); B structural 4/4 x2 + behavioural 10/10 (STABLE secdef service_role-only, null/empty/unknown handles answer [], two-customer fixture proves per-handle containment, provenance carried, deterministic order); C structural 3/3 x2 + behavioural 3/3 (attgenerated='s', unique index refuses a canonically-equal raw-distinct transaction id by name, zero derivation disagreements) and on a separate pre-index database the precheck answered STOP_RECONCILE_DUPLICATES and the apply refused whole. Production never connected."
+      },
+      "notes": "Read-only STABLE security-definer cart-checkout history read for member order history, service_role EXECUTE only, customer_ref array filter with empty-array guard, M62 binding provenance carried. Adversarial review 2026-08-19: PASS after its postcheck was corrected to probe browser roles on the never-revoked M58 cart tables and service_role only on legal_bindings. NOT applied to production; founder-gated apply order A->B->C per docs/research-launch/INTEGRATION-LANE-C.md section 5."
+    },
+    {
+      "id": "research_ea_cart_settlement_canonical_txn",
+      "path": "supabase/migrations/20260819170200_research_ea_cart_settlement_canonical_txn.sql",
+      "sourceSha": "3b07ecb773e885d2c385c2601eadde25fec6a8a8",
+      "dependsOn": [
+        "research_early_access_cart_checkout"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "52a3a392d957b0c564bb9561aa7ee4310803d3f581ca869860e6cc78faa1b92c"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_the_unique_index_then_the_stored_generated_canonical_transaction_id_column_raw_column_never_modified",
+        "procedure": "docs/research-launch/INTEGRATION-LANE-C.md",
+        "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-20260819-cart-migrations.sh (bootstrap supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql), over a replay of the REAL deployed migration chain 20260726143000..20260814061500 plus M71, Supabase role set NOLOGIN. 2026-08-19 rehearsal: A structural 7/7 x2 + behavioural 12/12 (forced RLS, zero direct grants across all four principals via aclexplode, service_role-only EXECUTE with acldefault expansion, malformed commission refuses with ZERO settlement rows, valid commission settles + holds atomically with held_at == payment_verified_at, replay answers already_settled with exactly one hold, append-only trigger refuses UPDATE and DELETE on a real row); B structural 4/4 x2 + behavioural 10/10 (STABLE secdef service_role-only, null/empty/unknown handles answer [], two-customer fixture proves per-handle containment, provenance carried, deterministic order); C structural 3/3 x2 + behavioural 3/3 (attgenerated='s', unique index refuses a canonically-equal raw-distinct transaction id by name, zero derivation disagreements) and on a separate pre-index database the precheck answered STOP_RECONCILE_DUPLICATES and the apply refused whole. Production never connected."
+      },
+      "notes": "STORED GENERATED canonical_transaction_id + unique index on cart settlements, closing EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN at the table. Full table rewrite under ACCESS EXCLUSIVE bounded by 5s lock_timeout; precheck refuses pre-existing duplicate canonical forms (STOP_RECONCILE_DUPLICATES). Adversarial review 2026-08-19: PASS. NOT applied to production; founder-gated apply order A->B->C per docs/research-launch/INTEGRATION-LANE-C.md section 5."
     }
   ],
   "invariants": [

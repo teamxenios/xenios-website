@@ -32,7 +32,11 @@ with rpc as (
         and has_function_privilege('service_role', rpc.oid, 'EXECUTE')
     ) as service_role_may_execute,
     exists (
-      select 1 from rpc, aclexplode((select proacl from pg_proc where oid = rpc.oid)) acl
+      -- acldefault expansion: a NULL proacl means the PostgreSQL default,
+      -- which INCLUDES a PUBLIC execute grant; skipping null would call
+      -- the most dangerous case clean (the M71 rehearsal lesson).
+      select 1 from rpc, aclexplode(coalesce((select proacl from pg_proc where oid = rpc.oid),
+        acldefault('f', (select proowner from pg_proc where oid = rpc.oid)))) acl
       where acl.grantee = 0 and acl.privilege_type = 'EXECUTE'
     ) as public_may_execute,
     exists (

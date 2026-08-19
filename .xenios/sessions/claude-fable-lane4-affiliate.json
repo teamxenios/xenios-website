@@ -5,6 +5,6 @@
   "branch": "lane/affiliate-attribution-core",
   "state": "active",
   "startedAt": "2026-08-19T16:35:54.248Z",
-  "heartbeatAt": "2026-08-19T16:35:54.248Z",
-  "note": "Fable session 4: P0 affiliate attribution core in isolated worktree from 5bb3fa9; lead claude-fable-desktop integrates"
+  "heartbeatAt": "2026-08-19T16:46:55.115Z",
+  "note": "Gap analysis done: grant writer has zero callers; building durable customer attribution binding + bind decorator + EA grant adapter in lane worktree"
 }
