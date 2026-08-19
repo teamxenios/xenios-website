@@ -149,6 +149,18 @@ const ASSISTED_ORDER_BRIDGE_SOURCE_SHA =
   "35b0fbe5b8c924a3ab6f4322b2f692871e801a17";
 const ASSISTED_ORDER_BRIDGE_PATH =
   "supabase/migrations/20260815150000_research_assisted_order_bridge.sql";
+// The three 2026-08-19 launch cart migrations (commission settlement, member
+// cart history, canonical settlement txn), promoted from candidates after
+// adversarial review and a two-engine disposable apply-twice rehearsal
+// (scripts/verify-20260819-cart-migrations.sh). One promotion commit holds
+// all three canonical blobs.
+const LAUNCH_CART_MIGRATIONS_SOURCE_SHA =
+  "3b07ecb773e885d2c385c2601eadde25fec6a8a8";
+const LAUNCH_CART_MIGRATION_PATHS = new Set([
+  "supabase/migrations/20260819170000_research_ea_cart_commission_settlement.sql",
+  "supabase/migrations/20260819170100_research_ea_cart_member_order_history.sql",
+  "supabase/migrations/20260819170200_research_ea_cart_settlement_canonical_txn.sql",
+]);
 const EA_STRENGTH_MIRROR_PATH =
   "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql";
 const pg16It =
@@ -851,6 +863,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(SEARCH_PATH_HARDENING_SOURCE_SHA);
           } else if (path === ASSISTED_ORDER_BRIDGE_PATH) {
             expect(sourceSha).toBe(ASSISTED_ORDER_BRIDGE_SOURCE_SHA);
+          } else if (LAUNCH_CART_MIGRATION_PATHS.has(path)) {
+            expect(sourceSha).toBe(LAUNCH_CART_MIGRATIONS_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
           }
