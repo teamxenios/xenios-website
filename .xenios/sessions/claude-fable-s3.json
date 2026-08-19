@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s3",
+  "tool": "claude",
+  "lane": "assisted-order-customer-flow",
+  "branch": "fable/assisted-order-customer-flow-20260819",
+  "state": "active",
+  "startedAt": "2026-08-19T16:37:17.279Z",
+  "heartbeatAt": "2026-08-19T16:41:37.833Z",
+  "note": "Recon done (client+shared read, task claimed, worktree at 5bb3fa9). Waiting on server-route map; npm ci running in worktree."
+}

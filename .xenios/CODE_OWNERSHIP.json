@@ -73,6 +73,44 @@
       "state": "handoff",
       "claimedAt": "2026-08-16T19:57:44.377Z",
       "heartbeatAt": "2026-08-16T19:57:44.377Z"
+    },
+    {
+      "id": "8ecc5959-9402-41fb-86d2-b92fa756ceae",
+      "task": "AFFILIATE-PRODUCTION",
+      "session": "claude-fable-desktop",
+      "paths": [
+        "client/src/research/pages/partners/**",
+        "server/research/partners/**",
+        "shared/research/affiliate-system.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-19T15:43:29.453Z",
+      "heartbeatAt": "2026-08-19T15:43:29.453Z"
+    },
+    {
+      "id": "b225ee6d-397f-4566-ae85-2aa00db7da7c",
+      "task": "ASSISTED-ORDER-CUSTOMER-FLOW",
+      "session": "claude-fable-s3",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-19T16:37:33.076Z",
+      "heartbeatAt": "2026-08-19T16:41:37.833Z"
+    },
+    {
+      "id": "619c8d71-e790-4e1e-842e-202075f7b0f1",
+      "task": "FULFILLMENT-MOUNT",
+      "session": "claude-fable-s8-fulfillment",
+      "paths": [
+        "server/research/fulfillment/**",
+        "server/research/operations/suppliers.ts",
+        "shared/research/fulfillment/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-19T16:43:30.555Z",
+      "heartbeatAt": "2026-08-19T16:43:30.555Z"
     }
   ],
   "rules": [

@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s7",
+  "tool": "claude",
+  "lane": "canonical-order-history",
+  "branch": "fable/canonical-order-history-20260819",
+  "state": "active",
+  "startedAt": "2026-08-19T16:42:25.724Z",
+  "heartbeatAt": "2026-08-19T16:43:48.305Z",
+  "note": "Worktree C:/xenios-wt/canonical-order at 5bb3fa9 on fable/canonical-order-history-20260819; mapping existing order flows before claiming paths"
+}

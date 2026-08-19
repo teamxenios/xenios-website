@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s8-fulfillment",
+  "tool": "claude",
+  "lane": "launch-fulfillment-tracking",
+  "branch": "lane/fulfillment-tracking-min",
+  "state": "active",
+  "startedAt": "2026-08-19T16:43:13.336Z",
+  "heartbeatAt": "2026-08-19T16:43:13.337Z",
+  "note": "Fable session 8: P0 minimum fulfillment + tracking in isolated worktree from 5bb3fa9; owns server/research/fulfillment/**, shared/research/fulfillment/**; no server/index.ts edits; lead claude-fable-desktop integrates"
+}

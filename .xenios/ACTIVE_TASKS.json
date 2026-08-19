@@ -63,14 +63,15 @@
       "id": "AFFILIATE-PRODUCTION",
       "title": "Complete affiliate identity and money lifecycle",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "claude-fable-desktop",
       "paths": [
         "client/src/research/pages/partners/**",
         "server/research/partners/**",
         "shared/research/affiliate-system.ts"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-19T15:43:29.452Z"
     },
     {
       "id": "REQUEST-CENTER",
@@ -224,6 +225,19 @@
       ]
     },
     {
+      "id": "ASSISTED-ORDER-CUSTOMER-FLOW",
+      "title": "Finish the assisted-order customer intake flow (catalog-first wizard, durable draft, confirmation/status polish)",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-s3",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-19T16:37:33.073Z"
+    },
+    {
       "id": "CATALOG-ACTION-UNIFICATION",
       "title": "One buyer-scoped catalog pathway and price projection for every surface",
       "priority": "P1",
@@ -242,14 +256,15 @@
       "id": "FULFILLMENT-MOUNT",
       "title": "Mount the tested fulfillment engine over HTTP with its admin surface",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "claude-fable-s8-fulfillment",
       "paths": [
         "server/research/fulfillment/**",
         "server/research/operations/suppliers.ts",
         "shared/research/fulfillment/**"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-19T16:43:30.552Z"
     },
     {
       "id": "PAYMENT-PROVIDER-INTEGRATION",

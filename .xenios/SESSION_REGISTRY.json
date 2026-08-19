@@ -28,8 +28,88 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-19T14:57:31.184Z",
-      "note": "2026-08-19: wiring RC c318ec90 complete + gates run; docs commit (packet, manifest, ownership rule, handoff) landing; next: push + PR + independent review. No production mutation."
+      "heartbeatAt": "2026-08-19T15:32:33.378Z",
+      "note": "2026-08-19 launch build: integration branch xenios/launch-integration-20260819 at 8fde33b (launch matrix from canonical data: 143 BUY_NOW_CANDIDATE / 244 CARE / 32 NOT_AVAILABLE / 1 REQUEST_QUOTE, zero UNKNOWN; 34 price mismatches queued for founder). Recon fan-out running; implementation lanes next. No production mutation."
+    },
+    {
+      "id": "claude-fable-lane4-affiliate",
+      "tool": "claude",
+      "lane": "launch-affiliate-attribution",
+      "branch": "lane/affiliate-attribution-core",
+      "state": "active",
+      "startedAt": "2026-08-19T16:35:54.248Z",
+      "heartbeatAt": "2026-08-19T16:35:54.248Z",
+      "note": "Fable session 4: P0 affiliate attribution core in isolated worktree from 5bb3fa9; lead claude-fable-desktop integrates"
+    },
+    {
+      "id": "claude-fable-s3",
+      "tool": "claude",
+      "lane": "assisted-order-customer-flow",
+      "branch": "fable/assisted-order-customer-flow-20260819",
+      "state": "active",
+      "startedAt": "2026-08-19T16:37:17.279Z",
+      "heartbeatAt": "2026-08-19T16:41:37.833Z",
+      "note": "Recon done (client+shared read, task claimed, worktree at 5bb3fa9). Waiting on server-route map; npm ci running in worktree."
+    },
+    {
+      "id": "claude-fable-lane5-partner-portal",
+      "tool": "claude",
+      "lane": "launch-affiliate-portal",
+      "branch": "lane/affiliate-partner-portal",
+      "state": "active",
+      "startedAt": "2026-08-19T16:38:15.308Z",
+      "heartbeatAt": "2026-08-19T16:38:15.308Z",
+      "note": "Fable session 5: affiliate portal + dashboard UI in isolated worktree from 5bb3fa9; UI/lifecycle only, no attribution authority; lead claude-fable-desktop integrates"
+    },
+    {
+      "id": "claude-fable-storefront",
+      "tool": "claude",
+      "lane": "launch-public-storefront",
+      "branch": "lane/launch-public-storefront",
+      "state": "active",
+      "startedAt": "2026-08-19T16:40:02.270Z",
+      "heartbeatAt": "2026-08-19T16:40:02.270Z",
+      "note": "FABLE SESSION 2: public storefront + order entry door. Isolated worktree off xenios/launch-integration-20260819 HEAD; will hand off exact SHA to lead."
+    },
+    {
+      "id": "claude-fable-s9-conversion-qa",
+      "tool": "claude",
+      "lane": "launch-conversion-qa",
+      "branch": "lane/e2e-conversion-qa-20260819",
+      "state": "active",
+      "startedAt": "2026-08-19T16:41:44.730Z",
+      "heartbeatAt": "2026-08-19T16:41:44.730Z",
+      "note": "Fable session 9: mobile + E2E conversion QA attacker in isolated worktree; fixes isolated frontend defects only, files handoffs for protected seams (payment authority untouched); lead claude-fable-desktop integrates"
+    },
+    {
+      "id": "claude-fable-s7",
+      "tool": "claude",
+      "lane": "canonical-order-history",
+      "branch": "fable/canonical-order-history-20260819",
+      "state": "active",
+      "startedAt": "2026-08-19T16:42:25.724Z",
+      "heartbeatAt": "2026-08-19T16:43:48.305Z",
+      "note": "Worktree C:/xenios-wt/canonical-order at 5bb3fa9 on fable/canonical-order-history-20260819; mapping existing order flows before claiming paths"
+    },
+    {
+      "id": "claude-fable-s8-fulfillment",
+      "tool": "claude",
+      "lane": "launch-fulfillment-tracking",
+      "branch": "lane/fulfillment-tracking-min",
+      "state": "active",
+      "startedAt": "2026-08-19T16:43:13.336Z",
+      "heartbeatAt": "2026-08-19T16:43:13.337Z",
+      "note": "Fable session 8: P0 minimum fulfillment + tracking in isolated worktree from 5bb3fa9; owns server/research/fulfillment/**, shared/research/fulfillment/**; no server/index.ts edits; lead claude-fable-desktop integrates"
+    },
+    {
+      "id": "claude-fable-s10-release-security",
+      "tool": "claude",
+      "lane": "release-security-negative-controls",
+      "branch": "lane/s10-release-security-20260819",
+      "state": "active",
+      "startedAt": "2026-08-19T16:43:14.972Z",
+      "heartbeatAt": "2026-08-19T16:43:14.972Z",
+      "note": ""
     }
   ]
 }

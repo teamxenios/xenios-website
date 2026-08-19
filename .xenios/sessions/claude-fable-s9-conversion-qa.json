@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s9-conversion-qa",
+  "tool": "claude",
+  "lane": "launch-conversion-qa",
+  "branch": "lane/e2e-conversion-qa-20260819",
+  "state": "active",
+  "startedAt": "2026-08-19T16:41:44.730Z",
+  "heartbeatAt": "2026-08-19T16:41:44.730Z",
+  "note": "Fable session 9: mobile + E2E conversion QA attacker in isolated worktree; fixes isolated frontend defects only, files handoffs for protected seams (payment authority untouched); lead claude-fable-desktop integrates"
+}

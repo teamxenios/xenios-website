@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-lane4-affiliate",
+  "tool": "claude",
+  "lane": "launch-affiliate-attribution",
+  "branch": "lane/affiliate-attribution-core",
+  "state": "active",
+  "startedAt": "2026-08-19T16:35:54.248Z",
+  "heartbeatAt": "2026-08-19T16:35:54.248Z",
+  "note": "Fable session 4: P0 affiliate attribution core in isolated worktree from 5bb3fa9; lead claude-fable-desktop integrates"
+}

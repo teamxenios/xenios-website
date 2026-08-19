@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-lane5-partner-portal",
+  "tool": "claude",
+  "lane": "launch-affiliate-portal",
+  "branch": "lane/affiliate-partner-portal",
+  "state": "active",
+  "startedAt": "2026-08-19T16:38:15.308Z",
+  "heartbeatAt": "2026-08-19T16:38:15.308Z",
+  "note": "Fable session 5: affiliate portal + dashboard UI in isolated worktree from 5bb3fa9; UI/lifecycle only, no attribution authority; lead claude-fable-desktop integrates"
+}
