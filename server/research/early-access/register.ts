@@ -20,6 +20,8 @@ import {
   createReleaseHistoryRoute,
   type EarlyAccessCatalogSource,
 } from "./release/release-routes";
+import { ReferralGrantCartAttribution } from "./cart/attribution-adapter";
+import type { EarlyAccessTrackingNotifier } from "./notifications/tracking-notifier";
 import { createEarlyAccessCatalogSourceForDeployment } from "./catalog/product-control-source";
 import { REVIEW_AUDIENCE_SOURCE } from "./catalog/declared-facts-source";
 import { supabaseConfigured } from "../../supabase";
@@ -49,6 +51,10 @@ import {
   createEarlyAccessSupplierOrderReadRoute,
   createEarlyAccessSupplierPackingRoute,
   createEarlyAccessSupplierShippedRoute,
+  createEarlyAccessSettledAwaitingFulfillmentRoute,
+  createEarlyAccessAdminExceptionsRoute,
+  EARLY_ACCESS_ADMIN_FULFILLMENT_QUEUE_PATH,
+  EARLY_ACCESS_ADMIN_EXCEPTIONS_PATH,
   createEarlyAccessSupplierTrackingRoute,
   type EarlyAccessAdminRouteDependencies,
 } from "./routes/admin-routes";
@@ -619,6 +625,19 @@ export interface EarlyAccessRegistrationOptions {
    */
   readonly orderNotifications?: EarlyAccessLegacyOrderNotifier;
   /**
+   * Customer tracking mail for the legacy single-order flow, over the same
+   * durable outbox. Absent means no mail; fire-and-forget by contract.
+   */
+  readonly trackingNotifications?: EarlyAccessTrackingNotifier;
+  /**
+   * The settled-awaiting-fulfillment queue read. Wire ONLY after the
+   * founder-gated candidate RPC is deployed; while absent the route answers
+   * 503 SETTLED_QUEUE_UNAVAILABLE by name.
+   */
+  readonly settledAwaitingFulfillment?: EarlyAccessAdminRouteDependencies["settledAwaitingFulfillment"];
+  /** The open-exceptions read over the DEPLOYED RPC. */
+  readonly openExceptions?: EarlyAccessAdminRouteDependencies["openExceptions"];
+  /**
    * Who may accept money, resolved from the address the admin guard verified.
    * Defaults to the configured ADMIN_EMAIL as founder, which is not a widening:
    * the guard has already refused every other address.
@@ -1111,6 +1130,12 @@ export function registerPrivateEarlyAccessApi(
           await audit.record(event as never);
         },
       },
+      // Attribution from the durable referral grant and from nothing else.
+      // `commerce.referrals` is the SAME SupabaseEarlyAccessReferralResolver
+      // instance the single-product settlement lane already trusts; with no
+      // durable resolver wired, NoEarlyAccessReferrals answers null and every
+      // checkout places unattributed — the previous behaviour exactly.
+      attribution: new ReferralGrantCartAttribution({ referrals: commerce.referrals }),
       now,
       notify: cartNotifier,
     });
@@ -1261,6 +1286,14 @@ export function registerPrivateEarlyAccessApi(
     const cartSettlementDeps = {
       checkouts: cartStore,
       settlements: cartStore,
+      // Re-resolves the durable grant at settlement time so the commission
+      // rate and affiliate handles come from the server's CURRENT record.
+      // Same instance as the checkout attribution above. Without this line,
+      // settling an ATTRIBUTED cart checkout refuses
+      // commission_persistence_unavailable (503) rather than silently
+      // dropping the affiliate's hold — that refusal is the designed
+      // pre-wiring state, not a bug.
+      referrals: commerce.referrals,
       audit: {
         async record(event: unknown) {
           await audit.record(event as never);
@@ -1394,6 +1427,13 @@ export function registerPrivateEarlyAccessApi(
     // The SAME notifier instance the customer door carries, so the lifecycle
     // mail family is one object end to end.
     ...(commerce.notifications === undefined ? {} : { notifications: commerce.notifications }),
+    ...(options.trackingNotifications === undefined
+      ? {}
+      : { trackingNotifications: options.trackingNotifications }),
+    ...(options.settledAwaitingFulfillment === undefined
+      ? {}
+      : { settledAwaitingFulfillment: options.settledAwaitingFulfillment }),
+    ...(options.openExceptions === undefined ? {} : { openExceptions: options.openExceptions }),
     guard: adminGuard,
   });
 
@@ -1446,9 +1486,19 @@ function registerEarlyAccessAdminApi(
   const packing = createEarlyAccessSupplierPackingRoute(deps);
   const tracking = createEarlyAccessSupplierTrackingRoute(deps);
   const shipped = createEarlyAccessSupplierShippedRoute(deps);
+  const fulfillmentQueue = createEarlyAccessSettledAwaitingFulfillmentRoute(deps);
+  const openExceptions = createEarlyAccessAdminExceptionsRoute(deps);
 
   app.get(EARLY_ACCESS_ADMIN_PAYMENTS_PATH, guard, (req: Request, res: Response) => {
     void queue({ adminEmail: adminEmailOf(req) }, res);
+  });
+
+  app.get(EARLY_ACCESS_ADMIN_FULFILLMENT_QUEUE_PATH, guard, (req: Request, res: Response) => {
+    void fulfillmentQueue({ adminEmail: adminEmailOf(req) }, res);
+  });
+
+  app.get(EARLY_ACCESS_ADMIN_EXCEPTIONS_PATH, guard, (req: Request, res: Response) => {
+    void openExceptions({ adminEmail: adminEmailOf(req) }, res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH, guard, (req: Request, res: Response) => {

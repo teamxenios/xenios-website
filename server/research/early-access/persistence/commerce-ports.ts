@@ -10,6 +10,7 @@ import type {
 import { earlyAccessSupplierIdentifier } from "../ops/supplier-identity";
 import {
   EarlyAccessPersistenceError,
+  expectArray,
   expectObject,
   runEarlyAccessCall,
   type EarlyAccessPersistenceQuery,
@@ -289,5 +290,90 @@ export class SupabaseEarlyAccessReferralResolver implements EarlyAccessReferralR
       affiliateCustomerRef: parsed.affiliateCustomerRef,
       holdBasisPoints: parsed.holdBasisPoints,
     });
+  }
+}
+
+import type {
+  EarlyAccessAdminExceptionRow,
+  EarlyAccessSettledAwaitingFulfillmentRow,
+} from "../routes/admin-routes";
+
+const FULFILLMENT_OPS_RPC = {
+  /** Founder-gated candidate: supabase/candidates/20260819_research_early_access_settled_awaiting_fulfillment.sql */
+  settledAwaitingFulfillment: "research_early_access_settled_awaiting_fulfillment",
+  /** Deployed by migration 20260804121000. */
+  openExceptions: "research_early_access_open_admin_exceptions",
+} as const;
+
+/**
+ * The two fulfillment-operations reads. Read-only by construction: both RPCs
+ * are security definer, service_role execute only, and neither takes an
+ * argument, so nothing here can write or be steered.
+ */
+export class SupabaseEarlyAccessFulfillmentOpsReads {
+  constructor(private readonly query: EarlyAccessPersistenceQuery) {}
+
+  async settledAwaitingFulfillment(): Promise<
+    readonly EarlyAccessSettledAwaitingFulfillmentRow[]
+  > {
+    const raw = await runEarlyAccessCall(this.query, {
+      fn: FULFILLMENT_OPS_RPC.settledAwaitingFulfillment,
+      args: {},
+    });
+    const rows = expectArray(FULFILLMENT_OPS_RPC.settledAwaitingFulfillment, raw);
+    return Object.freeze(
+      rows.map((row) => {
+        const record = expectObject(FULFILLMENT_OPS_RPC.settledAwaitingFulfillment, row);
+        if (
+          typeof record.orderNumber !== "string" ||
+          typeof record.settledAt !== "string" ||
+          typeof record.sku !== "string" ||
+          typeof record.quantity !== "number" ||
+          typeof record.payableTotalCents !== "number" ||
+          typeof record.currency !== "string" ||
+          typeof record.trackingCount !== "number" ||
+          typeof record.dispatchEventCount !== "number"
+        ) {
+          throw new EarlyAccessPersistenceError(FULFILLMENT_OPS_RPC.settledAwaitingFulfillment);
+        }
+        return Object.freeze({
+          orderNumber: record.orderNumber,
+          settledAt: record.settledAt,
+          sku: record.sku,
+          quantity: record.quantity,
+          payableTotalCents: record.payableTotalCents,
+          currency: record.currency,
+          trackingCount: record.trackingCount,
+          dispatchEventCount: record.dispatchEventCount,
+        });
+      }),
+    );
+  }
+
+  async openExceptions(): Promise<readonly EarlyAccessAdminExceptionRow[]> {
+    const raw = await runEarlyAccessCall(this.query, {
+      fn: FULFILLMENT_OPS_RPC.openExceptions,
+      args: {},
+    });
+    const rows = expectArray(FULFILLMENT_OPS_RPC.openExceptions, raw);
+    return Object.freeze(
+      rows.map((row) => {
+        const record = expectObject(FULFILLMENT_OPS_RPC.openExceptions, row);
+        if (
+          typeof record.id !== "number" ||
+          typeof record.kind !== "string" ||
+          typeof record.raisedAt !== "string"
+        ) {
+          throw new EarlyAccessPersistenceError(FULFILLMENT_OPS_RPC.openExceptions);
+        }
+        return Object.freeze({
+          id: record.id,
+          kind: record.kind,
+          orderNumber: typeof record.orderNumber === "string" ? record.orderNumber : null,
+          detail: record.detail ?? null,
+          raisedAt: record.raisedAt,
+        });
+      }),
+    );
   }
 }

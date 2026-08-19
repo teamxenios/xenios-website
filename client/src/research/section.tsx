@@ -10,6 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
 import PolicyPage from "./pages/PolicyPage";
 import { RequireMember } from "./pages/MemberArea";
 import { memberDestination } from "./lib/member-routing";
+import { captureReferralFromLocation } from "./referral-capture";
 import { ResearchLoadingState } from "./ui/kit";
 
 // xenios research: the section router (Supreme build). Canonical route flow:
@@ -194,6 +195,12 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
+  // Referral capture: /research?ref=CODE fires ONE fire-and-forget call to
+  // the server capture door (204 either way; only the signed cookie differs).
+  // Module-latched per document load, so render churn and navigation never
+  // repeat it, and nothing here can throw into the render.
+  captureReferralFromLocation();
+
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the

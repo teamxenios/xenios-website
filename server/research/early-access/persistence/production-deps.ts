@@ -14,6 +14,7 @@ import {
   SupabaseEarlyAccessShippingPolicy,
   SupabaseEarlyAccessSupplierDirectory,
   type EarlyAccessRequiredAgreement,
+  SupabaseEarlyAccessFulfillmentOpsReads,
 } from "./commerce-ports";
 import {
   SupabaseConsumedTokenStore,
@@ -223,6 +224,7 @@ export function buildEarlyAccessPersistence(
   }
 
   const run = query ?? createEarlyAccessSupabaseQuery();
+  const fulfillmentOps = new SupabaseEarlyAccessFulfillmentOpsReads(run);
   const warnings = [...decision.warnings];
   // The deployment's session-identity stance is stated in the logs on every
   // boot, deliberately and without any secret: whether the shared launch code
@@ -356,6 +358,13 @@ export function buildEarlyAccessPersistence(
     // have one: the events table is revoked from service_role.
     fulfilmentEvents: new SupabaseEarlyAccessShipmentEventStore(run),
   };
+  // The exceptions RPC is DEPLOYED (migration 20260804121000): wire always.
+  options.openExceptions = () => fulfillmentOps.openExceptions();
+  // FOUNDER-GATED: uncomment ONLY after Samuel approves and applies
+  // supabase/candidates/20260819_research_early_access_settled_awaiting_fulfillment.sql
+  // (precheck verdict APPLY_READY, postcheck verdict DEPLOYED_AND_LOCKED).
+  // Until then the route's named 503 is the correct, honest answer.
+  // options.settledAwaitingFulfillment = () => fulfillmentOps.settledAwaitingFulfillment();
 
   const required = readRequiredAgreements(env, warnings);
   if (required.length > 0) {
@@ -363,6 +372,7 @@ export function buildEarlyAccessPersistence(
     // The write half. Without it the gate above can only ever answer false,
     // because nothing else in the process can put an acceptance on file.
     options.agreementRecorder = new SupabaseEarlyAccessAgreementRecorder(run);
+
     options.requiredAgreements = required;
   } else {
     warnings.push(
