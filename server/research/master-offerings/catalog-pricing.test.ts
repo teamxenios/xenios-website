@@ -90,7 +90,7 @@ describe("catalog pricing", () => {
     }
   });
 
-  it("keeps a card action free even when the variant is fully purchasable", async () => {
+  it("gives the card the same server-resolved action the detail resolves", async () => {
     const service = new MasterOfferingCatalogService(
       new InMemoryMasterOfferingCatalogReader([PRODUCT]),
       () => ({
@@ -113,12 +113,16 @@ describe("catalog pricing", () => {
       }),
     );
     const card = (await service.list({})).products[0];
-    expect(JSON.stringify(card)).not.toContain("Add to Cart");
-    for (const entry of card.variants) {
-      expect(entry).not.toHaveProperty("action");
-    }
     const detail = await service.detail(PRODUCT.slug);
+    // Card and detail resolve through the one projection path, so the action
+    // the buyer saw while browsing is the action the product page resolves:
+    // add_to_cart on the exact bound variant, the truthful request everywhere
+    // else. Never a purchasable card over a non-purchasable detail.
+    expect(card.variants[0].action.kind).toBe("add_to_cart");
     expect(detail?.variants[0].action.kind).toBe("add_to_cart");
+    expect(card.variants[0].action).toEqual(detail?.variants[0].action);
+    expect(card.variants[1].action.kind).toBe("request_access");
+    expect(card.variants[1].action).not.toHaveProperty("productId");
   });
 
   it("shows a price without that price creating any purchase authority", async () => {

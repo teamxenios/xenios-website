@@ -191,6 +191,13 @@ export type MasterOfferingAction =
       label: "Add to Cart";
       productId: string;
       variantId: string;
+      /**
+       * The exact Product Control SKU the resolved selection named. The
+       * existing member cart is keyed by SKU, so the handoff needs it to add
+       * the line the server already authorized; the browser still supplies no
+       * identity of its own, it only echoes this one back.
+       */
+      sku: string;
       amount: { amountCents: number; currency: string };
       evaluatedAt: string;
     }
@@ -242,8 +249,11 @@ export type MasterOfferingAction =
     };
 
 /**
- * One selectable strength, size, or format, with its truthful state and its
- * approved price. A summary carries no action, so it is safe on a list card.
+ * One selectable strength, size, or format, with its truthful state, its
+ * approved price, and the one action the server resolved for it. The action is
+ * on the summary so a list card can state it truthfully; it is still entirely
+ * server resolved, and a card that renders it gains no authority the detail
+ * surface did not already have.
  */
 export interface MasterOfferingVariantSummary {
   id: string;
@@ -251,12 +261,15 @@ export interface MasterOfferingVariantSummary {
   displayState: MasterOfferingDisplayState;
   displayLabel: string;
   price: MasterOfferingPriceView;
-}
-
-export interface MasterOfferingVariantView
-  extends MasterOfferingVariantSummary {
   action: MasterOfferingAction;
 }
+
+/**
+ * The detail row is the same shape. The name survives because the detail
+ * surface reads it, and because keeping both names makes the contract state
+ * explicitly that card and detail may never diverge again.
+ */
+export type MasterOfferingVariantView = MasterOfferingVariantSummary;
 
 export interface MasterOfferingCardView {
   id: string;
@@ -274,10 +287,10 @@ export interface MasterOfferingCardView {
   copyState: MasterOfferingCopyState;
   variantCount: number;
   /**
-   * The strengths and formats a buyer can see while browsing, each with its own
-   * state and approved price. Deliberately action free: a card states facts,
-   * and only the detail surface resolves a purchase action for one exact
-   * variant.
+   * The strengths and formats a buyer can see while browsing, each with its
+   * own state, approved price, and server-resolved action. The card renders
+   * the action; it never resolves one. The exact purchase, with its quantity
+   * band, still happens only on the detail surface.
    */
   variants: readonly MasterOfferingVariantSummary[];
   priceSummary: MasterOfferingPriceSummary;

@@ -235,13 +235,24 @@ describe("adversarial: no private field crosses the HTTP boundary", () => {
     expect(planningVariant.action).not.toHaveProperty("productId");
     expect(detail.text).not.toContain("offeringVariantId");
 
-    // The list is action free, so no Product Control identity appears there at
-    // all, even for a fully purchasable variant.
+    // The list now carries the same server-resolved action the detail does,
+    // and the boundary holds in the same shape: Product Control identity
+    // appears only inside the one resolved add_to_cart, never on a planning
+    // variant and never as a binding.
     const list = await request(application).get(
       MASTER_OFFERING_CATALOG_LIST_ROUTE,
     );
-    expect(list.text).not.toContain("pc_product_1");
-    expect(list.text).not.toContain("Add to Cart");
+    const [listedBound, listedPlanning] = list.body.catalog.products[0].variants;
+    expect(listedBound.action.kind).toBe("add_to_cart");
+    expect(listedBound.action.productId).toBe("pc_product_1");
+    expect(listedPlanning.action.kind).not.toBe("add_to_cart");
+    expect(listedPlanning.action).not.toHaveProperty("productId");
+    expect(list.text).not.toContain("offeringVariantId");
+    // Without a resolved selection, the list still names no Product Control
+    // identity at all: the default app composes no commerce.
+    const inert = await request(app()).get(MASTER_OFFERING_CATALOG_LIST_ROUTE);
+    expect(inert.text).not.toContain("pc_product_1");
+    expect(inert.text).not.toContain("Add to Cart");
   });
 
   it("keeps the private headers on an error as well as on a success", async () => {

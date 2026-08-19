@@ -5,10 +5,6 @@
  */
 
 import {
-  MASTER_OFFERING_DISPLAY_LABELS,
-  type MasterOfferingVariantSummary,
-} from "@shared/research/master-offerings/contract";
-import {
   isDisplayablePrice,
   formatPriceCents,
   MASTER_OFFERING_PRICE_MIXED_LABEL,
@@ -109,23 +105,10 @@ export function summarizeMasterOfferingPrices(
       };
 }
 
-/**
- * Card-level variant rows. These carry the strength and the price and
- * deliberately carry no action, so a browsing card can never look
- * transaction-ready before an exact variant has been resolved on detail.
- */
-export function projectMasterOfferingVariantSummaries(
-  offering: NormalizedMasterOffering,
-  prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
-): readonly MasterOfferingVariantSummary[] {
-  return offering.variants.map((variant) => ({
-    id: variant.id,
-    label: variant.label,
-    displayState: variant.displayState,
-    displayLabel: MASTER_OFFERING_DISPLAY_LABELS[variant.displayState],
-    price: priceForVariant(prices, variant),
-  }));
-}
+// Card variant rows are no longer built here. The variant summary now carries
+// the server-resolved action, and action resolution belongs to the customer
+// projection; a price-only builder would emit a summary this file cannot make
+// truthful. `projectMasterOfferingCard` is the one card path.
 
 export function summarizeOfferingPrices(
   offering: NormalizedMasterOffering,

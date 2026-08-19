@@ -7,10 +7,10 @@ import {
 } from "@shared/research/master-offerings/pricing-contract";
 import {
   priceForVariant,
-  projectMasterOfferingVariantSummaries,
   summarizeMasterOfferingPrices,
   summarizeOfferingPrices,
 } from "./price-projection";
+import { projectMasterOfferingCard } from "./customer-projection";
 import { offering, variant } from "./test-fixtures";
 
 function priced(
@@ -100,7 +100,10 @@ describe("price summary", () => {
 });
 
 describe("variant summaries", () => {
-  it("carries the strength, the truthful state, and the price, and no action", () => {
+  it("carries the strength, the truthful state, the price, and the resolved action", () => {
+    // Summaries are built by the customer projection now; this file owns only
+    // the price half of the row. The action rules are pinned where they live,
+    // in customer-projection.test.ts and catalog-pricing.test.ts.
     const product = offering({
       variants: [
         variant({ id: "mov_a", label: "5 mg vial" }),
@@ -111,29 +114,22 @@ describe("variant summaries", () => {
         }),
       ],
     });
-    const summaries = projectMasterOfferingVariantSummaries(
-      product,
-      new Map([["mov_a", priced(9900)]]),
-    );
-    expect(summaries).toEqual([
-      {
-        id: "mov_a",
-        label: "5 mg vial",
-        displayState: "available_now",
-        displayLabel: "Available Now",
-        price: priced(9900),
-      },
-      {
-        id: "mov_b",
-        label: "10 mg vial",
-        displayState: "coming_soon",
-        displayLabel: "Coming Soon",
-        price: MASTER_OFFERING_PRICE_ON_REQUEST,
-      },
+    const prices = new Map([["mov_a", priced(9900)]]);
+    const summaries = projectMasterOfferingCard(product, prices).variants;
+    expect(summaries.map((summary) => summary.price)).toEqual([
+      priced(9900),
+      MASTER_OFFERING_PRICE_ON_REQUEST,
     ]);
-    for (const summary of summaries) {
-      expect(summary).not.toHaveProperty("action");
-    }
+    expect(summaries.map((summary) => summary.displayLabel)).toEqual([
+      "Available Now",
+      "Coming Soon",
+    ]);
+    // Without composed commerce the resolved actions are the truthful
+    // non-purchase ones: nothing here can invent Add to Cart.
+    expect(summaries.map((summary) => summary.action.kind)).toEqual([
+      "request_access",
+      "join_waitlist",
+    ]);
   });
 
   it("treats a missing map entry as on request, never as an inherited price", () => {

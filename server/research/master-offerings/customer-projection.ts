@@ -18,7 +18,6 @@ import {
 import {
   NO_MASTER_OFFERING_PRICES,
   priceForVariant,
-  projectMasterOfferingVariantSummaries,
   summarizeOfferingPrices,
   type MasterOfferingPriceMap,
 } from "./price-projection";
@@ -66,6 +65,14 @@ export function projectMasterOfferingVariant(
 export function projectMasterOfferingCard(
   offering: NormalizedMasterOffering,
   prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
+  /**
+   * Defaults to no commerce, so a caller that composes no purchase authority
+   * projects the same truthful non-purchase actions it always did. Only an
+   * exact resolved CartProductSelection can make a card say Add to Cart, which
+   * is the identical rule the detail projection enforces.
+   */
+  commerce: MasterOfferingCommerceResolver = noMasterOfferingCommerce,
+  capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingCardView {
   if (offering.visibility !== "member") {
     throw new Error(`Refused to project admin-only offering ${offering.id}`);
@@ -85,7 +92,15 @@ export function projectMasterOfferingCard(
     stateExplanation: offering.stateExplanation,
     copyState: offering.copyState,
     variantCount: offering.variants.length,
-    variants: projectMasterOfferingVariantSummaries(offering, prices),
+    variants: offering.variants.map((variant) =>
+      projectMasterOfferingVariant(
+        offering,
+        variant,
+        commerce,
+        priceForVariant(prices, variant),
+        capabilities,
+      ),
+    ),
     priceSummary: summarizeOfferingPrices(offering, prices),
   };
 }
@@ -105,17 +120,11 @@ export function projectMasterOfferingDetail(
     disclosures.unshift(MASTER_OFFERING_RESEARCH_DISCLOSURE);
   }
   return {
-    ...projectMasterOfferingCard(offering, prices),
+    // Card and detail now project variants through the one path, so the action
+    // a buyer saw on the card is by construction the action the detail page
+    // resolves for the same variant.
+    ...projectMasterOfferingCard(offering, prices, commerce, capabilities),
     overview: null,
-    variants: offering.variants.map((variant) =>
-      projectMasterOfferingVariant(
-        offering,
-        variant,
-        commerce,
-        priceForVariant(prices, variant),
-        capabilities,
-      ),
-    ),
     disclosures,
   };
 }
@@ -123,8 +132,10 @@ export function projectMasterOfferingDetail(
 export function projectMasterOfferingList(
   offerings: readonly NormalizedMasterOffering[],
   prices: MasterOfferingPriceMap = NO_MASTER_OFFERING_PRICES,
+  commerce: MasterOfferingCommerceResolver = noMasterOfferingCommerce,
+  capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): readonly MasterOfferingCardView[] {
   return offerings.map((offering) =>
-    projectMasterOfferingCard(offering, prices),
+    projectMasterOfferingCard(offering, prices, commerce, capabilities),
   );
 }
