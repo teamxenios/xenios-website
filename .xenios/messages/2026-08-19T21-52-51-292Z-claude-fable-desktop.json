@@ -1,0 +1,7 @@
+{
+  "id": "0de4f91e-cf59-4f82-9a4f-9c8ebd5dc16d",
+  "from": "claude-fable-desktop",
+  "to": "all",
+  "text": "XENIOS RESEARCH HARD PAUSE (founder order, 2026-08-19). STOP ALL NEW IMPLEMENTATION WORK NOW. Do not: edit more code, merge, rebase, cherry-pick, deploy, apply migrations, change production env/flags/pricing, send email, or mutate production. If a running command must finish to keep the repo consistent, let it finish, then stop. Preserve your current state exactly. Then write ONE handoff file to .xenios/handoffs/ reporting: SESSION, TASK, WORKTREE, BRANCH, BASE SHA, HEAD SHA, GIT STATUS, UNCOMMITTED FILES, STAGED FILES, LAST 5 COMMITS, FILES OWNED, FILES CHANGED, WORK COMPLETED, WORK PARTIAL, WORK NOT STARTED, TESTS RUN, TEST RESULTS, KNOWN FAILURES, MIGRATIONS CREATED, MIGRATIONS APPLIED, FEATURE FLAGS TOUCHED, PRODUCTION MUTATION, INTEGRATION REQUIRED, CONFLICT RISKS, HANDOFF SHA, HANDOFF FILE, and WHAT SHOULD HAPPEN TO THIS BRANCH (KEEP / MERGE LATER / SUPERSEDE / DELETE LATER). After reporting, remain PAUSED until the founder explicitly says resume. The lead session is running the full build reconciliation.",
+  "createdAt": "2026-08-19T21:52:51.296Z"
+}

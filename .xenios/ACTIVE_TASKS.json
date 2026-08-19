@@ -293,6 +293,21 @@
       "dependsOn": []
     },
     {
+      "id": "CANONICAL-ORDER-HISTORY",
+      "title": "Canonical order conversion domain, customer order-history projection and UI",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-s7",
+      "paths": [
+        "shared/research/orders/**",
+        "server/research/orders/**",
+        "client/src/research/orders/**",
+        "docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-19T21:48:00.428Z"
+    },
+    {
       "id": "FULL-VISION-DEMO",
       "title": "Build the production-isolated multi-persona /research/demo lane with browser E2E",
       "priority": "P1",

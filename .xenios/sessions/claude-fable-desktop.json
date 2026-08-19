@@ -5,6 +5,6 @@
   "branch": "claude/assisted-order-bridge",
   "state": "active",
   "startedAt": "2026-08-17T16:45:39.066Z",
-  "heartbeatAt": "2026-08-19T20:45:00.311Z",
-  "note": "2026-08-19 RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0): M71 applied+verified, bucket private, intake+affiliate doors enabled, 34-variant price release executed. Fleet continues Release B."
+  "heartbeatAt": "2026-08-19T21:52:53.377Z",
+  "note": "2026-08-19 HARD PAUSE (founder order): all sessions frozen via messages/all broadcast; lead running full reconciliation; NO further merges/deploys/migrations/flags/pricing until founder resume."
 }

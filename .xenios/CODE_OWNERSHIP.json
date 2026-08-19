@@ -85,7 +85,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-08-19T15:43:29.453Z",
-      "heartbeatAt": "2026-08-19T20:45:00.311Z"
+      "heartbeatAt": "2026-08-19T21:52:53.377Z"
     },
     {
       "id": "b225ee6d-397f-4566-ae85-2aa00db7da7c",
@@ -111,6 +111,20 @@
       "state": "active",
       "claimedAt": "2026-08-19T16:43:30.555Z",
       "heartbeatAt": "2026-08-19T16:48:02.158Z"
+    },
+    {
+      "id": "fa696b29-98ef-4e62-ada4-9c902bcbccd8",
+      "task": "CANONICAL-ORDER-HISTORY",
+      "session": "claude-fable-s7",
+      "paths": [
+        "shared/research/orders/**",
+        "server/research/orders/**",
+        "client/src/research/orders/**",
+        "docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-19T21:48:00.441Z",
+      "heartbeatAt": "2026-08-19T21:48:00.441Z"
     }
   ],
   "rules": [
