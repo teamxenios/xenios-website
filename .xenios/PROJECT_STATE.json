@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T20:45:00Z",
+  "updatedAt": "2026-08-19T22:35:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "a66434d980c909303d3595382e5df77342fbc127",
@@ -58,6 +58,7 @@
     "RUO products remain research-use only.",
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
-    "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284."
+    "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
+    "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction."
   ]
 }
