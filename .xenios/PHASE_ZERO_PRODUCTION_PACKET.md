@@ -162,8 +162,11 @@ A/B/C through the release train (now promoted: migrations 72-74, adversarial
 review PASS, applied twice on disposable PostgreSQL 16+17 via
 scripts/verify-20260819-cart-migrations.sh).
 
-RELEASE A RC: pending the freeze battery on
-5093267... (xenios/launch-integration-20260819). The runtime candidate
+RELEASE A RC (FROZEN 2026-08-19): 50a188ea7e6f70d8390e6e626c7a32a1c9ab8cfa
+(xenios/launch-integration-20260819; runtime gates ran green at 5093267
+and the delta to the frozen tip is the packet/status docs, the control-plane
+source-pin registration, and line-ending normalization — non-runtime,
+verified by diff). The runtime candidate
 SUPERSEDES c318ec90 as the deploy target; every guarantee of the earlier
 candidate is contained in it (verified ancestry) plus the launch lanes.
 
