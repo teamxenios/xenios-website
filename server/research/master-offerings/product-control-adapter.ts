@@ -1,4 +1,5 @@
 import type {
+  CartAudienceEligibility,
   CartProductSelectionRequest,
   CartProductSelectionResult,
 } from "@shared/research/cart-product-selection";
@@ -20,10 +21,26 @@ export interface MasterOfferingCommerceBindingReader {
     | MasterOfferingCommerceIdentityBinding
     | null;
 }
+/**
+ * The session facts a selection evaluation cannot read for itself. The
+ * eligibility inside is the server-resolved authorization of the requesting
+ * viewer; an authority that receives it must still validate it (identity,
+ * instant, non-blank provenance) exactly as it validates every other fact.
+ */
+export interface ProductControlSelectionSessionContext {
+  audienceEligibility: CartAudienceEligibility;
+}
+
 /** Existing Product Control remains responsible for producing the selection. */
 export interface ProductControlSelectionAuthority {
   select(
     request: CartProductSelectionRequest,
+    /**
+     * Optional on purpose: the hard-wired refusal and every existing test
+     * double stay valid without it, and an authority that needs the session
+     * facts fails closed when they are absent rather than inventing them.
+     */
+    session?: ProductControlSelectionSessionContext,
   ): Promise<CartProductSelectionResult> | CartProductSelectionResult;
 }
 
@@ -31,6 +48,13 @@ export interface MasterOfferingProductControlContext {
   audience: CartProductSelectionRequest["audience"];
   currency: string;
   evaluatedAt: string;
+  /**
+   * The provenance fingerprint of the server-side authorization decision that
+   * produced `audience`, when the composition has one. With it the adapter can
+   * hand the selection authority a complete audience-eligibility fact; without
+   * it the authority receives none and fails closed on that seam.
+   */
+  audienceSourceVersion?: string;
 }
 
 export interface MasterOfferingProductControlAdapterDependencies {
@@ -81,13 +105,29 @@ export function createMasterOfferingProductControlResolver(
       const context = await dependencies.context();
       if (!validContext(context)) return { binding, selection: null };
 
-      const result = await dependencies.selections.select({
+      const request: CartProductSelectionRequest = {
         productId: binding.productId,
         variantId: binding.variantId,
         audience: context.audience,
         currency: context.currency,
         evaluatedAt: context.evaluatedAt,
-      });
+      };
+      // The session facts travel only when the composition resolved a real
+      // authorization fingerprint. The same evaluation instant is used for the
+      // request and the eligibility, so a selection can never be authorized at
+      // one moment and priced at another.
+      const sourceVersion = context.audienceSourceVersion;
+      const result =
+        typeof sourceVersion === "string" && sourceVersion.trim() !== ""
+          ? await dependencies.selections.select(request, {
+              audienceEligibility: {
+                audience: context.audience,
+                state: "authorized",
+                sourceVersion,
+                evaluatedAt: context.evaluatedAt,
+              },
+            })
+          : await dependencies.selections.select(request);
       return {
         binding,
         selection: result.ok ? result.selection : null,

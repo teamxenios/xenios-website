@@ -213,6 +213,16 @@ describe("composition", () => {
     await request(app({ selections: { select } })).get(DETAIL_PATH);
     expect(select).toHaveBeenCalledWith(
       expect.objectContaining({ evaluatedAt: EVALUATED_AT, currency: "USD" }),
+      // The session's audience fact travels beside the request and shares its
+      // instant, so a selection can never be authorized at one moment and
+      // priced at another.
+      expect.objectContaining({
+        audienceEligibility: expect.objectContaining({
+          audience: "member",
+          state: "authorized",
+          evaluatedAt: EVALUATED_AT,
+        }),
+      }),
     );
   });
 
