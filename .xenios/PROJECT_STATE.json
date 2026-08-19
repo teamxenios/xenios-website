@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T19:25:00Z",
+  "updatedAt": "2026-08-19T15:05:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
@@ -56,6 +56,7 @@
     "Kris/Roman is one buyer configuration, not the general architecture.",
     "Provider-only products remain in Care.",
     "RUO products remain research-use only.",
-    "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it."
+    "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
+    "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step)."
   ]
 }

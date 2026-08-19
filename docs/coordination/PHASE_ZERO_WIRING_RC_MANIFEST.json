@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "PHASE_ZERO_ASSISTED_ORDER_WIRING_RC_2026-08-19",
+  "domain": "research-assisted-order",
+  "lane": "release-manager",
+  "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+  "createdAt": "2026-08-19T14:52:00Z",
+  "baseSha": "458e7284c12cfbd95bd91371afb88cb8a6201454",
+  "headSha": "c318ec9029378bb2dfdc391226263f6414487260",
+  "currentProductionSha": "458e7284c12cfbd95bd91371afb88cb8a6201454",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/DECISIONS.md",
+    ".xenios/FOUNDER_ACTIONS.md",
+    ".xenios/PHASE_ZERO_EXECUTOR_DESIGNATION.md",
+    ".xenios/PHASE_ZERO_PRODUCTION_PACKET.md",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/README.md",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_LAUNCH_RUNBOOK_2026-08-17.md",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/VISION_GAP_MAP.md",
+    ".xenios/handoffs/2026-08-16T02-49-37-332Z-CONTINUITY-PROMPTS-claude-fable-main.md",
+    ".xenios/handoffs/2026-08-16T18-56-04-068Z-ASSISTED-ORDER-MOUNT-claude-fable-main.md",
+    ".xenios/handoffs/2026-08-16T20-05-47-731Z-M71-RELEASE-REGISTRATION-claude-fable-main.md",
+    ".xenios/handoffs/2026-08-17T18-06-21-364Z-SCOPED-MCP-ISOLATION-VERIFIED-claude-fable-desktop.md",
+    ".xenios/handoffs/2026-08-17T19-16-18-003Z-MANUAL-BEARER-MCP-SWITCH-claude-fable-desktop.md",
+    ".xenios/handoffs/2026-08-17T19-58-00-000Z-PHASE-ZERO-SUCCESSOR-READY-claude-fable-desktop.md",
+    ".xenios/messages/2026-08-15T21-54-54-737Z-claude-opus5-main.json",
+    ".xenios/messages/2026-08-15T22-19-24-309Z-claude-opus5-main.json",
+    ".xenios/messages/2026-08-15T22-20-23-939Z-claude-opus5-main.json",
+    ".xenios/messages/2026-08-15T22-37-09-472Z-claude-opus5-main.json",
+    ".xenios/messages/2026-08-15T22-54-20-919Z-claude-opus5-main.json",
+    ".xenios/messages/2026-08-16T02-49-37-462Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T17-52-28-863Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T17-57-27-620Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T18-17-03-773Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T18-22-25-910Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T18-40-26-304Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-16T20-21-21-719Z-claude-fable-main.json",
+    ".xenios/messages/2026-08-17T17-11-13-231Z-claude-fable-desktop.json",
+    ".xenios/prompts/CASHFLOW_EXPANSION_LANE_PROMPT_2026-08-17.md",
+    ".xenios/prompts/EMERGENCY_RECOVERY_PROMPT.md",
+    ".xenios/prompts/FULL_VISION_DEMO_LANE_PROMPT_2026-08-17.md",
+    ".xenios/prompts/PHASE_ZERO_SUCCESSOR_PROMPT_2026-08-17.md",
+    ".xenios/prompts/PRE_SWITCH_CHECKPOINT_PROMPT.md",
+    ".xenios/prompts/UNIVERSAL_TAKEOVER_PROMPT.md",
+    ".xenios/prompts/XENIOS_CASHFLOW_FIRST_EXECUTION_OVERLAY_2026-08-17.md",
+    ".xenios/prompts/XENIOS_FABLE5_FULL_VISION_END_TO_END_DEMO_PROMPT_2026-08-17.md",
+    ".xenios/prompts/XENIOS_REAL_CUSTOMER_BUYING_FULL_SITE_OVERLAY_2026-08-17.md",
+    ".xenios/sessions/claude-fable-desktop.json",
+    ".xenios/sessions/claude-fable-main.json",
+    ".xenios/sessions/claude-opus5-main.json",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "client/src/research/adminx-section.tsx",
+    "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+    "client/src/research/assisted-order/AdminAssistedOrderQueue.tsx",
+    "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+    "client/src/research/assisted-order/AssistedOrderCta.tsx",
+    "client/src/research/assisted-order/AssistedOrderPage.tsx",
+    "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+    "client/src/research/assisted-order/SecureDocumentUpload.tsx",
+    "client/src/research/assisted-order/api.ts",
+    "client/src/research/assisted-order/assisted-order.css",
+    "client/src/research/assisted-order/index.ts",
+    "client/src/research/assisted-order/storage.ts",
+    "client/src/research/assisted-order/wizard-state.test.ts",
+    "client/src/research/assisted-order/wizard-state.ts",
+    "client/src/research/early-access/EarlyAccessRoute.tsx",
+    "client/src/research/section.tsx",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "scripts/agentic/Find-XeniosWebsiteRepo.ps1",
+    "scripts/agentic/Show-XeniosContinuationState.ps1",
+    "scripts/verify-m71-assisted-order-bridge.sh",
+    "server/index.ts",
+    "server/release-control-plane.test.ts",
+    "server/research/assisted-order/catalog-adapter.ts",
+    "server/research/assisted-order/communications.ts",
+    "server/research/assisted-order/defaults.ts",
+    "server/research/assisted-order/express.ts",
+    "server/research/assisted-order/google-mirror.ts",
+    "server/research/assisted-order/http-e2e.test.ts",
+    "server/research/assisted-order/http.ts",
+    "server/research/assisted-order/index.ts",
+    "server/research/assisted-order/memory-repository.ts",
+    "server/research/assisted-order/mount.ts",
+    "server/research/assisted-order/ports.ts",
+    "server/research/assisted-order/production-catalog.test.ts",
+    "server/research/assisted-order/production-catalog.ts",
+    "server/research/assisted-order/production-deps.ts",
+    "server/research/assisted-order/production-wiring.test.ts",
+    "server/research/assisted-order/production.ts",
+    "server/research/assisted-order/service.test.ts",
+    "server/research/assisted-order/service.ts",
+    "server/research/assisted-order/supabase-document-store.ts",
+    "server/research/assisted-order/supabase-repository.ts",
+    "server/research/early-access-wall.test.ts",
+    "server/research/early-access/register.ts",
+    "server/research/index.ts",
+    "server/research/master-offerings/assisted-order-pricing-seam.test.ts",
+    "server/research/master-offerings/member-pricing-viewer.test.ts",
+    "server/research/master-offerings/member-pricing-viewer.ts",
+    "server/research/outbox.ts",
+    "shared/research/assisted-order/action-policy.test.ts",
+    "shared/research/assisted-order/action-policy.ts",
+    "shared/research/assisted-order/contract.ts",
+    "shared/research/assisted-order/form.ts",
+    "shared/research/assisted-order/index.ts",
+    "supabase/MIGRATIONS.md",
+    "supabase/candidates/20260815_research_assisted_order_bridge.sql",
+    "supabase/candidates/20260815_research_assisted_order_bridge_postcheck.sql",
+    "supabase/candidates/20260815_research_assisted_order_bridge_precheck.sql",
+    "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+    "supabase/production/research-assisted-order-bridge-rollback-notes.md",
+    "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql"
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/config"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/catalog"
+    },
+    {
+      "method": "POST",
+      "path": "/api/research/early-access/assisted-orders"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/:publicReference"
+    },
+    {
+      "method": "POST",
+      "path": "/api/research/early-access/assisted-orders/:requestId/documents/upload-url"
+    },
+    {
+      "method": "POST",
+      "path": "/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/assisted-orders"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/assisted-orders/:requestId"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/research/assisted-orders/:requestId/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"
+    }
+  ],
+  "migrations": [
+    {
+      "id": "research_assisted_order_bridge",
+      "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "checksum": "da60e8b0f0d66625ff72f687f3386c45edaf27f5fc5f020e9137f7e6d486091a",
+      "dependsOn": [],
+      "rollback": {
+        "strategy": "containment_first_flag_off",
+        "steps": [
+          "Disable RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED before any database action; committed request rows are preserved, never dropped.",
+          "Follow supabase/production/research-assisted-order-bridge-rollback-notes.md for containment; M71 objects are never dropped while any request row exists."
+        ],
+        "verification": [
+          "Every assisted-order door answers the named refusal (or 404 pre-mount), never a 500.",
+          "research_assisted_order_requests row count is unchanged by the rollback."
+        ]
+      }
+    }
+  ],
+  "tables": [
+    "research_assisted_order_requests",
+    "research_assisted_order_lines",
+    "research_assisted_order_events",
+    "research_assisted_order_access_tokens",
+    "research_assisted_order_documents"
+  ],
+  "functions": [],
+  "rls": [
+    "M71 is RPC-only: forced RLS, zero direct table grants; app code reaches the five tables only through the eight reviewed SECURITY DEFINER RPCs."
+  ],
+  "privileges": [
+    "No privilege change in this diff; the runtime repair touches composition wiring only."
+  ],
+  "environmentNames": [
+    "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED",
+    "RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL"
+  ],
+  "sharedWiring": [
+    "server/index.ts seam: assisted-order resolveMember now carries the server-derived master-offerings pricing viewer; seam baseline moved with a dated note in docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json.",
+    "server/research/master-offerings/member-pricing-viewer.ts: the ONE member-row -> viewer-with-grant derivation shared by the v2 catalog doors and the assisted-order bridge."
+  ],
+  "tests": {
+    "focused": {
+      "status": "PASS",
+      "command": "npx vitest run server/research/assisted-order/ server/research/master-offerings/",
+      "checkedAt": "2026-08-19T14:39:00Z"
+    },
+    "fullSuite": {
+      "status": "PASS",
+      "command": "npx vitest run",
+      "checkedAt": "2026-08-19T14:44:00Z"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run check",
+      "checkedAt": "2026-08-19T14:41:00Z"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "npm run build",
+      "checkedAt": "2026-08-19T14:50:00Z"
+    },
+    "diffCheck": {
+      "status": "PASS",
+      "command": "git diff --name-only --no-renames 458e7284..c318ec90",
+      "checkedAt": "2026-08-19T14:51:19Z"
+    }
+  },
+  "rollback": {
+    "strategy": "flag_off_first_then_runtime",
+    "steps": [
+      "Set RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED off (unset or not exactly 'true') and redeploy the same SHA; every assisted-order door answers the named refusal and the site is otherwise byte-identical.",
+      "If runtime rollback is still required, redeploy 458e7284c12cfbd95bd91371afb88cb8a6201454 (the verified production predecessor).",
+      "Never drop M71 objects; committed request rows are preserved per supabase/production/research-assisted-order-bridge-rollback-notes.md."
+    ],
+    "verification": [
+      "GET /api/research/early-access/assisted-orders/config returns the disabled state (or 404 pre-mount), never a 500.",
+      "Core site, Research gateway, Early Access, and member catalog smoke unchanged.",
+      "research_assisted_order_requests row count unchanged by the rollback."
+    ]
+  },
+  "smoke": {
+    "steps": [
+      "Dark deploy c318ec90 with the flag off; verify core site, /research gateway, Early Access, member catalog, and that every assisted-order door stays dark.",
+      "Enable RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true on the same SHA; GET config as an authorized viewer.",
+      "As an active member: GET catalog and confirm an approved member price renders (not 'Price on request' on a priced, bound, direct-eligible variant).",
+      "As a private Early Access session without a member grant: GET catalog and confirm 'Price on request' (never $0).",
+      "Submit one controlled multi-line request; record the XRR reference.",
+      "GET the status page by reference; confirm the timeline renders.",
+      "As admin: GET the queue and the request detail; confirm the request appears with lines and estimates.",
+      "Confirm the admin notification intent exists in the durable outbox with its dedupe key."
+    ],
+    "expected": [
+      "config: enabled=true with the exact Early Access required agreement pairs.",
+      "member catalog: canonical approved member prices via the server-derived pricing viewer.",
+      "EA catalog: request_pricing workflow and null price, never zero.",
+      "submit: 201 with XRR-YYYYMMDD-XXXXXXXXXX and a durable row reachable by status read.",
+      "admin queue: the reference is listed behind requireSupabaseAdmin only.",
+      "no outbound customer email beyond the reviewed notification intents; no supplier cost, margin, or internal notes in any customer payload."
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "production_database_preflight_readonly",
+      "reference": "storage.buckets has NO research-assisted-order-documents bucket; information_schema shows NO research_assisted_order% tables. Both must be created by the approved packet steps before flag enablement.",
+      "checkedAt": "2026-08-19T14:45:00Z"
+    },
+    {
+      "kind": "migration_checksum",
+      "reference": "M71 sha256 da60e8b0f0d66625ff72f687f3386c45edaf27f5fc5f020e9137f7e6d486091a re-hashed at c318ec90, identical to the canonical MIGRATION_DAG.json value.",
+      "checkedAt": "2026-08-19T14:50:00Z"
+    },
+    {
+      "kind": "gate_release_control_plane",
+      "reference": "npm run check:release-control-plane clean; npm run test:release-control-plane 35 passed, 1 skipped.",
+      "checkedAt": "2026-08-19T14:49:00Z"
+    },
+    {
+      "kind": "gate_migration_dag",
+      "reference": "npm run verify:migration-dag \u2014 accepted, 30 nodes, canonical checksums verified.",
+      "checkedAt": "2026-08-19T14:46:00Z"
+    },
+    {
+      "kind": "gate_route_uniqueness",
+      "reference": "npm run verify:route-uniqueness \u2014 accepted, 385 static registrations across 376 call sites; unchanged by this diff.",
+      "checkedAt": "2026-08-19T14:46:00Z"
+    },
+    {
+      "kind": "gate_production_state_PREEXISTING_FAIL",
+      "reference": "npm run verify:production-state exits 1 with four STALE_EVIDENCE items (production HTTP, production database, founder workaround addendum, final full-website directive). Identical failure at the untouched base 78f3482c: the evidence documents aged past the allowed window after the 2026-08-17 production drift. Refreshing them requires live production verification inside the founder-approved execution window.",
+      "checkedAt": "2026-08-19T14:47:00Z"
+    },
+    {
+      "kind": "gate_core_site_protection_script_PREEXISTING_FAIL",
+      "reference": "node scripts/acceptance/verify-core-site-protection.mjs exits 1 comparing origin/main..HEAD: the branch's accumulated continuity-corpus and PWA files (e.g. .xenios/**, AGENTS.md, CLAUDE.md, client/index.html, client/public/sw.js) sit outside the Research/Care write zones. Identical failure at the untouched base 78f3482c; this diff adds no new out-of-zone runtime file. The vitest seam gate (server/core-site-protection.test.ts) is green: 32/32 after the documented seam-baseline move.",
+      "checkedAt": "2026-08-19T14:48:00Z"
+    },
+    {
+      "kind": "audit_sink_decision",
+      "reference": "auditWrite remains application-log based at this SHA, recorded as a NAMED Phase Zero limitation: the durable business record for every request and transition is M71's append-only research_assisted_order_events ledger (trigger-guarded), so the log sink duplicates operational telemetry only. Required follow-up: wire a durable structured research audit repository before Release B payment states go live.",
+      "checkedAt": "2026-08-19T14:50:00Z"
+    }
+  ]
+}

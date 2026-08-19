@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-17T20:56:49.210Z",
-      "note": "2026-08-17 FINAL: founder credential-safety resequencing recorded (Phase Zero runs first with PAT; lanes launch only after PAT deletion+revocation+.mcp.json removal+second restart); narrow GO scope recorded in the runbook. Seat holds untouched; this session ends at the founder's app restart; successor adopts claude-fable-desktop per PHASE_ZERO_SUCCESSOR_PROMPT_2026-08-17.md."
+      "heartbeatAt": "2026-08-19T14:57:31.184Z",
+      "note": "2026-08-19: wiring RC c318ec90 complete + gates run; docs commit (packet, manifest, ownership rule, handoff) landing; next: push + PR + independent review. No production mutation."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T19:25:00Z",
+  "updatedAt": "2026-08-19T15:05:00Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "458e7284c12cfbd95bd91371afb88cb8a6201454",
   "lastDocumentedProductionRelease": {
@@ -12,12 +12,15 @@
     "note": "0_4 runtime plus the non-runtime continuity corpus; manual deploy live 2026-08-17T19:05:41Z, actor unknown; reconciled as the Phase Zero predecessor 2026-08-17"
   },
   "nextRelease": {
-    "name": "RESEARCH_PLATFORM_0_5",
+    "name": "RESEARCH_PLATFORM_0_5_ASSISTED_ORDER_RC2",
     "scope": [
-      "Pack02 renamed schema",
-      "organization account UI mount"
+      "Phase Zero assisted-order wiring repair (legal port carried, server-derived pricing viewer)",
+      "M71 apply + private document bucket creation + admin email + flag enablement per replacement packet"
     ],
-    "status": "blocked_on_migration_certification"
+    "status": "candidate_c318ec90_awaiting_review_ci_tag_and_founder_approval",
+    "candidateSha": "c318ec9029378bb2dfdc391226263f6414487260",
+    "candidateBranch": "fix/phase-zero-assisted-order-wiring-20260818",
+    "supersedes": "32bbd7998e806d881590c9e9a32123c2b8ba8168"
   },
   "productionWriter": "claude-fable-desktop",
   "invariants": [
