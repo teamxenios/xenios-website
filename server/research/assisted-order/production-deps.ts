@@ -122,6 +122,10 @@ export function buildAssistedOrderProduction(
 
   const composition = createAssistedOrderProductionComposition({
     enabled,
+    // The canonical legal port built above, carried through to the service.
+    // Dropping this line is exactly the 2026-08-18 Phase Zero defect: the
+    // production-wiring test proves config publishes these exact pairs.
+    legal,
     catalog,
     repository,
     outbox,

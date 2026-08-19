@@ -27,6 +27,13 @@ export type AssistedOrderViewer = Readonly<{
   // Admin identities can be Supabase JWT email identities with no member row.
   // This label is the recordable actor for such viewers.
   actorLabel?: string | null;
+  /**
+   * Opaque server-derived master-offerings pricing viewer, set ONLY by the
+   * composition root from the authenticated member row — never from browser
+   * input. Absent or null means no price grant: the canonical price authority
+   * fails closed and every price renders "Price on request", never $0.
+   */
+  pricingViewer?: unknown;
   capabilities: ReadonlySet<
     | "assisted_orders:submit"
     | "assisted_orders:read_own"

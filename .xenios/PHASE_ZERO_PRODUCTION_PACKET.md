@@ -1,62 +1,130 @@
-# Phase Zero production execution packet (founder-approved 2026-08-16)
+# Phase Zero production execution packet — REPLACEMENT CANDIDATE 2026-08-19 (NOT YET FOUNDER-APPROVED)
 
-Samuel approved production steps 1 to 4 for the EXACT frozen candidate below.
-The approval is narrow: it authorizes ONLY M71, the admin notification email,
-the frozen release SHA, and the survey feature flag. It does NOT authorize
-M69, M70, any other migration, any other release SHA, any unrelated Render
-change, account-claim email activation, commerce, payments, or supplier
-automation. If the exact target changes, return to Samuel for approval.
+STATUS: AWAITING (1) independent exact-SHA review, (2) GitHub CI on the PR,
+(3) RC tag freeze after review, (4) Samuel's CURRENT explicit approval of the
+exact SHA below. NO production mutation is authorized by this document.
 
-## Approved targets
+## Supersession
 
-- RELEASE SHA: 32bbd7998e806d881590c9e9a32123c2b8ba8168
-  (tag RESEARCH_PLATFORM_0_5_ASSISTED_ORDER_RC)
+The 2026-08-16 approval for 32bbd7998e806d881590c9e9a32123c2b8ba8168 is
+SUPERSEDED and MUST NOT be executed. The 2026-08-18 recovery packet found two
+production composition defects in that candidate:
+
+- Defect A: the canonical legal port was constructed in
+  buildAssistedOrderProduction and dropped before the service, so every
+  submission refused with legal_requirements_unavailable even after M71, the
+  admin email, the deploy, and the flag.
+- Defect B: the server-authorized pricing viewer never rode the assisted-order
+  viewer, so the approved-price authority failed closed and the survey showed
+  "Price on request" over 417 approved member prices.
+
+Both are repaired, regression-locked, and committed on
+fix/phase-zero-assisted-order-wiring-20260818.
+
+## Candidate targets (approval must name these exactly)
+
+- RELEASE SHA (runtime candidate): c318ec9029378bb2dfdc391226263f6414487260
+  (branch fix/phase-zero-assisted-order-wiring-20260818, base
+  78f3482c25e233c8a2cafca6f0c956fcc9ac03d8 = claude/assisted-order-bridge head)
+- INTENDED RC TAG (created only after independent review + CI):
+  RESEARCH_PLATFORM_0_5_ASSISTED_ORDER_RC2
 - M71: supabase/migrations/20260815150000_research_assisted_order_bridge.sql
-- M71 SHA256: da60e8b0f0d66625ff72f687f3386c45edaf27f5fc5f020e9137f7e6d486091a
+- M71 SHA256 (re-hashed AT the candidate SHA, 2026-08-19, identical to the
+  canonical MIGRATION_DAG value):
+  da60e8b0f0d66625ff72f687f3386c45edaf27f5fc5f020e9137f7e6d486091a
+- DOCUMENT BUCKET: research-assisted-order-documents (private) — DOES NOT
+  EXIST in production yet; creation is now an explicit approved step below.
 - ADMIN EMAIL: RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL=research@xeniostechnology.com
 - FLAG: RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true
 - Supabase project: yvzeduaxbwgcwllhywff
 - Render service: srv-d8s9vej7uimc7384dfcg (workspace tea-d8nhh6a8qa3s73f4ocj0)
+- Production predecessor / first containment redeploy target:
+  458e7284c12cfbd95bd91371afb88cb8a6201454
+- Release manifest: docs/coordination/PHASE_ZERO_WIRING_RC_MANIFEST.json
 
-## Pre-flight, VERIFIED 2026-08-16 by claude-fable-main (re-verify before each mutation)
+## Pre-flight, VERIFIED 2026-08-19 by claude-fable-desktop (re-verify before each mutation)
 
-1. Production currently runs b0fe396 (deploy dep-da07gcdbedkc73a3mka0, live
-   2026-08-15T14:32:06Z). Service updatedAt unchanged since.
-2. Release SHA resolves and equals the approved SHA.
-3. M71 bytes AT the approved release SHA hash to exactly the approved SHA256.
-4. Production database has ZERO research_assisted_order tables and ZERO
-   research_assisted_order routines, so M71 is a clean first apply.
-5. Render autoDeploy is "no" and autoDeployTrigger is "off": an env write does
-   NOT auto-deploy this service.
-6. No other production writer. The only active lease is claude-opus5-main on
-   F7-PACK02-RENAME, which touches Pack 02 files, not production.
+1. Local head of claude/assisted-order-bridge equals origin and the expected
+   78f3482c...; 32bbd799... and 458e7284... are both verified ancestors.
+2. The candidate c318ec90... is exactly eleven files beyond 78f3482c...: the
+   two wiring repairs, four regression/test files, one new shared derivation
+   module, and the documented server/index.ts seam-baseline move.
+3. M71 bytes at the candidate SHA hash to exactly the approved SHA256 above.
+4. READ-ONLY production checks (executed 2026-08-19, no mutation): production
+   database has ZERO research_assisted_order% tables (clean first apply) and
+   storage.buckets has NO research-assisted-order-documents bucket (must be
+   created, private, before flag enablement — new step 2 below).
+5. The untracked local .mcp.json was never committed. No credential enters
+   this branch.
 
-## Why this packet exists
+## Gate evidence at the exact candidate SHA (2026-08-19)
 
-The executing session must emit the 47,876-byte migration as a tool parameter.
-The session that prepared this packet reached its context limit and refused to
-risk sending a TRUNCATED migration to a production database. That is the only
-reason execution is deferred. Nothing about the candidate is unresolved.
+- Focused suites: PASS — 332 passed / 13 skipped across
+  server/research/assisted-order/ and server/research/master-offerings/,
+  including the four new suites (production-wiring, pricing-seam, http-e2e,
+  member-pricing-viewer).
+- Full suite: PASS — npx vitest run: 9551 passed / 43 skipped / 0 failed
+  (the single interim failure was the leased server/index.ts seam hash,
+  resolved by the documented CORE_SITE_PROTECTION_MANIFEST baseline note;
+  server/core-site-protection.test.ts re-run green 32/32).
+- Typecheck: PASS (npm run check). Build: PASS (npm run build).
+- Release control plane: PASS (check + 35 tests).
+- Migration DAG: PASS (30 nodes, canonical checksums).
+- Route uniqueness: PASS (385 registrations, unchanged by this diff).
+- verify:production-state: PRE-EXISTING FAIL (four STALE_EVIDENCE items aged
+  past their window after the 2026-08-17 drift; identical failure at the
+  untouched base 78f3482c). Refresh requires live production verification
+  inside the approved execution window — step 0 below.
+- verify-core-site-protection.mjs: PRE-EXISTING FAIL vs origin/main (the
+  branch's accumulated continuity-corpus/PWA files outside Research/Care
+  zones; identical at the untouched base). This diff adds no new out-of-zone
+  runtime file. The vitest seam gate is green.
+- verify:release-manifest: all structural, SHA-binding, diff-exactness,
+  route, migration, test, rollback, smoke, and evidence checks PASS. 99
+  UNOWNED_FILE findings remain and are STRUCTURAL: the verifier reads
+  FILE_OWNERSHIP.json from the trusted BASE commit (458e7284), whose ledger
+  (generated 2026-08-03) predates the assisted-order lane entirely. No edit
+  in this branch can cure that run. The refreshed ownership rule
+  OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819 ships IN this release so
+  the next release verifies against a coherent base ledger. The independent
+  reviewer must accept this residual explicitly.
 
-## Execution order (fail-safe: no intermediate step shows a working-but-broken form)
+## Named Phase Zero limitation (decision recorded in code review, not marketing)
 
-1. Apply M71 via the repository's approved process (Supabase MCP
-   apply_migration), capturing the real result. Then run the M71 production
-   postcheck (supabase/verification/, see the DAG entry's evidence field).
-   Verify: five tables exist, RLS enabled AND forced, zero direct table grants
-   to public/anon/authenticated/service_role, RPC-only boundary intact,
-   routines present, no unrelated object changed, no business row written.
-   If apply or postcheck fails: STOP, contain per
+auditWrite remains application-log based at this SHA. The durable business
+record for every request, line, document, and status transition is M71's
+append-only research_assisted_order_events ledger (trigger-guarded, RPC-only),
+so the log sink duplicates operational telemetry only. REQUIRED FOLLOW-UP
+(release-blocking for Release B payment states, not for Phase Zero intake):
+wire a durable structured research audit repository.
+
+## Execution order (only after CURRENT founder approval of the exact SHA; fail-safe: no intermediate step shows a working-but-broken form)
+
+0. Re-verify the production predecessor is still 458e7284 (no competing
+   writer, no new manual deploy), and refresh the stale production-state
+   evidence documents from this live verification.
+1. Apply M71 via the approved process (Supabase MCP apply_migration), then run
+   the M71 production postcheck. Verify: five tables, RLS enabled AND forced,
+   zero direct grants, RPC-only boundary, routines present, no unrelated
+   object changed, no business row written. On failure: STOP, contain per
    supabase/production/research-assisted-order-bridge-rollback-notes.md.
-2. Set RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL=research@xeniostechnology.com.
+2. Create the PRIVATE storage bucket research-assisted-order-documents
+   (public=false) through the approved process; verify public=false and that
+   no anonymous policy exists on it.
+3. Set RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL=research@xeniostechnology.com.
    Leave the bridge flag unset. Confirm the running release is unchanged.
-3. Deploy EXACTLY 32bbd799... (not branch HEAD unless proven identical).
-   Verify the deploy object's commit, health, core site, Early Access, and
-   that assisted-order doors REFUSE because the flag is unset, and the CTA
-   advertises nothing.
-4. Set RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true and redeploy the SAME SHA
-   so production reads it. No code change during enablement.
-5. Run the founder's 27-point live smoke with a controlled test request.
+4. Deploy EXACTLY c318ec9029378bb2dfdc391226263f6414487260. Verify the deploy
+   object's commit, health, core site, Research gateway, Early Access, member
+   catalog, and that every assisted-order door REFUSES because the flag is
+   unset (CTA advertises nothing).
+5. Set RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true and redeploy the SAME SHA.
+   No code change during enablement.
+6. Run the controlled live smoke per the manifest's smoke block, including the
+   two pricing proofs the defects would have failed: an active member sees a
+   canonical approved price; an Early Access session without a grant sees
+   "Price on request", never $0.
+7. Verify customer receipt, durable XRR row, admin queue, notification outbox
+   intent (dedupe key present), privacy boundaries, and status read.
 
 ## Test-order rule
 
@@ -70,31 +138,6 @@ the truthful supported path afterwards.
 First containment on any release-blocking issue:
 RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=false, verify the doors refuse again,
 and only then debug. Preserve every committed request row. If needed, redeploy
-the verified production predecessor (458e7284 per the 2026-08-17
-reconciliation below; b0fe3963722665dcd7e8853f05f637bc09960a56 remains the
-next-older fallback).
-
-## Baseline reconciliation (2026-08-17, claude-fable-desktop)
-
-Production moved off this packet's b0fe396 baseline BEFORE Phase Zero began:
-a MANUAL deploy, dep-da1lmgu417fc73elr8f0, went live 2026-08-17T19:05:41Z
-with commit 458e7284c12cfbd95bd91371afb88cb8a6201454 (the head of
-release/early-access-code-session-checkout). Render deploy metadata records
-trigger "manual" and exposes no actor: UNKNOWN MANUAL DEPLOY ACTOR. The
-unexplained deploy authorizes no further mutation.
-
-Independent derivation by this session: b0fe396..458e7284 is a fast-forward
-of exactly three commits (7d6ef7a, 17a8370, 458e728) touching ONLY
-.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, and
-docs/research-launch/RESEARCH_PLATFORM_0_2_EVIDENCE.md. Zero changes under
-client/, server/, shared/, supabase/migrations/, or any build/runtime
-configuration. Drift type: NON-RUNTIME.
-
-Consequences:
-- Pre-flight item 1 above is superseded: production runs 458e7284
-  (dep-da1lmgu417fc73elr8f0), not b0fe396.
-- 458e7284 is the NEW verified Phase Zero production predecessor and the
-  first containment redeploy target.
-- The frozen candidate 32bbd7998e806d881590c9e9a32123c2b8ba8168 descends
-  from 458e7284 (verified ancestor), so the approved release SHA, M71, the
-  admin email, and the flag scope are UNCHANGED. The founder approval stands.
+the verified production predecessor 458e7284 (b0fe3963722665dcd7e8853f05f637bc09960a56
+remains the next-older fallback). Never drop M71 objects while any request row
+exists.
