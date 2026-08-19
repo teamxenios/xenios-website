@@ -1,8 +1,14 @@
 # Phase Zero production execution packet — REPLACEMENT CANDIDATE 2026-08-19 (NOT YET FOUNDER-APPROVED)
 
-STATUS: AWAITING (1) independent exact-SHA review, (2) GitHub CI on the PR,
-(3) RC tag freeze after review, (4) Samuel's CURRENT explicit approval of the
-exact SHA below. NO production mutation is authorized by this document.
+STATUS 2026-08-19 (supersedes the header below it): the founder's
+2026-08-19 unblock directive authorizes executing the Release A sequence once
+the lead freezes the exact Release A RC SHA and the gates are green or every
+residual failure is proven pre-existing/non-runtime — "without another broad
+founder-decision pause". The Release A Addendum at the end of this file names
+the deltas; the RC SHA is recorded there at freeze. Fleet Session 10
+(release/security QA) carries the independent adversarial function in
+parallel; PR #305 remains open for asynchronous review of the wiring repair
+lineage.
 
 ## Supersession
 
@@ -141,3 +147,40 @@ and only then debug. Preserve every committed request row. If needed, redeploy
 the verified production predecessor 458e7284 (b0fe3963722665dcd7e8853f05f637bc09960a56
 remains the next-older fallback). Never drop M71 objects while any request row
 exists.
+
+
+## RELEASE A ADDENDUM — 2026-08-19 (founder unblock directive)
+
+The founder's 2026-08-19 unblock directive AUTHORIZES executing the Release A
+sequence after exact-SHA freeze without a further founder pause, and approves:
+manual payment for Release A, admin-driven fulfillment, the retail price book
+as the target schedule for the 34 exact-matched variants (controlled release,
+canonical RPCs, artifact docs/research-launch/PRICE_RELEASE_2026-08-19.sql),
+the affiliate program configuration (20%/7.5% months 2-12/21-day hold/$50
+minimum/biweekly Friday; activation via AFFILIATE_PROGRAM_ENABLED), and SQL
+A/B/C through the release train (now promoted: migrations 72-74, adversarial
+review PASS, applied twice on disposable PostgreSQL 16+17 via
+scripts/verify-20260819-cart-migrations.sh).
+
+RELEASE A RC: pending the freeze battery on
+5093267... (xenios/launch-integration-20260819). The runtime candidate
+SUPERSEDES c318ec90 as the deploy target; every guarantee of the earlier
+candidate is contained in it (verified ancestry) plus the launch lanes.
+
+Release A execution deltas vs the base packet sequence:
+- Deploy target: the frozen Release A RC SHA via fast-forward of
+  release/early-access-code-session-checkout and an explicit Render deploy
+  (autoDeploy off, verified).
+- Step 2 (bucket) stands, but is NOT an intake blocker: uploads occur only
+  after an admin-initiated identity request; create the bucket before the
+  first such request.
+- New env at flag time: RESEARCH_PARTNER_LINK_SECRET (freshly generated,
+  never committed), AFFILIATE_SYSTEM_ENABLED=true, AFFILIATE_CODES_ENABLED=true,
+  AFFILIATE_PORTAL_ENABLED=true, AFFILIATE_PROGRAM_ENABLED=true.
+- After dark-deploy smoke: execute the controlled price release (34 variants,
+  one transaction, canonical create->approve RPCs), recording before/after.
+- Migrations 72-74 are NOT applied at Release A (their consumers are the cart
+  lane, Release B); they ride the runtime as PENDING. The M58 service_role
+  revoke candidate (20260819_research_ea_cart_service_role_revoke) awaits its
+  own founder approval.
+- Mobile smoke per the activation runbook step 7 is a release-blocking check.
