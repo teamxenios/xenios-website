@@ -28,12 +28,21 @@ with rpc as (
         and has_function_privilege(r.rolname, (select oid from rpc), 'EXECUTE')
     ) as browser_role_may_execute,
     exists (
+      -- Browser roles must never read either table directly. service_role is
+      -- probed only on legal_bindings (revoked by M62): the M58 cart tables
+      -- were never revoked from service_role in production, so probing it
+      -- there would report REVIEW_REQUIRED forever for a pre-existing state
+      -- this migration does not touch (closing that hole is the separate
+      -- founder-gated hardening candidate 20260819_research_ea_cart_service_role_revoke).
       select 1 from pg_roles r
-      where r.rolname in ('anon', 'authenticated', 'service_role')
+      where r.rolname in ('anon', 'authenticated')
         and (
           has_table_privilege(r.rolname, 'public.research_early_access_cart_checkouts', 'SELECT')
           or has_table_privilege(r.rolname, 'public.research_early_access_legal_bindings', 'SELECT')
         )
+    ) or exists (
+      select 1
+      where has_table_privilege('service_role', 'public.research_early_access_legal_bindings', 'SELECT')
     ) as any_role_reads_tables_directly
 )
 select jsonb_build_object(

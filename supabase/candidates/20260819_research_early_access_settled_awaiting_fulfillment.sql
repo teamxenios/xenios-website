@@ -13,6 +13,20 @@
 -- route answers a NAMED 503 rather than inventing an empty queue, because a
 -- fabricated "nothing to ship" is exactly how a paid order sits unshipped
 -- with every screen looking clean.
+--
+-- ROLLBACK / CONTAINMENT: drop function
+-- public.research_early_access_settled_awaiting_fulfillment(); nothing is
+-- written by this migration, no table or grant changes, so the drop
+-- restores the previous state exactly (the admin route returns to its
+-- named 503).
+--
+-- INNER-JOIN SEMANTICS, stated deliberately: the reads join order_lines
+-- and money_snapshots with INNER joins, so a settled order missing either
+-- row would be silently absent from this queue. The deployed placement
+-- commit (20260804121000) writes placement, lines, and money atomically,
+-- so such a row should be unreachable; if operations ever suspects a
+-- settled order is missing here, compare this queue against the payment
+-- queue by order number before trusting the empty answer.
 
 begin;
 

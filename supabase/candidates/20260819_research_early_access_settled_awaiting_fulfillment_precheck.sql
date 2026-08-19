@@ -32,6 +32,8 @@ select jsonb_build_object(
     when missing_tables.missing_table_count = 0
      and function_collisions.function_collision_count = 0
     then 'APPLY_READY'
+    when missing_tables.missing_table_count > 0
+    then 'STOP_MISSING_PREREQUISITES'
     else 'STOP_REVIEW_EXISTING_OBJECTS'
   end,
   'tables', (
