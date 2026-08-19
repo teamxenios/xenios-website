@@ -188,15 +188,24 @@ export function createEarlyAccessCartConfirmPaymentAdminRoute(
     const status =
       result.reason === "checkout_unknown"
         ? 404
-        : result.reason === "transaction_id_used" ||
-            result.reason === "transaction_id_duplicate_canonical" ||
-            result.reason === "amount_mismatch" ||
-            result.reason === "checkout_superseded" ||
-            result.reason === "agreements_not_current" ||
-            result.reason === "submission_missing" ||
-            result.reason === "submission_unreconciled"
-          ? 409
-          : 400;
+        : // The deployment cannot yet settle an ATTRIBUTED checkout atomically
+          // with its commission. 503, not 400: the request was fine, the
+          // capability is missing until the founder applies the candidate SQL
+          // and wires the referrals seam, and a retry after that succeeds.
+          result.reason === "commission_persistence_unavailable"
+          ? 503
+          : result.reason === "transaction_id_used" ||
+              result.reason === "transaction_id_duplicate_canonical" ||
+              result.reason === "amount_mismatch" ||
+              result.reason === "checkout_superseded" ||
+              result.reason === "agreements_not_current" ||
+              result.reason === "submission_missing" ||
+              result.reason === "submission_unreconciled" ||
+              // The durable RPC refused the commission record the service
+              // computed. Nothing settled; the disagreement needs a human.
+              result.reason === "commission_invalid"
+            ? 409
+            : 400;
     response.status(status).json({
       ok: false,
       code: result.reason,

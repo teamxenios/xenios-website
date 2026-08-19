@@ -41,6 +41,7 @@ import {
 } from "./refusing";
 import { buildEarlyAccessProofDependencies } from "../proof/production-deps";
 import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
+import { SupabaseEarlyAccessCartOrderHistory } from "../orders/cart-order-history";
 import type { EarlyAccessOrderHistoryDependencies } from "../orders/member-order-history";
 import { SupabaseEarlyAccessAdminPaymentReviewStore } from "../cart/supabase-admin-payment-review";
 import { SupabaseEarlyAccessShippingSlaStore } from "../cart/supabase-shipping-sla";
@@ -385,6 +386,17 @@ export function buildEarlyAccessPersistence(
     orderHistory: Object.freeze({
       bindings: new SupabaseEarlyAccessLegalBindingDirectory(run),
       store: options.store as SupabaseEarlyAccessCommerceStore,
+      // CART CHECKOUTS IN THE MEMBER HISTORY, FOUNDER-GATED BY THE SWITCH
+      // BELOW. The read RPC is candidate SQL
+      // (supabase/candidates/20260819_research_ea_cart_member_order_history.sql)
+      // and does not exist in production until the founder applies it. Wiring
+      // the port before the RPC exists would make EVERY history read fail
+      // (a wired port's failure propagates, deliberately), so the port is
+      // absent — the fail-closed state, placements-only history — until the
+      // founder both applies the SQL and sets the flag to exactly "true".
+      ...(env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true"
+        ? { cartOrders: new SupabaseEarlyAccessCartOrderHistory(run) }
+        : {}),
     }),
   });
 }

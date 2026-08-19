@@ -74,6 +74,13 @@ import type { OrderDetailDto, OrderSummaryDto } from "../../../../shared/researc
 import type { OrderState } from "../../../../shared/research/commerce";
 import type { EarlyAccessLegalBindingDirectory } from "../hardening-contract";
 import type { EarlyAccessCommerceStore, EarlyAccessPlacement } from "../routes/store";
+import {
+  cartOrderDetail,
+  cartOrderSummary,
+  readCartHistoryEntry,
+  type EarlyAccessCartHistoryEntry,
+  type EarlyAccessCartOrderHistoryPort,
+} from "./cart-order-history";
 
 /**
  * How the session that placed an order was bound to its customer, restricted to
@@ -118,6 +125,16 @@ export type EarlyAccessOrderHistoryDependencies = Readonly<{
   // from different records.
   bindings: Pick<EarlyAccessLegalBindingDirectory, "customerRefsFor" | "forCustomer">;
   store: Pick<EarlyAccessCommerceStore, "placementsForCustomers">;
+  /**
+   * Cart checkouts, the canonical launch order. OPTIONAL, and the absence is
+   * the fail-closed state: until the founder applies the candidate read RPC
+   * and production wires this port, the cart section is structurally absent
+   * and the history behaves exactly as before — it does not render a fake
+   * empty cart answer, because there is no dependency to ask. Once wired, a
+   * failed cart read propagates like a failed placements read: the whole
+   * history fails honestly rather than rendering half of itself.
+   */
+  cartOrders?: EarlyAccessCartOrderHistoryPort;
 }>;
 
 /** The member-facing orders service this decorates. Structural on purpose. */
@@ -180,6 +197,40 @@ async function ownedPlacements(
     if (seen.has(placement.orderNumber)) continue;
     seen.add(placement.orderNumber);
     kept.push(placement);
+  }
+  return kept;
+}
+
+/**
+ * The cart checkouts this member may be shown, under the SAME discipline the
+ * placements take: ownership re-checked against the handle set even though the
+ * RPC filtered on it, weak or absent provenance dropped, repeated checkout
+ * numbers dropped, and every field re-proven by `readCartHistoryEntry` before
+ * anything renders. An unwired port answers an empty list without asking
+ * anything; a WIRED port's failure propagates, exactly like the placements
+ * read, because half a history is indistinguishable from a complete one.
+ */
+async function ownedCartEntries(
+  deps: EarlyAccessOrderHistoryDependencies,
+  memberId: unknown,
+): Promise<readonly EarlyAccessCartHistoryEntry[]> {
+  if (!deps.cartOrders) return [];
+  const owned = await ownedHandles(deps, memberId);
+  if (owned.size === 0) return [];
+
+  const rows = await deps.cartOrders.checkoutsForCustomers(Array.from(owned));
+  if (!Array.isArray(rows)) return [];
+
+  const seen = new Set<string>();
+  const kept: EarlyAccessCartHistoryEntry[] = [];
+  for (const row of rows) {
+    const entry = readCartHistoryEntry(row);
+    if (entry === null) continue;
+    // THE RE-CHECK, same reason as the placements above.
+    if (!owned.has(entry.customerRef)) continue;
+    if (seen.has(entry.cartCheckoutNumber)) continue;
+    seen.add(entry.cartCheckoutNumber);
+    kept.push(entry);
   }
   return kept;
 }
@@ -261,11 +312,16 @@ export function withEarlyAccessOrderHistory(
 ): MemberOrdersService {
   return {
     async listForMember(memberId: string): Promise<OrderSummaryDto[]> {
-      const [own, placements] = await Promise.all([
+      const [own, placements, cartEntries] = await Promise.all([
         base.listForMember(memberId),
         ownedPlacements(deps, memberId),
+        ownedCartEntries(deps, memberId),
       ]);
-      const merged = [...own, ...placements.map(earlyAccessOrderSummary)];
+      const merged = [
+        ...own,
+        ...placements.map(earlyAccessOrderSummary),
+        ...cartEntries.map(cartOrderSummary),
+      ];
       return merged.sort((a, b) =>
         a.placedAt === b.placedAt
           ? a.orderId.localeCompare(b.orderId)
@@ -286,7 +342,14 @@ export function withEarlyAccessOrderHistory(
       // another member's order from one that does not exist.
       const placements = await ownedPlacements(deps, memberId);
       const match = placements.find((placement) => placement.orderNumber === orderId);
-      return match === undefined ? null : earlyAccessOrderDetail(match);
+      if (match !== undefined) return earlyAccessOrderDetail(match);
+
+      // Cart checkouts occupy their own id space (XEC- against XEA-), and take
+      // the same ownership-first resolution for the same probe-resistance
+      // reason.
+      const cartEntries = await ownedCartEntries(deps, memberId);
+      const cartMatch = cartEntries.find((entry) => entry.cartCheckoutNumber === orderId);
+      return cartMatch === undefined ? null : cartOrderDetail(cartMatch);
     },
   };
 }
