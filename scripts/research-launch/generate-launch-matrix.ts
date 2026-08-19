@@ -89,8 +89,13 @@ const bindingsFile = loadJson<{ bindings: Binding[] }>(
 const priceSnapshot = loadJson<{ capturedAt: string; prices: PriceRow[] }>(
   "docs/research-launch/PRODUCTION_MEMBER_PRICES_SNAPSHOT_2026-08-19.json",
 );
-const founderBook = loadJson<{ retailPriceBook: PriceBookRow[] }>(
-  "docs/research-launch/FOUNDER_PRICE_BOOK_2026-08-16.json",
+const founderBook = loadJson<{
+  retailPriceBook: PriceBookRow[];
+  changeLog: Record<string, unknown>[];
+}>("docs/research-launch/FOUNDER_PRICE_BOOK_2026-08-16.json");
+
+const changeLogBySku = new Map(
+  founderBook.changeLog.map((row) => [String(row.SKU), row]),
 );
 
 const bindingByOfferingVariant = new Map(
@@ -199,6 +204,10 @@ type MatrixRow = {
   founderBookSku: string | null;
   founderBookRetailCents: number | null;
   priceDelta: "MATCH" | "MISMATCH" | "NOT_IN_BOOK" | "BOOK_ONLY_NO_PRICE";
+  /** From the founder book, verbatim: activation/docs truth. Absent rows are
+   * simply not in the 39-SKU launch book. */
+  supplierReady: string | null;
+  docsReady: string | null;
 };
 
 const HELD_STATES = new Set(["temporarily_unavailable", "coming_soon"]);
@@ -311,6 +320,10 @@ for (const product of dataset.products) {
       founderBookSku: bookRow?.SKU ?? null,
       founderBookRetailCents: bookCents,
       priceDelta,
+      supplierReady: bookRow
+        ? (changeLogBySku.get(bookRow.SKU)?.Decision as string | undefined) ?? null
+        : null,
+      docsReady: bookRow ? String(bookRow["Catalog Status"]) : null,
     });
   }
 }

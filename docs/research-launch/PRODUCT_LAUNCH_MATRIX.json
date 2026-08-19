@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-19T15:31:54.508Z",
+ "generatedAt": "2026-08-19T15:33:23.547Z",
  "inputs": {
   "dataset": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
   "bindings": "server/research/master-offerings/data/master-offering-bindings.generated.json",
@@ -35,7 +35,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_28408f253a09df4cc6d8",
@@ -53,7 +55,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_76ccee864784942d94bf",
@@ -71,7 +75,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_959f2da90c182628d171",
@@ -89,7 +95,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_575a315e40db433d731d",
@@ -107,7 +115,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_49df7d5bf0502a0cb88f",
@@ -125,7 +135,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7e78307400954139ac62",
@@ -143,7 +155,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_18231f22d5471487f599",
@@ -161,7 +175,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c730f1f31b9e41c476b6",
@@ -179,7 +195,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_94a9cc1056bd619832ad",
@@ -197,7 +215,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9970858318e0c0947b31",
@@ -215,7 +235,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6e1a7f3233199bcd407e",
@@ -233,7 +255,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a317ccc332c6b52c26b5",
@@ -251,7 +275,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5f86f781abf4dcc05a4f",
@@ -269,7 +295,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6f5de65e6efe06649fe1",
@@ -287,7 +315,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1a00f73c22b0f04f9b2c",
@@ -305,7 +335,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7939e71f3b1c005b5d0c",
@@ -323,7 +355,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c6a78bd97653d1a0d07a",
@@ -341,7 +375,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_52375140d27fb5ea05e5",
@@ -359,7 +395,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f090369236db025d4a9b",
@@ -377,7 +415,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d7a9409fb28a8c4623a1",
@@ -395,7 +435,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7e5b4f1628b4bc2f6078",
@@ -413,7 +455,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2064240ea11f991b8cb4",
@@ -431,7 +475,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b6019095f40863517855",
@@ -449,7 +495,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a795e8418c3d6a7a78b7",
@@ -467,7 +515,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b7dcd84743d97b069cf5",
@@ -485,7 +535,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6f038acdd134b7f91ef4",
@@ -503,7 +555,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3ce7a55d619cc3921800",
@@ -521,7 +575,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4958d7ef84b43bc11df6",
@@ -539,7 +595,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7b02c6c157d0dd81f9cd",
@@ -557,7 +615,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_485ab8c53ce83a32bbb1",
@@ -575,7 +635,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_327138734a9410ce05d2",
@@ -593,7 +655,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c861c9587b3a2f0e37c6",
@@ -611,7 +675,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_57c25c9e9d07f83c0aac",
@@ -629,7 +695,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5ae80eae05219c7ed007",
@@ -647,7 +715,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8ee9f92bd687ef68748e",
@@ -665,7 +735,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d591d933e4e94f6a1724",
@@ -683,7 +755,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_84708fec51c5b88849c2",
@@ -701,7 +775,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ff7b17c9bfb2405ddfed",
@@ -719,7 +795,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b9495e37aaee2b1c290e",
@@ -737,7 +815,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_de8939c1b6ff7bf35e5f",
@@ -755,7 +835,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5f905f5e5496d9df01a3",
@@ -773,7 +855,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_22f24e6b7f11be51fc44",
@@ -791,7 +875,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3d63197d505782575b8c",
@@ -809,7 +895,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4212e2161648af7f969a",
@@ -827,7 +915,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4641752396f401452edd",
@@ -845,7 +935,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b1dae271b377b0eff993",
@@ -863,7 +955,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e39eebc18fe8e7795adf",
@@ -881,7 +975,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c640dc6db29f26b53e55",
@@ -899,7 +995,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_df301126ddc3108dc6b4",
@@ -917,7 +1015,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5ffbf1b43993ad6868b0",
@@ -935,7 +1035,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3c7b42246b0c5b975f23",
@@ -953,7 +1055,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_aebdba8672b47fafeb70",
@@ -971,7 +1075,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9c4e4a0e5ad273733807",
@@ -989,7 +1095,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_51fe59c0f212ad68ca3f",
@@ -1007,7 +1115,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cb9f8afab0a6228de0bb",
@@ -1025,7 +1135,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c100778b39a735f70686",
@@ -1043,7 +1155,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ec8335d4636f1efe50b4",
@@ -1061,7 +1175,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ee73386cbf5463478334",
@@ -1079,7 +1195,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ccf410e1df6931045e1f",
@@ -1097,7 +1215,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7894df52d83bbdd0aef7",
@@ -1115,7 +1235,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6b21a4fe0ab1ec733d91",
@@ -1133,7 +1255,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8ca205c9a3396be1b6a7",
@@ -1151,7 +1275,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2129be196e4cfa4db478",
@@ -1169,7 +1295,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a1fcb7f19d45389c0881",
@@ -1187,7 +1315,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2b828a36cdb0c41766b3",
@@ -1205,7 +1335,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_899dabe026510b4a5d8c",
@@ -1223,7 +1355,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c9c3aa9e5613ca970ef4",
@@ -1241,7 +1375,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e12b0e93d98d14ee9fed",
@@ -1259,7 +1395,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7028bf4bbb517b12de1a",
@@ -1277,7 +1415,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ee31bafef560781635e1",
@@ -1295,7 +1435,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_39c2cf1305d4282c62ed",
@@ -1313,7 +1455,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_071c4b9f279557c52f15",
@@ -1331,7 +1475,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ebfcba2708e8603fb96a",
@@ -1349,7 +1495,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_da74a7e210b06e5614aa",
@@ -1367,7 +1515,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4dbae3e6051f6f7410bd",
@@ -1385,7 +1535,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_aa9e5754187361b07ce3",
@@ -1403,7 +1555,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_89913165683e004bc212",
@@ -1421,7 +1575,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b7ebe0db8b401f515de0",
@@ -1439,7 +1595,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3d043e2a35ceaa045986",
@@ -1457,7 +1615,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_740df0000ec017ecab18",
@@ -1475,7 +1635,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9fd892a721686eb78c3a",
@@ -1493,7 +1655,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_997e24688ac7d4eafe54",
@@ -1511,7 +1675,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d0778841c3e3bb7d118b",
@@ -1529,7 +1695,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ddfac143bec7ba76663c",
@@ -1547,7 +1715,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a0d07fd81da710a95e3b",
@@ -1565,7 +1735,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_597123caca97b0680a1d",
@@ -1583,7 +1755,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e06b78bda06b0eb046ee",
@@ -1601,7 +1775,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4a94e7d0778b10bff7c9",
@@ -1619,7 +1795,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b921da33c0430303f46f",
@@ -1637,7 +1815,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6462cb4aee9e7583d839",
@@ -1655,7 +1835,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e85284c651d65690a90d",
@@ -1673,7 +1855,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2f5fb2ac7ae3faca754c",
@@ -1691,7 +1875,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2a7d16014d529f3499e1",
@@ -1709,7 +1895,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9b46a8704cf564734190",
@@ -1727,7 +1915,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6ef101aaa428198b1aa2",
@@ -1745,7 +1935,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fa81dfe11f956fbe6b4d",
@@ -1763,7 +1955,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cd39fd71f66a0935b86b",
@@ -1781,7 +1975,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1a1322bbf0026b9f48ba",
@@ -1799,7 +1995,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a86493b9d16bbdf413fc",
@@ -1817,7 +2015,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c0112c450a6e71d64e87",
@@ -1835,7 +2035,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_06462e2fb8d73f8a9073",
@@ -1853,7 +2055,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f834d950f34643f7ba63",
@@ -1871,7 +2075,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0fb4e44e1ea7cfead2fe",
@@ -1889,7 +2095,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e8845bf58c5e0a256d2a",
@@ -1907,7 +2115,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d8bb4d1adcb0d49d45e6",
@@ -1925,7 +2135,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_85333819f0419b09c591",
@@ -1943,7 +2155,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b11b15656e48a07633d7",
@@ -1961,7 +2175,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f524eb1ffae9041d8b56",
@@ -1979,7 +2195,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7b97bb146bda0d0ea4ac",
@@ -1997,7 +2215,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1725f51379ac3797a082",
@@ -2015,7 +2235,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_654fa6f9bcf54566093a",
@@ -2033,7 +2255,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_13aa6db9214d74eae20a",
@@ -2051,7 +2275,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a812c45672f8b41e9016",
@@ -2069,7 +2295,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7b708abc8ac204acccce",
@@ -2087,7 +2315,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a18349a47453e1786c50",
@@ -2105,7 +2335,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_45c754265490d023691d",
@@ -2123,7 +2355,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0dd9a7003cde0145405e",
@@ -2141,7 +2375,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_92499f4f1bb3546f691b",
@@ -2159,7 +2395,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d4dd7c2702ff34654d13",
@@ -2177,7 +2415,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_dc205da785a833f18c6a",
@@ -2195,7 +2435,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_caf08c6e07fbae253963",
@@ -2213,7 +2455,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0102ab46e2ba768c2e65",
@@ -2231,7 +2475,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2c6a0fe86e302e0230bf",
@@ -2249,7 +2495,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9f01cd4fd044bf92341e",
@@ -2267,7 +2515,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cbcc07c63ef522322254",
@@ -2285,7 +2535,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b2ecbab1b831fc2519ad",
@@ -2303,7 +2555,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8982282d9ae80cd15ec9",
@@ -2321,7 +2575,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0c17cd2bf32ab3bdf7e8",
@@ -2339,7 +2595,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7f613e77a9fbb975ad5e",
@@ -2357,7 +2615,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ce6422f6e1cdb603e7f2",
@@ -2375,7 +2635,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3df9fa8657910de64efe",
@@ -2393,7 +2655,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_22704ce12559d10a4229",
@@ -2411,7 +2675,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_64c49ea66ef9b84b54c7",
@@ -2429,7 +2695,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5261903feb1b3551d7ff",
@@ -2447,7 +2715,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a455518e174020e345a1",
@@ -2465,7 +2735,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8ecd70a2d4731e48ba35",
@@ -2483,7 +2755,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_102c7bf21db99d3c4622",
@@ -2501,7 +2775,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6dd72b337df13c68232d",
@@ -2519,7 +2795,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9f6c9d3b8e8c2ee60ffe",
@@ -2537,7 +2815,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b95ade79821018d8cd22",
@@ -2555,7 +2835,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2d4c6bd9c04b27797c53",
@@ -2573,7 +2855,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4f81b4aaa77b1aea6041",
@@ -2591,7 +2875,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_466c20dfa5a68bca9520",
@@ -2609,7 +2895,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_95b724aa9a1b0cebaf02",
@@ -2627,7 +2915,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c35ba5fa200b86b340e0",
@@ -2645,7 +2935,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f4405d79b2c8feb650dc",
@@ -2663,7 +2955,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a1c1549134223ad0c541",
@@ -2681,7 +2975,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_339e35d9e938ca7e0da1",
@@ -2699,7 +2995,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a7da518e4103504ebdef",
@@ -2717,7 +3015,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_99793af3a2ec5e6f704f",
@@ -2735,7 +3035,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cd193eb5a09726090ad9",
@@ -2753,7 +3055,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_be72c39f79aed473eeb4",
@@ -2771,7 +3075,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_142f893feea7dde2c738",
@@ -2789,7 +3095,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7cd457eab4c24a129688",
@@ -2807,7 +3115,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f2b239c78fcf28e367d8",
@@ -2825,7 +3135,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fa5c151a9e36d546f3b3",
@@ -2843,7 +3155,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_70bf7796665a2f46dd52",
@@ -2861,7 +3175,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d2d4ad6828a518ecc7bf",
@@ -2879,7 +3195,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d91faa561e8eeec03b3e",
@@ -2897,7 +3215,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2503f1e03ceebb9ccd4f",
@@ -2915,7 +3235,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_db0700e3225ab22a0dc3",
@@ -2933,7 +3255,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a1c6ed67f3dac9f1fe96",
@@ -2951,7 +3275,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_914447c51171b5e2d64b",
@@ -2969,7 +3295,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e4399e39702856b122ad",
@@ -2987,7 +3315,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_512758c392ac4775acb8",
@@ -3005,7 +3335,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0e4077d63cc4037a6cc9",
@@ -3023,7 +3355,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9d6082a31a3d4b5ec984",
@@ -3041,7 +3375,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8a207482e9e88656a747",
@@ -3059,7 +3395,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5edab3b666c35c0c76ce",
@@ -3077,7 +3415,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ddf4b076727f1572662f",
@@ -3095,7 +3435,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_79a4ee26cea6c7ff0dcf",
@@ -3113,7 +3455,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e48d78fa7ebd33e081c9",
@@ -3131,7 +3475,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c93c18f3a636a88d2bdd",
@@ -3149,7 +3495,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d457e842bc771b91a571",
@@ -3167,7 +3515,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c7c531599a1de3a083a0",
@@ -3185,7 +3535,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_55c79f62b104199c734b",
@@ -3203,7 +3555,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_62935f6113d345b8eaef",
@@ -3221,7 +3575,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f16dab92434da8c1b715",
@@ -3239,7 +3595,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ca1bb5bbcb82035373c1",
@@ -3257,7 +3615,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8754664779c38ffebf72",
@@ -3275,7 +3635,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6727b60b3f136b732ee1",
@@ -3293,7 +3655,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_bf16557322df1c7a4a68",
@@ -3311,7 +3675,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_619942d67da9c6db5e71",
@@ -3329,7 +3695,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cb76bb0a5e6936deb6be",
@@ -3347,7 +3715,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_35a7921b69b22151e7d1",
@@ -3365,7 +3735,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ca7f58585bdd1f385ccc",
@@ -3383,7 +3755,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e1cc42a81f6d09fdaf31",
@@ -3401,7 +3775,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b2e273fd7992214adcc7",
@@ -3419,7 +3795,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_01b1cc9d114718bbe385",
@@ -3437,7 +3815,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ec579d1a4b7149546141",
@@ -3455,7 +3835,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_75409737f08c0f3f778e",
@@ -3473,7 +3855,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4226db08fb26cccadad0",
@@ -3491,7 +3875,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_654379f9d2aac577242b",
@@ -3509,7 +3895,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6ea962af58dadfcd943e",
@@ -3527,7 +3915,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cfdbc0f047dc06f6e1f4",
@@ -3545,7 +3935,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_71e2492004c64bf53988",
@@ -3563,7 +3955,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_52fb8d64bf9d436c8b94",
@@ -3581,7 +3975,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_01aa8c629f0c4c030103",
@@ -3599,7 +3995,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4463fcdff81752545aec",
@@ -3617,7 +4015,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1a49c73846a526f4dafa",
@@ -3635,7 +4035,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_456476cdb9ece08d4690",
@@ -3653,7 +4055,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c9eb5f65b71cc7896515",
@@ -3671,7 +4075,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_bb24c4cae6b18541db17",
@@ -3689,7 +4095,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b745ef3cdaeee166dcd6",
@@ -3707,7 +4115,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_167fa15a6b3f29edcad1",
@@ -3725,7 +4135,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b3e2683e1021aec52109",
@@ -3743,7 +4155,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fd8c7c94b4772a6342e9",
@@ -3761,7 +4175,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_23f1657b280c4d0d1843",
@@ -3779,7 +4195,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f48d4ca1310f3f97305d",
@@ -3797,7 +4215,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6dea87adb93b7a3d7960",
@@ -3815,7 +4235,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b1a47ddceb680dead7d1",
@@ -3833,7 +4255,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_493b3d5a7aeeaa81df5b",
@@ -3851,7 +4275,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c50b5f1d259a7f6dea01",
@@ -3869,7 +4295,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f3107dd5a39ed82eb00e",
@@ -3887,7 +4315,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_90738c1f17934a557b28",
@@ -3905,7 +4335,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b2c16be50b550aae5a41",
@@ -3923,7 +4355,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a4da84624f592e5c410d",
@@ -3941,7 +4375,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_87165aa999b84e1c3d5b",
@@ -3959,7 +4395,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f7965d9d4656cdf8a0cc",
@@ -3977,7 +4415,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a97dab304199bf1de669",
@@ -3995,7 +4435,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_785a1aad2c04bcdddf4f",
@@ -4013,7 +4455,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2487b3f03cf4c1c23928",
@@ -4031,7 +4475,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_69616b6e72656b0fb850",
@@ -4049,7 +4495,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d1f12aa7533cd106deb6",
@@ -4067,7 +4515,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fd05226c97761b0533f5",
@@ -4085,7 +4535,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_231da18a4b523b7ba52d",
@@ -4103,7 +4555,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fd6b1fa3f1d28e8c4b72",
@@ -4121,7 +4575,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d5a222cec701a73cd6a9",
@@ -4139,7 +4595,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2b364e372adf3373e2af",
@@ -4157,7 +4615,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1d7d3a4ee4161caa7d90",
@@ -4175,7 +4635,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d467f4d3c166f51723d8",
@@ -4193,7 +4655,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ca7ec97882e7327626bd",
@@ -4211,7 +4675,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_410aa5d189bdbe58e89e",
@@ -4229,7 +4695,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_edc18921b4edce436dc5",
@@ -4247,7 +4715,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_abe11a686532f5edd2fb",
@@ -4265,7 +4735,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2cfdd8ac0285ab6fa94a",
@@ -4283,7 +4755,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0e02d031be52298cfb1e",
@@ -4301,7 +4775,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_680fa91e7dc5961aa30b",
@@ -4319,7 +4795,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_89fe9b28f30b6b1b102b",
@@ -4337,7 +4815,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e0deaee446f7a1615ce1",
@@ -4355,7 +4835,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_93ef5e210632cb217415",
@@ -4373,7 +4855,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c600e7eb1c9f5fd03c80",
@@ -4391,7 +4875,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_401b85ce671d94672ba0",
@@ -4409,7 +4895,9 @@
    "launchAction": "REQUEST_QUOTE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7ba89975fb62ceb33b7b",
@@ -4427,7 +4915,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_75bc8d1ad93b04865e6c",
@@ -4445,7 +4935,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5e454a6196e0a7defb77",
@@ -4463,7 +4955,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4668304296fb55b51280",
@@ -4481,7 +4975,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b2ebb969d48a20f9e680",
@@ -4499,7 +4995,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3c6f0d26e9df4bcb80c5",
@@ -4517,7 +5015,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_34fa0d12f1effd156e61",
@@ -4535,7 +5035,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_143d09ffd9b13780f2d7",
@@ -4553,7 +5055,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2923115827ca8fe37d2c",
@@ -4571,7 +5075,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a6f7f071ed946577ce56",
@@ -4589,7 +5095,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_aace3aded470921f6af2",
@@ -4607,7 +5115,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1d9d501ac84d6cd9d46d",
@@ -4625,7 +5135,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b01b90df2792becd9a75",
@@ -4643,7 +5155,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_87b00893d8f75a60b08f",
@@ -4661,7 +5175,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_afb0add32da0de7426f5",
@@ -4679,7 +5195,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
@@ -4697,7 +5215,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-027",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_0907a4d651019afed8ed",
@@ -4715,7 +5235,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ca085a7994a6db594748",
@@ -4733,7 +5255,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_463212f23e8e3e39c57b",
@@ -4751,7 +5275,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_216b3a5f02fb7724cd51",
@@ -4769,7 +5295,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-028",
    "founderBookRetailCents": 8900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_af289f611c02b3fcef01",
@@ -4787,7 +5315,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-008",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_9a755fa72de0409cd937",
@@ -4805,7 +5335,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e4de11c77d16c4c3b83d",
@@ -4823,7 +5355,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_13c038b9250a2c8ac901",
@@ -4841,7 +5375,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-010",
    "founderBookRetailCents": 9900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_53622a0c32300df8ec03",
@@ -4859,7 +5395,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_178c8a4230f88f157d5d",
@@ -4877,7 +5415,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-009",
    "founderBookRetailCents": 7900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_8023384ab099bc55fa93",
@@ -4895,7 +5435,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ec5dad7fec0e0750fdbc",
@@ -4913,7 +5455,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-013",
    "founderBookRetailCents": 7900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "INCUMBENT RETAINED",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_c464ca523cda95adb8a6",
@@ -4931,7 +5475,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4bbd59b26b04e4265758",
@@ -4949,7 +5495,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_023a54a623e28e84ffd5",
@@ -4967,7 +5515,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_be72c9fb4d708d8a3eee",
@@ -4985,7 +5535,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_918fe6760c731934168d",
@@ -5003,7 +5555,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-021",
    "founderBookRetailCents": 10900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_4a4dd3014ea4cd85cb6e",
@@ -5021,7 +5575,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-020",
    "founderBookRetailCents": 5900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_fbf99d262617562b9dbb",
@@ -5039,7 +5595,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3b716f351a069264bd3d",
@@ -5057,7 +5615,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1c93e6c7c97d1e38167e",
@@ -5075,7 +5635,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-034",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_04d91e1cb01f09d3496e",
@@ -5093,7 +5655,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8a3829642d06ad3ca7c4",
@@ -5111,7 +5675,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8cca713c2b203a712494",
@@ -5129,7 +5695,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9c3a4dd1b38f6b9ebc54",
@@ -5147,7 +5715,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9bd279e3ef84393cf793",
@@ -5165,7 +5735,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_321599837d987cc36181",
@@ -5183,7 +5755,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_bf5e52e34a71bce9974e",
@@ -5201,7 +5775,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c0b32b7549d7539af51e",
@@ -5219,7 +5795,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b06b77a95d5dd5bf8cd7",
@@ -5237,7 +5815,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fb02f804912e868b0a10",
@@ -5255,7 +5835,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-011",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_b75af573f3209d0710b1",
@@ -5273,7 +5855,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_65340dd542e68a0af5ab",
@@ -5291,7 +5875,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e948b9ac0d531ef744ae",
@@ -5309,7 +5895,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_849cdbb1463f8382f1f6",
@@ -5327,7 +5915,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f8e8d69d2068c9bb2de1",
@@ -5345,7 +5935,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a40fbe6a1890ff7176ed",
@@ -5363,7 +5955,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-025",
    "founderBookRetailCents": 13900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
@@ -5381,7 +5975,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_fa2070d7fd794ad0c245",
@@ -5399,7 +5995,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5e145fbee8e39536b580",
@@ -5417,7 +6015,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_adf1037eceb9904e7d07",
@@ -5435,7 +6035,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4223bdd3e6880240fc4a",
@@ -5453,7 +6055,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5720466fd9388d2044ed",
@@ -5471,7 +6075,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d3a60ea0a358aef218f8",
@@ -5489,7 +6095,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e9e1c849f7549246cb89",
@@ -5507,7 +6115,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-018",
    "founderBookRetailCents": 5900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_b2300ccf4ffd64e20ca2",
@@ -5525,7 +6135,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d40ce6b09815282e14fa",
@@ -5543,7 +6155,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-039",
    "founderBookRetailCents": 13900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_a8ea579b9329428591bd",
@@ -5561,7 +6175,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_bb39fc388cb58003b1f8",
@@ -5579,7 +6195,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-029",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_ffeecca340b02f400868",
@@ -5597,7 +6215,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_61e8c1f887725c9938ae",
@@ -5615,7 +6235,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6d5f244f45892249b132",
@@ -5633,7 +6255,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_987ced2746afaa80e326",
@@ -5651,7 +6275,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2fd34c733360f34e7a63",
@@ -5669,7 +6295,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_839d9f0cb2ab74e094ee",
@@ -5687,7 +6315,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_33b6b3e982b2dc5113bb",
@@ -5705,7 +6335,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-023",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_b1b15717ae2e89a19981",
@@ -5723,7 +6355,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_595ec28612674477e5aa",
@@ -5741,7 +6375,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-022",
    "founderBookRetailCents": 3900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_dbed3adeeecd92ac1d41",
@@ -5759,7 +6395,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_25463089835b0939dc4b",
@@ -5777,7 +6415,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-017",
    "founderBookRetailCents": 11900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_4bf44c0afe1ae392ddf0",
@@ -5795,7 +6435,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-016",
    "founderBookRetailCents": 7900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_b785d68e84643da31a20",
@@ -5813,7 +6455,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3ac83d28defd63915a71",
@@ -5831,7 +6475,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-036",
    "founderBookRetailCents": 3900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_f66623171e193fc81edb",
@@ -5849,7 +6495,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-019",
    "founderBookRetailCents": 4500,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_0784f8ad4fc471f8053e",
@@ -5867,7 +6515,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f7fecc82508964efe3aa",
@@ -5885,7 +6535,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e230262ae1c41d2d7e18",
@@ -5903,7 +6555,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_90d6189c4ecf3875647e",
@@ -5921,7 +6575,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-005",
    "founderBookRetailCents": 15900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_f293ba683340fcd926d9",
@@ -5939,7 +6595,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f9cf15e9c10861844ce4",
@@ -5957,7 +6615,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-006",
    "founderBookRetailCents": 18900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_45db3e0f87d6d796d4b8",
@@ -5975,7 +6635,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_cf224f8d2efb906334c0",
@@ -5993,7 +6655,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8cea67b7890cebf8eb52",
@@ -6011,7 +6675,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d045624d6f5d00d2cda2",
@@ -6029,7 +6695,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-033",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_4df776b9fb9b2d4b7302",
@@ -6047,7 +6715,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a1d452a070c24e5f0033",
@@ -6065,7 +6735,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-003",
    "founderBookRetailCents": 8900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_4e47d44fd3982b0b5e61",
@@ -6083,7 +6755,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_06babb8e374b38824ee8",
@@ -6101,7 +6775,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-004",
    "founderBookRetailCents": 9900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_36fbcc90a698a8e7ada6",
@@ -6119,7 +6795,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ef095e8f7e8fe3a7f85d",
@@ -6137,7 +6815,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_42060e3ba6b7fa26b5a9",
@@ -6155,7 +6835,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-032",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_c87f1a7cdcd50253c3e8",
@@ -6173,7 +6855,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_005347c6204a94d3f7e2",
@@ -6191,7 +6875,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-015",
    "founderBookRetailCents": 7900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_9c7083a0cfc2bfd2d525",
@@ -6209,7 +6895,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0693d8b85b10f7c34f2e",
@@ -6227,7 +6915,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e7bb199ac249b82eb17b",
@@ -6245,7 +6935,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f729b05046ef91543822",
@@ -6263,7 +6955,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b33c802f4f7735fe986d",
@@ -6281,7 +6975,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9651dedf0c4086bc6e3d",
@@ -6299,7 +6995,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5da1ee7942bcff333ef6",
@@ -6317,7 +7015,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-012",
    "founderBookRetailCents": 9900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_941e1192f6c03d88cb43",
@@ -6335,7 +7035,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ca6143466abf3895672c",
@@ -6353,7 +7055,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f23a8023a45df853f6e1",
@@ -6371,7 +7075,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-031",
    "founderBookRetailCents": 9900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "CORRECTED INCUMBENT; NEW QUOTE NOT SELECTED",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_8fd0e604ab7719eded45",
@@ -6389,7 +7095,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-030",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_2e8194100fed7f7ca6ee",
@@ -6407,7 +7115,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_422f4a4ca7e34ce66416",
@@ -6425,7 +7135,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_17fe8edfd59d6a97260b",
@@ -6443,7 +7155,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c79fda8d9b5122d37137",
@@ -6461,7 +7175,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_e28684442b78867c14ae",
@@ -6479,7 +7195,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_330de196b6297a7096d2",
@@ -6497,7 +7215,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-001",
    "founderBookRetailCents": 7900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_8f14a0f8f4f86e07fda8",
@@ -6515,7 +7235,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_226c15232adfd35b3288",
@@ -6533,7 +7255,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_25017e496277b4120dde",
@@ -6551,7 +7275,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_3566952a7131123bd55f",
@@ -6569,7 +7295,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": "XRUO-002",
    "founderBookRetailCents": 11900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW SUPPLIER SELECTED - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_598b143f4ffe06294832",
@@ -6587,7 +7315,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4c07e82051ba4c95297b",
@@ -6605,7 +7335,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_6d14f0bbb3bdfe5f900e",
@@ -6623,7 +7355,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a8ad050608013cf7d4b4",
@@ -6641,7 +7375,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_761c9b0f8f19d9d2c3b5",
@@ -6659,7 +7395,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d1a6493665b6ba628c2a",
@@ -6677,7 +7415,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_952b9a3bac3ac9f76438",
@@ -6695,7 +7435,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_69c6615ef3e615e76088",
@@ -6713,7 +7455,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2fb4e0f567f434b55b20",
@@ -6731,7 +7475,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2c3aec78638c9e2ff2a8",
@@ -6749,7 +7495,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_230a06a5ed15405e65b2",
@@ -6767,7 +7515,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2aaac3a06aa0dd6b2923",
@@ -6785,7 +7535,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": "XRUO-038",
    "founderBookRetailCents": 4900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW CATALOG VARIANT - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_b223f1eabb29e09a69e9",
@@ -6803,7 +7555,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f3a48e654e93b4f7d0b9",
@@ -6821,7 +7575,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_9138595ccf6417877896",
@@ -6839,7 +7595,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1dd0658eb7bf15f91900",
@@ -6857,7 +7615,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": "XRUO-037",
    "founderBookRetailCents": 5900,
-   "priceDelta": "MISMATCH"
+   "priceDelta": "MISMATCH",
+   "supplierReady": "NEW CATALOG VARIANT - DOCUMENTATION PENDING",
+   "docsReady": "PRICING READY - ACTIVATION DOCUMENTS PENDING"
   },
   {
    "offeringId": "mo_f6e814a2e3224bb6b53d",
@@ -6875,7 +7635,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f4298f80cc7aa9f1046a",
@@ -6893,7 +7655,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_73f7704a1cabe9b2f63a",
@@ -6911,7 +7675,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_1d2f33123a079af3786b",
@@ -6929,7 +7695,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_33c52b7e9611bf4e2527",
@@ -6947,7 +7715,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_364c9d00a30c0cfb197b",
@@ -6965,7 +7735,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_f35e748aed26af26e9e4",
@@ -6983,7 +7755,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_4645a385049d13824a66",
@@ -7001,7 +7775,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_13553ad94844151cf7c5",
@@ -7019,7 +7795,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_86fc6ac5138a0a0ddd54",
@@ -7037,7 +7815,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b36a2992242d2a55c145",
@@ -7055,7 +7835,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_95489efcae6c13f8bf0d",
@@ -7073,7 +7855,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d1a47413d4b8e58bfd52",
@@ -7091,7 +7875,9 @@
    "launchAction": "NOT_AVAILABLE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d5072d9cc26b1f898b6d",
@@ -7109,7 +7895,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b49627a2296975935e26",
@@ -7127,7 +7915,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_003b0c272099eeb1f114",
@@ -7145,7 +7935,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a7a7e307d58f24affb42",
@@ -7163,7 +7955,9 @@
    "launchAction": "CARE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b126ee9235f0a810dc95",
@@ -7181,7 +7975,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_81f2af5cc04167a47413",
@@ -7199,7 +7995,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_7bc91b37c8c041f166dd",
@@ -7217,7 +8015,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_db61126250f5fa3a3324",
@@ -7235,7 +8035,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_79376f449760149d1030",
@@ -7253,7 +8055,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_474aba04fff9d244c37b",
@@ -7271,7 +8075,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_a4cfc5396d714f879944",
@@ -7289,7 +8095,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_eca326cdaae5d36cfae6",
@@ -7307,7 +8115,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_edefaf4799bd53853d01",
@@ -7325,7 +8135,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_d82610b6fe7ebf3b4d63",
@@ -7343,7 +8155,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5050cf525ec249ebf0bf",
@@ -7361,7 +8175,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_381d77419fba80336299",
@@ -7379,7 +8195,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_453f612e1a8a3021d41c",
@@ -7397,7 +8215,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_c875679cdaafb9cf7336",
@@ -7415,7 +8235,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_b48e883b4ada1469f824",
@@ -7433,7 +8255,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_62754736300e3e130eb5",
@@ -7451,7 +8275,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_5b122372a6ecdea51c52",
@@ -7469,7 +8295,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_2d42f72361aac15b6d5d",
@@ -7487,7 +8315,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_ad9795d751913350bdea",
@@ -7505,7 +8335,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_85898714d8df5a3d2f10",
@@ -7523,7 +8355,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_8c30b8e7afa6f5aa08f7",
@@ -7541,7 +8375,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_510176c449623185709c",
@@ -7559,7 +8395,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   },
   {
    "offeringId": "mo_0be4f713aeab92ee8a18",
@@ -7577,7 +8415,9 @@
    "launchAction": "BUY_NOW_CANDIDATE",
    "founderBookSku": null,
    "founderBookRetailCents": null,
-   "priceDelta": "NOT_IN_BOOK"
+   "priceDelta": "NOT_IN_BOOK",
+   "supplierReady": null,
+   "docsReady": null
   }
  ],
  "unmatchedFounderBookRows": [
