@@ -19,6 +19,7 @@
 // (min $1.00, max $2,250.00). So "bound" and "priced" really are the same set
 // in production, and pricing exactly the bound pairs here reproduces it.
 
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
   createAssistedOrderMasterCatalogCallbacks,
@@ -49,6 +50,9 @@ const UNBOUND_PRODUCT_NAMES = [
   "FedEx Standard Overnight",
   "Syringes & Alcohol Swabs",
 ];
+
+/** The production price-set fingerprint these coverage numbers were measured against. */
+const PRODUCTION_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
 
 /** A plain, positive price, so a $0 anywhere in the walk is unambiguously a bug. */
 const PRICE_CENTS = 6500;
@@ -93,6 +97,12 @@ const REAL_PRICES: Record<string, number> = {
 
 const bindingIndex = loadBindingIndex().index;
 const byVariant = bindingsByOfferingVariantId(bindingIndex);
+const reverseBindings = new Map(
+  Array.from(bindingIndex.values()).map((binding) => [
+    `${binding.productId}\u0000${binding.variantId}`,
+    binding.offeringVariantId,
+  ]),
+);
 const pricedPairs = new Set(
   Array.from(bindingIndex.values()).map(
     (binding) => `${binding.productId}\u0000${binding.variantId}`,
@@ -125,7 +135,10 @@ function productForPricing(productId: string): AdminProductDetail | null {
         id: `price_${binding.variantId}`,
         productId,
         variantId: binding.variantId,
-        audience: EARLY_ACCESS_RETAIL_PRICE_AUDIENCE,
+        // LITERAL on purpose. A fixture built from the constant under test is
+        // self-consistent under EVERY value of it, including one with no
+        // production rows at all.
+        audience: "member",
         amountCents: REAL_PRICES[binding.variantId] ?? PRICE_CENTS,
         currency: "USD",
         effectiveAt: "2026-08-01T00:00:00.000Z",
@@ -141,8 +154,12 @@ function productForPricing(productId: string): AdminProductDetail | null {
   } as unknown as AdminProductDetail;
 }
 
+/** Parsed once: twelve tests each re-reading the dataset is the difference
+ *  between a 2-second file and one that times out under a loaded suite. */
+let sharedReader: ReturnType<typeof createMasterOfferingCatalogReaderFromEnv> | null = null;
+
 function callbacks() {
-  const catalogReader = createMasterOfferingCatalogReaderFromEnv();
+  const catalogReader = (sharedReader ??= createMasterOfferingCatalogReaderFromEnv());
   if (catalogReader === null) {
     throw new Error(
       "The committed master-offerings dataset was not found; coverage cannot be measured.",
@@ -176,7 +193,13 @@ function callbacks() {
         ? { productId: binding.productId, variantId: binding.variantId }
         : null;
     },
-    offeringVariantFor: () => null,
+    // The REVERSE map, built exactly as server/index.ts builds it. Stubbing
+    // this to null makes every bound row unresolvable at submit, which is a
+    // convincing-looking failure that says nothing about the product.
+    offeringVariantFor: (identity) =>
+      reverseBindings.get(
+        `${identity.productId}\u0000${identity.variantId}`,
+      ) ?? null,
     catalogVersion: "catalog-coverage",
   });
 }
@@ -267,13 +290,17 @@ describe("Early Access price coverage across the whole catalog", () => {
     expect(care.every((item) => item.unitPriceCents !== null)).toBe(true);
   });
 
-  it("has the measured composition of the shipped catalog", () => {
-    // Measured on 2026-08-20 by walking all 420 rows, not estimated. If these
-    // move, the catalog changed and the launch numbers must be re-measured.
-    expect(
-      MEASURED_TOTAL_VARIANTS === TOTAL_VARIANTS &&
-        MEASURED_PRICED + MEASURED_ON_REQUEST === TOTAL_VARIANTS,
-    ).toBe(true);
+  it("prices against the audience production actually holds rows on", () => {
+    // THE value the whole repair turns on, and the one thing no other test in
+    // this file could catch: production holds 417 active price rows and every
+    // one is audience "member", with zero on retail, private_early_access,
+    // professional or wholesale. Point the authority at any of those and the
+    // live catalog silently returns to "Price on request" — while every other
+    // assertion here stays green, because they would all build their fixtures
+    // from the same wrong constant. Checked against a literal from the
+    // measurement, deliberately not against the constant itself.
+    expect(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE).toBe("member");
+    expect(MEASURED_PRICED + MEASURED_ON_REQUEST).toBe(MEASURED_TOTAL_VARIANTS);
   });
 
   it("matches that measured composition when actually walked", async () => {
@@ -336,6 +363,98 @@ describe("Early Access price coverage across the whole catalog", () => {
     expect(bam15?.workflowMode).toBe("request_pricing");
   });
 
+  it("re-resolves EVERY row at submit time to exactly what the catalog showed", async () => {
+    // CONCERN A, closed by exhaustion rather than by sampling. The list path and
+    // the submit path are different code: list() pages once, resolve() walks
+    // pages looking for one variant. A row the catalog prices but the submit
+    // path cannot find is a customer filling in a whole order and being refused
+    // at the end — the exact shape of an earlier defect where a page clamp left
+    // 320 of 420 rows unreachable.
+    //
+    // So every one of the 420 rows is resolved individually and compared on the
+    // authoritative fingerprint, which covers productId, variantId, price,
+    // priceVersion, catalogVersion and workflowMode together.
+    const cb = callbacks();
+    const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+    expect(items).toHaveLength(TOTAL_VARIANTS);
+
+    const unresolved: string[] = [];
+    const disagreed: string[] = [];
+    for (const listed of items) {
+      const resolved = await cb.resolve(
+        EARLY_ACCESS_VIEWER,
+        listed.productId,
+        listed.variantId,
+      );
+      if (resolved === null) {
+        unresolved.push(`${listed.productName} (${listed.variantId})`);
+        continue;
+      }
+      if (cb.fingerprint(resolved) !== cb.fingerprint(listed)) {
+        disagreed.push(
+          `${listed.productName}: listed ${listed.unitPriceCents} / resolved ${resolved.unitPriceCents}`,
+        );
+      }
+    }
+    expect(unresolved).toEqual([]);
+    expect(disagreed).toEqual([]);
+    // 420 resolves, each paging the real dataset. Deliberately the most
+    // expensive test in the lane, and it timed out at the 5s default under a
+    // loaded suite. A generous explicit budget is the honest fix: quietly
+    // sampling fewer rows would give back the very coverage it exists for.
+  }, 120_000);
+
+  it("resolves the specific rows the founder named, at every position in the catalog", async () => {
+    // The same property stated positionally, so a regression names WHERE it
+    // broke instead of only that something did.
+    const cb = callbacks();
+    const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+
+    const positions: Array<[string, number]> = [
+      ["first page", 0],
+      ["page-1 boundary", 99],
+      ["beyond the old first-100 boundary", 100],
+      ["middle page", Math.floor(TOTAL_VARIANTS / 2)],
+      ["last page", TOTAL_VARIANTS - 1],
+    ];
+    for (const [where, index] of positions) {
+      const listed = items[index];
+      expect(listed, `no catalog row at ${where}`).toBeTruthy();
+      const resolved = await cb.resolve(
+        EARLY_ACCESS_VIEWER,
+        listed.productId,
+        listed.variantId,
+      );
+      expect(resolved, `${where} did not resolve at submit`).toBeTruthy();
+      expect(resolved!.unitPriceCents, `${where} price disagreed`).toBe(
+        listed.unitPriceCents,
+      );
+    }
+
+    // Kisspeptin 10 mg: priced, and the price survives the submit re-read.
+    const kiss = items.find(
+      (item) => item.variantId === "55b1eadd-514f-407f-b390-d202f11117ed",
+    )!;
+    const kissResolved = await cb.resolve(
+      EARLY_ACCESS_VIEWER,
+      kiss.productId,
+      kiss.variantId,
+    );
+    expect(kissResolved?.unitPriceCents).toBe(6500);
+
+    // BAM15: unpriced, and it must still RESOLVE. A row the catalog shows and
+    // the submit path cannot read back takes the whole basket down with it.
+    const bam = items.find((item) => item.productName === "BAM15")!;
+    const bamResolved = await cb.resolve(
+      EARLY_ACCESS_VIEWER,
+      bam.productId,
+      bam.variantId,
+    );
+    expect(bamResolved).toBeTruthy();
+    expect(bamResolved?.unitPriceCents).toBeNull();
+    expect(bamResolved?.workflowMode).toBe("request_pricing");
+  });
+
   it("leaks no procurement economics on any page of the whole catalog", async () => {
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const wire = JSON.stringify(items).toLowerCase();
@@ -356,11 +475,31 @@ describe("Early Access price coverage across the whole catalog", () => {
     }
   });
 
-  it("keeps the binding artifact and the measured production price set in step", () => {
-    // If this count moves, the production measurement in the header of this
-    // file is stale and the coverage numbers must be re-measured, not guessed.
+  it("still matches the production price set that was measured against it", () => {
+    // Comparing the artifact's size to a constant proves nothing about
+    // production. This compares the artifact's CONTENT to a fingerprint taken
+    // FROM production on 2026-08-20:
+    //
+    //   md5(string_agg(product_id || '|' || variant_id, chr(10) order by ...))
+    //   over active, in-window, member-audience prices on published products
+    //   and approved variants  ->  062a30f0...92d4f6 across 417 rows.
+    //
+    // It cannot notice production drifting on its own — no offline test can —
+    // which is why the failure message points at re-measuring rather than at
+    // editing the constant.
+    const digest = createHash("md5")
+      .update(
+        Array.from(bindingIndex.values())
+          .map((binding) => binding.productId + "|" + binding.variantId)
+          .sort()
+          .join("\n"),
+      )
+      .digest("hex");
     expect(bindingIndex.size).toBe(BOUND_VARIANTS);
-    expect(pricedPairs.size).toBe(BOUND_VARIANTS);
+    expect(
+      digest,
+      "the binding artifact changed: re-measure the production price set before trusting any coverage number in this file",
+    ).toBe(PRODUCTION_PRICED_PAIRS_MD5);
     expect(earlyAccessRetailPricingViewer().pricingGrant?.audience).toBe(
       EARLY_ACCESS_RETAIL_PRICE_AUDIENCE,
     );

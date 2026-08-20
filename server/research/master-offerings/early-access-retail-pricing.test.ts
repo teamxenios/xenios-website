@@ -85,7 +85,10 @@ function product(
               productId: id,
               variantId,
               // The audience the published retail schedule actually lives on.
-              audience: EARLY_ACCESS_RETAIL_PRICE_AUDIENCE,
+              // LITERAL on purpose: a fixture built from the constant under
+              // test passes for every value of it, including one with no
+              // production price rows at all.
+              audience: "member",
               amountCents,
               currency: "USD",
               effectiveAt: "2026-08-01T00:00:00.000Z",
