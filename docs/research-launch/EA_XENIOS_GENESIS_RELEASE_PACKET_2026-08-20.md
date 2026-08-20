@@ -1,5 +1,20 @@
 # Early Access "Xenios Genesis" Release Packet — 2026-08-20 (DRAFT until SHAs frozen)
 
+> **SUPERSEDED 2026-08-20 by a founder decision: there is no customer-facing
+> Early Access password at all.** The Xenios Genesis code is retired before it
+> was ever set in production. `/research/early-access` now opens straight into
+> the ordering journey, gated by `RESEARCH_EARLY_ACCESS_OPEN_ACCESS=true`.
+>
+> The hash mechanism below is NOT deleted — the password mode still exists for
+> any deployment that wants it, and is still tested — but it is no longer part
+> of this journey, and `RESEARCH_EARLY_ACCESS_PASSWORD_HASH` is no longer
+> required for Early Access to run. Do not set a Xenios Genesis hash: under open
+> access it would gate nothing, and a MALFORMED value is still reported as a
+> configuration problem.
+>
+> Kept for the record of what was decided and why, and because the scrypt format
+> and the Render deploy-trigger hazard remain accurate.
+
 Lead-owned. Executes only after the P0 lanes land and gates pass. Founder
 approval for the build and this release path was given 2026-08-20; each
 production mutation below still executes only as this exact reviewed packet.

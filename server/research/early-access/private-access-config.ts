@@ -18,6 +18,7 @@ export const EARLY_ACCESS_ENV = {
   maxAttempts: "RESEARCH_EARLY_ACCESS_MAX_ATTEMPTS",
   lockoutMinutes: "RESEARCH_EARLY_ACCESS_LOCKOUT_MINUTES",
   cookieName: "RESEARCH_EARLY_ACCESS_COOKIE_NAME",
+  openAccess: "RESEARCH_EARLY_ACCESS_OPEN_ACCESS",
 } as const;
 
 // Session lifetime is 240 minutes by decision, because the Early Access order
@@ -47,6 +48,18 @@ export type EarlyAccessConfigProblem =
 export type EarlyAccessConfig = Readonly<{
   /** True only when the flag is exactly "true" AND every secret is valid. */
   enabled: boolean;
+  /**
+   * No customer-facing password at all (founder decision, 2026-08-20).
+   *
+   * The Early Access ordering surface is open: a visitor reaches the catalog
+   * and the order form without a shared code. The SESSION does not go away with
+   * it — it stops being proof of access and becomes the anonymous identity that
+   * scopes what a browser owns. Removing it as well would collapse every
+   * ownership check in the lane, because "whose order is this" would have no
+   * answer, so a status read could become an oracle over other customers'
+   * requests.
+   */
+  openAccess: boolean;
   passwordHash: string;
   sessionSecret: string;
   sessionTtlMinutes: number;
@@ -84,21 +97,34 @@ function readBoundedInteger(
 /**
  * Resolve the deployment configuration.
  *
- * FAILS CLOSED: `enabled` is true only when the flag is exactly "true" and the
- * password hash and session secret are both present and well formed. A
- * deployment that sets the flag but forgets a secret stays closed and reports
- * the reason, rather than opening a gate that admits nobody or, worse, admits
- * everybody.
+ * FAILS CLOSED: `enabled` is true only when the flag is exactly "true" and every
+ * secret it still needs is present and well formed. A deployment that sets the
+ * flag but forgets one stays closed and reports the reason, rather than opening
+ * a gate that admits nobody or, worse, admits everybody.
+ *
+ * Under RESEARCH_EARLY_ACCESS_OPEN_ACCESS the password hash is no longer one of
+ * those secrets, because there is no password to check. The SESSION SECRET
+ * still is: sessions continue to be minted and signed, since they carry the
+ * anonymous identity every ownership check in the lane depends on.
  */
 export function resolveEarlyAccessConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): EarlyAccessConfig {
   const problems: EarlyAccessConfigProblem[] = [];
 
+  // Founder decision, 2026-08-20: no customer-facing Early Access password.
+  const openAccess = readString(env, EARLY_ACCESS_ENV.openAccess) === "true";
+
   const passwordHash = readString(env, EARLY_ACCESS_ENV.passwordHash);
-  if (passwordHash === null) {
+  // With no password in the journey, a missing hash is the EXPECTED state, not
+  // a misconfiguration. Keeping it a problem would have been the trap: the
+  // moment an operator removed the now-unused secret, `enabled` would flip
+  // false and the whole ordering surface would go dark with a 503 that looks
+  // like an outage. A hash that is still present is still validated, because a
+  // malformed one means somebody is mid-change and should be told.
+  if (!openAccess && passwordHash === null) {
     problems.push("PASSWORD_HASH_MISSING");
-  } else if (parsePrivateAccessPasswordHash(passwordHash) === null) {
+  } else if (passwordHash !== null && parsePrivateAccessPasswordHash(passwordHash) === null) {
     problems.push("PASSWORD_HASH_INVALID");
   }
 
@@ -137,6 +163,7 @@ export function resolveEarlyAccessConfig(
 
   return Object.freeze({
     enabled: flagOn && problems.length === 0,
+    openAccess,
     passwordHash: passwordHash ?? "",
     sessionSecret: sessionSecret ?? "",
     sessionTtlMinutes,

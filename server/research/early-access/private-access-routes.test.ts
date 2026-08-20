@@ -606,7 +606,15 @@ describe("session read", () => {
     await createSessionRoute(harness.deps)({ cookieHeader }, port);
 
     expect(recorded.status).toBe(200);
-    expect(Object.keys(recorded.body as object).sort()).toEqual(["authenticated", "expiresAt"]);
+    // openAccess is a deployment-wide boolean (is there a password at all),
+    // never anything about this caller. It is listed explicitly so the
+    // "and nothing else" guard keeps its teeth: a future field still fails here
+    // until someone adds it on purpose.
+    expect(Object.keys(recorded.body as object).sort()).toEqual([
+      "authenticated",
+      "expiresAt",
+      "openAccess",
+    ]);
     expect((recorded.body as { authenticated: boolean }).authenticated).toBe(true);
     // No handle, hash, owner, role, or reason reaches the client.
     const serialized = JSON.stringify(recorded.body);
@@ -624,7 +632,7 @@ describe("session read", () => {
     for (const cookieHeader of [undefined, "", "unrelated=1", "__Host-XeniosPrivateEarlyAccess=nope", foreignCookie]) {
       const { port, recorded } = makeResponse();
       await route({ cookieHeader }, port);
-      expect(recorded.body).toEqual({ authenticated: false });
+      expect(recorded.body).toEqual({ authenticated: false, openAccess: false });
       expect(recorded.status).toBe(200);
     }
   });
@@ -635,7 +643,7 @@ describe("session read", () => {
     harness.clock.value = START + BASE_CONFIG.sessionTtlMinutes * 60_000;
     const { port, recorded } = makeResponse();
     await createSessionRoute(harness.deps)({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: false });
+    expect(recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 
   it("reports no session once the row has been revoked, even with a valid cookie", async () => {
@@ -647,7 +655,7 @@ describe("session read", () => {
     );
     const { port, recorded } = makeResponse();
     await createSessionRoute(harness.deps)({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: false });
+    expect(recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 
   it("reports no session when the gate is shut, without consulting the store", async () => {
@@ -657,7 +665,7 @@ describe("session read", () => {
     const repository = withRepositoryOverrides(harness.repository, { resolve });
     const { port, recorded } = makeResponse();
     await createSessionRoute({ ...harness.deps, config: FLAG_OFF, repository })({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: false });
+    expect(recorded.body).toEqual({ authenticated: false, openAccess: false });
     expect(resolve).not.toHaveBeenCalled();
   });
 
@@ -681,7 +689,7 @@ describe("session read", () => {
     });
     const { port, recorded } = makeResponse();
     await createSessionRoute({ ...harness.deps, repository })({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: true });
+    expect(recorded.body).toEqual({ authenticated: true, openAccess: false });
   });
 
   it("is unaffected by a touch that fails or throws, and touch never extends the session", async () => {
@@ -704,7 +712,7 @@ describe("session read", () => {
     harness.clock.value = START + BASE_CONFIG.sessionTtlMinutes * 60_000;
     const last = makeResponse();
     await route({ cookieHeader }, last.port);
-    expect(last.recorded.body).toEqual({ authenticated: false });
+    expect(last.recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 
   it("reports no session when the store throws", async () => {
@@ -717,7 +725,7 @@ describe("session read", () => {
     });
     const { port, recorded } = makeResponse();
     await createSessionRoute({ ...harness.deps, repository })({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: false });
+    expect(recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 });
 
@@ -838,6 +846,6 @@ describe("every response is private", () => {
 
     const after = makeResponse();
     await sessionRoute({ cookieHeader }, after.port);
-    expect(after.recorded.body).toEqual({ authenticated: false });
+    expect(after.recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 });

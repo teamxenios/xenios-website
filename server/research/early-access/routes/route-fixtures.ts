@@ -50,6 +50,10 @@ export const EARLY_ACCESS_TEST_SESSION_SECRET =
 
 export const EARLY_ACCESS_TEST_CONFIG: EarlyAccessConfig = Object.freeze({
   enabled: true,
+  // The password-gated shape stays the default fixture: these suites exist to
+  // prove the gate behaves, and open access is asserted explicitly where it is
+  // the thing under test.
+  openAccess: false,
   passwordHash: EARLY_ACCESS_TEST_PASSWORD_HASH,
   sessionSecret: EARLY_ACCESS_TEST_SESSION_SECRET,
   sessionTtlMinutes: 60,

@@ -52,7 +52,8 @@ Set these on the service, with the flag still **false**. Names are from
 | Variable | Value |
 | --- | --- |
 | `RESEARCH_EARLY_ACCESS_ENABLED` | `false` for now |
-| `RESEARCH_EARLY_ACCESS_PASSWORD_HASH` | the hash from step 1 (secret) |
+| `RESEARCH_EARLY_ACCESS_OPEN_ACCESS` | `true` — NO customer-facing password (founder decision 2026-08-20). With this set, the hash below is not required and the row above it is not part of the journey. |
+| `RESEARCH_EARLY_ACCESS_PASSWORD_HASH` | the hash from step 1 (secret). NOT REQUIRED under open access; leave unset. A malformed value is still reported. |
 | `RESEARCH_EARLY_ACCESS_SESSION_SECRET` | a fresh 32+ byte random value (secret) |
 | `RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES` | `240` |
 | `RESEARCH_EARLY_ACCESS_MAX_ATTEMPTS` | `5` |

@@ -409,8 +409,16 @@ function gateIsOpen(config: EarlyAccessConfig): boolean {
     config.enabled === true &&
     Array.isArray(config.problems) &&
     config.problems.length === 0 &&
-    typeof config.passwordHash === "string" &&
-    config.passwordHash.length > 0 &&
+    // A password hash is required only while there IS a password. This was the
+    // dead dependency that would have failed the whole lane closed: with the
+    // prompt removed and the secret retired, `passwordHash` is "" and every
+    // door — unlock, session read, the session resolver every ordering route
+    // depends on — reported the gate shut and answered a refusal. The surface
+    // would have looked switched off rather than open.
+    (config.openAccess === true ||
+      (typeof config.passwordHash === "string" && config.passwordHash.length > 0)) &&
+    // The session secret is NOT optional either way: sessions are still minted
+    // and signed, because they carry the identity every ownership check uses.
     typeof config.sessionSecret === "string" &&
     config.sessionSecret.length > 0
   );
@@ -563,17 +571,32 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
         return;
       }
 
-      const password = readPresentedPassword(request?.body);
-      if (password === null || !verify(password, deps.config.passwordHash)) {
-        limiter.recordFailure(clientKey, now);
-        log(deps.logger, "private_access.unlock.denied");
-        denyUnlock(response);
-        return;
+      // OPEN ACCESS: no customer-facing password (founder decision 2026-08-20).
+      //
+      // Only the password CHECK is skipped. Everything around it is deliberately
+      // kept: the rate-limit identity is still required and still consulted
+      // above, the gate must still be open, the session is still minted, signed
+      // and written before any cookie exists, and the same audit line is still
+      // written. What changes is what the caller must prove to obtain an
+      // anonymous session — nothing — not what that session then permits.
+      //
+      // The limiter stays because it now bounds session MINTING rather than
+      // password guessing: without it, one caller could ask for unlimited
+      // durable session rows.
+      if (!deps.config.openAccess) {
+        const password = readPresentedPassword(request?.body);
+        if (password === null || !verify(password, deps.config.passwordHash)) {
+          limiter.recordFailure(clientKey, now);
+          log(deps.logger, "private_access.unlock.denied");
+          denyUnlock(response);
+          return;
+        }
       }
 
-      // Everything below this line runs only for a CORRECT password, so every
-      // remaining failure must answer exactly like a wrong one. A distinct
-      // status or body here would confirm the guess.
+      // Everything below this line runs only for a CORRECT password (or, under
+      // open access, for any caller), so every remaining failure must answer
+      // exactly like a wrong one. A distinct status or body here would confirm
+      // a guess while a password still exists.
       const ttlSeconds = Math.max(1, Math.floor(deps.config.sessionTtlMinutes)) * 60;
       const minted = await mintSession({ ownerId, now, ttlSeconds });
       if (!minted.ok) {
@@ -622,7 +645,18 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
         return;
       }
 
-      limiter.reset(clientKey);
+      if (deps.config.openAccess === true) {
+        // COUNT THE ISSUANCE. With no password there is nothing to guess, so
+        // every call reaches this line — and a reset here would clear the very
+        // counter it should be filling, leaving session minting completely
+        // unbounded for any caller. The limiter's increment is named for the
+        // guessing it used to bound, but the mechanism is a per-client attempt
+        // counter, and bounding how many durable session rows one client can
+        // demand is exactly what it is still needed for.
+        limiter.recordFailure(clientKey, now);
+      } else {
+        limiter.reset(clientKey);
+      }
       // The CONTINUITY cookie rides beside the session cookie, minted once
       // per browser: a later unlock that already carries a valid credential
       // keeps it, which is exactly what lets a purchaser renew their session
@@ -776,9 +810,16 @@ export function createSessionRoute(deps: PrivateAccessRouteDependencies): Privat
     try {
       applyPrivateHeaders(response);
 
+      // `openAccess` tells the browser there is no password to ask for, so the
+      // customer is never shown a prompt it could not satisfy. It reveals no
+      // secret: it is the same fact the ordering surface demonstrates by simply
+      // working, and it is a boolean about the deployment, never about a
+      // caller.
+      const openAccess = deps.config.openAccess === true;
+
       const check = await resolve(request?.cookieHeader);
       if (!check.authenticated) {
-        send(response, 200, { authenticated: false });
+        send(response, 200, { authenticated: false, openAccess });
         return;
       }
 
@@ -787,12 +828,18 @@ export function createSessionRoute(deps: PrivateAccessRouteDependencies): Privat
         response,
         200,
         expiresAtEpochMs === null
-          ? { authenticated: true }
-          : { authenticated: true, expiresAt: new Date(expiresAtEpochMs).toISOString() },
+          ? { authenticated: true, openAccess }
+          : { authenticated: true, openAccess, expiresAt: new Date(expiresAtEpochMs).toISOString() },
       );
     } catch {
       try {
-        send(response, 200, { authenticated: false });
+        // Same shape on the failure path. A body that changes its KEYS when the
+        // store is down would let a caller detect an outage from the outside,
+        // and would make the browser think the deployment had a password again.
+        send(response, 200, {
+          authenticated: false,
+          openAccess: deps.config.openAccess === true,
+        });
       } catch {
         // The response port itself is broken.
       }

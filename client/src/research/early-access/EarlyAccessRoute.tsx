@@ -110,6 +110,41 @@ export default function EarlyAccessRoute() {
         setState({ kind: "authenticated", expiresAt });
         return;
       }
+      // OPEN ACCESS (founder decision 2026-08-20): there is no customer-facing
+      // password, so never show a prompt the customer could not satisfy. Take
+      // the anonymous session the server is willing to issue and carry on into
+      // the catalog.
+      //
+      // The session still matters with the password gone: it is the identity
+      // that decides which order this browser may read back, so the journey
+      // cannot simply skip obtaining one.
+      if (body?.openAccess === true) {
+        const opened = await fetch(UNLOCK_PATH, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({}),
+        });
+        if (opened.ok) {
+          // Re-read rather than trusting the unlock body, so the cookie the
+          // browser actually kept is the thing that decided this.
+          const confirmed = await fetch(SESSION_PATH, {
+            credentials: "same-origin",
+            headers: { Accept: "application/json" },
+          });
+          const confirmedBody = await readJson(confirmed);
+          if (confirmedBody?.authenticated === true) {
+            const expiresAt =
+              typeof confirmedBody.expiresAt === "string" ? confirmedBody.expiresAt : null;
+            setState({ kind: "authenticated", expiresAt });
+            return;
+          }
+        }
+        // Could not obtain one. That is an unavailable deployment, not
+        // something a customer can fix by typing, so do not ask them to.
+        setState({ kind: "unavailable" });
+        return;
+      }
       setState({ kind: "locked", error: null, busy: false });
     } catch {
       setState({ kind: "locked", error: null, busy: false });
