@@ -1665,8 +1665,18 @@ describe("route uniqueness validator", () => {
     // count is ten and not twenty. Serving stays dark behind
     // RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED, and a missing dependency keeps
     // the whole family unmounted with a named refusal in the log.
-    expect(result.callSites).toBe(380);
-    expect(result.routes).toHaveLength(389);
+    // +6 (the minimum fulfillment + tracking engine, 2026-08-20): the lane's own
+    // register() route table under server/research/fulfillment/register.ts —
+    // GET and POST /api/research/fulfillment/admin/assignments, POST
+    // .../admin/assignments/:assignmentId/transition, GET
+    // .../supplier/assignments, POST .../supplier/assignments/:assignmentId/transition,
+    // and GET /api/research/fulfillment/orders/:orderReference/status. The census
+    // counts them because it scans server/**, but NOTHING IS MOUNTED: register()
+    // is not called from server/index.ts, so none of these are reachable in any
+    // deployment. They are counted here so that mounting them later is a visible
+    // move rather than a silent one.
+    expect(result.callSites).toBe(386);
+    expect(result.routes).toHaveLength(395);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
