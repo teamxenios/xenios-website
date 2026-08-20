@@ -5,6 +5,7 @@ import {
   addOrUpdateSelection,
   agreementRequirementKey,
   clampQuantity,
+  familyLabel,
   money,
   parseAssistedOrderConfig,
   removeSelection,
@@ -106,6 +107,23 @@ describe("assisted order wizard state", () => {
     const state = addOrUpdateSelection(new Map(), unpriced, 3);
     expect(selectionEstimateCents(state)).toBeNull();
     expect(money(selectionEstimateCents(state))).toBe("Price pending");
+  });
+});
+
+describe("family labels", () => {
+  it("uses the canonical taxonomy label, never the raw enum key", () => {
+    expect(familyLabel("clinical_formulations_503a")).toBe("503A Clinical Formulations");
+    expect(familyLabel("research_peptides_materials")).toBe("Research Peptides and Materials");
+  });
+
+  it("humanizes an unknown slug instead of leaking it raw", () => {
+    expect(familyLabel("some_new_family")).toBe("Some New Family");
+    expect(familyLabel("CLINICAL_FORMULATIONS_503A")).toBe("Clinical Formulations 503a");
+  });
+
+  it("never returns an empty label", () => {
+    expect(familyLabel("")).toBe("");
+    expect(familyLabel("   ")).toBe("   ");
   });
 });
 
