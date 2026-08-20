@@ -326,7 +326,9 @@ describe("createMemberPartnerSource", () => {
     if (!issued.ok) return;
     expect(issued.value).toEqual({
       code: "code_p_a_1",
-      url: "https://research.test/r/code_p_a_1",
+      // The mounted capture door is /api/r/:code; /r/:code is served by
+      // nothing, so a link pointing there would hand the partner a 404.
+      url: "https://research.test/api/r/code_p_a_1",
       channel: "signed_link",
       campaign: "spring",
       qrSvgPath: null,

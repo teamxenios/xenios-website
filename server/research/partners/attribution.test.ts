@@ -7,6 +7,7 @@ import {
   createAttributionService,
   createInMemoryAttributionRepository,
   LinkSecretMissingError,
+  REFERRAL_SHARE_PATH,
   SubjectKeyNotOpaqueError,
   type AttributionRepository,
   type AttributionService,
@@ -49,7 +50,9 @@ describe("signed codes", () => {
     const link = service.issueLink("partner-1", "signed_link", "summer", NOW);
 
     expect(service.verifyCode(link.code)).toEqual({ partnerId: "partner-1" });
-    expect(link.url).toBe(`${BASE_URL}/r/${link.code}`);
+    expect(link.url).toBe(
+      `${BASE_URL}${REFERRAL_SHARE_PATH}/${encodeURIComponent(link.code)}`,
+    );
     expect(link.campaign).toBe("summer");
   });
 
@@ -154,7 +157,34 @@ describe("links", () => {
     const { service } = build({ linkBaseUrl: `${BASE_URL}/` });
     const link = service.issueLink("partner-1", "signed_link", null, NOW);
 
-    expect(link.url).toBe(`${BASE_URL}/r/${link.code}`);
+    expect(link.url).toBe(
+      `${BASE_URL}${REFERRAL_SHARE_PATH}/${encodeURIComponent(link.code)}`,
+    );
+  });
+
+  // The regression that motivated REFERRAL_SHARE_PATH: the generator advertised
+  // `/r/CODE` while the composition root mounts `/api/r/:code`, so every link a
+  // partner was handed, and every QR encoding it, answered 404. These pin the
+  // share URL to a door that is actually served.
+  it("points the shareable link at the mounted capture door", () => {
+    const { service } = build();
+    const link = service.issueLink("partner-1", "signed_link", null, NOW);
+    expect(link.url.startsWith(`${BASE_URL}/api/r/`)).toBe(true);
+    expect(service.qrPayloadFor(link)).toBe(link.url);
+  });
+
+  it("survives a signed code, which the ?ref= client filter cannot carry", () => {
+    const { service } = build();
+    const link = service.issueLink("partner-1", "signed_link", null, NOW);
+    // The client hook only forwards ^[A-Za-z0-9_-]{2,64}$; a signed code is
+    // longer and contains dots, so `/research?ref=` would drop it silently.
+    expect(/^[A-Za-z0-9_-]{2,64}$/.test(link.code)).toBe(false);
+    // The path segment carries it intact, and it still verifies after a
+    // round trip through the URL.
+    const segment = link.url.slice(`${BASE_URL}/api/r/`.length);
+    expect(service.verifyCode(decodeURIComponent(segment))).toEqual({
+      partnerId: "partner-1",
+    });
   });
 });
 

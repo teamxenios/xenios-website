@@ -145,6 +145,38 @@ export interface AttributionService {
 }
 
 // ---------------------------------------------------------------------------
+// The shareable referral URL
+// ---------------------------------------------------------------------------
+
+/**
+ * The path prefix a partner's shareable link and QR payload point at.
+ *
+ * THIS MUST NAME A DOOR THAT IS ACTUALLY MOUNTED. It previously read `/r`,
+ * which nothing served: the composition root registers the capture door at
+ * `/api/r/:code` because the route census forbids non-`/api` paths, so every
+ * link a partner was given — and every QR encoding that link — answered 404
+ * and captured nothing. Two individually correct modules, one dead seam.
+ *
+ * The other entry, `/research?ref=CODE`, cannot substitute for signed links:
+ * the client capture hook only forwards codes matching
+ * `^[A-Za-z0-9_-]{2,64}$`, and a signed code is ~72 characters containing
+ * dots, so it is silently dropped before any request is made. Short STORED
+ * codes do travel that way; signed ones need this door.
+ *
+ * When the founder wants the prettier `xeniostechnology.com/r/CODE`, the lead
+ * adds the census exception and this ONE constant becomes "/r". Nothing else
+ * changes, and every already-issued link follows, because a link's URL is
+ * computed from its stored code on every read rather than persisted.
+ */
+export const REFERRAL_SHARE_PATH = "/api/r";
+
+/** The one place a shareable referral URL is built. */
+export function referralShareUrl(baseUrl: string, code: string): string {
+  const base = baseUrl.replace(/\/+$/, "");
+  return `${base}${REFERRAL_SHARE_PATH}/${encodeURIComponent(code)}`;
+}
+
+// ---------------------------------------------------------------------------
 // Code signing
 // ---------------------------------------------------------------------------
 
@@ -260,8 +292,7 @@ export function createAttributionService(deps: AttributionServiceDeps): Attribut
   }
 
   function urlFor(code: string): string {
-    const base = deps.linkBaseUrl.replace(/\/+$/, "");
-    return `${base}/r/${code}`;
+    return referralShareUrl(deps.linkBaseUrl, code);
   }
 
   function toDto(link: StoredLink): PartnerLinkDto {
