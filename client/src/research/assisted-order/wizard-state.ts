@@ -3,6 +3,7 @@ import type {
   AssistedOrderCatalogItem,
   AssistedOrderLineInput,
 } from "../../../../shared/research/assisted-order/contract";
+import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
 
 export type AssistedOrderSelection = Readonly<{
   item: AssistedOrderCatalogItem;
@@ -39,6 +40,53 @@ export function removeSelection(
   const next = new Map(selections);
   next.delete(catalogItemKey(item));
   return next;
+}
+
+/**
+ * Clamps a requested quantity to the item's own MOQ / increment / maximum
+ * rules. Free-typed numbers snap to the nearest allowed step at or above the
+ * minimum, so the wizard can offer a plain number input without ever carrying
+ * an invalid quantity into a submission.
+ */
+export function clampQuantity(
+  item: Pick<
+    AssistedOrderCatalogItem,
+    "minimumQuantity" | "maximumQuantity" | "quantityIncrement"
+  >,
+  requested: number,
+): number {
+  if (!Number.isFinite(requested)) {
+    return item.minimumQuantity;
+  }
+  const floored = Math.floor(requested);
+  if (floored <= item.minimumQuantity) {
+    return item.minimumQuantity;
+  }
+  const steps = Math.round(
+    (floored - item.minimumQuantity) / item.quantityIncrement,
+  );
+  let candidate = item.minimumQuantity + steps * item.quantityIncrement;
+  if (item.maximumQuantity !== null && candidate > item.maximumQuantity) {
+    const allowedSteps = Math.floor(
+      (item.maximumQuantity - item.minimumQuantity) / item.quantityIncrement,
+    );
+    candidate = item.minimumQuantity + allowedSteps * item.quantityIncrement;
+  }
+  return quantityIsAllowed(item, candidate) ? candidate : item.minimumQuantity;
+}
+
+/**
+ * Whether an item may be ADDED to a research order request at all. A Care /
+ * provider-pathway product must never enter this request path: it has its own
+ * clinical workflow, and offering to fold it into a research request would
+ * misrepresent both. Everything else the server projects stays requestable —
+ * including price-pending and activation items, which submit truthfully as
+ * requests, not orders.
+ */
+export function selectableInResearchRequest(
+  item: Pick<AssistedOrderCatalogItem, "workflowMode">,
+): boolean {
+  return item.workflowMode !== "provider_request";
 }
 
 export function selectionEstimateCents(
@@ -133,34 +181,131 @@ function requirementFromEntry(
 }
 
 /**
- * Parses the config endpoint's required-agreement set. Returns null when the
- * body does not carry a usable, non-empty set, so callers fail closed instead
- * of inventing a fallback.
+ * A form acknowledgment as the config endpoint publishes it: the operational
+ * request fact the founder worded (D-005), with the exact copy the server will
+ * verify by hash at submission. `scope` says when it is required: "always", or
+ * only when the request actually carries a Research Use Only line.
  */
-export function parseAgreementRequirements(
+export type AssistedOrderFormAcknowledgmentView = Readonly<{
+  id: string;
+  scope: "always" | "research_use_only";
+  kind: string;
+  version: string;
+  copy: string;
+}>;
+
+export type AssistedOrderWizardConfig = Readonly<{
+  legal: readonly AssistedOrderAgreementRequirement[];
+  form: readonly AssistedOrderFormAcknowledgmentView[];
+}>;
+
+function formAcknowledgmentFromEntry(
+  entry: unknown,
+): AssistedOrderFormAcknowledgmentView | null {
+  if (typeof entry !== "object" || entry === null) {
+    return null;
+  }
+  const record = entry as Record<string, unknown>;
+  const id = typeof record.id === "string" ? record.id.trim() : "";
+  const kind = typeof record.kind === "string" ? record.kind.trim() : "";
+  const version =
+    typeof record.version === "string" ? record.version.trim() : "";
+  const copy = typeof record.copy === "string" ? record.copy.trim() : "";
+  const scope =
+    record.scope === "always" || record.scope === "research_use_only"
+      ? record.scope
+      : null;
+  if (!id || !kind || !version || !copy || !scope) {
+    return null;
+  }
+  return Object.freeze({ id, scope, kind, version, copy });
+}
+
+/**
+ * Parses the config endpoint's full requirement surface: the canonical legal
+ * (kind, version) pairs AND the operational form acknowledgments, each of
+ * which the server independently verifies at submission. Returns null when
+ * either set is missing or unusable, so callers fail closed instead of
+ * inventing a fallback — a submission missing either set is refused anyway.
+ */
+export function parseAssistedOrderConfig(
   body: unknown,
-): readonly AssistedOrderAgreementRequirement[] | null {
+): AssistedOrderWizardConfig | null {
   if (typeof body !== "object" || body === null) {
     return null;
   }
   const record = body as Record<string, unknown>;
-  const raw = Array.isArray(record.requiredAgreements)
+  const rawLegal = Array.isArray(record.requiredAgreements)
     ? record.requiredAgreements
-    : Array.isArray(record.agreements)
-      ? record.agreements
-      : null;
-  if (!raw || raw.length === 0) {
+    : null;
+  const rawForm = Array.isArray(record.formAcknowledgments)
+    ? record.formAcknowledgments
+    : null;
+  if (!rawLegal || rawLegal.length === 0 || !rawForm || rawForm.length === 0) {
     return null;
   }
-  const requirements: AssistedOrderAgreementRequirement[] = [];
-  for (const entry of raw) {
+  const legal: AssistedOrderAgreementRequirement[] = [];
+  for (const entry of rawLegal) {
     const requirement = requirementFromEntry(entry);
     if (!requirement) {
       return null;
     }
-    requirements.push(requirement);
+    legal.push(requirement);
   }
-  return Object.freeze(requirements);
+  const form: AssistedOrderFormAcknowledgmentView[] = [];
+  for (const entry of rawForm) {
+    const acknowledgment = formAcknowledgmentFromEntry(entry);
+    if (!acknowledgment) {
+      return null;
+    }
+    form.push(acknowledgment);
+  }
+  return Object.freeze({
+    legal: Object.freeze(legal),
+    form: Object.freeze(form),
+  });
+}
+
+/** Whether any selected line is a Research Use Only item. */
+export function selectionsIncludeResearchUseOnly(
+  selections: AssistedOrderSelectionMap,
+): boolean {
+  for (const selection of Array.from(selections.values())) {
+    if (selection.item.researchUseOnly) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * The complete acknowledgment list this exact request must carry, rendered in
+ * submission order: every legal pair, then every form fact whose scope
+ * applies. Form facts use the server's own copy verbatim — the server verifies
+ * that copy by hash, so no client paraphrase can stand in for it.
+ */
+export function requiredAcknowledgmentEntries(
+  config: AssistedOrderWizardConfig,
+  includesResearchUseOnly: boolean,
+): readonly AssistedOrderAgreementRequirement[] {
+  const entries: AssistedOrderAgreementRequirement[] = config.legal.map(
+    (requirement) => requirement,
+  );
+  for (const acknowledgment of config.form) {
+    if (
+      acknowledgment.scope === "always" ||
+      (acknowledgment.scope === "research_use_only" && includesResearchUseOnly)
+    ) {
+      entries.push(
+        Object.freeze({
+          kind: acknowledgment.kind,
+          version: acknowledgment.version,
+          label: acknowledgment.copy,
+        }),
+      );
+    }
+  }
+  return Object.freeze(entries);
 }
 
 /**

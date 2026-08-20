@@ -12,8 +12,8 @@ import type {
   AssistedOrderUploadTicket,
 } from "../../../../shared/research/assisted-order/contract";
 import {
-  parseAgreementRequirements,
-  type AssistedOrderAgreementRequirement,
+  parseAssistedOrderConfig,
+  type AssistedOrderWizardConfig,
 } from "./wizard-state";
 
 export class AssistedOrderApiError extends Error {
@@ -82,14 +82,14 @@ export function loadAssistedOrderCatalog(
 }
 
 /**
- * Loads the server-published assisted-order configuration: the exact
- * (kind, version) agreement pairs this deployment requires. The wizard renders
- * and submits only what this returns. Anything unusable throws, so the caller
- * fails closed with a retry state instead of falling back to a built-in list.
+ * Loads the server-published assisted-order configuration: the exact legal
+ * (kind, version) pairs AND the operational form acknowledgments this
+ * deployment requires — the server verifies both independently at submission.
+ * The wizard renders and submits only what this returns. Anything unusable
+ * throws, so the caller fails closed with a retry state instead of falling
+ * back to a built-in list.
  */
-export async function loadAssistedOrderConfig(): Promise<
-  readonly AssistedOrderAgreementRequirement[]
-> {
+export async function loadAssistedOrderConfig(): Promise<AssistedOrderWizardConfig> {
   const body = await request<Record<string, unknown> | null>(
     "/api/research/early-access/assisted-orders/config",
   );
@@ -100,15 +100,15 @@ export async function loadAssistedOrderConfig(): Promise<
       "Assisted ordering is not available right now. Please try again later.",
     );
   }
-  const requirements = parseAgreementRequirements(body);
-  if (!requirements) {
+  const config = parseAssistedOrderConfig(body);
+  if (!config) {
     throw new AssistedOrderApiError(
       502,
       "config_unusable",
       "The required acknowledgments could not be loaded. Please retry before submitting.",
     );
   }
-  return requirements;
+  return config;
 }
 
 export function submitAssistedOrder(
