@@ -143,3 +143,94 @@ Both queued intents for controlled order `XRR-20260820-2E67BC3AA3` transitioned
 `pending` → **`sent`** on attempt 1 with a provider message id and no error:
 `research.assisted_order.submitted.admin` → research@xeniostechnology.com and
 `research.assisted_order.submitted.customer` → team@xeniostechnology.com.
+
+---
+
+# ROUND 2 — ADVERSARIAL REVIEW, AND WHAT IT CHANGED
+
+Five hostile lenses (privilege, data exposure, money correctness, ordering
+pathway, test integrity), 16 candidate findings, each handed to an independent
+agent whose job was to REFUTE it. 21 agents, ~20 minutes.
+
+**16 candidates, 0 survived refutation.** The refutations were substantive, not
+rubber stamps: they checked the actual diff, ran the real suites, and killed
+claims on their own facts. The three most serious:
+
+- *unbound: identity forgery.* Real mechanic — `resolve()` takes the client's
+  `{productId, variantId}` when the variant id carries the `unbound:` prefix.
+  But price and pathway are both recomputed server-side from the variant the
+  server itself walked to, `research_assisted_order_lines.product_id` has no
+  foreign key and no consumer outside the bridge, and any authenticated member
+  could already do it before this commit. Buys nothing. Logged as a data-hygiene
+  nit for the assisted-order lane, not a blocker.
+- *Per-request Product Control fan-out.* Pre-existing: the live
+  `/api/research/early-access/catalog` door already did a full read per request
+  before this commit, and `production-catalog.ts` is not in the diff.
+- *The grant reaching the cart purchase gauntlet.* `EARLY_ACCESS_RETAIL_PRICE_AUDIENCE`
+  is `"member"`, so `grant.audience ?? "member"` yields the exact string the old
+  hard-coded line produced. Zero behavioural delta, and audience eligibility is
+  one of ~15 necessary conditions in `selectCartProduct`, never sufficient.
+
+## What the review actually corrected — in my own work
+
+**A question I had assumed rather than checked.** The grant is handed only to a
+viewer with a non-null `earlyAccessSessionHash`, and a cookieless visitor has
+none. So: does this repair reach the person who sees no prices? I had not
+proved it. It does, structurally: `createAssistedOrderViewerResolvers` sets
+capabilities and pricing provenance in the SAME branch — member branch carries
+a `pricingViewer`, identified Early Access carries a session hash, and the
+anonymous fallback carries neither capabilities nor a hash. **A viewer that can
+read the catalog is always priced; a viewer that is not priced cannot read the
+catalog at all.** Production answers such a request HTTP 403, verified live.
+Pinned in `early-access-pricing-reach.test.ts`.
+
+**Tests that could not fail.** Both new files built their price fixtures FROM
+`EARLY_ACCESS_RETAIL_PRICE_AUDIENCE` — the one constant the repair turns on.
+Pointing it at `private_early_access` (zero production rows) left the whole
+suite green while the live catalog would silently return to "Price on request".
+Fixed: fixtures use a literal, the constant is asserted against the
+measurement. **Flipping it now fails 13 tests; before, it failed none.**
+
+Two assertions proved nothing and are replaced: one compared five constants in
+the same file to each other; the other compared the binding artifact to a set
+derived from that same artifact. The latter now fingerprints the artifact's
+CONTENT against the md5 measured from production.
+
+## CONCERN A — submit-path reach — CLOSED BY EXHAUSTION
+
+`RESOLVE_MAX_PAGES` is 500 against a five-page catalog, so it was never the
+bound. Proved rather than argued: **all 420 rows are resolved individually
+through the submit path and compared on the authoritative fingerprint** (which
+covers productId, variantId, price, priceVersion, catalogVersion and
+workflowMode together). Zero unresolved, zero disagreements. Positional cases
+named separately — first page, page-1 boundary, row 100, middle, last row —
+plus Kisspeptin and BAM15, which must resolve while staying unpriced.
+
+Real production prices at those positions: 5-Amino-1MQ `$200.00` (first),
+Metformin HCl ER 500MG `$1.88` (row 99), Methylcobalamin `$75.00` (row 100),
+Tesofensine `$5.63` (middle), Radient XO Serum `$750.00` (LAST ROW).
+
+That test timed out at the 5s default under a loaded suite. It now has an
+explicit budget and shares one parsed dataset — sampling fewer rows would have
+given back the coverage it exists for.
+
+## CONCERN B — pricingGrant audience — CLOSED BY AUDIT AND GUARD
+
+The entire non-test codebase has **exactly two** grant construction sites: the
+Early Access authority (explicit `member`) and `masterOfferingViewerForMember`
+(no audience, so the `"member"` default — existing member behaviour byte-for-byte
+unchanged). Nothing constructs `wholesale`, `professional`, `retail`, or
+`private_early_access`. `pricingViewer` is assigned only in the composition root
+and the member resolver; the browser has no path to either.
+
+`pricing-grant-boundary.test.ts` pins all of it structurally. A rogue grant site
+fails it; a commercial audience named in executable code at a grant site fails it.
+
+## A COMMERCIAL OBSERVATION, SURFACED NOT FIXED
+
+101 of the 417 priced rows are under $10 and 71 are under $5 (minimum $1.00) —
+per-unit 503A compounded pricing. **All 101 are 503A Clinical Formulations on
+the Care pathway**, so none is directly orderable: they render "Continue through
+Care", not a $1.88 buy button. No `$0` anywhere. Worth an eyeball before launch,
+but not a blocker and not a code defect.
+
