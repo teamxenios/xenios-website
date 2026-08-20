@@ -67,7 +67,7 @@ function assertKeyboardReachableActions(view: HTMLElement) {
 }
 
 describe("Research public application flow", () => {
-  it("keeps the gateway focused on Apply and Member Login with canonical public links", async () => {
+  it("keeps the gateway focused on its commercial and access doors with canonical public links", async () => {
     const view = await render(<Gateway />);
     assertSinglePageHeading(view);
 
@@ -77,7 +77,21 @@ describe("Research public application flow", () => {
     expect(hrefs).toContain("/research/privacy");
     expect(hrefs).toContain("/research/terms");
     expect(hrefs).toContain("/research/support");
-    expect(hrefs.some((href) => /catalog|products|shop|supplements/i.test(href))).toBe(false);
+    // The public storefront, added by the 2026-08-19 launch directive.
+    expect(hrefs).toContain("/research/catalog");
+    // The bare-word scan this line used to run (/catalog|products|shop/)
+    // cannot survive that directive: the directed CTA points at
+    // /research/catalog by name. Narrowed to the surfaces that are genuinely
+    // still forbidden here — every MEMBER-private, partner, supplier, and
+    // admin catalog route — so a disguised member-catalog link still fails.
+    // The full rationale, and the open founder confirmation item, are in
+    // docs/research/RESEARCH_HOME_CATALOG_POLICY.md and
+    // client/src/research/pages/Gateway.catalog-guard.test.tsx.
+    expect(
+      hrefs.filter((href) =>
+        /\/research\/(member\/|products|supplements|shop)|catalog-display/i.test(href),
+      ),
+    ).toEqual([]);
     assertKeyboardReachableActions(view);
   });
 
