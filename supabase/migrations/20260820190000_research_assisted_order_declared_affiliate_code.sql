@@ -153,7 +153,13 @@ begin
   -- The declared affiliate code. Absent keys yield null and 'not_provided',
   -- which is exactly what the CURRENT production runtime produces, so this
   -- routine serves the existing client unchanged.
-  v_declared_code := nullif(btrim(p_request ->> 'declaredAffiliateCode'), '');
+  -- UPPERCASE FIRST, then validate. The application normalizes case before it
+  -- sends, but this routine must not depend on that: validating without
+  -- normalizing means a caller that sends 'dana10' has a perfectly good code
+  -- silently dropped as invalid, and the two layers would disagree about what a
+  -- code is. Found by the managed-Supabase rehearsal, which submitted a
+  -- lowercase code and watched it vanish.
+  v_declared_code := upper(nullif(btrim(p_request ->> 'declaredAffiliateCode'), ''));
   v_declared_state := nullif(btrim(p_request ->> 'declaredAffiliateCodeState'), '');
   if v_declared_code is not null and v_declared_code !~ '^[A-Z0-9][A-Z0-9._-]{1,39}$' then
     v_declared_code := null;
