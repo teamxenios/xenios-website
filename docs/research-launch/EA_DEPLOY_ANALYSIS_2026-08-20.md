@@ -1,7 +1,43 @@
 # What deploying the integration head actually changes — 2026-08-20
 
-Lead: claude-fable-desktop. Candidate SHA: `119228c` (+ this document).
+Lead: claude-fable-desktop.
 Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first).
+
+## STATUS: RELEASE CANDIDATE FROZEN — AWAITING FOUNDER GO
+
+- **Frozen SHA: `2c6433f`** on `xenios/launch-integration-20260819`.
+- **Gates GREEN at this SHA**: full suite 679 files passed / 4 skipped / **0
+  failed** (exit 0); `tsc --noEmit` clean; route census re-pinned and uniqueness
+  clean; release-control-plane 35 passed / 1 skipped.
+- **Predecessor verified**: production `a66434d9` is an ancestor of this SHA, so
+  the deploy branch fast-forwards cleanly (42 commits, behaviourally inert except
+  the two items listed below).
+- **Not executed.** `CLAUDE.md` requires Samuel's current explicit approval for
+  every production mutation, and today's directive approved building and
+  preparing the release, not firing it. The deploy branch has deliberately NOT
+  been moved: fast-forwarding it would arm the Render auto-deploy trigger.
+- **A human is required for the smoke regardless**: verifying the fix means
+  entering the Early Access code in a real browser, which the assistant must not
+  do.
+
+### To release, on your word
+
+1. `git push origin 2c6433f:release/early-access-code-session-checkout` (clean
+   fast-forward from `a66434d9`).
+2. Trigger the deploy on service `srv-d8s9vej7uimc7384dfcg`.
+3. Smoke live paths, then the fix (steps 4–6 below).
+
+Rollback at any point: redeploy `a66434d9`. No migration is involved.
+
+### One watch item, stated honestly
+
+The superseded-price-formula guard
+(`server/research/products-diagnostics/customer-price-authority.test.ts`), which
+forbids wholesale/margin formulas outside the one catalog module, failed once in
+an earlier full run and then passed both in isolation and in the clean full run
+at this SHA. The failure did not reproduce and I could not identify a cause, so
+it is recorded as a watch item rather than an explained one. It is a guard worth
+re-checking on the next full run.
 
 ## The reason this deploy matters
 
