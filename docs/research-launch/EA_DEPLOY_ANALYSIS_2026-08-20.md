@@ -5,10 +5,30 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ## STATUS: RELEASE CANDIDATE FROZEN — AWAITING FOUNDER GO
 
-- **Frozen SHA: `2c6433f`** on `xenios/launch-integration-20260819`.
-- **Gates GREEN at this SHA**: full suite 679 files passed / 4 skipped / **0
+- **Frozen SHA: `e7b95db`** on `xenios/launch-integration-20260819`.
+  (Supersedes `2c6433f`, which was frozen before conversion QA reported. That
+  candidate would have shipped a journey that could not unlock, could not price
+  a line, and could not accept a submission.)
+- **Gates GREEN at this SHA**: full suite 681 files passed / 4 skipped / **0
   failed** (exit 0); `tsc --noEmit` clean; route census re-pinned and uniqueness
-  clean; release-control-plane 35 passed / 1 skipped.
+  clean; seam tripwire clean after a documented baseline move.
+
+### Four defects fixed since the first freeze — all customer-fatal
+
+1. **The gate rejected the correct code.** The durable repository issued grants
+   under `RESEARCH_EARLY_ACCESS_OWNER_ID` while the unlock route fell back to a
+   hard-coded default, so the exchange refused an owner mismatch and the route
+   reported it as a wrong password. Silent, total, and it would have made the
+   Xenios Genesis launch look broken to every customer.
+2. **Orders could not be priced.** The assisted-order seam looked bindings up by
+   a bare variant id against a map keyed `offeringId|offeringVariantId`, so all
+   417 lookups missed: lines projected `unbound:`, prices were suppressed, the
+   action degraded, and submit answered HTTP 500.
+3. **Every real browser submission was refused 400** — the client never sent the
+   form acknowledgments the server demands (found by the wizard lane).
+4. **One rejected database call took the site down.** 31 routes dispatched
+   handlers as bare fire-and-forget promises; an unhandled rejection exits Node,
+   so a blip during checkout was an outage rather than a failed request.
 - **Predecessor verified**: production `a66434d9` is an ancestor of this SHA, so
   the deploy branch fast-forwards cleanly (42 commits, behaviourally inert except
   the two items listed below).
@@ -22,7 +42,7 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ### To release, on your word
 
-1. `git push origin 2c6433f:release/early-access-code-session-checkout` (clean
+1. `git push origin e7b95db:release/early-access-code-session-checkout` (clean
    fast-forward from `a66434d9`).
 2. Trigger the deploy on service `srv-d8s9vej7uimc7384dfcg`.
 3. Smoke live paths, then the fix (steps 4–6 below).
