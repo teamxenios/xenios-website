@@ -69,13 +69,25 @@ function callbacks(
   offerings: NormalizedMasterOffering[],
   prices: ReadonlyMap<string, MasterOfferingPriceView>,
   bound = true,
+  // The real catalog search clamps pageSize to 100 and then slices. A double
+  // that ignores paging cannot see the defect that clamp caused, which is
+  // exactly why the submission-time re-read shipped able to find only the
+  // alphabetically first hundred offerings.
+  clampPageSize = Number.POSITIVE_INFINITY,
 ) {
   const service = {
-    select: async () => ({
-      offerings,
-      prices,
-      page: { ok: true, page: 1, pageSize: 24, total: offerings.length, totalPages: 1, sort: "name", products: [], facets: {} },
-    }),
+    select: async (query: { page?: number; pageSize?: number } = {}) => {
+      const requested = query.pageSize ?? 24;
+      const pageSize = Math.min(requested, clampPageSize);
+      const page = query.page ?? 1;
+      const start = (page - 1) * pageSize;
+      const slice = offerings.slice(start, start + pageSize);
+      return {
+        offerings: slice,
+        prices,
+        page: { ok: true, page, pageSize, total: offerings.length, totalPages: Math.ceil(offerings.length / pageSize), sort: "name", products: [], facets: {} },
+      };
+    },
   } as unknown as AssistedOrderMasterCatalogService;
   return createAssistedOrderMasterCatalogCallbacks({
     serviceFor: () => service,
@@ -137,6 +149,77 @@ describe("assisted-order production catalog mapping", () => {
     expect(hit?.unitPriceCents).toBe(5000);
     const miss = await built.resolve(viewer, "pc-prod-1", "pc-var-unknown");
     expect(miss).toBeNull();
+  });
+});
+
+describe("the submission-time re-read against a clamping catalog", () => {
+  /**
+   * The catalog search clamps pageSize to 100 and then slices, so asking for
+   * "everything" returns the alphabetically first hundred and looks complete.
+   * This seam asked for a million rows, so 320 of the 420 production offerings
+   * resolved to null at submission and the whole request died as an opaque
+   * HTTP 500 — after the customer had entered contact details and accepted
+   * every agreement, with nothing stored and no operator notified.
+   *
+   * Neither half was wrong on its own: the clamp has its own passing test, and
+   * this file's double used to ignore paging entirely. Only the composition
+   * was broken, which is why nothing caught it.
+   */
+  function manyOfferings(count: number): NormalizedMasterOffering[] {
+    return Array.from({ length: count }, (_, index) => {
+      const id = String(index).padStart(4, "0");
+      return offering({
+        id: `off_${id}`,
+        slug: `product-${id}`,
+        displayName: `Product ${id}`,
+        variants: [
+          { id: `var_${id}`, label: "10 mg", displayState: "request_access", visibility: "member", sourceReferences: [] },
+        ],
+      } as Partial<NormalizedMasterOffering>);
+    });
+  }
+
+  function boundCallbacks(offerings: NormalizedMasterOffering[], target: string) {
+    const prices = new Map(offerings.map((entry) => [entry.variants[0].id, priced(5000)]));
+    return createAssistedOrderMasterCatalogCallbacks({
+      serviceFor: () => ({
+        select: async (query: { page?: number; pageSize?: number } = {}) => {
+          const pageSize = Math.min(query.pageSize ?? 24, 100);
+          const page = query.page ?? 1;
+          const start = (page - 1) * pageSize;
+          return {
+            offerings: offerings.slice(start, start + pageSize),
+            prices,
+            page: { ok: true, page, pageSize, total: offerings.length, totalPages: Math.ceil(offerings.length / pageSize), sort: "name", products: [], facets: {} },
+          };
+        },
+      }) as unknown as AssistedOrderMasterCatalogService,
+      bindingFor: () => ({ productId: "pc-prod-1", variantId: "pc-var-1" }),
+      offeringVariantFor: () => target,
+      catalogVersion: "catalog-test-v1",
+    });
+  }
+
+  it("finds an offering far past the clamp boundary", async () => {
+    const offerings = manyOfferings(420);
+    // Position 400 of 420: unreachable in a single clamped page.
+    const target = offerings[399].variants[0].id;
+    const built = boundCallbacks(offerings, target);
+    const resolved = await built.resolve(viewer, "pc-prod-1", "pc-var-1");
+    expect(resolved).not.toBeNull();
+    expect(resolved?.unitPriceCents).toBe(5000);
+  });
+
+  it("still finds one inside the first page", async () => {
+    const offerings = manyOfferings(420);
+    const built = boundCallbacks(offerings, offerings[3].variants[0].id);
+    expect(await built.resolve(viewer, "pc-prod-1", "pc-var-1")).not.toBeNull();
+  });
+
+  it("returns null for an identity the catalog genuinely does not carry, without spinning", async () => {
+    const offerings = manyOfferings(420);
+    const built = boundCallbacks(offerings, "var_does_not_exist");
+    expect(await built.resolve(viewer, "pc-prod-1", "pc-var-1")).toBeNull();
   });
 });
 

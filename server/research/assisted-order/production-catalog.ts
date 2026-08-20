@@ -69,6 +69,22 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
  * must resolve every variant through THIS derivation rather than a replica
  * that could drift. Production callers stay inside this module.
  */
+/**
+ * The page size the submission-time re-read walks with.
+ *
+ * Deliberately equal to the catalog search's own maximum. Asking for more does
+ * not raise the ceiling, it just hands back a clamped page that looks like the
+ * whole dataset.
+ */
+const RESOLVE_PAGE_SIZE = 100;
+
+/**
+ * A hard stop on the walk, so a service that misreports its total can cost a
+ * bounded number of reads rather than looping forever inside a submission.
+ * Sized far above the real catalog (420 offerings, five pages).
+ */
+const RESOLVE_MAX_PAGES = 500;
+
 export function authorityFor(
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOffering["variants"][number],
@@ -195,24 +211,54 @@ export function createAssistedOrderMasterCatalogCallbacks(
       if (!service) return null;
       const offeringVariantId = input.offeringVariantFor({ productId, variantId });
       if (!offeringVariantId) return null;
-      // Walk the current dataset for the owning offering; the dataset is one
-      // in-memory catalog read, the same cost the list path pays.
-      const selection = await service.select({ page: 1, pageSize: 1_000_000 });
-      for (const offering of selection.offerings) {
-        for (const variant of offering.variants) {
-          if (variant.id !== offeringVariantId) continue;
-          return projectAssistedOrderCatalogItem(
-            authorityFor(
-              offering,
-              variant,
-              selection.prices.get(variant.id),
-              { productId, variantId },
-              input.catalogVersion,
-            ),
-          );
+      // PAGE THROUGH. Asking for one enormous page does not work: the catalog
+      // search hard-clamps pageSize to its own maximum and then slices, so a
+      // request for a million rows silently returns the alphabetically first
+      // hundred. This seam used to do exactly that, and the 320 offerings past
+      // that boundary — including most of the priced, directly orderable ones —
+      // resolved to null at submission. The line then threw a bare Error, which
+      // is not one of the typed refusals, so the customer's whole request died
+      // as "The assisted order service is temporarily unavailable" AFTER they
+      // had filled in contact details and accepted every agreement, with
+      // nothing stored and no operator notified.
+      //
+      // It hid because both halves are correct on their own: the clamp is
+      // pinned by its own test, and this seam's test double ignores paging and
+      // returns everything it was given. Only the composition was wrong. It
+      // also hid at runtime because a miss returns null, which is equally the
+      // honest answer for an identity that genuinely is not in the catalog.
+      //
+      // The loop is bounded by the reported total and by a page-count ceiling,
+      // so a service that keeps reporting a larger total can never spin here.
+      let page = 1;
+      let total: number | null = null;
+      for (;;) {
+        const selection = await service.select({ page, pageSize: RESOLVE_PAGE_SIZE });
+        for (const offering of selection.offerings) {
+          for (const variant of offering.variants) {
+            if (variant.id !== offeringVariantId) continue;
+            return projectAssistedOrderCatalogItem(
+              authorityFor(
+                offering,
+                variant,
+                selection.prices.get(variant.id),
+                { productId, variantId },
+                input.catalogVersion,
+              ),
+            );
+          }
         }
+        if (total === null) total = selection.page.total;
+        // A page the service could not fill is the end of the dataset, whatever
+        // the reported total claims.
+        if (selection.offerings.length === 0) return null;
+        const pageSize = selection.page.pageSize > 0
+          ? selection.page.pageSize
+          : RESOLVE_PAGE_SIZE;
+        if (page * pageSize >= total) return null;
+        page += 1;
+        if (page > RESOLVE_MAX_PAGES) return null;
       }
-      return null;
     },
 
     fingerprint(item) {
