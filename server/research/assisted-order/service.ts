@@ -309,7 +309,20 @@ export class AssistedOrderService {
     const resolvedLines: ResolvedAssistedOrderLine[] = [];
     for (let index = 0; index < input.lines.length; index += 1) {
       const requested = input.lines[index];
-      const authority = await this.deps.catalog.resolveLine(viewer, requested);
+      // Name the line. The catalog port refuses an unresolvable product with a
+      // field-scoped validation error, but it cannot know WHICH line it was
+      // handed, and "product" alone leaves the customer guessing across a
+      // basket. Only that refusal is re-scoped; anything else (a database that
+      // is genuinely down) keeps its own meaning and its own status.
+      let authority: ResolvedAssistedOrderLine;
+      try {
+        authority = await this.deps.catalog.resolveLine(viewer, requested);
+      } catch (error) {
+        if (error instanceof AssistedOrderValidationError && error.field === "product") {
+          throw new AssistedOrderValidationError(`lines.${index}.productId`, error.message);
+        }
+        throw error;
+      }
       if (!quantityIsAllowed(authority, requested.quantity)) {
         throw new AssistedOrderValidationError(
           `lines.${index}.quantity`,

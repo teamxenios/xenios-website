@@ -1,8 +1,9 @@
-import type {
-  AssistedOrderCatalogItem,
-  AssistedOrderCatalogPage,
-  AssistedOrderCatalogQuery,
-  AssistedOrderLineInput,
+import {
+  AssistedOrderValidationError,
+  type AssistedOrderCatalogItem,
+  type AssistedOrderCatalogPage,
+  type AssistedOrderCatalogQuery,
+  type AssistedOrderLineInput,
 } from "../../../shared/research/assisted-order/contract";
 import type {
   AssistedOrderCatalogPort,
@@ -50,7 +51,17 @@ export class CallbackAssistedOrderCatalogAdapter
       line.variantId,
     );
     if (!item) {
-      throw new Error("Catalog item is unavailable or not authorized.");
+      // A TYPED refusal, not a bare Error. An untyped throw here fell through
+      // to the 500 branch, so one unresolvable line killed the customer's whole
+      // basket with "The assisted order service is temporarily unavailable" —
+      // after they had entered contact details and accepted every agreement,
+      // with nothing stored, no operator notified, no indication of which line
+      // was at fault, and a message promising that retrying would eventually
+      // work. It never would.
+      throw new AssistedOrderValidationError(
+        "product",
+        "That product is no longer available to request. Remove it and submit the rest of your request.",
+      );
     }
     return Object.freeze({
       lineId: "assigned-by-service",

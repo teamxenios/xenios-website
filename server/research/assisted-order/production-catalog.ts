@@ -65,11 +65,6 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
 }>;
 
 /**
- * Exported for the launch-matrix generator (scripts/research-launch), which
- * must resolve every variant through THIS derivation rather than a replica
- * that could drift. Production callers stay inside this module.
- */
-/**
  * The page size the submission-time re-read walks with.
  *
  * Deliberately equal to the catalog search's own maximum. Asking for more does
@@ -85,6 +80,24 @@ const RESOLVE_PAGE_SIZE = 100;
  */
 const RESOLVE_MAX_PAGES = 500;
 
+/**
+ * The marker on a synthetic identity for a variant with no commerce binding.
+ *
+ * A row without a binding still appears in the catalog — that is deliberate,
+ * because "Price on request" is a truthful state the founder asked for — so it
+ * is minted an identity derived from the offering instead of a Product Control
+ * one. The submission path must be able to READ that identity back, or the row
+ * becomes something the catalog invites you to ask about and then refuses,
+ * taking the entire basket with it. Minting and reading share this constant so
+ * the two halves cannot drift.
+ */
+const UNBOUND_IDENTITY_PREFIX = "unbound:";
+
+/**
+ * Exported for the launch-matrix generator (scripts/research-launch), which
+ * must resolve every variant through THIS derivation rather than a replica
+ * that could drift. Production callers stay inside this module.
+ */
 export function authorityFor(
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOffering["variants"][number],
@@ -105,8 +118,8 @@ export function authorityFor(
     // A variant without a commerce binding keeps a synthetic identity so the
     // row stays visible, but it is never direct-eligible and carries no
     // price: identity is what makes an estimate honest.
-    productId: identity?.productId ?? `unbound:${offering.id}`,
-    variantId: identity?.variantId ?? `unbound:${variant.id}`,
+    productId: identity?.productId ?? `${UNBOUND_IDENTITY_PREFIX}${offering.id}`,
+    variantId: identity?.variantId ?? `${UNBOUND_IDENTITY_PREFIX}${variant.id}`,
     productName: offering.displayName,
     family: offering.family,
     channel: offering.category,
@@ -209,7 +222,12 @@ export function createAssistedOrderMasterCatalogCallbacks(
     async resolve(viewer, productId, variantId) {
       const service = input.serviceFor(viewer);
       if (!service) return null;
-      const offeringVariantId = input.offeringVariantFor({ productId, variantId });
+      // A synthetic identity carries the offering variant id in plain sight, so
+      // read it back rather than asking the binding map, which by definition has
+      // no entry for an unbound row.
+      const offeringVariantId = variantId.startsWith(UNBOUND_IDENTITY_PREFIX)
+        ? variantId.slice(UNBOUND_IDENTITY_PREFIX.length)
+        : input.offeringVariantFor({ productId, variantId });
       if (!offeringVariantId) return null;
       // PAGE THROUGH. Asking for one enormous page does not work: the catalog
       // search hard-clamps pageSize to its own maximum and then slices, so a

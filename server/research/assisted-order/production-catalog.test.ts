@@ -223,6 +223,44 @@ describe("the submission-time re-read against a clamping catalog", () => {
   });
 });
 
+describe("a variant with no commerce binding", () => {
+  /**
+   * A row without a binding is deliberately still listed — "Price on request"
+   * is a truthful state, and two of the founder's catalog rows are exactly
+   * that. The list side mints it a synthetic identity; the submit side has to
+   * be able to read that identity back. It could not, so the catalog invited a
+   * customer to ask about the product and then refused the ENTIRE basket when
+   * they did.
+   */
+  it("is listed with no price and an honest pathway", async () => {
+    const page = await callbacks([offering()], new Map(), false).list(viewer, { page: 1, pageSize: 24 });
+    const item = page.items[0];
+    expect(item.unitPriceCents).toBeNull();
+    expect(item.workflowMode).toBe("request_pricing");
+    expect(item.productId.startsWith("unbound:")).toBe(true);
+    expect(item.variantId.startsWith("unbound:")).toBe(true);
+  });
+
+  it("resolves back from its own synthetic identity at submission", async () => {
+    const built = callbacks([offering()], new Map(), false);
+    const page = await built.list(viewer, { page: 1, pageSize: 24 });
+    const listed = page.items[0];
+
+    const resolved = await built.resolve(viewer, listed.productId, listed.variantId);
+    expect(resolved).not.toBeNull();
+    expect(resolved?.productId).toBe(listed.productId);
+    expect(resolved?.variantId).toBe(listed.variantId);
+    // Still unpriced, still request-only. Resolving it must not invent a price.
+    expect(resolved?.unitPriceCents).toBeNull();
+    expect(resolved?.workflowMode).toBe("request_pricing");
+  });
+
+  it("does not resolve a synthetic identity the catalog never minted", async () => {
+    const built = callbacks([offering()], new Map(), false);
+    expect(await built.resolve(viewer, "unbound:off_x", "unbound:var_nope")).toBeNull();
+  });
+});
+
 /**
  * The founder's per-variant ceiling, proven where it is actually decided.
  *
