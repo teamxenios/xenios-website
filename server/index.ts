@@ -168,9 +168,26 @@ import { createServer } from "http";
 const app = express();
 // Behind the deployment's reverse proxy, req.ip must be the CLIENT address,
 // not the proxy's, or every unlock attempt shares one rate-limit bucket and a
-// single scripted attacker can lock the door for everyone (QA R9). One hop is
-// what the deployment actually has; more would let a client spoof its own ip.
-app.set("trust proxy", 1);
+// single scripted attacker can lock the door for everyone (QA R9).
+//
+// TWO hops, verified from production response headers on 2026-08-20: one
+// response carries both Cloudflare markers (Server: cloudflare, CF-RAY,
+// cf-cache-status) and Render markers (x-render-origin-server, rndr-id), so the
+// chain is client -> Cloudflare -> Render -> Node. This said 1 because the
+// original handoff described Render as the only hop; Cloudflare appears nowhere
+// in the docs and was never in view. At 1, Express skipped a single hop from
+// the socket and handed back the Cloudflare EGRESS address, so req.ip was the
+// CDN edge shared by every customer in that colo — and the Early Access unlock
+// lockout keys on exactly that value. Five mistyped passwords from any mix of
+// customers behind one edge locked the shared bucket for fifteen minutes, and
+// every correct password after that was refused with the same message a wrong
+// one produces. The guard added to prevent a shared bucket was creating one.
+//
+// 2 is also the safe ceiling, not merely the working one: an attacker who sends
+// their own X-Forwarded-For gets it appended to, not honoured, so the value
+// Express returns is the address Cloudflare recorded. 3 would hand back the
+// attacker's own string.
+app.set("trust proxy", 2);
 // Collapse duplicate slashes FIRST, before any gate or wall: a later rewrite
 // would let //api/research/... slip past the research wall (which matched the
 // un-normalized path) and reach a normalized route unguarded. Mounted here,
