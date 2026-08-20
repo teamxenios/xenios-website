@@ -371,6 +371,68 @@ export type AssistedOrderPaymentProofReceipt = Readonly<{
 }>;
 
 // ---------------------------------------------------------------------------
+// The operator projection. Authorized admin surfaces only.
+// ---------------------------------------------------------------------------
+
+/**
+ * What an authorized operator sees. Carries the two things the customer view
+ * deliberately withholds — who verified what, and what actually arrived — plus
+ * the claim trail, so an admin can tell "the customer says so" apart from "we
+ * checked" at a glance.
+ *
+ * `exceptionReason` is here and nowhere else. It is operator text and may name
+ * amounts, bank detail or suspicion; it has no customer rendering anywhere.
+ */
+export type AssistedOrderPaymentAdminProofView = Readonly<{
+  proofId: string;
+  customerReference: string;
+  note: string;
+  submittedAt: string;
+  submittedByLabel: string;
+  reviewOutcome: "pending" | "accepted" | "rejected";
+}>;
+
+export type AssistedOrderPaymentAdminSettlementView = Readonly<{
+  settlementId: string;
+  verifiedAmountCents: number;
+  currency: "USD";
+  verifiedAt: string;
+  verifiedByLabel: string;
+  verifiedByKind: "admin" | "processor";
+  evidenceRef: string;
+}>;
+
+export type AssistedOrderPaymentAdminEventView = Readonly<{
+  eventId: string;
+  from: AssistedOrderPaymentState | null;
+  to: AssistedOrderPaymentState;
+  actorKind: AssistedOrderPaymentActorKind;
+  actorLabel: string;
+  at: string;
+  evidenceRef: string | null;
+}>;
+
+export type AssistedOrderPaymentAdminView = Readonly<{
+  paymentId: string;
+  requestId: string;
+  requestPublicReference: string;
+  state: AssistedOrderPaymentState;
+  amountDueCents: number;
+  currency: "USD";
+  quoteId: string;
+  quoteVersion: number;
+  acceptanceId: string;
+  instructions: AssistedOrderPaymentInstructionsView | null;
+  proofs: readonly AssistedOrderPaymentAdminProofView[];
+  settlement: AssistedOrderPaymentAdminSettlementView | null;
+  exceptionReason: string | null;
+  history: readonly AssistedOrderPaymentAdminEventView[];
+  openedAt: string;
+  updatedAt: string;
+  settledAt: string | null;
+}>;
+
+// ---------------------------------------------------------------------------
 // Refusal vocabulary, shared by the engine and the doors above it.
 // ---------------------------------------------------------------------------
 

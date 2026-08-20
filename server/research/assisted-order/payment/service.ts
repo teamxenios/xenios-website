@@ -29,6 +29,7 @@ import {
   mayActorReachPaymentState,
   paymentNextActionFor,
   type AssistedOrderAmountDue,
+  type AssistedOrderPaymentAdminView,
   type AssistedOrderPaymentProofInput,
   type AssistedOrderPaymentProofReceipt,
   type AssistedOrderPaymentRefusalCode,
@@ -165,6 +166,68 @@ export function customerPaymentView(
     quoteVersion: record.quoteVersion,
     instructions: live,
     settled: isSettledPaymentState(record.state),
+    openedAt: record.openedAt,
+    updatedAt: record.updatedAt,
+    settledAt: record.settledAt,
+  });
+}
+
+/**
+ * The operator projection. Still an allowlist rather than the raw record: the
+ * internal note on each history event stays server-side even for an admin
+ * surface, because it is scratch reasoning rather than a recorded decision.
+ */
+export function adminPaymentView(
+  record: AssistedOrderPaymentRecord,
+): AssistedOrderPaymentAdminView {
+  return Object.freeze({
+    paymentId: record.paymentId,
+    requestId: record.requestId,
+    requestPublicReference: record.requestPublicReference,
+    state: record.state,
+    amountDueCents: record.amountDueCents,
+    currency: record.currency,
+    quoteId: record.quoteId,
+    quoteVersion: record.quoteVersion,
+    acceptanceId: record.acceptanceId,
+    instructions: record.instructions,
+    proofs: Object.freeze(
+      record.proofs.map((proof) =>
+        Object.freeze({
+          proofId: proof.proofId,
+          customerReference: proof.customerReference,
+          note: proof.note,
+          submittedAt: proof.submittedAt,
+          submittedByLabel: proof.submittedByLabel,
+          reviewOutcome: proof.reviewOutcome,
+        }),
+      ),
+    ),
+    settlement: record.settlement
+      ? Object.freeze({
+          settlementId: record.settlement.settlementId,
+          verifiedAmountCents: record.settlement.verifiedAmountCents,
+          currency: record.settlement.currency,
+          verifiedAt: record.settlement.verifiedAt,
+          verifiedByLabel: record.settlement.verifiedByLabel,
+          verifiedByKind: record.settlement.verifiedByKind,
+          evidenceRef: record.settlement.evidenceRef,
+        })
+      : null,
+    exceptionReason: record.exceptionReason,
+    history: Object.freeze(
+      record.history.map((event) =>
+        Object.freeze({
+          eventId: event.eventId,
+          from: event.from,
+          to: event.to,
+          actorKind: event.actorKind,
+          actorLabel: event.actorLabel,
+          at: event.at,
+          evidenceRef: event.evidenceRef,
+        }),
+      ),
+    ),
     openedAt: record.openedAt,
     updatedAt: record.updatedAt,
     settledAt: record.settledAt,
