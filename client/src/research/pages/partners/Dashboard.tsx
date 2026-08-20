@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { useResearch, formatMoney } from "../../core";
 import { PARTNER_ROUTES } from "../../lib/routes";
@@ -12,9 +13,9 @@ import {
   ResearchStatusBadge,
   type BadgeTone,
 } from "../../ui/kit";
-import { getPartnerDashboard } from "../../adapters/partner";
+import { getPartnerDashboard, getPartnerLinks } from "../../adapters/partner";
 import { usePartnerResource, type BoundaryState } from "./shared";
-import type { PartnerDashboardDto } from "@shared/research/commerce-api";
+import type { PartnerDashboardDto, PartnerLinkDto } from "@shared/research/commerce-api";
 import type { CommissionState } from "@shared/research/distribution";
 
 // ---------------------------------------------------------------------------
@@ -54,6 +55,69 @@ const COMMISSION_STATE_TONES: Record<CommissionState, BadgeTone> = {
 };
 
 type ConversionRow = PartnerDashboardDto["conversions"][number] & { key: string };
+
+// The dashboard's own copy of the rep's link and code (loaded from the same
+// live GET /api/research/partner/links the Links page reads), so an active
+// rep can copy their link without leaving the page. Never invented: no link
+// from the server means the honest "issued after certification" card.
+function ReferralLinkPanel() {
+  const { memberToken } = useResearch();
+  const links = usePartnerResource<{ links: PartnerLinkDto[] }>(getPartnerLinks, memberToken);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copy = async (key: string, value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(key);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // Clipboard unavailable: the value stays visible for manual copy.
+    }
+  };
+
+  if (links.state === "loading" || links.state === "error" || links.state === "unauthorized") {
+    // The main dashboard boundary already reports this page's health; a second
+    // error banner for the same account would be noise. Render nothing.
+    return null;
+  }
+
+  const list = links.state === "ok" ? links.data?.links ?? [] : [];
+  const primary = list[0] ?? null;
+
+  return (
+    <section aria-labelledby="pd-link" className="mb-8" data-testid="pd-link-panel">
+      <h2 id="pd-link" className="mono-cap text-ink-mute">
+        Your link and code
+      </h2>
+      {primary ? (
+        <div className="card mt-4" style={{ maxWidth: 640 }} data-testid="pd-link-card">
+          <p className="display-s tabular">{primary.code}</p>
+          <p className="body-m tabular mt-2" style={{ wordBreak: "break-all" }}>
+            {primary.url}
+          </p>
+          <div className="mt-3 flex gap-3 flex-wrap">
+            <button type="button" className="btn btn-secondary" onClick={() => void copy("url", primary.url)}>
+              {copied === "url" ? "Copied" : "Copy link"}
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={() => void copy("code", primary.code)}>
+              {copied === "code" ? "Copied" : "Copy code"}
+            </button>
+            <Link href={PARTNER_ROUTES.links} className="btn btn-ghost">
+              All links{list.length > 1 ? ` (${list.length})` : ""}
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="card mt-4" style={{ maxWidth: 640 }}>
+          <ResearchStatusBadge label="Issued after certification" tone="pending" />
+          <p className="body-s text-ink-2 mt-2">
+            Your unique link and code appear here once your application is approved and certification is complete.
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
 
 export default function Dashboard() {
   const { memberToken } = useResearch();
@@ -126,6 +190,22 @@ export default function Dashboard() {
             />
           </div>
         )}
+
+        {partner && partner.state !== "active" && (
+          <div className="card mb-8" style={{ maxWidth: 640 }} data-testid="pd-not-active">
+            <p className="body-s text-ink-2">
+              Your account is not active yet, so nothing can be earned and no link is live. Onboarding shows exactly
+              where you stand and what comes next.
+            </p>
+            <div className="mt-3">
+              <Link href={PARTNER_ROUTES.onboarding} className="btn btn-secondary">
+                See where you stand
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <ReferralLinkPanel />
 
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {cards.map((c) => (

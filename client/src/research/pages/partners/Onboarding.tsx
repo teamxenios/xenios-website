@@ -1,4 +1,6 @@
+import { Link } from "wouter";
 import { useResearch } from "../../core";
+import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import {
   ResearchCapabilityBoundary,
@@ -6,7 +8,8 @@ import {
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
-import { getPartnerOnboarding } from "../../adapters/partner";
+import { getPartnerOnboarding, getPartnerSelf, type PartnerSelfDto } from "../../adapters/partner";
+import { PartnerLifecycle } from "./lifecycle";
 import {
   PARTNER_PENDING_BODY,
   PARTNER_PENDING_TITLE,
@@ -15,11 +18,15 @@ import {
 } from "./shared";
 
 // ---------------------------------------------------------------------------
-// Partner onboarding (/research/partners/onboarding). Verification status,
-// the agreements checklist, and payout/tax setup. Live status comes only
-// from GET /api/research/partner/onboarding; until that endpoint is
-// published the page shows the honest pending state. The payout and tax
-// section sits behind the affiliate_payouts capability boundary.
+// Partner onboarding (/research/partners/onboarding). The page leads with the
+// LIVE lifecycle position from GET /api/research/partner/me (served today by
+// the commerce lane): application review through activation, rendered by
+// PartnerLifecycle from server facts only. A member with no partner record
+// gets the honest "no application on file" card with the apply path. Below
+// that, the richer verification/agreements checklist still loads from GET
+// /api/research/partner/onboarding and keeps its honest pending state until
+// that endpoint is published. The payout and tax section sits behind the
+// affiliate_payouts capability boundary.
 // ---------------------------------------------------------------------------
 
 interface AgreementItem {
@@ -59,6 +66,7 @@ export default function Onboarding() {
     getPartnerOnboarding,
     memberToken,
   );
+  const self = usePartnerResource<{ partner: PartnerSelfDto }>(getPartnerSelf, memberToken);
   const capabilities = usePartnerCapabilities(memberToken);
   const payoutStatus = capabilityStatusOrPending(capabilities, "affiliate_payouts");
 
@@ -67,7 +75,45 @@ export default function Onboarding() {
       title="Onboarding"
       lead="The steps between an approved application and a live rep link. Each one is confirmed by the team, and your live status appears here as it moves."
     >
-      <section aria-labelledby="po-steps">
+      <section aria-labelledby="po-position">
+        <h2 id="po-position" className="mono-cap text-ink-mute">
+          Where you stand
+        </h2>
+        <div className="mt-4">
+          {/* A signed-in member with no partner record gets 404 partner_not_found
+              from /partner/me — which the client envelope reports as unavailable
+              (a coded 404 is not routable today; the denied intercept also stands
+              in case the envelope is refined later). Both land here, and the copy
+              is written to be true in either world: no record on file, or the
+              route not mounted. */}
+          {self.denied?.code === "partner_not_found" || self.state === "unavailable" ? (
+            <div className="card" data-testid="po-no-application" style={{ maxWidth: 640 }}>
+              <ResearchStatusBadge label="No partner record on file" tone="neutral" />
+              <p className="body-s text-ink-2 mt-2">
+                This account has no partner application on file. The application takes a few minutes, and a person
+                reviews every one. If you have already applied, your status appears here as soon as it is recorded.
+              </p>
+              <div className="mt-4">
+                <Link href={PARTNER_ROUTES.apply} className="btn btn-primary">
+                  Apply to become a rep
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <ResearchRouteBoundary
+              state={self.state}
+              errorMessage={self.errorMessage}
+              onRetry={() => void self.reload()}
+              unavailableTitle={PARTNER_PENDING_TITLE}
+              unavailableBody={PARTNER_PENDING_BODY}
+            >
+              {self.data?.partner && <PartnerLifecycle partner={self.data.partner} />}
+            </ResearchRouteBoundary>
+          )}
+        </div>
+      </section>
+
+      <section aria-labelledby="po-steps" className="mt-10">
         <h2 id="po-steps" className="mono-cap text-ink-mute">
           The onboarding steps
         </h2>

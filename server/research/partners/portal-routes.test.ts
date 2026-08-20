@@ -150,8 +150,9 @@ describe("the partner adapter has no dead calls", () => {
   // The four partner paths the commerce lane already publishes
   // (server/research/commerce/routes.ts, "G8 partner portal"). Listed here so the
   // coverage assertion below is over EVERY path the UI can call, not only this
-  // module's. /partner/me is served there and is not in the client adapter.
+  // module's.
   const COMMERCE_OWNED = new Set([
+    "/api/research/partner/me",
     "/api/research/partner/dashboard",
     "/api/research/partner/apply",
     "/api/research/partner/links",

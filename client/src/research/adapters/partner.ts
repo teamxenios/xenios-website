@@ -12,6 +12,7 @@
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import { denialPresentation } from "../lib/denials";
 import type { PartnerDashboardDto, PartnerLinkDto } from "@shared/research/commerce-api";
+import type { PartnerRole, PartnerState } from "@shared/research/distribution";
 
 export type PartnerToken = string | null;
 
@@ -21,6 +22,7 @@ export type PartnerLoader<T> = (token: PartnerToken) => Promise<ApiResult<T>>;
 
 export const PARTNER_API = {
   apply: "/api/research/partner/apply",
+  me: "/api/research/partner/me",
   dashboard: "/api/research/partner/dashboard",
   links: "/api/research/partner/links",
   conversions: "/api/research/partner/conversions",
@@ -46,9 +48,27 @@ export const PARTNER_API = {
 // the endpoint. Every function is a stable module reference, safe to hand to
 // usePartnerResource directly.
 
+// The wire shape of GET /api/research/partner/me, mirrored from the server's
+// toPartnerSelfDto (server/research/commerce/routes.ts, built by explicit
+// construction). The partner's own lifecycle position and nothing else: no
+// member identity, no money, no structure fields.
+export interface PartnerSelfDto {
+  partnerId: string;
+  role: PartnerRole;
+  state: PartnerState;
+  certified: boolean;
+  active: boolean;
+  training: Array<{ moduleKey: string; moduleVersion: string; completedAt: string }>;
+  agreements: Array<{ agreementKey: string; agreementVersion: string; decidedAt: string }>;
+}
+
 // Frozen surface (docs/research-commerce/API_CONTRACTS_COMMERCE.md): the
 // dashboard and links payloads are typed by the authoritative contract.
 // Aggregates only; the server never puts member identity in these shapes.
+export function getPartnerSelf(token: PartnerToken): Promise<ApiResult<{ partner: PartnerSelfDto }>> {
+  return apiGet(PARTNER_API.me, token);
+}
+
 export function getPartnerDashboard(token: PartnerToken): Promise<ApiResult<{ partner: PartnerDashboardDto }>> {
   return apiGet(PARTNER_API.dashboard, token);
 }

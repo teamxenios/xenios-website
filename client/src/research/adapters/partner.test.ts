@@ -38,6 +38,7 @@ import {
   getPartnerCommissions,
   getPartnerDashboard,
   getPartnerLeads,
+  getPartnerSelf,
   requestCampaign,
 } from "./partner";
 import {
@@ -163,6 +164,16 @@ describe("partner adapter result mapping", () => {
     await getPartnerDashboard("member-jwt");
     expect(calls[0].url).toBe(PARTNER_API.dashboard);
     expect(calls[0].url).toBe("/api/research/partner/dashboard");
+    expect(calls[0].headers["Authorization"]).toBe("Bearer member-jwt");
+  });
+
+  it("getPartnerSelf GETs the live self path (commerce-owned /partner/me) with the bearer token", async () => {
+    installFetch(() => jsonResponse({ ok: true, partner: { partnerId: "prt_1" } }));
+    const result = await getPartnerSelf("member-jwt");
+    expect(result.kind).toBe("ok");
+    expect(calls[0].url).toBe(PARTNER_API.me);
+    expect(calls[0].url).toBe("/api/research/partner/me");
+    expect(calls[0].method).toBe("GET");
     expect(calls[0].headers["Authorization"]).toBe("Bearer member-jwt");
   });
 
