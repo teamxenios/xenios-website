@@ -570,7 +570,16 @@ export class AssistedOrderPaymentService {
     const evidenceRef = nonBlank(input.evidenceRef, "evidenceRef");
 
     if (record.settlement) {
-      // Replay. Report the incumbent rather than settling twice.
+      // Replay ONLY while the payment is still paid. A settled payment that has
+      // since been refunded must not absorb a second mark-paid quietly: the
+      // operator would read a success and believe the money is back on the
+      // books. Refusing sends them to the refund trail instead.
+      if (record.state !== "paid") {
+        throw new AssistedOrderPaymentConflictError(
+          "ILLEGAL_TRANSITION",
+          `This payment settled and is now ${record.state}; it cannot be marked paid again.`,
+        );
+      }
       return customerPaymentView(record, this.deps.clock.now());
     }
     return this.settle(record, {
@@ -598,6 +607,12 @@ export class AssistedOrderPaymentService {
     const record = await this.load(fact.paymentId);
 
     if (record.settlement) {
+      if (record.state !== "paid") {
+        throw new AssistedOrderPaymentConflictError(
+          "ILLEGAL_TRANSITION",
+          `This payment settled and is now ${record.state}; a later provider event cannot re-settle it.`,
+        );
+      }
       if (record.settlement.evidenceRef === providerEventId) {
         return customerPaymentView(record, this.deps.clock.now());
       }

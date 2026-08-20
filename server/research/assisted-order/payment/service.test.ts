@@ -834,6 +834,53 @@ describe("refunds", () => {
     ).rejects.toMatchObject({ code: "VERIFICATION_GRANT_REQUIRED" });
   });
 
+  it("refuses a second mark-paid after a refund instead of reporting success", async () => {
+    const h = harness();
+    const { paymentId } = await settled(h);
+    await h.service.refund(verifierViewer, paymentId, {
+      refundedAmountCents: TOTAL_CENTS,
+      reason: "customer cancelled",
+      evidenceRef: "refund-ref-1",
+    });
+    // Without this refusal an operator would read a success and believe the
+    // money was back on the books.
+    await expect(
+      h.service.markPaid(verifierViewer, {
+        paymentId,
+        verifiedAmountCents: TOTAL_CENTS,
+        evidenceRef: "bank-ref-1",
+      }),
+    ).rejects.toMatchObject({ code: "ILLEGAL_TRANSITION" });
+  });
+
+  it("refuses a late provider event after a refund", async () => {
+    const h = harness();
+    const opened = await h.service.open(adminViewer, REQUEST_ID);
+    await h.service.presentInstructions(adminViewer, opened.paymentId, "wire");
+    await h.service.beginReview(adminViewer, opened.paymentId);
+    await h.service.recordProcessorSettlement({
+      paymentId: opened.paymentId,
+      providerId: "stripe",
+      providerEventId: "evt_123",
+      verifiedAmountCents: TOTAL_CENTS,
+      currency: "USD",
+    });
+    await h.service.refund(verifierViewer, opened.paymentId, {
+      refundedAmountCents: TOTAL_CENTS,
+      reason: "customer cancelled",
+      evidenceRef: "refund-ref-1",
+    });
+    await expect(
+      h.service.recordProcessorSettlement({
+        paymentId: opened.paymentId,
+        providerId: "stripe",
+        providerEventId: "evt_123",
+        verifiedAmountCents: TOTAL_CENTS,
+        currency: "USD",
+      }),
+    ).rejects.toMatchObject({ code: "ILLEGAL_TRANSITION" });
+  });
+
   it("is idempotent", async () => {
     const h = harness();
     const { paymentId } = await settled(h);
