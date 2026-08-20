@@ -14,6 +14,7 @@ import {
   MASTER_OFFERING_BINDINGS_ENV_VAR,
   MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
   createProductionBindingReader,
+  bindingsByOfferingVariantId,
   loadBindingIndex,
   masterOfferingProductionBindings,
 } from "./production-bindings";
@@ -52,6 +53,33 @@ describe("the committed binding artifact", () => {
     expect(problem).toBeNull();
     expect(index.size).toBe(artifact.boundCount);
     expect(index.size).toBe(417);
+  });
+
+  it("re-keys by offering variant id with no loss, which is what the order seam looks up", () => {
+    // The assisted-order composition holds an offering VARIANT id and nothing
+    // else. It used to query the composite-keyed index directly, so all 417
+    // lookups missed and every order line lost its price and its purchase
+    // action, with submit answering HTTP 500. A miss returns null, which is
+    // also the honest answer for a genuinely unbound variant, so nothing
+    // complained. These assertions are the thing that would have complained.
+    const { index } = loadBindingIndex();
+    const byVariant = bindingsByOfferingVariantId(index);
+
+    expect(byVariant.size).toBe(index.size);
+    expect(byVariant.size).toBe(417);
+
+    for (const binding of Array.from(index.values())) {
+      const resolved = byVariant.get(binding.offeringVariantId);
+      expect(resolved, binding.offeringVariantId).toBeDefined();
+      expect(resolved?.productId).toBe(binding.productId);
+      expect(resolved?.variantId).toBe(binding.variantId);
+    }
+
+    // And the composite key is NOT what this map answers to, which is exactly
+    // the confusion that caused the outage.
+    const first = Array.from(index.keys())[0];
+    expect(first).toContain("|");
+    expect(byVariant.get(first)).toBeUndefined();
   });
 
   it("accounts for every dataset variant exactly once", () => {

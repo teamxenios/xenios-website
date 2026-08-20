@@ -115,6 +115,7 @@ import {
   type MasterOfferingViewerWithGrant,
 } from "./research/master-offerings/member-pricing-viewer";
 import {
+  bindingsByOfferingVariantId,
   loadBindingIndex,
   masterOfferingProductionBindings,
   MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
@@ -792,6 +793,18 @@ app.use(
 // missing dependency, every door below answers the composition's named refusal
 // rather than serving a half-built feature.
 const assistedOrderBindingIndex = loadBindingIndex().index;
+// `loadBindingIndex` keys its map `offeringId|offeringVariantId`, but this seam
+// is handed an offering VARIANT id on its own, so the composite-keyed map could
+// never answer it and every one of the 417 lookups missed. The whole consequence
+// chain was customer-visible: each catalog line projected as `unbound:…`, an
+// approved price was suppressed to "Price pending", the truthful action degraded
+// from direct_order_request to request_pricing, and submitting returned HTTP 500
+// out of resolveLine. A forward map keyed by the variant id alone is built in
+// the same pass below; the loader already refuses a duplicate offering variant
+// id, so the map is total and unambiguous.
+const assistedOrderBindingsByVariant = bindingsByOfferingVariantId(
+  assistedOrderBindingIndex,
+);
 const assistedOrderReverseBindings = new Map<string, string>();
 for (const binding of Array.from(assistedOrderBindingIndex.values())) {
   assistedOrderReverseBindings.set(
@@ -820,7 +833,7 @@ const assistedOrderComposition = buildAssistedOrderProduction({
     }
   },
   bindingFor: (offeringVariantId) => {
-    const binding = assistedOrderBindingIndex.get(offeringVariantId);
+    const binding = assistedOrderBindingsByVariant.get(offeringVariantId);
     return binding
       ? { productId: binding.productId, variantId: binding.variantId }
       : null;

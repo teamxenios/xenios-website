@@ -164,6 +164,32 @@ export function loadBindingIndex(input?: {
  * then answers null for everything, which the price authority renders as
  * "Price on request".
  */
+/**
+ * The bindings re-keyed by offering variant id alone.
+ *
+ * `loadBindingIndex` keys its map `offeringId|offeringVariantId`, which is the
+ * right key for detecting duplicates but the wrong one for every caller that
+ * holds a variant id and nothing else. The assisted-order composition did that
+ * lookup against the composite-keyed map directly and missed on all 417 rows:
+ * catalog lines projected as `unbound:…`, approved prices were suppressed to
+ * "Price pending", the truthful action degraded to request_pricing, and submit
+ * answered HTTP 500. It was invisible because the miss returns null, which is
+ * also the legitimate answer for a genuinely unbound variant.
+ *
+ * It lives here, named and tested against the committed artifact, so that the
+ * lookup is a reviewed function rather than a map built inline in a composition
+ * root where nothing can reach it.
+ */
+export function bindingsByOfferingVariantId(
+  index: ReadonlyMap<string, MasterOfferingCommerceIdentityBinding>,
+): Map<string, MasterOfferingCommerceIdentityBinding> {
+  const byVariant = new Map<string, MasterOfferingCommerceIdentityBinding>();
+  for (const binding of Array.from(index.values())) {
+    byVariant.set(binding.offeringVariantId, binding);
+  }
+  return byVariant;
+}
+
 export function createProductionBindingReader(input?: {
   env?: NodeJS.ProcessEnv;
   cwd?: string;
