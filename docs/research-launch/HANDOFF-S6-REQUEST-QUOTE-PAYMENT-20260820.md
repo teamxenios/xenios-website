@@ -128,29 +128,38 @@ server/research/assisted-order/payment/service.test.ts    52 passed
 server/research/assisted-order/conversion/gate.test.ts    32 passed
 client/src/research/payments/payments-ui.test.tsx         18 passed
 lane suite (assisted-order + orders + shared)            179 passed / 9 files
-FULL SUITE  9,890 passed | 43 skipped | 1 failed (667 files)
+FULL SUITE  662 files passed | 1 failed | 4 skipped (667 files)
+            9,889 tests passed | 2 failed | 43 skipped (9,934)
+            uncontended run, 341s
 ```
 
-### The one full-suite failure is PRE-EXISTING and not from this lane
+### The full-suite failures are PRE-EXISTING and not from this lane
+
+Every failure, in every run, is in ONE file this lane does not touch:
 
 ```
 client/src/research/kris-launch-a/access-presentation.test.tsx
   "renders BOTH the channel notices and the note as supplied, on every item"
-  Error: Test timed out in 5000ms
+  "says provider workflow required on every clinical item"
+  Error: Test timed out in 5000ms   (both)
 ```
 
-Reproduced at the **base SHA in the lead worktree** with none of this lane's
-code loaded — 3 failed / 13 passed, same file, same timeouts. It is a 420-item
-React render loop against vitest's 5s default, so it is machine-speed dependent,
-not a correctness regression. This lane touches no file under
-`client/src/research/kris-launch-a/`.
+Two independent confirmations that it is not this lane:
+
+1. **Reproduced at the base SHA in the lead worktree**, with none of this lane's
+   code loaded: 3 failed / 13 passed, same file, same timeouts.
+2. **The count moves with machine load, not with code.** Across four runs of the
+   identical tree the same file failed 1, 3, 5 and 2 tests — the runs that
+   overlapped with a concurrent `tsc` or a second vitest failed more. Nothing
+   outside this file ever failed. A correctness regression does not behave that
+   way; a 420-item React render loop against vitest's 5s default does.
 
 Flagging it because the 2026-08-20 ownership map records "Full suite GREEN on
 this exact SHA: 659 test files, 9,758 tests, 0 failures" for `7b16a2e0`. That
-claim does not reproduce on this machine. It is a timeout, not a broken
-assertion — most likely a faster machine or less concurrency when it was
-measured. Worth a `testTimeout` on that file rather than a hunt for a
-regression, but it is the lead's file to change, not this lane's.
+claim does not reproduce on this machine. **Suggested fix (lead's file, not
+this lane's): a per-file `testTimeout` on `access-presentation.test.tsx`.** Until
+then the fleet should expect this file to be a flaky red and should not read it
+as a regression from whichever lane happens to run the suite next.
 
 Requested negative tests, and where each lives:
 
