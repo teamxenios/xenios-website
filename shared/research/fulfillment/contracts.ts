@@ -3,10 +3,13 @@ export const FULFILLMENT_STATES = [
   "acknowledged",
   "picking",
   "packed",
+  "tracking_created",
   "shipped",
   "delivered",
   "exception",
   "returned",
+  "replacement",
+  "refunded",
   "damaged",
   "lost",
   "recalled",
@@ -19,10 +22,13 @@ export const FULFILLMENT_ACTIONS = [
   "acknowledge",
   "start_picking",
   "pack",
+  "record_tracking",
   "ship",
   "deliver",
   "record_exception",
   "record_return",
+  "record_replacement",
+  "record_refund",
   "record_damage",
   "record_loss",
   "record_recall",
@@ -30,6 +36,25 @@ export const FULFILLMENT_ACTIONS = [
 ] as const;
 
 export type FulfillmentAction = (typeof FULFILLMENT_ACTIONS)[number];
+
+/**
+ * Actions a supplier operator may perform on their own assignment. Everything
+ * else (cancellation, recall, return/damage/loss dispositions, replacement and
+ * refund dispositions) is an internal authority decision.
+ *
+ * `record_refund` and `record_replacement` record a fulfillment DISPOSITION
+ * only. Money movement stays owned by the canonical payment/claims systems;
+ * nothing in this module mutates a payment.
+ */
+export const SUPPLIER_PERMITTED_ACTIONS = [
+  "acknowledge",
+  "start_picking",
+  "pack",
+  "record_tracking",
+  "ship",
+  "deliver",
+  "record_exception",
+] as const satisfies readonly FulfillmentAction[];
 
 export type FulfillmentActor =
   | {
@@ -55,8 +80,8 @@ export interface FulfillmentAssignmentLine {
 
 /**
  * Minimum-necessary partner projection. It intentionally excludes member id,
- * email, health data, assessment data, affiliate attribution, payment data,
- * prior-order history, and internal notes.
+ * email, health data, assessment data, affiliate attribution, commission and
+ * margin economics, payment data, prior-order history, and internal notes.
  */
 export interface FulfillmentAssignmentView {
   assignmentId: string;
