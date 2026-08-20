@@ -164,11 +164,18 @@ begin
   -- 7. THE BOUNDARY. No client role may execute the routine, and row level
   --    security on the requests table is still enabled AND forced.
   -- ==========================================================================
-  select coalesce(array_to_string(p.proacl, ','), '') into v_acl
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public' and p.proname = 'research_assisted_order_submit';
-  if v_acl like '%anon=%' or v_acl like '%authenticated=%' or v_acl like '%=X/%' then
-    raise exception 'M75 verify: submit routine reachable by a client role: %', v_acl;
+  -- grantee 0 IS PUBLIC. A substring match on '=X/' would also flag the correct
+  -- 'postgres=X/postgres', which is exactly the false positive that aborted the
+  -- first production apply.
+  select count(*) into v_count
+  from aclexplode((
+    select p.proacl from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'research_assisted_order_submit'
+  )) a
+  where a.grantee = 0
+     or (a.grantee <> 0 and pg_get_userbyid(a.grantee) in ('anon', 'authenticated'));
+  if v_count <> 0 then
+    raise exception 'M75 verify: submit routine reachable by % client/PUBLIC grantee(s)', v_count;
   end if;
   if not exists (
     select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace

@@ -404,13 +404,30 @@ begin
       using errcode = '55000';
   end if;
 
-  -- No client role may execute it. Read straight from the ACL, including the
-  -- PUBLIC pseudo-role, which is how the managed default-privilege gap shows up.
-  select coalesce(array_to_string(p.proacl, ','), '') into v_acl
-  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public' and p.proname = 'research_assisted_order_submit';
-  if v_acl like '%anon=%' or v_acl like '%authenticated=%' or v_acl like '%=X/%' then
-    raise exception 'M75 postcheck: submit routine is reachable by a client role: %', v_acl
+  -- No client role may execute it, and PUBLIC may not either.
+  --
+  -- Enumerated with aclexplode rather than matched as a substring. The first
+  -- version of this check tested the ACL text for '=X/', intending to catch the
+  -- PUBLIC pseudo-role, whose entry has an EMPTY grantee and so renders as a
+  -- leading '=X/postgres'. But every ordinary entry also contains '=X/' —
+  -- 'postgres=X/postgres' does — so the correct, already-secured production ACL
+  -- tripped it and the apply aborted. It failed CLOSED and nothing was
+  -- committed, which is the right direction to be wrong in, but the check was
+  -- still wrong. grantee = 0 IS PUBLIC in pg_catalog terms; that is the exact
+  -- test, and it cannot be confused by a role whose name happens to sit beside
+  -- an equals sign.
+  select count(*) into v_missing
+  from aclexplode((
+    select p.proacl from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'research_assisted_order_submit'
+  )) a
+  where a.grantee = 0
+     or (a.grantee <> 0 and pg_get_userbyid(a.grantee) in ('anon', 'authenticated'));
+  if v_missing <> 0 then
+    select coalesce(array_to_string(p.proacl, ','), '') into v_acl
+    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'research_assisted_order_submit';
+    raise exception 'M75 postcheck: submit routine is reachable by % client/PUBLIC grantee(s): %', v_missing, v_acl
       using errcode = '55000';
   end if;
 
