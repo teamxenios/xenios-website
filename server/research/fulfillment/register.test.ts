@@ -36,7 +36,7 @@ function build(overrides: Partial<FulfillmentHttpDependencies> = {}): Harness {
   store.seedSupplier({ supplierId: SUPPLIER_A_ID, supplierLabel: "Supplier A" });
   store.seedFulfillmentOrder({
     fulfillmentOrderId: ORDER_ID,
-    orderReference: "XEN-1001",
+    orderReference: "XEA-7F3K9QW2TM4BXYZ1",
     memberId: MEMBER_ID,
     paid: false,
     recipient: {
@@ -108,7 +108,7 @@ function assignBody(idempotencyKey = "assign:xen-1001") {
 async function assignPaid(harness: Harness): Promise<string> {
   harness.store.markOrderPaid(ORDER_ID);
   const response = await request(harness.app)
-    .post("/api/research/fulfillment/admin/assignments")
+    .post("/api/admin/research/fulfillment/assignments")
     .set("x-test-admin", "yes")
     .send(assignBody());
   expect(response.status).toBe(201);
@@ -119,10 +119,10 @@ describe("fulfillment HTTP surface", () => {
   it("walls admin routes behind the injected admin guard", async () => {
     const { app } = build();
     await request(app)
-      .get("/api/research/fulfillment/admin/assignments")
+      .get("/api/admin/research/fulfillment/assignments")
       .expect(401);
     await request(app)
-      .post("/api/research/fulfillment/admin/assignments")
+      .post("/api/admin/research/fulfillment/assignments")
       .send(assignBody())
       .expect(401);
   });
@@ -130,7 +130,7 @@ describe("fulfillment HTTP surface", () => {
   it("refuses to release an unpaid order to a supplier over HTTP", async () => {
     const { app } = build();
     const response = await request(app)
-      .post("/api/research/fulfillment/admin/assignments")
+      .post("/api/admin/research/fulfillment/assignments")
       .set("x-test-admin", "yes")
       .send(assignBody());
     expect(response.status).toBe(409);
@@ -142,12 +142,12 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     harness.store.markOrderPaid(ORDER_ID);
     const first = await request(harness.app)
-      .post("/api/research/fulfillment/admin/assignments")
+      .post("/api/admin/research/fulfillment/assignments")
       .set("x-test-admin", "yes")
       .send(assignBody());
     expect(first.status).toBe(201);
     const replay = await request(harness.app)
-      .post("/api/research/fulfillment/admin/assignments")
+      .post("/api/admin/research/fulfillment/assignments")
       .set("x-test-admin", "yes")
       .send(assignBody());
     expect(replay.status).toBe(200);
@@ -158,14 +158,14 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     const id = await assignPaid(harness);
     const ack = await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({ action: "acknowledge", expectedVersion: 1, idempotencyKey: "ack:xen-1001" });
     expect(ack.status).toBe(200);
     expect(ack.body.result.state).toBe("acknowledged");
 
     const exception = await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({
         action: "record_exception",
@@ -177,7 +177,7 @@ describe("fulfillment HTTP surface", () => {
     expect(exception.body.result.state).toBe("exception");
 
     const tracking = await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({
         action: "record_tracking",
@@ -196,12 +196,12 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     const id = await assignPaid(harness);
     await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({ action: "acknowledge", expectedVersion: 1, idempotencyKey: "ack:xen-1001" })
       .expect(200);
     const stale = await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({ action: "acknowledge", expectedVersion: 1, idempotencyKey: "ack:retry:1" });
     expect(stale.status).toBe(409);
@@ -212,12 +212,12 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     const id = await assignPaid(harness);
     const unauthenticated = await request(harness.app).get(
-      "/api/research/fulfillment/supplier/assignments",
+      "/api/admin/research/fulfillment/supplier/assignments",
     );
     expect(unauthenticated.status).toBe(401);
 
     const queue = await request(harness.app)
-      .get("/api/research/fulfillment/supplier/assignments")
+      .get("/api/admin/research/fulfillment/supplier/assignments")
       .set("x-test-supplier", SUPPLIER_A_ID);
     expect(queue.status).toBe(200);
     expect(queue.body.assignments).toHaveLength(1);
@@ -227,7 +227,7 @@ describe("fulfillment HTTP surface", () => {
     expect(JSON.stringify(view)).not.toMatch(/commission|margin|affiliate|memberId/);
 
     const forbidden = await request(harness.app)
-      .post(`/api/research/fulfillment/supplier/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/supplier/assignments/${id}/transition`)
       .set("x-test-supplier", SUPPLIER_A_ID)
       .send({
         action: "record_refund",
@@ -242,7 +242,7 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     const id = await assignPaid(harness);
     const ack = await request(harness.app)
-      .post(`/api/research/fulfillment/supplier/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/supplier/assignments/${id}/transition`)
       .set("x-test-supplier", SUPPLIER_A_ID)
       .send({ action: "acknowledge", expectedVersion: 1, idempotencyKey: "ack:sup:1001" });
     expect(ack.status).toBe(200);
@@ -252,7 +252,7 @@ describe("fulfillment HTTP surface", () => {
   it("answers 503 fail-closed when supplier access is not wired", async () => {
     const { app } = build({ resolveSupplierActor: undefined });
     const response = await request(app)
-      .get("/api/research/fulfillment/supplier/assignments")
+      .get("/api/admin/research/fulfillment/supplier/assignments")
       .set("x-test-supplier", SUPPLIER_A_ID);
     expect(response.status).toBe(503);
     expect(response.body.code).toBe("FULFILLMENT_NOT_CONFIGURED");
@@ -272,7 +272,7 @@ describe("fulfillment HTTP surface", () => {
       ],
     ] as const) {
       await request(harness.app)
-        .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+        .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
         .set("x-test-admin", "yes")
         .send({
           action,
@@ -283,7 +283,7 @@ describe("fulfillment HTTP surface", () => {
         .expect(200);
     }
     const status = await request(harness.app)
-      .get("/api/research/fulfillment/orders/XEN-1001/status")
+      .get("/api/research/fulfillment/orders/XEA-7F3K9QW2TM4BXYZ1/status")
       .set("x-test-member", MEMBER_ID);
     expect(status.status).toBe(200);
     expect(status.body.status.status).toBe("tracking_created");
@@ -296,10 +296,10 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     await assignPaid(harness);
     await request(harness.app)
-      .get("/api/research/fulfillment/orders/XEN-1001/status")
+      .get("/api/research/fulfillment/orders/XEA-7F3K9QW2TM4BXYZ1/status")
       .expect(401);
     const foreign = await request(harness.app)
-      .get("/api/research/fulfillment/orders/XEN-1001/status")
+      .get("/api/research/fulfillment/orders/XEA-7F3K9QW2TM4BXYZ1/status")
       .set("x-test-member", "89999999-9999-4999-8999-999999999999");
     expect(foreign.status).toBe(404);
   });
@@ -307,7 +307,7 @@ describe("fulfillment HTTP surface", () => {
   it("answers 503 fail-closed when customer reads are not wired", async () => {
     const { app } = build({ customerReads: undefined });
     const response = await request(app)
-      .get("/api/research/fulfillment/orders/XEN-1001/status")
+      .get("/api/research/fulfillment/orders/XEA-7F3K9QW2TM4BXYZ1/status")
       .set("x-test-member", MEMBER_ID);
     expect(response.status).toBe(503);
   });
@@ -316,7 +316,7 @@ describe("fulfillment HTTP surface", () => {
     const harness = build();
     const id = await assignPaid(harness);
     await request(harness.app)
-      .post(`/api/research/fulfillment/admin/assignments/${id}/transition`)
+      .post(`/api/admin/research/fulfillment/assignments/${id}/transition`)
       .set("x-test-admin", "yes")
       .send({ action: "teleport", expectedVersion: 1, idempotencyKey: "bad:action:1" })
       .expect(422);

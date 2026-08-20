@@ -13,7 +13,7 @@ function view(state: FulfillmentState): FulfillmentAssignmentView {
   return {
     assignmentId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     fulfillmentOrderId: "55555555-5555-4555-8555-555555555555",
-    orderReference: "XEN-1001",
+    orderReference: "XEA-7F3K9QW2TM4BXYZ1",
     supplierId: "33333333-3333-4333-8333-333333333333",
     supplierLabel: "Supplier A",
     state,

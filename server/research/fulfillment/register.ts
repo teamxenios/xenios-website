@@ -19,16 +19,44 @@ import { isFulfillmentError, type FulfillmentErrorCode } from "./errors";
  * Every dependency that is not wired fails closed with 503, never open.
  */
 
+/**
+ * OPERATOR DOORS LIVE OUTSIDE THE RESEARCH WALL.
+ *
+ * Everything under `/api/research/*` is answered first by the wall in
+ * `server/research/index.ts`, which admits a method-exact, path-exact
+ * allowlist and refuses everything else with 401 "Access required." Admin and
+ * supplier traffic must never be a reason to widen that allowlist, so these
+ * five doors sit under `/api/admin/research/...` beside the existing admin
+ * doors, where they answer to their own guard and the wall never sees them.
+ *
+ * The supplier doors share that namespace for the same reason: it is the
+ * side of the wall operator traffic belongs on. They answer to the supplier
+ * guard, NOT to `requireSupabaseAdmin` — a supplier operator is not an admin.
+ */
 export const FULFILLMENT_ADMIN_QUEUE_PATH =
-  "/api/research/fulfillment/admin/assignments";
+  "/api/admin/research/fulfillment/assignments";
 export const FULFILLMENT_ADMIN_ASSIGN_PATH =
-  "/api/research/fulfillment/admin/assignments";
+  "/api/admin/research/fulfillment/assignments";
 export const FULFILLMENT_ADMIN_TRANSITION_PATH =
-  "/api/research/fulfillment/admin/assignments/:assignmentId/transition";
+  "/api/admin/research/fulfillment/assignments/:assignmentId/transition";
 export const FULFILLMENT_SUPPLIER_QUEUE_PATH =
-  "/api/research/fulfillment/supplier/assignments";
+  "/api/admin/research/fulfillment/supplier/assignments";
 export const FULFILLMENT_SUPPLIER_TRANSITION_PATH =
-  "/api/research/fulfillment/supplier/assignments/:assignmentId/transition";
+  "/api/admin/research/fulfillment/supplier/assignments/:assignmentId/transition";
+
+/**
+ * The ONE customer door, and the only one inside the research namespace. A
+ * customer who unlocked Private Early Access must be able to read their own
+ * fulfillment status without also holding the research gateway password, so
+ * the wall admits this exact path and method.
+ *
+ * The anchored pattern the wall must admit lives in `./wall-admission`, so the
+ * wall can import the shape without importing this route table.
+ *
+ * ADMISSION IS NOT AUTHORIZATION. The handler still resolves the member
+ * server-side and answers 404 for an order that is not theirs, exactly as it
+ * does for one that does not exist, so it cannot become an existence oracle.
+ */
 export const FULFILLMENT_CUSTOMER_STATUS_PATH =
   "/api/research/fulfillment/orders/:orderReference/status";
 
