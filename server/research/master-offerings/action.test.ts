@@ -27,6 +27,42 @@ describe("master offering action authority", () => {
     });
   });
 
+  it("never emits Add to Cart for a provider-pathway row, however complete its commerce is", () => {
+    // Care separation is a standing rule, not a flag-dependent one. This arm
+    // used to check visibility and the binding only, and the purchase authority
+    // behind it gates on Product Control facts, which carry no notion of the
+    // care pathway. 244 of the 420 catalog variants are care_pathway, every one
+    // of them bound to a Product Control identity with an active member price
+    // and carrying the copy "Not available for direct purchase" — so all of
+    // them would have offered Add to Cart the moment direct commerce was
+    // enabled. It stayed invisible because the flag is off.
+    const selection = cartSelection();
+    const binding = (presentation: { id: string }) => ({
+      offeringVariantId: presentation.id,
+      productId: selection.productId,
+      variantId: selection.variantId,
+    });
+
+    const careVariant = offering();
+    const carePresentation = { ...careVariant.variants[0], displayState: "care_pathway" as const };
+    expect(
+      resolveMasterOfferingAction(careVariant, carePresentation, {
+        binding: binding(carePresentation),
+        selection,
+      }).kind,
+    ).not.toBe("add_to_cart");
+
+    // The same, when it is the OFFERING that carries the pathway.
+    const careOffering = { ...offering(), displayState: "care_pathway" as const };
+    const presentation = careOffering.variants[0];
+    expect(
+      resolveMasterOfferingAction(careOffering, presentation, {
+        binding: binding(presentation),
+        selection,
+      }).kind,
+    ).not.toBe("add_to_cart");
+  });
+
   it("keeps an Available Now planning row at Request Access when commerce is absent", () => {
     const product = offering();
     const action = resolveMasterOfferingAction(product, product.variants[0], {

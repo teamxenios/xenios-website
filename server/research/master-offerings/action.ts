@@ -122,7 +122,27 @@ export function resolveMasterOfferingAction(
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingAction {
   const selection = commerce.selection;
+  // A provider-pathway row can never be a direct purchase, whatever Product
+  // Control says about it.
+  //
+  // This arm used to check visibility and the binding only. The purchase
+  // authority behind it gates on Product Control facts — commerce approval and
+  // stock — and Product Control has no notion of the master-offerings care
+  // pathway, which is never passed to it. So 244 of the 420 variants, every one
+  // of them carrying the copy "Fulfilled through the provider pathway... Not
+  // available for direct purchase", and every one bound to a Product Control
+  // identity with an active member price, would have rendered "Add to Cart" the
+  // moment direct commerce was enabled.
+  //
+  // The omission read as deliberate because the NEXT arm checks displayState,
+  // and it stayed invisible because the flag is off. The assisted-order lane
+  // gates on the same pathway correctly, so the two lanes disagreed about the
+  // same variant. Care separation is a standing rule, not a flag-dependent one:
+  // it is enforced here, before authority is consulted.
+  const providerPathway =
+    variant.displayState === "care_pathway" || offering.displayState === "care_pathway";
   if (
+    !providerPathway &&
     offering.visibility === "member" &&
     variant.visibility === "member" &&
     bindingMatches(variant, commerce.binding, selection)
