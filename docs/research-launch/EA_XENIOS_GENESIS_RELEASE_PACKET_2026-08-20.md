@@ -15,6 +15,14 @@ production mutation below still executes only as this exact reviewed packet.
   (XRR bridge LIVE; required agreement early_access_terms v1).
 - Admin order email recipient env already set by the executed Release A packet:
   `RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL=research@xeniostechnology.com`.
+- Outbox worker VERIFIED RUNNING in production logs (60s interval, started
+  2026-08-19T20:43Z on the live deploy). No send has been attempted this deploy
+  epoch, so the Resend transport is UNPROVEN in production. Proof path at
+  release: (1) `GET /api/admin/research/system-status` (admin JWT; safe
+  booleans report email configuration without sending), then (2) one
+  founder-approved `POST /api/admin/research/test-email` to a configured admin
+  address (door restricts recipients to that set), then (3) the smoke order's
+  two real notifications. Each real send needs the founder's per-send approval.
 - Production SHA a66434d9; rollback 458e7284 (flags off first).
 
 ## The one-code swap (the only gate change production needs)
