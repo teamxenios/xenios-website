@@ -14,7 +14,8 @@ BASE SHA: `8dabe22208c2d5a8d73e6f385460de936ed913a4`
 (exact head of `xenios/launch-integration-20260819`; code-identical to the
 published green resume SHA `7b16a2e0` — 8dabe22 adds only `.xenios` fleet docs)
 
-PUSHED SHA: `9f17132bf72b7934c6bbddbeab0cbb0c346878b0`
+PUSHED SHA (last code commit, the SHA to QA): `9f17132bf72b7934c6bbddbeab0cbb0c346878b0`
+BRANCH TIP (adds only this handoff doc): `e7b4840b3ba6342134d716b27f8b6bd9b4b0e278`
 
 COMMITS:
 
