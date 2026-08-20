@@ -66,6 +66,30 @@ describe("assisted order action policy", () => {
     ).toMatchObject({ visible: true, workflowMode: "request_activation" });
   });
 
+  it("routes a Care product to the provider pathway even when priced and direct-eligible", () => {
+    // Pathway precedes price and eligibility: no flag combination may present
+    // a Care product as directly orderable in the research request path.
+    expect(
+      decideAssistedOrderAction(
+        authority({
+          providerWorkflowRequired: true,
+          directEligible: true,
+          unitPriceCents: 9900,
+        }),
+      ),
+    ).toMatchObject({ workflowMode: "provider_request" });
+  });
+
+  it("never presents a held or out-of-stock product as orderable", () => {
+    for (const overrides of [{ held: true }, { outOfStock: true }] as const) {
+      const decision = decideAssistedOrderAction(
+        authority({ ...overrides, directEligible: true, unitPriceCents: 2500 }),
+      );
+      expect(decision.workflowMode).toBe("availability_review");
+      expect(decision.actionLabel).not.toBe("Add to order request");
+    }
+  });
+
   it("honors MOQ, increment and maximum", () => {
     const item = projectAssistedOrderCatalogItem(
       authority({ minimumQuantity: 10, maximumQuantity: 100, quantityIncrement: 10 }),

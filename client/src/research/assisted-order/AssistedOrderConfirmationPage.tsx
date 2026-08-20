@@ -1,44 +1,52 @@
 import { useMemo } from "react";
-import type { AssistedOrderReceipt } from "../../../../shared/research/assisted-order/contract";
 import { money } from "./wizard-state";
+import { readStoredAssistedOrderReceipt } from "./storage";
 import "./assisted-order.css";
 
-function readReceipt(reference: string): AssistedOrderReceipt | null {
-  try {
-    const raw = sessionStorage.getItem(`xenios.assisted-order.${reference}.receipt`);
-    return raw ? (JSON.parse(raw) as AssistedOrderReceipt) : null;
-  } catch {
-    return null;
+// The wizard navigates here as .../confirmation/<publicReference>, matching
+// the registered route. The querystring form is still read as a fallback so
+// an older stored or shared link keeps resolving.
+function referenceFromLocation(): string {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  const last = decodeURIComponent(parts[parts.length - 1] ?? "");
+  if (last && last !== "confirmation") {
+    return last;
   }
+  return new URLSearchParams(window.location.search).get("reference") ?? "";
 }
 
 export function AssistedOrderConfirmationPage() {
-  const reference = useMemo(
-    () => new URLSearchParams(window.location.search).get("reference") ?? "",
-    [],
+  const reference = useMemo(referenceFromLocation, []);
+  const receipt = useMemo(
+    () => (reference ? readStoredAssistedOrderReceipt(reference) : null),
+    [reference],
   );
-  const receipt = useMemo(() => readReceipt(reference), [reference]);
   const statusHref = `/research/early-access/order-request/${encodeURIComponent(reference)}`;
 
   return (
     <main className="xenios-order-page">
       <section className="xenios-order-panel">
         <p className="xenios-order-eyebrow">Request received</p>
-        <h1>Your Early Access request is in review</h1>
+        <h1 data-testid="order-confirmation-reference">Reference: {reference || "Unavailable"}</h1>
         <p>
-          Xenios will review your products, availability, pricing, and any required
-          documentation. You will receive follow-up instructions from Xenios.
+          We will confirm availability and payment details before fulfillment.
+          Keep this reference for your records.
         </p>
         <dl className="xenios-order-facts">
-          <div><dt>Request</dt><dd>{reference || "Unavailable"}</dd></div>
           <div><dt>Status</dt><dd>Submitted</dd></div>
           {receipt ? <div><dt>Lines</dt><dd>{receipt.lines.length}</dd></div> : null}
           {receipt ? <div><dt>Estimated priced total</dt><dd>{money(receipt.estimatedTotalCents)}</dd></div> : null}
         </dl>
+        {receipt && receipt.nextSteps.length > 0 ? (
+          <ul className="xenios-order-timeline">
+            {receipt.nextSteps.map((stepText) => (
+              <li key={stepText}>{stepText}</li>
+            ))}
+          </ul>
+        ) : null}
         <div className="xenios-order-notice">
-          <strong>Identity documents are not required automatically.</strong> If Xenios
-          requests identity verification, use the secure upload option on your request
-          status page. Do not email identity-document images.
+          If Xenios requests identity verification, use the secure upload on
+          your request status page. Do not email identity documents.
         </div>
         <div className="xenios-order-actions">
           <a href="/research/early-access">Return to Early Access</a>
