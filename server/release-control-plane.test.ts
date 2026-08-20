@@ -158,7 +158,7 @@ const ASSISTED_ORDER_BRIDGE_PATH =
 // from an older copy of the file, so the pinned bytes are the ones reviewed
 // against live behaviour.
 const DECLARED_AFFILIATE_CODE_SOURCE_SHA =
-  "a4b04cb8c4e0f935069ec6e77eb6bef417c5785f";
+  "0bda86909d61fd33ef18dd92acb7856eaee662ea";
 const DECLARED_AFFILIATE_CODE_PATH =
   "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql";
 // The three 2026-08-19 launch cart migrations (commission settlement, member
