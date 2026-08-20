@@ -272,6 +272,27 @@ function isPublicResearchPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
   if (!normalized) return false;
 
+  // THE EARLY ACCESS ORDERING JOURNEY (founder decision, 2026-08-20: no
+  // customer-facing password at all).
+  //
+  // Without these the server side of the decision was invisible: every Early
+  // Access API was open and minting anonymous sessions, and the browser still
+  // rendered the shared review password page before the customer ever reached
+  // the catalog. A visitor saw "Enter the access password to continue" on a
+  // journey that no longer has a password, and nothing on the server reported a
+  // problem, because nothing was wrong there.
+  //
+  // Path-exact for the surfaces themselves, plus the anchored order-request
+  // family, so this stays an allowlist rather than a prefix exemption over
+  // everything under /research/early-access.
+  if (
+    normalized === "/research/early-access"
+    || normalized === "/research/early-access/order-request"
+    || normalized.startsWith("/research/early-access/order-request/")
+  ) {
+    return true;
+  }
+
   return normalized === "/research"
     || normalized === "/research/access-hub"
     || normalized === "/research/supplier-access"
