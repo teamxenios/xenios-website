@@ -290,6 +290,35 @@ describe("the exemption opened nothing else", () => {
   });
 });
 
+describe("a signed-in member's own claims and subscriptions", () => {
+  // These were shadowed by the wall while their siblings /cart and /orders were
+  // admitted. The failure was not a missing page: the member subnav links
+  // Subscriptions on every member screen, the page reads it on mount, and the
+  // 401 was rendered as "Your session has ended. Sign in again" to a member
+  // whose session was perfectly valid.
+  it.each([
+    ["/api/research/subscriptions"],
+    ["/api/research/claims"],
+  ])("%s reaches its own member guard rather than the wall", async (path) => {
+    const app = makeApp();
+    const res = await request(app).get(path);
+    // The wall must not be the thing that answers. Whatever the downstream
+    // guard says (it refuses without a member JWT), it must not be the wall's
+    // shared-password refusal.
+    expect(res.body?.message).not.toBe(WALLED);
+  });
+
+  it.each([
+    ["/api/research/subscriptions"],
+    ["/api/research/claims"],
+  ])("still walls POST %s, because only the reads were admitted", async (path) => {
+    const app = makeApp();
+    const res = await request(app).post(path).send({});
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+});
+
 describe("the operator routes are not the wall's business", () => {
   it.each([
     ["GET", "/api/admin/research/payments"],

@@ -424,6 +424,21 @@ export function registerResearchApi(app: Express) {
   const DOWNSTREAM_MEMBER_GUARDED_READ_PATHS = new Set([
     "/capabilities",
     "/cart",
+    // A signed-in member's own claims and subscriptions. Both were shadowed by
+    // this gateway while their siblings /cart and /orders were admitted, and the
+    // consequence was not a missing page: the member subnav links Subscriptions
+    // on every member screen, the page reads it on mount, and a 401 there is
+    // rendered as "Your session has ended. Sign in again" — a false statement
+    // about the customer's account while their session is perfectly valid. The
+    // 401 looked like a legitimate answer, so nothing complained.
+    //
+    // Each owns a STRONGER gate than this one: registered with the active-member
+    // guard and a withSubject wrapper that fails closed when no subject was
+    // authenticated, so reaching the handler through this wall reaches a
+    // refusal, never another member's claims or subscriptions. READS only —
+    // creating a claim or a subscription stays walled here on purpose.
+    "/claims",
+    "/subscriptions",
     "/documents",
     "/member/me",
     "/plans/xenios30",
