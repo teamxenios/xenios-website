@@ -888,7 +888,11 @@ body {
 .cs-fld-input {
   width: 100%; padding: 6px 0 8px 0;
   background: transparent; color: #0A0A0A;
-  font-family: 'Inter Tight', 'Inter', sans-serif; font-size: 14px;
+  /* 16px, not 14: under the threshold iOS Safari zooms the page on focus and
+     does not zoom back. No component renders this class today, so raising it
+     changes nothing on screen — it stops the next surface that picks the class
+     up from inheriting the defect. */
+  font-family: 'Inter Tight', 'Inter', sans-serif; font-size: 16px;
   border: none; border-bottom: 1px solid #E5E5E5;
   outline: none; border-radius: 0;
   appearance: none; -webkit-appearance: none;

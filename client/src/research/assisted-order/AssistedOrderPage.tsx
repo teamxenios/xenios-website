@@ -39,6 +39,7 @@ import {
 } from "./draft-store";
 import { refreshSelectionSnapshots } from "./selection-refresh";
 import { storeAssistedOrderReceipt } from "./storage";
+import { assistedOrderFamilyLabel } from "./family-label";
 import "./assisted-order.css";
 
 // The full acknowledgment surface, published by the server. The wizard never
@@ -143,7 +144,7 @@ function ProductCard(props: {
     <article className="xenios-order-card" data-testid={`order-card-${item.variantId}`}>
       <div className="xenios-order-card__header">
         <div>
-          <p className="xenios-order-eyebrow">{item.family}</p>
+          <p className="xenios-order-eyebrow">{assistedOrderFamilyLabel(item.family)}</p>
           <h3>{item.productName}</h3>
         </div>
         <span className={`xenios-order-mode xenios-order-mode--${item.workflowMode}`}>
@@ -590,7 +591,9 @@ export function AssistedOrderPage() {
           <div>
             <div className="xenios-order-panel xenios-order-filters">
               <label>Search<input type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Product or specification" /></label>
-              <label>Family<select value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}><option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
+              {/* The option VALUE stays the exact server slug the query filters
+                  on; only the text a customer reads is the approved label. */}
+              <label>Family<select value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}><option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{assistedOrderFamilyLabel(value)}</option>)}</select></label>
               <label>Channel<select value={channel} onChange={(e) => { setChannel(e.target.value); setPage(1); }}><option value="">All channels</option>{catalog?.channels.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
               <label>Action<select value={workflowMode} onChange={(e) => { setWorkflowMode(e.target.value as "" | AssistedOrderWorkflowMode); setPage(1); }}><option value="">All actions</option>{Object.entries(workflowLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
             </div>

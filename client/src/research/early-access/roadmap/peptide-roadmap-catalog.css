@@ -53,13 +53,18 @@
   gap: 0.4rem;
 }
 
+/* font-size is pinned at the 16px iOS threshold, NOT inherited: the wrapping
+   label is 0.875rem (14px), and `font: inherit` would pull that down and make
+   Safari zoom the page on focus without zooming back. Same defect that was
+   found on the order form in conversion QA. font-family still inherits. */
 .ea-roadmap__controls input,
 .ea-roadmap__controls select {
   background: #fff;
   border: 1px solid #b9c5c7;
   border-radius: 0.6rem;
   color: #172126;
-  font: inherit;
+  font-family: inherit;
+  font-size: 16px;
   min-height: 2.75rem;
   padding: 0.65rem 0.75rem;
   width: 100%;
