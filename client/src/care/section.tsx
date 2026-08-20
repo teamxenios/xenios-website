@@ -6,6 +6,7 @@ import type { CareCapabilityStatus } from "@shared/care/contracts";
 import CareClinicianReviewQueuePage, {
   CARE_CLINICIAN_REVIEW_PATH,
 } from "./CareClinicianReviewQueuePage";
+import CareDiscoveryPage, { CARE_DISCOVERY_PATH } from "./CareDiscoveryPage";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -29,6 +30,9 @@ type StatusLoadState =
  */
 export default function CareSection() {
   const [location] = useLocation();
+  if (location === CARE_DISCOVERY_PATH) {
+    return <CareDiscoveryPage />;
+  }
   if (location === CARE_CLINICIAN_REVIEW_PATH) {
     return <CareClinicianReviewQueuePage />;
   }

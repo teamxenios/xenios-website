@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  CARE_DISCOVERY_NEXT_PATH,
   createResearchToCareDiscovery,
   hasCarePermission,
+  type ResearchToCareDiscoveryRequest,
+  type ResearchToCareDiscoveryResponse,
   type CarePrincipal,
 } from "./contracts";
 
@@ -35,5 +38,22 @@ describe("Care rail and role contracts", () => {
     expect(discovery).not.toHaveProperty("sku");
     expect(discovery).not.toHaveProperty("orderId");
     expect(discovery).not.toHaveProperty("purchaseId");
+  });
+
+  it("keeps the discovery handoff explicit, generic, and on the safe Care path", () => {
+    const request: ResearchToCareDiscoveryRequest = { consent: true };
+    const response: ResearchToCareDiscoveryResponse = {
+      ok: true,
+      discovery: createResearchToCareDiscovery(
+        "subject-1",
+        "2026-07-25T00:00:00.000Z",
+      ),
+      nextPath: CARE_DISCOVERY_NEXT_PATH,
+    };
+
+    expect(request).toEqual({ consent: true });
+    expect(response.nextPath).toBe("/care/eligibility");
+    expect(response).not.toHaveProperty("created");
+    expect(response).not.toHaveProperty("persisted");
   });
 });

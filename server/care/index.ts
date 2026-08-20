@@ -1,11 +1,26 @@
 import type { Express, NextFunction, Request, Response } from "express";
-import { CARE_ROUTE_CONTRACTS } from "@shared/care/contracts";
+import { z } from "zod";
+import {
+  CARE_DISCOVERY_NEXT_PATH,
+  CARE_ROUTE_CONTRACTS,
+  createResearchToCareDiscovery,
+  type ResearchToCareDiscoveryResponse,
+} from "@shared/care/contracts";
 import {
   requireCarePermission,
   sendCareTemporarilyUnavailable,
   unconfiguredCareAccessDependencies,
   type CareAccessDependencies,
 } from "./access";
+
+const discoveryRequestBody = z.object({ consent: z.literal(true) }).strict();
+
+function hasServerDerivedSubject(
+  principal: Awaited<ReturnType<CareAccessDependencies["resolvePrincipal"]>>,
+): principal is NonNullable<typeof principal> {
+  return typeof principal?.subjectId === "string" &&
+    principal.subjectId.trim().length > 0;
+}
 
 export function carePageGate(req: Request, res: Response, next: NextFunction) {
   const normalized = req.path.toLowerCase();
@@ -19,6 +34,7 @@ export function carePageGate(req: Request, res: Response, next: NextFunction) {
 export function registerCareApi(
   app: Express,
   deps: CareAccessDependencies = unconfiguredCareAccessDependencies(),
+  now: () => Date = () => new Date(),
 ) {
   app.use("/api/care", (_req, res, next) => {
     res.set("Cache-Control", "no-store");
@@ -32,6 +48,41 @@ export function registerCareApi(
       res.json({ ok: true, capability: await deps.loadCapabilityStatus() });
     } catch {
       sendCareTemporarilyUnavailable(res);
+    }
+  });
+
+  app.post(CARE_ROUTE_CONTRACTS.discovery, async (req, res) => {
+    try {
+      // This is an authenticated, metadata-only handoff. It intentionally
+      // bypasses the Care capability gate and does not persist or activate a
+      // Care workflow.
+      const principal = await deps.resolvePrincipal(req);
+      if (principal === null) {
+        return res.status(401).json({ ok: false, code: "care_auth_required" });
+      }
+      if (!hasServerDerivedSubject(principal)) {
+        return sendCareTemporarilyUnavailable(res);
+      }
+
+      const parsed = discoveryRequestBody.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          ok: false,
+          code: "care_invalid_request",
+        });
+      }
+
+      const response = {
+        ok: true,
+        discovery: createResearchToCareDiscovery(
+          principal.subjectId,
+          now().toISOString(),
+        ),
+        nextPath: CARE_DISCOVERY_NEXT_PATH,
+      } satisfies ResearchToCareDiscoveryResponse;
+      return res.status(200).json(response);
+    } catch {
+      return sendCareTemporarilyUnavailable(res);
     }
   });
 

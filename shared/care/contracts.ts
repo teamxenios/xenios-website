@@ -93,6 +93,10 @@ export interface ResearchToCareDiscovery {
   consentedAt: string;
 }
 
+export interface ResearchToCareDiscoveryRequest {
+  consent: true;
+}
+
 export const CARE_ROUTE_CONTRACTS = {
   publicShell: "/care",
   status: "/api/care/status",
@@ -114,6 +118,14 @@ export const CARE_ROUTE_CONTRACTS = {
   audit: "/api/care/audit",
   discovery: "/api/care/discovery",
 } as const;
+
+export const CARE_DISCOVERY_NEXT_PATH = "/care/eligibility" as const;
+
+export interface ResearchToCareDiscoveryResponse {
+  ok: true;
+  discovery: ResearchToCareDiscovery;
+  nextPath: typeof CARE_DISCOVERY_NEXT_PATH;
+}
 
 export function isCareRole(role: string): role is CareRole {
   return (CARE_ROLES as readonly string[]).includes(role);
