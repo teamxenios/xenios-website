@@ -4,6 +4,10 @@ import type {
   AssistedOrderLineInput,
 } from "../../../../shared/research/assisted-order/contract";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
+import {
+  MASTER_OFFERING_FAMILY_LABELS,
+  type MasterOfferingFamily,
+} from "../../../../shared/research/master-offerings/contract";
 
 export type AssistedOrderSelection = Readonly<{
   item: AssistedOrderCatalogItem;
@@ -338,6 +342,29 @@ export function acceptedAgreements(
       }),
     ),
   );
+}
+
+/**
+ * The human name for a catalog family. The canonical taxonomy already names
+ * every family once (MASTER_OFFERING_FAMILY_LABELS), so this reuses that map
+ * rather than starting a second one; the card header and the filter dropdown
+ * then agree instead of one showing `clinical_formulations_503a` and the other
+ * showing "503A Clinical Formulations". An unrecognized slug is humanized
+ * rather than printed raw, so a newly added family degrades to readable text
+ * instead of leaking an enum key at the customer.
+ */
+export function familyLabel(family: string): string {
+  const known = (
+    MASTER_OFFERING_FAMILY_LABELS as Readonly<Record<string, string>>
+  )[family as MasterOfferingFamily];
+  if (known) {
+    return known;
+  }
+  const humanized = family.trim().replace(/[_-]+/g, " ").toLowerCase();
+  if (humanized.length === 0) {
+    return family;
+  }
+  return humanized.replace(/\b[a-z]/g, (character) => character.toUpperCase());
 }
 
 export function money(cents: number | null): string {

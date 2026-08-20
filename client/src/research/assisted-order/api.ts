@@ -11,6 +11,7 @@ import type {
   AssistedOrderUploadRequest,
   AssistedOrderUploadTicket,
 } from "../../../../shared/research/assisted-order/contract";
+import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import {
   parseAssistedOrderConfig,
   type AssistedOrderWizardConfig,
@@ -28,16 +29,43 @@ export class AssistedOrderApiError extends Error {
   }
 }
 
+// The assisted-order doors admit TWO customer identities, and a browser can
+// hold either: an Early Access session (an HttpOnly cookie this script cannot
+// read) or a signed-in member (a Supabase JWT). The server resolves the member
+// FIRST — resolveActiveMemberSilently, the same guard every member door uses —
+// and only a resolved member carries the master-offerings pricing grant.
+//
+// Sending the cookie alone therefore made a signed-in member anonymous to these
+// routes: refused at the catalog step and on the status page, with no recovery
+// the customer could act on. Attaching the bearer when a session exists costs
+// the cookie path nothing (credentials still ride on every call), and it is
+// what upgrades a member's prices from "Price on request" to their approved
+// price. Authorization stays server-side: this only presents the credential.
+async function memberAuthHeaders(): Promise<Readonly<Record<string, string>>> {
+  try {
+    const supabase = await getSupabaseBrowser();
+    if (!supabase) return {};
+    const token = (await supabase.auth.getSession()).data.session?.access_token;
+    return token ? { authorization: `Bearer ${token}` } : {};
+  } catch {
+    // No session, or auth is unreachable. The Early Access cookie path must
+    // keep working, so this is never fatal.
+    return {};
+  }
+}
+
 async function request<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
+  const auth = await memberAuthHeaders();
   const response = await fetch(path, {
     credentials: "include",
     ...init,
     headers: {
       accept: "application/json",
       ...(init.body ? { "content-type": "application/json" } : {}),
+      ...auth,
       ...(init.headers ?? {}),
     },
   });
