@@ -5,15 +5,14 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ## STATUS: RELEASE CANDIDATE FROZEN — AWAITING FOUNDER GO
 
-- **Frozen SHA: `e7b95db`** on `xenios/launch-integration-20260819`.
-  (Supersedes `2c6433f`, which was frozen before conversion QA reported. That
-  candidate would have shipped a journey that could not unlock, could not price
-  a line, and could not accept a submission.)
-- **Gates GREEN at this SHA**: full suite 681 files passed / 4 skipped / **0
-  failed** (exit 0); `tsc --noEmit` clean; route census re-pinned and uniqueness
-  clean; seam tripwire clean after a documented baseline move.
+- **Frozen SHA: `f004026`** on `xenios/launch-integration-20260819`.
+  (Supersedes `e7b95db` and `2c6433f`. Each earlier candidate would have shipped
+  a journey that was broken in ways nothing in the test suite could see.)
+- **Gates GREEN at this SHA**: full suite 682 files passed / 4 skipped / **0
+  failed** (exit 0); `tsc --noEmit` clean; route census re-pinned with uniqueness
+  clean; seam tripwire clean after three documented baseline moves.
 
-### Four defects fixed since the first freeze — all customer-fatal
+### Eight defects fixed since the first freeze
 
 1. **The gate rejected the correct code.** The durable repository issued grants
    under `RESEARCH_EARLY_ACCESS_OWNER_ID` while the unlock route fell back to a
@@ -29,6 +28,24 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 4. **One rejected database call took the site down.** 31 routes dispatched
    handlers as bare fire-and-forget promises; an unhandled rejection exits Node,
    so a blip during checkout was an outage rather than a failed request.
+5. **320 of 420 catalog rows could not be ordered.** The submission-time catalog
+   re-read asked for one enormous page, but the search clamps pageSize to 100
+   and then slices, so "everything" was the alphabetically first hundred. Both
+   halves were individually green: the clamp has its own passing test, and the
+   seam's test double ignored paging.
+6. **A price-on-request row killed the whole basket.** BAM15 500 mcg is listed
+   deliberately, but the synthetic identity the list side minted could not be
+   read back at submit — and any unresolvable line threw an untyped error, so
+   the entire request died as an opaque 500 after every agreement was accepted.
+7. **The unlock lockout keyed on the CDN, not the customer.** trust proxy was 1
+   against a verified two-hop chain, so req.ip was the Cloudflare egress address
+   shared by every customer in that colo. Five typos locked them all out, and
+   the correct code was then refused with the message a wrong one produces.
+8. **The shared research password had no working throttle.** Every research
+   limiter keyed on the leftmost x-forwarded-for entry, which the caller
+   supplies. member/claim consumes a one-time token and sets a new password, so
+   an unthrottled grind is an account takeover.
+
 - **Predecessor verified**: production `a66434d9` is an ancestor of this SHA, so
   the deploy branch fast-forwards cleanly (42 commits, behaviourally inert except
   the two items listed below).
@@ -42,7 +59,7 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ### To release, on your word
 
-1. `git push origin e7b95db:release/early-access-code-session-checkout` (clean
+1. `git push origin f004026:release/early-access-code-session-checkout` (clean
    fast-forward from `a66434d9`).
 2. Trigger the deploy on service `srv-d8s9vej7uimc7384dfcg`.
 3. Smoke live paths, then the fix (steps 4–6 below).
