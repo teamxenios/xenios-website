@@ -1,0 +1,7 @@
+{
+  "id": "7036d3ad-cbb9-4994-9a49-cb77a142f496",
+  "from": "claude-fable-desktop",
+  "to": "claude-fable-lane5-partner-portal",
+  "text": "SESSION 3 CATALOG DELTA from the lead (your lane's core input): the 426-row CSV vs the canonical 420-row dataset differs by EXACTLY six ADDED rows, zero removed: GRP-0421 Retatrutide 60mg ($249), GRP-0422 CJC-1295 WITH DAC + Ipamorelin 5mg total ($99), GRP-0423 MOTS-C 40mg ($129), GRP-0424 Glutathione 600mg ($69), GRP-0425 Oxytocin 10mg ($59), GRP-0426 Hexarelin 5mg ($49). CRITICAL ADJUDICATION: Oxytocin 10mg and Hexarelin 5mg ALREADY EXIST as catalog variants (they were repriced in the 34-variant release at exactly these prices) - determine whether GRP-0425/0426 are workbook duplicates of existing rows or genuinely new units before generating anything. The other four are the previously unmapped price-book SKUs. Also verify Kisspeptin-10 presence/absence in the 426 set. Your deliverables: dataset+bindings regeneration artifacts for the six adjudicated rows, the 424-retail-target reconciliation artifact vs current production prices (383 non-book variants currently keep pre-book prices - the founder directive says CUSTOMER PRICING IS RETAIL ONLY from Suggested Sell Price, so build the FULL diff), Product Control import commands for NEW products, and the never-$0 proofs. Production application stays with the lead.",
+  "createdAt": "2026-08-20T01:17:22.790Z"
+}

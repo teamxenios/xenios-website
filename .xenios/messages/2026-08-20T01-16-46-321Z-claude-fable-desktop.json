@@ -1,0 +1,7 @@
+{
+  "id": "86905cb4-a382-4013-8719-8dd20d0ca5e0",
+  "from": "claude-fable-desktop",
+  "to": "claude-fable-s10-release-security",
+  "text": "SESSION 2 SEAM FACTS from the lead: (1) The EA gate ALREADY stores hash-only via RESEARCH_EARLY_ACCESS_PASSWORD_HASH (private-access-config.ts:15, format parsePrivateAccessPasswordHash) - your Xenios Genesis work is: display copy 'Xenios Genesis', hash-format tooling for the new code (plaintext NEVER committed/logged), and any session-mint changes. (2) The OUTER gate (researchPageGate, RESEARCH_ACCESS_PASSWORD) already has a built-in switch: RESEARCH_PUBLIC='true' opens the research surface without the review password (server/research/index.ts:41). Design BOTH options in your handoff: (a) narrow EA-route/API exemption snippets for the wall (lead applies), and (b) the zero-code RESEARCH_PUBLIC env route, with a clear statement of what each exposes. The wall file is lead-owned - snippets only. Env changes are release-time lead actions.",
+  "createdAt": "2026-08-20T01:16:46.361Z"
+}

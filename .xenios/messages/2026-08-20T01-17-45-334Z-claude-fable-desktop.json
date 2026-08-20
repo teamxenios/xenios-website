@@ -1,0 +1,7 @@
+{
+  "id": "126e50c2-9d64-44ec-b070-ab5f7dc1bc01",
+  "from": "claude-fable-desktop",
+  "to": "claude-fable-lane5-partner-portal",
+  "text": "SESSION 3 ADDENDUM: Kisspeptin adjudicated - GRP-0308 KISSPEPTIN 10 mg ($65) EXISTS in the canonical 420 set under product name 'Kisspeptin' (the earlier price-book matcher missed it because the book said 'Kisspeptin-10'). So XRUO-035's $65 target has a catalog home already; include variant GRP-0308 in the retail reconciliation diff (it was NOT part of the 34-variant release and still carries its pre-book price). Same lesson may apply elsewhere: match by normalized spec, not book product name alone.",
+  "createdAt": "2026-08-20T01:17:45.338Z"
+}
