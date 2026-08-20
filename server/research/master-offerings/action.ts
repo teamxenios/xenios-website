@@ -1,5 +1,9 @@
 import type { CartProductSelection } from "@shared/research/cart-product-selection";
 import type { MasterOfferingAction } from "@shared/research/master-offerings/contract";
+import {
+  isDirectPurchaseForbidden,
+  requiresProviderPathway,
+} from "@shared/research/master-offerings/pathway-authority";
 import { productRequestHref } from "@shared/research/product-request-sources";
 import type {
   MasterOfferingCommerceIdentityBinding,
@@ -135,14 +139,23 @@ export function resolveMasterOfferingAction(
   // moment direct commerce was enabled.
   //
   // The omission read as deliberate because the NEXT arm checks displayState,
-  // and it stayed invisible because the flag is off. The assisted-order lane
-  // gates on the same pathway correctly, so the two lanes disagreed about the
-  // same variant. Care separation is a standing rule, not a flag-dependent one:
-  // it is enforced here, before authority is consulted.
-  const providerPathway =
-    variant.displayState === "care_pathway" || offering.displayState === "care_pathway";
+  // and it stayed invisible because the flag is off. Care separation is a
+  // standing rule, not a flag-dependent one: it is enforced here, before
+  // authority is consulted.
+  //
+  // The rule itself now lives in the shared pathway authority rather than in an
+  // expression here, because the assisted-order lane was deciding the same
+  // thing from a wider fact set (it also refuses the whole
+  // `clinical_formulations_503a` family). The two agreed only because every
+  // 503a row happens to carry `care_pathway` today; one workbook edit would
+  // have split them. One predicate, both lanes.
+  const forbidden = isDirectPurchaseForbidden({
+    family: offering.family,
+    displayState: offering.displayState,
+    variantDisplayState: variant.displayState,
+  });
   if (
-    !providerPathway &&
+    !forbidden &&
     offering.visibility === "member" &&
     variant.visibility === "member" &&
     bindingMatches(variant, commerce.binding, selection)
@@ -168,7 +181,13 @@ export function resolveMasterOfferingAction(
   // manual Early Access purchase case. It is reached only after the exact
   // CartProductSelection check above has already declined, so it can never
   // shadow or weaken a real Add to Cart.
+  //
+  // It carries the same forbidden-row guard as Add to Cart. A manual purchase
+  // request is still a request to BUY, so a provider-required row must not
+  // offer one by the side door just because it has no Product Control
+  // authority yet.
   if (
+    !forbidden &&
     capabilities.manualEarlyAccessPurchase === true &&
     offering.visibility === "member" &&
     variant.visibility === "member" &&
@@ -178,6 +197,28 @@ export function resolveMasterOfferingAction(
       kind: "request_early_access_purchase",
       label: "Request Early Access Purchase",
       href: targets.earlyAccessPurchase(offering, variant),
+    };
+  }
+
+  // A provider-required row routes to Care whatever its display state says.
+  //
+  // For every row shipping today this returns exactly what the `care_pathway`
+  // switch arm below already returned, so the rendered catalog does not move.
+  // It matters for the row that is provider-required by FAMILY while carrying
+  // some other display state: without this, such a row would fall through to
+  // "Request Access", which invites a customer down a research-use-only path
+  // for a product that requires a provider.
+  if (
+    requiresProviderPathway({
+      family: offering.family,
+      displayState: offering.displayState,
+      variantDisplayState: variant.displayState,
+    })
+  ) {
+    return {
+      kind: "explore_care",
+      label: "Explore Care",
+      href: targets.exploreCare(offering, variant),
     };
   }
 
