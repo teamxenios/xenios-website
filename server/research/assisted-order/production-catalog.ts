@@ -25,6 +25,7 @@ import {
   projectAssistedOrderCatalogItem,
   type AssistedOrderCatalogAuthority,
 } from "../../../shared/research/assisted-order/action-policy";
+import { EARLY_ACCESS_POLICY_MAX_QUANTITY } from "../../../shared/research/early-access-quantity";
 import type { AssistedOrderViewer } from "./ports";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
@@ -97,7 +98,15 @@ export function authorityFor(
     format: null,
     packBasis: null,
     minimumQuantity: 1,
-    maximumQuantity: null,
+    // The founder's default per-variant ceiling, carried on the authority row
+    // itself. It was null before, which read as "no maximum" and left the
+    // assisted-order lane bounded only by the contract's 100_000 sanity check,
+    // so a request for ten thousand vials of one variant was a legal request.
+    // Because M71 stores this band ON each line and checks the quantity against
+    // that stored band, the ceiling becomes durable the moment a request is
+    // written: no migration, and every already-stored line keeps the band it
+    // was accepted under.
+    maximumQuantity: EARLY_ACCESS_POLICY_MAX_QUANTITY,
     quantityIncrement: 1,
     unitPriceCents: priced && identity !== null ? price.amountCents : null,
     currency: "USD",

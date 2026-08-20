@@ -6,6 +6,13 @@ import {
 import type { AssistedOrderViewer } from "./ports";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
+import { quantityIsAllowed } from "../../../shared/research/assisted-order/action-policy";
+import { ASSISTED_ORDER_MAX_QUANTITY } from "../../../shared/research/assisted-order/contract";
+import {
+  EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY,
+  EARLY_ACCESS_MAX_QUANTITY,
+  EARLY_ACCESS_POLICY_MAX_QUANTITY,
+} from "../../../shared/research/early-access-quantity";
 
 const viewer: AssistedOrderViewer = Object.freeze({
   actorType: "member",
@@ -130,5 +137,64 @@ describe("assisted-order production catalog mapping", () => {
     expect(hit?.unitPriceCents).toBe(5000);
     const miss = await built.resolve(viewer, "pc-prod-1", "pc-var-unknown");
     expect(miss).toBeNull();
+  });
+});
+
+/**
+ * The founder's per-variant ceiling, proven where it is actually decided.
+ *
+ * This band is not a UI courtesy. M71 copies it onto every stored line and
+ * checks the quantity against that stored copy, so whatever the authority says
+ * here is what the database will enforce for the life of that request. It read
+ * `null` before 2026-08-20, which meant "no maximum": a request for ten thousand
+ * vials of one variant was a legal request, bounded only by the contract's
+ * 100_000 sanity ceiling, which exists to keep arithmetic safe rather than to
+ * express a commercial rule.
+ */
+describe("the founder's per-variant quantity ceiling", () => {
+  it("carries 100 on the authority row, not an absent maximum", async () => {
+    const page = await callbacks([offering()], new Map([["var_1", priced(5000)]])).list(viewer, { page: 1, pageSize: 24 });
+    expect(page.items[0].maximumQuantity).toBe(EARLY_ACCESS_POLICY_MAX_QUANTITY);
+    expect(page.items[0].maximumQuantity).toBe(100);
+    expect(page.items[0].minimumQuantity).toBe(1);
+    expect(page.items[0].quantityIncrement).toBe(1);
+  });
+
+  it("accepts exactly one hundred and refuses one hundred and one", async () => {
+    const page = await callbacks([offering()], new Map([["var_1", priced(5000)]])).list(viewer, { page: 1, pageSize: 24 });
+    const item = page.items[0];
+    expect(quantityIsAllowed(item, 100)).toBe(true);
+    expect(quantityIsAllowed(item, 101)).toBe(false);
+    expect(quantityIsAllowed(item, 1)).toBe(true);
+    expect(quantityIsAllowed(item, 0)).toBe(false);
+  });
+
+  it("still carries the ceiling on a variant that cannot be ordered directly", async () => {
+    // A Care row is not orderable through this lane at all, but if the pathway
+    // ever changed, an absent band must not be what decides the quantity.
+    const page = await callbacks(
+      [offering({ family: "clinical_formulations_503a", displayState: "care_pathway", variants: [{ id: "var_1", label: "Rx", displayState: "care_pathway", visibility: "member", sourceReferences: [] }] } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(9000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+    expect(page.items[0].workflowMode).toBe("provider_request");
+    expect(page.items[0].maximumQuantity).toBe(100);
+  });
+
+  it("keeps the contract's sanity ceiling far above the commercial ceiling", () => {
+    // The two numbers answer different questions and must not be collapsed:
+    // 100 is what a customer may buy, 100_000 is what the arithmetic can hold.
+    expect(ASSISTED_ORDER_MAX_QUANTITY).toBeGreaterThan(EARLY_ACCESS_POLICY_MAX_QUANTITY);
+  });
+
+  it("records that the cart lane has NOT reached the policy ceiling yet", () => {
+    // Deliberate, and pinned so it cannot drift silently: the cart's durable
+    // band is a database constraint, and as of 2026-08-20 production still
+    // carries the original 1..3 band with M65 and M66 both pending. Widening
+    // the constant before the migration chain would let a customer fill a cart
+    // and lose it at insert. When the chain is applied, this expectation is the
+    // thing that fails and tells the next person to finish the move.
+    expect(EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY).toBe(50);
+    expect(EARLY_ACCESS_MAX_QUANTITY).toBe(EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY);
+    expect(EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY).toBeLessThan(EARLY_ACCESS_POLICY_MAX_QUANTITY);
   });
 });

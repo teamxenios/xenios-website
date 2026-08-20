@@ -35,15 +35,43 @@
 export const EARLY_ACCESS_MIN_QUANTITY = 1;
 
 /**
- * The most units one exact variant may carry through normal commerce.
+ * The founder's per-variant ceiling: 100 units of one exact variant, by
+ * default, wherever a customer expresses a quantity (2026-08-20 decision).
  *
  * PER EXACT VARIANT, not per cart. Two different variants may each carry the
  * maximum. The same variant may not reach past it by arriving on more than one
  * cart line, which is what `canonicalizeQuantities` in the cart model exists to
- * prevent. Production must not mount this code until the separately reviewed
- * M66/release chain widens the durable band to the same authority.
+ * prevent. A real, explicitly authorized lower limit on a product still wins:
+ * this is the default ceiling, not an override of a product's own rule.
  */
-export const EARLY_ACCESS_MAX_QUANTITY = 50;
+export const EARLY_ACCESS_POLICY_MAX_QUANTITY = 100;
+
+/**
+ * What the CART lane may accept today, which is deliberately not yet the policy
+ * maximum.
+ *
+ * READ THE LEDGER BEFORE TRUSTING THIS NUMBER. As of 2026-08-20 the production
+ * database is still at the ORIGINAL 1..3 band: supabase/MIGRATIONS.md records
+ * both M65 (1..3 -> 1..20) and M66 (1..20 -> 1..50) as PENDING, applied only to
+ * disposable rehearsal databases. So this constant already outruns the durable
+ * band by a wide margin, which is precisely why the cart lane is not enabled in
+ * production and why enabling it without its migration chain would let a
+ * customer fill a cart and lose it at insert — the one failure a checkout must
+ * not have.
+ *
+ * Reaching the policy maximum on this lane therefore needs the whole chain, in
+ * order: M65, then M66, then the successor candidate
+ * (supabase/candidates/20260820_research_early_access_cart_quantity_band_100.sql),
+ * each applied and verified. When that chain is applied, this becomes
+ * EARLY_ACCESS_POLICY_MAX_QUANTITY and this comment goes away.
+ *
+ * The assisted-order lane is NOT held back by this. Its durable check reads the
+ * min/max band stored on each line from the catalog authority, so it carries the
+ * policy maximum today with no migration at all.
+ */
+export const EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY = 50;
+
+export const EARLY_ACCESS_MAX_QUANTITY = EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY;
 
 /**
  * Compatibility name retained for consumers that used the former request band.
