@@ -1,0 +1,23 @@
+Execute the attached **XENIOS RESEARCH — UNIVERSAL MODEL-AGNOSTIC CONTINUITY OS + BUILD TAKEOVER PROMPT**.
+
+This is the founder's resume directive.
+
+Find `teamxenios/xenios-website`, recover current Git, production, worktrees, `.xenios`, the latest full build status, and the latest exact-SHA handoff. Determine whether you are continuing the same active session, taking over a clean handoff, recovering a stale session, acting as lead, or acting as one isolated worker.
+
+Do not restart from `main`.
+Do not ask me to repeat project history.
+Do not open an arbitrary number of sessions.
+Preserve all dirty worktrees before editing.
+Continue the highest-priority dependency-ready Xenios Research task under one exact path lease.
+
+Current founder build directives:
+- one customer-facing Early Access code only: `XeniosGenesis` (store only its hash)
+- remove the outer/first Early Access password gate
+- allow up to 100 units per exact product variant across the complete stack
+- reconcile and display the full retail catalog from `XENIOS_MASTER_CATALOG_AFFILIATE_PRICING_2026-08-16(2)(2).xlsx`
+- retail, not wholesale
+- 426 catalog rows, 424 numeric retail prices, 2 Price on request
+- keep Care products out of direct RUO checkout
+- finish the complete Xenios Research vision in dependency order
+
+After the takeover block, keep coding and checkpoint continuously.

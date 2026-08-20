@@ -1,5 +1,24 @@
 Read `.xenios/MASTER_CORPUS.md` first.
 
+## Mandatory session reading (permanent, any model or human)
+
+Every Claude Code, Fable, Codex, ChatGPT, or human session must read, in order,
+before any edit:
+
+1. `.xenios/MASTER_CORPUS.md`
+2. `.xenios/FULL_VISION.md` (the canonical full Xenios Research vision)
+3. The latest full build status (currently
+   `docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md`)
+4. The latest exact-SHA handoff in `.xenios/handoffs/`
+5. Current task/session/path ownership: `.xenios/ACTIVE_TASKS.json`,
+   `.xenios/SESSION_REGISTRY.json`, `.xenios/CODE_OWNERSHIP.json`, and
+   `.xenios/LAUNCH_LANE_OWNERSHIP_2026-08-19.md`
+
+Then follow `.xenios/prompts/UNIVERSAL_MODEL_AGNOSTIC_CONTINUITY_OS.md` to
+determine your role (same session, clean takeover, recovery, lead, worker, or
+solo) and continue the fleet that already exists. Current Git and production
+state outrank every prompt and every old handoff.
+
 # Xenios Research agent operating contract
 
 Every Claude Code, Codex, ChatGPT, or human engineering session must begin here.
