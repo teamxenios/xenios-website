@@ -185,6 +185,7 @@ import { registerReferralFraudAdmin } from "./fraud-admin";
 
 function makeApp() {
   const app = express();
+  app.set("trust proxy", true);
   app.use(express.json());
   registerMemberApi(app);
   registerMemberAccessApi(app);
@@ -697,6 +698,7 @@ describe("CODEX_UI contracts", () => {
 describe("fresh-browser password recovery (wall allowlist)", () => {
   function makeComposedApp() {
     const app = express();
+    app.set("trust proxy", true);
     app.use(express.json());
     registerResearchApi(app);
     registerMembershipApi(app);
@@ -943,6 +945,7 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
 
   it("the shared gate remains required for the gateway page flow, and the recovery PAGE carries the sensitive-flow headers", async () => {
     const app = express();
+    app.set("trust proxy", true);
     app.use(researchPageGate);
     app.get("/research/reset-password", (_req, res) => res.send("reset page"));
     app.get("/research", (_req, res) => res.send("gateway"));
@@ -963,6 +966,7 @@ describe("fresh-browser password recovery (wall allowlist)", () => {
 
   it("case-variant AND percent-encoded research URLs still get the security headers (wouter renders them; the gate must not miss them)", async () => {
     const app = express();
+    app.set("trust proxy", true);
     app.use(researchPageGate);
     app.get("/{*any}", (_req, res) => res.send("spa"));
 

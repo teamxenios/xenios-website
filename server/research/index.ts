@@ -149,7 +149,14 @@ export function isAuthed(req: Request): boolean {
 // Small fixed-window limiter on password attempts (per IP).
 const attempts = new Map<string, { count: number; resetAt: number }>();
 function allowAttempt(req: Request): boolean {
-  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
+  // req.ip, not the raw header. The leftmost X-Forwarded-For entry is whatever
+  // the CLIENT sent — the edge appends to that header rather than replacing it
+  // — so keying this bucket on it handed an attacker a fresh bucket for every
+  // request and left the shared research password with no throttle at all in
+  // front of a constant-time comparison that has no lockout of its own.
+  const ip =
+    (typeof req.ip === "string" && req.ip.length > 0 ? req.ip : req.socket.remoteAddress) ||
+    "unknown";
   const now = Date.now();
   const bucket = attempts.get(ip);
   if (!bucket || bucket.resetAt < now) {

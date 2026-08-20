@@ -132,6 +132,7 @@ import { makeStatusToken, readStatusToken, registerMembershipApi } from "./membe
 
 function makeApp() {
   const app = express();
+  app.set("trust proxy", true);
   app.use(express.json());
   registerMembershipApi(app);
   return app;

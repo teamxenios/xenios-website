@@ -50,8 +50,32 @@ export async function rateLimitHit(key: string, windowSeconds: number, maxHits: 
   return memoryHit(key, windowSeconds, maxHits);
 }
 
-export function requestIp(req: { headers: Record<string, unknown>; socket?: { remoteAddress?: string | null } }): string {
-  const forwarded = req.headers["x-forwarded-for"];
-  if (typeof forwarded === "string" && forwarded.length) return forwarded.split(",")[0].trim();
+/**
+ * The caller's address, as the deployment's proxy chain actually establishes it.
+ *
+ * This used to read `x-forwarded-for` and take the LEFTMOST entry, which is not
+ * the client: it is whatever the client SENT. Cloudflare appends the address it
+ * observes rather than replacing the header, so anyone can prepend a value of
+ * their choosing and it lands in that position. Every limiter keyed on it —
+ * the shared research password door, account claim, forgot-password,
+ * application submit, resend-link — could therefore be bypassed completely by
+ * varying one header per request, which is not a weak limit but no limit at
+ * all. Account claim is the worst of them: it consumes a one-time claim token
+ * and sets a new password, so an unthrottled grind is an account takeover
+ * before the real applicant ever signs in.
+ *
+ * `req.ip` is Express's own derivation through the app's `trust proxy` hop
+ * count, which this deployment sets to the verified number of hops. A
+ * client-supplied X-Forwarded-For is appended to rather than honoured, so the
+ * value here is the address the edge recorded and cannot be chosen by the
+ * caller. The socket address is the fallback for compositions that do not run
+ * behind Express.
+ */
+export function requestIp(req: {
+  ip?: unknown;
+  headers: Record<string, unknown>;
+  socket?: { remoteAddress?: string | null };
+}): string {
+  if (typeof req.ip === "string" && req.ip.length > 0) return req.ip;
   return req.socket?.remoteAddress ?? "unknown";
 }
