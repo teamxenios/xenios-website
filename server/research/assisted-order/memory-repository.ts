@@ -247,6 +247,8 @@ export class InMemoryAssistedOrderRepository implements AssistedOrderRepository 
       generalNotes: record.generalNotes,
       agreements: record.agreements,
       affiliateAttributionRef: record.affiliateAttributionRef,
+      declaredAffiliateCode: record.declaredAffiliateCode,
+      declaredAffiliateCodeState: record.declaredAffiliateCodeState,
       timeline: view.timeline,
       documents: view.documents,
       createdAt: record.createdAt,

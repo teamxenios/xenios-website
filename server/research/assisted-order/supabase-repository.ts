@@ -197,6 +197,16 @@ function decodeAdminDetail(value: unknown): AssistedOrderAdminDetail {
     generalNotes: nullableText(item, "generalNotes"),
     agreements: assertArray(item.agreements, "agreements") as AssistedOrderAdminDetail["agreements"],
     affiliateAttributionRef: nullableText(item, "affiliateAttributionRef"),
+    declaredAffiliateCode: nullableText(item, "declaredAffiliateCode"),
+    // A row written before the column existed reports not_provided rather than
+    // a null state, so an operator console never has to render an absent value.
+    declaredAffiliateCodeState:
+      (nullableText(item, "declaredAffiliateCodeState") as
+        | "not_provided"
+        | "captured_unmatched"
+        | "matched_manual"
+        | "invalid_ignored"
+        | null) ?? "not_provided",
     timeline: decodeTimeline(item.timeline),
     documents: decodeDocuments(item.documents),
     createdAt: text(item, "createdAt"),
@@ -255,6 +265,11 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
         agreements: record.agreements,
         generalNotes: record.generalNotes,
         affiliateAttributionRef: record.affiliateAttributionRef,
+        // Sent under names the RPC reads explicitly. A key the function does not
+        // read is silently null, so these two must stay in step with the
+        // migration that added them.
+        declaredAffiliateCode: record.declaredAffiliateCode,
+        declaredAffiliateCodeState: record.declaredAffiliateCodeState,
         estimatedTotalCents: record.estimatedTotalCents,
         currency: record.currency,
         source: record.source,

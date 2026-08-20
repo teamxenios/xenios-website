@@ -1,3 +1,4 @@
+import type { DeclaredAffiliateCodeState } from "../partners/declared-affiliate-code";
 import type {
   AssistedOrderAdminDetail,
   AssistedOrderAdminListItem,
@@ -88,6 +89,17 @@ export type AssistedOrderCreateRecord = Readonly<{
   agreements: AssistedOrderSubmitInput["agreements"];
   generalNotes: string | null;
   affiliateAttributionRef: string | null;
+  /**
+   * The affiliate code the CUSTOMER TYPED, and how far it has travelled.
+   *
+   * A separate field from the verified attribution above on purpose. That one
+   * is proof the server derived; this one is a claim a stranger typed, and it
+   * stays unmatched until a human matches it. Writing a typed string into the
+   * verified field would hand the browser the power to choose which partner an
+   * order pays, which the submit path refuses by design.
+   */
+  declaredAffiliateCode: string | null;
+  declaredAffiliateCodeState: DeclaredAffiliateCodeState;
   estimatedTotalCents: number | null;
   currency: "USD";
   source: "early_access_manual_order_bridge";

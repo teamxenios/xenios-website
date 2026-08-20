@@ -138,6 +138,16 @@ export type AssistedOrderSubmitInput = Readonly<{
   lines: readonly AssistedOrderLineInput[];
   generalNotes?: string;
   affiliateAttributionRef?: string;
+  /**
+   * An affiliate code the CUSTOMER TYPED. A claim, never attribution.
+   *
+   * Deliberately a different field from `affiliateAttributionRef`, which the
+   * service ignores from the body on purpose so a browser cannot choose which
+   * partner an order pays. This one is accepted from the browser precisely
+   * because it grants nothing: it is normalized, stored as its own fact, and
+   * stays unmatched until a human matches it.
+   */
+  declaredAffiliateCode?: string;
 }>;
 
 export type AssistedOrderLineSnapshot = Readonly<{
@@ -303,6 +313,19 @@ export type AssistedOrderAdminDetail = Readonly<{
   generalNotes: string | null;
   agreements: readonly AssistedOrderAgreementAcceptance[];
   affiliateAttributionRef: string | null;
+  /**
+   * The affiliate code the CUSTOMER TYPED, for the operator to match by hand.
+   *
+   * Shown to an authorized admin only, and always beside its state so nobody
+   * reads an unmatched claim as a proven relationship. It is never part of any
+   * customer-facing projection.
+   */
+  declaredAffiliateCode: string | null;
+  declaredAffiliateCodeState:
+    | "not_provided"
+    | "captured_unmatched"
+    | "matched_manual"
+    | "invalid_ignored";
   timeline: readonly AssistedOrderStatusEventView[];
   documents: readonly AssistedOrderDocumentView[];
   createdAt: string;
@@ -585,6 +608,16 @@ export function validateSubmitInput(
     affiliateAttributionRef: normalizeOptionalText(
       "affiliateAttributionRef",
       input.affiliateAttributionRef,
+      160,
+    ),
+    // Carried through validation as free text and normalized to a code by the
+    // affiliate domain at the service. It is bounded here only so an enormous
+    // string cannot ride along; a value that is not a usable code is dropped
+    // later rather than refused, because an unknown code must never cost a
+    // customer their order.
+    declaredAffiliateCode: normalizeOptionalText(
+      "declaredAffiliateCode",
+      input.declaredAffiliateCode,
       160,
     ),
   });

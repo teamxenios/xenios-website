@@ -22,6 +22,7 @@ import {
   validateSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
 import { quantityIsAllowed } from "../../../shared/research/assisted-order/action-policy";
+import { normalizeDeclaredAffiliateCode } from "../partners/declared-affiliate-code";
 import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   ASSISTED_ORDER_FORM_ID,
@@ -306,6 +307,12 @@ export class AssistedOrderService {
       `${input.contact.email}\u0000${input.idempotencyKey}`,
     );
 
+    // A claim, not attribution. Normalizing here means the row, the operator
+    // console and the admin email all read the same canonical value.
+    const declaredAffiliateCode = normalizeDeclaredAffiliateCode(
+      input.declaredAffiliateCode,
+    );
+
     const resolvedLines: ResolvedAssistedOrderLine[] = [];
     for (let index = 0; index < input.lines.length; index += 1) {
       const requested = input.lines[index];
@@ -419,6 +426,12 @@ export class AssistedOrderService {
         // deliberately never read: the browser must not be able to choose
         // which partner an order pays.
         affiliateAttributionRef: verifiedAffiliateAttributionRef,
+        // The code the CUSTOMER TYPED, kept as a separate fact beside the
+        // verified one above. It is accepted from the browser precisely because
+        // it grants nothing, and it is normalized rather than refused so an
+        // unknown or malformed code cannot cost the customer their order.
+        declaredAffiliateCode: declaredAffiliateCode.code,
+        declaredAffiliateCodeState: declaredAffiliateCode.state,
         estimatedTotalCents,
         currency: ASSISTED_ORDER_CURRENCY,
         source: ASSISTED_ORDER_SOURCE,
@@ -498,6 +511,9 @@ export class AssistedOrderService {
       // The server-verified attribution, when one exists. Never a browser-
       // supplied value: `input.affiliateAttributionRef` is ignored on purpose.
       affiliateAttributionRef: verifiedAffiliateAttributionRef,
+      // The typed claim, rendered separately and labelled unverified, so an
+      // operator never reads it as a proven relationship.
+      declaredAffiliateCode: declaredAffiliateCode.code,
       adminPath: `/admin/research/assisted-orders/${storedRequestId}`,
     });
 

@@ -218,6 +218,19 @@ export function AssistedOrderPage() {
     draft ? draftSelectionMap(draft) : new Map(),
   );
   const [generalNotes, setGeneralNotes] = useState(() => draft?.generalNotes ?? "");
+  // The OPTIONAL affiliate code, typed by the customer. Seeded from ?ref= as a
+  // convenience only: the verified referral cookie remains the authority, this
+  // is a claim, and the two are stored as separate facts. Whatever lands here
+  // grants nothing — it cannot change a price, a pathway, a payment or a
+  // permission — so accepting it from the browser is safe by construction.
+  const [affiliateCode, setAffiliateCode] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      return new URLSearchParams(window.location.search).get("ref")?.slice(0, 40) ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [idempotencyKey, setIdempotencyKey] = useState(
     () => draft?.idempotencyKey ?? newIdempotencyKey(),
   );
@@ -507,6 +520,7 @@ export function AssistedOrderPage() {
       agreements,
       lines: selectionsToLines(selections),
       generalNotes: generalNotes || undefined,
+      declaredAffiliateCode: affiliateCode.trim() || undefined,
     };
     setSubmitting(true);
     try {
@@ -651,6 +665,18 @@ export function AssistedOrderPage() {
               <label>Billing country code<input maxLength={2} value={contact.billingCountryCode} onChange={(e) => setContactField("billingCountryCode", e.target.value.toUpperCase())} /></label>
             </div>
           ) : null}
+          <label className="is-wide">
+            Affiliate code, optional
+            <input
+              data-testid="order-affiliate-code"
+              value={affiliateCode}
+              onChange={(e) => setAffiliateCode(e.target.value)}
+              maxLength={40}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="If someone referred you"
+            />
+          </label>
           <label className="xenios-order-check"><input type="checkbox" checked={contact.ageConfirmed} onChange={(e) => setContactField("ageConfirmed", e.target.checked)} data-testid="order-age-confirm" /> I confirm that I am at least 18 years old.</label>
           <div className="xenios-order-actions">
             <button type="button" onClick={() => setStep("products")}>Back</button>

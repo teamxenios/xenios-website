@@ -96,6 +96,39 @@ export function AdminAssistedOrderDetailPage() {
             <div className="xenios-order-review-contact"><div><strong>{detail.fullLegalName}</strong><span>{detail.email}</span><span>{detail.mobilePhone}</span><span>{detail.organizationName}</span></div><div><strong>Ship to</strong><span>{detail.shippingAddress.line1}</span><span>{detail.shippingAddress.city}, {detail.shippingAddress.region} {detail.shippingAddress.postalCode}</span><span>{detail.shippingAddress.countryCode}</span></div></div>
             <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span><span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
             {detail.generalNotes ? <div><h3>Customer notes</h3><p>{detail.generalNotes}</p></div> : null}
+            {/* Affiliate. The typed code and the verified attribution are shown
+                as SEPARATE lines, and the typed one always carries its match
+                state, so an operator never reads a claim as a proven
+                relationship. */}
+            <div data-testid="admin-affiliate">
+              <h3>Affiliate</h3>
+              <dl className="xenios-order-facts">
+                <div>
+                  <dt>Affiliate code</dt>
+                  <dd data-testid="admin-affiliate-code">
+                    {detail.declaredAffiliateCode ?? "None provided"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Match status</dt>
+                  <dd data-testid="admin-affiliate-state">
+                    {detail.declaredAffiliateCodeState === "matched_manual"
+                      ? "Matched"
+                      : detail.declaredAffiliateCodeState === "captured_unmatched"
+                        ? "Unmatched"
+                        : detail.declaredAffiliateCodeState === "invalid_ignored"
+                          ? "Ignored (not a usable code)"
+                          : "None provided"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Verified referral</dt>
+                  <dd data-testid="admin-verified-attribution">
+                    {detail.affiliateAttributionRef ?? "None"}
+                  </dd>
+                </div>
+              </dl>
+            </div>
             <h3>Documents</h3>
             {detail.documents.length === 0 ? <p>No documents received.</p> : <ul>{detail.documents.map((document) => <li key={document.documentId}>{document.fileName} · {document.status.replaceAll("_", " ")} <button type="button" onClick={() => download(document.documentId)}>Open securely</button></li>)}</ul>}
             <h3>Timeline</h3>

@@ -786,3 +786,119 @@ describe("the research-use-only acknowledgment is conditional", () => {
     expect(receipt.status).toBe("submitted");
   });
 });
+
+/**
+ * THE TYPED AFFILIATE CODE (founder decision, 2026-08-20).
+ *
+ * The whole point is that it is a CLAIM, not attribution. The service already
+ * refuses a browser-supplied `affiliateAttributionRef` so the browser cannot
+ * choose which partner an order pays; the typed code is accepted precisely
+ * because it grants nothing. These prove both halves of that: it is stored and
+ * surfaced, and it moves nothing it must not move.
+ */
+describe("the customer-typed affiliate code", () => {
+  it("is stored, normalized, as its own fact", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(
+      memberViewer,
+      input({ declaredAffiliateCode: " dana10 " }),
+    );
+    // Read it back the way an operator does. Storing it is not enough: the
+    // founder has to be able to SEE it to match it by hand.
+    const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+    expect(detail.declaredAffiliateCode).toBe("DANA10");
+    expect(detail.declaredAffiliateCodeState).toBe("captured_unmatched");
+  });
+
+  it("never lands in the server-verified attribution field", async () => {
+    // The invariant that matters most. If a typed string could reach here, the
+    // browser would be choosing which partner an order pays.
+    const h = harness();
+    const receipt = await h.service.submit(
+      memberViewer,
+      input({
+        declaredAffiliateCode: "DANA10",
+        affiliateAttributionRef: "partner_forged_by_browser",
+      }),
+    );
+    const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+    expect(detail.affiliateAttributionRef).toBeNull();
+    expect(detail.declaredAffiliateCode).toBe("DANA10");
+  });
+
+  it("lets an order through with no code at all", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    expect(receipt.publicReference).toBeTruthy();
+    const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+    expect(detail.declaredAffiliateCodeState).toBe("not_provided");
+  });
+
+  it("lets an order through when the code is unknown or malformed", async () => {
+    // Founder rule: an unknown code must NOT block an order. Malformed input is
+    // dropped, and the customer still gets their request.
+    for (const raw of ["NOBODY-HAS-THIS-CODE", "<script>alert(1)</script>", "a b c"]) {
+      const h = harness();
+      const receipt = await h.service.submit(
+        memberViewer,
+        input({ idempotencyKey: `k-${raw}`, declaredAffiliateCode: raw }),
+      );
+      expect(receipt.publicReference, raw).toBeTruthy();
+    }
+  });
+
+  it("drops a malformed code rather than storing it", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(
+      memberViewer,
+      input({ declaredAffiliateCode: "<script>" }),
+    );
+    const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+    expect(detail.declaredAffiliateCode).toBeNull();
+    expect(detail.declaredAffiliateCodeState).toBe("invalid_ignored");
+  });
+
+  it("changes no price, and no pathway, whatever the code says", async () => {
+    const plain = harness();
+    const a = await plain.service.submit(memberViewer, input());
+    const withCode = harness();
+    const b = await withCode.service.submit(
+      memberViewer,
+      input({ declaredAffiliateCode: "FREE100.OFF" }),
+    );
+    expect(b.estimatedTotalCents).toBe(a.estimatedTotalCents);
+    expect(b.lines[0].unitPriceCents).toBe(a.lines[0].unitPriceCents);
+    expect(b.lines[0].workflowMode).toBe(a.lines[0].workflowMode);
+  });
+
+  it("cannot mark anything paid, or move the request out of submitted", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(
+      memberViewer,
+      input({ declaredAffiliateCode: "PAID" }),
+    );
+    const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+    // Whatever the customer typed, the request begins where every request does.
+    expect(detail.status).toBe("submitted");
+    expect(detail.declaredAffiliateCode).toBe("PAID");
+  });
+
+  it("reaches the ADMIN notification and never the customer's", async () => {
+    const h = harness();
+    await h.service.submit(memberViewer, input({ declaredAffiliateCode: "DANA10" }));
+    const admin = h.notifications.find((n) => n.recipientKind === "admin");
+    const customer = h.notifications.find((n) => n.recipientKind === "customer");
+    expect((admin?.payload as Record<string, unknown>)?.declaredAffiliateCode).toBe("DANA10");
+    // The customer has no business seeing internal affiliate bookkeeping.
+    expect(JSON.stringify(customer?.payload)).not.toContain("DANA10");
+    expect(JSON.stringify(customer?.payload)).not.toMatch(/affiliate/i);
+  });
+
+  it("does not duplicate notifications when the same submission replays", async () => {
+    const h = harness();
+    const first = await h.service.submit(memberViewer, input({ declaredAffiliateCode: "DANA10" }));
+    const replay = await h.service.submit(memberViewer, input({ declaredAffiliateCode: "DANA10" }));
+    expect(replay.publicReference).toBe(first.publicReference);
+    expect(h.notifications).toHaveLength(2);
+  });
+});

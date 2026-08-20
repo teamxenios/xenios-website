@@ -89,6 +89,14 @@
   .xenios-order-actions button { width: 100%; }
   .xenios-order-card__header { display: grid; }
   .xenios-order-review-lines article { display: grid; }
+  /* iOS Safari zooms the page whenever a focused text control computes under
+     16px, and these inherit .9rem from their label, so every field on the order
+     form shifted the layout on focus. 16px is the platform threshold, not a
+     taste choice; the checkbox is excluded because it sizes from width/height
+     and zoom does not apply to it. */
+  .xenios-order-page input:not([type="checkbox"]),
+  .xenios-order-page select,
+  .xenios-order-page textarea { font-size: 16px; }
 }
 .xenios-order-timeline { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 14px; }
 .xenios-order-timeline li { border-left: 3px solid var(--accent); padding-left: 15px; display: grid; gap: 3px; }
