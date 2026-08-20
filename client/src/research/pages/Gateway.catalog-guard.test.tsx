@@ -1,32 +1,13 @@
 // @vitest-environment jsdom
-//
-// SCOPE CHANGED 2026-08-19, AND THE CHANGE IS NOT SETTLED YET. Read this
-// before editing.
-//
-// The original founder directive (Samuel), enforced here since it was
-// written: there must be no "Research Catalog" button, card, tile, hero CTA,
-// navigation CTA, or equivalent public catalog-entry control on the /research
-// home page. It was recorded as a repeated nonnegotiable.
-//
-// The 2026-08-19 launch directive ("PUBLIC STOREFRONT + ORDER ENTRY")
-// reverses that for ONE surface: "MAKE THE LANDING PAGE COMMERCIAL. Primary
-// CTA: Browse Research Catalog. Secondary CTA: Member Sign In." The two
-// directives are in direct conflict; the newer one is implemented on
-// lane/launch-public-storefront in an isolated commit so it can be dropped
-// whole, and it is logged in .xenios/FOUNDER_ACTIONS.md awaiting Samuel's
-// confirmation. If the reversal was not intended, revert that commit and this
-// file returns to forbidding every catalog CTA.
-//
-// WHAT THIS GUARD STILL PROTECTS, unchanged and just as hard: the Gateway
-// must never link to a MEMBER-PRIVATE, partner, supplier, or admin catalog
-// surface. /research/member/products, /research/member/catalog,
-// /research/supplements, /research/products and anything catalog-display
-// remain forbidden. Only the fail-closed public storefront projection at
-// /research/catalog is permitted, and it is separately asserted to be
-// present, so the page's commercial intent cannot silently regress either.
-//
-// See docs/research/RESEARCH_HOME_CATALOG_POLICY.md for the full rationale,
-// what changed materially, and how to extend this guard.
+// Founder directive (Samuel): there must be no "Research Catalog" button,
+// card, tile, hero CTA, navigation CTA, or equivalent public catalog-entry
+// control on the /research home page (client/src/research/pages/Gateway.tsx,
+// mounted at "/research" in client/src/research/section.tsx). This file is
+// the automated lock: it must keep failing the build the moment a catalog
+// CTA reappears here, whether by direct regression, a responsive-only
+// variant, or a feature flag. See docs/research/RESEARCH_HOME_CATALOG_POLICY.md
+// for where catalog access legitimately lives instead, and how to extend
+// this guard if a new, genuinely non-catalog Gateway CTA is ever added.
 //
 // Three independent checks live in this one file on purpose, each catching
 // something the others cannot:
@@ -62,36 +43,28 @@ import Gateway from "./Gateway";
 
 const GATEWAY_SOURCE_PATH = resolve(dirname(fileURLToPath(import.meta.url)), "Gateway.tsx");
 
-// The PHRASE denylist is retired as of 2026-08-19 and deliberately empty.
-//
-// It cannot survive the reversal: the directed primary CTA is literally
-// "Browse Research Catalog", so every phrase in the old list ("catalog",
-// "research catalog", "browse products", "shop", ...) would now reject the
-// page the founder asked for. Renaming the CTA to dodge the denylist, which
-// the old policy's rule 5 would otherwise require, is not available either —
-// the wording itself is the directive.
-//
-// Deleting a whole layer of a lock deserves to be uncomfortable, so it is
-// stated plainly rather than quietly widened: WORDING IS NO LONGER GUARDED ON
-// THIS PAGE. What replaces it is stricter than a word list and is what
-// actually mattered — the href denylist below (where a CTA leads, which no
-// rename can disguise), the closed allowlist (what may exist at all), and the
-// positive storefront assertion. A CTA reading "Shop now" that pointed at
-// /research/member/products still fails, on its href, as it always did.
-const DENYLISTED_PHRASES: string[] = [];
+// Phrases that, in an accessible name, visible text, or data-testid, mean
+// "this is a way into the product catalog." Matched case-insensitively as
+// substrings, so "Research Catalog", "See the catalog", "Shop now", etc. all
+// trip it.
+const DENYLISTED_PHRASES = [
+  "research catalog",
+  "catalog",
+  "browse products",
+  "shop",
+  "view products",
+  "product catalog",
+  "see catalog",
+  "enter catalog",
+];
 
-// Hrefs that lead to a MEMBER-PRIVATE, partner, supplier, or admin catalog
-// surface. section.tsx redirects the legacy /research/* paths to their
-// canonical /research/member/* equivalents, so a public Gateway CTA pointed
-// at either form is equally a private-catalog entry point.
-//
-// /research/catalog is NOT here any more: it is the fail-closed public
-// storefront projection (no SKUs, no member pricing, sells nothing, noindex,
-// off unless RESEARCH_PUBLIC_STOREFRONT_ENABLED is exactly "true").
-// /research/member/catalog IS still here, and the patterns are anchored so
-// the public route can never be read as permission for the member one.
+// Hrefs that lead to a real or legacy catalog surface. section.tsx redirects
+// the legacy /research/* paths to their canonical /research/member/*
+// equivalents, so a public Gateway CTA pointed at either form is equally a
+// catalog entry point.
 const DENYLISTED_HREF_PATTERNS: RegExp[] = [
   /\/research\/products(\/|$|\?)/i,
+  /\/research\/catalog(\/|$|\?)/i,
   /\/research\/member\/catalog(\/|$|\?)/i,
   /\/research\/supplements(\/|$|\?)/i,
   /\/research\/member\/products(\/|$|\?)/i, // the real member-catalog route today
@@ -208,15 +181,6 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       // doors. No product, no price, and no catalog data are reachable from
       // it without a server-authorized session; a catalog CTA it is not.
       "/research/access-hub",
-      // The public storefront (link-gateway-catalog). REVIEWED under the
-      // 2026-08-19 launch directive, and the one entry that reverses the
-      // original policy. The page behind it is a projection composed for a
-      // viewer with no pricing grant: no SKU, no Product Control identity, no
-      // price provenance, no member href, no cart, no checkout. It shows a
-      // price only where the server supplied one, never zero. It is off
-      // unless RESEARCH_PUBLIC_STOREFRONT_ENABLED is exactly "true", and it
-      // stays noindex. A member-catalog CTA it is not.
-      "/research/catalog",
     ]);
 
     const view = await renderGateway();
@@ -314,12 +278,9 @@ describe("Gateway: source-level route guard", () => {
   // comment legitimately contains the word "catalog" ("No navigation, no
   // catalog, ..."), so a bare word scan would false-positive on that
   // comment; a route-string scan does not.
-  // "/research/catalog" is deliberately absent: it is the reviewed public
-  // storefront. Note it is also a PREFIX of "/research/catalog/:family/:slug",
-  // which is fine, and NOT a prefix of "/research/member/catalog", which is
-  // listed separately and still forbidden.
   const DENYLISTED_ROUTE_STRINGS = [
     "/research/products",
+    "/research/catalog",
     "/research/member/catalog",
     "/research/supplements",
     "/research/member/products", // the real member-catalog route today
@@ -331,56 +292,10 @@ describe("Gateway: source-level route guard", () => {
     const hits = DENYLISTED_ROUTE_STRINGS.filter((route) => source.includes(route));
     expect(
       hits,
-      `Gateway.tsx source contains denylisted catalog route string(s): ${hits.join(", ")}. A member-private, ` +
-        `partner, supplier, or admin catalog entry point is not allowed on the /research home page, even inside ` +
-        `a conditional the DOM tests above never render. Remove it, or if this is a legitimate addition, update ` +
+      `Gateway.tsx source contains denylisted catalog route string(s): ${hits.join(", ")}. A public catalog ` +
+        `entry point is not allowed on the /research home page, even inside a conditional the DOM tests above ` +
+        `never render. Remove it, or if this is a legitimate non-catalog addition, update ` +
         `docs/research/RESEARCH_HOME_CATALOG_POLICY.md and the rationale here first.`,
     ).toEqual([]);
-  });
-});
-
-describe("Gateway: the commercial storefront CTA is present (2026-08-19 directive)", () => {
-  // The reversal asserted POSITIVELY. Everything else in this file constrains
-  // what may not appear; without this, someone could quietly delete the
-  // directed primary CTA and every remaining test would still pass, which is
-  // how a commercial landing page silently becomes a wall again.
-
-  it("links to the public storefront exactly once, as a primary CTA", async () => {
-    const view = await renderGateway();
-    const storefrontLinks = Array.from(
-      view.querySelectorAll<HTMLAnchorElement>('a[href="/research/catalog"]'),
-    );
-    expect(
-      storefrontLinks.map(describeElement),
-      "the /research Gateway must offer exactly one Browse Research Catalog CTA",
-    ).toHaveLength(1);
-
-    const cta = storefrontLinks[0];
-    expect(cta.getAttribute("data-testid")).toBe("link-gateway-catalog");
-    expect((cta.textContent ?? "").trim()).toBe("Browse Research Catalog");
-    // Primary, not a buried text link: the directive names it the primary CTA.
-    expect(cta.className).toContain("btn-primary");
-  });
-
-  it("offers Member Sign In beside it", async () => {
-    const view = await renderGateway();
-    const signIn = view.querySelector<HTMLAnchorElement>(
-      'a[data-testid="link-gateway-signin"]',
-    );
-    expect(signIn, "the Gateway must offer a Member Sign In CTA").not.toBeNull();
-    expect(signIn!.getAttribute("href")).toBe("/research/sign-in");
-    expect((signIn!.textContent ?? "").trim()).toBe("Member Sign In");
-  });
-
-  it("still refuses a member-catalog link even alongside the public one", async () => {
-    // The anchored patterns must not be readable as blanket permission: prove
-    // the member route is rejected while the public route is accepted.
-    const host = document.createElement("div");
-    host.innerHTML =
-      '<a href="/research/catalog">ok</a>' +
-      '<a href="/research/member/catalog">not ok</a>';
-    const findings = collectDenylistFindings(host);
-    expect(findings).toHaveLength(1);
-    expect(findings[0].element).toContain("/research/member/catalog");
   });
 });
