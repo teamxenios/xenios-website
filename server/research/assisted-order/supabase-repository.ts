@@ -177,7 +177,12 @@ function decodeStatusView(value: unknown): AssistedOrderStatusView {
   });
 }
 
-function decodeAdminDetail(value: unknown): AssistedOrderAdminDetail {
+/**
+ * Exported for the backward-compatibility test: a request row written BEFORE
+ * the declared-code columns existed must still decode, because the migrate-
+ * then-deploy order deliberately leaves such rows in the table.
+ */
+export function decodeAdminDetail(value: unknown): AssistedOrderAdminDetail {
   const item = assertObject(value, "admin detail");
   return Object.freeze({
     requestId: text(item, "requestId"),
