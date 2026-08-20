@@ -37,7 +37,7 @@ function harness(options: { paid?: boolean } = {}) {
   store.seedSupplier({ supplierId: SUPPLIER_B_ID, supplierLabel: "Supplier B" });
   store.seedFulfillmentOrder({
     fulfillmentOrderId: ORDER_ID,
-    orderReference: "XEN-1001",
+    orderReference: "XEA-7F3K9QW2TM4BXYZ1",
     memberId: MEMBER_ID,
     paid: options.paid ?? true,
     recipient: {
@@ -245,9 +245,9 @@ describe("in-memory fulfillment store", () => {
     const { store, service } = harness();
     await assign(service);
     const otherMember = "89999999-9999-4999-8999-999999999999";
-    expect(await store.findAssignmentForMember(otherMember, "XEN-1001")).toBeNull();
-    const owned = await store.findAssignmentForMember(MEMBER_ID, "XEN-1001");
-    expect(owned?.orderReference).toBe("XEN-1001");
+    expect(await store.findAssignmentForMember(otherMember, "XEA-7F3K9QW2TM4BXYZ1")).toBeNull();
+    const owned = await store.findAssignmentForMember(MEMBER_ID, "XEA-7F3K9QW2TM4BXYZ1");
+    expect(owned?.orderReference).toBe("XEA-7F3K9QW2TM4BXYZ1");
   });
 
   it("throws typed errors for unknown records", async () => {

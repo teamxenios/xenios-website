@@ -111,12 +111,18 @@ Routes registered:
 
 | Method | Path | Guard |
 | --- | --- | --- |
-| GET | `/api/research/fulfillment/admin/assignments` | `requireAdmin` + internal actor |
-| POST | `/api/research/fulfillment/admin/assignments` | `requireAdmin` + internal actor |
-| POST | `/api/research/fulfillment/admin/assignments/:assignmentId/transition` | `requireAdmin` + internal actor |
-| GET | `/api/research/fulfillment/supplier/assignments` | supplier actor |
-| POST | `/api/research/fulfillment/supplier/assignments/:assignmentId/transition` | supplier actor + action allowlist |
+| GET | `/api/admin/research/fulfillment/assignments` | `requireAdmin` + internal actor |
+| POST | `/api/admin/research/fulfillment/assignments` | `requireAdmin` + internal actor |
+| POST | `/api/admin/research/fulfillment/assignments/:assignmentId/transition` | `requireAdmin` + internal actor |
+| GET | `/api/admin/research/fulfillment/supplier/assignments` | supplier actor (NOT `requireAdmin`) |
+| POST | `/api/admin/research/fulfillment/supplier/assignments/:assignmentId/transition` | supplier actor + action allowlist |
 | GET | `/api/research/fulfillment/orders/:orderReference/status` | member identity, server-derived |
+
+The five operator doors sit under `/api/admin/research/...` so the research
+wall never answers for them and never has to be widened for operator traffic.
+The supplier pair shares that namespace for the same reason but answers to the
+supplier guard, not `requireSupabaseAdmin` — a supplier operator is not an
+admin, and there is no blanket guard on `/api/admin/*` to assume otherwise.
 
 Required of the lead before these do real work:
 
@@ -138,32 +144,79 @@ Required of the lead before these do real work:
    candidate SQL is reviewed, registered in the migration DAG, and applied with
    current founder approval.
 
-## Release census update required (lead-owned, currently RED)
+## Release census — no change needed
 
-`server/release-control-plane.test.ts` is owned by `ASSISTED-ORDER-MOUNT`
-(`claude-fable-main`), so this lane did not edit it. Its route census now
-fails on this branch and the lead must accept the new numbers:
+The lead already pinned this lane at **386 call sites / 395 registrations**
+at `119228c`. Moving the five operator doors out of the research namespace
+changes the paths but not the count, so those pins remain correct.
+Re-measured with the repo's own scanner on this branch: `callSites` 386,
+`routes` 395, `validateRouteUniqueness` returns `[]`, no scanner issues.
 
+The scanner walks every non-test `.ts` under `server/`, so it still records
+these six descriptors even though **nothing mounts them** —
+`registerFulfillmentRoutes` has no caller.
+
+## The wall admission (lead seam — exact verified diff)
+
+`server/research/index.ts` is a lead seam, so this lane did not change it.
+The pattern is exported from `server/research/fulfillment/wall-admission.ts`,
+a module that deliberately imports nothing but the order-number regex, so the
+wall depends on a shape rather than on the fulfillment subsystem:
+
+```ts
+export const FULFILLMENT_CUSTOMER_STATUS_ADMISSION = new RegExp(
+  `^/fulfillment/orders/(?:${EARLY_ACCESS_ORDER_NUMBER.source.replace(/^\^|\$$/g, "")})/status$`,
+);
 ```
-expect(result.callSites).toBe(376);   ->  382
-expect(result.routes).toHaveLength(385);  ->  391
+
+Expanded, that is `^/fulfillment/orders/(?:XEA-[0-9ABCDEFGHJKMNPQRSTVWXYZ]{16})/status$`,
+anchored at both ends, against the path AFTER the `/api/research` mount prefix.
+Method: **GET** only. The segment comes from the generator's own anchored
+regex, so the door cannot drift from the shape the server mints.
+
+This exact diff was applied locally, verified, and reverted — the full
+wall-composed suite goes from 10 passed / 2 skipped to **12 passed**:
+
+```diff
+ import { z } from "zod";
++import { FULFILLMENT_CUSTOMER_STATUS_ADMISSION } from "./fulfillment/wall-admission";
+
+           EARLY_ACCESS_CART_READ.test(req.path) ||
+-          EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path))) ||
++          EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path) ||
++          FULFILLMENT_CUSTOMER_STATUS_ADMISSION.test(req.path))) ||
 ```
 
-Measured with the repo's own scanner: `validateRouteUniqueness` returns `[]`
-and the scanner reports no issues, so there are no path collisions. The
-scanner walks every non-test `.ts` under `server/`, so it records these six
-descriptors from `server/research/fulfillment/register.ts` even though
-**nothing mounts them** — `registerFulfillmentRoutes` has no caller.
-
-Suggested census paragraph for the comment block:
+Census paragraph, if the existing note needs refreshing for the new paths:
 
 > +6 (minimum fulfillment and tracking, FULFILLMENT-MOUNT): the six
-> descriptors from the fulfillment lane's own registrar. Three admin doors
-> sit behind the injected `requireAdmin` guard, two supplier doors resolve a
-> supplier-scoped actor, and one customer door serves a safe status
-> projection. The registrar is not called from `server/index.ts`, so these
+> descriptors from the fulfillment lane's own registrar. Five operator doors
+> sit under `/api/admin/research/fulfillment/...`, OUTSIDE the research wall,
+> so admin and supplier traffic is never a reason to widen that allowlist:
+> three answer to the injected `requireAdmin` guard and two to the supplier
+> guard. One customer door stays inside the research namespace and is admitted
+> by an anchored pattern on the exact generated order-number shape. The
+> registrar is not called from `server/index.ts`, so these
 > are scanner call sites and not yet reachable doors; unwired supplier
 > access and unwired customer reads answer 503 rather than 200.
+
+## The wall-composed test
+
+`register.test.ts` registers the route table on a bare app with no wall in
+front of it — the same blind spot that once left every cart route unreachable
+by the customers it existed for. `register-wall.test.ts` closes it: it composes
+the REAL `registerResearchApi` wall in front of the real table and pins that
+the customer door reaches its own handler, that the five operator doors are
+never answered by the wall, that a lookalike or wrong-method order reference
+stays walled, and that no operator door has drifted back inside the research
+namespace.
+
+Two of its assertions cannot pass until the wall admission lands, so they
+**skip with a named reason** rather than failing the branch, and they activate
+automatically the moment the lead adds the entry — nothing has to be
+remembered or unskipped by hand. The skip is driven by probing the real wall,
+so it cannot pass by accident. Verified: with the admission applied locally the
+file goes from 10 passed / 2 skipped to 12 passed.
 
 ## Client state-list gaps this contract change creates (lead-owned)
 
