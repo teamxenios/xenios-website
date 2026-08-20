@@ -5,6 +5,6 @@
   "branch": "lane/fulfillment-tracking-min",
   "state": "active",
   "startedAt": "2026-08-19T16:43:13.336Z",
-  "heartbeatAt": "2026-08-20T14:19:38.573Z",
-  "note": "FULFILLMENT-MOUNT handed off at 4b8ed62a6b0e0d0fea14915e8207abb6cbdab164 (pushed, branch lane/fulfillment-tracking-min). 48 tests pass, tsc clean. Awaiting lead: route mount, census 376->382 / 385->391, candidate SQL, admin client state lists."
+  "heartbeatAt": "2026-08-20T18:12:17.024Z",
+  "note": "Wall finding answered at 4a7bca30f0a9b9516ec645ce50c3c0665c6f8fd0 (lane/fulfillment-wall-alignment, pushed). Operator doors moved outside the wall, admission regex exported + verified, wall-composed test added. Census unchanged 386/395. 160 passed/3 skipped, tsc clean. Awaiting lead: 2-line wall admission, candidate SQL, admin client state lists."
 }

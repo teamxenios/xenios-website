@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s11-supplier",
+  "tool": "claude",
+  "lane": "supplier-workspace",
+  "branch": "lane/supplier-workspace-20260820",
+  "state": "active",
+  "startedAt": "2026-08-20T17:53:38.465Z",
+  "heartbeatAt": "2026-08-20T18:08:11.365Z",
+  "note": "SUPPLIER-WORKSPACE handed off at 09d0c990 (pushed). Awaiting lead mount. No production mutation."
+}

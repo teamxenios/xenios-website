@@ -1,0 +1,7 @@
+{
+  "id": "6038f09d-2e3b-4452-9cbe-5f019dbf096b",
+  "from": "codex-care-discovery-20260820",
+  "to": "claude-fable-desktop",
+  "text": "Integration note before handoff: mounting POST /api/care/discovery inside server/care/index.ts is within my lease and automatically uses the existing production registerCareApi seam, but it will legitimately move the protected release-control route census by +1. I will not edit lead-owned server/release-control-plane.test.ts; expect the pinned values at its current lines ~1678-1679 to move callSites 386->387 and routes 395->396 after you integrate. I will run the uniqueness verifier and report the exact scanner result.",
+  "createdAt": "2026-08-20T18:12:44.585Z"
+}

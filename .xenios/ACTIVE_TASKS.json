@@ -50,14 +50,21 @@
       "id": "SUPPLIER-WORKSPACE",
       "title": "Build minimum-data supplier workspace",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "qa",
+      "owner": "claude-fable-s11-supplier",
       "paths": [
         "client/src/research/supplier/**",
         "server/research/supplier/**",
         "shared/research/supplier/**"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-20T17:53:40.115Z",
+      "handoff": {
+        "session": "claude-fable-s11-supplier",
+        "sha": "09d0c990aaec3428a3f3bd2b8002382ea739e097",
+        "file": ".xenios/handoffs/2026-08-20T18-08-03-795Z-SUPPLIER-WORKSPACE-claude-fable-s11-supplier.md",
+        "at": "2026-08-20T18:08:03.797Z"
+      }
     },
     {
       "id": "AFFILIATE-PRODUCTION",
@@ -235,20 +242,20 @@
         "shared/research/assisted-order/**"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-19T16:37:33.073Z",
+      "claimedAt": "2026-08-20T17:51:58.215Z",
       "handoff": {
         "session": "claude-fable-s3",
-        "sha": "33af738e5825e0032e249dbf16ef1d7055d6c848",
-        "file": ".xenios/handoffs/2026-08-20T14-15-22-868Z-ASSISTED-ORDER-CUSTOMER-FLOW-claude-fable-s3.md",
-        "at": "2026-08-20T14:15:22.872Z"
+        "sha": "0b9c24eb070045844ae52094b91430a92c298f3b",
+        "file": ".xenios/handoffs/2026-08-20T18-03-29-854Z-ASSISTED-ORDER-CUSTOMER-FLOW-claude-fable-s3.md",
+        "at": "2026-08-20T18:03:29.858Z"
       }
     },
     {
       "id": "CATALOG-ACTION-UNIFICATION",
       "title": "One buyer-scoped catalog pathway and price projection for every surface",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "claude-fable-s7",
       "paths": [
         "shared/research/master-offerings/**",
         "server/research/master-offerings/**",
@@ -256,7 +263,8 @@
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-20T17:51:40.938Z"
     },
     {
       "id": "FULFILLMENT-MOUNT",
@@ -295,14 +303,21 @@
       "id": "CARE-DISCOVERY-BRIDGE",
       "title": "Implement /api/care/discovery and the provider_request handoff into Care",
       "priority": "P2",
-      "state": "ready",
-      "owner": null,
+      "state": "qa",
+      "owner": "codex-care-discovery-20260820",
       "paths": [
         "server/care/**",
         "client/src/care/**",
         "shared/care/**"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-20T18:07:19.883Z",
+      "handoff": {
+        "session": "codex-care-discovery-20260820",
+        "sha": "64c9da533132be871018cd2b88e47af59d36bf2e",
+        "file": ".xenios/handoffs/2026-08-20T18-22-10-687Z-CARE-DISCOVERY-BRIDGE-codex-care-discovery-20260820.md",
+        "at": "2026-08-20T18:22:10.689Z"
+      }
     },
     {
       "id": "CANONICAL-ORDER-HISTORY",
@@ -329,15 +344,23 @@
       "id": "FULL-VISION-DEMO",
       "title": "Build the production-isolated multi-persona /research/demo lane with browser E2E",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "qa",
+      "owner": "claude-fable-s9-conversion-qa",
       "paths": [
         "client/src/research/demo/**",
         "server/research/demo/**",
         "e2e/**",
         "scripts/demo-seed.*"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "claimedAt": "2026-08-20T17:56:19.544Z",
+      "releasedAt": "2026-08-20T14:54:58.522Z",
+      "handoff": {
+        "session": "claude-fable-s9-conversion-qa",
+        "sha": "c7bb20a42cb8e85eb8475ca0c6c73009667552aa",
+        "file": ".xenios/handoffs/2026-08-20T18-09-22-510Z-FULL-VISION-DEMO-claude-fable-s9-conversion-qa.md",
+        "at": "2026-08-20T18:09:22.520Z"
+      }
     }
   ]
 }

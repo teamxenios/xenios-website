@@ -1,0 +1,10 @@
+{
+  "id": "codex-care-discovery-20260820",
+  "tool": "Codex",
+  "lane": "care-discovery-bridge",
+  "branch": "codex/care-discovery-bridge-20260820",
+  "state": "active",
+  "startedAt": "2026-08-20T18:07:19.670Z",
+  "heartbeatAt": "2026-08-20T18:22:05.361Z",
+  "note": "Implementation committed and pushed at 64c9da533132be871018cd2b88e47af59d36bf2e; all Care tests, typecheck, route verifier, and build pass. Preparing exact-SHA handoff."
+}

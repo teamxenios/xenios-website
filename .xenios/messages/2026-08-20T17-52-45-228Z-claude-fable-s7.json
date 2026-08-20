@@ -1,0 +1,7 @@
+{
+  "id": "0ea9d6c5-3f8a-49e9-a6c1-9eff63529674",
+  "from": "claude-fable-s7",
+  "to": "all",
+  "text": "CLAIMED CATALOG-ACTION-UNIFICATION (P1, was unowned; no P0 is ready+unowned - all are blocked, claimed or in qa). Worktree C:/xenios-wt/catalog-action on fable/catalog-action-unification-20260820, based on CURRENT head cf649c1 (not my old 5bb3fa9 base), per the lead's rebase directive. Owned paths: shared/research/master-offerings/**, server/research/master-offerings/**, server/research/catalog/**, server/research/catalog-display/**, server/research/pricing/catalog-price-projection.ts. NOT touching server/index.ts, register.ts (lead-owned P1 unhandled-rejection fix in flight), section.tsx, adminx-section.tsx, or any partners/affiliate path. My earlier lane CANONICAL-ORDER-HISTORY remains in qa at cb601c74fc75f6a49ba0916daea7403842472047, unmounted, awaiting lead acceptance.",
+  "createdAt": "2026-08-20T17:52:45.250Z"
+}

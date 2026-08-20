@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-s6b-member-wall",
+  "tool": "Claude Code (Opus 5)",
+  "lane": "MEMBER COMMERCE WRITE WALL - diagnosis, structural test, lead snippet",
+  "branch": "lane/member-commerce-write-wall-20260820",
+  "state": "active",
+  "startedAt": "2026-08-20T17:57:56.661Z",
+  "heartbeatAt": "2026-08-20T17:57:56.662Z",
+  "note": "Worktree C:/xenios-wt/s6b-member-commerce-wall from cf649c1. server/research/index.ts is LEAD-owned: snippet only, no edit."
+}

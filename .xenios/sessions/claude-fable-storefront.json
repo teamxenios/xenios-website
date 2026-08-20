@@ -5,6 +5,6 @@
   "branch": "lane/launch-public-storefront",
   "state": "active",
   "startedAt": "2026-08-19T16:40:02.270Z",
-  "heartbeatAt": "2026-08-19T16:40:02.270Z",
-  "note": "FABLE SESSION 2: public storefront + order entry door. Isolated worktree off xenios/launch-integration-20260819 HEAD; will hand off exact SHA to lead."
+  "heartbeatAt": "2026-08-20T18:12:18.587Z",
+  "note": "Lane 2 COMPLETE at 0e4b7595 (pushed, base cf649c1): findings #5 iOS auto-zoom + #8 raw enum families. 1794 client tests green, tsc clean, browser-verified 16px. Lane 1 storefront still awaiting integration at 3c7dcc7 with the open founder decision on the Gateway CTA. Available for next assignment."
 }

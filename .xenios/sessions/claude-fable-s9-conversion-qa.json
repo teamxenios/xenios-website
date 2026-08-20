@@ -5,6 +5,6 @@
   "branch": "lane/e2e-conversion-qa-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:41:44.730Z",
-  "heartbeatAt": "2026-08-19T16:41:44.730Z",
-  "note": "Fable session 9: mobile + E2E conversion QA attacker in isolated worktree; fixes isolated frontend defects only, files handoffs for protected seams (payment authority untouched); lead claude-fable-desktop integrates"
+  "heartbeatAt": "2026-08-20T18:09:35.850Z",
+  "note": "FULL-VISION-DEMO (launch negatives slice) handed off at c7bb20a4 on lane/e2e-conversion-qa-20260819 (pushed, base cf649c1). 16 composed-door negative controls, tsc clean, standalone vitest config so no shared root file changed. Suite proven to fail via 3 reverted mutations. Uncovered-and-named: held-cannot-BuyNow (needs s7 catalog lane), unpaid-cannot-fulfil (needs s8 mount). Also reported 2 fleet-tooling defects: xenios-os next ignores leases, and overlaps() freezes REQUEST-CENTER/NOTIFICATION-CENTER/ANALYTICS for everyone."
 }

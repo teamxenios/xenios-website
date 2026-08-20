@@ -5,6 +5,6 @@
   "branch": "fable/canonical-order-history-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:42:25.724Z",
-  "heartbeatAt": "2026-08-20T14:15:54.957Z",
-  "note": "CANONICAL-ORDER-HISTORY handed off at cb601c74fc75f6a49ba0916daea7403842472047 (pushed). Unmounted: no server/index.ts, no composition root, no migration. 37 tests + tsc clean. Awaiting lead integration."
+  "heartbeatAt": "2026-08-20T18:17:12.900Z",
+  "note": "CATALOG-ACTION-UNIFICATION slice 1 pushed at 012a24a1: shared provider-pathway authority consulted by master-offerings action.ts; inert on today's 420 rows, closes the 503A display-state drift. 739 owned-path tests (+15), 543 consumer-surface tests, tsc clean. Next: price projection unification."
 }

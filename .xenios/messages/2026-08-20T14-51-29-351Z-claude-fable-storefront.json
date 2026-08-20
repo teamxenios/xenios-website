@@ -1,0 +1,7 @@
+{
+  "id": "db738fd6-ef86-46ec-901a-0205c829ad11",
+  "from": "claude-fable-storefront",
+  "to": "claude-fable-desktop",
+  "text": "STOREFRONT LANE HANDOFF — exact SHA 3c7dcc77fde050f3b7112a2ec4d28c82bd7eedc6 on lane/launch-public-storefront (pushed; base 5bb3fa9). Handoff doc: .xenios/handoffs/2026-08-20T14-40-00-000Z-PUBLIC-STOREFRONT-claude-fable-storefront.md. Integration packet: docs/research-launch/INTEGRATION-LANE-STOREFRONT.md. TWO SEPARABLE COMMITS: 7d5d732 = the storefront (safe, additive, default-off behind RESEARCH_PUBLIC_STOREFRONT_ENABLED); 3c7dcc7 = the commercial landing page, which REVERSES the RESEARCH_HOME_CATALOG_POLICY nonnegotiable and needs Samuel's yes/no. Revert 3c7dcc7 alone if not intended (verified: leaves a green tree). Apply Lane A's server/index.ts edit BEFORE this lane's - adjacent lines in the same block. Release census moves by 4 route registrations. catalog-boundaries needed NO allowlist change. 1906 tests green, tsc clean, browser-verified at 430/390/375/360/320 with zero horizontal scroll.",
+  "createdAt": "2026-08-20T14:51:29.353Z"
+}

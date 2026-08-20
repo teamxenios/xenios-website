@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-20T13:43:56.961Z",
-      "note": "Lead: founder decisions broadcast c5f866c, release packet 4e9ac63; outbox worker verified live in prod logs; DoD audit workflow running; awaiting first worker pushes"
+      "heartbeatAt": "2026-08-20T17:22:56.823Z",
+      "note": "RC 0aba726 green (682 files). All 10 confirmed hunt findings resolved; Care add-to-cart hazard closed. Awaiting founder go for deploy."
     },
     {
       "id": "claude-fable-lane4-affiliate",
@@ -38,8 +38,8 @@
       "branch": "lane/affiliate-attribution-core",
       "state": "active",
       "startedAt": "2026-08-19T16:35:54.248Z",
-      "heartbeatAt": "2026-08-20T14:14:53.570Z",
-      "note": "Lane 4 delivered at 8c3fdc6 (pushed). Handoff + message sent to lead. Awaiting integration; no production mutation."
+      "heartbeatAt": "2026-08-20T18:13:31.014Z",
+      "note": "Lane 4B delivered ccd7f5f (pushed): declared affiliate code + referral share-path 404 fix. Awaiting lead integration."
     },
     {
       "id": "claude-fable-s3",
@@ -48,8 +48,8 @@
       "branch": "fable/assisted-order-customer-flow-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:37:17.279Z",
-      "heartbeatAt": "2026-08-20T14:16:34.580Z",
-      "note": "ASSISTED-ORDER-CUSTOMER-FLOW complete: 33af738e pushed, handoff filed, 37/37 focused tests green. Two blocking defects repaired (form acks never sent -> 400 on every real submit; confirmation route unreachable). Lead messaged that the Codex-3 QA rationale is now stale. Awaiting lead assignment; not taking another lane."
+      "heartbeatAt": "2026-08-20T18:04:14.023Z",
+      "note": "S9 defects closed at 0b9c24eb (member JWT + iOS 16px + family labels); 45/45 focused tests green; handoff filed; S9 and lead messaged. Lease in handoff. Awaiting delegation: register.ts unguarded handlers (lead seam) or CATALOG-ACTION-UNIFICATION."
     },
     {
       "id": "claude-fable-lane5-partner-portal",
@@ -68,8 +68,8 @@
       "branch": "lane/launch-public-storefront",
       "state": "active",
       "startedAt": "2026-08-19T16:40:02.270Z",
-      "heartbeatAt": "2026-08-19T16:40:02.270Z",
-      "note": "FABLE SESSION 2: public storefront + order entry door. Isolated worktree off xenios/launch-integration-20260819 HEAD; will hand off exact SHA to lead."
+      "heartbeatAt": "2026-08-20T18:12:18.587Z",
+      "note": "Lane 2 COMPLETE at 0e4b7595 (pushed, base cf649c1): findings #5 iOS auto-zoom + #8 raw enum families. 1794 client tests green, tsc clean, browser-verified 16px. Lane 1 storefront still awaiting integration at 3c7dcc7 with the open founder decision on the Gateway CTA. Available for next assignment."
     },
     {
       "id": "claude-fable-s9-conversion-qa",
@@ -78,8 +78,8 @@
       "branch": "lane/e2e-conversion-qa-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:41:44.730Z",
-      "heartbeatAt": "2026-08-19T16:41:44.730Z",
-      "note": "Fable session 9: mobile + E2E conversion QA attacker in isolated worktree; fixes isolated frontend defects only, files handoffs for protected seams (payment authority untouched); lead claude-fable-desktop integrates"
+      "heartbeatAt": "2026-08-20T18:09:35.850Z",
+      "note": "FULL-VISION-DEMO (launch negatives slice) handed off at c7bb20a4 on lane/e2e-conversion-qa-20260819 (pushed, base cf649c1). 16 composed-door negative controls, tsc clean, standalone vitest config so no shared root file changed. Suite proven to fail via 3 reverted mutations. Uncovered-and-named: held-cannot-BuyNow (needs s7 catalog lane), unpaid-cannot-fulfil (needs s8 mount). Also reported 2 fleet-tooling defects: xenios-os next ignores leases, and overlaps() freezes REQUEST-CENTER/NOTIFICATION-CENTER/ANALYTICS for everyone."
     },
     {
       "id": "claude-fable-s7",
@@ -88,8 +88,8 @@
       "branch": "fable/canonical-order-history-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:42:25.724Z",
-      "heartbeatAt": "2026-08-20T14:15:54.957Z",
-      "note": "CANONICAL-ORDER-HISTORY handed off at cb601c74fc75f6a49ba0916daea7403842472047 (pushed). Unmounted: no server/index.ts, no composition root, no migration. 37 tests + tsc clean. Awaiting lead integration."
+      "heartbeatAt": "2026-08-20T18:17:12.900Z",
+      "note": "CATALOG-ACTION-UNIFICATION slice 1 pushed at 012a24a1: shared provider-pathway authority consulted by master-offerings action.ts; inert on today's 420 rows, closes the 503A display-state drift. 739 owned-path tests (+15), 543 consumer-surface tests, tsc clean. Next: price projection unification."
     },
     {
       "id": "claude-fable-s8-fulfillment",
@@ -98,8 +98,8 @@
       "branch": "lane/fulfillment-tracking-min",
       "state": "active",
       "startedAt": "2026-08-19T16:43:13.336Z",
-      "heartbeatAt": "2026-08-20T14:19:38.573Z",
-      "note": "FULFILLMENT-MOUNT handed off at 4b8ed62a6b0e0d0fea14915e8207abb6cbdab164 (pushed, branch lane/fulfillment-tracking-min). 48 tests pass, tsc clean. Awaiting lead: route mount, census 376->382 / 385->391, candidate SQL, admin client state lists."
+      "heartbeatAt": "2026-08-20T18:12:17.024Z",
+      "note": "Wall finding answered at 4a7bca30f0a9b9516ec645ce50c3c0665c6f8fd0 (lane/fulfillment-wall-alignment, pushed). Operator doors moved outside the wall, admission regex exported + verified, wall-composed test added. Census unchanged 386/395. 160 passed/3 skipped, tsc clean. Awaiting lead: 2-line wall admission, candidate SQL, admin client state lists."
     },
     {
       "id": "claude-fable-s10-release-security",
@@ -108,7 +108,7 @@
       "branch": "lane/s10-release-security-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:43:14.972Z",
-      "heartbeatAt": "2026-08-20T14:11:37.348Z",
+      "heartbeatAt": "2026-08-20T18:04:36.377Z",
       "note": ""
     },
     {
@@ -118,8 +118,38 @@
       "branch": "lane/s6-request-quote-payment-20260820",
       "state": "active",
       "startedAt": "2026-08-20T14:14:50.384Z",
-      "heartbeatAt": "2026-08-20T14:48:51.595Z",
-      "note": "Lane complete through conversion gate + isolated UI. Pushed 3f48c2d on lane/s6-request-quote-payment-20260820. Handoff published."
+      "heartbeatAt": "2026-08-20T15:00:25.813Z",
+      "note": "Lane complete, QA SHA 9f17132. Uncontended full suite: 9889 pass / 2 fail, both pre-existing timeouts in kris-launch-a access-presentation."
+    },
+    {
+      "id": "claude-fable-s11-supplier",
+      "tool": "claude",
+      "lane": "supplier-workspace",
+      "branch": "lane/supplier-workspace-20260820",
+      "state": "active",
+      "startedAt": "2026-08-20T17:53:38.465Z",
+      "heartbeatAt": "2026-08-20T18:08:11.365Z",
+      "note": "SUPPLIER-WORKSPACE handed off at 09d0c990 (pushed). Awaiting lead mount. No production mutation."
+    },
+    {
+      "id": "claude-fable-s6b-member-wall",
+      "tool": "Claude Code (Opus 5)",
+      "lane": "MEMBER COMMERCE WRITE WALL - diagnosis, structural test, lead snippet",
+      "branch": "lane/member-commerce-write-wall-20260820",
+      "state": "active",
+      "startedAt": "2026-08-20T17:57:56.661Z",
+      "heartbeatAt": "2026-08-20T17:57:56.662Z",
+      "note": "Worktree C:/xenios-wt/s6b-member-commerce-wall from cf649c1. server/research/index.ts is LEAD-owned: snippet only, no edit."
+    },
+    {
+      "id": "codex-care-discovery-20260820",
+      "tool": "Codex",
+      "lane": "care-discovery-bridge",
+      "branch": "codex/care-discovery-bridge-20260820",
+      "state": "active",
+      "startedAt": "2026-08-20T18:07:19.670Z",
+      "heartbeatAt": "2026-08-20T18:22:05.361Z",
+      "note": "Implementation committed and pushed at 64c9da533132be871018cd2b88e47af59d36bf2e; all Care tests, typecheck, route verifier, and build pass. Preparing exact-SHA handoff."
     }
   ]
 }

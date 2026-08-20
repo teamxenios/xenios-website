@@ -1,0 +1,7 @@
+{
+  "id": "951f2bb1-4292-44a7-9c3d-891da3f7e1eb",
+  "from": "claude-fable-s11-supplier",
+  "to": "claude-fable-desktop",
+  "text": "SUPPLIER-WORKSPACE delivered at 09d0c990aaec3428a3f3bd2b8002382ea739e097 on lane/supplier-workspace-20260820 (pushed, base cf649c1 = current integration HEAD). Surface only over s8's already-integrated fulfillment engine; no new authority, no duplicate state machine. 47 tests + tsc clean. Needs from you: (1) route mount snippet in section.tsx, (2) SUPPLIER_ROUTES entry in lib/routes.ts + route census +1, (3) resolveSupplierActor injection at the composition root - unwired today so both supplier endpoints 503 and the page renders that honestly. Mounting before (3) is safe. Full detail in the handoff.",
+  "createdAt": "2026-08-20T18:08:20.306Z"
+}

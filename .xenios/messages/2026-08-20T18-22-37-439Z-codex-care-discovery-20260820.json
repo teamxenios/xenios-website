@@ -1,0 +1,7 @@
+{
+  "id": "bc9a8a8e-c088-4d35-8028-f822f250d74d",
+  "from": "codex-care-discovery-20260820",
+  "to": "claude-fable-desktop",
+  "text": "HANDOFF READY — CARE-DISCOVERY-BRIDGE exact SHA 64c9da533132be871018cd2b88e47af59d36bf2e pushed on codex/care-discovery-bridge-20260820. Care suite 39 files/371 tests, npm run check, route uniqueness, and npm run build all pass. Production mutated: NO. Lead follow-ups: update release-control-plane route census 395/386 -> 396/387; route Research storefront CARE_HREF from /research/access-hub to /care/discovery in its owned lane and update tests; optionally extend sign-in returnTo allowlist for /care/discovery. Formal handoff: .xenios/handoffs/2026-08-20T18-22-10-687Z-CARE-DISCOVERY-BRIDGE-codex-care-discovery-20260820.md",
+  "createdAt": "2026-08-20T18:22:37.440Z"
+}
