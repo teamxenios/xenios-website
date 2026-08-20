@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-20T01:15:19.531Z",
-      "note": "2026-08-20 FLEET RESUMED (founder order): resume base 6251a6a published; 9 dispatch messages written (.xenios/messages DISPATCH-SESSION-02..10); ownership table LAUNCH_LANE_OWNERSHIP_2026-08-20.md; dirty worktrees preserved with checkpoint-first instructions. Lead beginning Session 1 integration work; P0 = Early Access usable today."
+      "heartbeatAt": "2026-08-20T13:43:56.961Z",
+      "note": "Lead: founder decisions broadcast c5f866c, release packet 4e9ac63; outbox worker verified live in prod logs; DoD audit workflow running; awaiting first worker pushes"
     },
     {
       "id": "claude-fable-lane4-affiliate",
@@ -38,8 +38,8 @@
       "branch": "lane/affiliate-attribution-core",
       "state": "active",
       "startedAt": "2026-08-19T16:35:54.248Z",
-      "heartbeatAt": "2026-08-19T16:46:55.115Z",
-      "note": "Gap analysis done: grant writer has zero callers; building durable customer attribution binding + bind decorator + EA grant adapter in lane worktree"
+      "heartbeatAt": "2026-08-20T14:14:53.570Z",
+      "note": "Lane 4 delivered at 8c3fdc6 (pushed). Handoff + message sent to lead. Awaiting integration; no production mutation."
     },
     {
       "id": "claude-fable-s3",
@@ -48,8 +48,8 @@
       "branch": "fable/assisted-order-customer-flow-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:37:17.279Z",
-      "heartbeatAt": "2026-08-19T16:41:37.833Z",
-      "note": "Recon done (client+shared read, task claimed, worktree at 5bb3fa9). Waiting on server-route map; npm ci running in worktree."
+      "heartbeatAt": "2026-08-20T14:16:34.580Z",
+      "note": "ASSISTED-ORDER-CUSTOMER-FLOW complete: 33af738e pushed, handoff filed, 37/37 focused tests green. Two blocking defects repaired (form acks never sent -> 400 on every real submit; confirmation route unreachable). Lead messaged that the Codex-3 QA rationale is now stale. Awaiting lead assignment; not taking another lane."
     },
     {
       "id": "claude-fable-lane5-partner-portal",
@@ -58,8 +58,8 @@
       "branch": "lane/affiliate-partner-portal",
       "state": "active",
       "startedAt": "2026-08-19T16:38:15.308Z",
-      "heartbeatAt": "2026-08-19T16:48:27.875Z",
-      "note": ""
+      "heartbeatAt": "2026-08-20T14:13:16.904Z",
+      "note": "Lane 5 complete at 6d4262580f7f6f991819c65bdb86cf25bdec2c3f on lane/affiliate-partner-portal. Lifecycle stepper + live /partner/me binding + dashboard referral link. 85 focused tests pass, clean tsc. Handoff written; AFFILIATE-PRODUCTION board state left to claude-fable-desktop. Not pushed."
     },
     {
       "id": "claude-fable-storefront",
@@ -88,8 +88,8 @@
       "branch": "fable/canonical-order-history-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:42:25.724Z",
-      "heartbeatAt": "2026-08-19T16:43:48.305Z",
-      "note": "Worktree C:/xenios-wt/canonical-order at 5bb3fa9 on fable/canonical-order-history-20260819; mapping existing order flows before claiming paths"
+      "heartbeatAt": "2026-08-20T14:15:54.957Z",
+      "note": "CANONICAL-ORDER-HISTORY handed off at cb601c74fc75f6a49ba0916daea7403842472047 (pushed). Unmounted: no server/index.ts, no composition root, no migration. 37 tests + tsc clean. Awaiting lead integration."
     },
     {
       "id": "claude-fable-s8-fulfillment",
@@ -98,8 +98,8 @@
       "branch": "lane/fulfillment-tracking-min",
       "state": "active",
       "startedAt": "2026-08-19T16:43:13.336Z",
-      "heartbeatAt": "2026-08-19T16:48:02.158Z",
-      "note": "Context loaded; extending fulfillment machine (tracking_created/replacement/refunded), paid-release gate, in-memory port, HTTP module in worktree"
+      "heartbeatAt": "2026-08-20T14:19:38.573Z",
+      "note": "FULFILLMENT-MOUNT handed off at 4b8ed62a6b0e0d0fea14915e8207abb6cbdab164 (pushed, branch lane/fulfillment-tracking-min). 48 tests pass, tsc clean. Awaiting lead: route mount, census 376->382 / 385->391, candidate SQL, admin client state lists."
     },
     {
       "id": "claude-fable-s10-release-security",
@@ -108,8 +108,18 @@
       "branch": "lane/s10-release-security-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:43:14.972Z",
-      "heartbeatAt": "2026-08-19T16:48:46.644Z",
+      "heartbeatAt": "2026-08-20T14:11:37.348Z",
       "note": ""
+    },
+    {
+      "id": "claude-fable-s6-quote-payment",
+      "tool": "Claude Code (Opus 5)",
+      "lane": "REQUEST -> QUOTE -> PAYMENT OPERATIONS",
+      "branch": "lane/s6-request-quote-payment-20260820",
+      "state": "active",
+      "startedAt": "2026-08-20T14:14:50.384Z",
+      "heartbeatAt": "2026-08-20T14:48:51.595Z",
+      "note": "Lane complete through conversion gate + isolated UI. Pushed 3f48c2d on lane/s6-request-quote-payment-20260820. Handoff published."
     }
   ]
 }

@@ -5,6 +5,6 @@
   "branch": "lane/fulfillment-tracking-min",
   "state": "active",
   "startedAt": "2026-08-19T16:43:13.336Z",
-  "heartbeatAt": "2026-08-19T16:48:02.158Z",
-  "note": "Context loaded; extending fulfillment machine (tracking_created/replacement/refunded), paid-release gate, in-memory port, HTTP module in worktree"
+  "heartbeatAt": "2026-08-20T14:19:38.573Z",
+  "note": "FULFILLMENT-MOUNT handed off at 4b8ed62a6b0e0d0fea14915e8207abb6cbdab164 (pushed, branch lane/fulfillment-tracking-min). 48 tests pass, tsc clean. Awaiting lead: route mount, census 376->382 / 385->391, candidate SQL, admin client state lists."
 }

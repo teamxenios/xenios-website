@@ -5,6 +5,6 @@
   "branch": "claude/assisted-order-bridge",
   "state": "active",
   "startedAt": "2026-08-17T16:45:39.066Z",
-  "heartbeatAt": "2026-08-20T01:15:19.531Z",
-  "note": "2026-08-20 FLEET RESUMED (founder order): resume base 6251a6a published; 9 dispatch messages written (.xenios/messages DISPATCH-SESSION-02..10); ownership table LAUNCH_LANE_OWNERSHIP_2026-08-20.md; dirty worktrees preserved with checkpoint-first instructions. Lead beginning Session 1 integration work; P0 = Early Access usable today."
+  "heartbeatAt": "2026-08-20T13:43:56.961Z",
+  "note": "Lead: founder decisions broadcast c5f866c, release packet 4e9ac63; outbox worker verified live in prod logs; DoD audit workflow running; awaiting first worker pushes"
 }

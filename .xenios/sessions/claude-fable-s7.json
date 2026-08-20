@@ -5,6 +5,6 @@
   "branch": "fable/canonical-order-history-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:42:25.724Z",
-  "heartbeatAt": "2026-08-19T16:43:48.305Z",
-  "note": "Worktree C:/xenios-wt/canonical-order at 5bb3fa9 on fable/canonical-order-history-20260819; mapping existing order flows before claiming paths"
+  "heartbeatAt": "2026-08-20T14:15:54.957Z",
+  "note": "CANONICAL-ORDER-HISTORY handed off at cb601c74fc75f6a49ba0916daea7403842472047 (pushed). Unmounted: no server/index.ts, no composition root, no migration. 37 tests + tsc clean. Awaiting lead integration."
 }

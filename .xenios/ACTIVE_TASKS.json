@@ -228,14 +228,20 @@
       "id": "ASSISTED-ORDER-CUSTOMER-FLOW",
       "title": "Finish the assisted-order customer intake flow (catalog-first wizard, durable draft, confirmation/status polish)",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-s3",
       "paths": [
         "client/src/research/assisted-order/**",
         "shared/research/assisted-order/**"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-19T16:37:33.073Z"
+      "claimedAt": "2026-08-19T16:37:33.073Z",
+      "handoff": {
+        "session": "claude-fable-s3",
+        "sha": "33af738e5825e0032e249dbf16ef1d7055d6c848",
+        "file": ".xenios/handoffs/2026-08-20T14-15-22-868Z-ASSISTED-ORDER-CUSTOMER-FLOW-claude-fable-s3.md",
+        "at": "2026-08-20T14:15:22.872Z"
+      }
     },
     {
       "id": "CATALOG-ACTION-UNIFICATION",
@@ -256,7 +262,7 @@
       "id": "FULFILLMENT-MOUNT",
       "title": "Mount the tested fulfillment engine over HTTP with its admin surface",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-s8-fulfillment",
       "paths": [
         "server/research/fulfillment/**",
@@ -264,7 +270,13 @@
         "shared/research/fulfillment/**"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-19T16:43:30.552Z"
+      "claimedAt": "2026-08-19T16:43:30.552Z",
+      "handoff": {
+        "session": "claude-fable-s8-fulfillment",
+        "sha": "4b8ed62a6b0e0d0fea14915e8207abb6cbdab164",
+        "file": ".xenios/handoffs/2026-08-20T14-19-27-438Z-FULFILLMENT-MOUNT-claude-fable-s8-fulfillment.md",
+        "at": "2026-08-20T14:19:27.441Z"
+      }
     },
     {
       "id": "PAYMENT-PROVIDER-INTEGRATION",
@@ -296,7 +308,7 @@
       "id": "CANONICAL-ORDER-HISTORY",
       "title": "Canonical order conversion domain, customer order-history projection and UI",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-fable-s7",
       "paths": [
         "shared/research/orders/**",
@@ -305,7 +317,13 @@
         "docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-19T21:48:00.428Z"
+      "claimedAt": "2026-08-19T21:48:00.428Z",
+      "handoff": {
+        "session": "claude-fable-s7",
+        "sha": "cb601c74fc75f6a49ba0916daea7403842472047",
+        "file": ".xenios/handoffs/2026-08-20T14-15-38-461Z-CANONICAL-ORDER-HISTORY-claude-fable-s7.md",
+        "at": "2026-08-20T14:15:38.464Z"
+      }
     },
     {
       "id": "FULL-VISION-DEMO",

@@ -85,7 +85,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-08-19T15:43:29.453Z",
-      "heartbeatAt": "2026-08-20T01:15:19.531Z"
+      "heartbeatAt": "2026-08-20T13:43:56.961Z"
     },
     {
       "id": "b225ee6d-397f-4566-ae85-2aa00db7da7c",
@@ -95,7 +95,7 @@
         "client/src/research/assisted-order/**",
         "shared/research/assisted-order/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-19T16:37:33.076Z",
       "heartbeatAt": "2026-08-19T16:41:37.833Z"
     },
@@ -108,7 +108,7 @@
         "server/research/operations/suppliers.ts",
         "shared/research/fulfillment/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-19T16:43:30.555Z",
       "heartbeatAt": "2026-08-19T16:48:02.158Z"
     },
@@ -122,7 +122,7 @@
         "client/src/research/orders/**",
         "docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-19T21:48:00.441Z",
       "heartbeatAt": "2026-08-19T21:48:00.441Z"
     }

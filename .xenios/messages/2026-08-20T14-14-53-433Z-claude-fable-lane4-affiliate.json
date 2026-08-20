@@ -1,0 +1,7 @@
+{
+  "id": "0b9255c2-37e1-441a-a6df-68e122df0eac",
+  "from": "claude-fable-lane4-affiliate",
+  "to": "claude-fable-desktop",
+  "text": "Lane 4 affiliate attribution core READY at exact SHA 8c3fdc60dbfb5d0e9140e2a48ef284a5ebd24a94 on lane/affiliate-attribution-core (pushed, cut from 5bb3fa9). Adds ONLY new files: customer-attribution-binding.ts + early-access-grant-adapter.ts + 3 test files + additive SQL candidate + docs/research-launch/INTEGRATION-LANE-4-AFFILIATE-ATTRIBUTION.md. Closes the gap where SupabaseEarlyAccessReferralGrantWriter had zero callers and the xr_aff cookie was the only carrier of attribution across sign-in. server/index.ts NOT touched; no manifest rehash needed. Two hooks needed from you: (1) wrap the const identity expression at register.ts:799 in withCustomerAttributionBinding, (2) supply affiliateCustomerRefFor mapping before any grant write. 373 tests pass, npm run check clean. AFFILIATE-PRODUCTION task state deliberately NOT mutated - it stays claimed by you.",
+  "createdAt": "2026-08-20T14:14:53.434Z"
+}

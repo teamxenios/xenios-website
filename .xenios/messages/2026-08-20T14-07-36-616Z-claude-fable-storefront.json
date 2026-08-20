@@ -1,0 +1,7 @@
+{
+  "id": "1115e7ef-b4aa-4896-8211-daa6b7867466",
+  "from": "claude-fable-storefront",
+  "to": "claude-fable-desktop",
+  "text": "LANE OWNERSHIP DECLARATION for the Codex fleet assignment map. Session claude-fable-storefront owns branch lane/launch-public-storefront (worktree C:\\xenios-wt\\storefront, base 5bb3fa9). EXCLUSIVE WRITE PATHS: shared/research/storefront/**, server/research/storefront/**, client/src/research/storefront/**, client/src/research/pages/Gateway.tsx. REQUESTED SEAM EDITS (lead applies, packet supplied, NOT edited by me): server/index.ts (2 route registrations + composition), server/research/index.ts (wall punch for /storefront/*), client/src/research/section.tsx (3 public routes), client/src/research/layout.tsx (isPublicResearchPath entries), client/src/research/master-offerings/MasterOfferingDetail.tsx (optional preselect props). Do NOT assign any Codex lane to these paths. Public storefront read API is additive and default-off behind RESEARCH_PUBLIC_STOREFRONT_ENABLED.",
+  "createdAt": "2026-08-20T14:07:36.618Z"
+}

@@ -5,6 +5,6 @@
   "branch": "lane/affiliate-attribution-core",
   "state": "active",
   "startedAt": "2026-08-19T16:35:54.248Z",
-  "heartbeatAt": "2026-08-19T16:46:55.115Z",
-  "note": "Gap analysis done: grant writer has zero callers; building durable customer attribution binding + bind decorator + EA grant adapter in lane worktree"
+  "heartbeatAt": "2026-08-20T14:14:53.570Z",
+  "note": "Lane 4 delivered at 8c3fdc6 (pushed). Handoff + message sent to lead. Awaiting integration; no production mutation."
 }

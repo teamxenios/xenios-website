@@ -5,6 +5,6 @@
   "branch": "fable/assisted-order-customer-flow-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:37:17.279Z",
-  "heartbeatAt": "2026-08-19T16:41:37.833Z",
-  "note": "Recon done (client+shared read, task claimed, worktree at 5bb3fa9). Waiting on server-route map; npm ci running in worktree."
+  "heartbeatAt": "2026-08-20T14:16:34.580Z",
+  "note": "ASSISTED-ORDER-CUSTOMER-FLOW complete: 33af738e pushed, handoff filed, 37/37 focused tests green. Two blocking defects repaired (form acks never sent -> 400 on every real submit; confirmation route unreachable). Lead messaged that the Codex-3 QA rationale is now stale. Awaiting lead assignment; not taking another lane."
 }
