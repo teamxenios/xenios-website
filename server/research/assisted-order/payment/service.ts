@@ -29,6 +29,7 @@ import {
   mayActorReachPaymentState,
   paymentNextActionFor,
   type AssistedOrderAmountDue,
+  type AssistedOrderPaymentAdminView,
   type AssistedOrderPaymentProofInput,
   type AssistedOrderPaymentProofReceipt,
   type AssistedOrderPaymentRefusalCode,
@@ -165,6 +166,68 @@ export function customerPaymentView(
     quoteVersion: record.quoteVersion,
     instructions: live,
     settled: isSettledPaymentState(record.state),
+    openedAt: record.openedAt,
+    updatedAt: record.updatedAt,
+    settledAt: record.settledAt,
+  });
+}
+
+/**
+ * The operator projection. Still an allowlist rather than the raw record: the
+ * internal note on each history event stays server-side even for an admin
+ * surface, because it is scratch reasoning rather than a recorded decision.
+ */
+export function adminPaymentView(
+  record: AssistedOrderPaymentRecord,
+): AssistedOrderPaymentAdminView {
+  return Object.freeze({
+    paymentId: record.paymentId,
+    requestId: record.requestId,
+    requestPublicReference: record.requestPublicReference,
+    state: record.state,
+    amountDueCents: record.amountDueCents,
+    currency: record.currency,
+    quoteId: record.quoteId,
+    quoteVersion: record.quoteVersion,
+    acceptanceId: record.acceptanceId,
+    instructions: record.instructions,
+    proofs: Object.freeze(
+      record.proofs.map((proof) =>
+        Object.freeze({
+          proofId: proof.proofId,
+          customerReference: proof.customerReference,
+          note: proof.note,
+          submittedAt: proof.submittedAt,
+          submittedByLabel: proof.submittedByLabel,
+          reviewOutcome: proof.reviewOutcome,
+        }),
+      ),
+    ),
+    settlement: record.settlement
+      ? Object.freeze({
+          settlementId: record.settlement.settlementId,
+          verifiedAmountCents: record.settlement.verifiedAmountCents,
+          currency: record.settlement.currency,
+          verifiedAt: record.settlement.verifiedAt,
+          verifiedByLabel: record.settlement.verifiedByLabel,
+          verifiedByKind: record.settlement.verifiedByKind,
+          evidenceRef: record.settlement.evidenceRef,
+        })
+      : null,
+    exceptionReason: record.exceptionReason,
+    history: Object.freeze(
+      record.history.map((event) =>
+        Object.freeze({
+          eventId: event.eventId,
+          from: event.from,
+          to: event.to,
+          actorKind: event.actorKind,
+          actorLabel: event.actorLabel,
+          at: event.at,
+          evidenceRef: event.evidenceRef,
+        }),
+      ),
+    ),
     openedAt: record.openedAt,
     updatedAt: record.updatedAt,
     settledAt: record.settledAt,
@@ -507,7 +570,16 @@ export class AssistedOrderPaymentService {
     const evidenceRef = nonBlank(input.evidenceRef, "evidenceRef");
 
     if (record.settlement) {
-      // Replay. Report the incumbent rather than settling twice.
+      // Replay ONLY while the payment is still paid. A settled payment that has
+      // since been refunded must not absorb a second mark-paid quietly: the
+      // operator would read a success and believe the money is back on the
+      // books. Refusing sends them to the refund trail instead.
+      if (record.state !== "paid") {
+        throw new AssistedOrderPaymentConflictError(
+          "ILLEGAL_TRANSITION",
+          `This payment settled and is now ${record.state}; it cannot be marked paid again.`,
+        );
+      }
       return customerPaymentView(record, this.deps.clock.now());
     }
     return this.settle(record, {
@@ -535,6 +607,12 @@ export class AssistedOrderPaymentService {
     const record = await this.load(fact.paymentId);
 
     if (record.settlement) {
+      if (record.state !== "paid") {
+        throw new AssistedOrderPaymentConflictError(
+          "ILLEGAL_TRANSITION",
+          `This payment settled and is now ${record.state}; a later provider event cannot re-settle it.`,
+        );
+      }
       if (record.settlement.evidenceRef === providerEventId) {
         return customerPaymentView(record, this.deps.clock.now());
       }
