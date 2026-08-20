@@ -138,7 +138,8 @@ describe("every one of the 420 items", () => {
     // Every policy says so in the data as well as in the rendering.
     expect(items.every((item) => item.access.purchasable === false)).toBe(true);
     unmount();
-  });
+    // Renders all 420 cards at once; see the note on the per-item test below.
+  }, 60_000);
 
   it("renders Buy Now for one real direct row only after an exact server handoff", () => {
     const direct = items.find((item) => item.id === "kli_ab4498834d24d715da48");
@@ -207,7 +208,11 @@ describe("every one of the 420 items", () => {
       ).toBe(item.access.statusLabel);
       unmount();
     }
-  });
+    // 420 separate mount/unmount cycles. It sits just under vitest's 5s default
+    // on an idle machine and just over it when the rest of the fleet is
+    // building, which made a real gate fail for a reason that had nothing to do
+    // with the code under test.
+  }, 60_000);
 });
 
 describe("the copy each channel is required to carry", () => {
