@@ -49,6 +49,41 @@ intact at that moment, which is what step 6 exists to establish.
 - **Anonymous session minting is bounded**: 14 consecutive unlock attempts from
   one address produced 6 minted and 8 refused. The limiter engaged.
 
+## Follow-up deploy — the release was NOT complete at the flag
+
+**Step 9 of the founder's sequence failed on first check**, and only a real
+browser could see it. With every API open and `openAccess:true` reported,
+`/research/early-access` still rendered "Enter the access password to continue".
+
+The gate was one layer above the server: `client/src/research/layout.tsx` gates
+the whole research tree on a path allowlist, and the Early Access route had
+never been added to it. Nothing on the server reported a problem because nothing
+was wrong there. Two individually-correct layers disagreeing, failing as a
+plausible-looking page rather than an error — the same shape as every other
+defect found this day.
+
+| | |
+|---|---|
+| **Follow-up SHA** | `ce1590fa08dcb5eae299bcaf55e799ad9ea092d1` |
+| **Deploy ID** | `dep-da3lomjrn74s73fjvdpg` |
+| Predecessor | `7896438` | 
+| Migration / flag change | none |
+
+Verified live in a real browser at 375x812 after this deploy:
+
+- `/research/early-access` renders **PRIVATE EARLY ACCESS / Research Catalogue**
+  with the 8-step journey and **no password input at all**. The anonymous
+  session is minted automatically and the customer lands on step 2, Identity and
+  Agreements — agreements still gate ordering, exactly as intended.
+- **No horizontal overflow** at 375 (`scrollWidth` 375 = viewport).
+- The allowlist did not leak: `/research/member` still renders the shared review
+  password page, with a password input, in the same browser.
+- Private APIs still refuse: admin outbox, member/me, applications, documents
+  all 401.
+
+Known P2 carried forward: the input on this step computes to 13.3px, below the
+16px threshold at which iOS Safari zooms on focus. Cosmetic, already logged.
+
 ## Rollback
 
 1. Unset `RESEARCH_EARLY_ACCESS_OPEN_ACCESS`. Password mode returns immediately
