@@ -153,6 +153,14 @@ const ASSISTED_ORDER_BRIDGE_SOURCE_SHA =
   "310ef190fd7136828ee6fcace7ec3bfb7567896f";
 const ASSISTED_ORDER_BRIDGE_PATH =
   "supabase/migrations/20260815150000_research_assisted_order_bridge.sql";
+// Registered 2026-08-20 with M75, the customer-typed affiliate code. Its submit
+// routine was regenerated from the definition running in production rather than
+// from an older copy of the file, so the pinned bytes are the ones reviewed
+// against live behaviour.
+const DECLARED_AFFILIATE_CODE_SOURCE_SHA =
+  "a4b04cb8c4e0f935069ec6e77eb6bef417c5785f";
+const DECLARED_AFFILIATE_CODE_PATH =
+  "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql";
 // The three 2026-08-19 launch cart migrations (commission settlement, member
 // cart history, canonical settlement txn), promoted from candidates after
 // adversarial review and a two-engine disposable apply-twice rehearsal
@@ -867,6 +875,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(SEARCH_PATH_HARDENING_SOURCE_SHA);
           } else if (path === ASSISTED_ORDER_BRIDGE_PATH) {
             expect(sourceSha).toBe(ASSISTED_ORDER_BRIDGE_SOURCE_SHA);
+          } else if (path === DECLARED_AFFILIATE_CODE_PATH) {
+            expect(sourceSha).toBe(DECLARED_AFFILIATE_CODE_SOURCE_SHA);
           } else if (LAUNCH_CART_MIGRATION_PATHS.has(path)) {
             expect(sourceSha).toBe(LAUNCH_CART_MIGRATIONS_SOURCE_SHA);
           } else {

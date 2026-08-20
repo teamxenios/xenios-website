@@ -607,8 +607,8 @@
         "algorithm": "sha256",
         "value": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
       },
-      "appliedToProduction": false,
-      "managedMigrationId": "PENDING",
+      "appliedToProduction": true,
+      "managedMigrationId": "20260819203614",
       "applyTwiceVerified": true,
       "rollback": {
         "strategy": "drop_the_five_additive_assisted_order_tables_and_fourteen_routines_in_dependency_order_the_bridge_is_the_only_writer_and_no_existing_object_is_altered",
@@ -681,6 +681,26 @@
         "evidence": "Applied twice at psql exit 0 on disposable PostgreSQL 16 and 17 via scripts/verify-20260819-cart-migrations.sh (bootstrap supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql), over a replay of the REAL deployed migration chain 20260726143000..20260814061500 plus M71, Supabase role set NOLOGIN. 2026-08-19 rehearsal: A structural 7/7 x2 + behavioural 12/12 (forced RLS, zero direct grants across all four principals via aclexplode, service_role-only EXECUTE with acldefault expansion, malformed commission refuses with ZERO settlement rows, valid commission settles + holds atomically with held_at == payment_verified_at, replay answers already_settled with exactly one hold, append-only trigger refuses UPDATE and DELETE on a real row); B structural 4/4 x2 + behavioural 10/10 (STABLE secdef service_role-only, null/empty/unknown handles answer [], two-customer fixture proves per-handle containment, provenance carried, deterministic order); C structural 3/3 x2 + behavioural 3/3 (attgenerated='s', unique index refuses a canonically-equal raw-distinct transaction id by name, zero derivation disagreements) and on a separate pre-index database the precheck answered STOP_RECONCILE_DUPLICATES and the apply refused whole. Production never connected."
       },
       "notes": "STORED GENERATED canonical_transaction_id + unique index on cart settlements, closing EARLY_ACCESS_SETTLEMENT_NEEDS_CANONICAL_TXN_COLUMN at the table. Full table rewrite under ACCESS EXCLUSIVE bounded by 5s lock_timeout; precheck refuses pre-existing duplicate canonical forms (STOP_RECONCILE_DUPLICATES). Adversarial review 2026-08-19: PASS. NOT applied to production; founder-gated apply order A->B->C per docs/research-launch/INTEGRATION-LANE-C.md section 5."
+    },
+    {
+      "id": "research_assisted_order_declared_affiliate_code",
+      "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+      "sourceSha": "a4b04cb8c4e0f935069ec6e77eb6bef417c5785f",
+      "dependsOn": [
+        "research_assisted_order_bridge"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "f9913f11a50299f81016e1072ed4a5751a425a8b98dcf11cd58f02df29b4a4a8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "drop_two_additive_nullable_columns_and_three_checks_then_restore_the_m71_submit_body_no_existing_column_or_row_is_altered",
+        "procedure": "supabase/production/research-assisted-order-declared-affiliate-code-rollback-notes.md",
+        "evidence": "Rehearsed on a DISPOSABLE MANAGED SUPABASE project (ref bqwcvdkubxrlhecsuegk, PostgreSQL 17.6, us-east-1, created and torn down 2026-08-20), chosen over local Docker because M71 proved managed defaults behave differently from stock Postgres. MANAGED DEFAULT PRIVILEGES MEASURED, NOT ASSUMED: a newly created function in public is granted EXECUTE to anon, authenticated AND the PUBLIC pseudo-role (=X/), and a newly created table is granted arwdDxtm to anon and authenticated - the exact gap that refused M71's first production apply. M75 creates NO new table or function, and both of its operations were measured on an already-secured object: ALTER TABLE ADD COLUMN preserved the locked ACL, forced RLS and column-level refusal for anon; CREATE OR REPLACE FUNCTION preserved the existing ACL with anon and authenticated still unable to execute. APPLIED TWICE: after the second apply, exactly 2 columns, 3 constraints and 1 function existed, the ACL was still postgres+service_role only, SECURITY DEFINER and search_path=public survived, RLS remained enabled AND forced, and all 5 seeded rows were preserved. Behavioural suite green after EACH apply: a pre-M75 row stayed readable with nulls; an OLD-runtime payload carrying neither new key produced its receipt and not_provided; a NEW-runtime payload persisted the code as captured_unmatched; a malformed code did NOT block the order and stored (null, invalid_ignored); a payload claiming matched_manual was downgraded to captured_unmatched; verified attribution stayed null; an idempotent replay produced one row and did not rewrite the stored code; the line quantity band still refused an out-of-band quantity; and a self-contradicting direct UPDATE was refused by the agreement constraint. THE REHEARSAL FOUND A REAL DEFECT: the routine validated the code shape without normalizing case, so a lowercase code was silently dropped as invalid; fixed to uppercase before validating, and re-verified across lowercase, mixed case, trimmed, malformed, empty, absent and leading-joiner inputs. Production was never connected or mutated."
+      }
     }
   ],
   "invariants": [
