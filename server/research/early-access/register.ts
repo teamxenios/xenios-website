@@ -670,6 +670,32 @@ export interface EarlyAccessRegistrationOptions {
 }
 
 /**
+ * Hand a route handler's promise somewhere that cannot take the process down.
+ *
+ * Every route below dispatches a handler that owns its own response and returns
+ * a promise nobody awaits. Under Node's default unhandled-rejection policy that
+ * is not merely a failed request: ONE rejected persistence call terminates the
+ * process, so a database blip while a customer is placing an order is a
+ * site-wide outage rather than a 500 on one request. That was observed
+ * directly — a failing call inside the agreements route exited the server.
+ *
+ * The shape mirrors the assisted-order adapter, which already gets this right:
+ * settle the promise, and if the handler died before answering, answer for it.
+ * `headersSent` matters because a handler that already began streaming a
+ * response cannot be given a second status, and trying would throw here, inside
+ * the very guard meant to contain the failure.
+ */
+export function dispatchEarlyAccessRoute(work: Promise<unknown>, res: Response): void {
+  void Promise.resolve(work).catch(() => {
+    if (res.headersSent) return;
+    res.status(500).json({
+      error: "early_access_unavailable",
+      message: "Early Access is temporarily unavailable. Please try again.",
+    });
+  });
+}
+
+/**
  * Register the Early Access API: the gate, the catalog, the customer commerce
  * routes, and the operator routes behind them.
  *
@@ -741,18 +767,18 @@ export function registerPrivateEarlyAccessApi(
   const logout = createLogoutRoute(deps);
 
   app.post(EARLY_ACCESS_UNLOCK_PATH, (req: Request, res: Response) => {
-    void unlock(
+    dispatchEarlyAccessRoute(unlock(
       { body: req.body, clientKey: clientKeyFor(req), cookieHeader: req.headers?.cookie },
       res,
-    );
+    ), res);
   });
 
   app.get(EARLY_ACCESS_SESSION_PATH, (req: Request, res: Response) => {
-    void session({ cookieHeader: req.headers.cookie }, res);
+    dispatchEarlyAccessRoute(session({ cookieHeader: req.headers.cookie }, res), res);
   });
 
   app.post(EARLY_ACCESS_LOGOUT_PATH, (req: Request, res: Response) => {
-    void logout({ cookieHeader: req.headers.cookie }, res);
+    dispatchEarlyAccessRoute(logout({ cookieHeader: req.headers.cookie }, res), res);
   });
 
   // The catalog reuses the SAME session resolver the session endpoint uses, so
@@ -854,6 +880,7 @@ export function registerPrivateEarlyAccessApi(
   const catalogRoute = createEarlyAccessCatalogRoute(routeDependencies);
   const resolveMember = options.resolveMember ?? (async () => null);
   app.get(EARLY_ACCESS_CATALOG_PATH, (req: Request, res: Response) => {
+    // Already guarded by its own .catch below; left as-is deliberately.
     void Promise.all([
       resolveMember(req),
       identity.resolve({ cookieHeader: req.headers.cookie }),
@@ -936,7 +963,7 @@ export function registerPrivateEarlyAccessApi(
   });
 
   app.post(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH, (req: Request, res: Response) => {
-    void acceptAgreement(
+    dispatchEarlyAccessRoute(acceptAgreement(
       {
         cookieHeader: req.headers.cookie,
         body: req.body,
@@ -951,21 +978,21 @@ export function registerPrivateEarlyAccessApi(
             : null,
       },
       res,
-    );
+    ), res);
   });
 
   // No parameter is read from the request beyond the session cookie, so there is
   // no way to ask this route about anybody but the caller.
   app.get(EARLY_ACCESS_AGREEMENT_STATUS_PATH, (req: Request, res: Response) => {
-    void readAgreementStatus({ cookieHeader: req.headers.cookie }, res);
+    dispatchEarlyAccessRoute(readAgreementStatus({ cookieHeader: req.headers.cookie }, res), res);
   });
 
   app.post(EARLY_ACCESS_ORDERS_PATH, (req: Request, res: Response) => {
-    void placeOrder({ cookieHeader: req.headers.cookie, body: req.body }, res);
+    dispatchEarlyAccessRoute(placeOrder({ cookieHeader: req.headers.cookie, body: req.body }, res), res);
   });
 
   app.get(EARLY_ACCESS_ORDER_PATH, (req: Request, res: Response) => {
-    void readOrder({ cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber }, res);
+    dispatchEarlyAccessRoute(readOrder({ cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber }, res), res);
   });
 
   // THE admin guard, resolved once and shared by both admin surfaces. Two
@@ -1068,7 +1095,7 @@ export function registerPrivateEarlyAccessApi(
       EARLY_ACCESS_ADMIN_CART_SHIPPING_SLA_PATH,
       adminGuard,
       (req: Request, res: Response) => {
-        void sweepShippingSla({ actor: adminActorOf(req) }, res as never);
+        dispatchEarlyAccessRoute(sweepShippingSla({ actor: adminActorOf(req) }, res as never), res);
       },
     );
   }
@@ -1336,24 +1363,24 @@ export function registerPrivateEarlyAccessApi(
     });
 
     app.post(EARLY_ACCESS_ADMIN_CART_PROOF_PATH, adminGuard, (req: Request, res: Response) => {
-      void recordCartProof(
+      dispatchEarlyAccessRoute(recordCartProof(
         {
           actor: adminActorOf(req),
           cartCheckoutNumber: req.params.cartCheckoutNumber,
           body: req.body,
         },
         res as never,
-      );
+      ), res);
     });
     app.post(EARLY_ACCESS_ADMIN_CART_CONFIRM_PATH, adminGuard, (req: Request, res: Response) => {
-      void confirmCartPayment(
+      dispatchEarlyAccessRoute(confirmCartPayment(
         {
           actor: adminActorOf(req),
           cartCheckoutNumber: req.params.cartCheckoutNumber,
           body: req.body,
         },
         res as never,
-      );
+      ), res);
     });
 
     // THE READ-ONLY REVIEW, on the SAME path as the settlement action.
@@ -1390,17 +1417,17 @@ export function registerPrivateEarlyAccessApi(
   }
 
   app.get(EARLY_ACCESS_ORDER_INVOICE_PATH, (req: Request, res: Response) => {
-    void readInvoice(
+    dispatchEarlyAccessRoute(readInvoice(
       { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber },
       res,
-    );
+    ), res);
   });
 
   app.post(EARLY_ACCESS_ORDER_PROOF_PATH, (req: Request, res: Response) => {
-    void submitProof(
+    dispatchEarlyAccessRoute(submitProof(
       { cookieHeader: req.headers.cookie, orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
 
@@ -1498,92 +1525,92 @@ function registerEarlyAccessAdminApi(
   const openExceptions = createEarlyAccessAdminExceptionsRoute(deps);
 
   app.get(EARLY_ACCESS_ADMIN_PAYMENTS_PATH, guard, (req: Request, res: Response) => {
-    void queue({ adminEmail: adminEmailOf(req) }, res);
+    dispatchEarlyAccessRoute(queue({ adminEmail: adminEmailOf(req) }, res), res);
   });
 
   app.get(EARLY_ACCESS_ADMIN_FULFILLMENT_QUEUE_PATH, guard, (req: Request, res: Response) => {
-    void fulfillmentQueue({ adminEmail: adminEmailOf(req) }, res);
+    dispatchEarlyAccessRoute(fulfillmentQueue({ adminEmail: adminEmailOf(req) }, res), res);
   });
 
   app.get(EARLY_ACCESS_ADMIN_EXCEPTIONS_PATH, guard, (req: Request, res: Response) => {
-    void openExceptions({ adminEmail: adminEmailOf(req) }, res);
+    dispatchEarlyAccessRoute(openExceptions({ adminEmail: adminEmailOf(req) }, res), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_PAYMENT_CONFIRM_PATH, guard, (req: Request, res: Response) => {
-    void confirm(
+    dispatchEarlyAccessRoute(confirm(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   // The rejection half of the same review, behind the same guard: needs a
   // named admin, the CURRENT proof, and a durable store; asks the customer
   // for a fresh submission rather than deciding anything about the money.
   app.post(EARLY_ACCESS_ADMIN_PAYMENT_REJECT_PATH, guard, (req: Request, res: Response) => {
-    void rejectPayment(
+    dispatchEarlyAccessRoute(rejectPayment(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   const externalProof = createEarlyAccessExternalProofRoute(deps);
   app.post(EARLY_ACCESS_ADMIN_EXTERNAL_PROOF_PATH, guard, (req: Request, res: Response) => {
-    void externalProof(
+    dispatchEarlyAccessRoute(externalProof(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   const paymentOrder = createEarlyAccessPaymentOrderReadRoute(deps);
   app.get(EARLY_ACCESS_ADMIN_PAYMENT_ORDER_PATH, guard, (req: Request, res: Response) => {
-    void paymentOrder({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
+    dispatchEarlyAccessRoute(paymentOrder({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res), res);
   });
 
   app.get(EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH, guard, (req: Request, res: Response) => {
-    void readSupplierOrder({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
+    dispatchEarlyAccessRoute(readSupplierOrder({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_ORDER_PATH, guard, (req: Request, res: Response) => {
-    void ensureSupplierOrder(
+    dispatchEarlyAccessRoute(ensureSupplierOrder(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber },
       res,
-    );
+    ), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_NOTIFICATION_PATH, guard, (req: Request, res: Response) => {
-    void notification(
+    dispatchEarlyAccessRoute(notification(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   app.post(
     EARLY_ACCESS_ADMIN_SUPPLIER_ACKNOWLEDGEMENT_PATH,
     guard,
     (req: Request, res: Response) => {
-      void acknowledgement(
+      dispatchEarlyAccessRoute(acknowledgement(
         { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
         res,
-      );
+      ), res);
     },
   );
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_PACKING_PATH, guard, (req: Request, res: Response) => {
-    void packing(
+    dispatchEarlyAccessRoute(packing(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_TRACKING_PATH, guard, (req: Request, res: Response) => {
-    void tracking(
+    dispatchEarlyAccessRoute(tracking(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_SUPPLIER_SHIPPED_PATH, guard, (req: Request, res: Response) => {
-    void shipped({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res);
+    dispatchEarlyAccessRoute(shipped({ adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber }, res), res);
   });
 
   // The two doors an overpaying customer's money needs. Both RECORD and
@@ -1593,17 +1620,17 @@ function registerEarlyAccessAdminApi(
   const refund = createEarlyAccessRefundRoute(deps);
 
   app.post(EARLY_ACCESS_ADMIN_OVERPAYMENT_PATH, guard, (req: Request, res: Response) => {
-    void overpayment(
+    dispatchEarlyAccessRoute(overpayment(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 
   app.post(EARLY_ACCESS_ADMIN_REFUND_PATH, guard, (req: Request, res: Response) => {
-    void refund(
+    dispatchEarlyAccessRoute(refund(
       { adminEmail: adminEmailOf(req), orderNumber: req.params.orderNumber, body: req.body },
       res,
-    );
+    ), res);
   });
 }
 
@@ -1642,15 +1669,15 @@ function registerEarlyAccessFounderReleaseApi(
   // not have to disambiguate them; they differ by suffix, not by parameter, but
   // ordering makes that independent of future edits.
   app.get(EARLY_ACCESS_RELEASE_HISTORY_PATH, requireAdmin, (req: Request, res: Response) => {
-    void history({ query: req.query as Record<string, unknown> }, res as never);
+    dispatchEarlyAccessRoute(history({ query: req.query as Record<string, unknown> }, res as never), res);
   });
   app.get(EARLY_ACCESS_RELEASES_PATH, requireAdmin, (req: Request, res: Response) => {
-    void review({ actor: adminActor(req) }, res as never);
+    dispatchEarlyAccessRoute(review({ actor: adminActor(req) }, res as never), res);
   });
   app.post(EARLY_ACCESS_RELEASES_PATH, requireAdmin, (req: Request, res: Response) => {
     // The actor is read from what the guard authenticated and never from the
     // body, even if the body carries a field of the same name.
-    void record({ body: req.body, actor: adminActor(req) }, res as never);
+    dispatchEarlyAccessRoute(record({ body: req.body, actor: adminActor(req) }, res as never), res);
   });
 }
 
