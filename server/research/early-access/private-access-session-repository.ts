@@ -128,6 +128,21 @@ export type CreatePrivateAccessSessionInput = Readonly<{
  * cannot leak a driver error message into a response.
  */
 export interface PrivateAccessSessionRepository {
+  /**
+   * The owner every grant and session in this repository is written under, when
+   * the repository is scoped to one.
+   *
+   * It is published so the ROUTE can unlock under the same owner the REPOSITORY
+   * issues under. They were configured independently before: the repository read
+   * RESEARCH_EARLY_ACCESS_OWNER_ID while the route fell back to a hard-coded
+   * default, so any deployment whose owner id was not exactly that default
+   * rejected the correct password. The exchange refuses an owner mismatch and
+   * the route maps that to the same generic denial as a wrong password, by
+   * design, so it failed silently and looked like the customer's fault.
+   *
+   * Optional because an in-memory repository is not owner-scoped.
+   */
+  readonly sessionOwnerId?: string;
   create(
     input: CreatePrivateAccessSessionInput,
   ): Promise<PrivateAccessSessionRepositoryResult<StoredPrivateAccessSession>>;
@@ -396,10 +411,13 @@ export type SupabasePrivateAccessSessionRepositoryOptions = Readonly<{
 export class SupabasePrivateAccessSessionRepository implements PrivateAccessSessionRepository {
   private readonly query: PrivateAccessSessionQuery;
   private readonly ownerId: string;
+  /** Published so the unlock route resolves the SAME owner this writes under. */
+  readonly sessionOwnerId: string;
 
   constructor(options: SupabasePrivateAccessSessionRepositoryOptions) {
     this.query = options.query;
     this.ownerId = options.ownerId;
+    this.sessionOwnerId = options.ownerId;
   }
 
   /**

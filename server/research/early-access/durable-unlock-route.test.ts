@@ -98,6 +98,90 @@ async function call(routes: Map<string, Function>, key: string, req: any) {
   return state;
 }
 
+/**
+ * A durable store scoped to a NON-default owner, which is what every real
+ * deployment is, and which refuses an owner mismatch exactly as the SQL does.
+ */
+function ownerScopedStore(ownerId: string) {
+  const grants = new Map<string, boolean>();
+  const rows = new Map<string, number>();
+  const seenOwners: string[] = [];
+  return {
+    grants,
+    rows,
+    seenOwners,
+    repository: {
+      sessionOwnerId: ownerId,
+      async issueNonce(nonceHash: string) {
+        grants.set(nonceHash, false);
+        return { ok: true as const, value: 1 };
+      },
+      async create(input: any) {
+        seenOwners.push(input.ownerId);
+        // The exchange RPC refuses an owner mismatch, and the route maps that
+        // refusal to the same generic denial as a wrong password.
+        if (input.ownerId !== ownerId) return { ok: false as const, code: "NOT_FOUND" };
+        if (grants.get(input.nonceHash) !== false) return { ok: false as const, code: "NONCE_REQUIRED" };
+        grants.set(input.nonceHash, true);
+        rows.set(input.sessionHash, input.expiresAt);
+        return { ok: true as const, value: { sessionHash: input.sessionHash, expiresAtEpochMs: input.expiresAt } };
+      },
+      async resolve(sessionHash: string) {
+        const expiresAtEpochMs = rows.get(sessionHash);
+        return expiresAtEpochMs === undefined
+          ? { ok: false as const, code: "NOT_FOUND" }
+          : { ok: true as const, value: { sessionHash, ownerId, expiresAtEpochMs } };
+      },
+      async touch() { return { ok: true as const, value: undefined }; },
+      async revoke() { return { ok: true as const, value: undefined }; },
+      async pruneExpired() { return { ok: true as const, value: 0 }; },
+    } as any,
+  };
+}
+
+describe("the unlock route and its repository agree about the owner", () => {
+  // The failure this pins was silent and total: the repository issued grants
+  // under RESEARCH_EARLY_ACCESS_OWNER_ID while the route exchanged them under a
+  // hard-coded default, so every deployment whose owner id was not exactly that
+  // default answered the CORRECT password with the same denial as a wrong one.
+  // The only configuration that happened to work was the hard-coded default.
+  const NON_DEFAULT_OWNER = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
+
+  it("unlocks under the owner the repository writes under, not a default", async () => {
+    const store = ownerScopedStore(NON_DEFAULT_OWNER);
+    const { app, routes } = fakeApp();
+    registerPrivateEarlyAccessApi(app, { config: config(), repository: store.repository });
+
+    const unlocked = await call(routes, "POST /api/research/early-access/unlock", {
+      body: { password: PASSWORD }, ip: "203.0.113.10",
+    });
+
+    expect(unlocked.status).toBe(200);
+    expect(store.seenOwners).toEqual([NON_DEFAULT_OWNER]);
+    expect(store.seenOwners).not.toContain(OWNER);
+    expect(store.rows.size).toBe(1);
+  });
+
+  it("still issues a cookie that resolves, under that same owner", async () => {
+    const store = ownerScopedStore(NON_DEFAULT_OWNER);
+    const { app, routes } = fakeApp();
+    registerPrivateEarlyAccessApi(app, { config: config(), repository: store.repository });
+
+    const unlocked = await call(routes, "POST /api/research/early-access/unlock", {
+      body: { password: PASSWORD }, ip: "203.0.113.11",
+    });
+    const setCookie = unlocked.headers["set-cookie"] as string;
+    const firstPair = setCookie.slice(0, setCookie.indexOf(";"));
+    const cookieName = firstPair.slice(0, firstPair.indexOf("="));
+    const cookieValue = firstPair.slice(firstPair.indexOf("=") + 1);
+
+    const session = await call(routes, "GET /api/research/early-access/session", {
+      headers: { cookie: `${cookieName}=${cookieValue}` },
+    });
+    expect(session.body).toMatchObject({ authenticated: true });
+  });
+});
+
 describe("the mounted unlock route on a durable store", () => {
   it("mints through the grant exchange, and the cookie it issues RESOLVES", async () => {
     const store = durableStore();

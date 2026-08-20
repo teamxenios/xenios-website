@@ -716,6 +716,14 @@ export function registerPrivateEarlyAccessApi(
   const deps: PrivateAccessRouteDependencies = {
     config: effectiveConfig,
     repository,
+    // Unlock under the owner the repository actually writes under, taken FROM
+    // the repository rather than configured a second time. Without this the
+    // route fell back to PRIVATE_ACCESS_DEFAULT_OWNER_ID while a production
+    // repository issued grants under RESEARCH_EARLY_ACCESS_OWNER_ID, and the
+    // owner mismatch made the exchange refuse the CORRECT password with the
+    // same generic denial as a wrong one. The only configuration that happened
+    // to work was setting the environment variable to the hard-coded default.
+    ownerId: (repository as PrivateAccessSessionRepository).sessionOwnerId,
     now,
     randomToken,
     // The customer-continuity credential exists only in the session-identity
