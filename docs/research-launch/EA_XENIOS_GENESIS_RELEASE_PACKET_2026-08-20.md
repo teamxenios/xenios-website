@@ -45,17 +45,49 @@ Procedure at release time (NOT before):
    intact (RESEARCH_EARLY_ACCESS_MAX_ATTEMPTS / LOCKOUT_MINUTES unchanged).
 5. Display copy "Xenios Genesis" ships in the release SHA itself (S2 lane).
 
-## Remaining release actions (filled as lanes land)
+## Release actions — status at integration head `8b5251e`
 
-- [ ] S2 gate copy + hash tooling + wall-admission tests → integrate.
-- [ ] S3 426-row artifacts → adjudicated per founder row decisions → controlled
-      Product Control retail release (424 numeric, 2 price-on-request, no $0).
-- [ ] S5 quantity 100: shared constant, authority default 100, M66-successor
-      candidate → promote → DAG → apply-twice rehearsal → founder-gated apply.
-- [ ] S6 affiliate manual code; S7 email template v2s; S8 payment/canonical;
-      S9 fulfillment queue; S4 storefront/mobile; S10 composed E2E.
-- [ ] Freeze SHA, run full gate suite, dark deploy, progressive activation,
-      founder phone smoke.
+DONE:
+
+- [x] **Quantity 100** in the live order lane. Authority row moved from
+      `maximumQuantity: null` (no ceiling at all) to 100; M71 makes it durable
+      per line with no migration. 11 conformance tests.
+- [x] **426-row catalog reconciled against LIVE Product Control** (not the stale
+      snapshot). 415 rows already matched; Kisspeptin 10 mg $70.00 → $65.00
+      applied through the canonical RPCs and verified superseded/active. See
+      `RETAIL_RECONCILIATION_426_2026-08-20.md`.
+- [x] **Six worker lanes integrated**, typecheck clean: assisted-order customer
+      flow (incl. two P0 defect fixes — form acknowledgments were never sent so
+      every real submit was refused 400, and the confirmation route was
+      unreachable), canonical order + history, payment lifecycle, fulfillment +
+      tracking, affiliate attribution core, public storefront.
+- [x] **Landing-page commercialization reverted** (`e05f807`) pending founder
+      confirmation; storefront itself stays merged.
+
+PENDING:
+
+- [ ] Manual affiliate code (lane4 + S3) — the last unbuilt P0 link.
+- [ ] Email template v2 enrichment (Codex 4).
+- [ ] **Mounting**: canonical order, payment, and fulfillment are merged but
+      UNMOUNTED by design. Each needs a durable repository and a lead seam
+      registration; canonical order additionally needs the same M62 legal-binding
+      directory instance the EA order history uses. Their migration candidates
+      are founder-gated.
+- [ ] Cart-lane quantity chain M65 → M66 → successor (production is still at the
+      ORIGINAL 1..3 band; both predecessors PENDING in the ledger).
+- [ ] Composed E2E + mobile viewports (Codex 7).
+- [ ] Freeze SHA, full gate suite, dark deploy, progressive activation, founder
+      smoke.
+
+## Founder decisions required
+
+1. Landing-page commercial CTA: confirm the reversal of the recorded
+   nonnegotiable, or leave reverted.
+2. Four catalog rows with no canonical variant: Retatrutide 60 mg ($249),
+   MOTS-C 40 mg ($129), Glutathione 600 mg ($69) need variant creation;
+   CJC-1295 WITH DAC + Ipamorelin ($99) stays non-direct per the founder's own
+   ruling until the formulation is confirmed. GRP-0364 "FedEx Standard
+   Overnight" is a shipping charge, not a catalog product.
 
 Nothing in this packet may run out of order, and no step invents a missing
 secret.
