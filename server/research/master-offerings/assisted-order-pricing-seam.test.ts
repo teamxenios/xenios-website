@@ -2,8 +2,16 @@
 // express member resolver attaches the server-derived pricing viewer, the
 // index seam hands it to the real master-offerings composition, the real
 // approved-price authority resolves it, and the assisted-order catalog
-// projects the price. An Early Access session rides the same chain without a
-// grant and truthfully stays "Price on request" — never zero.
+// projects the price. A viewer that rides the same chain WITHOUT a grant
+// truthfully stays "Price on request" — never zero.
+//
+// CHANGED DELIBERATELY 2026-08-20. When this was written, an Early Access
+// session was such a grantless viewer, and that was the whole defect: 420
+// catalog rows and not one price. An Early Access session now carries the
+// Early Access RETAIL grant (see early-access-retail-pricing.ts), so the case
+// below is no longer "an Early Access session" but the narrower and still
+// essential one it always really tested: NO GRANT MEANS NO PRICE. The Early
+// Access behaviour itself is proved in early-access-retail-pricing.test.ts.
 //
 // This test lives INSIDE the master-offerings lane on purpose: the lane
 // boundary (catalog-boundaries.test.ts) allows only the composition root to
@@ -162,7 +170,7 @@ describe("the server-authorized pricing viewer rides the assisted-order viewer (
     expect(item.workflowMode).toBe("direct_order_request");
   });
 
-  it("keeps an Early Access session without a member grant on Price on request — never zero", async () => {
+  it("keeps a viewer with no pricing grant on Price on request — never zero", async () => {
     const resolvers = viewerResolvers(null);
     const viewer = await resolvers.customer({
       headers: { cookie: "ea=1" },

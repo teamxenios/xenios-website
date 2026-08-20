@@ -1,25 +1,24 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T20:45:00Z",
+  "updatedAt": "2026-08-20T22:50:00Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "a66434d980c909303d3595382e5df77342fbc127",
   "lastDocumentedProductionRelease": {
-    "tag": "RESEARCH_PLATFORM_0_5_RELEASE_A_RC2",
-    "sha": "a66434d9",
-    "rollback": "458e7284",
-    "deployId": "dep-da31altg1s2s73f6tep0",
+    "tag": "RESEARCH_EARLY_ACCESS_OPEN_ACCESS_TYPED_AFFILIATE_CODE",
+    "sha": "77e782e0c4c1c5be5275711e6996d7f6dfb81fe0",
+    "rollback": "ce1590fa08dcb5eae299bcaf55e799ad9ea092d1",
+    "deployId": "dep-da3o55gn74is73f9sdo0",
     "status": "live",
-    "note": "Release A: assisted-order intake live, affiliate capture live, price release executed 2026-08-19T20:43Z; executed by claude-fable-desktop under the founder's 2026-08-19 unblock directive."
+    "note": "Live 2026-08-20: Early Access open access (no shared password, no Xenios Genesis gate) with admin/member/supplier/finance/Care unchanged, and M75 applied (checksum f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda) adding the typed declared affiliate code, sanitize-not-abort, service_role-only execute. Controlled order XRR-20260820-2E67BC3AA3 carried DANA10/captured_unmatched with null verified attribution; both submitted-order emails reached status sent on attempt 1."
   },
   "nextRelease": {
-    "name": "RESEARCH_PLATFORM_0_6_RELEASE_B_BUY_NOW",
+    "name": "RESEARCH_EARLY_ACCESS_ANONYMOUS_RETAIL_PRICING",
     "scope": [
-      "ready-subset Buy Now behind RESEARCH_MASTER_OFFERINGS_DIRECT_COMMERCE",
-      "cart migrations 72-74 apply",
-      "EA cart env chain",
-      "fleet lane integrations"
+      "server-authoritative Early Access retail pricing viewer (no member identity, no client price injection)",
+      "declared affiliate code end-to-end proof",
+      "canonical order copy (hard prerequisite before canonical order conversion)"
     ],
-    "status": "in_build"
+    "status": "awaiting_founder_go"
   },
   "productionWriter": "claude-fable-desktop",
   "invariants": [

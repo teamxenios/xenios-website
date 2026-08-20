@@ -12,6 +12,7 @@
 import { memberAudienceSourceVersion } from "../catalog/member-catalog-service";
 import type { MemberRow } from "../member-auth";
 import type { MasterOfferingCatalogViewer } from "./routes";
+import type { CustomerPriceAudience } from "@shared/research/pricing";
 import type { MasterOfferingRequestIdentity } from "./composition";
 
 /**
@@ -20,7 +21,13 @@ import type { MasterOfferingRequestIdentity } from "./composition";
  * viewer as opaque and hands it back to `pricingIdentityFromViewer` unchanged.
  */
 export type MasterOfferingViewerWithGrant = MasterOfferingCatalogViewer & {
-  pricingGrant?: { sourceVersion: string };
+  /**
+   * The pricing grant. `audience` is optional and defaults to "member" so every
+   * existing member caller behaves exactly as before; the Early Access retail
+   * authority sets it explicitly rather than relying on that default, so the
+   * audience a price resolves against is always visible at the call site.
+   */
+  pricingGrant?: { sourceVersion: string; audience?: CustomerPriceAudience };
 };
 
 /**
@@ -57,7 +64,7 @@ export function pricingIdentityFromViewer(
     ?.pricingGrant;
   if (!grant) return null;
   return {
-    audience: "member",
+    audience: grant.audience ?? "member",
     sourceVersion: grant.sourceVersion,
     evaluatedAt: new Date().toISOString(),
     currency: "USD",

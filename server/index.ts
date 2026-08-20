@@ -109,6 +109,7 @@ import {
 import type { MasterOfferingCatalogViewer } from "./research/master-offerings/routes";
 import { createMasterOfferingCatalogDependencies } from "./research/master-offerings/composition";
 import { mayViewMasterOfferings } from "./research/master-offerings/visibility-policy";
+import { pricingViewerForCustomerViewer } from "./research/master-offerings/early-access-retail-pricing";
 import {
   masterOfferingViewerForMember,
   pricingIdentityFromViewer,
@@ -834,12 +835,24 @@ const assistedOrderComposition = buildAssistedOrderProduction({
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
   masterOfferingServiceFor: (viewer) => {
     try {
-      // The pricing viewer rides on the assisted-order viewer, set only by the
-      // member resolver below from the authenticated member row. A viewer
-      // without one (Early Access session, anonymous probe) still gets the
-      // catalog; identityFor resolves null and prices stay "Price on request".
+      // The pricing viewer rides on the assisted-order viewer, set by the member
+      // resolver below from the authenticated member row.
+      //
+      // An ANONYMOUS EARLY ACCESS SESSION has no member row, and before this it
+      // fell through with no grant at all: identityFor answered null and every
+      // approved price degraded to "Price on request". Measured live on
+      // 2026-08-20 that was 420 catalog rows and ZERO prices — a customer could
+      // browse the entire catalog and never see a number.
+      //
+      // Such a session now prices through the Early Access RETAIL authority.
+      // It is a price-projection grant and nothing more: no member row, no
+      // capability, no visibility change. Note the ORDER — a member's own
+      // viewer always wins, so this can never quietly replace a real member's
+      // pricing, and it is reached only for an actual Early Access session,
+      // never for an unresolved member or an anonymous probe with no session.
+      const pricingViewer = pricingViewerForCustomerViewer(viewer);
       const service = masterOfferingCatalogDependencies.serviceForViewer(
-        viewer.pricingViewer as MasterOfferingViewerWithGrant,
+        pricingViewer as MasterOfferingViewerWithGrant,
       );
       // The composition's factory is synchronous today. A promise here would
       // mean a future async factory, which this seam does not support, so

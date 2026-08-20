@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T22:35:00Z",
+  "updatedAt": "2026-08-20T22:50:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "a66434d980c909303d3595382e5df77342fbc127",
   "currentRelease": {
-    "tag": "RESEARCH_PLATFORM_0_5_RELEASE_A_RC2",
-    "sha": "a66434d9",
+    "tag": "RESEARCH_EARLY_ACCESS_OPEN_ACCESS_TYPED_AFFILIATE_CODE",
+    "sha": "77e782e0",
     "status": "live",
-    "rollback": "458e7284",
-    "deployId": "dep-da31altg1s2s73f6tep0",
-    "note": "RELEASE A LIVE 2026-08-19T20:43:55Z per the founder's unblock directive: M71 applied (corrected artifact 3e59df26, own post-condition proved the boundary; first apply REFUSED on the managed default-privilege gap with nothing committed), private bucket created, assisted-order intake + referral capture + partner portal flags enabled, controlled price release executed (34 variants to the founder retail schedule via canonical RPCs, 68 audit rows, 417 active total unchanged)."
+    "rollback": "ce1590fa",
+    "deployId": "dep-da3o55gn74is73f9sdo0",
+    "note": "Live 2026-08-20: Early Access open access (no shared password, no Xenios Genesis gate) with admin/member/supplier/finance/Care unchanged, and M75 applied (checksum f9ab389...403fda) adding the typed declared affiliate code with sanitize-not-abort and service_role-only execute. Controlled order XRR-20260820-2E67BC3AA3 carried DANA10/captured_unmatched with null verified attribution; both submitted-order emails reached status sent on attempt 1."
   },
   "catalog": {
     "workbookRows": 420,
@@ -49,7 +49,8 @@
     "safe_general_commerce",
     "cross_persona_notifications",
     "cross_persona_analytics",
-    "google_workspace_integration"
+    "google_workspace_integration",
+    "early_access_anonymous_retail_pricing_fix_built_not_deployed"
   ],
   "productionProjectRef": "yvzeduaxbwgcwllhywff",
   "notes": [
