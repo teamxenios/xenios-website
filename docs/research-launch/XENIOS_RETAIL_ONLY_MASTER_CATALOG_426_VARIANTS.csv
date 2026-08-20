@@ -1,0 +1,427 @@
+﻿Group ID,Family,Channel,Product,Normalized Specification,Dosage Form,Current Retail Price,Price Display,Planned Catalog Status
+GRP-0001,503A Clinical Formulations,Clinical / Provider Only,5-Amino-1Mq,5-AMINO-1MQ 5MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0002,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 0.25MG CAPSULE,Capsule,1.875,$1.88,New clinical formulary item
+GRP-0003,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 0.5MG CAPSULE,Capsule,2.5,$2.50,New clinical formulary item
+GRP-0004,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 1MG CAPSULE,Capsule,3.75,$3.75,New clinical formulary item
+GRP-0005,503A Clinical Formulations,Clinical / Provider Only,Anastrozole Tablet,ANASTROZOLE TABLET 1MG,Tablet,3.75,$3.75,New clinical formulary item
+GRP-0006,503A Clinical Formulations,Clinical / Provider Only,Aod-9604,AOD-9604 1.2MG/ML (6MG/5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0007,503A Clinical Formulations,Clinical / Provider Only,Aod-9604,AOD-9604 300MCG TROCHE,Troche,6.25,$6.25,Clinical formulation expansion
+GRP-0008,503A Clinical Formulations,Clinical / Provider Only,Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin,AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML),Compounded Vial / Liquid,312.5,$312.50,Clinical formulation expansion
+GRP-0009,503A Clinical Formulations,Clinical / Provider Only,Ara 290,ARA 290 6MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,New clinical formulary item
+GRP-0010,503A Clinical Formulations,Clinical / Provider Only,Ascorbic Acid,ASCORBIC ACID 500MG/ML INJ. (10ML),Injectable Solution,62.5,$62.50,Clinical formulation expansion
+GRP-0011,503A Clinical Formulations,Clinical / Provider Only,Ascorbic Acid,ASCORBIC ACID 500MG/ML INJ. (30ML),Injectable Solution,112.5,$112.50,Clinical formulation expansion
+GRP-0012,503A Clinical Formulations,Clinical / Provider Only,BPC-157,BPC-157 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0013,503A Clinical Formulations,Clinical / Provider Only,BPC-157,BPC-157 500MCG CAPSULE,Capsule,6.25,$6.25,Clinical formulation expansion
+GRP-0014,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + KPV,BPC-157/KPV 500MCG-500MCG CAPSULE,Capsule,11.25,$11.25,Clinical formulation expansion
+GRP-0015,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml),BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML),Compounded Vial / Liquid,300,$300.00,Clinical formulation expansion
+GRP-0016,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 + KPV 3-3-3Mg + Ml (No Copper) (5Ml),BPC-157/TB500/KPV 3-3-3MG/ML (NO COPPER) (5ML),Compounded Vial / Liquid,300,$300.00,Clinical formulation expansion
+GRP-0017,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 3-3Mg + Ml (5Ml),BPC-157/TB500 3-3MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0018,503A Clinical Formulations,Clinical / Provider Only,BRANCHED CHAIN AMINO ACIDS (BCAA),Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml),Compounded Vial / Liquid,124.5,$124.50,New clinical formulary item
+GRP-0019,503A Clinical Formulations,Clinical / Provider Only,Benzocaine,BENZOCAINE 20% / LIDOCAINE 10% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0020,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 1.25MG (80/20) CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0021,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 2.5MG (80/20) CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0022,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 5MG (50/50) CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0023,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 5MG (80/20) CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0024,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 6MG (80/20) CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0025,503A Clinical Formulations,Clinical / Provider Only,Bi-Est (80 + 20),BI-EST (80/20) 2MG/ML CREAM,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0026,503A Clinical Formulations,Clinical / Provider Only,Bi-Est (80 + 20),BI-EST (80/20) 3MG/ML CREAM,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0027,503A Clinical Formulations,Clinical / Provider Only,Bi-Pro-Test Cream,BI-PRO-TEST CREAM 0.25MG/100MG/0.25MG/GM,Topical Cream,162.5,$162.50,New clinical formulary item
+GRP-0028,503A Clinical Formulations,Clinical / Provider Only,Bi-Pro-Test Cream,BI-PRO-TEST CREAM 0.25MG/100MG/1MG/GM,Topical Cream,162.5,$162.50,New clinical formulary item
+GRP-0029,503A Clinical Formulations,Clinical / Provider Only,Biotin,BIOTIN 10MG/ML (10ML),Compounded Vial / Liquid,162.5,$162.50,Clinical formulation expansion
+GRP-0030,503A Clinical Formulations,Clinical / Provider Only,CASHMERE CREAM,CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%) 30GM,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0031,503A Clinical Formulations,Clinical / Provider Only,CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml),CJC-1295/IPAMORELIN 2-2MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0032,503A Clinical Formulations,Clinical / Provider Only,Cabergoline Tablets,CABERGOLINE TABLETS 0.5MG,Tablet,8.75,$8.75,New clinical formulary item
+GRP-0033,503A Clinical Formulations,Clinical / Provider Only,"Cartalax (Aed, T-31)","CARTALAX (AED, t-31) 4MG/ML (5ML)",Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0034,503A Clinical Formulations,Clinical / Provider Only,Clomiphene,CLOMIPHENE 25MG CAPSULE,Capsule,1.875,$1.88,New clinical formulary item
+GRP-0035,503A Clinical Formulations,Clinical / Provider Only,Clomiphene,CLOMIPHENE 50MG CAPSULE,Capsule,3.75,$3.75,New clinical formulary item
+GRP-0036,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 100MG CAPSULE,Capsule,2.625,$2.62,New clinical formulary item
+GRP-0037,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 25MG CAPSULE,Capsule,2.375,$2.38,New clinical formulary item
+GRP-0038,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 50MG CAPSULE,Capsule,2.5,$2.50,New clinical formulary item
+GRP-0039,503A Clinical Formulations,Clinical / Provider Only,Dihexa,DIHEXA 25MG CAPSULE,Capsule,34.375,$34.38,Clinical formulation expansion
+GRP-0040,503A Clinical Formulations,Clinical / Provider Only,Dihexa,DIHEXA 5MG CAPSULE,Capsule,8.75,$8.75,Clinical formulation expansion
+GRP-0041,503A Clinical Formulations,Clinical / Provider Only,Dsip,DSIP 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0042,503A Clinical Formulations,Clinical / Provider Only,Elamipretide (Ss31),ELAMIPRETIDE (SS31) 15MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0043,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 12.5MG CAPSULE,Capsule,2.5,$2.50,New clinical formulary item
+GRP-0044,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 25MG CAPSULE,Capsule,6.25,$6.25,New clinical formulary item
+GRP-0045,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 50MG CAPSULE,Capsule,9.375,$9.38,New clinical formulary item
+GRP-0046,503A Clinical Formulations,Clinical / Provider Only,Epithalon,EPITHALON 10MG/ML (5ML),Compounded Vial / Liquid,325,$325.00,Clinical formulation expansion
+GRP-0047,503A Clinical Formulations,Clinical / Provider Only,Epithalon,EPITHALON 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0048,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.25MG CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0049,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.5MG TABLET,Tablet,1.25,$1.25,New clinical formulary item
+GRP-0050,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.75MG CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0051,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.25MG CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0052,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.5MG CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0053,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.75MG CAPSULE,Capsule,1.25,$1.25,New clinical formulary item
+GRP-0054,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 10MG/ML CREAM,Topical Cream,100,$100.00,New clinical formulary item
+GRP-0055,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1MG TABLET,Tablet,1.25,$1.25,New clinical formulary item
+GRP-0056,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 2MG TABLET,Tablet,1.25,$1.25,New clinical formulary item
+GRP-0057,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 4MG/ML CREAM,Topical Cream,75,$75.00,New clinical formulary item
+GRP-0058,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 6MG/ML CREAM,Topical Cream,87.5,$87.50,New clinical formulary item
+GRP-0059,503A Clinical Formulations,Clinical / Provider Only,Finasteride Tablet,FINASTERIDE TABLET 1MG,Tablet,2,$2.00,New clinical formulary item
+GRP-0060,503A Clinical Formulations,Clinical / Provider Only,Finasteride Tablet,FINASTERIDE TABLET 5MG,Tablet,2.5,$2.50,New clinical formulary item
+GRP-0061,503A Clinical Formulations,Clinical / Provider Only,Foxo4-Dri,FOXO4-DRI 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,New clinical formulary item
+GRP-0062,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu,GHK-CU 1% HAIR RESTORATION SOLUTION 30ML,Solution,250,$250.00,Clinical formulation expansion
+GRP-0063,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu,GHK-CU 10MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0064,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu + Epithalon 10-2Mg + Ml (5Ml),GHK-CU/EPITHALON 10-2MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0065,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu + Snap 8 Biocosmetic, Cream (GHK-Cu","GHK-CU + SNAP 8 BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3% / SNAP-8 1%) 30GM",Topical Cream,300,$300.00,Clinical formulation expansion
+GRP-0066,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu + Snap 8 Serum, Gel (GHK-Cu","GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML",Topical Gel / Serum,350,$350.00,Clinical formulation expansion
+GRP-0067,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu Biocosmetic, Cream (GHK-Cu","GHK-CU BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3%) 30GM",Topical Cream,250,$250.00,Clinical formulation expansion
+GRP-0068,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu Firming Serum, Gel (GHK-Cu","GHK-CU FIRMING SERUM, GEL (GHK-CU 3% / NIACINAMIDE 3%) 30ML",Topical Gel / Serum,300,$300.00,Clinical formulation expansion
+GRP-0069,503A Clinical Formulations,Clinical / Provider Only,Glutathione,GLUTATHIONE 200MG/ML (10ML),Compounded Vial / Liquid,50,$50.00,Clinical formulation expansion
+GRP-0070,503A Clinical Formulations,Clinical / Provider Only,Glutathione,GLUTATHIONE 200MG/ML (30ML),Compounded Vial / Liquid,112.5,$112.50,Clinical formulation expansion
+GRP-0071,503A Clinical Formulations,Clinical / Provider Only,Glycine,GLYCINE 50MG/ML (10ML),Compounded Vial / Liquid,75,$75.00,Clinical formulation expansion
+GRP-0072,503A Clinical Formulations,Clinical / Provider Only,Gonadorelin,GONADORELIN 200MCG/ML (5ML),Compounded Vial / Liquid,87.5,$87.50,Clinical formulation expansion
+GRP-0073,503A Clinical Formulations,Clinical / Provider Only,"HCG Pregnyl 10,000Iu","HCG PREGNYL 10,000IU",Listed Unit,462.5,$462.50,Clinical formulation expansion
+GRP-0074,503A Clinical Formulations,Clinical / Provider Only,IGF-Lr3,IGF-LR3 200MCG/ML (5ML),Compounded Vial / Liquid,362.5,$362.50,New clinical formulary item
+GRP-0075,503A Clinical Formulations,Clinical / Provider Only,Ibutamoren,IBUTAMOREN 12.5MG CAPSULE,Capsule,4.125,$4.12,New clinical formulary item
+GRP-0076,503A Clinical Formulations,Clinical / Provider Only,Ibutamoren,IBUTAMOREN 25MG CAPSULE,Capsule,6.625,$6.62,New clinical formulary item
+GRP-0077,503A Clinical Formulations,Clinical / Provider Only,Ketoconazole Cream (Ketoconazole,KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM,Topical Cream,125,$125.00,New clinical formulary item
+GRP-0078,503A Clinical Formulations,Clinical / Provider Only,Kisspeptin,KISSPEPTIN 1MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0079,503A Clinical Formulations,Clinical / Provider Only,Kyzatrex (Oral Testosterone),KYZATREX (ORAL TESTOSTERONE) 200MG,Listed Unit,397.5,$397.50,New clinical formulary item
+GRP-0080,503A Clinical Formulations,Clinical / Provider Only,LIBIDO CREAM (SCREAM CREAM),LIBIDO CREAM (SCREAM CREAM) — Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream,Topical Cream,187.5,$187.50,New clinical formulary item
+GRP-0081,503A Clinical Formulations,Clinical / Provider Only,LIVER SUPPORT,"LIVER SUPPORT (Vitamin E 50%, Milk Thistle, N-Acetylcysteine, Thiamine, Selenium) CAPSULE",Capsule,112.5,$112.50,New clinical formulary item
+GRP-0082,503A Clinical Formulations,Clinical / Provider Only,Larazotide,LARAZOTIDE 250MCG CAPSULE,Capsule,4.5,$4.50,New clinical formulary item
+GRP-0083,503A Clinical Formulations,Clinical / Provider Only,Larazotide,LARAZOTIDE 500MCG CAPSULE,Capsule,8.75,$8.75,New clinical formulary item
+GRP-0084,503A Clinical Formulations,Clinical / Provider Only,Larazotide + KPV,LARAZOTIDE/KPV 500MCG-500MCG CAPSULE,Capsule,8.75,$8.75,Clinical formulation expansion
+GRP-0085,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 10% / PHENYLEPHRINE 0.5% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0086,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0087,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 7% / PRILOCAINE 2% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,New clinical formulary item
+GRP-0088,503A Clinical Formulations,Clinical / Provider Only,Lipo-B (Cyanocobalamin + Mic) (10Ml),LIPO-B (Cyanocobalamin/MIC) (10ML),Compounded Vial / Liquid,75,$75.00,New clinical formulary item
+GRP-0089,503A Clinical Formulations,Clinical / Provider Only,Lipo-B (Cyanocobalamin + Mic) (30Ml),LIPO-B (Cyanocobalamin/MIC) (30ML),Compounded Vial / Liquid,112.5,$112.50,New clinical formulary item
+GRP-0090,503A Clinical Formulations,Clinical / Provider Only,Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml),LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (10ML),Compounded Vial / Liquid,87.5,$87.50,Clinical formulation expansion
+GRP-0091,503A Clinical Formulations,Clinical / Provider Only,Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (30Ml),LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (30ML),Compounded Vial / Liquid,112.5,$112.50,Clinical formulation expansion
+GRP-0092,503A Clinical Formulations,Clinical / Provider Only,Low Dose Naltrexone,LOW DOSE NALTREXONE 1.5MG CAPSULE,Capsule,2.125,$2.12,New clinical formulary item
+GRP-0093,503A Clinical Formulations,Clinical / Provider Only,MOTS-C,MOTS-C 10MG/ML (5ML),Compounded Vial / Liquid,325,$325.00,Clinical formulation expansion
+GRP-0094,503A Clinical Formulations,Clinical / Provider Only,MOTS-C,MOTS-C 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0095,503A Clinical Formulations,Clinical / Provider Only,MYERS' COCKTAIL,"MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (10ML)",Compounded Vial / Liquid,75,$75.00,New clinical formulary item
+GRP-0096,503A Clinical Formulations,Clinical / Provider Only,MYERS' COCKTAIL,"MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (30ML)",Compounded Vial / Liquid,125,$125.00,New clinical formulary item
+GRP-0097,503A Clinical Formulations,Clinical / Provider Only,Magnesium Chloride,MAGNESIUM CHLORIDE 200MG/ML (50ML),Compounded Vial / Liquid,150,$150.00,New clinical formulary item
+GRP-0098,503A Clinical Formulations,Clinical / Provider Only,Melanotan Ii,MELANOTAN II 1MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0099,503A Clinical Formulations,Clinical / Provider Only,Metformin HCl Er Tablet,METFORMIN HCl ER TABLET 1000MG,Tablet,3.75,$3.75,New clinical formulary item
+GRP-0100,503A Clinical Formulations,Clinical / Provider Only,Metformin HCl Er Tablet,METFORMIN HCl ER TABLET 500MG,Tablet,1.875,$1.88,New clinical formulary item
+GRP-0101,503A Clinical Formulations,Clinical / Provider Only,Methylcobalamin,METHYLCOBALAMIN 5MG/ML (10ML),Compounded Vial / Liquid,75,$75.00,Clinical formulation expansion
+GRP-0102,503A Clinical Formulations,Clinical / Provider Only,Methylcobalamin,METHYLCOBALAMIN 5MG/ML (30ML),Compounded Vial / Liquid,162.5,$162.50,Clinical formulation expansion
+GRP-0103,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 10MG CAPSULE,Capsule,5,$5.00,New clinical formulary item
+GRP-0104,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 15MG CAPSULE,Capsule,5.625,$5.62,New clinical formulary item
+GRP-0105,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 25MG CAPSULE,Capsule,6.25,$6.25,New clinical formulary item
+GRP-0106,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 5MG CAPSULE,Capsule,4.375,$4.38,New clinical formulary item
+GRP-0107,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue Anti-Aging Cream (Methylene Blue,METHYLENE BLUE ANTI-AGING CREAM (METHYLENE BLUE 0.0064% / ESTRIOL 0.003%) 30GM,Topical Cream,125,$125.00,New clinical formulary item
+GRP-0108,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / AZELAIC ACID 12.5% / FINASTERIDE 0.1% / KETOCONAZOLE 2% SOLUTION 60ML,Solution,225,$225.00,New clinical formulary item
+GRP-0109,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / FINASTERIDE 0.1% SOLUTION 60ML,Solution,187.5,$187.50,New clinical formulary item
+GRP-0110,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / TRETINOIN 0.025% SOLUTION 60ML,Solution,187.5,$187.50,New clinical formulary item
+GRP-0111,503A Clinical Formulations,Clinical / Provider Only,NAD+,NAD+ 100MG/ML (10ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0112,503A Clinical Formulations,Clinical / Provider Only,NAD+,NAD+ 10MG/0.1ML (15ML) NASAL SPRAY,Nasal Spray,300,$300.00,Clinical formulation expansion
+GRP-0113,503A Clinical Formulations,Clinical / Provider Only,Nandrolone,NANDROLONE 200MG/ML GRAPE SEED OIL (10ML),Compounded Vial / Liquid,300,$300.00,Clinical formulation expansion
+GRP-0114,503A Clinical Formulations,Clinical / Provider Only,Nandrolone,NANDROLONE 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,150,$150.00,Clinical formulation expansion
+GRP-0115,503A Clinical Formulations,Clinical / Provider Only,Ondansetron,ONDANSETRON 4MG ODT (ZOFRAN) 30 TABLETS (AntiNausea),ODT / Tablet,93.75,$93.75,New clinical formulary item
+GRP-0116,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 25MG CAPSULE,Capsule,5.625,$5.62,New clinical formulary item
+GRP-0117,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 50MG CAPSULE,Capsule,11.25,$11.25,New clinical formulary item
+GRP-0118,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 5MG CAPSULE,Capsule,3,$3.00,New clinical formulary item
+GRP-0119,503A Clinical Formulations,Clinical / Provider Only,Oxymetholone,OXYMETHOLONE 25MG CAPSULE,Capsule,11.25,$11.25,New clinical formulary item
+GRP-0120,503A Clinical Formulations,Clinical / Provider Only,Oxymetholone,OXYMETHOLONE 50MG CAPSULE,Capsule,15,$15.00,New clinical formulary item
+GRP-0121,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Nasal Spray,OXYTOCIN NASAL SPRAY 100 IU/ML (10ML),Nasal Spray,87.5,$87.50,Clinical formulation expansion
+GRP-0122,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Nasal Spray,OXYTOCIN NASAL SPRAY 100 IU/ML (15ML),Nasal Spray,87.5,$87.50,Clinical formulation expansion
+GRP-0123,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Troche,OXYTOCIN TROCHE 120 IU,Troche,10,$10.00,Clinical formulation expansion
+GRP-0124,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Troche,OXYTOCIN TROCHE 50 IU,Troche,10,$10.00,Clinical formulation expansion
+GRP-0125,503A Clinical Formulations,Clinical / Provider Only,PT-141,PT-141 2MG/ML (5ML),Compounded Vial / Liquid,187.5,$187.50,Clinical formulation expansion
+GRP-0126,503A Clinical Formulations,Clinical / Provider Only,PT-141 Nasal Spray,PT-141 NASAL SPRAY 2.5MG/SPRAY (3ML),Nasal Spray,247.5,$247.50,Clinical formulation expansion
+GRP-0127,503A Clinical Formulations,Clinical / Provider Only,Peg-Mgf,PEG-MGF 0.4MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,New clinical formulary item
+GRP-0128,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 15MG CAPSULE,Capsule,1.625,$1.62,New clinical formulary item
+GRP-0129,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 30MG CAPSULE,Capsule,1.625,$1.62,New clinical formulary item
+GRP-0130,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 45MG CAPSULE,Capsule,1.625,$1.62,New clinical formulary item
+GRP-0131,503A Clinical Formulations,Clinical / Provider Only,Phentermine SR,PHENTERMINE SR 37.5MG CAPSULE,Capsule,1,$1.00,New clinical formulary item
+GRP-0132,503A Clinical Formulations,Clinical / Provider Only,Phentermine SR,PHENTERMINE SR 45MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0133,503A Clinical Formulations,Clinical / Provider Only,Phenylephrine Inj,PHENYLEPHRINE INJ 0.1%,Injectable Solution,45,$45.00,New clinical formulary item
+GRP-0134,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 100MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0135,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 125MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0136,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 125MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0137,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 150MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0138,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 150MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0139,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 175MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0140,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 200MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0141,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 200MG/ML CREAM,Topical Cream,87.5,$87.50,New clinical formulary item
+GRP-0142,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 225MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0143,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG CAPSULE,Capsule,1.875,$1.88,New clinical formulary item
+GRP-0144,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG SR CAPSULE,Capsule,1.875,$1.88,New clinical formulary item
+GRP-0145,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG/ML CREAM,Topical Cream,87.5,$87.50,New clinical formulary item
+GRP-0146,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 25MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0147,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 25MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0148,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 300MG CAPSULE,Capsule,2.5,$2.50,New clinical formulary item
+GRP-0149,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 300MG SR CAPSULE,Capsule,2.5,$2.50,New clinical formulary item
+GRP-0150,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0151,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0152,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG/ML CREAM,Topical Cream,69.375,$69.38,New clinical formulary item
+GRP-0153,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 75MG CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0154,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 75MG SR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0155,503A Clinical Formulations,Clinical / Provider Only,SLU-PP-332,SLU-PP-332 250MCG PER CAPSULE,Capsule,7.5,$7.50,Clinical formulation expansion
+GRP-0156,503A Clinical Formulations,Clinical / Provider Only,SLU-PP-332 + Bam 15 Capsule,SLU-PP-332/BAM 15 CAPSULE 100MCG/15MG PER CAPSULE,Capsule,8.75,$8.75,New clinical formulary item
+GRP-0157,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 0.6MG-500MCG/ML (2ML) (1.2mg vial),Compounded Vial / Liquid,150,$150.00,Clinical formulation expansion
+GRP-0158,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 1.2MG-500MCG/ML (2ML) (2.4mg vial),Compounded Vial / Liquid,187.5,$187.50,Clinical formulation expansion
+GRP-0159,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 10MG-500MCG/ML (3ML) (30mg vial),Compounded Vial / Liquid,750,$750.00,Clinical formulation expansion
+GRP-0160,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 2.2MG-500MCG/ML (2ML) (4.4mg vial),Compounded Vial / Liquid,225,$225.00,Clinical formulation expansion
+GRP-0161,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 2.5MG-500MCG/ML (5ML) (12.5mg vial),Compounded Vial / Liquid,375,$375.00,Clinical formulation expansion
+GRP-0162,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 3.4MG-500MCG/ML (2ML) (6.8mg vial),Compounded Vial / Liquid,312.5,$312.50,Clinical formulation expansion
+GRP-0163,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 4.1MG-500MCG/ML (2ML) (8.2mg vial),Compounded Vial / Liquid,375,$375.00,Clinical formulation expansion
+GRP-0164,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5.6MG-500MCG/ML (2ML) (11.2mg vial),Compounded Vial / Liquid,437.5,$437.50,Clinical formulation expansion
+GRP-0165,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5MG-500MCG/ML (3ML) (15mg vial),Compounded Vial / Liquid,475,$475.00,Clinical formulation expansion
+GRP-0166,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5MG-500MCG/ML (4ML) (20mg vial),Compounded Vial / Liquid,625,$625.00,Clinical formulation expansion
+GRP-0167,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + Glycine,SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (2ML) (10mg vial),Compounded Vial / Liquid,437.5,$437.50,Clinical formulation expansion
+GRP-0168,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + Glycine,SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (6ML) (30mg vial),Compounded Vial / Liquid,1062.5,"$1,062.50",Clinical formulation expansion
+GRP-0169,503A Clinical Formulations,Clinical / Provider Only,Semax + Selank,SEMAX/SELANK 2.5MG/2.5MG/ML NASAL SPRAY (15ML),Nasal Spray,375,$375.00,Clinical formulation expansion
+GRP-0170,503A Clinical Formulations,Clinical / Provider Only,Sermorelin,SERMORELIN 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0171,503A Clinical Formulations,Clinical / Provider Only,Sermorelin + Ipamorelin,SERMORELIN/IPAMORELIN 3MG-3.6MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0172,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 100MG TABLET,Tablet,3.125,$3.12,New clinical formulary item
+GRP-0173,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 110MG CAPSULE,Capsule,7.5,$7.50,New clinical formulary item
+GRP-0174,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 50MG TABLET,Tablet,1.875,$1.88,New clinical formulary item
+GRP-0175,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 55MG CAPSULE,Capsule,5,$5.00,New clinical formulary item
+GRP-0176,503A Clinical Formulations,Clinical / Provider Only,Sildenafil + Tadalafil,SILDENAFIL/TADALAFIL 50MG-10MG CAPSULE,Capsule,5,$5.00,Clinical formulation expansion
+GRP-0177,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 110MG CAPSULE,Capsule,7.5,$7.50,New clinical formulary item
+GRP-0178,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 36MG CAPSULE,Capsule,5,$5.00,New clinical formulary item
+GRP-0179,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 55MG CAPSULE,Capsule,6.25,$6.25,New clinical formulary item
+GRP-0180,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 75MG CAPSULE,Capsule,7.5,$7.50,New clinical formulary item
+GRP-0181,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 10MG CAPSULE,Capsule,5,$5.00,New clinical formulary item
+GRP-0182,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 25MG CAPSULE,Capsule,6.25,$6.25,New clinical formulary item
+GRP-0183,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 50MG CAPSULE,Capsule,10,$10.00,New clinical formulary item
+GRP-0184,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 5MG CAPSULE,Capsule,3.75,$3.75,New clinical formulary item
+GRP-0185,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 114MCG/27MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0186,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 152MCG/36MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0187,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 19MCG/4.5MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0188,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 28.5MCG/6.8MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0189,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 38MCG/9MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0190,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 50MCG/10MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0191,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 50MCG/15MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0192,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 57MCG/13.5MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0193,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 76MCG/18MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0194,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 95MCG/22.5MCG IR CAPSULE,Capsule,1.375,$1.38,New clinical formulary item
+GRP-0195,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 10MG TABLET,Tablet,6,$6.00,Clinical formulation expansion
+GRP-0196,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 12MG CAPSULE,Capsule,7.5,$7.50,Clinical formulation expansion
+GRP-0197,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 20MG TABLET,Tablet,7.5,$7.50,Clinical formulation expansion
+GRP-0198,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 24MG CAPSULE,Capsule,11.25,$11.25,Clinical formulation expansion
+GRP-0199,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 5MG TABLET,Tablet,4.625,$4.62,Clinical formulation expansion
+GRP-0200,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 12MG CAPSULE,Capsule,7.5,$7.50,Clinical formulation expansion
+GRP-0201,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 18MG CAPSULE,Capsule,8.75,$8.75,Clinical formulation expansion
+GRP-0202,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 24MG CAPSULE,Capsule,11.25,$11.25,Clinical formulation expansion
+GRP-0203,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 6MG CAPSULE,Capsule,3.75,$3.75,Clinical formulation expansion
+GRP-0204,503A Clinical Formulations,Clinical / Provider Only,Tadalafil Troche,TADALAFIL TROCHE 20MG,Troche,11.875,$11.88,Clinical formulation expansion
+GRP-0205,503A Clinical Formulations,Clinical / Provider Only,Tadalafil Troche,TADALAFIL TROCHE 25MG,Troche,11.875,$11.88,Clinical formulation expansion
+GRP-0206,503A Clinical Formulations,Clinical / Provider Only,Tamoxifen,TAMOXIFEN 10MG TABLET,Tablet,3.125,$3.12,New clinical formulary item
+GRP-0207,503A Clinical Formulations,Clinical / Provider Only,Tb-500,TB-500 10MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0208,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin,TESAMORELIN 3MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,Clinical formulation expansion
+GRP-0209,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin,TESAMORELIN 8MG/ML (3ML),Compounded Vial / Liquid,500,$500.00,Clinical formulation expansion
+GRP-0210,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin + Ipamorelin,TESAMORELIN/IPAMORELIN 2.4MG-1.2MG/ML (5ML),Compounded Vial / Liquid,300,$300.00,Clinical formulation expansion
+GRP-0211,503A Clinical Formulations,Clinical / Provider Only,Tesofensine,TESOFENSINE 500MCG CAPSULE,Capsule,5.625,$5.62,New clinical formulary item
+GRP-0212,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 100MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0213,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 10MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0214,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 14MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0215,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 200MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0216,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 30MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0217,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 50MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,Clinical formulation expansion
+GRP-0218,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML COTTON SEED OIL (10ML),Compounded Vial / Liquid,75,$75.00,New clinical formulary item
+GRP-0219,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (10ML),Compounded Vial / Liquid,125,$125.00,New clinical formulary item
+GRP-0220,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,62.5,$62.50,New clinical formulary item
+GRP-0221,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML MCT OIL (5ML),Compounded Vial / Liquid,75,$75.00,New clinical formulary item
+GRP-0222,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 20MG/ML GRAPE SEED OIL (2ML),Compounded Vial / Liquid,62.5,$62.50,New clinical formulary item
+GRP-0223,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 50MG/ML GRAPE SEED OIL (2ML),Compounded Vial / Liquid,62.5,$62.50,New clinical formulary item
+GRP-0224,503A Clinical Formulations,Clinical / Provider Only,Testosterone Ent,TESTOSTERONE ENT 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,100,$100.00,New clinical formulary item
+GRP-0225,503A Clinical Formulations,Clinical / Provider Only,Testosterone Pro,TESTOSTERONE PRO 100MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,137.5,$137.50,New clinical formulary item
+GRP-0226,503A Clinical Formulations,Clinical / Provider Only,Thymosin Alpha-1,THYMOSIN ALPHA-1 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,Clinical formulation expansion
+GRP-0227,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 10.5MG-500MCG/ML (5ML) (52.5mg vial),Compounded Vial / Liquid,812.5,$812.50,Clinical formulation expansion
+GRP-0228,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 10MG-500MCG/ML (3ML) (30mg vial),Compounded Vial / Liquid,750,$750.00,Clinical formulation expansion
+GRP-0229,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 12MG-500MCG/ML (2ML) (24mg vial),Compounded Vial / Liquid,375,$375.00,Clinical formulation expansion
+GRP-0230,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 17MG-500MCG/ML (2ML) (34mg vial),Compounded Vial / Liquid,562.5,$562.50,Clinical formulation expansion
+GRP-0231,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 20MG-500MCG/ML (3ML) (60mg vial),Compounded Vial / Liquid,850,$850.00,Clinical formulation expansion
+GRP-0232,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 22MG-500MCG/ML (2ML) (44mg vial),Compounded Vial / Liquid,687.5,$687.50,Clinical formulation expansion
+GRP-0233,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 28MG-500MCG/ML (2ML) (56mg vial),Compounded Vial / Liquid,812.5,$812.50,Clinical formulation expansion
+GRP-0234,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 30MG-500MCG/ML (6ML) (180mg vial),Compounded Vial / Liquid,2250,"$2,250.00",Clinical formulation expansion
+GRP-0235,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 33MG-500MCG/ML (2ML) (66mg vial),Compounded Vial / Liquid,937.5,$937.50,Clinical formulation expansion
+GRP-0236,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 6MG-500MCG/ML (2ML) (12mg vial),Compounded Vial / Liquid,212.5,$212.50,Clinical formulation expansion
+GRP-0237,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + Glycine,TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (2ML) (60mg vial),Compounded Vial / Liquid,750,$750.00,Clinical formulation expansion
+GRP-0238,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + Glycine,TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (6ML) (180mg vial),Compounded Vial / Liquid,2250,"$2,250.00",Clinical formulation expansion
+GRP-0239,503A Clinical Formulations,Clinical / Provider Only,Trimix (Papaverine,TRIMIX (Papaverine 30mg / Phentolamine 1mg / Alprostadil 20mcg per mL) (5ML),Compounded Vial / Liquid,162.5,$162.50,New clinical formulary item
+GRP-0240,503A Clinical Formulations,Clinical / Provider Only,VITAMIN B-COMPLEX,"VITAMIN B-COMPLEX (Thiamine 100mg, Niacinamide 100mg, Riboflavin-5- Phosphate 2mg, Pyridoxine 2mg per mL) (30ML)",Compounded Vial / Liquid,100,$100.00,New clinical formulary item
+GRP-0241,503A Clinical Formulations,Clinical / Provider Only,Vardenafil,VARDENAFIL 20MG TROCHE,Troche,11.25,$11.25,New clinical formulary item
+GRP-0242,503A Clinical Formulations,Clinical / Provider Only,"Vitamin D3 50,000Iu + Ml (30Ml)","VITAMIN D3 50,000IU/ML (30ML)",Compounded Vial / Liquid,137.5,$137.50,New clinical formulary item
+GRP-0243,Research Capsules,RUO Research,5-Amino-1MQ,5-AMINO-1MQ 50 mg,Capsule / Bottle,472.5,$472.50,Alternate strength / format
+GRP-0244,Research Capsules,RUO Research,BAM15,BAM15 500 mcg,Capsule / Bottle,,Price on request,Price / clarification required
+GRP-0245,Research Capsules,RUO Research,BPC-157,BPC-157 500 mcg,Capsule / Bottle,372.5,$372.50,Alternate strength / format
+GRP-0246,Research Capsules,RUO Research,Blend BPC-157 + TB-500,BLEND BPC-157 + TB-500 500/500 mcg,Capsule / Bottle,600,$600.00,New supplier-only item
+GRP-0247,Research Capsules,RUO Research,Dihexa,DIHEXA 10 mg,Capsule / Bottle,297.5,$297.50,Already represented in planned catalog
+GRP-0248,Research Capsules,RUO Research,GHK-Cu,GHK-Cu 2 mg,Capsule / Bottle,290,$290.00,Alternate strength / format
+GRP-0249,Research Capsules,RUO Research,KPV,KPV 500 mcg,Capsule / Bottle,290,$290.00,Alternate strength / format
+GRP-0250,Research Capsules,RUO Research,SLU-PP-332,SLU-PP-332 250 mcg,Capsule / Bottle,247.5,$247.50,Already represented in planned catalog
+GRP-0251,Research Capsules,RUO Research,SLU-PP-332,SLU-PP-332 500 mcg,Capsule / Bottle,297.5,$297.50,Alternate strength / format
+GRP-0252,Research Capsules,RUO Research,Sermorelin,SERMORELIN 500 mcg,Capsule / Bottle,337.5,$337.50,Alternate strength / format
+GRP-0253,Research Capsules,RUO Research,TB-500,TB-500 500 mcg,Capsule / Bottle,295,$295.00,Alternate strength / format
+GRP-0254,Research Capsules,RUO Research,Tesofensine,TESOFENSINE 500 mcg,Capsule / Bottle,297.5,$297.50,New supplier-only item
+GRP-0255,Research Capsules,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 500 mcg,Capsule / Bottle,340,$340.00,Alternate strength / format
+GRP-0395,Research Capsules,Supplier Catalog / Classification Pending,Colostrum,Colostrum (100mg x 90 Capsules),Capsule / Bottle,222.5,$222.50,New supplier item - planning review
+GRP-0418,Research Capsules,Supplier Catalog / Classification Pending,Tesofensine,Tesofensine (500mcg) Capsules x100,Capsule / Bottle,500,$500.00,New supplier item - planning review
+GRP-0419,Research Capsules,Supplier Catalog / Classification Pending,Tesofensine,Tesofensine (500mcg) Capsules x30,Capsule / Bottle,175,$175.00,New supplier item - planning review
+GRP-0256,Research Peptides & Materials,RUO Research,5-Amino-1Mq,5-AMINO-1MQ 10 mg,Lyophilized Vial,171.875,$171.88,Alternate strength / format
+GRP-0261,Research Peptides & Materials,RUO Research,AOD-9604,AOD-9604 5 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0257,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 10 mg,Lyophilized Vial,195,$195.00,Already represented in planned catalog
+GRP-0258,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 15 mg,Lyophilized Vial,237.5,$237.50,Alternate strength / format
+GRP-0259,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 5 mg,Lyophilized Vial,165,$165.00,Alternate strength / format
+GRP-0260,Research Peptides & Materials,RUO Research,Aod-9604,AOD-9604 10 mg,Lyophilized Vial,89,$89.00,Already represented in planned catalog
+GRP-0262,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0263,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 15 mg,Lyophilized Vial,167.5,$167.50,Alternate strength / format
+GRP-0264,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 5 mg,Lyophilized Vial,33.5,$33.50,Already represented in planned catalog
+GRP-0265,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 10 mg + TB-500 10 mg,Lyophilized Vial,99,$99.00,Already represented in planned catalog
+GRP-0266,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 15 mg + TB-500 15 mg,Lyophilized Vial,181.25,$181.25,Already represented in planned catalog
+GRP-0267,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 5 mg + TB-500 5 mg,Lyophilized Vial,79,$79.00,Already represented in planned catalog
+GRP-0268,Research Peptides & Materials,RUO Research,CJC-1295 (No DAC) + Ipamorelin,CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg,Lyophilized Vial,187.5,$187.50,Already represented in planned catalog
+GRP-0269,Research Peptides & Materials,RUO Research,CJC-1295 (No DAC) + Ipamorelin,CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg,Lyophilized Vial,79,$79.00,Already represented in planned catalog
+GRP-0270,Research Peptides & Materials,RUO Research,CJC-1295 No Dac,CJC-1295 NO DAC 10 mg,Lyophilized Vial,105,$105.00,New supplier-only item
+GRP-0271,Research Peptides & Materials,RUO Research,CJC-1295 No Dac,CJC-1295 NO DAC 2 mg,Lyophilized Vial,162.5,$162.50,New supplier-only item
+GRP-0272,Research Peptides & Materials,RUO Research,CJC-1295 With Dac,CJC-1295 WITH DAC 2 mg,Lyophilized Vial,100,$100.00,Alternate strength / format
+GRP-0273,Research Peptides & Materials,RUO Research,CJC-1295 With Dac,CJC-1295 WITH DAC 5 mg,Lyophilized Vial,187.5,$187.50,Already represented in planned catalog
+GRP-0274,Research Peptides & Materials,RUO Research,Cagrilintide,CAGRILINTIDE 10 mg,Lyophilized Vial,109,$109.00,Already represented in planned catalog
+GRP-0275,Research Peptides & Materials,RUO Research,Cagrilintide,CAGRILINTIDE 5 mg,Lyophilized Vial,59,$59.00,Alternate strength / format
+GRP-0276,Research Peptides & Materials,RUO Research,Cagrilintide + Semaglutide,CAGRILINTIDE 10 mg + SEMAGLUTIDE 10 mg,Lyophilized Vial,231.25,$231.25,New supplier-only item
+GRP-0277,Research Peptides & Materials,RUO Research,Cagrilintide + Semaglutide,CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg,Lyophilized Vial,187.5,$187.50,New supplier-only item
+GRP-0278,Research Peptides & Materials,RUO Research,DSIP,DSIP 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0279,Research Peptides & Materials,RUO Research,DSIP + Selank,DSIP 2 mg + SELANK 10 mg,Lyophilized Vial,170,$170.00,New supplier-only item
+GRP-0280,Research Peptides & Materials,RUO Research,Dihexa,DIHEXA 10 mg,Lyophilized Vial,175,$175.00,Already represented in planned catalog
+GRP-0281,Research Peptides & Materials,RUO Research,Dsip,DSIP 5 mg,Lyophilized Vial,62.5,$62.50,Already represented in planned catalog
+GRP-0282,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 10 mg,Lyophilized Vial,62.5,$62.50,Already represented in planned catalog
+GRP-0283,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 20 mg,Lyophilized Vial,159.375,$159.38,Alternate strength / format
+GRP-0284,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 30 mg,Lyophilized Vial,162.5,$162.50,Alternate strength / format
+GRP-0285,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 35 mg,Lyophilized Vial,175,$175.00,Alternate strength / format
+GRP-0286,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 50 mg,Lyophilized Vial,112.5,$112.50,Alternate strength / format
+GRP-0287,Research Peptides & Materials,RUO Research,GHK-Cu,GHK-Cu 100 mg,Lyophilized Vial,42,$42.00,Already represented in planned catalog
+GRP-0288,Research Peptides & Materials,RUO Research,GHK-Cu,GHK-Cu 50 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0289,Research Peptides & Materials,RUO Research,GHK-Cu + Epithalon,GHK-Cu 50 mg + EPITHALON 10 mg,Lyophilized Vial,207.5,$207.50,New supplier-only item
+GRP-0290,Research Peptides & Materials,RUO Research,GHRP-2,GHRP-2 10 mg,Lyophilized Vial,162.5,$162.50,New supplier-only item
+GRP-0291,Research Peptides & Materials,RUO Research,GHRP-2,GHRP-2 5 mg,Lyophilized Vial,65,$65.00,New supplier-only item
+GRP-0292,Research Peptides & Materials,RUO Research,GHRP-6,GHRP-6 10 mg,Lyophilized Vial,162.5,$162.50,New supplier-only item
+GRP-0293,Research Peptides & Materials,RUO Research,GHRP-6,GHRP-6 5 mg,Lyophilized Vial,65,$65.00,New supplier-only item
+GRP-0294,Research Peptides & Materials,RUO Research,GLOW (BPC-157 + TB-500 + GHK-Cu),BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg,Lyophilized Vial,139,$139.00,Already represented in planned catalog
+GRP-0295,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 1500 mg,Lyophilized Vial,168.75,$168.75,Already represented in planned catalog
+GRP-0296,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 500 mg,Lyophilized Vial,44.75,$44.75,Already represented in planned catalog
+GRP-0297,Research Peptides & Materials,RUO Research,Gonadorelin,GONADORELIN 5 mg,Lyophilized Vial,100,$100.00,Already represented in planned catalog
+GRP-0298,Research Peptides & Materials,RUO Research,HCG,"HCG 10,000 IU",Lyophilized Vial,212.5,$212.50,Alternate strength / format
+GRP-0299,Research Peptides & Materials,RUO Research,HCG,HCG 5000 IU,Lyophilized Vial,112.5,$112.50,Already represented in planned catalog
+GRP-0300,Research Peptides & Materials,RUO Research,Hexarelin,HEXARELIN 10 mg,Lyophilized Vial,84,$84.00,Already represented in planned catalog
+GRP-0301,Research Peptides & Materials,RUO Research,IGF-1 Lr3,IGF-1 LR3 1 mg,Lyophilized Vial,142.5,$142.50,Already represented in planned catalog
+GRP-0302,Research Peptides & Materials,RUO Research,Ipamorelin,IPAMORELIN 10 mg,Lyophilized Vial,59,$59.00,Already represented in planned catalog
+GRP-0303,Research Peptides & Materials,RUO Research,Ipamorelin,IPAMORELIN 5 mg,Lyophilized Vial,153.125,$153.12,Alternate strength / format
+GRP-0305,Research Peptides & Materials,RUO Research,KLOW (BPC-157 + TB-500 + GHK-Cu + KPV),BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg + KPV 10 mg,Lyophilized Vial,139,$139.00,Already represented in planned catalog
+GRP-0304,Research Peptides & Materials,RUO Research,KLOW (BPC-157 + TB-500 + GHK-Cu + KPV),BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg,Lyophilized Vial,335,$335.00,Already represented in planned catalog
+GRP-0306,Research Peptides & Materials,RUO Research,KPV,KPV 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0307,Research Peptides & Materials,RUO Research,KPV,KPV 5 mg,Lyophilized Vial,112.5,$112.50,Alternate strength / format
+GRP-0308,Research Peptides & Materials,RUO Research,Kisspeptin,KISSPEPTIN 10 mg,Lyophilized Vial,65,$65.00,Already represented in planned catalog
+GRP-0309,Research Peptides & Materials,RUO Research,Kisspeptin,KISSPEPTIN 5 mg,Lyophilized Vial,112.5,$112.50,Price / clarification required
+GRP-0310,Research Peptides & Materials,RUO Research,Liraglutide,LIRAGLUTIDE 10 mg,Lyophilized Vial,181.25,$181.25,New supplier-only item
+GRP-0311,Research Peptides & Materials,RUO Research,Liraglutide,LIRAGLUTIDE 20 mg,Lyophilized Vial,218.75,$218.75,New supplier-only item
+GRP-0312,Research Peptides & Materials,RUO Research,Ll-37 (Cap-18),LL-37 CAP-18 5 mg,Lyophilized Vial,125,$125.00,Alternate strength / format
+GRP-0313,Research Peptides & Materials,RUO Research,MOTS-C,MOTS-C 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0314,Research Peptides & Materials,RUO Research,Melanotan I,Melanotan I 10 mg,Lyophilized Vial,85,$85.00,Already represented in planned catalog
+GRP-0315,Research Peptides & Materials,RUO Research,Melanotan II,Melanotan II 10 mg,Lyophilized Vial,39,$39.00,Already represented in planned catalog
+GRP-0316,Research Peptides & Materials,RUO Research,Mgf,MGF 2 mg,Lyophilized Vial,117.5,$117.50,New supplier-only item
+GRP-0317,Research Peptides & Materials,RUO Research,NAD+,NAD+ 1000 mg,Lyophilized Vial,119,$119.00,Already represented in planned catalog
+GRP-0318,Research Peptides & Materials,RUO Research,NAD+,NAD+ 500 mg,Lyophilized Vial,79,$79.00,Already represented in planned catalog
+GRP-0319,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 2 mg,Lyophilized Vial,150,$150.00,Alternate strength / format
+GRP-0320,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 5 mg,Lyophilized Vial,39,$39.00,Already represented in planned catalog
+GRP-0321,Research Peptides & Materials,RUO Research,PT-141,PT-141 10 mg,Lyophilized Vial,45,$45.00,Already represented in planned catalog
+GRP-0322,Research Peptides & Materials,RUO Research,Pinealon,PINEALON 10 mg,Lyophilized Vial,150,$150.00,Already represented in planned catalog
+GRP-0323,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 10 mg,Lyophilized Vial,64.5,$64.50,Already represented in planned catalog
+GRP-0324,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 15 mg,Lyophilized Vial,89.5,$89.50,Already represented in planned catalog
+GRP-0325,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 20 mg,Lyophilized Vial,159,$159.00,Already represented in planned catalog
+GRP-0326,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 30 mg,Lyophilized Vial,112,$112.00,Already represented in planned catalog
+GRP-0327,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 40 mg,Lyophilized Vial,189,$189.00,Alternate strength / format
+GRP-0329,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 5 mg,Lyophilized Vial,175,$175.00,Alternate strength / format
+GRP-0328,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 50 mg,Lyophilized Vial,1075,"$1,075.00",Already represented in planned catalog
+GRP-0330,Research Peptides & Materials,RUO Research,Retatrutide + Cagrilintide,RETATRUTIDE 10 mg + CAGRILINTIDE 2.5 mg,Lyophilized Vial,475,$475.00,New supplier-only item
+GRP-0331,Research Peptides & Materials,RUO Research,Selank,SELANK 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0332,Research Peptides & Materials,RUO Research,Selank,SELANK 5 mg,Lyophilized Vial,60,$60.00,Alternate strength / format
+GRP-0333,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 10 mg,Lyophilized Vial,89,$89.00,Already represented in planned catalog
+GRP-0334,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 15 mg,Lyophilized Vial,313.2,$313.20,Already represented in planned catalog
+GRP-0335,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 20 mg,Lyophilized Vial,99,$99.00,Already represented in planned catalog
+GRP-0336,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 5 mg,Lyophilized Vial,28,$28.00,Already represented in planned catalog
+GRP-0337,Research Peptides & Materials,RUO Research,Semaglutide + BPC-157,SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg,Lyophilized Vial,200,$200.00,New supplier-only item
+GRP-0338,Research Peptides & Materials,RUO Research,Semax,SEMAX 10 mg,Lyophilized Vial,49,$49.00,Already represented in planned catalog
+GRP-0339,Research Peptides & Materials,RUO Research,Semax + Selank + DSIP,SEMAX 10 mg + SELANK 10 mg + DSIP 2 mg,Lyophilized Vial,247.5,$247.50,Already represented in planned catalog
+GRP-0340,Research Peptides & Materials,RUO Research,Sermorelin,SERMORELIN 10 mg,Lyophilized Vial,79,$79.00,Already represented in planned catalog
+GRP-0341,Research Peptides & Materials,RUO Research,Sermorelin,SERMORELIN 5 mg,Lyophilized Vial,50.5,$50.50,Already represented in planned catalog
+GRP-0342,Research Peptides & Materials,RUO Research,Snap-8,SNAP-8 10 mg,Lyophilized Vial,168.75,$168.75,Already represented in planned catalog
+GRP-0343,Research Peptides & Materials,RUO Research,Ss-31,SS-31 10 mg,Lyophilized Vial,82.5,$82.50,Already represented in planned catalog
+GRP-0344,Research Peptides & Materials,RUO Research,Ss-31,SS-31 50 mg,Lyophilized Vial,250,$250.00,Already represented in planned catalog
+GRP-0345,Research Peptides & Materials,RUO Research,TB-500,TB-500 10 mg,Lyophilized Vial,112.5,$112.50,Already represented in planned catalog
+GRP-0346,Research Peptides & Materials,RUO Research,TB-500,TB-500 5 mg,Lyophilized Vial,105,$105.00,Already represented in planned catalog
+GRP-0347,Research Peptides & Materials,RUO Research,Tesamorelin,TESAMORELIN 10 mg,Lyophilized Vial,99,$99.00,Already represented in planned catalog
+GRP-0348,Research Peptides & Materials,RUO Research,Tesamorelin,TESAMORELIN 5 mg,Lyophilized Vial,169.27499999999998,$169.27,Already represented in planned catalog
+GRP-0349,Research Peptides & Materials,RUO Research,Thymalin,THYMALIN 10 mg,Lyophilized Vial,162.5,$162.50,Already represented in planned catalog
+GRP-0350,Research Peptides & Materials,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 10 mg,Lyophilized Vial,99,$99.00,Already represented in planned catalog
+GRP-0351,Research Peptides & Materials,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 5 mg,Lyophilized Vial,49,$49.00,Alternate strength / format
+GRP-0352,Research Peptides & Materials,RUO Research,Thymosin Alpha-1 + KPV + LL-37,Thymosin Alpha-1 10 mg + KPV 10 mg + LL-37 5 mg,Lyophilized Vial,300,$300.00,Alternate strength / format
+GRP-0353,Research Peptides & Materials,RUO Research,Thymosin Alpha-1 + KPV + LL-37,Thymosin Alpha-1 5 mg + KPV 5 mg + LL-37 5 mg,Lyophilized Vial,397.5,$397.50,Already represented in planned catalog
+GRP-0354,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 10 mg,Lyophilized Vial,42,$42.00,Already represented in planned catalog
+GRP-0355,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 15 mg,Lyophilized Vial,56,$56.00,Already represented in planned catalog
+GRP-0356,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 20 mg,Lyophilized Vial,371.70000000000005,$371.70,Already represented in planned catalog
+GRP-0357,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 30 mg,Lyophilized Vial,79,$79.00,Already represented in planned catalog
+GRP-0358,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 40 mg,Lyophilized Vial,700,$700.00,Alternate strength / format
+GRP-0360,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 5 mg,Lyophilized Vial,159.3,$159.30,Alternate strength / format
+GRP-0359,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 50 mg,Lyophilized Vial,537.5,$537.50,Alternate strength / format
+GRP-0361,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 60 mg,Lyophilized Vial,119,$119.00,Already represented in planned catalog
+GRP-0392,Research Peptides & Materials,Supplier Catalog / Classification Pending,BDNF,BDNF (Brain-derived neurotrophic factor) (10mg),Form not stated,200,$200.00,New supplier item - planning review
+GRP-0393,Research Peptides & Materials,Supplier Catalog / Classification Pending,BPC-157,BPC-157 (20mg),Form not stated,157.5,$157.50,New supplier item - planning review
+GRP-0394,Research Peptides & Materials,Supplier Catalog / Classification Pending,CJC-1295 With DAC,CJC-1295 - With DAC (10mg),Form not stated,125,$125.00,New supplier item - planning review
+GRP-0396,Research Peptides & Materials,Supplier Catalog / Classification Pending,Curcumin,Curcumin (600mg),Form not stated,275,$275.00,New supplier item - planning review
+GRP-0397,Research Peptides & Materials,Supplier Catalog / Classification Pending,Follistatin 344,Follistatin 344 (95%) (1mg),Form not stated,287.5,$287.50,New supplier item - planning review
+GRP-0398,Research Peptides & Materials,Supplier Catalog / Classification Pending,GHK-Cu,GHK-Cu (75mg),Form not stated,92.5,$92.50,New supplier item - planning review
+GRP-0391,Research Peptides & Materials,Supplier Catalog / Classification Pending,GHRP-2 + Tesamorelin + MGF + Ipamorelin,4X Blend GHRP-2 (5mg) / Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg),Form not stated,137.5,$137.50,New supplier item - planning review
+GRP-0399,Research Peptides & Materials,Supplier Catalog / Classification Pending,GLOW (GHK-Cu + BPC-157 + TB-500),GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg),Form not stated,162.5,$162.50,New supplier item - planning review
+GRP-0400,Research Peptides & Materials,Supplier Catalog / Classification Pending,Gonadorelin,Gonadorelin (10mg),Form not stated,137.5,$137.50,New supplier item - planning review
+GRP-0401,Research Peptides & Materials,Supplier Catalog / Classification Pending,HCG,HCG(120000iu),Form not stated,137.5,$137.50,Supplier clarification required
+GRP-0403,Research Peptides & Materials,Supplier Catalog / Classification Pending,HGH,HGH (10iu),Form not stated,112.5,$112.50,New supplier item - planning review
+GRP-0402,Research Peptides & Materials,Supplier Catalog / Classification Pending,Hexarelin,Hexarelin (5mg),Form not stated,62.5,$62.50,New supplier item - planning review
+GRP-0404,Research Peptides & Materials,Supplier Catalog / Classification Pending,IGF-1 DES,IGF-1 DES (1mg),Form not stated,150,$150.00,New supplier item - planning review
+GRP-0405,Research Peptides & Materials,Supplier Catalog / Classification Pending,LL-37 Complex,LL-37 Complex (5mg),Form not stated,237.5,$237.50,New supplier item - planning review
+GRP-0406,Research Peptides & Materials,Supplier Catalog / Classification Pending,MGF,MGF (IGF-1Ec) (5mg),Form not stated,130,$130.00,New supplier item - planning review
+GRP-0407,Research Peptides & Materials,Supplier Catalog / Classification Pending,Oxytocin,Oxytocin (10mg),Form not stated,107.5,$107.50,New supplier item - planning review
+GRP-0408,Research Peptides & Materials,Supplier Catalog / Classification Pending,PE-22-28,PE-22-28 (10mg),Form not stated,80,$80.00,New supplier item - planning review
+GRP-0409,Research Peptides & Materials,Supplier Catalog / Classification Pending,PT-141,PT-141 (5mg),Form not stated,80,$80.00,New supplier item - planning review
+GRP-0410,Research Peptides & Materials,Supplier Catalog / Classification Pending,Retatrutide / GLP-3,GLP-3 (12mg),Form not stated,275,$275.00,New supplier item - planning review
+GRP-0411,Research Peptides & Materials,Supplier Catalog / Classification Pending,Retatrutide / GLP-3,GLP-3 (24mg),Form not stated,500,$500.00,New supplier item - planning review
+GRP-0414,Research Peptides & Materials,Supplier Catalog / Classification Pending,SS-31,SS-31 (15mg),Form not stated,125,$125.00,New supplier item - planning review
+GRP-0412,Research Peptides & Materials,Supplier Catalog / Classification Pending,Semaglutide / GLP-1,GLP-1 (2mg),Form not stated,100,$100.00,New supplier item - planning review
+GRP-0413,Research Peptides & Materials,Supplier Catalog / Classification Pending,Semax,Semax (30mg),Form not stated,75,$75.00,New supplier item - planning review
+GRP-0415,Research Peptides & Materials,Supplier Catalog / Classification Pending,Survodutide,Survodutide (6mg),Form not stated,187.5,$187.50,New supplier item - planning review
+GRP-0416,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin,Tesamorelin (8mg) x 4 pack,Form not stated,187.5,$187.50,New supplier item - planning review
+GRP-0388,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + Ipamorelin,2X Blend Tesamorelin (10mg) / Ipamorelin (5mg),Form not stated,125,$125.00,New supplier item - planning review
+GRP-0389,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + Ipamorelin,2X Blend Tesamorelin (5mg) / Ipamorelin (5mg),Form not stated,117.5,$117.50,New supplier item - planning review
+GRP-0390,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + MGF + Ipamorelin,3X Blend Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg),Form not stated,117.5,$117.50,New supplier item - planning review
+GRP-0417,Research Peptides & Materials,Supplier Catalog / Classification Pending,Thymosin Alpha-1 + Thymulin,Thymosin Alpha 1 (TA1) Complex Thymulin (10mg/6.4mg),Form not stated,175,$175.00,New supplier item - planning review
+GRP-0362,Research Supplies,RUO Research,Acetic Acid 0.6%,ACETIC ACID 0.6% 5 mL,Liquid,37.5,$37.50,New supplier-only item
+GRP-0363,Research Supplies,RUO Research,Reconstitution Solution,RECONSTITUTION SOLUTION 4 mL,Solution,30,$30.00,New supplier-only item
+GRP-0364,Shipping & Fulfillment,Clinical / Provider Only,FedEx Standard Overnight,FedEx Standard Overnight,Shipping Service,37.5,$37.50,New clinical formulary item
+GRP-0365,Shipping & Fulfillment,Clinical / Provider Only,Syringes & Alcohol Swabs,Syringes & Alcohol Swabs,Included Supply,,Price on request,Price / clarification required
+GRP-0366,Supplements,Supplement,Annatto Pro 125,Retail unit / package,Supplement Unit,74.7,$74.70,Already represented in planned catalog
+GRP-0367,Supplements,Supplement,Brain Restore,Retail unit / package,Supplement Unit,168.75,$168.75,Already represented in planned catalog
+GRP-0368,Supplements,Supplement,Chondro Jointaide,Retail unit / package,Supplement Unit,149.375,$149.38,Already represented in planned catalog
+GRP-0369,Supplements,Supplement,Collagen Renew (Dynamic Multi),Retail unit / package,Supplement Unit,117.375,$117.38,Already represented in planned catalog
+GRP-0370,Supplements,Supplement,Fruits & Greens,Retail unit / package,Supplement Unit,68,$68.00,Already represented in planned catalog
+GRP-0371,Supplements,Supplement,GI Defend,Retail unit / package,Supplement Unit,108.125,$108.12,Already represented in planned catalog
+GRP-0372,Supplements,Supplement,Hydrate,Retail unit / package,Supplement Unit,39.375,$39.38,Already represented in planned catalog
+GRP-0373,Supplements,Supplement,Inflam-Eze (30-serving),Retail unit / package,Supplement Unit,163.75,$163.75,Already represented in planned catalog
+GRP-0374,Supplements,Supplement,Longevity Essentials NAD+,Retail unit / package,Supplement Unit,65.5,$65.50,Already represented in planned catalog
+GRP-0375,Supplements,Supplement,Magtein (Magnesium L-Threonate),Retail unit / package,Supplement Unit,88.75,$88.75,Already represented in planned catalog
+GRP-0376,Supplements,Supplement,Mito Recharge,Retail unit / package,Supplement Unit,86.25,$86.25,Already represented in planned catalog
+GRP-0377,Supplements,Supplement,Omega Pure EPA-DHA 2400,Retail unit / package,Supplement Unit,71.875,$71.88,Already represented in planned catalog
+GRP-0378,Supplements,Supplement,PRM Resolve,Retail unit / package,Supplement Unit,102.375,$102.38,Already represented in planned catalog
+GRP-0379,Supplements,Supplement,PeriMenopause Support,Retail unit / package,Supplement Unit,43.125,$43.12,Already represented in planned catalog
+GRP-0380,Supplements,Supplement,Rejuvenate+,Retail unit / package,Supplement Unit,94.875,$94.88,Already represented in planned catalog
+GRP-0381,Supplements,Supplement,Stress Essentials Balance,Retail unit / package,Supplement Unit,87.375,$87.38,Already represented in planned catalog
+GRP-0382,Supplements,Supplement,Stress Essentials Calm,Retail unit / package,Supplement Unit,87.375,$87.38,Already represented in planned catalog
+GRP-0383,Supplements,Supplement,UltraBiotic Akkermansia Plus,Retail unit / package,Supplement Unit,78.75,$78.75,Already represented in planned catalog
+GRP-0384,Supplements,Supplement,UltraBiotic Prebiotic,Retail unit / package,Supplement Unit,107.375,$107.38,Already represented in planned catalog
+GRP-0385,Supplements,Supplement,Uplift+,Retail unit / package,Supplement Unit,91.25,$91.25,Already represented in planned catalog
+GRP-0386,Topicals & Regenerative,Nonclinical / Topical,Exosome Cream,EXOSOME CREAM 30 mL,Topical Cream,525,$525.00,New supplier-only item
+GRP-0387,Topicals & Regenerative,Nonclinical / Topical,GHKcu,GHK-Cu 30 mL,Topical Cream,400,$400.00,New supplier-only item
+GRP-0420,Topicals & Regenerative,Nonclinical / Topical,Radient XO Serum,Radient XO Serum (5 Billion Exosomes),Topical Serum,750,$750.00,Regenerative / topical expansion candidate
+GRP-0421,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 60 mg,Lyophilized Vial,249,$249.00,Alternate strength / format
+GRP-0422,Research Peptides & Materials,RUO Research,CJC-1295 + Ipamorelin,CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending),Lyophilized Vial,99,$99.00,Supplier clarification required
+GRP-0423,Research Peptides & Materials,RUO Research,MOTS-C,MOTS-C 40 mg,Lyophilized Vial,129,$129.00,Alternate strength / format
+GRP-0424,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 600 mg,Lyophilized Vial,69,$69.00,Alternate strength / format
+GRP-0425,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 10 mg,Lyophilized Vial,59,$59.00,Alternate strength / format
+GRP-0426,Research Peptides & Materials,RUO Research,Hexarelin,HEXARELIN 5 mg,Lyophilized Vial,49,$49.00,Alternate strength / format

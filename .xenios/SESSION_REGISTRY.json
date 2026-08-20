@@ -28,8 +28,8 @@
       "branch": "claude/assisted-order-bridge",
       "state": "active",
       "startedAt": "2026-08-17T16:45:39.066Z",
-      "heartbeatAt": "2026-08-19T22:33:01.447Z",
-      "note": "HARD PAUSE COMPLETE: reconciliation done, status file written (docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md), MIGRATIONS.md row 71 reconciled. All work stopped. Awaiting explicit founder resume."
+      "heartbeatAt": "2026-08-20T01:15:19.531Z",
+      "note": "2026-08-20 FLEET RESUMED (founder order): resume base 6251a6a published; 9 dispatch messages written (.xenios/messages DISPATCH-SESSION-02..10); ownership table LAUNCH_LANE_OWNERSHIP_2026-08-20.md; dirty worktrees preserved with checkpoint-first instructions. Lead beginning Session 1 integration work; P0 = Early Access usable today."
     },
     {
       "id": "claude-fable-lane4-affiliate",
