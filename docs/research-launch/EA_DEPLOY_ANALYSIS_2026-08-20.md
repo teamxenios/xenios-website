@@ -5,8 +5,8 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ## STATUS: RELEASE CANDIDATE FROZEN — AWAITING FOUNDER GO
 
-- **Frozen SHA: `362154b`** on `xenios/launch-integration-20260819`.
-  (Supersedes `f004026`, `e7b95db` and `2c6433f`. Each earlier candidate would have shipped
+- **Frozen SHA: `0aba726`** on `xenios/launch-integration-20260819`.
+  (Supersedes `362154b`, `f004026`, `e7b95db` and `2c6433f`. Each earlier candidate would have shipped
   a journey that was broken in ways nothing in the test suite could see.)
 - **Gates GREEN at this SHA**: full suite 682 files passed / 4 skipped / **0
   failed** (exit 0); `tsc --noEmit` clean; route census re-pinned with uniqueness
@@ -59,7 +59,7 @@ Current production: `a66434d9` (Release A), rollback `458e7284` (flags off first
 
 ### To release, on your word
 
-1. `git push origin 362154b:release/early-access-code-session-checkout` (clean
+1. `git push origin 0aba726:release/early-access-code-session-checkout` (clean
    fast-forward from `a66434d9`).
 2. Trigger the deploy on service `srv-d8s9vej7uimc7384dfcg`.
 3. Smoke live paths, then the fix (steps 4–6 below).

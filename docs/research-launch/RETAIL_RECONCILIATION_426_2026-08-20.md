@@ -78,6 +78,25 @@ row but is a shipping charge, not a research product. It has no Product Control
 price and should not become a purchasable catalog line; it belongs to fulfillment
 pricing. Flagged for the founder rather than created.
 
+## STANDING RULE FOR ANYONE CHANGING A PRICE
+
+**Always go through `research_admin_create_product_price` →
+`research_admin_approve_product_price`. Never hand-write an UPDATE or INSERT.**
+
+The price resolver treats two concurrently-active, in-window member rows for one
+variant as ambiguous, and an ambiguous price is rendered as "Price on request".
+It does not fall back to the newer row, or the older one — **the price silently
+disappears from every customer surface**, and the product becomes
+indistinguishable from one that was never priced. There is no error, no log line
+a customer or an operator would see, and nothing in the catalog that looks wrong.
+
+The RPC pair supersedes the previous row as part of the same transaction, which
+is what keeps exactly one row active. A direct INSERT does not, and a direct
+UPDATE that misses the status column does not either. Both the 2026-08-19
+release and this one used the RPC pair; verification after any price change
+should confirm the old version reads `superseded` and exactly one row reads
+`active`, as recorded above for Kisspeptin.
+
 ## Customer-surface guarantees re-checked
 
 - Retail only. No wholesale, supplier price, supplier quote, cost, margin,
