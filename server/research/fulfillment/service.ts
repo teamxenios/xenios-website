@@ -1,20 +1,40 @@
-import type {
-  AssignFulfillmentInput,
-  FulfillmentAction,
-  FulfillmentActor,
-  FulfillmentCommandResult,
-  FulfillmentPreparationResult,
-  FulfillmentQueueQuery,
-  FulfillmentState,
-  PrepareFulfillmentOrderInput,
-  TransitionFulfillmentInput,
+import {
+  SUPPLIER_PERMITTED_ACTIONS,
+  type AssignFulfillmentInput,
+  type FulfillmentAction,
+  type FulfillmentActor,
+  type FulfillmentCommandResult,
+  type FulfillmentPreparationResult,
+  type FulfillmentQueueQuery,
+  type FulfillmentState,
+  type PrepareFulfillmentOrderInput,
+  type TransitionFulfillmentInput,
 } from "@shared/research/fulfillment/contracts";
 import type { FulfillmentOperationsPort } from "./port";
+import { FulfillmentError } from "./errors";
+import {
+  createFailClosedPaidOrderReleaseGate,
+  type PaidOrderReleaseGate,
+} from "./release-gate";
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const KEY = /^[A-Za-z0-9:_./-]{8,200}$/;
 
+/**
+ * The minimum operational pipeline is
+ * assigned -> acknowledged -> picking -> packed -> tracking_created ->
+ * shipped -> delivered.
+ *
+ * `shipped` is reachable ONLY from `tracking_created`: recording a tracking
+ * reference is its own audited step and never implies carrier possession.
+ * Recovery from `exception` also has to pass back through the evidence-bearing
+ * steps rather than jumping straight to `shipped`.
+ *
+ * `replacement` and `refunded` are fulfillment dispositions recorded after a
+ * failed outcome; they move no money and issue no replacement stock by
+ * themselves. Replacement stock ships as a NEW assignment.
+ */
 export const FULFILLMENT_TRANSITIONS: Readonly<
   Record<FulfillmentState, Partial<Record<FulfillmentAction, FulfillmentState>>>
 > = {
@@ -38,8 +58,16 @@ export const FULFILLMENT_TRANSITIONS: Readonly<
     record_recall: "recalled",
   },
   packed: {
+    record_tracking: "tracking_created",
+    record_exception: "exception",
+    record_damage: "damaged",
+    record_loss: "lost",
+    record_recall: "recalled",
+  },
+  tracking_created: {
     ship: "shipped",
     record_exception: "exception",
+    cancel: "cancelled",
     record_damage: "damaged",
     record_loss: "lost",
     record_recall: "recalled",
@@ -61,19 +89,51 @@ export const FULFILLMENT_TRANSITIONS: Readonly<
   exception: {
     start_picking: "picking",
     pack: "packed",
-    ship: "shipped",
+    record_tracking: "tracking_created",
     cancel: "cancelled",
     record_return: "returned",
+    record_replacement: "replacement",
+    record_refund: "refunded",
     record_damage: "damaged",
     record_loss: "lost",
     record_recall: "recalled",
   },
-  returned: {},
-  damaged: {},
-  lost: {},
-  recalled: {},
-  cancelled: {},
+  returned: {
+    record_replacement: "replacement",
+    record_refund: "refunded",
+  },
+  damaged: {
+    record_replacement: "replacement",
+    record_refund: "refunded",
+  },
+  lost: {
+    record_replacement: "replacement",
+    record_refund: "refunded",
+  },
+  recalled: {
+    record_replacement: "replacement",
+    record_refund: "refunded",
+  },
+  cancelled: {
+    record_refund: "refunded",
+  },
+  replacement: {},
+  refunded: {},
 };
+
+const SUPPLIER_ACTION_SET: ReadonlySet<FulfillmentAction> =
+  new Set<FulfillmentAction>(SUPPLIER_PERMITTED_ACTIONS);
+
+const REASON_REQUIRED_ACTIONS: ReadonlySet<FulfillmentAction> = new Set<FulfillmentAction>([
+  "record_exception",
+  "record_return",
+  "record_replacement",
+  "record_refund",
+  "record_damage",
+  "record_loss",
+  "record_recall",
+  "cancel",
+]);
 
 export function normalizeInstant(value: string): string {
   if (typeof value !== "string" || value.length === 0) {
@@ -108,16 +168,20 @@ function assertKey(value: string): void {
   if (!KEY.test(value)) throw new Error("Idempotency key is invalid.");
 }
 
+function assertActionAuthority(
+  actor: FulfillmentActor,
+  action: FulfillmentAction,
+): void {
+  if (actor.kind === "supplier" && !SUPPLIER_ACTION_SET.has(action)) {
+    throw new Error(
+      "This fulfillment disposition is an internal decision and is not available to supplier operators.",
+    );
+  }
+}
+
 function assertReason(action: FulfillmentAction, reason: string | undefined): void {
   if (
-    [
-      "record_exception",
-      "record_return",
-      "record_damage",
-      "record_loss",
-      "record_recall",
-      "cancel",
-    ].includes(action) &&
+    REASON_REQUIRED_ACTIONS.has(action) &&
     (!reason || reason.trim().length < 3 || reason.length > 500)
   ) {
     throw new Error("This fulfillment action requires a concise reason.");
@@ -129,13 +193,15 @@ function assertTransitionMetadata(input: TransitionFulfillmentInput): void {
     throw new Error("Packing requires a label reference.");
   }
   if (
-    input.action === "ship" &&
+    input.action === "record_tracking" &&
     (!input.labelReference ||
       !input.carrier ||
       !input.service ||
       !input.trackingReference)
   ) {
-    throw new Error("Shipping requires label, carrier, service, and tracking evidence.");
+    throw new Error(
+      "Recording tracking requires label, carrier, service, and tracking evidence.",
+    );
   }
   if (input.expectedShipAt) normalizeInstant(input.expectedShipAt);
 }
@@ -199,13 +265,26 @@ export function validateTransitionFulfillment(input: TransitionFulfillmentInput)
   }
   assertKey(input.idempotencyKey);
   normalizeInstant(input.at);
+  assertActionAuthority(input.actor, input.action);
   assertReason(input.action, input.reason);
   assertTransitionMetadata(input);
 }
 
+export interface FulfillmentServiceDependencies {
+  /**
+   * Paid-order boundary consulted before any supplier release. Omitting it
+   * leaves the fail-closed default in place: every assignment is refused
+   * until the composition root wires real paid evidence.
+   */
+  paidOrderRelease?: PaidOrderReleaseGate;
+}
+
 export function createFulfillmentOperationsService(
   port: FulfillmentOperationsPort,
+  dependencies: FulfillmentServiceDependencies = {},
 ): FulfillmentOperationsPort {
+  const paidOrderRelease =
+    dependencies.paidOrderRelease ?? createFailClosedPaidOrderReleaseGate();
   return {
     async listAssignments(query: FulfillmentQueueQuery) {
       assertActor(query.actor);
@@ -225,6 +304,13 @@ export function createFulfillmentOperationsService(
 
     async assign(input: AssignFulfillmentInput): Promise<FulfillmentCommandResult> {
       validateAssignFulfillment(input);
+      const release = await paidOrderRelease.check(input.fulfillmentOrderId);
+      if (!release.releasable) {
+        throw new FulfillmentError(
+          "UNPAID_ORDER",
+          `Unpaid orders never release to a supplier (${release.reason}).`,
+        );
+      }
       return port.assign(input);
     },
 
