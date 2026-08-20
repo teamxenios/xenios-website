@@ -229,14 +229,42 @@ price, access, payment or ownership. Session 6 (affiliate) owns normalization.
 
 ## OWNERSHIP NOTES FOR THE LEAD
 
-- The `CANONICAL-ORDER-HISTORY` lease is still recorded as `active` for
-  `claude-fable-s7`, whose worktree `C:/xenios-wt/canonical-order` has not moved
-  since the 2026-08-19 pause (last heartbeat 2026-08-19T21:48Z). Its untracked
-  `server/research/orders/**` + `shared/research/orders/**` scaffold was
-  **copied**, not moved, into commit 169440d so it is durable and reviewable.
-  **That worktree was not touched.** If s7 wakes and pushes first, drop 169440d
-  and rebase this lane's three commits onto their branch — the three later
-  commits depend on the orders engine only through imports, not edits.
+### `server/research/orders/**` — RESOLVED, no conflict
+
+At the start of this lane the `CANONICAL-ORDER-HISTORY` lease was `active` for
+`claude-fable-s7` but dormant (last heartbeat 2026-08-19T21:48Z), with its
+`server/research/orders/**` + `shared/research/orders/**` scaffold living only
+as untracked files in `C:/xenios-wt/canonical-order`. This lane **copied** it —
+never moved, never edited — into commit 169440d so it was durable and so the
+conversion gate could build on the existing order engine rather than inventing a
+second one. That worktree was not touched.
+
+**s7 then woke and pushed** at
+`cb601c74fc75f6a49ba0916daea7403842472047` on
+`fable/canonical-order-history-20260819` (handoff
+`2026-08-20T14-15-38-461Z-CANONICAL-ORDER-HISTORY-claude-fable-s7.md`).
+
+Checked, and the outcome is clean:
+
+```
+git diff --stat 169440d cb601c7 -- server/research/orders shared/research/orders
+  (empty — byte-identical)
+```
+
+- The seven files commit 169440d carries are **byte-identical** to s7's, so the
+  overlap merges as identical content. Nothing to reconcile, nothing to drop.
+- s7's branch additionally carries six files this lane never touched —
+  `client/src/research/orders/**` (5) and
+  `docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md`. Those are theirs.
+- s7 branched from `5bb3fa9`, which is **not** a descendant of the integration
+  SHA, so this lane was NOT rebased onto their branch — that would have pulled
+  it off the integration base. This lane stays on `8dabe22` and stays
+  self-contained and testable standalone.
+- **Lead action:** take s7's `cb601c7` as the authority for the orders lane.
+  Commit 169440d then contributes nothing and can be dropped or merged
+  indifferently; either way the tree is the same. s7 remains the writer for
+  `server/research/orders/**` and `client/src/research/orders/**`; this lane
+  imports that module and never edits it.
 - `claude-fable-s3` holds an active lease on `shared/research/assisted-order/**`
   and `client/src/research/assisted-order/**`. This lane added only NEW files in
   the first glob and used a NEW directory outside the second, and edited no
@@ -257,11 +285,19 @@ price, access, payment or ownership. Session 6 (affiliate) owns normalization.
 2. **No SQL yet.** The memory repositories enforce the constraints the durable
    store must enforce; if the SQL implementation is laxer, tests pass on a
    guarantee production does not make.
-3. **`exception` is deliberately roomy.** It can move to `paid`, `rejected`,
+3. **Two order-lane payment vocabularies now coexist, on purpose.** The
+   canonical order carries `awaiting_payment | paid` — the right answer to
+   "has my money arrived". This lane's eight states are the *lifecycle* that
+   produces that answer. They must not be merged: collapsing them would put
+   `proof_submitted` on an order record, where some surface would eventually
+   read it as settlement. The bridge is one function,
+   `isSettledPaymentState`, and the conversion gate is the only caller that
+   maps across.
+4. **`exception` is deliberately roomy.** It can move to `paid`, `rejected`,
    `refunded` or back to instructions, because a real discrepancy resolves in
    several legitimate directions. Every such exit is still actor-gated, and
    reaching `paid` from it still needs the grant.
-4. The two unpriced catalog rows (BAM15 500 mcg, Syringes & Alcohol Swabs)
+5. The two unpriced catalog rows (BAM15 500 mcg, Syringes & Alcohol Swabs)
    cannot reach a quote, a payment or an order — they refuse at three layers.
    That is intended, and is the "never $0" rule.
 
