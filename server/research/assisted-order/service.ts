@@ -443,17 +443,48 @@ export class AssistedOrderService {
     const workflowModes = Array.from(
       new Set(resolvedLines.map((line) => line.workflowMode)),
     );
+    // The one line projection both emails are built from.
+    //
+    // It is RETAIL ONLY by construction, not by filtering: the catalog
+    // authority a line is resolved from carries no wholesale price, no supplier
+    // cost, no margin and no benchmark, so there is nothing here to leak. It
+    // also carries no address, no document, and no payment evidence. The
+    // renderers apply their own allowlist on top of this, so a field added here
+    // later still cannot reach an email until a template asks for it.
+    const notificationLines = Object.freeze(
+      resolvedLines.map((line) =>
+        Object.freeze({
+          productName: line.productName,
+          specification: line.specification,
+          quantity: line.quantity,
+          unitPriceCents: line.unitPriceCents,
+          lineEstimateCents: line.lineEstimateCents,
+          workflowMode: line.workflowMode,
+        }),
+      ),
+    );
+    const totalQuantity = resolvedLines.reduce(
+      (sum, line) => sum + line.quantity,
+      0,
+    );
+    // Nothing is owed at submission. Saying so plainly in both emails is the
+    // point: it is the sentence that stops a customer paying a stranger, and it
+    // tells the operator that no money fact exists to reconcile yet.
+    const paymentState = "none_due_yet";
+
     const adminPayload = Object.freeze({
       publicReference: receipt.publicReference,
       fullLegalName: input.contact.fullLegalName,
       email: input.contact.email,
       lineCount: resolvedLines.length,
-      totalQuantity: resolvedLines.reduce(
-        (sum, line) => sum + line.quantity,
-        0,
-      ),
+      totalQuantity,
       estimatedTotalCents,
       workflowModes,
+      lines: notificationLines,
+      paymentState,
+      // The server-verified attribution, when one exists. Never a browser-
+      // supplied value: `input.affiliateAttributionRef` is ignored on purpose.
+      affiliateAttributionRef: verifiedAffiliateAttributionRef,
       adminPath: `/admin/research/assisted-orders/${storedRequestId}`,
     });
 
@@ -467,7 +498,7 @@ export class AssistedOrderService {
           recipientKind: "admin",
           recipientAddress: this.deps.adminNotificationEmail,
           templateKey: "research.assisted_order.submitted.admin",
-          templateVersion: "v1",
+          templateVersion: "v2",
           payload: adminPayload,
           dedupeKey: `assisted-order:${storedRequestId}:submitted:admin`,
           createdAt: nowIso,
@@ -482,11 +513,15 @@ export class AssistedOrderService {
           recipientKind: "customer",
           recipientAddress: input.contact.email,
           templateKey: "research.assisted_order.submitted.customer",
-          templateVersion: "v1",
+          templateVersion: "v2",
           payload: Object.freeze({
             publicReference: receipt.publicReference,
             lineCount: resolvedLines.length,
+            totalQuantity,
             estimatedTotalCents,
+            lines: notificationLines,
+            paymentState,
+            nextSteps: receipt.nextSteps,
             statusPath: `/research/early-access/order-request/${receipt.publicReference}`,
           }),
           dedupeKey: `assisted-order:${storedRequestId}:submitted:customer`,
