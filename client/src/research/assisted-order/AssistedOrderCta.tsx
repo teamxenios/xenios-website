@@ -18,7 +18,15 @@ type ConfigState =
 
 export const ASSISTED_ORDER_CTA_PATH = "/research/early-access/order-request";
 
-export function AssistedOrderCta() {
+/**
+ * Whether the assisted-order bridge is actually open, asked of the server.
+ *
+ * Shared with the storefront so the full canonical catalog and this CTA agree:
+ * a dark deployment shows neither a dead button nor a catalog the submit door
+ * would refuse. Exported as a hook rather than duplicated, because two probes
+ * would eventually disagree about the same fact.
+ */
+export function useAssistedOrderBridgeState(): ConfigState {
   const [state, setState] = useState<ConfigState>({ kind: "checking" });
 
   useEffect(() => {
@@ -49,6 +57,12 @@ export function AssistedOrderCta() {
       alive = false;
     };
   }, []);
+
+  return state;
+}
+
+export function AssistedOrderCta() {
+  const state = useAssistedOrderBridgeState();
 
   if (state.kind === "checking" || state.kind === "absent") {
     return null;

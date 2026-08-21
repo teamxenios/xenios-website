@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
-import { AssistedOrderCta } from "../assisted-order/AssistedOrderCta";
+import {
+  AssistedOrderCta,
+  useAssistedOrderBridgeState,
+} from "../assisted-order/AssistedOrderCta";
+import { Suspense, lazy } from "react";
+
+/** The full canonical catalog, loaded on demand so the storefront shell stays small. */
+const FullCanonicalCatalog = lazy(() =>
+  import("../assisted-order/AssistedOrderPage").then((m) => ({
+    default: m.AssistedOrderPage,
+  })),
+);
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
@@ -88,6 +99,9 @@ export default function EarlyAccessRoute() {
   // the customer. Reading it grants nothing: the status endpoint re-authorizes
   // against the session's derived identity on every call.
   const [rememberedOrder] = useState<string | null>(() => readLastOrderNumber());
+  // Asked once, shared with the CTA below, so the storefront and the door
+  // cannot disagree about whether ordering is open.
+  const bridgeState = useAssistedOrderBridgeState();
   const catalogRef = useRef<HTMLDivElement | null>(null);
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
 
@@ -361,15 +375,25 @@ export default function EarlyAccessRoute() {
                   </div>
                 )}
                 {/*
-                  The assisted-order door, additive and beside the existing
-                  catalogue rather than in front of it: the single-item flow,
-                  the cart, and checkout are untouched. The component asks the
-                  server whether the feature is open and renders nothing when
-                  it is absent, so a dark deployment shows no dead button.
+                  ONE STOREFRONT (founder decision 2026-08-21).
+                  
+                  The full canonical catalog is now the primary Early Access
+                  experience: 424 canonical variants, every one priced by the
+                  same server authority and routed by the same canonical action
+                  resolver. The curated opening set below is a FEATURED
+                  projection over that same catalog — same product identity,
+                  same price authority, same action router — and is no longer a
+                  second canonical storefront competing with it.
+                  
+                  Before this, /research/early-access showed only the 22-product
+                  opening set while the real 420-row catalog lived behind a
+                  separate order-request link, so a customer looking at the
+                  storefront could not see most of what Xenios sells.
                 */}
                 <div className="mb-4">
                   <AssistedOrderCta />
                 </div>
+                <h3 className="xenios-early-access-section-heading">Featured products</h3>
                 <EarlyAccessCatalogSection
                   fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
                   reviewEnabled={agreed && blocked === null}
@@ -389,6 +413,23 @@ export default function EarlyAccessRoute() {
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 />
+                {/*
+                  ALL PRODUCTS — the full canonical catalog, on the storefront
+                  itself rather than behind a separate link. Same product
+                  identity, same server price authority and same canonical
+                  action router as the featured set above, so a row's button
+                  says the same thing wherever the customer meets it.
+                */}
+                {bridgeState.kind === "enabled" ? (
+                  <section className="mt-8" data-testid="early-access-full-catalog">
+                    <h3 className="xenios-early-access-section-heading">All products</h3>
+                    <Suspense
+                      fallback={<p className="xenios-order-notice">Loading the full research catalogue.</p>}
+                    >
+                      <FullCanonicalCatalog />
+                    </Suspense>
+                  </section>
+                ) : null}
               </div>
             ) : (
               <div className="mt-5" data-testid="early-access-checkout-mount">
