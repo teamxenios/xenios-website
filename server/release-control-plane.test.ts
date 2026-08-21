@@ -161,6 +161,14 @@ const DECLARED_AFFILIATE_CODE_SOURCE_SHA =
   "0bda86909d61fd33ef18dd92acb7856eaee662ea";
 const DECLARED_AFFILIATE_CODE_PATH =
   "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql";
+// The bulk unit-fact reads (ledger row 76): the set-valued twins of the
+// per-unit hold-kinds and live-confirmation RPCs, OPTIONAL for the code RC
+// because the server falls back to the per-unit functions when absent.
+// Pinned at the launch-integration commit that introduced the file.
+const BULK_UNIT_FACTS_SOURCE_SHA =
+  "7d409a648a315f31637d75150917459af41948b4";
+const BULK_UNIT_FACTS_PATH =
+  "supabase/migrations/20260821170000_research_early_access_bulk_unit_facts.sql";
 // The three 2026-08-19 launch cart migrations (commission settlement, member
 // cart history, canonical settlement txn), promoted from candidates after
 // adversarial review and a two-engine disposable apply-twice rehearsal
@@ -875,6 +883,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(SEARCH_PATH_HARDENING_SOURCE_SHA);
           } else if (path === ASSISTED_ORDER_BRIDGE_PATH) {
             expect(sourceSha).toBe(ASSISTED_ORDER_BRIDGE_SOURCE_SHA);
+          } else if (path === BULK_UNIT_FACTS_PATH) {
+            expect(sourceSha).toBe(BULK_UNIT_FACTS_SOURCE_SHA);
           } else if (path === DECLARED_AFFILIATE_CODE_PATH) {
             expect(sourceSha).toBe(DECLARED_AFFILIATE_CODE_SOURCE_SHA);
           } else if (LAUNCH_CART_MIGRATION_PATHS.has(path)) {

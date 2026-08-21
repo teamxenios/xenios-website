@@ -68,6 +68,7 @@ const PRODUCTION_ENV = {
 } as NodeJS.ProcessEnv;
 
 const HOLD_KINDS_RPC = "research_early_access_active_hold_kinds_for_unit";
+const BULK_HOLDS_RPC = "research_early_access_active_unit_holds";
 
 /** A database that has migration 54's TABLE but not its read FUNCTION. */
 function withoutHoldRpc() {
@@ -76,7 +77,12 @@ function withoutHoldRpc() {
     calls,
     query: async (call: EarlyAccessPersistenceCall): Promise<unknown> => {
       calls.push(call.fn);
-      if (call.fn === HOLD_KINDS_RPC) {
+      // A database without migration 54 is missing BOTH hold reads: the
+      // bulk function (migration 20260821170000) cannot even be created
+      // there, because its body references the table migration 54 creates.
+      // Failing only the per-unit name would model a database that cannot
+      // exist — and would silently skip the fallback ladder under test.
+      if (call.fn === HOLD_KINDS_RPC || call.fn === BULK_HOLDS_RPC) {
         // Exactly what `runEarlyAccessCall` produces for a missing function:
         // every driver failure collapses into this one opaque error.
         throw new EarlyAccessPersistenceError(call.fn);

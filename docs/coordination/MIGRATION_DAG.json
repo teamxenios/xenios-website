@@ -705,7 +705,7 @@
   {
    "id": "research_early_access_bulk_unit_facts",
    "path": "supabase/migrations/20260821170000_research_early_access_bulk_unit_facts.sql",
-   "sourceSha": "2a4aa985e344e7a947905c5af1e4e94f3eef690a",
+   "sourceSha": "7d409a648a315f31637d75150917459af41948b4",
    "dependsOn": [
     "research_early_access_supplier_operations",
     "research_early_access_unit_holds"
@@ -719,7 +719,7 @@
    "applyTwiceVerified": true,
    "rollback": {
     "strategy": "drop_the_two_functions_no_table_or_row_is_touched",
-    "procedure": "drop function public.research_early_access_active_unit_holds(); drop function public.research_early_access_live_supplier_confirmations(timestamptz);",
+    "procedure": "supabase/production/research-early-access-bulk-unit-facts-rollback-notes.md",
     "evidence": "REHEARSED 2026-08-21 on disposable PostgreSQL 17 (docker postgres:17-alpine, roles anon/authenticated/service_role NOLOGIN, pgcrypto): prerequisites 20260804122000 + 20260804130000 applied clean, this migration applied TWICE at psql exit 0. Behavioural: empty reads return []; bulk holds == per-unit kinds for a unit holding STOP_SHIP + REGULATORY_HOLD; withdraw removes the kind from the bulk read immediately; live confirmation appears identically in bulk and per-unit reads and vanishes from the bulk read past expires_at; ACLs service_role EXECUTE true, anon/authenticated false on both functions. OPTIONAL FOR THE CODE RC: adapters fall back to per-unit RPCs when absent (declared-facts window ladder). Parity with server reads pinned in server/research/early-access/catalog/declared-facts-bulk-window.test.ts."
    }
   }
