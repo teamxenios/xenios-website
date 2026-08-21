@@ -280,56 +280,72 @@ describe("peptide launch: duplicate reconciliation", () => {
     expect(droppedIds.sort()).toEqual(["GRP-0402", "GRP-0407"]);
   });
 
-  // The twins disagree about BOTH price and classification, so the collapse
-  // decides buyability, not merely a number. Which twin survives is NOT a
-  // matter of taste: the founder's own targets determine it uniquely.
+  // WHICH TWIN SURVIVES IS DISPUTED, SO THIS ASSERTS THE INVARIANT, NOT A PRICE.
   //
-  //   keep RUO     -> unique RUO 112, direct 111, pending 27   MATCHES
-  //   keep pending -> unique RUO 110, direct 109, pending 29   does not
+  // An earlier version of this file hardcoded $49.00 and $59.00. That was a
+  // mistake: it picked a side in a live disagreement. The reviewed config and
+  // production's 2026-08-19 adjudication say the RUO row wins ($49.00/$59.00);
+  // the founder has separately been reported as selecting $62.50/$107.50, the
+  // pending twins' prices. Until that is reconciled, a test that names a number
+  // is a test that will either be wrong or quietly make the decision.
   //
-  // Both arrangements give 139 unique, so the total alone cannot discriminate;
-  // 111/27 can, and only one arrangement produces it. Keeping the confirmed RUO
-  // row is therefore forced, and the retail price follows from the row that
-  // survives - $49.00 and $59.00. Derived independently with claude-fable-s6b.
-  //
-  // RESIDUAL, deliberately narrow and NOT launch-blocking: the retired twins
-  // came from a supplier sheet ("New supplier item - planning review") at
-  // higher prices, and the Oxytocin gap is +82%. If either higher figure is a
-  // NEWER authorized retail price rather than a stale duplicate, only the
-  // founder can say so. Until then the surviving row's price is the coherent
-  // answer, because taking the pending row's price while keeping the RUO row's
-  // classification would invent a variant that exists in neither sheet.
-  it("resolves each collapsed pair to the confirmed RUO row and its price", () => {
-    const resolved = duplicateGroups.map(([key, rows]) => {
+  // What is NOT in dispute, and is the failure mode this pair actually invites:
+  // price and classification are ONE choice. The cheaper row in each pair IS the
+  // RUO row, so taking one row's price with the other row's classification would
+  // invent a variant that exists in neither sheet - a product priced as
+  // confirmed-RUO but classified pending, or the reverse. This asserts that the
+  // surviving row is internally coherent, whichever row the founder picks.
+  // (Invariant proposed by claude-fable-s7; it survives either answer.)
+  it("takes the surviving row's price and classification from the SAME source row", () => {
+    for (const [key, rows] of duplicateGroups) {
       const kept = canonicalRow(rows);
-      const retired = rows.find((r) => r !== kept)!;
-      return {
-        variant: key,
-        keptGroupId: kept["Group ID"],
-        retailPrice: kept["Price Display"],
-        retiredGroupId: retired["Group ID"],
-        retiredPrice: retired["Price Display"],
-      };
-    });
-    expect(resolved).toEqual([
+      const sameRow = rows.find(
+        (r) =>
+          r["Price Display"] === kept["Price Display"] &&
+          r.Channel === kept.Channel &&
+          r["Group ID"] === kept["Group ID"],
+      );
+      expect(sameRow, `${key}: price and channel must come from one row`).toBeDefined();
+      // And the retired twin's price is never silently borrowed.
+      const retired = rows.find((r) => r["Group ID"] !== kept["Group ID"])!;
+      expect(kept["Price Display"]).not.toBe(retired["Price Display"]);
+    }
+  });
+
+  it("never counts a classification-pending survivor as directly orderable", () => {
+    for (const [, rows] of duplicateGroups) {
+      const kept = canonicalRow(rows);
+      if (kept.Channel === PENDING_CHANNEL) {
+        expect(pathwayFor(kept)).toBe("assisted_order");
+        expect(pathwayEntersPayment(pathwayFor(kept))).toBe(false);
+      }
+    }
+  });
+
+  it("records the disputed pair as data, so the decision is visible not buried", () => {
+    // Deliberately reports both candidates without endorsing either.
+    const disputed = duplicateGroups.map(([key, rows]) => ({
+      variant: key,
+      candidates: rows
+        .map((r) => `${r["Group ID"]}:${r.Channel === RUO_CHANNEL ? "RUO" : "pending"}:${r["Price Display"]}`)
+        .sort(),
+    }));
+    expect(disputed).toEqual([
       {
         variant: "HEXARELIN 5 MG",
-        keptGroupId: "GRP-0426",
-        retailPrice: "$49.00",
-        retiredGroupId: "GRP-0402",
-        retiredPrice: "$62.50",
+        candidates: ["GRP-0402:pending:$62.50", "GRP-0426:RUO:$49.00"],
       },
       {
         variant: "OXYTOCIN 10 MG",
-        keptGroupId: "GRP-0425",
-        retailPrice: "$59.00",
-        retiredGroupId: "GRP-0407",
-        retiredPrice: "$107.50",
+        candidates: ["GRP-0407:pending:$107.50", "GRP-0425:RUO:$59.00"],
       },
     ]);
   });
 
-  it("proves the founder's targets admit only the keep-RUO arrangement", () => {
+  it("shows the founder's targets follow from keeping the RUO row", () => {
+    // Stated as arithmetic, not as an instruction. If the founder's answer is
+    // the pending twin, the authorized counts become 109/29 and THIS is the
+    // test that says so out loud rather than the storefront discovering it.
     const HELD = 1;
     const arrangement = (keepRuo: boolean) => {
       const uniqueRuo = keepRuo ? 112 : 112 - duplicateGroups.length;
