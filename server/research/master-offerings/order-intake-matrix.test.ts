@@ -12,6 +12,8 @@ import type {
   NormalizedMasterOfferingVariant,
 } from "./model";
 import { cartSelection } from "./test-fixtures";
+import { projectMasterOfferingVariant } from "./customer-projection";
+import type { MasterOfferingPriceView } from "@shared/research/master-offerings/pricing-contract";
 
 // ---------------------------------------------------------------------------
 // ORDER INTAKE MATRIX — every canonical variant, at the layer that decides what
@@ -248,5 +250,139 @@ describe("order intake matrix: what the customer's button says", () => {
     expect(
       TARGET.direct + TARGET.formulationBlocked + TARGET.classificationPending,
     ).toBe(TARGET.canonicalPeptideVariants);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// A row the customer cannot order still has to show what it costs.
+//
+// The founder's routing table says GRP-0422 is VISIBLE, RETAIL PRICED, and
+// Request Order. Those are three separate properties and only one of them is a
+// routing decision. Price and action are resolved independently — the action
+// resolver never sees the price, and the projection sets them side by side —
+// so this pins the independence rather than assuming it.
+//
+// The regression it guards against is a plausible and well-meant one: someone
+// deciding that a product you cannot buy should not show a price. That would
+// leave a customer requesting an order for an amount nobody ever showed them.
+// ---------------------------------------------------------------------------
+
+const RETAIL_PRICE: MasterOfferingPriceView = {
+  state: "priced",
+  amountCents: 9900,
+  currency: "USD",
+  display: "$99.00",
+  basis: "exact_listed_unit",
+  priceId: "price_grp_0422",
+  priceVersion: 1,
+  effectiveAt: "2026-08-19T00:00:00.000Z",
+  expiresAt: null,
+};
+
+function projectRow(row: Row, price: MasterOfferingPriceView) {
+  const variant: NormalizedMasterOfferingVariant = {
+    id: "mov_matrix_variant",
+    label: row.variantLabel,
+    displayState: row.variantDisplayState,
+    visibility: "member",
+    sourceReferences: [],
+  };
+  const offering = {
+    id: "mo_matrix_offering",
+    slug: "matrix",
+    canonicalKey: "matrix",
+    displayName: row.productName,
+    canonicalName: row.productName,
+    family: row.family,
+    category: "matrix",
+    subcategory: null,
+    brand: null,
+    aliases: [],
+    displayState: row.displayState,
+    stateExplanation: "",
+    copyState: "approved",
+    visibility: "member",
+    variants: [variant],
+    sourceReferences: [],
+  } as unknown as NormalizedMasterOffering;
+
+  const selection = cartSelection();
+  return projectMasterOfferingVariant(
+    offering,
+    variant,
+    () => ({
+      binding: {
+        offeringVariantId: variant.id,
+        productId: selection.productId,
+        variantId: selection.variantId,
+      },
+      selection,
+    }),
+    price,
+    { reviewedFormulationHolds: reviewedHeldSpecifications() },
+  );
+}
+
+describe("a Request Order row still shows its retail price", () => {
+  it("prices the formulation-held combination while refusing to sell it", () => {
+    const view = projectRow(
+      {
+        family: "research_peptides_materials",
+        productName: "CJC-1295 + Ipamorelin",
+        variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+        displayState: "request_access",
+        variantDisplayState: "request_access",
+      },
+      RETAIL_PRICE,
+    );
+
+    // Visible, priced, and not directly orderable — all three at once.
+    expect(view.label).toBe("CJC-1295 WITH DAC + IPAMORELIN 5 mg total");
+    expect(view.price).toMatchObject({ state: "priced", amountCents: 9900, display: "$99.00" });
+    expect(view.action.kind).not.toBe("add_to_cart");
+  });
+
+  it("prices a classification-pending peptide it will not sell", () => {
+    const view = projectRow(
+      {
+        family: "research_peptides_materials",
+        productName: "Some Pending Peptide",
+        variantLabel: "PENDING PEPTIDE 10 mg",
+        displayState: "approval_required",
+        variantDisplayState: "approval_required",
+      },
+      RETAIL_PRICE,
+    );
+
+    expect(view.price).toMatchObject({ state: "priced", amountCents: 9900 });
+    expect(view.action.kind).not.toBe("add_to_cart");
+  });
+
+  it("keeps the price identical to the one an orderable row would show", () => {
+    // The same price object reaches the customer whether or not the row can be
+    // bought, so a held row cannot quietly render a different number.
+    const held = projectRow(
+      {
+        family: "research_peptides_materials",
+        productName: "CJC-1295 + Ipamorelin",
+        variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+        displayState: "request_access",
+        variantDisplayState: "request_access",
+      },
+      RETAIL_PRICE,
+    );
+    const orderableRow = projectRow(
+      {
+        family: "research_peptides_materials",
+        productName: "CJC-1295 With Dac",
+        variantLabel: "CJC-1295 WITH DAC 5 mg",
+        displayState: "request_access",
+        variantDisplayState: "request_access",
+      },
+      RETAIL_PRICE,
+    );
+
+    expect(orderableRow.action.kind).toBe("add_to_cart");
+    expect(held.price).toEqual(orderableRow.price);
   });
 });
