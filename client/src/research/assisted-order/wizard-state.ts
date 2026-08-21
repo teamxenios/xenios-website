@@ -342,7 +342,7 @@ export function acceptedAgreements(
 
 export function money(cents: number | null): string {
   if (cents === null) {
-    return "Price pending";
+    return "Price on request";
   }
   return new Intl.NumberFormat("en-US", {
     style: "currency",

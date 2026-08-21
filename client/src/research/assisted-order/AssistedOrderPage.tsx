@@ -706,7 +706,7 @@ export function AssistedOrderPage() {
                     />
                   </label>
                 </div>
-                <div><span>Qty {selection.quantity}</span><strong>{selection.item.unitPriceCents === null ? "Price pending" : money(selection.item.unitPriceCents * selection.quantity)}</strong></div>
+                <div><span>Qty {selection.quantity}</span><strong>{selection.item.unitPriceCents === null ? "Price on request" : money(selection.item.unitPriceCents * selection.quantity)}</strong></div>
               </article>
             ))}
           </div>

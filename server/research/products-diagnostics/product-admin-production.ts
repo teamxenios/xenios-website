@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import { readInChunks } from "../catalog/chunked-ids";
 import { getSupabaseAdmin } from "../../supabase";
 import type {
   AdminProductContent,
@@ -412,45 +413,60 @@ export class SupabaseProductAdminRepository
     const ids = products.map((row) => rowText(row.id)).filter(Boolean);
     if (!ids.length) return [];
 
+    // Every id-set read is CHUNKED. At 217 products one `.in()` querystring is
+    // ~7.7KB, and an 8KB proxy request-line default answers 414 — killing the
+    // whole catalog, measured live in the browser-perf rehearsal. Per-product
+    // row ordering is unaffected: all of a product's rows come back in the one
+    // chunk carrying that product's id.
     const [variantRows, priceRows, mediaRows, contentRowsRaw, inputRows] =
       await Promise.all([
-        many(
-          this.db
-            .from(VARIANT_TABLE)
-            .select("*")
-            .in("product_id", ids)
-            .order("sort_order", { ascending: true }),
-          "list variants for details",
+        readInChunks(ids, (chunk) =>
+          many(
+            this.db
+              .from(VARIANT_TABLE)
+              .select("*")
+              .in("product_id", chunk)
+              .order("sort_order", { ascending: true }),
+            "list variants for details",
+          ),
         ),
-        many(
-          this.db
-            .from(PRICE_TABLE)
-            .select("*")
-            .in("product_id", ids)
-            .order("created_at", { ascending: false }),
-          "list prices for details",
+        readInChunks(ids, (chunk) =>
+          many(
+            this.db
+              .from(PRICE_TABLE)
+              .select("*")
+              .in("product_id", chunk)
+              .order("created_at", { ascending: false }),
+            "list prices for details",
+          ),
         ),
-        many(
-          this.db
-            .from(MEDIA_TABLE)
-            .select("*")
-            .in("product_id", ids)
-            .order("sort_order", { ascending: true }),
-          "list media for details",
+        readInChunks(ids, (chunk) =>
+          many(
+            this.db
+              .from(MEDIA_TABLE)
+              .select("*")
+              .in("product_id", chunk)
+              .order("sort_order", { ascending: true }),
+            "list media for details",
+          ),
         ),
-        many(
-          this.db
-            .from(CONTENT_TABLE)
-            .select("product_id,section,body,metadata")
-            .in("product_id", ids),
-          "list content for details",
+        readInChunks(ids, (chunk) =>
+          many(
+            this.db
+              .from(CONTENT_TABLE)
+              .select("product_id,section,body,metadata")
+              .in("product_id", chunk),
+            "list content for details",
+          ),
         ),
-        many(
-          this.db
-            .from(REQUIRED_INPUT_TABLE)
-            .select("record_id,current_state,blocking_level")
-            .in("record_id", ids),
-          "list required inputs for details",
+        readInChunks(ids, (chunk) =>
+          many(
+            this.db
+              .from(REQUIRED_INPUT_TABLE)
+              .select("record_id,current_state,blocking_level")
+              .in("record_id", chunk),
+            "list required inputs for details",
+          ),
         ),
       ]);
 

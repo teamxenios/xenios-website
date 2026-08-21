@@ -30,6 +30,7 @@ import {
   projectMemberProductDetail,
   type MemberCatalogProjectionInput,
 } from "./member-catalog-projection";
+import { readInChunks } from "./chunked-ids";
 import {
   createProductionProductControlReader,
   type ProductCatalogReader,
@@ -405,13 +406,21 @@ export function createSupabaseBulkVariantInventoryFactsReader(dependencies: {
       const productIds = Array.from(
         new Set(units.map((unit) => unit.productId)),
       );
-      const result = await db
-        .from("research_inventory_lots")
-        .select("id,product_id,variant_id,sku,disposition,version,updated_at")
-        .in("product_id", productIds)
-        .order("id");
-      if (result.error) throw new Error("member_catalog_inventory_unavailable");
-      const rows = (result.data ?? []) as InventoryLotRow[];
+      // Chunked for the same 414 cliff listDetails guards against: one
+      // `.in()` over the whole catalog's ids overruns an 8KB proxy line
+      // limit. Per-unit row ordering survives because a unit's rows all come
+      // from the chunk that carries its product id, ordered by id within it.
+      const rows = await readInChunks(productIds, async (chunk) => {
+        const result = await db
+          .from("research_inventory_lots")
+          .select("id,product_id,variant_id,sku,disposition,version,updated_at")
+          .in("product_id", chunk)
+          .order("id");
+        if (result.error) {
+          throw new Error("member_catalog_inventory_unavailable");
+        }
+        return (result.data ?? []) as InventoryLotRow[];
+      });
 
       // Only lots that belong to a REQUESTED unit are decided. The grouping
       // filter is the per-variant query's WHERE clause, applied in memory.

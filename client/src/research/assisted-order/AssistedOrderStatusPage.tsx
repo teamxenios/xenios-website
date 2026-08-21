@@ -59,7 +59,7 @@ export function AssistedOrderStatusPage() {
               {status.lines.map((line) => (
                 <article key={line.lineId}>
                   <div><strong>{line.productName}</strong><span>{line.specification}</span><span>{line.workflowMode.replaceAll("_", " ")}</span></div>
-                  <div><span>Qty {line.quantity}</span><strong>{line.lineEstimateCents === null ? "Price pending" : money(line.lineEstimateCents)}</strong></div>
+                  <div><span>Qty {line.quantity}</span><strong>{line.lineEstimateCents === null ? "Price on request" : money(line.lineEstimateCents)}</strong></div>
                 </article>
               ))}
             </div>

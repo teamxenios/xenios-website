@@ -98,14 +98,14 @@ describe("assisted order wizard state", () => {
   });
 
   it("renders null price as pending", () => {
-    expect(money(null)).toBe("Price pending");
+    expect(money(null)).toBe("Price on request");
   });
 
   it("never turns an all-unpriced request into a zero estimate", () => {
     const unpriced = { ...item, unitPriceCents: null, priceVersion: null };
     const state = addOrUpdateSelection(new Map(), unpriced, 3);
     expect(selectionEstimateCents(state)).toBeNull();
-    expect(money(selectionEstimateCents(state))).toBe("Price pending");
+    expect(money(selectionEstimateCents(state))).toBe("Price on request");
   });
 });
 
