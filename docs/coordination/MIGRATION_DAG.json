@@ -716,11 +716,11 @@
    },
    "appliedToProduction": false,
    "managedMigrationId": "PENDING",
-   "applyTwiceVerified": false,
+   "applyTwiceVerified": true,
    "rollback": {
     "strategy": "drop_the_two_functions_no_table_or_row_is_touched",
     "procedure": "drop function public.research_early_access_active_unit_holds(); drop function public.research_early_access_live_supplier_confirmations(timestamptz);",
-    "evidence": "Not yet rehearsed on a disposable database. OPTIONAL FOR THE CODE RC: server adapters detect the functions structurally and fall back to the existing per-unit RPCs when absent (declared-facts window ladder), so the RC runs correctly on a production that has not applied this; applying it later removes the per-unit fan-out."
+    "evidence": "REHEARSED 2026-08-21 on disposable PostgreSQL 17 (docker postgres:17-alpine, roles anon/authenticated/service_role NOLOGIN, pgcrypto): prerequisites 20260804122000 + 20260804130000 applied clean, this migration applied TWICE at psql exit 0. Behavioural: empty reads return []; bulk holds == per-unit kinds for a unit holding STOP_SHIP + REGULATORY_HOLD; withdraw removes the kind from the bulk read immediately; live confirmation appears identically in bulk and per-unit reads and vanishes from the bulk read past expires_at; ACLs service_role EXECUTE true, anon/authenticated false on both functions. OPTIONAL FOR THE CODE RC: adapters fall back to per-unit RPCs when absent (declared-facts window ladder). Parity with server reads pinned in server/research/early-access/catalog/declared-facts-bulk-window.test.ts."
    }
   }
  ],
