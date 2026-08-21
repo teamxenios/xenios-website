@@ -3,9 +3,11 @@
 **Session:** claude-fable-main-integrator (sole integrator / RC / release / production owner, 3-session command)
 **Written:** 2026-08-21
 **Base handoff:** `6977f24` (`XENIOS_IMMEDIATE_MANUAL_ORDER_LAUNCH_TAKEOVER_2026-08-21.md`)
-**CODE-FINAL SHA:** `5ca944f0427a1fc6be5904798fb2f12d8f63b827` — the tree the full
-suite certified. The RC SHA the founder approves is the commit that ADDS this
-handoff on top of it (docs-only delta); verify both against origin.
+**CODE-FINAL SHA:** `bf0bcec5d03180d68ceb14e0cf306727dc616162` — the tree the full
+suite certified (supersedes the first freeze at `8763efe`: the browser-perf
+worker's measured 414 cliff forced an id-chunking amendment before GO). The RC
+SHA the founder approves is the commit that UPDATES this handoff on top of it
+(docs-only delta); verify both against origin.
 **Production predecessor:** `c3712011c471ca605ee24a2a0fcd0eb9f354924e` (verified live on Render by the takeover handoff; `RELEASE_STATE.json` corrected this session — the previously recorded `77e782e0` is the DEACTIVATED prior deploy)
 **PRODUCTION MUTATED: NO.** No deploy, no env change, no migration applied, no catalog data touched, no real email sent.
 
@@ -110,7 +112,8 @@ only), s10's branch (prompt persistence only — s10 never pushed an N+1 fix).
 | master-offerings (incl. 420-row matrix) | PASS |
 | new: declared-facts bulk window (7) | PASS |
 | new: cached catalog reader (6) | PASS |
-| **full suite at `5ca944f`** | **709 files passed / 4 skipped · 10,383 tests passed / 43 skipped · 0 failed** |
+| **full suite at `bf0bcec` (amended tree)** | **710 files passed / 4 skipped · 10,386 tests passed / 43 skipped · 0 failed** |
+| e2e composed door at `bf0bcec` | 53/53 PASS |
 
 Two full-suite failures found and fixed on the way to green, both control-plane
 fallout from registering migration 76, neither a runtime defect: the DAG
@@ -120,19 +123,69 @@ and `hold-rpc-compatibility` modeled an impossible database (per-unit hold RPC
 missing but the newer bulk RPC answering); its fake now fails both together,
 which exercises the real fallback ladder and the once-per-projection warning.
 
-## BROWSER / MOBILE STATE
+## BROWSER / MOBILE STATE — REAL EVIDENCE, POST-FIX TIMING UNAVAILABLE
 
-Main-session smoke (production bundle via `scripts/preview-research.mjs`,
-placeholder env): server boots, shell endpoints answer in single-digit ms,
-Early Access gate FAILS CLOSED without a durable session store (correct), and
-the reachable surface has NO horizontal overflow at 430/390/375/360/320.
-Behind-the-gate visual/perf proof requires the seeded local environment —
-tasked twice to `claude-fable-browser-perf` (lane/browser-perf-proof-20260821);
-no branch on origin and no message at freeze, so this RC records
-**BROWSER PERFORMANCE PROOF: ENVIRONMENT BLOCKED / WORKER UNREPORTED** rather
-than waiting. The architectural proof (query counts, cache, SWR, empty-guard)
-is test-pinned and does not depend on it. **Production smoke after founder GO
-remains the authoritative visual proof**, exactly as the takeover handoff said.
+The browser-perf worker stood up a seeded local Supabase at FULL canonical
+scale (217 products / 417 variants, exact binding-artifact UUIDs, founder-CSV
+retail prices — **no production credential requested or used**) and proved, in
+a real browser at the pre-fix tree `23b496e`:
+
+- **TWO composed browser orders**, one at desktop (`XRR-20260821-5FDD95BDE9`,
+  CJC-1295 NO DAC 2mg ×3 = $487.50, DANA10 declared/captured-unmatched) and
+  one driven ENTIRELY at 320px (`XRR-20260821-A02956DB0C`) — each exactly
+  1 durable request + 1 customer + 1 admin outbox row carrying all five
+  agreement kind+version pairs; both survived a deliberately dead email
+  provider. Quantity 101 clamps to 100 with correct math.
+- **Mobile 430/390/375/360/320 all clean**: no horizontal overflow, 24 cards
+  with prices at every width, 16px inputs, no button under 32px.
+- **The BEFORE, quantified at scale**: legacy catalog ≈ 4,300 round trips /
+  12.8–15.0s at sub-millisecond local RTT — the founder's 30–60s at
+  production RTT — and it drags the already-fixed assisted-orders endpoint
+  from 60–150ms to ~4s through pool contention, since the storefront fires
+  both. Page shell TTFB 18–40ms (the shell was never the problem).
+- **A NEW HARD FINDING, fixed in this RC**: at 217 products a single `.in()`
+  querystring is ~7.7KB and an 8KB proxy request-line default answers 414 —
+  killing the whole catalog (their local Kong did). Every id-set read in the
+  bulk paths is now chunked at 100 ids (`server/research/catalog/chunked-ids.ts`,
+  test-pinned), so the fix cannot die at the proxy production is ~10 products
+  away from hitting.
+
+The worker was asked to remeasure amended code head `bf0bcec`, but no post-fix
+result exists and the seeded containers are no longer running. Therefore:
+
+**BROWSER WORKER: EVIDENCE ONLY. COLD/WARM/FIRST PRODUCT/FIRST PRICE POST-FIX:
+UNAVAILABLE.** These are not represented as measured. The amended structural
+result is test-pinned: approximately 3,300+ remote reads before to about five
+bounded reads warm after, with cold adding two seven-read catalog batches once
+per 60-second cache window; 100-ID chunking, cache, SWR, and the empty-success
+guard are all covered. **Production smoke after founder GO remains the
+authoritative final proof.**
+
+Worker findings recorded, NOT changed in this RC (founder decisions / data
+packet, not code defects):
+1. The Featured lane's quantity selector caps at 50 (its own self-consistent
+   founder band) while the canonical order door takes 100 — one deliberate
+   founder look at whether the two bands should converge.
+2. WITH-DAC / GRP-0422 rows absent from the 420-row artifact — the known
+   catalog DATA packet, not client code.
+3. Featured renders only the 22 released units at launch while All Products
+   carries the full catalog — truthful, worth one founder look.
+
+## FINAL CODEX TAKEOVER VERIFICATION
+
+Codex recovered and independently verified the amended tree in an isolated,
+clean worktree on 2026-08-21:
+
+- Full-suite evidence is attributable to exact code head `bf0bcec`: 710 files
+  passed / 4 skipped, 10,386 tests passed / 43 skipped, zero failed. The raw
+  full-suite log SHA-256 is
+  `7BB9E9E85245385031247659230D4904DEA00B48A245024C67E4CF82FF3A43E8`.
+- The amended composed E2E was independently rerun on that exact tree: 4 files,
+  53/53 tests passed.
+- `npm run check` passed on that exact tree.
+- `npm run build` passed on that exact tree.
+- The RC freeze commit changes this handoff only; its code tree is identical to
+  `bf0bcec`. Production was not deployed or mutated.
 
 ## DEPLOY (only after exact founder GO on this SHA)
 
