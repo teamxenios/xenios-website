@@ -109,6 +109,7 @@ type ReviewedMerge = {
   keeps: string;
   supersedes: string[];
   canonical: { specification: string; channel: string; retailPriceCents: number };
+  why?: string[];
 };
 type ReviewedHold = {
   sourceRow: string;
@@ -483,11 +484,30 @@ describe("peptide launch: the workbook agrees with the reviewed reconciliation",
       const kept = canonicalRow(group![1]);
       expect(kept["Group ID"]).toBe(merge.keeps);
       expect(kept.Channel).toBe(merge.canonical.channel);
-      // THE MONEY ASSERTION. The reviewed record states the active retail price
-      // production adjudicated on 2026-08-19; the superseded twin's higher
-      // figure is evidence, not an offer. If a re-export ever moves the kept
-      // row's price away from the reviewed decision, this fails.
-      expect(centsOf(kept)).toBe(merge.canonical.retailPriceCents);
+      // THE MONEY ASSERTION, override-aware.
+      //
+      // The REVIEWED CONFIG is the price authority, not the workbook. On
+      // 2026-08-21 the founder repriced these two ($62.50 / $107.50),
+      // superseding the $49.00 / $59.00 that production had adjudicated on
+      // 2026-08-19, and required that the override be recorded WITH PROVENANCE
+      // rather than by quietly editing the merge record so it reads as though
+      // the workbook always said so.
+      //
+      // So a config price that differs from the workbook is legitimate - but
+      // only when the record SAYS WHY. A silent divergence is the thing this
+      // catches: it is indistinguishable from a re-export drifting, and the
+      // next reconciler cannot tell an intended override from a mistake.
+      const workbookCents = centsOf(kept);
+      const authorityCents = merge.canonical.retailPriceCents;
+      if (workbookCents !== authorityCents) {
+        const why = (merge.why ?? []).join(" ").toLowerCase();
+        expect(
+          /override|supersede|repric|founder/.test(why),
+          `${merge.id}: config says ${authorityCents} but the workbook says ` +
+            `${workbookCents}, and the record does not say why. An override is ` +
+            `legitimate; an unexplained one is not.`,
+        ).toBe(true);
+      }
     }
   });
 
@@ -512,5 +532,85 @@ describe("peptide launch: the workbook agrees with the reviewed reconciliation",
       expect(pathway).toBe(hold.customerResult.pathway);
       expect(pathwayEntersPayment(pathway)).toBe(hold.customerResult.directPurchase);
     }
+  });
+});
+
+describe("founder rule: commerce never reads display copy", () => {
+  // 2026-08-21. "No commerce decision may depend on customer-facing product
+  // names, specifications, descriptions, notices, or string matching. Commerce
+  // decisions must use structured canonical facts only."
+  //
+  // This is not hypothetical. An earlier version of this very file asserted the
+  // GRP-0422 hold by matching "(SPLIT PENDING)" in the specification, and an
+  // earlier resolver implementation MATCHED ON IT to apply the hold. The
+  // reviewed canonical specification strips that marker, so both would have
+  // gone quietly wrong the moment the catalog was regenerated - the assertion
+  // by passing meaninglessly, the resolver by silently ceasing to hold a
+  // product the founder blocked. Caught by claude-fable-s7.
+
+  /** Rewrite every customer-facing string on a row, keeping structure intact. */
+  function withDisplayCopyScrambled(row: Row): Row {
+    return {
+      ...row,
+      Product: "ZZZ Renamed Product",
+      "Normalized Specification": "ZZZ RENAMED 999 MG",
+      "Dosage Form": "ZZZ Renamed Form",
+      "Planned Catalog Status": "ZZZ renamed status",
+      "Price Display": "$0.00",
+    };
+  }
+
+  it("holds GRP-0422 even when every display string on the row is rewritten", () => {
+    const held = canonicalVariants.find(
+      (r) => r["Group ID"] === FORMULATION_HOLD_GROUP_ID,
+    )!;
+    const scrambled = withDisplayCopyScrambled(held);
+    // The hold is keyed on the structured identity, so the pathway is unchanged
+    // even though nothing a customer would read survives.
+    expect(pathwayFor(scrambled)).toBe(pathwayFor(held));
+    expect(pathwayFor(scrambled)).toBe("assisted_order");
+    expect(pathwayEntersPayment(pathwayFor(scrambled))).toBe(false);
+  });
+
+  it("does not start selling a held product because its name lost a marker", () => {
+    // The specific regression: strip the "(SPLIT PENDING)" marker the way a
+    // catalog regeneration does, and confirm the hold survives.
+    const held = canonicalVariants.find(
+      (r) => r["Group ID"] === FORMULATION_HOLD_GROUP_ID,
+    )!;
+    const demarked: Row = {
+      ...held,
+      "Normalized Specification": "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+    };
+    expect(canonicalVariantKey(demarked["Normalized Specification"])).not.toContain(
+      "SPLIT PENDING",
+    );
+    expect(pathwayFor(demarked)).toBe("assisted_order");
+    expect(pathwayEntersPayment(pathwayFor(demarked))).toBe(false);
+  });
+
+  it("routes every canonical variant identically when display copy is scrambled", () => {
+    // Whole-catalogue version: no row's commerce outcome may move because its
+    // customer-facing text changed.
+    for (const row of canonicalVariants) {
+      expect(
+        pathwayFor(withDisplayCopyScrambled(row)),
+        `${row["Group ID"]} changed pathway when only display copy changed`,
+      ).toBe(pathwayFor(row));
+    }
+  });
+
+  it("decides the pathway from structured facts alone", () => {
+    // The oracle this matrix uses reads Group ID, Channel and price - never a
+    // product name or description. Stated as a test so a future edit that
+    // reaches for a string has to break it deliberately.
+    const structuralKeys = ["Group ID", "Channel", "Current Retail Price"];
+    const held = canonicalVariants.find(
+      (r) => r["Group ID"] === FORMULATION_HOLD_GROUP_ID,
+    )!;
+    const structuralOnly = Object.fromEntries(
+      structuralKeys.map((k) => [k, held[k]]),
+    ) as Row;
+    expect(pathwayFor(structuralOnly)).toBe(pathwayFor(held));
   });
 });
