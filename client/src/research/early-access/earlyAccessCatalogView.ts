@@ -36,7 +36,6 @@ export type EarlyAccessCatalogRowView = Readonly<{
   availability?: unknown;
   purchasable?: unknown;
   quantityLimit?: unknown;
-  featured?: unknown;
 }>;
 
 function isNonEmptyString(value: unknown): value is string {
@@ -106,10 +105,6 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
     description: isNonEmptyString(row.description) ? row.description : "",
     availability,
     quantityLimit,
-    // Merchandising, and it fails closed to false: an older server that does
-    // not send the field yields an All-Products-only catalogue rather than a
-    // page where every row claims to be Featured.
-    featured: row.featured === true,
   };
 }
 

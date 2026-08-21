@@ -75,18 +75,6 @@ export function EarlyAccessCatalogSection({
     });
   }, [products, query, filter]);
 
-  // Featured is merchandising, so it only ever GROUPS what the filters and the
-  // search already left visible. A featured unit that does not match the
-  // search stays hidden, exactly like any other.
-  const featured = useMemo(
-    () => visible.filter((product) => product.featured === true),
-    [visible],
-  );
-  const rest = useMemo(
-    () => visible.filter((product) => product.featured !== true),
-    [visible],
-  );
-
   const counts = useMemo(() => ({
     all: products.length,
     available: products.filter(isAvailable).length,
@@ -149,43 +137,11 @@ export function EarlyAccessCatalogSection({
       <div className="mt-4">
         {products.length > 0 && visible.length === 0 ? (
           <p data-testid={`${testId}-no-matches`} role="status" className="body-s text-ink-2">No products match this search.</p>
-        ) : featured.length === 0 ? (
-          // No released units in view: one plain list, exactly as before. A
-          // "Featured" heading over an empty shelf would be worse than none.
+        ) : (
           <EarlyAccessCatalogGrid products={visible} dropped={result.dropped}
             quantities={quantities}
             onQuantityChange={(variantId, quantity) => setQuantities((current) => ({ ...current, [variantId]: quantity }))}
             onSelect={toggleSelected} selectedVariantIds={selectedIds} />
-        ) : (
-          // Two shelves, never the same card twice: All Products holds the
-          // remainder, so a variantId appears in exactly one grid and
-          // selection, quantity state and test ids stay unambiguous.
-          <>
-            <section aria-labelledby={`${testId}-featured-heading`} data-testid={`${testId}-featured`}>
-              <h3 id={`${testId}-featured-heading`} className="body-l font-700" data-count={featured.length}>
-                Featured Products
-              </h3>
-              <div className="mt-3">
-                <EarlyAccessCatalogGrid products={featured} dropped={0}
-                  quantities={quantities}
-                  onQuantityChange={(variantId, quantity) => setQuantities((current) => ({ ...current, [variantId]: quantity }))}
-                  onSelect={toggleSelected} selectedVariantIds={selectedIds} />
-              </div>
-            </section>
-            {rest.length > 0 && (
-              <section aria-labelledby={`${testId}-all-heading`} data-testid={`${testId}-all`} className="mt-8">
-                <h3 id={`${testId}-all-heading`} className="body-l font-700" data-count={rest.length}>
-                  All Products
-                </h3>
-                <div className="mt-3">
-                  <EarlyAccessCatalogGrid products={rest} dropped={result.dropped}
-                    quantities={quantities}
-                    onQuantityChange={(variantId, quantity) => setQuantities((current) => ({ ...current, [variantId]: quantity }))}
-                    onSelect={toggleSelected} selectedVariantIds={selectedIds} />
-                </div>
-              </section>
-            )}
-          </>
         )}
       </div>
       <EarlyAccessSelectionBar selectedCount={selectedProduct === null ? 0 : 1}
