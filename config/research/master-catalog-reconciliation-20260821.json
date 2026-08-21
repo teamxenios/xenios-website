@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "decidedOn": "2026-08-21",
+  "decidedBy": "founder",
+  "sourceWorkbook": {
+    "filename": "XENIOS_MASTER_CATALOG_AFFILIATE_PRICING_2026-08-16(4).xlsx",
+    "sha256": "6478ad0d3f710b75c6bf0c5f5e56ff1189ab2a2a4439cab23c2a28498134ea6f",
+    "masterSheet": "MASTER CATALOG",
+    "sourceRows": 426
+  },
+  "$comment": [
+    "REVIEWED CANONICAL RECONCILIATION.",
+    "",
+    "The workbook is source EVIDENCE and stays whole: every one of its 426 rows",
+    "survives export untouched, including the rows superseded below. What this",
+    "file records is the separate question of which canonical CUSTOMER products",
+    "those rows add up to, and it records it as reviewed data rather than as",
+    "conditionals scattered through the catalog build or the storefront.",
+    "",
+    "Two ideas that were being used interchangeably, and are not the same:",
+    "  SOURCE ROWS      what the workbook lists      426 (141 peptides)",
+    "  CANONICAL VARIANTS what a customer can buy    424 (139 peptides)",
+    "",
+    "Every decision below names the exact source rows it consumes, so the",
+    "provenance survives the merge and an operator can always get back to the",
+    "workbook rows that produced a canonical product."
+  ],
+  "merges": [
+    {
+      "id": "hexarelin-5mg",
+      "keeps": "GRP-0426",
+      "supersedes": ["GRP-0402"],
+      "canonical": {
+        "product": "Hexarelin",
+        "specification": "HEXARELIN 5 mg",
+        "family": "research_peptides_materials",
+        "channel": "RUO Research",
+        "retailPriceCents": 4900
+      },
+      "why": [
+        "The workbook carries this one 5 mg vial twice: GRP-0402 as Supplier",
+        "Catalog / Classification Pending, and GRP-0426 as RUO Research. They are",
+        "the same physical product, so rendering both would show a customer two",
+        "Hexarelin 5 mg rows at two different prices.",
+        "Production already adjudicated this: the 2026-08-19 retail release set",
+        "the active price to $49.00 and superseded $62.50, which is the RUO row's",
+        "price. The classification simply never followed the price.",
+        "Canonical result is the RUO row. GRP-0402 is kept as provenance."
+      ]
+    },
+    {
+      "id": "oxytocin-10mg",
+      "keeps": "GRP-0425",
+      "supersedes": ["GRP-0407"],
+      "canonical": {
+        "product": "Oxytocin",
+        "specification": "OXYTOCIN 10 mg",
+        "family": "research_peptides_materials",
+        "channel": "RUO Research",
+        "retailPriceCents": 5900
+      },
+      "why": [
+        "Identical shape to Hexarelin. GRP-0407 is the pending row, GRP-0425 the",
+        "RUO row, and production already carries $59.00 active with $107.50",
+        "superseded from the same 2026-08-19 release.",
+        "Canonical result is the RUO row. GRP-0407 is kept as provenance."
+      ]
+    }
+  ],
+  "commerceHolds": [
+    {
+      "id": "cjc-1295-with-dac-ipamorelin",
+      "sourceRow": "GRP-0422",
+      "product": "CJC-1295 + Ipamorelin",
+      "specification": "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+      "retailPriceCents": 9900,
+      "customerResult": {
+        "visible": true,
+        "retailPriceShown": true,
+        "directPurchase": false,
+        "pathway": "assisted_order"
+      },
+      "why": [
+        "The workbook classifies this row RUO Research, which under the direct",
+        "purchase rule would make it Buy Now. The founder is holding it because",
+        "the exact component split between CJC-1295 (with DAC) and Ipamorelin",
+        "inside a 5 mg total is not confirmed, and nobody may invent it.",
+        "",
+        "Recorded as a HOLD rather than by editing the workbook's channel to",
+        "Classification Pending, because the classification is not in doubt — the",
+        "formulation is. Falsifying the source to obtain a behaviour would lose",
+        "that distinction and would quietly reverse the next time the workbook is",
+        "re-exported.",
+        "",
+        "Removing this entry is all that is needed to release it. No storefront",
+        "change, no code change."
+      ]
+    }
+  ],
+  "expected": {
+    "$comment": "Asserted by the applier, so a silent drift fails the build rather than the storefront.",
+    "sourceRows": 426,
+    "canonicalVariants": 424,
+    "peptideSourceRows": 141,
+    "peptideCanonicalVariants": 139,
+    "peptideDirect": 111,
+    "peptideFormulationBlocked": 1,
+    "peptidePendingUnique": 27
+  }
+}
