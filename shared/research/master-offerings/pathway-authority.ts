@@ -72,6 +72,36 @@ export const PROVIDER_PATHWAY_FAMILIES: ReadonlySet<MasterOfferingFamily> =
 export const NON_MERCHANDISE_FAMILIES: ReadonlySet<MasterOfferingFamily> =
   new Set<MasterOfferingFamily>(["shipping_and_fulfillment"]);
 
+/**
+ * Families that are real merchandise but are NOT part of direct purchase for
+ * the Early Access peptide launch.
+ *
+ * Founder rule, 2026-08-20: direct purchase is for the research peptides and
+ * materials family. Research Capsules are named explicitly as excluded, so
+ * they are named explicitly here rather than left to be inferred from the
+ * absence of a rule.
+ *
+ * This set is a LAUNCH SCOPE decision, not a safety classification: a capsule
+ * is not unsafe to sell, it is simply not in this launch. Adding or removing a
+ * family here is therefore a deliberate founder call, and the acceptance
+ * matrix prints the per-family verdict so the decision stays visible rather
+ * than buried. `supplements`, `topicals_regenerative` and `research_supplies`
+ * are deliberately NOT listed: the founder's rule did not name them, and this
+ * lane does not get to decide their launch scope by guessing.
+ */
+export const DIRECT_PURCHASE_EXCLUDED_FAMILIES: ReadonlySet<MasterOfferingFamily> =
+  new Set<MasterOfferingFamily>(["research_capsules"]);
+
+/**
+ * The display state that means "classification is still pending".
+ *
+ * A pending row is visible and honest, and it may be REQUESTED, but it can
+ * never be a direct purchase: the classification is exactly what direct
+ * purchase depends on. 29 peptide rows sit here, and every one of them must
+ * route to a request rather than a cart.
+ */
+const CLASSIFICATION_PENDING_DISPLAY_STATE: MasterOfferingDisplayState = "approval_required";
+
 /** The display state that refuses a direct purchase on its own. */
 const CARE_PATHWAY_DISPLAY_STATE: MasterOfferingDisplayState = "care_pathway";
 
@@ -79,7 +109,9 @@ const CARE_PATHWAY_DISPLAY_STATE: MasterOfferingDisplayState = "care_pathway";
 export type DirectPurchaseRefusal =
   | "care_pathway_display_state"
   | "provider_pathway_family"
-  | "non_merchandise_family";
+  | "non_merchandise_family"
+  | "family_outside_launch_scope"
+  | "classification_pending";
 
 /**
  * The facts this decision needs, and only those. Structural rather than the
@@ -110,6 +142,18 @@ export function directPurchaseRefusal(
     subject.variantDisplayState === CARE_PATHWAY_DISPLAY_STATE
   ) {
     return "care_pathway_display_state";
+  }
+  if (DIRECT_PURCHASE_EXCLUDED_FAMILIES.has(subject.family)) {
+    return "family_outside_launch_scope";
+  }
+  // Checked last of the refusals, so a provider or out-of-scope row reports the
+  // reason that actually governs it rather than the one it happens to share
+  // with a peptide awaiting classification.
+  if (
+    subject.displayState === CLASSIFICATION_PENDING_DISPLAY_STATE ||
+    subject.variantDisplayState === CLASSIFICATION_PENDING_DISPLAY_STATE
+  ) {
+    return "classification_pending";
   }
   return null;
 }
