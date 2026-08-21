@@ -311,14 +311,22 @@ describe("a non-directly-orderable row cannot complete a direct submit", () => {
   });
 
   it("GRP-0422 is asserted through the authority, never through marker text", async () => {
-    const { service } = harness(
+    const { service, notifications } = harness(
       directPeptide({ productId: "GRP-0422", specification: "5 mg total", workflowMode: "availability_review" }),
     );
-    const receipt = await service.submit(customer, input());
-    // The canonical specification has the marker STRIPPED, so the routing must
-    // come from workflowMode and not from anything spelled in the text.
-    expect(receipt.lines[0].specification).not.toMatch(/split|pending|hold/i);
-    expect(acceptedAsDirect(receipt)).toBe(false);
+    // STRENGTHENED 2026-08-21 alongside the submit-time pathway gate. This
+    // asserted that an unavailable row was ACCEPTED but not treated as direct.
+    // It is now refused outright: a row the authority calls unavailable has no
+    // business creating a durable order the founder would then email payment
+    // instructions about.
+    //
+    // The marker-independence point the test was written to make is preserved
+    // and still load-bearing — the specification has the marker STRIPPED, so
+    // the refusal has to come from workflowMode and cannot be coming from text.
+    await expect(service.submit(customer, input())).rejects.toThrow(
+      /not available to order right now/i,
+    );
+    expect(notifications).toHaveLength(0);
   });
 });
 
