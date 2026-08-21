@@ -57,6 +57,17 @@ export interface MasterOfferingActionCapabilities {
    * authorized `Add to Cart`.
    */
   manualEarlyAccessPurchase?: boolean;
+  /**
+   * The normalized specifications the founder's reviewed reconciliation
+   * currently holds out of direct purchase.
+   *
+   * Optional so existing callers compile, but a purchase-deciding composition
+   * MUST supply it: without it a reviewed hold is invisible here, and the only
+   * thing standing between a formulation-unresolved product and a cart is the
+   * declared marker, which the canonical rewrite removes from the customer-
+   * facing specification. `reviewedHeldSpecifications()` is the reader.
+   */
+  reviewedFormulationHolds?: ReadonlySet<string> | null;
 }
 
 export const DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES: MasterOfferingActionCapabilities =
@@ -153,9 +164,11 @@ export function resolveMasterOfferingAction(
     family: offering.family,
     displayState: offering.displayState,
     variantDisplayState: variant.displayState,
-    // The declared specification, so a row that says its own formulation is
-    // unresolved is refused before any purchase authority is consulted.
+    // The declared specification, so a row the founder has held, or one that
+    // says its own formulation is unresolved, is refused before any purchase
+    // authority is consulted.
     specification: variant.label,
+    reviewedHolds: capabilities.reviewedFormulationHolds,
   });
   if (
     !forbidden &&
@@ -217,6 +230,7 @@ export function resolveMasterOfferingAction(
       displayState: offering.displayState,
       variantDisplayState: variant.displayState,
       specification: variant.label,
+      reviewedHolds: capabilities.reviewedFormulationHolds,
     })
   ) {
     return {

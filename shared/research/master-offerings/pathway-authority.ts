@@ -131,6 +131,11 @@ export interface MasterOfferingPathwaySubject {
    * every purchase-deciding caller passes it.
    */
   specification?: string | null;
+  /**
+   * The normalized specifications the reviewed reconciliation currently holds.
+   * Supplied by the server composition, which reads the founder's record.
+   */
+  reviewedHolds?: ReadonlySet<string> | null;
 }
 
 /**
@@ -158,7 +163,7 @@ export function directPurchaseRefusal(
   // The founder's fourth clause: no explicit hold. A row whose own
   // specification declares its composition unresolved cannot be sold, however
   // complete its family, classification and price are.
-  if (isFormulationHeld(subject.specification)) {
+  if (isFormulationHeld(subject.specification, subject.reviewedHolds)) {
     return "formulation_hold";
   }
   // Checked last of the refusals, so a provider or out-of-scope row reports the
