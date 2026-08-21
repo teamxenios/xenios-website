@@ -1,31 +1,33 @@
 {
-  "schemaVersion": 1,
-  "updatedAt": "2026-08-20T22:50:00Z",
-  "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "500bc88",
-  "lastDocumentedProductionRelease": {
-    "tag": "RESEARCH_EARLY_ACCESS_OPEN_ACCESS_TYPED_AFFILIATE_CODE",
-    "sha": "77e782e0c4c1c5be5275711e6996d7f6dfb81fe0",
-    "rollback": "ce1590fa08dcb5eae299bcaf55e799ad9ea092d1",
-    "deployId": "dep-da3o55gn74is73f9sdo0",
-    "status": "live",
-    "note": "Live 2026-08-20: Early Access open access (no shared password, no Xenios Genesis gate) with admin/member/supplier/finance/Care unchanged, and M75 applied (checksum f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda) adding the typed declared affiliate code, sanitize-not-abort, service_role-only execute. Controlled order XRR-20260820-2E67BC3AA3 carried DANA10/captured_unmatched with null verified attribution; both submitted-order emails reached status sent on attempt 1."
-  },
-  "nextRelease": {
-    "name": "RESEARCH_EARLY_ACCESS_ANONYMOUS_RETAIL_PRICING",
-    "scope": [
-      "server-authoritative Early Access retail pricing viewer (no member identity, no client price injection)",
-      "declared affiliate code end-to-end proof",
-      "canonical order copy (hard prerequisite before canonical order conversion)"
-    ],
-    "status": "awaiting_founder_go"
-  },
-  "productionWriter": "claude-fable-desktop",
-  "invariants": [
-    "one production writer",
-    "immutable release tags",
-    "exact deploy SHA verification",
-    "no fabricated payments",
-    "no fabricated clinical authorization"
-  ]
+ "schemaVersion": 1,
+ "updatedAt": "2026-08-21T16:45:00Z",
+ "canonicalBranch": "release/early-access-code-session-checkout",
+ "observedHead": "500bc88",
+ "lastDocumentedProductionRelease": {
+  "tag": "RESEARCH_EARLY_ACCESS_PRE_TAKEOVER_BASELINE",
+  "sha": "c3712011c471ca605ee24a2a0fcd0eb9f354924e",
+  "rollback": "77e782e0c4c1c5be5275711e6996d7f6dfb81fe0",
+  "deployId": "dep-da3p9pn10e5c738vnr40",
+  "status": "live",
+  "note": "Corrected 2026-08-21 by the takeover: the previously recorded 77e782e0 (dep-da3o55gn74is73f9sdo0) is DEACTIVATED. c371201 verified live against Render read-only by claude-opus5-main in XENIOS_IMMEDIATE_MANUAL_ORDER_LAUNCH_TAKEOVER_2026-08-21.md (autodeploy off, tracked branch release/early-access-code-session-checkout, /api/health 200, commerceEnabled false). Production NOT mutated by this correction - this file records observation only."
+ },
+ "nextRelease": {
+  "name": "RESEARCH_EARLY_ACCESS_MANUAL_ORDER_LAUNCH",
+  "scope": [
+   "legacy storefront catalog N+1 eliminated (bulk listDetails + bulk declared-facts window + cached catalog snapshot)",
+   "composed manual-order e2e (exactly-once: 1 durable request, 1 customer intent, 1 admin intent, XRR reference)",
+   "master-offerings action seam gated (pathway authority + founder-record formulation hold)",
+   "client config single-fetch + preview boot",
+   "OPTIONAL migration 20260821170000 (bulk unit-fact RPCs; per-unit fallback ladder means deploy order is free)"
+  ],
+  "status": "rc_in_preparation_awaiting_founder_go"
+ },
+ "productionWriter": "claude-fable-main-integrator",
+ "invariants": [
+  "one production writer",
+  "immutable release tags",
+  "exact deploy SHA verification",
+  "no fabricated payments",
+  "no fabricated clinical authorization"
+ ]
 }

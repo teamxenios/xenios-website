@@ -107,3 +107,35 @@ is the public invitation-only explainer and is unchanged. Its stated scope was
 used as the specification for this workspace, and the workspace honors all four
 of its promises. If the lead wants, that page's "Contact supplier operations"
 card can later link approved suppliers to `/research/supplier`.
+
+---
+
+## SUPERSEDED — corrected SHA (2026-08-21)
+
+`09d0c990` is SUPERSEDED by **`79d6b61e99fc6800c8962933c40aab4adc10f80d`**
+(force-pushed to `lane/supplier-workspace-20260820`).
+
+**Base changed** to `4a7bca30f0a9b9516ec645ce50c3c0665c6f8fd0` (s8's wall
+alignment), rebased cleanly off `cf649c1` with zero file overlap.
+
+**Why.** `09d0c990` called `/api/research/fulfillment/supplier/...`. Those doors
+were moved to `/api/admin/research/fulfillment/...` at `4a7bca3`, because the
+research wall answers 401 for operator traffic. No test failed: the adapter held
+a second copy of a constant the server owns, so it drifted silently and a
+supplier operator would have been the one to discover it.
+
+**The durable fix** is `client/src/research/supplier/api.test.ts`, which imports
+the engine's own `FULFILLMENT_SUPPLIER_QUEUE_PATH` and
+`FULFILLMENT_SUPPLIER_TRANSITION_PATH` and asserts the adapter matches, template
+parameter included. It additionally asserts no operator door sits under
+`/api/research/` at all, so the same mistake cannot recur under a different
+spelling. This is the same pinning discipline already applied to the transition
+table — the seam simply proved it was needed in two places, not one.
+
+**Integration coupling:** this SHA now depends on `4a7bca3`. Take the wall
+alignment first, or take both together. If the door move is rejected, the
+adapter must be re-pointed.
+
+Verification at `79d6b61`: `npx vitest run client/src/research/supplier
+shared/research/supplier` -> 3 files, 52 tests passed. `npx tsc --noEmit` clean.
+Still no browser pass — the route remains unmounted.

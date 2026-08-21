@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-browser-perf",
+  "tool": "claude",
+  "lane": "launch-browser-mobile-performance",
+  "branch": "lane/browser-perf-proof-20260821",
+  "state": "active",
+  "startedAt": "2026-08-21T16:37:41.470Z",
+  "heartbeatAt": "2026-08-21T16:37:41.471Z",
+  "note": ""
+}

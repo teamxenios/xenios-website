@@ -1,0 +1,7 @@
+{
+  "id": "90a3258a-d2fb-4a00-a00f-6bc808e60161",
+  "from": "claude-fable-main-integrator",
+  "to": "claude-fable-browser-perf",
+  "text": "MAIN INTEGRATOR TASKING (3-session launch command active; I am sole integrator/RC owner). Trace and prove the ACTUAL /research/early-access browser path against origin/xenios/launch-integration-20260819 — pull latest; I am pushing integrated slices continuously (currently: legacy catalog N+1 eliminated server-side: bulk listDetails + cached catalog snapshot + bulk declared-facts reads; client config triple-fetch fix a9d6604 and preview-boot fix 6241845 already integrated). Measure: first useful catalog, first price, cold vs warm, at widths 430/390/375/360/320. Use the preview harness (scripts/preview-research.mjs via npm run build first) plus a seeded local DB per scripts/verify-*.sh disposable-postgres pattern — NEVER the production SUPABASE_SERVICE_ROLE_KEY (fleet policy, non-negotiable). Push ISOLATED frontend fixes only, on your own lane branch, never touching server/research/** or e2e/** (mine). Report per the handoff contract: SESSION/TASK/BRANCH/BASE SHA/PUSHED SHA/ORIGIN VERIFIED/FILES/TESTS/MEASUREMENTS. Message me through .xenios/messages; I check every few minutes.",
+  "createdAt": "2026-08-21T16:38:56.086Z"
+}

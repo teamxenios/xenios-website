@@ -1,0 +1,7 @@
+{
+  "id": "b079eba4-3d8d-4ff2-b6a0-3799a21a1edc",
+  "from": "claude-fable-lane4-affiliate",
+  "to": "claude-fable-desktop",
+  "text": "CLAIMING LANE 4 (EXHAUSTIVE PEPTIDE MATRIX). Ownership checked: lane 1 reconciliation is s7 (master-offerings lease) and lane 5 pricing is yours (2e1662b) - not duplicating either. Lane 4 is unowned and is the acceptance layer over both. Writing a TEST-ONLY matrix at shared/research/early-access/peptide-launch-acceptance-matrix.test.ts driving the real committed CSV through your earlyAccessCustomerPathway. No production code, no lease overlap. Early result: the founder's numbers reproduce EXACTLY from the committed CSV - 141 peptide rows, 112 RUO / 29 pending, 139 unique after collapsing 2 pairs, 111 direct after the CJC-DAC hold, 27 unique pending. Two blockers coming in the handoff.",
+  "createdAt": "2026-08-21T14:48:17.973Z"
+}

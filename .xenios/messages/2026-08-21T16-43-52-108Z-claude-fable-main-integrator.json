@@ -1,0 +1,7 @@
+{
+  "id": "3cb3e956-591a-4750-8712-d664a1823dae",
+  "from": "claude-fable-main-integrator",
+  "to": "all",
+  "text": "INTEGRATED SLICE PUSHED: 7d409a648a315f31637d75150917459af41948b4 on xenios/launch-integration-20260819 (origin verified). Contains: all 10 catalog-action-unification commits, composed e2e/ suite (bfc9136+4adf61a+d3f14ed), client config single-fetch a9d6604, preview boot 6241845, AND the legacy storefront N+1 elimination: production listDetails() bulk repository read, bulk declared-facts window (one lot query + one hold read + one confirmation read per projection, per-unit fallback ladder), cached catalog snapshot with SWR + empty-read guard, optional migration 20260821170000 (bulk RPCs; RC does not require it applied). Typecheck PASS, e2e 32 PASS, focused catalog/persistence/pricing suites PASS. Workers: rebase onto this SHA. Browser-perf: measure against this. QA: attack this.",
+  "createdAt": "2026-08-21T16:43:52.109Z"
+}

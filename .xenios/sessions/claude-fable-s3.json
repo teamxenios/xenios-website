@@ -5,6 +5,6 @@
   "branch": "fable/assisted-order-customer-flow-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:37:17.279Z",
-  "heartbeatAt": "2026-08-20T18:04:14.023Z",
-  "note": "S9 defects closed at 0b9c24eb (member JWT + iOS 16px + family labels); 45/45 focused tests green; handoff filed; S9 and lead messaged. Lease in handoff. Awaiting delegation: register.ts unguarded handlers (lead seam) or CATALOG-ACTION-UNIFICATION."
+  "heartbeatAt": "2026-08-21T16:05:26.697Z",
+  "note": "Recorded founder price override ($62.50/$107.50) + production GO at 1142da90. Withdrew my own string-match hold recommendation (founder forbade display-copy commerce) and delivered the regression coverage at 4f873ae8, origin-verified. Flagged that the performance gate cannot pass: EA catalog still on the 436-round-trip reader."
 }

@@ -5,6 +5,6 @@
   "branch": "fable/canonical-order-history-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:42:25.724Z",
-  "heartbeatAt": "2026-08-20T18:17:12.900Z",
-  "note": "CATALOG-ACTION-UNIFICATION slice 1 pushed at 012a24a1: shared provider-pathway authority consulted by master-offerings action.ts; inert on today's 420 rows, closes the 503A display-state drift. 739 owned-path tests (+15), 543 consumer-surface tests, tsc clean. Next: price projection unification."
+  "heartbeatAt": "2026-08-21T16:11:42.803Z",
+  "note": "P0 CATALOG PERF: root cause found + fixed in my lease at 4852e91b (origin-verified). readCatalog was 2 gets per product (472+2 calls for 236 products) uncached = the 30-60s. Bulk path added, stability guarantee preserved. Needs listDetails() wired at composition. 853 owned tests, tsc clean."
 }

@@ -5,6 +5,6 @@
   "branch": "lane/affiliate-attribution-core",
   "state": "active",
   "startedAt": "2026-08-19T16:35:54.248Z",
-  "heartbeatAt": "2026-08-20T18:13:31.014Z",
-  "note": "Lane 4B delivered ccd7f5f (pushed): declared affiliate code + referral share-path 404 fix. Awaiting lead integration."
+  "heartbeatAt": "2026-08-21T16:08:46.310Z",
+  "note": "afe7d75 pushed + ORIGIN VERIFIED: founder section-3 display-copy regression (mutation-checked, 4 fail on reintroducing the string match) + override-aware money assertion so the 62.50/107.50 reprice will not red the RC when recorded with provenance. 95 pass, tsc clean."
 }

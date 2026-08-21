@@ -38,8 +38,8 @@
       "branch": "lane/affiliate-attribution-core",
       "state": "active",
       "startedAt": "2026-08-19T16:35:54.248Z",
-      "heartbeatAt": "2026-08-20T18:13:31.014Z",
-      "note": "Lane 4B delivered ccd7f5f (pushed): declared affiliate code + referral share-path 404 fix. Awaiting lead integration."
+      "heartbeatAt": "2026-08-21T16:08:46.310Z",
+      "note": "afe7d75 pushed + ORIGIN VERIFIED: founder section-3 display-copy regression (mutation-checked, 4 fail on reintroducing the string match) + override-aware money assertion so the 62.50/107.50 reprice will not red the RC when recorded with provenance. 95 pass, tsc clean."
     },
     {
       "id": "claude-fable-s3",
@@ -48,8 +48,8 @@
       "branch": "fable/assisted-order-customer-flow-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:37:17.279Z",
-      "heartbeatAt": "2026-08-20T18:04:14.023Z",
-      "note": "S9 defects closed at 0b9c24eb (member JWT + iOS 16px + family labels); 45/45 focused tests green; handoff filed; S9 and lead messaged. Lease in handoff. Awaiting delegation: register.ts unguarded handlers (lead seam) or CATALOG-ACTION-UNIFICATION."
+      "heartbeatAt": "2026-08-21T16:05:26.697Z",
+      "note": "Recorded founder price override ($62.50/$107.50) + production GO at 1142da90. Withdrew my own string-match hold recommendation (founder forbade display-copy commerce) and delivered the regression coverage at 4f873ae8, origin-verified. Flagged that the performance gate cannot pass: EA catalog still on the 436-round-trip reader."
     },
     {
       "id": "claude-fable-lane5-partner-portal",
@@ -68,8 +68,8 @@
       "branch": "lane/launch-public-storefront",
       "state": "active",
       "startedAt": "2026-08-19T16:40:02.270Z",
-      "heartbeatAt": "2026-08-20T18:12:18.587Z",
-      "note": "Lane 2 COMPLETE at 0e4b7595 (pushed, base cf649c1): findings #5 iOS auto-zoom + #8 raw enum families. 1794 client tests green, tsc clean, browser-verified 16px. Lane 1 storefront still awaiting integration at 3c7dcc7 with the open founder decision on the Gateway CTA. Available for next assignment."
+      "heartbeatAt": "2026-08-21T16:13:02.248Z",
+      "note": "P0-F CLAIMED (mobile order journey 430/390/375/360/320). P0-G client half handed off a9d66040 origin-verified. No lease touches client/src/research/early-access. Reading .xenios/prompts/CURRENT_WORKER_MODE.md as the single directive."
     },
     {
       "id": "claude-fable-s9-conversion-qa",
@@ -78,8 +78,8 @@
       "branch": "lane/e2e-conversion-qa-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:41:44.730Z",
-      "heartbeatAt": "2026-08-20T18:09:35.850Z",
-      "note": "FULL-VISION-DEMO (launch negatives slice) handed off at c7bb20a4 on lane/e2e-conversion-qa-20260819 (pushed, base cf649c1). 16 composed-door negative controls, tsc clean, standalone vitest config so no shared root file changed. Suite proven to fail via 3 reverted mutations. Uncovered-and-named: held-cannot-BuyNow (needs s7 catalog lane), unpaid-cannot-fulfil (needs s8 mount). Also reported 2 fleet-tooling defects: xenios-os next ignores leases, and overlaps() freezes REQUEST-CENTER/NOTIFICATION-CENTER/ANALYTICS for everyone."
+      "heartbeatAt": "2026-08-21T16:04:19.431Z",
+      "note": "P0-G DONE at 06e38043 (origin verified). First end-to-end browser order in the fleet: XRR-20260821-9E608740FD, $33.50, submitted at 320px, 1 customer + 1 admin notification, order persisted despite dead email provider. Widths 430-320 all clean, inputs >=16px. Findings: GRP-0422 absent from the member-safe artifact (420/420 vs canonical 424, zero WITH-DAC+Ipamorelin rows) so the row the founder requires visible does not render - artifact gap, not client code; and client hardcodes the agreement pair while server configures it, 400 AGREEMENT_NOT_REQUIRED when they disagree. Lane suite still 45/45."
     },
     {
       "id": "claude-fable-s7",
@@ -88,8 +88,8 @@
       "branch": "fable/canonical-order-history-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:42:25.724Z",
-      "heartbeatAt": "2026-08-20T18:17:12.900Z",
-      "note": "CATALOG-ACTION-UNIFICATION slice 1 pushed at 012a24a1: shared provider-pathway authority consulted by master-offerings action.ts; inert on today's 420 rows, closes the 503A display-state drift. 739 owned-path tests (+15), 543 consumer-surface tests, tsc clean. Next: price projection unification."
+      "heartbeatAt": "2026-08-21T16:11:42.803Z",
+      "note": "P0 CATALOG PERF: root cause found + fixed in my lease at 4852e91b (origin-verified). readCatalog was 2 gets per product (472+2 calls for 236 products) uncached = the 30-60s. Bulk path added, stability guarantee preserved. Needs listDetails() wired at composition. 853 owned tests, tsc clean."
     },
     {
       "id": "claude-fable-s8-fulfillment",
@@ -98,8 +98,8 @@
       "branch": "lane/fulfillment-tracking-min",
       "state": "active",
       "startedAt": "2026-08-19T16:43:13.336Z",
-      "heartbeatAt": "2026-08-20T18:12:17.024Z",
-      "note": "Wall finding answered at 4a7bca30f0a9b9516ec645ce50c3c0665c6f8fd0 (lane/fulfillment-wall-alignment, pushed). Operator doors moved outside the wall, admission regex exported + verified, wall-composed test added. Census unchanged 386/395. 160 passed/3 skipped, tsc clean. Awaiting lead: 2-line wall admission, candidate SQL, admin client state lists."
+      "heartbeatAt": "2026-08-21T15:40:46.272Z",
+      "note": "STAND DOWN per founder P0 change: fulfillment/supplier automation deferred, NOT deleted. Lane checkpointed + pushed at 77fb8fc09bee1db865bbe647631821e102edcb4f; deferred blockers recorded in INTEGRATION_PACKET.md (wall admission, unapplied candidate SQL). Broadcast MANUAL_ORDER_INTAKE_WORKER_PROMPT.md to all 9 peers. RETRACTED my overlaps() diagnosis - s3 was right; and proved the landed fix 6291242 returns FALSE NEGATIVES so leases can grant two sessions the same file. Escalated to lead + founder. Next: claiming an order-intake lane."
     },
     {
       "id": "claude-fable-s10-release-security",
@@ -108,7 +108,7 @@
       "branch": "lane/s10-release-security-20260819",
       "state": "active",
       "startedAt": "2026-08-19T16:43:14.972Z",
-      "heartbeatAt": "2026-08-20T18:04:36.377Z",
+      "heartbeatAt": "2026-08-21T16:08:18.141Z",
       "note": ""
     },
     {
@@ -128,8 +128,8 @@
       "branch": "lane/supplier-workspace-20260820",
       "state": "active",
       "startedAt": "2026-08-20T17:53:38.465Z",
-      "heartbeatAt": "2026-08-20T18:08:11.365Z",
-      "note": "SUPPLIER-WORKSPACE handed off at 09d0c990 (pushed). Awaiting lead mount. No production mutation."
+      "heartbeatAt": "2026-08-21T16:14:37.642Z",
+      "note": "PAUSED at fleet stand-down. All 5 branches origin-verified: composition-hold-fact a17e675, overlaps-fix 29d8e2c (integrated 1b44147), submit-negatives d8afb8f (integrated), supplier-workspace 79d6b61, partner-portal 6d42625. Final checkpoint handoff written. Open decisions: price confirmation in lead's session; preprod environment. Production NOT mutated."
     },
     {
       "id": "claude-fable-s6b-member-wall",
@@ -138,8 +138,8 @@
       "branch": "lane/member-commerce-write-wall-20260820",
       "state": "active",
       "startedAt": "2026-08-20T17:57:56.661Z",
-      "heartbeatAt": "2026-08-20T17:57:56.662Z",
-      "note": "Worktree C:/xenios-wt/s6b-member-commerce-wall from cf649c1. server/research/index.ts is LEAD-owned: snippet only, no edit."
+      "heartbeatAt": "2026-08-21T16:01:51.580Z",
+      "note": "004b405 origin-verified. Catalog fan-out measured; fix belongs to s7."
     },
     {
       "id": "codex-care-discovery-20260820",
@@ -150,6 +150,26 @@
       "startedAt": "2026-08-20T18:07:19.670Z",
       "heartbeatAt": "2026-08-20T18:22:05.361Z",
       "note": "Implementation committed and pushed at 64c9da533132be871018cd2b88e47af59d36bf2e; all Care tests, typecheck, route verifier, and build pass. Preparing exact-SHA handoff."
+    },
+    {
+      "id": "claude-fable-browser-perf",
+      "tool": "claude",
+      "lane": "launch-browser-mobile-performance",
+      "branch": "lane/browser-perf-proof-20260821",
+      "state": "active",
+      "startedAt": "2026-08-21T16:37:41.470Z",
+      "heartbeatAt": "2026-08-21T16:37:41.471Z",
+      "note": ""
+    },
+    {
+      "id": "claude-fable-main-integrator",
+      "tool": "claude",
+      "lane": "launch-integration-rc",
+      "branch": "xenios/launch-integration-20260819",
+      "state": "active",
+      "startedAt": "2026-08-21T16:38:55.554Z",
+      "heartbeatAt": "2026-08-21T16:59:33.320Z",
+      "note": "RC candidate e752db6 pushed+verified. P0-1 eliminated (bulk listDetails + declared-facts window + cache), P0-2 integrated (e2e 53/53), QA defect fixed, migration 76 rehearsed. Full suite running for freeze; awaiting browser-perf report."
     }
   ]
 }

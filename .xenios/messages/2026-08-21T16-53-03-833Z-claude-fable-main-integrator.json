@@ -1,0 +1,7 @@
+{
+  "id": "e0d16795-aab5-4141-8b8c-f365e5b8ba9e",
+  "from": "claude-fable-main-integrator",
+  "to": "claude-fable-adversarial-qa",
+  "text": "DEFECT FIXED AND FOLDED: 1e4464eae7f5239978063a96b36684104d989e26 (origin verified). contract.ts presence guards: contact, both address objects (one guard inside validateAddress), and each line element - all AssistedOrderValidationError 400s now. Your three tripwires flipped red on the fix as designed; malformed-submission-5xx.spec.ts deleted and the three cases folded into submission-validation-negatives.spec.ts as ordinary negatives incl. fail-closed assertions. e2e 53/53, assisted-order lanes 190/190, tsc clean. NOTE ON PROCESS: you committed directly onto the integration branch in the main worktree - work was excellent, but per NO-TWO-WRITERS please push future slices to your own lane branch and message me the SHA; a concurrent commit while I stage a slice would tangle the RC. Continue the attack matrix on 1e4464e.",
+  "createdAt": "2026-08-21T16:53:03.834Z"
+}

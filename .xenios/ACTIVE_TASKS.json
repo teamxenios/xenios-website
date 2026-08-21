@@ -50,8 +50,8 @@
       "id": "SUPPLIER-WORKSPACE",
       "title": "Build minimum-data supplier workspace",
       "priority": "P1",
-      "state": "qa",
-      "owner": "claude-fable-s11-supplier",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "client/src/research/supplier/**",
         "server/research/supplier/**",
@@ -64,7 +64,8 @@
         "sha": "09d0c990aaec3428a3f3bd2b8002382ea739e097",
         "file": ".xenios/handoffs/2026-08-20T18-08-03-795Z-SUPPLIER-WORKSPACE-claude-fable-s11-supplier.md",
         "at": "2026-08-20T18:08:03.797Z"
-      }
+      },
+      "releasedAt": "2026-08-21T16:14:38.208Z"
     },
     {
       "id": "AFFILIATE-PRODUCTION",
@@ -98,7 +99,9 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside."
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "claimedAt": "2026-08-21T15:46:37.875Z",
+      "releasedAt": "2026-08-21T15:51:29.849Z"
     },
     {
       "id": "GENERAL-COMMERCE",
@@ -141,7 +144,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -366,9 +369,9 @@
       "releasedAt": "2026-08-20T14:54:58.522Z",
       "handoff": {
         "session": "claude-fable-s9-conversion-qa",
-        "sha": "12361658c5a2075c57e738103e2ff38d2105b475",
-        "file": ".xenios/handoffs/2026-08-21T15-40-54-784Z-FULL-VISION-DEMO-claude-fable-s9-conversion-qa.md",
-        "at": "2026-08-21T15:40:54.786Z"
+        "sha": "ff46ed9ea965f076995f800806e51b8ed85691d3",
+        "file": ".xenios/handoffs/2026-08-21T16-08-19-330Z-FULL-VISION-DEMO-claude-fable-s9-conversion-qa.md",
+        "at": "2026-08-21T16:08:19.358Z"
       }
     },
     {
@@ -422,6 +425,19 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-08-21T15:35:03.372Z"
+    },
+    {
+      "id": "BROWSER-PERF-PROOF",
+      "title": "P0-3/P0-4: seeded local browser proof, mobile smoke 430-320, and catalog performance measurement for the manual-order launch",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-browser-perf",
+      "paths": [
+        "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
+        "e2e/browser-perf/**"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-21T16:38:03.054Z"
     }
   ]
 }

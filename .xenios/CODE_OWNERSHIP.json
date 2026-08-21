@@ -153,7 +153,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-08-20T17:51:40.949Z",
-      "heartbeatAt": "2026-08-20T18:17:12.900Z"
+      "heartbeatAt": "2026-08-21T16:11:42.803Z"
     },
     {
       "id": "a83c0202-4bba-42c8-b1a5-5f5429788881",
@@ -176,7 +176,7 @@
         "server/research/supplier/**",
         "shared/research/supplier/**"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-08-20T17:53:40.211Z",
       "heartbeatAt": "2026-08-20T17:53:40.211Z"
     },
@@ -206,6 +206,88 @@
       "state": "handoff",
       "claimedAt": "2026-08-20T18:07:19.885Z",
       "heartbeatAt": "2026-08-20T18:22:05.361Z"
+    },
+    {
+      "id": "02cf8ffa-f786-421b-a4f3-905cadd4c4db",
+      "task": "PEPTIDE-LAUNCH-ACCEPTANCE",
+      "session": "claude-fable-s3",
+      "paths": [
+        "shared/research/launch/**",
+        "docs/research-launch/PEPTIDE_LAUNCH_ACCEPTANCE_2026-08-21.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T14:39:01.895Z",
+      "heartbeatAt": "2026-08-21T14:39:01.895Z"
+    },
+    {
+      "id": "286778ce-d57b-4bf4-88bc-f09dca71d459",
+      "task": "PEPTIDE-DIRECT-ORDER-HOLD",
+      "session": "claude-fable-s3",
+      "paths": [
+        "shared/research/early-access/customer-pathway.ts",
+        "shared/research/early-access/customer-pathway.test.ts",
+        "shared/research/launch/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T14:45:28.144Z",
+      "heartbeatAt": "2026-08-21T14:45:28.144Z"
+    },
+    {
+      "id": "56e6ec05-2824-4e4b-acaf-902025f5f224",
+      "task": "FULL-VISION-DEMO",
+      "session": "claude-fable-s9-conversion-qa",
+      "paths": [
+        "client/src/research/demo/**",
+        "server/research/demo/**",
+        "e2e/**",
+        "scripts/demo-seed.*"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T15:05:20.240Z",
+      "heartbeatAt": "2026-08-21T15:05:20.240Z"
+    },
+    {
+      "id": "32c03dd5-158b-4127-a1e7-0d4ea70503b8",
+      "task": "ADMIN-ORDER-EMAIL-COMPLETENESS",
+      "session": "claude-fable-s3",
+      "paths": [
+        "server/research/assisted-order/communications.ts",
+        "server/research/assisted-order/communications.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T15:35:03.376Z",
+      "heartbeatAt": "2026-08-21T16:05:26.697Z"
+    },
+    {
+      "id": "ede177bf-6ec2-4660-886b-4af0631e47fe",
+      "task": "REQUEST-CENTER",
+      "session": "claude-fable-lane4-affiliate",
+      "paths": [
+        "client/src/research/adapters/productRequests.ts",
+        "client/src/research/pages/adminx/ProductRequestAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductRequestsAdmin.tsx",
+        "client/src/research/pages/member/NewProductRequest.tsx",
+        "client/src/research/pages/member/ProductRequests.tsx",
+        "client/src/research/products-diagnostics/ProductRequestExperience.tsx",
+        "server/research/product-requests.ts",
+        "server/research/products-diagnostics/product-request-integration.ts",
+        "shared/research/product-request-sources.ts"
+      ],
+      "state": "released",
+      "claimedAt": "2026-08-21T15:46:37.884Z",
+      "heartbeatAt": "2026-08-21T15:47:25.050Z"
+    },
+    {
+      "id": "cea2fe7a-235b-445e-8162-ecc08043cfaf",
+      "task": "BROWSER-PERF-PROOF",
+      "session": "claude-fable-browser-perf",
+      "paths": [
+        "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
+        "e2e/browser-perf/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T16:38:03.056Z",
+      "heartbeatAt": "2026-08-21T16:38:03.056Z"
     }
   ],
   "rules": [

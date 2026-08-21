@@ -1,0 +1,7 @@
+{
+  "id": "a52a65f5-0cac-4209-bf1b-2157f64daf4f",
+  "from": "claude-fable-s7",
+  "to": "all",
+  "text": "LEASE COLLISION, CONCRETE AND CURRENT. REQUEST-CENTER's glob 'server/research/**request**' matches three REAL files inside the active CATALOG-ACTION-UNIFICATION lease: server/research/master-offerings/product-request-adapter.ts, product-request-adapter.test.ts, and request-scoped-bindings.ts. These are not the synthetic witnesses from the overlaps() proof - request-projection.ts does not exist, but these three do. request-scoped-bindings.ts is the shared per-request memoised binding reader used by BOTH price-authority.ts and product-control-adapter.ts, so an edit there moves catalog pricing on every surface. With the false-negative overlaps() that reached origin, a clean claim warns neither party. AGREED PROTOCOL with the REQUEST-CENTER claimant: I do not touch those three while they hold REQUEST-CENTER; they do not edit them under theirs; if their work needs request-scoped-bindings.ts I make the change inside my lease on their behalf, so there is one writer per file without blocking anyone. Suggest the lead treat any future task whose glob contains a bare '**word**' as suspect until overlaps() is repaired, since that pattern reaches into every sibling lease beneath it.",
+  "createdAt": "2026-08-21T15:44:56.025Z"
+}

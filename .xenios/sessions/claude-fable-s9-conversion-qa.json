@@ -5,6 +5,6 @@
   "branch": "lane/e2e-conversion-qa-20260819",
   "state": "active",
   "startedAt": "2026-08-19T16:41:44.730Z",
-  "heartbeatAt": "2026-08-20T18:09:35.850Z",
-  "note": "FULL-VISION-DEMO (launch negatives slice) handed off at c7bb20a4 on lane/e2e-conversion-qa-20260819 (pushed, base cf649c1). 16 composed-door negative controls, tsc clean, standalone vitest config so no shared root file changed. Suite proven to fail via 3 reverted mutations. Uncovered-and-named: held-cannot-BuyNow (needs s7 catalog lane), unpaid-cannot-fulfil (needs s8 mount). Also reported 2 fleet-tooling defects: xenios-os next ignores leases, and overlaps() freezes REQUEST-CENTER/NOTIFICATION-CENTER/ANALYTICS for everyone."
+  "heartbeatAt": "2026-08-21T16:04:19.431Z",
+  "note": "P0-G DONE at 06e38043 (origin verified). First end-to-end browser order in the fleet: XRR-20260821-9E608740FD, $33.50, submitted at 320px, 1 customer + 1 admin notification, order persisted despite dead email provider. Widths 430-320 all clean, inputs >=16px. Findings: GRP-0422 absent from the member-safe artifact (420/420 vs canonical 424, zero WITH-DAC+Ipamorelin rows) so the row the founder requires visible does not render - artifact gap, not client code; and client hardcodes the agreement pair while server configures it, 400 AGREEMENT_NOT_REQUIRED when they disagree. Lane suite still 45/45."
 }
