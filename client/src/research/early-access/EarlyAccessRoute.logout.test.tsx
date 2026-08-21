@@ -9,6 +9,11 @@ import {
   CART_ATTEMPT_STORAGE_KEY,
   LAST_CART_CHECKOUT_STORAGE_KEY,
 } from "./cart/cartAttemptStore";
+import {
+  assistedOrderReceiptKey,
+  assistedOrderTokenKey,
+} from "../assisted-order/storage";
+import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
 
 /**
  * F6 I: SIGNING OUT FORGETS EVERYTHING THIS BROWSER REMEMBERED.
@@ -29,6 +34,8 @@ import {
 const CART_KEY = "xenios.research.earlyAccess.cart.v1";
 
 /** Every key the Early Access path is allowed to write. */
+const ASSISTED_ORDER_REFERENCE = "XRR-20260821-DEADBEEF01";
+
 const EVERY_RECOVERY_KEY = [
   CART_KEY,
   CART_ATTEMPT_STORAGE_KEY,
@@ -168,5 +175,44 @@ describe("F6 I: sign-out clears every browser recovery pointer", () => {
     });
     await settle();
     expect(window.sessionStorage.length).toBe(0);
+  });
+});
+
+describe("sign-out takes the assisted-order status token with it", () => {
+  it("leaves no bearer credential for the next person who unlocks", async () => {
+    // The status token is not a hint, it is a CREDENTIAL: it authorizes reading
+    // that exact request on its own, with no session. Leaving it in
+    // sessionStorage on a shared machine hands the next person a working key to
+    // the previous customer's order, and their name, address and phone with it.
+    sessionStorage.setItem(assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE), "secret-status-token");
+    sessionStorage.setItem(
+      assistedOrderReceiptKey(ASSISTED_ORDER_REFERENCE),
+      JSON.stringify({ publicReference: ASSISTED_ORDER_REFERENCE, lines: [] }),
+    );
+    sessionStorage.setItem(
+      ASSISTED_ORDER_DRAFT_KEY,
+      JSON.stringify({ idempotencyKey: "k", step: "products", selections: [], generalNotes: "" }),
+    );
+
+    stubFetch();
+    await act(async () => {
+      root.render(<EarlyAccessRoute />);
+    });
+    await settle();
+
+    const signOut = container.querySelector('[data-testid="early-access-signout"]');
+    expect(signOut).not.toBeNull();
+    await act(async () => {
+      signOut!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(sessionStorage.getItem(assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE))).toBeNull();
+    expect(sessionStorage.getItem(assistedOrderReceiptKey(ASSISTED_ORDER_REFERENCE))).toBeNull();
+    expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    // Nothing under the family prefix survives, whatever its reference.
+    const survivors = Object.keys(sessionStorage).filter((key) =>
+      key.startsWith("xenios.assisted-order."),
+    );
+    expect(survivors).toEqual([]);
   });
 });

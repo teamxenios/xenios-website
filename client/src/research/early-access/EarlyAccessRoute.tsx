@@ -15,6 +15,7 @@ import {
   clearPendingAttempt,
   readLastOrderNumber,
 } from "./pendingOrderStore";
+import { clearAssistedOrderStorage } from "../assisted-order/storage";
 import { clearBrowserCart } from "./cart/cartStore";
 import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
@@ -222,6 +223,14 @@ export default function EarlyAccessRoute() {
       // purchaser's checkout. The server would still refuse to show it, but a
       // signed-out browser should not be holding the pointer at all.
       clearCartRecovery();
+      // The assisted-order family: the in-progress order draft AND the status
+      // token of any request this browser submitted. The token is a bearer
+      // credential — it authorizes reading that exact request on its own, with
+      // no session — so leaving it behind on a shared machine hands the next
+      // person who unlocks a working key to the previous customer's order and
+      // their name, address and phone with it. The draft is the same problem in
+      // a smaller way: somebody else's basket.
+      clearAssistedOrderStorage();
       setAgreed(false);
       setBlocked(null);
       setSelection(null);
