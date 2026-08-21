@@ -131,3 +131,97 @@ describe("Early Access catalog read amplification", () => {
     expect(second - first).toBe(first);
   });
 });
+
+// ---------------------------------------------------------------------------
+// The bulk path: the same answer, in a constant number of reads.
+// ---------------------------------------------------------------------------
+
+function bulkRepository(mutateSecondRead?: (details: AdminProductDetail[]) => AdminProductDetail[]) {
+  let listDetailCalls = 0;
+  return {
+    calls: () => listDetailCalls,
+    repository: {
+      async list() {
+        throw new Error("the bulk path must not fall back to per-product reads");
+      },
+      async get() {
+        throw new Error("the bulk path must not fall back to per-product reads");
+      },
+      async listDetails() {
+        listDetailCalls += 1;
+        const all = Array.from({ length: PRODUCTS }, (_, i) => detail(i));
+        return listDetailCalls > 1 && mutateSecondRead ? mutateSecondRead(all) : all;
+      },
+    },
+  };
+}
+
+describe("the bulk catalog read", () => {
+  it("answers the whole catalog in two reads instead of two per product", async () => {
+    const bulk = bulkRepository();
+    const reader = new LiveProductControlReader(bulk.repository as never);
+
+    const products = await reader.readCatalog();
+
+    expect(products).toHaveLength(PRODUCTS);
+    // Two, because the stability guarantee is kept: read, re-read, compare.
+    expect(bulk.calls()).toBe(2);
+  });
+
+  it("does not grow with catalog size", async () => {
+    const bulk = bulkRepository();
+    const reader = new LiveProductControlReader(bulk.repository as never);
+
+    await reader.readCatalog();
+    await reader.readCatalog();
+
+    // Four calls for two catalog pages, not 2N per page.
+    expect(bulk.calls()).toBe(4);
+  });
+
+  it("still drops a product that changed between the two reads", async () => {
+    // The guarantee that makes the per-product double-read worth its cost: a
+    // product edited mid-read is never served half-applied. Speed must not buy
+    // that away.
+    const bulk = bulkRepository((all) =>
+      all.map((product, index) =>
+        index === 0
+          ? ({ ...product, prices: [{ id: "price_new" }] } as unknown as AdminProductDetail)
+          : product,
+      ),
+    );
+    const reader = new LiveProductControlReader(bulk.repository as never);
+
+    const products = await reader.readCatalog();
+
+    expect(products).toHaveLength(PRODUCTS - 1);
+    expect(products.some((p) => p.id === "prod_0")).toBe(false);
+  });
+
+  it("drops a product that vanished between the two reads", async () => {
+    const bulk = bulkRepository((all) => all.slice(1));
+    const reader = new LiveProductControlReader(bulk.repository as never);
+
+    const products = await reader.readCatalog();
+
+    expect(products).toHaveLength(PRODUCTS - 1);
+    expect(products.some((p) => p.id === "prod_0")).toBe(false);
+  });
+
+  it("drops a duplicated id rather than guessing which row is the product", async () => {
+    const bulk = bulkRepository();
+    const withDuplicate = {
+      ...bulk.repository,
+      async listDetails() {
+        const all = Array.from({ length: PRODUCTS }, (_, i) => detail(i));
+        return [...all, detail(0)];
+      },
+    };
+    const reader = new LiveProductControlReader(withDuplicate as never);
+
+    const products = await reader.readCatalog();
+
+    expect(products.some((p) => p.id === "prod_0")).toBe(false);
+    expect(products).toHaveLength(PRODUCTS - 1);
+  });
+});

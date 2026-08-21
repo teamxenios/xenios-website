@@ -103,7 +103,7 @@ describe("the pricing grant boundary", () => {
       if (!PERMITTED_GRANT_SITES.includes(rel)) offenders.push(rel);
     }
     expect(offenders).toEqual([]);
-  });
+  }, SOURCE_SCAN_TIMEOUT_MS);
 
   it("never names a non-customer audience at any grant site", () => {
     // The commercial schedules, by name, anywhere in the two permitted files.
@@ -200,7 +200,7 @@ describe("the pricing grant boundary", () => {
     } as never);
     expect(clean?.pricingGrant?.audience).toBe(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE);
     expect(clean?.email).toBe("");
-  }, SOURCE_SCAN_TIMEOUT_MS);
+  });
 
   it("sets pricingViewer in exactly the reviewed places", () => {
     // The companion to the grant audit: pricingGrant is only dangerous if

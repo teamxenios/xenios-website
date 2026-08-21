@@ -17,7 +17,29 @@ export {
 export type ProductControlReadRepository = Pick<
   ProductAdminRepository,
   "list" | "get"
->;
+> & {
+  /**
+   * Read every published, public product WITH the fields a customer catalog
+   * renders, in a bounded number of remote calls.
+   *
+   * OPTIONAL, and its absence is not a failure: a repository without it keeps
+   * the per-product path below, unchanged. When it IS supplied, `readCatalog`
+   * costs a constant number of reads instead of two per product.
+   *
+   * The measured cost of not having it, at 236 published products, is 472 get
+   * calls plus 2 list calls; each get is a product query plus six more, which
+   * is the ~3,300-query catalog read the Early Access storefront was paying on
+   * every request.
+   *
+   * WHAT AN IMPLEMENTATION MUST INCLUDE. Everything a customer surface reads:
+   * the product summary, its variants, its prices AND its content. The
+   * existing `listForPricing` is the right SHAPE but not a valid substitute —
+   * it returns `content` empty because pricing never reads it, and the Early
+   * Access catalog renders `content.shortDescription`. Wiring this to
+   * `listForPricing` would make the catalog fast and silently wordless.
+   */
+  listDetails?(): Promise<AdminProductDetail[]>;
+};
 
 export interface ProductCatalogReader {
   readCatalog(): Promise<AdminProductDetail[]>;
@@ -143,7 +165,61 @@ export class LiveProductControlReader
       : null;
   }
 
+  /**
+   * The same answer as the per-product path, from two bulk reads.
+   *
+   * The stability guarantee is preserved rather than traded away. The
+   * per-product path reads each product twice and compares snapshot tokens so
+   * a concurrent edit cannot be served half-applied; this reads the whole
+   * catalog twice and compares the same tokens. That is equal or stronger: it
+   * also catches a product appearing or disappearing between the two reads,
+   * which the per-product path needed a separate verification list to see.
+   */
+  private async readCatalogInBulk(
+    listDetails: () => Promise<AdminProductDetail[]>,
+  ): Promise<AdminProductDetail[]> {
+    const [first, second] = [await listDetails(), await listDetails()];
+
+    const uniquePublished = (details: readonly AdminProductDetail[]) => {
+      const idCounts = new Map<string, number>();
+      const slugCounts = new Map<string, number>();
+      for (const detail of details) {
+        idCounts.set(detail.id, (idCounts.get(detail.id) ?? 0) + 1);
+        const slug = detail.slug.trim().toLowerCase();
+        slugCounts.set(slug, (slugCounts.get(slug) ?? 0) + 1);
+      }
+      const byId = new Map<string, AdminProductDetail>();
+      for (const detail of details) {
+        if (!publiclyPublished(detail)) continue;
+        // A duplicated id or slug is ambiguous, and the per-product path drops
+        // it for the same reason: two rows claiming one product is not a
+        // product we can name.
+        if (idCounts.get(detail.id) !== 1) continue;
+        if (slugCounts.get(detail.slug.trim().toLowerCase()) !== 1) continue;
+        byId.set(detail.id, detail);
+      }
+      return byId;
+    };
+
+    const before = uniquePublished(first);
+    const after = uniquePublished(second);
+
+    const stable: AdminProductDetail[] = [];
+    before.forEach((detail, id) => {
+      const confirmed = after.get(id);
+      if (confirmed === undefined) return;
+      if (detailSnapshotToken(detail) !== detailSnapshotToken(confirmed)) return;
+      if (!sameSummarySnapshot(detail, confirmed)) return;
+      stable.push(confirmed);
+    });
+    return stable;
+  }
+
   async readCatalog(): Promise<AdminProductDetail[]> {
+    const listDetails = this.repository.listDetails?.bind(this.repository);
+    if (listDetails !== undefined) {
+      return this.readCatalogInBulk(listDetails);
+    }
     const summaries = await this.repository.list({
       status: "published",
       visibility: "public",
