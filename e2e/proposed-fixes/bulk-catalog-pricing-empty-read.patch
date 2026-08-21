@@ -1,0 +1,28 @@
+diff --git a/server/research/pricing/bulk-catalog-pricing-source.ts b/server/research/pricing/bulk-catalog-pricing-source.ts
+index 1e1ed0a..9ae6fe4 100644
+--- a/server/research/pricing/bulk-catalog-pricing-source.ts
++++ b/server/research/pricing/bulk-catalog-pricing-source.ts
+@@ -128,6 +128,23 @@ export class BulkCatalogPricingSource implements BulkPricingProductSource {
+     if (this.inFlight) return this.inFlight;
+     const pending = (async () => {
+       const catalog = await this.reader.listForPricing();
++      // A read that RESOLVES with zero rows is not evidence that the catalog
++      // is empty. An RLS change, a revoked grant, a filtered query or a
++      // half-applied migration all resolve successfully with nothing, and
++      // this deployment has already had one incident where a key
++      // misconfiguration made reads silently return empty. Replacing a good
++      // snapshot with that would reprice every approved product to "Price on
++      // request" and cache the falsehood for a full ttl: the exact collapse
++      // this class exists to prevent, reached through a quieter door.
++      if (
++        catalog.length === 0 &&
++        this.snapshot !== null &&
++        this.snapshot.catalog.length > 0
++      ) {
++        throw new Error(
++          "Product Control returned an empty catalog while a non-empty snapshot is held; refusing to replace priced products with nothing.",
++        );
++      }
+       const next: Snapshot = {
+         catalog,
+         byId: indexById(catalog),

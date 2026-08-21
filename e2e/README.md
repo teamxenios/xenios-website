@@ -76,3 +76,52 @@ then reverted:
 
 Re-run that check after changing the harness. A harness that cannot fail is a
 harness that is not testing anything.
+
+---
+
+# LANE H — pricing cache adversarial verification
+
+`pricing-cache-adversarial.spec.ts` attacks `BulkCatalogPricingSource`, the
+3-query replacement for the 3,306-query catalog read. It does not ask whether
+the cache caches; it asks whether any reachable upstream behaviour can still
+show the customer a catalog with no prices in it.
+
+**12 of 13 pass. One fails, and it is a confirmed defect.**
+
+## Confirmed defect: an empty successful read poisons the cache
+
+A read that RESOLVES with zero rows silently replaces a good snapshot. Every
+product then answers `null` from `readProductForPricing`, so all 417 approved
+prices render "Price on request" — cached for the full ttl, and re-poisoned on
+each refresh.
+
+This is the exact collapse the class was written to prevent, reached through a
+quieter door: the failure path is guarded, the success-with-nothing path is not.
+It is not hypothetical here — `.env.example` records a production incident on
+this project where a key misconfiguration made "reads silently return empty".
+
+**Ready-to-apply fix** (17 lines, refuse an empty read only when a non-empty
+snapshot is held):
+
+```bash
+git apply e2e/proposed-fixes/bulk-catalog-pricing-empty-read.patch
+```
+
+Verified: with the patch the suite is 13/13; reverting it puts exactly the
+empty-read test back to red. The file is the lead's active unpushed work, so
+this lane proposes rather than applies it.
+
+## Open policy question, deliberately not decided
+
+A refresh returning 2 rows where 417 stood has the same causes as an empty read,
+but "how small is too small" is a founder/lead judgement — too strict a ratio
+would refuse a legitimate catalog reduction. The suite therefore pins today's
+behaviour (the shrunken read is accepted) instead of asserting an unagreed
+threshold, so the question stays visible rather than silent.
+
+## What passed
+
+Cold read, warm serve, ttl refresh, stampede collapse at 1/5/10/25 concurrent
+cold callers (one upstream read each time), stale-while-error serving the last
+verified snapshot, honest raise past the staleness ceiling, honest raise on cold
+upstream failure, recovery to fresh data, and no customer identity in `stats()`.
