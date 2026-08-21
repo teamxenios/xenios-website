@@ -5,6 +5,11 @@ import type {
   EarlyAccessCatalogRow,
 } from "../catalog/early-access-catalog";
 import {
+  mayEnterPaymentJourney,
+  type CanonicalPaymentFacts,
+  type PaymentEligibilityPolicy,
+} from "./canonical-payment-eligibility";
+import {
   decideEarlyAccessRelease,
   earlyAccessReleaseVersion,
   mayWaiveBlocker,
@@ -124,8 +129,19 @@ export function buildEarlyAccessStorefront(input: {
    * visible and truthfully held, but a unit no founder ever put in front of
    * customers is not shown at all. The customer catalog uses this; the
    * founder review reads everything.
+   *
+   * "canonical_eligible" is the peptide-launch scope. It admits the released
+   * units AS WELL AS every unit the canonical payment-eligibility gate accepts,
+   * so the founder-released opening set becomes a FEATURED subset rather than
+   * the boundary of what can be bought. A unit reaches the customer here by
+   * being a real, classified, priced, unheld product — not by having a row in
+   * the release ledger.
+   *
+   * It is a UNION, deliberately. Dropping the released set would silently
+   * un-list any opening-set unit that the canonical facts do not (yet) cover,
+   * and losing a live product is a worse failure than showing one extra.
    */
-  readonly scope?: "all" | "released_units";
+  readonly scope?: "all" | "released_units" | "canonical_eligible";
   /**
    * Units the FOUNDER has deliberately not released yet. Under
    * "released_units" they would otherwise vanish from the customer catalog,
@@ -137,10 +153,61 @@ export function buildEarlyAccessStorefront(input: {
     productId: string;
     variantId: string;
   }>[];
+  /**
+   * REQUIRED when scope is "canonical_eligible", ignored otherwise.
+   *
+   * Resolves the canonical facts for one exact unit, or null when the catalog
+   * authority cannot state them. A null FAILS CLOSED — the unit is not admitted
+   * — because "we could not establish what this product is" must never resolve
+   * to "sell it". That is the same rule the pricing lane learned: an upstream
+   * blip may not be allowed to change what a customer can do.
+   */
+  readonly canonicalFacts?: (
+    row: EarlyAccessCatalogRow,
+  ) => CanonicalPaymentFacts | null;
+  /** REQUIRED when scope is "canonical_eligible". The approved-family policy. */
+  readonly paymentPolicy?: PaymentEligibilityPolicy;
 }): EarlyAccessStorefront {
   // The projection instant is the clock for every release decision below, so
   // an expired release is refused at STOREFRONT time, not only at creation.
   const nowMs = Date.parse(input.projection.evaluatedAt);
+
+  if (input.scope === "canonical_eligible") {
+    // Fail closed on a misconfigured composition rather than falling back to a
+    // wider scope. Silently serving "all" here would put 503A clinical rows and
+    // capsules in front of a customer.
+    if (!input.canonicalFacts || !input.paymentPolicy) {
+      throw new Error(
+        'buildEarlyAccessStorefront: scope "canonical_eligible" requires both canonicalFacts and paymentPolicy.',
+      );
+    }
+  }
+
+  const releasedKeys = new Set([
+    ...input.releases.map(
+      (release) => `${release.productId} ${release.variantId}`,
+    ),
+    ...(input.founderHeldUnits ?? []).map(
+      (unit) => `${unit.productId} ${unit.variantId}`,
+    ),
+  ]);
+
+  if (input.scope === "canonical_eligible") {
+    const facts = input.canonicalFacts as (
+      row: EarlyAccessCatalogRow,
+    ) => CanonicalPaymentFacts | null;
+    const policy = input.paymentPolicy as PaymentEligibilityPolicy;
+    const rows = input.projection.rows.filter((row) => {
+      if (releasedKeys.has(`${row.productId} ${row.variantId}`)) {
+        return true;
+      }
+      const resolved = facts(row);
+      // Null fails closed: an unresolvable unit is not admitted.
+      return resolved === null ? false : mayEnterPaymentJourney(resolved, policy);
+    });
+    return summarize(input.projection.evaluatedAt, rows, input.releases, nowMs);
+  }
+
   const named =
     input.scope === "released_units"
       ? new Set([
@@ -158,9 +225,23 @@ export function buildEarlyAccessStorefront(input: {
       : input.projection.rows.filter((row) =>
           named.has(`${row.productId}\u0000${row.variantId}`),
         );
-  const units = rows.map((row) => toUnit(row, input.releases, nowMs));
+  return summarize(input.projection.evaluatedAt, rows, input.releases, nowMs);
+}
+
+/**
+ * The counts every scope reports, computed once. Extracted so the
+ * canonical-eligible branch cannot drift into reporting them differently from
+ * the released-units branch.
+ */
+function summarize(
+  evaluatedAt: string,
+  rows: readonly EarlyAccessCatalogRow[],
+  releases: readonly EarlyAccessRelease[],
+  nowMs: number,
+): EarlyAccessStorefront {
+  const units = rows.map((row) => toUnit(row, releases, nowMs));
   return Object.freeze({
-    evaluatedAt: input.projection.evaluatedAt,
+    evaluatedAt,
     units: Object.freeze(units),
     purchasableCount: units.filter((unit) => unit.state === "purchasable").length,
     heldCount: units.filter((unit) => unit.state !== "purchasable").length,
