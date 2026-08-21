@@ -443,7 +443,7 @@
       "id": "LIVE-UX-PERFORMANCE-HOTFIX",
       "title": "Prepare the founder-authorized Early Access UX and safe performance hotfix RC",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-live-ux-hotfix-20260821",
       "paths": [
         "client/src/research/assisted-order/**",
@@ -462,7 +462,13 @@
       ],
       "dependsOn": [],
       "pathsNote": "Founder-authorized hotfix from live SHA 5c23225 only. No deployment, catalog-data release, pricing, payment, fulfillment, environment, migration, or unrelated architecture changes.",
-      "claimedAt": "2026-08-21T18:33:07.405Z"
+      "claimedAt": "2026-08-21T18:33:07.405Z",
+      "handoff": {
+        "session": "codex-live-ux-hotfix-20260821",
+        "sha": "1971c365308558036491db0c3755cca4f09b4890",
+        "file": ".xenios/handoffs/2026-08-21T18-51-47-509Z-LIVE-UX-PERFORMANCE-HOTFIX-codex-live-ux-hotfix-20260821.md",
+        "at": "2026-08-21T18:51:47.511Z"
+      }
     }
   ]
 }

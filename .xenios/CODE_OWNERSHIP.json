@@ -308,7 +308,7 @@
         "server/research/early-access/catalog/**",
         "docs/research-launch/XENIOS_LIVE_UX_HOTFIX_RC_2026-08-21.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-21T18:33:07.407Z",
       "heartbeatAt": "2026-08-21T18:50:49.721Z"
     }
