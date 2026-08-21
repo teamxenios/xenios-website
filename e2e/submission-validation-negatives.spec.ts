@@ -137,10 +137,10 @@ describe("door negative: age and identity gates hold at the door", () => {
 });
 
 describe("door negative: a required shipping sub-field is refused cleanly", () => {
-  // The whole address OBJECT being absent is a SEPARATE, worse case tracked in
-  // malformed-submission-5xx.spec.ts — that one currently 500s. A missing
-  // sub-field on a present address object is handled correctly, and this locks
-  // that in.
+  // The whole address OBJECT being absent is the separate case covered by
+  // "an absent nested object is a clean client error" below; a missing
+  // sub-field on a present address object was always handled correctly, and
+  // this locks that in.
   for (const field of ["line1", "city", "region", "postalCode", "countryCode"] as const) {
     it(`refuses a shipping address missing ${field}`, async () => {
       const { app, enqueued } = buildDoor();
@@ -158,4 +158,47 @@ describe("door negative: a required shipping sub-field is refused cleanly", () =
       expect(enqueued).toHaveLength(0);
     });
   }
+});
+
+// Folded in from malformed-submission-5xx.spec.ts once the contract fix
+// landed: an ABSENT nested object is now the same clean 400 a missing
+// sub-field always was. These used to 500 (raw TypeError before validation);
+// the presence guards in shared/research/assisted-order/contract.ts are what
+// hold them at 4xx now, and every case still proves the fail-closed half —
+// no order, no reference, nobody notified.
+describe("door negative: an absent nested object is a clean client error", () => {
+  it("refuses a submission with no contact object at all", async () => {
+    const { app, enqueued } = buildDoor();
+    const response = await submitAs(app, { ...submission(), contact: undefined });
+    expect(response.status).toBeGreaterThanOrEqual(400);
+    expect(response.status).toBeLessThan(500);
+    expect(response.body.publicReference).toBeUndefined();
+    expect(enqueued).toHaveLength(0);
+  });
+
+  it("refuses a submission whose shipping address object is absent", async () => {
+    const { app, enqueued } = buildDoor();
+    const base = submission();
+    const contact = { ...(base.contact as Record<string, unknown>) };
+    delete contact.shippingAddress;
+    const response = await submitAs(app, { ...base, contact });
+    expect(response.status).toBeGreaterThanOrEqual(400);
+    expect(response.status).toBeLessThan(500);
+    expect(response.body.publicReference).toBeUndefined();
+    expect(enqueued).toHaveLength(0);
+  });
+
+  it("refuses a differing billing selection whose billing address object is absent", async () => {
+    const { app, enqueued } = buildDoor();
+    const base = submission();
+    const contact = {
+      ...(base.contact as Record<string, unknown>),
+      billingSameAsShipping: false,
+    };
+    const response = await submitAs(app, { ...base, contact });
+    expect(response.status).toBeGreaterThanOrEqual(400);
+    expect(response.status).toBeLessThan(500);
+    expect(response.body.publicReference).toBeUndefined();
+    expect(enqueued).toHaveLength(0);
+  });
 });

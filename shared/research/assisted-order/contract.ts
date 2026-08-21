@@ -419,6 +419,12 @@ export function validateAddress(
   field: string,
   input: AssistedOrderAddressInput,
 ): AssistedOrderAddressInput {
+  // Presence first. Dereferencing an absent object throws a raw TypeError,
+  // which the express adapter reports as a 500 outage; an absent address is a
+  // client mistake and must say so as a 400 the customer can act on.
+  if (typeof input !== "object" || input === null) {
+    throw new AssistedOrderValidationError(field, `${field} is required.`);
+  }
   return Object.freeze({
     line1: normalizeRequiredText(`${field}.line1`, input.line1, 200),
     line2: normalizeOptionalText(`${field}.line2`, input.line2, 200),
@@ -445,6 +451,13 @@ export function validateSubmitInput(
     input.idempotencyKey,
     160,
   );
+  // Presence before any nested read, for the same reason validateAddress
+  // checks it: a submission with no contact object at all is a 400-shaped
+  // client mistake, and `input.contact.email` on undefined would turn it
+  // into a 500-shaped outage instead.
+  if (typeof input.contact !== "object" || input.contact === null) {
+    throw new AssistedOrderValidationError("contact", "contact is required.");
+  }
   const email = normalizeEmail(
     normalizeRequiredText("contact.email", input.contact.email, 320),
   );
@@ -484,6 +497,14 @@ export function validateSubmitInput(
 
   const seen = new Set<string>();
   const lines = input.lines.map((line, index) => {
+    // Same presence rule as contact and the addresses: a null or non-object
+    // line element is a malformed request, not a server outage.
+    if (typeof line !== "object" || line === null) {
+      throw new AssistedOrderValidationError(
+        `lines.${index}`,
+        `lines.${index} is required.`,
+      );
+    }
     const productId = normalizeRequiredText(
       `lines.${index}.productId`,
       line.productId,
