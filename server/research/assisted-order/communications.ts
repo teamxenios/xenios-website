@@ -109,6 +109,52 @@ function paymentSentence(payload: Record<string, unknown>): string {
   return "";
 }
 
+/**
+ * The shipping address, ADMIN EMAIL ONLY.
+ *
+ * Deliberately never rendered into a customer email: the customer knows where
+ * they live, and echoing a full address back over mail adds exposure for no
+ * gain. It is here because manual fulfilment needs somewhere to ship to.
+ */
+function addressBlock(value: unknown): string[] {
+  if (typeof value !== "object" || value === null) return ["(no address supplied)"];
+  const address = value as Record<string, unknown>;
+  const lines = [
+    text(address.recipientName),
+    text(address.line1),
+    text(address.line2),
+    [text(address.city), text(address.region), text(address.postalCode)]
+      .filter((part) => part !== "")
+      .join(", "),
+    text(address.countryCode),
+  ].filter((line) => line !== "");
+  return lines.length > 0 ? lines : ["(no address supplied)"];
+}
+
+/** Which agreements the customer accepted, and when. */
+function agreementBlock(payload: Record<string, unknown>): string[] {
+  const agreements = Array.isArray(payload.agreements) ? payload.agreements : [];
+  const rendered = agreements
+    .map((entry) => {
+      if (typeof entry !== "object" || entry === null) return "";
+      const record = entry as Record<string, unknown>;
+      const kind = text(record.kind);
+      return kind ? `  ${kind} ${text(record.version)}`.trimEnd() : "";
+    })
+    .filter((line) => line !== "");
+  if (rendered.length === 0) return [];
+  const at = text(payload.acceptedAt);
+  return ["", "AGREEMENTS ACCEPTED", ...rendered, at ? `  at ${at}` : ""].filter(
+    (line) => line !== "",
+  );
+}
+
+/** Anything the customer wrote, so the operator answers the real question. */
+function notesBlock(payload: Record<string, unknown>): string[] {
+  const notes = text(payload.customerNotes);
+  return notes ? ["", "CUSTOMER NOTES", notes] : [];
+}
+
 export function renderAssistedOrderOutboxEmail(
   templateKey: string,
   payload: Record<string, unknown>,
@@ -153,16 +199,31 @@ export function renderAssistedOrderOutboxEmail(
         `A new assisted order request needs review.`,
         ``,
         `Reference: ${reference}`,
-        `Customer: ${text(payload.fullLegalName)} <${text(payload.email)}>`,
+        `Status: ${text(payload.operatorStatus) || "Order received. Awaiting manual review."}`,
+        ``,
+        `CUSTOMER`,
+        `${text(payload.fullLegalName)} <${text(payload.email)}>`,
+        text(payload.mobilePhone) ? `Phone: ${text(payload.mobilePhone)}` : "",
+        ``,
+        // Payment is MANUAL at launch: the operator answers this email with
+        // availability and payment instructions. The address has to be here
+        // rather than one admin-screen login away, or the email cannot do the
+        // job it exists to do. Admin recipient only; never the customer.
+        `SHIPPING`,
+        ...addressBlock(payload.shippingAddress),
+        ``,
+        `ORDER`,
         lineCount !== null ? `Lines: ${lineCount}` : "",
         ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
+        `Order total: ${money(payload.estimatedTotalCents)}`,
         modes ? `Workflow: ${modes}` : "",
         paymentSentence(payload),
         affiliateLine(payload),
+        ...agreementBlock(payload),
+        ...notesBlock(payload),
         ``,
-        `Next action: review the request, confirm the agreements and pricing,`,
-        `then issue payment instructions from the admin screen.`,
+        `Next action: confirm availability, then reply to the customer with`,
+        `payment instructions. Nothing is owed or confirmed until you do.`,
         ``,
         adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : "",
       ].filter((line) => line !== "").join("\n"),

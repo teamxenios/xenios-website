@@ -260,8 +260,27 @@ describe("AssistedOrderService", () => {
     expect(h.notifications).toHaveLength(2);
     expect(h.notifications[0].requestId).toBe(receipt.requestId);
     expect(h.notifications[1].requestId).toBe(receipt.requestId);
-    expect(h.notifications[0].payload).not.toHaveProperty("shippingAddress");
-    expect(h.notifications[0].payload).not.toHaveProperty("documents");
+    // CHANGED DELIBERATELY 2026-08-21. The admin payload used to carry no
+    // shipping address. Payment is manual at launch — the operator reads that
+    // email and replies with availability and payment instructions — so an
+    // admin alert without an address cannot do its job, and withholding it
+    // only sends the operator to the database for every order.
+    //
+    // The narrowing that keeps it honest is the RECIPIENT, so both directions
+    // are asserted here rather than just the permissive one.
+    const adminPayload = h.notifications[0].payload as Record<string, unknown>;
+    const customerPayload = h.notifications[1].payload as Record<string, unknown>;
+    expect(h.notifications[0].recipientKind).toBe("admin");
+    expect(h.notifications[1].recipientKind).toBe("customer");
+    expect(adminPayload).toHaveProperty("shippingAddress");
+    expect(adminPayload).toHaveProperty("mobilePhone");
+    // The customer already knows where they live; echoing it back adds
+    // exposure and tells them nothing.
+    expect(customerPayload).not.toHaveProperty("shippingAddress");
+    expect(customerPayload).not.toHaveProperty("mobilePhone");
+    // Documents stay behind the admin session in both directions.
+    expect(adminPayload).not.toHaveProperty("documents");
+    expect(customerPayload).not.toHaveProperty("documents");
     expect(h.audit).toHaveBeenCalled();
   });
 

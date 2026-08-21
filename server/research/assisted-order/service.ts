@@ -498,10 +498,37 @@ export class AssistedOrderService {
     // tells the operator that no money fact exists to reconcile yet.
     const paymentState = "none_due_yet";
 
+    // WHAT THE OPERATOR NEEDS TO WORK THE ORDER FROM THEIR INBOX.
+    //
+    // Payment is manual at launch: the founder reads this email and replies to
+    // the customer with availability and payment instructions. That only works
+    // if the email carries the facts required to do it — a shipping address to
+    // quote and ship to, a phone number to call, the agreements that were
+    // accepted, and anything the customer wrote. Without those the operator has
+    // to open the database to answer a customer, which is the thing this email
+    // exists to avoid.
+    //
+    // This is ADMIN ONLY and stays that way. It goes to the configured admin
+    // address, never to the customer, and it still carries no wholesale price,
+    // no supplier cost, no margin and no benchmark, because the catalog
+    // authority these lines resolve from does not hold any.
     const adminPayload = Object.freeze({
       publicReference: receipt.publicReference,
       fullLegalName: input.contact.fullLegalName,
       email: input.contact.email,
+      mobilePhone: input.contact.mobilePhone,
+      shippingAddress: input.contact.shippingAddress,
+      customerNotes: input.generalNotes ?? null,
+      agreements: Object.freeze(
+        (input.agreements ?? []).map((agreement) =>
+          Object.freeze({
+            kind: agreement.kind,
+            version: agreement.version,
+          }),
+        ),
+      ),
+      acceptedAt: nowIso,
+      operatorStatus: "Order received. Awaiting manual review.",
       lineCount: resolvedLines.length,
       totalQuantity,
       estimatedTotalCents,

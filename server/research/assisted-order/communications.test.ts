@@ -142,14 +142,74 @@ describe("the admin order alert", () => {
         marginCents: 3_700,
         supplierName: "Contoso Peptides",
         internalPricingNote: "2.5x multiplier",
-        shippingAddress: { line1: "1 Test Way" },
       }),
     )!.text;
     expect(body).not.toContain("1200");
     expect(body).not.toContain("3700");
     expect(body).not.toContain("Contoso");
     expect(body).not.toMatch(/multiplier/i);
+  });
+
+  it("CARRIES the shipping address, because manual fulfilment needs one", () => {
+    // CHANGED DELIBERATELY 2026-08-21. This assertion used to be the opposite:
+    // the admin alert deliberately carried no address, on the reasoning that
+    // the operator would open the admin screen for anything that specific.
+    //
+    // Payment is manual at launch. The founder reads this email and replies to
+    // the customer with availability and payment instructions, so an email
+    // without an address cannot do the job it exists to do. Withholding it
+    // would not protect anyone — it would just send the operator to the
+    // database for every order.
+    //
+    // The narrowing that keeps this honest is the recipient, not the field:
+    // it goes to the configured admin address only, and the customer template
+    // still renders no address at all (asserted below).
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({
+        mobilePhone: "+15125550100",
+        shippingAddress: {
+          recipientName: "Dana Okafor",
+          line1: "1 Test Way",
+          city: "Austin",
+          region: "TX",
+          postalCode: "78704",
+          countryCode: "US",
+        },
+        customerNotes: "Please confirm cold-chain packing.",
+        agreements: [{ kind: "early_access_terms", version: "v1" }],
+        acceptedAt: "2026-08-21T10:00:00.000Z",
+        operatorStatus: "Order received. Awaiting manual review.",
+      }),
+    )!.text;
+
+    expect(body).toContain("1 Test Way");
+    expect(body).toContain("Austin, TX, 78704");
+    expect(body).toContain("+15125550100");
+    expect(body).toContain("early_access_terms v1");
+    expect(body).toContain("Please confirm cold-chain packing.");
+    expect(body).toContain("Awaiting manual review");
+    // Still says plainly that nothing is owed, so the operator knows there is
+    // no money fact to reconcile yet.
+    expect(body).toMatch(/nothing is due yet/i);
+  });
+
+  it("keeps the customer email free of the address it never needed", () => {
+    // The customer knows where they live. Echoing a full address back over
+    // mail adds exposure and tells them nothing.
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        shippingAddress: {
+          recipientName: "Dana Okafor",
+          line1: "1 Test Way",
+          city: "Austin",
+        },
+        mobilePhone: "+15125550100",
+      }),
+    )!.text;
     expect(body).not.toContain("1 Test Way");
+    expect(body).not.toContain("+15125550100");
   });
 });
 
