@@ -74,6 +74,14 @@ function relative(file: string): string {
   return path.relative(REPO_ROOT, file).split(path.sep).join("/");
 }
 
+/**
+ * These two audits read every source file in the repository, which takes well
+ * over vitest's 5s default on a cold cache. Without an explicit budget they
+ * fail intermittently — and a security boundary that fails at random is worse
+ * than no gate, because the failures get waved through.
+ */
+const SOURCE_SCAN_TIMEOUT_MS = 120_000;
+
 describe("the pricing grant boundary", () => {
   it("walks a source tree that actually contains the known grant sites", () => {
     // Guards the guard: a scanner that silently walks nothing would let every
@@ -192,7 +200,7 @@ describe("the pricing grant boundary", () => {
     } as never);
     expect(clean?.pricingGrant?.audience).toBe(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE);
     expect(clean?.email).toBe("");
-  });
+  }, SOURCE_SCAN_TIMEOUT_MS);
 
   it("sets pricingViewer in exactly the reviewed places", () => {
     // The companion to the grant audit: pricingGrant is only dangerous if
@@ -220,5 +228,5 @@ describe("the pricing grant boundary", () => {
       }
     }
     expect(offenders).toEqual([]);
-  });
+  }, SOURCE_SCAN_TIMEOUT_MS);
 });

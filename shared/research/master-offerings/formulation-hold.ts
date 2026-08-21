@@ -62,6 +62,17 @@ export const FORMULATION_HOLD_MARKERS: readonly RegExp[] = Object.freeze([
 export interface FormulationHold {
   /** The exact declared text that triggered the hold, for the audit trail. */
   declaredIn: string;
+  /** Which authority held it: the reviewed record, or a declared marker. */
+  source: "reviewed_record" | "declared_marker";
+}
+
+/**
+ * Specifications compare on a normalized form, so incidental spacing or case
+ * cannot let a held product through. The server reader normalizes the reviewed
+ * record the same way.
+ */
+export function normalizeHeldSpecification(value: string): string {
+  return value.trim().replace(/\s+/g, " ").toUpperCase();
 }
 
 /**
@@ -74,17 +85,31 @@ export interface FormulationHold {
  */
 export function declaredFormulationHold(
   specification: string | null | undefined,
+  reviewedHolds?: ReadonlySet<string> | null,
 ): FormulationHold | null {
   if (typeof specification !== "string") return null;
   const trimmed = specification.trim();
   if (trimmed === "") return null;
+
+  // The reviewed record first: it is what the founder actually decided, and it
+  // survives the canonical rewrite that strips internal wording from a
+  // customer-facing product name.
+  if (reviewedHolds && reviewedHolds.has(normalizeHeldSpecification(trimmed))) {
+    return { declaredIn: trimmed, source: "reviewed_record" };
+  }
+
+  // A declared marker still holds, for a raw workbook row that has not been
+  // through reconciliation yet. This can only add a hold, never remove one.
   for (const marker of FORMULATION_HOLD_MARKERS) {
-    if (marker.test(trimmed)) return { declaredIn: trimmed };
+    if (marker.test(trimmed)) return { declaredIn: trimmed, source: "declared_marker" };
   }
   return null;
 }
 
-/** True when the row declares its own formulation unresolved. */
-export function isFormulationHeld(specification: string | null | undefined): boolean {
-  return declaredFormulationHold(specification) !== null;
+/** True when the row is held by the reviewed record or declares itself unresolved. */
+export function isFormulationHeld(
+  specification: string | null | undefined,
+  reviewedHolds?: ReadonlySet<string> | null,
+): boolean {
+  return declaredFormulationHold(specification, reviewedHolds) !== null;
 }
