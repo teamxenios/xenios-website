@@ -375,6 +375,84 @@ describe("downstream operational state cannot refuse a customer's order", () => 
 });
 
 // ---------------------------------------------------------------------------
+// The duplicate collapse is already decided by the founder's own two targets.
+// ---------------------------------------------------------------------------
+
+describe("collapsing the duplicate pairs: 111 and 27 only reconcile one way", () => {
+  const rows = workbookRows();
+  const peptides = rows.filter((row) => row.Family === PEPTIDE_FAMILY);
+  const byGroup = (id: string) => {
+    const row = rows.find((candidate) => candidate["Group ID"] === id);
+    if (!row) throw new Error(`${id} not found`);
+    return row;
+  };
+
+  // Hexarelin 5 mg and Oxytocin 10 mg each appear twice, and the two rows in
+  // each pair disagree about BOTH price and classification:
+  //
+  //   GRP-0426 HEXARELIN 5 mg   RUO Research   $49.00
+  //   GRP-0402 Hexarelin (5mg)  pending        $62.50
+  //   GRP-0425 OXYTOCIN 10 mg   RUO Research   $59.00
+  //   GRP-0407 Oxytocin (10mg)  pending        $107.50
+  //
+  // So the collapse decides not just what a customer is charged but whether the
+  // product can be bought at all. It was escalated as an open founder decision.
+  // It does not need one: the founder's own targets already fix the answer, and
+  // these assertions are the arithmetic.
+
+  it("each duplicated strength really does carry two disagreeing rows", () => {
+    expect(byGroup("GRP-0426").Channel).toBe(CONFIRMED_RUO_CHANNEL);
+    expect(byGroup("GRP-0402").Channel).not.toBe(CONFIRMED_RUO_CHANNEL);
+    expect(byGroup("GRP-0425").Channel).toBe(CONFIRMED_RUO_CHANNEL);
+    expect(byGroup("GRP-0407").Channel).not.toBe(CONFIRMED_RUO_CHANNEL);
+    expect(byGroup("GRP-0426")["Suggested Sell Price"]).not.toBe(
+      byGroup("GRP-0402")["Suggested Sell Price"],
+    );
+    expect(byGroup("GRP-0425")["Suggested Sell Price"]).not.toBe(
+      byGroup("GRP-0407")["Suggested Sell Price"],
+    );
+  });
+
+  it("the 111 target only holds if the RUO row survives the collapse", () => {
+    // 111 = 112 confirmed-RUO minus the one composition-blocked combination.
+    // GRP-0425 and GRP-0426 are inside that 112. Retiring them in favour of
+    // their pending twins would leave 109 direct, not 111.
+    const admitted = peptides.filter((row) =>
+      mayEnterPaymentJourney(factsFor(row), POLICY),
+    );
+    expect(admitted).toHaveLength(111);
+    expect(admitted.map((row) => row["Group ID"])).toContain("GRP-0425");
+    expect(admitted.map((row) => row["Group ID"])).toContain("GRP-0426");
+    const withoutRuoTwins = admitted.filter(
+      (row) => !["GRP-0425", "GRP-0426"].includes(row["Group ID"]),
+    );
+    expect(withoutRuoTwins).toHaveLength(109);
+  });
+
+  it("the 27 target only holds if the PENDING row is the one retired", () => {
+    // 29 classification-pending rows exist. The founder's target is 27 unique.
+    // The two removed are exactly the pending twins of an already-RUO strength.
+    const pending = peptides.filter(
+      (row) => row.Channel !== CONFIRMED_RUO_CHANNEL,
+    );
+    expect(pending).toHaveLength(29);
+    const retired = ["GRP-0402", "GRP-0407"];
+    for (const id of retired) {
+      expect(pending.map((row) => row["Group ID"])).toContain(id);
+    }
+    expect(
+      pending.filter((row) => !retired.includes(row["Group ID"])),
+    ).toHaveLength(27);
+  });
+
+  // Both targets therefore agree on one resolution, and no other resolution
+  // satisfies either: KEEP the RUO row, RETIRE the pending twin. The customer
+  // pays $49.00 for Hexarelin 5 mg and $59.00 for Oxytocin 10 mg, and both are
+  // directly orderable. Recorded here rather than in a document so a different
+  // collapse cannot land without turning this suite red.
+});
+
+// ---------------------------------------------------------------------------
 // The reconciliation against what the site actually serves today.
 // ---------------------------------------------------------------------------
 
