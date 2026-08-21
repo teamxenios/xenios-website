@@ -61,7 +61,7 @@ export const paymentEligibilityRefusalCodes = [
   "NO_APPROVED_PRICE",
   /** The composition/split is not stated, so the product cannot be described. */
   "COMPOSITION_UNRESOLVED",
-  /** Product Control, a dispute, or a founder hold is holding this unit. */
+  /** An EXPLICIT commerce/formulation hold. Never operational readiness. */
   "UNIT_HELD",
   /** Availability is under review; visible, deliberately not purchasable. */
   "AVAILABILITY_UNDER_REVIEW",
@@ -119,9 +119,28 @@ export type CanonicalPaymentFacts = Readonly<{
    * `compositionResolvedFromSpecification` for the interim reading.
    */
   compositionResolved: boolean;
-  /** Product Control blocker, strength dispute, or founder hold. */
-  held: boolean;
-  /** Availability is under review for this exact unit. */
+  /**
+   * An EXPLICIT commerce or formulation hold on this exact unit: a founder
+   * hold, a strength dispute, a commerce block someone decided on purpose.
+   *
+   * OPERATIONAL READINESS IS NOT A COMMERCE HOLD, and must never be wired in
+   * here. Supplier assignment, inventory confirmation, lot assignment, COA
+   * state and fulfillment readiness are DOWNSTREAM checks: they decide whether
+   * Xenios can ship the order, not whether Xenios may accept it. A customer
+   * placing an order for a real, classified, priced product is entitled to have
+   * that order taken; the operational lane then does its work, and the order
+   * waits in an honest state if it must.
+   *
+   * Wiring a Product Control blocker set straight into this field would refuse
+   * orders the founder has explicitly said to accept, and it would do it
+   * silently — the customer would see "not available" for a product that is.
+   */
+  commerceHold: boolean;
+  /**
+   * Availability is under review for this exact unit — a deliberate commercial
+   * state ("Temporarily Unavailable"), NOT the absence of stock. Same rule as
+   * above: no inventory count belongs in this boolean.
+   */
   availabilityUnderReview: boolean;
 }>;
 
@@ -151,8 +170,11 @@ export function canonicalPaymentEligibility(
       "Availability for this unit is under review.",
     );
   }
-  if (facts.held) {
-    return refuse("UNIT_HELD", "This unit is held and cannot be sold.");
+  if (facts.commerceHold) {
+    return refuse(
+      "UNIT_HELD",
+      "An explicit commerce or formulation hold applies to this unit.",
+    );
   }
   if (!facts.researchUseOnlyConfirmed) {
     return refuse(

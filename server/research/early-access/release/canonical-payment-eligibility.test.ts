@@ -87,7 +87,7 @@ function factsFor(row: WorkbookRow): CanonicalPaymentFacts {
     compositionResolved: compositionResolvedFromSpecification(
       row["Normalized Specification"],
     ),
-    held: false,
+    commerceHold: false,
     availabilityUnderReview: false,
   };
 }
@@ -100,7 +100,7 @@ function baseFacts(
     researchUseOnlyConfirmed: true,
     hasApprovedRetailPrice: true,
     compositionResolved: true,
-    held: false,
+    commerceHold: false,
     availabilityUnderReview: false,
     ...overrides,
   };
@@ -151,7 +151,7 @@ describe("the gate refuses on canonical facts, in the right order", () => {
   });
 
   it("refuses a held unit and a unit under availability review", () => {
-    expect(canonicalPaymentEligibility(baseFacts({ held: true }), POLICY)).toMatchObject(
+    expect(canonicalPaymentEligibility(baseFacts({ commerceHold: true }), POLICY)).toMatchObject(
       { eligible: false, code: "UNIT_HELD" },
     );
     expect(
@@ -276,6 +276,105 @@ describe("the founder's peptide targets, computed not restated", () => {
 });
 
 // ---------------------------------------------------------------------------
+// The WITH-DAC decision, pinned row by row.
+// ---------------------------------------------------------------------------
+
+describe("the WITH-DAC hold is exactly one row and is not broadened", () => {
+  const rows = workbookRows();
+  const byGroup = (id: string) => {
+    const row = rows.find((candidate) => candidate["Group ID"] === id);
+    if (!row) throw new Error(`${id} not found in the workbook`);
+    return row;
+  };
+
+  // The founder's 2026-08-21 decision, stated row by row. Standalone WITH-DAC
+  // products are NOT globally blocked; only the combination whose component
+  // split is unresolved is. Written out per row so a future widening of the
+  // composition predicate — the easy mistake, e.g. matching "DAC" — fails here
+  // rather than silently pulling two priced products off the shelf.
+  it("admits CJC-1295 WITH DAC 2 mg (confirmed RUO, priced)", () => {
+    const row = byGroup("GRP-0272");
+    expect(row["Normalized Specification"]).toBe("CJC-1295 WITH DAC 2 mg");
+    expect(mayEnterPaymentJourney(factsFor(row), POLICY)).toBe(true);
+  });
+
+  it("admits CJC-1295 WITH DAC 5 mg (confirmed RUO, priced)", () => {
+    const row = byGroup("GRP-0273");
+    expect(row["Normalized Specification"]).toBe("CJC-1295 WITH DAC 5 mg");
+    expect(mayEnterPaymentJourney(factsFor(row), POLICY)).toBe(true);
+  });
+
+  it("refuses CJC-1295 With DAC 10 mg for CLASSIFICATION, not composition", () => {
+    const row = byGroup("GRP-0394");
+    expect(row.Channel).not.toBe(CONFIRMED_RUO_CHANNEL);
+    expect(canonicalPaymentEligibility(factsFor(row), POLICY)).toMatchObject({
+      code: "CLASSIFICATION_NOT_CONFIRMED",
+    });
+  });
+
+  it("refuses ONLY the combination, for COMPOSITION", () => {
+    expect(canonicalPaymentEligibility(factsFor(byGroup("GRP-0422")), POLICY)).toMatchObject(
+      { code: "COMPOSITION_UNRESOLVED" },
+    );
+    // Nothing else in the whole workbook is refused for composition.
+    const compositionRefused = rows.filter((row) => {
+      const verdict = canonicalPaymentEligibility(factsFor(row), POLICY);
+      return !verdict.eligible && verdict.code === "COMPOSITION_UNRESOLVED";
+    });
+    expect(compositionRefused.map((row) => row["Group ID"])).toEqual(["GRP-0422"]);
+  });
+
+  it("leaves the No-DAC combinations orderable", () => {
+    for (const id of ["GRP-0268", "GRP-0269", "GRP-0270", "GRP-0271"]) {
+      expect(mayEnterPaymentJourney(factsFor(byGroup(id)), POLICY)).toBe(true);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Operational readiness must never block ACCEPTING an order.
+// ---------------------------------------------------------------------------
+
+describe("downstream operational state cannot refuse a customer's order", () => {
+  it("has no input for supplier, inventory, lot, COA or fulfillment readiness", () => {
+    // The strongest possible statement of the rule: the gate cannot consider
+    // these because they cannot be passed to it. A caller that wants to block
+    // on stock has to change this type, which is a reviewed act.
+    const keys = Object.keys(baseFacts());
+    for (const operational of [
+      "supplierAssigned",
+      "supplierReady",
+      "inventoryConfirmed",
+      "inStock",
+      "lotAssigned",
+      "coaOnFile",
+      "fulfillmentReady",
+      "releasedUnit",
+    ]) {
+      expect(keys).not.toContain(operational);
+    }
+  });
+
+  it("admits an eligible variant regardless of any operational surroundings", () => {
+    // Same facts, asserted twice, to state plainly that nothing outside the six
+    // canonical facts participates in the decision.
+    expect(mayEnterPaymentJourney(baseFacts(), POLICY)).toBe(true);
+    expect(
+      mayEnterPaymentJourney(
+        { ...baseFacts(), commerceHold: false, availabilityUnderReview: false },
+        POLICY,
+      ),
+    ).toBe(true);
+  });
+
+  it("still honours an EXPLICIT commerce hold, which is a decision not a stock level", () => {
+    expect(
+      canonicalPaymentEligibility(baseFacts({ commerceHold: true }), POLICY),
+    ).toMatchObject({ eligible: false, code: "UNIT_HELD" });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // The reconciliation against what the site actually serves today.
 // ---------------------------------------------------------------------------
 
@@ -347,7 +446,7 @@ describe("the gate cannot leak internal pricing", () => {
       "researchUseOnlyConfirmed",
       "hasApprovedRetailPrice",
       "compositionResolved",
-      "held",
+      "commerceHold",
       "availabilityUnderReview",
     ]);
     // No amount, cost, margin, markup or supplier field can be passed in, so
@@ -379,7 +478,7 @@ describe("the gate cannot leak internal pricing", () => {
         baseFacts({ compositionResolved: false }),
         POLICY,
       ),
-      canonicalPaymentEligibility(baseFacts({ held: true }), POLICY),
+      canonicalPaymentEligibility(baseFacts({ commerceHold: true }), POLICY),
     ];
     for (const refusal of refusals) {
       expect(refusal.eligible).toBe(false);
