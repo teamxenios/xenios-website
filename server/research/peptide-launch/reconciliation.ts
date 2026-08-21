@@ -33,20 +33,40 @@ const PENDING_STATE = "approval_required";
 export const DIRECT_PEPTIDE_FAMILY = "research_peptides_materials";
 
 /**
- * Formulations that must NEVER be promoted to direct purchase by a bulk
- * classification pass.
+ * The ONE explicitly held formulation, per the founder decision of 2026-08-21.
  *
- * The with-DAC CJC formulation is the live example and the reason this exists:
- * it sits in the classification-pending set, it is already bound, priced,
- * approved, active and member-eligible, so a well-meaning "confirm the 29
- * pending rows" step would make it directly orderable in one move. The founder
- * has it explicitly formulation-blocked with its component split unresolved.
- * Matching is on the label, because that is where the formulation is stated.
+ * NARROW ON PURPOSE, and it was wrong before. The first version of this matched
+ * any label containing "with DAC", which flagged the standalone
+ * `CJC-1295 WITH DAC 2 mg` and `5 mg` rows. Those are confirmed RUO, priced,
+ * and the founder has ruled them DIRECT. The hold covers only the COMBINATION
+ * product, whose component split is unresolved:
+ *
+ *     GRP-0422 · CJC-1295 + Ipamorelin WITH DAC · 5 mg total · $99
+ *
+ * So the rule is the conjunction that actually identifies it — CJC **and**
+ * Ipamorelin **and** with-DAC — rather than the with-DAC substring alone. The
+ * founder's instruction was explicit: do not broaden this hold. A standalone
+ * with-DAC row must not match, and the tests sweep every shape both ways.
+ *
+ * The SKU is checked too, so the hold binds to the exact row the moment that
+ * product is generated into the catalog (it is absent from the shipped
+ * artifact today) and stops depending on label wording at all.
  */
-const FORMULATION_BLOCKED = [/with\s*[-_ ]?\s*dac/i];
+const HELD_SKUS = new Set(["GRP-0422"]);
 
-export function isFormulationBlocked(label: string): boolean {
-  return FORMULATION_BLOCKED.some((pattern) => pattern.test(label));
+function labelIsHeldCombination(label: string): boolean {
+  const value = label.toLowerCase();
+  const withDac = /with\s*[-_ ]?\s*dac/.test(value);
+  if (!withDac) return false;
+  // The combination, not the standalone. Both components must be named.
+  return /cjc/.test(value) && /ipamorelin/.test(value);
+}
+
+export function isFormulationBlocked(label: string, sku?: string | null): boolean {
+  if (sku !== undefined && sku !== null && HELD_SKUS.has(sku.toUpperCase())) {
+    return true;
+  }
+  return labelIsHeldCombination(label);
 }
 
 export interface PeptideRow {
@@ -60,6 +80,7 @@ export interface PeptideRow {
   /** Approved, active, member-eligible, positive amount. */
   sellable: boolean;
   amountCents: number | null;
+  sku: string | null;
   formulationBlocked: boolean;
 }
 
@@ -146,7 +167,7 @@ export function reconcilePeptideLaunch(
     Array.isArray(bindingsRaw)
       ? bindingsRaw
       : (bindingsRaw.bindings ?? [])
-  ) as { offeringVariantId: string; variantId: string }[];
+  ) as { offeringVariantId: string; variantId: string; productControlSku?: string }[];
   const bindingByOfferingVariant = new Map(
     bindingList.map((b) => [b.offeringVariantId, b]),
   );
@@ -173,7 +194,11 @@ export function reconcilePeptideLaunch(
           price.variant_active === true &&
           price.member_eligible === true,
         amountCents: price?.amount_cents ?? null,
-        formulationBlocked: isFormulationBlocked(variant.label),
+        sku: binding?.productControlSku ?? null,
+        formulationBlocked: isFormulationBlocked(
+          variant.label,
+          binding?.productControlSku,
+        ),
       });
     }
   }
