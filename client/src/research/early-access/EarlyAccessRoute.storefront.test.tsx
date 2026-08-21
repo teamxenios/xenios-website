@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
 import EarlyAccessRoute from "./EarlyAccessRoute";
+import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 
 let container: HTMLDivElement;
 let root: Root;
@@ -216,6 +217,11 @@ async function renderStorefront() {
 }
 
 beforeEach(() => {
+  // The assisted-order config request is shared across the three components
+  // that ask for it, so it is cached for the page load. Each test stubs its
+  // own fetch, so the cache has to start cold or a later test reuses an
+  // earlier test's answer and never calls its own stub.
+  resetAssistedOrderConfigCache();
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
