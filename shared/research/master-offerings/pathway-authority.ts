@@ -41,6 +41,7 @@
  */
 
 import type { MasterOfferingDisplayState, MasterOfferingFamily } from "./contract";
+import { isFormulationHeld } from "./formulation-hold";
 
 /**
  * Families whose products are provider- or clinician-required, whatever the
@@ -111,6 +112,7 @@ export type DirectPurchaseRefusal =
   | "provider_pathway_family"
   | "non_merchandise_family"
   | "family_outside_launch_scope"
+  | "formulation_hold"
   | "classification_pending";
 
 /**
@@ -122,6 +124,13 @@ export interface MasterOfferingPathwaySubject {
   family: MasterOfferingFamily;
   displayState: MasterOfferingDisplayState;
   variantDisplayState: MasterOfferingDisplayState;
+  /**
+   * The variant's declared specification, which is the canonical copy of the
+   * source row's normalized specification. Optional so existing callers keep
+   * compiling; when absent, no formulation hold can be detected, which is why
+   * every purchase-deciding caller passes it.
+   */
+  specification?: string | null;
 }
 
 /**
@@ -145,6 +154,12 @@ export function directPurchaseRefusal(
   }
   if (DIRECT_PURCHASE_EXCLUDED_FAMILIES.has(subject.family)) {
     return "family_outside_launch_scope";
+  }
+  // The founder's fourth clause: no explicit hold. A row whose own
+  // specification declares its composition unresolved cannot be sold, however
+  // complete its family, classification and price are.
+  if (isFormulationHeld(subject.specification)) {
+    return "formulation_hold";
   }
   // Checked last of the refusals, so a provider or out-of-scope row reports the
   // reason that actually governs it rather than the one it happens to share

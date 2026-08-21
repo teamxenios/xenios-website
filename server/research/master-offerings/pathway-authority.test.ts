@@ -136,6 +136,70 @@ describe("the action resolver consults the authority", () => {
     ).not.toBe("add_to_cart");
   });
 
+  it("refuses a row whose own specification declares its formulation unresolved", () => {
+    // The CJC-1295 WITH DAC row: peptides family, RUO, priced, bound, and a
+    // perfectly valid Product Control selection. Every existing test passes for
+    // it. It must still never reach a cart, because we cannot say what is in
+    // the vial.
+    const product = offering({
+      family: "research_peptides_materials",
+      displayState: "request_access",
+      variants: [
+        variant({
+          displayState: "request_access",
+          label: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)",
+        }),
+      ],
+    });
+    const presentation = product.variants[0];
+
+    const action = resolveMasterOfferingAction(product, presentation, bindingFor(presentation));
+    expect(action.kind).not.toBe("add_to_cart");
+    // Held, but not a care referral: the product is not provider-required, it
+    // is undescribed. Telling a customer to see a provider would be a lie.
+    expect(action.kind).not.toBe("explore_care");
+  });
+
+  it("refuses the manual purchase side door for a formulation-held row too", () => {
+    const product = offering({
+      family: "research_peptides_materials",
+      displayState: "available_now",
+      variants: [
+        variant({
+          displayState: "available_now",
+          label: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)",
+        }),
+      ],
+    });
+    const action = resolveMasterOfferingAction(
+      product,
+      product.variants[0],
+      { binding: null, selection: null },
+      undefined,
+      { manualEarlyAccessPurchase: true },
+    );
+    expect(action.kind).not.toBe("request_early_access_purchase");
+  });
+
+  it("still emits Add to Cart for a sibling combination that states its amounts", () => {
+    // The neighbouring CJC row. Held and unheld rows differ only by the
+    // declaration, so this proves the hold is not simply refusing every combo.
+    const product = offering({
+      family: "research_peptides_materials",
+      displayState: "request_access",
+      variants: [
+        variant({
+          displayState: "request_access",
+          label: "CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg",
+        }),
+      ],
+    });
+    const presentation = product.variants[0];
+    expect(
+      resolveMasterOfferingAction(product, presentation, bindingFor(presentation)).kind,
+    ).toBe("add_to_cart");
+  });
+
   it("still emits Add to Cart for an ordinary research row", () => {
     const selection = cartSelection();
     const product = offering({ family: "research_peptides_materials" });
@@ -203,6 +267,11 @@ describe("the 420-row acceptance matrix", () => {
     }
     return byReason;
   };
+
+  it("holds no row today, because the CJC-1295 WITH DAC row is not in the artifact yet", () => {
+    // Flips to 1 the moment the workbook regeneration lands GRP-0422.
+    expect(matrix().get("formulation_hold") ?? []).toHaveLength(0);
+  });
 
   it("accounts for all 420 variants exactly once", () => {
     const buckets = matrix();
