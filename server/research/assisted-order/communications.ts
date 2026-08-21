@@ -155,6 +155,29 @@ function notesBlock(payload: Record<string, unknown>): string[] {
   return notes ? ["", "CUSTOMER NOTES", notes] : [];
 }
 
+/**
+ * The destination, for the CUSTOMER, as a summary rather than an address.
+ *
+ * A customer who typed the wrong city or country should find out before Xenios
+ * ships, and this email is the last thing they read before the founder acts on
+ * the order by hand. They do not need their own street read back to them, and
+ * echoing it puts a second copy of a home address into a forwardable channel
+ * for no gain. So: city, region, country. Enough to notice "that is not where I
+ * meant", not enough to be worth intercepting. `addressBlock` keeps the street
+ * lines, and it is admin-only.
+ */
+function destinationSummary(payload: Record<string, unknown>): string {
+  const raw = payload.shippingAddress;
+  if (typeof raw !== "object" || raw === null) return "";
+  const address = raw as Record<string, unknown>;
+  const summary = [
+    text(address.city),
+    text(address.region),
+    text(address.countryCode),
+  ].filter((part) => part !== "");
+  return summary.length === 0 ? "" : `Shipping to: ${summary.join(", ")}`;
+}
+
 export function renderAssistedOrderOutboxEmail(
   templateKey: string,
   payload: Record<string, unknown>,
@@ -172,12 +195,22 @@ export function renderAssistedOrderOutboxEmail(
         `Reference: ${reference}`,
         lineCount !== null ? `Requested items: ${lineCount}` : "",
         ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
+        `Order total: ${money(payload.estimatedTotalCents)}`,
+        destinationSummary(payload),
         paymentSentence(payload),
         ``,
-        `A member of the Xenios team reviews every request personally. You will`,
-        `hear from us about agreements, payment, and fulfillment. Nothing is`,
-        `charged automatically.`,
+        // Deliberately careful. This is sent the moment the request persists,
+        // which is BEFORE anyone has checked availability and before any money
+        // exists. It may say received. It may not imply paid, confirmed, in
+        // stock, reserved or shipped — a customer who reads "confirmed" here
+        // stops watching for the email that actually matters.
+        `Status: Order received. We have not charged you and nothing is`,
+        `reserved yet.`,
+        ``,
+        `A member of the Xenios team reviews every request personally. We will`,
+        `email you to confirm availability and to send your payment`,
+        `instructions. Payment is arranged with us directly; nothing is charged`,
+        `automatically and no card is stored.`,
         ``,
         ...nextStepBlock(payload),
         statusPath ? `Track your request: ${SITE_ORIGIN}${statusPath}` : "",

@@ -67,6 +67,70 @@ describe("the customer confirmation email", () => {
     expect(body).toContain("/research/early-access/order-request/XRR-20260820-A1B2C3D4E5");
   });
 
+  it("says order received without implying paid, confirmed, in stock or shipped", () => {
+    // Sent the moment the request persists — before availability is checked and
+    // before any money exists. Every word below is a claim the system cannot
+    // support at that instant.
+    const body = renderAssistedOrderOutboxEmail(CUSTOMER, v2Payload())!.text;
+    expect(body).toContain("Order received");
+    expect(body).toContain("We have not charged you");
+    expect(body).toContain("confirm availability");
+    expect(body).toContain("payment");
+    expect(body).not.toMatch(/paid/i);
+    expect(body).not.toMatch(/in stock/i);
+    expect(body).not.toMatch(/shipped/i);
+    expect(body).not.toMatch(/reserved for you/i);
+    expect(body).not.toMatch(/order confirmed/i);
+  });
+
+  it("gives the customer a destination SUMMARY, not their street address", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        shippingAddress: {
+          recipientName: "Dana Okafor",
+          line1: "1 Test Way",
+          line2: "Suite 4",
+          city: "Austin",
+          region: "TX",
+          postalCode: "78704",
+          countryCode: "US",
+        },
+      }),
+    )!.text;
+    expect(body).toContain("Shipping to: Austin, TX, US");
+    expect(body).not.toContain("1 Test Way");
+    expect(body).not.toContain("Suite 4");
+    expect(body).not.toContain("78704");
+  });
+
+  it("omits the destination line rather than printing a bare comma", () => {
+    const body = renderAssistedOrderOutboxEmail(CUSTOMER, v2Payload())!.text;
+    expect(body).not.toContain("Shipping to:");
+  });
+
+  it("never leaks the operator payload to the customer", () => {
+    // The admin payload and the customer payload are the same object shape in
+    // practice, so the customer template must read an allowlist rather than
+    // trusting that operator fields were stripped upstream.
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        mobilePhone: "+15125550100",
+        declaredAffiliateCode: "DANA10",
+        affiliateAttributionRef: "partner_7f3a",
+        customerNotes: "internal-looking note",
+        operatorStatus: "Order received. Awaiting manual review.",
+        shippingAddress: { line1: "1 Test Way", city: "Austin" },
+      }),
+    )!.text;
+    expect(body).not.toContain("+15125550100");
+    expect(body).not.toContain("DANA10");
+    expect(body).not.toContain("partner_7f3a");
+    expect(body).not.toContain("1 Test Way");
+    expect(body).not.toContain("/admin/");
+  });
+
   it("never shows the customer an operator surface", () => {
     const body = renderAssistedOrderOutboxEmail(CUSTOMER, v2Payload())!.text;
     expect(body).not.toContain("/admin/");
