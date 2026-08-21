@@ -149,10 +149,34 @@ function agreementBlock(payload: Record<string, unknown>): string[] {
   );
 }
 
-/** Anything the customer wrote, so the operator answers the real question. */
+/**
+ * Anything the customer wrote, so the operator answers the real question.
+ *
+ * Two sources, because the wizard offers two: one note for the whole request,
+ * and one per line. The per-line note is the one that changes what gets
+ * shipped — "send the 10 mg vial, not the 5 mg" — so it is attributed to its
+ * product rather than merged into a single blob where the operator has to
+ * guess which item it meant.
+ *
+ * ADMIN ONLY, like the address: `lines[].customerNotes` is present on the
+ * admin line projection and absent from the customer one.
+ */
 function notesBlock(payload: Record<string, unknown>): string[] {
-  const notes = text(payload.customerNotes);
-  return notes ? ["", "CUSTOMER NOTES", notes] : [];
+  const rendered: string[] = [];
+  const general = text(payload.customerNotes);
+  if (general) rendered.push(general);
+  const raw = payload.lines;
+  if (Array.isArray(raw)) {
+    for (const entry of raw) {
+      if (typeof entry !== "object" || entry === null) continue;
+      const line = entry as Record<string, unknown>;
+      const note = text(line.customerNotes);
+      if (note === "") continue;
+      const name = text(line.productName);
+      rendered.push(name === "" ? note : `${name}: ${note}`);
+    }
+  }
+  return rendered.length > 0 ? ["", "CUSTOMER NOTES", ...rendered] : [];
 }
 
 export function renderAssistedOrderOutboxEmail(
@@ -213,11 +237,11 @@ export function renderAssistedOrderOutboxEmail(
         ...addressBlock(payload.shippingAddress),
         ``,
         `ORDER`,
-        lineCount !== null ? `Lines: ${lineCount}` : "",
+        lineCount !== null ? `Lines: ${lineCount}` : null,
         ...lineBlock(payload),
         `Order total: ${money(payload.estimatedTotalCents)}`,
-        modes ? `Workflow: ${modes}` : "",
-        paymentSentence(payload),
+        modes ? `Workflow: ${modes}` : null,
+        paymentSentence(payload) || null,
         affiliateLine(payload),
         ...agreementBlock(payload),
         ...notesBlock(payload),
@@ -225,8 +249,14 @@ export function renderAssistedOrderOutboxEmail(
         `Next action: confirm availability, then reply to the customer with`,
         `payment instructions. Nothing is owed or confirmed until you do.`,
         ``,
-        adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : "",
-      ].filter((line) => line !== "").join("\n"),
+        adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : null,
+        // Only genuinely ABSENT lines are dropped (null). The blank strings are
+        // deliberate paragraph breaks — SHIPPING from ORDER, notes from the
+        // next action — and the old `!== ""` filter removed every one of them,
+        // collapsing the whole message into an unbroken block. A person reads
+        // this one by hand under time pressure; that is how an address gets
+        // misread as an order line.
+      ].filter((line): line is string => line !== null).join("\n"),
     };
   }
 

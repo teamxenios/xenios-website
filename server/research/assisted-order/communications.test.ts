@@ -254,3 +254,88 @@ describe("an unknown template key", () => {
     expect(renderAssistedOrderOutboxEmail("research.assisted_order.nope", {})).toBeNull();
   });
 });
+
+describe("the per-line note reaches the operator", () => {
+  it("attributes a line note to its product instead of merging it into one blob", () => {
+    // The wizard offers a note per line, and the request stores it, but until
+    // now only the single general note was carried outward. A line note is the
+    // one that changes what ships.
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({
+        customerNotes: "Please confirm cold-chain packing.",
+        lines: [
+          {
+            productName: "BPC-157",
+            specification: "BPC-157 10 mg",
+            quantity: 2,
+            unitPriceCents: 4_900,
+            lineEstimateCents: 9_800,
+            workflowMode: "direct_order_request",
+            customerNotes: "Send the 10 mg vial, not the 5 mg.",
+          },
+          {
+            productName: "Kisspeptin",
+            specification: "KISSPEPTIN 10 mg",
+            quantity: 10,
+            unitPriceCents: 6_500,
+            lineEstimateCents: 65_000,
+            workflowMode: "direct_order_request",
+          },
+        ],
+      }),
+    )!.text;
+    expect(body).toContain("Please confirm cold-chain packing.");
+    expect(body).toContain("BPC-157: Send the 10 mg vial, not the 5 mg.");
+  });
+
+  it("keeps line notes out of the customer email", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        lines: [
+          {
+            productName: "BPC-157",
+            specification: "BPC-157 10 mg",
+            quantity: 2,
+            unitPriceCents: 4_900,
+            lineEstimateCents: 9_800,
+            workflowMode: "direct_order_request",
+            customerNotes: "Send the 10 mg vial, not the 5 mg.",
+          },
+        ],
+      }),
+    )!.text;
+    expect(body).not.toContain("Send the 10 mg vial");
+  });
+
+  it("renders no notes section at all when there are none", () => {
+    expect(renderAssistedOrderOutboxEmail(ADMIN, v2Payload())!.text).not.toContain(
+      "CUSTOMER NOTES",
+    );
+  });
+});
+
+describe("the admin email is readable by a human under time pressure", () => {
+  it("keeps its paragraph breaks instead of collapsing into one block", () => {
+    // The previous filter dropped every deliberate blank line, so SHIPPING ran
+    // straight into ORDER. That is how an address gets misread as an order line.
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({
+        shippingAddress: { line1: "1 Test Way", city: "Austin", region: "TX" },
+      }),
+    )!.text;
+    expect(body).toContain("\n\n");
+    expect(body).not.toContain("US\nORDER");
+  });
+
+  it("still drops rows that are genuinely absent", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ workflowModes: [], adminPath: "" }),
+    )!.text;
+    expect(body).not.toContain("Workflow:");
+    expect(body).not.toContain("Review: https");
+  });
+});

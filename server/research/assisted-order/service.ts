@@ -489,6 +489,31 @@ export class AssistedOrderService {
         }),
       ),
     );
+    // The ADMIN copy of the lines, which additionally carries the note the
+    // customer attached to THAT line.
+    //
+    // The customer can write one per line in the wizard, and the request stores
+    // it, but until now nothing carried it outward: the admin email showed only
+    // the single general note. So "please send the 10 mg vial, not the 5 mg"
+    // reached the database and stopped there, and the operator answered the
+    // wrong question or opened the database to find the right one — which is
+    // exactly what this email exists to prevent.
+    //
+    // Kept separate from `notificationLines` rather than added to it, so this
+    // cannot widen what the CUSTOMER email renders.
+    const adminNotificationLines = Object.freeze(
+      resolvedLines.map((line) =>
+        Object.freeze({
+          productName: line.productName,
+          specification: line.specification,
+          quantity: line.quantity,
+          unitPriceCents: line.unitPriceCents,
+          lineEstimateCents: line.lineEstimateCents,
+          workflowMode: line.workflowMode,
+          customerNotes: line.customerNotes ?? null,
+        }),
+      ),
+    );
     const totalQuantity = resolvedLines.reduce(
       (sum, line) => sum + line.quantity,
       0,
@@ -533,7 +558,7 @@ export class AssistedOrderService {
       totalQuantity,
       estimatedTotalCents,
       workflowModes,
-      lines: notificationLines,
+      lines: adminNotificationLines,
       paymentState,
       // The server-verified attribution, when one exists. Never a browser-
       // supplied value: `input.affiliateAttributionRef` is ignored on purpose.
