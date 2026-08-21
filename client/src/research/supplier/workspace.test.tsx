@@ -152,7 +152,7 @@ describe("supplier workspace: the assigned work", () => {
       buttonNamed(view, "Acknowledge")!.click();
     });
     const post = calls.find((c) => c.method === "POST");
-    expect(post?.url).toBe("/api/research/fulfillment/supplier/assignments/asg_1/transition");
+    expect(post?.url).toBe("/api/admin/research/fulfillment/supplier/assignments/asg_1/transition");
     const body = JSON.parse(post?.body ?? "{}");
     expect(body.action).toBe("acknowledge");
     expect(body.expectedVersion).toBe(3);

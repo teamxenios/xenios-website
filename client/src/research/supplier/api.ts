@@ -10,7 +10,15 @@ import type {
 // touches lives HERE and nowhere else, so pages never spell an endpoint.
 //
 // The two paths are published by the fulfillment engine
-// (server/research/fulfillment/register.ts). Supplier identity is resolved
+// (server/research/fulfillment/register.ts) and are re-spelled here because the
+// browser bundle cannot import server code. That makes them a SECOND COPY, and
+// a second copy drifts: these doors were moved OUT of the research namespace
+// into /api/admin/research/... because the research wall answered 401 for
+// operator traffic, and this adapter silently kept pointing at the old ones.
+// `api.test.ts` now imports the engine's own path constants and asserts these
+// match, so the next move fails a test instead of a supplier.
+//
+// Supplier identity is resolved
 // ENTIRELY server-side from the request, by the engine's injected
 // `resolveSupplierActor`; nothing in this file names a supplier, and no
 // supplier id is ever sent. A workspace that cannot say who it is cannot
@@ -22,9 +30,9 @@ import type {
 // ---------------------------------------------------------------------------
 
 export const SUPPLIER_API = {
-  assignments: "/api/research/fulfillment/supplier/assignments",
+  assignments: "/api/admin/research/fulfillment/supplier/assignments",
   transition: (assignmentId: string) =>
-    `/api/research/fulfillment/supplier/assignments/${encodeURIComponent(assignmentId)}/transition`,
+    `/api/admin/research/fulfillment/supplier/assignments/${encodeURIComponent(assignmentId)}/transition`,
 } as const;
 
 export type SupplierToken = string | null;
