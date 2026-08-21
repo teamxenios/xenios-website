@@ -260,8 +260,30 @@ describe("AssistedOrderService", () => {
     expect(h.notifications).toHaveLength(2);
     expect(h.notifications[0].requestId).toBe(receipt.requestId);
     expect(h.notifications[1].requestId).toBe(receipt.requestId);
-    expect(h.notifications[0].payload).not.toHaveProperty("shippingAddress");
+    // notifications[0] is the ADMIN intent, [1] the customer one.
+    //
+    // DELIBERATE POLICY CHANGE (founder, 2026-08-21): this line used to assert
+    // the admin payload had NO shippingAddress. Payment automation is deferred
+    // and the founder now fulfils these orders by hand from the email, so the
+    // address must be there. Inverted rather than deleted, so the reversal is
+    // visible instead of looking like lost coverage.
+    expect(h.notifications[0].payload).toHaveProperty("shippingAddress");
     expect(h.notifications[0].payload).not.toHaveProperty("documents");
+    // The customer half of the boundary did NOT move, and this is the
+    // assertion that keeps it from drifting: the operator fields are admin
+    // only. A future change that widens the customer payload fails here.
+    for (const operatorOnly of [
+      "shippingAddress",
+      "mobilePhone",
+      "agreements",
+      "declaredAffiliateCode",
+      "affiliateAttributionRef",
+      "adminPath",
+      "orderStatusLabel",
+      "documents",
+    ]) {
+      expect(h.notifications[1].payload).not.toHaveProperty(operatorOnly);
+    }
     expect(h.audit).toHaveBeenCalled();
   });
 

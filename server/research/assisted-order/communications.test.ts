@@ -142,14 +142,33 @@ describe("the admin order alert", () => {
         marginCents: 3_700,
         supplierName: "Contoso Peptides",
         internalPricingNote: "2.5x multiplier",
-        shippingAddress: { line1: "1 Test Way" },
       }),
     )!.text;
     expect(body).not.toContain("1200");
     expect(body).not.toContain("3700");
     expect(body).not.toContain("Contoso");
     expect(body).not.toMatch(/multiplier/i);
-    expect(body).not.toContain("1 Test Way");
+  });
+
+  it("DOES carry the shipping address now, which this test previously forbade", () => {
+    // DELIBERATE POLICY CHANGE (founder, 2026-08-21). This assertion used to
+    // read `expect(body).not.toContain("1 Test Way")`, because the original
+    // boundary kept every address out of every email and put operator depth
+    // behind the admin link.
+    //
+    // Payment automation is now deferred and the founder fulfils these orders
+    // by hand, from the email, without opening the database — so the address
+    // has to be in the ADMIN email. It is inverted here rather than deleted so
+    // the reversal is visible to the next reader instead of looking like the
+    // coverage was quietly dropped.
+    //
+    // The customer half of this boundary did NOT move: see "the operator
+    // surface never crosses into the customer email".
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ shippingAddress: { line1: "1 Test Way", city: "Boston" } }),
+    )!.text;
+    expect(body).toContain("1 Test Way");
   });
 });
 
@@ -192,5 +211,189 @@ describe("rows queued before the v2 payload existed", () => {
 describe("an unknown template key", () => {
   it("returns null so the worker refuses rather than inventing a message", () => {
     expect(renderAssistedOrderOutboxEmail("research.assisted_order.nope", {})).toBeNull();
+  });
+});
+
+describe("the admin email is enough to fulfil an order by hand", () => {
+  // Payment automation is deferred (founder, 2026-08-21): the founder works
+  // these orders from the email itself. Anything missing here is a trip to the
+  // database, so each field is asserted by the value an operator would need,
+  // never merely by presence.
+  const operatorPayload = () =>
+    v2Payload({
+      mobilePhone: "+15550102000",
+      organizationName: "Okafor Research",
+      shippingAddress: {
+        line1: "1 Research Way",
+        line2: "Suite 4",
+        city: "Boston",
+        region: "MA",
+        postalCode: "02110",
+        countryCode: "US",
+      },
+      agreements: [
+        { kind: "research_use_policy", version: "2026-05", acceptedAt: "2026-08-21T14:00:00.000Z" },
+        {
+          kind: "assisted_order_form_v1:accuracy",
+          version: "aeb2ba5a069dd3f4",
+          acceptedAt: "2026-08-21T14:00:00.000Z",
+        },
+      ],
+      generalNotes: "Please ship cold chain.",
+      orderStatusLabel: "Order Received / Awaiting Manual Review",
+      lines: [
+        {
+          productName: "BPC-157",
+          specification: "BPC-157 10 mg",
+          quantity: 2,
+          unitPriceCents: 4_900,
+          lineEstimateCents: 9_800,
+          workflowMode: "direct_order_request",
+          customerNotes: "Prefer the 10 mg vial.",
+        },
+      ],
+    });
+
+  const adminText = () =>
+    renderAssistedOrderOutboxEmail(
+      ADMIN,
+      operatorPayload(),
+    )!.text;
+
+  it("states the order is received and awaiting manual review, not paid", () => {
+    const text = adminText();
+    expect(text).toContain("Order Received / Awaiting Manual Review");
+    expect(text).toContain("Nothing is paid, reserved or shipped yet.");
+  });
+
+  it("carries the phone and the full shipping address", () => {
+    const text = adminText();
+    expect(text).toContain("+15550102000");
+    expect(text).toContain("1 Research Way");
+    expect(text).toContain("Suite 4");
+    expect(text).toContain("Boston, MA, 02110");
+    expect(text).toContain("US");
+  });
+
+  it("says so plainly when no phone was provided, rather than omitting the row", () => {
+    const text = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ mobilePhone: "" }),
+    )!.text;
+    expect(text).toContain("Phone: not provided");
+  });
+
+  it("carries the order total and every line's retail money", () => {
+    const text = adminText();
+    expect(text).toContain("Order total: $248.00 USD (estimate)");
+    expect(text).toContain("$49.00 each");
+    expect(text).toContain("$98.00 line total");
+  });
+
+  it("carries each agreement at its exact version and acceptance time", () => {
+    const text = adminText();
+    expect(text).toContain("research_use_policy (version 2026-05 | 2026-08-21T14:00:00.000Z)");
+    expect(text).toContain("assisted_order_form_v1:accuracy (version aeb2ba5a069dd3f4");
+  });
+
+  it("marks an agreement missing its version as unrecorded rather than dropping it", () => {
+    // A silently missing agreement is indistinguishable from one never
+    // accepted; an operator must be able to see that the evidence is thin.
+    const text = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ agreements: [{ kind: "research_use_policy", version: "", acceptedAt: "" }] }),
+    )!.text;
+    expect(text).toContain("research_use_policy (version not recorded | time not recorded)");
+  });
+
+  it("carries the general note and the per-line note", () => {
+    const text = adminText();
+    expect(text).toContain("Please ship cold chain.");
+    expect(text).toContain("BPC-157: Prefer the 10 mg vial.");
+  });
+
+  it("keeps blank separator lines, so a shipping address is not misread", () => {
+    expect(adminText()).toContain("\n\n");
+  });
+
+  it("renders a partial address rather than nothing", () => {
+    const text = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ shippingAddress: { line1: "1 Research Way", countryCode: "US" } }),
+    )!.text;
+    expect(text).toContain("1 Research Way");
+    expect(text).toContain("Ship to:");
+  });
+
+  it("still renders when the operator fields are absent entirely", () => {
+    // Rows queued before this change carry none of them; they must render,
+    // not walk to failed_permanent.
+    const text = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload(),
+    )!.text;
+    expect(text).toContain("XRR-20260820-A1B2C3D4E5");
+    expect(text).not.toContain("Ship to:");
+    expect(text).not.toContain("Agreements accepted:");
+  });
+});
+
+describe("the operator surface never crosses into the customer email", () => {
+  it("mails the customer no phone, address, agreement version or internal status", () => {
+    const operatorFields = {
+      mobilePhone: "+15550102000",
+      shippingAddress: {
+        line1: "1 Research Way",
+        city: "Boston",
+        region: "MA",
+        postalCode: "02110",
+        countryCode: "US",
+      },
+      agreements: [
+        { kind: "research_use_policy", version: "2026-05", acceptedAt: "2026-08-21T14:00:00.000Z" },
+      ],
+      generalNotes: "Please ship cold chain.",
+      orderStatusLabel: "Order Received / Awaiting Manual Review",
+      declaredAffiliateCode: "DANA10",
+      affiliateAttributionRef: "ref_verified_1",
+      adminPath: "/admin/research/assisted-orders/8f14e45f",
+    };
+    const text = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload(operatorFields),
+    )!.text;
+    for (const leak of [
+      "+15550102000",
+      "1 Research Way",
+      "02110",
+      "2026-05",
+      "Please ship cold chain.",
+      "Awaiting Manual Review",
+      "DANA10",
+      "ref_verified_1",
+      "/admin/",
+    ]) {
+      expect(text).not.toContain(leak);
+    }
+  });
+
+  it("tells the customer their order was received and that instructions are coming", () => {
+    const text = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload(),
+    )!.text;
+    expect(text).toContain("Order received");
+    expect(text).toContain("payment instructions");
+  });
+
+  it("never tells the customer the order is paid, confirmed, in stock or shipped", () => {
+    const rendered = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload(),
+    )!;
+    const whole = `${rendered.subject}\n${rendered.text}`.toLowerCase();
+    for (const forbidden of ["paid", "in stock", "has shipped", "your payment", "confirmed."]) {
+      expect(whole).not.toContain(forbidden);
+    }
   });
 });

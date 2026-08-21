@@ -4,10 +4,21 @@
 //
 // PRIVACY BOUNDARY, ENFORCED AT RENDER TIME: each template reads an explicit
 // allowlist of payload fields and ignores everything else. No identity
-// document bytes or storage paths, no shipping or billing address, no payment
-// evidence, no supplier data, and no procurement economics can reach an email
-// even if a future payload accidentally carries them. Admin depth lives
-// behind the admin link, which requires the admin bearer session.
+// document bytes or storage paths, no payment evidence, no supplier data, and
+// no procurement economics — cost, margin, markup, multiplier — can reach any
+// email even if a future payload accidentally carries them, because nothing
+// here reads those fields.
+//
+// THE BOUNDARY IS NOT SYMMETRIC, deliberately (founder decision 2026-08-21).
+// Payment automation is deferred: the founder fulfils these orders BY HAND and
+// must be able to do it from the email alone, without opening the database. So
+// the ADMIN template additionally renders phone, shipping address, accepted
+// agreement versions and notes. The CUSTOMER template renders none of those —
+// it has no reader for them — so extending the operator's view can never widen
+// what is mailed to a customer.
+//
+// What stays out of BOTH, whatever the payload carries: procurement economics,
+// identity-document bytes or paths, and payment evidence.
 
 const SITE_ORIGIN = "https://xeniostechnology.com";
 
@@ -91,6 +102,79 @@ function affiliateLine(payload: Record<string, unknown>): string {
   return `Affiliate: ${parts.join("; ")}`;
 }
 
+/**
+ * The shipping address block, ADMIN ONLY.
+ *
+ * Read field by field rather than spread, so an address object that later
+ * grows a field nobody reviewed cannot silently appear in an operator's inbox.
+ * A partial address still renders what it has: an operator chasing a missing
+ * postcode is better served by four correct lines than by silence.
+ */
+function shippingBlock(payload: Record<string, unknown>): string[] {
+  const raw = payload.shippingAddress;
+  if (typeof raw !== "object" || raw === null) return [];
+  const address = raw as Record<string, unknown>;
+  const line1 = text(address.line1);
+  const line2 = text(address.line2);
+  const city = text(address.city);
+  const region = text(address.region);
+  const postalCode = text(address.postalCode);
+  const countryCode = text(address.countryCode);
+  const lines = [line1, line2].filter((part) => part !== "");
+  const locality = [city, region, postalCode].filter((part) => part !== "").join(", ");
+  if (locality !== "") lines.push(locality);
+  if (countryCode !== "") lines.push(countryCode);
+  if (lines.length === 0) return [];
+  return ["Ship to:", ...lines.map((part) => `  ${part}`)];
+}
+
+/**
+ * Accepted agreements, ADMIN ONLY: what was accepted, at which exact published
+ * version, and when. The version and the timestamp are what make this evidence
+ * rather than a checkbox, so a row missing either is rendered as incomplete
+ * instead of being quietly dropped.
+ */
+function agreementBlock(payload: Record<string, unknown>): string[] {
+  const raw = payload.agreements;
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const rendered: string[] = [];
+  for (const entry of raw) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const agreement = entry as Record<string, unknown>;
+    const kind = text(agreement.kind);
+    if (kind === "") continue;
+    const version = text(agreement.version);
+    const acceptedAt = text(agreement.acceptedAt);
+    const detail = [
+      version === "" ? "version not recorded" : `version ${version}`,
+      acceptedAt === "" ? "time not recorded" : acceptedAt,
+    ].join(" | ");
+    rendered.push(`  - ${kind} (${detail})`);
+  }
+  if (rendered.length === 0) return [];
+  return ["Agreements accepted:", ...rendered];
+}
+
+/** Customer notes, ADMIN ONLY: the general note and any per-line notes. */
+function noteBlock(payload: Record<string, unknown>): string[] {
+  const rendered: string[] = [];
+  const general = text(payload.generalNotes);
+  if (general !== "") rendered.push(`  ${general}`);
+  const raw = payload.lines;
+  if (Array.isArray(raw)) {
+    for (const entry of raw) {
+      if (typeof entry !== "object" || entry === null) continue;
+      const line = entry as Record<string, unknown>;
+      const note = text(line.customerNotes);
+      const name = text(line.productName);
+      if (note === "") continue;
+      rendered.push(`  ${name === "" ? "line" : name}: ${note}`);
+    }
+  }
+  if (rendered.length === 0) return [];
+  return ["Customer notes:", ...rendered];
+}
+
 /** The next steps the receipt already computed, when the payload carries them. */
 function nextStepBlock(payload: Record<string, unknown>): string[] {
   const raw = payload.nextSteps;
@@ -119,9 +203,13 @@ export function renderAssistedOrderOutboxEmail(
     const statusPath = text(payload.statusPath);
     const lineCount = count(payload.lineCount);
     return {
-      subject: `Xenios Research order request received (${reference})`,
+      subject: `Order received — Xenios Research (${reference})`,
       text: [
-        `Your Xenios Research order request has been received.`,
+        // "Order received" and nothing stronger. Never paid, confirmed,
+        // reserved, in stock or shipped: at this moment the only true fact is
+        // that the request arrived, and payment instructions are sent by hand
+        // after a person checks availability.
+        `Order received. Thank you.`,
         ``,
         `Reference: ${reference}`,
         lineCount !== null ? `Requested items: ${lineCount}` : "",
@@ -129,9 +217,10 @@ export function renderAssistedOrderOutboxEmail(
         `Estimated value: ${money(payload.estimatedTotalCents)}`,
         paymentSentence(payload),
         ``,
-        `A member of the Xenios team reviews every request personally. You will`,
-        `hear from us about agreements, payment, and fulfillment. Nothing is`,
-        `charged automatically.`,
+        `A member of the Xenios team reviews every order personally. We will`,
+        `email you to confirm availability and to send payment instructions.`,
+        `Nothing is charged automatically, and your order is not confirmed or`,
+        `shipped until we contact you.`,
         ``,
         ...nextStepBlock(payload),
         statusPath ? `Track your request: ${SITE_ORIGIN}${statusPath}` : "",
@@ -153,19 +242,38 @@ export function renderAssistedOrderOutboxEmail(
         `A new assisted order request needs review.`,
         ``,
         `Reference: ${reference}`,
+        `Status: ${text(payload.orderStatusLabel) || "Order Received / Awaiting Manual Review"}`,
+        ``,
+        // Everything needed to fulfil by hand, in the order an operator uses
+        // it: who, how to reach them, where it goes, what they asked for, what
+        // it comes to, what they agreed to, what they said.
         `Customer: ${text(payload.fullLegalName)} <${text(payload.email)}>`,
-        lineCount !== null ? `Lines: ${lineCount}` : "",
+        text(payload.mobilePhone) ? `Phone: ${text(payload.mobilePhone)}` : "Phone: not provided",
+        text(payload.organizationName)
+          ? `Organization: ${text(payload.organizationName)}`
+          : null,
+        ``,
+        ...shippingBlock(payload),
+        ``,
+        lineCount !== null ? `Lines: ${lineCount}` : null,
         ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
-        modes ? `Workflow: ${modes}` : "",
-        paymentSentence(payload),
+        `Order total: ${money(payload.estimatedTotalCents)}`,
+        modes ? `Workflow: ${modes}` : null,
+        paymentSentence(payload) || null,
         affiliateLine(payload),
         ``,
-        `Next action: review the request, confirm the agreements and pricing,`,
-        `then issue payment instructions from the admin screen.`,
+        ...agreementBlock(payload),
         ``,
-        adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : "",
-      ].filter((line) => line !== "").join("\n"),
+        ...noteBlock(payload),
+        ``,
+        `Next action: confirm availability and pricing, then email the customer`,
+        `payment instructions. Nothing is paid, reserved or shipped yet.`,
+        ``,
+        adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : null,
+        // Only genuinely absent lines are dropped (null). Deliberate blank
+        // lines survive, because a human reads this one by hand and an
+        // unbroken wall of text is how a shipping address gets misread.
+      ].filter((line): line is string => line !== null).join("\n"),
     };
   }
 

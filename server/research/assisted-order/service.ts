@@ -498,15 +498,57 @@ export class AssistedOrderService {
     // tells the operator that no money fact exists to reconcile yet.
     const paymentState = "none_due_yet";
 
+    // The ADMIN lines carry the customer's per-line note; the customer lines
+    // above deliberately do not, so this extension cannot widen what the
+    // customer email says. Still an explicit allowlist: no cost, margin,
+    // supplier or catalog internals, because the operator does not need them
+    // to fulfil and an email is the wrong place for them.
+    const adminNotificationLines = Object.freeze(
+      resolvedLines.map((line) =>
+        Object.freeze({
+          productName: line.productName,
+          specification: line.specification,
+          quantity: line.quantity,
+          unitPriceCents: line.unitPriceCents,
+          lineEstimateCents: line.lineEstimateCents,
+          workflowMode: line.workflowMode,
+          customerNotes: line.customerNotes ?? null,
+        }),
+      ),
+    );
+
     const adminPayload = Object.freeze({
       publicReference: receipt.publicReference,
       fullLegalName: input.contact.fullLegalName,
       email: input.contact.email,
+      // The founder handles these orders by hand and must not have to open the
+      // database to do it. Phone, shipping address, agreements and notes are
+      // ADMIN-ONLY additions for that reason; the customer template has no
+      // reader for any of them.
+      mobilePhone: input.contact.mobilePhone,
+      organizationName: input.contact.organizationName ?? null,
+      shippingAddress: Object.freeze({ ...input.contact.shippingAddress }),
+      // What the customer accepted, at which exact published version, and when.
+      // Version and timestamp are the parts that make it evidence rather than
+      // a checkbox.
+      agreements: Object.freeze(
+        input.agreements.map((agreement) =>
+          Object.freeze({
+            kind: agreement.kind,
+            version: agreement.version,
+            acceptedAt: agreement.acceptedAt,
+          }),
+        ),
+      ),
+      generalNotes: input.generalNotes ?? null,
+      // Said out loud so the email cannot be read as a completed sale. The
+      // request is received; nothing is paid, confirmed, reserved or shipped.
+      orderStatusLabel: "Order Received / Awaiting Manual Review",
       lineCount: resolvedLines.length,
       totalQuantity,
       estimatedTotalCents,
       workflowModes,
-      lines: notificationLines,
+      lines: adminNotificationLines,
       paymentState,
       // The server-verified attribution, when one exists. Never a browser-
       // supplied value: `input.affiliateAttributionRef` is ignored on purpose.
