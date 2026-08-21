@@ -205,6 +205,61 @@ describe("the bulk catalog pricing source", () => {
     expect(recovered?.prices[0].amountCents).toBe(9900);
   });
 
+  it("KEEPS REAL PRICES when a successful read comes back empty", async () => {
+    // The hole the failure path does not cover, and the more dangerous one,
+    // because nothing throws. A revoked grant, an RLS change, a half-applied
+    // migration or a wrong key all resolve successfully with zero rows.
+    // Accepting that would unprice all 417 approved prices, cache it for the
+    // full TTL, and re-poison on every refresh.
+    const upstream = countingReader();
+    const time = clock();
+    const onError = vi.fn();
+    const source = new BulkCatalogPricingSource(upstream.reader, {
+      ttlMs: 60_000,
+      now: time.now,
+      onError,
+    });
+
+    expect((await source.readProductForPricing("p1"))?.prices[0].amountCents).toBe(6500);
+
+    time.advance(61_000);
+    upstream.replace([]); // succeeds, returns nothing
+
+    expect((await source.readProductForPricing("p1"))?.prices[0].amountCents).toBe(6500);
+    expect((await source.readCatalogForPricing()).length).toBe(2);
+    expect(onError).toHaveBeenCalled();
+  });
+
+  it("does not let an empty read masquerade as a fresh snapshot", async () => {
+    // The held snapshot must not be re-stamped by the empty read, or the
+    // staleness ceiling would never fire and a dead catalog could be served
+    // indefinitely while looking healthy.
+    const upstream = countingReader();
+    const time = clock();
+    const source = new BulkCatalogPricingSource(upstream.reader, {
+      ttlMs: 60_000,
+      staleWhileErrorMs: 10 * 60_000,
+      now: time.now,
+      onError: () => {},
+    });
+
+    await source.readProductForPricing("p1");
+    const ageBefore = source.stats().ageMs ?? 0;
+    time.advance(61_000);
+    upstream.replace([]);
+    await source.readProductForPricing("p1");
+    expect((source.stats().ageMs ?? 0)).toBeGreaterThan(ageBefore);
+  });
+
+  it("accepts an empty catalog when there is nothing to protect", async () => {
+    // A genuinely empty deployment is a real state. With no prior snapshot
+    // there is no healthy answer being discarded, so refusing here would
+    // invent an outage instead of reporting one.
+    const upstream = countingReader([]);
+    const source = new BulkCatalogPricingSource(upstream.reader, { onError: () => {} });
+    expect(await source.readCatalogForPricing()).toEqual([]);
+  });
+
   it("keeps a duplicated product id unpriceable", async () => {
     const upstream = countingReader([product("dup"), product("dup", 100)]);
     const source = new BulkCatalogPricingSource(upstream.reader);

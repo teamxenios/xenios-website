@@ -128,6 +128,34 @@ export class BulkCatalogPricingSource implements BulkPricingProductSource {
     if (this.inFlight) return this.inFlight;
     const pending = (async () => {
       const catalog = await this.reader.listForPricing();
+      const held = this.snapshot;
+
+      // A SUCCESSFUL READ THAT RETURNS NOTHING IS NOT EVIDENCE OF AN EMPTY
+      // CATALOG. This is the hole the failure path above does not cover, and it
+      // is the more dangerous of the two because nothing throws.
+      //
+      // A revoked grant, an RLS policy change, a half-applied migration or a
+      // misconfigured key all RESOLVE SUCCESSFULLY with zero rows — .env.example
+      // records exactly that incident on this project, where the wrong key made
+      // RLS-protected reads come back empty rather than erroring. Accepting it
+      // would replace a healthy snapshot with nothing, answer null for every
+      // product, render "Price on request" across all 417 approved prices, cache
+      // that for the full TTL, and re-poison itself on the next refresh.
+      //
+      // So an empty read is treated as the outage it almost certainly is: keep
+      // the last verified catalog and report. The snapshot is deliberately NOT
+      // re-stamped, so the staleness ceiling keeps running and this cannot
+      // masquerade as a fresh read indefinitely.
+      if (catalog.length === 0 && held !== null && held.catalog.length > 0) {
+        this.onError(
+          "Product Control returned an EMPTY catalog on a successful read; " +
+            "keeping the last verified snapshot rather than unpricing every product. " +
+            "Check grants, RLS and the service key.",
+          new Error("empty_catalog_read"),
+        );
+        return held;
+      }
+
       const next: Snapshot = {
         catalog,
         byId: indexById(catalog),
