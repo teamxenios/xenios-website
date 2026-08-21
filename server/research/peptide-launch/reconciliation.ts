@@ -35,6 +35,16 @@ export const DIRECT_PEPTIDE_FAMILY = "research_peptides_materials";
 /**
  * The ONE explicitly held formulation, per the founder decision of 2026-08-21.
  *
+ * NOT A RUNTIME AUTHORITY, AND MUST NOT BECOME ONE. This is a measurement
+ * mirror used by this lane's acceptance matrix only. The canonical hold is the
+ * fourth canonical fact inside
+ * `shared/research/early-access/customer-pathway.ts` (session s3) with the
+ * catalog-side rule in `shared/research/master-offerings/pathway-authority.ts`
+ * (session s7); both were in flight on unmerged lane branches when this was
+ * written, which is the only reason the predicate is restated here rather than
+ * imported. When either lands, DELETE this and consult theirs — three copies
+ * of one money rule is how they drift apart.
+ *
  * NARROW ON PURPOSE, and it was wrong before. The first version of this matched
  * any label containing "with DAC", which flagged the standalone
  * `CJC-1295 WITH DAC 2 mg` and `5 mg` rows. Those are confirmed RUO, priced,
