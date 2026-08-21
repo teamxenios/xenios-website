@@ -1,23 +1,60 @@
-import type {
-  FulfillmentAction,
-  FulfillmentAssignmentView,
+import {
+  fulfillmentActionsFor,
+  type FulfillmentAction,
+  type FulfillmentAssignmentView,
+  type FulfillmentState,
 } from "@shared/research/fulfillment/contracts";
 import {
   ResearchEmptyState,
   ResearchStatusBadge,
 } from "../ui/kit";
 
-function toneForState(
-  state: FulfillmentAssignmentView["state"],
-): "neutral" | "info" | "success" | "warning" | "danger" {
-  if (state === "delivered") return "success";
-  if (["exception", "damaged", "lost", "recalled"].includes(state)) return "danger";
-  if (["assigned", "acknowledged", "picking", "packed", "shipped"].includes(state)) {
-    return "info";
-  }
-  if (state === "returned") return "warning";
-  return "neutral";
+type StateTone = "neutral" | "info" | "success" | "warning" | "danger";
+
+// Exhaustive by construction: a new fulfillment state fails to compile until
+// it is given a tone here, rather than silently falling through to "neutral".
+const STATE_TONES: Record<FulfillmentState, StateTone> = {
+  assigned: "info",
+  acknowledged: "info",
+  picking: "info",
+  packed: "info",
+  tracking_created: "info",
+  shipped: "info",
+  delivered: "success",
+  exception: "danger",
+  damaged: "danger",
+  lost: "danger",
+  recalled: "danger",
+  returned: "warning",
+  replacement: "warning",
+  refunded: "warning",
+  cancelled: "neutral",
+};
+
+function toneForState(state: FulfillmentAssignmentView["state"]): StateTone {
+  return STATE_TONES[state];
 }
+
+/**
+ * The actions this restricted queue may offer, and nothing else.
+ *
+ * Keyed off SUPPLIER_PERMITTED_ACTIONS so an internal-only disposition
+ * (cancel, recall, return, replacement, refund, damage, loss) can never
+ * surface as a supplier button. The buttons themselves are rendered from the
+ * canonical transition graph, so a state that does not permit an action does
+ * not show it — previously "Record shipment" was offered on `packed`, which
+ * the server now refuses because shipping is reachable only after tracking is
+ * recorded.
+ */
+const OPERATOR_ACTION_LABELS: Partial<Record<FulfillmentAction, string>> = {
+  acknowledge: "Acknowledge",
+  start_picking: "Start picking",
+  pack: "Record packing",
+  record_tracking: "Record tracking",
+  ship: "Record shipment",
+  deliver: "Record delivery",
+  record_exception: "Report exception",
+};
 
 export interface MitchPortalProps {
   assignments: FulfillmentAssignmentView[];
@@ -133,53 +170,22 @@ export function MitchPortal({ assignments, onCommand }: MitchPortalProps) {
                 role="toolbar"
                 aria-label={`Actions for order ${assignment.orderReference}`}
               >
-                {assignment.state === "assigned" ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => onCommand(assignment, "acknowledge")}
-                  >
-                    Acknowledge
-                  </button>
-                ) : null}
-                {assignment.state === "acknowledged" ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => onCommand(assignment, "start_picking")}
-                  >
-                    Start picking
-                  </button>
-                ) : null}
-                {assignment.state === "picking" ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => onCommand(assignment, "pack")}
-                  >
-                    Record packing
-                  </button>
-                ) : null}
-                {assignment.state === "packed" ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => onCommand(assignment, "ship")}
-                  >
-                    Record shipment
-                  </button>
-                ) : null}
-                {!["returned", "damaged", "lost", "recalled", "cancelled"].includes(
-                  assignment.state,
-                ) ? (
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => onCommand(assignment, "record_exception")}
-                  >
-                    Report exception
-                  </button>
-                ) : null}
+                {fulfillmentActionsFor(assignment.state)
+                  .filter((action) => OPERATOR_ACTION_LABELS[action] !== undefined)
+                  .map((action) => (
+                    <button
+                      key={action}
+                      type="button"
+                      className={
+                        action === "record_exception"
+                          ? "btn btn-secondary"
+                          : "btn btn-primary"
+                      }
+                      onClick={() => onCommand(assignment, action)}
+                    >
+                      {OPERATOR_ACTION_LABELS[action]}
+                    </button>
+                  ))}
               </div>
             ) : null}
           </li>

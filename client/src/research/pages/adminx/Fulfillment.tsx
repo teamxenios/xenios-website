@@ -4,7 +4,10 @@ import { MitchPortal } from "../../operations/MitchPortal";
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
-import type { FulfillmentAssignmentView } from "@shared/research/fulfillment/contracts";
+import {
+  FULFILLMENT_STATES,
+  type FulfillmentAssignmentView,
+} from "@shared/research/fulfillment/contracts";
 
 // ---------------------------------------------------------------------------
 // /admin/research/fulfillment: the shipment pipeline. Publishes with the
@@ -58,11 +61,12 @@ function toAssignment(row: FulfillmentRow): FulfillmentAssignmentView | null {
     !row.shipping_service ||
     !Number.isSafeInteger(row.version) ||
     Number(row.version) <= 0 ||
-    ![
-      "assigned", "acknowledged", "picking", "packed", "shipped",
-      "delivered", "exception", "returned", "damaged", "lost",
-      "recalled", "cancelled",
-    ].includes(row.stage) ||
+    // Driven by the canonical contract, never a local copy. The hardcoded
+    // list this replaces had already gone stale: tracking_created, replacement
+    // and refunded failed it, toAssignment returned null, and the caller
+    // filtered those rows out — so an operator silently could not see orders
+    // that existed.
+    !(FULFILLMENT_STATES as readonly string[]).includes(row.stage) ||
     !["ambient", "cold_chain"].includes(row.handling_profile ?? "")
   ) {
     return null;
