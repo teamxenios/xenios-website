@@ -32,6 +32,15 @@ import {
   normalizeMasterCatalog,
   type RawMasterCatalogRow,
 } from "../../server/research/master-offerings/normalize-catalog";
+import {
+  applyCatalogReconciliation,
+  assertReconciledAccounting,
+  CatalogReconciliationError,
+  type CatalogReconciliation,
+} from "../../server/research/master-offerings/catalog-reconciliation";
+
+/** The reviewed reconciliation currently in force. */
+const RECONCILIATION_FILE = "master-catalog-reconciliation-20260821.json";
 
 const PRIVATE_MASTER_COLUMNS = [
   "Selected Supplier",
@@ -213,11 +222,77 @@ const intake = readIntake(path.resolve(inputArgument));
 const output = safeOutputDirectory(process.argv[3]);
 fs.mkdirSync(output, { recursive: true });
 
+// REVIEWED RECONCILIATION, before normalization.
+//
+// The workbook is source evidence and stays whole: intake.masterRows still
+// holds all 426 rows. What this step decides is which of them are CANONICAL
+// customer products, from config/research/master-catalog-reconciliation-*.json
+// rather than from conditionals here or, worse, in the storefront.
+//
+// Two Hexarelin 5 mg rows and two Oxytocin 10 mg rows collapse to one product
+// each, keeping the RUO row that production already priced and recording the
+// superseded row as provenance. CJC-1295 + Ipamorelin WITH DAC keeps its RUO
+// classification and gains a commerce hold, because its FORMULATION is
+// unresolved, not its classification.
+//
+// The applier refuses rather than shrugs: a merge whose rows have moved, or a
+// hold that matches nothing, fails the build here instead of putting a
+// formulation-unresolved product on sale.
+const reconciliation: CatalogReconciliation = JSON.parse(
+  fs.readFileSync(
+    path.resolve(process.cwd(), "config", "research", RECONCILIATION_FILE),
+    "utf8",
+  ),
+);
+let reconciled;
+try {
+  reconciled = applyCatalogReconciliation(
+    intake.masterRows as unknown as Record<string, unknown>[],
+    reconciliation,
+  );
+} catch (error) {
+  if (error instanceof CatalogReconciliationError) fail(error.message);
+  throw error;
+}
+
 let catalog;
 try {
-  catalog = normalizeMasterCatalog(intake.masterRows);
+  catalog = normalizeMasterCatalog(
+    reconciled.rows as unknown as RawMasterCatalogRow[],
+  );
 } catch (error) {
   if (error instanceof MasterCatalogNormalizeError) fail(error.message);
+  throw error;
+}
+
+// Refuse the build if the reviewed accounting no longer describes the source.
+// These are the numbers quoted in release packets; a silent drift would keep
+// them being quoted after they stopped being true.
+const peptideRows = (rows: readonly Record<string, unknown>[]) =>
+  rows.filter((row) => row["Family"] === "Research Peptides & Materials");
+const canonicalPeptides = peptideRows(
+  reconciled.rows as unknown as Record<string, unknown>[],
+);
+const ruoPeptides = canonicalPeptides.filter(
+  (row) => row["Channel"] === "RUO Research",
+);
+const heldPeptides = ruoPeptides.filter((row) =>
+  reconciled.provenance.commerceHeldRows.has(String(row["Group ID"]).trim()),
+);
+try {
+  assertReconciledAccounting(reconciliation, {
+    sourceRows: reconciled.provenance.sourceRowCount,
+    canonicalVariants: reconciled.provenance.canonicalRowCount,
+    peptideSourceRows: peptideRows(
+      intake.masterRows as unknown as Record<string, unknown>[],
+    ).length,
+    peptideCanonicalVariants: canonicalPeptides.length,
+    peptideDirect: ruoPeptides.length - heldPeptides.length,
+    peptideFormulationBlocked: heldPeptides.length,
+    peptidePendingUnique: canonicalPeptides.length - ruoPeptides.length,
+  });
+} catch (error) {
+  if (error instanceof CatalogReconciliationError) fail(error.message);
   throw error;
 }
 
@@ -229,6 +304,20 @@ const publicCatalog = {
   generatedAt,
   sourceWorkbookSha256: intake.sources.masterCatalog.sha256,
   sourceRowCount: catalog.sourceRowCount,
+  // Source rows and canonical variants are different numbers and must never be
+  // quoted interchangeably: the workbook lists 426 rows, a customer can buy 424
+  // products. The superseded rows survive in `reconciliation.provenance`.
+  workbookSourceRowCount: reconciled.provenance.sourceRowCount,
+  reconciliation: {
+    file: RECONCILIATION_FILE,
+    decidedOn: reconciliation.decidedOn,
+    sourceRows: reconciled.provenance.sourceRowCount,
+    canonicalRows: reconciled.provenance.canonicalRowCount,
+    provenance: Object.fromEntries(
+      Array.from(reconciled.provenance.sourceRowsByCanonical.entries()),
+    ),
+    commerceHeldRows: Array.from(reconciled.provenance.commerceHeldRows),
+  },
   canonicalProductCount: catalog.products.length,
   variantCount: catalog.products.reduce((sum, product) => sum + product.variants.length, 0),
   invariants: {
