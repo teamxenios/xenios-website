@@ -287,6 +287,96 @@ export class SupabaseProductAdminRepository
       : summaries;
   }
 
+  /**
+   * The WHOLE published catalog shaped for PRICING, in three queries.
+   *
+   * WHY THIS EXISTS. Pricing a catalog page used to go through
+   * `LiveProductControlReader.readCatalog()`, which reads the product list
+   * twice and then calls `get()` TWICE per product for snapshot stability.
+   * Each `get()` is seven queries — product, variants, prices, media, content,
+   * audit history, required inputs. Measured against production on 2026-08-21
+   * with 236 published public products that is
+   *
+   *     2 + (236 x 2 x 7) = 3,306 Supabase round trips PER catalog request,
+   *
+   * which took 27-37 seconds and, under sustained requests, made Supabase
+   * answer Cloudflare 522. The price read then failed, and because the
+   * request-scoped source is deliberately all-or-nothing, 417 real prices
+   * became "Price on request" for the customer. That is the live defect this
+   * replaces.
+   *
+   * FOUR of those seven per-product reads — media, content, audit history and
+   * required inputs — are never consulted by the price resolver. It reads only
+   * the product's id/status/visibility/active, its variants'
+   * id/productId/status/active/memberEligible, and its price rows.
+   * So this asks for exactly those, in bulk:
+   *
+   *     1 products  +  1 variants (.in product_id)  +  1 prices (.in product_id)
+   *
+   * WHAT IT DOES NOT CHANGE. Product Control remains the sole price authority.
+   * Every later check in the resolver runs unchanged on the same rows this
+   * returns. This changes HOW the rows are read, never who owns price truth.
+   *
+   * `missingInputCount` is reported as 0 because the required-input table is
+   * not read here; no pricing decision consults it, and the field is not on
+   * the customer projection.
+   */
+  async listForPricing(): Promise<AdminProductDetail[]> {
+    const products = await many(
+      this.db
+        .from(PRODUCT_TABLE)
+        .select("*")
+        .eq("admin_status", "published")
+        .eq("visibility_state", "public"),
+      "list products for pricing",
+    );
+    const ids = products.map((row) => rowText(row.id)).filter(Boolean);
+    if (!ids.length) return [];
+
+    const [variantRows, priceRows] = await Promise.all([
+      many(
+        this.db
+          .from(VARIANT_TABLE)
+          .select("*")
+          .in("product_id", ids)
+          .order("sort_order", { ascending: true }),
+        "list variants for pricing",
+      ),
+      many(
+        this.db
+          .from(PRICE_TABLE)
+          .select("*")
+          .in("product_id", ids)
+          .order("created_at", { ascending: false }),
+        "list prices for pricing",
+      ),
+    ]);
+
+    const variants = variantRows.map(variantRow);
+    const pricesByProduct = new Map<string, AdminProductPrice[]>();
+    for (const row of priceRows) {
+      const price = priceRow(row);
+      const bucket = pricesByProduct.get(price.productId);
+      if (bucket) bucket.push(price);
+      else pricesByProduct.set(price.productId, [price]);
+    }
+
+    return products.map((row) => {
+      const id = rowText(row.id);
+      const ownVariants = variants.filter((item) => item.productId === id);
+      return {
+        ...productSummary(row, variants, 0),
+        // The empty shape the mapper produces for a product with no content rows.
+        // Pricing never reads it; this keeps the type honest rather than casting.
+        content: contentRows([]),
+        variants: ownVariants,
+        prices: pricesByProduct.get(id) ?? [],
+        media: [],
+        history: [],
+      };
+    });
+  }
+
   async get(productId: string): Promise<AdminProductDetail | null> {
     const productResult = await this.db
       .from(PRODUCT_TABLE)

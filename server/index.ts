@@ -41,6 +41,8 @@ import {
   type CartSelectionFactsReader,
 } from "./research/master-offerings/direct-commerce-selections";
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
+import { BulkCatalogPricingSource } from "./research/pricing/bulk-catalog-pricing-source";
+import { SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -630,6 +632,15 @@ app.use(
 // pricing_disabled). The /api/research gateway wall bypasses GET/HEAD
 // /pricing/* reads to this adapter's own guard chain (the
 // downstreamMemberGuardedRead predicate in server/research/index.ts).
+/**
+ * One shared, short-lived snapshot of the published Product Control catalog,
+ * shaped for pricing. Bulk-read, cached across requests, and safe when
+ * Supabase is briefly unreachable. See bulk-catalog-pricing-source.ts.
+ */
+const masterOfferingCatalogPricingSource = new BulkCatalogPricingSource(
+  new SupabaseProductAdminRepository(),
+);
+
 const pricingResolver = createAuthoritativePriceResolver(
   new CatalogPricingProductSource(createProductionProductControlReader()),
 );
@@ -769,9 +780,18 @@ const masterOfferingCatalogDependencies = createMasterOfferingCatalogDependencie
       process.env,
       createProductControlSelectionAuthority(masterOfferingSelectionFacts),
     ),
-    pricingSource: new CatalogPricingProductSource(
-      createProductionProductControlReader(),
-    ),
+    // THE CATALOG'S pricing read. Deliberately NOT the drift-checked
+    // per-product reader used by the single-product /pricing route above.
+    //
+    // That reader costs 3,306 Supabase round trips for one catalog request
+    // (measured 2026-08-21: 236 published products, two stability reads each,
+    // seven queries per read). It took 27-37 seconds, and under sustained
+    // requests Supabase answered Cloudflare 522 — at which point the
+    // all-or-nothing request-scoped source turned all 417 approved prices into
+    // "Price on request" for the customer. Three queries answer the same
+    // question, and a brief upstream failure now keeps the last verified
+    // prices instead of rewriting them.
+    pricingSource: masterOfferingCatalogPricingSource,
     // Null-safe: a viewer without a grant (an Early Access session, an
     // anonymous probe through the assisted-order seam) is a null identity and
     // every price truthfully fails closed to "Price on request".
