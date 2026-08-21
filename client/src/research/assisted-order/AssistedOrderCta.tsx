@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { requestAssistedOrderConfigBody } from "./api";
 
 // The authenticated Early Access entry point to the assisted-order wizard.
 //
@@ -33,16 +34,10 @@ export function useAssistedOrderBridgeState(): ConfigState {
     let alive = true;
     void (async () => {
       try {
-        const response = await fetch(
-          "/api/research/early-access/assisted-orders/config",
-          { credentials: "include", headers: { accept: "application/json" } },
-        );
-        if (!alive) return;
-        if (!response.ok) {
-          setState({ kind: "absent" });
-          return;
-        }
-        const body: unknown = await response.json();
+        // The SHARED request, not a private fetch. Three components ask this
+        // same question on the storefront; a private fetch here made one of
+        // three sequential round trips that delayed the catalog behind them.
+        const body = await requestAssistedOrderConfigBody();
         if (!alive) return;
         const enabled =
           typeof body === "object" &&
@@ -50,6 +45,8 @@ export function useAssistedOrderBridgeState(): ConfigState {
           (body as { enabled?: unknown }).enabled === true;
         setState({ kind: enabled ? "enabled" : "disabled" });
       } catch {
+        // Unreachable/refused probe. Unchanged: render nothing rather than a
+        // hopeful button.
         if (alive) setState({ kind: "absent" });
       }
     })();

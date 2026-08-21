@@ -89,10 +89,50 @@ export function loadAssistedOrderCatalog(
  * throws, so the caller fails closed with a retry state instead of falling
  * back to a built-in list.
  */
+/**
+ * ONE config request per page load, shared by every caller.
+ *
+ * Three components ask the server the same question: the storefront route (to
+ * decide whether the full canonical catalog may render), the CTA (to decide
+ * whether to offer the wizard), and the wizard itself (for the exact
+ * acknowledgment versions). Measured in a browser, that was three separate
+ * round trips for one unchanging answer — and worse, they were SEQUENTIAL,
+ * because the wizard only mounts after the route's probe resolves, so the
+ * catalog request could not even begin until two config round trips and a lazy
+ * chunk had completed. On a phone that is seconds of spinner before the
+ * expensive request starts.
+ *
+ * The promise is cached, not the value, so concurrent callers join the request
+ * already in flight rather than starting their own. A REJECTION is not cached:
+ * a failed probe must stay retryable, and a caller that retries would
+ * otherwise get the original failure forever.
+ *
+ * Deliberately per page load and not time-based. The config is legal versions
+ * and a feature flag; a customer who needs a changed value needs a reload
+ * anyway, and a TTL here would be a cache-invalidation problem bought for
+ * nothing.
+ */
+let inFlightConfig: Promise<Record<string, unknown> | null> | null = null;
+
+export function requestAssistedOrderConfigBody(): Promise<Record<string, unknown> | null> {
+  if (inFlightConfig === null) {
+    inFlightConfig = request<Record<string, unknown> | null>(
+      "/api/research/early-access/assisted-orders/config",
+    ).catch((error: unknown) => {
+      inFlightConfig = null;
+      throw error;
+    });
+  }
+  return inFlightConfig;
+}
+
+/** Test seam: drop the shared request so each test starts cold. */
+export function resetAssistedOrderConfigCache(): void {
+  inFlightConfig = null;
+}
+
 export async function loadAssistedOrderConfig(): Promise<AssistedOrderWizardConfig> {
-  const body = await request<Record<string, unknown> | null>(
-    "/api/research/early-access/assisted-orders/config",
-  );
+  const body = await requestAssistedOrderConfigBody();
   if (body && body.enabled === false) {
     throw new AssistedOrderApiError(
       503,
