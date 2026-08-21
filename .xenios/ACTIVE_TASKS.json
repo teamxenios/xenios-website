@@ -87,11 +87,18 @@
       "state": "ready",
       "owner": null,
       "paths": [
-        "client/src/research/**request**",
-        "server/research/**request**",
-        "shared/research/**request**"
+        "client/src/research/adapters/productRequests.ts",
+        "client/src/research/pages/adminx/ProductRequestAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductRequestsAdmin.tsx",
+        "client/src/research/pages/member/NewProductRequest.tsx",
+        "client/src/research/pages/member/ProductRequests.tsx",
+        "client/src/research/products-diagnostics/ProductRequestExperience.tsx",
+        "server/research/product-requests.ts",
+        "server/research/products-diagnostics/product-request-integration.ts",
+        "shared/research/product-request-sources.ts"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside."
     },
     {
       "id": "GENERAL-COMMERCE",
@@ -116,10 +123,11 @@
       "owner": null,
       "paths": [
         "server/research/notifications/**",
-        "client/src/research/**notification**",
-        "shared/research/**notification**"
+        "client/src/research/notifications/**",
+        "shared/research/notifications/**"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "pathsNote": "Narrowed 2026-08-21 from **notification**, which matched Early Access cart notification files under another lease. The notification centre is new work in its own directories."
     },
     {
       "id": "ANALYTICS",
@@ -128,11 +136,12 @@
       "state": "ready",
       "owner": null,
       "paths": [
-        "client/src/research/**analytics**",
-        "server/research/**analytics**",
-        "shared/research/**analytics**"
+        "server/research/analytics/**",
+        "client/src/research/analytics/**",
+        "shared/research/analytics/**"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -353,14 +362,66 @@
         "scripts/demo-seed.*"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-20T17:56:19.544Z",
+      "claimedAt": "2026-08-21T15:05:20.237Z",
       "releasedAt": "2026-08-20T14:54:58.522Z",
       "handoff": {
         "session": "claude-fable-s9-conversion-qa",
-        "sha": "c7bb20a42cb8e85eb8475ca0c6c73009667552aa",
-        "file": ".xenios/handoffs/2026-08-20T18-09-22-510Z-FULL-VISION-DEMO-claude-fable-s9-conversion-qa.md",
-        "at": "2026-08-20T18:09:22.520Z"
+        "sha": "12361658c5a2075c57e738103e2ff38d2105b475",
+        "file": ".xenios/handoffs/2026-08-21T15-40-54-784Z-FULL-VISION-DEMO-claude-fable-s9-conversion-qa.md",
+        "at": "2026-08-21T15:40:54.786Z"
       }
+    },
+    {
+      "id": "PEPTIDE-LAUNCH-ACCEPTANCE",
+      "title": "Pin the 141-peptide launch target to canonical data and name every row that breaks it",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "claude-fable-s3",
+      "paths": [
+        "shared/research/launch/**",
+        "docs/research-launch/PEPTIDE_LAUNCH_ACCEPTANCE_2026-08-21.md"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-21T14:39:01.888Z",
+      "handoff": {
+        "session": "claude-fable-s3",
+        "sha": "68271321551ee0d5b86982129ecfe39f6bd72fb7",
+        "file": ".xenios/handoffs/2026-08-21T14-43-07-698Z-PEPTIDE-LAUNCH-ACCEPTANCE-claude-fable-s3.md",
+        "at": "2026-08-21T14:43:07.700Z"
+      }
+    },
+    {
+      "id": "PEPTIDE-DIRECT-ORDER-HOLD",
+      "title": "Add the explicit-hold fact to the direct-order rule and pin the 139-variant canonical target",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "claude-fable-s3",
+      "paths": [
+        "shared/research/early-access/customer-pathway.ts",
+        "shared/research/early-access/customer-pathway.test.ts",
+        "shared/research/launch/**"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-21T14:45:28.143Z",
+      "handoff": {
+        "session": "claude-fable-s3",
+        "sha": "b0b228e9c740e219e984a069af07f06e2dd8b4c4",
+        "file": ".xenios/handoffs/2026-08-21T14-49-00-407Z-PEPTIDE-DIRECT-ORDER-HOLD-claude-fable-s3.md",
+        "at": "2026-08-21T14:49:00.411Z"
+      }
+    },
+    {
+      "id": "ADMIN-ORDER-EMAIL-COMPLETENESS",
+      "title": "Make the admin order email sufficient to fulfil an order without opening the database",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-fable-s3",
+      "paths": [
+        "server/research/assisted-order/communications.ts",
+        "server/research/assisted-order/communications.test.ts"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-08-21T15:35:03.372Z"
     }
   ]
 }
