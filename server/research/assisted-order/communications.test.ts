@@ -239,6 +239,35 @@ describe("the admin order alert", () => {
     expect(body).not.toContain("Agreements accepted");
   });
 
+  it("gives the customer a destination SUMMARY, not their street address", () => {
+    // Section 9 asks for a shipping destination summary. The point is that a
+    // customer can spot "that is not where I meant" before Xenios ships —
+    // which needs city/region/country, and does not need their street read
+    // back to them.
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        shippingAddress: {
+          line1: "1 Test Way",
+          line2: "Suite 4",
+          city: "Austin",
+          region: "TX",
+          postalCode: "78701",
+          countryCode: "US",
+        },
+      }),
+    )!.text;
+    expect(body).toContain("Shipping to: Austin, TX, US");
+    expect(body).not.toContain("1 Test Way");
+    expect(body).not.toContain("Suite 4");
+    expect(body).not.toContain("78701");
+  });
+
+  it("omits the destination line rather than printing a bare comma", () => {
+    const body = renderAssistedOrderOutboxEmail(CUSTOMER, v2Payload())!.text;
+    expect(body).not.toContain("Shipping to:");
+  });
+
   it("never echoes the address back to the CUSTOMER", () => {
     // The customer knows where they live. Echoing it only adds a copy of their
     // address to a forwardable channel, so the customer template reads no

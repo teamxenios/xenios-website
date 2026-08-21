@@ -165,6 +165,29 @@ function agreementBlock(payload: Record<string, unknown>): string[] {
   ];
 }
 
+/**
+ * The destination, for the CUSTOMER, as a summary rather than an address.
+ *
+ * The customer needs to be able to spot that they typed the wrong city or
+ * country before Xenios ships, which is a real failure this catches early. They
+ * do not need their own street address read back to them, and echoing it puts a
+ * second copy of a home address into a forwardable channel for no benefit.
+ *
+ * So: city, region, country. Enough to notice "that is not where I meant",
+ * not enough to be worth intercepting. The street lines stay admin-only.
+ */
+function destinationSummary(payload: Record<string, unknown>): string {
+  const raw = payload.shippingAddress;
+  if (typeof raw !== "object" || raw === null) return "";
+  const address = raw as Record<string, unknown>;
+  const summary = [
+    text(address.city),
+    text(address.region),
+    text(address.countryCode),
+  ].filter((part) => part !== "");
+  return summary.length === 0 ? "" : `Shipping to: ${summary.join(", ")}`;
+}
+
 /** Anything the customer typed. Rendered verbatim, never interpreted. */
 function customerNotesBlock(payload: Record<string, unknown>): string[] {
   const notes = text(payload.customerNotes);
@@ -206,7 +229,8 @@ export function renderAssistedOrderOutboxEmail(
         `Reference: ${reference}`,
         lineCount !== null ? `Requested items: ${lineCount}` : "",
         ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
+        `Order total: ${money(payload.estimatedTotalCents)}`,
+        destinationSummary(payload),
         paymentSentence(payload),
         ``,
         // Deliberately careful wording. This email is sent the moment the
