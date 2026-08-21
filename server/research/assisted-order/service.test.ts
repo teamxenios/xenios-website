@@ -284,16 +284,55 @@ describe("AssistedOrderService", () => {
     expect(h.audit).toHaveBeenCalled();
   });
 
-  it("keeps provider items as provider requests", async () => {
+  it("REFUSES a Care item at submit rather than explaining it afterwards", async () => {
+    // CHANGED DELIBERATELY 2026-08-21. This test used to assert that a
+    // provider-pathway item was ACCEPTED into the order request and that the
+    // next-steps copy told the customer it would follow the Care pathway.
+    //
+    // The only thing keeping Care out of a durable order was the browser
+    // declining to add it to the basket. A client-side guard is not a guard,
+    // and `provider_request` appeared in the service exactly once — in that
+    // copy, explaining the Care pathway to a customer whose Care item had
+    // already been accepted.
+    //
+    // Payment is manual at launch, so a wrong acceptance ends with the founder
+    // personally emailing payment instructions for a clinical product, in
+    // writing, with nothing downstream to catch it. Refusing at the door is
+    // the truthful answer; the customer is told where the product does belong.
     const h = harness(item({
       channel: "Clinical / Provider Only",
       workflowMode: "provider_request",
       actionLabel: "Start provider workflow",
       researchUseOnly: false,
     }));
-    const receipt = await h.service.submit(memberViewer, input());
-    expect(receipt.lines[0].workflowMode).toBe("provider_request");
-    expect(receipt.nextSteps.join(" ")).toContain("provider review");
+    await expect(h.service.submit(memberViewer, input())).rejects.toThrow(
+      /Xenios Care provider pathway/i,
+    );
+    // Nothing durable, and nobody emailed about an order that does not exist.
+    expect(h.notifications).toHaveLength(0);
+  });
+
+  it("REFUSES an unavailable item at submit", async () => {
+    const h = harness(item({
+      workflowMode: "availability_review",
+      actionLabel: "Request availability review",
+    }));
+    await expect(h.service.submit(memberViewer, input())).rejects.toThrow(
+      /not available to order right now/i,
+    );
+    expect(h.notifications).toHaveLength(0);
+  });
+
+  it("still ADMITS the pathways that legitimately place a request", async () => {
+    // Classification-pending and price-pending rows are askable. Refusing them
+    // would have been the easy over-correction and would have taken the whole
+    // Request Order flow with it.
+    for (const workflowMode of ["request_activation", "request_pricing"] as const) {
+      const h = harness(item({ workflowMode, actionLabel: "Request order" }));
+      const receipt = await h.service.submit(memberViewer, input());
+      expect(receipt.lines[0].workflowMode).toBe(workflowMode);
+      expect(h.notifications).toHaveLength(2);
+    }
   });
 
   it("never turns price pending into zero", async () => {

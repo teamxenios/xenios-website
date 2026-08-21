@@ -1,4 +1,9 @@
 import {
+  earlyAccessCustomerPathway,
+  pathwayEntersPayment,
+  pathwayEntersRequest,
+} from "@shared/research/early-access/customer-pathway";
+import {
   ASSISTED_ORDER_CURRENCY,
   ASSISTED_ORDER_SOURCE,
   type AssistedOrderAdminDetail,
@@ -364,6 +369,43 @@ export class AssistedOrderService {
           "The price authority changed. Refresh before submitting.",
         );
       }
+      // SUBMIT-TIME PATHWAY GATE.
+      //
+      // Everything above re-resolves the line server-side — quantity, price,
+      // catalog version, price version — and then accepted whatever pathway
+      // came back. The only thing stopping a Care or held product entering a
+      // durable order was the BROWSER declining to add it to the basket, and a
+      // client-side guard is not a guard. `provider_request` appeared in this
+      // file exactly once before now, in the next-steps COPY, which explained
+      // the Care pathway to a customer whose Care item had already been
+      // accepted.
+      //
+      // That matters more under manual payment, not less: a wrong acceptance
+      // ends with the founder personally emailing payment instructions for a
+      // clinical or held product, in writing, with no automated system
+      // downstream to catch it.
+      //
+      // Decided by the SAME derivation the storefront button uses, never a
+      // second copy — a shelf and a door that compute admission separately is
+      // how the GRP-0422 hold came to be recorded and consulted by nobody.
+      // Family is not passed because it cannot change this answer: it only
+      // separates buy_now from assisted_order, and BOTH are admitted here.
+      // What is refused is Care and unavailable, in either direction.
+      const pathway = earlyAccessCustomerPathway({
+        workflowMode: authority.workflowMode,
+        researchUseOnly: authority.researchUseOnly,
+        hasApprovedRetailPrice: authority.unitPriceCents !== null,
+        family: "",
+      });
+      if (!pathwayEntersPayment(pathway) && !pathwayEntersRequest(pathway)) {
+        throw new AssistedOrderValidationError(
+          `lines.${index}.productId`,
+          pathway === "care"
+            ? `${authority.productName} is fulfilled through the Xenios Care provider pathway and cannot be ordered here.`
+            : `${authority.productName} is not available to order right now.`,
+        );
+      }
+
       resolvedLines.push(
         Object.freeze({
           ...authority,
