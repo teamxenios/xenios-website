@@ -234,6 +234,33 @@ describe("the Early Access customer pathway", () => {
     expect(DIRECT_PURCHASE_FAMILIES).toEqual(["research_peptides_materials"]);
   });
 
+  it("HOLDS a product whose reviewed hold outranks every selling fact", () => {
+    // CJC-1295 + Ipamorelin WITH DAC, 5 mg total: confirmed RUO, approved
+    // retail price, approved family, direct workflow mode. Everything says
+    // sell it, and it must not be sold, because nobody has stated the
+    // component split inside that 5 mg.
+    expect(
+      earlyAccessCustomerPathway({
+        workflowMode: "direct_order_request",
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
+        commerceHold: true,
+      }),
+    ).toBe("assisted_order");
+    // Absent or false means no hold; it must never be the thing that ENABLES
+    // a sale, only the thing that prevents one.
+    expect(
+      earlyAccessCustomerPathway({
+        workflowMode: "provider_request",
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
+        commerceHold: false,
+      }),
+    ).toBe("care");
+  });
+
   it("treats featured and purchasable as unrelated ideas", () => {
     // There is no "featured" input at all. Merchandising cannot grant a
     // payment path, which is the whole point of retiring the curated 22 as a

@@ -108,6 +108,17 @@ export interface EarlyAccessPathwayInput {
    * "research_peptides_materials". Server-derived from the catalog dataset.
    */
   readonly family: string;
+  /**
+   * An explicit reviewed commerce hold on this exact variant, from
+   * config/research/master-catalog-reconciliation-*.json.
+   *
+   * Separate from classification on purpose. A held row's classification may be
+   * perfectly confirmed — the hold exists for a different reason, such as a
+   * formulation whose component split nobody has stated. Recording it as a hold
+   * rather than by falsifying the classification keeps those two facts
+   * distinct, and releasing the product is then deleting one config entry.
+   */
+  readonly commerceHold?: boolean;
 }
 
 /**
@@ -142,6 +153,10 @@ export function earlyAccessCustomerPathway(
       // still needs BOTH a confirmed research-use classification and an
       // approved retail price. Either one missing means the order goes through
       // review instead — the customer can still place it.
+      // The hold is checked FIRST among the direct conditions. A reviewed hold
+      // outranks every fact that would otherwise sell the product, which is the
+      // entire reason it is written down.
+      if (input.commerceHold === true) return "assisted_order";
       return input.researchUseOnly &&
         input.hasApprovedRetailPrice &&
         DIRECT_PURCHASE_FAMILIES.includes(input.family)
