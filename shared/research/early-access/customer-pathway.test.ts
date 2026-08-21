@@ -7,6 +7,7 @@ import { assistedOrderWorkflowModes } from "../assisted-order/contract";
 import {
   DIRECT_PURCHASE_FAMILIES,
   earlyAccessCustomerPathway,
+  hasDirectOrderHold,
   earlyAccessCustomerPathways,
   earlyAccessPathwayLabel,
   pathwayEntersPayment,
@@ -241,5 +242,71 @@ describe("the Early Access customer pathway", () => {
     const source = earlyAccessCustomerPathway.toString().toLowerCase();
     expect(source).not.toContain("featured");
     expect(source).not.toContain("legacy");
+  });
+});
+
+describe("the explicit hold, the fourth canonical fact", () => {
+  const directPeptide = {
+    workflowMode: "direct_order_request",
+    researchUseOnly: true,
+    hasApprovedRetailPrice: true,
+    family: "research_peptides_materials",
+  } as const;
+
+  it("buys when nothing is held", () => {
+    expect(earlyAccessCustomerPathway(directPeptide)).toBe("buy_now");
+    expect(earlyAccessCustomerPathway({ ...directPeptide, directOrderHold: null })).toBe("buy_now");
+  });
+
+  it("withholds the one launch row whose composition is unresolved", () => {
+    // CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending): approved
+    // family, confirmed RUO, approved price. The first three facts alone would
+    // sell it. The hold is the only thing standing between the customer and a
+    // product Xenios cannot describe.
+    const pathway = earlyAccessCustomerPathway({
+      ...directPeptide,
+      directOrderHold: "composition_unresolved",
+    });
+    expect(pathway).toBe("assisted_order");
+    expect(pathwayEntersPayment(pathway)).toBe(false);
+  });
+
+  it("still lets the customer REQUEST a held row", () => {
+    // A hold is not a refusal. The row stays visible and requestable; it just
+    // does not take money.
+    const pathway = earlyAccessCustomerPathway({
+      ...directPeptide,
+      directOrderHold: "composition_unresolved",
+    });
+    expect(pathwayEntersRequest(pathway)).toBe(true);
+  });
+
+  it("clears itself with no code change when the catalog stops reporting a reason", () => {
+    // The whole point of a canonical hold over a SKU denylist: resolving the
+    // split makes the row purchasable without editing this file.
+    expect(earlyAccessCustomerPathway({ ...directPeptide, directOrderHold: "composition_unresolved" })).toBe("assisted_order");
+    expect(earlyAccessCustomerPathway({ ...directPeptide, directOrderHold: undefined })).toBe("buy_now");
+  });
+
+  it("never withholds a product because of a blank catalog column", () => {
+    // Empty or whitespace text is absence of a hold, not a hold. A blank
+    // column must not quietly pull 111 products off sale.
+    for (const blank of ["", "   ", "	"]) {
+      expect(hasDirectOrderHold({ directOrderHold: blank })).toBe(false);
+      expect(earlyAccessCustomerPathway({ ...directPeptide, directOrderHold: blank })).toBe("buy_now");
+    }
+    expect(hasDirectOrderHold({ directOrderHold: null })).toBe(false);
+    expect(hasDirectOrderHold({ directOrderHold: undefined })).toBe(false);
+    expect(hasDirectOrderHold({ directOrderHold: "composition_unresolved" })).toBe(true);
+  });
+
+  it("cannot promote a Care or pending row just because it carries no hold", () => {
+    // The hold only ever SUBTRACTS. It is checked inside the direct branch, so
+    // an absent hold can never lift a row out of Care or classification review.
+    for (const workflowMode of ["provider_request", "request_activation", "availability_review", "request_pricing"] as const) {
+      const pathway = earlyAccessCustomerPathway({ ...directPeptide, workflowMode, directOrderHold: null });
+      expect(pathway).not.toBe("buy_now");
+      expect(pathwayEntersPayment(pathway)).toBe(false);
+    }
   });
 });

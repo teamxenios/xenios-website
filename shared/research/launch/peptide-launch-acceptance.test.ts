@@ -198,6 +198,70 @@ describe("the founder's reconciliation rows", () => {
   });
 });
 
+/**
+ * SOURCE ROWS vs CANONICAL VARIANTS.
+ *
+ * The workbook has 141 peptide ROWS. Two of them are duplicate listings of a
+ * strength that already exists, so the canonical catalog carries 139 unique
+ * VARIANTS. The founder adjudicated the collapse on 2026-08-21:
+ *
+ *   141 source rows  ->  139 canonical variants
+ *   112 RUO source   ->  111 direct + 1 held
+ *    29 pending rows ->   27 unique pending
+ *
+ * Asserted separately from the source-row counts above, because a
+ * reconciliation that silently drops a real product and a reconciliation that
+ * correctly collapses a duplicate both change the row count — and only one of
+ * them is right.
+ */
+describe("canonical variant target after duplicate reconciliation", () => {
+  /** The two source rows the founder ruled are duplicates, not products. */
+  const COLLAPSING_DUPLICATE_ROWS = ["Hexarelin (5mg)", "Oxytocin (10mg)"];
+
+  const collapsingRows = () =>
+    classificationPending().filter((row) =>
+      COLLAPSING_DUPLICATE_ROWS.includes(row["Normalized Specification"]),
+    );
+
+  it("collapses exactly two source rows, and both are classification-pending", () => {
+    // Both duplicates sit on the PENDING side, so the collapse removes pending
+    // rows and never removes a directly orderable one.
+    expect(collapsingRows()).toHaveLength(2);
+  });
+
+  it("reaches 139 unique canonical variants", () => {
+    expect(peptides().length - collapsingRows().length).toBe(139);
+  });
+
+  it("reaches 27 unique classification-pending variants", () => {
+    expect(classificationPending().length - collapsingRows().length).toBe(27);
+  });
+
+  it("adds up: 111 direct + 1 held + 27 pending = 139", () => {
+    const direct = confirmedRuo().filter((row) => !compositionUnresolved(row));
+    const held = confirmedRuo().filter(compositionUnresolved);
+    const pending = classificationPending().length - collapsingRows().length;
+    expect(direct).toHaveLength(111);
+    expect(held).toHaveLength(1);
+    expect(pending).toBe(27);
+    expect(direct.length + held.length + pending).toBe(139);
+  });
+
+  it("keeps the surviving canonical variant of each collapsed pair directly orderable", () => {
+    // The collapse must keep the RUO side, not the pending side. Keeping the
+    // pending row would take a product that is orderable today and make it
+    // un-orderable, which is a revenue regression disguised as a cleanup.
+    for (const specification of ["HEXARELIN 5 mg", "OXYTOCIN 10 mg"]) {
+      const survivor = confirmedRuo().find(
+        (row) => row["Normalized Specification"] === specification,
+      );
+      expect(survivor, specification + " must survive the collapse").toBeDefined();
+      expect(hasApprovedPrice(survivor!)).toBe(true);
+      expect(compositionUnresolved(survivor!)).toBe(false);
+    }
+  });
+});
+
 describe("families that must not enter direct purchase", () => {
   it("keeps Research Capsules out of the peptide direct set", () => {
     // A generic "researchUseOnly + priced" rule would have swept these in.

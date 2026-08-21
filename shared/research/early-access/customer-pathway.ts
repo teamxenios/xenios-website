@@ -37,12 +37,19 @@
  * are real, but they are downstream operational states of an order that has
  * already been placed — not reasons to hide the buy action from a customer.
  *
- * So BUY_NOW is earned by three canonical facts and no others: the product is
+ * So BUY_NOW is earned by four canonical facts and no others: the product is
  * in an approved direct-purchase FAMILY, its classification is confirmed RUO,
- * and the canonical authority resolves an approved retail price. Nothing about
- * merchandising, and nothing about warehouse readiness.
- * A row becomes purchasable the moment its classification lands, with no code
- * change and no list to edit.
+ * the canonical authority resolves an approved retail price, and no explicit
+ * hold stands against this row. Nothing about merchandising, and nothing about
+ * warehouse readiness.
+ * A row becomes purchasable the moment its classification lands and its hold
+ * clears, with no code change and no list to edit.
+ *
+ * The fourth fact is the row-level one. The first three describe a CATEGORY of
+ * product; a hold describes THIS variant. The launch has exactly one today —
+ * a combination peptide whose component split is unresolved, which is priced,
+ * research-use and in the approved family, and which must still not take money
+ * until Xenios can state what is in the vial.
  *
  * What this must never do is make an order LOOK further along than it is.
  * Placing the order is honest; "inventory confirmed", "payment verified" and
@@ -108,6 +115,44 @@ export interface EarlyAccessPathwayInput {
    * "research_peptides_materials". Server-derived from the catalog dataset.
    */
   readonly family: string;
+  /**
+   * A canonical, server-derived reason this specific variant is withheld from
+   * DIRECT purchase even though it satisfies every other direct-purchase fact.
+   * `null` (or omitted) means no hold.
+   *
+   * WHY THIS EXISTS. Family, classification and price are facts about a
+   * CATEGORY of product. A hold is a fact about THIS ROW. The launch has one
+   * today: `CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)` is in
+   * the approved family, is confirmed research use, and carries an approved
+   * retail price — so the three-fact rule alone makes it purchasable — but its
+   * component split is unresolved, meaning Xenios cannot state what is in the
+   * vial. Selling something we cannot describe is worse than listing one row
+   * too many, so the row is held.
+   *
+   * DELIBERATELY NOT A SKU DENYLIST. A denylist would have to be edited twice:
+   * once to add the row, once to remember to remove it. A canonical hold
+   * clears itself — the row becomes purchasable the moment the catalog stops
+   * reporting a reason, with no code change. That is the same property the
+   * classification rule already has, and it is the reason this is an input
+   * rather than a constant in this file.
+   *
+   * A HOLD IS NOT A REFUSAL. A held row still appears, still shows its retail
+   * price, and can still be REQUESTED. It simply does not take money before
+   * Xenios can describe what it is selling.
+   */
+  readonly directOrderHold?: string | null;
+}
+
+/**
+ * Whether a variant is withheld from direct purchase by an explicit canonical
+ * hold. Whitespace-only text is treated as no hold, so a blank column in the
+ * catalog dataset cannot accidentally withhold a product from sale.
+ */
+export function hasDirectOrderHold(
+  input: Pick<EarlyAccessPathwayInput, "directOrderHold">,
+): boolean {
+  return typeof input.directOrderHold === "string"
+    && input.directOrderHold.trim().length > 0;
 }
 
 /**
@@ -139,12 +184,14 @@ export function earlyAccessCustomerPathway(
       return "request_quote";
     case "direct_order_request":
       // The only branch where a direct purchase is possible at all, and it
-      // still needs BOTH a confirmed research-use classification and an
-      // approved retail price. Either one missing means the order goes through
-      // review instead — the customer can still place it.
+      // still needs a confirmed research-use classification, an approved
+      // retail price, an approved family, and no explicit hold on THIS row.
+      // Any one of the four missing means the order goes through review
+      // instead — the customer can still place it.
       return input.researchUseOnly &&
         input.hasApprovedRetailPrice &&
-        DIRECT_PURCHASE_FAMILIES.includes(input.family)
+        DIRECT_PURCHASE_FAMILIES.includes(input.family) &&
+        !hasDirectOrderHold(input)
         ? "buy_now"
         : "assisted_order";
   }
