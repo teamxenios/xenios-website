@@ -59,6 +59,15 @@ export type EarlyAccessAvailabilityState =
 export type EarlyAccessPurchaseBasis = "product_control" | "founder_release";
 
 export interface EarlyAccessStorefrontUnit {
+  /**
+   * Merchandising only. True for a unit the founder has released, which is
+   * what the customer catalog used to be FILTERED to. Marking instead of
+   * filtering is what lets one storefront show the whole canonical catalog
+   * with the released set surfaced as "Featured", and it carries no authority:
+   * `state`/`purchasable` are unchanged by it, so a featured unit is not more
+   * buyable and an unfeatured one is not less.
+   */
+  readonly featured: boolean;
   readonly productId: string;
   readonly variantId: string;
   readonly slug: string;
@@ -99,6 +108,7 @@ export interface EarlyAccessStorefront {
   readonly availableCount: number;
   readonly confirmationRequiredCount: number;
   readonly temporarilyHeldCount: number;
+  readonly featuredCount: number;
 }
 
 /**
@@ -158,7 +168,21 @@ export function buildEarlyAccessStorefront(input: {
       : input.projection.rows.filter((row) =>
           named.has(`${row.productId}\u0000${row.variantId}`),
         );
-  const units = rows.map((row) => toUnit(row, input.releases, nowMs));
+  // Featured is exactly the set "released_units" would have filtered TO, so
+  // under that scope every surviving row is featured and the marker is
+  // redundant; under "all" it is what separates the released catalog from the
+  // rest WITHOUT hiding anything.
+  const featuredKeys = new Set(
+    input.releases.map(
+      (release) => `${release.productId}\u0000${release.variantId}`,
+    ),
+  );
+  const units: readonly EarlyAccessStorefrontUnit[] = rows.map((row) =>
+    Object.freeze({
+      ...toUnit(row, input.releases, nowMs),
+      featured: featuredKeys.has(`${row.productId}\u0000${row.variantId}`),
+    }),
+  );
   return Object.freeze({
     evaluatedAt: input.projection.evaluatedAt,
     units: Object.freeze(units),
@@ -171,14 +195,18 @@ export function buildEarlyAccessStorefront(input: {
     temporarilyHeldCount: units.filter(
       (unit) => unit.availability === "TEMPORARILY_HELD",
     ).length,
+    featuredCount: units.filter((unit) => unit.featured).length,
   });
 }
 
+// Returns everything BUT `featured`: merchandising is decided by the caller
+// against the release ledger, and keeping it out of here means the three
+// state branches below stay purely about authority.
 function toUnit(
   row: EarlyAccessCatalogRow,
   releases: readonly EarlyAccessRelease[],
   nowMs: number,
-): EarlyAccessStorefrontUnit {
+): Omit<EarlyAccessStorefrontUnit, "featured"> {
   const base = {
     productId: row.productId,
     variantId: row.variantId,
