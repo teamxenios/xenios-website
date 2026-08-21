@@ -136,3 +136,69 @@ env needs both gate passwords, the EA password hash and session secret, the
 owner id `00000000-0000-4000-8000-000000000001`, the assisted-order bridge flag
 and admin email, master-offerings enabled with founder-admin-only off, and a
 required-agreements value matching the client pair.
+
+---
+
+# P0-C and P0-D — the two emails, verified against a real order
+
+Both payloads below are the actual enqueued notifications from
+`XRR-20260821-9E608740FD`, not a fixture. This is independent corroboration of
+the read-only admin-email audit, using data a customer actually produced.
+
+## P0-C admin email — PASSES
+
+Every field the founder needs to close the sale by hand is present:
+
+| Required | Present as |
+|---|---|
+| order reference | `publicReference` |
+| customer name | `fullLegalName` |
+| email | `email` |
+| phone | `mobilePhone` |
+| full shipping address | `shippingAddress` (line1, city, region, postalCode, countryCode) |
+| product | `productName` |
+| variant / strength | `specification` |
+| quantity | `quantity`, `totalQuantity` |
+| retail unit price | `unitPriceCents` |
+| line total | `lineEstimateCents` |
+| order total | `estimatedTotalCents` |
+| affiliate code | `declaredAffiliateCode: "DANA10"` |
+| verified referral, separately | `affiliateAttributionRef: null` |
+| agreements + versions | `agreements[]` with kind and version for all five |
+| timestamp | `acceptedAt` |
+| notes | `customerNotes` |
+| status | `operatorStatus: "Order received. Awaiting manual review."` |
+| secure admin link | `adminPath` |
+
+No wholesale, cost, margin, markup or multiplier anywhere in the payload.
+
+The affiliate separation holds end to end on real data: the code the customer
+typed is captured as `declaredAffiliateCode` while `affiliateAttributionRef`
+stays null. The founder can see what was typed and reconcile it by hand, and
+nothing about that typed string routes commission.
+
+## P0-D customer email — PASSES the current list
+
+| Required | Present as |
+|---|---|
+| reference | `publicReference` |
+| order items | `lines[]` with productName and specification |
+| quantities | `quantity`, `totalQuantity` |
+| retail totals | `unitPriceCents`, `lineEstimateCents`, `estimatedTotalCents` |
+| status | `paymentState: "none_due_yet"` |
+| next steps | `nextSteps[]` |
+
+Next steps read: *"Xenios will review availability, pricing, and documentation
+requirements"* and *"You will receive follow-up instructions from Xenios."*
+
+Nothing claims paid, inventory confirmed, fulfilled or shipped. `paymentState`
+is `none_due_yet`, which is the truthful state for a manual launch where the
+founder sends payment instructions afterwards.
+
+### One discrepancy for the lead to settle
+
+An earlier version of the directive listed a **shipping destination summary**
+among the customer email contents. The current version does not, and the payload
+does not carry one — the customer is not shown where the order is going. The
+admin payload has the full address, so this is only about the customer's copy.
+Worth a decision rather than a silent difference between directive versions.
