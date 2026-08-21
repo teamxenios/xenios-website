@@ -121,9 +121,50 @@ function toPriceView(resolution: PriceResolution): MasterOfferingPriceView {
   };
 }
 
+/**
+ * Why a price could not be shown even though the product may well have one.
+ *
+ * These are the cases where "Price on request" is not a business fact about the
+ * product but the shape of our own failure. A genuinely unpriced variant is NOT
+ * one of them and raises nothing, so this signal stays quiet until something is
+ * actually wrong.
+ */
+export type MasterOfferingPricingIncidentReason =
+  /** Two concurrently-active in-window rows. The product HAS an approved price;
+   *  we cannot tell which one, so nothing may be displayed. */
+  | "price_ambiguous"
+  /** The binding or price read threw. A transient upstream fault, not a
+   *  decision about the product. */
+  | "reader_threw"
+  /** The resolver answered about a different identity than the one asked for. */
+  | "identity_mismatch";
+
+export interface MasterOfferingPricingIncident {
+  reason: MasterOfferingPricingIncidentReason;
+  offeringId: string;
+  offeringVariantId: string;
+}
+
 export interface MasterOfferingPriceAuthorityDependencies {
   bindings: MasterOfferingCommerceBindingReader;
   prices: MasterOfferingApprovedPriceReader;
+  /**
+   * Called when a price could not be determined for a reason that is not the
+   * product simply having no price.
+   *
+   * This exists because the failure it reports is otherwise completely silent.
+   * The 426-row retail reconciliation states the consequence exactly: an
+   * ambiguous price "silently disappears from every customer surface", the
+   * product "becomes indistinguishable from one that was never priced", and
+   * there is "no error, no log line a customer or an operator would see". The
+   * same is true of a transient reader fault, which can turn every price on a
+   * catalogue page into Price on request while the catalogue looks perfectly
+   * healthy.
+   *
+   * Optional, and its own failure is swallowed: observing a problem must never
+   * become a second problem.
+   */
+  onPricingIncident?: (incident: MasterOfferingPricingIncident) => void;
 }
 
 /**
@@ -138,6 +179,23 @@ export function createMasterOfferingPriceAuthority(
   dependencies: MasterOfferingPriceAuthorityDependencies,
 ): MasterOfferingPriceAuthority {
   const cache = new Map<string, Promise<MasterOfferingPriceView>>();
+
+  const report = (
+    reason: MasterOfferingPricingIncidentReason,
+    offering: NormalizedMasterOffering,
+    variant: NormalizedMasterOfferingVariant,
+  ): void => {
+    if (dependencies.onPricingIncident === undefined) return;
+    try {
+      dependencies.onPricingIncident({
+        reason,
+        offeringId: offering.id,
+        offeringVariantId: variant.id,
+      });
+    } catch {
+      // An observer that throws must not take the catalogue down with it.
+    }
+  };
 
   const resolve = async (
     offering: NormalizedMasterOffering,
@@ -163,6 +221,10 @@ export function createMasterOfferingPriceAuthority(
         productId: binding.productId,
         variantId: binding.variantId,
       });
+      // Ambiguity is the documented silent failure: the product has an
+      // approved price and we cannot say which, so it renders exactly like a
+      // product that was never priced.
+      if (resolution.state === "ambiguous") report("price_ambiguous", offering, variant);
       const view = toPriceView(resolution);
       // The price must belong to the exact variant that was asked for. A
       // resolver that answered about a different identity is not an answer.
@@ -172,10 +234,15 @@ export function createMasterOfferingPriceAuthority(
         (resolution.price.productId !== binding.productId ||
           resolution.price.variantId !== binding.variantId)
       ) {
+        report("identity_mismatch", offering, variant);
         return MASTER_OFFERING_PRICE_ON_REQUEST;
       }
       return view;
     } catch {
+      // Still fail closed — no price is invented — but no longer in silence.
+      // One blip here reads to a customer as "this product is quote-only", a
+      // claim about the product that we did not mean to make.
+      report("reader_threw", offering, variant);
       return MASTER_OFFERING_PRICE_ON_REQUEST;
     }
   };
