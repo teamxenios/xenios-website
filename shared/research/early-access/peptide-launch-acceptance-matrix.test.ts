@@ -10,7 +10,8 @@
 //   141 peptide source rows
 //   -> 139 unique peptide variants   (two duplicate pairs collapse)
 //   -> 111 directly orderable RUO variants
-//   ->   1 formulation-blocked variant (CJC-1295 WITH DAC + Ipamorelin)
+//   ->   1 formulation-blocked variant (CJC-1295 WITH DAC + Ipamorelin),
+//         visible and priced, offered as Request Order - NOT hidden
 //   ->  27 unique classification-pending variants
 //
 // WHY THIS EXISTS SEPARATELY. catalog-reconciliation.test.ts proves the
@@ -146,10 +147,23 @@ const canonicalVariants = [...byCanonicalKey.values()].map(canonicalRow);
 
 function workflowModeFor(row: Row): AssistedOrderWorkflowMode {
   // The one variant the founder placed on hold: real, priced, RUO-classified,
-  // and NOT sellable, because the component split is unresolved. It must be
-  // held UPSTREAM of the pathway rules; classification and price alone would
-  // otherwise make it directly purchasable.
-  if (row["Group ID"] === FORMULATION_HOLD_GROUP_ID) return "availability_review";
+  // and NOT directly sellable, because the component split is unresolved. It
+  // must be held UPSTREAM of the pathway rules; classification and price alone
+  // would otherwise make it directly purchasable.
+  //
+  // The founder's 2026-08-21 decision is that this row stays VISIBLE, keeps its
+  // RETAIL PRICE, and offers REQUEST ORDER — deliberately NOT "Temporarily
+  // Unavailable", which would hide a product that is real and orderable through
+  // review. So it maps to the mode that yields the assisted-order pathway.
+  //
+  // GAP WORTH CLOSING (s7 / lead): customer-pathway.ts has no distinct concept
+  // of a COMMERCE/FORMULATION hold. `availability_review` exists but answers
+  // "temporarily_held", which is the wrong customer outcome here, so the hold
+  // has to borrow `request_activation` — a mode that otherwise means
+  // "classification pending". The customer sees the right thing; the reason
+  // recorded against it is imprecise. A `commerce_hold` mode resolving to
+  // assisted_order would say what is actually true.
+  if (row["Group ID"] === FORMULATION_HOLD_GROUP_ID) return "request_activation";
   if (row.Channel === PENDING_CHANNEL) return "request_activation";
   return "direct_order_request";
 }
@@ -251,24 +265,53 @@ describe("peptide launch: the customer pathway for every canonical variant", () 
     pathway: pathwayFor(row),
   }));
 
-  it("resolves 111 directly orderable, 1 held, 27 request-only", () => {
+  it("resolves 111 directly orderable and 28 request-only, nothing hidden", () => {
     const counts = new Map<EarlyAccessCustomerPathway, number>();
     for (const { pathway } of pathways) {
       counts.set(pathway, (counts.get(pathway) ?? 0) + 1);
     }
+    // 27 classification-pending + the 1 formulation-held combo. Nothing
+    // resolves to temporarily_held or not_available: every canonical peptide
+    // variant is visible and has a real way for a customer to proceed.
     expect(Object.fromEntries(counts)).toEqual({
       buy_now: 111,
-      temporarily_held: 1,
-      assisted_order: 27,
+      assisted_order: 28,
     });
     expect(pathways).toHaveLength(139);
   });
 
-  it("holds the CJC-1295 WITH DAC + Ipamorelin variant out of direct purchase", () => {
-    const held = pathways.filter((p) => p.pathway === "temporarily_held");
-    expect(held.map((p) => p.groupId)).toEqual([FORMULATION_HOLD_GROUP_ID]);
-    expect(held[0].key).toContain("WITH DAC");
-    expect(held[0].key).toContain("SPLIT PENDING");
+  it("offers the CJC-1295 WITH DAC + Ipamorelin combo as Request Order, not as unavailable", () => {
+    const held = pathways.find((p) => p.groupId === FORMULATION_HOLD_GROUP_ID)!;
+    expect(held.key).toContain("WITH DAC");
+    expect(held.key).toContain("SPLIT PENDING");
+    // Visible, priced, and requestable — the founder's 2026-08-21 decision.
+    expect(held.pathway).toBe("assisted_order");
+    expect(pathwayEntersPayment(held.pathway)).toBe(false);
+    expect(pathwayEntersRequest(held.pathway)).toBe(true);
+    const row = canonicalVariants.find(
+      (r) => r["Group ID"] === FORMULATION_HOLD_GROUP_ID,
+    )!;
+    expect(isPriced(row)).toBe(true);
+    expect(row["Price Display"]).toBe("$99.00");
+  });
+
+  it("keeps every STANDALONE with-DAC variant on its own merits, not swept into the hold", () => {
+    // The hold is one combination product, not the with-DAC family. 2 mg and
+    // 5 mg are confirmed RUO and priced, so they are directly orderable; the
+    // 10 mg row is classification pending, so it is Request Order.
+    const withDac = canonicalVariants.filter(
+      (r) =>
+        /WITH DAC/.test(canonicalVariantKey(r["Normalized Specification"])) &&
+        r["Group ID"] !== FORMULATION_HOLD_GROUP_ID,
+    );
+    const byId = Object.fromEntries(
+      withDac.map((r) => [r["Group ID"], pathwayFor(r)]),
+    );
+    expect(byId).toEqual({
+      "GRP-0272": "buy_now", // CJC-1295 WITH DAC 2 mg, RUO, $100.00
+      "GRP-0273": "buy_now", // CJC-1295 WITH DAC 5 mg, RUO, $187.50
+      "GRP-0394": "assisted_order", // WITH DAC 10 mg, classification pending
+    });
   });
 
   it("never lets a classification-pending variant reach the payment journey", () => {
