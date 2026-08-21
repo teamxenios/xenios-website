@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   normalizeSpecification,
@@ -128,5 +129,50 @@ describe("fail closed", () => {
     // An unreadable reconciliation is an UNKNOWN number of holds. Answering an
     // empty set would put a formulation-unresolved product on sale.
     expect(() => readReviewedCommerceHolds("/nonexistent-xenios-root")).toThrow();
+  });
+});
+
+describe("the hold is on by default", () => {
+  it("is carried by the lane composition, not left for a caller to remember", async () => {
+    // The failure this pins: a hold that must be opted into is a hold nobody
+    // has. DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES carries none, so if the
+    // composition forgets to supply the reviewed set, every held product is
+    // purchasable and every unit test in this repo still passes.
+    const source = readFileSync(
+      new URL("./composition.ts", import.meta.url),
+      "utf8",
+    );
+    expect(source).toContain("reviewedFormulationHolds: reviewedHeldSpecifications(");
+  });
+
+  it("leaves the held row purchasable if the reviewed set is not supplied", () => {
+    // Documents the exact regression the composition line prevents, so anyone
+    // who deletes that line sees this test explain what they just switched off.
+    const product = offering({
+      family: "research_peptides_materials",
+      displayState: "request_access",
+      variants: [variant({ displayState: "request_access", label: CANONICAL_HELD_SPEC })],
+    });
+    const presentation = product.variants[0];
+    const selection = cartSelection();
+    const commerce = {
+      binding: {
+        offeringVariantId: presentation.id,
+        productId: selection.productId,
+        variantId: selection.variantId,
+      },
+      selection,
+    };
+
+    // No reviewed set: sellable. This is what "the hold was consulted by
+    // nobody" looked like in the running system.
+    expect(resolveMasterOfferingAction(product, presentation, commerce).kind).toBe("add_to_cart");
+
+    // With it: refused.
+    expect(
+      resolveMasterOfferingAction(product, presentation, commerce, undefined, {
+        reviewedFormulationHolds: reviewedHeldSpecifications(),
+      }).kind,
+    ).not.toBe("add_to_cart");
   });
 });

@@ -25,6 +25,7 @@
 
 import type { CartPurchaseAudience } from "@shared/research/cart-product-selection";
 import type { CustomerPriceAudience } from "@shared/research/pricing";
+import { reviewedHeldSpecifications } from "./reviewed-holds";
 import {
   authorizeAudienceFromServerIdentity,
   createAuthoritativePriceResolver,
@@ -127,6 +128,13 @@ export function createMasterOfferingCatalogDependencies(
 
   const capabilities = {
     manualEarlyAccessPurchase: masterOfferingsManualPurchaseRequests(env),
+    // The founder's reviewed commerce holds, read once here rather than left
+    // for a caller to remember. A hold that has to be opted into is a hold
+    // nobody has: the resolver's default capabilities carry none, so without
+    // this line every held product is purchasable and every unit test still
+    // passes. Read at composition so an unreadable record fails the service
+    // rather than silently selling.
+    reviewedFormulationHolds: reviewedHeldSpecifications(input.cwd),
   };
 
   return {
