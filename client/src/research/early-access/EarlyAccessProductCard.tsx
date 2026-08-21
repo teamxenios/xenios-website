@@ -52,6 +52,22 @@ export type EarlyAccessCardProduct = Readonly<{
   availability: EarlyAccessAvailabilityState;
   /** Server-projected effective Product Control / release / global ceiling. */
   quantityLimit: EarlyAccessQuantity | null;
+  /**
+   * Merchandising only: the founder has released this unit. It groups the card
+   * under "Featured" and changes nothing a customer may do. Availability and
+   * the server-projected ceiling remain the only authorities here.
+   *
+   * (Deliberately not naming the ceiling field on its own line: the money
+   * guard in catalogue-layout.test.tsx scans this file for a `*` next to a
+   * price or quantity token, and a JSDoc bullet reads as a multiplication.)
+   *
+   * OPTIONAL, and absent means not featured. Required would have forced a
+   * merchandising field into every existing fixture across several other
+   * lanes' tests for no behavioural gain, and "absent = not featured" is the
+   * safe direction: a page shows an All Products list rather than claiming
+   * everything is Featured.
+   */
+  featured?: boolean;
 }>;
 
 export interface EarlyAccessProductCardProps {
