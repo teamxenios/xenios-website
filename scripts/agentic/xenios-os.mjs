@@ -47,9 +47,60 @@ function getTask(id) {
   if (!task) throw new Error(`Unknown task ${id}`);
   return { board, task };
 }
+// Whether two path patterns can name the same file.
+//
+// A lease conflict must NEVER be missed: two writers on one file is the exact
+// failure this system exists to prevent. So this errs toward reporting a
+// conflict, and makes exact only the case where exactness is free — a pattern
+// against a CONCRETE path, where the question is simply "does this path match
+// that pattern?".
+//
+// The previous implementation truncated every pattern at its first "**", so
+// "server/research/**request**" became "server/research" and swallowed every
+// lease beneath it. Against another GLOB that verdict is usually RIGHT and
+// must not be relaxed: "server/research/master-offerings/**" really can
+// contain "request-projection.ts", which really does match
+// "server/research/**request**". Relaxing that would put two writers on one
+// file. But against a concrete file such as
+// "server/research/pricing/catalog-price-projection.ts" — which contains no
+// "request" and never will — the verdict was simply wrong, and it blocked
+// real unowned work from being claimed.
+function patternIsLiteral(pattern) {
+  return !pattern.includes("*");
+}
+function patternToRegExp(pattern) {
+  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&");
+  // "**" spans directory separators; a single "*" stays inside one segment.
+  const body = escaped
+    .split("**")
+    .map((part) => part.replace(/\*/g, "[^/]*"))
+    .join(".*");
+  return new RegExp(`^${body}$`);
+}
+function literalPrefix(pattern) {
+  return pattern.replace(/\*.*$/, "").replace(/[\\/]+$/, "");
+}
 function overlaps(a, b) {
-  const normalize = (p) => p.replace(/\*\*.*$/, "").replace(/[\\/]+$/, "");
-  const aa = normalize(a); const bb = normalize(b);
+  const aLiteral = patternIsLiteral(a);
+  const bLiteral = patternIsLiteral(b);
+  if (aLiteral && bLiteral) {
+    return a === b || a.startsWith(`${b}/`) || b.startsWith(`${a}/`);
+  }
+  // Exactly one side is concrete: decide it exactly. A concrete DIRECTORY that
+  // contains the other pattern still conflicts, since a bare directory in a
+  // lease means everything under it.
+  if (bLiteral) {
+    return patternToRegExp(a).test(b) || literalPrefix(a).startsWith(`${b}/`);
+  }
+  if (aLiteral) {
+    return patternToRegExp(b).test(a) || literalPrefix(b).startsWith(`${a}/`);
+  }
+  // Both are globs. Deciding glob intersection exactly is not worth the risk of
+  // getting it subtly wrong here, so keep the conservative prefix test: it can
+  // over-report a conflict, which costs a worker one retry, and never
+  // under-reports one, which would cost two writers the same file.
+  const aa = literalPrefix(a);
+  const bb = literalPrefix(b);
   return aa === bb || aa.startsWith(`${bb}/`) || bb.startsWith(`${aa}/`);
 }
 function activeSessions() {
