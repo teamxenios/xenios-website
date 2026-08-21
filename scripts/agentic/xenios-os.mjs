@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { overlaps } from "./path-overlap.mjs";
 
 const argv = process.argv.slice(2);
 const command = argv.shift() ?? "help";
@@ -47,11 +48,12 @@ function getTask(id) {
   if (!task) throw new Error(`Unknown task ${id}`);
   return { board, task };
 }
-function overlaps(a, b) {
-  const normalize = (p) => p.replace(/\*\*.*$/, "").replace(/[\\/]+$/, "");
-  const aa = normalize(a); const bb = normalize(b);
-  return aa === bb || aa.startsWith(`${bb}/`) || bb.startsWith(`${aa}/`);
-}
+// Lease conflict detection lives in ./path-overlap.mjs. It used to be inlined
+// here, where it cut a pattern at the first `**` and so reported a conflict
+// against every lease beneath that directory — which made REQUEST-CENTER
+// unclaimable by anyone and hid P1 work from nine sessions. That module
+// explains the failure and shared/research/continuity/path-overlap.test.ts
+// pins it.
 function activeSessions() {
   const dir = path.join(corpus, "sessions");
   if (!fs.existsSync(dir)) return [];
