@@ -205,14 +205,50 @@ function refuse(
  * depends on parsing display text, and deleting this function later cannot
  * change the gate's behaviour for any caller that supplies the real fact.
  *
- * The pattern deliberately matches the peptide-launch acceptance lane's, so the
- * two agree on which rows are unresolved rather than drifting into two answers.
+ * FIXED 2026-08-21. It previously decided composition from the text ALONE, and
+ * that was wrong for the one row it exists to catch:
+ *
+ *   "CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)" -> unresolved
+ *   "CJC-1295 WITH DAC + IPAMORELIN 5 mg total"                 -> RESOLVED
+ *
+ * The second string is the CANONICAL specification, and the reviewed
+ * reconciliation strips the marker on purpose, because a customer should not
+ * read our internal uncertainty in a product name. So the moment the
+ * reconciled artifact lands, the held combination passes the gate.
+ *
+ * That is the third instance of one defect, after a marker-based hold in
+ * master-offerings and a marker-based assertion in the acceptance matrix. The
+ * general rule: NOTHING THAT DECIDES COMMERCE MAY READ DISPLAY TEXT. Copy is
+ * written for customers and gets cleaned up; facts belong in the reviewed
+ * record.
+ *
+ * The reading is now FACT FIRST, text second, and fails closed in both
+ * directions: the canonical specification is matched against the reviewed
+ * commerce holds, and the marker pattern is kept as a fallback so an
+ * un-reconciled workbook row still refuses.
  */
 const COMPOSITION_UNRESOLVED_PATTERN =
   /split pending|pending split|\btbd\b|unresolved/i;
 
+/**
+ * Canonical specifications the founder has placed on commerce hold for an
+ * unresolved formulation, mirrored from `commerceHolds[].specification` in
+ * config/research/master-catalog-reconciliation-*.json.
+ *
+ * Mirrored rather than imported: no server module in this repository imports
+ * JSON, and `resolveJsonModule` is not enabled, so reaching for the config here
+ * would change build configuration for one constant. The copy is pinned instead
+ * — `canonical-payment-eligibility.holds.test.ts` reads the reviewed config and
+ * fails if these drift apart, which is the same discipline applied to the
+ * fulfillment transition table and the supplier adapter's paths.
+ */
+export const REVIEWED_COMPOSITION_HELD_SPECIFICATIONS: readonly string[] = Object.freeze([
+  "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+]);
+
 export function compositionResolvedFromSpecification(
   specification: string | null | undefined,
+  heldSpecifications: readonly string[] = REVIEWED_COMPOSITION_HELD_SPECIFICATIONS,
 ): boolean {
   if (typeof specification !== "string" || specification.trim() === "") {
     // No specification is not evidence of an unresolved split. A single-molecule
@@ -220,5 +256,15 @@ export function compositionResolvedFromSpecification(
     // most of the catalogue on a rule about combinations.
     return true;
   }
+  // FACT FIRST. Compared exactly against the reviewed canonical specification,
+  // with no fuzzy or normalized matching: a near-miss here would fail OPEN,
+  // which is the direction that sells a held product. Surrounding whitespace is
+  // trimmed off the INPUT only, which can only ever make more rows match a hold
+  // and therefore only ever refuses more.
+  const candidate = specification.trim();
+  if (heldSpecifications.some((held) => held === candidate)) return false;
+
+  // TEXT SECOND. An un-reconciled workbook row still carries its marker, and
+  // must still refuse.
   return !COMPOSITION_UNRESOLVED_PATTERN.test(specification);
 }
