@@ -90,6 +90,45 @@ function parseCsv(text: string): Row[] {
 }
 
 const allRows = parseCsv(readFileSync(CSV_PATH, "utf8").replace(/^﻿/, ""));
+
+/**
+ * The founder's REVIEWED reconciliation. The workbook is source evidence and
+ * stays whole; this file records which canonical customer products those rows
+ * add up to. Asserting the workbook against it is what turns this matrix into a
+ * drift detector: if a re-export changes a price or a channel the reviewed
+ * decision does not expect, that is caught here rather than in a customer's
+ * basket.
+ */
+const RECONCILIATION_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../../config/research/master-catalog-reconciliation-20260821.json",
+);
+
+type ReviewedMerge = {
+  id: string;
+  keeps: string;
+  supersedes: string[];
+  canonical: { specification: string; channel: string; retailPriceCents: number };
+};
+type ReviewedHold = {
+  sourceRow: string;
+  specification: string;
+  retailPriceCents: number;
+  customerResult: {
+    visible: boolean;
+    retailPriceShown: boolean;
+    directPurchase: boolean;
+    pathway: string;
+  };
+};
+
+const reviewed = JSON.parse(readFileSync(RECONCILIATION_PATH, "utf8")) as {
+  sourceWorkbook: { sourceRows: number };
+  merges: ReviewedMerge[];
+  commerceHolds: ReviewedHold[];
+};
+
+const centsOf = (row: Row): number => Math.round(retailPriceOf(row) * 100);
 const peptides = allRows.filter((r) => r.Family === PEPTIDE_FAMILY);
 
 /**
@@ -241,20 +280,64 @@ describe("peptide launch: duplicate reconciliation", () => {
     expect(droppedIds.sort()).toEqual(["GRP-0402", "GRP-0407"]);
   });
 
-  // OPEN FOUNDER DECISION, asserted so it stays visible rather than being
-  // quietly resolved by whichever row a dedupe happens to keep. Both collapsed
-  // pairs state DIFFERENT retail prices, so collapsing them necessarily picks a
-  // price the customer will be charged. This test records the conflict; when
-  // the founder adjudicates, the prices converge and this test says so.
-  it("records that both collapsed pairs still disagree about retail price", () => {
-    const conflicts = duplicateGroups.map(([key, rows]) => ({
-      variant: key,
-      prices: rows.map((r) => `${r["Group ID"]}=${r["Price Display"]}`).sort(),
-    }));
-    expect(conflicts).toEqual([
-      { variant: "HEXARELIN 5 MG", prices: ["GRP-0402=$62.50", "GRP-0426=$49.00"] },
-      { variant: "OXYTOCIN 10 MG", prices: ["GRP-0407=$107.50", "GRP-0425=$59.00"] },
+  // The twins disagree about BOTH price and classification, so the collapse
+  // decides buyability, not merely a number. Which twin survives is NOT a
+  // matter of taste: the founder's own targets determine it uniquely.
+  //
+  //   keep RUO     -> unique RUO 112, direct 111, pending 27   MATCHES
+  //   keep pending -> unique RUO 110, direct 109, pending 29   does not
+  //
+  // Both arrangements give 139 unique, so the total alone cannot discriminate;
+  // 111/27 can, and only one arrangement produces it. Keeping the confirmed RUO
+  // row is therefore forced, and the retail price follows from the row that
+  // survives - $49.00 and $59.00. Derived independently with claude-fable-s6b.
+  //
+  // RESIDUAL, deliberately narrow and NOT launch-blocking: the retired twins
+  // came from a supplier sheet ("New supplier item - planning review") at
+  // higher prices, and the Oxytocin gap is +82%. If either higher figure is a
+  // NEWER authorized retail price rather than a stale duplicate, only the
+  // founder can say so. Until then the surviving row's price is the coherent
+  // answer, because taking the pending row's price while keeping the RUO row's
+  // classification would invent a variant that exists in neither sheet.
+  it("resolves each collapsed pair to the confirmed RUO row and its price", () => {
+    const resolved = duplicateGroups.map(([key, rows]) => {
+      const kept = canonicalRow(rows);
+      const retired = rows.find((r) => r !== kept)!;
+      return {
+        variant: key,
+        keptGroupId: kept["Group ID"],
+        retailPrice: kept["Price Display"],
+        retiredGroupId: retired["Group ID"],
+        retiredPrice: retired["Price Display"],
+      };
+    });
+    expect(resolved).toEqual([
+      {
+        variant: "HEXARELIN 5 MG",
+        keptGroupId: "GRP-0426",
+        retailPrice: "$49.00",
+        retiredGroupId: "GRP-0402",
+        retiredPrice: "$62.50",
+      },
+      {
+        variant: "OXYTOCIN 10 MG",
+        keptGroupId: "GRP-0425",
+        retailPrice: "$59.00",
+        retiredGroupId: "GRP-0407",
+        retiredPrice: "$107.50",
+      },
     ]);
+  });
+
+  it("proves the founder's targets admit only the keep-RUO arrangement", () => {
+    const HELD = 1;
+    const arrangement = (keepRuo: boolean) => {
+      const uniqueRuo = keepRuo ? 112 : 112 - duplicateGroups.length;
+      const uniquePending = keepRuo ? 29 - duplicateGroups.length : 29;
+      return { direct: uniqueRuo - HELD, pending: uniquePending };
+    };
+    expect(arrangement(true)).toEqual({ direct: 111, pending: 27 });
+    expect(arrangement(false)).toEqual({ direct: 109, pending: 29 });
   });
 });
 
@@ -282,8 +365,12 @@ describe("peptide launch: the customer pathway for every canonical variant", () 
 
   it("offers the CJC-1295 WITH DAC + Ipamorelin combo as Request Order, not as unavailable", () => {
     const held = pathways.find((p) => p.groupId === FORMULATION_HOLD_GROUP_ID)!;
+    // Identified by Group ID, never by a word in the product name: the
+    // reviewed canonical specification strips the "(SPLIT PENDING)" marker, so
+    // a marker-based assertion would pass today and mean nothing after the
+    // catalog is regenerated. (Caught by claude-fable-s7, who hit it first.)
+    expect(held.groupId).toBe(reviewed.commerceHolds[0].sourceRow);
     expect(held.key).toContain("WITH DAC");
-    expect(held.key).toContain("SPLIT PENDING");
     // Visible, priced, and requestable — the founder's 2026-08-21 decision.
     expect(held.pathway).toBe("assisted_order");
     expect(pathwayEntersPayment(held.pathway)).toBe(false);
@@ -352,6 +439,62 @@ describe("peptide launch: the customer pathway for every canonical variant", () 
       });
       expect(pathway).toBe("assisted_order");
       expect(pathwayEntersPayment(pathway)).toBe(false);
+    }
+  });
+});
+
+describe("peptide launch: the workbook agrees with the reviewed reconciliation", () => {
+  it("reconciles against the same 426-row workbook this matrix parses", () => {
+    expect(reviewed.sourceWorkbook.sourceRows).toBe(allRows.length);
+  });
+
+  it("declares a merge for exactly the duplicate pairs the workbook still contains", () => {
+    const declared = reviewed.merges
+      .map((m) => [m.keeps, ...m.supersedes].sort().join("+"))
+      .sort();
+    const detected = duplicateGroups
+      .map(([, rows]) => rows.map((r) => r["Group ID"]).sort().join("+"))
+      .sort();
+    expect(declared).toEqual(detected);
+  });
+
+  it("keeps the row the reviewed decision keeps, at the price it records", () => {
+    for (const merge of reviewed.merges) {
+      const group = duplicateGroups.find(([, rows]) =>
+        rows.some((r) => r["Group ID"] === merge.keeps),
+      );
+      expect(group, `no duplicate group for ${merge.id}`).toBeDefined();
+      const kept = canonicalRow(group![1]);
+      expect(kept["Group ID"]).toBe(merge.keeps);
+      expect(kept.Channel).toBe(merge.canonical.channel);
+      // THE MONEY ASSERTION. The reviewed record states the active retail price
+      // production adjudicated on 2026-08-19; the superseded twin's higher
+      // figure is evidence, not an offer. If a re-export ever moves the kept
+      // row's price away from the reviewed decision, this fails.
+      expect(centsOf(kept)).toBe(merge.canonical.retailPriceCents);
+    }
+  });
+
+  it("retires the superseded twin rather than letting it reach a customer", () => {
+    const superseded = reviewed.merges.flatMap((m) => m.supersedes);
+    const shown = canonicalVariants.map((r) => r["Group ID"]);
+    for (const groupId of superseded) {
+      expect(shown).not.toContain(groupId);
+      // It stays in the workbook as provenance, which is the point of merging
+      // rather than deleting.
+      expect(allRows.map((r) => r["Group ID"])).toContain(groupId);
+    }
+  });
+
+  it("gives the held row the customer result the reviewed decision specifies", () => {
+    for (const hold of reviewed.commerceHolds) {
+      const row = canonicalVariants.find((r) => r["Group ID"] === hold.sourceRow);
+      expect(row, `held row ${hold.sourceRow} is not a canonical variant`).toBeDefined();
+      expect(centsOf(row!)).toBe(hold.retailPriceCents);
+      expect(isPriced(row!)).toBe(hold.retailPriceShown ?? true);
+      const pathway = pathwayFor(row!);
+      expect(pathway).toBe(hold.customerResult.pathway);
+      expect(pathwayEntersPayment(pathway)).toBe(hold.customerResult.directPurchase);
     }
   });
 });
