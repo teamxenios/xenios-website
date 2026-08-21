@@ -142,14 +142,120 @@ describe("the admin order alert", () => {
         marginCents: 3_700,
         supplierName: "Contoso Peptides",
         internalPricingNote: "2.5x multiplier",
-        shippingAddress: { line1: "1 Test Way" },
       }),
     )!.text;
     expect(body).not.toContain("1200");
     expect(body).not.toContain("3700");
     expect(body).not.toContain("Contoso");
     expect(body).not.toMatch(/multiplier/i);
+  });
+
+  // The shipping-address assertion used to live in the test above, bundled in
+  // with wholesale cost and margin. That bundling was the error: an address is
+  // not procurement economics, it is operational data the founder needs to fill
+  // the order, and the payload was already built to carry it. The real boundary
+  // is per-RECIPIENT, so it is asserted per recipient below.
+  it("gives the operator the shipping address, because that is the point", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({
+        shippingAddress: {
+          line1: "1 Test Way",
+          line2: "Suite 4",
+          city: "Austin",
+          region: "TX",
+          postalCode: "78701",
+          countryCode: "US",
+        },
+      }),
+    )!.text;
+    expect(body).toContain("Ship to:");
+    expect(body).toContain("1 Test Way");
+    expect(body).toContain("Suite 4");
+    expect(body).toContain("Austin, TX, 78701");
+    expect(body).toContain("US");
+  });
+
+  // Section 8 of the founder's manual-intake brief, field by field. The bar is
+  // that the founder can close the sale by REPLYING to this email, so each of
+  // these is asserted rather than assumed.
+  it("carries every field the founder needs to close the sale by reply", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({
+        mobilePhone: "+1 512 555 0134",
+        totalQuantity: 7,
+        customerNotes: "Please ship to the lab, not the office.",
+        operatorStatus: "Order received. Awaiting manual review.",
+        acceptedAt: "2026-08-21T14:00:00.000Z",
+        agreements: [
+          { kind: "research_use_policy", version: "2026-07-01" },
+          { kind: "terms_of_sale", version: "2026-06-15" },
+        ],
+        shippingAddress: {
+          line1: "1 Test Way",
+          city: "Austin",
+          region: "TX",
+          postalCode: "78701",
+          countryCode: "US",
+        },
+      }),
+    )!.text;
+    expect(body).toContain("Status: Order received. Awaiting manual review.");
+    expect(body).toContain("+1 512 555 0134");
+    expect(body).toContain("Ship to:");
+    expect(body).toContain("Total units: 7");
+    expect(body).toContain("Order total:");
+    expect(body).toContain("research_use_policy 2026-07-01");
+    expect(body).toContain("terms_of_sale 2026-06-15");
+    expect(body).toContain("2026-08-21T14:00:00.000Z");
+    expect(body).toContain("Please ship to the lab, not the office.");
+  });
+
+  it("states a status even when the payload carries none", () => {
+    const body = renderAssistedOrderOutboxEmail(ADMIN, v2Payload())!.text;
+    expect(body).toContain("Status: Order received. Awaiting manual review.");
+  });
+
+  it("says the version is unrecorded rather than implying one", () => {
+    const body = renderAssistedOrderOutboxEmail(
+      ADMIN,
+      v2Payload({ agreements: [{ kind: "research_use_policy" }] }),
+    )!.text;
+    expect(body).toContain("research_use_policy (version unrecorded)");
+  });
+
+  it("still renders a v1 payload that carries none of the new fields", () => {
+    // Rows queued before this change must keep rendering. An outbox job whose
+    // template throws walks to failed_permanent, which would lose a real order
+    // notification — worse than a sparse email.
+    const body = renderAssistedOrderOutboxEmail(ADMIN, {
+      publicReference: "XRR-20260821-ABCDEF0123",
+      fullLegalName: "Ada Lovelace",
+      email: "ada@example.com",
+    })!.text;
+    expect(body).toContain("XRR-20260821-ABCDEF0123");
+    expect(body).not.toContain("Ship to:");
+    expect(body).not.toContain("Agreements accepted");
+  });
+
+  it("never echoes the address back to the CUSTOMER", () => {
+    // The customer knows where they live. Echoing it only adds a copy of their
+    // address to a forwardable channel, so the customer template reads no
+    // address field at all.
+    const body = renderAssistedOrderOutboxEmail(
+      CUSTOMER,
+      v2Payload({
+        shippingAddress: { line1: "1 Test Way", city: "Austin" },
+        mobilePhone: "+1 512 555 0134",
+        adminPath: "/admin/research/assisted-orders/x",
+        declaredAffiliateCode: "DANA10",
+      }),
+    )!.text;
     expect(body).not.toContain("1 Test Way");
+    expect(body).not.toContain("555 0134");
+    expect(body).not.toContain("/admin/");
+    expect(body).not.toContain("DANA10");
   });
 });
 

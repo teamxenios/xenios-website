@@ -4,10 +4,31 @@
 //
 // PRIVACY BOUNDARY, ENFORCED AT RENDER TIME: each template reads an explicit
 // allowlist of payload fields and ignores everything else. No identity
-// document bytes or storage paths, no shipping or billing address, no payment
-// evidence, no supplier data, and no procurement economics can reach an email
-// even if a future payload accidentally carries them. Admin depth lives
-// behind the admin link, which requires the admin bearer session.
+// document bytes or storage paths, no payment evidence, no supplier data, and
+// no procurement economics can reach an email even if a future payload
+// accidentally carries them.
+//
+// THE BOUNDARY IS NOT THE SAME FOR BOTH RECIPIENTS, and saying so precisely
+// matters more than saying it strictly:
+//
+//   CUSTOMER templates carry the customer's OWN order and nothing operational.
+//   No address is echoed back — the customer already knows where they live, and
+//   echoing it adds a copy of their address to a forwardable channel for no
+//   benefit. No admin link, no attribution, no internal status.
+//
+//   ADMIN templates carry the operational facts, INCLUDING the shipping address
+//   and phone. That is a deliberate decision recorded at the payload site in
+//   service.ts: the founder handles an order by replying to this email, and
+//   "without those the operator has to open the database to answer a customer,
+//   which is the thing this email exists to avoid". It goes only to the
+//   configured admin address. An earlier version of this comment said no
+//   address could reach ANY email; that predated the v2 admin payload, and it
+//   left the renderer dropping fields the payload was deliberately built to
+//   carry. Correcting the comment as well as the code, so the next reader is
+//   not told the opposite of what the file does.
+//
+// What stays out of BOTH: wholesale cost, supplier price, margin, markup,
+// multiplier, benchmark internals, credentials, document bytes.
 
 const SITE_ORIGIN = "https://xeniostechnology.com";
 
@@ -91,6 +112,65 @@ function affiliateLine(payload: Record<string, unknown>): string {
   return `Affiliate: ${parts.join("; ")}`;
 }
 
+/**
+ * The shipping address, ADMIN ONLY. Field by field from the canonical address
+ * shape; an unrecognised key cannot reach the email because nothing reads it.
+ * Returns an empty array when the payload carries no address (a v1 row), so
+ * older queued rows keep rendering instead of walking to failed_permanent.
+ */
+function shippingBlock(payload: Record<string, unknown>): string[] {
+  const raw = payload.shippingAddress;
+  if (typeof raw !== "object" || raw === null) return [];
+  const address = raw as Record<string, unknown>;
+  const line1 = text(address.line1);
+  const city = text(address.city);
+  if (line1 === "" && city === "") return [];
+  const region = text(address.region);
+  const postalCode = text(address.postalCode);
+  const countryCode = text(address.countryCode);
+  const cityLine = [city, region, postalCode]
+    .filter((part) => part !== "")
+    .join(", ");
+  return [
+    "Ship to:",
+    ...[line1, text(address.line2), cityLine, countryCode]
+      .filter((part) => part !== "")
+      .map((part) => `  ${part}`),
+  ];
+}
+
+/**
+ * The agreements the customer accepted, with EXACT versions. An operator
+ * answering a compliance question needs the version, not the word "accepted",
+ * so a bare kind with no version renders the kind and says the version is
+ * unrecorded rather than implying one.
+ */
+function agreementBlock(payload: Record<string, unknown>): string[] {
+  const raw = payload.agreements;
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const rendered: string[] = [];
+  for (const entry of raw) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const agreement = entry as Record<string, unknown>;
+    const kind = text(agreement.kind);
+    if (kind === "") continue;
+    const version = text(agreement.version);
+    rendered.push(`  - ${kind} ${version === "" ? "(version unrecorded)" : version}`);
+  }
+  if (rendered.length === 0) return [];
+  const acceptedAt = text(payload.acceptedAt);
+  return [
+    acceptedAt === "" ? "Agreements accepted:" : `Agreements accepted ${acceptedAt}:`,
+    ...rendered,
+  ];
+}
+
+/** Anything the customer typed. Rendered verbatim, never interpreted. */
+function customerNotesBlock(payload: Record<string, unknown>): string[] {
+  const notes = text(payload.customerNotes);
+  return notes === "" ? [] : ["Customer notes:", `  ${notes}`];
+}
+
 /** The next steps the receipt already computed, when the payload carries them. */
 function nextStepBlock(payload: Record<string, unknown>): string[] {
   const raw = payload.nextSteps;
@@ -129,9 +209,18 @@ export function renderAssistedOrderOutboxEmail(
         `Estimated value: ${money(payload.estimatedTotalCents)}`,
         paymentSentence(payload),
         ``,
-        `A member of the Xenios team reviews every request personally. You will`,
-        `hear from us about agreements, payment, and fulfillment. Nothing is`,
-        `charged automatically.`,
+        // Deliberately careful wording. This email is sent the moment the
+        // request persists, which is BEFORE anyone has checked availability and
+        // before any money exists. So it may say received, and it may not imply
+        // paid, confirmed, in stock, reserved or shipped — a customer who reads
+        // "confirmed" here stops watching for the email that actually matters.
+        `Status: Order received. We have not charged you and nothing is`,
+        `reserved yet.`,
+        ``,
+        `A member of the Xenios team reviews every request personally. We will`,
+        `email you to confirm availability and to send your payment`,
+        `instructions. Payment is arranged with us directly; nothing is charged`,
+        `automatically and no card is stored.`,
         ``,
         ...nextStepBlock(payload),
         statusPath ? `Track your request: ${SITE_ORIGIN}${statusPath}` : "",
@@ -147,22 +236,41 @@ export function renderAssistedOrderOutboxEmail(
     const modes = Array.isArray(payload.workflowModes)
       ? payload.workflowModes.filter((m) => typeof m === "string").join(", ")
       : "";
+    // Everything an operator needs to handle this order by REPLYING to this
+    // email, without opening the database. The payload already carried all of
+    // it; this template previously read six of the fields and dropped the rest,
+    // which is why the founder still had to open the admin screen for an
+    // address or a phone number.
+    const phone = text(payload.mobilePhone);
+    const totalQuantity = count(payload.totalQuantity);
+    const operatorStatus = text(payload.operatorStatus);
     return {
       subject: `New assisted order request ${reference}`,
       text: [
         `A new assisted order request needs review.`,
         ``,
         `Reference: ${reference}`,
+        operatorStatus !== ""
+          ? `Status: ${operatorStatus}`
+          : `Status: Order received. Awaiting manual review.`,
+        ``,
         `Customer: ${text(payload.fullLegalName)} <${text(payload.email)}>`,
+        phone !== "" ? `Phone: ${phone}` : "",
+        ...shippingBlock(payload),
+        ``,
         lineCount !== null ? `Lines: ${lineCount}` : "",
         ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
+        totalQuantity !== null ? `Total units: ${totalQuantity}` : "",
+        `Order total: ${money(payload.estimatedTotalCents)}`,
         modes ? `Workflow: ${modes}` : "",
         paymentSentence(payload),
         affiliateLine(payload),
         ``,
-        `Next action: review the request, confirm the agreements and pricing,`,
-        `then issue payment instructions from the admin screen.`,
+        ...agreementBlock(payload),
+        ...customerNotesBlock(payload),
+        ``,
+        `Next action: review the request, confirm availability and pricing,`,
+        `then email the customer their payment instructions.`,
         ``,
         adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : "",
       ].filter((line) => line !== "").join("\n"),
