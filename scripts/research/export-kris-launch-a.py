@@ -136,12 +136,25 @@ def read_sheet(path, header_anchor):
 
 
 def main(argv):
-    if len(argv) < 3:
+    # MASTER-ONLY MODE. build-master-offerings-from-catalog.ts reads ONLY
+    # masterRows and, in its own words, "never the Kris pricing rows". So the
+    # canonical catalog can be regenerated from the MASTER CATALOG workbook
+    # alone, and demanding a Kris pricing workbook that nothing downstream
+    # reads blocks a catalog rebuild for no reason. The Kris launch artifacts
+    # still require both, which is why the second workbook stays mandatory
+    # unless this flag is passed explicitly.
+    argv = [a for a in argv]
+    master_only = "--master-only" in argv
+    if master_only:
+        argv.remove("--master-only")
+    if len(argv) < (2 if master_only else 3):
         raise SystemExit(
-            "usage: export-kris-launch-a.py <master.xlsx> <kris-pricing.xlsx> [output.json]"
+            "usage: export-kris-launch-a.py <master.xlsx> <kris-pricing.xlsx> [output.json]\n"
+            "       export-kris-launch-a.py <master.xlsx> --master-only [output.json]"
         )
-    master_path, kris_path = argv[1], argv[2]
-    output = argv[3] if len(argv) > 3 else DEFAULT_OUTPUT
+    master_path = argv[1]
+    kris_path = None if master_only else argv[2]
+    output = argv[2 if master_only else 3] if len(argv) > (2 if master_only else 3) else DEFAULT_OUTPUT
 
     resolved = os.path.abspath(output)
     if ".local" not in resolved.replace("\\", "/").split("/"):
@@ -154,7 +167,10 @@ def main(argv):
     master_sheet, master_header, master_rows = read_sheet(
         master_path, MASTER_HEADER_ANCHOR
     )
-    kris_sheet, kris_header, kris_rows = read_sheet(kris_path, KRIS_HEADER_ANCHOR)
+    if kris_path is None:
+        kris_sheet, kris_header, kris_rows = None, [], []
+    else:
+        kris_sheet, kris_header, kris_rows = read_sheet(kris_path, KRIS_HEADER_ANCHOR)
 
     payload = {
         "schemaVersion": 1,
@@ -169,7 +185,9 @@ def main(argv):
                 "sheet": master_sheet,
                 "columns": master_header,
             },
-            "krisPricing": {
+            "krisPricing": None
+            if kris_path is None
+            else {
                 "filename": os.path.basename(kris_path),
                 "sha256": sha256_of(kris_path),
                 "sheet": kris_sheet,
@@ -191,7 +209,7 @@ def main(argv):
                 "masterRows": len(master_rows),
                 "krisRows": len(kris_rows),
                 "masterSha256": payload["sources"]["masterCatalog"]["sha256"],
-                "krisSha256": payload["sources"]["krisPricing"]["sha256"],
+                "krisSha256": (payload["sources"]["krisPricing"] or {}).get("sha256"),
                 "output": resolved,
                 "private": True,
             }

@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 import { assistedOrderWorkflowModes } from "../assisted-order/contract";
 import {
+  DIRECT_PURCHASE_FAMILIES,
   earlyAccessCustomerPathway,
   earlyAccessCustomerPathways,
   earlyAccessPathwayLabel,
@@ -16,10 +17,12 @@ import {
 describe("the Early Access customer pathway", () => {
   it("answers every canonical workflow mode, with no silent fallthrough", () => {
     for (const workflowMode of assistedOrderWorkflowModes) {
-      for (const directPurchaseEligible of [true, false]) {
+      for (const researchUseOnly of [true, false]) {
         const pathway = earlyAccessCustomerPathway({
           workflowMode,
-          directPurchaseEligible,
+          researchUseOnly,
+          hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
         });
         expect(earlyAccessCustomerPathways).toContain(pathway);
       }
@@ -33,25 +36,90 @@ describe("the Early Access customer pathway", () => {
     expect(
       earlyAccessCustomerPathway({
         workflowMode: "provider_request",
-        directPurchaseEligible: true,
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
       }),
     ).toBe("care");
   });
 
-  it("keeps a priced held row unpurchasable", () => {
+  it("lets a classification-pending row be REQUESTED, never bought", () => {
+    // All 32 of these are real, priced products whose intended-use
+    // classification is unfinished. The customer may ask; nothing here may
+    // relabel them RUO to make them purchasable.
     expect(
       earlyAccessCustomerPathway({
         workflowMode: "request_activation",
-        directPurchaseEligible: true,
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
       }),
-    ).toBe("temporarily_held");
+    ).toBe("assisted_order");
+    expect(pathwayEntersPayment("assisted_order")).toBe(false);
+  });
+
+  it("keeps an availability-review row out of every commercial path", () => {
+    const pathway = earlyAccessCustomerPathway({
+      workflowMode: "availability_review",
+      researchUseOnly: true,
+      hasApprovedRetailPrice: true,
+      family: "research_peptides_materials",
+    });
+    expect(pathway).toBe("temporarily_held");
+    expect(pathwayEntersPayment(pathway)).toBe(false);
+    expect(pathwayEntersRequest(pathway)).toBe(false);
+  });
+
+  it("does not let a price alone buy a customer anything", () => {
+    // The same approved price on four different pathways. Only one of them
+    // reaches payment, and it is not the one with the biggest number.
+    for (const workflowMode of [
+      "provider_request",
+      "request_activation",
+      "availability_review",
+    ] as const) {
+      expect(
+        pathwayEntersPayment(
+          earlyAccessCustomerPathway({
+            workflowMode,
+            researchUseOnly: true,
+            hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
+          }),
+        ),
+      ).toBe(false);
+    }
+  });
+
+  it("sends a confirmed RUO row WITHOUT a price to review, not to checkout", () => {
+    expect(
+      earlyAccessCustomerPathway({
+        workflowMode: "direct_order_request",
+        researchUseOnly: true,
+        hasApprovedRetailPrice: false,
+        family: "research_peptides_materials",
+      }),
+    ).toBe("assisted_order");
+  });
+
+  it("never promotes an unconfirmed classification, however well priced", () => {
+    expect(
+      earlyAccessCustomerPathway({
+        workflowMode: "direct_order_request",
+        researchUseOnly: false,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
+      }),
+    ).toBe("assisted_order");
   });
 
   it("routes a direct row to payment ONLY when the server says the facts are complete", () => {
     expect(
       earlyAccessCustomerPathway({
         workflowMode: "direct_order_request",
-        directPurchaseEligible: true,
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_peptides_materials",
       }),
     ).toBe("buy_now");
     // The same row, same price, without complete declared facts: it still
@@ -59,7 +127,9 @@ describe("the Early Access customer pathway", () => {
     expect(
       earlyAccessCustomerPathway({
         workflowMode: "direct_order_request",
-        directPurchaseEligible: false,
+        researchUseOnly: true,
+        hasApprovedRetailPrice: false,
+        family: "research_peptides_materials",
       }),
     ).toBe("assisted_order");
   });
@@ -68,20 +138,32 @@ describe("the Early Access customer pathway", () => {
     expect(
       earlyAccessCustomerPathway({
         workflowMode: "request_pricing",
-        directPurchaseEligible: false,
+        researchUseOnly: true,
+        hasApprovedRetailPrice: false,
+        family: "research_peptides_materials",
       }),
     ).toBe("request_quote");
   });
 
-  it("takes NOTHING from price — the input does not even accept one", () => {
-    // Structural, not behavioural: there is no price on the input, so no
-    // implementation of this function can branch on one. A future edit that
-    // adds a price parameter has to come through review.
-    const input = { workflowMode: "direct_order_request", directPurchaseEligible: false } as const;
-    expect(Object.keys(input).sort()).toEqual([
-      "directPurchaseEligible",
-      "workflowMode",
-    ]);
+  it("takes no fulfilment readiness into account at all", () => {
+    // Placing an order and shipping one are different questions. Supplier
+    // assignment, inventory and lot/COA are downstream operational states of
+    // an order that has already been placed, and must never be a reason to
+    // hide the buy action. A future edit that reintroduces them has to come
+    // through review rather than sliding in as a field.
+    const source = earlyAccessCustomerPathway.toString().toLowerCase();
+    for (const readiness of [
+      "supplier",
+      "inventory",
+      "stock",
+      "lot",
+      "coa",
+      "fulfil",
+      "fulfill",
+      "readiness",
+    ]) {
+      expect(source).not.toContain(readiness);
+    }
   });
 
   it("lets only buy_now reach payment", () => {
@@ -114,6 +196,42 @@ describe("the Early Access customer pathway", () => {
     // held row from a Care row from a purchasable one.
     expect(new Set(labels.values()).size).toBe(earlyAccessCustomerPathways.length);
     expect(earlyAccessPathwayLabel("care")).toBe("Continue through Care");
+  });
+
+  it("refuses direct purchase to a family that has not been approved for it", () => {
+    // Research Capsules satisfy every generic condition — confirmed RUO, an
+    // approved retail price, a direct workflow mode — and are still NOT
+    // approved for direct purchase. 13 live rows are exactly this case, and a
+    // generic rule would have quietly started selling them.
+    expect(
+      earlyAccessCustomerPathway({
+        workflowMode: "direct_order_request",
+        researchUseOnly: true,
+        hasApprovedRetailPrice: true,
+        family: "research_capsules",
+      }),
+    ).toBe("assisted_order");
+    // ...and every other family in the shipped catalog, for the same reason.
+    for (const family of [
+      "supplements",
+      "topicals_regenerative",
+      "research_supplies",
+      "shipping_and_fulfillment",
+      "clinical_formulations_503a",
+    ]) {
+      expect(
+        pathwayEntersPayment(
+          earlyAccessCustomerPathway({
+            workflowMode: "direct_order_request",
+            researchUseOnly: true,
+            hasApprovedRetailPrice: true,
+            family,
+          }),
+        ),
+      ).toBe(false);
+    }
+    // The approved set is exactly one family, by decision, not by accident.
+    expect(DIRECT_PURCHASE_FAMILIES).toEqual(["research_peptides_materials"]);
   });
 
   it("treats featured and purchasable as unrelated ideas", () => {
