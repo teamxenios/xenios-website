@@ -153,6 +153,9 @@ export function resolveMasterOfferingAction(
     family: offering.family,
     displayState: offering.displayState,
     variantDisplayState: variant.displayState,
+    // The declared specification, so a row that says its own formulation is
+    // unresolved is refused before any purchase authority is consulted.
+    specification: variant.label,
   });
   if (
     !forbidden &&
@@ -213,6 +216,7 @@ export function resolveMasterOfferingAction(
       family: offering.family,
       displayState: offering.displayState,
       variantDisplayState: variant.displayState,
+      specification: variant.label,
     })
   ) {
     return {
