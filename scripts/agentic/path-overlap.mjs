@@ -81,6 +81,47 @@ function isGlobstar(segment) {
 }
 
 /**
+ * A segment carrying `**` INSIDE it, such as `**request**`.
+ *
+ * These are not standard glob. Whoever wrote `server/research/**request**`
+ * meant "anything under server/research whose path mentions request", which
+ * crosses directory boundaries — so reading the inner `**` as a within-segment
+ * wildcard silently narrows the claim.
+ *
+ * That narrowing is not a harmless difference of opinion: it produces FALSE
+ * NEGATIVES. `server/research/**request**` and `server/research/master-offerings/**`
+ * both cover `server/research/master-offerings/request-projection.ts`, and a
+ * within-segment reading reports no conflict, which hands two sessions the same
+ * file. A missed conflict is the failure this module exists to prevent, and it
+ * is strictly worse than the over-blocking it replaced.
+ *
+ * Deciding intersection precisely for these would mean intersecting two regular
+ * languages. They are rare and pathological, so this takes the safe answer
+ * instead: fall back to comparing literal prefixes, which over-reports. A task
+ * that wants a precise lease should narrow its paths rather than rely on this.
+ */
+function hasInlineGlobstar(segment) {
+  return !isGlobstar(segment) && segment.includes("**");
+}
+
+/** The literal directory prefix, i.e. everything before the first wildcard. */
+function literalPrefix(segments) {
+  const literal = [];
+  for (const segment of segments) {
+    if (segment.includes("*")) break;
+    literal.push(segment);
+  }
+  return literal;
+}
+
+/** Conservative answer for pathological patterns: do the literal prefixes nest? */
+function prefixesNest(a, b) {
+  const shorter = a.length <= b.length ? a : b;
+  const longer = a.length <= b.length ? b : a;
+  return shorter.every((segment, i) => segment === longer[i]);
+}
+
+/**
  * Does any concrete path match both patterns?
  *
  * Exported for tests; `overlaps` is the name the CLI uses.
@@ -88,6 +129,15 @@ function isGlobstar(segment) {
 export function patternsOverlap(a, b) {
   const left = patternSegments(a);
   const right = patternSegments(b);
+
+  // Pathological patterns take the conservative answer. See hasInlineGlobstar:
+  // reading `**request**` as within-segment silently narrows the claim and
+  // hands two sessions the same file, which is the one outcome this check
+  // exists to prevent.
+  if (left.some(hasInlineGlobstar) || right.some(hasInlineGlobstar)) {
+    return prefixesNest(literalPrefix(left), literalPrefix(right));
+  }
+
   const memo = new Map();
 
   const walk = (i, j) => {

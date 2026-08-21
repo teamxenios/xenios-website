@@ -13,10 +13,29 @@ import { patternSegments, patternsOverlap, segmentsIntersect } from "../../../sc
 
 const overlaps = patternsOverlap as (a: string, b: string) => boolean;
 
-describe("the regression that hid P1 work from nine sessions", () => {
-  // The four leases xenios-os falsely reported as conflicting with
-  // REQUEST-CENTER. None of them contains a path that could hold a
-  // `**request**` file.
+describe("patterns with an inline globstar take the conservative answer", () => {
+  // CORRECTED 2026-08-21, after general-platform-07 found false negatives in
+  // the first version of this fix.
+  //
+  // The first attempt read `**request**` as a WITHIN-SEGMENT wildcard, which
+  // made REQUEST-CENTER claimable and looked like the right answer. It was
+  // not. Under that reading `server/research/**request**` and
+  // `server/research/master-offerings/**` both cover
+  // `server/research/master-offerings/request-projection.ts`, yet overlaps()
+  // returned false — handing two sessions the same file. Verified with witness
+  // files for all three of 07's cases before this correction landed.
+  //
+  // Whoever wrote `**request**` meant "anything under here mentioning
+  // request", which crosses directories. Deciding that precisely means
+  // intersecting two regular languages; these patterns are rare and
+  // pathological, so the module over-reports instead. Over-reporting blocks a
+  // claim, which is recoverable. Under-reporting puts two writers in one file,
+  // which is not.
+  //
+  // CONSEQUENCE, recorded deliberately: REQUEST-CENTER is NOT claimable while
+  // its paths are written this way. The fix for that belongs in
+  // ACTIVE_TASKS.json — narrow the paths to real directories — and not in this
+  // module.
   const REQUEST_CENTER = [
     "client/src/research/**request**",
     "server/research/**request**",
@@ -24,27 +43,32 @@ describe("the regression that hid P1 work from nine sessions", () => {
   ];
 
   it.each([
-    ["server/research/account-identity/**", "claude-opus5-main"],
-    ["client/src/research/pages/partners/**", "claude-fable-desktop"],
-    ["server/research/partners/**", "claude-fable-desktop"],
-    ["shared/research/affiliate-system.ts", "claude-fable-desktop"],
-    ["server/research/master-offerings/**", "claude-fable-s7"],
-    ["server/research/catalog/**", "claude-fable-s7"],
-    ["client/src/research/demo/**", "claude-fable-s9-conversion-qa"],
-    ["e2e/**", "claude-fable-s9-conversion-qa"],
-  ])("REQUEST-CENTER does not conflict with %s (held by %s)", (leasePath) => {
+    ["server/research/master-offerings/**", "server/research/master-offerings/request-projection.ts"],
+    ["client/src/research/pages/partners/**", "client/src/research/pages/partners/analytics-request.tsx"],
+    ["server/research/catalog/**", "server/research/catalog/request-hook.ts"],
+  ])("conflicts with %s, which really can hold %s", (leasePath) => {
+    const taskPath = leasePath.startsWith("client")
+      ? "client/src/research/**request**"
+      : "server/research/**request**";
+    expect(overlaps(taskPath, leasePath), `${taskPath} vs ${leasePath}`).toBe(true);
+    expect(overlaps(leasePath, taskPath), `${leasePath} vs ${taskPath}`).toBe(true);
+  });
+
+  it("is symmetric for every REQUEST-CENTER path against a same-tree lease", () => {
     for (const taskPath of REQUEST_CENTER) {
-      expect(overlaps(taskPath, leasePath), `${taskPath} vs ${leasePath}`).toBe(false);
-      expect(overlaps(leasePath, taskPath), `${leasePath} vs ${taskPath}`).toBe(false);
+      const sameTree = `${taskPath.split("/**")[0]}/partners/**`;
+      expect(overlaps(taskPath, sameTree)).toBe(overlaps(sameTree, taskPath));
     }
   });
 
-  it("still reports a REAL request conflict, so the fix does not open a hole", () => {
-    // A file whose name genuinely contains "request", directly under the
-    // pattern's directory, IS inside REQUEST-CENTER's claim.
+  it("does NOT conflict across different trees, which the old truncation also got right", () => {
+    expect(overlaps("server/research/**request**", "client/src/research/pages/**")).toBe(false);
+    expect(overlaps("client/src/research/**request**", "server/research/partners/**")).toBe(false);
+    expect(overlaps("shared/research/**request**", "e2e/**")).toBe(false);
+  });
+
+  it("still reports the obvious real conflict", () => {
     expect(overlaps("server/research/**request**", "server/research/product-requests.ts")).toBe(true);
-    expect(overlaps("client/src/research/**request**", "client/src/research/RequestPanel.tsx")).toBe(false);
-    expect(overlaps("client/src/research/**request**", "client/src/research/product-request.tsx")).toBe(true);
   });
 });
 
