@@ -44,7 +44,7 @@ import type {
   PartnerStatsSource,
 } from "./partners";
 import type { CommissionLedgerEntry, CommissionLedgerRepository } from "./commissions";
-import type { LinkChannel, StoredLink } from "./attribution";
+import { referralShareUrl, type LinkChannel, type StoredLink } from "./attribution";
 import type {
   OrganizationAggregate,
   OrganizationRecord,
@@ -266,9 +266,10 @@ export interface MemberPartnerSource {
 }
 
 export function createMemberPartnerSource(deps: MemberPartnerSourceDeps): MemberPartnerSource {
+  // The SAME builder the attribution service uses. Two copies of this were how
+  // the share path drifted onto a door nobody mounted; there is now one.
   function urlFor(code: string): string {
-    const base = deps.linkBaseUrl.replace(/\/+$/, "");
-    return `${base}/r/${code}`;
+    return referralShareUrl(deps.linkBaseUrl, code);
   }
 
   /** Explicit construction, mirroring the attribution service's DTO builder. */
