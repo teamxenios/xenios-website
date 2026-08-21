@@ -288,6 +288,29 @@
       "state": "active",
       "claimedAt": "2026-08-21T16:38:03.056Z",
       "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "a016965c-8b7a-4785-a380-0e8ad4b0de40",
+      "task": "LIVE-UX-PERFORMANCE-HOTFIX",
+      "session": "codex-live-ux-hotfix-20260821",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.logout.test.tsx",
+        "client/src/research/early-access/EarlyAccessCatalogSection.tsx",
+        "client/src/research/early-access/EarlyAccessCatalogSection.test.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/early-access/EarlyAccessQuantitySelector.tsx",
+        "client/src/research/early-access/EarlyAccessQuantitySelector.test.tsx",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/early-access/catalog/**",
+        "docs/research-launch/XENIOS_LIVE_UX_HOTFIX_RC_2026-08-21.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T18:33:07.407Z",
+      "heartbeatAt": "2026-08-21T18:50:49.721Z"
     }
   ],
   "rules": [

@@ -56,7 +56,7 @@ export function decideAssistedOrderAction(
     return Object.freeze({
       visible: true,
       workflowMode: "provider_request",
-      actionLabel: "Start provider workflow",
+      actionLabel: "Continue through Care",
       reason: "Provider review is required before ordinary commerce.",
     });
   }
@@ -65,7 +65,7 @@ export function decideAssistedOrderAction(
     return Object.freeze({
       visible: true,
       workflowMode: "request_activation",
-      actionLabel: "Request activation",
+      actionLabel: "Request Order",
       reason: "Classification or documentation must be completed first.",
     });
   }

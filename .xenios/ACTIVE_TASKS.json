@@ -438,6 +438,31 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-08-21T16:38:03.054Z"
+    },
+    {
+      "id": "LIVE-UX-PERFORMANCE-HOTFIX",
+      "title": "Prepare the founder-authorized Early Access UX and safe performance hotfix RC",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-live-ux-hotfix-20260821",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.logout.test.tsx",
+        "client/src/research/early-access/EarlyAccessCatalogSection.tsx",
+        "client/src/research/early-access/EarlyAccessCatalogSection.test.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/early-access/EarlyAccessQuantitySelector.tsx",
+        "client/src/research/early-access/EarlyAccessQuantitySelector.test.tsx",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/early-access/catalog/**",
+        "docs/research-launch/XENIOS_LIVE_UX_HOTFIX_RC_2026-08-21.md"
+      ],
+      "dependsOn": [],
+      "pathsNote": "Founder-authorized hotfix from live SHA 5c23225 only. No deployment, catalog-data release, pricing, payment, fulfillment, environment, migration, or unrelated architecture changes.",
+      "claimedAt": "2026-08-21T18:33:07.405Z"
     }
   ]
 }

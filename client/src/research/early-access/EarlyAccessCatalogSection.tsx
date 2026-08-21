@@ -4,7 +4,11 @@ import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
 import type { EarlyAccessCardProduct } from "./EarlyAccessProductCard";
 import type { EarlyAccessQuantity } from "./EarlyAccessQuantitySelector";
 import { EarlyAccessSelectionBar } from "./EarlyAccessSelectionBar";
-import { routeEarlyAccessQuantity } from "@shared/research/early-access-quantity";
+import {
+  EARLY_ACCESS_MIN_QUANTITY,
+  EARLY_ACCESS_POLICY_MAX_QUANTITY,
+  routeEarlyAccessQuantity,
+} from "@shared/research/early-access-quantity";
 import {
   loadEarlyAccessCatalog,
   type EarlyAccessCatalogLoad,
@@ -127,7 +131,8 @@ export function EarlyAccessCatalogSection({
       </div>
       <p className="body-s text-ink-mute mt-3" data-testid={`${testId}-fulfillment`}>{fulfillmentTargetCopy}</p>
       <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-single-product`}>
-        Normal order quantities are 1 through 50. Quantity alone does not trigger review.
+        Assisted order requests support {EARLY_ACCESS_MIN_QUANTITY}–{EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant.
+        Featured checkout routing respects current per-product release limits. Quantity alone does not trigger review.
         Quantity 3 receives the server-confirmed Research Bundle pricing.
       </p>
       <div className="mt-4">

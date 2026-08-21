@@ -29,6 +29,11 @@ import { EARLY_ACCESS_POLICY_MAX_QUANTITY } from "../../../shared/research/early
 import type { AssistedOrderViewer } from "./ports";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
+import {
+  MASTER_OFFERING_FAMILIES,
+  isMasterOfferingFamily,
+  type MasterOfferingFamily,
+} from "../../../shared/research/master-offerings/contract";
 
 /**
  * The catalog reader this adapter needs, stated structurally so the
@@ -39,6 +44,7 @@ import type { MasterOfferingPriceView } from "../../../shared/research/master-of
 export type AssistedOrderMasterCatalogService = Readonly<{
   select(query: {
     q?: string;
+    families?: readonly MasterOfferingFamily[];
     page?: number;
     pageSize?: number;
   }): Promise<{
@@ -79,6 +85,17 @@ const RESOLVE_PAGE_SIZE = 100;
  * Sized far above the real catalog (420 offerings, five pages).
  */
 const RESOLVE_MAX_PAGES = 500;
+
+/**
+ * Action is a derived, variant-level fact: it depends on canonical pathway,
+ * Product Control identity, and the current price projection. The upstream
+ * catalog can filter structured family values before paging, but it cannot
+ * honestly filter this downstream fact. When an Action filter is present we
+ * therefore walk bounded canonical pages, project each variant through the
+ * same action policy the cards use, and only then paginate the matches.
+ */
+const ACTION_FILTER_SCAN_PAGE_SIZE = 100;
+const ACTION_FILTER_SCAN_MAX_PAGES = 500;
 
 /**
  * The marker on a synthetic identity for a variant with no commerce binding.
@@ -178,35 +195,103 @@ export function createAssistedOrderMasterCatalogCallbacks(
       if (!service) {
         throw new Error("The catalog is not available for this viewer.");
       }
-      const selection = await service.select({
-        q: query.search || undefined,
-        page: query.page,
-        pageSize: query.pageSize,
-      });
-      const items: AssistedOrderCatalogItem[] = [];
-      for (const offering of selection.offerings) {
-        for (const variant of offering.variants) {
-          const identity = input.bindingFor(variant.id);
-          const item = projectAssistedOrderCatalogItem(
-            authorityFor(
-              offering,
-              variant,
-              selection.prices.get(variant.id),
-              identity,
-              input.catalogVersion,
-            ),
-          );
-          if (item) items.push(item);
-        }
+      const family = query.family === undefined
+        ? undefined
+        : isMasterOfferingFamily(query.family)
+          ? query.family
+          : null;
+      const requestedPage = query.page ?? 1;
+      const requestedPageSize = query.pageSize ?? 24;
+
+      // A non-canonical family token must match nothing. Silently dropping it
+      // would turn an invalid filter into an unfiltered catalog response.
+      if (family === null) {
+        return Object.freeze({
+          items: Object.freeze([]),
+          total: 0,
+          page: requestedPage,
+          pageSize: requestedPageSize,
+          families: MASTER_OFFERING_FAMILIES,
+          channels: Object.freeze([]),
+          workflowModes: Object.freeze([]),
+        });
       }
+
+      const canonicalQuery = {
+        q: query.search || undefined,
+        families: family === undefined ? undefined : [family],
+      } as const;
+      const projectSelection = (
+        selection: Awaited<ReturnType<AssistedOrderMasterCatalogService["select"]>>,
+      ): AssistedOrderCatalogItem[] => {
+        const projected: AssistedOrderCatalogItem[] = [];
+        for (const offering of selection.offerings) {
+          for (const variant of offering.variants) {
+            const identity = input.bindingFor(variant.id);
+            const item = projectAssistedOrderCatalogItem(
+              authorityFor(
+                offering,
+                variant,
+                selection.prices.get(variant.id),
+                identity,
+                input.catalogVersion,
+              ),
+            );
+            if (item) projected.push(item);
+          }
+        }
+        return projected;
+      };
+
+      let items: AssistedOrderCatalogItem[];
+      let total: number;
+
+      if (query.workflowMode === undefined) {
+        const selection = await service.select({
+          ...canonicalQuery,
+          page: requestedPage,
+          pageSize: requestedPageSize,
+        });
+        items = projectSelection(selection);
+        total = selection.page.total;
+      } else {
+        const matches: AssistedOrderCatalogItem[] = [];
+        let scanPage = 1;
+        let sourceTotal: number | null = null;
+        for (;;) {
+          const selection = await service.select({
+            ...canonicalQuery,
+            page: scanPage,
+            pageSize: ACTION_FILTER_SCAN_PAGE_SIZE,
+          });
+          for (const item of projectSelection(selection)) {
+            if (item.workflowMode === query.workflowMode) matches.push(item);
+          }
+          if (sourceTotal === null) sourceTotal = selection.page.total;
+          if (selection.offerings.length === 0) break;
+          const sourcePageSize = selection.page.pageSize > 0
+            ? selection.page.pageSize
+            : ACTION_FILTER_SCAN_PAGE_SIZE;
+          if (scanPage * sourcePageSize >= sourceTotal) break;
+          scanPage += 1;
+          if (scanPage > ACTION_FILTER_SCAN_MAX_PAGES) break;
+        }
+        total = matches.length;
+        const start = (requestedPage - 1) * requestedPageSize;
+        items = start >= total
+          ? []
+          : matches.slice(start, start + requestedPageSize);
+      }
+
       return Object.freeze({
         items: Object.freeze(items),
-        total: selection.page.total,
-        page: selection.page.page,
-        pageSize: selection.page.pageSize,
-        families: Object.freeze(
-          Array.from(new Set(items.map((item) => item.family))),
-        ),
+        total,
+        page: requestedPage,
+        pageSize: requestedPageSize,
+        // Stable canonical values keep the select usable after one family is
+        // chosen; deriving options from the filtered page would erase every
+        // alternative family as soon as the first filter was applied.
+        families: MASTER_OFFERING_FAMILIES,
         channels: Object.freeze(
           Array.from(new Set(items.map((item) => item.channel))),
         ),

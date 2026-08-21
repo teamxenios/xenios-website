@@ -6,6 +6,7 @@ import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { EARLY_ACCESS_POLICY_MAX_QUANTITY } from "@shared/research/early-access-quantity";
 import {
   EARLY_ACCESS_QUANTITY_MAX,
   EARLY_ACCESS_QUANTITY_MIN,
@@ -97,7 +98,15 @@ describe("EarlyAccessQuantitySelector", () => {
 
     const note = fieldset?.querySelector("p");
     expect(note?.textContent).toContain("3 units is the Research Bundle, 20% savings");
-    expect(note?.textContent).toContain(`Normal order quantities are 1 through ${EARLY_ACCESS_QUANTITY_MAX} units`);
+    expect(note?.textContent).toContain(
+      `assisted order requests support 1–${EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant`,
+    );
+    expect(note?.textContent).toContain(
+      `Featured checkout is currently limited to ${EARLY_ACCESS_QUANTITY_MAX} units`,
+    );
+    // The copy distinguishes the already-supported assisted-order maximum
+    // from the still-disabled direct-cart lane's current durable ceiling.
+    expect(input.max).toBe(String(EARLY_ACCESS_QUANTITY_MAX));
     expect(note?.textContent).not.toMatch(/manual review/i);
     expect(note?.textContent).not.toMatch(/\$\s*\d/);
   });

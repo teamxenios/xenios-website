@@ -58,8 +58,17 @@ const careItem: AssistedOrderCatalogItem = {
   productName: "Care Formulation",
   family: "clinical_formulations_503a",
   workflowMode: "provider_request",
-  actionLabel: "Start provider workflow",
+  actionLabel: "Continue through Care",
   researchUseOnly: false,
+};
+
+const pendingItem: AssistedOrderCatalogItem = {
+  ...directRuoItem,
+  productId: "prod-pending",
+  variantId: "var-pending",
+  productName: "Pending Peptide",
+  workflowMode: "request_activation",
+  actionLabel: "Request Order",
 };
 
 const pricePendingItem: AssistedOrderCatalogItem = {
@@ -195,7 +204,7 @@ beforeEach(() => {
   api.loadAssistedOrderConfig.mockReset();
   api.submitAssistedOrder.mockReset();
   api.loadAssistedOrderCatalog.mockResolvedValue(
-    catalogPage([directRuoItem, careItem, pricePendingItem]),
+    catalogPage([directRuoItem, careItem, pricePendingItem, pendingItem]),
   );
   api.loadAssistedOrderConfig.mockResolvedValue(wizardConfig);
 });
@@ -212,6 +221,27 @@ describe("AssistedOrderPage", () => {
     expect(byTestId(`order-card-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-care-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-add-${careItem.variantId}`)).toBeNull();
+    const careCta = byTestId<HTMLAnchorElement>(
+      `order-card-care-cta-${careItem.variantId}`,
+    );
+    expect(careCta?.textContent).toBe("Continue through Care");
+    expect(careCta?.getAttribute("href")).toBe("/care");
+  });
+
+  it("labels pending products Request Order without changing their request-only mode", async () => {
+    render();
+    await settle();
+    const pendingCta = byTestId<HTMLButtonElement>(
+      `order-card-add-${pendingItem.variantId}`,
+    );
+    expect(pendingCta?.textContent).toBe("Request Order");
+    expect(pendingItem.workflowMode).toBe("request_activation");
+    click(pendingCta);
+    expect(
+      byTestId(`order-card-${pendingItem.variantId}`)?.querySelector(
+        'input[type="number"]',
+      ),
+    ).not.toBeNull();
   });
 
   it("submits the full request with server-published acknowledgments and a durable idempotency key", async () => {

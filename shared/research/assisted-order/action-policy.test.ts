@@ -63,7 +63,11 @@ describe("assisted order action policy", () => {
       decideAssistedOrderAction(
         authority({ directEligible: false, classificationPending: true }),
       ),
-    ).toMatchObject({ visible: true, workflowMode: "request_activation" });
+    ).toMatchObject({
+      visible: true,
+      workflowMode: "request_activation",
+      actionLabel: "Request Order",
+    });
   });
 
   it("routes a Care product to the provider pathway even when priced and direct-eligible", () => {
@@ -77,7 +81,10 @@ describe("assisted order action policy", () => {
           unitPriceCents: 9900,
         }),
       ),
-    ).toMatchObject({ workflowMode: "provider_request" });
+    ).toMatchObject({
+      workflowMode: "provider_request",
+      actionLabel: "Continue through Care",
+    });
   });
 
   it("never presents a held or out-of-stock product as orderable", () => {

@@ -96,7 +96,7 @@ const workflowLabels: Readonly<Record<AssistedOrderWorkflowMode, string>> = {
   direct_order_request: "Order request",
   provider_request: "Care pathway",
   request_pricing: "Request pricing",
-  request_activation: "Request activation",
+  request_activation: "Request Order",
   availability_review: "Availability review",
 };
 
@@ -166,10 +166,19 @@ function ProductCard(props: {
       ) : null}
       {item.accessNotice ? <p className="xenios-order-notice">{item.accessNotice}</p> : null}
       {!selectable ? (
-        <p className="xenios-order-notice" data-testid={`order-card-care-${item.variantId}`}>
-          This product requires provider review through Xenios Care and cannot
-          be added to a research order request.
-        </p>
+        <>
+          <p className="xenios-order-notice" data-testid={`order-card-care-${item.variantId}`}>
+            This product requires provider review through Xenios Care and cannot
+            be added to a research order request.
+          </p>
+          <a
+            className="xenios-order-button"
+            href="/care"
+            data-testid={`order-card-care-cta-${item.variantId}`}
+          >
+            {item.actionLabel}
+          </a>
+        </>
       ) : selection ? (
         <div className="xenios-order-quantity" aria-label={`Quantity for ${item.productName}`}>
           <button type="button" onClick={() => onQuantity(item, selection.quantity - item.quantityIncrement)} aria-label="Decrease quantity">−</button>

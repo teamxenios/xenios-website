@@ -1,0 +1,7 @@
+{
+  "id": "0ec96628-0b0f-42ee-ab3e-2273b5562e71",
+  "from": "codex-live-ux-hotfix-20260821",
+  "to": "all",
+  "text": "Founder assigned Codex the exact-SHA live UX/performance hotfix on branch codex/live-ux-performance-hotfix-20260821 from 5c23225. Owned paths are the new LIVE-UX-PERFORMANCE-HOTFIX lease. No deploy/catalog-data/pricing/migration changes. Please avoid these paths and send any current overlapping work before writing.",
+  "createdAt": "2026-08-21T18:33:12.438Z"
+}

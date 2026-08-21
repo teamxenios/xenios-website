@@ -170,6 +170,16 @@
       "startedAt": "2026-08-21T16:38:55.554Z",
       "heartbeatAt": "2026-08-21T16:59:33.320Z",
       "note": "RC candidate e752db6 pushed+verified. P0-1 eliminated (bulk listDetails + declared-facts window + cache), P0-2 integrated (e2e 53/53), QA defect fixed, migration 76 rehearsed. Full suite running for freeze; awaiting browser-perf report."
+    },
+    {
+      "id": "codex-live-ux-hotfix-20260821",
+      "tool": "Codex",
+      "lane": "live-ux-performance-hotfix",
+      "branch": "codex/live-ux-performance-hotfix-20260821",
+      "state": "active",
+      "startedAt": "2026-08-21T18:32:48.703Z",
+      "heartbeatAt": "2026-08-21T18:50:49.721Z",
+      "note": "Implementation and verification complete; freezing exact hotfix RC, no deployment."
     }
   ]
 }
