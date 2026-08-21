@@ -46,11 +46,12 @@ describe("peptide launch reconciliation", () => {
       pendingBlocked: result.pendingFormulationBlocked.length,
     }).toEqual({
       total: 135,
-      // 104 clean + 2 with-DAC already sellable = 106 confirmed sellable rows.
-      directToday: 104,
+      // All 106 confirmed sellable rows are direct. The two standalone
+      // CJC WITH DAC rows are among them, by founder decision 2026-08-21.
+      directToday: 106,
       pending: 29,
-      blockedButSellable: 2,
-      pendingBlocked: 1,
+      blockedButSellable: 0,
+      pendingBlocked: 0,
     });
   });
 
@@ -72,58 +73,58 @@ describe("peptide launch reconciliation", () => {
     expect(bad).toEqual([]);
   });
 
-  it("SAFETY: a formulation-blocked row is never counted as promotable", () => {
-    // The live hazard. The with-DAC CJC formulation is classification-pending
-    // AND already bound, priced, approved, active and member-eligible, so a
-    // bulk "confirm the pending rows" step would put a formulation whose
-    // component split is unresolved on direct sale in a single move.
+  it("SAFETY: the held combination is never counted as promotable", () => {
     const result = reconcilePeptideLaunch(sources);
-    expect(result.pendingFormulationBlocked.length).toBeGreaterThan(0);
-    for (const row of result.pendingFormulationBlocked) {
-      expect(isFormulationBlocked(row.variantLabel)).toBe(true);
-    }
     expect(result.pendingPromotable).toBe(
       result.pendingButCommerceReady - result.pendingFormulationBlocked.length,
     );
   });
 
-  it("OPEN FOUNDER DECISION: names every with-DAC row already on direct sale", () => {
-    // NOT asserted as a defect, because it is not settled. The launch brief
-    // blocks a with-DAC COMBO ("CJC-1295 + Ipamorelin WITH DAC, 5 mg total,
-    // $99") that does not exist in this catalog at all. What DOES exist is
-    // three STANDALONE with-DAC CJC rows, and two of them are already
-    // confirmed, bound, priced and member-eligible, so they go on direct sale
-    // the moment direct peptide purchase is switched on.
-    //
-    // Whether standalone with-DAC is blocked too is the founder's call. This
-    // test exists so the exposure cannot be discovered after the fact: it
-    // speaks if the set changes in EITHER direction, whether a new with-DAC
-    // row appears or these are withdrawn.
-    const result = reconcilePeptideLaunch(sources);
-    expect(
-      result.formulationBlockedButSellable.map((r) => r.variantLabel).sort(),
-    ).toEqual(["CJC-1295 WITH DAC 2 mg", "CJC-1295 WITH DAC 5 mg"]);
-    expect(
-      result.pendingFormulationBlocked.map((r) => r.variantLabel),
-    ).toEqual(["CJC-1295 - With DAC (10mg)"]);
-  });
-
-  it("recognizes the with-DAC formulation in the shapes the workbook writes it", () => {
-    for (const label of [
-      "CJC-1295 - With DAC (10mg)",
-      "CJC-1295 WITH DAC 5 mg",
-      "cjc-1295 with-dac 2 mg",
-      "CJC-1295 With  DAC",
+  it("holds ONLY the CJC + Ipamorelin combination, never standalone with-DAC", () => {
+    // Founder decision 2026-08-21, and the correction to this module's first
+    // version, which matched the with-DAC substring alone and would therefore
+    // have withheld two products the founder has ruled DIRECT. The instruction
+    // was explicit: do not broaden this hold.
+    for (const held of [
+      "CJC-1295 + Ipamorelin WITH DAC 5 mg total",
+      "CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)",
+      "cjc-1295 with-dac + ipamorelin",
     ]) {
-      expect(isFormulationBlocked(label), label).toBe(true);
+      expect(isFormulationBlocked(held), held).toBe(true);
     }
-    for (const label of [
+    for (const direct of [
+      "CJC-1295 WITH DAC 2 mg",
+      "CJC-1295 WITH DAC 5 mg",
+      "CJC-1295 - With DAC (10mg)",
       "CJC-1295 NO DAC 10 mg",
       "CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg",
       "BPC-157 (20mg)",
     ]) {
-      expect(isFormulationBlocked(label), label).toBe(false);
+      expect(isFormulationBlocked(direct), direct).toBe(false);
     }
+    // The hold binds to the SKU too, so it survives any relabelling once the
+    // row is generated into the catalog.
+    expect(isFormulationBlocked("anything at all", "GRP-0422")).toBe(true);
+    expect(isFormulationBlocked("anything at all", "GEN-GRP-0001")).toBe(false);
+  });
+
+  it("the two standalone with-DAC rows are DIRECT, and the 10 mg is Request Order", () => {
+    // The founder's three-way split, asserted against the shipped artifact so
+    // a catalog change that moved any of them would be caught.
+    const result = reconcilePeptideLaunch(sources);
+    const find = (label: string) =>
+      result.rows.find((r) => r.variantLabel === label);
+    for (const label of ["CJC-1295 WITH DAC 2 mg", "CJC-1295 WITH DAC 5 mg"]) {
+      const row = find(label);
+      expect(row, `${label} missing from the artifact`).toBeDefined();
+      expect(row!.classificationPending, label).toBe(false);
+      expect(row!.sellable, label).toBe(true);
+      expect(row!.formulationBlocked, label).toBe(false);
+    }
+    const tenMg = find("CJC-1295 - With DAC (10mg)");
+    expect(tenMg).toBeDefined();
+    expect(tenMg!.classificationPending).toBe(true);
+    expect(tenMg!.formulationBlocked).toBe(false);
   });
 
   it("reconciles the shipped artifact against the 139/111/27 canonical target", () => {
@@ -150,12 +151,7 @@ describe("peptide launch reconciliation", () => {
     const GENERATED_RUO = 3;
     expect(result.totalVariants + MISSING_FROM_ARTIFACT).toBe(139);
     expect(result.classificationPending - RECLASSIFY).toBe(27);
-    expect(
-      result.directToday +
-        result.formulationBlockedButSellable.length +
-        RECLASSIFY +
-        GENERATED_RUO,
-    ).toBe(111);
+    expect(result.directToday + RECLASSIFY + GENERATED_RUO).toBe(111);
   });
 
   it("the rows the target needs generated are genuinely absent, not just renamed", () => {
