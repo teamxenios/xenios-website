@@ -113,6 +113,33 @@ export interface UnitHoldReader {
   ): Promise<readonly EarlyAccessHoldBlocker[]>;
 }
 
+/**
+ * The key a bulk unit-fact map is indexed by. One function, used by every
+ * producer and every consumer of such a map, so a key built on one side always
+ * matches a key built on the other. The separator cannot appear in an id that
+ * passes `isSafeText`.
+ */
+export function unitFactKey(productId: string, variantId: string): string {
+  return `${productId}\n${variantId}`;
+}
+
+/**
+ * The set-valued form of `UnitHoldReader`: active holds for EVERY unit, in one
+ * read, keyed by `unitFactKey`. A unit with no active hold has no entry, which
+ * a consumer reads as "no recorded prohibition" — exactly what the per-unit
+ * read answers with an empty array.
+ *
+ * OPTIONAL on any given registry. The declared-facts projection uses it when
+ * present and falls back to per-unit reads when absent or failing, so a
+ * registry (or a deployment whose bulk RPC is not yet applied) is never worse
+ * off than today's per-unit path.
+ */
+export interface BulkUnitHoldReader {
+  activeHoldsForAllUnits(
+    evaluatedAt: string,
+  ): Promise<ReadonlyMap<string, readonly EarlyAccessHoldBlocker[]>>;
+}
+
 /** The full registry: the reader plus the two recorded state changes. */
 export interface UnitHoldRegistry extends UnitHoldReader {
   record(hold: UnitHoldRecord): Promise<boolean>;
@@ -157,5 +184,28 @@ export class InMemoryUnitHoldRegistry implements UnitHoldRegistry {
       }
     }
     return HOLD_KINDS.filter((kind) => kinds.has(kind));
+  }
+
+  /**
+   * The bulk read, answered BY the per-unit read for every unit that has any
+   * record. One derivation: this cannot drift from `activeHoldsForUnit`
+   * because it is `activeHoldsForUnit`, applied per known unit.
+   */
+  async activeHoldsForAllUnits(
+    _evaluatedAt: string,
+  ): Promise<ReadonlyMap<string, readonly EarlyAccessHoldBlocker[]>> {
+    const units = new Map<string, { productId: string; variantId: string }>();
+    for (const hold of Array.from(this.holds.values())) {
+      units.set(unitFactKey(hold.productId, hold.variantId), {
+        productId: hold.productId,
+        variantId: hold.variantId,
+      });
+    }
+    const all = new Map<string, readonly EarlyAccessHoldBlocker[]>();
+    for (const [key, unit] of Array.from(units.entries())) {
+      const kinds = await this.activeHoldsForUnit(unit.productId, unit.variantId);
+      if (kinds.length > 0) all.set(key, kinds);
+    }
+    return all;
   }
 }

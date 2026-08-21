@@ -54,8 +54,15 @@ import type {
   CartAudienceEligibility,
   CartInventoryEligibility,
 } from "@shared/research/cart-product-selection";
-import { supplierConfirmedFulfillmentFact } from "../ops/supplier-confirmation";
-import type { UnitHoldReader } from "../ops/unit-holds";
+import {
+  supplierConfirmedFulfillmentFact,
+  type BulkSupplierConfirmationLiveReader,
+} from "../ops/supplier-confirmation";
+import {
+  unitFactKey,
+  type BulkUnitHoldReader,
+  type UnitHoldReader,
+} from "../ops/unit-holds";
 import type { EarlyAccessHoldBlocker } from "./eligibility";
 import type { ProductAvailability, ProductLane } from "@shared/research/catalog";
 import {
@@ -69,6 +76,7 @@ import type { MemberRow } from "../../member-auth";
 import { fulfillmentOwnerForLane } from "../../catalog/legacy-adapter";
 import {
   memberAudience,
+  type BulkVariantInventoryFactsReader,
   type VariantInventoryFactsReader,
 } from "../../catalog/member-catalog-service";
 import { decideProductControlPrice } from "../../products-diagnostics/product-control-price-resolver";
@@ -319,6 +327,20 @@ export interface ProductControlDeclaredFactsDependencies {
    * regulatory hold applies.
    */
   readonly holds?: UnitHoldReader;
+  /**
+   * The BULK inventory read, when a composition can supply one. With it, one
+   * projection costs one lot query plus one allocatability RPC per real lot;
+   * without it, one lot query per variant. The facts are identical either way
+   * because both paths end in `deriveVariantInventoryFacts` — this changes
+   * how rows are fetched, never what a row means.
+   */
+  readonly bulkInventory?: BulkVariantInventoryFactsReader;
+  /**
+   * Where a failed BULK read is reported before the projection falls back to
+   * the per-unit path. Fallback is silent-correct; the report exists so a
+   * deployment quietly paying per-unit costs again is visible in the logs.
+   */
+  readonly onBulkDegraded?: (message: string, cause: unknown) => void;
 }
 
 /**
@@ -330,6 +352,37 @@ export interface ProductControlDeclaredFactsDependencies {
  */
 export class EarlyAccessDeclaredFactsError extends Error {}
 
+/**
+ * The per-load view of the three unit-fact sources. Opened once per
+ * projection: bulk-backed when a bulk read is available and succeeds,
+ * otherwise the per-unit readers unchanged. The per-variant projection below
+ * reads through this window and cannot tell which shape served it — which is
+ * the point: one derivation, two fetch strategies.
+ */
+type UnitFactsWindow = Readonly<{
+  inventory: VariantInventoryFactsReader;
+  holds: UnitHoldReader | null;
+  supplierConfirmations: SupplierConfirmationLiveReader | null;
+}>;
+
+function bulkHoldCapable(
+  reader: UnitHoldReader,
+): reader is UnitHoldReader & BulkUnitHoldReader {
+  return (
+    typeof (reader as Partial<BulkUnitHoldReader>).activeHoldsForAllUnits ===
+    "function"
+  );
+}
+
+function bulkConfirmationCapable(
+  reader: SupplierConfirmationLiveReader,
+): reader is SupplierConfirmationLiveReader & BulkSupplierConfirmationLiveReader {
+  return (
+    typeof (reader as Partial<BulkSupplierConfirmationLiveReader>)
+      .liveForAllUnits === "function"
+  );
+}
+
 export class ProductControlDeclaredFactsReader
   implements EarlyAccessDeclaredFactsReader
 {
@@ -338,6 +391,8 @@ export class ProductControlDeclaredFactsReader
   private readonly currency: string;
   private readonly supplierConfirmations: SupplierConfirmationLiveReader | null;
   private readonly holds: UnitHoldReader | null;
+  private readonly bulkInventory: BulkVariantInventoryFactsReader | null;
+  private readonly onBulkDegraded: (message: string, cause: unknown) => void;
 
   constructor(dependencies: ProductControlDeclaredFactsDependencies) {
     this.inventory = dependencies.inventory;
@@ -345,6 +400,10 @@ export class ProductControlDeclaredFactsReader
     this.currency = dependencies.currency;
     this.supplierConfirmations = dependencies.supplierConfirmations ?? null;
     this.holds = dependencies.holds ?? null;
+    this.bulkInventory = dependencies.bulkInventory ?? null;
+    this.onBulkDegraded =
+      dependencies.onBulkDegraded ??
+      ((message, cause) => console.warn(message, cause));
   }
 
   async readDeclaredFacts(input: {
@@ -355,21 +414,112 @@ export class ProductControlDeclaredFactsReader
     const evaluatedAt = input.now.toISOString();
     const context = input.context ?? {};
     const audience = this.audience.authorize(context, evaluatedAt);
+    const window = await this.openFactsWindow(input.products, evaluatedAt);
     return Promise.all(
       input.products.map((product) =>
-        this.readProductFacts(product, audience, evaluatedAt),
+        this.readProductFacts(product, audience, evaluatedAt, window),
       ),
     );
+  }
+
+  /**
+   * Open the bulk-backed window for one projection, falling back per source.
+   *
+   * INVENTORY: a bulk failure is a FAILURE, exactly as a per-variant failure
+   * is — it raises rather than falling back, because retrying the same broken
+   * store once per variant would answer nothing new and "we could not look"
+   * must surface. HOLDS and CONFIRMATIONS: a bulk failure falls back to the
+   * per-unit readers, because the bulk RPCs are newer than the per-unit ones
+   * and a deployment where only the new RPC is missing must not lose facts the
+   * old path still serves (the migration-54 tolerance ladder).
+   */
+  private async openFactsWindow(
+    products: readonly AdminProductDetail[],
+    evaluatedAt: string,
+  ): Promise<UnitFactsWindow> {
+    let inventory = this.inventory;
+    if (this.bulkInventory !== null) {
+      const units = products.flatMap((product) =>
+        product.variants.map((variant) => ({ productId: product.id, variant })),
+      );
+      let facts;
+      try {
+        facts = await this.bulkInventory.readAllVariantInventoryFacts({
+          units,
+          evaluatedAt,
+        });
+      } catch (cause) {
+        throw new EarlyAccessDeclaredFactsError(
+          "Inventory and lot documentation could not be read for the catalog.",
+          { cause },
+        );
+      }
+      inventory = {
+        async readVariantInventoryFacts({ productId, variant }) {
+          const found = facts.get(unitFactKey(productId, variant.id));
+          if (found === undefined) {
+            // Every requested unit was derived above, so a miss is a unit this
+            // window was never opened for. Refusing is the closed direction.
+            throw new Error("member_catalog_inventory_unavailable");
+          }
+          return found;
+        },
+      };
+    }
+
+    let holds = this.holds;
+    if (holds !== null && bulkHoldCapable(holds)) {
+      const perUnit = holds;
+      try {
+        const all = await perUnit.activeHoldsForAllUnits(evaluatedAt);
+        holds = {
+          async activeHoldsForUnit(productId, variantId) {
+            return all.get(unitFactKey(productId, variantId)) ?? [];
+          },
+        };
+      } catch (cause) {
+        this.onBulkDegraded(
+          "[early-access] bulk unit-hold read failed; this projection is " +
+            "reading holds per unit instead. Recorded prohibitions still apply.",
+          cause,
+        );
+      }
+    }
+
+    let supplierConfirmations = this.supplierConfirmations;
+    if (
+      supplierConfirmations !== null &&
+      bulkConfirmationCapable(supplierConfirmations)
+    ) {
+      const perUnit = supplierConfirmations;
+      try {
+        const all = await perUnit.liveForAllUnits(evaluatedAt);
+        supplierConfirmations = {
+          async liveForUnit(productId, variantId) {
+            return all.get(unitFactKey(productId, variantId)) ?? null;
+          },
+        };
+      } catch (cause) {
+        this.onBulkDegraded(
+          "[early-access] bulk supplier-confirmation read failed; this " +
+            "projection is reading confirmations per unit instead.",
+          cause,
+        );
+      }
+    }
+
+    return { inventory, holds, supplierConfirmations };
   }
 
   private async readProductFacts(
     product: AdminProductDetail,
     audience: CartAudienceEligibility | null,
     evaluatedAt: string,
+    window: UnitFactsWindow,
   ): Promise<EarlyAccessDeclaredProductFacts> {
     const variantFacts = await Promise.all(
       product.variants.map((variant) =>
-        this.readVariantFacts(product, variant, audience, evaluatedAt),
+        this.readVariantFacts(product, variant, audience, evaluatedAt, window),
       ),
     );
     return { productId: product.id, audience, variantFacts };
@@ -380,10 +530,11 @@ export class ProductControlDeclaredFactsReader
     variant: AdminProductVariant,
     audience: CartAudienceEligibility | null,
     evaluatedAt: string,
+    window: UnitFactsWindow,
   ): Promise<EarlyAccessVariantFacts> {
     let inventory;
     try {
-      inventory = await this.inventory.readVariantInventoryFacts({
+      inventory = await window.inventory.readVariantInventoryFacts({
         productId: product.id,
         variant,
         evaluatedAt,
@@ -412,6 +563,7 @@ export class ProductControlDeclaredFactsReader
       variant,
       evaluatedAt,
       canonical.regulatoryHoldReason !== null,
+      window,
     );
     const offerState = resolveEarlyAccessOfferState({
       product,
@@ -441,7 +593,13 @@ export class ProductControlDeclaredFactsReader
               // silently covering a unit somebody else now ships.
               sourceVersion: `lane:${product.lane}@${product.updatedAt}`,
             },
-      fulfillment: await this.fulfillmentFact(product, variant, inventory.inventory, evaluatedAt),
+      fulfillment: await this.fulfillmentFact(
+        product,
+        variant,
+        inventory.inventory,
+        evaluatedAt,
+        window,
+      ),
       documentation: inventory.lotCoa,
       offerState,
       identityDispute: identityDisputeState(canonical.identity),
@@ -464,11 +622,12 @@ export class ProductControlDeclaredFactsReader
     variant: AdminProductVariant,
     evaluatedAt: string,
     canonicalRegulatoryHold: boolean,
+    window: UnitFactsWindow,
   ): Promise<readonly EarlyAccessHoldBlocker[]> {
     let recorded: readonly EarlyAccessHoldBlocker[] = [];
-    if (this.holds !== null) {
+    if (window.holds !== null) {
       try {
-        recorded = await this.holds.activeHoldsForUnit(product.id, variant.id, evaluatedAt);
+        recorded = await window.holds.activeHoldsForUnit(product.id, variant.id, evaluatedAt);
       } catch (cause) {
         throw new EarlyAccessDeclaredFactsError(
           `Recorded holds could not be read for ${variant.sku}.`,
@@ -494,12 +653,13 @@ export class ProductControlDeclaredFactsReader
     variant: AdminProductVariant,
     inventoryFact: CartInventoryEligibility | null,
     evaluatedAt: string,
+    window: UnitFactsWindow,
   ): Promise<CartInventoryEligibility | null> {
     if (inventoryFact !== null && inventoryFact.state === "eligible") return inventoryFact;
-    if (this.supplierConfirmations === null) return inventoryFact;
+    if (window.supplierConfirmations === null) return inventoryFact;
     let confirmation;
     try {
-      confirmation = await this.supplierConfirmations.liveForUnit(
+      confirmation = await window.supplierConfirmations.liveForUnit(
         product.id,
         variant.id,
         evaluatedAt,

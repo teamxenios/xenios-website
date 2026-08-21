@@ -59,7 +59,11 @@ import {
   createProductionProductControlReader,
   type ProductCatalogReader,
 } from "../../catalog/product-control-reader";
-import { buildProductionVariantInventoryFactsReader } from "../../catalog/member-catalog-service";
+import { CachedProductCatalogReader } from "../../catalog/cached-product-catalog-reader";
+import {
+  buildProductionBulkVariantInventoryFactsReader,
+  buildProductionVariantInventoryFactsReader,
+} from "../../catalog/member-catalog-service";
 import type { MemberRow } from "../../member-auth";
 import {
   EARLY_ACCESS_CUSTOMER_AUDIENCE_SOURCE,
@@ -393,9 +397,21 @@ export function createProductionEarlyAccessCatalogSource(
 ): ProductControlCatalogSource {
   const currency = resolveEarlyAccessSettlementCurrency();
   return new ProductControlCatalogSource({
-    catalog: createProductionProductControlReader(),
+    // The live reader (bulk listDetails underneath) behind a short-lived
+    // shared snapshot: one upstream catalog read per window instead of one
+    // per customer request. Only the published catalog is cached — audience,
+    // holds, confirmations and inventory are still resolved per request by
+    // the declared-facts reader below, so a hold recorded now is in the NEXT
+    // projection, not the next TTL.
+    catalog: new CachedProductCatalogReader(
+      createProductionProductControlReader(),
+    ),
     declaredFacts: new ProductControlDeclaredFactsReader({
       inventory: buildProductionVariantInventoryFactsReader(),
+      // One lot query per projection instead of one per variant. Same
+      // derivation, same fingerprints; per-variant reads remain the fallback
+      // seam and the master-offerings path.
+      bulkInventory: buildProductionBulkVariantInventoryFactsReader(),
       audience,
       currency,
       ...(facts.supplierConfirmations

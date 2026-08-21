@@ -38,7 +38,7 @@ import {
 const MEDIA_BUCKET = "research-product-media";
 const CURRENCY = "USD";
 
-type InventoryLotRow = {
+export type InventoryLotRow = {
   id: string;
   product_id: string | null;
   variant_id: string | null;
@@ -216,6 +216,27 @@ export async function inventoryFactsForVariant(
       return { row, allocatable: allocatable.data === true };
     }),
   );
+  return deriveVariantInventoryFacts(readiness, productId, variant.id, evaluatedAt);
+}
+
+/**
+ * The one projection from allocatability-annotated lot rows to the two
+ * inventory facts. Both the per-variant read above and the bulk read below end
+ * here, so a variant read either way carries the identical facts and — the
+ * part that breaks silently — the identical `sourceVersion`.
+ *
+ * That fingerprint is byte-locked to a SQL twin:
+ * `research_persistent_cart_inventory_source_version`
+ * (supabase/migrations/20260727200000_research_persistent_cart.sql) recomputes
+ * it row for row, so the rows here must stay filtered to the exact unit,
+ * ordered by lot id, with this property order.
+ */
+export function deriveVariantInventoryFacts(
+  readiness: readonly { row: InventoryLotRow; allocatable: boolean }[],
+  productId: string,
+  variantId: string,
+  evaluatedAt: string,
+): VariantInventoryFacts {
   const eligible = readiness.some((item) => item.allocatable);
   const sourceVersion = fingerprint(
     readiness.map(({ row, allocatable }) => ({
@@ -232,7 +253,7 @@ export async function inventoryFactsForVariant(
   return {
     inventory: {
       productId,
-      variantId: variant.id,
+      variantId,
       state: eligible ? "eligible" : "unavailable",
       reason: eligible ? null : "not_currently_available",
       sourceVersion,
@@ -240,7 +261,7 @@ export async function inventoryFactsForVariant(
     },
     lotCoa: {
       productId,
-      variantId: variant.id,
+      variantId,
       state: eligible ? "verified" : "required",
       sourceVersion,
       evaluatedAt,
@@ -300,6 +321,153 @@ export function createSupabaseVariantInventoryFactsReader(dependencies: {
 
 export function buildProductionVariantInventoryFactsReader(): VariantInventoryFactsReader {
   return createSupabaseVariantInventoryFactsReader({
+    configured: supabaseConfigured,
+    db: getSupabaseAdmin,
+  });
+}
+
+/**
+ * The set-valued form of `VariantInventoryFactsReader`: the inventory facts
+ * for EVERY requested unit, from ONE lot query plus one allocatability RPC per
+ * lot actually found — bounded by real lots on the shelf, not by catalog size.
+ * Today's per-variant path costs one query per variant before any lot exists.
+ *
+ * Every unit in the request gets an entry (a unit with no lot rows derives
+ * from zero rows, exactly as the per-variant read answers), so a missing key
+ * can only mean the unit was never asked for.
+ */
+export interface BulkVariantInventoryFactsReader {
+  readAllVariantInventoryFacts(input: {
+    readonly units: readonly {
+      readonly productId: string;
+      readonly variant: AdminProductVariant;
+    }[];
+    readonly evaluatedAt: string;
+  }): Promise<ReadonlyMap<string, VariantInventoryFacts>>;
+}
+
+/** The key `readAllVariantInventoryFacts` maps by. Matches ops/unit-holds. */
+function inventoryUnitKey(productId: string, variantId: string): string {
+  return `${productId}\n${variantId}`;
+}
+
+/** Bounded fan-out for the per-lot allocatability RPCs. */
+async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  limit: number,
+  map: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+  const workers = Array.from(
+    { length: Math.min(limit, items.length) },
+    async () => {
+      while (next < items.length) {
+        const index = next;
+        next += 1;
+        results[index] = await map(items[index]);
+      }
+    },
+  );
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * One bulk read for a whole catalog's inventory facts.
+ *
+ * The projection per unit is `deriveVariantInventoryFacts` — the SAME function
+ * the per-variant read ends in — over rows grouped to the exact
+ * (productId, variantId, sku) triple and kept in lot-id order, so the facts
+ * and the byte-locked fingerprint are identical to a per-variant read of the
+ * same rows. The allocatability decision stays with the
+ * `research_lot_is_allocatable` RPC; nothing here re-implements it.
+ *
+ * A failed lot query or RPC throws `member_catalog_inventory_unavailable`,
+ * exactly as the per-variant read does: "we could not look" must never
+ * project as "there is nothing there".
+ */
+export function createSupabaseBulkVariantInventoryFactsReader(dependencies: {
+  configured(): boolean;
+  db(): SupabaseClient;
+  /** RPC fan-out bound. Default 8: parallel enough, no stampede. */
+  rpcConcurrency?: number;
+}): BulkVariantInventoryFactsReader {
+  const rpcConcurrency = dependencies.rpcConcurrency ?? 8;
+  return {
+    async readAllVariantInventoryFacts({ units, evaluatedAt }) {
+      if (!dependencies.configured()) {
+        throw new Error("member_catalog_inventory_unavailable");
+      }
+      const facts = new Map<string, VariantInventoryFacts>();
+      if (units.length === 0) return facts;
+      const db = dependencies.db();
+      const productIds = Array.from(
+        new Set(units.map((unit) => unit.productId)),
+      );
+      const result = await db
+        .from("research_inventory_lots")
+        .select("id,product_id,variant_id,sku,disposition,version,updated_at")
+        .in("product_id", productIds)
+        .order("id");
+      if (result.error) throw new Error("member_catalog_inventory_unavailable");
+      const rows = (result.data ?? []) as InventoryLotRow[];
+
+      // Only lots that belong to a REQUESTED unit are decided. The grouping
+      // filter is the per-variant query's WHERE clause, applied in memory.
+      const requested = new Map(
+        units.map((unit) => [
+          inventoryUnitKey(unit.productId, unit.variant.id),
+          unit,
+        ]),
+      );
+      const rowsByUnit = new Map<string, InventoryLotRow[]>();
+      for (const row of rows) {
+        const key = inventoryUnitKey(row.product_id ?? "", row.variant_id ?? "");
+        const unit = requested.get(key);
+        if (unit === undefined) continue;
+        if (row.sku !== unit.variant.sku) continue;
+        const bucket = rowsByUnit.get(key);
+        if (bucket) bucket.push(row);
+        else rowsByUnit.set(key, [row]);
+      }
+
+      const decidedRows = Array.from(rowsByUnit.values()).flat();
+      const allocatableByLot = new Map<string, boolean>();
+      await mapWithConcurrency(decidedRows, rpcConcurrency, async (row) => {
+        const allocatable = await db.rpc("research_lot_is_allocatable", {
+          p_lot_id: row.id,
+          p_as_of: evaluatedAt,
+        });
+        if (allocatable.error) {
+          throw new Error("member_catalog_inventory_unavailable");
+        }
+        allocatableByLot.set(row.id, allocatable.data === true);
+      });
+
+      for (const [key, unit] of Array.from(requested.entries())) {
+        const unitRows = rowsByUnit.get(key) ?? [];
+        const readiness = unitRows.map((row) => ({
+          row,
+          allocatable: allocatableByLot.get(row.id) === true,
+        }));
+        facts.set(
+          key,
+          deriveVariantInventoryFacts(
+            readiness,
+            unit.productId,
+            unit.variant.id,
+            evaluatedAt,
+          ),
+        );
+      }
+      return facts;
+    },
+  };
+}
+
+export function buildProductionBulkVariantInventoryFactsReader(): BulkVariantInventoryFactsReader {
+  return createSupabaseBulkVariantInventoryFactsReader({
     configured: supabaseConfigured,
     db: getSupabaseAdmin,
   });

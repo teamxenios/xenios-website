@@ -377,6 +377,128 @@ export class SupabaseProductAdminRepository
     });
   }
 
+  /**
+   * The WHOLE published, public catalog with the fields a customer surface
+   * renders, in seven bulk queries.
+   *
+   * This is the production implementation of the optional
+   * `ProductControlReadRepository.listDetails` seam: with it,
+   * `LiveProductControlReader.readCatalog()` costs two calls to this method
+   * instead of two `get()` calls per product. At 236 published products the
+   * per-product path is 474 remote reads (~3,300 queries counting `get()`'s
+   * own fan-out) per catalog request, which is the 30-60 second
+   * /research/early-access page load measured on 2026-08-21.
+   *
+   * Unlike `listForPricing`, this includes CONTENT and MEDIA, because customer
+   * catalogs render `content.shortDescription` and the member catalog signs
+   * media. Every row goes through the same mappers `get()` uses, and
+   * `missingInputCount` is computed from the same required-input read with the
+   * same filter, so a product read here and a product read through `get()` are
+   * the same product.
+   *
+   * `history` is the one omission: it is the unbounded per-product audit
+   * trail, no catalog consumer reads it, and bulk-reading every audit row for
+   * every product would turn a bounded read back into an unbounded one.
+   */
+  async listDetails(): Promise<AdminProductDetail[]> {
+    const products = await many(
+      this.db
+        .from(PRODUCT_TABLE)
+        .select("*")
+        .eq("admin_status", "published")
+        .eq("visibility_state", "public"),
+      "list product details",
+    );
+    const ids = products.map((row) => rowText(row.id)).filter(Boolean);
+    if (!ids.length) return [];
+
+    const [variantRows, priceRows, mediaRows, contentRowsRaw, inputRows] =
+      await Promise.all([
+        many(
+          this.db
+            .from(VARIANT_TABLE)
+            .select("*")
+            .in("product_id", ids)
+            .order("sort_order", { ascending: true }),
+          "list variants for details",
+        ),
+        many(
+          this.db
+            .from(PRICE_TABLE)
+            .select("*")
+            .in("product_id", ids)
+            .order("created_at", { ascending: false }),
+          "list prices for details",
+        ),
+        many(
+          this.db
+            .from(MEDIA_TABLE)
+            .select("*")
+            .in("product_id", ids)
+            .order("sort_order", { ascending: true }),
+          "list media for details",
+        ),
+        many(
+          this.db
+            .from(CONTENT_TABLE)
+            .select("product_id,section,body,metadata")
+            .in("product_id", ids),
+          "list content for details",
+        ),
+        many(
+          this.db
+            .from(REQUIRED_INPUT_TABLE)
+            .select("record_id,current_state,blocking_level")
+            .in("record_id", ids),
+          "list required inputs for details",
+        ),
+      ]);
+
+    const variants = variantRows.map(variantRow);
+    const groupBy = <T>(
+      rows: readonly T[],
+      key: (row: T) => string,
+    ): Map<string, T[]> => {
+      const grouped = new Map<string, T[]>();
+      for (const row of rows) {
+        const bucket = grouped.get(key(row));
+        if (bucket) bucket.push(row);
+        else grouped.set(key(row), [row]);
+      }
+      return grouped;
+    };
+    const pricesByProduct = groupBy(priceRows.map(priceRow), (price) => price.productId);
+    const mediaByProduct = groupBy(mediaRows.map(mediaRow), (media) => media.productId);
+    const contentByProduct = groupBy(contentRowsRaw, (row) => rowText(row.product_id));
+    // The same missing-input filter `get()` applies, per product.
+    const missingByProduct = new Map<string, number>();
+    for (const row of inputRows) {
+      const state = rowText(row.current_state);
+      if (
+        state === "verified" ||
+        state === "not_applicable" ||
+        state === "superseded" ||
+        rowText(row.blocking_level) === "informational"
+      ) {
+        continue;
+      }
+      const id = rowText(row.record_id);
+      missingByProduct.set(id, (missingByProduct.get(id) ?? 0) + 1);
+    }
+
+    return products.map((row) => {
+      const id = rowText(row.id);
+      return {
+        ...productSummary(row, variants, missingByProduct.get(id) ?? 0),
+        content: contentRows(contentByProduct.get(id) ?? []),
+        variants: variants.filter((item) => item.productId === id),
+        prices: pricesByProduct.get(id) ?? [],
+        media: mediaByProduct.get(id) ?? [],
+        history: [],
+      };
+    });
+  }
+
   async get(productId: string): Promise<AdminProductDetail | null> {
     const productResult = await this.db
       .from(PRODUCT_TABLE)

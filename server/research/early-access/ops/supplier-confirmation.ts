@@ -33,6 +33,7 @@ import { createHash } from "node:crypto";
 
 import type { CartInventoryEligibility } from "@shared/research/cart-product-selection";
 import type { CommerceResult } from "../commerce/input-guards";
+import { unitFactKey } from "./unit-holds";
 
 // ---------------------------------------------------------------------------
 // The record
@@ -305,6 +306,24 @@ export interface SupplierConfirmationStore {
   withdraw(confirmationId: string, by: string, at: string): Promise<boolean>;
 }
 
+/**
+ * The set-valued form of `liveForUnit`: the newest live confirmation for EVERY
+ * unit that has one, in one read, keyed by `unitFactKey` from ops/unit-holds.
+ * A unit with no live confirmation has no entry — the same answer the
+ * per-unit read gives as null.
+ *
+ * OPTIONAL on any given store. The declared-facts projection uses it when
+ * present and falls back to per-unit reads when absent or failing.
+ * `supplierConfirmedFulfillmentFact` re-verifies unit match and liveness on
+ * every projected value, so a map that somehow carried the wrong unit's
+ * confirmation projects nothing rather than a wrong fact.
+ */
+export interface BulkSupplierConfirmationLiveReader {
+  liveForAllUnits(
+    now: string,
+  ): Promise<ReadonlyMap<string, SupplierConfirmation>>;
+}
+
 /** Test and labeled-local-development store. Not for production. */
 export class InMemorySupplierConfirmationStore implements SupplierConfirmationStore {
   private readonly confirmations = new Map<string, SupplierConfirmation>();
@@ -345,6 +364,29 @@ export class InMemorySupplierConfirmationStore implements SupplierConfirmationSt
       withdrawnBy: by,
     });
     return true;
+  }
+
+  /**
+   * The bulk read, answered BY the per-unit read for every unit that has any
+   * record. One derivation: this cannot drift from `liveForUnit` because it
+   * is `liveForUnit`, applied per known unit.
+   */
+  async liveForAllUnits(
+    now: string,
+  ): Promise<ReadonlyMap<string, SupplierConfirmation>> {
+    const units = new Map<string, { productId: string; variantId: string }>();
+    for (const confirmation of Array.from(this.confirmations.values())) {
+      units.set(unitFactKey(confirmation.productId, confirmation.variantId), {
+        productId: confirmation.productId,
+        variantId: confirmation.variantId,
+      });
+    }
+    const all = new Map<string, SupplierConfirmation>();
+    for (const [key, unit] of Array.from(units.entries())) {
+      const live = await this.liveForUnit(unit.productId, unit.variantId, now);
+      if (live !== null) all.set(key, live);
+    }
+    return all;
   }
 }
 

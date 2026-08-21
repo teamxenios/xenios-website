@@ -1,9 +1,15 @@
 import type {
   SupplierConfirmation,
   SupplierConfirmationStore,
+  BulkSupplierConfirmationLiveReader,
 } from "../ops/supplier-confirmation";
 import type { UnitHoldRecord } from "../ops/unit-holds";
-import type { UnitHoldReader, UnitHoldRegistry as UnitHoldRegistryPort } from "../ops/unit-holds";
+import {
+  unitFactKey,
+  type BulkUnitHoldReader,
+  type UnitHoldReader,
+  type UnitHoldRegistry as UnitHoldRegistryPort,
+} from "../ops/unit-holds";
 import type { EarlyAccessHoldBlocker } from "../catalog/eligibility";
 import {
   EarlyAccessPersistenceError,
@@ -32,6 +38,7 @@ const CONFIRMATION_RPC = {
   insert: "research_early_access_record_supplier_confirmation",
   byId: "research_early_access_supplier_confirmation_by_id",
   liveForUnit: "research_early_access_supplier_confirmation_for_unit",
+  liveForAllUnits: "research_early_access_live_supplier_confirmations",
   withdraw: "research_early_access_supplier_confirmation_withdraw",
 } as const;
 
@@ -40,6 +47,7 @@ const HOLD_RPC = {
   withdraw: "research_early_access_unit_hold_withdraw",
   byId: "research_early_access_unit_hold_by_id",
   activeKindsForUnit: "research_early_access_active_hold_kinds_for_unit",
+  activeForAllUnits: "research_early_access_active_unit_holds",
   forUnit: "research_early_access_unit_holds_for_unit",
 } as const;
 
@@ -51,7 +59,9 @@ const HOLD_KIND_ORDER: readonly EarlyAccessHoldBlocker[] = [
   "SUPPLIER_QUALITY_HOLD",
 ];
 
-export class SupabaseSupplierConfirmationStore implements SupplierConfirmationStore {
+export class SupabaseSupplierConfirmationStore
+  implements SupplierConfirmationStore, BulkSupplierConfirmationLiveReader
+{
   constructor(private readonly query: EarlyAccessPersistenceQuery) {}
 
   async insert(confirmation: SupplierConfirmation): Promise<boolean> {
@@ -99,6 +109,33 @@ export class SupabaseSupplierConfirmationStore implements SupplierConfirmationSt
     });
     return raw === true;
   }
+
+  /**
+   * The newest live confirmation for EVERY unit, in one RPC
+   * (migration 20260821170000). The SQL's liveness clause is the per-unit
+   * function's clause verbatim, so the two reads cannot disagree about what
+   * "live" means. Throws `EarlyAccessPersistenceError` when the RPC is absent
+   * or the read fails; the projection falls back to per-unit reads then.
+   */
+  async liveForAllUnits(
+    now: string,
+  ): Promise<ReadonlyMap<string, SupplierConfirmation>> {
+    const raw = expectArray(
+      CONFIRMATION_RPC.liveForAllUnits,
+      await runEarlyAccessCall(this.query, {
+        fn: CONFIRMATION_RPC.liveForAllUnits,
+        args: { p_now: now },
+      }),
+    );
+    const all = new Map<string, SupplierConfirmation>();
+    for (const entry of raw) {
+      const confirmation = Object.freeze(
+        expectObject(CONFIRMATION_RPC.liveForAllUnits, entry),
+      ) as unknown as SupplierConfirmation;
+      all.set(unitFactKey(confirmation.productId, confirmation.variantId), confirmation);
+    }
+    return all;
+  }
 }
 
 /**
@@ -106,7 +143,7 @@ export class SupabaseSupplierConfirmationStore implements SupplierConfirmationSt
  * declared-facts projection and carries the same record/withdraw surface as
  * the in-memory registry for the operator path.
  */
-export class SupabaseUnitHoldRegistry implements UnitHoldReader {
+export class SupabaseUnitHoldRegistry implements UnitHoldReader, BulkUnitHoldReader {
   constructor(private readonly query: EarlyAccessPersistenceQuery) {}
 
   async record(hold: UnitHoldRecord): Promise<boolean> {
@@ -170,6 +207,54 @@ export class SupabaseUnitHoldRegistry implements UnitHoldReader {
           Object.freeze(expectObject(HOLD_RPC.forUnit, entry)) as unknown as UnitHoldRecord,
       ),
     );
+  }
+
+  /**
+   * Active hold kinds for EVERY unit, in one RPC (migration 20260821170000).
+   * The SQL's `status = 'active'` clause is the per-unit function's clause
+   * verbatim, and the kinds are re-ordered into the same canonical order the
+   * per-unit read answers in. Throws `EarlyAccessPersistenceError` when the
+   * RPC is absent or the read fails; the projection falls back to per-unit
+   * reads then.
+   */
+  async activeHoldsForAllUnits(
+    _evaluatedAt: string,
+  ): Promise<ReadonlyMap<string, readonly EarlyAccessHoldBlocker[]>> {
+    const raw = expectArray(
+      HOLD_RPC.activeForAllUnits,
+      await runEarlyAccessCall(this.query, {
+        fn: HOLD_RPC.activeForAllUnits,
+        args: {},
+      }),
+    );
+    const kindsByUnit = new Map<string, Set<string>>();
+    for (const entry of raw) {
+      const row = expectObject(HOLD_RPC.activeForAllUnits, entry) as {
+        productId?: unknown;
+        variantId?: unknown;
+        kind?: unknown;
+      };
+      if (
+        typeof row.productId !== "string" ||
+        typeof row.variantId !== "string" ||
+        typeof row.kind !== "string"
+      ) {
+        continue;
+      }
+      const key = unitFactKey(row.productId, row.variantId);
+      const bucket = kindsByUnit.get(key) ?? new Set<string>();
+      bucket.add(row.kind);
+      kindsByUnit.set(key, bucket);
+    }
+    const all = new Map<string, readonly EarlyAccessHoldBlocker[]>();
+    for (const [key, present] of Array.from(kindsByUnit.entries())) {
+      // The canonical blocker order, exactly as the per-unit read answers.
+      const kinds = Object.freeze(
+        HOLD_KIND_ORDER.filter((kind) => present.has(kind)),
+      );
+      if (kinds.length > 0) all.set(key, kinds);
+    }
+    return all;
   }
 }
 
@@ -251,6 +336,20 @@ export class MigrationTolerantUnitHoldRegistry implements UnitHoldRegistryPort {
       }
       return Object.freeze([]);
     }
+  }
+
+  /**
+   * The bulk read, delegated unchanged. A failure PROPAGATES rather than
+   * degrading here: the declared-facts projection catches it and falls back to
+   * the per-unit read — which this wrapper then degrades to "no durable
+   * blockers" only if the per-unit RPC is also unavailable. Degrading the bulk
+   * read directly would skip the per-unit rung of that ladder and silently
+   * drop real holds on a deployment where only the NEW bulk RPC is missing.
+   */
+  async activeHoldsForAllUnits(
+    evaluatedAt: string,
+  ): Promise<ReadonlyMap<string, readonly EarlyAccessHoldBlocker[]>> {
+    return this.inner.activeHoldsForAllUnits(evaluatedAt);
   }
 
   /** Unchanged, and deliberately still throwing. */
