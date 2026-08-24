@@ -405,3 +405,50 @@ describe("bulk supplier-confirmation window", () => {
     ).toBe(true);
   });
 });
+
+describe("bulk facts critical path", () => {
+  it("starts hold and supplier-confirmation bulk reads in the same post-inventory wave", async () => {
+    const started: string[] = [];
+    let releaseHolds!: () => void;
+    let releaseConfirmations!: () => void;
+    const holdsGate = new Promise<void>((resolve) => {
+      releaseHolds = resolve;
+    });
+    const confirmationsGate = new Promise<void>((resolve) => {
+      releaseConfirmations = resolve;
+    });
+
+    const pending = declaredWith({
+      holds: {
+        async activeHoldsForUnit() {
+          return [];
+        },
+        async activeHoldsForAllUnits() {
+          started.push("holds");
+          await holdsGate;
+          return new Map();
+        },
+      },
+      supplierConfirmations: {
+        async liveForUnit() {
+          return null;
+        },
+        async liveForAllUnits() {
+          started.push("confirmations");
+          await confirmationsGate;
+          return new Map();
+        },
+      },
+    });
+
+    // Capture before either gate is released. A serialized implementation can
+    // have started only holds here; the second source starts only after the
+    // first promise resolves.
+    const startedTogether = [...started];
+    releaseHolds();
+    releaseConfirmations();
+    await pending;
+
+    expect(startedTogether).toEqual(["holds", "confirmations"]);
+  });
+});

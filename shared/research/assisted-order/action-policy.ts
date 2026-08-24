@@ -61,6 +61,22 @@ export function decideAssistedOrderAction(
     });
   }
 
+  // Availability before price: a canonical hold remains held even when its
+  // price is absent. Otherwise one missing price would move a held product
+  // into the Request Order filter and conceal its actual pathway state.
+  if (authority.held || authority.outOfStock) {
+    return Object.freeze({
+      visible: true,
+      workflowMode: "availability_review",
+      actionLabel: authority.outOfStock
+        ? "Request availability"
+        : "Request review",
+      reason: authority.outOfStock
+        ? "This item is currently out of stock."
+        : "This item is currently held for review.",
+    });
+  }
+
   if (authority.classificationPending) {
     return Object.freeze({
       visible: true,
@@ -76,19 +92,6 @@ export function decideAssistedOrderAction(
       workflowMode: "request_pricing",
       actionLabel: "Request pricing",
       reason: "No approved customer price is currently available.",
-    });
-  }
-
-  if (authority.held || authority.outOfStock) {
-    return Object.freeze({
-      visible: true,
-      workflowMode: "availability_review",
-      actionLabel: authority.outOfStock
-        ? "Request availability"
-        : "Request review",
-      reason: authority.outOfStock
-        ? "This item is currently out of stock."
-        : "This item is currently held for review.",
     });
   }
 

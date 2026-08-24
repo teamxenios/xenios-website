@@ -1,0 +1,10 @@
+{
+  "id": "codex-live-ux-hotfix-20260824",
+  "tool": "Codex",
+  "lane": "live-ux-performance-hotfix-qa",
+  "branch": "codex/live-ux-performance-hotfix-20260821",
+  "state": "active",
+  "startedAt": "2026-08-24T17:41:25.807Z",
+  "heartbeatAt": "2026-08-24T17:41:25.807Z",
+  "note": ""
+}

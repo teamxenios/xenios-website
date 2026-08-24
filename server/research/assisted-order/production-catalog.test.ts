@@ -147,6 +147,46 @@ describe("assisted-order production catalog mapping", () => {
     expect(page.items[0].actionLabel).toBe("Request Order");
   });
 
+  it("keeps canonical temporarily-unavailable variants held, priced or unpriced", async () => {
+    const held = offering({
+      displayState: "temporarily_unavailable",
+      variants: [{
+        id: "var_1",
+        label: "10 mg",
+        displayState: "temporarily_unavailable",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+
+    for (const prices of [new Map([["var_1", priced(5000)]]), new Map()]) {
+      const page = await callbacks([held], prices).list(viewer, {
+        page: 1,
+        pageSize: 24,
+      });
+      expect(page.items[0].workflowMode).toBe("availability_review");
+      expect(page.items[0].workflowMode).not.toBe("direct_order_request");
+      expect(page.items[0].workflowMode).not.toBe("request_pricing");
+    }
+  });
+
+  it("never derives held status from variant label copy", async () => {
+    const page = await callbacks(
+      [offering({
+        variants: [{
+          id: "var_1",
+          label: "CJC-1295 + Ipamorelin (split pending)",
+          displayState: "request_access",
+          visibility: "member",
+          sourceReferences: [],
+        }],
+      } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(5000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("direct_order_request");
+  });
+
   it("keeps an unpriced variant visible as request pricing with a null price, never zero", async () => {
     const page = await callbacks([offering()], new Map()).list(viewer, { page: 1, pageSize: 24 });
     expect(page.items[0].unitPriceCents).toBeNull();
@@ -165,6 +205,90 @@ describe("assisted-order production catalog mapping", () => {
     expect(hit?.unitPriceCents).toBe(5000);
     const miss = await built.resolve(viewer, "pc-prod-1", "pc-var-unknown");
     expect(miss).toBeNull();
+  });
+
+  it("composes Family with search and Action, and clearing Family restores all rows", async () => {
+    const rightDirect = offering({
+      id: "off_right_direct",
+      displayName: "Alpha Direct",
+      canonicalName: "Alpha Direct",
+      variants: [{
+        id: "var_right_direct",
+        label: "10 mg",
+        displayState: "request_access",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+    const rightPending = offering({
+      id: "off_right_pending",
+      displayName: "Beta Pending",
+      canonicalName: "Beta Pending",
+      displayState: "approval_required",
+      variants: [{
+        id: "var_right_pending",
+        label: "10 mg",
+        displayState: "approval_required",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+    const wrongFamily = offering({
+      id: "off_wrong_family_pair",
+      displayName: "Alpha Capsule",
+      canonicalName: "Alpha Capsule",
+      family: "research_capsules",
+      displayState: "approval_required",
+      variants: [{
+        id: "var_wrong_family_pair",
+        label: "10 mg",
+        displayState: "approval_required",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+    const all = [rightDirect, rightPending, wrongFamily];
+    const built = callbacks(
+      all,
+      new Map(all.map((entry) => [entry.variants[0].id, priced(5000)])),
+    );
+
+    const familyOnly = await built.list(viewer, {
+      family: "research_peptides_materials",
+      page: 1,
+      pageSize: 24,
+    });
+    expect(familyOnly.items.map((item) => item.productName)).toEqual([
+      "Alpha Direct",
+      "Beta Pending",
+    ]);
+
+    const searchAndFamily = await built.list(viewer, {
+      search: "Alpha",
+      family: "research_peptides_materials",
+      page: 1,
+      pageSize: 24,
+    });
+    expect(searchAndFamily.items.map((item) => item.productName)).toEqual([
+      "Alpha Direct",
+    ]);
+
+    const familyAndAction = await built.list(viewer, {
+      family: "research_peptides_materials",
+      actionGroup: "request_order",
+      page: 1,
+      pageSize: 24,
+    });
+    expect(familyAndAction.items.map((item) => item.productName)).toEqual([
+      "Beta Pending",
+    ]);
+
+    const cleared = await built.list(viewer, { page: 1, pageSize: 24 });
+    expect(cleared.items.map((item) => item.productName)).toEqual([
+      "Alpha Direct",
+      "Beta Pending",
+      "Alpha Capsule",
+    ]);
   });
 
   it("composes search, canonical Family, and derived Action across source pages", async () => {
@@ -202,6 +326,20 @@ describe("assisted-order production catalog mapping", () => {
           sourceReferences: [],
         },
       ],
+    } as Partial<NormalizedMasterOffering>);
+    const targetPriceRequest = offering({
+      id: "off_target_price_request",
+      slug: "target-price-request",
+      canonicalKey: "target-price-request",
+      displayName: "Target Price Request",
+      canonicalName: "Target Price Request",
+      variants: [{
+        id: "var_target_price_request",
+        label: "10 mg",
+        displayState: "request_access",
+        visibility: "member",
+        sourceReferences: [],
+      }],
     } as Partial<NormalizedMasterOffering>);
     const wrongFamilyPending = offering({
       id: "off_wrong_family",
@@ -241,17 +379,20 @@ describe("assisted-order production catalog mapping", () => {
     const all = [
       ...direct,
       targetPending,
+      targetPriceRequest,
       wrongFamilyPending,
       wrongSearchPending,
     ];
     const prices = new Map(
-      all.map((entry) => [entry.variants[0].id, priced(5000)]),
+      all
+        .filter((entry) => entry.id !== targetPriceRequest.id)
+        .map((entry) => [entry.variants[0].id, priced(5000)]),
     );
 
     const page = await callbacks(all, prices, true, 100).list(viewer, {
       search: "Target",
       family: "research_peptides_materials",
-      workflowMode: "request_activation",
+      actionGroup: "request_order",
       page: 1,
       pageSize: 24,
     });
@@ -259,11 +400,15 @@ describe("assisted-order production catalog mapping", () => {
     // The only match sits after the canonical source's 100-row clamp. Search
     // excludes Unrelated, Family excludes capsules, and Action excludes the
     // 105 direct rows after authoritative projection.
-    expect(page.total).toBe(1);
+    expect(page.total).toBe(2);
     expect(page.items.map((item) => item.productName)).toEqual([
       "Target Pending",
+      "Target Price Request",
     ]);
-    expect(page.items[0].workflowMode).toBe("request_activation");
+    expect(page.items.map((item) => item.workflowMode)).toEqual([
+      "request_activation",
+      "request_pricing",
+    ]);
     expect(page.families).toContain("research_peptides_materials");
     expect(page.families).toContain("research_capsules");
   });

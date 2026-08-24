@@ -12,7 +12,10 @@
 import express, { type RequestHandler } from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import type { AssistedOrderSubmitInput } from "../../../shared/research/assisted-order/contract";
+import type {
+  AssistedOrderCatalogQuery,
+  AssistedOrderSubmitInput,
+} from "../../../shared/research/assisted-order/contract";
 import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   assistedOrderFormPair,
@@ -109,7 +112,7 @@ function submitInput(): AssistedOrderSubmitInput {
   };
 }
 
-function buildApp() {
+function buildApp(onCatalogQuery?: (query: AssistedOrderCatalogQuery) => void) {
   const repository = new InMemoryAssistedOrderRepository();
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
@@ -119,15 +122,18 @@ function buildApp() {
       ],
     },
     catalog: {
-      list: async () => ({
-        items: [CATALOG_ITEM],
-        total: 1,
-        page: 1,
-        pageSize: 24,
-        families: [CATALOG_ITEM.family],
-        channels: [CATALOG_ITEM.channel],
-        workflowModes: [CATALOG_ITEM.workflowMode],
-      }),
+      list: async (_viewer, query) => {
+        onCatalogQuery?.(query);
+        return {
+          items: [CATALOG_ITEM],
+          total: 1,
+          page: 1,
+          pageSize: 24,
+          families: [CATALOG_ITEM.family],
+          channels: [CATALOG_ITEM.channel],
+          workflowModes: [CATALOG_ITEM.workflowMode],
+        };
+      },
       resolveLine: async (_viewer, requested) => ({
         lineId: "assigned-by-service",
         productId: CATALOG_ITEM.productId,
@@ -205,6 +211,29 @@ function buildApp() {
 }
 
 describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> admin queue", () => {
+  it("parses the structured customer Action group without deriving button copy", async () => {
+    let observed: AssistedOrderCatalogQuery | undefined;
+    const app = buildApp((query) => {
+      observed = query;
+    });
+
+    const response = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({
+        q: "Alpha",
+        family: "research_peptides_materials",
+        action: "request_order",
+      })
+      .set("x-test-member", "1");
+
+    expect(response.status).toBe(200);
+    expect(observed).toMatchObject({
+      search: "Alpha",
+      family: "research_peptides_materials",
+      actionGroup: "request_order",
+    });
+  });
+
   it("walks the whole journey over real doors", async () => {
     const app = buildApp();
 

@@ -99,7 +99,9 @@ export default function EarlyAccessRoute() {
   // refresh or render failure after a successful placement does not strand
   // the customer. Reading it grants nothing: the status endpoint re-authorizes
   // against the session's derived identity on every call.
-  const [rememberedOrder] = useState<string | null>(() => readLastOrderNumber());
+  const [rememberedOrder, setRememberedOrder] = useState<string | null>(
+    () => readLastOrderNumber(),
+  );
   // Asked once, shared with the CTA below, so the storefront and the door
   // cannot disagree about whether ordering is open.
   const bridgeState = useAssistedOrderBridgeState();
@@ -216,10 +218,12 @@ export default function EarlyAccessRoute() {
     clearBrowserCart();
     clearCartRecovery();
     clearAssistedOrderStorage();
+    setRememberedOrder(null);
     setAgreed(false);
     setBlocked(null);
     setSelection(null);
     setOrderRequest(null);
+    setPriceChanged(false);
     setCheckoutPhase("details");
     setState({ kind: "locked", error: null, busy: false });
 

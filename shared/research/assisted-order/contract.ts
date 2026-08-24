@@ -22,6 +22,57 @@ export const assistedOrderWorkflowModes = [
 export type AssistedOrderWorkflowMode =
   (typeof assistedOrderWorkflowModes)[number];
 
+/**
+ * The four customer-facing Action filters.
+ *
+ * Workflow modes remain the durable server-side meaning of a line. These
+ * groups are only a browsing projection over that closed vocabulary, so the
+ * filter never has to infer an action from mutable button copy.
+ */
+export const assistedOrderActionGroups = [
+  "direct_order",
+  "request_order",
+  "care",
+  "temporarily_unavailable_held",
+] as const;
+
+export type AssistedOrderActionGroup =
+  (typeof assistedOrderActionGroups)[number];
+
+export const assistedOrderActionGroupLabels: Readonly<
+  Record<AssistedOrderActionGroup, string>
+> = Object.freeze({
+  direct_order: "Direct Order",
+  request_order: "Request Order",
+  care: "Care",
+  temporarily_unavailable_held: "Temporarily Unavailable / Held",
+});
+
+export function isAssistedOrderActionGroup(
+  value: unknown,
+): value is AssistedOrderActionGroup {
+  return (
+    typeof value === "string" &&
+    (assistedOrderActionGroups as readonly string[]).includes(value)
+  );
+}
+
+export function assistedOrderActionGroupFor(
+  workflowMode: AssistedOrderWorkflowMode,
+): AssistedOrderActionGroup {
+  switch (workflowMode) {
+    case "direct_order_request":
+      return "direct_order";
+    case "request_pricing":
+    case "request_activation":
+      return "request_order";
+    case "provider_request":
+      return "care";
+    case "availability_review":
+      return "temporarily_unavailable_held";
+  }
+}
+
 export const assistedOrderStatuses = [
   "submitted",
   "reviewing",
@@ -250,6 +301,8 @@ export type AssistedOrderCatalogQuery = Readonly<{
   search?: string;
   family?: string;
   channel?: string;
+  actionGroup?: AssistedOrderActionGroup;
+  /** Legacy exact-mode query support; customer surfaces use actionGroup. */
   workflowMode?: AssistedOrderWorkflowMode;
   page?: number;
   pageSize?: number;

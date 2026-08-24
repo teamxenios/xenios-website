@@ -162,6 +162,32 @@ describe("F6 I: sign-out clears every browser recovery pointer", () => {
     }
     // And the customer is back at the password screen, not inside a session.
     expect(container.textContent).toContain("Private Early Access");
+
+    const password = container.querySelector(
+      '[data-testid="early-access-unlock-form-password"]',
+    ) as HTMLInputElement;
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    act(() => {
+      valueSetter?.call(password, "next-customer");
+      password.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await settle();
+    const unlock = container.querySelector(
+      '[data-testid="early-access-unlock-form-submit"]',
+    ) as HTMLButtonElement;
+    expect(unlock.disabled).toBe(false);
+    act(() => unlock.click());
+    await settle();
+
+    // Same React mount, freshly authenticated customer: the previous order
+    // context must not return from the state captured before sign-out.
+    expect(container.querySelector('[data-testid="early-access-signout"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="early-access-order-recovery"]')).toBeNull();
+    expect(container.textContent).not.toContain("XEA-000123");
+    expect(window.sessionStorage.getItem(LAST_ORDER_STORAGE_KEY)).toBeNull();
   });
 
   it("leaves storage belonging to no one behind: nothing else is written on sign-out", async () => {

@@ -21,6 +21,7 @@ import type {
   AssistedOrderCatalogPage,
   AssistedOrderCatalogQuery,
 } from "../../../shared/research/assisted-order/contract";
+import { assistedOrderActionGroupFor } from "../../../shared/research/assisted-order/contract";
 import {
   projectAssistedOrderCatalogItem,
   type AssistedOrderCatalogAuthority,
@@ -32,6 +33,7 @@ import type { MasterOfferingPriceView } from "../../../shared/research/master-of
 import {
   MASTER_OFFERING_FAMILIES,
   isMasterOfferingFamily,
+  type MasterOfferingDisplayState,
   type MasterOfferingFamily,
 } from "../../../shared/research/master-offerings/contract";
 
@@ -97,6 +99,22 @@ const RESOLVE_MAX_PAGES = 500;
 const ACTION_FILTER_SCAN_PAGE_SIZE = 100;
 const ACTION_FILTER_SCAN_MAX_PAGES = 500;
 
+/** Canonical states whose existing master-offerings action is non-ordering. */
+const HELD_DISPLAY_STATES: ReadonlySet<MasterOfferingDisplayState> =
+  new Set<MasterOfferingDisplayState>([
+    "available_this_week",
+    "temporarily_unavailable",
+    "coming_soon",
+    "planned",
+    "unavailable",
+  ]);
+
+const OUT_OF_STOCK_DISPLAY_STATES: ReadonlySet<MasterOfferingDisplayState> =
+  new Set<MasterOfferingDisplayState>([
+    "temporarily_unavailable",
+    "unavailable",
+  ]);
+
 /**
  * The marker on a synthetic identity for a variant with no commerce binding.
  *
@@ -128,6 +146,10 @@ export function authorityFor(
     || offering.family === "clinical_formulations_503a";
   const classificationPending = variant.displayState === "approval_required"
     || offering.displayState === "approval_required";
+  const held = HELD_DISPLAY_STATES.has(variant.displayState)
+    || HELD_DISPLAY_STATES.has(offering.displayState);
+  const outOfStock = OUT_OF_STOCK_DISPLAY_STATES.has(variant.displayState)
+    || OUT_OF_STOCK_DISPLAY_STATES.has(offering.displayState);
   const researchUseOnly = offering.family === "research_peptides_materials"
     || offering.family === "research_capsules"
     || offering.family === "research_supplies";
@@ -160,16 +182,16 @@ export function authorityFor(
     priceVersion: priced && identity !== null ? price.priceId : null,
     visible: true,
     directEligible: priced && identity !== null
-      && !providerWorkflowRequired && !classificationPending,
+      && !providerWorkflowRequired && !classificationPending && !held,
     providerWorkflowRequired,
     classificationPending,
     // Pathway precedence: a provider or classification-pending row is not
     // "price pending", its pathway is what blocks it. Price-pending is the
     // truthful state only for the general lane.
     pricePending: (!priced || identity === null)
-      && !providerWorkflowRequired && !classificationPending,
-    held: false,
-    outOfStock: false,
+      && !providerWorkflowRequired && !classificationPending && !held,
+    held,
+    outOfStock,
     researchUseOnly,
     accessNotice: offering.stateExplanation || null,
   });
@@ -246,7 +268,7 @@ export function createAssistedOrderMasterCatalogCallbacks(
       let items: AssistedOrderCatalogItem[];
       let total: number;
 
-      if (query.workflowMode === undefined) {
+      if (query.actionGroup === undefined && query.workflowMode === undefined) {
         const selection = await service.select({
           ...canonicalQuery,
           page: requestedPage,
@@ -265,7 +287,13 @@ export function createAssistedOrderMasterCatalogCallbacks(
             pageSize: ACTION_FILTER_SCAN_PAGE_SIZE,
           });
           for (const item of projectSelection(selection)) {
-            if (item.workflowMode === query.workflowMode) matches.push(item);
+            // The customer group is authoritative when present. Exact mode is
+            // retained only for older callers; intersecting both would let a
+            // stale hidden parameter turn a valid customer filter into zero.
+            const matchesAction = query.actionGroup !== undefined
+              ? assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup
+              : item.workflowMode === query.workflowMode;
+            if (matchesAction) matches.push(item);
           }
           if (sourceTotal === null) sourceTotal = selection.page.total;
           if (selection.offerings.length === 0) break;
