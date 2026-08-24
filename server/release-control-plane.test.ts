@@ -1695,8 +1695,8 @@ describe("route uniqueness validator", () => {
     // is not called from server/index.ts, so none of these are reachable in any
     // deployment. They are counted here so that mounting them later is a visible
     // move rather than a silent one.
-    expect(result.callSites).toBe(386);
-    expect(result.routes).toHaveLength(395);
+    expect(result.callSites).toBe(387);
+    expect(result.routes).toHaveLength(396);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

@@ -13,6 +13,7 @@ import { buildEarlyAccessPersistence } from "./research/early-access/persistence
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { registerRecruitingMail } from "./research/recruiting-mail";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
 import { defaultDeps as defaultMemberPlatformDeps } from "./research/member-platform-deps";
@@ -1097,6 +1098,9 @@ log(
 
 // Email provider diagnostics (booleans only) + the durable notification worker.
 registerOutboxAdmin(app);
+// Recruiting mail: narrow, authenticated, sender-locked. Deliberately NOT part of the
+// outbox admin route, which stays capped to admin recipients so it can never relay.
+registerRecruitingMail(app);
 registerReferralFraudAdmin(app);
 
 // Referral reward promotion: held rewards become available once their hold

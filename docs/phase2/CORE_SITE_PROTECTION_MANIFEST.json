@@ -930,7 +930,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:78dc66623df3e311d7268aad8655a3ffc5f260ab4843851f5919887f5ee73251",
+      "server/index.ts": "sha256:508721473cc3fb629cc918195b22150f048657055d37feb9539e67a777d301d2",
       "server/research/index.ts": "sha256:b1fdbf431c149f55acab4eccf04e47c282c9bbbac0300b6b6ea9f9d57d34de73",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
