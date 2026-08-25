@@ -9,7 +9,8 @@ Production deploy: **not performed**
 - Original prompt baseline: `5c23225fd3223c64ab2851fa31bf44969e7b702c`
 - Reconciled live-code base approved for this lane: `df16b3639fbe49f39aee744d0823d01474580026`
 - Branch: `hotfix/xenios-research-live-ux-performance-20260825`
-- Frozen RC SHA: populated after the final commit and origin verification
+- Verified implementation SHA: `6d6755313694e4d7d06ae66e078db6e6b457cfb7` (origin verified)
+- Frozen deploy SHA: **not assigned**; the real-browser visual evidence gate remains open.
 - Production, catalog data, pricing, payment, email, and database state were not mutated.
 
 ## Customer experience corrected
