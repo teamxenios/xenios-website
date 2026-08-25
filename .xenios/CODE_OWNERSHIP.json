@@ -288,6 +288,26 @@
       "state": "active",
       "claimedAt": "2026-08-21T16:38:03.056Z",
       "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "b036f0d5-d0b4-43b4-a4a3-fa4b05e68526",
+      "task": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+      "session": "codex-step1-live-hotfix-20260825",
+      "paths": [
+        "client/src/research/early-access/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/http-e2e.test.ts",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/early-access/catalog/**",
+        "docs/research-launch/XENIOS_STEP_1_LIVE_HOTFIX_RC_2026-08-25.md",
+        "artifacts/research-step1-hotfix/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-25T16:30:48.142Z",
+      "heartbeatAt": "2026-08-25T16:30:48.205Z"
     }
   ],
   "rules": [

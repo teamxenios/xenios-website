@@ -1,0 +1,10 @@
+{
+  "id": "codex-step1-live-hotfix-20260825",
+  "tool": "Codex",
+  "lane": "step1-live-ux-performance-hotfix",
+  "branch": "hotfix/xenios-research-live-ux-performance-20260825",
+  "state": "active",
+  "startedAt": "2026-08-25T16:30:30.865Z",
+  "heartbeatAt": "2026-08-25T16:30:48.205Z",
+  "note": "Lease claimed on exact Step 1 paths; reconciling prior tested hotfix against approved live base."
+}

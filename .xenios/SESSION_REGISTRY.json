@@ -170,6 +170,16 @@
       "startedAt": "2026-08-21T16:38:55.554Z",
       "heartbeatAt": "2026-08-21T16:59:33.320Z",
       "note": "RC candidate e752db6 pushed+verified. P0-1 eliminated (bulk listDetails + declared-facts window + cache), P0-2 integrated (e2e 53/53), QA defect fixed, migration 76 rehearsed. Full suite running for freeze; awaiting browser-perf report."
+    },
+    {
+      "id": "codex-step1-live-hotfix-20260825",
+      "tool": "Codex",
+      "lane": "step1-live-ux-performance-hotfix",
+      "branch": "hotfix/xenios-research-live-ux-performance-20260825",
+      "state": "active",
+      "startedAt": "2026-08-25T16:30:30.865Z",
+      "heartbeatAt": "2026-08-25T16:30:48.205Z",
+      "note": "Lease claimed on exact Step 1 paths; reconciling prior tested hotfix against approved live base."
     }
   ]
 }

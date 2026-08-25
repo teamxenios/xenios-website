@@ -438,6 +438,28 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-08-21T16:38:03.054Z"
+    },
+    {
+      "id": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+      "title": "Founder-authorized Step 1 Early Access UX, security, and performance hotfix RC from live df16b363",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-step1-live-hotfix-20260825",
+      "paths": [
+        "client/src/research/early-access/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/http-e2e.test.ts",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/early-access/catalog/**",
+        "docs/research-launch/XENIOS_STEP_1_LIVE_HOTFIX_RC_2026-08-25.md",
+        "artifacts/research-step1-hotfix/**"
+      ],
+      "dependsOn": [],
+      "pathsNote": "Founder approved df16b3639fbe49f39aee744d0823d01474580026 as the exact base. Preserve recruiting-mail functionality. No deployment, production mutation, catalog-data release, pricing, payment, affiliate economics, migration, Care buildout, or unrelated cleanup. Active master-offerings/catalog-display and e2e/browser-perf leases remain excluded.",
+      "claimedAt": "2026-08-25T16:30:48.141Z"
     }
   ]
 }
