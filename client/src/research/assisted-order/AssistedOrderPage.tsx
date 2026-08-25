@@ -102,8 +102,30 @@ const workflowLabels: Readonly<Record<AssistedOrderWorkflowMode, string>> = {
   provider_request: "Care pathway",
   request_pricing: "Request pricing",
   request_activation: "Request Order",
-  availability_review: "Availability review",
+  availability_review: "Temporarily Unavailable",
 };
+
+const CATALOG_TIMEOUT_MS = 15_000;
+
+function markCatalogTiming(name: string): void {
+  try {
+    globalThis.performance?.mark?.(name);
+  } catch {
+    // Timing evidence is diagnostic only and must never affect the order path.
+  }
+}
+
+function measureCatalogTiming(
+  name: string,
+  startMark: string,
+  endMark: string,
+): void {
+  try {
+    globalThis.performance?.measure?.(name, startMark, endMark);
+  } catch {
+    // Missing marks or unsupported Performance APIs are safe to ignore.
+  }
+}
 
 function addressFromContact(contact: ContactState): AssistedOrderAddressInput {
   return {
@@ -146,6 +168,8 @@ function ProductCard(props: {
   const selectable = selectableInResearchRequest(item);
   const careOnly = item.workflowMode === "provider_request";
   const unavailable = item.workflowMode === "availability_review";
+  const requestOnly = item.workflowMode === "request_activation";
+  const quantityHelpId = `order-quantity-help-${item.variantId}`;
   return (
     <article className="xenios-order-card" data-testid={`order-card-${item.variantId}`}>
       <div className="xenios-order-card__header">
@@ -172,6 +196,12 @@ function ProductCard(props: {
         <p className="xenios-order-notice"><strong>Research Use Only.</strong> Not for human or veterinary use.</p>
       ) : null}
       {item.accessNotice ? <p className="xenios-order-notice">{item.accessNotice}</p> : null}
+      {requestOnly ? (
+        <p className="xenios-order-notice">
+          Submit a request and Xenios will review availability, classification,
+          and next steps.
+        </p>
+      ) : null}
       {careOnly ? (
         <>
           <p className="xenios-order-notice" data-testid={`order-card-care-${item.variantId}`}>
@@ -197,8 +227,13 @@ function ProductCard(props: {
       ) : !selectable ? (
         null
       ) : selection ? (
-        <div className="xenios-order-quantity" aria-label={`Quantity for ${item.productName}`}>
-          <button type="button" onClick={() => onQuantity(item, selection.quantity - item.quantityIncrement)} aria-label="Decrease quantity">−</button>
+        <div className="xenios-order-quantity" role="group" aria-label={`Quantity for ${item.productName}`}>
+          <button
+            type="button"
+            disabled={selection.quantity <= item.minimumQuantity}
+            onClick={() => onQuantity(item, selection.quantity - item.quantityIncrement)}
+            aria-label="Decrease quantity"
+          >−</button>
           <input
             type="number"
             inputMode="numeric"
@@ -207,13 +242,22 @@ function ProductCard(props: {
             step={item.quantityIncrement}
             value={selection.quantity}
             aria-label={`Quantity for ${item.productName}`}
+            aria-describedby={quantityHelpId}
             onChange={(e) => {
               const value = Number(e.target.value);
               if (Number.isFinite(value)) onQuantity(item, value);
             }}
             style={{ width: 72, textAlign: "center" }}
           />
-          <button type="button" onClick={() => onQuantity(item, selection.quantity + item.quantityIncrement)} aria-label="Increase quantity">+</button>
+          <span className="xenios-order-sr-only" id={quantityHelpId}>
+            Allowed quantity {item.minimumQuantity} to {item.maximumQuantity ?? "the current server limit"}, in increments of {item.quantityIncrement}.
+          </span>
+          <button
+            type="button"
+            disabled={item.maximumQuantity !== null && selection.quantity >= item.maximumQuantity}
+            onClick={() => onQuantity(item, selection.quantity + item.quantityIncrement)}
+            aria-label="Increase quantity"
+          >+</button>
           <button className="xenios-order-link" type="button" onClick={() => onRemove(item)}>Remove</button>
         </div>
       ) : (
@@ -230,7 +274,9 @@ function ProductCard(props: {
   );
 }
 
-export function AssistedOrderPage() {
+export function AssistedOrderPage({
+  embedded = false,
+}: Readonly<{ embedded?: boolean }> = {}) {
   // A draft persisted before a session bounce restores the basket and the
   // idempotency key, so the resumed submission replays as the SAME request.
   // Contact details are never persisted, so a restored wizard can resume at
@@ -263,11 +309,12 @@ export function AssistedOrderPage() {
   const [contact, setContact] = useState<ContactState>(initialContact);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
-  const [channel, setChannel] = useState("");
   const [actionGroup, setActionGroup] = useState<"" | AssistedOrderActionGroup>("");
   const [page, setPage] = useState(1);
+  const [catalogRequestVersion, setCatalogRequestVersion] = useState(0);
   const [catalog, setCatalog] = useState<AssistedOrderCatalogPage | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [config, setConfig] = useState<ConfigState>({ kind: "loading" });
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
   const [submitting, setSubmitting] = useState(false);
@@ -324,20 +371,30 @@ export function AssistedOrderPage() {
   useEffect(() => {
     if (step !== "products") return;
     const abort = new AbortController();
+    let disposed = false;
+    let timedOut = false;
+    let requestTimeout: number | undefined;
+    setCatalogLoading(true);
+    setCatalogError(null);
+    markCatalogTiming("xenios:assisted-catalog:requested");
     const timer = window.setTimeout(() => {
-      setCatalogLoading(true);
-      setError(null);
+      markCatalogTiming("xenios:assisted-catalog:fetch-start");
+      requestTimeout = window.setTimeout(() => {
+        timedOut = true;
+        abort.abort();
+      }, CATALOG_TIMEOUT_MS);
       loadAssistedOrderCatalog({
         search: search || undefined,
         family: family || undefined,
-        channel: channel || undefined,
         actionGroup: actionGroup || undefined,
         page,
         pageSize: 24,
-      })
+      }, abort.signal)
         .then((result) => {
-          if (abort.signal.aborted) return;
+          if (disposed) return;
+          markCatalogTiming("xenios:assisted-catalog:fetch-complete");
           setCatalog(result);
+          setCatalogError(null);
           // Any selection visible on this fresh page adopts the fresh
           // snapshot, so displayed prices heal while the customer browses.
           setSelections((current) => {
@@ -356,20 +413,47 @@ export function AssistedOrderPage() {
             return next;
           });
         })
-        .catch((reason) => {
-          if (!abort.signal.aborted) {
-            setError(reason instanceof Error ? reason.message : "The catalog could not be loaded.");
-          }
+        .catch(() => {
+          if (disposed) return;
+          setCatalog(null);
+          setCatalogError(
+            timedOut
+              ? "The catalog took too long to respond. Please try again."
+              : "We couldn't load the catalog. Check your connection and try again.",
+          );
         })
         .finally(() => {
-          if (!abort.signal.aborted) setCatalogLoading(false);
+          if (requestTimeout !== undefined) window.clearTimeout(requestTimeout);
+          if (!disposed) setCatalogLoading(false);
         });
     }, 200);
     return () => {
+      disposed = true;
       abort.abort();
       window.clearTimeout(timer);
+      if (requestTimeout !== undefined) window.clearTimeout(requestTimeout);
     };
-  }, [step, search, family, channel, actionGroup, page]);
+  }, [step, search, family, actionGroup, page, catalogRequestVersion]);
+
+  useEffect(() => {
+    if (step !== "products" || catalogLoading || !catalog || catalog.items.length === 0) {
+      return;
+    }
+    markCatalogTiming("xenios:assisted-catalog:first-card");
+    measureCatalogTiming(
+      "xenios:assisted-catalog:fetch-to-first-card",
+      "xenios:assisted-catalog:fetch-start",
+      "xenios:assisted-catalog:first-card",
+    );
+    if (catalog.items.some((item) => item.unitPriceCents !== null)) {
+      markCatalogTiming("xenios:assisted-catalog:first-price");
+      measureCatalogTiming(
+        "xenios:assisted-catalog:fetch-to-first-price",
+        "xenios:assisted-catalog:fetch-start",
+        "xenios:assisted-catalog:first-price",
+      );
+    }
+  }, [step, catalogLoading, catalog]);
 
   const selectionList = useMemo(() => Array.from(selections.values()), [selections]);
   const estimate = useMemo(() => selectionEstimateCents(selections), [selections]);
@@ -388,6 +472,25 @@ export function AssistedOrderPage() {
     [config, includesRuo],
   );
   const acknowledgmentsIncomplete = submissionBlocked(requirements, acknowledged);
+  const hasCatalogFilters = search.trim() !== "" || family !== "" || actionGroup !== "";
+  const emptyCatalogMessage = search.trim() !== ""
+    ? hasCatalogFilters && (family !== "" || actionGroup !== "")
+      ? "No products match your search and selected filters."
+      : "No products match that search."
+    : family !== "" && actionGroup !== ""
+      ? "No products match the selected Family and Action."
+      : family !== ""
+        ? "No products match the selected Family."
+        : actionGroup !== ""
+          ? "No products match the selected Action."
+          : "No products are available right now.";
+
+  const clearCatalogFilters = () => {
+    setSearch("");
+    setFamily("");
+    setActionGroup("");
+    setPage(1);
+  };
 
   const toggleAcknowledgment = (key: string, checked: boolean) => {
     setAcknowledged((current) => {
@@ -596,7 +699,7 @@ export function AssistedOrderPage() {
     <div className="xenios-order-page">
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Private Early Access</p>
-        <h1>Request an order</h1>
+        {embedded ? <h3>Request an order</h3> : <h1>Request an order</h1>}
         <p>
           Choose products and quantities. Xenios confirms availability and
           payment details before fulfillment.
@@ -626,29 +729,99 @@ export function AssistedOrderPage() {
       {notice ? <div className="xenios-order-notice" role="status" data-testid="order-notice">{notice}</div> : null}
 
       {step === "products" ? (
-        <section className="xenios-order-catalog-layout">
+        <section className="xenios-order-catalog-layout" aria-labelledby="order-catalog-heading">
           <div>
+            <h2 className="xenios-order-sr-only" id="order-catalog-heading">Browse all products</h2>
             <div className="xenios-order-panel xenios-order-filters">
-              <label>Search<input data-testid="order-filter-search" type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Product or specification" /></label>
-              <label>Family<select data-testid="order-filter-family" value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}><option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
-              <label>Channel<select value={channel} onChange={(e) => { setChannel(e.target.value); setPage(1); }}><option value="">All channels</option>{catalog?.channels.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
-              <label>Action<select data-testid="order-filter-action" value={actionGroup} onChange={(e) => { setActionGroup(e.target.value as "" | AssistedOrderActionGroup); setPage(1); }}><option value="">All actions</option>{assistedOrderActionGroups.map((value) => <option key={value} value={value}>{assistedOrderActionGroupLabels[value]}</option>)}</select></label>
-            </div>
-            {catalogLoading ? <p className="xenios-order-loading" aria-live="polite">Loading catalog…</p> : null}
-            <div className="xenios-order-cards">
-              {catalog?.items.map((item) => {
-                const selection = selections.get(catalogItemKey(item));
-                return <ProductCard key={catalogItemKey(item)} item={item} selection={selection} onAdd={addItem} onQuantity={setQuantity} onRemove={removeItem} />;
-              })}
-            </div>
-            {catalog && catalog.total === 0 ? <p className="xenios-order-empty">No products match those filters.</p> : null}
-            {catalog && catalog.total > catalog.pageSize ? (
-              <div className="xenios-order-pagination">
-                <button type="button" disabled={catalog.page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</button>
-                <span>Page {catalog.page} of {Math.ceil(catalog.total / catalog.pageSize)}</span>
-                <button type="button" disabled={catalog.page >= Math.ceil(catalog.total / catalog.pageSize)} onClick={() => setPage((value) => value + 1)}>Next</button>
+              <label>
+                Search
+                <input data-testid="order-filter-search" type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Product or specification" />
+              </label>
+              <label>
+                Family
+                <select data-testid="order-filter-family" value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}>
+                  <option value="">All families</option>
+                  {catalog?.families.map((value) => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </label>
+              <label>
+                Action
+                <select data-testid="order-filter-action" value={actionGroup} onChange={(e) => { setActionGroup(e.target.value as "" | AssistedOrderActionGroup); setPage(1); }}>
+                  <option value="">All actions</option>
+                  {assistedOrderActionGroups.map((value) => <option key={value} value={value}>{assistedOrderActionGroupLabels[value]}</option>)}
+                </select>
+              </label>
+              <div className="xenios-order-filter-actions">
+                <span>Search, Family, and Action apply before pagination.</span>
+                <button
+                  type="button"
+                  data-testid="order-clear-filters"
+                  disabled={!hasCatalogFilters}
+                  onClick={clearCatalogFilters}
+                >
+                  Clear filters
+                </button>
               </div>
-            ) : null}
+            </div>
+            <div className="xenios-order-results" aria-busy={catalogLoading}>
+              <p className="xenios-order-sr-only" role="status" aria-live="polite" data-testid="order-catalog-status">
+                {catalogLoading
+                  ? "Loading catalog."
+                  : catalogError
+                    ? catalogError
+                    : catalog
+                      ? `${catalog.total} ${catalog.total === 1 ? "result" : "results"}. ${hasCatalogFilters ? "Selected filters applied." : "No filters selected."}`
+                      : "Catalog not loaded."}
+              </p>
+              {catalogLoading ? (
+                <>
+                  <p className="xenios-order-loading">Loading catalog…</p>
+                  <div className="xenios-order-cards" aria-hidden="true" data-testid="order-catalog-skeletons">
+                    {Array.from({ length: 4 }, (_, index) => (
+                      <article className="xenios-order-card xenios-order-card--skeleton" key={index}>
+                        <span className="xenios-order-skeleton xenios-order-skeleton--short" />
+                        <span className="xenios-order-skeleton xenios-order-skeleton--title" />
+                        <span className="xenios-order-skeleton" />
+                        <span className="xenios-order-skeleton" />
+                        <span className="xenios-order-skeleton xenios-order-skeleton--button" />
+                      </article>
+                    ))}
+                  </div>
+                </>
+              ) : catalogError ? (
+                <div className="xenios-order-error xenios-order-error--catalog" role="alert" data-testid="order-catalog-error">
+                  <p>{catalogError}</p>
+                  <button type="button" onClick={() => setCatalogRequestVersion((value) => value + 1)}>
+                    Try again
+                  </button>
+                </div>
+              ) : catalog ? (
+                <>
+                  <p className="xenios-order-result-count" data-testid="order-result-count">
+                    {catalog.total} {catalog.total === 1 ? "result" : "results"}. Sorted by product name.
+                  </p>
+                  <div className="xenios-order-cards">
+                    {catalog.items.map((item) => {
+                      const selection = selections.get(catalogItemKey(item));
+                      return <ProductCard key={catalogItemKey(item)} item={item} selection={selection} onAdd={addItem} onQuantity={setQuantity} onRemove={removeItem} />;
+                    })}
+                  </div>
+                  {catalog.total === 0 ? (
+                    <div className="xenios-order-empty" data-testid="order-catalog-empty">
+                      <p>{emptyCatalogMessage}</p>
+                      {hasCatalogFilters ? <button type="button" onClick={clearCatalogFilters}>Clear filters</button> : null}
+                    </div>
+                  ) : null}
+                  {catalog.total > catalog.pageSize ? (
+                    <nav className="xenios-order-pagination" aria-label="Catalog pages">
+                      <button type="button" disabled={catalog.page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</button>
+                      <span aria-live="polite">Page {catalog.page} of {Math.ceil(catalog.total / catalog.pageSize)}</span>
+                      <button type="button" disabled={catalog.page >= Math.ceil(catalog.total / catalog.pageSize)} onClick={() => setPage((value) => value + 1)}>Next</button>
+                    </nav>
+                  ) : null}
+                </>
+              ) : null}
+            </div>
           </div>
           <aside className="xenios-order-summary">
             <h2>Your request</h2>

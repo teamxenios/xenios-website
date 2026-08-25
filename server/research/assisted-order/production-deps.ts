@@ -27,6 +27,7 @@ import type {
   AssistedOrderViewer,
 } from "./ports";
 import { enqueueNotificationOnce } from "../outbox";
+import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
 
 export const ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR =
   "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED";
@@ -82,6 +83,11 @@ export function buildAssistedOrderProduction(
       bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor,
       catalogVersion: wiring.catalogVersion,
+      // The assisted-order projection must honor the exact same reviewed
+      // formulation holds as the canonical member catalog. Reading the
+      // fail-closed record here makes the production seam impossible to
+      // compose with an accidental empty/default hold set.
+      reviewedFormulationHolds: reviewedHeldSpecifications(),
     }),
   );
 

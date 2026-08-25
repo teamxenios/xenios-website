@@ -76,9 +76,11 @@ function queryString(query: AssistedOrderCatalogQuery): string {
 
 export function loadAssistedOrderCatalog(
   query: AssistedOrderCatalogQuery,
+  signal?: AbortSignal,
 ): Promise<AssistedOrderCatalogPage> {
   return request(
     `/api/research/early-access/assisted-orders/catalog${queryString(query)}`,
+    { signal },
   );
 }
 

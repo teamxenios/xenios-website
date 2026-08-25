@@ -74,6 +74,7 @@ function callbacks(
   // exactly why the submission-time re-read shipped able to find only the
   // alphabetically first hundred offerings.
   clampPageSize = Number.POSITIVE_INFINITY,
+  reviewedFormulationHolds: ReadonlySet<string> = new Set(),
 ) {
   const service = {
     select: async (
@@ -112,6 +113,7 @@ function callbacks(
         ? "var_1"
         : null,
     catalogVersion: "catalog-test-v1",
+    reviewedFormulationHolds,
   });
 }
 
@@ -170,7 +172,7 @@ describe("assisted-order production catalog mapping", () => {
     }
   });
 
-  it("never derives held status from variant label copy", async () => {
+  it("holds a formulation whose source label explicitly declares a pending split", async () => {
     const page = await callbacks(
       [offering({
         variants: [{
@@ -184,7 +186,30 @@ describe("assisted-order production catalog mapping", () => {
       new Map([["var_1", priced(5000)]]),
     ).list(viewer, { page: 1, pageSize: 24 });
 
-    expect(page.items[0].workflowMode).toBe("direct_order_request");
+    expect(page.items[0].workflowMode).toBe("availability_review");
+    expect(page.items[0].workflowMode).not.toBe("direct_order_request");
+  });
+
+  it("honors a founder-reviewed hold after customer-facing copy removes the internal marker", async () => {
+    const canonicalSpecification = "CJC-1295 WITH DAC + IPAMORELIN 5 mg total";
+    const page = await callbacks(
+      [offering({
+        variants: [{
+          id: "var_1",
+          label: canonicalSpecification,
+          displayState: "request_access",
+          visibility: "member",
+          sourceReferences: [],
+        }],
+      } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(5000)]]),
+      true,
+      Number.POSITIVE_INFINITY,
+      new Set([canonicalSpecification.toUpperCase()]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("availability_review");
+    expect(page.items[0].workflowMode).not.toBe("direct_order_request");
   });
 
   it("keeps an unpriced variant visible as request pricing with a null price, never zero", async () => {

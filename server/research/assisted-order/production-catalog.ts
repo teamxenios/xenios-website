@@ -36,6 +36,7 @@ import {
   type MasterOfferingDisplayState,
   type MasterOfferingFamily,
 } from "../../../shared/research/master-offerings/contract";
+import { isFormulationHeld } from "../../../shared/research/master-offerings/formulation-hold";
 
 /**
  * The catalog reader this adapter needs, stated structurally so the
@@ -70,6 +71,8 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
   offeringVariantFor(identity: AssistedOrderCommerceIdentity): string | null;
   /** A stable dataset identity that changes when the catalog dataset changes. */
   catalogVersion: string;
+  /** Canonical, founder-reviewed formulation holds from the reconciliation record. */
+  reviewedFormulationHolds?: ReadonlySet<string>;
 }>;
 
 /**
@@ -139,6 +142,7 @@ export function authorityFor(
   price: MasterOfferingPriceView | undefined,
   identity: AssistedOrderCommerceIdentity | null,
   catalogVersion: string,
+  reviewedFormulationHolds?: ReadonlySet<string>,
 ): AssistedOrderCatalogAuthority {
   const priced = price !== undefined && price.state === "priced";
   const providerWorkflowRequired = variant.displayState === "care_pathway"
@@ -147,7 +151,8 @@ export function authorityFor(
   const classificationPending = variant.displayState === "approval_required"
     || offering.displayState === "approval_required";
   const held = HELD_DISPLAY_STATES.has(variant.displayState)
-    || HELD_DISPLAY_STATES.has(offering.displayState);
+    || HELD_DISPLAY_STATES.has(offering.displayState)
+    || isFormulationHeld(variant.label, reviewedFormulationHolds);
   const outOfStock = OUT_OF_STOCK_DISPLAY_STATES.has(variant.displayState)
     || OUT_OF_STOCK_DISPLAY_STATES.has(offering.displayState);
   const researchUseOnly = offering.family === "research_peptides_materials"
@@ -257,6 +262,7 @@ export function createAssistedOrderMasterCatalogCallbacks(
                 selection.prices.get(variant.id),
                 identity,
                 input.catalogVersion,
+                input.reviewedFormulationHolds,
               ),
             );
             if (item) projected.push(item);
@@ -375,6 +381,7 @@ export function createAssistedOrderMasterCatalogCallbacks(
                 selection.prices.get(variant.id),
                 { productId, variantId },
                 input.catalogVersion,
+                input.reviewedFormulationHolds,
               ),
             );
           }

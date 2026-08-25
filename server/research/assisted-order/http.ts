@@ -72,15 +72,29 @@ function parsePositiveInt(
 function catalogQuery(
   request: AssistedOrderHttpRequest,
 ): AssistedOrderCatalogQuery {
+  const action = request.query.action?.trim();
+  if (action && !isAssistedOrderActionGroup(action)) {
+    throw new AssistedOrderValidationError(
+      "action",
+      "Choose a valid catalog action.",
+    );
+  }
+  const workflowMode = request.query.workflowMode?.trim();
+  if (workflowMode && !isAssistedOrderWorkflowMode(workflowMode)) {
+    throw new AssistedOrderValidationError(
+      "workflowMode",
+      "Choose a valid catalog workflow.",
+    );
+  }
   return Object.freeze({
     search: request.query.q?.trim() || undefined,
     family: request.query.family?.trim() || undefined,
     channel: request.query.channel?.trim() || undefined,
-    actionGroup: isAssistedOrderActionGroup(request.query.action)
-      ? request.query.action
+    actionGroup: isAssistedOrderActionGroup(action)
+      ? action
       : undefined,
-    workflowMode: isAssistedOrderWorkflowMode(request.query.workflowMode)
-      ? request.query.workflowMode
+    workflowMode: isAssistedOrderWorkflowMode(workflowMode)
+      ? workflowMode
       : undefined,
     page: parsePositiveInt(request.query.page, 1, 100_000),
     pageSize: parsePositiveInt(request.query.pageSize, 24, 100),

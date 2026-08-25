@@ -243,7 +243,16 @@ describe("the unified Early Access storefront", () => {
     expect(text).toContain("Featured products");
     expect(text).toContain("All products");
     // The customer no longer has to find a separate page for the real catalog.
-    expect(container.querySelector('[data-testid="early-access-full-catalog"]')).toBeTruthy();
+    const allProducts = container.querySelector('[data-testid="early-access-full-catalog"]');
+    const featured = container.querySelector('[data-testid="early-access-featured-catalog"]');
+    expect(allProducts).toBeTruthy();
+    expect(featured).toBeTruthy();
+    // The historically faster, primary canonical surface must precede the
+    // heavier Featured projection so a slow secondary fetch cannot own first
+    // useful product time.
+    expect(
+      allProducts!.compareDocumentPosition(featured!) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   // NOTE ON SCOPE. The price text, the Care refusal and each row's action

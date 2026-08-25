@@ -29,10 +29,12 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { decideAssistedOrderAction } from "../../shared/research/assisted-order/action-policy";
 import { authorityFor } from "../../server/research/assisted-order/production-catalog";
+import { reviewedHeldSpecifications } from "../../server/research/master-offerings/reviewed-holds";
 import type { NormalizedMasterOffering } from "../../server/research/master-offerings/model";
 import type { MasterOfferingPriceView } from "../../shared/research/master-offerings/pricing-contract";
 
 const ROOT = process.cwd();
+const REVIEWED_FORMULATION_HOLDS = reviewedHeldSpecifications(ROOT);
 
 type DatasetProduct = {
   id: string;
@@ -249,6 +251,7 @@ for (const product of dataset.products) {
       priceView,
       binding ? { productId: binding.productId, variantId: binding.variantId } : null,
       "launch-matrix",
+      REVIEWED_FORMULATION_HOLDS,
     );
 
     const decision = decideAssistedOrderAction(authority);

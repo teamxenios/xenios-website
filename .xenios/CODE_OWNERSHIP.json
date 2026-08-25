@@ -299,15 +299,18 @@
         "shared/research/assisted-order/**",
         "server/research/assisted-order/http.ts",
         "server/research/assisted-order/http-e2e.test.ts",
+        "server/research/assisted-order/production-deps.ts",
         "server/research/assisted-order/production-catalog.ts",
         "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/assisted-order/production-wiring.test.ts",
         "server/research/early-access/catalog/**",
+        "scripts/research-launch/generate-launch-matrix.ts",
         "docs/research-launch/XENIOS_STEP_1_LIVE_HOTFIX_RC_2026-08-25.md",
         "artifacts/research-step1-hotfix/**"
       ],
       "state": "active",
       "claimedAt": "2026-08-25T16:30:48.142Z",
-      "heartbeatAt": "2026-08-25T16:30:48.205Z"
+      "heartbeatAt": "2026-08-25T16:50:17.633Z"
     }
   ],
   "rules": [

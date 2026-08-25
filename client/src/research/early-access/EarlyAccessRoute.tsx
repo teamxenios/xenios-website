@@ -386,26 +386,6 @@ export default function EarlyAccessRoute() {
                 <div className="mb-4">
                   <AssistedOrderCta />
                 </div>
-                <h3 className="xenios-early-access-section-heading">Featured products</h3>
-                <EarlyAccessCatalogSection
-                  fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
-                  reviewEnabled={agreed && blocked === null}
-                  onReview={(nextSelection) => {
-                    if (!agreed || blocked !== null) return;
-                    setPriceChanged(false);
-                    setOrderRequest(null);
-                    setSelection(nextSelection);
-                    setCheckoutPhase("details");
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  onOrderRequest={(nextRequest) => {
-                    if (!agreed || blocked !== null) return;
-                    setPriceChanged(false);
-                    setSelection(null);
-                    setOrderRequest(nextRequest);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                />
                 {/*
                   ALL PRODUCTS — the full canonical catalog, on the storefront
                   itself rather than behind a separate link. Same product
@@ -415,14 +395,44 @@ export default function EarlyAccessRoute() {
                 */}
                 {bridgeState.kind === "enabled" ? (
                   <section className="mt-8" data-testid="early-access-full-catalog">
-                    <h3 className="xenios-early-access-section-heading">All products</h3>
+                    <h2 className="xenios-early-access-section-heading">All products</h2>
                     <Suspense
                       fallback={<p className="xenios-order-notice">Loading the full research catalogue.</p>}
                     >
-                      <FullCanonicalCatalog />
+                      <FullCanonicalCatalog embedded />
                     </Suspense>
                   </section>
                 ) : null}
+                {/*
+                  Featured is intentionally secondary. Its richer projection
+                  is the historically slower request, while All products is
+                  the declared primary storefront and can usually show a
+                  useful server-authorized card sooner. Both still start from
+                  their existing authorities; DOM order alone keeps the slow
+                  shelf from blocking the first useful catalog experience.
+                */}
+                <section className="mt-8" data-testid="early-access-featured-catalog">
+                  <h2 className="xenios-early-access-section-heading">Featured products</h2>
+                  <EarlyAccessCatalogSection
+                    fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+                    reviewEnabled={agreed && blocked === null}
+                    onReview={(nextSelection) => {
+                      if (!agreed || blocked !== null) return;
+                      setPriceChanged(false);
+                      setOrderRequest(null);
+                      setSelection(nextSelection);
+                      setCheckoutPhase("details");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    onOrderRequest={(nextRequest) => {
+                      if (!agreed || blocked !== null) return;
+                      setPriceChanged(false);
+                      setSelection(null);
+                      setOrderRequest(nextRequest);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  />
+                </section>
               </div>
             ) : (
               <div className="mt-5" data-testid="early-access-checkout-mount">

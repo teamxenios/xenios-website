@@ -234,6 +234,32 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     });
   });
 
+  it("rejects tampered Action and workflow tokens instead of broadening the catalog", async () => {
+    const observed: AssistedOrderCatalogQuery[] = [];
+    const app = buildApp((query) => observed.push(query));
+
+    const invalidAction = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({ action: "direct_order_request" })
+      .set("x-test-member", "1");
+    expect(invalidAction.status).toBe(400);
+    expect(invalidAction.body).toMatchObject({
+      error: "validation_error",
+      field: "action",
+    });
+
+    const invalidWorkflow = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({ workflowMode: "anything_goes" })
+      .set("x-test-member", "1");
+    expect(invalidWorkflow.status).toBe(400);
+    expect(invalidWorkflow.body).toMatchObject({
+      error: "validation_error",
+      field: "workflowMode",
+    });
+    expect(observed).toEqual([]);
+  });
+
   it("walks the whole journey over real doors", async () => {
     const app = buildApp();
 

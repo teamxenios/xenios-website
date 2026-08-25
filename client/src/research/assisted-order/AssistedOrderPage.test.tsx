@@ -198,6 +198,16 @@ function selectValue(select: HTMLSelectElement | null, value: string) {
   });
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
+}
+
 function fillContact() {
   typeInto(byTestId<HTMLInputElement>("order-contact-name"), "Ada Researcher");
   typeInto(byTestId<HTMLInputElement>("order-contact-email"), "ada@example.org");
@@ -271,6 +281,7 @@ describe("AssistedOrderPage", () => {
       ["care", "Care"],
       ["temporarily_unavailable_held", "Temporarily Unavailable / Held"],
     ]);
+    expect(document.body.textContent).not.toContain("Channel");
 
     typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Alpha");
     selectValue(
@@ -286,6 +297,7 @@ describe("AssistedOrderPage", () => {
         family: "research_peptides_materials",
         actionGroup: "request_order",
       }),
+      expect.anything(),
     );
 
     selectValue(byTestId<HTMLSelectElement>("order-filter-family"), "");
@@ -296,7 +308,84 @@ describe("AssistedOrderPage", () => {
         family: undefined,
         actionGroup: "request_order",
       }),
+      expect.anything(),
     );
+
+    click(byTestId("order-clear-filters"));
+    await settle();
+    expect(byTestId<HTMLInputElement>("order-filter-search")?.value).toBe("");
+    expect(byTestId<HTMLSelectElement>("order-filter-family")?.value).toBe("");
+    expect(byTestId<HTMLSelectElement>("order-filter-action")?.value).toBe("");
+    expect(api.loadAssistedOrderCatalog).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        search: undefined,
+        family: undefined,
+        actionGroup: undefined,
+        page: 1,
+      }),
+      expect.anything(),
+    );
+  });
+
+  it("hides stale cards while a new filter loads and aborts the obsolete request", async () => {
+    const pending = deferred<AssistedOrderCatalogPage>();
+    api.loadAssistedOrderCatalog
+      .mockResolvedValueOnce(catalogPage([directRuoItem]))
+      .mockImplementationOnce(() => pending.promise)
+      .mockResolvedValueOnce(catalogPage([pendingItem]));
+    render();
+    await settle();
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)).not.toBeNull();
+
+    typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Pending");
+    await settle(230);
+    expect(byTestId("order-catalog-skeletons")).not.toBeNull();
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
+    const obsoleteSignal = api.loadAssistedOrderCatalog.mock.calls.at(-1)?.[1] as AbortSignal;
+    expect(obsoleteSignal.aborted).toBe(false);
+
+    typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Pending Peptide");
+    expect(obsoleteSignal.aborted).toBe(true);
+    pending.resolve(catalogPage([directRuoItem]));
+    await settle();
+    expect(byTestId(`order-card-${pendingItem.variantId}`)).not.toBeNull();
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
+  });
+
+  it("shows a customer-safe retry state without leaking a raw catalog error", async () => {
+    api.loadAssistedOrderCatalog
+      .mockResolvedValueOnce(catalogPage([directRuoItem]))
+      .mockRejectedValueOnce(new Error("postgres password=do-not-expose"));
+    render();
+    await settle();
+
+    typeInto(byTestId<HTMLInputElement>("order-filter-search"), "anything");
+    await settle();
+    const error = byTestId("order-catalog-error");
+    expect(error).not.toBeNull();
+    expect(error?.textContent).toContain("couldn't load the catalog");
+    expect(error?.textContent).not.toContain("postgres");
+    expect(error?.textContent).not.toContain("do-not-expose");
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
+  });
+
+  it("announces a filter-specific empty state and provides an accessible clear action", async () => {
+    api.loadAssistedOrderCatalog
+      .mockResolvedValueOnce(catalogPage([directRuoItem]))
+      .mockResolvedValueOnce(catalogPage([]));
+    render();
+    await settle();
+
+    selectValue(byTestId<HTMLSelectElement>("order-filter-action"), "care");
+    await settle();
+    expect(byTestId("order-catalog-empty")?.textContent).toContain(
+      "No products match the selected Action.",
+    );
+    expect(byTestId("order-catalog-status")?.textContent).toContain(
+      "Selected filters applied.",
+    );
+    click(byTestId("order-catalog-empty")?.querySelector("button") ?? null);
+    expect(byTestId<HTMLSelectElement>("order-filter-action")?.value).toBe("");
   });
 
   it("labels pending products Request Order without changing their request-only mode", async () => {
