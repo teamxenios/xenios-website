@@ -288,6 +288,21 @@
       "state": "active",
       "claimedAt": "2026-08-21T16:38:03.056Z",
       "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "d1e5d91c-1fd2-4b26-916b-236e7133a731",
+      "task": "HINO-PUBLIC-MICROSITE",
+      "session": "codex-hino-public-20260825",
+      "paths": [
+        "client/public/hino/**",
+        "scripts/hino/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/research/hino-static-site.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-25T19:45:06.989Z",
+      "heartbeatAt": "2026-08-25T20:13:31.692Z"
     }
   ],
   "rules": [

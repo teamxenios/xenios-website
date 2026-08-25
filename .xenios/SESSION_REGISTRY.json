@@ -170,6 +170,16 @@
       "startedAt": "2026-08-21T16:38:55.554Z",
       "heartbeatAt": "2026-08-21T16:59:33.320Z",
       "note": "RC candidate e752db6 pushed+verified. P0-1 eliminated (bulk listDetails + declared-facts window + cache), P0-2 integrated (e2e 53/53), QA defect fixed, migration 76 rehearsed. Full suite running for freeze; awaiting browser-perf report."
+    },
+    {
+      "id": "codex-hino-public-20260825",
+      "tool": "Codex",
+      "lane": "hino-public-microsite",
+      "branch": "codex/hino-route-20260825",
+      "state": "active",
+      "startedAt": "2026-08-25T19:45:05.888Z",
+      "heartbeatAt": "2026-08-25T20:13:31.692Z",
+      "note": "Implementation complete; 40 focused tests, full typecheck, production build, desktop/mobile browser QA, catalog/media/contact checks all green"
     }
   ]
 }
