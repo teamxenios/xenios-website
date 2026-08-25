@@ -60,6 +60,31 @@ describe("the changed-file classifier", () => {
     expect(result.seam).toEqual([]);
   });
 
+  it("allows only the explicitly approved /hino static subtree under client/public", () => {
+    const result = classifyChangedFiles(
+      [
+        "client/public/hino/index.html",
+        "client/public/hino/story/index.html",
+        "client/public/hino/assets/hino-hero-profile.webp",
+        "client/public/hino-lookalike/index.html",
+        "client/public/hino.html",
+        "client/public/robots.txt",
+      ],
+      manifest,
+    );
+
+    expect(result.allowed.sort()).toEqual([
+      "client/public/hino/assets/hino-hero-profile.webp",
+      "client/public/hino/index.html",
+      "client/public/hino/story/index.html",
+    ]);
+    expect(result.violations.sort()).toEqual([
+      "client/public/hino-lookalike/index.html",
+      "client/public/hino.html",
+      "client/public/robots.txt",
+    ]);
+  });
+
   it("FAILS a change set that touches client/src/pages/Home.tsx", () => {
     const result = classifyChangedFiles(
       ["client/src/research/section.tsx", "client/src/pages/Home.tsx"],

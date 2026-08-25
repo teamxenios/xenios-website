@@ -1,0 +1,30 @@
+{
+  "sourceHandoffDate": "2026-08-25",
+  "sourceCommit": "5b1327bc9a0d63a820aefd2ef3c3db27ad868eff",
+  "sourceProject": "hollywood-hino-platform",
+  "productionBase": "https://xeniostechnology.com/hino",
+  "routes": [
+    "/",
+    "/story",
+    "/legacy",
+    "/media",
+    "/collective",
+    "/retreat",
+    "/merch",
+    "/research",
+    "/contact",
+    "/press",
+    "/training",
+    "/privacy",
+    "/terms",
+    "/research-use"
+  ],
+  "assets": [
+    "hino-hero-profile.webp",
+    "hino-archive-02.webp",
+    "hino-archive-03.webp",
+    "hino-archive-04.webp",
+    "hino-archive-05.webp"
+  ],
+  "rightsBoundary": "Getty-watermarked attachment excluded; only the five supplied WebP assets listed above are published."
+}

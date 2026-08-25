@@ -332,8 +332,9 @@
       "script/**"
     ],
     "exemptSubtrees": {
-      "$comment": "Subtrees that sit inside the globs above but are Research/Care owned, so the globs do not capture them.",
+      "$comment": "Subtrees that sit inside the globs above but are Research/Care owned or explicitly approved as an isolated public microsite, so the globs do not capture them.",
       "paths": [
+        "client/public/hino/**",
         "client/src/research/**",
         "client/src/care/**",
         "client/src/pages/AdminResearchTab.tsx"
@@ -343,10 +344,12 @@
   "allowedWriteZones": {
     "$comment": [
       "The Research and Care surfaces as they ACTUALLY exist in this repository at",
-      "baselineSha. A candidate branch may add, change, or remove files freely inside",
-      "these prefixes without a lease."
+      "baselineSha, plus the explicitly approved static Hollywood Hino microsite added",
+      "on 2026-08-25. Changes inside these prefixes remain subject to the repository's",
+      "task and path-lease rules."
     ],
     "prefixes": [
+      "client/public/hino/",
       "client/src/research/",
       "client/src/care/",
       "server/research/",
@@ -357,6 +360,14 @@
       "content/research-guides/",
       "content/research-products/",
       "supabase/"
+    ],
+    "hinoMicrositeApproval": [
+      "2026-08-25: The current founder instruction explicitly directed publication at xeniostechnology.com/hino.",
+      "The exception is exactly client/public/hino/; the rest of client/public remains protected.",
+      "The subtree is static and resolves before the existing SPA fallback, so no App, API,",
+      "middleware, commerce, Research, Care, or existing public route is modified.",
+      "Focused tests pin the exact route set, first hero asset, noindex posture, retail snapshot",
+      "count, runtime independence, canonical Research handoff, and Getty exclusion."
     ],
     "exactFiles": [
       "client/src/pages/AdminResearchTab.tsx",
