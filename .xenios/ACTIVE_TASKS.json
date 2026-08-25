@@ -443,7 +443,7 @@
       "id": "HINO-PUBLIC-MICROSITE",
       "title": "Publish the approved Hollywood Hino microsite at /hino without changing existing Xenios routes",
       "priority": "P1",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-hino-public-20260825",
       "paths": [
         "client/public/hino/**",
@@ -454,7 +454,16 @@
       ],
       "dependsOn": [],
       "pathsNote": "Founder-approved new public surface. The static /hino subtree is isolated from the existing SPA and APIs; the protection-manifest change is limited to this exact prefix and must be covered by focused regression tests.",
-      "claimedAt": "2026-08-25T19:45:06.982Z"
+      "claimedAt": "2026-08-25T19:45:06.982Z",
+      "handoff": {
+        "session": "codex-hino-public-20260825",
+        "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+        "file": ".xenios/handoffs/2026-08-25T20-41-13-816Z-HINO-PUBLIC-MICROSITE-codex-hino-public-20260825.md",
+        "at": "2026-08-25T20:41:13.821Z"
+      },
+      "acceptedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "acceptedBy": "codex-hino-public-20260825",
+      "acceptedAt": "2026-08-25T20:41:14.232Z"
     }
   ]
 }
