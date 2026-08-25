@@ -26,6 +26,7 @@ import {
   clearPendingAttempt,
   readLastOrderNumber,
 } from "./pendingOrderStore";
+import { clearAssistedOrderStorage } from "../assisted-order/storage";
 import { clearBrowserCart } from "./cart/cartStore";
 import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
@@ -98,7 +99,9 @@ export default function EarlyAccessRoute() {
   // refresh or render failure after a successful placement does not strand
   // the customer. Reading it grants nothing: the status endpoint re-authorizes
   // against the session's derived identity on every call.
-  const [rememberedOrder] = useState<string | null>(() => readLastOrderNumber());
+  const [rememberedOrder, setRememberedOrder] = useState<string | null>(
+    () => readLastOrderNumber(),
+  );
   // Asked once, shared with the CTA below, so the storefront and the door
   // cannot disagree about whether ordering is open.
   const bridgeState = useAssistedOrderBridgeState();
@@ -207,42 +210,32 @@ export default function EarlyAccessRoute() {
   );
 
   const signOut = useCallback(() => {
-    void (async () => {
-      try {
-        await fetch(LOGOUT_PATH, {
-          method: "POST",
-          credentials: "same-origin",
-          headers: { Accept: "application/json" },
-        });
-      } catch {
-        // Logout is idempotent and the cookie is cleared server-side; a network
-        // failure still returns the customer to the password screen.
-      }
-      // The next customer to unlock on this browser starts from the server's
-      // answer about themselves, never from the last person's. That includes
-      // the browser's own recovery hints: a signed-out machine remembers no
-      // order number and no unfinished attempt, so nothing of the previous
-      // purchaser is shown to whoever unlocks next. (The server clears the
-      // continuity credential on logout for the same reason.)
-      clearLastOrderNumber();
-      clearPendingAttempt();
-      // The cart is intent the PREVIOUS customer expressed. On a shared
-      // machine the next person to unlock must start with an empty one, not
-      // inherit somebody else's basket.
-      clearBrowserCart();
-      // And the cart's OWN two recovery pointers: the in-flight attempt key
-      // and the last cart checkout number. Clearing the basket while leaving
-      // these behind would hand the next person a pointer at the previous
-      // purchaser's checkout. The server would still refuse to show it, but a
-      // signed-out browser should not be holding the pointer at all.
-      clearCartRecovery();
-      setAgreed(false);
-      setBlocked(null);
-      setSelection(null);
-      setOrderRequest(null);
-      setCheckoutPhase("details");
-      setState({ kind: "locked", error: null, busy: false });
-    })();
+    // Clear customer-scoped browser state BEFORE waiting on the network. A
+    // slow or hung logout request must not leave bearer tokens, receipts, or a
+    // previous customer's basket behind after the person clicked Sign out.
+    clearLastOrderNumber();
+    clearPendingAttempt();
+    clearBrowserCart();
+    clearCartRecovery();
+    clearAssistedOrderStorage();
+    setRememberedOrder(null);
+    setAgreed(false);
+    setBlocked(null);
+    setSelection(null);
+    setOrderRequest(null);
+    setPriceChanged(false);
+    setCheckoutPhase("details");
+    setState({ kind: "locked", error: null, busy: false });
+
+    void fetch(LOGOUT_PATH, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    }).catch(() => {
+      // Logout is idempotent. Even if the request fails, the browser has
+      // already discarded the previous customer's local state and returned
+      // to the password screen.
+    });
   }, []);
 
   return (

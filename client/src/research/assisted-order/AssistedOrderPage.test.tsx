@@ -58,8 +58,17 @@ const careItem: AssistedOrderCatalogItem = {
   productName: "Care Formulation",
   family: "clinical_formulations_503a",
   workflowMode: "provider_request",
-  actionLabel: "Start provider workflow",
+  actionLabel: "Continue through Care",
   researchUseOnly: false,
+};
+
+const pendingItem: AssistedOrderCatalogItem = {
+  ...directRuoItem,
+  productId: "prod-pending",
+  variantId: "var-pending",
+  productName: "Pending Peptide",
+  workflowMode: "request_activation",
+  actionLabel: "Request Order",
 };
 
 const pricePendingItem: AssistedOrderCatalogItem = {
@@ -72,6 +81,15 @@ const pricePendingItem: AssistedOrderCatalogItem = {
   unitPriceCents: null,
   priceVersion: null,
   researchUseOnly: false,
+};
+
+const heldItem: AssistedOrderCatalogItem = {
+  ...directRuoItem,
+  productId: "prod-held",
+  variantId: "var-held",
+  productName: "Held Peptide",
+  workflowMode: "availability_review",
+  actionLabel: "Request availability",
 };
 
 function catalogPage(
@@ -168,6 +186,18 @@ function typeInto(input: HTMLInputElement | null, value: string) {
   });
 }
 
+function selectValue(select: HTMLSelectElement | null, value: string) {
+  expect(select).not.toBeNull();
+  const setter = Object.getOwnPropertyDescriptor(
+    HTMLSelectElement.prototype,
+    "value",
+  )?.set;
+  setter?.call(select, value);
+  act(() => {
+    select!.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
 function fillContact() {
   typeInto(byTestId<HTMLInputElement>("order-contact-name"), "Ada Researcher");
   typeInto(byTestId<HTMLInputElement>("order-contact-email"), "ada@example.org");
@@ -195,7 +225,7 @@ beforeEach(() => {
   api.loadAssistedOrderConfig.mockReset();
   api.submitAssistedOrder.mockReset();
   api.loadAssistedOrderCatalog.mockResolvedValue(
-    catalogPage([directRuoItem, careItem, pricePendingItem]),
+    catalogPage([directRuoItem, careItem, pricePendingItem, pendingItem, heldItem]),
   );
   api.loadAssistedOrderConfig.mockResolvedValue(wizardConfig);
 });
@@ -212,6 +242,77 @@ describe("AssistedOrderPage", () => {
     expect(byTestId(`order-card-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-care-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-add-${careItem.variantId}`)).toBeNull();
+    const careCta = byTestId<HTMLAnchorElement>(
+      `order-card-care-cta-${careItem.variantId}`,
+    );
+    expect(careCta?.textContent).toBe("Continue through Care");
+    expect(careCta?.getAttribute("href")).toBe("/care");
+  });
+
+  it("keeps held products out of both Research ordering and the Care route", async () => {
+    render();
+    await settle();
+    expect(byTestId(`order-card-unavailable-${heldItem.variantId}`)).not.toBeNull();
+    expect(byTestId(`order-card-add-${heldItem.variantId}`)).toBeNull();
+    expect(byTestId(`order-card-care-cta-${heldItem.variantId}`)).toBeNull();
+  });
+
+  it("offers four structured Action groups and composes them with search and Family", async () => {
+    render();
+    await settle();
+
+    const action = byTestId<HTMLSelectElement>("order-filter-action")!;
+    expect(
+      Array.from(action.options).map((option) => [option.value, option.textContent]),
+    ).toEqual([
+      ["", "All actions"],
+      ["direct_order", "Direct Order"],
+      ["request_order", "Request Order"],
+      ["care", "Care"],
+      ["temporarily_unavailable_held", "Temporarily Unavailable / Held"],
+    ]);
+
+    typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Alpha");
+    selectValue(
+      byTestId<HTMLSelectElement>("order-filter-family"),
+      "research_peptides_materials",
+    );
+    selectValue(action, "request_order");
+    await settle();
+
+    expect(api.loadAssistedOrderCatalog).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        search: "Alpha",
+        family: "research_peptides_materials",
+        actionGroup: "request_order",
+      }),
+    );
+
+    selectValue(byTestId<HTMLSelectElement>("order-filter-family"), "");
+    await settle();
+    expect(api.loadAssistedOrderCatalog).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        search: "Alpha",
+        family: undefined,
+        actionGroup: "request_order",
+      }),
+    );
+  });
+
+  it("labels pending products Request Order without changing their request-only mode", async () => {
+    render();
+    await settle();
+    const pendingCta = byTestId<HTMLButtonElement>(
+      `order-card-add-${pendingItem.variantId}`,
+    );
+    expect(pendingCta?.textContent).toBe("Request Order");
+    expect(pendingItem.workflowMode).toBe("request_activation");
+    click(pendingCta);
+    expect(
+      byTestId(`order-card-${pendingItem.variantId}`)?.querySelector(
+        'input[type="number"]',
+      ),
+    ).not.toBeNull();
   });
 
   it("submits the full request with server-published acknowledgments and a durable idempotency key", async () => {

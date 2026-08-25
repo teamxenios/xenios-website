@@ -1,5 +1,6 @@
 import {
   AssistedOrderValidationError,
+  isAssistedOrderActionGroup,
   isAssistedOrderStatus,
   isAssistedOrderWorkflowMode,
   type AssistedOrderCatalogQuery,
@@ -75,6 +76,9 @@ function catalogQuery(
     search: request.query.q?.trim() || undefined,
     family: request.query.family?.trim() || undefined,
     channel: request.query.channel?.trim() || undefined,
+    actionGroup: isAssistedOrderActionGroup(request.query.action)
+      ? request.query.action
+      : undefined,
     workflowMode: isAssistedOrderWorkflowMode(request.query.workflowMode)
       ? request.query.workflowMode
       : undefined,

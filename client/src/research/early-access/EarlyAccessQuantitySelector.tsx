@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import {
-  DIRECT_EARLY_ACCESS_MAX_QUANTITY,
+  EARLY_ACCESS_POLICY_MAX_QUANTITY,
   REQUEST_MAX_QUANTITY,
   EARLY_ACCESS_MIN_QUANTITY,
   isEarlyAccessRequestQuantity,
@@ -218,7 +218,10 @@ export function EarlyAccessQuantitySelector({
         {effectiveMax < REQUEST_MAX_QUANTITY ? (
           <>This product is currently released for direct checkout up to {effectiveMax} units. </>
         ) : (
-          <>Normal order quantities are {EARLY_ACCESS_MIN_QUANTITY} through {DIRECT_EARLY_ACCESS_MAX_QUANTITY} units. </>
+          <>
+            Featured checkout is currently limited to {effectiveMax} units; assisted order requests support{" "}
+            {EARLY_ACCESS_MIN_QUANTITY}–{EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant.{" "}
+          </>
         )}
         3 units is the Research Bundle, 20% savings.
       </p>

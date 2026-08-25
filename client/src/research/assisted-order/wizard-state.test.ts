@@ -136,12 +136,15 @@ describe("research request eligibility", () => {
     expect(selectableInResearchRequest({ workflowMode: "provider_request" })).toBe(false);
   });
 
-  it("keeps requestable modes selectable, including price-pending and held", () => {
+  it("keeps held/unavailable products out of a request the server will refuse", () => {
+    expect(selectableInResearchRequest({ workflowMode: "availability_review" })).toBe(false);
+  });
+
+  it("keeps the genuinely requestable modes selectable", () => {
     for (const workflowMode of [
       "direct_order_request",
       "request_pricing",
       "request_activation",
-      "availability_review",
     ] as const) {
       expect(selectableInResearchRequest({ workflowMode })).toBe(true);
     }

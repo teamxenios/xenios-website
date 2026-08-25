@@ -9,6 +9,12 @@ import {
   CART_ATTEMPT_STORAGE_KEY,
   LAST_CART_CHECKOUT_STORAGE_KEY,
 } from "./cart/cartAttemptStore";
+import {
+  ASSISTED_ORDER_STORAGE_PREFIX,
+  assistedOrderReceiptKey,
+  assistedOrderTokenKey,
+} from "../assisted-order/storage";
+import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
 
 /**
  * F6 I: SIGNING OUT FORGETS EVERYTHING THIS BROWSER REMEMBERED.
@@ -27,6 +33,7 @@ import {
  */
 
 const CART_KEY = "xenios.research.earlyAccess.cart.v1";
+const ASSISTED_ORDER_REFERENCE = "XRR-20260821-DEADBEEF01";
 
 /** Every key the Early Access path is allowed to write. */
 const EVERY_RECOVERY_KEY = [
@@ -49,13 +56,16 @@ function jsonResponse(body: unknown, status = 200): Response {
   } as unknown as Response;
 }
 
-function stubFetch(): void {
+function stubFetch(pendingLogout?: Promise<Response>): void {
   vi.stubGlobal(
     "fetch",
     vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
       if (path.endsWith("/early-access/session")) {
         return jsonResponse({ authenticated: true, expiresAt: null });
+      }
+      if (path.endsWith("/early-access/logout") && pendingLogout) {
+        return pendingLogout;
       }
       if (path.endsWith("/early-access/cart/capability")) {
         // Cart flag OFF, so the existing single-product surface renders and
@@ -152,6 +162,32 @@ describe("F6 I: sign-out clears every browser recovery pointer", () => {
     }
     // And the customer is back at the password screen, not inside a session.
     expect(container.textContent).toContain("Private Early Access");
+
+    const password = container.querySelector(
+      '[data-testid="early-access-unlock-form-password"]',
+    ) as HTMLInputElement;
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    act(() => {
+      valueSetter?.call(password, "next-customer");
+      password.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await settle();
+    const unlock = container.querySelector(
+      '[data-testid="early-access-unlock-form-submit"]',
+    ) as HTMLButtonElement;
+    expect(unlock.disabled).toBe(false);
+    act(() => unlock.click());
+    await settle();
+
+    // Same React mount, freshly authenticated customer: the previous order
+    // context must not return from the state captured before sign-out.
+    expect(container.querySelector('[data-testid="early-access-signout"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="early-access-order-recovery"]')).toBeNull();
+    expect(container.textContent).not.toContain("XEA-000123");
+    expect(window.sessionStorage.getItem(LAST_ORDER_STORAGE_KEY)).toBeNull();
   });
 
   it("leaves storage belonging to no one behind: nothing else is written on sign-out", async () => {
@@ -168,5 +204,85 @@ describe("F6 I: sign-out clears every browser recovery pointer", () => {
     });
     await settle();
     expect(window.sessionStorage.length).toBe(0);
+  });
+});
+
+describe("sign-out clears the entire assisted-order storage family", () => {
+  it("removes bearer tokens, receipt/reference state, drafts and future prefixed artifacts", async () => {
+    window.sessionStorage.setItem(
+      assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE),
+      "secret-status-token",
+    );
+    window.sessionStorage.setItem(
+      assistedOrderReceiptKey(ASSISTED_ORDER_REFERENCE),
+      JSON.stringify({ publicReference: ASSISTED_ORDER_REFERENCE, lines: [] }),
+    );
+    window.sessionStorage.setItem(
+      ASSISTED_ORDER_DRAFT_KEY,
+      JSON.stringify({ idempotencyKey: "k", step: "products", selections: [] }),
+    );
+    window.sessionStorage.setItem(`${ASSISTED_ORDER_STORAGE_PREFIX}future-artifact`, "private");
+    window.sessionStorage.setItem("unrelated.session.key", "keep");
+
+    stubFetch();
+    await act(async () => {
+      root.render(<EarlyAccessRoute />);
+    });
+    await settle();
+
+    const signOut = container.querySelector(
+      '[data-testid="early-access-signout"]',
+    ) as HTMLButtonElement | null;
+    expect(signOut).not.toBeNull();
+    await act(async () => {
+      signOut!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await settle();
+
+    const assistedOrderSurvivors = Array.from(
+      { length: window.sessionStorage.length },
+      (_, index) => window.sessionStorage.key(index),
+    ).filter((key): key is string =>
+      key !== null && key.startsWith(ASSISTED_ORDER_STORAGE_PREFIX),
+    );
+    expect(assistedOrderSurvivors).toEqual([]);
+    expect(window.sessionStorage.getItem("unrelated.session.key")).toBe("keep");
+  });
+
+  it("clears credentials synchronously even while the server logout is still pending", async () => {
+    let finishLogout: ((response: Response) => void) | undefined;
+    let logoutSettled = false;
+    const pendingLogout = new Promise<Response>((resolve) => {
+      finishLogout = (response) => {
+        logoutSettled = true;
+        resolve(response);
+      };
+    });
+    window.sessionStorage.setItem(
+      assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE),
+      "secret-status-token",
+    );
+    window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, "private-draft");
+
+    stubFetch(pendingLogout);
+    await act(async () => {
+      root.render(<EarlyAccessRoute />);
+    });
+    await settle();
+
+    const signOut = container.querySelector(
+      '[data-testid="early-access-signout"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      signOut.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(logoutSettled).toBe(false);
+    expect(window.sessionStorage.getItem(assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE))).toBeNull();
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    expect(container.textContent).toContain("Private Early Access");
+
+    finishLogout?.(jsonResponse({ ok: true }));
+    await settle();
   });
 });

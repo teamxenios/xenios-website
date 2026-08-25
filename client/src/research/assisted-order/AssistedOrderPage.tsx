@@ -1,11 +1,16 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import type {
+  AssistedOrderActionGroup,
   AssistedOrderAddressInput,
   AssistedOrderCatalogItem,
   AssistedOrderCatalogPage,
   AssistedOrderSubmitInput,
   AssistedOrderWorkflowMode,
+} from "../../../../shared/research/assisted-order/contract";
+import {
+  assistedOrderActionGroupLabels,
+  assistedOrderActionGroups,
 } from "../../../../shared/research/assisted-order/contract";
 import {
   AssistedOrderApiError,
@@ -96,7 +101,7 @@ const workflowLabels: Readonly<Record<AssistedOrderWorkflowMode, string>> = {
   direct_order_request: "Order request",
   provider_request: "Care pathway",
   request_pricing: "Request pricing",
-  request_activation: "Request activation",
+  request_activation: "Request Order",
   availability_review: "Availability review",
 };
 
@@ -139,6 +144,8 @@ function ProductCard(props: {
 }) {
   const { item, selection, onAdd, onQuantity, onRemove } = props;
   const selectable = selectableInResearchRequest(item);
+  const careOnly = item.workflowMode === "provider_request";
+  const unavailable = item.workflowMode === "availability_review";
   return (
     <article className="xenios-order-card" data-testid={`order-card-${item.variantId}`}>
       <div className="xenios-order-card__header">
@@ -165,11 +172,30 @@ function ProductCard(props: {
         <p className="xenios-order-notice"><strong>Research Use Only.</strong> Not for human or veterinary use.</p>
       ) : null}
       {item.accessNotice ? <p className="xenios-order-notice">{item.accessNotice}</p> : null}
-      {!selectable ? (
-        <p className="xenios-order-notice" data-testid={`order-card-care-${item.variantId}`}>
-          This product requires provider review through Xenios Care and cannot
-          be added to a research order request.
+      {careOnly ? (
+        <>
+          <p className="xenios-order-notice" data-testid={`order-card-care-${item.variantId}`}>
+            This product requires provider review through Xenios Care and cannot
+            be added to a research order request.
+          </p>
+          <a
+            className="xenios-order-button"
+            href="/care"
+            data-testid={`order-card-care-cta-${item.variantId}`}
+          >
+            {item.actionLabel}
+          </a>
+        </>
+      ) : unavailable ? (
+        <p
+          className="xenios-order-notice"
+          data-testid={`order-card-unavailable-${item.variantId}`}
+        >
+          This product is temporarily unavailable or held and cannot be added
+          to an order request right now.
         </p>
+      ) : !selectable ? (
+        null
       ) : selection ? (
         <div className="xenios-order-quantity" aria-label={`Quantity for ${item.productName}`}>
           <button type="button" onClick={() => onQuantity(item, selection.quantity - item.quantityIncrement)} aria-label="Decrease quantity">−</button>
@@ -238,7 +264,7 @@ export function AssistedOrderPage() {
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
   const [channel, setChannel] = useState("");
-  const [workflowMode, setWorkflowMode] = useState<"" | AssistedOrderWorkflowMode>("");
+  const [actionGroup, setActionGroup] = useState<"" | AssistedOrderActionGroup>("");
   const [page, setPage] = useState(1);
   const [catalog, setCatalog] = useState<AssistedOrderCatalogPage | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(false);
@@ -305,7 +331,7 @@ export function AssistedOrderPage() {
         search: search || undefined,
         family: family || undefined,
         channel: channel || undefined,
-        workflowMode: workflowMode || undefined,
+        actionGroup: actionGroup || undefined,
         page,
         pageSize: 24,
       })
@@ -343,7 +369,7 @@ export function AssistedOrderPage() {
       abort.abort();
       window.clearTimeout(timer);
     };
-  }, [step, search, family, channel, workflowMode, page]);
+  }, [step, search, family, channel, actionGroup, page]);
 
   const selectionList = useMemo(() => Array.from(selections.values()), [selections]);
   const estimate = useMemo(() => selectionEstimateCents(selections), [selections]);
@@ -603,10 +629,10 @@ export function AssistedOrderPage() {
         <section className="xenios-order-catalog-layout">
           <div>
             <div className="xenios-order-panel xenios-order-filters">
-              <label>Search<input type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Product or specification" /></label>
-              <label>Family<select value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}><option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
+              <label>Search<input data-testid="order-filter-search" type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Product or specification" /></label>
+              <label>Family<select data-testid="order-filter-family" value={family} onChange={(e) => { setFamily(e.target.value); setPage(1); }}><option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
               <label>Channel<select value={channel} onChange={(e) => { setChannel(e.target.value); setPage(1); }}><option value="">All channels</option>{catalog?.channels.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
-              <label>Action<select value={workflowMode} onChange={(e) => { setWorkflowMode(e.target.value as "" | AssistedOrderWorkflowMode); setPage(1); }}><option value="">All actions</option>{Object.entries(workflowLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label>Action<select data-testid="order-filter-action" value={actionGroup} onChange={(e) => { setActionGroup(e.target.value as "" | AssistedOrderActionGroup); setPage(1); }}><option value="">All actions</option>{assistedOrderActionGroups.map((value) => <option key={value} value={value}>{assistedOrderActionGroupLabels[value]}</option>)}</select></label>
             </div>
             {catalogLoading ? <p className="xenios-order-loading" aria-live="polite">Loading catalog…</p> : null}
             <div className="xenios-order-cards">

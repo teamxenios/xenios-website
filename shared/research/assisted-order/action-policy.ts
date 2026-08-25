@@ -56,29 +56,14 @@ export function decideAssistedOrderAction(
     return Object.freeze({
       visible: true,
       workflowMode: "provider_request",
-      actionLabel: "Start provider workflow",
+      actionLabel: "Continue through Care",
       reason: "Provider review is required before ordinary commerce.",
     });
   }
 
-  if (authority.classificationPending) {
-    return Object.freeze({
-      visible: true,
-      workflowMode: "request_activation",
-      actionLabel: "Request activation",
-      reason: "Classification or documentation must be completed first.",
-    });
-  }
-
-  if (authority.unitPriceCents === null || authority.pricePending) {
-    return Object.freeze({
-      visible: true,
-      workflowMode: "request_pricing",
-      actionLabel: "Request pricing",
-      reason: "No approved customer price is currently available.",
-    });
-  }
-
+  // Availability before price: a canonical hold remains held even when its
+  // price is absent. Otherwise one missing price would move a held product
+  // into the Request Order filter and conceal its actual pathway state.
   if (authority.held || authority.outOfStock) {
     return Object.freeze({
       visible: true,
@@ -89,6 +74,24 @@ export function decideAssistedOrderAction(
       reason: authority.outOfStock
         ? "This item is currently out of stock."
         : "This item is currently held for review.",
+    });
+  }
+
+  if (authority.classificationPending) {
+    return Object.freeze({
+      visible: true,
+      workflowMode: "request_activation",
+      actionLabel: "Request Order",
+      reason: "Classification or documentation must be completed first.",
+    });
+  }
+
+  if (authority.unitPriceCents === null || authority.pricePending) {
+    return Object.freeze({
+      visible: true,
+      workflowMode: "request_pricing",
+      actionLabel: "Request pricing",
+      reason: "No approved customer price is currently available.",
     });
   }
 

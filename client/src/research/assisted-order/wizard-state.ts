@@ -78,15 +78,15 @@ export function clampQuantity(
 /**
  * Whether an item may be ADDED to a research order request at all. A Care /
  * provider-pathway product must never enter this request path: it has its own
- * clinical workflow, and offering to fold it into a research request would
- * misrepresent both. Everything else the server projects stays requestable —
- * including price-pending and activation items, which submit truthfully as
- * requests, not orders.
+ * clinical workflow. A held/unavailable product cannot enter either, because
+ * the server refuses that mode at submit. Price-pending and activation items
+ * remain truthful requests rather than direct orders.
  */
 export function selectableInResearchRequest(
   item: Pick<AssistedOrderCatalogItem, "workflowMode">,
 ): boolean {
-  return item.workflowMode !== "provider_request";
+  return item.workflowMode !== "provider_request"
+    && item.workflowMode !== "availability_review";
 }
 
 export function selectionEstimateCents(

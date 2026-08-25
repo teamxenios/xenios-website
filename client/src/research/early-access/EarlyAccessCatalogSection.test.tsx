@@ -80,6 +80,23 @@ describe("early access catalogue section", () => {
     ).toBe("22");
   });
 
+  it("states the supported 1–100 assisted-order band without widening Featured checkout", async () => {
+    const { el } = await mount({
+      kind: "ok",
+      products: [product(1, "AVAILABLE")],
+      dropped: 0,
+      received: 1,
+    });
+
+    const sectionCopy = el.querySelector(
+      "[data-testid='early-access-catalog-section-single-product']",
+    )?.textContent ?? "";
+    expect(sectionCopy).toContain("Assisted order requests support 1–100 units per exact variant");
+    expect(sectionCopy).toContain("Featured checkout routing respects current per-product release limits");
+    expect(sectionCopy).not.toContain("1 through 50");
+    expect(el.querySelector<HTMLInputElement>("input[type='number']")?.max).toBe("50");
+  });
+
   it("shows a lapsed session as lapsed, never as an empty catalogue", async () => {
     // A signed-out customer shown an empty shelf concludes there is nothing to
     // buy. The truth is that they need to unlock again, and only one of those

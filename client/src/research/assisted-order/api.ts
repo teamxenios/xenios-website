@@ -66,6 +66,7 @@ function queryString(query: AssistedOrderCatalogQuery): string {
   if (query.search) params.set("q", query.search);
   if (query.family) params.set("family", query.family);
   if (query.channel) params.set("channel", query.channel);
+  if (query.actionGroup) params.set("action", query.actionGroup);
   if (query.workflowMode) params.set("workflowMode", query.workflowMode);
   if (query.page) params.set("page", String(query.page));
   if (query.pageSize) params.set("pageSize", String(query.pageSize));
