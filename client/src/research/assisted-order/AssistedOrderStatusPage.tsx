@@ -4,6 +4,7 @@ import { loadAssistedOrderStatus } from "./api";
 import { money } from "./wizard-state";
 import { readAssistedOrderToken } from "./storage";
 import { SecureDocumentUpload } from "./SecureDocumentUpload";
+import { assistedOrderStatusErrorCopy } from "./customer-safe-errors";
 import "./assisted-order.css";
 
 function referenceFromPath(): string {
@@ -26,13 +27,7 @@ export function AssistedOrderStatusPage() {
     setError(null);
     loadAssistedOrderStatus(reference, token)
       .then(setStatus)
-      .catch((reason) =>
-        setError(
-          reason instanceof Error
-            ? reason.message
-            : "The request status could not be loaded.",
-        ),
-      )
+      .catch((reason) => setError(assistedOrderStatusErrorCopy(reason)))
       .finally(() => setLoading(false));
   }, [reference, token]);
 

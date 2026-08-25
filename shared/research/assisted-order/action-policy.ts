@@ -107,7 +107,7 @@ export function decideAssistedOrderAction(
   return Object.freeze({
     visible: true,
     workflowMode: "request_activation",
-    actionLabel: "Request item",
+    actionLabel: "Request Order",
     reason: "The item is visible but does not currently have direct authority.",
   });
 }

@@ -58,25 +58,30 @@ const PRODUCTION_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
 const PRICE_CENTS = 6500;
 
 /**
- * The composition of the shipped catalog, MEASURED by walking all 420 rows on
- * 2026-08-20 — not estimated, and not read off a spreadsheet.
+ * The composition of the shipped catalog, re-measured by walking all 420 rows
+ * through the shared canonical pathway authority on 2026-08-25 — not
+ * estimated, and not read off a spreadsheet.
  *
  *   TOTAL             420
  *   PRICED            417
- *   PRICE ON REQUEST    3   BAM15, FedEx Standard Overnight, Syringes & Swabs
- *   RUO               153   research use only
- *   CARE              244   503A / provider pathway, priced but never direct
- *   HELD               32   approval required before activation
- *   DIRECT            143   the rows an Early Access customer can order outright
+ *   UNPRICED             3   BAM15, FedEx Standard Overnight, Syringes & Swabs
+ *   RUO                153   research use only
+ *   PROVIDER REQUEST   242   503A / provider pathway, priced but never direct
+ *   AVAILABILITY         2   non-merchandise or otherwise held rows
+ *   ACTIVATION          44   visible rows lacking direct launch authority
+ *   PRICING REQUEST      1   the one generally orderable row lacking a price
+ *   DIRECT REQUEST     131   rows the shared pathway authority admits
  */
 const MEASURED_TOTAL_VARIANTS = 420;
 const MEASURED_PRICED = 417;
-const MEASURED_ON_REQUEST = 3;
+const MEASURED_UNPRICED = 3;
 const MEASURED_RUO = 153;
-const MEASURED_CARE = 244;
-const MEASURED_HELD = 32;
-const MEASURED_DIRECT = 143;
-/** The 503A channel specifically; the Care pathway also carries 2 non-503A rows. */
+const MEASURED_PROVIDER_REQUEST = 242;
+const MEASURED_AVAILABILITY_REVIEW = 2;
+const MEASURED_REQUEST_ACTIVATION = 44;
+const MEASURED_REQUEST_PRICING = 1;
+const MEASURED_DIRECT_ORDER_REQUEST = 131;
+/** The 503A channel specifically, which is the complete provider-request set. */
 const MEASURED_503A = 242;
 
 /**
@@ -300,27 +305,32 @@ describe("Early Access price coverage across the whole catalog", () => {
     // from the same wrong constant. Checked against a literal from the
     // measurement, deliberately not against the constant itself.
     expect(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE).toBe("member");
-    expect(MEASURED_PRICED + MEASURED_ON_REQUEST).toBe(MEASURED_TOTAL_VARIANTS);
+    expect(MEASURED_PRICED + MEASURED_UNPRICED).toBe(MEASURED_TOTAL_VARIANTS);
   });
 
   it("matches that measured composition when actually walked", async () => {
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const count = (predicate: (item: AssistedOrderCatalogItem) => boolean) =>
       items.filter(predicate).length;
-    expect(count((item) => item.unitPriceCents !== null)).toBe(MEASURED_PRICED);
-    expect(count((item) => item.unitPriceCents === null)).toBe(
-      MEASURED_ON_REQUEST,
-    );
-    expect(count((item) => item.researchUseOnly)).toBe(MEASURED_RUO);
-    expect(count((item) => item.workflowMode === "provider_request")).toBe(
-      MEASURED_CARE,
-    );
-    expect(count((item) => item.workflowMode === "request_activation")).toBe(
-      MEASURED_HELD,
-    );
-    expect(count((item) => item.workflowMode === "direct_order_request")).toBe(
-      MEASURED_DIRECT,
-    );
+    expect({
+      priced: count((item) => item.unitPriceCents !== null),
+      unpriced: count((item) => item.unitPriceCents === null),
+      researchUseOnly: count((item) => item.researchUseOnly),
+      providerRequest: count((item) => item.workflowMode === "provider_request"),
+      availabilityReview: count((item) => item.workflowMode === "availability_review"),
+      requestActivation: count((item) => item.workflowMode === "request_activation"),
+      requestPricing: count((item) => item.workflowMode === "request_pricing"),
+      directOrderRequest: count((item) => item.workflowMode === "direct_order_request"),
+    }).toEqual({
+      priced: MEASURED_PRICED,
+      unpriced: MEASURED_UNPRICED,
+      researchUseOnly: MEASURED_RUO,
+      providerRequest: MEASURED_PROVIDER_REQUEST,
+      availabilityReview: MEASURED_AVAILABILITY_REVIEW,
+      requestActivation: MEASURED_REQUEST_ACTIVATION,
+      requestPricing: MEASURED_REQUEST_PRICING,
+      directOrderRequest: MEASURED_DIRECT_ORDER_REQUEST,
+    });
   });
 
   it("shows an anonymous visitor the SAME rows it showed before pricing existed", async () => {

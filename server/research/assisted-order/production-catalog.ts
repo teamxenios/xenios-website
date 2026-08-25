@@ -36,7 +36,10 @@ import {
   type MasterOfferingDisplayState,
   type MasterOfferingFamily,
 } from "../../../shared/research/master-offerings/contract";
-import { isFormulationHeld } from "../../../shared/research/master-offerings/formulation-hold";
+import {
+  directPurchaseRefusal,
+  requiresProviderPathway,
+} from "../../../shared/research/master-offerings/pathway-authority";
 
 /**
  * The catalog reader this adapter needs, stated structurally so the
@@ -145,14 +148,24 @@ export function authorityFor(
   reviewedFormulationHolds?: ReadonlySet<string>,
 ): AssistedOrderCatalogAuthority {
   const priced = price !== undefined && price.state === "priced";
-  const providerWorkflowRequired = variant.displayState === "care_pathway"
-    || offering.displayState === "care_pathway"
-    || offering.family === "clinical_formulations_503a";
+  const pathwaySubject = {
+    family: offering.family,
+    displayState: offering.displayState,
+    variantDisplayState: variant.displayState,
+    specification: variant.label,
+    reviewedHolds: reviewedFormulationHolds,
+  } as const;
+  const refusal = directPurchaseRefusal(pathwaySubject);
+  const providerWorkflowRequired = requiresProviderPathway(pathwaySubject);
   const classificationPending = variant.displayState === "approval_required"
     || offering.displayState === "approval_required";
   const held = HELD_DISPLAY_STATES.has(variant.displayState)
     || HELD_DISPLAY_STATES.has(offering.displayState)
-    || isFormulationHeld(variant.label, reviewedFormulationHolds);
+    || refusal === "formulation_hold"
+    // Shipping and fulfillment are catalog facts, not merchandise and not a
+    // Care referral. Keep them visible for reconciliation while withholding
+    // every ordering action through the existing unavailable presentation.
+    || refusal === "non_merchandise_family";
   const outOfStock = OUT_OF_STOCK_DISPLAY_STATES.has(variant.displayState)
     || OUT_OF_STOCK_DISPLAY_STATES.has(offering.displayState);
   const researchUseOnly = offering.family === "research_peptides_materials"
@@ -186,8 +199,12 @@ export function authorityFor(
     catalogVersion,
     priceVersion: priced && identity !== null ? price.priceId : null,
     visible: true,
+    // Every direct-order refusal comes from the shared canonical pathway
+    // authority. Keeping a second family allow-list here made this projection
+    // disagree with the member catalog for otherwise eligible supplements,
+    // topicals, and research supplies.
     directEligible: priced && identity !== null
-      && !providerWorkflowRequired && !classificationPending && !held,
+      && refusal === null && !held,
     providerWorkflowRequired,
     classificationPending,
     // Pathway precedence: a provider or classification-pending row is not
@@ -253,6 +270,14 @@ export function createAssistedOrderMasterCatalogCallbacks(
       ): AssistedOrderCatalogItem[] => {
         const projected: AssistedOrderCatalogItem[] = [];
         for (const offering of selection.offerings) {
+          // This adapter's total/page contract is offering-based. The current
+          // canonical catalog is intentionally one variant per offering; fail
+          // closed if that topology changes so a multi-variant row cannot
+          // silently overflow pageSize or corrupt totals. Supporting that
+          // future shape requires variant-level pagination at the authority.
+          if (offering.variants.length !== 1) {
+            throw new Error("Assisted-order catalog requires one variant per offering.");
+          }
           for (const variant of offering.variants) {
             const identity = input.bindingFor(variant.id);
             const item = projectAssistedOrderCatalogItem(
@@ -274,7 +299,11 @@ export function createAssistedOrderMasterCatalogCallbacks(
       let items: AssistedOrderCatalogItem[];
       let total: number;
 
-      if (query.actionGroup === undefined && query.workflowMode === undefined) {
+      if (
+        query.actionGroup === undefined
+        && query.workflowMode === undefined
+        && query.channel === undefined
+      ) {
         const selection = await service.select({
           ...canonicalQuery,
           page: requestedPage,
@@ -293,12 +322,17 @@ export function createAssistedOrderMasterCatalogCallbacks(
             pageSize: ACTION_FILTER_SCAN_PAGE_SIZE,
           });
           for (const item of projectSelection(selection)) {
+            if (query.channel !== undefined && item.channel !== query.channel) {
+              continue;
+            }
             // The customer group is authoritative when present. Exact mode is
             // retained only for older callers; intersecting both would let a
             // stale hidden parameter turn a valid customer filter into zero.
             const matchesAction = query.actionGroup !== undefined
               ? assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup
-              : item.workflowMode === query.workflowMode;
+              : query.workflowMode !== undefined
+                ? item.workflowMode === query.workflowMode
+                : true;
             if (matchesAction) matches.push(item);
           }
           if (sourceTotal === null) sourceTotal = selection.page.total;
@@ -344,10 +378,18 @@ export function createAssistedOrderMasterCatalogCallbacks(
       // A synthetic identity carries the offering variant id in plain sight, so
       // read it back rather than asking the binding map, which by definition has
       // no entry for an unbound row.
-      const offeringVariantId = variantId.startsWith(UNBOUND_IDENTITY_PREFIX)
+      const syntheticIdentity = variantId.startsWith(UNBOUND_IDENTITY_PREFIX);
+      const offeringVariantId = syntheticIdentity
         ? variantId.slice(UNBOUND_IDENTITY_PREFIX.length)
         : input.offeringVariantFor({ productId, variantId });
       if (!offeringVariantId) return null;
+      // A synthetic id is valid only while the canonical variant remains
+      // unbound. Once Product Control has a reviewed binding, the old browser
+      // snapshot is stale and must be refreshed instead of being upgraded into
+      // the newly priced/direct identity during submit.
+      if (syntheticIdentity && input.bindingFor(offeringVariantId) !== null) {
+        return null;
+      }
       // PAGE THROUGH. Asking for one enormous page does not work: the catalog
       // search hard-clamps pageSize to its own maximum and then slices, so a
       // request for a million rows silently returns the alphabetically first
@@ -374,12 +416,25 @@ export function createAssistedOrderMasterCatalogCallbacks(
         for (const offering of selection.offerings) {
           for (const variant of offering.variants) {
             if (variant.id !== offeringVariantId) continue;
+            // Both halves of a synthetic identity are minted together. Trusting
+            // only the variant half lets a caller pair one real unbound variant
+            // with arbitrary product ids, bypassing duplicate-line identity
+            // checks and swapping the product identity stored on the request.
+            if (
+              syntheticIdentity &&
+              productId !== `${UNBOUND_IDENTITY_PREFIX}${offering.id}`
+            ) {
+              return null;
+            }
             return projectAssistedOrderCatalogItem(
               authorityFor(
                 offering,
                 variant,
                 selection.prices.get(variant.id),
-                { productId, variantId },
+                // Synthetic rows are intentionally request-only and unpriced.
+                // Passing their synthetic ids as a commerce identity would
+                // manufacture direct-order authority at submission time.
+                syntheticIdentity ? null : { productId, variantId },
                 input.catalogVersion,
                 input.reviewedFormulationHolds,
               ),

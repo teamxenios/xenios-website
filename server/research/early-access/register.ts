@@ -466,6 +466,10 @@ export interface EarlyAccessRegistrationOptions {
      * entry password still proves entry, never customer identity.
      */
     readonly identity: EarlyAccessIdentityDirectory;
+    /** The canonical live/revoked/expired session decision. */
+    readonly resolveSession: (
+      cookieHeader: unknown,
+    ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readonly readSessionId: (cookieHeader: unknown) => string | null;
   }) => void;
 
@@ -860,7 +864,13 @@ export function registerPrivateEarlyAccessApi(
         })
       : boundIdentity);
 
-  options.onDoorSources?.({ catalog, releases, identity, readSessionId });
+  options.onDoorSources?.({
+    catalog,
+    releases,
+    identity,
+    resolveSession,
+    readSessionId,
+  });
 
   const routeDependencies = {
     resolveSession,

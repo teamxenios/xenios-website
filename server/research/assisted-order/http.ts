@@ -9,6 +9,7 @@ import {
   type AssistedOrderUploadRequest,
 } from "../../../shared/research/assisted-order/contract";
 import {
+  AssistedOrderAgreementRequiredError,
   AssistedOrderAuthorizationError,
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
@@ -113,6 +114,12 @@ function errorResponse(error: unknown): AssistedOrderHttpResponse {
     return ok(403, {
       error: "forbidden",
       message: "This request is not authorized.",
+    });
+  }
+  if (error instanceof AssistedOrderAgreementRequiredError) {
+    return ok(403, {
+      error: "agreement_required",
+      message: "Accept the current Research Use Policy before submitting.",
     });
   }
   if (error instanceof AssistedOrderNotFoundError) {

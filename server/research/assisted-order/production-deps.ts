@@ -24,6 +24,7 @@ import type {
   AssistedOrderAuditSink,
   AssistedOrderLegalPort,
   AssistedOrderOutbox,
+  AssistedOrderSubmissionStanding,
   AssistedOrderViewer,
 } from "./ports";
 import { enqueueNotificationOnce } from "../outbox";
@@ -47,6 +48,10 @@ export type AssistedOrderProductionWiring = Readonly<{
   requiredAgreements:
     | readonly Readonly<{ kind: string; version: string }>[]
     | undefined;
+  /** The same durable agreement gate used by the Early Access order door. */
+  agreementGate:
+    | Readonly<{ accepted(customerRef: string): Promise<boolean> }>
+    | null;
   /** The per-viewer canonical master-offerings service, or null. */
   masterOfferingServiceFor(
     viewer: AssistedOrderViewer,
@@ -74,6 +79,22 @@ export function buildAssistedOrderProduction(
             wiring.requiredAgreements!.map((entry) =>
               Object.freeze({ kind: entry.kind, version: entry.version }),
             ),
+        }
+      : null;
+
+  const submissionStanding: AssistedOrderSubmissionStanding | null =
+    wiring.agreementGate
+      ? {
+          accepted: async (viewer) => {
+            const customerRef = viewer.earlyAccessCustomerRef?.trim() ?? "";
+            const hasLiveSession =
+              (viewer.actorType === "member" ||
+                viewer.actorType === "early_access_session") &&
+              (viewer.earlyAccessSessionHash?.length ?? 0) > 0;
+            return hasLiveSession && customerRef.length > 0
+              ? wiring.agreementGate!.accepted(customerRef)
+              : false;
+          },
         }
       : null;
 
@@ -132,6 +153,7 @@ export function buildAssistedOrderProduction(
     // Dropping this line is exactly the 2026-08-18 Phase Zero defect: the
     // production-wiring test proves config publishes these exact pairs.
     legal,
+    submissionStanding,
     catalog,
     repository,
     outbox,

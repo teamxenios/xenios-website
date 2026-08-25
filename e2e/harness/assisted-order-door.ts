@@ -189,6 +189,7 @@ export function buildDoor(items: readonly AssistedOrderCatalogItem[] = [catalogI
       };
     },
     earlyAccess: () => null,
+    earlyAccessBindings: () => null,
     adminEmail: () => "research@xeniostechnology.com",
   });
 

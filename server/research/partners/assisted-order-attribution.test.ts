@@ -97,6 +97,7 @@ function harness() {
         { kind: "assisted_order_request_notice", version: "v1" },
       ],
     },
+    submissionStanding: { accepted: async () => true },
     catalog: {
       list: async () => ({
         items: [],

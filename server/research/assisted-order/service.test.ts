@@ -8,6 +8,7 @@ import type {
   AssistedOrderDependencies,
   AssistedOrderLegalPort,
   AssistedOrderNotificationIntent,
+  AssistedOrderSubmissionStanding,
   AssistedOrderViewer,
 } from "./ports";
 import {
@@ -31,6 +32,7 @@ import {
   type SupabaseRpcClient,
 } from "./supabase-repository";
 import {
+  AssistedOrderAgreementRequiredError,
   AssistedOrderAuthorizationError,
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
@@ -150,7 +152,10 @@ function input(overrides: Partial<AssistedOrderSubmitInput> = {}): AssistedOrder
 
 function harness(
   catalogItem = item(),
-  overrides: { legal?: AssistedOrderLegalPort | null } = {},
+  overrides: {
+    legal?: AssistedOrderLegalPort | null;
+    submissionStanding?: AssistedOrderSubmissionStanding | null;
+  } = {},
 ) {
   const repository = new InMemoryAssistedOrderRepository();
   const notifications: AssistedOrderNotificationIntent[] = [];
@@ -165,6 +170,10 @@ function harness(
   };
   const deps: AssistedOrderDependencies = {
     legal: overrides.legal !== undefined ? overrides.legal : defaultLegal,
+    submissionStanding:
+      overrides.submissionStanding !== undefined
+        ? overrides.submissionStanding
+        : { accepted: async () => true },
     catalog: {
       list: async () => ({
         items: [catalogItem],
@@ -251,6 +260,20 @@ function harness(
 }
 
 describe("AssistedOrderService", () => {
+  it("refuses forged request agreement fields without durable server standing", async () => {
+    const h = harness(item(), {
+      submissionStanding: { accepted: async () => false },
+    });
+
+    await expect(h.service.submit(memberViewer, input())).rejects.toBeInstanceOf(
+      AssistedOrderAgreementRequiredError,
+    );
+    expect(h.notifications).toHaveLength(0);
+    expect(
+      await h.repository.listAdmin({ page: 1, pageSize: 25 }),
+    ).toMatchObject({ total: 0, items: [] });
+  });
+
   it("persists before notifications and returns an authoritative estimate", async () => {
     const h = harness();
     const receipt = await h.service.submit(memberViewer, input());

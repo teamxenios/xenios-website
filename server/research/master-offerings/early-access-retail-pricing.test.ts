@@ -162,9 +162,23 @@ function resolvers() {
   return createAssistedOrderViewerResolvers({
     resolveMember: async () => null,
     earlyAccess: () => ({
-      identity: { resolve: async () => ({ email: "ea@example.com" }) },
+      identity: {
+        resolve: async () => ({
+          customerRef: "eac_0123456789abcdef0123456789abcdef",
+          displayName: "Early Access customer",
+          boundBy: "verified_link" as const,
+        }),
+      },
+      // The production resolver now proves the session before it reads either
+      // its id or its customer binding. Omitting this authority makes the
+      // fixture fail closed to the capability-free viewer, which correctly
+      // receives no retail pricing but does not model the scenario under test.
+      resolveSession: async () => ({ authenticated: true }),
       readSessionId: () => "ea-session-1",
     }),
+    // This anonymous-Early-Access pricing test does not resolve a member, so
+    // the member/customer binding directory is deliberately absent.
+    earlyAccessBindings: () => null,
     adminEmail: () => "research@xeniostechnology.com",
   });
 }

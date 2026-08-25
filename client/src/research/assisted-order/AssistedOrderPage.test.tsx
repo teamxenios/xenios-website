@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act } from "react";
+import { act, type ComponentProps } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type {
@@ -141,11 +141,11 @@ const receipt: AssistedOrderReceipt = {
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
 
-function render() {
+function render(props: ComponentProps<typeof AssistedOrderPage> = {}) {
   host = document.createElement("div");
   document.body.appendChild(host);
   root = createRoot(host);
-  act(() => root!.render(<AssistedOrderPage />));
+  act(() => root!.render(<AssistedOrderPage {...props} />));
   return host;
 }
 
@@ -404,6 +404,170 @@ describe("AssistedOrderPage", () => {
     ).not.toBeNull();
   });
 
+  it("honors a product-specific lower limit and increment in the quantity control", async () => {
+    const bulkItem = {
+      ...directRuoItem,
+      productId: "prod-bulk",
+      variantId: "var-bulk",
+      productName: "Bulk Peptide",
+      minimumQuantity: 10,
+      quantityIncrement: 10,
+    };
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([bulkItem]));
+    render();
+    await settle();
+
+    click(byTestId(`order-card-add-${bulkItem.variantId}`));
+    const card = byTestId(`order-card-${bulkItem.variantId}`)!;
+    const quantity = card.querySelector<HTMLInputElement>('input[type="number"]')!;
+    expect(quantity.value).toBe("10");
+    expect(quantity.min).toBe("10");
+    expect(quantity.max).toBe("100");
+    expect(quantity.step).toBe("10");
+    click(card.querySelector('button[aria-label="Increase quantity"]'));
+    expect(quantity.value).toBe("20");
+  });
+
+  it("marks the current wizard step and disables unavailable future steps", async () => {
+    render();
+    await settle();
+
+    expect(byTestId("order-step-products")?.getAttribute("aria-current")).toBe("step");
+    expect(byTestId<HTMLButtonElement>("order-step-contact")?.disabled).toBe(true);
+    expect(byTestId<HTMLButtonElement>("order-step-review")?.disabled).toBe(true);
+
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    expect(byTestId("order-step-products")?.getAttribute("aria-current")).toBeNull();
+    expect(byTestId("order-step-contact")?.getAttribute("aria-current")).toBe("step");
+    expect(byTestId<HTMLButtonElement>("order-step-products")?.disabled).toBe(false);
+    expect(byTestId<HTMLButtonElement>("order-step-review")?.disabled).toBe(true);
+  });
+
+  it("allows embedded browsing but withholds Contact until the outer gate is complete", async () => {
+    render({ embedded: true, continuationEnabled: false });
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+
+    const continueButton = byTestId<HTMLButtonElement>("order-continue-contact")!;
+    expect(continueButton.disabled).toBe(true);
+    expect(continueButton.getAttribute("aria-describedby")).toBe("order-continuation-gate");
+    expect(document.getElementById("order-continuation-gate")?.textContent).toContain(
+      "Complete the required agreement and account checks",
+    );
+    expect(byTestId("order-contact-name")).toBeNull();
+  });
+
+  it("cannot restore a gated embedded draft into Contact or Review", async () => {
+    sessionStorage.setItem(
+      ASSISTED_ORDER_DRAFT_KEY,
+      JSON.stringify({
+        idempotencyKey: "draft-gate-test",
+        step: "review",
+        selections: [{ item: directRuoItem, quantity: 1, notes: "" }],
+        generalNotes: "",
+        savedAt: "2026-08-25T00:00:00.000Z",
+      }),
+    );
+
+    render({ embedded: true, continuationEnabled: false });
+    await settle();
+
+    expect(byTestId("order-step-products")?.getAttribute("aria-current")).toBe("step");
+    expect(byTestId("order-contact-name")).toBeNull();
+    expect(byTestId("order-submit")).toBeNull();
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
+
+  it("removes a selected row if a fresh catalog response makes it held", async () => {
+    api.loadAssistedOrderCatalog
+      .mockResolvedValueOnce(catalogPage([directRuoItem]))
+      .mockResolvedValueOnce(catalogPage([{ ...directRuoItem, workflowMode: "availability_review" }]));
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+
+    typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Alpha");
+    await settle();
+
+    expect(byTestId("order-notice")?.textContent).toContain(
+      "No longer available and removed from your request: Alpha Peptide",
+    );
+    expect(document.body.textContent).toContain("No products selected yet.");
+    expect(byTestId("order-estimate")?.textContent).toBe("Price on request");
+    expect(byTestId(`order-card-add-${directRuoItem.variantId}`)).toBeNull();
+  });
+
+  it("does not expose a raw acknowledgment configuration failure", async () => {
+    api.loadAssistedOrderConfig.mockRejectedValue(
+      new Error("DATABASE_URL=postgres://secret-internal-host"),
+    );
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    fillContact();
+    click(byTestId("order-continue-review"));
+    await settle(20);
+
+    expect(document.body.textContent).toContain(
+      "The required acknowledgments could not be loaded.",
+    );
+    expect(document.body.textContent).not.toContain("DATABASE_URL");
+    expect(document.body.textContent).not.toContain("secret-internal-host");
+    const retry = Array.from(document.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Retry loading acknowledgments"),
+    );
+    expect(retry?.classList.contains("xenios-order-retry")).toBe(true);
+  });
+
+  it("does not expose a raw submission failure", async () => {
+    api.submitAssistedOrder.mockRejectedValue(
+      new Error("SUPABASE_SERVICE_ROLE_KEY=do-not-expose"),
+    );
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    fillContact();
+    click(byTestId("order-continue-review"));
+    await settle(20);
+    checkAllAcknowledgments();
+    click(byTestId("order-submit"));
+    await settle(20);
+
+    expect(byTestId("order-error")?.textContent).toContain(
+      "The order request could not be submitted. Nothing was ordered or charged.",
+    );
+    expect(document.body.textContent).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
+    expect(document.body.textContent).not.toContain("do-not-expose");
+  });
+
+  it("maps missing durable agreement standing to fixed customer-safe copy", async () => {
+    api.submitAssistedOrder.mockRejectedValue(
+      new AssistedOrderApiError(
+        403,
+        "agreement_required",
+        "durable agreement lookup leaked secret-row-id",
+      ),
+    );
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    fillContact();
+    click(byTestId("order-continue-review"));
+    await settle(20);
+    checkAllAcknowledgments();
+    click(byTestId("order-submit"));
+    await settle(20);
+
+    expect(byTestId("order-error")?.textContent).toContain(
+      "Review and accept the current Research Use Policy before submitting.",
+    );
+    expect(document.body.textContent).not.toContain("secret-row-id");
+  });
+
   it("submits the full request with server-published acknowledgments and a durable idempotency key", async () => {
     api.submitAssistedOrder.mockResolvedValue(receipt);
     render();
@@ -473,6 +637,44 @@ describe("AssistedOrderPage", () => {
       `xenios.assisted-order.${receipt.publicReference}.receipt`,
     )!;
     expect(storedReceipt).not.toContain("secret-token");
+  });
+
+  it("does not report a server-accepted request as failed when receipt storage is unavailable", async () => {
+    api.submitAssistedOrder.mockResolvedValue(receipt);
+    const nativeSetItem = Storage.prototype.setItem;
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (
+      this: Storage,
+      key,
+      value,
+    ) {
+      if (String(key).endsWith(`.${receipt.publicReference}.receipt`)) {
+        throw new DOMException("Quota exceeded", "QuotaExceededError");
+      }
+      return nativeSetItem.call(this, key, value);
+    });
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    fillContact();
+    click(byTestId("order-continue-review"));
+    await settle(20);
+    checkAllAcknowledgments();
+    click(byTestId("order-submit"));
+    await settle(20);
+
+    expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+    expect(window.location.pathname).toBe(
+      `/research/early-access/order-request/confirmation/${receipt.publicReference}`,
+    );
+    expect(byTestId("order-error")).toBeNull();
+    expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    expect(
+      sessionStorage.getItem(`xenios.assisted-order.${receipt.publicReference}.token`),
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem(`xenios.assisted-order.${receipt.publicReference}.receipt`),
+    ).toBeNull();
   });
 
   it("omits the RUO confirmation when no RUO line is selected", async () => {

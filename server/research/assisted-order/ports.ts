@@ -24,6 +24,12 @@ export type AssistedOrderViewer = Readonly<{
   actorType: "member" | "early_access_session" | "admin";
   memberId: string | null;
   earlyAccessSessionHash: string | null;
+  /**
+   * Opaque customer handle resolved by the Early Access identity directory.
+   * This is the only identity the durable agreement gate accepts; it is never
+   * read from a body, query string, email, or member claim.
+   */
+  earlyAccessCustomerRef?: string | null;
   normalizedEmail: string | null;
   // Admin identities can be Supabase JWT email identities with no member row.
   // This label is the recordable actor for such viewers.
@@ -69,6 +75,11 @@ export type AssistedOrderRequiredAgreement = Readonly<{
 
 export type AssistedOrderLegalPort = Readonly<{
   requiredAgreements(): Promise<ReadonlyArray<AssistedOrderRequiredAgreement>>;
+}>;
+
+/** Server-recorded standing required before a customer submission is written. */
+export type AssistedOrderSubmissionStanding = Readonly<{
+  accepted(viewer: AssistedOrderViewer): Promise<boolean>;
 }>;
 
 export type AssistedOrderCreateRecord = Readonly<{
@@ -290,6 +301,10 @@ export type AssistedOrderDependencies = Readonly<{
   // Optional so existing composition compiles, but submission fails closed
   // when the port is absent: no submit without a provable agreement set.
   legal?: AssistedOrderLegalPort | null;
+  // Optional at the type seam for compatibility; submit fails closed when it
+  // is absent. Request-carried agreement pairs are acknowledgments, not proof
+  // that the durable Early Access acceptance exists.
+  submissionStanding?: AssistedOrderSubmissionStanding | null;
   repository: AssistedOrderRepository;
   outbox: AssistedOrderOutbox;
   audit: AssistedOrderAuditSink;

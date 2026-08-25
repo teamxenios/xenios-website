@@ -140,6 +140,37 @@ describe("assisted-order production catalog mapping", () => {
     expect(page.items[0].actionLabel).toBe("Continue through Care");
   });
 
+  it("uses canonical provider-family authority even without a care display state", async () => {
+    const page = await callbacks(
+      [offering({ family: "provider_network" } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(9000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("provider_request");
+    expect(page.items[0].actionLabel).toBe("Continue through Care");
+  });
+
+  it("never misroutes a non-merchandise shipping row into Care or ordering", async () => {
+    const page = await callbacks(
+      [offering({
+        family: "shipping_and_fulfillment",
+        displayState: "care_pathway",
+        variants: [{
+          id: "var_1",
+          label: "Standard overnight",
+          displayState: "care_pathway",
+          visibility: "member",
+          sourceReferences: [],
+        }],
+      } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(5000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("availability_review");
+    expect(page.items[0].workflowMode).not.toBe("provider_request");
+    expect(page.items[0].workflowMode).not.toBe("direct_order_request");
+  });
+
   it("keeps a classification-pending variant as an activation request", async () => {
     const page = await callbacks(
       [offering({ displayState: "approval_required", variants: [{ id: "var_1", label: "10 mg", displayState: "approval_required", visibility: "member", sourceReferences: [] }] } as Partial<NormalizedMasterOffering>)],
@@ -188,6 +219,27 @@ describe("assisted-order production catalog mapping", () => {
 
     expect(page.items[0].workflowMode).toBe("availability_review");
     expect(page.items[0].workflowMode).not.toBe("direct_order_request");
+  });
+
+  it("never grants peptide-direct authority to a priced research capsule", async () => {
+    const page = await callbacks(
+      [offering({ family: "research_capsules" } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(5000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("request_activation");
+    expect(page.items[0].actionLabel).toBe("Request Order");
+    expect(page.items[0].workflowMode).not.toBe("direct_order_request");
+  });
+
+  it("uses the canonical pathway authority for an eligible priced supplement", async () => {
+    const page = await callbacks(
+      [offering({ family: "supplements" } as Partial<NormalizedMasterOffering>)],
+      new Map([["var_1", priced(5000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+
+    expect(page.items[0].workflowMode).toBe("direct_order_request");
+    expect(page.items[0].unitPriceCents).toBe(5000);
   });
 
   it("honors a founder-reviewed hold after customer-facing copy removes the internal marker", async () => {
@@ -314,6 +366,74 @@ describe("assisted-order production catalog mapping", () => {
       "Beta Pending",
       "Alpha Capsule",
     ]);
+  });
+
+  it("applies a supported Channel filter before pagination", async () => {
+    const peptides = offering({
+      id: "off_peptides",
+      displayName: "Peptide Row",
+      category: "Peptides",
+      variants: [{
+        id: "var_peptides",
+        label: "10 mg",
+        displayState: "request_access",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+    const wellness = offering({
+      id: "off_wellness",
+      displayName: "Wellness Row",
+      category: "Wellness",
+      variants: [{
+        id: "var_wellness",
+        label: "60 count",
+        displayState: "request_access",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    } as Partial<NormalizedMasterOffering>);
+    const built = callbacks(
+      [peptides, wellness],
+      new Map([
+        ["var_peptides", priced(5000)],
+        ["var_wellness", priced(5000)],
+      ]),
+    );
+
+    const page = await built.list(viewer, {
+      channel: "Wellness",
+      page: 1,
+      pageSize: 1,
+    });
+
+    expect(page.total).toBe(1);
+    expect(page.items.map((item) => item.productName)).toEqual(["Wellness Row"]);
+  });
+
+  it("fails closed if the canonical topology stops being one variant per offering", async () => {
+    const multiVariant = offering({
+      variants: [
+        {
+          id: "var_1",
+          label: "10 mg",
+          displayState: "request_access",
+          visibility: "member",
+          sourceReferences: [],
+        },
+        {
+          id: "var_2",
+          label: "20 mg",
+          displayState: "request_access",
+          visibility: "member",
+          sourceReferences: [],
+        },
+      ],
+    } as Partial<NormalizedMasterOffering>);
+
+    await expect(
+      callbacks([multiVariant], new Map()).list(viewer, { page: 1, pageSize: 24 }),
+    ).rejects.toThrow("requires one variant per offering");
   });
 
   it("composes search, canonical Family, and derived Action across source pages", async () => {
@@ -559,6 +679,57 @@ describe("a variant with no commerce binding", () => {
   it("does not resolve a synthetic identity the catalog never minted", async () => {
     const built = callbacks([offering()], new Map(), false);
     expect(await built.resolve(viewer, "unbound:off_x", "unbound:var_nope")).toBeNull();
+  });
+
+  it("rejects a swapped synthetic product id for a real unbound variant", async () => {
+    const built = callbacks([offering()], new Map(), false);
+    const page = await built.list(viewer, { page: 1, pageSize: 24 });
+    const listed = page.items[0];
+
+    expect(
+      await built.resolve(viewer, "unbound:off_attacker", listed.variantId),
+    ).toBeNull();
+  });
+
+  it("keeps a priced-but-unbound synthetic row request-only when re-resolved", async () => {
+    const built = callbacks(
+      [offering()],
+      new Map([["var_1", priced(5000)]]),
+      false,
+    );
+    const listed = (await built.list(viewer, { page: 1, pageSize: 24 })).items[0];
+
+    const resolved = await built.resolve(viewer, listed.productId, listed.variantId);
+
+    expect(resolved).not.toBeNull();
+    expect(resolved?.unitPriceCents).toBeNull();
+    expect(resolved?.priceVersion).toBeNull();
+    expect(resolved?.workflowMode).toBe("request_pricing");
+  });
+
+  it("rejects a stale synthetic identity once the variant gains a reviewed binding", async () => {
+    const offerings = [offering()];
+    const prices = new Map([["var_1", priced(5000)]]);
+    let bound = false;
+    const service = {
+      select: async () => ({
+        offerings,
+        prices,
+        page: { page: 1, pageSize: 24, total: 1 },
+      }),
+    } as AssistedOrderMasterCatalogService;
+    const built = createAssistedOrderMasterCatalogCallbacks({
+      serviceFor: () => service,
+      bindingFor: () => bound
+        ? { productId: "pc-prod-1", variantId: "pc-var-1" }
+        : null,
+      offeringVariantFor: () => "var_1",
+      catalogVersion: "catalog-test-v1",
+    });
+    const listed = (await built.list(viewer, { page: 1, pageSize: 24 })).items[0];
+    bound = true;
+
+    expect(await built.resolve(viewer, listed.productId, listed.variantId)).toBeNull();
   });
 });
 

@@ -276,14 +276,22 @@ function ProductCard(props: {
 
 export function AssistedOrderPage({
   embedded = false,
-}: Readonly<{ embedded?: boolean }> = {}) {
+  continuationEnabled = true,
+  onStepChange,
+}: Readonly<{
+  embedded?: boolean;
+  continuationEnabled?: boolean;
+  onStepChange?: (step: AssistedOrderWizardStep) => void;
+}> = {}) {
   // A draft persisted before a session bounce restores the basket and the
   // idempotency key, so the resumed submission replays as the SAME request.
   // Contact details are never persisted, so a restored wizard can resume at
   // products or contact, never directly at review.
   const [draft] = useState(() => readAssistedOrderDraft());
   const [step, setStep] = useState<AssistedOrderWizardStep>(() => {
-    if (!draft || draft.selections.length === 0) return "products";
+    if (!continuationEnabled || !draft || draft.selections.length === 0) {
+      return "products";
+    }
     return draft.step === "products" ? "products" : "contact";
   });
   const [selections, setSelections] = useState<AssistedOrderSelectionMap>(() =>
@@ -324,17 +332,30 @@ export function AssistedOrderPage({
   const refreshedDraft = useRef(false);
   const [, navigate] = useLocation();
 
+  useEffect(() => {
+    onStepChange?.(step);
+  }, [onStepChange, step]);
+
+  useEffect(() => {
+    if (continuationEnabled) return;
+    setContact(initialContact);
+    setAcknowledged(new Set());
+    if (step !== "products") {
+      setStep("products");
+      setError(
+        "Complete the required agreement and account checks above before continuing.",
+      );
+    }
+  }, [continuationEnabled, step]);
+
   const loadConfig = useCallback(() => {
     setConfig({ kind: "loading" });
     loadAssistedOrderConfig()
       .then((value) => setConfig({ kind: "ready", config: value }))
-      .catch((reason) =>
+      .catch(() =>
         setConfig({
           kind: "error",
-          message:
-            reason instanceof Error
-              ? reason.message
-              : "The required acknowledgments could not be loaded. Please retry before submitting.",
+          message: "The required acknowledgments could not be loaded. Please retry before submitting.",
         }),
       );
   }, []);
@@ -395,6 +416,17 @@ export function AssistedOrderPage({
           markCatalogTiming("xenios:assisted-catalog:fetch-complete");
           setCatalog(result);
           setCatalogError(null);
+          const removedNames = result.items
+            .filter((item) =>
+              selections.has(catalogItemKey(item)) &&
+              !selectableInResearchRequest(item),
+            )
+            .map((item) => item.productName);
+          if (removedNames.length > 0) {
+            setNotice(
+              `No longer available and removed from your request: ${removedNames.join(", ")}.`,
+            );
+          }
           // Any selection visible on this fresh page adopts the fresh
           // snapshot, so displayed prices heal while the customer browses.
           setSelections((current) => {
@@ -402,12 +434,14 @@ export function AssistedOrderPage({
             for (const item of result.items) {
               const existing = current.get(catalogItemKey(item));
               if (existing) {
-                next = addOrUpdateSelection(
-                  next,
-                  item,
-                  clampQuantity(item, existing.quantity),
-                  existing.notes,
-                );
+                next = selectableInResearchRequest(item)
+                  ? addOrUpdateSelection(
+                      next,
+                      item,
+                      clampQuantity(item, existing.quantity),
+                      existing.notes,
+                    )
+                  : removeSelection(next, existing.item);
               }
             }
             return next;
@@ -582,12 +616,25 @@ export function AssistedOrderPage({
       setError("Select at least one product.");
       return;
     }
+    if (!continuationEnabled) {
+      setError(
+        "Complete the required agreement and account checks above before continuing.",
+      );
+      return;
+    }
     setStep("contact");
     window.scrollTo({ top: 0 });
   };
 
   const continueFromContact = () => {
     setError(null);
+    if (!continuationEnabled) {
+      setStep("products");
+      setError(
+        "Complete the required agreement and account checks above before continuing.",
+      );
+      return;
+    }
     if (validateContact()) {
       setStep("review");
       window.scrollTo({ top: 0 });
@@ -616,6 +663,13 @@ export function AssistedOrderPage({
     setError(null);
     setFieldError(null);
     setNotice(null);
+    if (!continuationEnabled) {
+      setStep("products");
+      setError(
+        "Complete the required agreement and account checks above before continuing.",
+      );
+      return;
+    }
     // Fail closed: no server-supplied acknowledgment set, no submission.
     if (config.kind !== "ready" || requirements === null) {
       setError(
@@ -654,8 +708,10 @@ export function AssistedOrderPage({
     setSubmitting(true);
     try {
       const receipt = await submitAssistedOrder(input);
-      // The status token is stored only under its own key; the receipt JSON
-      // is stripped of it before storage.
+      // Local persistence is best-effort and atomic per receipt. A browser
+      // quota/privacy failure must never reinterpret this accepted server
+      // request as a failed submission; the path still carries its safe
+      // public reference and the server/session remains authoritative.
       storeAssistedOrderReceipt(receipt);
       clearAssistedOrderDraft();
       navigate(
@@ -678,11 +734,21 @@ export function AssistedOrderPage({
             "Your earlier request with these details was already received in a different form. Press Submit again to send this version as a new request.",
           );
         } else {
-          setError(reason.message);
-          setFieldError(reason.field ?? null);
+          setError(
+            reason.code === "agreement_required"
+              ? "Review and accept the current Research Use Policy before submitting."
+              : reason.code === "forbidden"
+              ? "Your Early Access session ended. Return to Early Access and start again."
+              : reason.code === "validation_error"
+                ? "Review the highlighted information and try again."
+                : "The order request could not be submitted. Nothing was ordered or charged. Please try again.",
+          );
+          setFieldError(reason.code === "validation_error" ? reason.field ?? null : null);
         }
       } else {
-        setError(reason instanceof Error ? reason.message : "The request could not be submitted.");
+        setError(
+          "The order request could not be submitted. Nothing was ordered or charged. Please try again.",
+        );
       }
     } finally {
       setSubmitting(false);
@@ -696,7 +762,7 @@ export function AssistedOrderPage({
   };
 
   return (
-    <div className="xenios-order-page">
+    <div className={`xenios-order-page${embedded ? " xenios-order-page--embedded" : ""}`}>
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Private Early Access</p>
         {embedded ? <h3>Request an order</h3> : <h1>Request an order</h1>}
@@ -713,10 +779,12 @@ export function AssistedOrderPage({
             type="button"
             className={step === value ? "is-active" : ""}
             data-testid={`order-step-${value}`}
+            aria-current={step === value ? "step" : undefined}
+            disabled={stepIndex[value] > stepIndex[step]}
             onClick={() => {
               if (value === "products") setStep(value);
-              if (value === "contact" && selections.size > 0) setStep(value);
-              if (value === "review" && selections.size > 0 && validateContact()) setStep(value);
+              if (continuationEnabled && value === "contact" && selections.size > 0) setStep(value);
+              if (continuationEnabled && value === "review" && selections.size > 0 && validateContact()) setStep(value);
             }}
           >
             <span>{stepIndex[value] + 1}</span>
@@ -830,7 +898,23 @@ export function AssistedOrderPage({
             )}
             <div className="xenios-order-total"><span>Estimated priced total</span><strong data-testid="order-estimate">{money(estimate)}</strong></div>
             <p className="xenios-order-small">Estimates only. Xenios confirms availability and payment details before fulfillment.</p>
-            <div className="xenios-order-actions"><button className="xenios-order-button" type="button" data-testid="order-continue-contact" onClick={continueFromProducts}>Continue</button></div>
+            {!continuationEnabled && selectionList.length > 0 ? (
+              <p className="xenios-order-notice" id="order-continuation-gate" role="status">
+                Complete the required agreement and account checks above before continuing.
+              </p>
+            ) : null}
+            <div className="xenios-order-actions">
+              <button
+                className="xenios-order-button"
+                type="button"
+                data-testid="order-continue-contact"
+                aria-describedby={!continuationEnabled ? "order-continuation-gate" : undefined}
+                disabled={selections.size === 0 || !continuationEnabled}
+                onClick={continueFromProducts}
+              >
+                Continue
+              </button>
+            </div>
           </aside>
         </section>
       ) : null}
@@ -921,7 +1005,7 @@ export function AssistedOrderPage({
             {config.kind === "error" ? (
               <div className="xenios-order-error" role="alert">
                 <p>{config.message}</p>
-                <button type="button" onClick={loadConfig}>
+                <button className="xenios-order-retry" type="button" onClick={loadConfig}>
                   Retry loading acknowledgments
                 </button>
               </div>

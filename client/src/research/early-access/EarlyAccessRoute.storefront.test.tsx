@@ -19,19 +19,18 @@ import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 let container: HTMLDivElement;
 let root: Root;
 
-const POLICIES = [
-  {
+const POLICIES = {
+  "research-use": {
     slug: "research-use",
     title: "Research Use Policy",
-    version: "v1",
-    updatedLabel: "Updated July 2026",
-    body: "Research materials are supplied for laboratory research only.",
-    description: "",
-    availability: "AVAILABLE",
-    purchasable: true,
-    quantityLimit: null,
+    updated: "July 2026",
+    sections: [{
+      heading: "Purpose",
+      paragraphs: ["Research materials are supplied for laboratory research only."],
+      bullets: [],
+    }],
   },
-];
+};
 
 /** The curated opening set the storefront shows as Featured. */
 const FEATURED_UNITS = [
@@ -152,7 +151,12 @@ function jsonResponse(body: unknown, status = 200): Response {
   } as unknown as Response;
 }
 
-function stubFetch(options: { bridgeEnabled: boolean }) {
+type AgreementFixture = "accepted" | "required" | "unverified" | "locked";
+
+function stubFetch(options: {
+  bridgeEnabled: boolean;
+  agreement?: AgreementFixture;
+}) {
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     if (init?.method === "POST") return jsonResponse({ ok: true });
@@ -161,10 +165,16 @@ function stubFetch(options: { bridgeEnabled: boolean }) {
     }
     if (path.endsWith("/research/policies")) return jsonResponse({ policies: POLICIES });
     if (path.endsWith("/early-access/agreements")) {
+      if (options.agreement === "unverified") {
+        return jsonResponse({ ok: false, code: "IDENTITY_REQUIRED" }, 403);
+      }
+      if (options.agreement === "locked") {
+        return jsonResponse({ ok: false, code: "SESSION_REQUIRED" }, 401);
+      }
       return jsonResponse({
         ok: true,
         required: [{ kind: "early_access_terms", version: "v1" }],
-        accepted: true,
+        accepted: options.agreement !== "required",
       });
     }
     if (path.endsWith("/early-access/catalog")) {
@@ -254,6 +264,97 @@ describe("the unified Early Access storefront", () => {
       allProducts!.compareDocumentPosition(featured!) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
+
+  it("shows only the assisted-order journey after the embedded catalog advances", async () => {
+    stubFetch({ bridgeEnabled: true });
+    await renderStorefront();
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 260));
+    });
+
+    const add = container.querySelector<HTMLButtonElement>(
+      '[data-testid="order-card-add-pcv_pep_1"]',
+    );
+    expect(add).toBeTruthy();
+    act(() => add!.click());
+    const continueButton = container.querySelector<HTMLButtonElement>(
+      '[data-testid="order-continue-contact"]',
+    );
+    expect(continueButton).toBeTruthy();
+    act(() => continueButton!.click());
+
+    expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
+    expect(container.querySelector('[data-testid="early-access-stepper"]')).toBeNull();
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+    expect(container.querySelector("h1")?.textContent).toBe("Complete your order request");
+    expect(
+      container.querySelector('[data-testid="early-access-full-catalog"] h2')?.textContent,
+    ).toBe("Contact and shipping");
+    expect(container.querySelector('[data-testid="order-step-contact"]')?.getAttribute("aria-current"))
+      .toBe("step");
+  });
+
+  it("allows browsing but unlocks Contact only after the agreement is recorded", async () => {
+    stubFetch({ bridgeEnabled: true, agreement: "required" });
+    await renderStorefront();
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 260));
+    });
+
+    act(() => {
+      container.querySelector<HTMLButtonElement>(
+        '[data-testid="order-card-add-pcv_pep_1"]',
+      )!.click();
+    });
+    const continueButton = container.querySelector<HTMLButtonElement>(
+      '[data-testid="order-continue-contact"]',
+    )!;
+    expect(continueButton.disabled).toBe(true);
+    expect(container.querySelector('[data-testid="order-contact-name"]')).toBeNull();
+
+    act(() => {
+      container.querySelector<HTMLInputElement>(
+        '[data-testid="early-access-agreement-checkbox"]',
+      )!.click();
+    });
+    act(() => {
+      container.querySelector<HTMLButtonElement>(
+        '[data-testid="early-access-agreement-submit"]',
+      )!.click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(continueButton.disabled).toBe(false);
+    act(() => continueButton.click());
+    expect(container.querySelector('[data-testid="order-contact-name"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
+  });
+
+  it.each(["unverified", "locked"] as const)(
+    "never exposes Contact or submit while agreement standing is %s",
+    async (agreement) => {
+      stubFetch({ bridgeEnabled: true, agreement });
+      await renderStorefront();
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 260));
+      });
+      act(() => {
+        container.querySelector<HTMLButtonElement>(
+          '[data-testid="order-card-add-pcv_pep_1"]',
+        )!.click();
+      });
+
+      expect(
+        container.querySelector<HTMLButtonElement>(
+          '[data-testid="order-continue-contact"]',
+        )?.disabled,
+      ).toBe(true);
+      expect(container.querySelector('[data-testid="order-contact-name"]')).toBeNull();
+      expect(container.querySelector('[data-testid="order-submit"]')).toBeNull();
+    },
+  );
 
   // NOTE ON SCOPE. The price text, the Care refusal and each row's action
   // label are rendered by the catalog component itself and are already proven

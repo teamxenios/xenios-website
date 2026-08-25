@@ -145,9 +145,17 @@ function viewerResolvers(memberRow: MemberRow | null) {
           }
         : null,
     earlyAccess: () => ({
-      identity: { resolve: async () => ({ email: "ea@example.com" }) },
+      identity: {
+        resolve: async () => ({
+          customerRef: "eac_0123456789abcdef0123456789abcdef",
+          displayName: "Early Access customer",
+          boundBy: "verified_link" as const,
+        }),
+      },
+      resolveSession: async () => ({ authenticated: true }),
       readSessionId: () => "ea-session-1",
     }),
+    earlyAccessBindings: () => null,
     adminEmail: () => "research@xeniostechnology.com",
   });
 }

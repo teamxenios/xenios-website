@@ -137,6 +137,7 @@ export function EarlyAccessAgreementSection({
         return;
       }
       setPhase({ status: "ready" });
+      onBlocked(null);
     });
     return () => {
       live = false;
@@ -155,6 +156,7 @@ export function EarlyAccessAgreementSection({
         // on file, which is the only thing checkout asks about, so telling the
         // customer it failed would be false.
         setPhase({ status: "accepted", alreadyAccepted: result.alreadyAccepted });
+        onBlocked(null);
         onAccepted(true);
         return;
       }

@@ -65,10 +65,21 @@ function resolvers(options: {
       // The real directory returns null for a session that is not bound to an
       // APPROVED customer. That null is what produces the anonymous fallback.
       identity: {
-        resolve: async () => (options.identified ? { email: "ea@example.com" } : null),
+        resolve: async () =>
+          options.identified
+            ? {
+                customerRef: "eac_0123456789abcdef0123456789abcdef",
+                displayName: "Early Access customer",
+                boundBy: "verified_link" as const,
+              }
+            : null,
       },
+      // Session standing is proven before the production resolver will trust
+      // either the opaque session id or the customer-directory answer.
+      resolveSession: async () => ({ authenticated: true }),
       readSessionId: () => "ea-session-1",
     }),
+    earlyAccessBindings: () => null,
     adminEmail: () => "research@xeniostechnology.com",
   });
 }
