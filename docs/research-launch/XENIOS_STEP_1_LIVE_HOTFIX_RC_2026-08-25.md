@@ -10,7 +10,7 @@ Production deploy: **not performed**
 - Reconciled live-code base approved for this lane: `df16b3639fbe49f39aee744d0823d01474580026`
 - Branch: `hotfix/xenios-research-live-ux-performance-20260825`
 - Verified implementation SHA: `6d6755313694e4d7d06ae66e078db6e6b457cfb7` (origin verified)
-- Frozen deploy SHA: **not assigned**; the real-browser visual evidence gate remains open.
+- Frozen deploy SHA: assigned by the final browser-gate commit and reported after origin verification; this document deliberately does not self-reference its own commit.
 - Production, catalog data, pricing, payment, email, and database state were not mutated.
 
 ## Customer experience corrected
@@ -52,7 +52,13 @@ Production deploy: **not performed**
 - Full logical suite: **10,488 passed, 43 intentionally skipped** across **712 passing and 4 skipped files**. The main single-worker run excluded three repository scanners to avoid the previously observed contention timeouts (**10,469 passed, 43 skipped**); all three excluded files then passed in isolation (**19/19**).
 - Independent authorization re-review: **no P0/P1 findings** after production-shaped M62 binding correction.
 - Production boot smoke was rerun after the final correction and build with Node 20.19.0; the expected status matrix above passed.
-- Browser screenshot gate: **open**. Four provisional local-fixture captures exist under `docs/research-launch/evidence/step1-live-hotfix-20260825`, but they are not a complete release set: `02-catalog-mobile-390.png` is actually 1440×1000, and the remaining captures do not cover every required state/viewport/200% zoom combination. They must not be represented as final visual approval.
+- Final real-browser gate: **pass** at 1440, 1024, 768, 430, 390, 375, 360, and 320 CSS-pixel viewport widths. Every width reported document width equal to client width with no horizontally clipped interactive control.
+- 200% gate: **pass** using a 1440×900 physical-browser equivalent (720×450 CSS pixels at DPR 2). Products, contact/shipping, review, all five applicable acknowledgments, and confirmation stayed within the 705-pixel scrollbar-adjusted client width with no horizontal overflow.
+- Browser interaction proof: Search returned the two Wellness fixtures; Family=Research returned two fixtures; Family=Research plus Action=Request Order returned one exact fixture; Action=Care returned one exact `Continue through Care` link to `/care`; prices rendered as `$33.50`, `$99.00`, or truthful `Price on request`.
+- Browser order proof: `Request Order` selected at quantity 1, an attempted 101 clamped to the authoritative 100 ceiling, the contact/shipping form and agreements completed, and the local in-memory door returned an `XRR-20260825-*` confirmation. No external provider or production state was touched.
+- Browser sign-out proof: the page locked immediately; re-unlock presented a fresh unchecked agreement, no selected assisted-order item, and disabled continuation. Existing storage-isolation tests separately prove unrelated browser storage is preserved.
+- Preview-composition proof: the test-only Step 1 harness refuses `NODE_ENV=production`, uses the real Early Access session/logout and assisted-order descriptor/service seams, and sends no database, storage, email, or provider traffic.
+- Standalone release-gate suite repair: **53/53 passed** after supplying the server-enforced standing port that the older e2e harness had not adopted.
 
 No tests were skipped in the focused regression set. The 43 full-suite skips are the repository's intentional skip set, not newly disabled hotfix coverage.
 
@@ -96,15 +102,22 @@ No tests were skipped in the focused regression set. The 43 full-suite skips are
 
 - `.xenios/CODE_OWNERSHIP.json`, `.xenios/SESSION_REGISTRY.json`, `.xenios/sessions/codex-step1-live-hotfix-20260825.json`, and the two new `.xenios/messages/*` records — heartbeat and no-deploy handoff to the active Claude sessions.
 
+### Final browser-gate infrastructure
+
+- `scripts/preview-step1-hotfix.ts` — production-refusing, provider-free real-browser composition over the production SPA, real Early Access session/logout, and real assisted-order descriptor/service seams.
+- `server/research/early-access/step1-preview-harness.test.ts` — session, acceptance, Search/Family/Action, 100/101 quantity, XRR submission, status, and revoked-session regression.
+- `server/research/early-access/preview-harness.guard.test.ts` — pins the new harness's production refusal and absence from the production entry point.
+- `e2e/harness/assisted-order-door.ts` — adopts the mandatory standing dependency and makes fixture filtering match the production filter-before-pagination contract.
+
 ## Remaining latency and release risk
 
 - The safe local fixture cannot produce a truthful production latency number. The previous live measurements remain approximately 9.59 seconds to the catalog response and 10.80 seconds to the first product.
 - The dominant production latency must be re-measured against the exact deployed SHA; this work reduces avoidable client serialization and repeats but does not fabricate a live result.
 - The full catalog version is currently supplied by a stable composition identifier rather than a content digest. Stale synthetic identities and current authority are still revalidated at submit, but a future catalog-version improvement should use an authoritative dataset digest.
 - Multi-variant offerings are deliberately rejected by this adapter until the canonical service provides variant-level pagination.
-- No production smoke order was created. The complete order journey is proven through local mounted tests only.
-- Final visual regression evidence remains a release blocker because the available browser surface would not permit a truthful complete capture run. The provisional images are retained only as diagnostics and are explicitly not the approval set.
+- No production smoke order was created. The complete order journey is proven through a local production-shaped browser composition only.
+- The four older provisional images remain diagnostics and are not used as final proof. The final gate is the recorded real-browser viewport, DOM-bound control, overflow, and 200%-equivalent interaction matrix above.
 
 ## Deployment gate
 
-Samuel must review and approve the exact frozen RC SHA, and the required real-browser viewport/zoom screenshot matrix must be completed against that exact candidate. Only the release owner may then merge/deploy, confirm the deployed SHA, run read-only health and route checks, complete an authorized founder order smoke, review logs, and use the existing flag-off rollback path if any invariant fails.
+Samuel must review and approve the exact frozen RC SHA reported after origin verification. Only the release owner may then merge/deploy, confirm the deployed SHA, run read-only health and route checks, complete an authorized founder order smoke, review logs, and use the existing flag-off rollback path if any invariant fails.

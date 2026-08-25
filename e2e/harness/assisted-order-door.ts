@@ -9,7 +9,10 @@
 // tests missed, all of them at composition seams.
 
 import express, { type Express, type RequestHandler } from "express";
-import type { AssistedOrderCatalogItem } from "@shared/research/assisted-order/contract";
+import {
+  assistedOrderActionGroupFor,
+  type AssistedOrderCatalogItem,
+} from "@shared/research/assisted-order/contract";
 import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   assistedOrderFormPair,
@@ -119,16 +122,50 @@ export function buildDoor(items: readonly AssistedOrderCatalogItem[] = [catalogI
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
     legal: { requiredAgreements: async () => [LEGAL_PAIR] },
+    // This standalone door fixture predates the durable Early Access
+    // agreement-standing port. Its callers authenticate as a fixture member
+    // and carry the exact required agreement pairs in `submission()`, so the
+    // test port grants standing only to that resolved member identity. The
+    // production composition remains fail closed and is covered separately by
+    // the real binding/agreement-gate tests.
+    submissionStanding: {
+      accepted: async (viewer) => viewer.memberId !== null,
+    },
     catalog: {
-      list: async () => ({
-        items: [...items],
-        total: items.length,
-        page: 1,
-        pageSize: 24,
-        families: [...new Set(items.map((item) => item.family))],
-        channels: [...new Set(items.map((item) => item.channel))],
-        workflowModes: [...new Set(items.map((item) => item.workflowMode))],
-      }),
+      list: async (_viewer, query) => {
+        const search = query.search?.trim().toLocaleLowerCase() ?? "";
+        const filtered = items.filter((item) => {
+          if (query.family && item.family !== query.family) return false;
+          if (query.channel && item.channel !== query.channel) return false;
+          if (query.actionGroup && assistedOrderActionGroupFor(item.workflowMode) !== query.actionGroup) {
+            return false;
+          }
+          if (query.workflowMode && item.workflowMode !== query.workflowMode) return false;
+          if (!search) return true;
+          return [
+            item.productName,
+            item.family,
+            item.channel,
+            item.specification,
+            item.format,
+            item.packBasis,
+          ].some((value) => value?.toLocaleLowerCase().includes(search));
+        });
+        const page = query.page ?? 1;
+        const pageSize = query.pageSize ?? 24;
+        const start = (page - 1) * pageSize;
+        return {
+          items: filtered.slice(start, start + pageSize),
+          total: filtered.length,
+          page,
+          pageSize,
+          // Filter choices describe the whole fixture catalog, not only the
+          // current result page, matching the production adapter's behavior.
+          families: [...new Set(items.map((item) => item.family))],
+          channels: [...new Set(items.map((item) => item.channel))],
+          workflowModes: [...new Set(items.map((item) => item.workflowMode))],
+        };
+      },
       resolveLine: async (_viewer, requested) => {
         const item = items.find(
           (candidate) =>
