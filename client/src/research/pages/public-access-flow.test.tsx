@@ -67,7 +67,7 @@ function assertKeyboardReachableActions(view: HTMLElement) {
 }
 
 describe("Research public application flow", () => {
-  it("keeps the gateway focused on Apply and Member Login with canonical public links", async () => {
+  it("keeps the editorial gateway connected to canonical access and protected catalog routes", async () => {
     const view = await render(<Gateway />);
     assertSinglePageHeading(view);
 
@@ -77,7 +77,11 @@ describe("Research public application flow", () => {
     expect(hrefs).toContain("/research/privacy");
     expect(hrefs).toContain("/research/terms");
     expect(hrefs).toContain("/research/support");
-    expect(hrefs.some((href) => /catalog|products|shop|supplements/i.test(href))).toBe(false);
+    expect(hrefs).toContain("/research/member/products");
+    expect(
+      hrefs.filter((href) => /catalog|products|shop|supplements/i.test(href))
+        .every((href) => href === "/research/member/products"),
+    ).toBe(true);
     assertKeyboardReachableActions(view);
   });
 
@@ -109,7 +113,7 @@ describe("Research public application flow", () => {
     expect(source).not.toContain('type="checkbox"');
   });
 
-  for (const width of [320, 375, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
     it(`preserves public-page structural invariants at ${width}px`, async () => {
       Object.defineProperty(window, "innerWidth", { configurable: true, value: width });
       window.dispatchEvent(new Event("resize"));
@@ -120,12 +124,9 @@ describe("Research public application flow", () => {
       expect(gateway.querySelector('[data-testid="link-gateway-apply"]')).not.toBeNull();
       expect(gateway.querySelector('[data-testid="link-gateway-signin"]')).not.toBeNull();
       assertKeyboardReachableActions(gateway);
-      const gatewayActions = Array.from(gateway.querySelectorAll<HTMLElement>(".btn"));
-      expect(
-        gatewayActions.every(
-          (action) => action.style.width === "100%" && action.style.maxWidth === "240px",
-        ),
-      ).toBe(true);
+      expect(gateway.querySelector('[data-testid="link-gateway-catalog"]')?.getAttribute("href"))
+        .toBe("/research/member/products");
+      expect(gateway.querySelectorAll("section").length).toBeGreaterThanOrEqual(8);
 
       act(() => root!.unmount());
       root = null;

@@ -1,108 +1,56 @@
 # Research home catalog policy
 
-## The directive
+## Current product decision
 
-Samuel's directive, restated exactly: there must be no "Research Catalog" button, card,
-tile, hero CTA, navigation CTA, or equivalent public catalog-entry control on the
-`/research` home page. This is a repeated nonnegotiable, not a one-time cleanup.
+The public `/research` page may explain the Xenios Research offering and provide a clear
+entry point to the canonical catalog at `/research/member/products`. That destination is
+not a public catalog: it remains inside `RequireMember`, and the server remains the
+authorization authority for catalog data.
 
-`/research` renders `client/src/research/pages/Gateway.tsx` (mounted at that path in
-`client/src/research/section.tsx`). Gateway is a private-membership gate for an
-unauthenticated visitor: a wordmark, an eyebrow, a headline, one sentence, exactly two
-actions ("Apply for Membership" to `/research/apply` and "Member Login" to
-`/research/sign-in`), and three small footer links (privacy, terms, support). Nothing
-else belongs there. No navigation, no product grid, no "browse before you apply" path,
-no way to see catalog contents, pricing, or SKUs without first applying and being
-approved, or signing in as an existing member.
+The homepage must never render or fetch catalog records, product detail, prices,
+inventory, checkout state, member data, or direct product routes. It may describe broad
+research areas and the information a member can expect to evaluate. All current product
+truth stays in the protected catalog.
 
-As of this writing Gateway already matches that description. No catalog CTA was found
-on it; this policy and its guard tests exist to keep it that way, not to remove
-something that was there.
+This replaces the earlier temporary minimal-gateway rule that prohibited any catalog
+entry link. It does not change the access architecture.
 
-## Where catalog access legitimately lives instead
+This newer founder-directed homepage decision also supersedes only the minimal,
+one-viewport Gateway presentation described in the earlier Competitive Code UI Master
+Guide. The guide remains authoritative for the rest of Research; its access, restraint,
+originality, responsive, and accessibility rules still apply here.
 
-The catalog is real and reachable, just never from the public home page:
+## Required boundary
 
-- **Authenticated member workspace.** `/research/member/products` (`MemberProducts`,
-  `client/src/research/pages/member/Products.tsx`) is the actual, current member
-  catalog route. It sits behind `RequireMember` (`client/src/research/pages/MemberArea.tsx`),
-  so it only renders for a signed-in, active member. Related member-only surfaces:
-  `/research/member/supplements`, `/research/member/metabolic-care`,
-  `/research/member/diagnostics`, and the cart/checkout/orders/subscriptions family
-  under `/research/member/*`.
-- **Authorized partner views.** The Research Rep / affiliate portal under
-  `/research/partners/*` (password-gated, its own shell, see `section.tsx`) has its own
-  links and resources; it is a separate authorized surface, not the public gateway.
-- **Supplier operational views.** `client/src/research/operations/` (for example
-  `MitchPortal.tsx`, `OperationsCommandCenter.tsx`) and the commerce/inventory adminx
-  pages are operational surfaces for suppliers and staff, gated separately from the
-  public site.
-- **Product Control (admin).** The `/admin/research/*` family (`adminx-section.tsx`),
-  including `/admin/research/products` (`ProductsAdmin`), `/admin/research/inventory/*`,
-  and `/admin/research/commerce-queues`, is the Product Control center: forced RLS,
-  service-only privileges, no public reachability at all.
-- **Admin Research home.** `/admin/research` (`AdminResearchHome`) is the internal
-  admin landing page for the whole Research admin family, again never public.
+- Approved catalog destination: `/research/member/products` only.
+- The link may appear in the hero, relevant editorial sections, the final call to action,
+  the footer, and a responsive sticky action.
+- Every instance must resolve to that exact protected route.
+- No public product cards, names, SKUs, price claims, inventory claims, or product APIs.
+- No links to `/research/products`, `/research/catalog`, `/research/shop`, cart, checkout,
+  a product slug, or any `/api/research/*` endpoint.
+- No client-side flag, storage value, or query parameter may expose a second version of
+  the homepage with catalog data.
+- Signed-out, inactive, pending, or otherwise unauthorized visitors who follow the link
+  remain subject to the existing member authorization flow.
 
-None of the above should ever be linked from, or reachable through, the public
-`/research` Gateway page. A visitor reaches them only by applying and being approved
-(member workspace), by a separate authorized partner/staff login (partner and
-operations views), or by internal admin access (Product Control, Admin Research).
+## Implementation and regression lock
 
-## What the guard checks
+`client/src/research/pages/Gateway.tsx` is the public editorial page. Its catalog route is
+declared once as `MEMBER_CATALOG_PATH` and reused by each catalog action. The component
+contains no fetch or member-state loading.
 
-The regression lock lives in
-`client/src/research/pages/Gateway.catalog-guard.test.tsx`, run as part of
-`client/src/research/pages/` in CI. It has three independent layers:
+`client/src/research/pages/Gateway.catalog-guard.test.tsx` enforces:
 
-1. **DOM denylist.** Renders Gateway in jsdom and inspects every real `<a>` and
-   `<button>` it produced: accessible name, visible text content, `href`, and
-   `data-testid`, each checked against a phrase denylist (`"research catalog"`,
-   `"catalog"`, `"browse products"`, `"shop"`, `"view products"`,
-   `"product catalog"`, `"see catalog"`, `"enter catalog"`) and an href-pattern
-   denylist (`/research/products`, `/research/catalog`, `/research/member/catalog`,
-   `/research/supplements`, `/research/member/products`, and anything containing
-   `catalog-display`). The assertion is that zero elements match, and a failure names
-   every offending element.
-2. **DOM closed allowlist.** Beyond the denylist, a second test asserts the page
-   contains only a known-good, exact set of anchors (the wordmark home link, apply,
-   sign-in, privacy, terms, support) and zero `<button>` elements. This catches any
-   *new* element even if its wording never matches the denylist above; any addition to
-   the Gateway page has to be reviewed against this file first.
-3. **Responsive / feature-flag dimension.** jsdom has no layout engine, so the tests do
-   not pretend to measure real visibility at a given screen size. What they do
-   honestly check: `Gateway.length === 0` (it declares no props today, so there is no
-   prop to vary), a source-text scan proving Gateway reads no flag, env, storage, or
-   context API (`useContext`, `useFeatureFlag`, `useFlag`, `import.meta.env`,
-   `process.env`, `localStorage`, `sessionStorage`, `useSearch`, `useParams`,
-   `matchMedia`), and a re-render of the same DOM denylist check after setting
-   `window.innerWidth` to a narrow (375) and a wide (1920) value.
-4. **Source-level route guard.** Independent of anything jsdom renders, a test reads
-   the raw text of `Gateway.tsx` and checks it for the same denylisted route strings.
-   This exists because a link written inside a branch the render never takes (a flag
-   check, a dev-only block) would never appear in the DOM checks above but would still
-   ship. A DOM check and a source check are both kept because each misses what the
-   other catches: the DOM check misses unreached branches, the source check misses an
-   href assembled at runtime from a variable rather than written as a literal.
+1. Every catalog-labelled action uses `/research/member/products`.
+2. Direct product, API, cart, checkout, shop, and legacy catalog destinations are absent.
+3. Every anchor is in a closed, reviewed destination allowlist.
+4. The source contains no fetch, external asset URL, browser-storage branch, or
+   environment-flag branch.
+5. The same protected catalog destination is rendered at 320, 375, 390, 430, 768, and
+   1440 CSS pixels.
 
-## How to extend the guard
-
-If a legitimate new, genuinely non-catalog Gateway CTA is ever proposed (for example, a
-third access-family link that is not a catalog entry point):
-
-1. Confirm it is not catalog access under a different name. If it leads to product
-   listings, pricing, SKUs, or anything a non-member/non-partner should not browse, it
-   does not belong on Gateway at all; route it through the member workspace, partner
-   portal, or admin surfaces above instead.
-2. Add its `href` to the `ALLOWED_HREFS` set in the DOM closed-allowlist test in
-   `Gateway.catalog-guard.test.tsx`, with a short comment explaining what it is.
-3. If it reads a new prop or flag, update the "declares zero parameters" and "reads no
-   flag" tests to instead enumerate that prop/flag explicitly, and render Gateway under
-   every value it can take, asserting the DOM denylist and allowlist checks stay clean
-   for each value.
-4. Update this document's "two actions" description and the list above so the written
-   policy still matches the real page.
-5. Do not widen or remove a denylist phrase, href pattern, or route string to make a
-   new CTA pass. If a legitimate CTA's wording collides with the denylist (for example
-   it happens to contain the word "shop"), rename the CTA; the denylist protects
-   against exactly that ambiguity.
+The protected route itself remains mounted inside `RequireMember` in
+`client/src/research/section.tsx`. Changes to that router, `RequireMember`, member auth,
+or server authorization are outside the homepage workstream and require a separate
+security review.
