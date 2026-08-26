@@ -170,6 +170,16 @@
       "startedAt": "2026-08-21T16:38:55.554Z",
       "heartbeatAt": "2026-08-21T16:59:33.320Z",
       "note": "RC candidate e752db6 pushed+verified. P0-1 eliminated (bulk listDetails + declared-facts window + cache), P0-2 integrated (e2e 53/53), QA defect fixed, migration 76 rehearsed. Full suite running for freeze; awaiting browser-perf report."
+    },
+    {
+      "id": "claude-fable-client-accounts-20260826",
+      "tool": "claude",
+      "lane": "client-accounts-backend-blitz",
+      "branch": "claude/xenios-client-accounts-backend-20260826",
+      "state": "active",
+      "startedAt": "2026-08-26T22:16:58.846Z",
+      "heartbeatAt": "2026-08-26T22:43:24.897Z",
+      "note": "Checkpoint cb5a14c pushed+origin-verified: shared contracts (customer-account, product-activation, client-import) + server route tables + 43 tests green, tsc clean. Codex consuming shared/**. Next: activation overlay config, candidate SQL, gap report."
     }
   ]
 }

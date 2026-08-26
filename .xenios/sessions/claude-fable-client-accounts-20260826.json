@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-client-accounts-20260826",
+  "tool": "claude",
+  "lane": "client-accounts-backend-blitz",
+  "branch": "claude/xenios-client-accounts-backend-20260826",
+  "state": "active",
+  "startedAt": "2026-08-26T22:16:58.846Z",
+  "heartbeatAt": "2026-08-26T22:43:24.897Z",
+  "note": "Checkpoint cb5a14c pushed+origin-verified: shared contracts (customer-account, product-activation, client-import) + server route tables + 43 tests green, tsc clean. Codex consuming shared/**. Next: activation overlay config, candidate SQL, gap report."
+}
