@@ -1,0 +1,95 @@
+{
+  "$comment": [
+    "PRODUCT ACTIVATION OVERLAY — 2026-08-26 blitz.",
+    "",
+    "Records the commercial-activation state of demand-priority products ON TOP",
+    "of the catalog authorities. It can only make a product MORE cautious, never",
+    "grant availability: shared/research/product-activation/contract.ts enforces",
+    "that a 'verbal' confirmationBasis can never project live, and 'live'",
+    "additionally requires a complete documentation checklist PLUS a recorded",
+    "founder activation approval PLUS whatever the base catalog already demands.",
+    "",
+    "confirmationBasis 'verbal' entries record Kris's 2026-08-26 verbal",
+    "confirmation that his telemedicine team and Dallas 503A/503B pharmacy",
+    "relationships can support these product categories. That is business",
+    "intelligence, not availability: VERBALLY_CONFIRMED_PENDING_DOCUMENTATION.",
+    "",
+    "activationQueue entries are demanded EXACT VARIANTS that exist in no",
+    "catalog source yet — they enter pharmacy verification, never the site,",
+    "until documentation and founder approval exist.",
+    "",
+    "No entry in this file may ever be flipped to live by editing JSON alone:",
+    "the resolver requires founderActivationApproval AND a documented checklist,",
+    "and the founder release ledger still gates actual selling."
+  ],
+  "schemaVersion": 1,
+  "recordedOn": "2026-08-26",
+  "recordedBy": "claude-fable-client-accounts-20260826 (founder-directed blitz)",
+  "entries": [
+    {
+      "groupId": "GRP-0008",
+      "label": "AOD-9604 / MOTS-C / Tesamorelin / Ipamorelin blend (provider)",
+      "confirmationBasis": "verbal",
+      "confirmedBy": "Kris — telemedicine/pharmacy partner (verbal)",
+      "confirmedAt": "2026-08-26T00:00:00.000Z",
+      "checklist": {},
+      "founderActivationApproval": null,
+      "held": false
+    },
+    {
+      "groupId": "GRP-0031",
+      "label": "CJC-1295 / Ipamorelin 2-2mg/mL (provider formulation)",
+      "confirmationBasis": "verbal",
+      "confirmedBy": "Kris — telemedicine/pharmacy partner (verbal)",
+      "confirmedAt": "2026-08-26T00:00:00.000Z",
+      "checklist": {},
+      "founderActivationApproval": null,
+      "held": false
+    },
+    {
+      "groupId": "GRP-0210",
+      "label": "Tesamorelin / Ipamorelin blend (provider formulation)",
+      "confirmationBasis": "verbal",
+      "confirmedBy": "Kris — telemedicine/pharmacy partner (verbal)",
+      "confirmedAt": "2026-08-26T00:00:00.000Z",
+      "checklist": {},
+      "founderActivationApproval": null,
+      "held": false
+    },
+    {
+      "groupId": "GRP-0169",
+      "label": "Semax/Selank nasal spray (provider formulation)",
+      "confirmationBasis": "verbal",
+      "confirmedBy": "Kris — telemedicine/pharmacy partner (verbal)",
+      "confirmedAt": "2026-08-26T00:00:00.000Z",
+      "checklist": {},
+      "founderActivationApproval": null,
+      "held": false
+    },
+    {
+      "groupId": "GRP-0098",
+      "label": "Melanotan II provider formulation",
+      "confirmationBasis": "verbal",
+      "confirmedBy": "Kris — telemedicine/pharmacy partner (verbal)",
+      "confirmedAt": "2026-08-26T00:00:00.000Z",
+      "checklist": {},
+      "founderActivationApproval": null,
+      "held": false
+    }
+  ],
+  "activationQueue": [
+    { "queueId": "Q-2026-08-26-01", "label": "Retatrutide 48 mg", "demandMentions": 2, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-02", "label": "Provider/Care Retatrutide variants (exact pharmacy formulary strengths)", "demandMentions": 36, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-03", "label": "Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-04", "label": "BPC-157 + TB-500 + MGF (Wolverine blend)", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-05", "label": "IGF-1 LR3 + MOTS-C blend", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-06", "label": "GHK-Cu + Epithalon + MOTS-C blend", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-07", "label": "CJC-1295 + Ipamorelin + IGF-1 LR3 blend", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-08", "label": "CJC-1295 + Ipamorelin + AOD-9604 blend", "demandMentions": 1, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-09", "label": "Semax + Selank 5mg/5mg exact formulation", "demandMentions": 8, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-10", "label": "BPC-157 500 mcg capsules, 100-count package", "demandMentions": 4, "basis": "verbal" },
+    { "queueId": "Q-2026-08-26-11", "label": "Initial hormone-evaluation labs (diagnostic service entry, not a peptide)", "demandMentions": 1, "basis": "none" },
+    { "queueId": "Q-2026-08-26-12", "label": "Exosomes 1 oz exact item (reconcile vs existing exosome cream/serum rows)", "demandMentions": 1, "basis": "none" },
+    { "queueId": "Q-2026-08-26-13", "label": "Revive Glutathione 10 mL exact formulation (reconcile vs Glutathione 200mg/mL 10mL vial)", "demandMentions": 1, "basis": "none" }
+  ]
+}
