@@ -19,6 +19,8 @@
 
 import type {
   OrderFulfillmentDisplayState,
+  OrderHistoryCompletenessDto,
+  OrderPaymentDisplayState,
   OrderSummaryDto as PortalOrderSummaryDto,
 } from "@shared/research/customer-account/contract";
 import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
@@ -35,7 +37,11 @@ export type CommerceOrdersSource = Readonly<{
   getForMember(memberId: string, orderId: string): Promise<unknown>;
 }>;
 
-type ShipmentShape = Readonly<{ trackingNumber: string | null; carrier: string | null }>;
+type ShipmentShape = Readonly<{
+  trackingNumber: string | null;
+  carrier: string | null;
+  status: string | null;
+}>;
 type SummaryShape = Readonly<{
   orderId: string;
   state: OrderState;
@@ -65,6 +71,7 @@ function asSummary(value: unknown): SummaryShape {
           trackingNumber:
             typeof shipment.trackingNumber === "string" ? shipment.trackingNumber : null,
           carrier: typeof shipment.carrier === "string" ? shipment.carrier : null,
+          status: typeof shipment.status === "string" ? shipment.status : null,
         };
       })
     : [];
@@ -83,30 +90,67 @@ function asLines(value: unknown): readonly LineShape[] {
   });
 }
 
-// Money has moved (or moved and come back). "approved" is pre-capture and
-// stays awaiting_payment: code cannot mark itself paid.
-const PAID_STATES: ReadonlySet<OrderState> = new Set<OrderState>([
-  "payment_captured",
-  "processing",
-  "partially_fulfilled",
-  "fulfilled",
-  "delivered",
-  "refunded",
-  "replaced",
-]);
+// Payment truth from the lifecycle state ALONE (P1-3, 2026-08-27), derived
+// from the shared transition table, not assumed:
+//   * unpaid    — states reachable only BEFORE capture. "approved" and
+//                 "payment_authorized" stay unpaid: authorization is not
+//                 capture, and code cannot mark itself paid.
+//   * paid      — states the machine reaches only THROUGH a recorded capture.
+//   * refunded  — its transition requires provider confirmation, so the state
+//                 itself is durable payment evidence. Never rendered as paid.
+//   * unknown   — exception, cancelled, and replaced are reachable both
+//                 before AND after capture; with no capture/refund evidence
+//                 on the wire DTO, any answer would be a guess. The customer
+//                 sees "unknown", never an invented "unpaid" on money already
+//                 taken or "paid" on money returned.
+function paymentOf(state: OrderState): OrderPaymentDisplayState {
+  switch (state) {
+    case "payment_captured":
+    case "processing":
+    case "partially_fulfilled":
+    case "fulfilled":
+    case "delivered":
+      return "paid";
+    case "refunded":
+      return "refunded";
+    case "exception":
+    case "cancelled":
+    case "replaced":
+      return "unknown";
+    default:
+      return "unpaid";
+  }
+}
 
-function fulfillmentOf(state: OrderState): OrderFulfillmentDisplayState {
+/** A shipment fact that actually evidences movement: a tracking number, or a carrier-reported moving/arrived status. */
+function hasShipmentEvidence(shipments: readonly ShipmentShape[]): boolean {
+  return shipments.some((shipment) => {
+    const tracking = (shipment.trackingNumber ?? "").trim();
+    const status = (shipment.status ?? "").trim().toLowerCase();
+    return tracking !== "" || status === "shipped" || status === "in_transit" || status === "delivered";
+  });
+}
+
+// Fulfillment truth (P1-4): shipped/delivered are claims about the physical
+// world and require a durable shipment fact; a lifecycle state alone is not
+// evidence a box moved. Pre-shipment operational states remain lifecycle
+// facts; refunded says nothing about where the goods are.
+function fulfillmentOf(
+  state: OrderState,
+  shipments: readonly ShipmentShape[],
+): OrderFulfillmentDisplayState {
   switch (state) {
     case "processing":
     case "partially_fulfilled":
       return "processing";
     case "fulfilled":
-      return "shipped";
+      return hasShipmentEvidence(shipments) ? "shipped" : "unknown";
     case "delivered":
-      return "delivered";
+      return hasShipmentEvidence(shipments) ? "delivered" : "unknown";
     case "cancelled":
-    case "refunded":
       return "cancelled";
+    case "refunded":
+      return "unknown";
     case "exception":
     case "replaced":
       return "exception";
@@ -151,7 +195,25 @@ function labelsFrom(lines: readonly LineShape[]): {
   return { itemLabel: "Research order", variantLabel: null, quantity: 0 };
 }
 
-export function createCommerceOrdersPort(source: CommerceOrdersSource): CustomerOrdersPort {
+/**
+ * The DEFAULT completeness declaration is the honest static truth of this
+ * codebase today (P1-4): the assisted-order lane (XRR-) has no list-by-member
+ * read at all, and the Early Access cart lane (XEC-) exists only behind an
+ * unapplied candidate RPC. A composition that wires more must SAY so
+ * explicitly; nothing defaults to "complete".
+ */
+export const DEFAULT_ORDER_HISTORY_COMPLETENESS: OrderHistoryCompletenessDto = Object.freeze({
+  complete: false,
+  unavailableSources: Object.freeze([
+    "assisted order requests (XRR)",
+    "Early Access cart checkouts (XEC)",
+  ]) as readonly string[],
+});
+
+export function createCommerceOrdersPort(
+  source: CommerceOrdersSource,
+  history: OrderHistoryCompletenessDto = DEFAULT_ORDER_HISTORY_COMPLETENESS,
+): CustomerOrdersPort {
   return {
     async ordersFor(memberKey) {
       const rows = await source.listForMember(memberKey);
@@ -171,14 +233,14 @@ export function createCommerceOrdersPort(source: CommerceOrdersSource): Customer
             itemLabel: labels.itemLabel,
             variantLabel: labels.variantLabel,
             quantity: labels.quantity,
-            paymentState: PAID_STATES.has(summary.state) ? "paid" : "awaiting_payment",
-            fulfillmentState: fulfillmentOf(summary.state),
+            paymentState: paymentOf(summary.state),
+            fulfillmentState: fulfillmentOf(summary.state, summary.shipments),
             trackingUrl: trackingUrlOf(summary.shipments),
             lotCoaAvailable: false,
           };
         }),
       );
-      return { research, carePharmacy: [] };
+      return { research, carePharmacy: [], history };
     },
   };
 }

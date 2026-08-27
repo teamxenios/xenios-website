@@ -15,6 +15,7 @@ import type {
 
 export const FIXTURE_MEMBERSHIP_MANUAL: MembershipDto = Object.freeze({
   state: "active",
+  billing: "current",
   planLabel: "Xenios Research Membership",
   nextRenewalAt: "2026-09-26T00:00:00.000Z",
   manageUrl: null,
@@ -23,7 +24,18 @@ export const FIXTURE_MEMBERSHIP_MANUAL: MembershipDto = Object.freeze({
 
 export const FIXTURE_MEMBERSHIP_NONE: MembershipDto = Object.freeze({
   state: "none",
+  billing: "none",
   planLabel: null,
+  nextRenewalAt: null,
+  manageUrl: null,
+  manualBilling: true,
+});
+
+/** Access active while the billing ledger says past_due — the two truths diverge. */
+export const FIXTURE_MEMBERSHIP_PAST_DUE_BILLING: MembershipDto = Object.freeze({
+  state: "active",
+  billing: "past_due",
+  planLabel: "Xenios Research Membership",
   nextRenewalAt: null,
   manageUrl: null,
   manualBilling: true,
@@ -52,7 +64,7 @@ export const FIXTURE_ORDERS: readonly OrderSummaryDto[] = Object.freeze([
     itemLabel: "Example Research Material A",
     variantLabel: "10 mg",
     quantity: 2,
-    paymentState: "awaiting_payment" as const,
+    paymentState: "unpaid" as const,
     fulfillmentState: "unfulfilled" as const,
     trackingUrl: null,
     lotCoaAvailable: false,
@@ -81,6 +93,10 @@ export const FIXTURE_CUSTOMER_ORDERS: CustomerOrdersDto = Object.freeze({
       updatedAt: "2026-08-24T15:30:00.000Z",
     }),
   ]),
+  history: Object.freeze({
+    complete: false,
+    unavailableSources: Object.freeze(["assisted order requests (XRR)"]) as readonly string[],
+  }),
 });
 
 export const FIXTURE_DOCUMENTS: readonly DocumentSummaryDto[] = Object.freeze([

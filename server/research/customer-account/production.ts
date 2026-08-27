@@ -21,7 +21,10 @@
 //   attribution→ research_affiliate_customer_bindings (candidate, 20260819) +
 //                partner registry; staff projection only.
 
-import type { MembershipDisplayState } from "@shared/research/customer-account/contract";
+import type {
+  MembershipBillingDisplayState,
+  MembershipDisplayState,
+} from "@shared/research/customer-account/contract";
 import { getMemberByAuthUserId, type MemberRow } from "../member-auth";
 import type {
   CatalogPriorityPort,
@@ -55,28 +58,61 @@ export type ProductionAccountSources = Readonly<{
   catalogPriority?: CatalogPriorityPort;
 }>;
 
-// Mirrors requireActiveMember's billing rule (member-auth.ts): billing_state
-// participates only while RESEARCH_MEMBERSHIP_BILLING_ENABLED is on; a MISSING
-// state on an active member reads as verified-legacy; sponsored_b2b is exempt.
-const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
+// P1-5 (2026-08-27): DISPLAY truth and ACCESS enforcement are now separate
+// questions. The RESEARCH_MEMBERSHIP_BILLING_ENABLED flag still governs the
+// guards (member-auth.ts); it plays NO part in what this projection says.
+// Access state comes from research_members.status alone; billing state comes
+// from the stored billing_state alone — a known past_due/disputed/cancelled/
+// refunded billing fact renders as itself whether or not enforcement is on,
+// and a value we cannot read renders "unknown", never "current".
 
 function membershipStateOf(row: MemberRow | null): MembershipDisplayState {
   if (row === null) return "none";
-  const status = String(row.status ?? "");
-  if (status === "active") {
-    if (!billingEnabled()) return "active";
-    const billing = String((row as Record<string, unknown>).billing_state ?? "");
-    const sponsored = String((row as Record<string, unknown>).access_basis ?? "") === "sponsored_b2b";
-    if (billing === "" || billing === "active" || sponsored) return "active";
-    if (billing === "past_due" || billing === "disputed") return "past_due";
-    if (billing === "cancelled" || billing === "refunded") return "canceled";
-    // not_started / activation_pending / subscription_pending / unknown:
-    // billing has not completed, so no active plan is claimed.
-    return "none";
+  switch (String(row.status ?? "")) {
+    case "active":
+      return "active";
+    case "pending_activation":
+      return "pending";
+    case "past_due":
+      return "past_due";
+    case "paused":
+      return "paused";
+    case "cancelled":
+    case "closed":
+      return "canceled";
+    default:
+      return "inactive";
   }
-  if (status === "past_due") return "past_due";
-  if (status === "cancelled" || status === "closed") return "canceled";
-  return "none";
+}
+
+function billingDisplayOf(row: MemberRow | null): MembershipBillingDisplayState {
+  if (row === null) return "none";
+  const raw = (row as Record<string, unknown>).billing_state;
+  if (raw === undefined || raw === null || raw === "") {
+    // Pre-migration rows carry no billing column: that is an absence of
+    // knowledge, not a clean bill. "unknown", never a fabricated "current".
+    return "unknown";
+  }
+  switch (String(raw)) {
+    case "active":
+      return "current";
+    case "past_due":
+      return "past_due";
+    case "disputed":
+      return "disputed";
+    case "cancelled":
+      return "cancelled";
+    case "refunded":
+      return "refunded";
+    case "not_started":
+    case "activation_pending":
+    case "subscription_pending":
+      // Billing has not begun/completed: there is no billing relationship to
+      // report yet, and that too is a truth, not an erasure.
+      return "none";
+    default:
+      return "unknown";
+  }
 }
 
 /**
@@ -109,15 +145,17 @@ export function buildProductionCustomerAccountPorts(
       },
     },
     membership: {
-      // research_members.status + billing_state (ledger row 9), mirroring
-      // requireActiveMember's rule. manageUrl stays null and manualBilling
-      // stays true: the Stripe seam has no production caller and no
-      // billing-portal-session capability, so there is nothing real to link.
+      // research_members.status for ACCESS + billing_state (ledger row 9) for
+      // BILLING, independently (P1-5). manageUrl and nextRenewalAt stay null:
+      // the Stripe seam has no production caller, no billing-portal-session
+      // capability, and no renewal schedule — nothing real exists to link or
+      // date, so nothing is invented.
       async membershipFor(memberKey) {
         const row = await lookup(memberKey);
         const state = membershipStateOf(row);
         return {
           state,
+          billing: billingDisplayOf(row),
           planLabel: state === "none" ? null : "Xenios Research Membership",
           nextRenewalAt: null,
           manageUrl: null,
@@ -139,9 +177,23 @@ export function buildProductionCustomerAccountPorts(
       // Ungraduated fallback. The composition root injects the commerce
       // member-orders projection (orders-projection.ts) over the ONE decorated
       // MemberOrdersService; XRR assisted-order request history additionally
-      // needs a list-by-member RPC that does not exist yet.
+      // needs a list-by-member RPC that does not exist yet. With NO source
+      // wired, the honest completeness claim is "nothing was readable" —
+      // never a silently-empty list presented as the whole truth (P1-4).
       async ordersFor() {
-        return { research: [], carePharmacy: [] };
+        return {
+          research: [],
+          carePharmacy: [],
+          history: {
+            complete: false,
+            unavailableSources: [
+              "commerce member orders",
+              "Early Access placements (XEA)",
+              "Early Access cart checkouts (XEC)",
+              "assisted order requests (XRR)",
+            ],
+          },
+        };
       },
     },
     interests: {

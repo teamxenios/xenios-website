@@ -16,6 +16,13 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           </div>
           <ResearchStatusBadge label={`${data.research.length} orders`} tone="neutral" />
         </div>
+        {!data.history.complete ? (
+          // P1-4: an incomplete read never masquerades as the whole truth.
+          <div className="account-surface account-surface-warm mt-5" role="note">
+            <p className="body-s font-700">Some historical order information is not yet available.</p>
+            <p className="body-s text-ink-2 mt-2">Order records from these sources are not connected to this view yet: {data.history.unavailableSources.join(", ")}.</p>
+          </div>
+        ) : null}
         {data.research.length ? (
           <div className="account-card-list mt-6">
             {data.research.map((order) => {
@@ -42,7 +49,13 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
               );
             })}
           </div>
-        ) : <div className="account-empty mt-6">No Research orders are attached to this account.</div>}
+        ) : (
+          <div className="account-empty mt-6">
+            {data.history.complete
+              ? "No Research orders are attached to this account."
+              : "No Research orders are visible here yet — see the note above about sources that are not connected."}
+          </div>
+        )}
       </section>
 
       <section className="account-surface account-surface-warm" aria-labelledby="care-fulfillment-heading">

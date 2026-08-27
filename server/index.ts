@@ -1128,7 +1128,25 @@ registerCustomerAccountApi(
       return error ? null : ((data as MemberRow | null) ?? null);
     },
     {
-      orders: createCommerceOrdersPort(commerceDependencies.orders),
+      // P1-4: the projection DECLARES which order sources this composition
+      // could not read, computed from the same wiring facts used above —
+      // never assumed complete. XRR has no list-by-member read anywhere yet,
+      // so history is incomplete in every deployment today.
+      orders: createCommerceOrdersPort(commerceDependencies.orders, {
+        complete: false,
+        unavailableSources: [
+          "assisted order requests (XRR)",
+          ...(process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true"
+            ? []
+            : ["commerce member orders"]),
+          ...(earlyAccessPersistence.orderHistory === undefined
+            ? ["Early Access placements (XEA)"]
+            : []),
+          ...(process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true"
+            ? []
+            : ["Early Access cart checkouts (XEC)"]),
+        ],
+      }),
       support: createSupabaseMemberQuestionsSupportSource(),
       documents: createSupabasePlanDocumentsSource(),
       catalogPriority: createCatalogPriorityPort(process.cwd()),

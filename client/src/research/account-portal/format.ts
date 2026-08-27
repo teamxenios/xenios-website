@@ -22,16 +22,19 @@ export function formatAccountDate(value: string | null, withTime = false): strin
 }
 
 export function statusTone(value: string): BadgeTone {
-  if (["active", "paid", "delivered", "completed", "resolved", "shipped"].includes(value)) {
+  if (["active", "current", "paid", "delivered", "completed", "resolved", "shipped"].includes(value)) {
     return "success";
   }
-  if (["past_due", "exception", "cancelled", "canceled", "unavailable", "held"].includes(value)) {
+  if (["past_due", "disputed", "exception", "cancelled", "canceled", "unavailable", "held"].includes(value)) {
     return "danger";
   }
-  if (["awaiting_payment", "follow_up_required", "waiting_on_customer", "pending_activation"].includes(value)) {
+  if (
+    ["unpaid", "refunded", "partially_refunded", "paused", "follow_up_required", "waiting_on_customer", "pending", "pending_activation"].includes(value)
+  ) {
     return "warning";
   }
   if (["provider_review", "processing", "open", "trial"].includes(value)) return "info";
+  // "unknown" and anything unrecognized stay neutral: no tone implies a fact.
   return "neutral";
 }
 

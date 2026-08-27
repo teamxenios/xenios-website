@@ -70,18 +70,28 @@ describe("commerce orders projection", () => {
     expect(orders.research[0].quantity).toBe(4);
   });
 
-  it("maps money-adjacent states conservatively: approved is NOT paid", async () => {
+  // P1-3/P1-4 (2026-08-27): the COMPLETE 14-state truth table, with no
+  // shipment evidence on any order. Payment: paid only through a recorded
+  // capture; refunded is its own state (never "paid"); exception/cancelled/
+  // replaced are reachable both sides of capture and answer "unknown".
+  // Fulfillment: shipped/delivered require shipment evidence — absent here,
+  // so both project "unknown" instead of a physical-world claim.
+  it("maps every lifecycle state to payment/fulfillment truth: no guess survives", async () => {
     const cases: Array<[CommerceOrderSummaryDto["state"], string, string]> = [
-      ["checkout_pending", "awaiting_payment", "unfulfilled"],
-      ["manual_review", "awaiting_payment", "unfulfilled"],
-      ["approved", "awaiting_payment", "unfulfilled"],
+      ["draft", "unpaid", "unfulfilled"],
+      ["checkout_pending", "unpaid", "unfulfilled"],
+      ["payment_authorized", "unpaid", "unfulfilled"],
+      ["manual_review", "unpaid", "unfulfilled"],
+      ["approved", "unpaid", "unfulfilled"],
       ["payment_captured", "paid", "unfulfilled"],
       ["processing", "paid", "processing"],
-      ["fulfilled", "paid", "shipped"],
-      ["delivered", "paid", "delivered"],
-      ["cancelled", "awaiting_payment", "cancelled"],
-      ["refunded", "paid", "cancelled"],
-      ["exception", "awaiting_payment", "exception"],
+      ["partially_fulfilled", "paid", "processing"],
+      ["fulfilled", "paid", "unknown"],
+      ["delivered", "paid", "unknown"],
+      ["cancelled", "unknown", "cancelled"],
+      ["refunded", "refunded", "unknown"],
+      ["exception", "unknown", "exception"],
+      ["replaced", "unknown", "exception"],
     ];
     for (const [state, payment, fulfillment] of cases) {
       const id = `XO-${state}`;
@@ -92,6 +102,59 @@ describe("commerce orders projection", () => {
       expect(orders.research[0].paymentState, state).toBe(payment);
       expect(orders.research[0].fulfillmentState, state).toBe(fulfillment);
     }
+  });
+
+  it("NEVER converts refunded to paid, or post-capture ambiguity to unpaid", async () => {
+    for (const state of ["refunded", "cancelled", "exception", "replaced"] as const) {
+      const id = `XO-${state}`;
+      const port = createCommerceOrdersPort(
+        sourceOf([summary({ orderId: id, state })], { [id]: detail({ orderId: id, state }) }),
+      );
+      const orders = await port.ordersFor("member-1");
+      expect(orders.research[0].paymentState, state).not.toBe("paid");
+      expect(orders.research[0].paymentState, state).not.toBe("unpaid");
+    }
+  });
+
+  it("emits shipped/delivered ONLY with durable shipment evidence", async () => {
+    const withTracking = summary({
+      orderId: "XO-evidenced",
+      state: "fulfilled",
+      shipments: [{ owner: "xenios", status: "shipped", trackingNumber: "1Z999EVIDENCE", carrier: "ups" }],
+    });
+    const port = createCommerceOrdersPort(
+      sourceOf([withTracking], { "XO-evidenced": detail({ orderId: "XO-evidenced", state: "fulfilled" }) }),
+    );
+    const orders = await port.ordersFor("member-1");
+    expect(orders.research[0].fulfillmentState).toBe("shipped");
+    expect(orders.research[0].trackingUrl).toContain("ups.com");
+
+    const delivered = summary({
+      orderId: "XO-delivered",
+      state: "delivered",
+      shipments: [{ owner: "xenios", status: "delivered", trackingNumber: null, carrier: null }],
+    });
+    const port2 = createCommerceOrdersPort(
+      sourceOf([delivered], { "XO-delivered": detail({ orderId: "XO-delivered", state: "delivered" }) }),
+    );
+    const orders2 = await port2.ordersFor("member-1");
+    expect(orders2.research[0].fulfillmentState).toBe("delivered");
+    // a delivered status is evidence of arrival, but carrier/tracking stay null
+    expect(orders2.research[0].trackingUrl).toBeNull();
+  });
+
+  it("declares history completeness instead of presenting a partial list as the whole truth", async () => {
+    const defaulted = createCommerceOrdersPort(sourceOf([], {}));
+    const orders = await defaulted.ordersFor("member-1");
+    expect(orders.history.complete).toBe(false);
+    expect(orders.history.unavailableSources).toContain("assisted order requests (XRR)");
+
+    const declared = createCommerceOrdersPort(sourceOf([], {}), {
+      complete: false,
+      unavailableSources: ["commerce member orders", "assisted order requests (XRR)"],
+    });
+    const declaredOrders = await declared.ordersFor("member-1");
+    expect(declaredOrders.history.unavailableSources).toContain("commerce member orders");
   });
 
   it("links tracking only for carriers with a known public URL shape", async () => {

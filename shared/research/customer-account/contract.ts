@@ -32,23 +32,53 @@ export type CustomerAccountResult<T> =
 
 export const MEMBERSHIP_DISPLAY_STATES = [
   "none",
+  "pending",
   "trial",
   "active",
   "past_due",
+  "paused",
   "canceled",
+  "inactive",
 ] as const;
 
 export type MembershipDisplayState = (typeof MEMBERSHIP_DISPLAY_STATES)[number];
 
+/**
+ * BILLING truth, carried INDEPENDENTLY of membership/access state (P1-5,
+ * 2026-08-27). The billing-enforcement feature flag may gate ACCESS; it may
+ * never erase what the billing ledger already knows. A stored past_due /
+ * disputed / cancelled / refunded state renders as itself whether or not
+ * enforcement is on; a value the projection cannot read renders "unknown",
+ * never "current".
+ */
+export const MEMBERSHIP_BILLING_DISPLAY_STATES = [
+  "current",
+  "past_due",
+  "disputed",
+  "cancelled",
+  "refunded",
+  "none",
+  "unknown",
+] as const;
+
+export type MembershipBillingDisplayState = (typeof MEMBERSHIP_BILLING_DISPLAY_STATES)[number];
+
 export type MembershipDto = Readonly<{
+  /** Membership/ACCESS state, derived from research_members.status only. */
   state: MembershipDisplayState;
+  /** Billing truth, derived from the stored billing_state only — never from the enforcement flag. */
+  billing: MembershipBillingDisplayState;
   planLabel: string | null;
-  /** ISO timestamp of the next renewal/billing event, when one is scheduled. */
+  /**
+   * ISO timestamp of the next renewal/billing event, when one is actually
+   * scheduled in a durable source. Never invented: null until such a source
+   * exists.
+   */
   nextRenewalAt: string | null;
   /**
    * Where "manage billing" points. Null while automated billing is not wired
    * (`RESEARCH_MEMBERSHIP_BILLING_ENABLED` off) — the UI then renders the
-   * manual/offline explanation instead of a dead link.
+   * manual/offline explanation instead of a dead link. Never invented.
    */
   manageUrl: string | null;
   /** True when billing runs manually/offline (no Stripe portal yet). */
@@ -96,9 +126,30 @@ export type CareEnrollmentDto = Readonly<{
 // Orders — research orders and Care/pharmacy fulfillment listed separately.
 // ---------------------------------------------------------------------------
 
-export const ORDER_PAYMENT_DISPLAY_STATES = ["awaiting_payment", "paid"] as const;
+/**
+ * Payment display truth (P1-3, 2026-08-27). paid and refunded are emitted
+ * ONLY from durable authoritative facts (a recorded capture; a refund the
+ * state machine accepts only with provider confirmation). A lifecycle state
+ * that is reachable both before and after capture — exception, cancelled,
+ * replaced — projects "unknown": no customer-facing financial guess is
+ * acceptable. refunded never renders paid; cancelled-after-capture never
+ * renders unpaid.
+ */
+export const ORDER_PAYMENT_DISPLAY_STATES = [
+  "unpaid",
+  "paid",
+  "partially_refunded",
+  "refunded",
+  "unknown",
+] as const;
 export type OrderPaymentDisplayState = (typeof ORDER_PAYMENT_DISPLAY_STATES)[number];
 
+/**
+ * Fulfillment display truth (P1-4). shipped/delivered are emitted only when
+ * durable shipment evidence exists on the order; a lifecycle claim with no
+ * shipment fact behind it projects "unknown", and tracking stays null unless
+ * a real carrier + tracking number are recorded.
+ */
 export const ORDER_FULFILLMENT_DISPLAY_STATES = [
   "unfulfilled",
   "processing",
@@ -106,6 +157,7 @@ export const ORDER_FULFILLMENT_DISPLAY_STATES = [
   "delivered",
   "cancelled",
   "exception",
+  "unknown",
 ] as const;
 export type OrderFulfillmentDisplayState = (typeof ORDER_FULFILLMENT_DISPLAY_STATES)[number];
 
@@ -132,9 +184,23 @@ export type CareFulfillmentDto = Readonly<{
   updatedAt: string;
 }>;
 
+/**
+ * Order-history completeness (P1-4): the projection declares which
+ * authoritative sources it could actually read, so the client can say
+ * "some historical order information is not yet available" instead of
+ * presenting a silently-partial list as the whole truth. `complete` is true
+ * ONLY when every known source of customer orders is connected and readable.
+ */
+export type OrderHistoryCompletenessDto = Readonly<{
+  complete: boolean;
+  /** Human-safe labels of the sources that are not connected/readable. */
+  unavailableSources: readonly string[];
+}>;
+
 export type CustomerOrdersDto = Readonly<{
   research: readonly OrderSummaryDto[];
   carePharmacy: readonly CareFulfillmentDto[];
+  history: OrderHistoryCompletenessDto;
 }>;
 
 // ---------------------------------------------------------------------------

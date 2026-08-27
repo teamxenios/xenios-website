@@ -38,10 +38,16 @@ describe("production customer-account ports", () => {
     expect(m.nextRenewalAt).toBeNull();
   });
 
-  it("an inactive member has no membership rather than a fabricated one", async () => {
-    const m = await ports({ ...MEMBER, status: "pending" }).membership.membershipFor("x");
+  it("no member row means no membership — and no fabricated plan", async () => {
+    const m = await ports(null).membership.membershipFor("x");
     expect(m.state).toBe("none");
+    expect(m.billing).toBe("none");
     expect(m.planLabel).toBeNull();
+  });
+
+  it("an unrecognized status reads inactive, never active and never erased", async () => {
+    const m = await ports({ ...MEMBER, status: "pending" }).membership.membershipFor("x");
+    expect(m.state).toBe("inactive");
   });
 
   it("unwired concerns return truthful empty states, never inventions", async () => {
@@ -59,31 +65,58 @@ describe("production customer-account ports", () => {
     ).rejects.toThrow("support_capability_pending");
   });
 
-  it("mirrors requireActiveMember's billing rule only while billing is enabled", async () => {
-    const withBilling = async (billing_state: string, access_basis?: string) => {
-      process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = "true";
+  // P1-5 (2026-08-27): billing truth is NEVER erased by the enforcement flag.
+  // Every stored billing state renders identically with enforcement ON and
+  // OFF, and access state comes from status alone.
+  it("renders every stored billing state truthfully, with enforcement ON and OFF", async () => {
+    const expected: Array<[string | undefined, string]> = [
+      ["active", "current"],
+      ["past_due", "past_due"],
+      ["disputed", "disputed"],
+      ["cancelled", "cancelled"],
+      ["refunded", "refunded"],
+      ["not_started", "none"],
+      ["activation_pending", "none"],
+      ["subscription_pending", "none"],
+      ["", "unknown"], // stored but unreadable
+      [undefined, "unknown"], // pre-migration row: absence of knowledge
+      ["something_new", "unknown"], // unrecognized: never guessed current
+    ];
+    for (const enforcement of [undefined, "true"]) {
+      if (enforcement) process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = enforcement;
       try {
-        return await ports({ ...MEMBER, billing_state, ...(access_basis ? { access_basis } : {}) })
-          .membership.membershipFor("x");
+        for (const [stored, display] of expected) {
+          const row = stored === undefined ? { ...MEMBER } : { ...MEMBER, billing_state: stored };
+          const dto = await ports(row).membership.membershipFor("x");
+          expect(dto.billing, `stored=${String(stored)} enforcement=${String(enforcement)}`).toBe(display);
+          // Access state is status-derived and untouched by billing/flag.
+          expect(dto.state, `stored=${String(stored)}`).toBe("active");
+        }
       } finally {
         delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
       }
-    };
-    // Billing disabled (the production default): status alone decides.
-    expect((await ports({ ...MEMBER, billing_state: "past_due" }).membership.membershipFor("x")).state).toBe("active");
-    // Billing enabled: explicit non-active billing states surface truthfully.
-    expect((await withBilling("active")).state).toBe("active");
-    expect((await withBilling("")).state).toBe("active"); // verified-legacy
-    expect((await withBilling("past_due")).state).toBe("past_due");
-    expect((await withBilling("cancelled")).state).toBe("canceled");
-    expect((await withBilling("not_started")).state).toBe("none");
-    expect((await withBilling("past_due", "sponsored_b2b")).state).toBe("active");
+    }
   });
 
-  it("surfaces non-active statuses without fabricating an active plan", async () => {
-    expect((await ports({ ...MEMBER, status: "past_due" }).membership.membershipFor("x")).state).toBe("past_due");
-    expect((await ports({ ...MEMBER, status: "cancelled" }).membership.membershipFor("x")).state).toBe("canceled");
-    expect((await ports({ ...MEMBER, status: "pending_activation" }).membership.membershipFor("x")).state).toBe("none");
+  it("a known past_due billing fact is NOT erased when enforcement is off", async () => {
+    // The exact defect the adversarial review found, inverted into a pin.
+    const dto = await ports({ ...MEMBER, billing_state: "past_due" }).membership.membershipFor("x");
+    expect(dto.billing).toBe("past_due");
+    expect(dto.nextRenewalAt).toBeNull(); // and no renewal date is invented
+  });
+
+  it("surfaces every non-active status without fabricating an active plan", async () => {
+    const cases: Array<[string, string]> = [
+      ["past_due", "past_due"],
+      ["cancelled", "canceled"],
+      ["closed", "canceled"],
+      ["pending_activation", "pending"],
+      ["paused", "paused"],
+      ["mystery_status", "inactive"],
+    ];
+    for (const [status, display] of cases) {
+      expect((await ports({ ...MEMBER, status }).membership.membershipFor("x")).state, status).toBe(display);
+    }
   });
 
   it("injected sources replace the empty fallbacks, and only those", async () => {

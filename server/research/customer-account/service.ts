@@ -31,10 +31,12 @@ export function nextAdministrativeAction(
   if (care.enrolled && care.status.stage === "appointment_needed") {
     return "Schedule your appointment.";
   }
-  if (orders.research.some((o) => o.paymentState === "awaiting_payment")) {
+  if (orders.research.some((o) => o.paymentState === "unpaid")) {
     return "An order is awaiting payment — payment instructions arrive by email.";
   }
-  if (membership.state === "past_due") {
+  // Billing truth and access state prompt independently (P1-5): a stored
+  // past-due billing fact deserves the prompt even while enforcement is off.
+  if (membership.state === "past_due" || membership.billing === "past_due") {
     return "Your membership payment is past due.";
   }
   return null;

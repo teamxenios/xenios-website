@@ -114,7 +114,7 @@ describe("customer-account routes", () => {
       .set("x-test-member", "member-fixture-1");
     expect(res.body.data.research).toHaveLength(2);
     expect(res.body.data.carePharmacy).toHaveLength(1);
-    expect(res.body.data.research[0].paymentState).toBe("awaiting_payment");
+    expect(res.body.data.research[0].paymentState).toBe("unpaid");
   });
 
   it("rejects malformed support cases with 400, never 500", async () => {

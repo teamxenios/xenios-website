@@ -56,7 +56,13 @@ export function createMemoryCustomerAccountPorts(
     },
     orders: {
       async ordersFor(memberKey) {
-        return seedOf(memberKey)?.orders ?? { research: [], carePharmacy: [] };
+        return (
+          seedOf(memberKey)?.orders ?? {
+            research: [],
+            carePharmacy: [],
+            history: { complete: false, unavailableSources: ["assisted order requests (XRR)"] },
+          }
+        );
       },
     },
     interests: {

@@ -13,11 +13,14 @@ export function AccountSubscriptionView({ data }: { data: SubscriptionPageDto })
       <section className="account-surface account-surface-dark" aria-labelledby="membership-plan-heading">
         <p className="account-section-label" style={{ color: "#c8c4bb" }}>Xenios membership</p>
         <h2 id="membership-plan-heading" className="account-section-title">{membership?.planLabel ?? "No membership plan"}</h2>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-wrap gap-3">
           <ResearchStatusBadge label={membership ? sentenceCase(membership.state) : "None"} tone={statusTone(membership?.state ?? "none")} />
+          {/* P1-5: billing truth is its own badge, never folded into access state. */}
+          <ResearchStatusBadge label={`Billing: ${membership ? sentenceCase(membership.billing) : "None"}`} tone={statusTone(membership?.billing ?? "none")} />
         </div>
         <dl className="mt-6">
-          <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Next billing / renewal</dt><dd className="account-data-value">{formatAccountDate(membership?.nextRenewalAt ?? null)}</dd></div>
+          <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Billing status</dt><dd className="account-data-value">{membership ? sentenceCase(membership.billing) : "None"}</dd></div>
+          <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Next billing / renewal</dt><dd className="account-data-value">{membership?.nextRenewalAt ? formatAccountDate(membership.nextRenewalAt) : "No renewal is scheduled in a connected billing source."}</dd></div>
           <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Billing method</dt><dd className="account-data-value">{membership?.manualBilling ? "Manual / offline" : "Online management"}</dd></div>
         </dl>
         {manageUrl ? (

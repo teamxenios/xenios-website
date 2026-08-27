@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { CARE_TIMELINE_STAGES, MEMBERSHIP_DISPLAY_STATES } from "./contract";
+import {
+  CARE_TIMELINE_STAGES,
+  MEMBERSHIP_BILLING_DISPLAY_STATES,
+  MEMBERSHIP_DISPLAY_STATES,
+  ORDER_FULFILLMENT_DISPLAY_STATES,
+  ORDER_PAYMENT_DISPLAY_STATES,
+} from "./contract";
 import {
   FIXTURE_ACCOUNT_OVERVIEW,
   FIXTURE_ACCOUNT_OVERVIEW_STAFF,
@@ -25,7 +31,30 @@ describe("care timeline vocabulary", () => {
 
   it("membership display states include none and never a medical promise", () => {
     expect(MEMBERSHIP_DISPLAY_STATES).toContain("none");
-    expect(MEMBERSHIP_DISPLAY_STATES).toHaveLength(5);
+    expect(MEMBERSHIP_DISPLAY_STATES).toHaveLength(8);
+  });
+
+  it("billing display truth carries the full stored vocabulary plus unknown (P1-5)", () => {
+    expect(MEMBERSHIP_BILLING_DISPLAY_STATES).toEqual([
+      "current",
+      "past_due",
+      "disputed",
+      "cancelled",
+      "refunded",
+      "none",
+      "unknown",
+    ]);
+  });
+
+  it("payment display truth includes refunded and unknown — no two-value guess (P1-3)", () => {
+    expect(ORDER_PAYMENT_DISPLAY_STATES).toEqual([
+      "unpaid",
+      "paid",
+      "partially_refunded",
+      "refunded",
+      "unknown",
+    ]);
+    expect(ORDER_FULFILLMENT_DISPLAY_STATES).toContain("unknown");
   });
 });
 
