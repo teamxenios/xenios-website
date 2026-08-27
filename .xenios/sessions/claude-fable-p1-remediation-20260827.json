@@ -5,6 +5,6 @@
   "branch": "fix/xenios-client-account-p1-remediation-20260827",
   "state": "active",
   "startedAt": "2026-08-27T21:45:30.010Z",
-  "heartbeatAt": "2026-08-27T22:23:57.183Z",
-  "note": "All 11 P1s addressed at 10f8e34 (pushed): auth exact-binding, catalog-priority active-door, payment/fulfillment/history/billing truth-or-unknown, Care contract + route-to-view test, activation monotonic + strict config, SQL reworked+18-attack-rehearsed (UNAPPLIED), import production-disabled + hardened. Now: Node 20.19.0 full gates, browser QA, scans, recut."
+  "heartbeatAt": "2026-08-27T22:52:18.209Z",
+  "note": "RECUT COMPLETE. All 11 P1s fixed-or-disabled; Node 20.19.0 gates: full suite 10703/0 fail, e2e 53/53, tsc+build clean, census 399/408 unchanged, scans 0/0, browser QA 1440-320 zero overflow, Care timeline proven live. Freezing + pushing for Codex re-review."
 }
