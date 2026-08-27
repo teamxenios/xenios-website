@@ -89,10 +89,13 @@ function makeWalledApi(
   app.get("/api/research/kris-launch-a/v1/catalog", denyAsDownstreamGuard);
   app.get("/api/research/kris-launch-a/v1/products/:slug", denyAsDownstreamGuard);
   registerMemberPlatformApi(app);
-  // Customer-account portal (2026-08-27 admissions): the injected guard is the
-  // same sentinel, so this suite proves the wall — not the port data.
+  // Customer-account portal (2026-08-27 admissions): BOTH injected guards are
+  // the same sentinel, so this suite proves the wall — not the port data and
+  // not which guard a route chose (routes.test.ts pins that: catalog-priority
+  // rides requireActiveMember since the P1-2 remediation).
   registerCustomerAccountApi(app, createMemoryCustomerAccountPorts(defaultMemorySeeds()), {
     requireMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
+    requireActiveMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
   });
   const commerceGuards: CommerceGuards = {
     requireActiveMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),

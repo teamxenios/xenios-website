@@ -5,6 +5,6 @@
   "branch": "fix/xenios-client-account-p1-remediation-20260827",
   "state": "active",
   "startedAt": "2026-08-27T21:45:30.010Z",
-  "heartbeatAt": "2026-08-27T21:45:30.011Z",
-  "note": "P1 remediation recut from failed RC b432d7a. 11 P1s: auth email fallback, catalog leak, payment truth, order history, billing truth, Care DTO, activation monotonicity, migration privileges/governance (fix-but-unapplied), import privacy/integrity (production-disable). Old RC branch untouched. No deploy, no migration apply, no invitations."
+  "heartbeatAt": "2026-08-27T22:23:57.183Z",
+  "note": "All 11 P1s addressed at 10f8e34 (pushed): auth exact-binding, catalog-priority active-door, payment/fulfillment/history/billing truth-or-unknown, Care contract + route-to-view test, activation monotonic + strict config, SQL reworked+18-attack-rehearsed (UNAPPLIED), import production-disabled + hardened. Now: Node 20.19.0 full gates, browser QA, scans, recut."
 }
