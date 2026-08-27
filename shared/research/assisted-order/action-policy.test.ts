@@ -5,6 +5,10 @@ import {
   quantityIsAllowed,
   type AssistedOrderCatalogAuthority,
 } from "./action-policy";
+import {
+  assistedOrderActionGroupFor,
+  assistedOrderWorkflowModes,
+} from "./contract";
 
 function authority(
   overrides: Partial<AssistedOrderCatalogAuthority> = {},
@@ -58,15 +62,24 @@ describe("assisted order action policy", () => {
     });
   });
 
-  it("keeps classification pending visible", () => {
+  it("keeps classification pending visible even while its price is absent", () => {
     expect(
       decideAssistedOrderAction(
-        authority({ directEligible: false, classificationPending: true }),
+        authority({
+          directEligible: false,
+          classificationPending: true,
+          unitPriceCents: null,
+          pricePending: true,
+        }),
       ),
-    ).toMatchObject({ visible: true, workflowMode: "request_activation" });
+    ).toMatchObject({
+      visible: true,
+      workflowMode: "request_activation",
+      actionLabel: "Request Order",
+    });
   });
 
-  it("routes a Care product to the provider pathway even when priced and direct-eligible", () => {
+  it("routes a Care product to the provider pathway even when held and direct-eligible", () => {
     // Pathway precedes price and eligibility: no flag combination may present
     // a Care product as directly orderable in the research request path.
     expect(
@@ -74,10 +87,14 @@ describe("assisted order action policy", () => {
         authority({
           providerWorkflowRequired: true,
           directEligible: true,
+          held: true,
           unitPriceCents: 9900,
         }),
       ),
-    ).toMatchObject({ workflowMode: "provider_request" });
+    ).toMatchObject({
+      workflowMode: "provider_request",
+      actionLabel: "Continue through Care",
+    });
   });
 
   it("never presents a held or out-of-stock product as orderable", () => {
@@ -88,6 +105,36 @@ describe("assisted order action policy", () => {
       expect(decision.workflowMode).toBe("availability_review");
       expect(decision.actionLabel).not.toBe("Add to order request");
     }
+  });
+
+  it("keeps an unpriced held product in availability rather than Request Order", () => {
+    expect(
+      decideAssistedOrderAction(
+        authority({
+          held: true,
+          directEligible: false,
+          unitPriceCents: null,
+          pricePending: true,
+        }),
+      ),
+    ).toMatchObject({ workflowMode: "availability_review" });
+  });
+
+  it("maps every internal mode into exactly one of the four customer Action groups", () => {
+    expect(
+      Object.fromEntries(
+        assistedOrderWorkflowModes.map((mode) => [
+          mode,
+          assistedOrderActionGroupFor(mode),
+        ]),
+      ),
+    ).toEqual({
+      direct_order_request: "direct_order",
+      provider_request: "care",
+      request_pricing: "request_order",
+      request_activation: "request_order",
+      availability_review: "temporarily_unavailable_held",
+    });
   });
 
   it("honors MOQ, increment and maximum", () => {

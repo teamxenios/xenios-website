@@ -12,7 +12,10 @@
 import express, { type RequestHandler } from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import type { AssistedOrderSubmitInput } from "../../../shared/research/assisted-order/contract";
+import type {
+  AssistedOrderCatalogQuery,
+  AssistedOrderSubmitInput,
+} from "../../../shared/research/assisted-order/contract";
 import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   assistedOrderFormPair,
@@ -26,9 +29,18 @@ import { createAssistedOrderRouteTable } from "./http";
 import { InMemoryAssistedOrderRepository } from "./memory-repository";
 import type { AssistedOrderDocumentStore } from "./ports";
 import { createAssistedOrderProductionComposition } from "./production";
+import type { EarlyAccessCustomer } from "../early-access/routes/ports";
 
 const MEMBER_ID = "11111111-1111-4111-8111-111111111111";
+const OTHER_MEMBER_ID = "22222222-2222-4222-8222-222222222222";
 const ADMIN_BEARER = "Bearer admin-test";
+const EARLY_ACCESS_COOKIE = "x-ea-session=valid";
+const EARLY_ACCESS_CUSTOMER_REF = "eac_0123456789abcdef0123456789abcdef";
+const EARLY_ACCESS_CUSTOMER: EarlyAccessCustomer = Object.freeze({
+  customerRef: EARLY_ACCESS_CUSTOMER_REF,
+  displayName: "Test member",
+  boundBy: "verified_link",
+});
 
 const FORM_PAIRS = ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((a) => ({
   ...assistedOrderFormPair(a),
@@ -109,7 +121,19 @@ function submitInput(): AssistedOrderSubmitInput {
   };
 }
 
-function buildApp() {
+function buildApp(
+  onCatalogQuery?: (query: AssistedOrderCatalogQuery) => void,
+  options: Readonly<{
+    agreementAccepted?: boolean;
+    bindingMemberId?: string | null;
+    bindingThrows?: boolean;
+    earlyAccessSessionAuthenticated?: boolean;
+    onBindingResolve?: () => void;
+    onIdentityResolve?: () => void;
+    onNotification?: () => void;
+    onStandingViewer?: (customerRef: string | null) => void;
+  }> = {},
+) {
   const repository = new InMemoryAssistedOrderRepository();
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
@@ -118,16 +142,29 @@ function buildApp() {
         { kind: "assisted_order_request_notice", version: "v1" },
       ],
     },
+    submissionStanding: {
+      accepted: async (viewer) => {
+        const customerRef = viewer.earlyAccessCustomerRef ?? null;
+        options.onStandingViewer?.(customerRef);
+        return (
+          options.agreementAccepted !== false &&
+          customerRef === EARLY_ACCESS_CUSTOMER_REF
+        );
+      },
+    },
     catalog: {
-      list: async () => ({
-        items: [CATALOG_ITEM],
-        total: 1,
-        page: 1,
-        pageSize: 24,
-        families: [CATALOG_ITEM.family],
-        channels: [CATALOG_ITEM.channel],
-        workflowModes: [CATALOG_ITEM.workflowMode],
-      }),
+      list: async (_viewer, query) => {
+        onCatalogQuery?.(query);
+        return {
+          items: [CATALOG_ITEM],
+          total: 1,
+          page: 1,
+          pageSize: 24,
+          families: [CATALOG_ITEM.family],
+          channels: [CATALOG_ITEM.channel],
+          workflowModes: [CATALOG_ITEM.workflowMode],
+        };
+      },
       resolveLine: async (_viewer, requested) => ({
         lineId: "assigned-by-service",
         productId: CATALOG_ITEM.productId,
@@ -153,7 +190,11 @@ function buildApp() {
       }),
     },
     repository,
-    outbox: { enqueue: async () => undefined },
+    outbox: {
+      enqueue: async () => {
+        options.onNotification?.();
+      },
+    },
     audit: { record: async () => undefined },
     documents,
     adminNotificationEmail: "research@xeniostechnology.com",
@@ -171,7 +212,36 @@ function buildApp() {
             pricingViewer: { audience: "member", email: "member@example.com" },
           }
         : null,
-    earlyAccess: () => null,
+    earlyAccess: () => ({
+      resolveSession: async (cookieHeader) => ({
+        authenticated:
+          options.earlyAccessSessionAuthenticated !== false &&
+          typeof cookieHeader === "string" &&
+          cookieHeader.includes(EARLY_ACCESS_COOKIE),
+      }),
+      readSessionId: (cookieHeader) =>
+        typeof cookieHeader === "string" && cookieHeader.includes(EARLY_ACCESS_COOKIE)
+          ? "valid-session"
+          : null,
+      identity: {
+        resolve: async () => {
+          options.onIdentityResolve?.();
+          return EARLY_ACCESS_CUSTOMER;
+        },
+      },
+    }),
+    earlyAccessBindings: () => ({
+      forCustomer: async (customerRef) => {
+        options.onBindingResolve?.();
+        if (options.bindingThrows) throw new Error("binding directory unavailable");
+        const memberId = options.bindingMemberId === undefined
+          ? MEMBER_ID
+          : options.bindingMemberId;
+        return customerRef === EARLY_ACCESS_CUSTOMER_REF && memberId !== null
+          ? { ok: true as const, binding: { memberId } }
+          : { ok: false as const };
+      },
+    }),
     adminEmail: () => "research@xeniostechnology.com",
   });
 
@@ -204,7 +274,275 @@ function buildApp() {
   return app;
 }
 
+function readAdminQueue(app: ReturnType<typeof buildApp>) {
+  return request(app)
+    .get("/api/admin/research/assisted-orders")
+    .set("authorization", ADMIN_BEARER);
+}
+
 describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> admin queue", () => {
+  it("parses the structured customer Action group without deriving button copy", async () => {
+    let observed: AssistedOrderCatalogQuery | undefined;
+    const app = buildApp((query) => {
+      observed = query;
+    });
+
+    const response = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({
+        q: "Alpha",
+        family: "research_peptides_materials",
+        action: "request_order",
+      })
+      .set("x-test-member", "1");
+
+    expect(response.status).toBe(200);
+    expect(observed).toMatchObject({
+      search: "Alpha",
+      family: "research_peptides_materials",
+      actionGroup: "request_order",
+    });
+  });
+
+  it("rejects tampered Action and workflow tokens instead of broadening the catalog", async () => {
+    const observed: AssistedOrderCatalogQuery[] = [];
+    const app = buildApp((query) => observed.push(query));
+
+    const invalidAction = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({ action: "direct_order_request" })
+      .set("x-test-member", "1");
+    expect(invalidAction.status).toBe(400);
+    expect(invalidAction.body).toMatchObject({
+      error: "validation_error",
+      field: "action",
+    });
+
+    const invalidWorkflow = await request(app)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .query({ workflowMode: "anything_goes" })
+      .set("x-test-member", "1");
+    expect(invalidWorkflow.status).toBe(400);
+    expect(invalidWorkflow.body).toMatchObject({
+      error: "validation_error",
+      field: "workflowMode",
+    });
+    expect(observed).toEqual([]);
+  });
+
+  it("accepts an agreement-complete live Early Access customer without a member session", async () => {
+    let observedCustomerRef: string | null = null;
+    const app = buildApp(undefined, {
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const submitted = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(submitted.status).toBe(201);
+    expect(observedCustomerRef).toBe(EARLY_ACCESS_CUSTOMER_REF);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 1 },
+    });
+  });
+
+  it("requires durable Early Access standing from an otherwise active member", async () => {
+    let notificationCount = 0;
+    let observedCustomerRef: string | null = "not-called";
+    const app = buildApp(undefined, {
+      onNotification: () => {
+        notificationCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const rejected = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .send(submitInput());
+
+    expect(rejected.status).toBe(403);
+    expect(rejected.body).toMatchObject({ error: "agreement_required" });
+    expect(observedCustomerRef).toBeNull();
+    expect(notificationCount).toBe(0);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 0, items: [] },
+    });
+  });
+
+  it("does not borrow agreement standing from an Early Access customer bound to another member", async () => {
+    let bindingResolveCount = 0;
+    let identityResolveCount = 0;
+    let notificationCount = 0;
+    let observedCustomerRef: string | null = "not-called";
+    const app = buildApp(undefined, {
+      bindingMemberId: OTHER_MEMBER_ID,
+      onBindingResolve: () => {
+        bindingResolveCount += 1;
+      },
+      onIdentityResolve: () => {
+        identityResolveCount += 1;
+      },
+      onNotification: () => {
+        notificationCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const rejected = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(rejected.status).toBe(403);
+    expect(rejected.body).toMatchObject({ error: "agreement_required" });
+    expect(identityResolveCount).toBe(1);
+    expect(bindingResolveCount).toBe(1);
+    expect(observedCustomerRef).toBeNull();
+    expect(notificationCount).toBe(0);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 0, items: [] },
+    });
+  });
+
+  it("rejects a revoked Early Access cookie before identity resolution or side effects", async () => {
+    let identityResolveCount = 0;
+    let notificationCount = 0;
+    let observedCustomerRef: string | null = "not-called";
+    const app = buildApp(undefined, {
+      earlyAccessSessionAuthenticated: false,
+      onIdentityResolve: () => {
+        identityResolveCount += 1;
+      },
+      onNotification: () => {
+        notificationCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const rejected = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(rejected.status).toBe(403);
+    expect(rejected.body).toMatchObject({ error: "agreement_required" });
+    expect(identityResolveCount).toBe(0);
+    expect(observedCustomerRef).toBeNull();
+    expect(notificationCount).toBe(0);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 0, items: [] },
+    });
+  });
+
+  it("accepts a production-shaped Early Access identity durably bound to the active member", async () => {
+    let bindingResolveCount = 0;
+    let identityResolveCount = 0;
+    let observedCustomerRef: string | null = null;
+    const app = buildApp(undefined, {
+      onBindingResolve: () => {
+        bindingResolveCount += 1;
+      },
+      onIdentityResolve: () => {
+        identityResolveCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const submitted = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(submitted.status).toBe(201);
+    expect(identityResolveCount).toBe(1);
+    expect(bindingResolveCount).toBe(1);
+    expect(observedCustomerRef).toBe(EARLY_ACCESS_CUSTOMER_REF);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 1 },
+    });
+  });
+
+  it("fails closed when the durable member/customer binding cannot be read", async () => {
+    let notificationCount = 0;
+    let observedCustomerRef: string | null = "not-called";
+    const app = buildApp(undefined, {
+      bindingThrows: true,
+      onNotification: () => {
+        notificationCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const rejected = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(rejected.status).toBe(403);
+    expect(rejected.body).toMatchObject({ error: "agreement_required" });
+    expect(observedCustomerRef).toBeNull();
+    expect(notificationCount).toBe(0);
+    await expect(readAdminQueue(app)).resolves.toMatchObject({
+      status: 200,
+      body: { total: 0, items: [] },
+    });
+  });
+
+  it("rejects forged agreement pairs when durable standing is absent, with no write or notification", async () => {
+    let notificationCount = 0;
+    let observedCustomerRef: string | null = null;
+    const app = buildApp(undefined, {
+      agreementAccepted: false,
+      onNotification: () => {
+        notificationCount += 1;
+      },
+      onStandingViewer: (customerRef) => {
+        observedCustomerRef = customerRef;
+      },
+    });
+
+    const rejected = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+
+    expect(rejected.status).toBe(403);
+    expect(rejected.body).toMatchObject({ error: "agreement_required" });
+    expect(observedCustomerRef).toBe(EARLY_ACCESS_CUSTOMER_REF);
+    expect(notificationCount).toBe(0);
+
+    const queue = await request(app)
+      .get("/api/admin/research/assisted-orders")
+      .set("authorization", ADMIN_BEARER);
+    expect(queue.status).toBe(200);
+    expect(queue.body).toMatchObject({ total: 0, items: [] });
+  });
+
   it("walks the whole journey over real doors", async () => {
     const app = buildApp();
 
@@ -236,6 +574,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     const submitted = await request(app)
       .post("/api/research/early-access/assisted-orders")
       .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
       .send(submitInput());
     expect(submitted.status).toBe(201);
     const reference: string = submitted.body.publicReference;

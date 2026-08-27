@@ -86,6 +86,13 @@ function stubFetch(answers: Answers) {
         answers.accepted = true;
         return jsonResponse({ ok: true, kind: "early_access_terms", version: "v1", alreadyAccepted: false });
       }
+      if (path.endsWith("/early-access/verify")) {
+        answers.identity = true;
+        return jsonResponse({ ok: true });
+      }
+      if (path.endsWith("/early-access/verification/request")) {
+        return jsonResponse({ ok: true }, 202);
+      }
       return jsonResponse({ ok: true });
     }
     if (path.endsWith("/early-access/session")) {
@@ -282,5 +289,57 @@ describe("signed in, but the session is not bound to an approved customer", () =
 
     expect(host.querySelector('[data-testid="early-access-catalog-mount"]')).not.toBeNull();
     expect(host.querySelectorAll("article")).toHaveLength(2);
+  });
+
+  it("unblocks continuation after verification reloads required standing and acceptance succeeds", async () => {
+    const { posted } = stubFetch({ accepted: false, identity: false });
+    const host = await mountRoute();
+
+    selectFirstUnit(host);
+    const review = reviewButton(host);
+    expect(review.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="early-access-agreement-unverified"]')).not.toBeNull();
+
+    const token = host.querySelector<HTMLInputElement>(
+      '[data-testid="early-access-agreement-verification-token"]',
+    );
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    act(() => {
+      valueSetter?.call(token, "verified-session-token");
+      token?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    act(() => {
+      host.querySelector<HTMLButtonElement>(
+        '[data-testid="early-access-agreement-verification-redeem"]',
+      )?.click();
+    });
+    await settle();
+
+    expect(
+      posted.find((call) => call.path.endsWith("/early-access/verify"))?.body,
+    ).toEqual({ token: "verified-session-token" });
+    expect(host.querySelector('[data-testid="early-access-agreement-unverified"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).not.toBeNull();
+    // Verification establishes identity, but the policy is still required.
+    expect(review.disabled).toBe(true);
+
+    act(() => {
+      host.querySelector<HTMLInputElement>(
+        '[data-testid="early-access-agreement-checkbox"]',
+      )?.click();
+    });
+    act(() => {
+      host.querySelector<HTMLButtonElement>(
+        '[data-testid="early-access-agreement-submit"]',
+      )?.click();
+    });
+    await settle();
+
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
+    expect(review.disabled).toBe(false);
+    expect(review.textContent).toContain("Review order");
   });
 });

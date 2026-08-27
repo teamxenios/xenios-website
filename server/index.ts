@@ -418,6 +418,9 @@ const earlyAccessDoorSources: {
     catalog: KrisDoorCatalogSource;
     releases: KrisDoorReleaseLedger;
     identity: { resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<unknown> };
+    resolveSession: (
+      cookieHeader: unknown,
+    ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readSessionId: (cookieHeader: unknown) => string | null;
   } | null;
 } = { current: null };
@@ -854,6 +857,7 @@ for (const binding of Array.from(assistedOrderBindingIndex.values())) {
 const assistedOrderComposition = buildAssistedOrderProduction({
   env: process.env,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
+  agreementGate: earlyAccessPersistence.options.agreements ?? null,
   masterOfferingServiceFor: (viewer) => {
     try {
       // The pricing viewer rides on the assisted-order viewer, set by the member
@@ -922,6 +926,8 @@ if (assistedOrderComposition.service) {
       };
     },
     earlyAccess: () => earlyAccessDoorSources.current,
+    earlyAccessBindings: () =>
+      earlyAccessPersistence.orderHistory?.bindings ?? null,
     adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),
   });
   const assistedOrderRoutes = createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(

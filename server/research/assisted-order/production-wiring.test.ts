@@ -44,6 +44,7 @@ const memberViewer: AssistedOrderViewer = Object.freeze({
   actorType: "member",
   memberId: "11111111-1111-4111-8111-111111111111",
   earlyAccessSessionHash: null,
+  earlyAccessCustomerRef: "eac_0123456789abcdef0123456789abcdef",
   normalizedEmail: "member@example.com",
   capabilities: new Set([
     "assisted_orders:submit",
@@ -79,6 +80,7 @@ function wiring(
       [ASSISTED_ORDER_ADMIN_EMAIL_ENV_VAR]: "research@xeniostechnology.com",
     } as NodeJS.ProcessEnv,
     requiredAgreements: REQUIRED_AGREEMENTS,
+    agreementGate: { accepted: async () => true },
     masterOfferingServiceFor: () => null,
     bindingFor: () => null,
     offeringVariantFor: () => null,
@@ -142,6 +144,12 @@ describe("buildAssistedOrderProduction (the layer that dropped the legal port)",
     expect(noStorage.refusalReason).toContain("documents");
   });
 
+  it("refuses production composition without the durable agreement gate", () => {
+    const composition = buildAssistedOrderProduction(wiring({ agreementGate: null }));
+    expect(composition.service).toBeNull();
+    expect(composition.refusalReason).toContain("submissionStanding");
+  });
+
   it("refuses without the admin notification email", () => {
     const composition = buildAssistedOrderProduction(
       wiring({
@@ -200,6 +208,7 @@ function composedService(repository = new InMemoryAssistedOrderRepository()) {
     legal: {
       requiredAgreements: async () => REQUIRED_AGREEMENTS.map((pair) => ({ ...pair })),
     },
+    submissionStanding: { accepted: async () => true },
     catalog: {
       list: async () => ({
         items: [CATALOG_ITEM],

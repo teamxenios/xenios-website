@@ -14,6 +14,7 @@ import type {
   AssistedOrderLogger,
   AssistedOrderOutbox,
   AssistedOrderRepository,
+  AssistedOrderSubmissionStanding,
 } from "./ports";
 
 export type AssistedOrderProductionInputs = Readonly<{
@@ -32,6 +33,8 @@ export type AssistedOrderProductionInputs = Readonly<{
    * submission (D-005 fail-closed); nothing here invents an agreement.
    */
   legal: AssistedOrderLegalPort | null;
+  /** Durable, server-recorded Early Access agreement standing. */
+  submissionStanding: AssistedOrderSubmissionStanding | null;
   googleMirror?: AssistedOrderGoogleMirrorQueue | null;
   adminNotificationEmail: string | null;
   documentBucketName?: string | null;
@@ -64,6 +67,7 @@ export function createAssistedOrderProductionComposition(
   if (!inputs.outbox) missing.push("outbox");
   if (!inputs.audit) missing.push("audit");
   if (!inputs.documents) missing.push("documents");
+  if (!inputs.submissionStanding) missing.push("submissionStanding");
   if (!inputs.adminNotificationEmail?.trim()) {
     missing.push("adminNotificationEmail");
   }
@@ -78,6 +82,7 @@ export function createAssistedOrderProductionComposition(
     enabled: true,
     service: new AssistedOrderService({
       legal: inputs.legal,
+      submissionStanding: inputs.submissionStanding,
       catalog: inputs.catalog!,
       repository: inputs.repository!,
       outbox: inputs.outbox!,

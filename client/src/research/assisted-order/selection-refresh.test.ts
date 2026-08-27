@@ -83,6 +83,18 @@ describe("selection refresh", () => {
     expect(result.missing).toEqual(["Alpha Peptide"]);
   });
 
+  it("removes and reports a selection that became held or Care-only", async () => {
+    for (const workflowMode of ["availability_review", "provider_request"] as const) {
+      api.loadAssistedOrderCatalog.mockResolvedValueOnce(
+        page([{ ...item, workflowMode }]),
+      );
+      const selections = addOrUpdateSelection(new Map(), item, 2);
+      const result = await refreshSelectionSnapshots(selections);
+      expect(result.selections.size).toBe(0);
+      expect(result.missing).toEqual(["Alpha Peptide"]);
+    }
+  });
+
   it("fetches once per product name, not once per variant", async () => {
     api.loadAssistedOrderCatalog.mockResolvedValue(page([item, siblingVariant]));
     let selections = addOrUpdateSelection(new Map(), item, 1);

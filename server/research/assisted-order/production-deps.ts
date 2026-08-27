@@ -24,9 +24,11 @@ import type {
   AssistedOrderAuditSink,
   AssistedOrderLegalPort,
   AssistedOrderOutbox,
+  AssistedOrderSubmissionStanding,
   AssistedOrderViewer,
 } from "./ports";
 import { enqueueNotificationOnce } from "../outbox";
+import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
 
 export const ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR =
   "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED";
@@ -46,6 +48,10 @@ export type AssistedOrderProductionWiring = Readonly<{
   requiredAgreements:
     | readonly Readonly<{ kind: string; version: string }>[]
     | undefined;
+  /** The same durable agreement gate used by the Early Access order door. */
+  agreementGate:
+    | Readonly<{ accepted(customerRef: string): Promise<boolean> }>
+    | null;
   /** The per-viewer canonical master-offerings service, or null. */
   masterOfferingServiceFor(
     viewer: AssistedOrderViewer,
@@ -76,12 +82,33 @@ export function buildAssistedOrderProduction(
         }
       : null;
 
+  const submissionStanding: AssistedOrderSubmissionStanding | null =
+    wiring.agreementGate
+      ? {
+          accepted: async (viewer) => {
+            const customerRef = viewer.earlyAccessCustomerRef?.trim() ?? "";
+            const hasLiveSession =
+              (viewer.actorType === "member" ||
+                viewer.actorType === "early_access_session") &&
+              (viewer.earlyAccessSessionHash?.length ?? 0) > 0;
+            return hasLiveSession && customerRef.length > 0
+              ? wiring.agreementGate!.accepted(customerRef)
+              : false;
+          },
+        }
+      : null;
+
   const catalog = new CallbackAssistedOrderCatalogAdapter(
     createAssistedOrderMasterCatalogCallbacks({
       serviceFor: wiring.masterOfferingServiceFor,
       bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor,
       catalogVersion: wiring.catalogVersion,
+      // The assisted-order projection must honor the exact same reviewed
+      // formulation holds as the canonical member catalog. Reading the
+      // fail-closed record here makes the production seam impossible to
+      // compose with an accidental empty/default hold set.
+      reviewedFormulationHolds: reviewedHeldSpecifications(),
     }),
   );
 
@@ -126,6 +153,7 @@ export function buildAssistedOrderProduction(
     // Dropping this line is exactly the 2026-08-18 Phase Zero defect: the
     // production-wiring test proves config publishes these exact pairs.
     legal,
+    submissionStanding,
     catalog,
     repository,
     outbox,

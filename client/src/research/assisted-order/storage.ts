@@ -38,12 +38,27 @@ function defaultStorage(): Storage {
 export function storeAssistedOrderReceipt(
   receipt: AssistedOrderReceipt,
   storage: Storage = defaultStorage(),
-): void {
-  storage.setItem(assistedOrderTokenKey(receipt.publicReference), receipt.statusToken);
-  storage.setItem(
-    assistedOrderReceiptKey(receipt.publicReference),
-    JSON.stringify(receiptForStorage(receipt)),
-  );
+): boolean {
+  const tokenKey = assistedOrderTokenKey(receipt.publicReference);
+  const receiptKey = assistedOrderReceiptKey(receipt.publicReference);
+  try {
+    // Write the non-secret half first and the credential last. If either write
+    // fails, remove both halves so a quota/privacy fault cannot leave a bearer
+    // token stranded without the receipt it belongs to.
+    storage.setItem(receiptKey, JSON.stringify(receiptForStorage(receipt)));
+    storage.setItem(tokenKey, receipt.statusToken);
+    return true;
+  } catch {
+    for (const key of [tokenKey, receiptKey]) {
+      try {
+        storage.removeItem(key);
+      } catch {
+        // Best effort per half. The accepted server request remains durable;
+        // the confirmation path still carries its non-secret reference.
+      }
+    }
+    return false;
+  }
 }
 
 export function readAssistedOrderToken(
@@ -96,10 +111,32 @@ export function recomposeAssistedOrderReceipt(
 export function clearAssistedOrderStorage(
   storage: Storage = defaultStorage(),
 ): void {
-  for (let index = storage.length - 1; index >= 0; index -= 1) {
-    const key = storage.key(index);
-    if (key !== null && key.startsWith(ASSISTED_ORDER_STORAGE_PREFIX)) {
+  // Snapshot the key family first. Removing while walking the live Storage
+  // index can skip entries, and one browser/privacy failure must not prevent a
+  // later bearer-token key from being attempted.
+  const keys: string[] = [];
+  let length = 0;
+  try {
+    length = storage.length;
+  } catch {
+    return;
+  }
+  for (let index = 0; index < length; index += 1) {
+    try {
+      const key = storage.key(index);
+      if (key !== null && key.startsWith(ASSISTED_ORDER_STORAGE_PREFIX)) {
+        keys.push(key);
+      }
+    } catch {
+      // Keep inspecting the remaining slots when one lookup is unavailable.
+    }
+  }
+  for (const key of keys) {
+    try {
       storage.removeItem(key);
+    } catch {
+      // Best effort is per key: a failed draft/receipt deletion must not stop
+      // the subsequent status-token deletions.
     }
   }
 }

@@ -174,6 +174,7 @@ function harness(initial: AssistedOrderCatalogItem = directPeptide()) {
   };
   const deps: AssistedOrderDependencies = {
     legal,
+    submissionStanding: { accepted: async () => true },
     catalog: {
       list: async () => ({
         items: [authority.item],

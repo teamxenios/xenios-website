@@ -5,6 +5,7 @@ import {
   catalogItemKey,
   clampQuantity,
   removeSelection,
+  selectableInResearchRequest,
   type AssistedOrderSelectionMap,
 } from "./wizard-state";
 
@@ -51,7 +52,7 @@ export async function refreshSelectionSnapshots(
   for (const selection of wanted) {
     const key = catalogItemKey(selection.item);
     const fresh = found.get(key);
-    if (!fresh) {
+    if (!fresh || !selectableInResearchRequest(fresh)) {
       missing.push(selection.item.productName);
       next = removeSelection(next, selection.item);
       continue;

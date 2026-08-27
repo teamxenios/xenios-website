@@ -50,6 +50,13 @@ export class AssistedOrderAuthorizationError extends Error {
   }
 }
 
+export class AssistedOrderAgreementRequiredError extends Error {
+  public constructor() {
+    super("The server-recorded Early Access agreement is required.");
+    this.name = "AssistedOrderAgreementRequiredError";
+  }
+}
+
 export class AssistedOrderNotFoundError extends Error {
   public constructor() {
     super("The assisted order request was not found.");
@@ -301,6 +308,16 @@ export class AssistedOrderService {
     verifiedAffiliateAttributionRef: string | null = null,
   ): Promise<AssistedOrderReceipt> {
     requireCapability(viewer, "assisted_orders:submit");
+    // The body carries the exact agreement pairs the customer acknowledged,
+    // but those pairs cannot prove the durable Early Access acceptance exists:
+    // a caller can forge every body field. Ask the server-recorded standing
+    // authority before parsing lines, minting ids, writing, or notifying.
+    if (
+      !this.deps.submissionStanding ||
+      !(await this.deps.submissionStanding.accepted(viewer))
+    ) {
+      throw new AssistedOrderAgreementRequiredError();
+    }
     const input = validateSubmitInput(rawInput);
     const now = this.deps.clock.now();
     const nowIso = now.toISOString();

@@ -26,6 +26,7 @@ import {
   clearPendingAttempt,
   readLastOrderNumber,
 } from "./pendingOrderStore";
+import { clearAssistedOrderStorage } from "../assisted-order/storage";
 import { clearBrowserCart } from "./cart/cartStore";
 import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
@@ -67,6 +68,23 @@ type GateState =
   | { kind: "locked"; error: string | null; busy: boolean }
   | { kind: "authenticated"; expiresAt: string | null };
 
+type EmbeddedOrderStep = "products" | "contact" | "review";
+
+const MAX_BROWSER_TIMER_DELAY_MS = 2_147_483_647;
+
+function sessionExpiration(value: unknown): Readonly<{
+  expiresAt: string | null;
+  timestamp: number | null;
+}> {
+  if (typeof value !== "string") {
+    return { expiresAt: null, timestamp: null };
+  }
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp)
+    ? { expiresAt: value, timestamp }
+    : { expiresAt: null, timestamp: null };
+}
+
 async function readJson(response: Response): Promise<Record<string, unknown> | null> {
   try {
     const body: unknown = await response.json();
@@ -74,6 +92,25 @@ async function readJson(response: Response): Promise<Record<string, unknown> | n
   } catch {
     return null;
   }
+}
+
+function bestEffort(action: () => void): void {
+  try {
+    action();
+  } catch {
+    // Browser storage can fail per operation under privacy settings. Continue
+    // so a less-sensitive recovery hint never prevents a later credential
+    // from being removed.
+  }
+}
+
+/** Clears only customer-scoped browser artifacts owned by Early Access. */
+export function clearEarlyAccessCustomerStorage(): void {
+  bestEffort(clearLastOrderNumber);
+  bestEffort(clearPendingAttempt);
+  bestEffort(clearBrowserCart);
+  bestEffort(clearCartRecovery);
+  bestEffort(clearAssistedOrderStorage);
 }
 
 export default function EarlyAccessRoute() {
@@ -98,76 +135,214 @@ export default function EarlyAccessRoute() {
   // refresh or render failure after a successful placement does not strand
   // the customer. Reading it grants nothing: the status endpoint re-authorizes
   // against the session's derived identity on every call.
-  const [rememberedOrder] = useState<string | null>(() => readLastOrderNumber());
+  const [rememberedOrder, setRememberedOrder] = useState<string | null>(
+    () => readLastOrderNumber(),
+  );
+  // The full catalog owns its own three-step request journey. Once that
+  // journey advances, the surrounding storefront must stop presenting the
+  // separate Featured shelf and direct-checkout progress as if both flows
+  // were active at once.
+  const [embeddedOrderStep, setEmbeddedOrderStep] =
+    useState<EmbeddedOrderStep>("products");
   // Asked once, shared with the CTA below, so the storefront and the door
   // cannot disagree about whether ordering is open.
   const bridgeState = useAssistedOrderBridgeState();
   const catalogRef = useRef<HTMLDivElement | null>(null);
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
+  const lastExpiredSessionRef = useRef<string | null>(null);
+  const sessionRecheckInFlightRef = useRef(false);
+
+  const resetCustomerContext = useCallback(() => {
+    clearEarlyAccessCustomerStorage();
+    setRememberedOrder(null);
+    setAgreed(false);
+    setBlocked(null);
+    setSelection(null);
+    setOrderRequest(null);
+    setPriceChanged(false);
+    setCheckoutPhase("details");
+    setEmbeddedOrderStep("products");
+  }, []);
 
   const readSession = useCallback(async () => {
+    let retriedExpiredSession = false;
+    let attemptedOpenAccess = false;
     try {
-      const response = await fetch(SESSION_PATH, {
-        credentials: "same-origin",
-        headers: { Accept: "application/json" },
-      });
-      // The gate answers 503 when the deployment has it switched off or
-      // incompletely configured. That is a truthful unavailable state, not an
-      // error the customer can act on.
-      if (response.status === 503 || response.status === 404) {
-        setState({ kind: "unavailable" });
-        return;
-      }
-      const body = await readJson(response);
-      if (body?.authenticated === true) {
-        const expiresAt = typeof body.expiresAt === "string" ? body.expiresAt : null;
-        setState({ kind: "authenticated", expiresAt });
-        return;
-      }
-      // OPEN ACCESS (founder decision 2026-08-20): there is no customer-facing
-      // password, so never show a prompt the customer could not satisfy. Take
-      // the anonymous session the server is willing to issue and carry on into
-      // the catalog.
-      //
-      // The session still matters with the password gone: it is the identity
-      // that decides which order this browser may read back, so the journey
-      // cannot simply skip obtaining one.
-      if (body?.openAccess === true) {
-        const opened = await fetch(UNLOCK_PATH, {
-          method: "POST",
+      // At most one expired-session retry and one open-access unlock are
+      // allowed in a single check. This lets a genuinely expired cookie become
+      // a fresh anonymous session without looping if a broken endpoint keeps
+      // returning the same stale answer.
+      for (;;) {
+        const response = await fetch(SESSION_PATH, {
           credentials: "same-origin",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({}),
+          headers: { Accept: "application/json" },
         });
-        if (opened.ok) {
-          // Re-read rather than trusting the unlock body, so the cookie the
-          // browser actually kept is the thing that decided this.
-          const confirmed = await fetch(SESSION_PATH, {
-            credentials: "same-origin",
-            headers: { Accept: "application/json" },
-          });
-          const confirmedBody = await readJson(confirmed);
-          if (confirmedBody?.authenticated === true) {
-            const expiresAt =
-              typeof confirmedBody.expiresAt === "string" ? confirmedBody.expiresAt : null;
-            setState({ kind: "authenticated", expiresAt });
+        // The gate answers 503 when the deployment has it switched off or
+        // incompletely configured. That is a truthful unavailable state, not
+        // an error the customer can act on.
+        if (response.status === 503 || response.status === 404) {
+          setState({ kind: "unavailable" });
+          return;
+        }
+        const body = await readJson(response);
+        if (response.ok && body?.authenticated === true) {
+          const expiration = sessionExpiration(body.expiresAt);
+          if (
+            expiration.timestamp !== null &&
+            expiration.timestamp <= Date.now()
+          ) {
+            const newlyExpired =
+              lastExpiredSessionRef.current !== expiration.expiresAt;
+            if (newlyExpired) {
+              lastExpiredSessionRef.current = expiration.expiresAt;
+              resetCustomerContext();
+            }
+            if (newlyExpired && !retriedExpiredSession) {
+              retriedExpiredSession = true;
+              setState({ kind: "checking" });
+              continue;
+            }
+            // The retry repeated an already-expired authenticated answer.
+            // Fail closed rather than rendering a stale shared-machine view.
+            setState({ kind: "locked", error: null, busy: false });
             return;
           }
+          lastExpiredSessionRef.current = null;
+          setState({ kind: "authenticated", expiresAt: expiration.expiresAt });
+          return;
         }
-        // Could not obtain one. That is an unavailable deployment, not
-        // something a customer can fix by typing, so do not ask them to.
-        setState({ kind: "unavailable" });
+        // These are the only answers that definitively say the browser is no
+        // longer the customer whose recovery artifacts it may still hold.
+        // Clear that context before either issuing a fresh anonymous session
+        // or showing the locked gate. A malformed/5xx/network answer is not
+        // proof of sign-out and therefore must not destroy recoverable work.
+        const definitivelyUnauthenticated =
+          (response.ok && body?.authenticated === false) ||
+          response.status === 401 ||
+          response.status === 403;
+        if (definitivelyUnauthenticated) {
+          resetCustomerContext();
+        }
+        // OPEN ACCESS (founder decision 2026-08-20): there is no
+        // customer-facing password. Obtain a fresh anonymous identity, then
+        // loop through the authoritative session endpoint once more instead
+        // of trusting the unlock response body.
+        if (response.ok && body?.openAccess === true) {
+          if (attemptedOpenAccess) {
+            setState({ kind: "unavailable" });
+            return;
+          }
+          attemptedOpenAccess = true;
+          const opened = await fetch(UNLOCK_PATH, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({}),
+          });
+          if (opened.ok) {
+            continue;
+          }
+          // Could not obtain one. That is an unavailable deployment, not
+          // something a customer can fix by typing, so do not ask them to.
+          setState({ kind: "unavailable" });
+          return;
+        }
+        setState({ kind: "locked", error: null, busy: false });
         return;
       }
-      setState({ kind: "locked", error: null, busy: false });
     } catch {
       setState({ kind: "locked", error: null, busy: false });
     }
-  }, []);
+  }, [resetCustomerContext]);
 
   useEffect(() => {
     void readSession();
   }, [readSession]);
+
+  const recheckSession = useCallback(
+    (knownExpiresAt: string | null) => {
+      if (sessionRecheckInFlightRef.current) {
+        return;
+      }
+      sessionRecheckInFlightRef.current = true;
+      const expiration = sessionExpiration(knownExpiresAt);
+      if (
+        expiration.timestamp !== null &&
+        expiration.timestamp <= Date.now() &&
+        lastExpiredSessionRef.current !== expiration.expiresAt
+      ) {
+        lastExpiredSessionRef.current = expiration.expiresAt;
+        resetCustomerContext();
+      }
+      // Hide the authenticated surface while the server decides whether the
+      // resumed tab still owns a valid session.
+      setState({ kind: "checking" });
+      void readSession().finally(() => {
+        sessionRecheckInFlightRef.current = false;
+      });
+    },
+    [readSession, resetCustomerContext],
+  );
+
+  useEffect(() => {
+    if (state.kind !== "authenticated" || state.expiresAt === null) {
+      return;
+    }
+    const expiration = sessionExpiration(state.expiresAt);
+    if (expiration.timestamp === null) {
+      return;
+    }
+    let timer: number | null = null;
+    const scheduleExpiry = () => {
+      const remaining = expiration.timestamp! - Date.now();
+      if (remaining <= 0) {
+        recheckSession(state.expiresAt);
+        return;
+      }
+      // Browser timers cap at roughly 24.8 days. Re-arm without touching the
+      // mounted wizard until the real expiry is reached.
+      timer = window.setTimeout(
+        scheduleExpiry,
+        Math.min(remaining, MAX_BROWSER_TIMER_DELAY_MS),
+      );
+    };
+    scheduleExpiry();
+    return () => {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [recheckSession, state]);
+
+  useEffect(() => {
+    if (state.kind !== "authenticated") {
+      return;
+    }
+    const recheckVisibleSession = () => {
+      const expiration = sessionExpiration(state.expiresAt);
+      // Focus before the known expiry must not unmount the wizard: its contact
+      // fields intentionally live only in memory. The expiry timer covers an
+      // active tab; focus/visibility are the catch-up path for suspended tabs.
+      if (
+        expiration.timestamp === null ||
+        expiration.timestamp > Date.now()
+      ) {
+        return;
+      }
+      recheckSession(state.expiresAt);
+    };
+    const recheckWhenVisible = () => {
+      if (document.visibilityState === "visible") {
+        recheckVisibleSession();
+      }
+    };
+    window.addEventListener("focus", recheckVisibleSession);
+    document.addEventListener("visibilitychange", recheckWhenVisible);
+    return () => {
+      window.removeEventListener("focus", recheckVisibleSession);
+      document.removeEventListener("visibilitychange", recheckWhenVisible);
+    };
+  }, [recheckSession, state]);
 
   const submitPassword = useCallback(
     (password: string) => {
@@ -207,6 +382,12 @@ export default function EarlyAccessRoute() {
   );
 
   const signOut = useCallback(() => {
+    // Clear customer-scoped browser state BEFORE waiting on the network. A
+    // slow or hung logout request must not leave bearer tokens, receipts, or a
+    // previous customer's basket behind after the person clicked Sign out.
+    resetCustomerContext();
+    setState({ kind: "locked", error: null, busy: false });
+
     void (async () => {
       try {
         await fetch(LOGOUT_PATH, {
@@ -215,35 +396,12 @@ export default function EarlyAccessRoute() {
           headers: { Accept: "application/json" },
         });
       } catch {
-        // Logout is idempotent and the cookie is cleared server-side; a network
-        // failure still returns the customer to the password screen.
+        // Logout is idempotent. Even if the request fails (including a
+        // synchronous fetch failure), the browser has already discarded the
+        // previous customer's local state and returned to the password screen.
       }
-      // The next customer to unlock on this browser starts from the server's
-      // answer about themselves, never from the last person's. That includes
-      // the browser's own recovery hints: a signed-out machine remembers no
-      // order number and no unfinished attempt, so nothing of the previous
-      // purchaser is shown to whoever unlocks next. (The server clears the
-      // continuity credential on logout for the same reason.)
-      clearLastOrderNumber();
-      clearPendingAttempt();
-      // The cart is intent the PREVIOUS customer expressed. On a shared
-      // machine the next person to unlock must start with an empty one, not
-      // inherit somebody else's basket.
-      clearBrowserCart();
-      // And the cart's OWN two recovery pointers: the in-flight attempt key
-      // and the last cart checkout number. Clearing the basket while leaving
-      // these behind would hand the next person a pointer at the previous
-      // purchaser's checkout. The server would still refuse to show it, but a
-      // signed-out browser should not be holding the pointer at all.
-      clearCartRecovery();
-      setAgreed(false);
-      setBlocked(null);
-      setSelection(null);
-      setOrderRequest(null);
-      setCheckoutPhase("details");
-      setState({ kind: "locked", error: null, busy: false });
     })();
-  }, []);
+  }, [resetCustomerContext]);
 
   return (
     <>
@@ -307,26 +465,34 @@ export default function EarlyAccessRoute() {
               password, not after it.
             */}
             <p className="mono-cap text-pulse mb-2">Private Early Access</p>
-            <h1 className="display-s max-w-[26ch]">{selection === null ? "Research Catalogue" : "Complete your order"}</h1>
+            <h1 className="display-s max-w-[26ch]">
+              {selection !== null
+                ? "Complete your order"
+                : embeddedOrderStep === "products"
+                  ? "Research Catalogue"
+                  : "Complete your order request"}
+            </h1>
 
-            <div className="mt-4">
-              <EarlyAccessStepper
-                steps={EARLY_ACCESS_STEPS}
-                activeIndex={
-                  !agreed || blocked !== null
-                    ? EARLY_ACCESS_AGREEMENT_STEP
-                    : selection === null
-                      ? EARLY_ACCESS_CATALOG_STEP
-                      : checkoutPhase === "details"
-                        ? 1
-                        : checkoutPhase === "payment"
-                          ? 5
-                          : checkoutPhase === "status"
-                            ? 7
-                            : 4
-                }
-              />
-            </div>
+            {embeddedOrderStep === "products" ? (
+              <div className="mt-4">
+                <EarlyAccessStepper
+                  steps={EARLY_ACCESS_STEPS}
+                  activeIndex={
+                    !agreed || blocked !== null
+                      ? EARLY_ACCESS_AGREEMENT_STEP
+                      : selection === null
+                        ? EARLY_ACCESS_CATALOG_STEP
+                        : checkoutPhase === "details"
+                          ? 1
+                          : checkoutPhase === "payment"
+                            ? 5
+                            : checkoutPhase === "status"
+                              ? 7
+                              : 4
+                  }
+                />
+              </div>
+            ) : null}
 
             {/*
               The required agreement, above the catalogue. Browsing is not
@@ -378,7 +544,7 @@ export default function EarlyAccessRoute() {
                   ONE STOREFRONT (founder decision 2026-08-21).
                   
                   The full canonical catalog is now the primary Early Access
-                  experience: 424 canonical variants, every one priced by the
+                  experience: the current 420 canonical variants, each routed by the
                   same server authority and routed by the same canonical action
                   resolver. The curated opening set below is a FEATURED
                   projection over that same catalog — same product identity,
@@ -390,29 +556,11 @@ export default function EarlyAccessRoute() {
                   separate order-request link, so a customer looking at the
                   storefront could not see most of what Xenios sells.
                 */}
-                <div className="mb-4">
-                  <AssistedOrderCta />
-                </div>
-                <h3 className="xenios-early-access-section-heading">Featured products</h3>
-                <EarlyAccessCatalogSection
-                  fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
-                  reviewEnabled={agreed && blocked === null}
-                  onReview={(nextSelection) => {
-                    if (!agreed || blocked !== null) return;
-                    setPriceChanged(false);
-                    setOrderRequest(null);
-                    setSelection(nextSelection);
-                    setCheckoutPhase("details");
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  onOrderRequest={(nextRequest) => {
-                    if (!agreed || blocked !== null) return;
-                    setPriceChanged(false);
-                    setSelection(null);
-                    setOrderRequest(nextRequest);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                />
+                {embeddedOrderStep === "products" ? (
+                  <div className="mb-4">
+                    <AssistedOrderCta />
+                  </div>
+                ) : null}
                 {/*
                   ALL PRODUCTS — the full canonical catalog, on the storefront
                   itself rather than behind a separate link. Same product
@@ -422,12 +570,54 @@ export default function EarlyAccessRoute() {
                 */}
                 {bridgeState.kind === "enabled" ? (
                   <section className="mt-8" data-testid="early-access-full-catalog">
-                    <h3 className="xenios-early-access-section-heading">All products</h3>
+                    <h2 className="xenios-early-access-section-heading">
+                      {embeddedOrderStep === "products"
+                        ? "All products"
+                        : embeddedOrderStep === "contact"
+                          ? "Contact and shipping"
+                          : "Review and submit"}
+                    </h2>
                     <Suspense
                       fallback={<p className="xenios-order-notice">Loading the full research catalogue.</p>}
                     >
-                      <FullCanonicalCatalog />
+                      <FullCanonicalCatalog
+                        embedded
+                        continuationEnabled={agreed && blocked === null}
+                        onStepChange={setEmbeddedOrderStep}
+                      />
                     </Suspense>
+                  </section>
+                ) : null}
+                {/*
+                  Featured is intentionally secondary. Its richer projection
+                  is the historically slower request, while All products is
+                  the declared primary storefront and can usually show a
+                  useful server-authorized card sooner. Both still start from
+                  their existing authorities; DOM order alone keeps the slow
+                  shelf from blocking the first useful catalog experience.
+                */}
+                {embeddedOrderStep === "products" ? (
+                  <section className="mt-8" data-testid="early-access-featured-catalog">
+                    <h2 className="xenios-early-access-section-heading">Featured products</h2>
+                    <EarlyAccessCatalogSection
+                      fulfillmentTargetCopy={EARLY_ACCESS_FULFILLMENT_TARGET_COPY}
+                      reviewEnabled={agreed && blocked === null}
+                      onReview={(nextSelection) => {
+                        if (!agreed || blocked !== null) return;
+                        setPriceChanged(false);
+                        setOrderRequest(null);
+                        setSelection(nextSelection);
+                        setCheckoutPhase("details");
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      onOrderRequest={(nextRequest) => {
+                        if (!agreed || blocked !== null) return;
+                        setPriceChanged(false);
+                        setSelection(null);
+                        setOrderRequest(nextRequest);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    />
                   </section>
                 ) : null}
               </div>

@@ -7,6 +7,12 @@ import {
   createAssistedOrderUploadTicket,
   uploadAssistedOrderDocument,
 } from "./api";
+import { assistedOrderUploadErrorCopy } from "./customer-safe-errors";
+
+type UploadMessage = Readonly<{
+  tone: "success" | "error";
+  text: string;
+}>;
 
 export function SecureDocumentUpload(props: {
   requestId: string;
@@ -19,7 +25,7 @@ export function SecureDocumentUpload(props: {
   const [side, setSide] = useState<AssistedOrderDocumentSide>("front");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<UploadMessage | null>(null);
 
   const pickFile = (event: ChangeEvent<HTMLInputElement>) => {
     setMessage(null);
@@ -28,7 +34,7 @@ export function SecureDocumentUpload(props: {
 
   const upload = async () => {
     if (!file) {
-      setMessage("Choose a document first.");
+      setMessage({ tone: "error", text: "Choose a document first." });
       return;
     }
     setBusy(true);
@@ -47,15 +53,11 @@ export function SecureDocumentUpload(props: {
         publicReference: props.publicReference,
         statusToken: props.statusToken,
       });
-      setMessage("Document received securely.");
+      setMessage({ tone: "success", text: "Document received securely." });
       setFile(null);
       props.onUploaded();
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "The document could not be uploaded.",
-      );
+      setMessage({ tone: "error", text: assistedOrderUploadErrorCopy(error) });
     } finally {
       setBusy(false);
     }
@@ -104,7 +106,14 @@ export function SecureDocumentUpload(props: {
           />
         </label>
       </div>
-      {message ? <p role="status">{message}</p> : null}
+      {message ? (
+        <p
+          role={message.tone === "error" ? "alert" : "status"}
+          aria-live={message.tone === "error" ? "assertive" : "polite"}
+        >
+          {message.text}
+        </p>
+      ) : null}
       <div className="xenios-order-actions">
         <button
           className="xenios-order-button"

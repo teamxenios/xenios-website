@@ -21,6 +21,7 @@ import type {
   AssistedOrderCatalogPage,
   AssistedOrderCatalogQuery,
 } from "../../../shared/research/assisted-order/contract";
+import { assistedOrderActionGroupFor } from "../../../shared/research/assisted-order/contract";
 import {
   projectAssistedOrderCatalogItem,
   type AssistedOrderCatalogAuthority,
@@ -29,6 +30,16 @@ import { EARLY_ACCESS_POLICY_MAX_QUANTITY } from "../../../shared/research/early
 import type { AssistedOrderViewer } from "./ports";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
+import {
+  MASTER_OFFERING_FAMILIES,
+  isMasterOfferingFamily,
+  type MasterOfferingDisplayState,
+  type MasterOfferingFamily,
+} from "../../../shared/research/master-offerings/contract";
+import {
+  directPurchaseRefusal,
+  requiresProviderPathway,
+} from "../../../shared/research/master-offerings/pathway-authority";
 
 /**
  * The catalog reader this adapter needs, stated structurally so the
@@ -39,6 +50,7 @@ import type { MasterOfferingPriceView } from "../../../shared/research/master-of
 export type AssistedOrderMasterCatalogService = Readonly<{
   select(query: {
     q?: string;
+    families?: readonly MasterOfferingFamily[];
     page?: number;
     pageSize?: number;
   }): Promise<{
@@ -62,6 +74,8 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
   offeringVariantFor(identity: AssistedOrderCommerceIdentity): string | null;
   /** A stable dataset identity that changes when the catalog dataset changes. */
   catalogVersion: string;
+  /** Canonical, founder-reviewed formulation holds from the reconciliation record. */
+  reviewedFormulationHolds?: ReadonlySet<string>;
 }>;
 
 /**
@@ -79,6 +93,33 @@ const RESOLVE_PAGE_SIZE = 100;
  * Sized far above the real catalog (420 offerings, five pages).
  */
 const RESOLVE_MAX_PAGES = 500;
+
+/**
+ * Action is a derived, variant-level fact: it depends on canonical pathway,
+ * Product Control identity, and the current price projection. The upstream
+ * catalog can filter structured family values before paging, but it cannot
+ * honestly filter this downstream fact. When an Action filter is present we
+ * therefore walk bounded canonical pages, project each variant through the
+ * same action policy the cards use, and only then paginate the matches.
+ */
+const ACTION_FILTER_SCAN_PAGE_SIZE = 100;
+const ACTION_FILTER_SCAN_MAX_PAGES = 500;
+
+/** Canonical states whose existing master-offerings action is non-ordering. */
+const HELD_DISPLAY_STATES: ReadonlySet<MasterOfferingDisplayState> =
+  new Set<MasterOfferingDisplayState>([
+    "available_this_week",
+    "temporarily_unavailable",
+    "coming_soon",
+    "planned",
+    "unavailable",
+  ]);
+
+const OUT_OF_STOCK_DISPLAY_STATES: ReadonlySet<MasterOfferingDisplayState> =
+  new Set<MasterOfferingDisplayState>([
+    "temporarily_unavailable",
+    "unavailable",
+  ]);
 
 /**
  * The marker on a synthetic identity for a variant with no commerce binding.
@@ -104,13 +145,29 @@ export function authorityFor(
   price: MasterOfferingPriceView | undefined,
   identity: AssistedOrderCommerceIdentity | null,
   catalogVersion: string,
+  reviewedFormulationHolds?: ReadonlySet<string>,
 ): AssistedOrderCatalogAuthority {
   const priced = price !== undefined && price.state === "priced";
-  const providerWorkflowRequired = variant.displayState === "care_pathway"
-    || offering.displayState === "care_pathway"
-    || offering.family === "clinical_formulations_503a";
+  const pathwaySubject = {
+    family: offering.family,
+    displayState: offering.displayState,
+    variantDisplayState: variant.displayState,
+    specification: variant.label,
+    reviewedHolds: reviewedFormulationHolds,
+  } as const;
+  const refusal = directPurchaseRefusal(pathwaySubject);
+  const providerWorkflowRequired = requiresProviderPathway(pathwaySubject);
   const classificationPending = variant.displayState === "approval_required"
     || offering.displayState === "approval_required";
+  const held = HELD_DISPLAY_STATES.has(variant.displayState)
+    || HELD_DISPLAY_STATES.has(offering.displayState)
+    || refusal === "formulation_hold"
+    // Shipping and fulfillment are catalog facts, not merchandise and not a
+    // Care referral. Keep them visible for reconciliation while withholding
+    // every ordering action through the existing unavailable presentation.
+    || refusal === "non_merchandise_family";
+  const outOfStock = OUT_OF_STOCK_DISPLAY_STATES.has(variant.displayState)
+    || OUT_OF_STOCK_DISPLAY_STATES.has(offering.displayState);
   const researchUseOnly = offering.family === "research_peptides_materials"
     || offering.family === "research_capsules"
     || offering.family === "research_supplies";
@@ -142,17 +199,21 @@ export function authorityFor(
     catalogVersion,
     priceVersion: priced && identity !== null ? price.priceId : null,
     visible: true,
+    // Every direct-order refusal comes from the shared canonical pathway
+    // authority. Keeping a second family allow-list here made this projection
+    // disagree with the member catalog for otherwise eligible supplements,
+    // topicals, and research supplies.
     directEligible: priced && identity !== null
-      && !providerWorkflowRequired && !classificationPending,
+      && refusal === null && !held,
     providerWorkflowRequired,
     classificationPending,
     // Pathway precedence: a provider or classification-pending row is not
     // "price pending", its pathway is what blocks it. Price-pending is the
     // truthful state only for the general lane.
     pricePending: (!priced || identity === null)
-      && !providerWorkflowRequired && !classificationPending,
-    held: false,
-    outOfStock: false,
+      && !providerWorkflowRequired && !classificationPending && !held,
+    held,
+    outOfStock,
     researchUseOnly,
     accessNotice: offering.stateExplanation || null,
   });
@@ -178,35 +239,127 @@ export function createAssistedOrderMasterCatalogCallbacks(
       if (!service) {
         throw new Error("The catalog is not available for this viewer.");
       }
-      const selection = await service.select({
-        q: query.search || undefined,
-        page: query.page,
-        pageSize: query.pageSize,
-      });
-      const items: AssistedOrderCatalogItem[] = [];
-      for (const offering of selection.offerings) {
-        for (const variant of offering.variants) {
-          const identity = input.bindingFor(variant.id);
-          const item = projectAssistedOrderCatalogItem(
-            authorityFor(
-              offering,
-              variant,
-              selection.prices.get(variant.id),
-              identity,
-              input.catalogVersion,
-            ),
-          );
-          if (item) items.push(item);
-        }
+      const family = query.family === undefined
+        ? undefined
+        : isMasterOfferingFamily(query.family)
+          ? query.family
+          : null;
+      const requestedPage = query.page ?? 1;
+      const requestedPageSize = query.pageSize ?? 24;
+
+      // A non-canonical family token must match nothing. Silently dropping it
+      // would turn an invalid filter into an unfiltered catalog response.
+      if (family === null) {
+        return Object.freeze({
+          items: Object.freeze([]),
+          total: 0,
+          page: requestedPage,
+          pageSize: requestedPageSize,
+          families: MASTER_OFFERING_FAMILIES,
+          channels: Object.freeze([]),
+          workflowModes: Object.freeze([]),
+        });
       }
+
+      const canonicalQuery = {
+        q: query.search || undefined,
+        families: family === undefined ? undefined : [family],
+      } as const;
+      const projectSelection = (
+        selection: Awaited<ReturnType<AssistedOrderMasterCatalogService["select"]>>,
+      ): AssistedOrderCatalogItem[] => {
+        const projected: AssistedOrderCatalogItem[] = [];
+        for (const offering of selection.offerings) {
+          // This adapter's total/page contract is offering-based. The current
+          // canonical catalog is intentionally one variant per offering; fail
+          // closed if that topology changes so a multi-variant row cannot
+          // silently overflow pageSize or corrupt totals. Supporting that
+          // future shape requires variant-level pagination at the authority.
+          if (offering.variants.length !== 1) {
+            throw new Error("Assisted-order catalog requires one variant per offering.");
+          }
+          for (const variant of offering.variants) {
+            const identity = input.bindingFor(variant.id);
+            const item = projectAssistedOrderCatalogItem(
+              authorityFor(
+                offering,
+                variant,
+                selection.prices.get(variant.id),
+                identity,
+                input.catalogVersion,
+                input.reviewedFormulationHolds,
+              ),
+            );
+            if (item) projected.push(item);
+          }
+        }
+        return projected;
+      };
+
+      let items: AssistedOrderCatalogItem[];
+      let total: number;
+
+      if (
+        query.actionGroup === undefined
+        && query.workflowMode === undefined
+        && query.channel === undefined
+      ) {
+        const selection = await service.select({
+          ...canonicalQuery,
+          page: requestedPage,
+          pageSize: requestedPageSize,
+        });
+        items = projectSelection(selection);
+        total = selection.page.total;
+      } else {
+        const matches: AssistedOrderCatalogItem[] = [];
+        let scanPage = 1;
+        let sourceTotal: number | null = null;
+        for (;;) {
+          const selection = await service.select({
+            ...canonicalQuery,
+            page: scanPage,
+            pageSize: ACTION_FILTER_SCAN_PAGE_SIZE,
+          });
+          for (const item of projectSelection(selection)) {
+            if (query.channel !== undefined && item.channel !== query.channel) {
+              continue;
+            }
+            // The customer group is authoritative when present. Exact mode is
+            // retained only for older callers; intersecting both would let a
+            // stale hidden parameter turn a valid customer filter into zero.
+            const matchesAction = query.actionGroup !== undefined
+              ? assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup
+              : query.workflowMode !== undefined
+                ? item.workflowMode === query.workflowMode
+                : true;
+            if (matchesAction) matches.push(item);
+          }
+          if (sourceTotal === null) sourceTotal = selection.page.total;
+          if (selection.offerings.length === 0) break;
+          const sourcePageSize = selection.page.pageSize > 0
+            ? selection.page.pageSize
+            : ACTION_FILTER_SCAN_PAGE_SIZE;
+          if (scanPage * sourcePageSize >= sourceTotal) break;
+          scanPage += 1;
+          if (scanPage > ACTION_FILTER_SCAN_MAX_PAGES) break;
+        }
+        total = matches.length;
+        const start = (requestedPage - 1) * requestedPageSize;
+        items = start >= total
+          ? []
+          : matches.slice(start, start + requestedPageSize);
+      }
+
       return Object.freeze({
         items: Object.freeze(items),
-        total: selection.page.total,
-        page: selection.page.page,
-        pageSize: selection.page.pageSize,
-        families: Object.freeze(
-          Array.from(new Set(items.map((item) => item.family))),
-        ),
+        total,
+        page: requestedPage,
+        pageSize: requestedPageSize,
+        // Stable canonical values keep the select usable after one family is
+        // chosen; deriving options from the filtered page would erase every
+        // alternative family as soon as the first filter was applied.
+        families: MASTER_OFFERING_FAMILIES,
         channels: Object.freeze(
           Array.from(new Set(items.map((item) => item.channel))),
         ),
@@ -225,10 +378,18 @@ export function createAssistedOrderMasterCatalogCallbacks(
       // A synthetic identity carries the offering variant id in plain sight, so
       // read it back rather than asking the binding map, which by definition has
       // no entry for an unbound row.
-      const offeringVariantId = variantId.startsWith(UNBOUND_IDENTITY_PREFIX)
+      const syntheticIdentity = variantId.startsWith(UNBOUND_IDENTITY_PREFIX);
+      const offeringVariantId = syntheticIdentity
         ? variantId.slice(UNBOUND_IDENTITY_PREFIX.length)
         : input.offeringVariantFor({ productId, variantId });
       if (!offeringVariantId) return null;
+      // A synthetic id is valid only while the canonical variant remains
+      // unbound. Once Product Control has a reviewed binding, the old browser
+      // snapshot is stale and must be refreshed instead of being upgraded into
+      // the newly priced/direct identity during submit.
+      if (syntheticIdentity && input.bindingFor(offeringVariantId) !== null) {
+        return null;
+      }
       // PAGE THROUGH. Asking for one enormous page does not work: the catalog
       // search hard-clamps pageSize to its own maximum and then slices, so a
       // request for a million rows silently returns the alphabetically first
@@ -255,13 +416,27 @@ export function createAssistedOrderMasterCatalogCallbacks(
         for (const offering of selection.offerings) {
           for (const variant of offering.variants) {
             if (variant.id !== offeringVariantId) continue;
+            // Both halves of a synthetic identity are minted together. Trusting
+            // only the variant half lets a caller pair one real unbound variant
+            // with arbitrary product ids, bypassing duplicate-line identity
+            // checks and swapping the product identity stored on the request.
+            if (
+              syntheticIdentity &&
+              productId !== `${UNBOUND_IDENTITY_PREFIX}${offering.id}`
+            ) {
+              return null;
+            }
             return projectAssistedOrderCatalogItem(
               authorityFor(
                 offering,
                 variant,
                 selection.prices.get(variant.id),
-                { productId, variantId },
+                // Synthetic rows are intentionally request-only and unpriced.
+                // Passing their synthetic ids as a commerce identity would
+                // manufacture direct-order authority at submission time.
+                syntheticIdentity ? null : { productId, variantId },
                 input.catalogVersion,
+                input.reviewedFormulationHolds,
               ),
             );
           }

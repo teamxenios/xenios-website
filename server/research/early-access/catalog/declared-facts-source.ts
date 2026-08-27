@@ -365,6 +365,11 @@ type UnitFactsWindow = Readonly<{
   supplierConfirmations: SupplierConfirmationLiveReader | null;
 }>;
 
+type BulkFallbackResult<T> = Readonly<{
+  value: T;
+  degradation: Readonly<{ message: string; cause: unknown }> | null;
+}>;
+
 function bulkHoldCapable(
   reader: UnitHoldReader,
 ): reader is UnitHoldReader & BulkUnitHoldReader {
@@ -467,48 +472,92 @@ export class ProductControlDeclaredFactsReader
       };
     }
 
-    let holds = this.holds;
-    if (holds !== null && bulkHoldCapable(holds)) {
-      const perUnit = holds;
+    // Holds and supplier confirmations are independent read-only facts at the
+    // same evaluation instant. Inventory stays first so its fatal failure
+    // retains the existing short-circuit; after it succeeds these two bounded
+    // reads share one latency wave instead of serializing two network waits.
+    const holdsPromise = (async (): Promise<
+      BulkFallbackResult<UnitHoldReader | null>
+    > => {
+      const perUnit = this.holds;
+      if (perUnit === null || !bulkHoldCapable(perUnit)) {
+        return { value: perUnit, degradation: null };
+      }
       try {
         const all = await perUnit.activeHoldsForAllUnits(evaluatedAt);
-        holds = {
-          async activeHoldsForUnit(productId, variantId) {
-            return all.get(unitFactKey(productId, variantId)) ?? [];
+        return {
+          value: {
+            async activeHoldsForUnit(productId, variantId) {
+              return all.get(unitFactKey(productId, variantId)) ?? [];
+            },
           },
+          degradation: null,
         };
       } catch (cause) {
-        this.onBulkDegraded(
-          "[early-access] bulk unit-hold read failed; this projection is " +
-            "reading holds per unit instead. Recorded prohibitions still apply.",
-          cause,
-        );
+        return {
+          value: perUnit,
+          degradation: {
+            message:
+              "[early-access] bulk unit-hold read failed; this projection is " +
+              "reading holds per unit instead. Recorded prohibitions still apply.",
+            cause,
+          },
+        };
       }
-    }
+    })();
 
-    let supplierConfirmations = this.supplierConfirmations;
-    if (
-      supplierConfirmations !== null &&
-      bulkConfirmationCapable(supplierConfirmations)
-    ) {
-      const perUnit = supplierConfirmations;
+    const supplierConfirmationsPromise = (async (): Promise<
+      BulkFallbackResult<SupplierConfirmationLiveReader | null>
+    > => {
+      const perUnit = this.supplierConfirmations;
+      if (perUnit === null || !bulkConfirmationCapable(perUnit)) {
+        return { value: perUnit, degradation: null };
+      }
       try {
         const all = await perUnit.liveForAllUnits(evaluatedAt);
-        supplierConfirmations = {
-          async liveForUnit(productId, variantId) {
-            return all.get(unitFactKey(productId, variantId)) ?? null;
+        return {
+          value: {
+            async liveForUnit(productId, variantId) {
+              return all.get(unitFactKey(productId, variantId)) ?? null;
+            },
           },
+          degradation: null,
         };
       } catch (cause) {
-        this.onBulkDegraded(
-          "[early-access] bulk supplier-confirmation read failed; this " +
-            "projection is reading confirmations per unit instead.",
-          cause,
-        );
+        return {
+          value: perUnit,
+          degradation: {
+            message:
+              "[early-access] bulk supplier-confirmation read failed; this " +
+              "projection is reading confirmations per unit instead.",
+            cause,
+          },
+        };
       }
+    })();
+
+    const [holds, supplierConfirmations] = await Promise.all([
+      holdsPromise,
+      supplierConfirmationsPromise,
+    ]);
+    // Preserve today's deterministic reporting order even though the reads
+    // themselves overlap. A reporting failure still prevents the later report
+    // from becoming the surfaced error.
+    if (holds.degradation !== null) {
+      this.onBulkDegraded(holds.degradation.message, holds.degradation.cause);
+    }
+    if (supplierConfirmations.degradation !== null) {
+      this.onBulkDegraded(
+        supplierConfirmations.degradation.message,
+        supplierConfirmations.degradation.cause,
+      );
     }
 
-    return { inventory, holds, supplierConfirmations };
+    return {
+      inventory,
+      holds: holds.value,
+      supplierConfirmations: supplierConfirmations.value,
+    };
   }
 
   private async readProductFacts(

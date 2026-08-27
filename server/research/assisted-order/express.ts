@@ -56,16 +56,31 @@ export type AssistedOrderViewerWiring = Readonly<{
   /** The observed Early Access door sources, or null before registration. */
   earlyAccess(): Readonly<{
     identity: { resolve(input: Readonly<{ cookieHeader: unknown }>): Promise<unknown> };
+    resolveSession: (
+      cookieHeader: unknown,
+    ) => Promise<{ authenticated: boolean }>;
     readSessionId: (cookieHeader: unknown) => string | null;
+  }> | null;
+  /**
+   * The durable, server-owned member/customer binding directory. The Early
+   * Access route projection intentionally exposes no email address, so a member
+   * may borrow a session's agreement standing only when this directory binds
+   * that exact opaque customer handle to the authenticated member id.
+   */
+  earlyAccessBindings(): Readonly<{
+    forCustomer(customerRef: string): Promise<
+      | Readonly<{ ok: true; binding: Readonly<{ memberId: string }> }>
+      | Readonly<{ ok: false }>
+    >;
   }> | null;
   adminEmail(): string;
 }>;
 
-function normalizedEmailOf(candidate: unknown): string | null {
+function customerRefOf(candidate: unknown): string | null {
   if (typeof candidate !== "object" || candidate === null) return null;
-  const email = (candidate as Record<string, unknown>).email;
-  return typeof email === "string" && email.trim().length > 0
-    ? email.trim().toLowerCase()
+  const customerRef = (candidate as Record<string, unknown>).customerRef;
+  return typeof customerRef === "string" && customerRef.trim().length > 0
+    ? customerRef.trim()
     : null;
 }
 
@@ -77,12 +92,59 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
   const resolvers = {
     async customer(req: Request): Promise<AssistedOrderViewer> {
       const member = await wiring.resolveMember(req);
+      const doors = wiring.earlyAccess();
+      const cookieHeader = req.headers.cookie;
+      let sessionId: string | null = null;
+      let earlyAccessCustomer: unknown = null;
+      if (doors) {
+        try {
+          const session = await doors.resolveSession(cookieHeader);
+          if (session.authenticated) {
+            sessionId = doors.readSessionId(cookieHeader);
+            if (sessionId !== null && sessionId.length > 0) {
+              earlyAccessCustomer = await doors.identity.resolve({ cookieHeader });
+            }
+          }
+        } catch {
+          // A member may still browse through their authenticated member row,
+          // but cannot submit without a resolvable Early Access customer and
+          // the durable agreement standing attached to it. Non-members fail
+          // closed to the capability-free viewer below.
+          earlyAccessCustomer = null;
+        }
+      }
       if (member) {
+        const memberEmail = member.email?.trim().toLowerCase() ?? null;
+        const earlyAccessCustomerRef = customerRefOf(earlyAccessCustomer);
+        let identitiesBound = false;
+        if (earlyAccessCustomerRef !== null && sessionId !== null) {
+          try {
+            const directory = wiring.earlyAccessBindings();
+            const resolution = directory
+              ? await directory.forCustomer(earlyAccessCustomerRef)
+              : null;
+            identitiesBound =
+              resolution?.ok === true &&
+              resolution.binding.memberId === member.id;
+          } catch {
+            // Binding infrastructure is authorization infrastructure. An
+            // unreadable answer is never treated as a match; the member may
+            // still browse with their own pricing grant, but submission stays
+            // closed and performs no write or notification.
+            identitiesBound = false;
+          }
+        }
         return Object.freeze({
           actorType: "member",
           memberId: member.id,
-          earlyAccessSessionHash: null,
-          normalizedEmail: member.email?.trim().toLowerCase() ?? null,
+          earlyAccessSessionHash:
+            identitiesBound && sessionId
+              ? createHash("sha256").update(sessionId, "utf8").digest("hex")
+              : null,
+          earlyAccessCustomerRef: identitiesBound
+            ? earlyAccessCustomerRef
+            : null,
+          normalizedEmail: memberEmail,
           capabilities: CUSTOMER_CAPABILITIES,
           // Carried, never derived here: the wiring built this from the same
           // member row it resolved above. Early Access and anonymous viewers
@@ -90,23 +152,21 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
           pricingViewer: member.pricingViewer ?? null,
         }) as AssistedOrderViewer;
       }
-      const doors = wiring.earlyAccess();
-      if (doors) {
-        const cookieHeader = req.headers.cookie;
-        const sessionId = doors.readSessionId(cookieHeader);
-        if (sessionId !== null && sessionId.length > 0) {
-          const customer = await doors.identity.resolve({ cookieHeader });
-          if (customer !== null) {
-            return Object.freeze({
-              actorType: "early_access_session",
-              memberId: null,
-              earlyAccessSessionHash: createHash("sha256")
-                .update(sessionId, "utf8")
-                .digest("hex"),
-              normalizedEmail: normalizedEmailOf(customer),
-              capabilities: CUSTOMER_CAPABILITIES,
-            }) as AssistedOrderViewer;
-          }
+      if (doors && sessionId !== null && sessionId.length > 0) {
+        if (earlyAccessCustomer !== null) {
+          return Object.freeze({
+            actorType: "early_access_session",
+            memberId: null,
+            earlyAccessSessionHash: createHash("sha256")
+              .update(sessionId, "utf8")
+              .digest("hex"),
+            earlyAccessCustomerRef: customerRefOf(earlyAccessCustomer),
+            // The EarlyAccessCustomer contract deliberately exposes no email.
+            // Contact email is validated from the request body later; it is
+            // never an identity or authorization input here.
+            normalizedEmail: null,
+            capabilities: CUSTOMER_CAPABILITIES,
+          }) as AssistedOrderViewer;
         }
       }
       // Anonymous: a real viewer object with no capabilities, so the service
@@ -117,6 +177,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
         actorType: "early_access_session",
         memberId: null,
         earlyAccessSessionHash: null,
+        earlyAccessCustomerRef: null,
         normalizedEmail: null,
         capabilities: new Set<string>(),
       }) as AssistedOrderViewer;
@@ -130,6 +191,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
         actorType: "admin",
         memberId: null,
         earlyAccessSessionHash: null,
+        earlyAccessCustomerRef: null,
         normalizedEmail: wiring.adminEmail() || null,
         actorLabel: wiring.adminEmail() || "admin",
         capabilities: ADMIN_CAPABILITIES,

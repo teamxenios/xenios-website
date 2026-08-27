@@ -442,26 +442,30 @@ describe("cross-lane agreement", () => {
     }
   });
 
-  it("records the two provider-domain families this lane refuses and the assisted-order lane does not", () => {
-    // A real, currently harmless gap, kept visible rather than asserted away.
-    //
-    // This lane refuses `clinician_guided_care` and `provider_network` on
-    // family; the assisted-order lane names only `clinical_formulations_503a`,
-    // so it would call a priced, bound row in either family direct-eligible.
-    // That file belongs to another lane and this one may not edit it, so the
-    // gap is handed over rather than patched from here.
-    //
-    // It is inert only because neither family has a published variant. The
-    // second half of this test is the tripwire: publish one, and this fails
-    // before the disagreement can reach a customer.
+  it("keeps every provider-domain family aligned before unpublished families gain variants", () => {
+    // Both lanes now consume the same canonical family authority. The two
+    // provider-domain families without published rows stay named explicitly:
+    // their absence explains why this repair changes no current catalog row,
+    // while the all-family assertion proves either one will enter Care rather
+    // than direct ordering the moment Product Control publishes it.
     const diverging = [...PROVIDER_PATHWAY_FAMILIES].filter(
       (family) => !assistedOrderRequiresProvider(family, "available_now"),
     );
-    expect(diverging.sort()).toEqual(["clinician_guided_care", "provider_network"]);
+    expect(diverging).toEqual([]);
 
     const published = new Set(realCatalogVariants().map((row) => row.family));
-    for (const family of diverging) {
-      expect(published.has(family)).toBe(false);
+    const unpublishedProviderFamilies = [...PROVIDER_PATHWAY_FAMILIES]
+      .filter((family) => !published.has(family))
+      .sort();
+    expect(unpublishedProviderFamilies).toEqual([
+      "clinician_guided_care",
+      "provider_network",
+    ]);
+
+    for (const family of PROVIDER_PATHWAY_FAMILIES) {
+      for (const state of MASTER_OFFERING_DISPLAY_STATES) {
+        expect(assistedOrderRequiresProvider(family, state)).toBe(true);
+      }
     }
   });
 });

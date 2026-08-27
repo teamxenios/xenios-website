@@ -445,7 +445,9 @@ describe("signed in, but not verified against an approved account", () => {
     await settle();
 
     expect(accepted).toEqual([]);
-    expect(seen).toEqual(["unverified"]);
+    // Initial required standing clears any stale outer block; the server's
+    // unverified submit result then closes continuation again.
+    expect(seen).toEqual([null, "unverified"]);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
   });
 });

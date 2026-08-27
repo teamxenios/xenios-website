@@ -1,0 +1,10 @@
+{
+  "id": "codex-step1-live-hotfix-20260825",
+  "tool": "Codex",
+  "lane": "step1-live-ux-performance-hotfix",
+  "branch": "hotfix/xenios-research-live-ux-performance-20260825",
+  "state": "active",
+  "startedAt": "2026-08-25T16:30:30.865Z",
+  "heartbeatAt": "2026-08-25T16:50:17.633Z",
+  "note": "Focused server/UI hardening green: canonical reviewed hold wired, filter tampering rejected, truthful loading/error/empty states, obsolete requests aborted, canonical catalog moved ahead of heavier Featured projection. Browser QA and full suite pending."
+}

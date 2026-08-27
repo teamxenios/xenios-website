@@ -1,5 +1,6 @@
 import {
   AssistedOrderValidationError,
+  isAssistedOrderActionGroup,
   isAssistedOrderStatus,
   isAssistedOrderWorkflowMode,
   type AssistedOrderCatalogQuery,
@@ -8,6 +9,7 @@ import {
   type AssistedOrderUploadRequest,
 } from "../../../shared/research/assisted-order/contract";
 import {
+  AssistedOrderAgreementRequiredError,
   AssistedOrderAuthorizationError,
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
@@ -71,12 +73,29 @@ function parsePositiveInt(
 function catalogQuery(
   request: AssistedOrderHttpRequest,
 ): AssistedOrderCatalogQuery {
+  const action = request.query.action?.trim();
+  if (action && !isAssistedOrderActionGroup(action)) {
+    throw new AssistedOrderValidationError(
+      "action",
+      "Choose a valid catalog action.",
+    );
+  }
+  const workflowMode = request.query.workflowMode?.trim();
+  if (workflowMode && !isAssistedOrderWorkflowMode(workflowMode)) {
+    throw new AssistedOrderValidationError(
+      "workflowMode",
+      "Choose a valid catalog workflow.",
+    );
+  }
   return Object.freeze({
     search: request.query.q?.trim() || undefined,
     family: request.query.family?.trim() || undefined,
     channel: request.query.channel?.trim() || undefined,
-    workflowMode: isAssistedOrderWorkflowMode(request.query.workflowMode)
-      ? request.query.workflowMode
+    actionGroup: isAssistedOrderActionGroup(action)
+      ? action
+      : undefined,
+    workflowMode: isAssistedOrderWorkflowMode(workflowMode)
+      ? workflowMode
       : undefined,
     page: parsePositiveInt(request.query.page, 1, 100_000),
     pageSize: parsePositiveInt(request.query.pageSize, 24, 100),
@@ -95,6 +114,12 @@ function errorResponse(error: unknown): AssistedOrderHttpResponse {
     return ok(403, {
       error: "forbidden",
       message: "This request is not authorized.",
+    });
+  }
+  if (error instanceof AssistedOrderAgreementRequiredError) {
+    return ok(403, {
+      error: "agreement_required",
+      message: "Accept the current Research Use Policy before submitting.",
     });
   }
   if (error instanceof AssistedOrderNotFoundError) {

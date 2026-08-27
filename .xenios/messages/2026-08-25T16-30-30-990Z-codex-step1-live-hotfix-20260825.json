@@ -1,0 +1,7 @@
+{
+  "id": "ec7d2db5-c8b0-4df8-a778-b5c5d5fe601f",
+  "from": "codex-step1-live-hotfix-20260825",
+  "to": "all",
+  "text": "Founder approved df16b3639fbe49f39aee744d0823d01474580026 as exact Step 1 hotfix base. Codex owns the new isolated branch hotfix/xenios-research-live-ux-performance-20260825. Preserving recruiting-mail; no production mutation. I will reuse the prior handed-off live-UX paths and avoid active master-offerings/catalog-display and e2e/browser-perf leases unless explicitly transferred.",
+  "createdAt": "2026-08-25T16:30:30.992Z"
+}
