@@ -97,10 +97,12 @@ export function canonicalizeInterest(interest: string): string | null {
  * collapse to one person; control/format characters (bidi overrides included)
  * are stripped so no invisible character can split or spoof an identity.
  */
+const NAME_CONTROL_AND_FORMAT = new RegExp("[\\p{Cc}\\p{Cf}]", "gu");
+
 export function normalizedNameKey(name: string): string {
   return name
     .normalize("NFKC")
-    .replace(/[\p{Cc}\p{Cf}]/gu, "")
+    .replace(NAME_CONTROL_AND_FORMAT, "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, " ");

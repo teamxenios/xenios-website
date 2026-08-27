@@ -63,11 +63,15 @@ export type ImportDryRunOutcome = Readonly<{
 export const MAX_NAME_CHARS = 200;
 export const MAX_PRODUCT_CHARS = 500;
 
+// RegExp constructors, not literals: the repo's TS target predates the `u`
+// flag in literals; Node 20 executes these natively either way.
+const CONTROL_AND_FORMAT = new RegExp("[\\p{Cc}\\p{Cf}]", "gu");
+
 /** NFKC + strip control/format characters + collapse whitespace + trim. */
 export function sanitizeImportText(value: string): string {
   return value
     .normalize("NFKC")
-    .replace(/[\p{Cc}\p{Cf}]/gu, "")
+    .replace(CONTROL_AND_FORMAT, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -92,8 +96,10 @@ function withoutSuffix(nameKey: string): string {
     : nameKey;
 }
 
+const NON_LETTER_DIGIT_SPACE = new RegExp("[^\\p{L}\\p{N} ]", "gu");
+
 function punctuationStripped(nameKey: string): string {
-  return nameKey.replace(/[^\p{L}\p{N} ]/gu, "");
+  return nameKey.replace(NON_LETTER_DIGIT_SPACE, "");
 }
 
 export function runImportDryRun(input: ImportDryRunInput): ImportDryRunOutcome {
