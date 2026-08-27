@@ -47,11 +47,14 @@ export function CurrentDemandCollection({
   title = "Current client demand",
   lead = "A priority collection organized by verified catalog pathways and current activation status.",
   showFilters = true,
+  headingId = "current-demand-title",
 }: {
   items: readonly PriorityCatalogItem[];
   title?: string;
   lead?: string;
   showFilters?: boolean;
+  /** Unique per mount: a page rendering two collections must pass distinct ids. */
+  headingId?: string;
 }) {
   const [lane, setLane] = useState<CatalogPriorityLane | "All">("All");
   const visibleItems = useMemo(
@@ -60,11 +63,11 @@ export function CurrentDemandCollection({
   );
 
   return (
-    <section aria-labelledby="current-demand-title" className="catalog-priority">
+    <section aria-labelledby={headingId} className="catalog-priority">
       <div className="catalog-priority-heading">
         <div>
           <p className="account-section-label">Priority collection</p>
-          <h2 id="current-demand-title" className="account-section-title">{title}</h2>
+          <h2 id={headingId} className="account-section-title">{title}</h2>
           <p className="body-s text-ink-2 mt-2 max-w-[70ch]">{lead}</p>
         </div>
         <p className="mono-label text-ink-mute">No demand counts shown</p>

@@ -181,6 +181,7 @@ export function AccountOverviewView({
         <CurrentDemandCollection
           items={savedInterestItems(productInterests)}
           title="Your saved interests"
+          headingId="saved-interests-title"
           lead="Availability follows the current Research or Care pathway for each item. No interest is automatically an order."
           showFilters={false}
         />
@@ -197,6 +198,7 @@ export function AccountOverviewView({
           <CurrentDemandCollection
             items={projectDemandDefinitions(catalogPriority.statuses)}
             title="Current availability priorities"
+            headingId="availability-priorities-title"
             lead="Statuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it."
             showFilters={false}
           />
@@ -204,6 +206,7 @@ export function AccountOverviewView({
             <CurrentDemandCollection
               items={projectActivationQueue(catalogPriority.queue)}
               title="Exact variants pending activation"
+              headingId="pending-activation-queue-title"
               lead="These exact formulations are recorded for verification and are not orderable."
               showFilters={false}
             />

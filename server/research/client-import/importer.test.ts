@@ -111,7 +111,7 @@ describe("runImportDryRun — rejection accounting (never silent)", () => {
   it("rejects whitespace-only names explicitly and counts them", () => {
     const { report } = run([
       { name: "   ", product: "DSIP" },
-      { name: "\t​‮", product: "DSIP" }, // zero-width + bidi override only
+      { name: "\t\u200b\u202e", product: "DSIP" }, // zero-width + bidi override only
       { name: "Alex Fixture", product: "DSIP" },
     ]);
     expect(report.rejectedRows).toBe(2);
@@ -230,7 +230,10 @@ describe("runImportDryRun — the report boundary", () => {
 
 describe("sanitizers", () => {
   it("sanitizeImportText strips control and bidi characters and collapses whitespace", () => {
-    expect(sanitizeImportText("  A‮ B \t C  ")).toBe("AB C");
+    // The dirty input is built programmatically: source-auditability forbids
+    // raw control/bidi bytes in source files, which is itself the point.
+    const dirty = "  A" + String.fromCharCode(0x202e, 0) + "B \t C  ";
+    expect(sanitizeImportText(dirty)).toBe("AB C");
   });
 
   it("isFormulaLike flags the CSV-injection alphabet but not negative-number-looking strings", () => {
