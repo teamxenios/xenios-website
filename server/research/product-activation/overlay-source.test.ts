@@ -1,3 +1,6 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { activationStatusFor, loadActivationOverlay, overlayEntryFor } from "./overlay-source";
@@ -44,6 +47,13 @@ describe("activation overlay config (2026-08-26)", () => {
     expect(overlayEntryFor(overlay, "GRP-XXXX")).toBeNull();
   });
 
+  it("an unknown groupId leaves the base because the overlay ASSERTS nothing there", () => {
+    // Absence of an overlay entry means the reviewed base stands — that is
+    // the correct reading of "no additional claim". Contrast with the strict
+    // suite below: a PRESENT-but-unreadable claim refuses the whole load.
+    expect(activationStatusFor(overlay, "GRP-NOT-RECORDED", "held")).toBe("held");
+  });
+
   it("the queue carries the exact 13 blitz verification items", () => {
     const labels = overlay.queue.map((q) => q.label).join(" | ");
     for (const marker of [
@@ -59,5 +69,85 @@ describe("activation overlay config (2026-08-26)", () => {
     ]) {
       expect(labels).toContain(marker);
     }
+  });
+});
+
+// P1-7 (2026-08-27): malformed config FAILS CLOSED. A present-but-unreadable
+// claim refuses the entire load — nothing degrades to "none", no entry is
+// silently dropped, no hold is silently lost.
+describe("activation overlay config — strict parsing (fail closed)", () => {
+  function writeConfig(json: unknown): { root: string; rel: string } {
+    const root = mkdtempSync(join(tmpdir(), "overlay-strict-"));
+    const rel = "overlay.json";
+    writeFileSync(join(root, rel), JSON.stringify(json), "utf8");
+    return { root, rel };
+  }
+
+  const VALID_ENTRY = {
+    groupId: "GRP-0001",
+    label: "Fixture product",
+    confirmationBasis: "verbal",
+    confirmedBy: "Fixture partner",
+    confirmedAt: "2026-08-27T00:00:00.000Z",
+    checklist: {},
+    founderActivationApproval: null,
+    held: false,
+  };
+
+  it("accepts a strictly-valid config", () => {
+    const { root, rel } = writeConfig({ recordedOn: "2026-08-27", entries: [VALID_ENTRY], activationQueue: [] });
+    const parsed = loadActivationOverlay(root, rel);
+    expect(parsed.entries).toHaveLength(1);
+    expect(parsed.entries[0]?.confirmationBasis).toBe("verbal");
+  });
+
+  it("refuses a typo'd basis instead of degrading it to none", () => {
+    for (const basis of ["Verbal", "VERBAL", "documented ", "verbal​", 1, null, undefined]) {
+      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, confirmationBasis: basis }] });
+      expect(() => loadActivationOverlay(root, rel), JSON.stringify(basis)).toThrow(/confirmationBasis/);
+    }
+  });
+
+  it("refuses a non-boolean held flag instead of silently losing the hold", () => {
+    for (const held of ["true", 1, "yes", null, undefined]) {
+      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, held }] });
+      expect(() => loadActivationOverlay(root, rel), JSON.stringify(held)).toThrow(/held/);
+    }
+  });
+
+  it("refuses a malformed entry instead of dropping it", () => {
+    for (const entry of ["not-an-object", { ...VALID_ENTRY, groupId: "" }, { ...VALID_ENTRY, label: 7 }]) {
+      const { root, rel } = writeConfig({ entries: [entry] });
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/malformed/);
+    }
+  });
+
+  it("refuses an unreadable checklist and unknown checklist fields", () => {
+    for (const checklist of ["nope", 3, ["a"], { unknownField: "x" }, { exactStrength: 5 }]) {
+      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, checklist }] });
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/checklist/);
+    }
+  });
+
+  it("refuses a malformed founder approval record", () => {
+    for (const approval of ["Samuel", { approvedBy: "F" }, { approvedAt: "2026-08-27" }, 7]) {
+      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, founderActivationApproval: approval }] });
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/founderActivationApproval/);
+    }
+  });
+
+  it("refuses malformed queue items and non-array sections", () => {
+    expect(() => {
+      const { root, rel } = writeConfig({ entries: "x" });
+      loadActivationOverlay(root, rel);
+    }).toThrow(/entries/);
+    expect(() => {
+      const { root, rel } = writeConfig({ activationQueue: [{ queueId: 1, label: "x" }] });
+      loadActivationOverlay(root, rel);
+    }).toThrow(/queueId/);
+    expect(() => {
+      const { root, rel } = writeConfig({ activationQueue: [{ queueId: "Q-1", label: "x", basis: "maybe" }] });
+      loadActivationOverlay(root, rel);
+    }).toThrow(/confirmationBasis/);
   });
 });

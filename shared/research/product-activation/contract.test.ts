@@ -179,3 +179,80 @@ describe("isMoreRestrictive", () => {
     expect(isMoreRestrictive("verbally_confirmed_pending_documentation", "pending_pharmacy_activation")).toBe(true);
   });
 });
+
+// P1-7 (2026-08-27): the FULL Cartesian sweep. Every base status × every
+// basis × complete/incomplete checklist × approval present/absent × held
+// flag — and for every single combination, the resolved status is never more
+// permissive than the base. The exact-value assertions per branch live in the
+// suites above; this suite pins the INVARIANT so no future branch can escape.
+describe("resolveActivationStatus — monotonic restriction, exhaustively", () => {
+  const bases = PRODUCT_ACTIVATION_STATUSES;
+  const bases_and_overlays: Array<[string, ActivationOverlayEntry | null]> = [
+    ["no overlay", null],
+    ["basis none", entry({ confirmationBasis: "none" })],
+    ["verbal incomplete", entry({ confirmationBasis: "verbal" })],
+    ["verbal complete", entry({ confirmationBasis: "verbal", checklist: COMPLETE_CHECKLIST })],
+    ["verbal complete approved", entry({
+      confirmationBasis: "verbal",
+      checklist: COMPLETE_CHECKLIST,
+      founderActivationApproval: { approvedBy: "F", approvedAt: "2026-08-27T00:00:00.000Z" },
+    })],
+    ["documented incomplete", entry({ confirmationBasis: "documented" })],
+    ["documented incomplete approved", entry({
+      confirmationBasis: "documented",
+      founderActivationApproval: { approvedBy: "F", approvedAt: "2026-08-27T00:00:00.000Z" },
+    })],
+    ["documented complete unapproved", entry({ confirmationBasis: "documented", checklist: COMPLETE_CHECKLIST })],
+    ["documented complete approved", entry({
+      confirmationBasis: "documented",
+      checklist: COMPLETE_CHECKLIST,
+      founderActivationApproval: { approvedBy: "F", approvedAt: "2026-08-27T00:00:00.000Z" },
+    })],
+    ["held, none", entry({ held: true })],
+    ["held, documented complete approved", entry({
+      held: true,
+      confirmationBasis: "documented",
+      checklist: COMPLETE_CHECKLIST,
+      founderActivationApproval: { approvedBy: "F", approvedAt: "2026-08-27T00:00:00.000Z" },
+    })],
+  ];
+
+  it("no combination ever resolves MORE permissive than its base", () => {
+    for (const base of bases) {
+      for (const [label, overlay] of bases_and_overlays) {
+        const result = resolveActivationStatus(base, overlay);
+        expect(
+          isMoreRestrictive(base, result),
+          `base=${base} overlay=(${label}) resolved to ${result}, which is more permissive than the base`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it("held bases stay held and unavailable bases stay unavailable, whatever the overlay says", () => {
+    for (const [label, overlay] of bases_and_overlays) {
+      expect(resolveActivationStatus("held", overlay), `held × ${label}`).toBe("held");
+      expect(resolveActivationStatus("unavailable", overlay), `unavailable × ${label}`).toBe("unavailable");
+    }
+  });
+
+  it("the documented branch no longer loosens: incomplete/unapproved over held-or-worse keeps the base", () => {
+    const documentedIncomplete = entry({ confirmationBasis: "documented" });
+    const documentedUnapproved = entry({ confirmationBasis: "documented", checklist: COMPLETE_CHECKLIST });
+    expect(resolveActivationStatus("held", documentedIncomplete)).toBe("held");
+    expect(resolveActivationStatus("unavailable", documentedIncomplete)).toBe("unavailable");
+    expect(resolveActivationStatus("held", documentedUnapproved)).toBe("held");
+    expect(resolveActivationStatus("unavailable", documentedUnapproved)).toBe("unavailable");
+    // A verbal base is already stricter than pending: it stays verbal.
+    expect(resolveActivationStatus("verbally_confirmed_pending_documentation", documentedIncomplete))
+      .toBe("verbally_confirmed_pending_documentation");
+    // On a merely-sellable base the documented ladder still restricts as before.
+    expect(resolveActivationStatus("request_only", documentedIncomplete)).toBe("pending_pharmacy_activation");
+    expect(resolveActivationStatus("live", documentedUnapproved)).toBe("pending_pharmacy_activation");
+  });
+
+  it("an overlay hold restricts a live base but cannot LOOSEN an unavailable base", () => {
+    expect(resolveActivationStatus("live", entry({ held: true }))).toBe("held");
+    expect(resolveActivationStatus("unavailable", entry({ held: true }))).toBe("unavailable");
+  });
+});

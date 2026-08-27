@@ -30,6 +30,20 @@ describe("priority catalog activation UX", () => {
     expect(activationPresentation("unavailable")).toMatchObject({ label: "Unavailable", actionLabel: null, actionable: false });
   });
 
+  // P1-7: held and unavailable never gain ANY action — not Buy Now, not
+  // Order Now, not Available/In Stock, and not Join availability list. The
+  // server resolver is monotonically restrictive; this pins the receiving side.
+  it("held and unavailable states are terminal: no CTA of any kind", () => {
+    for (const status of ["held", "unavailable"] as const) {
+      const presentation = activationPresentation(status);
+      expect(presentation.actionable, status).toBe(false);
+      expect(presentation.actionLabel, status).toBeNull();
+      for (const forbidden of ["Buy Now", "Order Now", "Available", "In Stock", "Join availability list"]) {
+        expect(presentation.label, `${status} label must not read as ${forbidden}`).not.toContain(forbidden);
+      }
+    }
+  });
+
   it("never presents provider-required or pending products as live", async () => {
     const items: readonly PriorityCatalogItem[] = [
       { key: "provider", title: "Example provider item", formulation: null, lanes: ["Provider / Care"], activationStatus: "provider_required", detailsPath: null, actionPath: "/research/account/care" },

@@ -135,43 +135,48 @@ export function isMoreRestrictive(a: ProductActivationStatus, b: ProductActivati
 /**
  * Resolve the account/catalog-facing activation status for one product.
  *
- * Fail-closed rules, in order:
- *   1. An explicit hold is final.
- *   2. No overlay entry ⇒ the base status stands, except that a base of
- *      "live" additionally requires the founder release ledger (enforced
- *      elsewhere) — this function never invents live.
- *   3. A verbal-only confirmation projects
+ * THE ONE INVARIANT (P1-7, 2026-08-27): the final status is NEVER more
+ * permissive than the base. The overlay may restrict; it may never
+ * liberalize. `held` stays held and `unavailable` stays unavailable no
+ * matter what an overlay entry claims — changing a canonical base state is a
+ * separately authorized act on the base catalog, not an overlay side effect.
+ * The final clamp below enforces this for every branch, so no future branch
+ * can reintroduce the defect the adversarial review found (a documented
+ * overlay resolving a held/unavailable base down to
+ * pending_pharmacy_activation).
+ *
+ * Within that invariant, the ladder:
+ *   1. An explicit hold proposes "held".
+ *   2. Basis "none" proposes the base itself (the overlay asserts nothing).
+ *   3. A verbal-only confirmation proposes
  *      `verbally_confirmed_pending_documentation` — never live, never
  *      orderable — even if every checklist field were filled in.
- *   4. A documented confirmation with an incomplete checklist projects
- *      `pending_pharmacy_activation`.
- *   5. A complete checklist WITHOUT founder approval still projects
- *      `pending_pharmacy_activation`.
- *   6. Only documented basis + complete checklist + founder approval yields
- *      "live" — and only if the base state itself allows selling at all
- *      (a provider_required base stays provider_required until the base
- *      catalog changes; the overlay cannot skip the provider pathway).
+ *   4. A documented confirmation with an incomplete checklist, or without a
+ *      founder approval record, proposes `pending_pharmacy_activation`.
+ *   5. Documented + complete + approved proposes the base: the overlay is
+ *      satisfied and can only confirm what the catalog already permits —
+ *      it cannot skip the provider pathway, and it never invents live
+ *      (a live base additionally requires the founder release ledger,
+ *      enforced elsewhere).
  */
 export function resolveActivationStatus(
   base: ProductActivationStatus,
   overlay: ActivationOverlayEntry | null,
 ): ProductActivationStatus {
   if (overlay === null) return base;
-  if (overlay.held) return "held";
-  if (overlay.confirmationBasis === "none") return base;
-  if (overlay.confirmationBasis === "verbal") {
-    // Verbal information can only make the projection MORE cautious.
-    return isMoreRestrictive(base, "verbally_confirmed_pending_documentation")
-      ? base
-      : "verbally_confirmed_pending_documentation";
-  }
-  // documented:
-  const blockers = activationBlockers(overlay.checklist);
-  if (blockers.length > 0) return "pending_pharmacy_activation";
-  if (overlay.founderActivationApproval === null) return "pending_pharmacy_activation";
-  // Documented + complete + approved: the overlay is satisfied. The BASE still
-  // rules: it can only confirm what the catalog itself already permits.
-  return base;
+  const proposed = ((): ProductActivationStatus => {
+    if (overlay.held) return "held";
+    if (overlay.confirmationBasis === "none") return base;
+    if (overlay.confirmationBasis === "verbal") {
+      return "verbally_confirmed_pending_documentation";
+    }
+    // documented:
+    if (activationBlockers(overlay.checklist).length > 0) return "pending_pharmacy_activation";
+    if (overlay.founderActivationApproval === null) return "pending_pharmacy_activation";
+    return base;
+  })();
+  // The monotonic clamp: keep whichever of base/proposed is more restrictive.
+  return isMoreRestrictive(base, proposed) ? base : proposed;
 }
 
 /** True only when nothing stands between this entry and founder-approved life. */
