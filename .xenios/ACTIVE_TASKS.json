@@ -488,6 +488,37 @@
         "file": ".xenios/handoffs/2026-08-27T00-22-43-250Z-CLIENT-ACCOUNT-PORTAL-UI-20260826-codex-client-portal-20260826.md",
         "at": "2026-08-27T00:22:43.254Z"
       }
+    },
+    {
+      "id": "CLIENT-ACCOUNT-FINAL-INTEGRATION-20260827",
+      "title": "One production-shaped RC: release+hotfix reconciled, both lanes merged, seams registered, ports graduated, migration rehearsed, integrated browser QA",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "claude-fable-final-integrator-20260827",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/research/customer-account/**",
+        "server/research/product-activation/**",
+        "config/research/catalog-priority-projection-20260826.json",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/layout.tsx",
+        "client/src/research/account-portal/**",
+        "scripts/preview-account-portal.ts",
+        "docs/review/client-account-final-integration-20260826/**",
+        "docs/research/CLIENT_ACCOUNT_MIGRATION_REHEARSAL_2026-08-26.md",
+        "docs/research-launch/XENIOS_CLIENT_ACCOUNT_FINAL_INTEGRATION_RC_2026-08-27.md"
+      ],
+      "dependsOn": ["STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825", "CLIENT-ACCOUNT-PORTAL-UI-20260826"],
+      "pathsNote": "Release-authority integration pass per the 2026-08-26 blitz plan: the seam edits ride the protected-seam protocol with chained manifest notes. No deploy, no migration apply, no invitation, no activation, no production mutation. Founder decisions enumerated in the RC report section 26.",
+      "claimedAt": "2026-08-27T17:30:00.000Z",
+      "handoff": {
+        "session": "claude-fable-final-integrator-20260827",
+        "sha": "assigned-by-the-freezing-commit; origin-verified via ls-remote in the session report",
+        "file": ".xenios/handoffs/2026-08-27T21-45-00-000Z-CLIENT-ACCOUNT-FINAL-RC-claude-fable-final-integrator-20260827.md",
+        "at": "2026-08-27T21:45:00.000Z"
+      }
     }
   ]
 }

@@ -200,6 +200,16 @@
       "startedAt": "2026-08-26T22:19:54.746Z",
       "heartbeatAt": "2026-08-27T00:22:10.366Z",
       "note": "UI, tests, build, and responsive packet complete; preparing exact-SHA handoff"
+    },
+    {
+      "id": "claude-fable-final-integrator-20260827",
+      "tool": "claude",
+      "lane": "client-account-final-integration",
+      "branch": "integration/xenios-client-account-final-rc-20260826",
+      "state": "active",
+      "startedAt": "2026-08-27T17:30:00.000Z",
+      "heartbeatAt": "2026-08-27T21:30:00.000Z",
+      "note": "RC assembled: release 3daa3f4 + hotfix b8359eba reconciled at 6a2df29, Claude 42a3183 + Codex e376f80 merged, seams registered (manifest chained), ports graduated to durable sources, candidate SQL rehearsed on disposable PG, real Seth file dry-run aggregates reproduced (no names), integrated browser QA packet captured. No deploy, no migration apply, no invitation, no production mutation."
     }
   ]
 }

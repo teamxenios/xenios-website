@@ -130,6 +130,10 @@ export const PREVIEW_DOCUMENT_UUIDS: Readonly<Record<string, string>> = Object.f
   "doc-fixture-0002": "00000000-0000-4000-8000-000000000d02",
 });
 
+// Resolve the repo root from this file, not process.cwd(), so the preview
+// reads the real overlay/projection config no matter where it is launched.
+const PREVIEW_REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
 function previewPorts(): CustomerAccountPorts {
   const memory = createMemoryCustomerAccountPorts(defaultMemorySeeds());
   return {
@@ -165,7 +169,7 @@ function previewPorts(): CustomerAccountPorts {
         return null;
       },
     },
-    catalogPriority: createCatalogPriorityPort(process.cwd()),
+    catalogPriority: createCatalogPriorityPort(PREVIEW_REPO_ROOT),
   };
 }
 
