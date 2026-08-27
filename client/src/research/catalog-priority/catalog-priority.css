@@ -1,0 +1,39 @@
+.catalog-priority { min-width: 0; }
+.catalog-priority-heading { align-items: end; display: flex; gap: 20px; justify-content: space-between; }
+.catalog-priority-filters { display: flex; gap: 7px; margin: 20px 0; overflow-x: auto; padding: 2px 2px 8px; }
+.catalog-priority-filters button {
+  background: #fff;
+  border: 1px solid var(--account-rule, var(--rule));
+  color: var(--ink-2);
+  cursor: pointer;
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.catalog-priority-filters button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.catalog-priority-filters .catalog-priority-filter-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.catalog-priority-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 20px 0 0; padding: 0; }
+.catalog-priority-card { align-content: start; display: grid; gap: 13px; }
+.catalog-priority-card > * { min-width: 0; }
+.catalog-priority-card-top { align-items: flex-start; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+.catalog-priority-card-top .account-section-label { overflow-wrap: anywhere; }
+.catalog-priority-card-top .ra-badge { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+.catalog-priority-lanes { display: flex; flex-wrap: wrap; gap: 5px; min-height: 22px; }
+.catalog-priority-lanes span { border-left: 1px solid var(--rule); color: var(--ink-mute); font-size: 11px; padding-left: 7px; }
+.catalog-priority-action { align-self: end; margin-top: 6px; min-height: 44px; }
+.catalog-priority-action.btn {
+  height: auto;
+  overflow-wrap: anywhere;
+  padding-block: 12px;
+  text-align: left;
+  white-space: normal;
+}
+@media (max-width: 980px) { .catalog-priority-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) {
+  .catalog-priority-heading { align-items: flex-start; display: block; }
+  .catalog-priority-heading > .mono-label { margin-top: 12px; }
+  .catalog-priority-grid { grid-template-columns: minmax(0, 1fr); }
+  .catalog-priority-action.btn { width: 100%; }
+}

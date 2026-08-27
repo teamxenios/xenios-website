@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T19:55:00Z",
+  "updatedAt": "2026-08-26T22:20:00Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -463,6 +463,31 @@
       "dependsOn": [],
       "pathsNote": "Founder approved df16b3639fbe49f39aee744d0823d01474580026 as the exact base. Preserve recruiting-mail functionality. No deployment, production mutation, catalog-data release, pricing, payment, affiliate economics, migration, Care buildout, or unrelated cleanup. Active master-offerings/catalog-display and e2e/browser-perf leases remain excluded.",
       "claimedAt": "2026-08-25T16:30:48.141Z"
+    },
+    {
+      "id": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
+      "title": "Build the synthetic-data customer account portal, current-demand catalog presentation, and admin import review UI",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-client-portal-20260826",
+      "paths": [
+        "client/src/research/account/**",
+        "client/src/research/account-portal/**",
+        "client/src/research/catalog-priority/**",
+        "client/src/research/pages/adminx/client-imports/**",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "docs/review/client-account-portal-20260826/**"
+      ],
+      "dependsOn": [],
+      "pathsNote": "Authorized by C:/Users/sboad/projects/XENIOS_WEBSITE_BLITZ_20260826/COORDINATION.md. The section.tsx and routes.ts lease is limited to minimal /research/account/* registration. Organization reads remain optional; no Pack 02 schema dependency is introduced.",
+      "claimedAt": "2026-08-26T22:20:42.465Z",
+      "handoff": {
+        "session": "codex-client-portal-20260826",
+        "sha": "f6aa32dee7400af5ac9cdacfcae8e4c6f8972657",
+        "file": ".xenios/handoffs/2026-08-27T00-22-43-250Z-CLIENT-ACCOUNT-PORTAL-UI-20260826-codex-client-portal-20260826.md",
+        "at": "2026-08-27T00:22:43.254Z"
+      }
     }
   ]
 }

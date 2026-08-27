@@ -1,0 +1,5 @@
+body { background: #f8f7f3; }
+.account-review-root { min-height: 100vh; }
+.account-review-admin { margin-inline: auto; max-width: 1180px; padding: clamp(24px, 5vw, 64px) 20px; }
+@media (max-width: 520px) { .account-review-admin { padding-inline: 12px; } }
+

@@ -47,17 +47,25 @@ const AssistedOrderStatusPage = lazy(() =>
     default: m.AssistedOrderStatusPage,
   })),
 );
-// The unified account and organization page family stays UNMOUNTED here on
-// purpose: production holds only one of the eight Pack 02 tables, so the
-// account context read fails against the live database. The complete mounting
-// is parked on branch fable/pack02-account-mount and lands immediately after
-// the Pack 02 schema arrives through the governed migration chain.
+// The organization account family stays unmounted until Pack 02 lands. The
+// personal customer portal below is independent: its customer-account APIs
+// require a member and return personal projections even when organization
+// reads are unavailable.
 // The dynamic import itself sits behind the DEV flag, not just the route: a
 // top-level lazy() emits the gallery chunk even when the route is compiled
 // out, so the fixture code would still ship. With import.meta.env.DEV a
 // static false in production, the whole branch is dead code and the chunk is
 // never generated.
 const DevGallery = import.meta.env.DEV ? lazy(() => import("./gallery")) : null;
+
+// Personal customer account portal. Each page is code-split and every API
+// projection is guarded by the existing RequireMember boundary.
+const AccountOverview = lazy(() => import("./account/AccountOverview"));
+const AccountOrders = lazy(() => import("./account/AccountOrders"));
+const AccountSubscription = lazy(() => import("./account/AccountSubscription"));
+const AccountCare = lazy(() => import("./account/AccountCare"));
+const AccountDocuments = lazy(() => import("./account/AccountDocuments"));
+const AccountSupport = lazy(() => import("./account/AccountSupport"));
 
 export function LegacyMemberWelcome() {
   const { member, memberChecking } = useResearch();
@@ -317,6 +325,14 @@ export default function ResearchSection() {
           {DevGallery && (
             <Route path="/research/__gallery/:page">{() => <L component={DevGallery} />}</Route>
           )}
+
+          {/* Personal customer account: no organization-table dependency. */}
+          <Route path="/research/account/orders">{() => <L member component={AccountOrders} />}</Route>
+          <Route path="/research/account/subscription">{() => <L member component={AccountSubscription} />}</Route>
+          <Route path="/research/account/care">{() => <L member component={AccountCare} />}</Route>
+          <Route path="/research/account/documents">{() => <L member component={AccountDocuments} />}</Route>
+          <Route path="/research/account/support">{() => <L member component={AccountSupport} />}</Route>
+          <Route path="/research/account">{() => <L member component={AccountOverview} />}</Route>
 
 
           {/* The private member website */}

@@ -190,6 +190,16 @@
       "startedAt": "2026-08-26T22:16:58.846Z",
       "heartbeatAt": "2026-08-26T23:06:54.515Z",
       "note": "LANE COMPLETE f4e916f origin-verified. Gap report fe3b9f8, 54 tests, tsc clean, handoff written. Awaiting Codex UI lane + one controlled integration pass (release authority owns server/index.ts wiring)."
+    },
+    {
+      "id": "codex-client-portal-20260826",
+      "tool": "Codex",
+      "lane": "client-portal-ui",
+      "branch": "codex/xenios-client-portal-catalog-20260826",
+      "state": "active",
+      "startedAt": "2026-08-26T22:19:54.746Z",
+      "heartbeatAt": "2026-08-27T00:22:10.366Z",
+      "note": "UI, tests, build, and responsive packet complete; preparing exact-SHA handoff"
     }
   ]
 }
