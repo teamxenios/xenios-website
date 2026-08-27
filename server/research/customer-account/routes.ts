@@ -35,7 +35,9 @@ export interface CustomerAccountGuards {
 
 const BASE = "/api/research/customer-account";
 
-export const CUSTOMER_ACCOUNT_PATHS = Object.freeze({
+// A plain `as const` literal (not Object.freeze) so the route-uniqueness
+// acceptance scanner can statically resolve every registration path.
+export const CUSTOMER_ACCOUNT_PATHS = {
   overview: `${BASE}/overview`,
   orders: `${BASE}/orders`,
   subscription: `${BASE}/subscription`,
@@ -43,7 +45,7 @@ export const CUSTOMER_ACCOUNT_PATHS = Object.freeze({
   documents: `${BASE}/documents`,
   support: `${BASE}/support`,
   catalogPriority: `${BASE}/catalog-priority`,
-});
+} as const;
 
 function memberKeyOf(req: Request): string | null {
   const member = (req as { researchMember?: { id?: unknown } }).researchMember;

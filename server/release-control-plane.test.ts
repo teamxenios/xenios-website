@@ -1695,8 +1695,20 @@ describe("route uniqueness validator", () => {
     // is not called from server/index.ts, so none of these are reachable in any
     // deployment. They are counted here so that mounting them later is a visible
     // move rather than a silent one.
-    expect(result.callSites).toBe(387);
-    expect(result.routes).toHaveLength(396);
+    // +12 (the customer-account release integration, 2026-08-27): nine
+    // member-guarded customer-account registrations under
+    // server/research/customer-account/routes.ts — GET overview/orders/
+    // subscription/care/documents/support/catalog-priority, GET
+    // documents/:documentId (ownership-scoped bytes), POST support — and the
+    // three requireSupabaseAdmin client-import doors under
+    // server/research/client-import/admin-routes.ts (POST dry-run, GET
+    // :batchId, GET list). ALL TWELVE ARE MOUNTED from server/index.ts with
+    // the manifest seam notes of the same date; the member surface is
+    // additionally admitted through the research wall's exact-path
+    // customer-account entries (member-session-wall.test.ts pins both
+    // directions).
+    expect(result.callSites).toBe(399);
+    expect(result.routes).toHaveLength(408);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
