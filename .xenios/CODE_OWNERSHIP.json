@@ -302,7 +302,7 @@
         "client/src/research/lib/routes.ts",
         "docs/review/client-account-portal-20260826/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-26T22:20:42.475Z",
       "heartbeatAt": "2026-08-27T00:22:10.366Z"
     }

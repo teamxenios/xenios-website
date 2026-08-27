@@ -443,7 +443,7 @@
       "id": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
       "title": "Build the synthetic-data customer account portal, current-demand catalog presentation, and admin import review UI",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-client-portal-20260826",
       "paths": [
         "client/src/research/account/**",
@@ -456,7 +456,13 @@
       ],
       "dependsOn": [],
       "pathsNote": "Authorized by C:/Users/sboad/projects/XENIOS_WEBSITE_BLITZ_20260826/COORDINATION.md. The section.tsx and routes.ts lease is limited to minimal /research/account/* registration. Organization reads remain optional; no Pack 02 schema dependency is introduced.",
-      "claimedAt": "2026-08-26T22:20:42.465Z"
+      "claimedAt": "2026-08-26T22:20:42.465Z",
+      "handoff": {
+        "session": "codex-client-portal-20260826",
+        "sha": "f6aa32dee7400af5ac9cdacfcae8e4c6f8972657",
+        "file": ".xenios/handoffs/2026-08-27T00-22-43-250Z-CLIENT-ACCOUNT-PORTAL-UI-20260826-codex-client-portal-20260826.md",
+        "at": "2026-08-27T00:22:43.254Z"
+      }
     }
   ]
 }
