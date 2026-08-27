@@ -75,9 +75,43 @@ describe("safeResearchReturnTo", () => {
   });
 });
 
+describe("safeResearchReturnTo for the account portal", () => {
+  it("allows exactly the six registered account-portal routes", () => {
+    for (const path of [
+      "/research/account",
+      "/research/account/orders",
+      "/research/account/subscription",
+      "/research/account/care",
+      "/research/account/documents",
+      "/research/account/support",
+    ]) {
+      expect(safeResearchReturnTo(path)).toBe(path);
+    }
+  });
+
+  it("keeps the allowlist closed: parked and unregistered account paths are rejected", () => {
+    expect(safeResearchReturnTo("/research/account/sign-in")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/claim-history")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/organizations/abc")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/nonexistent")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/orders/../../admin")).toBeNull();
+  });
+});
+
 describe("memberDestination", () => {
   it("allows active members to resume inside the member site", () => {
     expect(memberDestination(active, "/research/member/security")).toBe("/research/member/security");
+  });
+
+  it("returns an active member to the exact account-portal route they asked for", () => {
+    expect(memberDestination(active, "/research/account/orders")).toBe("/research/account/orders");
+    expect(memberDestination(active, "/research/account")).toBe("/research/account");
+  });
+
+  it("never lets an account returnTo bypass activation or billing routing", () => {
+    expect(memberDestination(pending, "/research/account/orders")).toBe("/research/activate");
+    expect(memberDestination(pastDue, "/research/account/orders"))
+      .toBe("/research/access-state?code=billing_past_due");
   });
 
   it("routes active members away from activation to the member site", () => {

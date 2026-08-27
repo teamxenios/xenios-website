@@ -3,10 +3,17 @@ import type {
   CustomerAccountOverviewDto,
   ProductInterestDto,
 } from "@shared/research/customer-account/contract";
-import type { ProductActivationStatus } from "@shared/research/product-activation/contract";
+import type {
+  CatalogPriorityDto,
+  ProductActivationStatus,
+} from "@shared/research/product-activation/contract";
 import { ResearchStatusBadge } from "../../ui/kit";
 import { CurrentDemandCollection } from "../../catalog-priority/CurrentDemandCollection";
-import type { PriorityCatalogItem } from "../../catalog-priority/priority-config";
+import {
+  projectActivationQueue,
+  projectDemandDefinitions,
+  type PriorityCatalogItem,
+} from "../../catalog-priority/priority-config";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { formatAccountDate, safeExternalUrl, sentenceCase, statusTone } from "../format";
 
@@ -39,7 +46,14 @@ function savedInterestItems(interests: readonly ProductInterestDto[]): readonly 
   }));
 }
 
-export function AccountOverviewView({ data }: { data: CustomerAccountOverviewDto }) {
+export function AccountOverviewView({
+  data,
+  catalogPriority,
+}: {
+  data: CustomerAccountOverviewDto;
+  /** Null/absent when the audited projection is unavailable — the section hides. */
+  catalogPriority?: CatalogPriorityDto | null;
+}) {
   const {
     identity,
     membership,
@@ -177,6 +191,25 @@ export function AccountOverviewView({ data }: { data: CustomerAccountOverviewDto
           <p className="body-s text-ink-2 mt-3">Availability requests can be reviewed with account support.</p>
         </section>
       )}
+
+      {catalogPriority ? (
+        <>
+          <CurrentDemandCollection
+            items={projectDemandDefinitions(catalogPriority.statuses)}
+            title="Current availability priorities"
+            lead="Statuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it."
+            showFilters={false}
+          />
+          {catalogPriority.queue.length ? (
+            <CurrentDemandCollection
+              items={projectActivationQueue(catalogPriority.queue)}
+              title="Exact variants pending activation"
+              lead="These exact formulations are recorded for verification and are not orderable."
+              showFilters={false}
+            />
+          ) : null}
+        </>
+      ) : null}
 
       <section className="account-grid account-grid-3" aria-label="Account resources">
         <Link className="account-surface" href={ACCOUNT_PORTAL_ROUTES.documents}>

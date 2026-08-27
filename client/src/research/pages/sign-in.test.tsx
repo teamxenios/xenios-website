@@ -185,6 +185,18 @@ describe("member sign-in", () => {
     expect(window.location.host).not.toBe("evil.example");
   });
 
+  it("returns an active member to the exact account-portal route they asked for", async () => {
+    const establish = vi.fn(async () => ({
+      firstName: "Avery",
+      status: "active",
+      applicationStatus: "approved",
+    }));
+    await renderSignIn(establish, "?returnTo=%2Fresearch%2Faccount%2Forders");
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/account/orders");
+  });
+
   it("routes a coded server refusal to its distinct screen without signing the session out", async () => {
     // The provider records the guard's machine-readable code (e.g. a
     // recovery-purpose session refused by /member/me); sign-in routes on it.

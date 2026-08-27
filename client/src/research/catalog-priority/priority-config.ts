@@ -81,3 +81,24 @@ export function projectDemandDefinitions(
   }));
 }
 
+/**
+ * The audited activation queue, served by the customer-account API with
+ * statuses only. Each item carries the overlay's own resolved status verbatim
+ * — never loosened here — so a verbal confirmation renders as documentation
+ * pending and a basis-less item renders unavailable. Nothing in this
+ * projection is orderable; the only action is the availability list.
+ */
+export function projectActivationQueue(
+  queue: readonly Readonly<{ key: string; title: string; status: ProductActivationStatus }>[],
+): readonly PriorityCatalogItem[] {
+  return queue.map((item) => ({
+    key: item.key,
+    title: item.title,
+    formulation: "Exact documentation required",
+    lanes: ["Request-only / Pending activation"],
+    activationStatus: item.status,
+    detailsPath: null,
+    actionPath: "/research/account/support",
+  }));
+}
+

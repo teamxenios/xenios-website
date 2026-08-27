@@ -70,6 +70,13 @@ describe("member persona states (RequireMember)", () => {
       .toBe("/research/member/security?from=expired-session");
   });
 
+  it("preserves an account-portal deep link through sign-in", () => {
+    renderGate(fixtureContext(null), "/research/account/orders");
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(new URLSearchParams(window.location.search).get("returnTo"))
+      .toBe("/research/account/orders");
+  });
+
   it("redirects a pending_activation member to the activation flow", () => {
     const view = renderGate(
       fixtureContext({ firstName: "Sam", status: "pending_activation", applicationStatus: "approved" }),

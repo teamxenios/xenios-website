@@ -8,6 +8,7 @@ import {
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
 import { useResearch } from "./core";
+import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
 // architecture):
@@ -32,6 +33,7 @@ const MEMBER_NAV = [
   { label: "Cart", href: "/research/member/cart" },
   { label: "Orders", href: "/research/member/orders" },
   { label: "Membership", href: "/research/member/membership" },
+  { label: "Account", href: "/research/account" },
   { label: "Profile", href: "/research/member/profile" },
 ];
 
@@ -268,6 +270,16 @@ function isResearchSignInPath(path: string): boolean {
   return normalizeResearchPath(path) === "/research/sign-in";
 }
 
+// The six REGISTERED account-portal routes, exactly — never a prefix, so the
+// parked identity/organization family under /research/account stays gated
+// until it is mounted on purpose.
+const ACCOUNT_PORTAL_PATHS = new Set<string>(Object.values(ACCOUNT_PORTAL_ROUTES));
+
+function isAccountPortalPath(path: string): boolean {
+  const normalized = normalizeResearchPath(path);
+  return normalized !== null && ACCOUNT_PORTAL_PATHS.has(normalized);
+}
+
 function isPublicResearchPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
   if (!normalized) return false;
@@ -328,6 +340,16 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
     isResearchApplicationStatusPath(location)
   ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
+  }
+  // THE CUSTOMER ACCOUNT PORTAL (release integration, 2026-08-27). The six
+  // registered account routes are member-guarded at mount (RequireMember) and
+  // Bearer-guarded at every API read, so the shared review password adds no
+  // protection here — only a lockout: a signed-out customer must land on
+  // sign-in with the exact returnTo, not on the reviewer password page. Bare
+  // children on purpose: AccountPortalShell is the sole chrome, the same
+  // pattern as the gateway, so the portal does not render doubled headers.
+  if (isAccountPortalPath(location)) {
+    return <>{children}</>;
   }
   // The public Research journey must not depend on the legacy shared review
   // password. The gateway exposes only Apply and Member Login; application,

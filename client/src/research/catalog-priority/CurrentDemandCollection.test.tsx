@@ -9,6 +9,7 @@ import { CurrentDemandCollection } from "./CurrentDemandCollection";
 import {
   CURRENT_CLIENT_DEMAND_DEFINITIONS,
   PENDING_VARIANT_PLACEHOLDERS,
+  projectActivationQueue,
   projectDemandDefinitions,
   type PriorityCatalogItem,
 } from "./priority-config";
@@ -55,6 +56,22 @@ describe("priority catalog activation UX", () => {
     const projected = projectDemandDefinitions({});
     expect(projected).toHaveLength(CURRENT_CLIENT_DEMAND_DEFINITIONS.length);
     expect(projected.every((item) => item.activationStatus === "unavailable")).toBe(true);
+  });
+
+  it("projects the served activation queue verbatim — statuses are never loosened", () => {
+    const projected = projectActivationQueue([
+      { key: "Q-2026-08-26-01", title: "Retatrutide 48 mg", status: "verbally_confirmed_pending_documentation" },
+      { key: "Q-2026-08-26-11", title: "Initial hormone-evaluation labs", status: "unavailable" },
+    ]);
+    expect(projected).toHaveLength(2);
+    expect(projected[0].activationStatus).toBe("verbally_confirmed_pending_documentation");
+    expect(projected[1].activationStatus).toBe("unavailable");
+    expect(projected.every((item) => item.detailsPath === null)).toBe(true);
+    expect(projected.every((item) => item.actionPath === "/research/account/support")).toBe(true);
+    expect(projected.every((item) => item.lanes.includes("Request-only / Pending activation"))).toBe(true);
+    // no live, no orderable state can come out of this projection
+    expect(projected.some((item) => item.activationStatus === "live")).toBe(false);
+    expect(JSON.stringify(projected)).not.toMatch(/customerCount|mentions|Seth|Vitality/i);
   });
 });
 

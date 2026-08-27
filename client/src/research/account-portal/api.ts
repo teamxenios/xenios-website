@@ -6,6 +6,7 @@ import type {
   DocumentSummaryDto,
   SupportCaseSummaryDto,
 } from "@shared/research/customer-account/contract";
+import type { CatalogPriorityDto } from "@shared/research/product-activation/contract";
 import type {
   CustomerSubscriptionDto,
   SubscriptionPageDto,
@@ -53,6 +54,34 @@ export async function accountPortalFetch<T>(
 
 export const loadAccountOverview = (token: string | null) =>
   accountPortalFetch<CustomerAccountOverviewDto>(token, "/overview");
+
+export const loadCatalogPriority = (token: string | null) =>
+  accountPortalFetch<CatalogPriorityDto>(token, "/catalog-priority");
+
+export type AccountOverviewPageDto = Readonly<{
+  overview: CustomerAccountOverviewDto;
+  /** Null when the projection is unavailable — the section hides honestly. */
+  catalogPriority: CatalogPriorityDto | null;
+}>;
+
+export const loadAccountOverviewPage = async (
+  token: string | null,
+): Promise<CustomerAccountResult<AccountOverviewPageDto>> => {
+  const [overview, catalogPriority] = await Promise.all([
+    loadAccountOverview(token),
+    loadCatalogPriority(token),
+  ]);
+  if (overview.kind !== "ok") return overview;
+  return {
+    kind: "ok",
+    data: {
+      overview: overview.data,
+      // Degrades honestly: a denied/error projection hides the availability
+      // section rather than inventing statuses for it.
+      catalogPriority: catalogPriority.kind === "ok" ? catalogPriority.data : null,
+    },
+  };
+};
 
 export const loadAccountOrders = (token: string | null) =>
   accountPortalFetch<CustomerOrdersDto>(token, "/orders");

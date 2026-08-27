@@ -22,13 +22,13 @@ export const ACCESS_ROUTES = {
   earlyAccess: "/research/early-access",
 } as const;
 
-// The unified personal and organization account family. One canonical
-// Supabase identity can carry a personal member profile and/or organization
-// roles; these pages authenticate through the account API's own Bearer
-// boundary, never through the legacy shared review password. NOT yet in
-// ALL_MANIFEST_ROUTES: production holds only one of the eight Pack 02 tables,
-// so the pages stay unmounted (branch fable/pack02-account-mount) until the
-// account schema lands through the governed migration chain.
+// The personal customer account portal: six routes, MOUNTED (section.tsx)
+// and present in ALL_MANIFEST_ROUTES, each behind RequireMember with every
+// read on the customer-account API's own Bearer boundary — never the legacy
+// shared review password. Organization reads are not required: the portal
+// degrades without Pack 02, whose identity/organization family (the parked
+// ACCOUNT_ROUTES below) remains unmounted until the account schema lands
+// through the governed migration chain.
 export const ACCOUNT_PORTAL_ROUTES = {
   home: "/research/account",
   orders: "/research/account/orders",

@@ -1,10 +1,17 @@
 import type { MemberInfo } from "../core";
-import { MEMBER_ROUTES } from "./routes";
+import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES } from "./routes";
 
 const MEMBER_ROOT = "/research/member";
+const ACCOUNT_ROOT = "/research/account";
 const ACTIVATION_ROOT = "/research/activate";
-const STATIC_MEMBER_PATHS = new Set(
-  Object.values(MEMBER_ROUTES).filter((path) => !path.includes(":")),
+// The closed allowlist: registered member routes plus the six registered
+// account-portal routes. The portal set stays enumerated (never a
+// startsWith("/research/account") check) so the parked identity/organization
+// family under the same prefix remains unreturnable until it is mounted.
+const STATIC_MEMBER_PATHS = new Set<string>(
+  [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter(
+    (path) => !path.includes(":"),
+  ),
 );
 const DYNAMIC_MEMBER_PATHS = [
   /^\/research\/member\/goals\/[a-z0-9][a-z0-9._-]*$/,
@@ -22,7 +29,7 @@ const DYNAMIC_MEMBER_PATHS = [
 ];
 
 function isRegisteredMemberPath(pathname: string): boolean {
-  return STATIC_MEMBER_PATHS.has(pathname as (typeof MEMBER_ROUTES)[keyof typeof MEMBER_ROUTES]) ||
+  return STATIC_MEMBER_PATHS.has(pathname) ||
     DYNAMIC_MEMBER_PATHS.some((pattern) => pattern.test(pathname));
 }
 
@@ -82,7 +89,13 @@ export function denialDestination(code: string): string {
 export function memberDestination(member: MemberInfo, requestedReturnTo?: string | null): string {
   const safeReturnTo = safeResearchReturnTo(requestedReturnTo);
   if (member.status === "active") {
-    return safeReturnTo === MEMBER_ROOT || safeReturnTo?.startsWith(`${MEMBER_ROOT}/`)
+    // The prefix check here is safe ONLY because safeResearchReturnTo has
+    // already validated against the closed allowlist above — this branch
+    // merely decides which validated destinations an active member may keep.
+    return safeReturnTo === MEMBER_ROOT ||
+      safeReturnTo?.startsWith(`${MEMBER_ROOT}/`) ||
+      safeReturnTo === ACCOUNT_ROOT ||
+      safeReturnTo?.startsWith(`${ACCOUNT_ROOT}/`)
       ? safeReturnTo
       : MEMBER_ROOT;
   }
