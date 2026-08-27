@@ -120,7 +120,7 @@ function Review() {
     case "subscription":
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.subscription} eyebrow="Membership + billing" title="Membership, separated from Care." lead="Plan and renewal status without confusing membership with provider or pharmacy operations."><AccountSubscriptionView data={{ subscription: { membership: FIXTURE_MEMBERSHIP_MANUAL, careEnrollment: FIXTURE_CARE_ENROLLED }, billingDocuments: FIXTURE_DOCUMENTS.filter((document) => document.kind === "receipt") }} /></AccountFrame>;
     case "care":
-      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.care} eyebrow="Care operations" title="Care, step by step." lead="A neutral operational timeline without clinical detail or implied outcomes."><AccountCareView data={FIXTURE_CARE_ENROLLED.status} /></AccountFrame>;
+      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.care} eyebrow="Care operations" title="Care, step by step." lead="A neutral operational timeline without clinical detail or implied outcomes."><AccountCareView data={FIXTURE_CARE_ENROLLED} /></AccountFrame>;
     case "documents":
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.documents} eyebrow="Secure records" title="Documents in one place." lead="Approved customer-facing account records only."><AccountDocumentsView documents={FIXTURE_DOCUMENTS} onDownload={async () => "ok"} /></AccountFrame>;
     case "support":

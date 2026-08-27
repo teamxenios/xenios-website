@@ -1,5 +1,5 @@
 import type {
-  CareStatusDto,
+  CareEnrollmentDto,
   CustomerAccountOverviewDto,
   CustomerAccountResult,
   CustomerOrdersDto,
@@ -102,8 +102,12 @@ export const loadAccountSubscription = async (token: string | null): Promise<Cus
   };
 };
 
+// The /care endpoint answers the FULL CareEnrollmentDto — enrolled flag,
+// NESTED status, pharmacyState. This generic is the one canonical shape the
+// server sends and CareView consumes (P1-6): declaring the inner status type
+// here once hid every real enrollment behind an always-undefined `.stage`.
 export const loadAccountCare = (token: string | null) =>
-  accountPortalFetch<CareStatusDto>(token, "/care");
+  accountPortalFetch<CareEnrollmentDto>(token, "/care");
 
 export const loadAccountDocuments = (token: string | null) =>
   accountPortalFetch<readonly DocumentSummaryDto[]>(token, "/documents");

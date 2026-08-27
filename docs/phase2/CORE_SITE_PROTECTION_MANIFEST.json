@@ -989,12 +989,28 @@
       "MEMBER_SESSION_WRITE_PATHS, and one anchored canonical-UUID shape for",
       "GET /customer-account/documents/:documentId. Every admission requires a Bearer",
       "header and lands on the injected requireMember guard downstream; no bare",
-      "prefix was opened and no other admission set changed."
+      "prefix was opened and no other admission set changed.",
+      "",
+      "2026-08-27, P1 remediation recut (fix/xenios-client-account-p1-remediation-20260827):",
+      "server/index.ts moved for two minimal P1 fixes. P1-2: the customer-account",
+      "registration injects requireActiveMember alongside requireMember so the global",
+      "catalog-priority projection carries the member-catalog door; the seven per-member",
+      "paths are unchanged. P1-10/11: the client-import admin registration is",
+      "production-disabled behind RESEARCH_CLIENT_IMPORT_ADMIN_ENABLED === \"true\"",
+      "(route-absence idiom; flag absent means no route exists). No census change:",
+      "both edits wrap registrar calls and add no app.<method> call site.",
+      "old sha256:765fc162037346b4cb58ed180bf82db320d4810e40de6accd4a4b2628148d8a1,",
+      "new sha256:f0ec4ba007223536ec80f2d92d524c97059e0dbe37bc7e4ab5832f0575fb4d12.",
+      "server/research/index.ts moved for a COMMENT-ONLY correction: the admission note",
+      "for /customer-account/catalog-priority now records the active-member door; the",
+      "admitted path set is unchanged.",
+      "old sha256:64238c1430507d42f1a4d2dc7abef12b2ca02cedeb5c46331e6092e31c379543,",
+      "new sha256:26a9645d3d77898331b00b9c166ccb158b23a3cf49580226d48473ef5fa38763."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:765fc162037346b4cb58ed180bf82db320d4810e40de6accd4a4b2628148d8a1",
-      "server/research/index.ts": "sha256:64238c1430507d42f1a4d2dc7abef12b2ca02cedeb5c46331e6092e31c379543",
+      "server/index.ts": "sha256:f0ec4ba007223536ec80f2d92d524c97059e0dbe37bc7e4ab5832f0575fb4d12",
+      "server/research/index.ts": "sha256:26a9645d3d77898331b00b9c166ccb158b23a3cf49580226d48473ef5fa38763",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
     }

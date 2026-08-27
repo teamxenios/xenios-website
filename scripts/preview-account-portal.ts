@@ -286,17 +286,30 @@ export function buildAccountPortalPreviewApp(previewEnv: NodeJS.ProcessEnv = pro
   // the fail-closed public surface all come from production code.
   registerResearchApi(app);
 
-  // The REAL customer-account route table over synthetic ports, guarded by a
-  // preview member guard with the exact production guard shape.
+  // The REAL customer-account route table over synthetic ports, guarded by
+  // preview guards with the exact production guard shapes. requireActiveMember
+  // mirrors the merged guard's status gate (P1-2): the paused persona can read
+  // its own account state but never the global catalog-priority projection.
+  const previewRequireMember = (req: Request, res: Response, next: () => void) => {
+    const persona = personaByToken(bearerOf(req) ?? "");
+    if (!persona) {
+      res.status(401).json({ kind: "denied", reason: "member_required" });
+      return;
+    }
+    (req as { researchMember?: { id: string } }).researchMember = { id: persona.memberKey };
+    next();
+  };
   registerCustomerAccountApi(app, previewPorts(), {
-    requireMember: (req: Request, res: Response, next: () => void) => {
-      const persona = personaByToken(bearerOf(req) ?? "");
-      if (!persona) {
-        res.status(401).json({ kind: "denied", reason: "member_required" });
-        return;
-      }
-      (req as { researchMember?: { id: string } }).researchMember = { id: persona.memberKey };
-      next();
+    requireMember: previewRequireMember,
+    requireActiveMember: (req: Request, res: Response, next: () => void) => {
+      previewRequireMember(req, res, () => {
+        const persona = personaByToken(bearerOf(req) ?? "");
+        if (!persona || persona.status !== "active") {
+          res.status(403).json({ ok: false, code: "membership_inactive" });
+          return;
+        }
+        next();
+      });
     },
   });
 

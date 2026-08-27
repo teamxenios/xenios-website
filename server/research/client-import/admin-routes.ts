@@ -1,17 +1,20 @@
 // Admin-only HTTP surface for client-import dry runs.
 //
-// REGISTRATION IS PENDING, DELIBERATELY (protected-seam protocol; the wiring
-// line ships with the release authority):
-//
-//   import { registerClientImportAdminApi } from "./research/client-import/admin-routes";
-//   // next to the other /api/admin/research registrations:
-//   registerClientImportAdminApi(app, { store: resolveClientImportStagingStore() },
-//     { requireAdmin: requireSupabaseAdmin });
+// PRODUCTION-DISABLED (P1-10/11, 2026-08-27): server/index.ts wraps this
+// registration in RESEARCH_CLIENT_IMPORT_ADMIN_ENABLED === "true" — with the
+// flag absent (the production default) no route exists at all. The import
+// surface is not required for the customer-portal deploy, and it stays dark
+// until its validation/privacy hardening clears independent re-review. The
+// local dry-run CLI (scripts/research/client-import-dry-run.ts) remains the
+// authorized-operator path.
 //
 // The surface accepts rows and returns REPORTS. It never returns staged
 // records, never echoes a person's name, and has no invitation/send/activate
 // route AT ALL — those actions require founder-approved execution that this
-// lane does not implement.
+// lane does not implement. Raw person-name and product strings are bounded
+// and normalized in the importer; the report carries canonical exception
+// codes plus counts, and the only free text it may carry are product-string
+// details, each length-clamped before they cross the boundary.
 
 import type { Express, Request, Response } from "express";
 import { runImportDryRun, type ImportSourceRow } from "./importer";

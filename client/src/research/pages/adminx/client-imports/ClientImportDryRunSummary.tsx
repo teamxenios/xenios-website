@@ -46,11 +46,12 @@ export function ClientImportDryRunSummaryView({
       </section>
 
       <ResearchSecureNotice>
-        This is a counts-only staging projection. It creates no active accounts, sends no invitations, and displays no imported customer names, emails, phone numbers, or source rows.
+        This is a counts-only staging projection. It creates no active accounts, sends no invitations, and displays no imported customer names, emails, phone numbers, source rows, or raw product text — exceptions carry canonical codes and non-reversible references only.
       </ResearchSecureNotice>
 
       <section className="account-grid account-grid-3" aria-label="Import counts">
         <ResearchMetricCard label="Source rows" value={String(report.totalRows)} summary="Rows parsed into the staging dry run." />
+        <ResearchMetricCard label="Rejected rows" value={String(report.rejectedRows)} summary="Refused outright (blank or oversized fields); every one is counted, none dropped silently." />
         <ResearchMetricCard label="Unique people" value={String(report.uniquePeople)} summary="Case-insensitive normalized person keys, never displayed here." />
         <ResearchMetricCard label="Duplicate rows" value={String(report.duplicateNameRows)} summary="Additional name-key rows detected for aggregation." />
         <ResearchMetricCard label="Missing contact" value={String(report.missingContact)} summary="People blocked from invitation because required contact fields are absent." />
@@ -106,7 +107,10 @@ export function ClientImportDryRunSummaryView({
             empty="No mapping exceptions were reported."
             columns={[
               { key: "kind", header: "Exception", render: (row) => row.kind.replaceAll("_", " ") },
-              { key: "detail", header: "Product-string detail", render: (row) => row.detail },
+              // Non-reversible product-string reference (P1-11): operators
+              // recompute it from the source file they hold; no raw input is
+              // ever reflected into this surface.
+              { key: "ref", header: "Reference", render: (row) => <span className="tabular">{row.ref ?? "—"}</span> },
               { key: "count", header: "Occurrences", render: (row) => <span className="tabular">{row.occurrences}</span> },
             ]}
           />

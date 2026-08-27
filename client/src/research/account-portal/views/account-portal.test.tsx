@@ -79,7 +79,9 @@ describe("customer account portal views", () => {
   });
 
   it("uses the canonical ten-stage Care order and marks only the current step", async () => {
-    const container = await render(<AccountCareView data={FIXTURE_CARE_ENROLLED.status} />, "/research/account/care");
+    // The view consumes the FULL enrollment DTO — the same shape the wire
+    // carries — never a hand-unwrapped `.status` (P1-6).
+    const container = await render(<AccountCareView data={FIXTURE_CARE_ENROLLED} />, "/research/account/care");
     const steps = Array.from(container.querySelectorAll(".care-status-step"));
     expect(steps).toHaveLength(10);
     expect(steps.map((step) => step.querySelector("h3")?.textContent)).toEqual([
@@ -98,9 +100,23 @@ describe("customer account portal views", () => {
     expect(container.textContent).toContain("Later steps are not guaranteed");
   });
 
-  it("renders an honest empty Care state", async () => {
-    const container = await render(<AccountCareView data={{ stage: null, updatedAt: null, neutralSummary: null }} />);
-    expect(container.textContent).toContain("No Care enrollment is attached");
+  it("renders an honest not-started Care state", async () => {
+    const container = await render(
+      <AccountCareView
+        data={{ enrolled: false, status: { stage: null, updatedAt: null, neutralSummary: null }, pharmacyState: "none" }}
+      />,
+    );
+    expect(container.textContent).toContain("Care not started");
+    expect(container.querySelector(".care-status-timeline")).toBeNull();
+  });
+
+  it("an enrollment with no recorded stage renders unavailable, never a fabricated timeline", async () => {
+    const container = await render(
+      <AccountCareView
+        data={{ enrolled: true, status: { stage: null, updatedAt: null, neutralSummary: null }, pharmacyState: "none" }}
+      />,
+    );
+    expect(container.textContent).toContain("Care status unavailable");
     expect(container.querySelector(".care-status-timeline")).toBeNull();
   });
 

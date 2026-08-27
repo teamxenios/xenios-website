@@ -59,12 +59,16 @@ const selection: PersistentCartSelection = {
   },
   evaluatedAt: "2026-07-27T20:00:00Z",
 };
+// Relative expiries: the repository validates expiry against the real clock,
+// so a fixed calendar date would start failing the day it passes.
+const FUTURE_EXPIRY = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+const PAST_EXPIRY = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 const cart = {
   id: "66666666-6666-4666-8666-666666666666",
   owner: "member",
   state: "active",
   version: 1,
-  expiresAt: "2026-08-27T20:00:00Z",
+  expiresAt: FUTURE_EXPIRY,
   items: [],
 };
 
@@ -310,7 +314,7 @@ describe("persistent cart repository", () => {
       quantity: 1,
       selection,
       idempotencyKey: "past-put-key-123456",
-      expiresAt: "2026-01-01T00:00:00Z",
+      expiresAt: PAST_EXPIRY,
     })).resolves.toEqual({ ok: false, code: "invalid_input" });
     await expect(repo.claimAnonymousCart(member, {
       anonymousSecret: secret,
@@ -318,7 +322,7 @@ describe("persistent cart repository", () => {
       expectedAnonymousCartVersion: 1,
       expectedMemberCartVersion: null,
       idempotencyKey: "past-claim-key-1234",
-      expiresAt: "2026-01-01T00:00:00Z",
+      expiresAt: PAST_EXPIRY,
     })).resolves.toEqual({ ok: false, code: "invalid_input" });
     expect(rpc).not.toHaveBeenCalled();
   });

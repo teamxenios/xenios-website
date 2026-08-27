@@ -1702,9 +1702,14 @@ describe("route uniqueness validator", () => {
     // documents/:documentId (ownership-scoped bytes), POST support — and the
     // three requireSupabaseAdmin client-import doors under
     // server/research/client-import/admin-routes.ts (POST dry-run, GET
-    // :batchId, GET list). ALL TWELVE ARE MOUNTED from server/index.ts with
-    // the manifest seam notes of the same date; the member surface is
-    // additionally admitted through the research wall's exact-path
+    // :batchId, GET list). The nine customer-account registrations are
+    // mounted from server/index.ts (catalog-priority behind the injected
+    // requireActiveMember since the 2026-08-27 P1 remediation); the three
+    // client-import doors are counted but PRODUCTION-DISABLED — their
+    // registrar call is gated on RESEARCH_CLIENT_IMPORT_ADMIN_ENABLED ===
+    // "true", so with the flag absent no client-import route exists in any
+    // deployment (the census scans source, not a booted app). The member
+    // surface is additionally admitted through the research wall's exact-path
     // customer-account entries (member-session-wall.test.ts pins both
     // directions).
     expect(result.callSites).toBe(399);

@@ -1103,7 +1103,7 @@ registerFoundingActivationApi(app, buildFoundingActivationDependencies(), {
 });
 
 // Customer account read surface (/api/research/customer-account/*): the
-// injected merged member guard, no parallel auth (routes.ts header protocol).
+// injected merged guards, no parallel auth (routes.ts header protocol).
 // The lookup is bound to the guard's member key (research_members.id) — the
 // builder's auth_user_id fallback must NOT be used here (production.ts:52-56).
 // Graduated sources: orders reshape the ONE decorated member orders service
@@ -1111,7 +1111,10 @@ registerFoundingActivationApi(app, buildFoundingActivationDependencies(), {
 // support rides research_member_questions; documents ride
 // research_plan_documents (no production byte reader exists yet, so download
 // paths ship empty and stay honestly unavailable); catalog-priority serves
-// the audited activation-overlay projection, statuses only.
+// the audited activation-overlay projection, statuses only, and sits behind
+// requireActiveMember (P1-2, 2026-08-27): global availability-pipeline data
+// carries the member-catalog door, while the seven per-member paths stay on
+// requireMember so a billing-blocked customer can still read their own state.
 registerCustomerAccountApi(
   app,
   buildProductionCustomerAccountPorts(
@@ -1131,19 +1134,30 @@ registerCustomerAccountApi(
       catalogPriority: createCatalogPriorityPort(process.cwd()),
     },
   ),
-  { requireMember: adaptGuard(requireMember) },
+  {
+    requireMember: adaptGuard(requireMember),
+    requireActiveMember: adaptGuard(requireActiveMember),
+  },
 );
 
-// Client-import dry runs, admin-only (/api/admin/research/client-imports/*),
-// next to the other requireSupabaseAdmin registrations. The memory store is
-// the deliberate interim until the candidate SQL is applied and a
-// service-role staging store replaces it: batches evaporate on restart and
-// staged identity rows never leave process memory.
-registerClientImportAdminApi(
-  app,
-  { store: createMemoryClientImportStagingStore(), newBatchId: () => randomUUID() },
-  { requireAdmin: adaptGuard(requireSupabaseAdmin) },
-);
+// Client-import dry runs, admin-only (/api/admin/research/client-imports/*).
+// PRODUCTION-DISABLED by default (P1-10/11, 2026-08-27): the import surface is
+// not required for the customer-portal deploy, and its validation/privacy
+// hardening is under independent re-review — so with the flag absent no route
+// exists at all (same fail-closed idiom as the affiliate doors: exactly the
+// lowercase string "true"). The local dry-run CLI
+// (scripts/research/client-import-dry-run.ts) remains available to authorized
+// operators. The memory store stays the deliberate interim until the candidate
+// SQL is applied: batches evaporate on restart and staged identity rows never
+// leave process memory.
+if (process.env.RESEARCH_CLIENT_IMPORT_ADMIN_ENABLED === "true") {
+  registerClientImportAdminApi(
+    app,
+    { store: createMemoryClientImportStagingStore(), newBatchId: () => randomUUID() },
+    { requireAdmin: adaptGuard(requireSupabaseAdmin) },
+  );
+  log("client-import admin surface mounted", "client-import");
+}
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.

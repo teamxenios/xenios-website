@@ -111,13 +111,14 @@ describe("authorizeCatalogDisplayViewer", () => {
     expect(viewer).toEqual({ audience: "member", email: "member@example.com" });
   });
 
-  it("member audience via the legacy email fallback", async () => {
+  it("an email-only match resolves NO viewer (P1-1: the legacy fallback is gone)", async () => {
+    // The caller's Auth account shares an email with someone else's member
+    // row. Email reuse must never inherit a membership: null, not a viewer.
     state.authUser = { id: "auth-unknown", email: "member@example.com" };
     state.memberRows = [
       { auth_user_id: "other", email: "member@example.com", status: "active" },
     ];
-    const viewer = await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`));
-    expect(viewer).toEqual({ audience: "member", email: "member@example.com" });
+    expect(await authorizeCatalogDisplayViewer(reqWith(`Bearer ${PASSWORD_JWT}`))).toBeNull();
   });
 
   it("null for pending_activation, past_due, closed, and missing members", async () => {

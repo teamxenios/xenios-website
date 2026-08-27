@@ -91,7 +91,17 @@ export function canonicalizeInterest(interest: string): string | null {
   return null;
 }
 
-/** Person-name normalization for duplicate detection. Used as a KEY only. */
+/**
+ * Person-name normalization for duplicate detection. Used as a KEY only.
+ * NFKC first (P1-11): decomposed and precomposed spellings of one name must
+ * collapse to one person; control/format characters (bidi overrides included)
+ * are stripped so no invisible character can split or spoof an identity.
+ */
 export function normalizedNameKey(name: string): string {
-  return name.trim().toLowerCase().replace(/\s+/g, " ");
+  return name
+    .normalize("NFKC")
+    .replace(/[\p{Cc}\p{Cf}]/gu, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
 }

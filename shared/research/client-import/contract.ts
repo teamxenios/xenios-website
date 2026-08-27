@@ -50,33 +50,70 @@ export type StagedClientRecord = Readonly<{
   usState: string | null;
 }>;
 
+/**
+ * Canonical exception codes. The report carries the CODE, an occurrence
+ * count, and — only where a product string is involved — a non-reversible
+ * 12-hex reference derived from that product string, so an operator holding
+ * the source file can correlate rows without any raw input crossing the
+ * boundary (P1-11, 2026-08-27). Person names never produce a reference at
+ * all: name-derived hashes are dictionary-guessable and therefore not
+ * non-reversible in practice.
+ */
+export const IMPORT_EXCEPTION_KINDS = [
+  "unmapped_interest",
+  "ambiguous_blend",
+  "duplicate_person",
+  "empty_interest",
+  "not_applicable_row",
+  "formula_like_value",
+  "suffix_ambiguity",
+  "punctuation_variant_names",
+] as const;
+export type ImportExceptionKind = (typeof IMPORT_EXCEPTION_KINDS)[number];
+
+export const IMPORT_ROW_REJECTION_CODES = [
+  "blank_name",
+  "name_too_long",
+  "product_too_long",
+  "malformed_row",
+] as const;
+export type ImportRowRejectionCode = (typeof IMPORT_ROW_REJECTION_CODES)[number];
+
 export type ImportMappingException = Readonly<{
-  kind:
-    | "unmapped_interest"
-    | "ambiguous_blend"
-    | "duplicate_person"
-    | "empty_interest"
-    | "not_applicable_row";
-  /** The offending PRODUCT string — never a person name. */
-  detail: string;
+  kind: ImportExceptionKind;
+  /** Non-reversible product-string reference; null for name-derived kinds. */
+  ref: string | null;
   occurrences: number;
 }>;
 
-/** The admin-facing dry-run report: aggregate truth, zero identity. */
+export type ProductStringRef = Readonly<{ ref: string; occurrences: number }>;
+
+/**
+ * The admin-facing dry-run report: aggregate truth, zero identity, zero raw
+ * input. Counts, canonical codes, canonical interest keys, and non-reversible
+ * product-string references are the ONLY things that cross this boundary —
+ * never a person name, never a verbatim product cell.
+ */
 export type ImportDryRunReportDto = Readonly<{
   batchId: string;
   sourceLabel: string;
   dryRun: true;
   totalRows: number;
+  /** Rows refused outright; every one is counted, none silently dropped. */
+  rejectedRows: number;
+  rejectionCounts: Readonly<Record<ImportRowRejectionCode, number>>;
+  /** totalRows - rejectedRows: the rows the pipeline actually staged from. */
+  processedRows: number;
   uniquePeople: number;
   duplicateNameRows: number;
   multiInterestPeople: number;
   /** Everyone, today: the source file has no email/phone columns. */
   missingContact: number;
+  /** Unique (person, interest-key) pairs — a repeated interest on one person never inflates demand. */
   mappedInterestMentions: number;
   distinctInterestKeys: number;
-  unmappedInterests: readonly string[];
-  ambiguousBlendStrings: readonly Readonly<{ raw: string; occurrences: number }>[];
+  unmappedInterests: readonly ProductStringRef[];
+  ambiguousBlendStrings: readonly ProductStringRef[];
   consentStatusCounts: Readonly<Record<ImportConsentState, number>>;
   accountStatusCounts: Readonly<Record<ImportAccountState, number>>;
   /** People eligible for an invitation wave TODAY (consent + contact present). */

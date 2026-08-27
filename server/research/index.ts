@@ -517,15 +517,20 @@ export function registerResearchApi(app: Express) {
     "/agreements",
     "/assessment", // assessment.ts: requireActiveMember
     "/blueprint", // blueprint.ts: requireActiveMember
-    // customer-account/routes.ts: injected requireMember (a customer with a
-    // billing problem must still read their own account state, so the
-    // active-member guard is deliberately not the door here).
+    // customer-account/routes.ts: the seven PER-MEMBER paths ride injected
+    // requireMember (a customer with a billing problem must still read their
+    // own account state, so the active-member guard is deliberately not the
+    // door for those).
     "/customer-account/overview",
     "/customer-account/orders",
     "/customer-account/subscription",
     "/customer-account/care",
     "/customer-account/documents",
     "/customer-account/support",
+    // customer-account/routes.ts: injected requireActiveMember (P1-2,
+    // 2026-08-27) — the catalog-priority projection is GLOBAL availability
+    // data, not the caller's own account state, so it carries the same door
+    // as the member catalog. The wall only admits it to the route's guard.
     "/customer-account/catalog-priority",
     "/goals", // commerce/routes.ts: injected requireActiveMember
     "/guides", // commerce/routes.ts: injected requireActiveMember

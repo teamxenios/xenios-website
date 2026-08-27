@@ -1,11 +1,7 @@
 import type { Request } from "express";
 import { getSupabaseAnon, supabaseConfigured } from "../supabase";
 import type { CatalogDisplayViewer } from "./catalog-display/routes";
-import {
-  getMemberByAuthUserId,
-  getMemberByEmail,
-  isRecoveryPurposeSession,
-} from "./member-auth";
+import { getMemberByAuthUserId, isRecoveryPurposeSession } from "./member-auth";
 
 // The production authorizer the catalog-display wiring injects
 // (server/research/catalog-display/routes.ts documents this exact contract).
@@ -16,9 +12,10 @@ import {
 //
 // Resolution mirrors the repo's canonical chains exactly:
 // - member: resolveResearchMember (member-auth.ts): verify the Supabase JWT,
-//   deny recovery-purpose sessions, resolve the member row by Auth user id
-//   with the legacy email fallback, and require ACTIVE status, the same bar
-//   requireActiveMember sets for member content.
+//   deny recovery-purpose sessions, resolve the member row by the EXACT Auth
+//   user id binding only (the legacy email fallback was removed 2026-08-27 —
+//   a recycled or re-registered email must never inherit another membership),
+//   and require ACTIVE status, the same bar requireActiveMember sets.
 // - admin: requireSupabaseAdmin (server/routes.ts): the server-verified JWT
 //   email compared to ADMIN_EMAIL, lowercased and trimmed, never a client
 //   supplied label.
@@ -45,8 +42,7 @@ export async function authorizeCatalogDisplayViewer(
     if (adminEmail && email.toLowerCase().trim() === adminEmail) {
       return { audience: "admin", email };
     }
-    const member =
-      (await getMemberByAuthUserId(data.user.id)) ?? (await getMemberByEmail(email));
+    const member = await getMemberByAuthUserId(data.user.id);
     if (!member || String(member.status) !== "active") return null;
     // Billing parity with requireActiveMember: when membership billing is
     // enforced, a billing_state other than active closes member content.

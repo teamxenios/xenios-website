@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-p1-remediation-20260827",
+  "tool": "claude",
+  "lane": "client-account-p1-remediation",
+  "branch": "fix/xenios-client-account-p1-remediation-20260827",
+  "state": "active",
+  "startedAt": "2026-08-27T21:45:30.010Z",
+  "heartbeatAt": "2026-08-27T21:45:30.011Z",
+  "note": "P1 remediation recut from failed RC b432d7a. 11 P1s: auth email fallback, catalog leak, payment truth, order history, billing truth, Care DTO, activation monotonicity, migration privileges/governance (fix-but-unapplied), import privacy/integrity (production-disable). Old RC branch untouched. No deploy, no migration apply, no invitations."
+}

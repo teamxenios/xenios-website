@@ -180,9 +180,14 @@ export async function requireActiveMember(req: Request, res: Response, next: Nex
 }
 
 // Verifies the Supabase JWT and resolves the member row. Never trusts hidden
-// UI; attaches the member for downstream handlers. The stable identity link
-// is the Auth user id (email can change); the email lookup remains only as a
-// legacy fallback.
+// UI; attaches the member for downstream handlers. The ONLY identity link is
+// the exact Auth user id binding (P1-1, 2026-08-27): the legacy email
+// fallback is removed, because an email can be recycled, re-registered, or
+// shared by two historical identities, and a fallback would let a new Auth
+// account inherit another person's research_members row at request time.
+// A member row without an auth_user_id binding is denied here; rebinding a
+// legacy row is a separate, explicit administrative act — never a request-time
+// inference.
 async function resolveResearchMember(
   req: Request,
   res: Response,
@@ -215,7 +220,7 @@ async function resolveResearchMember(
     // Purpose check BEFORE member lookup: a recovery-grade session is denied
     // even when it maps to an active member (correction-pass blocker 3).
     if (denyRecoveryPurposeSession(jwt, res)) return;
-    const member = (await getMemberByAuthUserId(data.user.id)) ?? (await getMemberByEmail(data.user.email));
+    const member = await getMemberByAuthUserId(data.user.id);
     if (!member || (!allowClosed && member.status === "closed")) {
       return res.status(403).json({ ok: false, message: "No research membership for this account." });
     }

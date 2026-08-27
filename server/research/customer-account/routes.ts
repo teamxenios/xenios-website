@@ -1,24 +1,22 @@
 // The customer-account HTTP surface: /api/research/customer-account/*.
+// REGISTERED at the protected seam (server/index.ts, since e42825d) with BOTH
+// merged guards injected.
 //
-// REGISTRATION IS PENDING, DELIBERATELY — same protocol as the partner portal:
-// server/index.ts is a protected seam whose content hash is pinned in
-// docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json, so the one-line wiring ships
-// with the release authority, not from this lane:
-//
-//   import { registerCustomerAccountApi } from "./research/customer-account/routes";
-//   import { resolveCustomerAccountPorts } from "./research/customer-account/production";
-//
-//   // near the other member surfaces, after registerResearchApi(app):
-//   registerCustomerAccountApi(app, resolveCustomerAccountPorts(), {
-//     requireMember: adaptGuard(requireMember),
-//   });
-//
-// Authorization model (the commerce/portal lanes' proven shape, unchanged):
+// Authorization model (the commerce/portal lanes' proven shape):
 // the acting member comes ONLY from the injected guard; no handler reads an
 // identity from a body, query, or path parameter; every port is keyed by the
 // guard-attached member, so no request field can address another customer.
 // The staff projection (partner attribution) is NOT exposed here at all —
 // staff tooling reads it through the admin surface, never the member one.
+//
+// TWO doors, deliberately (P1-2, 2026-08-27):
+//   * The seven PER-MEMBER paths (overview/orders/subscription/care/documents/
+//     support) use `requireMember`: a customer with a billing problem must
+//     still read their own account state.
+//   * `catalog-priority` is NOT the caller's own account state — it is the
+//     global availability projection (unreleased-product pipeline data), part
+//     of the ACTIVE-member catalog experience, so it sits behind
+//     `requireActiveMember` exactly like /api/research/member/catalog.
 
 import type { Express, Request, Response } from "express";
 import {
@@ -31,6 +29,12 @@ import { createCustomerAccountService } from "./service";
 export interface CustomerAccountGuards {
   /** The merged member guard. Injected, so this module defines no parallel auth. */
   requireMember: (req: Request, res: Response, next: () => void) => void | Promise<void>;
+  /**
+   * The merged ACTIVE-member guard (status + billing gates). Guards only the
+   * global catalog-priority projection; the per-member account paths stay on
+   * requireMember so a billing-blocked customer can still see their own state.
+   */
+  requireActiveMember: (req: Request, res: Response, next: () => void) => void | Promise<void>;
 }
 
 const BASE = "/api/research/customer-account";
@@ -63,8 +67,23 @@ export function registerCustomerAccountApi(
   const withMember = (
     handler: (memberKey: string, req: Request, res: Response) => Promise<void>,
   ) => {
+    return guarded(guards.requireMember, handler);
+  };
+
+  // The active-member door: same handler shape, stricter guard. Used ONLY for
+  // the global catalog-priority projection (P1-2) — see the header.
+  const withActiveMember = (
+    handler: (memberKey: string, req: Request, res: Response) => Promise<void>,
+  ) => {
+    return guarded(guards.requireActiveMember, handler);
+  };
+
+  function guarded(
+    guard: CustomerAccountGuards["requireMember"],
+    handler: (memberKey: string, req: Request, res: Response) => Promise<void>,
+  ) {
     return (req: Request, res: Response) => {
-      void Promise.resolve(guards.requireMember(req, res, async () => {
+      void Promise.resolve(guard(req, res, async () => {
         const memberKey = memberKeyOf(req);
         if (memberKey === null) {
           // The guard passed but attached nothing usable: refuse, never guess.
@@ -78,7 +97,7 @@ export function registerCustomerAccountApi(
         }
       }));
     };
-  };
+  }
 
   app.get(CUSTOMER_ACCOUNT_PATHS.overview, withMember(async (memberKey, _req, res) => {
     const resolved = await service.resolveOverview(memberKey, { staff: false });
@@ -139,7 +158,11 @@ export function registerCustomerAccountApi(
     res.status(201).json({ kind: "ok", data: created });
   }));
 
-  app.get(CUSTOMER_ACCOUNT_PATHS.catalogPriority, withMember(async (_memberKey, _req, res) => {
+  // ACTIVE members only (P1-2): this projection is global availability
+  // pipeline data, not the caller's own account state, so it carries the same
+  // door as the member catalog. Pending/paused/cancelled/past-due members are
+  // refused by the guard with its machine-readable codes.
+  app.get(CUSTOMER_ACCOUNT_PATHS.catalogPriority, withActiveMember(async (_memberKey, _req, res) => {
     const port = ports.catalogPriority;
     if (!port) {
       // No projection composed: refuse rather than invent one. The guard has

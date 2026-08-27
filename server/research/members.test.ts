@@ -544,6 +544,95 @@ describe("active-member authorization (requireActiveMember)", () => {
   });
 });
 
+// P1-1 (2026-08-27): authorization-time member resolution uses the EXACT
+// auth_user_id binding only. The legacy email fallback is removed — a member
+// row must never be inheritable through email reuse. Every scenario below is
+// a way email-based resolution goes wrong in the real world.
+describe("exact auth-user-id binding (email fallback removed)", () => {
+  function seedMember(row: Record<string, unknown>) {
+    const app = seedApplication({ email: String(row.email ?? "member@example.com") });
+    state.tables.research_members.push({
+      id: crypto.randomUUID(),
+      application_id: app.id,
+      first_name: "Avery",
+      status: "active",
+      created_at: new Date().toISOString(),
+      ...row,
+    });
+  }
+
+  it("exact auth_user_id binding resolves, even when the stored email is stale", async () => {
+    seedMember({ auth_user_id: "auth-1", email: "old-address@example.com" });
+    // good-jwt carries auth-1 + member@example.com: the id matches, the email does not.
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(200);
+    expect(res.body.member.firstName).toBe("Avery");
+  });
+
+  it("an email-only match is REJECTED: same email, different auth account", async () => {
+    // The member row belongs to a different Auth identity that happens to
+    // share the caller's email address.
+    seedMember({ auth_user_id: "auth-somebody-else", email: "member@example.com" });
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(403);
+    expect(JSON.stringify(res.body)).not.toContain("Avery");
+  });
+
+  it("a deleted-and-recreated Auth account does not inherit the old membership", async () => {
+    // Original account auth-original owned the membership; the Auth user was
+    // deleted and re-registered with the SAME email under a new user id.
+    seedMember({ auth_user_id: "auth-original", email: "recreated@example.com" });
+    const recreated = makeSupabaseJwt({ sub: "auth-recreated", email: "recreated@example.com" });
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", `Bearer ${recreated}`);
+    expect(res.status).toBe(403);
+  });
+
+  it("a recycled email on a brand-new Auth account resolves nothing", async () => {
+    // The provider recycled a mailbox: a stranger now controls the address a
+    // member once used. The stranger's fresh Auth account must see no account.
+    seedMember({ auth_user_id: "auth-departed-member", email: "recycled@example.com" });
+    const stranger = makeSupabaseJwt({ sub: "auth-stranger", email: "recycled@example.com" });
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", `Bearer ${stranger}`);
+    expect(res.status).toBe(403);
+  });
+
+  it("a changed Auth email still resolves the same member through the id", async () => {
+    seedMember({ auth_user_id: "auth-renamer", email: "before-change@example.com" });
+    const renamed = makeSupabaseJwt({ sub: "auth-renamer", email: "after-change@example.com" });
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", `Bearer ${renamed}`);
+    expect(res.status).toBe(200);
+    expect(res.body.member.firstName).toBe("Avery");
+  });
+
+  it("two identities that shared an email each resolve ONLY their own row", async () => {
+    seedMember({ auth_user_id: "auth-first", email: "shared@example.com", first_name: "First" });
+    seedMember({ auth_user_id: "auth-second", email: "shared@example.com", first_name: "Second" });
+    const first = await request(makeApp())
+      .get("/api/research/member/me")
+      .set("Authorization", `Bearer ${makeSupabaseJwt({ sub: "auth-first", email: "shared@example.com" })}`);
+    expect(first.status).toBe(200);
+    expect(first.body.member.firstName).toBe("First");
+    const second = await request(makeApp())
+      .get("/api/research/member/me")
+      .set("Authorization", `Bearer ${makeSupabaseJwt({ sub: "auth-second", email: "shared@example.com" })}`);
+    expect(second.status).toBe(200);
+    expect(second.body.member.firstName).toBe("Second");
+    // A third identity carrying the shared email gets nobody's account.
+    const third = await request(makeApp())
+      .get("/api/research/member/me")
+      .set("Authorization", `Bearer ${makeSupabaseJwt({ sub: "auth-third", email: "shared@example.com" })}`);
+    expect(third.status).toBe(403);
+  });
+
+  it("a member row with NO auth binding is unreachable by email alone", async () => {
+    // Legacy row that was never bound: rebinding is an explicit administrative
+    // process, never a request-time inference from the email claim.
+    seedMember({ auth_user_id: null, email: "member@example.com" });
+    const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", "Bearer good-jwt");
+    expect(res.status).toBe(403);
+  });
+});
+
 describe("member session guard", () => {
   function seedMember() {
     const app = seedApplication();

@@ -6,22 +6,39 @@ import type { CustomerAccountPorts } from "./ports";
 import { CUSTOMER_ACCOUNT_PATHS, registerCustomerAccountApi } from "./routes";
 import { createMemoryCustomerAccountPorts, defaultMemorySeeds } from "./memory-adapters";
 
-// A test guard with the production shape: it attaches researchMember from a
-// test header, or answers 401. Handlers never read identity anywhere else, so
-// this is the only seam the tests need.
+// Test guards with the production shape: requireMember attaches researchMember
+// from a test header or answers 401; requireActiveMember additionally applies
+// the status gate the merged production guard applies (x-test-status header
+// models research_members.status; absent means active). Handlers never read
+// identity anywhere else, so these are the only seams the tests need.
 function buildApp(portsOverride?: Partial<CustomerAccountPorts>) {
   const app = express();
   app.use(express.json());
   const ports = { ...createMemoryCustomerAccountPorts(defaultMemorySeeds()), ...portsOverride };
+  const requireMember = (
+    req: express.Request,
+    res: express.Response,
+    next: () => void,
+  ) => {
+    const key = req.header("x-test-member");
+    if (!key) {
+      res.status(401).json({ kind: "denied", reason: "member_required" });
+      return;
+    }
+    (req as { researchMember?: { id: string } }).researchMember = { id: key };
+    next();
+  };
   registerCustomerAccountApi(app, ports, {
-    requireMember: (req, res, next) => {
-      const key = req.header("x-test-member");
-      if (!key) {
-        res.status(401).json({ kind: "denied", reason: "member_required" });
-        return;
-      }
-      (req as { researchMember?: { id: string } }).researchMember = { id: key };
-      next();
+    requireMember,
+    requireActiveMember: (req, res, next) => {
+      requireMember(req, res, () => {
+        const status = req.header("x-test-status") ?? "active";
+        if (status !== "active") {
+          res.status(403).json({ ok: false, code: `status_${status}` });
+          return;
+        }
+        next();
+      });
     },
   });
   return app;
@@ -164,6 +181,51 @@ describe("customer-account routes", () => {
     expect(res.body.data.statuses.dsip).toBe("live");
     expect(res.body.data.queue).toHaveLength(1);
     expect(JSON.stringify(res.body)).not.toContain("demandMentions");
+  });
+
+  // P1-2 (2026-08-27): the catalog-priority projection is GLOBAL
+  // availability-pipeline data, so it carries the active-member door. Every
+  // non-active status must be refused by the guard before the port is reached.
+  it("catalog-priority is ACTIVE members only: every non-active status is refused", async () => {
+    let portReads = 0;
+    const app = buildApp({
+      catalogPriority: {
+        catalogPriorityFor: async () => {
+          portReads += 1;
+          return { statuses: { dsip: "live" }, queue: [] };
+        },
+      },
+    });
+    const get = (status?: string) => {
+      const req = request(app)
+        .get(CUSTOMER_ACCOUNT_PATHS.catalogPriority)
+        .set("x-test-member", "member-fixture-1");
+      return status ? req.set("x-test-status", status) : req;
+    };
+
+    for (const status of ["pending_activation", "paused", "cancelled", "past_due"]) {
+      const res = await get(status);
+      expect(res.status, status).toBe(403);
+      expect(res.body.code).toBe(`status_${status}`);
+    }
+    expect(portReads).toBe(0); // no denied caller ever reached the projection
+
+    const unauthenticated = await request(app).get(CUSTOMER_ACCOUNT_PATHS.catalogPriority);
+    expect(unauthenticated.status).toBe(401);
+
+    const active = await get();
+    expect(active.status).toBe(200);
+    expect(portReads).toBe(1);
+  });
+
+  it("the seven per-member paths deliberately do NOT require active status", async () => {
+    // A past-due customer must still read their own account state.
+    const app = buildApp();
+    const res = await request(app)
+      .get(CUSTOMER_ACCOUNT_PATHS.overview)
+      .set("x-test-member", "member-fixture-1")
+      .set("x-test-status", "past_due");
+    expect(res.status).toBe(200);
   });
 
   it("document download denies when no byte capability is composed", async () => {

@@ -10,18 +10,21 @@ const report: ImportDryRunReportDto = {
   sourceLabel: "Synthetic import fixture",
   dryRun: true,
   totalRows: 24,
+  rejectedRows: 2,
+  rejectionCounts: { blank_name: 1, name_too_long: 1, product_too_long: 0, malformed_row: 0 },
+  processedRows: 22,
   uniquePeople: 18,
   duplicateNameRows: 3,
   multiInterestPeople: 6,
   missingContact: 18,
   mappedInterestMentions: 21,
   distinctInterestKeys: 5,
-  unmappedInterests: ["Example unmapped item"],
-  ambiguousBlendStrings: [{ raw: "Example A / B", occurrences: 2 }],
+  unmappedInterests: [{ ref: "ab12cd34ef56", occurrences: 1 }],
+  ambiguousBlendStrings: [{ ref: "0011aabbccdd", occurrences: 2 }],
   consentStatusCounts: { pending: 18, granted: 0, declined: 0 },
   accountStatusCounts: { not_invited: 18, invitation_approved: 0, invited: 0, active: 0 },
   invitationEligible: 0,
-  exceptions: [{ kind: "ambiguous_blend", detail: "Example A / B", occurrences: 2 }],
+  exceptions: [{ kind: "ambiguous_blend", ref: "0011aabbccdd", occurrences: 2 }],
   interestBreakdown: [{ interestKey: "example-a", mentions: 8 }],
 };
 
@@ -39,7 +42,10 @@ describe("client import dry-run summary", () => {
     ));
     expect(container.textContent).toContain("Dry run · no sends");
     expect(container.textContent).toContain("Source rows24");
+    expect(container.textContent).toContain("Rejected rows2");
     expect(container.textContent).toContain("Missing contact18");
+    // Only the non-reversible reference is painted — never raw product text.
+    expect(container.textContent).toContain("0011aabbccdd");
     expect(container.textContent).toContain("Invitation eligible0");
     expect(container.textContent).toContain("Approved0");
     expect(container.textContent).toContain("Blocked18");
