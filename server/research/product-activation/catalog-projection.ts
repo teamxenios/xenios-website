@@ -26,6 +26,7 @@ import {
   type ProductActivationStatus,
 } from "@shared/research/product-activation/contract";
 import { loadActivationOverlay, overlayEntryFor, type ActivationOverlay } from "./overlay-source";
+import type { CatalogPriorityPort } from "../customer-account/ports";
 
 const DEFAULT_PROJECTION_RELATIVE = "config/research/catalog-priority-projection-20260826.json";
 
@@ -68,4 +69,19 @@ export function loadCatalogPriorityProjection(
     status: item.status,
   }));
   return { statuses, queue };
+}
+
+/**
+ * The composition-root port: loads once (both files are static per deploy) and
+ * keeps failing closed — a load error propagates on every request until the
+ * config is readable, and is never cached as a permissive answer.
+ */
+export function createCatalogPriorityPort(rootDir: string): CatalogPriorityPort {
+  let cache: CatalogPriorityDto | null = null;
+  return {
+    async catalogPriorityFor() {
+      if (cache === null) cache = loadCatalogPriorityProjection(rootDir);
+      return cache;
+    },
+  };
 }

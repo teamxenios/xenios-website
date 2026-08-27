@@ -517,6 +517,16 @@ export function registerResearchApi(app: Express) {
     "/agreements",
     "/assessment", // assessment.ts: requireActiveMember
     "/blueprint", // blueprint.ts: requireActiveMember
+    // customer-account/routes.ts: injected requireMember (a customer with a
+    // billing problem must still read their own account state, so the
+    // active-member guard is deliberately not the door here).
+    "/customer-account/overview",
+    "/customer-account/orders",
+    "/customer-account/subscription",
+    "/customer-account/care",
+    "/customer-account/documents",
+    "/customer-account/support",
+    "/customer-account/catalog-priority",
     "/goals", // commerce/routes.ts: injected requireActiveMember
     "/guides", // commerce/routes.ts: injected requireActiveMember
     "/media", // media.ts: requireActiveMember
@@ -527,6 +537,7 @@ export function registerResearchApi(app: Express) {
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
+    "/customer-account/support", // customer-account/routes.ts: injected requireMember
     // agreements.ts:349, requireResearchSubject. A fully literal path: the
     // agreement id XR-MEM-012 is hardcoded in the registration, so this needs
     // no pattern and admits exactly one shape. Withdrawing consent must stay
@@ -573,6 +584,12 @@ export function registerResearchApi(app: Express) {
       // shapes reach their own canonical active-member resolver; no namespace
       // prefix is opened and no write method is admitted.
       if (isKrisLaunchAReadPath(path)) return true;
+      // GET /customer-account/documents/:documentId (customer-account/
+      // routes.ts, injected requireMember + ownership-scoped byte read).
+      // research_plan_documents.id is a gen_random_uuid() primary key, so the
+      // canonical-UUID anchor is the correct admission shape.
+      const customerAccountDocument = /^\/customer-account\/documents\/([^/]+)$/.exec(path);
+      if (customerAccountDocument !== null) return canonicalUuid(customerAccountDocument[1]);
       // Product detail is an Express one-segment route; reject literal or
       // encoded separators so the bypass cannot grow into a namespace prefix.
       if (isCanonicalProductPath(path)) return true;

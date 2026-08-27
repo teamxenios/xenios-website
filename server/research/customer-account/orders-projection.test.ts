@@ -145,4 +145,12 @@ describe("commerce orders projection", () => {
     });
     await expect(port.ordersFor("member-1")).rejects.toThrow("orders_read_failed");
   });
+
+  it("refuses an unrecognized row shape instead of rendering a guessed order", async () => {
+    const port = createCommerceOrdersPort({
+      listForMember: async () => [{ orderId: "XO-1", state: "not_a_state", placedAt: "x" }],
+      getForMember: async () => null,
+    });
+    await expect(port.ordersFor("member-1")).rejects.toThrow("order_shape_unrecognized");
+  });
 });

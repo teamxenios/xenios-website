@@ -21,17 +21,67 @@ import type {
   OrderFulfillmentDisplayState,
   OrderSummaryDto as PortalOrderSummaryDto,
 } from "@shared/research/customer-account/contract";
-import type {
-  OrderDetailDto as CommerceOrderDetailDto,
-  OrderSummaryDto as CommerceOrderSummaryDto,
-} from "@shared/research/commerce-api";
-import type { OrderState } from "@shared/research/commerce";
+import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type { CustomerOrdersPort } from "./ports";
 
+/**
+ * The commerce lane types its wire dependencies as unknown on purpose, so
+ * this source mirrors that shape and the projection NARROWS at runtime: a row
+ * that does not carry the fields we present fails the read closed instead of
+ * rendering a guessed order.
+ */
 export type CommerceOrdersSource = Readonly<{
-  listForMember(memberId: string): Promise<CommerceOrderSummaryDto[]>;
-  getForMember(memberId: string, orderId: string): Promise<CommerceOrderDetailDto | null>;
+  listForMember(memberId: string): Promise<unknown[]>;
+  getForMember(memberId: string, orderId: string): Promise<unknown>;
 }>;
+
+type ShipmentShape = Readonly<{ trackingNumber: string | null; carrier: string | null }>;
+type SummaryShape = Readonly<{
+  orderId: string;
+  state: OrderState;
+  placedAt: string;
+  shipments: readonly ShipmentShape[];
+}>;
+type LineShape = Readonly<{ displayName: string; quantity: number }>;
+
+function asSummary(value: unknown): SummaryShape {
+  const record = (value ?? {}) as Record<string, unknown>;
+  const orderId = record.orderId;
+  const state = record.state;
+  const placedAt = record.placedAt;
+  if (
+    typeof orderId !== "string" ||
+    orderId === "" ||
+    typeof placedAt !== "string" ||
+    typeof state !== "string" ||
+    !(ORDER_STATES as readonly string[]).includes(state)
+  ) {
+    throw new Error("order_shape_unrecognized");
+  }
+  const shipments: ShipmentShape[] = Array.isArray(record.shipments)
+    ? record.shipments.map((raw) => {
+        const shipment = (raw ?? {}) as Record<string, unknown>;
+        return {
+          trackingNumber:
+            typeof shipment.trackingNumber === "string" ? shipment.trackingNumber : null,
+          carrier: typeof shipment.carrier === "string" ? shipment.carrier : null,
+        };
+      })
+    : [];
+  return { orderId, state: state as OrderState, placedAt, shipments };
+}
+
+function asLines(value: unknown): readonly LineShape[] {
+  const record = (value ?? {}) as Record<string, unknown>;
+  if (!Array.isArray(record.lines)) return [];
+  return record.lines.map((raw) => {
+    const line = (raw ?? {}) as Record<string, unknown>;
+    if (typeof line.displayName !== "string" || typeof line.quantity !== "number") {
+      throw new Error("order_shape_unrecognized");
+    }
+    return { displayName: line.displayName, quantity: line.quantity };
+  });
+}
 
 // Money has moved (or moved and come back). "approved" is pre-capture and
 // stays awaiting_payment: code cannot mark itself paid.
@@ -73,8 +123,8 @@ const CARRIER_TRACKING: Readonly<Record<string, (trackingNumber: string) => stri
     fedex: (n: string) => `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(n)}`,
   });
 
-function trackingUrlOf(shipments: CommerceOrderSummaryDto["shipments"]): string | null {
-  for (const shipment of shipments ?? []) {
+function trackingUrlOf(shipments: readonly ShipmentShape[]): string | null {
+  for (const shipment of shipments) {
     const carrier = (shipment.carrier ?? "").trim().toLowerCase();
     const trackingNumber = (shipment.trackingNumber ?? "").trim();
     const build = CARRIER_TRACKING[carrier];
@@ -83,12 +133,11 @@ function trackingUrlOf(shipments: CommerceOrderSummaryDto["shipments"]): string 
   return null;
 }
 
-function labelsFrom(detail: CommerceOrderDetailDto): {
+function labelsFrom(lines: readonly LineShape[]): {
   itemLabel: string;
   variantLabel: string | null;
   quantity: number;
 } {
-  const lines = detail.lines ?? [];
   if (lines.length === 1) {
     return { itemLabel: lines[0].displayName, variantLabel: null, quantity: lines[0].quantity };
   }
@@ -105,16 +154,17 @@ function labelsFrom(detail: CommerceOrderDetailDto): {
 export function createCommerceOrdersPort(source: CommerceOrdersSource): CustomerOrdersPort {
   return {
     async ordersFor(memberKey) {
-      const summaries = await source.listForMember(memberKey);
+      const rows = await source.listForMember(memberKey);
       const research: PortalOrderSummaryDto[] = await Promise.all(
-        summaries.map(async (summary) => {
+        rows.map(async (row) => {
+          const summary = asSummary(row);
           const detail = await source.getForMember(memberKey, summary.orderId);
-          if (detail === null) {
+          if (detail === null || detail === undefined) {
             // Listed but unreadable: fail the whole read closed rather than
             // render an order row with invented contents.
             throw new Error("order_detail_unavailable");
           }
-          const labels = labelsFrom(detail);
+          const labels = labelsFrom(asLines(detail));
           return {
             reference: summary.orderId,
             placedAt: summary.placedAt,

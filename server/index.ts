@@ -167,6 +167,15 @@ import { runProductionFoundingSchedulerTick } from "./research/membership-activa
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
 import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./request-logging";
+import { registerCustomerAccountApi } from "./research/customer-account/routes";
+import { buildProductionCustomerAccountPorts } from "./research/customer-account/production";
+import { createCommerceOrdersPort } from "./research/customer-account/orders-projection";
+import { createSupabaseMemberQuestionsSupportSource } from "./research/customer-account/production-support";
+import { createSupabasePlanDocumentsSource } from "./research/customer-account/production-documents";
+import { createCatalogPriorityPort } from "./research/product-activation/catalog-projection";
+import { registerClientImportAdminApi } from "./research/client-import/admin-routes";
+import { createMemoryClientImportStagingStore } from "./research/client-import/staging-store";
+import { randomUUID } from "crypto";
 import { createServer } from "http";
 
 const app = express();
@@ -1092,6 +1101,49 @@ registerFoundingActivationApi(app, buildFoundingActivationDependencies(), {
   requireMember: adaptGuard(requireMember),
   requireSupabaseAdmin: adaptGuard(requireSupabaseAdmin),
 });
+
+// Customer account read surface (/api/research/customer-account/*): the
+// injected merged member guard, no parallel auth (routes.ts header protocol).
+// The lookup is bound to the guard's member key (research_members.id) — the
+// builder's auth_user_id fallback must NOT be used here (production.ts:52-56).
+// Graduated sources: orders reshape the ONE decorated member orders service
+// composed above (commerce + Early Access history — no second order system);
+// support rides research_member_questions; documents ride
+// research_plan_documents (no production byte reader exists yet, so download
+// paths ship empty and stay honestly unavailable); catalog-priority serves
+// the audited activation-overlay projection, statuses only.
+registerCustomerAccountApi(
+  app,
+  buildProductionCustomerAccountPorts(
+    async (memberKey) => {
+      if (!supabaseConfigured()) return null;
+      const { data, error } = await getSupabaseAdmin()
+        .from("research_members")
+        .select("*")
+        .eq("id", memberKey)
+        .maybeSingle();
+      return error ? null : ((data as MemberRow | null) ?? null);
+    },
+    {
+      orders: createCommerceOrdersPort(commerceDependencies.orders),
+      support: createSupabaseMemberQuestionsSupportSource(),
+      documents: createSupabasePlanDocumentsSource(),
+      catalogPriority: createCatalogPriorityPort(process.cwd()),
+    },
+  ),
+  { requireMember: adaptGuard(requireMember) },
+);
+
+// Client-import dry runs, admin-only (/api/admin/research/client-imports/*),
+// next to the other requireSupabaseAdmin registrations. The memory store is
+// the deliberate interim until the candidate SQL is applied and a
+// service-role staging store replaces it: batches evaporate on restart and
+// staged identity rows never leave process memory.
+registerClientImportAdminApi(
+  app,
+  { store: createMemoryClientImportStagingStore(), newBatchId: () => randomUUID() },
+  { requireAdmin: adaptGuard(requireSupabaseAdmin) },
+);
 
 // Startup config diagnostic (booleans only, never values): makes a fail-closed
 // 503 on /research immediately explainable from the deploy logs.

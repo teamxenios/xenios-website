@@ -46,6 +46,11 @@ vi.mock("./member-auth", async (importOriginal) => {
 });
 
 import { registerResearchApi } from "./index";
+import { registerCustomerAccountApi } from "./customer-account/routes";
+import {
+  createMemoryCustomerAccountPorts,
+  defaultMemorySeeds,
+} from "./customer-account/memory-adapters";
 import { registerMemberPlatformApi } from "./member-platform";
 import {
   registerCommerceApi,
@@ -56,6 +61,7 @@ import { buildCommerceDependencies } from "./commerce/production-deps";
 
 const MEDIA_ID = "3f1c2d4e-5a6b-4c8d-9e0f-1a2b3c4d5e6f";
 const QUESTION_ID = "8c7b6a59-4d3e-4f2a-8b1c-0d9e8f7a6b5c";
+const DOCUMENT_ID = "5e4d3c2b-1a09-4f8e-b7c6-d5e4f3a2b1c0";
 const GUIDE_SLUG = "thymosin-alpha-1-kpv-ll-37";
 const BEARER = "Bearer member-jwt-without-review-cookie";
 
@@ -83,6 +89,11 @@ function makeWalledApi(
   app.get("/api/research/kris-launch-a/v1/catalog", denyAsDownstreamGuard);
   app.get("/api/research/kris-launch-a/v1/products/:slug", denyAsDownstreamGuard);
   registerMemberPlatformApi(app);
+  // Customer-account portal (2026-08-27 admissions): the injected guard is the
+  // same sentinel, so this suite proves the wall — not the port data.
+  registerCustomerAccountApi(app, createMemoryCustomerAccountPorts(defaultMemorySeeds()), {
+    requireMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
+  });
   const commerceGuards: CommerceGuards = {
     requireActiveMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
     requireMember: (req: Request, res: Response) => denyAsDownstreamGuard(req, res),
@@ -152,6 +163,15 @@ const ADMITTED = [
   ["get", "/api/research/questions"],
   ["get", "/api/research/telegram"],
   ["get", "/api/research/tracker"],
+  ["get", "/api/research/customer-account/overview"],
+  ["get", "/api/research/customer-account/orders"],
+  ["get", "/api/research/customer-account/subscription"],
+  ["get", "/api/research/customer-account/care"],
+  ["get", "/api/research/customer-account/documents"],
+  ["get", `/api/research/customer-account/documents/${DOCUMENT_ID}`],
+  ["get", "/api/research/customer-account/support"],
+  ["get", "/api/research/customer-account/catalog-priority"],
+  ["post", "/api/research/customer-account/support"],
   ["get", "/api/research/store-credit"],
   ["head", "/api/research/store-credit"],
   ["post", "/api/research/agreements"],
@@ -432,6 +452,30 @@ describe("the withdraw path is exact, not a pattern", () => {
     ["get", "/api/research/agreements/XR-MEM-012/withdraw"],
     ["delete", "/api/research/agreements"],
     ["put", "/api/research/agreements"],
+  ] as const;
+
+  for (const [method, path] of NEAR_MISSES) {
+    it(`still walls ${method.toUpperCase()} ${path}`, async () => {
+      expectStillWalled(await call(method, path, { Authorization: BEARER }), method);
+    });
+  }
+});
+
+describe("the customer-account admissions are exact, not a namespace", () => {
+  // 2026-08-27 admissions: seven exact read paths, one exact write path, and
+  // one anchored canonical-UUID document shape. If any of these near-misses
+  // ever reach the guard, the admission has drifted into a prefix.
+  const NEAR_MISSES = [
+    ["get", "/api/research/customer-account"],
+    ["get", "/api/research/customer-account/"],
+    ["get", "/api/research/customer-account/anything-else"],
+    ["get", "/api/research/customer-account/documents/not-a-uuid"],
+    ["get", `/api/research/customer-account/documents/${DOCUMENT_ID.toUpperCase()}`],
+    ["get", `/api/research/customer-account/documents/${DOCUMENT_ID}/extra`],
+    ["post", "/api/research/customer-account/overview"],
+    ["post", `/api/research/customer-account/documents/${DOCUMENT_ID}`],
+    ["put", "/api/research/customer-account/support"],
+    ["delete", "/api/research/customer-account/support"],
   ] as const;
 
   for (const [method, path] of NEAR_MISSES) {
