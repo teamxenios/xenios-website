@@ -21,8 +21,16 @@
 //   attribution→ research_affiliate_customer_bindings (candidate, 20260819) +
 //                partner registry; staff projection only.
 
+import type { MembershipDisplayState } from "@shared/research/customer-account/contract";
 import { getMemberByAuthUserId, type MemberRow } from "../member-auth";
-import type { CustomerAccountPorts, CustomerIdentity } from "./ports";
+import type {
+  CatalogPriorityPort,
+  CustomerAccountPorts,
+  CustomerDocumentsPort,
+  CustomerIdentity,
+  CustomerOrdersPort,
+  SupportCasesPort,
+} from "./ports";
 
 function identityFromMemberRow(row: MemberRow): CustomerIdentity {
   return {
@@ -37,14 +45,51 @@ function identityFromMemberRow(row: MemberRow): CustomerIdentity {
 export type MemberLookup = (memberKey: string) => Promise<MemberRow | null>;
 
 /**
+ * The graduated concerns the composition root injects when their durable
+ * sources exist. Every absent source keeps the truthful empty behavior below.
+ */
+export type ProductionAccountSources = Readonly<{
+  orders?: CustomerOrdersPort;
+  support?: SupportCasesPort;
+  documents?: CustomerDocumentsPort;
+  catalogPriority?: CatalogPriorityPort;
+}>;
+
+// Mirrors requireActiveMember's billing rule (member-auth.ts): billing_state
+// participates only while RESEARCH_MEMBERSHIP_BILLING_ENABLED is on; a MISSING
+// state on an active member reads as verified-legacy; sponsored_b2b is exempt.
+const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
+
+function membershipStateOf(row: MemberRow | null): MembershipDisplayState {
+  if (row === null) return "none";
+  const status = String(row.status ?? "");
+  if (status === "active") {
+    if (!billingEnabled()) return "active";
+    const billing = String((row as Record<string, unknown>).billing_state ?? "");
+    const sponsored = String((row as Record<string, unknown>).access_basis ?? "") === "sponsored_b2b";
+    if (billing === "" || billing === "active" || sponsored) return "active";
+    if (billing === "past_due" || billing === "disputed") return "past_due";
+    if (billing === "cancelled" || billing === "refunded") return "canceled";
+    // not_started / activation_pending / subscription_pending / unknown:
+    // billing has not completed, so no active plan is claimed.
+    return "none";
+  }
+  if (status === "past_due") return "past_due";
+  if (status === "cancelled" || status === "closed") return "canceled";
+  return "none";
+}
+
+/**
  * The production ports. `lookupMember` is injectable for tests; production
- * passes nothing and gets the Supabase-backed lookup. Every unproven concern
+ * passes a lookup bound to the guard-resolved member row. `sources` carries
+ * the concerns that HAVE graduated to durable sources; every absent source
  * returns its truthful empty state rather than failing the whole surface —
  * an account page that says "no orders yet" is honest while the real order
  * sources are being wired; one that errors tells the customer nothing.
  */
 export function buildProductionCustomerAccountPorts(
   lookupMember?: MemberLookup,
+  sources?: ProductionAccountSources,
 ): CustomerAccountPorts {
   const lookup: MemberLookup =
     lookupMember ??
@@ -64,15 +109,16 @@ export function buildProductionCustomerAccountPorts(
       },
     },
     membership: {
-      // Graduates to research_member_billing + Stripe portal. Until billing is
-      // enabled the truthful state is: membership exists administratively for
-      // an active member, billed manually/offline, with no portal link.
+      // research_members.status + billing_state (ledger row 9), mirroring
+      // requireActiveMember's rule. manageUrl stays null and manualBilling
+      // stays true: the Stripe seam has no production caller and no
+      // billing-portal-session capability, so there is nothing real to link.
       async membershipFor(memberKey) {
         const row = await lookup(memberKey);
-        const active = row?.status === "active";
+        const state = membershipStateOf(row);
         return {
-          state: active ? "active" : "none",
-          planLabel: active ? "Xenios Research Membership" : null,
+          state,
+          planLabel: state === "none" ? null : "Xenios Research Membership",
           nextRenewalAt: null,
           manageUrl: null,
           manualBilling: true,
@@ -89,8 +135,11 @@ export function buildProductionCustomerAccountPorts(
         };
       },
     },
-    orders: {
-      // Graduates to assisted-order + EA member history (see map above).
+    orders: sources?.orders ?? {
+      // Ungraduated fallback. The composition root injects the commerce
+      // member-orders projection (orders-projection.ts) over the ONE decorated
+      // MemberOrdersService; XRR assisted-order request history additionally
+      // needs a list-by-member RPC that does not exist yet.
       async ordersFor() {
         return { research: [], carePharmacy: [] };
       },
@@ -101,15 +150,18 @@ export function buildProductionCustomerAccountPorts(
         return [];
       },
     },
-    documents: {
-      // Graduates to research_plan_documents + EA receipt/COA surfaces.
+    documents: sources?.documents ?? {
+      // Ungraduated fallback. The composition root injects the plan-documents
+      // source (production-documents.ts); EA receipt/COA surfaces remain
+      // future graduations with their own kinds.
       async documentsFor() {
         return [];
       },
     },
-    support: {
-      // Graduates to research_member_questions / research_sla_events. Until
-      // then a support write has nowhere durable to go: refuse, don't pretend.
+    support: sources?.support ?? {
+      // Ungraduated fallback: a support write with no durable source has
+      // nowhere to go — refuse, don't pretend. The composition root injects
+      // the research_member_questions source (production-support.ts).
       async casesFor() {
         return [];
       },
@@ -123,5 +175,6 @@ export function buildProductionCustomerAccountPorts(
         return null;
       },
     },
+    ...(sources?.catalogPriority ? { catalogPriority: sources.catalogPriority } : {}),
   };
 }

@@ -183,3 +183,26 @@ export function activationComplete(overlay: ActivationOverlayEntry): boolean {
     overlay.founderActivationApproval !== null
   );
 }
+
+// ---------------------------------------------------------------------------
+// Catalog-priority projection: the member-facing wire shape for the current
+// demand collection. STATUSES ONLY — demand counts, confirmer identity,
+// checklist contents, and every other overlay field stay server-side
+// (the client's account-portal-policy test pins the receiving side).
+// ---------------------------------------------------------------------------
+
+export type CatalogPriorityQueueItemDto = Readonly<{
+  /** The overlay's stable queueId ("Q-2026-08-26-01") — never a label join. */
+  key: string;
+  title: string;
+  status: ProductActivationStatus;
+}>;
+
+export type CatalogPriorityDto = Readonly<{
+  /**
+   * Demand-definition key → resolved activation status. A key that is absent
+   * here must project "unavailable" in every consumer — fail closed.
+   */
+  statuses: Readonly<Record<string, ProductActivationStatus>>;
+  queue: readonly CatalogPriorityQueueItemDto[];
+}>;

@@ -42,6 +42,7 @@ export const CUSTOMER_ACCOUNT_PATHS = Object.freeze({
   care: `${BASE}/care`,
   documents: `${BASE}/documents`,
   support: `${BASE}/support`,
+  catalogPriority: `${BASE}/catalog-priority`,
 });
 
 function memberKeyOf(req: Request): string | null {
@@ -134,5 +135,37 @@ export function registerCustomerAccountApi(
       description: description.trim(),
     });
     res.status(201).json({ kind: "ok", data: created });
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.catalogPriority, withMember(async (_memberKey, _req, res) => {
+    const port = ports.catalogPriority;
+    if (!port) {
+      // No projection composed: refuse rather than invent one. The guard has
+      // already run, so an unauthenticated probe still answers 401 above.
+      res.status(404).json({ kind: "denied", reason: "catalog_priority_unavailable" });
+      return;
+    }
+    res.json({ kind: "ok", data: await port.catalogPriorityFor() });
+  }));
+
+  // Authorized byte download for one OWNED document. Ownership lives inside
+  // the port (the storage query is scoped by memberKey), so an unowned id, an
+  // unknown id, and an absent download capability are indistinguishable — one
+  // 404 denial for all three, and never a raw storage URL.
+  app.get(`${BASE}/documents/:documentId`, withMember(async (memberKey, req, res) => {
+    const open = ports.documents.openDocument?.bind(ports.documents);
+    const documentId = typeof req.params.documentId === "string" ? req.params.documentId : "";
+    const payload = open && documentId !== "" ? await open(memberKey, documentId) : null;
+    if (payload === null || payload === undefined) {
+      res.status(404).json({ kind: "denied", reason: "document_unavailable" });
+      return;
+    }
+    res.setHeader("Content-Type", payload.contentType);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${payload.filename.replace(/[^A-Za-z0-9._-]/g, "_")}"`,
+    );
+    res.setHeader("Cache-Control", "no-store");
+    res.send(Buffer.from(payload.bytes));
   }));
 }

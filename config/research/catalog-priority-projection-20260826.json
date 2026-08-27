@@ -1,0 +1,73 @@
+{
+  "$comment": [
+    "Catalog-priority base statuses for the member-facing current-demand collection.",
+    "Each entry's baseStatus is the adversarially-verified per-category status from",
+    "docs/research/SETH_DEMAND_SITE_GAP_REPORT_2026-08-26.md (evidence quoted per",
+    "entry). groupId joins the product-activation overlay",
+    "(config/research/product-activation-overlay-20260826.json) ONLY where the",
+    "category's own adjudicated status is carried by that exact overlay entry; a",
+    "category card whose research-lane variant is request-only does NOT inherit a",
+    "provider-variant overlay entry. resolveActivationStatus is monotonically",
+    "restrictive, so this file can never grant presentation the catalog does not",
+    "already grant. A demand key absent from this file projects 'unavailable'",
+    "(fail closed) through the client's projectDemandDefinitions."
+  ],
+  "schemaVersion": 1,
+  "recordedOn": "2026-08-27",
+  "entries": [
+    {
+      "key": "bpc157-tb500-15-15",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report bpc157-tb500: GRP-0266 15/15mg is request_access in the member-safe artifact (BUY_NOW_CANDIDATE); not in the founder release seed."
+    },
+    {
+      "key": "aod-motsc-tesa-ipa",
+      "baseStatus": "provider_required",
+      "groupId": "GRP-0008",
+      "evidence": "Gap report aod-motsc-tesa-ipa: PROVIDER_PENDING_PHARMACY_DOCUMENTATION. The category IS the provider 4-way blend GEN-GRP-0008, so the overlay's verbal entry carries this card and projects documentation-pending."
+    },
+    {
+      "key": "melanotan-2",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report melanotan-2: GEN-GRP-0315 research vial is request_access. The provider compounded variant (overlay GRP-0098) is a different lane/variant and does not carry this category card."
+    },
+    {
+      "key": "retatrutide",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report retatrutide: all demanded registry strengths (GEN-GRP-0323..0329) are request_access; none is in the founder release seed."
+    },
+    {
+      "key": "ta1-kpv-ll37",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report thymosin-a1-kpv-ll37: GEN-GRP-0352/0353 are request_access research blends."
+    },
+    {
+      "key": "cjc1295-ipamorelin",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report cjc-ipa: GEN-GRP-0268/0269 (No DAC) are request_access. The WITH-DAC GRP-0422 formulation hold and the provider 2-2mg/mL overlay entry (GRP-0031) are different variants and do not carry this category card."
+    },
+    {
+      "key": "igf1-lr3",
+      "baseStatus": "request_only",
+      "groupId": null,
+      "evidence": "Gap report igf1lr3: GEN-GRP-0301 IGF-1 LR3 1 mg is request_access; not released."
+    },
+    {
+      "key": "dsip",
+      "baseStatus": "live",
+      "groupId": null,
+      "evidence": "Gap report dsip: LIVE — founder-first-release-seed.ts line 80 (DSIP 10 mg), GEN-GRP-0278."
+    },
+    {
+      "key": "nad-plus",
+      "baseStatus": "live",
+      "groupId": null,
+      "evidence": "Gap report nad: LIVE — NAD+ 1,000 mg (and 500 mg) in founder-first-release-seed.ts."
+    }
+  ]
+}
