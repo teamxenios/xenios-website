@@ -29,9 +29,21 @@ export const ACCESS_ROUTES = {
 // ALL_MANIFEST_ROUTES: production holds only one of the eight Pack 02 tables,
 // so the pages stay unmounted (branch fable/pack02-account-mount) until the
 // account schema lands through the governed migration chain.
+export const ACCOUNT_PORTAL_ROUTES = {
+  home: "/research/account",
+  orders: "/research/account/orders",
+  subscription: "/research/account/subscription",
+  care: "/research/account/care",
+  documents: "/research/account/documents",
+  support: "/research/account/support",
+} as const;
+
+// Parked account-identity and organization routes remain named for their
+// existing components, while the personal customer portal above is mounted
+// independently and degrades without organization reads.
 export const ACCOUNT_ROUTES = {
   signIn: "/research/account/sign-in",
-  home: "/research/account",
+  home: ACCOUNT_PORTAL_ROUTES.home,
   claimHistory: "/research/account/claim-history",
   initialPassword: "/research/account/security/initial-password",
   organizationInvitation: "/research/account/organization-invitations/accept",
@@ -151,6 +163,7 @@ export const ADMIN_ROUTES = {
 
 export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
+  ...Object.values(ACCOUNT_PORTAL_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),
   ...Object.values(ADMIN_ROUTES),

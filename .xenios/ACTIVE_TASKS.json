@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T19:55:00Z",
+  "updatedAt": "2026-08-26T22:20:00Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -438,6 +438,25 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-08-21T16:38:03.054Z"
+    },
+    {
+      "id": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
+      "title": "Build the synthetic-data customer account portal, current-demand catalog presentation, and admin import review UI",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-client-portal-20260826",
+      "paths": [
+        "client/src/research/account/**",
+        "client/src/research/account-portal/**",
+        "client/src/research/catalog-priority/**",
+        "client/src/research/pages/adminx/client-imports/**",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "docs/review/client-account-portal-20260826/**"
+      ],
+      "dependsOn": [],
+      "pathsNote": "Authorized by C:/Users/sboad/projects/XENIOS_WEBSITE_BLITZ_20260826/COORDINATION.md. The section.tsx and routes.ts lease is limited to minimal /research/account/* registration. Organization reads remain optional; no Pack 02 schema dependency is introduced.",
+      "claimedAt": "2026-08-26T22:20:42.465Z"
     }
   ]
 }

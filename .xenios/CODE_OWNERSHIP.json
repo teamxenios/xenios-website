@@ -288,6 +288,23 @@
       "state": "active",
       "claimedAt": "2026-08-21T16:38:03.056Z",
       "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "f27dc330-48dd-46ef-adef-29a794d31587",
+      "task": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
+      "session": "codex-client-portal-20260826",
+      "paths": [
+        "client/src/research/account/**",
+        "client/src/research/account-portal/**",
+        "client/src/research/catalog-priority/**",
+        "client/src/research/pages/adminx/client-imports/**",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "docs/review/client-account-portal-20260826/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-26T22:20:42.475Z",
+      "heartbeatAt": "2026-08-27T00:22:10.366Z"
     }
   ],
   "rules": [
