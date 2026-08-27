@@ -1,0 +1,185 @@
+// Product activation: the vocabulary and the fail-closed gate between "someone
+// says a pharmacy can supply this" and "a customer can order it".
+//
+// The business fact this file exists to make unrepresentable: a VERBAL supply
+// confirmation (today: Kris's telemedicine/pharmacy relationships) is real
+// commercial information worth displaying internally, and it is NOT any of
+// LIVE, ORDERABLE, ACTIVE_IN_ALL_STATES, PRICED, CONTRACTED or
+// FORMULARY_VERIFIED. A product reaches "live" only through a completed
+// documentation checklist PLUS a recorded founder activation approval. Every
+// derivation in this file refuses toward the safer state.
+//
+// This overlay COMPOSES with the existing catalog authorities; it never
+// overrides them. `pathway-authority.ts` can still refuse a direct purchase,
+// and a founder release ledger row is still required for anything to sell.
+// The overlay can only ever move a product DOWN from what the base display
+// state would allow, never up.
+
+export const PRODUCT_ACTIVATION_STATUSES = [
+  "live",
+  "request_only",
+  "provider_required",
+  "verbally_confirmed_pending_documentation",
+  "pending_pharmacy_activation",
+  "held",
+  "unavailable",
+] as const;
+
+export type ProductActivationStatus = (typeof PRODUCT_ACTIVATION_STATUSES)[number];
+
+/**
+ * What a supply confirmation is grounded on. "verbal" is a real, recorded
+ * business signal — and it is structurally incapable of producing "live".
+ */
+export const SUPPLY_CONFIRMATION_BASES = ["none", "verbal", "documented"] as const;
+export type SupplyConfirmationBasis = (typeof SUPPLY_CONFIRMATION_BASES)[number];
+
+/**
+ * The documentation checklist a provider/pharmacy product must complete before
+ * activation can even be proposed. Every field is evidence someone recorded,
+ * not a boolean someone toggled: each present string names its document/source.
+ */
+export type ActivationChecklist = Readonly<{
+  exactFormulation: string | null;
+  exactStrength: string | null;
+  dosageForm: string | null;
+  /** "503A" | "503B" recorded with the pharmacy that owns the lane. */
+  pharmacyLane: string | null;
+  stateAvailability: string | null;
+  providerRequirements: string | null;
+  pharmacyPricing: string | null;
+  turnaround: string | null;
+  shippingModel: string | null;
+  documentationTesting: string | null;
+  contractingApproval: string | null;
+}>;
+
+export const EMPTY_ACTIVATION_CHECKLIST: ActivationChecklist = Object.freeze({
+  exactFormulation: null,
+  exactStrength: null,
+  dosageForm: null,
+  pharmacyLane: null,
+  stateAvailability: null,
+  providerRequirements: null,
+  pharmacyPricing: null,
+  turnaround: null,
+  shippingModel: null,
+  documentationTesting: null,
+  contractingApproval: null,
+});
+
+export type ActivationOverlayEntry = Readonly<{
+  /** Founder-workbook Group ID ("GRP-0323") — the stable cross-source key. */
+  groupId: string;
+  /** Human label for admin surfaces; never replaces catalog copy. */
+  label: string;
+  confirmationBasis: SupplyConfirmationBasis;
+  /** Who recorded the confirmation and when — provenance, not authority. */
+  confirmedBy: string | null;
+  confirmedAt: string | null;
+  checklist: ActivationChecklist;
+  /**
+   * The founder's explicit activation approval for THIS product, recorded as
+   * actor + ISO timestamp. Absent ⇒ "live" is unreachable, whatever else says.
+   */
+  founderActivationApproval: Readonly<{ approvedBy: string; approvedAt: string }> | null;
+  /** An explicit hold always wins over everything below it. */
+  held: boolean;
+}>;
+
+/** The checklist fields still missing, in declaration order. */
+export function activationBlockers(checklist: ActivationChecklist): readonly (keyof ActivationChecklist)[] {
+  return (Object.keys(EMPTY_ACTIVATION_CHECKLIST) as (keyof ActivationChecklist)[]).filter(
+    (key) => checklist[key] === null || checklist[key]!.trim() === "",
+  );
+}
+
+/**
+ * The base status a catalog row projects BEFORE any overlay is considered,
+ * from the member-safe artifact's display state. Informative mapping recorded
+ * in the blitz coordination file; anything unknown refuses to "unavailable".
+ */
+export function baseStatusFromDisplayState(displayState: string): ProductActivationStatus {
+  switch (displayState) {
+    case "available_now":
+      return "live";
+    case "available_this_week":
+    case "request_access":
+      return "request_only";
+    case "care_pathway":
+    case "approval_required":
+      return "provider_required";
+    case "temporarily_unavailable":
+      return "held";
+    default:
+      return "unavailable";
+  }
+}
+
+const STATUS_SEVERITY: Readonly<Record<ProductActivationStatus, number>> = Object.freeze({
+  // Higher = more restrictive. resolveActivationStatus may only move a product
+  // toward a HIGHER severity than its base, never lower.
+  live: 0,
+  request_only: 1,
+  provider_required: 2,
+  pending_pharmacy_activation: 3,
+  verbally_confirmed_pending_documentation: 4,
+  held: 5,
+  unavailable: 6,
+});
+
+export function isMoreRestrictive(a: ProductActivationStatus, b: ProductActivationStatus): boolean {
+  return STATUS_SEVERITY[a] > STATUS_SEVERITY[b];
+}
+
+/**
+ * Resolve the account/catalog-facing activation status for one product.
+ *
+ * Fail-closed rules, in order:
+ *   1. An explicit hold is final.
+ *   2. No overlay entry ⇒ the base status stands, except that a base of
+ *      "live" additionally requires the founder release ledger (enforced
+ *      elsewhere) — this function never invents live.
+ *   3. A verbal-only confirmation projects
+ *      `verbally_confirmed_pending_documentation` — never live, never
+ *      orderable — even if every checklist field were filled in.
+ *   4. A documented confirmation with an incomplete checklist projects
+ *      `pending_pharmacy_activation`.
+ *   5. A complete checklist WITHOUT founder approval still projects
+ *      `pending_pharmacy_activation`.
+ *   6. Only documented basis + complete checklist + founder approval yields
+ *      "live" — and only if the base state itself allows selling at all
+ *      (a provider_required base stays provider_required until the base
+ *      catalog changes; the overlay cannot skip the provider pathway).
+ */
+export function resolveActivationStatus(
+  base: ProductActivationStatus,
+  overlay: ActivationOverlayEntry | null,
+): ProductActivationStatus {
+  if (overlay === null) return base;
+  if (overlay.held) return "held";
+  if (overlay.confirmationBasis === "none") return base;
+  if (overlay.confirmationBasis === "verbal") {
+    // Verbal information can only make the projection MORE cautious.
+    return isMoreRestrictive(base, "verbally_confirmed_pending_documentation")
+      ? base
+      : "verbally_confirmed_pending_documentation";
+  }
+  // documented:
+  const blockers = activationBlockers(overlay.checklist);
+  if (blockers.length > 0) return "pending_pharmacy_activation";
+  if (overlay.founderActivationApproval === null) return "pending_pharmacy_activation";
+  // Documented + complete + approved: the overlay is satisfied. The BASE still
+  // rules: it can only confirm what the catalog itself already permits.
+  return base;
+}
+
+/** True only when nothing stands between this entry and founder-approved life. */
+export function activationComplete(overlay: ActivationOverlayEntry): boolean {
+  return (
+    !overlay.held &&
+    overlay.confirmationBasis === "documented" &&
+    activationBlockers(overlay.checklist).length === 0 &&
+    overlay.founderActivationApproval !== null
+  );
+}

@@ -1,0 +1,138 @@
+// The customer-account HTTP surface: /api/research/customer-account/*.
+//
+// REGISTRATION IS PENDING, DELIBERATELY — same protocol as the partner portal:
+// server/index.ts is a protected seam whose content hash is pinned in
+// docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json, so the one-line wiring ships
+// with the release authority, not from this lane:
+//
+//   import { registerCustomerAccountApi } from "./research/customer-account/routes";
+//   import { resolveCustomerAccountPorts } from "./research/customer-account/production";
+//
+//   // near the other member surfaces, after registerResearchApi(app):
+//   registerCustomerAccountApi(app, resolveCustomerAccountPorts(), {
+//     requireMember: adaptGuard(requireMember),
+//   });
+//
+// Authorization model (the commerce/portal lanes' proven shape, unchanged):
+// the acting member comes ONLY from the injected guard; no handler reads an
+// identity from a body, query, or path parameter; every port is keyed by the
+// guard-attached member, so no request field can address another customer.
+// The staff projection (partner attribution) is NOT exposed here at all —
+// staff tooling reads it through the admin surface, never the member one.
+
+import type { Express, Request, Response } from "express";
+import {
+  SUPPORT_CASE_CATEGORIES,
+  type SupportCaseCategory,
+} from "@shared/research/customer-account/contract";
+import type { CustomerAccountPorts } from "./ports";
+import { createCustomerAccountService } from "./service";
+
+export interface CustomerAccountGuards {
+  /** The merged member guard. Injected, so this module defines no parallel auth. */
+  requireMember: (req: Request, res: Response, next: () => void) => void | Promise<void>;
+}
+
+const BASE = "/api/research/customer-account";
+
+export const CUSTOMER_ACCOUNT_PATHS = Object.freeze({
+  overview: `${BASE}/overview`,
+  orders: `${BASE}/orders`,
+  subscription: `${BASE}/subscription`,
+  care: `${BASE}/care`,
+  documents: `${BASE}/documents`,
+  support: `${BASE}/support`,
+});
+
+function memberKeyOf(req: Request): string | null {
+  const member = (req as { researchMember?: { id?: unknown } }).researchMember;
+  const id = member?.id;
+  return typeof id === "string" && id.length > 0 ? id : null;
+}
+
+export function registerCustomerAccountApi(
+  app: Express,
+  ports: CustomerAccountPorts,
+  guards: CustomerAccountGuards,
+): void {
+  const service = createCustomerAccountService(ports);
+
+  const withMember = (
+    handler: (memberKey: string, req: Request, res: Response) => Promise<void>,
+  ) => {
+    return (req: Request, res: Response) => {
+      void Promise.resolve(guards.requireMember(req, res, async () => {
+        const memberKey = memberKeyOf(req);
+        if (memberKey === null) {
+          // The guard passed but attached nothing usable: refuse, never guess.
+          res.status(401).json({ kind: "denied", reason: "member_identity_unresolved" });
+          return;
+        }
+        try {
+          await handler(memberKey, req, res);
+        } catch {
+          res.status(500).json({ kind: "error" });
+        }
+      }));
+    };
+  };
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.overview, withMember(async (memberKey, _req, res) => {
+    const resolved = await service.resolveOverview(memberKey, { staff: false });
+    if (resolved.kind === "ok") {
+      res.json({ kind: "ok", data: resolved.overview });
+    } else if (resolved.kind === "unknown_customer") {
+      res.status(404).json({ kind: "denied", reason: "customer_not_found" });
+    } else {
+      res.status(500).json({ kind: "error" });
+    }
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.orders, withMember(async (memberKey, _req, res) => {
+    res.json({ kind: "ok", data: await ports.orders.ordersFor(memberKey) });
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.subscription, withMember(async (memberKey, _req, res) => {
+    const [membership, careEnrollment] = await Promise.all([
+      ports.membership.membershipFor(memberKey),
+      ports.care.careFor(memberKey),
+    ]);
+    // Two objects, deliberately never merged: membership is administrative,
+    // Care is operational, and neither implies the other.
+    res.json({ kind: "ok", data: { membership, careEnrollment } });
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.care, withMember(async (memberKey, _req, res) => {
+    res.json({ kind: "ok", data: await ports.care.careFor(memberKey) });
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.documents, withMember(async (memberKey, _req, res) => {
+    res.json({ kind: "ok", data: await ports.documents.documentsFor(memberKey) });
+  }));
+
+  app.get(CUSTOMER_ACCOUNT_PATHS.support, withMember(async (memberKey, _req, res) => {
+    res.json({ kind: "ok", data: await ports.support.casesFor(memberKey) });
+  }));
+
+  app.post(CUSTOMER_ACCOUNT_PATHS.support, withMember(async (memberKey, req, res) => {
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    const category = body.category;
+    const subject = body.subject;
+    const description = body.description;
+    if (
+      typeof category !== "string" ||
+      !(SUPPORT_CASE_CATEGORIES as readonly string[]).includes(category) ||
+      typeof subject !== "string" || subject.trim().length === 0 || subject.length > 200 ||
+      typeof description !== "string" || description.trim().length === 0 || description.length > 5000
+    ) {
+      res.status(400).json({ kind: "denied", reason: "invalid_support_case" });
+      return;
+    }
+    const created = await ports.support.openCase(memberKey, {
+      category: category as SupportCaseCategory,
+      subject: subject.trim(),
+      description: description.trim(),
+    });
+    res.status(201).json({ kind: "ok", data: created });
+  }));
+}
