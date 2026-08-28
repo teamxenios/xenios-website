@@ -72,4 +72,48 @@ describe("member-safe master offering UI integration packet", () => {
       sourceVersion: "quantity-v1",
     });
   });
+
+  it("fails closed without throwing for mismatched or malformed capabilities", () => {
+    const action = {
+      kind: "add_to_cart" as const,
+      label: "Add to Cart" as const,
+      productId: "product",
+      variantId: "variant",
+      amount: { amountCents: 1000, currency: "USD" },
+      evaluatedAt: "2026-08-11T18:00:00.000Z",
+    };
+    const valid = {
+      source: "accepted_quantity_policy" as const,
+      productId: "product",
+      variantId: "variant",
+      minimum: 1,
+      maximum: 50,
+      aggregateMaximum: 50,
+      sourceVersion: "quantity-v1",
+    };
+    const refused = [
+      undefined,
+      {},
+      { ...valid, productId: "other-product" },
+      { ...valid, variantId: "other-variant" },
+      { ...valid, productId: "" },
+      { ...valid, variantId: "   " },
+      { ...valid, source: "presentation_guess" },
+      { ...valid, minimum: Number.NaN },
+      { ...valid, minimum: 0 },
+      { ...valid, maximum: 0 },
+      { ...valid, aggregateMaximum: 49 },
+      { ...valid, sourceVersion: null },
+      { ...valid, sourceVersion: "   " },
+    ];
+
+    for (const capability of refused) {
+      expect(() =>
+        purchaseQuantityControl(action, capability as never),
+      ).not.toThrow();
+      expect(
+        purchaseQuantityControl(action, capability as never),
+      ).toEqual({ visible: false });
+    }
+  });
 });

@@ -192,33 +192,64 @@ describe("master offering detail", () => {
     unmount();
   });
 
-  it("shows the quantity control only when the capability matches the exact identity", () => {
+  it("keeps add-to-cart disabled for absent, mismatched, or malformed capabilities", () => {
     const purchasable = detail({
       variants: [variant({ action: ADD_TO_CART })],
     });
+    const onAddToCart = vi.fn();
 
-    const without = render(<MasterOfferingDetail product={purchasable} />);
-    expect(without.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
-    expect(without.host.querySelector('[data-testid="mo-cta"]')?.textContent).toBe(
-      "Add to Cart",
-    );
-    without.unmount();
-
-    const mismatched = render(
+    const without = render(
       <MasterOfferingDetail
         product={purchasable}
-        capabilityFor={() => ({ ...CAPABILITY, variantId: "pc_variant_other" })}
+        onAddToCart={onAddToCart}
       />,
     );
+    expect(without.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
+    const absentCta = without.host.querySelector<HTMLButtonElement>(
+      '[data-testid="mo-cta"]',
+    );
+    expect(absentCta?.textContent).toBe("Add to Cart");
+    expect(absentCta?.disabled).toBe(true);
     expect(
-      mismatched.host.querySelector('[data-testid="mo-quantity"]'),
-    ).toBeNull();
-    mismatched.unmount();
+      without.host.querySelector('[data-testid="mo-capability-refusal"]')
+        ?.textContent,
+    ).toContain("approved quantity range");
+    click(absentCta);
+    expect(onAddToCart).not.toHaveBeenCalled();
+    without.unmount();
+
+    const refusedCapabilities = [
+      { ...CAPABILITY, productId: "pc_product_other" },
+      { ...CAPABILITY, variantId: "pc_variant_other" },
+      { ...CAPABILITY, minimum: 0 },
+      { ...CAPABILITY, maximum: 0 },
+      { ...CAPABILITY, aggregateMaximum: 49 },
+      { ...CAPABILITY, sourceVersion: null },
+      { ...CAPABILITY, sourceVersion: "   " },
+    ];
+    for (const refusedCapability of refusedCapabilities) {
+      const refused = render(
+        <MasterOfferingDetail
+          product={purchasable}
+          capabilityFor={() => refusedCapability as never}
+          onAddToCart={onAddToCart}
+        />,
+      );
+      expect(refused.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
+      const refusedCta = refused.host.querySelector<HTMLButtonElement>(
+        '[data-testid="mo-cta"]',
+      );
+      expect(refusedCta?.disabled).toBe(true);
+      click(refusedCta);
+      expect(onAddToCart).not.toHaveBeenCalled();
+      refused.unmount();
+    }
 
     const matched = render(
       <MasterOfferingDetail
         product={purchasable}
         capabilityFor={() => CAPABILITY}
+        onAddToCart={() => undefined}
       />,
     );
     const quantity = matched.host.querySelector<HTMLInputElement>(
@@ -227,7 +258,28 @@ describe("master offering detail", () => {
     expect(quantity?.getAttribute("min")).toBe("1");
     expect(quantity?.getAttribute("max")).toBe("50");
     expect(quantity?.value).toBe("1");
+    expect(
+      matched.host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]')
+        ?.disabled,
+    ).toBe(false);
     matched.unmount();
+  });
+
+  it("keeps a valid quantity selection disabled when no cart handoff exists", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail({ variants: [variant({ action: ADD_TO_CART })] })}
+        capabilityFor={() => CAPABILITY}
+      />,
+    );
+    expect(host.querySelector('[data-testid="mo-quantity"]')).not.toBeNull();
+    expect(
+      host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]')?.disabled,
+    ).toBe(true);
+    expect(
+      host.querySelector('[data-testid="mo-cart-refusal"]')?.textContent,
+    ).toContain("not available in this view");
+    unmount();
   });
 
   it("hands the server action and the chosen quantity back untouched", () => {

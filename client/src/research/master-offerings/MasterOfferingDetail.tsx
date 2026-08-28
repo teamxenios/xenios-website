@@ -72,7 +72,33 @@ export function MasterOfferingVariantAction({
   }
 
   if (action.kind === "add_to_cart") {
-    const chosenText = quantity ?? String(control.visible ? control.minimum : 1);
+    const capabilityRefusalId = `mo-capability-refusal-${variant.id}`;
+    if (!control.visible) {
+      return (
+        <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
+          <p
+            id={capabilityRefusalId}
+            className="body-s text-ink-mute min-w-0 break-words"
+            data-testid="mo-capability-refusal"
+          >
+            Direct checkout is unavailable because an approved quantity range
+            is not available for this exact variant.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary min-h-[44px]"
+            data-testid="mo-cta"
+            disabled
+            aria-describedby={capabilityRefusalId}
+            aria-label={actionName(productName, variant.label, action.label)}
+          >
+            {action.label}
+          </button>
+        </div>
+      );
+    }
+
+    const chosenText = quantity ?? String(control.minimum);
     const chosen = /^(?:0|[1-9]\d*)$/.test(chosenText)
       ? Number(chosenText)
       : null;
@@ -82,52 +108,61 @@ export function MasterOfferingVariantAction({
     // and remains the authority; this only stops an obviously out-of-band
     // submit from making a pointless round trip.
     const outOfBand =
-      control.visible &&
-      (chosen === null ||
-        !Number.isSafeInteger(chosen) ||
-        chosen < control.minimum ||
-        chosen > control.maximum);
+      chosen === null ||
+      !Number.isSafeInteger(chosen) ||
+      chosen < control.minimum ||
+      chosen > control.maximum;
+    const cartUnavailable = onAddToCart === undefined;
+    const cartRefusalId = `mo-cart-refusal-${variant.id}`;
     return (
       <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
-        {control.visible && (
-          <label className="grid min-w-0 gap-2 max-w-[12rem]" htmlFor={quantityId}>
-            <span className="form-label">
-              Quantity, {productName}, {variant.label}
+        <label className="grid min-w-0 gap-2 max-w-[12rem]" htmlFor={quantityId}>
+          <span className="form-label">
+            Quantity, {productName}, {variant.label}
+          </span>
+          <input
+            id={quantityId}
+            className="input-field"
+            type="number"
+            inputMode="numeric"
+            min={control.minimum}
+            max={control.maximum}
+            step={1}
+            value={chosenText}
+            data-testid="mo-quantity"
+            aria-invalid={outOfBand || undefined}
+            aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
+            onChange={(event) => onQuantityChange?.(event.target.value)}
+          />
+          {outOfBand && (
+            <span
+              id={`${quantityId}-band`}
+              className="body-s text-ink-mute"
+              data-testid="mo-quantity-band-note"
+            >
+              Choose between {control.minimum} and {control.maximum}.
             </span>
-            <input
-              id={quantityId}
-              className="input-field"
-              type="number"
-              inputMode="numeric"
-              min={control.minimum}
-              max={control.maximum}
-              step={1}
-              value={chosenText}
-              data-testid="mo-quantity"
-              aria-invalid={outOfBand || undefined}
-              aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
-              onChange={(event) => onQuantityChange?.(event.target.value)}
-            />
-            {outOfBand && (
-              <span
-                id={`${quantityId}-band`}
-                className="body-s text-ink-mute"
-                data-testid="mo-quantity-band-note"
-              >
-                Choose between {control.minimum} and {control.maximum}.
-              </span>
-            )}
-          </label>
+          )}
+        </label>
+        {cartUnavailable && (
+          <p
+            id={cartRefusalId}
+            className="body-s text-ink-mute min-w-0 break-words"
+            data-testid="mo-cart-refusal"
+          >
+            Direct checkout is not available in this view.
+          </p>
         )}
         <button
           type="button"
           className="btn btn-primary min-h-[44px]"
           data-testid="mo-cta"
-          disabled={outOfBand}
+          disabled={outOfBand || cartUnavailable}
+          aria-describedby={cartUnavailable ? cartRefusalId : undefined}
           aria-label={actionName(productName, variant.label, action.label)}
           onClick={() => {
-            if (outOfBand || chosen === null) return;
-            onAddToCart?.(action, chosen);
+            if (outOfBand || chosen === null || cartUnavailable) return;
+            onAddToCart(action, chosen);
           }}
         >
           {action.label}

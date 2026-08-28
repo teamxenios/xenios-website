@@ -210,13 +210,19 @@ function validCapability(
 ): value is AcceptedExactVariantQuantityCapability {
   return (
     value !== null &&
+    typeof value === "object" &&
     value.source === "accepted_quantity_policy" &&
+    typeof value.productId === "string" &&
+    value.productId.trim() !== "" &&
+    typeof value.variantId === "string" &&
+    value.variantId.trim() !== "" &&
     Number.isSafeInteger(value.minimum) &&
     value.minimum > 0 &&
     Number.isSafeInteger(value.maximum) &&
     value.maximum >= value.minimum &&
     Number.isSafeInteger(value.aggregateMaximum) &&
     value.aggregateMaximum >= value.maximum &&
+    typeof value.sourceVersion === "string" &&
     value.sourceVersion.trim() !== ""
   );
 }

@@ -142,6 +142,12 @@ describe("full catalog page", () => {
     expect(mobileToggle?.getAttribute("aria-expanded")).toBe("false");
     act(() => mobileToggle?.click());
     expect(mobileToggle?.getAttribute("aria-expanded")).toBe("true");
+    expect(host.textContent).toContain(
+      "direct checkout, a request, Care, updates, or no current action",
+    );
+    expect(host.textContent).not.toContain(
+      "Anything without direct checkout can still be requested",
+    );
     unmount();
   });
 
@@ -280,7 +286,7 @@ describe("full catalog page", () => {
       />,
     );
     // The card renders the server-resolved action and nothing stronger: a
-    // planned variant gets its request path, never a Buy button and never a
+    // planned variant gets its updates path, never a Buy button and never a
     // zero standing in for a missing price.
     expect(host.textContent).not.toContain("Add to Cart");
     expect(host.textContent).not.toContain("Buy Now");
@@ -293,6 +299,81 @@ describe("full catalog page", () => {
     expect(
       host.querySelector('[data-testid="mo-card-price"]')?.textContent,
     ).toBe("Price on request");
+    unmount();
+  });
+
+  it("keeps Care, planned, notification-only, and no-action paths distinct", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{}}
+        page={page({
+          products: [
+            card({
+              variantCount: 4,
+              variants: [
+                {
+                  id: "mov_care",
+                  label: "Care option",
+                  displayState: "care_pathway",
+                  displayLabel: "Care Pathway",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "explore_care",
+                    label: "Explore Care",
+                    href: "/research/member/metabolic-care",
+                  },
+                },
+                {
+                  id: "mov_planned",
+                  label: "Planned option",
+                  displayState: "planned",
+                  displayLabel: "Planned",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "get_updates",
+                    label: "Get Updates",
+                    href: "/research/member/product-updates",
+                  },
+                },
+                {
+                  id: "mov_notify",
+                  label: "Notification option",
+                  displayState: "coming_soon",
+                  displayLabel: "Coming Soon",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "notify_me",
+                    label: "Notify Me",
+                    href: "/research/member/product-updates",
+                  },
+                },
+                {
+                  id: "mov_none",
+                  label: "Unavailable option",
+                  displayState: "unavailable",
+                  displayLabel: "Unavailable",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: { kind: "none", label: null, href: null },
+                },
+              ],
+            }),
+          ],
+        })}
+        onQueryChange={() => {}}
+      />,
+    );
+    const rows = Array.from(
+      host.querySelectorAll<HTMLElement>('[data-testid="mo-variant-row"]'),
+    );
+    expect(rows[0]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Explore Care");
+    expect(rows[1]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Get Updates");
+    expect(rows[2]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Notify Me");
+    expect(rows[3]?.querySelector('[data-testid="mo-card-action"]')).toBeNull();
+    expect(rows[3]?.querySelector('[data-testid="mo-card-no-action"]')?.textContent)
+      .toBe("Not available");
     unmount();
   });
 

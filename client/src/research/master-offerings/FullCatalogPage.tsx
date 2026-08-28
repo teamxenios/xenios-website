@@ -97,9 +97,9 @@ export function FullCatalogPage({
         <h1 className="display-s">Full catalog</h1>
         <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
           Every offering we can show you, with its truthful availability and its
-          approved price. Where a price is not yet approved it says so. Anything
-          without direct checkout can still be requested, and a person picks it
-          up.
+          approved price. Where a price is not yet approved it says so. Each
+          exact variant states its available next step: direct checkout, a
+          request, Care, updates, or no current action.
         </p>
         <ResearchSecureNotice>
           Private catalog. Not indexed, and not for redistribution.

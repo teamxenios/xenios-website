@@ -310,7 +310,7 @@ describe("the routed page wires the handoff", () => {
     click(host.querySelector('[data-testid="mo-cta"]'));
     await settle();
     expect(host.textContent).toContain(
-      "Direct checkout is not enabled yet.",
+      "Direct checkout is not enabled.",
     );
     expect(host.textContent).not.toContain("commerce_disabled");
     // Still on the product page: a refusal never navigates to the cart.

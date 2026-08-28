@@ -31,7 +31,7 @@ const REFUSAL_COPY: Readonly<
   Record<Exclude<CatalogCartOutcome, { ok: true }>["reason"], string>
 > = {
   not_purchasable:
-    "This variant is not available for direct checkout. Use the request option above.",
+    "This variant is not available for direct checkout.",
   quantity_unauthorized:
     "A quantity has not been approved for this exact variant yet.",
   quantity_out_of_band: "That quantity is outside the approved range.",
@@ -47,7 +47,7 @@ const REFUSAL_COPY: Readonly<
  */
 const CART_REFUSAL_CODE_COPY: Readonly<Record<string, string>> = {
   commerce_disabled:
-    "Direct checkout is not enabled yet. This variant can still be requested through the request option.",
+    "Direct checkout is not enabled.",
 };
 
 function refusalCopy(outcome: Exclude<CatalogCartOutcome, { ok: true }>): string {
