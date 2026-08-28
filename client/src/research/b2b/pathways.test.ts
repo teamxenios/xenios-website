@@ -25,6 +25,7 @@ describe("public B2B pathway contract", () => {
       "clinic_medical_spa",
       "provider_practice",
       "affiliate",
+      "collective",
       "supplier_lab_fulfillment",
       "white_label",
       "strategic_partner",

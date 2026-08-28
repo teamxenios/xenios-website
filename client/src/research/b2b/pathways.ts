@@ -15,6 +15,7 @@ export type PartnershipPathwayId =
   | "clinic_medical_spa"
   | "provider_practice"
   | "affiliate"
+  | "collective"
   | "supplier_lab_fulfillment"
   | "white_label"
   | "strategic_partner";
@@ -62,13 +63,23 @@ export const PARTNERSHIP_PATHWAYS: readonly PartnershipPathway[] = [
   },
   {
     id: "affiliate",
-    eyebrow: "Educators · creators · collectives · communities",
-    title: "Affiliates and collectives",
+    eyebrow: "Educators · creators · referral partners",
+    title: "Affiliate relationships",
     summary:
       "Application, compliance review, approved resources, durable attribution, and reporting without clinical influence.",
     reviewFocus: "Audience, channels, disclosure practices, allowed claims, and agreement readiness.",
     route: B2B_PUBLIC_ROUTES.affiliates,
     actionLabel: "Explore affiliate access",
+  },
+  {
+    id: "collective",
+    eyebrow: "Communities · gyms · advisor groups",
+    title: "Collective partnerships",
+    summary:
+      "Reviewed group relationships with Xenios-owned customer accounts, internal source attribution, and no duplicate customer portal.",
+    reviewFocus: "Entity, program owner, audience, time window, disclosures, consent authority, and data boundaries.",
+    route: B2B_PUBLIC_ROUTES.affiliates,
+    actionLabel: "Review the collective boundary",
   },
   {
     id: "supplier_lab_fulfillment",

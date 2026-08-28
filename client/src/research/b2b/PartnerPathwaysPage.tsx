@@ -46,7 +46,7 @@ export default function PartnerPathwaysPage() {
         <SectionHeading
           id="partnership-pathways-heading"
           eyebrow="Relationship pathways"
-          title="One company, seven distinct ways to work together."
+          title="One company, distinct review paths for each relationship."
           body="Choose the path closest to the actual relationship. If more than one applies, start with the primary commercial purpose; the review team can route the rest without creating duplicate accounts."
         />
         <div className="xr-b2b-grid">

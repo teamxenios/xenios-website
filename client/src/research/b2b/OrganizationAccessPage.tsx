@@ -33,11 +33,11 @@ const REVIEW_STEPS = [
   },
   {
     title: "Commercial path",
-    body: "Xenios assigns the appropriate catalog, availability request, quote, organization account, or Care handoff without silently merging them.",
+    body: "Review identifies whether the next path is a catalog, availability request, quote, organization account, or Care handoff without silently merging them.",
   },
   {
     title: "Onboarding and support",
-    body: "Approved organizations receive an owner, next action, account status, and operational support path. Approval is never automatic.",
+    body: "Any approved onboarding must identify an accountable Xenios owner, next action, account status, and supported operational path. Approval is never automatic.",
   },
 ] as const;
 
