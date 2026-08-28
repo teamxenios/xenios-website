@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { ALL_MANIFEST_ROUTES } from "./lib/routes";
+import { ACCESS_ROUTES, ALL_MANIFEST_ROUTES } from "./lib/routes";
 
 // The route manifest is the single source of truth; this parity test fails
 // the build the moment a manifest route is missing from the routers.
@@ -22,5 +22,29 @@ describe("route manifest parity", () => {
     // is /research/application-status. Both must stay routed.
     expect(sources).toContain('"/research/apply/status"');
     expect(sources).toContain('"/research/application-status"');
+  });
+
+  it("keeps every public editorial route bidirectionally pinned to the manifest and router", () => {
+    const editorialRoutes = [
+      ACCESS_ROUTES.about,
+      ACCESS_ROUTES.howItWorks,
+      ACCESS_ROUTES.faq,
+      ACCESS_ROUTES.policies,
+      ACCESS_ROUTES.contact,
+    ];
+    expect(editorialRoutes).toEqual([
+      "/research/about",
+      "/research/how-it-works",
+      "/research/faq",
+      "/research/policies",
+      "/research/contact",
+    ]);
+    for (const route of editorialRoutes) {
+      expect(ALL_MANIFEST_ROUTES.filter((candidate) => candidate === route)).toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu"))).toHaveLength(1);
+    }
+    expect(sources).not.toContain(
+      '<Route path="/research/faq"><Redirect to="/research/support" /></Route>',
+    );
   });
 });

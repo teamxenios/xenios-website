@@ -60,6 +60,11 @@ describe("recovery route chrome isolation", () => {
     "/research/apply",
     "/research/apply/review",
     "/research/apply/success",
+    "/research/about",
+    "/research/how-it-works",
+    "/research/faq",
+    "/research/policies",
+    "/research/contact",
     "/research/support",
     "/research/privacy",
     "/research/terms",
@@ -70,6 +75,29 @@ describe("recovery route chrome isolation", () => {
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(view.querySelectorAll("main")).toHaveLength(1);
     expect(view.textContent).toContain("Back to gateway");
+    expect(view.querySelector('nav[aria-label="Research information"]')).toBeTruthy();
+  });
+
+  it.each([
+    ["/research/about", "about-public-content"],
+    ["/research/how-it-works", "how-it-works-public-content"],
+    ["/research/faq", "faq-public-content"],
+    ["/research/policies", "policies-public-content"],
+    ["/research/contact", "contact-public-content"],
+  ])("keeps %s public with its own routed content", (path, uniqueContent) => {
+    window.history.replaceState(null, "", path);
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    act(() => root!.render(
+      <ResearchLayout>
+        <div data-testid={uniqueContent}>{uniqueContent}</div>
+      </ResearchLayout>,
+    ));
+
+    expect(container.querySelector(`[data-testid="${uniqueContent}"]`)).toBeTruthy();
+    expect(container.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(container.querySelectorAll("main")).toHaveLength(1);
   });
 
   it.each([

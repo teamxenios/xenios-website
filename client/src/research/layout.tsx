@@ -9,6 +9,10 @@ import {
 } from "@shared/research/paths";
 import { useResearch } from "./core";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
+import {
+  PublicEditorialFooter,
+  PublicEditorialNav,
+} from "./pages/PublicEditorialNav";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
 // architecture):
@@ -51,7 +55,6 @@ const MEMBER_AREA_PREFIXES = [
   "/research/profile",
   "/research/membership",
   "/research/framework",
-  "/research/faq",
   "/research/quality",
   "/research/professionals",
   "/research/access",
@@ -137,6 +140,9 @@ function Unconfigured() {
 }
 
 function MinimalChrome({ children }: { children: ReactNode }) {
+  const [location] = useLocation();
+  const normalizedLocation = normalizeResearchPath(location) ?? undefined;
+
   return (
     <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
       <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
@@ -147,18 +153,12 @@ function MinimalChrome({ children }: { children: ReactNode }) {
           </Link>
           <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors">Back to gateway</Link>
         </div>
+        <div className="container-x" style={{ paddingBottom: 12 }}>
+          <PublicEditorialNav current={normalizedLocation} />
+        </div>
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="rule-top">
-        <div
-          className="container-x flex flex-wrap justify-center"
-          style={{ paddingTop: 24, paddingBottom: 24, gap: 32 }}
-        >
-          <Link href="/research/policies/privacy" className="body-s text-ink-mute hover:text-pulse transition-colors">Privacy</Link>
-          <Link href="/research/policies/terms" className="body-s text-ink-mute hover:text-pulse transition-colors">Terms</Link>
-          <a href="mailto:research@xeniostechnology.com" className="body-s text-ink-mute hover:text-pulse transition-colors">Support</a>
-        </div>
-      </footer>
+      <PublicEditorialFooter />
     </div>
   );
 }
@@ -315,6 +315,11 @@ function isPublicResearchPath(path: string): boolean {
     || normalized === "/research/application/status"
     || normalized === "/research/application-status"
     || normalized === "/research/support"
+    || normalized === "/research/about"
+    || normalized === "/research/how-it-works"
+    || normalized === "/research/faq"
+    || normalized === "/research/policies"
+    || normalized === "/research/contact"
     || normalized === "/research/privacy"
     || normalized === "/research/terms"
     || normalized.startsWith("/research/policies/");

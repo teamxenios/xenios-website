@@ -30,6 +30,11 @@ const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
+const AboutResearch = lazy(() => import("./pages/AboutResearch"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Faq = lazy(() => import("./pages/Faq"));
+const PoliciesIndex = lazy(() => import("./pages/PoliciesIndex"));
+const ResearchContact = lazy(() => import("./pages/ResearchContact"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
 // The assisted-order wizard family. Inside the gated Early Access experience:
 // every page's own fetches carry the Early Access session and are refused
@@ -316,6 +321,11 @@ export default function ResearchSection() {
           <Route path="/research/support">{() => <L component={Support} />}</Route>
           <Route path="/research/privacy">{() => <L component={LegalPage} props={{ kind: "privacy" }} />}</Route>
           <Route path="/research/terms">{() => <L component={LegalPage} props={{ kind: "terms" }} />}</Route>
+          <Route path="/research/about">{() => <L component={AboutResearch} />}</Route>
+          <Route path="/research/how-it-works">{() => <L component={HowItWorks} />}</Route>
+          <Route path="/research/faq">{() => <L component={Faq} />}</Route>
+          <Route path="/research/policies">{() => <L component={PoliciesIndex} />}</Route>
+          <Route path="/research/contact">{() => <L component={ResearchContact} />}</Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />
 
           {/* Development-only visual gallery (fixture mode). The route is
@@ -419,7 +429,6 @@ export default function ResearchSection() {
           <Route path="/research/cart"><Redirect to="/research/member/cart" /></Route>
           <Route path="/research/membership"><Redirect to="/research/member/membership" /></Route>
           <Route path="/research/framework"><Redirect to="/research/member/blueprint" /></Route>
-          <Route path="/research/faq"><Redirect to="/research/support" /></Route>
           <Route path="/research/quality"><Redirect to="/research/member/guides" /></Route>
           <Route path="/research/programs"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/professionals"><Redirect to="/research/partners" /></Route>

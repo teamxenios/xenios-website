@@ -2,6 +2,8 @@
 import { describe, expect, it } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import type {
   PublicStorefrontCard,
   PublicStorefrontDetail,
@@ -37,6 +39,10 @@ import { StorefrontProductPage } from "./StorefrontProductPage";
   true;
 
 const WIDTHS = [430, 390, 375, 360, 320];
+const gatewayCss = readFileSync(
+  resolve(__dirname, "../pages/gateway-editorial.css"),
+  "utf8",
+);
 
 /** One long unbreakable token: the shape that actually breaks narrow layouts. */
 const LONG =
@@ -144,25 +150,6 @@ describe("public storefront reflow", () => {
       });
     });
 
-    it(`landing page renders no horizontal-overflow-prone bare token at ${width}px`, () => {
-      atWidth(width, () => {
-        const view = render(<Gateway />);
-        // The gateway's own copy is short and balanced; what matters is that
-        // the row each CTA actually sits in wraps, rather than forcing every
-        // button onto one line. Derived from the buttons themselves, so a new
-        // CTA added to a non-wrapping row is caught.
-        const ctaRows = new Set(
-          Array.from(view.host.querySelectorAll<HTMLAnchorElement>("a.btn"))
-            .map((cta) => cta.parentElement)
-            .filter((row): row is HTMLElement => row !== null),
-        );
-        expect(ctaRows.size).toBeGreaterThan(0);
-        for (const row of Array.from(ctaRows)) {
-          expect(row.style.flexWrap).toBe("wrap");
-        }
-        view.unmount();
-      });
-    });
   }
 
   it("the legend cannot widen the product page", () => {
@@ -196,19 +183,30 @@ describe("public storefront reflow", () => {
     detail.unmount();
   });
 
-  it("the gateway's own CTAs are full-width-capped so they stack, not overflow", () => {
+  it("the gateway's real editorial CTAs are present and use the guarded responsive classes", () => {
     const view = render(<Gateway />);
     const ctas = Array.from(
-      view.host.querySelectorAll<HTMLAnchorElement>("a.btn"),
+      view.host.querySelectorAll<HTMLAnchorElement>("a.rg-btn, a.rg-mobile-access"),
     );
     expect(ctas.length).toBeGreaterThan(0);
     for (const cta of ctas) {
-      // width:100% with a maxWidth is what lets them sit side by side on a
-      // desktop and stack on a phone without a media query.
-      expect(cta.style.width).toBe("100%");
-      expect(cta.style.maxWidth).not.toBe("");
-      expect(Number.parseInt(cta.style.height, 10)).toBeGreaterThanOrEqual(44);
+      expect(cta.className).toMatch(/\brg-(?:btn|mobile-access)\b/u);
     }
     view.unmount();
+  });
+
+  it("pins wrapping, narrow-width stacking, and the 44px target floor in gateway CSS", () => {
+    expect(gatewayCss).toMatch(
+      /\.rg-stacked-actions\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap;/su,
+    );
+    expect(gatewayCss).toMatch(
+      /\.rg-btn,\s*\.rg-mobile-access\s*\{[^}]*min-height:\s*52px;/su,
+    );
+    expect(gatewayCss).toMatch(
+      /@media\s*\(max-width:\s*620px\)[\s\S]*?\.rg-hero-actions\s+\.rg-btn,\s*\.rg-final-actions\s+\.rg-btn\s*\{\s*width:\s*100%;/u,
+    );
+    expect(gatewayCss).toMatch(
+      /@media\s*\(max-width:\s*260px\)[\s\S]*?\.rg-btn,\s*\.rg-mobile-access\s*\{[^}]*overflow-wrap:\s*anywhere;/u,
+    );
   });
 });
