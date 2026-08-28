@@ -122,7 +122,7 @@ function LotRecord({
 
       <div className="card bg-paper-2 mt-8">
         <p className="body-s text-ink-2">
-          This is a limited public record, not a safety, clinical, potency, sterility, or suitability conclusion. Read each document’s method and scope. For testing context, visit <Link href="/research/testing">Testing explained</Link>.
+          This is a limited public record, not a safety, potency, sterility, or suitability conclusion. Read each document’s method and scope. For testing context, visit <Link href="/research/testing">Testing explained</Link>.
         </p>
       </div>
     </article>

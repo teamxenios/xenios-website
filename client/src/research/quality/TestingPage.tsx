@@ -85,7 +85,7 @@ export default function TestingPage() {
               A COA is not a universal guarantee. It is a controlled record of identified tests, methods, specifications, and results for a stated sample or lot.
             </p>
             <p className="body-s text-ink-2 mt-4">
-              It does not replace chain of custody, receiving inspection, release authority, storage controls, traceability, or exception handling. It also does not provide dosing, clinical, or personal-use guidance.
+              It does not replace chain of custody, receiving inspection, release authority, storage controls, traceability, or exception handling. It also does not provide dosing or personal-use guidance.
             </p>
           </div>
         </div>

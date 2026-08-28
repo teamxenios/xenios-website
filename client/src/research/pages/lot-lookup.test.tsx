@@ -107,7 +107,7 @@ describe("public lot verification UI", () => {
     expect(view.textContent).toContain("Identity");
     expect(view.textContent).toContain("Xenios approved quality record");
     expect(view.textContent).toContain("Independent laboratory record");
-    expect(view.textContent).toContain("not a safety, clinical, potency, sterility, or suitability conclusion");
+    expect(view.textContent).toContain("not a safety, potency, sterility, or suitability conclusion");
     const link = view.querySelector<HTMLAnchorElement>('[data-testid="public-lot-document-link"]')!;
     expect(link.getAttribute("href")).toBe(successBody.lot.documents[0].downloadPath);
     expect(link.getAttribute("rel")).toContain("noreferrer");

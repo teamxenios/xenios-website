@@ -71,7 +71,7 @@ describe("public quality editorial surfaces", () => {
     }
     expect(view.textContent).toContain("where applicable");
     expect(view.textContent).toContain("A COA is not a universal guarantee");
-    expect(view.textContent).toContain("does not provide dosing, clinical, or personal-use guidance");
+    expect(view.textContent).toContain("does not provide dosing or personal-use guidance");
   });
 
   it("keeps public and secure document lanes distinct with a labeled lot form", async () => {
