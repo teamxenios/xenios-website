@@ -68,6 +68,32 @@ describe("TestPaymentProvider", () => {
     }
   });
 
+  it("binds an authorization idempotency key to the exact money command", async () => {
+    const p = new TestPaymentProvider();
+    const first = await p.createAuthorization(baseInput);
+    const conflict = await p.createAuthorization({ ...baseInput, amountCents: baseInput.amountCents + 1 });
+    expect(first.ok).toBe(true);
+    expect(conflict.ok).toBe(false);
+    if (!conflict.ok) {
+      expect(conflict.code).toBe("PERMANENT_FAILURE");
+      expect(conflict.providerReference).toBe(first.ok ? first.value.providerReference : undefined);
+    }
+  });
+
+  it("replays keyed capture and cancellation without moving money twice", async () => {
+    const p = new TestPaymentProvider();
+    const captured = await p.createAuthorization(baseInput);
+    if (!captured.ok) throw new Error("setup failed");
+    const firstCapture = await p.captureAuthorization(captured.value.providerReference, baseInput.amountCents, "capture-key");
+    const replayCapture = await p.captureAuthorization(captured.value.providerReference, baseInput.amountCents, "capture-key");
+    expect(firstCapture.ok && replayCapture.ok).toBe(true);
+
+    const cancellable = await p.createAuthorization({ ...baseInput, idempotencyKey: "cancel-auth-key" });
+    if (!cancellable.ok) throw new Error("setup failed");
+    expect((await p.cancelAuthorization(cancellable.value.providerReference, "cancel-key")).ok).toBe(true);
+    expect((await p.cancelAuthorization(cancellable.value.providerReference, "cancel-key")).ok).toBe(true);
+  });
+
   it("creates a distinct authorization for a different key", async () => {
     const p = new TestPaymentProvider();
     const a = await p.createAuthorization(baseInput);
@@ -248,7 +274,7 @@ describe("StripePaymentAdapter", () => {
   describe("createAuthorization", () => {
     it("creates a manual-capture payment intent and forwards the caller's idempotency key", async () => {
       const { adapter, requests } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "requires_capture", amount: 33999 } },
+        { status: 200, body: { id: "pi_1", status: "requires_capture", amount: 33999, currency: "usd" } },
       ]);
       const r = await adapter.createAuthorization({ ...baseInput, paymentMethodReference: "pm_1" });
       expect(r.ok).toBe(true);
@@ -378,6 +404,76 @@ describe("StripePaymentAdapter", () => {
       if (!r.ok) expect(r.message).toContain("already captured");
     });
 
+    it("requires exact provider-reported authorization amount and currency", async () => {
+      for (const body of [
+        { id: "pi_1", status: "requires_capture", amount: 33998, currency: "usd" },
+        { id: "pi_1", status: "requires_capture", amount: 33999, currency: "eur" },
+        { id: "pi_1", status: "requires_capture", amount: 33999 },
+      ]) {
+        const { adapter } = stripeAdapter([{ status: 200, body }]);
+        const result = await adapter.createAuthorization(baseInput);
+        expect(result.ok).toBe(false);
+        if (!result.ok) {
+          expect(result.code).toBe("PERMANENT_FAILURE");
+          expect(result.providerReference).toBe("pi_1");
+        }
+      }
+    });
+
+    it("recovers a keyed capture only from exact provider amount and currency evidence", async () => {
+      const exact = stripeAdapter([{
+        status: 200,
+        body: { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "usd" },
+      }]);
+      const recovered = await exact.adapter.captureAuthorization("pi_1", 33999, "capture-command-key");
+      expect(recovered.ok).toBe(true);
+      expect(exact.requests).toHaveLength(1);
+
+      for (const body of [
+        { id: "pi_1", status: "succeeded", amount_received: 33998, currency: "usd" },
+        { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "eur" },
+        { id: "pi_1", status: "succeeded", amount_received: 33999 },
+      ]) {
+        const { adapter } = stripeAdapter([{ status: 200, body }]);
+        const result = await adapter.captureAuthorization("pi_1", 33999, "capture-command-key");
+        expect(result.ok).toBe(false);
+        if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
+      }
+    });
+
+    it("accepts a keyed capture response only with exact identity, amount, and currency", async () => {
+      const exact = stripeAdapter([
+        {
+          status: 200,
+          body: { id: "pi_1", status: "requires_capture", amount_capturable: 33999, currency: "usd" },
+        },
+        {
+          status: 200,
+          body: { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "usd" },
+        },
+      ]);
+      const captured = await exact.adapter.captureAuthorization("pi_1", 33999, "capture-command-key");
+      expect(captured.ok).toBe(true);
+      if (captured.ok) expect(captured.value.currency).toBe("usd");
+
+      for (const body of [
+        { id: "pi_other", status: "succeeded", amount_received: 33999, currency: "usd" },
+        { id: "pi_1", status: "succeeded", amount_received: 33998, currency: "usd" },
+        { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "eur" },
+      ]) {
+        const { adapter } = stripeAdapter([
+          {
+            status: 200,
+            body: { id: "pi_1", status: "requires_capture", amount_capturable: 33999, currency: "usd" },
+          },
+          { status: 200, body },
+        ]);
+        const result = await adapter.captureAuthorization("pi_1", 33999, "capture-command-key");
+        expect(result.ok).toBe(false);
+        if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
+      }
+    });
+
     it("refuses to capture a cancelled payment", async () => {
       const { adapter } = stripeAdapter([{ status: 200, body: { id: "pi_1", status: "canceled" } }]);
       const r = await adapter.captureAuthorization("pi_1");
@@ -413,6 +509,17 @@ describe("StripePaymentAdapter", () => {
       const r = await adapter.cancelAuthorization("pi_1");
       expect(r.ok).toBe(false);
       if (!r.ok) expect(r.code).toBe("REJECTED");
+    });
+
+    it("recovers a keyed cancellation from authoritative cancelled state without another POST", async () => {
+      const { adapter, requests } = stripeAdapter([{
+        status: 200,
+        body: { id: "pi_1", status: "canceled", amount: 33999, currency: "usd" },
+      }]);
+      const result = await adapter.cancelAuthorization("pi_1", "cancel-command-key");
+      expect(result.ok).toBe(true);
+      expect(requests).toHaveLength(1);
+      expect(requests[0].method).toBe("GET");
     });
   });
 

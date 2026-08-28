@@ -14,7 +14,7 @@
 // Nothing here marks an order paid on its own: every advance goes through
 // `transitionOrder`, which requires a provider reference for a paid state.
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import {
   evaluateLargeOrderReview,
@@ -172,6 +172,16 @@ export type CheckoutOutcome =
   | {
       ok: false;
       denials: CommerceDenialCode[];
+      /** A retry must reuse the same checkout idempotency key. */
+      retryable?: boolean;
+      /**
+       * Present when a provider result is ambiguous and durable reconciliation
+       * owns the next step. This is intentionally not a success-shaped order.
+       */
+      reconciliation?: {
+        commandId: string;
+        phase: "authorization" | "capture" | "cancellation";
+      };
       /**
        * Present only when the reservation seam refused: the lot-precise
        * operator codes behind the member-facing `insufficient_stock` denial.
@@ -182,6 +192,17 @@ export type CheckoutOutcome =
 export interface CheckoutService {
   validate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutValidation>;
   submit(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutOutcome>;
+}
+
+function legacyProviderCommandKey(
+  phase: "authorize" | "capture",
+  memberId: string,
+  checkoutIdempotencyKey: string,
+): string {
+  const digest = createHash("sha256")
+    .update(JSON.stringify(["xenios:legacy-checkout-provider-command:v1", phase, memberId, checkoutIdempotencyKey]), "utf8")
+    .digest("hex");
+  return `xr_checkout_legacy_${phase}_v1_${digest}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -503,7 +524,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
           currency: "usd",
           orderId,
           memberId,
-          idempotencyKey: req.idempotencyKey,
+          idempotencyKey: legacyProviderCommandKey("authorize", memberId, req.idempotencyKey),
           paymentMethodReference: req.paymentMethodReference,
         });
         if (auth.ok) {
@@ -521,7 +542,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       currency: "usd",
       orderId,
       memberId,
-      idempotencyKey: req.idempotencyKey,
+      idempotencyKey: legacyProviderCommandKey("authorize", memberId, req.idempotencyKey),
       paymentMethodReference: req.paymentMethodReference,
     });
     if (!auth.ok) {
@@ -548,7 +569,11 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     if (!approved.ok) return { ok: true, order, idempotent: false };
     order.state = approved.state;
 
-    const capture = await deps.payment.captureAuthorization(auth.value.providerReference, totalCents);
+    const capture = await deps.payment.captureAuthorization(
+      auth.value.providerReference,
+      totalCents,
+      legacyProviderCommandKey("capture", memberId, req.idempotencyKey),
+    );
     if (!capture.ok) {
       // The authorization stands and the order waits. It is never marked paid here.
       return { ok: true, order, idempotent: false };

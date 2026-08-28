@@ -60,6 +60,7 @@ export type CommerceDenialCode =
   | "payment_disabled"
   | "payment_method_required"
   | "payment_failed"
+  | "checkout_reconciliation_pending"
   | "large_order_review_required"
   | "order_not_found"
   | "order_state_invalid"

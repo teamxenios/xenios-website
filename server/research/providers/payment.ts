@@ -47,6 +47,8 @@ export interface PaymentAuthorization {
 export interface PaymentCapture {
   providerReference: string;
   capturedAmountCents: number;
+  /** Provider-reported currency. Atomic checkout requires this exact evidence. */
+  currency?: "usd";
   status: "captured";
 }
 
@@ -54,6 +56,15 @@ export interface PaymentRefund {
   providerReference: string;
   refundedAmountCents: number;
   status: "refunded";
+}
+
+export interface PaymentStatus {
+  status: string;
+  currency?: string;
+  /** Present only when the provider authoritatively reports an exact capture. */
+  capturedAmountCents?: number;
+  /** Present only when the provider authoritatively reports an exact authorization. */
+  authorizedAmountCents?: number;
 }
 
 export interface WebhookVerification {
@@ -70,10 +81,19 @@ export interface PaymentProvider {
   readonly supportsDeferredCapture: boolean;
 
   createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>>;
-  captureAuthorization(providerReference: string, amountCents?: number): Promise<ProviderResult<PaymentCapture>>;
-  cancelAuthorization(providerReference: string): Promise<ProviderResult<void>>;
+  captureAuthorization(
+    providerReference: string,
+    amountCents?: number,
+    /** Stable durable command key. Required by the atomic checkout saga. */
+    idempotencyKey?: string,
+  ): Promise<ProviderResult<PaymentCapture>>;
+  cancelAuthorization(
+    providerReference: string,
+    /** Stable durable command key. Required by the atomic checkout saga. */
+    idempotencyKey?: string,
+  ): Promise<ProviderResult<void>>;
   refund(providerReference: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>>;
-  retrieveStatus(providerReference: string): Promise<ProviderResult<{ status: string }>>;
+  retrieveStatus(providerReference: string): Promise<ProviderResult<PaymentStatus>>;
   verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>>;
 }
 
@@ -98,7 +118,7 @@ export class DisabledPaymentProvider implements PaymentProvider {
     return providerDisabled<PaymentRefund>("product_commerce");
   }
   async retrieveStatus() {
-    return providerDisabled<{ status: string }>("product_commerce");
+    return providerDisabled<PaymentStatus>("product_commerce");
   }
   async verifyWebhook() {
     return providerDisabled<WebhookVerification>("product_commerce");
@@ -126,8 +146,12 @@ export class TestPaymentProvider implements PaymentProvider {
     { amountCents: number; captured: number; refunded: number; cancelled: boolean; orderId: string }
   >();
   private byIdempotencyKey = new Map<string, string>();
+  private authorizationFingerprintsByKey = new Map<string, string>();
   /** Refund idempotency: key -> the refund result already produced for it. */
   private refundsByKey = new Map<string, PaymentRefund>();
+  private capturesByKey = new Map<string, PaymentCapture>();
+  private captureFingerprintsByKey = new Map<string, string>();
+  private cancellationsByKey = new Map<string, string>();
   private seenWebhookEvents = new Set<string>();
   private counter = 0;
 
@@ -142,9 +166,26 @@ export class TestPaymentProvider implements PaymentProvider {
       return providerMisconfigured<PaymentAuthorization>("Authorization amount must be positive.");
     }
 
-    // Idempotency: the same key returns the original authorization, never a second one.
+    const fingerprint = JSON.stringify([
+      input.amountCents,
+      input.currency,
+      input.orderId,
+      input.memberId,
+      input.paymentMethodReference ?? null,
+    ]);
+    // Idempotency binds the exact command. Reusing a key for changed money,
+    // ownership, order, or payment instrument is a conflict, never a replay.
     const existingRef = this.byIdempotencyKey.get(input.idempotencyKey);
     if (existingRef) {
+      if (this.authorizationFingerprintsByKey.get(input.idempotencyKey) !== fingerprint) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Authorization idempotency key conflicts with an earlier command.",
+          retryable: false,
+          providerReference: existingRef,
+        };
+      }
       const existing = this.authorizations.get(existingRef)!;
       return providerOk(
         {
@@ -167,6 +208,7 @@ export class TestPaymentProvider implements PaymentProvider {
       orderId: input.orderId,
     });
     this.byIdempotencyKey.set(input.idempotencyKey, ref);
+    this.authorizationFingerprintsByKey.set(input.idempotencyKey, fingerprint);
 
     return providerOk(
       {
@@ -180,7 +222,11 @@ export class TestPaymentProvider implements PaymentProvider {
     );
   }
 
-  async captureAuthorization(ref: string, amountCents?: number): Promise<ProviderResult<PaymentCapture>> {
+  async captureAuthorization(
+    ref: string,
+    amountCents?: number,
+    idempotencyKey?: string,
+  ): Promise<ProviderResult<PaymentCapture>> {
     const auth = this.authorizations.get(ref);
     if (!auth) {
       return { ok: false, code: "REJECTED", message: "Unknown authorization.", retryable: false };
@@ -188,26 +234,71 @@ export class TestPaymentProvider implements PaymentProvider {
     if (auth.cancelled) {
       return { ok: false, code: "REJECTED", message: "Authorization was cancelled.", retryable: false };
     }
+    const amount = amountCents ?? auth.amountCents;
+    if (idempotencyKey) {
+      const fingerprint = `${ref}:${amount}`;
+      const existingFingerprint = this.captureFingerprintsByKey.get(idempotencyKey);
+      if (existingFingerprint && existingFingerprint !== fingerprint) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Capture idempotency key conflicts with an earlier command.",
+          retryable: false,
+          providerReference: ref,
+        };
+      }
+      const replay = this.capturesByKey.get(idempotencyKey);
+      if (replay) return providerOk({ ...replay }, ref);
+    }
     if (auth.captured > 0) {
       return { ok: false, code: "REJECTED", message: "Authorization already captured.", retryable: false };
     }
-    const amount = amountCents ?? auth.amountCents;
     if (amount > auth.amountCents) {
       return { ok: false, code: "REJECTED", message: "Capture exceeds authorized amount.", retryable: false };
     }
     auth.captured = amount;
-    return providerOk({ providerReference: ref, capturedAmountCents: amount, status: "captured" as const }, ref);
+    const capture = {
+      providerReference: ref,
+      capturedAmountCents: amount,
+      currency: "usd" as const,
+      status: "captured" as const,
+    };
+    if (idempotencyKey) {
+      this.captureFingerprintsByKey.set(idempotencyKey, `${ref}:${amount}`);
+      this.capturesByKey.set(idempotencyKey, capture);
+    }
+    return providerOk({ ...capture }, ref);
   }
 
-  async cancelAuthorization(ref: string): Promise<ProviderResult<void>> {
+  async cancelAuthorization(ref: string, idempotencyKey?: string): Promise<ProviderResult<void>> {
     const auth = this.authorizations.get(ref);
     if (!auth) {
       return { ok: false, code: "REJECTED", message: "Unknown authorization.", retryable: false };
     }
     if (auth.captured > 0) {
-      return { ok: false, code: "REJECTED", message: "Cannot cancel a captured authorization.", retryable: false };
+      return {
+        ok: false,
+        code: "REJECTED",
+        message: "Cannot cancel a captured authorization.",
+        retryable: false,
+        providerReference: ref,
+      };
+    }
+    if (idempotencyKey) {
+      const prior = this.cancellationsByKey.get(idempotencyKey);
+      if (prior && prior !== ref) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Cancellation idempotency key conflicts with an earlier command.",
+          retryable: false,
+          providerReference: ref,
+        };
+      }
+      if (prior === ref) return providerOk(undefined as void, ref);
     }
     auth.cancelled = true;
+    if (idempotencyKey) this.cancellationsByKey.set(idempotencyKey, ref);
     return providerOk(undefined as void, ref);
   }
 
@@ -236,13 +327,18 @@ export class TestPaymentProvider implements PaymentProvider {
     return providerOk({ ...refund }, ref);
   }
 
-  async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
+  async retrieveStatus(ref: string): Promise<ProviderResult<PaymentStatus>> {
     const auth = this.authorizations.get(ref);
     if (!auth) {
       return { ok: false, code: "REJECTED", message: "Unknown authorization.", retryable: false };
     }
     const status = auth.cancelled ? "cancelled" : auth.captured > 0 ? "captured" : "authorized";
-    return providerOk({ status }, ref);
+    return providerOk({
+      status,
+      currency: "usd",
+      ...(auth.captured > 0 ? { capturedAmountCents: auth.captured } : {}),
+      ...(!auth.cancelled ? { authorizedAmountCents: auth.amountCents } : {}),
+    }, ref);
   }
 
   /**
@@ -635,11 +731,22 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (!reference) return unrecognizedProviderStatus("authorization", "response without an id");
 
     if (status === "requires_capture") {
+      const amount = readNumber(intent, "amount");
+      const currency = readString(intent, "currency");
+      if (amount !== input.amountCents || currency !== input.currency) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "The provider authorization amount or currency conflicts with this checkout command.",
+          retryable: false,
+          providerReference: reference,
+        };
+      }
       return providerOk<PaymentAuthorization>(
         {
           providerReference: reference,
-          amountCents: input.amountCents,
-          currency: "usd",
+          amountCents: amount,
+          currency,
           status: "authorized",
           captureDeferred: true,
         },
@@ -660,6 +767,7 @@ export class StripePaymentAdapter implements PaymentProvider {
         code: "REJECTED",
         message: `The payment was created (${reference}) but is not authorized yet (status ${String(status)}).`,
         retryable: false,
+        providerReference: reference,
       };
     }
     if (status === "canceled") {
@@ -672,12 +780,18 @@ export class StripePaymentAdapter implements PaymentProvider {
         message:
           "The provider reported an immediate capture where a deferred authorization was requested. Refusing to treat it as an authorization.",
         retryable: false,
+        providerReference: reference,
       };
     }
-    return unrecognizedProviderStatus("authorization", status);
+    const unknown = unrecognizedProviderStatus<PaymentAuthorization>("authorization", status);
+    return unknown.ok ? unknown : { ...unknown, providerReference: reference };
   }
 
-  async captureAuthorization(ref: string, amountCents?: number): Promise<ProviderResult<PaymentCapture>> {
+  async captureAuthorization(
+    ref: string,
+    amountCents?: number,
+    idempotencyKey?: string,
+  ): Promise<ProviderResult<PaymentCapture>> {
     const current = await this.retrieveIntent(ref);
     if (!current.ok) return current;
     const intent = current.value;
@@ -686,7 +800,49 @@ export class StripePaymentAdapter implements PaymentProvider {
       return { ok: false, code: "REJECTED", message: "Authorization was cancelled.", retryable: false };
     }
     if (intent.status === "succeeded") {
-      return { ok: false, code: "REJECTED", message: "Authorization already captured.", retryable: false };
+      const alreadyCaptured = readNumber(intent, "amount_received") ?? 0;
+      const expected = amountCents ?? alreadyCaptured;
+      const currency = readString(intent, "currency");
+      if (idempotencyKey && currency !== "usd") {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "The provider reports a captured currency that conflicts with this checkout command.",
+          retryable: false,
+          providerReference: ref,
+        };
+      }
+      if (idempotencyKey && alreadyCaptured > 0 && alreadyCaptured === expected) {
+        // Crash recovery: the provider may have captured before the process
+        // durably recorded the result. Retrieval is authoritative evidence of
+        // that exact amount, so replay completes instead of charging again or
+        // manufacturing success.
+        return providerOk<PaymentCapture>(
+          {
+            providerReference: ref,
+            capturedAmountCents: alreadyCaptured,
+            currency: "usd",
+            status: "captured",
+          },
+          ref,
+        );
+      }
+      if (!idempotencyKey) {
+        return {
+          ok: false,
+          code: "REJECTED",
+          message: "Authorization was already captured.",
+          retryable: false,
+          providerReference: ref,
+        };
+      }
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "The provider reports a captured amount that conflicts with this checkout command.",
+        retryable: false,
+        providerReference: ref,
+      };
     }
     if (intent.status !== "requires_capture") {
       return {
@@ -699,6 +855,17 @@ export class StripePaymentAdapter implements PaymentProvider {
 
     const capturable = readNumber(intent, "amount_capturable") ?? 0;
     const amount = amountCents ?? capturable;
+    const currentId = readString(intent, "id");
+    const currentCurrency = readString(intent, "currency");
+    if (idempotencyKey && (currentId !== ref || currentCurrency !== "usd")) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "The provider authorization identity or currency conflicts with this checkout command.",
+        retryable: false,
+        providerReference: ref,
+      };
+    }
     if (!Number.isInteger(amount) || amount <= 0) {
       return { ok: false, code: "REJECTED", message: "Capture amount must be a positive integer of cents.", retryable: false };
     }
@@ -713,6 +880,7 @@ export class StripePaymentAdapter implements PaymentProvider {
       method: "POST",
       path: `/v1/payment_intents/${encodeURIComponent(ref)}/capture`,
       form: { amount_to_capture: String(amount) },
+      idempotencyKey,
     });
     if (!response) return stripeTransportFailure();
     if (response.status !== 200) return mapStripeFailure(response.status, response.body);
@@ -720,16 +888,51 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (captured?.status !== "succeeded") {
       return unrecognizedProviderStatus("capture", captured?.status);
     }
+    if (
+      idempotencyKey &&
+      (readString(captured, "id") !== ref ||
+        readNumber(captured, "amount_received") !== amount ||
+        readString(captured, "currency") !== "usd")
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "The provider capture amount, currency, or identity conflicts with this checkout command.",
+        retryable: false,
+        providerReference: ref,
+      };
+    }
     return providerOk<PaymentCapture>(
-      { providerReference: ref, capturedAmountCents: amount, status: "captured" },
+      { providerReference: ref, capturedAmountCents: amount, currency: "usd", status: "captured" },
       ref,
     );
   }
 
-  async cancelAuthorization(ref: string): Promise<ProviderResult<void>> {
+  async cancelAuthorization(ref: string, idempotencyKey?: string): Promise<ProviderResult<void>> {
+    // The durable saga always supplies a key. Its recovery path first reads the
+    // authoritative state, so a crash after cancellation becomes idempotent and
+    // capture-vs-cancel races are explicit. Keyless legacy callers retain their
+    // historical one-call behavior.
+    if (idempotencyKey) {
+      const current = await this.retrieveIntent(ref);
+      if (!current.ok) return current;
+      if (current.value.status === "canceled") {
+        return providerOk(undefined as void, ref);
+      }
+      if (current.value.status === "succeeded") {
+        return {
+          ok: false,
+          code: "REJECTED",
+          message: "A captured payment cannot be cancelled.",
+          retryable: false,
+          providerReference: ref,
+        };
+      }
+    }
     const response = await this.call({
       method: "POST",
       path: `/v1/payment_intents/${encodeURIComponent(ref)}/cancel`,
+      idempotencyKey,
     });
     if (!response) return stripeTransportFailure();
     if (response.status !== 200) return mapStripeFailure(response.status, response.body);
@@ -795,12 +998,20 @@ export class StripePaymentAdapter implements PaymentProvider {
     );
   }
 
-  async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
+  async retrieveStatus(ref: string): Promise<ProviderResult<PaymentStatus>> {
     const current = await this.retrieveIntent(ref);
     if (!current.ok) return current;
     const mapped = INTENT_STATUS_DOMAIN[String(current.value.status)];
     if (!mapped) return unrecognizedProviderStatus("status retrieval", current.value.status);
-    return providerOk({ status: mapped }, ref);
+    const capturedAmountCents = readNumber(current.value, "amount_received");
+    const authorizedAmountCents = readNumber(current.value, "amount");
+    const currency = readString(current.value, "currency");
+    return providerOk({
+      status: mapped,
+      ...(currency !== undefined ? { currency } : {}),
+      ...(capturedAmountCents !== undefined ? { capturedAmountCents } : {}),
+      ...(authorizedAmountCents !== undefined ? { authorizedAmountCents } : {}),
+    }, ref);
   }
 
   async verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>> {

@@ -96,6 +96,14 @@ export type ProviderResult<T> =
       code: ProviderFailureCode;
       message: string;
       retryable: boolean;
+      /**
+       * A provider object may already exist even though the requested money
+       * state was not reached (for example, an unconfirmed PaymentIntent).
+       * Carrying its opaque reference lets a durable saga reconcile or cancel
+       * that object before it releases inventory or credit. It is never
+       * member-visible and it is never evidence that money moved.
+       */
+      providerReference?: string;
     };
 
 export type ProviderFailureCode =
