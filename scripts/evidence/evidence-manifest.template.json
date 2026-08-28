@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 2,
+  "status": "PENDING",
+  "repository": "teamxenios/xenios-website",
+  "integrationBranch": "codex/xenios-research-full-finish-integration-20260828",
+  "developmentSource": {
+    "sha": "a1bbc2a186ebbf96cead429a78dc30ffdc811005",
+    "verdict": "FAILED_NONDEPLOYABLE",
+    "deployAllowed": false
+  },
+  "productionEvidence": {
+    "attestedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "branch": "release/early-access-code-session-checkout",
+    "deploymentId": "dep-da6vorqfngtc73brb0gg",
+    "scanBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "controlsCommit": {
+      "sha": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
+      "sourceStatus": "PUSHED_VERIFIED",
+      "frozenCandidateVerification": "PENDING"
+    }
+  },
+  "candidate": {
+    "sha": null,
+    "originVerified": "PENDING",
+    "frozenAt": null,
+    "nodeVersion": "20.19.0",
+    "npmVersion": "10.8.2"
+  },
+  "lanes": {
+    "00": {
+      "scope": "lead-integration",
+      "observedSourceSha": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
+      "sourcePushed": true,
+      "sourceIntegrated": true,
+      "admissionStatus": "CONTROLS_ONLY_FINAL_RC_PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["FINAL_FROZEN_SHA_PENDING"]
+    },
+    "01": {
+      "scope": "truth-security",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["TESTED_AUTHORITY_HANDOFF_PENDING"]
+    },
+    "02": {
+      "scope": "public-brand",
+      "observedSourceSha": "54f9ce7e22822696e318fc299f76e04052b0a8a6",
+      "sourcePushed": true,
+      "sourceIntegrated": false,
+      "admissionStatus": "INDEPENDENT_VERIFICATION_PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": [
+        "LEAD_INTEGRATION_PENDING",
+        "WARM_SILVER_BROWSER_RECONCILIATION_PENDING"
+      ]
+    },
+    "03": {
+      "scope": "catalog",
+      "observedSourceSha": "bf86b30198f1027a77ebc2afecf2dfd312ed6746",
+      "sourcePushed": true,
+      "sourceIntegrated": false,
+      "admissionStatus": "SHARED_VOLUME_VERIFICATION_AND_LANE01_AUTHORITY_PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": [
+        "SHARED_VOLUME_VERIFICATION_PENDING",
+        "EXACT_PRODUCT_VARIANT_LIVE_AUTHORITY_PENDING"
+      ]
+    },
+    "04": {
+      "scope": "account-commerce",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "HELD_FOR_TESTED_LANE01_CONTRACT",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["LANE01_TRUTH_CONTRACT_HANDOFF_PENDING"]
+    },
+    "05": {
+      "scope": "care-tebra",
+      "observedSourceSha": "28de987d22f918cbe3db01ee8a4291e7acf9e40e",
+      "sourcePushed": true,
+      "sourceIntegrated": true,
+      "admissionStatus": "SOURCE_INTEGRATED_RELEASE_GATES_PENDING",
+      "scopedTestRecord": {
+        "passed": 262,
+        "total": 262,
+        "scope": "LANE_SCOPED_ONLY",
+        "overallLanePass": false
+      },
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": [
+        "REAL_CONFIGURATION_PENDING",
+        "STAGING_EVIDENCE_PENDING",
+        "CSP_ROUTES_TRACKING_PROTECTED_COMPOSITION_PENDING"
+      ]
+    },
+    "06": {
+      "scope": "quality-coa",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "BLOCKED_UNMOUNTED",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["PUBLIC_LOT_THROTTLE_AUTHORITY"]
+    },
+    "07": {
+      "scope": "b2b-partners",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "REJECTED_DIRTY_WORKTREE_STALE_HANDOFF",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["CLEAN_TESTED_PUSHED_HANDOFF_REQUIRED"]
+    },
+    "08": {
+      "scope": "admin-operations",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["TESTED_PUSHED_HANDOFF_PENDING"]
+    },
+    "09": {
+      "scope": "performance-accessibility-seo",
+      "observedSourceSha": "8c0c7b0afc7225aeb0ac692822010c29c34b2af8",
+      "sourcePushed": true,
+      "sourceIntegrated": true,
+      "admissionStatus": "ISOLATED_SOURCE_INTEGRATED_RELEASE_GATES_PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": [
+        "PROTECTED_GLOBAL_PATCH_COMPOSITION_PENDING",
+        "ROUTE_POLICY_AND_SEO_EVIDENCE_PENDING"
+      ]
+    },
+    "10": {
+      "scope": "independent-adversarial-review",
+      "observedSourceSha": null,
+      "sourcePushed": false,
+      "sourceIntegrated": false,
+      "admissionStatus": "FROZEN_SHA_PENDING",
+      "finalLaneSha": null,
+      "finalVerdict": "PENDING",
+      "blockers": ["EXACT_FROZEN_SHA_REQUIRED"]
+    }
+  },
+  "openControlGates": [
+    {
+      "id": "warm-silver-homepage-reconciliation",
+      "status": "PENDING_LEAD_COMPOSITION_AND_BROWSER_EVIDENCE",
+      "controlRef": "CONTROL/BLOCKERS/02-PUBLIC-BRAND-DIVERGENT-HOMEPAGE.md",
+      "sourceCommit": "8e8933cee58af2750edf69d672a463884df29634",
+      "requirements": [
+        "NO_WHOLESALE_MERGE",
+        "HINO_RUNTIME_CONTINUITY",
+        "VISUAL_RESPONSIVE_ACCESSIBILITY_EVIDENCE",
+        "CATALOG_GUARD_EVIDENCE"
+      ]
+    },
+    {
+      "id": "lane05-care-tebra-composition",
+      "status": "SOURCE_INTEGRATED_REAL_CONFIG_STAGING_AND_PROTECTED_COMPOSITION_PENDING",
+      "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-LANE05-CONTENTION-RERUN.md"
+    },
+    {
+      "id": "lane06-public-lot-throttle",
+      "status": "BLOCKED_UNMOUNTED",
+      "controlRef": "CONTROL/BLOCKERS/06-PUBLIC-LOT-THROTTLE-AUTHORITY.md",
+      "requirements": [
+        "KEYED_HMAC",
+        "TRUSTED_PROXY_CLIENT_ADDRESS",
+        "NO_RAW_IP",
+        "KEY_VERSION_AND_ROTATION",
+        "BOUNDED_RETENTION_AND_CLEANUP",
+        "FAIL_CLOSED_WITHOUT_KEY_STORE_TIME_CLEANUP_PUBLICATION_OR_AUDIT_AUTHORITY"
+      ]
+    },
+    {
+      "id": "lane07-handoff-admission",
+      "status": "REJECTED_DIRTY_WORKTREE_STALE_HANDOFF",
+      "controlRef": "CONTROL/BLOCKERS/07-HANDOFF-NOT-ADMISSIBLE.md"
+    },
+    {
+      "id": "lane09-protected-global-composition",
+      "status": "PENDING",
+      "controlRef": "CONTROL/BLOCKERS/09-PROTECTED-GLOBAL-PATCH-HANDOFF.md"
+    },
+    {
+      "id": "lane09-indexing-and-shared-risks",
+      "status": "PENDING",
+      "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-LANE09-SHARED-RISKS.md"
+    },
+    {
+      "id": "production-controls-frozen-candidate-verification",
+      "status": "SOURCE_PUSHED_VERIFIED_FINAL_FROZEN_SHA_PENDING",
+      "controlRef": "CONTROL/BLOCKERS/LEAD-RELEASE-EVIDENCE-GAPS.md"
+    },
+    {
+      "id": "migration-harness-and-pii",
+      "status": "PENDING",
+      "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-MIGRATION-HARNESS-AND-PII.md"
+    },
+    {
+      "id": "browser-matrix-and-lane10",
+      "status": "PENDING",
+      "controlRef": "CONTROL/BLOCKERS/LEAD-RELEASE-EVIDENCE-GAPS.md"
+    }
+  ],
+  "safetyLedger": {
+    "productionMutated": false,
+    "mergedToProduction": false,
+    "productionDeployed": false,
+    "migrationsApplied": false,
+    "realAccountsCreated": 0,
+    "realImportsPerformed": 0,
+    "invitationsSent": 0,
+    "productsActivated": 0,
+    "pricingChanges": 0,
+    "paymentConfigurationChanges": 0,
+    "tebraAccountChanges": 0,
+    "externalConfigurationChanges": 0,
+    "externalMessagesSent": 0
+  },
+  "migration": {
+    "candidateApplied": false,
+    "candidateExactPath": null,
+    "disposablePostgresHarness": "PENDING",
+    "harnessInGateGraph": "PENDING",
+    "expectedSuccessCases": 18,
+    "expectedAttackCases": 12,
+    "result": "PENDING"
+  },
+  "tebra": {
+    "sourceCommit": "28de987d22f918cbe3db01ee8a4291e7acf9e40e",
+    "sourceIntegrated": true,
+    "scopedTests": {
+      "passed": 262,
+      "total": 262,
+      "overallPass": false
+    },
+    "activationPacket": "docs/care/TEBRA_ACTIVATION_PACKET_2026-08-28.md",
+    "supportedModes": ["disabled", "direct_link", "iframe", "popup"],
+    "selectedMode": null,
+    "productionEnabled": false,
+    "exactConfigurationProvided": false,
+    "realConfigStaging": "BLOCKED_PENDING_HUMAN_CONFIGURATION",
+    "cspRoutesTrackingComposition": "PENDING",
+    "postMessageOriginAndSourceWindowValidation": "PENDING",
+    "patientPortalIsSeparateHandoff": true,
+    "result": "PENDING"
+  },
+  "gates": {
+    "fullSuite": {
+      "result": "PENDING",
+      "files": null,
+      "tests": null,
+      "passed": null,
+      "failed": null,
+      "skipped": null,
+      "command": null,
+      "output": null
+    },
+    "e2e": {
+      "result": "PENDING",
+      "priorExpectedBaselineTests": 53,
+      "tests": null,
+      "deltaExplanation": null,
+      "command": null,
+      "output": null
+    },
+    "build": { "result": "PENDING", "command": null, "output": null },
+    "tsc": { "result": "PENDING", "command": null, "output": null },
+    "releaseControlPlane": { "result": "PENDING", "command": null, "output": null },
+    "productionStateControls": {
+      "sourceCommit": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
+      "sourceStatus": "PUSHED_VERIFIED",
+      "frozenCandidateResult": "PENDING",
+      "command": null,
+      "output": null
+    },
+    "routeCensus": { "result": "PENDING", "command": null, "output": null },
+    "coreProtection": { "result": "PENDING", "command": null, "output": null },
+    "migrationDag": { "result": "PENDING", "command": null, "output": null },
+    "migrationDisposablePostgresAttack": {
+      "result": "PENDING",
+      "command": null,
+      "output": null
+    },
+    "secretScan": {
+      "result": "PENDING",
+      "baseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "command": null,
+      "output": null
+    },
+    "piiScan": {
+      "result": "PENDING",
+      "baseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "namesFileStoredInRepository": false,
+      "skippedOutputAllowed": false,
+      "command": null,
+      "redactedOutput": null
+    },
+    "warmSilverHomepage": {
+      "result": "PENDING",
+      "editorialCommit": "8e8933cee58af2750edf69d672a463884df29634",
+      "wholesaleMergeAllowed": false,
+      "artifact": null
+    },
+    "publicLotThrottle": {
+      "result": "BLOCKED_UNMOUNTED",
+      "artifact": null
+    },
+    "seo": {
+      "result": "PENDING",
+      "actualPublicRouteComposition": "PENDING",
+      "serverXRobotsTag": "PENDING",
+      "rawHtmlTitleCanonicalOpenGraph": "PENDING",
+      "sitemapParity": "PENDING",
+      "routeScopedStructuredData": "PENDING",
+      "authoritative404": "PENDING",
+      "publicToPrivateMetadataRestoration": "PENDING",
+      "artifact": null
+    },
+    "protectedGlobalPatches": {
+      "result": "PENDING",
+      "pageShellSkipFocus": "PENDING",
+      "carePathTrackingSuppression": "PENDING",
+      "appErrorBoundary": "PENDING",
+      "indexingComposition": "PENDING",
+      "artifact": null
+    },
+    "tebraComposition": {
+      "result": "PENDING",
+      "exactConfiguration": "BLOCKED_PENDING_HUMAN_CONFIGURATION",
+      "staging": "BLOCKED_PENDING_REAL_CONFIGURATION",
+      "csp": "PENDING",
+      "routes": "PENDING",
+      "tracking": "PENDING",
+      "postMessageOriginAndSourceWindow": "PENDING",
+      "artifact": null
+    },
+    "performance": { "result": "PENDING", "artifact": null },
+    "accessibility": { "result": "PENDING", "artifact": null },
+    "responsive": { "result": "PENDING", "artifact": null },
+    "adversarialReview": {
+      "result": "PENDING",
+      "reviewedSha": null,
+      "artifact": null,
+      "p0": null,
+      "p1": null,
+      "p2": null
+    }
+  },
+  "browserRunSchema": {
+    "requiredFields": [
+      "candidateSha",
+      "route",
+      "state",
+      "browserName",
+      "browserVersion",
+      "widthCssPx",
+      "zoomPercent",
+      "colorScheme",
+      "syntheticFixtureId",
+      "assertions",
+      "timestampUtc",
+      "reviewer",
+      "consoleResult",
+      "networkResult",
+      "piiPhiReview"
+    ],
+    "candidateShaMustEqualFrozenCandidate": true,
+    "realCustomerDataAllowed": false
+  },
+  "captureSchema": {
+    "requiredFields": [
+      "candidateSha",
+      "artifactPath",
+      "route",
+      "state",
+      "browserName",
+      "browserVersion",
+      "widthCssPx",
+      "zoomPercent",
+      "colorScheme",
+      "syntheticFixtureId",
+      "assertions",
+      "timestampUtc",
+      "reviewer",
+      "consoleResult",
+      "networkResult",
+      "piiPhiReview"
+    ],
+    "artifactPathMustBeUnder": "docs/review/xenios-research-full-site-20260828/",
+    "realCustomerDataAllowed": false
+  },
+  "browserMatrix": {
+    "result": "PENDING",
+    "requiredWidthsCssPx": [1440, 1024, 768, 430, 390, 375, 360, 320],
+    "requiresTwoHundredPercentZoomEquivalent": true,
+    "browserVersions": [],
+    "runs": []
+  },
+  "requiredSurfaces": [
+    "public-research-homepage",
+    "warm-silver-homepage-reconciliation",
+    "access-hub",
+    "catalog",
+    "product-detail",
+    "early-access",
+    "order-flow",
+    "care",
+    "tebra-scheduler",
+    "account-overview",
+    "orders",
+    "membership",
+    "care-account",
+    "documents",
+    "support",
+    "partners",
+    "quality-testing",
+    "public-lot-lookup-negative-state",
+    "admin-critical",
+    "research-fulfillment",
+    "hino",
+    "not-found-error"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "unavailable",
+    "unauthorized",
+    "disabled",
+    "unmounted",
+    "error"
+  ],
+  "httpHeadEvidence": {
+    "result": "PENDING",
+    "records": [],
+    "requiredAssertions": [
+      "STATUS_CODE",
+      "X_ROBOTS_TAG",
+      "RAW_HTML_TITLE",
+      "CANONICAL",
+      "OPEN_GRAPH",
+      "SITEMAP_PARITY",
+      "STRUCTURED_DATA_SCOPE",
+      "AUTHORITATIVE_404",
+      "PUBLIC_TO_PRIVATE_METADATA_RESTORATION"
+    ]
+  },
+  "captures": [],
+  "accessibilityEvidence": {
+    "keyboard": "PENDING",
+    "visibleFocus": "PENDING",
+    "singleMainLandmark": "PENDING",
+    "headings": "PENDING",
+    "targetSize44x44": "PENDING",
+    "reducedMotion": "PENDING",
+    "zoom200Percent": "PENDING",
+    "automatedScan": "PENDING",
+    "manualReview": "PENDING"
+  },
+  "finalVerdict": "PENDING",
+  "readyForSamuelDeployReview": false
+}
