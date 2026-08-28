@@ -83,6 +83,12 @@ export function registerCustomerAccountApi(
     handler: (memberKey: string, req: Request, res: Response) => Promise<void>,
   ) {
     return (req: Request, res: Response) => {
+      // Every response from this private surface is non-cacheable, including
+      // guard denials, validation failures, missing resources, and errors.
+      // Set the policy before invoking the guard so no early response can
+      // escape without it.
+      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Pragma", "no-cache");
       void Promise.resolve(guard(req, res, async () => {
         const memberKey = memberKeyOf(req);
         if (memberKey === null) {
@@ -201,7 +207,6 @@ export function registerCustomerAccountApi(
       "Content-Disposition",
       `attachment; filename="${payload.filename.replace(/[^A-Za-z0-9._-]/g, "_")}"`,
     );
-    res.setHeader("Cache-Control", "no-store");
     res.send(Buffer.from(payload.bytes));
   }));
 }
