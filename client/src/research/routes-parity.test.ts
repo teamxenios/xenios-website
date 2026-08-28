@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { ACCESS_ROUTES, ALL_MANIFEST_ROUTES, PARTNER_ROUTES } from "./lib/routes";
+import { PUBLIC_QUALITY_ROUTES } from "./quality/routes";
 
 // The route manifest is the single source of truth; this parity test fails
 // the build the moment a manifest route is missing from the routers.
@@ -66,5 +67,20 @@ describe("route manifest parity", () => {
     expect(sources).toContain('<Route path="/research/partners/apply">');
     expect(sources).not.toContain('<Route path="/research/organizations/');
     expect(sources).not.toContain('<Route path="/research/affiliates/');
+  });
+
+  it("registers the reviewed quality pages while keeping the public API separately unmounted", () => {
+    expect(Object.values(PUBLIC_QUALITY_ROUTES)).toEqual([
+      "/research/quality",
+      "/research/testing",
+      "/research/lots/:lotCode",
+      "/research/documents",
+    ]);
+    for (const route of Object.values(PUBLIC_QUALITY_ROUTES)) {
+      expect(ALL_MANIFEST_ROUTES.filter((candidate) => candidate === route)).toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu"))).toHaveLength(1);
+    }
+    expect(readFileSync(resolve(here, "../../../server/research/index.ts"), "utf8"))
+      .not.toContain("registerPublicQualityApi(");
   });
 });

@@ -1,3 +1,5 @@
+import { PUBLIC_QUALITY_ROUTES } from "../quality/routes";
+
 // The canonical route manifest for the Supreme frontend (single source of
 // truth; a parity test asserts every manifest route is registered in the
 // section router). Legacy aliases stay registered in section.tsx but are not
@@ -170,6 +172,7 @@ export const ADMIN_ROUTES = {
 
 export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
+  ...Object.values(PUBLIC_QUALITY_ROUTES),
   ...Object.values(ACCOUNT_PORTAL_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),

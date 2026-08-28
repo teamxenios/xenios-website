@@ -225,9 +225,12 @@ describe("public lot verification UI", () => {
     expect(view.textContent).not.toContain("Reference material alpha");
   });
 
-  it("treats a malformed route code as invalid without fetching", async () => {
+  it.each([
+    "/research/lots/ab",
+    "/research/lots/LOT%2FPRIVATE",
+  ])("treats malformed route code %s as invalid without fetching", async (path) => {
     const fetcher = vi.fn();
-    const view = await mountAt("/research/lots/ab", fetcher as never);
+    const view = await mountAt(path, fetcher as never);
     expect(view.querySelector('[data-testid="public-lot-result-invalid_request"]')).not.toBeNull();
     expect(view.textContent).toContain("Check the lot code.");
     expect(fetcher).not.toHaveBeenCalled();

@@ -7,6 +7,7 @@ export const PUBLIC_EDITORIAL_LINKS = [
   { href: "/research/how-it-works", label: "How it works" },
   { href: "/research/about", label: "About" },
   { href: "/research/faq", label: "FAQ" },
+  { href: "/research/quality", label: "Quality" },
   { href: "/research/policies", label: "Policies" },
   { href: "/research/contact", label: "Contact" },
   { href: "/research/support", label: "Support" },

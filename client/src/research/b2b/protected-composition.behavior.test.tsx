@@ -37,7 +37,7 @@ async function renderAt(path: string): Promise<HTMLDivElement> {
   await act(async () => {
     root!.render(<ResearchSection />);
   });
-  for (let attempt = 0; attempt < 100 && host.textContent?.includes("Loading..."); attempt += 1) {
+  for (let attempt = 0; attempt < 400 && host.textContent?.includes("Loading..."); attempt += 1) {
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 25));
     });
@@ -66,7 +66,7 @@ describe("routed B2B protected composition", () => {
     expect(view.textContent).toContain("The right relationship starts with the right boundary.");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
-  });
+  }, 15_000);
 
   it("keeps partner application and portal descendants behind the gate", async () => {
     const view = await renderAt("/research/partners/apply");

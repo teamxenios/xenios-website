@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { PUBLIC_QUALITY_ROUTES, publicLotRoute } from "./routes";
+import {
+  PUBLIC_QUALITY_ROUTES,
+  isPublicLotRoutePath,
+  publicLotRoute,
+} from "./routes";
 
 describe("public quality route handoff", () => {
   it("exports the exact unique public route set for protected composition", () => {
@@ -18,5 +22,17 @@ describe("public quality route handoff", () => {
   it("constructs only an exact normalized lot route", () => {
     expect(publicLotRoute(" lot-alpha-01 ")).toBe("/research/lots/LOT-ALPHA-01");
     expect(publicLotRoute("LOT/../../private")).toBeNull();
+  });
+
+  it("recognizes only one bounded exact lot segment", () => {
+    expect(isPublicLotRoutePath("/research/lots/LOT-ALPHA-01")).toBe(true);
+    expect(isPublicLotRoutePath("/Research/Lots/lot-alpha-01/")).toBe(true);
+    expect(isPublicLotRoutePath("/research/lots/ab")).toBe(true);
+    expect(isPublicLotRoutePath("/research/lots/%ZZ")).toBe(true);
+    expect(isPublicLotRoutePath("/research/lots/LOT-ALPHA-01//")).toBe(false);
+    expect(isPublicLotRoutePath("/research/lots/LOT-ALPHA-01/private")).toBe(false);
+    // decodeURI (and wouter) preserve an encoded slash as one segment; the
+    // routed page remains public but rejects it as an invalid lot code.
+    expect(isPublicLotRoutePath("/research/lots/LOT%2FPRIVATE")).toBe(true);
   });
 });

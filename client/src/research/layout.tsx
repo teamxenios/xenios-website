@@ -10,6 +10,7 @@ import {
 } from "@shared/research/paths";
 import { useResearch } from "./core";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
+import { isPublicLotRoutePath } from "./quality/routes";
 import {
   PublicEditorialFooter,
   PublicEditorialNav,
@@ -56,7 +57,6 @@ const MEMBER_AREA_PREFIXES = [
   "/research/profile",
   "/research/membership",
   "/research/framework",
-  "/research/quality",
   "/research/professionals",
   "/research/access",
   "/research/wholesale",
@@ -313,11 +313,15 @@ function isPublicResearchPath(path: string): boolean {
     || normalized === "/research/about"
     || normalized === "/research/how-it-works"
     || normalized === "/research/faq"
+    || normalized === "/research/quality"
+    || normalized === "/research/testing"
+    || normalized === "/research/documents"
     || normalized === "/research/policies"
     || normalized === "/research/contact"
     || normalized === "/research/privacy"
     || normalized === "/research/terms"
-    || normalized.startsWith("/research/policies/");
+    || normalized.startsWith("/research/policies/")
+    || isPublicLotRoutePath(path);
 }
 
 // Account access works from a fresh browser WITHOUT the shared review

@@ -120,6 +120,9 @@ describe("the homepage stays at the root domain", () => {
       "/Research/Partners/",
       "/%72esearch/organizations",
       "/research/affiliates",
+      "/research/quality",
+      "/research/testing",
+      "/research/documents",
       "/research/policies/research-use",
     ]) {
       const response = await request(app).get(path);
@@ -138,6 +141,8 @@ describe("the homepage stays at the root domain", () => {
       "/research/partners?ref=private",
       "/research/organizations/private",
       "/research/affiliates/private",
+      "/research/lots/LOT-ALPHA-01",
+      "/research/documents/private",
       "/research/policies/private",
       "/research/partners//",
     ]) {

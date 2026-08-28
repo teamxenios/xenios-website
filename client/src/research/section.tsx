@@ -34,6 +34,10 @@ const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Faq = lazy(() => import("./pages/Faq"));
 const PoliciesIndex = lazy(() => import("./pages/PoliciesIndex"));
 const ResearchContact = lazy(() => import("./pages/ResearchContact"));
+const Quality = lazy(() => import("./pages/Quality"));
+const Testing = lazy(() => import("./pages/Testing"));
+const ResearchDocuments = lazy(() => import("./pages/ResearchDocuments"));
+const LotVerification = lazy(() => import("./pages/LotVerification"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
 const OrganizationAccess = lazy(() => import("./b2b/OrganizationAccessPage"));
 const AffiliateAccess = lazy(() => import("./b2b/AffiliateAccessPage"));
@@ -319,6 +323,10 @@ export default function ResearchSection() {
           <Route path="/research/about">{() => <L component={AboutResearch} />}</Route>
           <Route path="/research/how-it-works">{() => <L component={HowItWorks} />}</Route>
           <Route path="/research/faq">{() => <L component={Faq} />}</Route>
+          <Route path="/research/quality">{() => <L component={Quality} />}</Route>
+          <Route path="/research/testing">{() => <L component={Testing} />}</Route>
+          <Route path="/research/documents">{() => <L component={ResearchDocuments} />}</Route>
+          <Route path="/research/lots/:lotCode">{() => <L component={LotVerification} />}</Route>
           <Route path="/research/policies">{() => <L component={PoliciesIndex} />}</Route>
           <Route path="/research/contact">{() => <L component={ResearchContact} />}</Route>
           {/* Public relationship orientation only. Application, portal,
@@ -429,7 +437,6 @@ export default function ResearchSection() {
           <Route path="/research/cart"><Redirect to="/research/member/cart" /></Route>
           <Route path="/research/membership"><Redirect to="/research/member/membership" /></Route>
           <Route path="/research/framework"><Redirect to="/research/member/blueprint" /></Route>
-          <Route path="/research/quality"><Redirect to="/research/member/guides" /></Route>
           <Route path="/research/programs"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/professionals"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access"><Redirect to="/research/partners" /></Route>
