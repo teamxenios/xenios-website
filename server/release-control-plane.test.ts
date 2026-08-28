@@ -1723,8 +1723,21 @@ describe("route uniqueness validator", () => {
     // surface is additionally admitted through the research wall's exact-path
     // customer-account entries (member-session-wall.test.ts pins both
     // directions).
-    expect(result.callSites).toBe(399);
-    expect(result.routes).toHaveLength(408);
+    // +1 net (the Research full-site release candidate, 2026-08-28; scanner
+    // diff of the pin commit 07fd479a against the candidate): +GET
+    // /api/care/tebra/configuration (server/care/index.ts — the Lane 05 public
+    // Care configuration read, mounted; fail-closed pending state until the
+    // practice supplies real Tebra values); +GET /api/research/quality/lots/
+    // :lotCode and +GET .../lots/:lotCode/documents/:documentId
+    // (server/research/quality/public-lot-api.ts — counted because the census
+    // scans server/**, but NOT MOUNTED: registerPublicQualityApi is never
+    // called from server/index.ts, so no public lot API exists in any
+    // deployment); −GET /api/r/:code and −GET /api/referral/capture
+    // (server/index.ts — the referral-capture endpoints removed by the
+    // attribution-privacy correction). 408 − 2 + 3 = 409 registrations across
+    // 400 call sites.
+    expect(result.callSites).toBe(400);
+    expect(result.routes).toHaveLength(409);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });
