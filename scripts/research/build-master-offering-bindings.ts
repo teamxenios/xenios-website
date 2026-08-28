@@ -85,17 +85,20 @@ const BANNED_KEY_FRAGMENTS = [
 ] as const;
 
 /**
- * Today's truth, pinned. GRP-0244 is the shipping service row, modeled as a
- * fulfillment fee rather than a purchasable product, so the initializer
- * created no Product Control unit for it. GRP-0364 and GRP-0365 carry no
- * usable base price yet, so no unit and no price row exist and their catalog
- * rows truthfully render "Price on request". When either fact changes, the
- * initializer runs first, this map shrinks in the same reviewed change, and
- * the build refuses to emit until both agree.
+ * Today's truth, pinned against the 426-row retail source. GRP-0364 (FedEx
+ * Standard Overnight) is the shipping service row, modeled as a fulfillment fee
+ * rather than a purchasable product, so the initializer created no Product
+ * Control unit for it. GRP-0244 (BAM15) and GRP-0365 (Syringes & Alcohol Swabs)
+ * carry no usable base price yet, so no unit and no price row exist and their
+ * catalog rows truthfully render "Price on request". An earlier revision had the
+ * shipping and price-pending explanations attached to the wrong identities;
+ * the reasons below are keyed to the row kinds the source actually records.
+ * When either fact changes, the initializer runs first, this map shrinks in the
+ * same reviewed change, and the build refuses to emit until both agree.
  */
 const EXPECTED_UNBOUND: Record<string, string> = {
-  "GRP-0244": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists",
-  "GRP-0364": "price pending: no approved base price exists yet, so no Product Control unit was initialized",
+  "GRP-0244": "price pending: no approved base price exists yet, so no Product Control unit was initialized",
+  "GRP-0364": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists",
   "GRP-0365": "price pending: no approved base price exists yet, so no Product Control unit was initialized",
 };
 

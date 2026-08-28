@@ -2942,12 +2942,12 @@
   {
    "offeringId": "mo_401b85ce671d94672ba0",
    "offeringVariantId": "mov_038386172c35c2ad8cca",
-   "reason": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists"
+   "reason": "price pending: no approved base price exists yet, so no Product Control unit was initialized"
   },
   {
    "offeringId": "mo_003b0c272099eeb1f114",
    "offeringVariantId": "mov_9b65ad5bb184691e19e0",
-   "reason": "price pending: no approved base price exists yet, so no Product Control unit was initialized"
+   "reason": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists"
   },
   {
    "offeringId": "mo_a7a7e307d58f24affb42",

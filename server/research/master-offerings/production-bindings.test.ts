@@ -200,3 +200,26 @@ describe("the production binding reader", () => {
     expect(problem).toContain("malformed");
   });
 });
+
+describe("the unbound explanations name the right rows", () => {
+  // The three exclusions are identity facts from the 426-row retail source:
+  // GRP-0364 FedEx Standard Overnight is the shipping service row, while
+  // GRP-0244 BAM15 and GRP-0365 Syringes & Alcohol Swabs are price-on-request
+  // rows. An earlier artifact attached the shipping explanation to BAM15 and
+  // the price-pending explanation to FedEx; this pins each reason to the row
+  // kind the source actually records so a regenerated artifact cannot drift.
+  const artifact = readRepoJson<ArtifactShape>(MASTER_OFFERING_COMMITTED_BINDINGS_PATH);
+  const dataset = readRepoJson<{ products: Array<{ id: string; displayName: string }> }>(DATASET_PATH);
+  const nameOf = (offeringId: string) =>
+    dataset.products.find((product) => product.id === offeringId)?.displayName ?? null;
+
+  it("keys shipping and price-pending reasons to the right offerings", () => {
+    const byName = new Map(artifact.unbound.map((entry) => [nameOf(entry.offeringId), entry.reason]));
+    expect(Array.from(byName.keys()).sort()).toEqual(
+      ["BAM15", "FedEx Standard Overnight", "Syringes & Alcohol Swabs"],
+    );
+    expect(byName.get("FedEx Standard Overnight")).toMatch(/^shipping service row/);
+    expect(byName.get("BAM15")).toMatch(/^price pending/);
+    expect(byName.get("Syringes & Alcohol Swabs")).toMatch(/^price pending/);
+  });
+});
