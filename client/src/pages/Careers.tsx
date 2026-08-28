@@ -1,13 +1,13 @@
 import { Link, useRoute } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
+import { buildJobPostingJsonLd, careerDetailRobots } from "@/lib/careers-schema";
 import {
   CAREERS_ROLES,
   COHORT_ROLES,
   EQUAL_OPPORTUNITY_STATEMENT,
   OPEN_ROLES,
   careerApplyHref,
-  careerDescription,
   type CareerRole,
 } from "@/lib/careers";
 
@@ -53,24 +53,7 @@ function RoleCard({ role }: { role: CareerRole }) {
 
 function JobPostingJsonLd({ role }: { role: CareerRole }) {
   if (role.group !== "open") return null;
-  const json = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: role.title,
-    description: careerDescription(role),
-    datePosted: "2026-06-22",
-    employmentType: "CONTRACTOR",
-    hiringOrganization: {
-      "@type": "Organization",
-      name: "Xenios Technologies, Inc.",
-      sameAs: "https://xeniostechnology.com",
-    },
-    applicantLocationRequirements: {
-      "@type": "Country",
-      name: role.location.includes("US") ? "United States" : "Remote",
-    },
-    jobLocationType: "TELECOMMUTE",
-  };
+  const json = buildJobPostingJsonLd(role);
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }} />;
 }
 
@@ -100,11 +83,12 @@ function DetailBlocks({ role }: { role: CareerRole }) {
 export function CareersRole() {
   const [, params] = useRoute<{ slug: string }>("/careers/:slug");
   const role = CAREERS_ROLES.find((item) => item.slug === params?.slug);
+  const robots = careerDetailRobots(role);
 
   if (!role) {
     return (
       <PageShell>
-        <SeoHead title="Role not found, xenios" description="That xenios role is not listed." path="/careers" />
+        <SeoHead title="Role not found, xenios" description="That xenios role is not listed." path="/careers" robots={robots} />
         <section className="container-x pt-24 md:pt-36 pb-20">
           <p className="mono-cap text-ink-mute mb-6">CAREERS</p>
           <h1 className="display-xl text-balance mb-8">Role not found.</h1>
