@@ -122,6 +122,9 @@ export function MemberProductDetailExperience({
                   <img
                     src={product.media.href}
                     alt={product.media.altText}
+                    width={4}
+                    height={3}
+                    decoding="async"
                     className="w-full"
                     style={{ aspectRatio: "4 / 3", objectFit: "contain" }}
                   />

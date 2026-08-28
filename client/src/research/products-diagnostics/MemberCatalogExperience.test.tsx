@@ -2,7 +2,7 @@
 import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { MemberCatalog } from "@shared/research/member-catalog";
 import { MemberCatalogExperience } from "./MemberCatalogExperience";
 
@@ -114,6 +114,9 @@ describe("member catalog experience", () => {
     expect(html).toContain("$149.00");
     expect(html).toContain("Documentation pending");
     expect(html).toContain("Price not currently available");
+    expect(html).toContain('width="4"');
+    expect(html).toContain('height="3"');
+    expect(html).toContain('decoding="async"');
     expect(html).not.toMatch(
       /Add to cart|Buy now|Renew\s+360|linear-gradient|radial-gradient|shadow-(?:sm|md|lg|xl)|rounded-2xl/,
     );
@@ -176,6 +179,45 @@ describe("member catalog experience", () => {
     expect(values[2]).toContain("Catalog request failed.");
     expect(values[3]).toContain("The product catalog is not available");
     expect(values[4]).toContain("Please sign in.");
+  });
+
+  it("keeps load failure retryable and never presents it as an empty catalog", () => {
+    const onRetry = vi.fn();
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    act(() =>
+      root!.render(
+        <MemberCatalogExperience
+          catalog={{ ...catalog, items: [] }}
+          state="error"
+          errorMessage="Catalog request failed."
+          onRetry={onRetry}
+        />,
+      ),
+    );
+    expect(host.textContent).toContain("Catalog request failed.");
+    expect(host.textContent).not.toContain("No products are published yet.");
+    const retry = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent === "Try again",
+    );
+    act(() => retry?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("composes under exactly one Research layout main in success, loading, and error", () => {
+    for (const state of ["ok", "loading", "error"] as const) {
+      const html = renderToStaticMarkup(
+        <main data-testid="research-layout-main">
+          <MemberCatalogExperience
+            catalog={catalog}
+            state={state}
+            errorMessage="Catalog request failed."
+          />
+        </main>,
+      );
+      expect(html.match(/<main(?:\s|>)/g)).toHaveLength(1);
+    }
   });
 
   it("uses reflow-safe responsive structures for 720/375/320 and 200% zoom", () => {

@@ -431,3 +431,8 @@ export function isMasterOfferingDisplayState(
     (MASTER_OFFERING_DISPLAY_STATES as readonly string[]).includes(value)
   );
 }
+
+// Additive presentation-only discovery vocabulary. Keeping it re-exported
+// here gives catalog consumers one canonical contract import without changing
+// the legacy server projection or its commerce authority.
+export * from "./presentation-contract";

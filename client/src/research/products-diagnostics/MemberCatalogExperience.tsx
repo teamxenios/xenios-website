@@ -80,7 +80,10 @@ function CatalogCard({ product }: { product: MemberCatalogCard }) {
         <img
           src={product.media.href}
           alt={product.media.altText}
+          width={4}
+          height={3}
           loading="lazy"
+          decoding="async"
           className="w-full"
           style={{
             aspectRatio: "4 / 3",

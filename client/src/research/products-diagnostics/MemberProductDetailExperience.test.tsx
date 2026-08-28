@@ -158,6 +158,9 @@ describe("member product detail experience", () => {
     expect(html).not.toContain("<main");
     expect(html).toContain("Alpha Research");
     expect(html).toContain("https://media.xeniostechnology.com/media-a");
+    expect(html).toContain('width="4"');
+    expect(html).toContain('height="3"');
+    expect(html).toContain('decoding="async"');
     expect(html).toContain("$149.00");
     expect(html).toContain("Exact-lot documentation verified");
     expect(html).toContain("This is Research catalog information.");
