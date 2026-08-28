@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
+import { isTrustedCalendlyScheduledMessage } from "@/lib/calendly-events";
 import { getConfig } from "@/lib/config";
 import { trackSchedule } from "@/lib/tracking";
 
@@ -33,7 +34,10 @@ export default function Book() {
     }
 
     function onMessage(e: MessageEvent) {
-      if (e.data && typeof e.data === "object" && e.data.event === "calendly.event_scheduled") {
+      const iframeWindow = document.querySelector<HTMLIFrameElement>(
+        '.calendly-inline-widget iframe',
+      )?.contentWindow ?? null;
+      if (isTrustedCalendlyScheduledMessage(e, calendlyUrl, iframeWindow)) {
         trackSchedule();
         setBooked(true);
       }
@@ -66,7 +70,7 @@ export default function Book() {
           <div
             className="calendly-inline-widget"
             data-url={calendlyUrl}
-            style={{ minWidth: "320px", minHeight: 700 }}
+            style={{ minWidth: 0, width: "100%", minHeight: 700 }}
             data-testid="embed-calendly"
           />
         )}

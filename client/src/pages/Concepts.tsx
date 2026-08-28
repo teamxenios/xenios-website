@@ -67,7 +67,16 @@ export default function Concepts() {
                 data-testid={`card-concept-${c.id}`}
               >
                 {c.image_url && (
-                  <img src={c.image_url} alt={c.title} className="w-full h-48 object-cover" data-testid={`img-concept-${c.id}`} />
+                  <img
+                    src={c.image_url}
+                    alt={c.title}
+                    width={640}
+                    height={192}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-48 object-cover"
+                    data-testid={`img-concept-${c.id}`}
+                  />
                 )}
                 <div className="p-6 flex flex-col gap-3 flex-1">
                   <div className="flex items-center justify-between gap-3">

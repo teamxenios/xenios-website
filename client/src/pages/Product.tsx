@@ -149,7 +149,7 @@ export default function Product() {
           <h2 className="display-m text-paper mb-6 max-w-[24ch]">Walk through it with your own practice in mind.</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/book" className="btn btn-primary btn-on-dark">Book a Product Walkthrough</Link>
-            <Link href="/waitlist" className="btn btn-ghost-on-dark">Join the Founding Cohort</Link>
+            <Link href="/waitlist" className="btn btn-ghost btn-on-dark">Join the Founding Cohort</Link>
           </div>
         </div>
       </section>

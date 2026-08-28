@@ -97,8 +97,8 @@ export default function About() {
           <h2 className="display-m text-paper mb-6 max-w-[26ch]">Build, fund, or test the next layer with us.</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/contact" className="btn btn-primary btn-on-dark">Contact xenios</Link>
-            <Link href="/careers" className="btn btn-ghost-on-dark">View Careers</Link>
-            <Link href="/waitlist" className="btn btn-ghost-on-dark">Request Early Access</Link>
+            <Link href="/careers" className="btn btn-ghost btn-on-dark">View Careers</Link>
+            <Link href="/waitlist" className="btn btn-ghost btn-on-dark">Request Early Access</Link>
           </div>
         </div>
       </section>
