@@ -285,7 +285,7 @@ function OverviewBody({ token }: { token: string }) {
     <div className="grid gap-8">
       <QueueOverview resource={apps} />
       <ActivationCandidates resource={apps} />
-      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
         <EmailDeliveryPanel resource={system} />
         <ReferralIntegrityPanel resource={fraud} />
       </div>
