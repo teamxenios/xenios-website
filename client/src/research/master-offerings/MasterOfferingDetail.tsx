@@ -10,6 +10,7 @@ import {
 } from "@shared/research/master-offerings/pricing-contract";
 import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
+import { isContradictoryPurchase } from "./catalog-access-path";
 import {
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
@@ -73,6 +74,37 @@ export function MasterOfferingVariantAction({
 
   if (action.kind === "add_to_cart") {
     const capabilityRefusalId = `mo-capability-refusal-${variant.id}`;
+    if (isContradictoryPurchase(variant)) {
+      // The server's resolver emits add_to_cart only on an available_now
+      // variant. A purchase action paired with any other listing state is
+      // self-contradicting evidence, and the honest presentation is the
+      // listing state in words and no enabled purchase control. Nothing here
+      // re-resolves the action; it only refuses to present one the server's
+      // own rule says cannot exist.
+      const stateRefusalId = `mo-state-refusal-${variant.id}`;
+      return (
+        <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
+          <p
+            id={stateRefusalId}
+            className="body-s text-ink-mute min-w-0 break-words"
+            data-testid="mo-state-refusal"
+          >
+            Direct checkout is unavailable because this variant is listed as{" "}
+            {variant.displayLabel}.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary min-h-[44px]"
+            data-testid="mo-cta"
+            disabled
+            aria-describedby={stateRefusalId}
+            aria-label={actionName(productName, variant.label, action.label)}
+          >
+            {action.label}
+          </button>
+        </div>
+      );
+    }
     if (!control.visible) {
       return (
         <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
