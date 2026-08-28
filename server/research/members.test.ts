@@ -541,6 +541,9 @@ describe("active-member authorization (requireActiveMember)", () => {
     const res = await request(makeApp()).get("/api/research/member/me").set("Authorization", "Bearer good-jwt");
     expect(res.status).toBe(200);
     expect(res.body.member.firstName).toBe("Avery");
+    expect(res.body.member.cartScope).toMatch(/^[a-f0-9]{64}$/);
+    expect(res.body.member.cartScope).not.toContain("auth-1");
+    expect(res.headers["cache-control"]).toBe("no-store");
   });
 });
 
