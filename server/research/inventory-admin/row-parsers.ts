@@ -913,7 +913,45 @@ export function parseQualityAccessReceipt(
   };
 }
 
-export function parseSignedUrl(value: unknown, code: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) invalid(code);
-  return value;
+export function parseSignedUrl(
+  value: unknown,
+  code: string,
+  expectedStorageOrigin: unknown,
+): string {
+  if (
+    typeof value !== "string" ||
+    value.length === 0 ||
+    value.length > 8_192 ||
+    value.trim() !== value ||
+    typeof expectedStorageOrigin !== "string" ||
+    expectedStorageOrigin.length === 0
+  ) {
+    invalid(code);
+  }
+  let signed: URL;
+  let expected: URL;
+  try {
+    signed = new URL(value);
+    expected = new URL(expectedStorageOrigin);
+  } catch {
+    invalid(code);
+  }
+  if (
+    expected.protocol !== "https:" ||
+    expected.username !== "" ||
+    expected.password !== "" ||
+    expected.pathname !== "/" ||
+    expected.search !== "" ||
+    expected.hash !== "" ||
+    signed.protocol !== "https:" ||
+    signed.origin !== expected.origin ||
+    signed.username !== "" ||
+    signed.password !== "" ||
+    signed.hash !== "" ||
+    !signed.pathname.startsWith("/storage/v1/object/") ||
+    !signed.searchParams.get("token")
+  ) {
+    invalid(code);
+  }
+  return signed.toString();
 }

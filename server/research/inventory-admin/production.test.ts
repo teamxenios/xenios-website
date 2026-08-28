@@ -20,6 +20,7 @@ import {
   parseLotQualityDocumentRow,
   parseLotQualityTestRow,
   parseProductCommerceReadinessProjection,
+  parseSignedUrl,
 } from "./row-parsers";
 
 const PRODUCT_ID = "30000000-0000-4000-8000-000000000001";
@@ -687,10 +688,119 @@ describe("Website 4 production repository command wiring", () => {
     });
   });
 
+  it("accepts only exact-origin HTTPS Supabase Storage signed capabilities", () => {
+    const origin = "https://storage.invalid";
+    const valid = [
+      "https://storage.invalid/storage/v1/object/upload/sign/research-coa/lots/exact.pdf?token=upload-token",
+      "https://storage.invalid/storage/v1/object/sign/research-coa/lots/exact.pdf?token=read-token",
+    ];
+    for (const value of valid) {
+      expect(parseSignedUrl(value, "signed_url_invalid", origin)).toBe(value);
+    }
+    for (const value of [
+      "javascript:alert(1)",
+      "http://storage.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://other.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://user:secret@storage.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://storage.invalid/storage/v1/object/sign/x#token=fragment",
+      "https://storage.invalid/storage/v1/object/sign/x",
+      "https://storage.invalid/not-storage/signed?token=read-token",
+      " https://storage.invalid/storage/v1/object/sign/x?token=read-token",
+    ]) {
+      expect(() => parseSignedUrl(value, "signed_url_invalid", origin)).toThrow(
+        "signed_url_invalid",
+      );
+    }
+    for (const invalidOrigin of [
+      "",
+      "http://storage.invalid",
+      "https://storage.invalid/path",
+      "https://user:secret@storage.invalid",
+    ]) {
+      expect(() => parseSignedUrl(valid[0], "signed_url_invalid", invalidOrigin)).toThrow(
+        "signed_url_invalid",
+      );
+    }
+  });
+
+  it("binds private read grants to the configured Storage origin", async () => {
+    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-exact.pdf`;
+    const createSignedUrl = vi.fn(async () => ({
+      data: {
+        signedUrl: `https://storage.invalid/storage/v1/object/sign/research-coa-production/${storageKey}?token=synthetic-read-token`,
+      },
+      error: null,
+    }));
+    const rpc = vi.fn(async (_name: string, args: Record<string, unknown>) => ({
+      data: {
+        accessEventId: args.p_access_id,
+        bucketId: "research-coa-production",
+        storageKey,
+        documentVersion: 1,
+      },
+      error: null,
+    }));
+    const repository = new SupabaseLotQualityAdminRepository(
+      {
+        rpc,
+        storage: { from: vi.fn(() => ({ createSignedUrl })) },
+      } as never,
+      "research-coa-production",
+      "https://storage.invalid",
+    );
+    const grant = await repository.createReadGrant(
+      DOCUMENT_ID,
+      "synthetic-reviewer",
+      "quality_review",
+    );
+    expect(grant.signedUrl).toContain("https://storage.invalid/storage/v1/object/sign/");
+    expect(grant.signedUrl).toContain("token=synthetic-read-token");
+  });
+
+  it.each([
+    ["javascript:alert(1)", "https://storage.invalid"],
+    [
+      "https://other.invalid/storage/v1/object/sign/research-coa/x?token=synthetic",
+      "https://storage.invalid",
+    ],
+    [
+      "https://storage.invalid/storage/v1/object/sign/research-coa/x?token=synthetic",
+      "",
+    ],
+  ])("refuses an untrusted read grant URL %s", async (signedUrl, configuredOrigin) => {
+    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-exact.pdf`;
+    const rpc = vi.fn(async (_name: string, args: Record<string, unknown>) => ({
+      data: {
+        accessEventId: args.p_access_id,
+        bucketId: "research-coa-production",
+        storageKey,
+        documentVersion: 1,
+      },
+      error: null,
+    }));
+    const repository = new SupabaseLotQualityAdminRepository(
+      {
+        rpc,
+        storage: {
+          from: vi.fn(() => ({
+            createSignedUrl: vi.fn(async () => ({ data: { signedUrl }, error: null })),
+          })),
+        },
+      } as never,
+      "research-coa-production",
+      configuredOrigin,
+    );
+    await expect(
+      repository.createReadGrant(DOCUMENT_ID, "synthetic-reviewer", "quality_review"),
+    ).rejects.toMatchObject({ code: "coa_access_grant_invalid" });
+  });
+
   it("prepares every upload through the replayable RPC and signs its persisted identity", async () => {
     const query = lotReadQuery();
     const createSignedUploadUrl = vi.fn(async (storageKey: string) => ({
-      data: { signedUrl: `https://storage.invalid/${storageKey}` },
+      data: {
+        signedUrl: `https://storage.invalid/storage/v1/object/upload/sign/research-coa-production/${storageKey}?token=synthetic-upload-token`,
+      },
       error: null,
     }));
     const storageFrom = vi.fn(() => ({ createSignedUploadUrl }));
@@ -712,7 +822,11 @@ describe("Website 4 production repository command wiring", () => {
       rpc,
       storage: { from: storageFrom },
     };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
+    const repository = new SupabaseLotQualityAdminRepository(
+      db as never,
+      "research-coa-production",
+      "https://storage.invalid",
+    );
     const input = {
       lotId: LOT_ID,
       filename: "exact.pdf",
@@ -829,7 +943,9 @@ describe("Website 4 production repository command wiring", () => {
         error: { message: "temporary signing failure" },
       })
       .mockResolvedValueOnce({
-        data: { signedUrl: `https://storage.invalid/${storageKey}` },
+        data: {
+          signedUrl: `https://storage.invalid/storage/v1/object/upload/sign/research-coa-production/${storageKey}?token=synthetic-upload-token`,
+        },
         error: null,
       });
     const rpc = vi.fn(async () => ({
@@ -847,7 +963,11 @@ describe("Website 4 production repository command wiring", () => {
       rpc,
       storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
     };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
+    const repository = new SupabaseLotQualityAdminRepository(
+      db as never,
+      "research-coa-production",
+      "https://storage.invalid",
+    );
     const input = {
       lotId: LOT_ID,
       filename: "retry.pdf",

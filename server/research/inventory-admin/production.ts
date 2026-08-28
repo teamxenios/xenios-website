@@ -271,6 +271,7 @@ export class SupabaseLotQualityAdminRepository {
   constructor(
     private readonly db: Db = getSupabaseAdmin(),
     private readonly bucketName = COA_BUCKET,
+    private readonly signedUrlOrigin = process.env.SUPABASE_URL ?? "",
   ) {}
 
   async listDocuments(): Promise<LotQualityDocumentAdmin[]> {
@@ -363,7 +364,11 @@ export class SupabaseLotQualityAdminRepository {
       .from(this.bucketName)
       .createSignedUploadUrl(storageKey);
     if (error) failed("coa_upload_grant_failed");
-    const uploadUrl = parseSignedUrl(data?.signedUrl, "coa_upload_grant_invalid");
+    const uploadUrl = parseSignedUrl(
+      data?.signedUrl,
+      "coa_upload_grant_invalid",
+      this.signedUrlOrigin,
+    );
     return {
       documentId,
       documentVersion,
@@ -514,7 +519,11 @@ export class SupabaseLotQualityAdminRepository {
       .from(this.bucketName)
       .createSignedUrl(authorized.storageKey, 60);
     if (error) failed("coa_access_grant_failed");
-    const signedUrl = parseSignedUrl(data?.signedUrl, "coa_access_grant_invalid");
+    const signedUrl = parseSignedUrl(
+      data?.signedUrl,
+      "coa_access_grant_invalid",
+      this.signedUrlOrigin,
+    );
     return {
       signedUrl,
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
