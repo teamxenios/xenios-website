@@ -268,13 +268,20 @@ describe("the unified Early Access storefront", () => {
   it("shows only the assisted-order journey after the embedded catalog advances", async () => {
     stubFetch({ bridgeEnabled: true });
     await renderStorefront();
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 260));
-    });
-
-    const add = container.querySelector<HTMLButtonElement>(
-      '[data-testid="order-card-add-pcv_pep_1"]',
-    );
+    // The embedded catalog mounts through a lazy chunk after the agreement
+    // resolves and then debounces its fetch by 200 ms, so a fixed 260 ms wait
+    // raced the mount and reported a missing card that was merely late. Wait
+    // for the card itself, bounded, so the assertion still fails on a genuine
+    // absence.
+    let add: HTMLButtonElement | null = null;
+    for (let attempt = 0; attempt < 60 && add === null; attempt += 1) {
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      });
+      add = container.querySelector<HTMLButtonElement>(
+        '[data-testid="order-card-add-pcv_pep_1"]',
+      );
+    }
     expect(add).toBeTruthy();
     act(() => add!.click());
     const continueButton = container.querySelector<HTMLButtonElement>(
