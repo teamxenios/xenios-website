@@ -1,171 +1,309 @@
-export const TEBRA_SCHEDULING_FAILURE_CODES = [
-  "care_disabled",
-  "tebra_unconfigured",
-  "tebra_configuration_invalid",
-  "tebra_unavailable",
-] as const;
+import type { CareCapabilityStatus } from "@shared/care/contracts";
+import {
+  isSafeTebraPopupScriptUrl,
+  isSafeTebraPublicUrl,
+  TEBRA_REQUEST_SEMANTICS,
+  TEBRA_SCHEDULING_MODES,
+  type TebraPortalConfiguration,
+  type TebraPublicConfiguration,
+  type TebraSchedulingConfiguration,
+  type TebraSchedulingMode,
+} from "@shared/care/tebra-experience";
 
-export type TebraSchedulingFailureCode =
-  (typeof TEBRA_SCHEDULING_FAILURE_CODES)[number];
+export const TEBRA_ENVIRONMENT_VARIABLES = {
+  schedulingEnabled: "TEBRA_SCHEDULING_ENABLED",
+  schedulingMode: "TEBRA_SCHEDULING_MODE",
+  schedulingUrl: "TEBRA_SCHEDULING_URL",
+  schedulingEmbedScriptUrl: "TEBRA_SCHEDULING_EMBED_SCRIPT_URL",
+  patientPortalUrl: "TEBRA_PATIENT_PORTAL_URL",
+  allowedOrigins: "TEBRA_ALLOWED_ORIGINS",
+  telehealthEnabled: "TEBRA_TELEHEALTH_ENABLED",
+  practiceName: "TEBRA_PRACTICE_NAME",
+  locationLabel: "TEBRA_LOCATION_LABEL",
+  providerLabel: "TEBRA_PROVIDER_LABEL",
+  environment: "TEBRA_ENVIRONMENT",
+} as const;
 
-export interface TebraSchedulingRequest {
-  appointmentId: string;
-  startsAt: string;
-  endsAt: string;
+export const TEBRA_ENVIRONMENTS = ["review", "production"] as const;
+export type TebraEnvironment = (typeof TEBRA_ENVIRONMENTS)[number];
+
+type ParsedValue<T> =
+  | { state: "missing" }
+  | { state: "invalid" }
+  | { state: "value"; value: T };
+
+export type TebraAllowedOriginsResult =
+  | { state: "missing"; origins: readonly [] }
+  | { state: "invalid"; origins: readonly [] }
+  | { state: "ready"; origins: readonly string[] };
+
+export interface ResolvedTebraExperienceConfiguration {
+  publicConfiguration: TebraPublicConfiguration;
+  environment: TebraEnvironment | null;
+  allowedOrigins: readonly string[];
 }
 
-export interface TebraSchedulingTransport {
-  createAppointment(
-    endpoint: URL,
-    apiKey: string,
-    request: TebraSchedulingRequest,
-  ): Promise<{ externalAppointmentId: string }>;
+function parseExactBoolean(value: string | undefined): ParsedValue<boolean> {
+  if (value === undefined || value === "") return { state: "missing" };
+  if (value === "true") return { state: "value", value: true };
+  if (value === "false") return { state: "value", value: false };
+  return { state: "invalid" };
 }
 
-export type LoadTebraCareCapability = () => Promise<CareCapabilityStatus>;
-
-export type TebraSchedulingResult =
-  | { ok: true; externalAppointmentId: string }
-  | {
-      ok: false;
-      code: TebraSchedulingFailureCode;
-      fallback: "concierge_required";
-    };
-
-interface ReadyConfiguration {
-  state: "ready";
-  endpoint: URL;
-  apiKey: string;
+function parseMode(value: string | undefined): ParsedValue<TebraSchedulingMode> {
+  if (value === undefined || value === "") return { state: "missing" };
+  return (TEBRA_SCHEDULING_MODES as readonly string[]).includes(value)
+    ? { state: "value", value: value as TebraSchedulingMode }
+    : { state: "invalid" };
 }
 
-type TebraSchedulingConfiguration =
-  | ReadyConfiguration
-  | { state: "care_disabled" | "unconfigured" | "invalid" };
+function parseEnvironment(value: string | undefined): ParsedValue<TebraEnvironment> {
+  if (value === undefined || value === "") return { state: "missing" };
+  return (TEBRA_ENVIRONMENTS as readonly string[]).includes(value)
+    ? { state: "value", value: value as TebraEnvironment }
+    : { state: "invalid" };
+}
 
-const OPAQUE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
+function parsePublicUrl(value: string | undefined): ParsedValue<string> {
+  if (value === undefined || value === "") return { state: "missing" };
+  return isSafeTebraPublicUrl(value)
+    ? { state: "value", value }
+    : { state: "invalid" };
+}
 
-function parseConfiguration(env: NodeJS.ProcessEnv): TebraSchedulingConfiguration {
-  if (env.CARE_ENABLED !== "true" || env.CARE_ENABLE_APPROVED !== "true") {
-    return { state: "care_disabled" };
+function parsePopupScriptUrl(value: string | undefined): ParsedValue<string> {
+  if (value === undefined || value === "") return { state: "missing" };
+  return isSafeTebraPopupScriptUrl(value)
+    ? { state: "value", value }
+    : { state: "invalid" };
+}
+
+function parseDisplayLabel(value: string | undefined): ParsedValue<string> {
+  if (value === undefined || value.trim() === "") return { state: "missing" };
+  const normalized = value.trim();
+  return normalized.length <= 160 && !/[\u0000-\u001f\u007f]/u.test(normalized)
+    ? { state: "value", value: normalized }
+    : { state: "invalid" };
+}
+
+/** Parses a comma-separated list as exact HTTPS origins, never host prefixes. */
+export function parseTebraAllowedOrigins(
+  value: string | undefined,
+): TebraAllowedOriginsResult {
+  if (value === undefined || value.trim() === "") {
+    return { state: "missing", origins: [] };
   }
-  if (env.CARE_TEBRA_SCHEDULING_ENABLED !== "true") {
-    return { state: "unconfigured" };
-  }
-  if (!env.CARE_TEBRA_BASE_URL || !env.CARE_TEBRA_API_KEY) {
-    return { state: "unconfigured" };
+  if (value.length > 8192) return { state: "invalid", origins: [] };
+
+  const entries = value.split(",").map((entry) => entry.trim());
+  if (
+    entries.length > 32 ||
+    entries.some((entry) => entry.length === 0 || entry.length > 2048)
+  ) {
+    return { state: "invalid", origins: [] };
   }
 
+  const origins: string[] = [];
   try {
-    const endpoint = new URL("/v1/appointments", env.CARE_TEBRA_BASE_URL);
-    const configured = new URL(env.CARE_TEBRA_BASE_URL);
-    if (
-      configured.protocol !== "https:" ||
-      configured.username ||
-      configured.password ||
-      configured.search ||
-      configured.hash ||
-      configured.pathname !== "/"
-    ) {
-      return { state: "invalid" };
+    for (const entry of entries) {
+      const url = new URL(entry);
+      if (
+        url.protocol !== "https:" ||
+        url.username !== "" ||
+        url.password !== "" ||
+        url.pathname !== "/" ||
+        url.search !== "" ||
+        url.hash !== "" ||
+        url.hostname.includes("*") ||
+        origins.includes(url.origin)
+      ) {
+        return { state: "invalid", origins: [] };
+      }
+      origins.push(url.origin);
     }
-    return { state: "ready", endpoint, apiKey: env.CARE_TEBRA_API_KEY };
   } catch {
-    return { state: "invalid" };
+    return { state: "invalid", origins: [] };
+  }
+
+  return { state: "ready", origins };
+}
+
+function careIsAvailable(capability: CareCapabilityStatus): boolean {
+  return (
+    capability?.rail === "care" &&
+    capability.state === "enabled" &&
+    capability.enabled === true
+  );
+}
+
+function originIsAllowed(url: string, origins: readonly string[]): boolean {
+  try {
+    return origins.includes(new URL(url).origin);
+  } catch {
+    return false;
   }
 }
 
-function unavailable(code: TebraSchedulingFailureCode): TebraSchedulingResult {
-  return { ok: false, code, fallback: "concierge_required" };
-}
-
-const RFC3339_INSTANT =
-  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})$/;
-
-function strictRfc3339Instant(value: string): number | null {
-  const match = RFC3339_INSTANT.exec(value);
-  if (!match) return null;
-  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , zone] = match;
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-  const second = Number(secondText);
-  if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) {
-    return null;
-  }
-  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
-  if (day < 1 || day > lastDay) return null;
-  if (zone !== "Z") {
-    const offsetHour = Number(zone.slice(1, 3));
-    const offsetMinute = Number(zone.slice(4, 6));
-    if (offsetHour > 23 || offsetMinute > 59) return null;
-  }
-  const instant = Date.parse(value);
-  return Number.isFinite(instant) ? instant : null;
-}
-
-function validRequest(input: TebraSchedulingRequest): boolean {
-  if (!OPAQUE_ID.test(input.appointmentId)) return false;
-  const startsAt = strictRfc3339Instant(input.startsAt);
-  const endsAt = strictRfc3339Instant(input.endsAt);
-  return startsAt !== null && endsAt !== null && endsAt > startsAt;
-}
-
-/**
- * Credential-late Tebra seam. The default has no network transport, so checking
- * in configuration can never make a provider call by itself. Callers receive a
- * stable concierge fallback until Care, both approvals, valid credentials, and
- * an explicitly injected reviewed transport are all present.
- */
-export function createTebraSchedulingAdapter(input: {
-  env?: NodeJS.ProcessEnv;
-  transport?: TebraSchedulingTransport;
-  loadCareCapability?: LoadTebraCareCapability;
-}) {
-  const configuration = parseConfiguration(input.env ?? process.env);
+function unavailableScheduling(
+  status: Exclude<TebraSchedulingConfiguration["status"], "ready">,
+  mode: TebraSchedulingMode,
+): TebraSchedulingConfiguration {
   return {
-    status:
-      configuration.state === "ready" && input.transport
-        ? "ready"
-        : configuration.state,
-    async schedule(request: TebraSchedulingRequest): Promise<TebraSchedulingResult> {
-      if (configuration.state !== "ready") {
-        const failureCode: TebraSchedulingFailureCode =
-          configuration.state === "care_disabled"
-            ? "care_disabled"
-            : configuration.state === "unconfigured"
-              ? "tebra_unconfigured"
-              : "tebra_configuration_invalid";
-        return unavailable(failureCode);
-      }
-      if (!input.transport || !validRequest(request)) {
-        return unavailable("tebra_unavailable");
-      }
-
-      try {
-        const capability = await input.loadCareCapability?.();
-        if (capability?.state !== "enabled" || capability.enabled !== true) {
-          return unavailable("care_disabled");
-        }
-      } catch {
-        return unavailable("care_disabled");
-      }
-
-      try {
-        const result = await input.transport.createAppointment(
-          configuration.endpoint,
-          configuration.apiKey,
-          request,
-        );
-        if (!OPAQUE_ID.test(result.externalAppointmentId)) {
-          return unavailable("tebra_unavailable");
-        }
-        return { ok: true, externalAppointmentId: result.externalAppointmentId };
-      } catch {
-        return unavailable("tebra_unavailable");
-      }
-    },
+    status,
+    mode: status === "disabled" ? "disabled" : mode,
+    telehealthEnabled: false,
+    requestSemantics: TEBRA_REQUEST_SEMANTICS,
   };
 }
-import type { CareCapabilityStatus } from "@shared/care/contracts";
+
+function resolveScheduling(input: {
+  env: NodeJS.ProcessEnv;
+  careAvailable: boolean;
+  allowedOrigins: TebraAllowedOriginsResult;
+  environment: ParsedValue<TebraEnvironment>;
+}): TebraSchedulingConfiguration {
+  const enabled = parseExactBoolean(input.env.TEBRA_SCHEDULING_ENABLED);
+  const mode = parseMode(input.env.TEBRA_SCHEDULING_MODE);
+  const requestedMode = mode.state === "value" ? mode.value : "disabled";
+
+  if (!input.careAvailable) {
+    return unavailableScheduling(
+      "care_unavailable",
+      enabled.state === "value" && enabled.value === false ? "disabled" : requestedMode,
+    );
+  }
+  if (enabled.state === "missing") {
+    return unavailableScheduling("unconfigured", requestedMode);
+  }
+  if (enabled.state === "invalid") {
+    return unavailableScheduling("configuration_invalid", requestedMode);
+  }
+  if (!enabled.value) return unavailableScheduling("disabled", "disabled");
+  if (mode.state === "missing") return unavailableScheduling("unconfigured", "disabled");
+  if (mode.state === "invalid") {
+    return unavailableScheduling("configuration_invalid", "disabled");
+  }
+  if (mode.value === "disabled") return unavailableScheduling("disabled", "disabled");
+  if (input.environment.state === "missing") {
+    return unavailableScheduling("unconfigured", mode.value);
+  }
+  if (input.environment.state === "invalid") {
+    return unavailableScheduling("configuration_invalid", mode.value);
+  }
+
+  const schedulingUrl = parsePublicUrl(input.env.TEBRA_SCHEDULING_URL);
+  if (schedulingUrl.state === "missing" || input.allowedOrigins.state === "missing") {
+    return unavailableScheduling("unconfigured", mode.value);
+  }
+  if (
+    schedulingUrl.state === "invalid" ||
+    input.allowedOrigins.state === "invalid" ||
+    !originIsAllowed(schedulingUrl.value, input.allowedOrigins.origins)
+  ) {
+    return unavailableScheduling("configuration_invalid", mode.value);
+  }
+
+  const telehealth = parseExactBoolean(input.env.TEBRA_TELEHEALTH_ENABLED);
+  const practiceName = parseDisplayLabel(input.env.TEBRA_PRACTICE_NAME);
+  const locationLabel = parseDisplayLabel(input.env.TEBRA_LOCATION_LABEL);
+  const providerLabel = parseDisplayLabel(input.env.TEBRA_PROVIDER_LABEL);
+  if (
+    telehealth.state === "invalid" ||
+    practiceName.state === "invalid" ||
+    locationLabel.state === "invalid" ||
+    providerLabel.state === "invalid"
+  ) {
+    return unavailableScheduling("configuration_invalid", mode.value);
+  }
+
+  const common = {
+    status: "ready" as const,
+    url: schedulingUrl.value,
+    telehealthEnabled: telehealth.state === "value" ? telehealth.value : false,
+    requestSemantics: TEBRA_REQUEST_SEMANTICS,
+    ...(practiceName.state === "value" ? { practiceName: practiceName.value } : {}),
+    ...(locationLabel.state === "value" ? { locationLabel: locationLabel.value } : {}),
+    ...(providerLabel.state === "value" ? { providerLabel: providerLabel.value } : {}),
+  };
+
+  if (mode.value !== "popup_widget") {
+    return { ...common, mode: mode.value };
+  }
+
+  const popupScriptUrl = parsePopupScriptUrl(
+    input.env.TEBRA_SCHEDULING_EMBED_SCRIPT_URL,
+  );
+  if (popupScriptUrl.state === "missing") {
+    return unavailableScheduling("unconfigured", mode.value);
+  }
+  if (
+    popupScriptUrl.state === "invalid" ||
+    !originIsAllowed(popupScriptUrl.value, input.allowedOrigins.origins)
+  ) {
+    return unavailableScheduling("configuration_invalid", mode.value);
+  }
+
+  return {
+    ...common,
+    mode: "popup_widget",
+    popupScriptUrl: popupScriptUrl.value,
+  };
+}
+
+function resolvePortal(input: {
+  env: NodeJS.ProcessEnv;
+  careAvailable: boolean;
+  allowedOrigins: TebraAllowedOriginsResult;
+  environment: ParsedValue<TebraEnvironment>;
+}): TebraPortalConfiguration {
+  if (!input.careAvailable) return { status: "care_unavailable" };
+
+  const portalUrl = parsePublicUrl(input.env.TEBRA_PATIENT_PORTAL_URL);
+  if (
+    portalUrl.state === "missing" ||
+    input.allowedOrigins.state === "missing" ||
+    input.environment.state === "missing"
+  ) {
+    return { status: "unconfigured" };
+  }
+  if (
+    portalUrl.state === "invalid" ||
+    input.allowedOrigins.state === "invalid" ||
+    input.environment.state === "invalid" ||
+    !originIsAllowed(portalUrl.value, input.allowedOrigins.origins)
+  ) {
+    return { status: "configuration_invalid" };
+  }
+  return { status: "ready", url: portalUrl.value };
+}
+
+export function resolveTebraExperienceConfiguration(input: {
+  env?: NodeJS.ProcessEnv;
+  careCapability: CareCapabilityStatus;
+}): ResolvedTebraExperienceConfiguration {
+  const env = input.env ?? process.env;
+  const careAvailable = careIsAvailable(input.careCapability);
+  const allowedOrigins = parseTebraAllowedOrigins(env.TEBRA_ALLOWED_ORIGINS);
+  const environment = parseEnvironment(env.TEBRA_ENVIRONMENT);
+  const publicConfiguration: TebraPublicConfiguration = {
+    schemaVersion: 1,
+    authority: "tebra",
+    careAvailable,
+    scheduling: resolveScheduling({ env, careAvailable, allowedOrigins, environment }),
+    portal: resolvePortal({ env, careAvailable, allowedOrigins, environment }),
+  };
+
+  return {
+    publicConfiguration,
+    environment: environment.state === "value" ? environment.value : null,
+    allowedOrigins:
+      careAvailable && allowedOrigins.state === "ready" ? allowedOrigins.origins : [],
+  };
+}
+
+export function resolveTebraPublicConfiguration(input: {
+  env?: NodeJS.ProcessEnv;
+  careCapability: CareCapabilityStatus;
+}): TebraPublicConfiguration {
+  return resolveTebraExperienceConfiguration(input).publicConfiguration;
+}
