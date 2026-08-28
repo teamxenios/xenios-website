@@ -382,6 +382,8 @@ describe("Care clinician review, page shell", () => {
     const text = (await render(CareSection)).textContent ?? "";
     expect(text).toContain("CARE · CLINICIAN REVIEW");
     expect(sectionSource).toContain("CARE_CLINICIAN_REVIEW_PATH");
-    expect(sectionSource).toContain("CarePendingShell");
+    expect(sectionSource).toContain("case CARE_CLINICIAN_REVIEW_PATH:");
+    expect(sectionSource).toContain("return <CareClinicianReviewQueuePage />;");
+    expect(sectionSource).toContain("return <CareNotFoundPage />;");
   });
 });
