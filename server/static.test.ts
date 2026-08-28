@@ -34,6 +34,11 @@ beforeAll(() => {
   fs.mkdirSync(path.join(distDir, "assets"));
   fs.writeFileSync(path.join(distDir, "assets", "app.js"), "console.log('app');\n", "utf8");
   fs.writeFileSync(path.join(distDir, "robots.txt"), "User-agent: *\nAllow: /\n", "utf8");
+  // A static microsite subtree exactly as client/public/hino is built: its own
+  // index documents must be served as files, never through the SPA policy.
+  fs.mkdirSync(path.join(distDir, "hino", "story"), { recursive: true });
+  fs.writeFileSync(path.join(distDir, "hino", "index.html"), "<!doctype html><html><head><title>hino-static</title></head><body>hino</body></html>", "utf8");
+  fs.writeFileSync(path.join(distDir, "hino", "story", "index.html"), "<!doctype html><html><head><title>hino-story-static</title></head><body>story</body></html>", "utf8");
   app = express();
   serveStatic(app, distDir);
 });
@@ -106,6 +111,29 @@ describe("the production static server answers documents through the raw HTTP po
   it("no longer soft-404s an unknown career slug", async () => {
     const res = await request(app).get("/careers/not-a-real-role");
     expect(res.status).toBe(404);
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+  });
+
+  it("serves the static /hino subtree byte-for-byte and never routes it through the policy", async () => {
+    const hino = await request(app).get("/hino/");
+    expect(hino.status).toBe(200);
+    expect(hino.text).toContain("<title>hino-static</title>");
+    expect(hino.text).not.toContain("data-raw-http-policy");
+    expect(hino.headers["x-robots-tag"]).toBeUndefined();
+    const story = await request(app).get("/hino/story/");
+    expect(story.status).toBe(200);
+    expect(story.text).toContain("hino-story-static");
+    // express.static's production behaviour: a directory without a trailing
+    // slash redirects to the slash form rather than falling into the SPA.
+    const bare = await request(app).get("/hino");
+    expect(bare.status).toBe(301);
+    expect(bare.headers.location).toBe("/hino/");
+  });
+
+  it("does not hand out the raw shell with its template schema at /index.html", async () => {
+    const res = await request(app).get("/index.html");
+    expect(res.text).not.toContain("template-organization");
+    expect(res.text).not.toContain("application/ld+json");
     expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
   });
 

@@ -40,20 +40,28 @@ export function serveStatic(
     );
   }
 
-  // index: false — "/" is a document like any other and must pass through the
-  // policy below instead of being answered by express.static's default index.
-  app.use(express.static(distPath, { index: false }));
-
   // The built shell is read once; the policy is applied per request because
   // status, robots, and canonical are properties of the request target.
   const templatePath = path.resolve(distPath, "index.html");
   let template: string | null = null;
-  app.use("/{*path}", (req, res, next) => {
+  const policyDocument = (req: Request, res: Response, next: express.NextFunction) => {
     try {
       template ??= fs.readFileSync(templatePath, "utf8");
       sendRawHttpDocument(req, res, template);
     } catch (error) {
       next(error);
     }
-  });
+  };
+
+  // The root document and the shell file itself are answered by the policy,
+  // never by express.static's index handling, so "/" carries exact robots,
+  // canonical, and route-owned schema instead of the raw template's global
+  // metadata. Every OTHER directory index under dist/public — the static
+  // /hino subtree above all — keeps express.static's production behaviour
+  // (index.html served, "/hino" redirected to "/hino/"), byte-for-byte.
+  app.get(["/", "/index.html"], policyDocument);
+  app.use(express.static(distPath));
+
+  // fall through to the policy for every remaining document request
+  app.use("/{*path}", policyDocument);
 }
