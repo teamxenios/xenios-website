@@ -50,7 +50,13 @@ export type TebraSchedulingConfiguration =
     })
   | (TebraSchedulingCommon & {
       status: "ready";
-      mode: "direct_link" | "iframe";
+      mode: "direct_link";
+      url: string;
+      popupScriptUrl?: never;
+    })
+  | (TebraSchedulingCommon & {
+      status: "ready";
+      mode: "iframe";
       url: string;
       popupScriptUrl?: never;
     })

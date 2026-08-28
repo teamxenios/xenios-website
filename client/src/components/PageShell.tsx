@@ -17,7 +17,7 @@ export default function PageShell({ children }: { children: ReactNode }) {
       </a>
       <TopRibbon />
       <Navbar />
-      <main id="site-main" className="flex-1">{children}</main>
+      <main id="site-main" tabIndex={-1} className="flex-1">{children}</main>
       <Footer />
     </div>
   );

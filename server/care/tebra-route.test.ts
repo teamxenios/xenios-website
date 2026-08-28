@@ -4,6 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 import type { CareAccessDependencies } from "./access";
 import { careCapabilityStatusForState } from "./capability";
 import { carePageGate, registerCareApi } from "./index";
+import {
+  fingerprintTebraAuthorityConfiguration,
+  type ReadyTebraSchedulingConfiguration,
+  type TebraPublicAuthoritySource,
+} from "./tebra-public-authority";
 
 function dependencies(
   loadCapabilityStatus: CareAccessDependencies["loadCapabilityStatus"] = vi.fn(
@@ -26,10 +31,51 @@ const directEnvironment: NodeJS.ProcessEnv = {
   TEBRA_ENVIRONMENT: "review",
 };
 
+const currentReleaseSha = "1111111111111111111111111111111111111111";
+const readyScheduling: ReadyTebraSchedulingConfiguration = {
+  status: "ready",
+  mode: "direct_link",
+  url: directEnvironment.TEBRA_SCHEDULING_URL!,
+  telehealthEnabled: false,
+  requestSemantics: "appointment_request_pending_confirmation",
+};
+
+function authoritySource(): TebraPublicAuthoritySource {
+  return {
+    load: vi.fn(async () => ({
+      scheduling: {
+        schemaVersion: 1,
+        source: "durable_release_attestation",
+        scope: "scheduling_public_handoff",
+        authorityId: "synthetic-route-authority",
+        releaseSha: currentReleaseSha,
+        environment: "production",
+        configurationFingerprint: fingerprintTebraAuthorityConfiguration(
+          "scheduling_public_handoff",
+          readyScheduling,
+        ),
+        stagingResult: "passed",
+        stagingVerifiedAt: "2026-08-28T09:00:00.000Z",
+        decision: "approved",
+        approvedByRef: "synthetic-route-reviewer",
+        approvedAt: "2026-08-28T10:00:00.000Z",
+        validUntil: "2026-08-29T12:00:00.000Z",
+        revokedAt: null,
+        providerSchedulingState: "verified_enabled",
+      },
+    })),
+  };
+}
+
 describe("Tebra public configuration route", () => {
-  it("serves only the validated public projection with privacy headers", async () => {
+  it("serves review configuration as non-actionable with privacy headers", async () => {
     const app = express();
-    registerCareApi(app, dependencies(), { env: directEnvironment });
+    registerCareApi(app, dependencies(), {
+      env: directEnvironment,
+      tebraAuthoritySource: authoritySource(),
+      currentReleaseSha,
+      clock: () => new Date("2026-08-28T12:00:00.000Z"),
+    });
 
     const response = await request(app).get("/api/care/tebra/configuration");
 
@@ -43,9 +89,8 @@ describe("Tebra public configuration route", () => {
       authority: "tebra",
       careAvailable: true,
       scheduling: {
-        status: "ready",
+        status: "unconfigured",
         mode: "direct_link",
-        url: directEnvironment.TEBRA_SCHEDULING_URL,
         telehealthEnabled: false,
         requestSemantics: "appointment_request_pending_confirmation",
       },
@@ -58,16 +103,79 @@ describe("Tebra public configuration route", () => {
       "scheduling",
       "schemaVersion",
     ]);
+    expect(JSON.stringify(response.body)).not.toContain(
+      directEnvironment.TEBRA_SCHEDULING_URL,
+    );
+  });
+
+  it("requires production plus an exact durable authority for a direct link", async () => {
+    const app = express();
+    registerCareApi(app, dependencies(), {
+      env: { ...directEnvironment, TEBRA_ENVIRONMENT: "production" },
+      tebraAuthoritySource: authoritySource(),
+      currentReleaseSha,
+      clock: () => new Date("2026-08-28T12:00:00.000Z"),
+    });
+
+    const response = await request(app).get("/api/care/tebra/configuration");
+
+    expect(response.status).toBe(200);
+    expect(response.body.scheduling).toEqual(readyScheduling);
+    expect(response.body).not.toHaveProperty("releaseSha");
+    expect(JSON.stringify(response.body)).not.toContain("authorityId");
+  });
+
+  it("does not let the authority reader self-supply missing release identity", async () => {
+    const app = express();
+    registerCareApi(app, dependencies(), {
+      env: { ...directEnvironment, TEBRA_ENVIRONMENT: "production" },
+      tebraAuthoritySource: authoritySource(),
+      clock: () => new Date("2026-08-28T12:00:00.000Z"),
+    });
+
+    const response = await request(app).get("/api/care/tebra/configuration");
+
+    expect(response.status).toBe(200);
+    expect(response.body.scheduling).toMatchObject({ status: "unconfigured" });
+    expect(JSON.stringify(response.body)).not.toContain("scheduler.example.test");
+  });
+
+  it("does not fall back to retained URLs when durable authority lookup fails", async () => {
+    const app = express();
+    registerCareApi(app, dependencies(), {
+      env: { ...directEnvironment, TEBRA_ENVIRONMENT: "production" },
+      tebraAuthoritySource: {
+        load: vi.fn(async () => {
+          throw new Error("private-authority-dependency-detail");
+        }),
+      },
+      currentReleaseSha,
+      clock: () => new Date("2026-08-28T12:00:00.000Z"),
+    });
+
+    const response = await request(app).get("/api/care/tebra/configuration");
+
+    expect(response.status).toBe(200);
+    expect(response.body.scheduling).toMatchObject({ status: "unconfigured" });
+    expect(JSON.stringify(response.body)).not.toContain("scheduler.example.test");
+    expect(JSON.stringify(response.body)).not.toContain(
+      "private-authority-dependency-detail",
+    );
   });
 
   it("fails closed without leaking configured destinations when capability lookup fails", async () => {
     const app = express();
+    const source = authoritySource();
     registerCareApi(
       app,
       dependencies(async () => {
         throw new Error("private-capability-detail");
       }),
-      { env: directEnvironment },
+      {
+        env: directEnvironment,
+        tebraAuthoritySource: source,
+        currentReleaseSha,
+      },
     );
 
     const response = await request(app).get("/api/care/tebra/configuration");
@@ -80,6 +188,7 @@ describe("Tebra public configuration route", () => {
     });
     expect(JSON.stringify(response.body)).not.toContain("scheduler.example.test");
     expect(JSON.stringify(response.body)).not.toContain("private-capability-detail");
+    expect(source.load).not.toHaveBeenCalled();
   });
 });
 

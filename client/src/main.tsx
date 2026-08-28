@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import AppErrorBoundary from "./components/AppErrorBoundary";
 import "./index.css";
 import { initAttribution } from "./lib/attribution";
 import { initTracking, installResearchDocumentBoundary } from "./lib/tracking";
@@ -12,8 +13,8 @@ void initTracking();
 registerXeniosPwa();
 
 createRoot(document.getElementById("root")!).render(
-  <>
+  <AppErrorBoundary>
     <App />
     <PwaLifecycle />
-  </>,
+  </AppErrorBoundary>,
 );

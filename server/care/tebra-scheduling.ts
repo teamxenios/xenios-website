@@ -9,6 +9,12 @@ import {
   type TebraSchedulingConfiguration,
   type TebraSchedulingMode,
 } from "@shared/care/tebra-experience";
+import {
+  evaluateTebraPublicAuthority,
+  type ReadyTebraPortalConfiguration,
+  type ReadyTebraSchedulingConfiguration,
+  type TebraPublicActivationContext,
+} from "./tebra-public-authority";
 
 export const TEBRA_ENVIRONMENT_VARIABLES = {
   schedulingEnabled: "TEBRA_SCHEDULING_ENABLED",
@@ -156,11 +162,44 @@ function unavailableScheduling(
   };
 }
 
+function authorityFailureStatus(
+  decision: ReturnType<typeof evaluateTebraPublicAuthority>,
+): "unconfigured" | "configuration_invalid" {
+  return decision === "invalid" ? "configuration_invalid" : "unconfigured";
+}
+
+function authorizeScheduling(
+  configuration: ReadyTebraSchedulingConfiguration,
+  activation: TebraPublicActivationContext | undefined,
+): TebraSchedulingConfiguration {
+  // The enforced disabled-state CSP has no Tebra frame/script sources. Until
+  // protected composition is separately attested, only an external direct
+  // link can become actionable even when a durable authority is supplied.
+  if (configuration.mode !== "direct_link") {
+    return unavailableScheduling("unconfigured", configuration.mode);
+  }
+
+  const decision = evaluateTebraPublicAuthority({
+    authority: activation?.authorities?.scheduling,
+    scope: "scheduling_public_handoff",
+    currentReleaseSha: activation?.currentReleaseSha,
+    configuration,
+    now: activation?.now ?? new Date(),
+  });
+  return decision === "approved"
+    ? configuration
+    : unavailableScheduling(
+        authorityFailureStatus(decision),
+        configuration.mode,
+      );
+}
+
 function resolveScheduling(input: {
   env: NodeJS.ProcessEnv;
   careAvailable: boolean;
   allowedOrigins: TebraAllowedOriginsResult;
   environment: ParsedValue<TebraEnvironment>;
+  activation?: TebraPublicActivationContext;
 }): TebraSchedulingConfiguration {
   const enabled = parseExactBoolean(input.env.TEBRA_SCHEDULING_ENABLED);
   const mode = parseMode(input.env.TEBRA_SCHEDULING_MODE);
@@ -227,7 +266,13 @@ function resolveScheduling(input: {
   };
 
   if (mode.value !== "popup_widget") {
-    return { ...common, mode: mode.value };
+    const configuration: ReadyTebraSchedulingConfiguration = {
+      ...common,
+      mode: mode.value,
+    };
+    return input.environment.value === "production"
+      ? authorizeScheduling(configuration, input.activation)
+      : unavailableScheduling("unconfigured", mode.value);
   }
 
   const popupScriptUrl = parsePopupScriptUrl(
@@ -243,11 +288,14 @@ function resolveScheduling(input: {
     return unavailableScheduling("configuration_invalid", mode.value);
   }
 
-  return {
+  const configuration: ReadyTebraSchedulingConfiguration = {
     ...common,
     mode: "popup_widget",
     popupScriptUrl: popupScriptUrl.value,
   };
+  return input.environment.value === "production"
+    ? authorizeScheduling(configuration, input.activation)
+    : unavailableScheduling("unconfigured", mode.value);
 }
 
 function resolvePortal(input: {
@@ -255,6 +303,7 @@ function resolvePortal(input: {
   careAvailable: boolean;
   allowedOrigins: TebraAllowedOriginsResult;
   environment: ParsedValue<TebraEnvironment>;
+  activation?: TebraPublicActivationContext;
 }): TebraPortalConfiguration {
   if (!input.careAvailable) return { status: "care_unavailable" };
 
@@ -274,12 +323,46 @@ function resolvePortal(input: {
   ) {
     return { status: "configuration_invalid" };
   }
-  return { status: "ready", url: portalUrl.value };
+  const configuration: ReadyTebraPortalConfiguration = {
+    status: "ready",
+    url: portalUrl.value,
+  };
+  if (input.environment.value !== "production") {
+    return { status: "unconfigured" };
+  }
+
+  const decision = evaluateTebraPublicAuthority({
+    authority: input.activation?.authorities?.portal,
+    scope: "patient_portal_public_handoff",
+    currentReleaseSha: input.activation?.currentReleaseSha,
+    configuration,
+    now: input.activation?.now ?? new Date(),
+  });
+  return decision === "approved"
+    ? configuration
+    : { status: authorityFailureStatus(decision) };
+}
+
+function approvedPublicOrigins(
+  configuration: TebraPublicConfiguration,
+): readonly string[] {
+  const urls: string[] = [];
+  if (configuration.scheduling.status === "ready") {
+    urls.push(configuration.scheduling.url);
+    if (configuration.scheduling.mode === "popup_widget") {
+      urls.push(configuration.scheduling.popupScriptUrl);
+    }
+  }
+  if (configuration.portal.status === "ready") {
+    urls.push(configuration.portal.url);
+  }
+  return [...new Set(urls.map((url) => new URL(url).origin))];
 }
 
 export function resolveTebraExperienceConfiguration(input: {
   env?: NodeJS.ProcessEnv;
   careCapability: CareCapabilityStatus;
+  activation?: TebraPublicActivationContext;
 }): ResolvedTebraExperienceConfiguration {
   const env = input.env ?? process.env;
   const careAvailable = careIsAvailable(input.careCapability);
@@ -289,21 +372,33 @@ export function resolveTebraExperienceConfiguration(input: {
     schemaVersion: 1,
     authority: "tebra",
     careAvailable,
-    scheduling: resolveScheduling({ env, careAvailable, allowedOrigins, environment }),
-    portal: resolvePortal({ env, careAvailable, allowedOrigins, environment }),
+    scheduling: resolveScheduling({
+      env,
+      careAvailable,
+      allowedOrigins,
+      environment,
+      activation: input.activation,
+    }),
+    portal: resolvePortal({
+      env,
+      careAvailable,
+      allowedOrigins,
+      environment,
+      activation: input.activation,
+    }),
   };
 
   return {
     publicConfiguration,
     environment: environment.state === "value" ? environment.value : null,
-    allowedOrigins:
-      careAvailable && allowedOrigins.state === "ready" ? allowedOrigins.origins : [],
+    allowedOrigins: approvedPublicOrigins(publicConfiguration),
   };
 }
 
 export function resolveTebraPublicConfiguration(input: {
   env?: NodeJS.ProcessEnv;
   careCapability: CareCapabilityStatus;
+  activation?: TebraPublicActivationContext;
 }): TebraPublicConfiguration {
   return resolveTebraExperienceConfiguration(input).publicConfiguration;
 }

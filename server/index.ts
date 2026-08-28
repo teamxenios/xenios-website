@@ -86,6 +86,7 @@ import {
   registerCareIntakeApi,
   registerCarePrescriptionApi,
 } from "./care";
+import { careDocumentCsp } from "./care-document-csp";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
 import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import {
@@ -470,6 +471,7 @@ registerPrivateEarlyAccessApi(app, {
     earlyAccessDoorSources.current = sources;
   },
 });
+app.use(careDocumentCsp);
 app.use(carePageGate);
 const careAccess = buildCareProductionDependencies();
 const careEligibility = buildCareEligibilityRepository();

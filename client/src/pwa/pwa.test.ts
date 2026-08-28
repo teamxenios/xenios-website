@@ -4,7 +4,8 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { runInNewContext } from "node:vm";
+import { describe, expect, it, vi } from "vitest";
 
 const swSource = readFileSync(
   resolve(__dirname, "../../public/sw.js"),
@@ -19,6 +20,53 @@ const indexHtml = readFileSync(
 );
 const mainSource = readFileSync(resolve(__dirname, "../main.tsx"), "utf8");
 const registerSource = readFileSync(resolve(__dirname, "register.ts"), "utf8");
+
+type ServiceWorkerFetchEvent = {
+  request: {
+    method: string;
+    url: string;
+    mode: string;
+    destination: string;
+  };
+  respondWith: ReturnType<typeof vi.fn>;
+};
+
+function evaluateServiceWorker() {
+  const listeners = new Map<string, (event: ServiceWorkerFetchEvent) => void>();
+  const fetchMock = vi.fn(() => Promise.resolve({ ok: true, type: "basic" }));
+  const cacheMatch = vi.fn(() => Promise.resolve({ offline: true }));
+  const context: Record<string, unknown> = {
+    URL,
+    decodeURI,
+    fetch: fetchMock,
+    caches: {
+      open: vi.fn(() => Promise.resolve({ addAll: vi.fn(), put: vi.fn() })),
+      keys: vi.fn(() => Promise.resolve([])),
+      delete: vi.fn(() => Promise.resolve(true)),
+      match: cacheMatch,
+    },
+    self: {
+      location: { origin: "https://xenios.test" },
+      clients: { claim: vi.fn() },
+      skipWaiting: vi.fn(),
+      addEventListener: (
+        type: string,
+        listener: (event: ServiceWorkerFetchEvent) => void,
+      ) => listeners.set(type, listener),
+    },
+  };
+
+  runInNewContext(swSource, context);
+
+  return {
+    fetchListener: listeners.get("fetch"),
+    isCareNavigationPath: context.isCareNavigationPath as
+      | ((pathname: string) => boolean)
+      | undefined,
+    fetchMock,
+    cacheMatch,
+  };
+}
 
 describe("service worker privacy policy", () => {
   it("declares /api/ as never-cache and returns before any caching for it", () => {
@@ -51,6 +99,85 @@ describe("service worker privacy policy", () => {
   it("serves the offline shell only for navigations", () => {
     expect(swSource).toContain('request.mode === "navigate"');
     expect(swSource).toContain("caches.match(OFFLINE_URL)");
+  });
+
+  it("classifies only canonical Care paths for network-only navigation", () => {
+    const { isCareNavigationPath } = evaluateServiceWorker();
+    expect(isCareNavigationPath).toBeTypeOf("function");
+
+    for (const path of [
+      "/care",
+      "/CARE/",
+      "/c%61re/schedule",
+      "/care/portal",
+    ]) {
+      expect(isCareNavigationPath?.(path), path).toBe(true);
+    }
+
+    for (const path of [
+      "/careers",
+      "/api/care/status",
+      "/care%2Fschedule",
+      "/care/%ZZ",
+      "/care//schedule",
+      "/research",
+    ]) {
+      expect(isCareNavigationPath?.(path), path).toBe(false);
+    }
+  });
+
+  it("never intercepts a Care navigation or supplies the generic offline shell", () => {
+    const { fetchListener, fetchMock, cacheMatch } = evaluateServiceWorker();
+    expect(fetchListener).toBeTypeOf("function");
+    const respondWith = vi.fn();
+
+    fetchListener?.({
+      request: {
+        method: "GET",
+        url: "https://xenios.test/care/schedule",
+        mode: "navigate",
+        destination: "document",
+      },
+      respondWith,
+    });
+
+    expect(respondWith).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(cacheMatch).not.toHaveBeenCalled();
+  });
+
+  it("keeps the generic offline fallback for an ordinary navigation", async () => {
+    const { fetchListener, fetchMock, cacheMatch } = evaluateServiceWorker();
+    const respondWith = vi.fn();
+    fetchMock.mockRejectedValueOnce(new Error("offline"));
+
+    fetchListener?.({
+      request: {
+        method: "GET",
+        url: "https://xenios.test/research",
+        mode: "navigate",
+        destination: "document",
+      },
+      respondWith,
+    });
+
+    expect(respondWith).toHaveBeenCalledOnce();
+    await expect(respondWith.mock.calls[0]?.[0]).resolves.toEqual({
+      offline: true,
+    });
+    expect(cacheMatch).toHaveBeenCalledWith("/offline.html");
+  });
+
+  it("checks Care before the generic navigation fallback", () => {
+    const careGuardIndex = swSource.indexOf(
+      'request.mode === "navigate" && isCareNavigationPath(url.pathname)',
+    );
+    const genericNavigationIndex = swSource.indexOf(
+      'if (request.mode === "navigate") {',
+    );
+
+    expect(careGuardIndex).toBeGreaterThan(-1);
+    expect(careGuardIndex).toBeLessThan(genericNavigationIndex);
   });
 });
 

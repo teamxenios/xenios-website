@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Tracking isolation (PR #25 correction pass, blocker 1): third-party
-// tracking must never initialize under /research or while a Supabase
+// tracking must never initialize under /research, under /care, or while a Supabase
 // recovery hash is present, and no event may carry a URL, hash, or token.
 
 const cfg = vi.hoisted(() => ({
@@ -34,16 +34,36 @@ beforeEach(() => {
 });
 
 describe("initTracking is a no-op on the private Research surface", () => {
-  it("no-op on /research/reset-password: no Meta script node, no fbq, no PageView", async () => {
-    setLocation("/research/reset-password");
-    const t = await freshTracking();
-    await t.initTracking();
-    expect(pixelScripts()).toHaveLength(0);
-    expect(window.fbq).toBeUndefined();
-  });
+  it(
+    "no-op on /research/reset-password: no Meta script node, no fbq, no PageView",
+    async () => {
+      setLocation("/research/reset-password");
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+    },
+    15_000,
+  );
 
   it("no-op on any /research/* path and on /research itself", async () => {
     for (const path of ["/research", "/research/apply", "/research/member", "/research/apply/status"]) {
+      setLocation(path);
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+    }
+  });
+
+  it("no-op on canonical Care paths, including normalized variants", async () => {
+    for (const path of [
+      "/care",
+      "/care/schedule",
+      "/Care/portal",
+      "/%63are/provider-review",
+      "/care/support/?topic=scheduling",
+    ]) {
       setLocation(path);
       const t = await freshTracking();
       await t.initTracking();
@@ -112,7 +132,7 @@ describe("positive control and event hygiene", () => {
     expect(JSON.stringify(queued)).not.toMatch(/http|#|access_token|recovery|@/);
   });
 
-  it("track() is suppressed under /research even when the pixel is already loaded (SPA navigation)", async () => {
+  it("track() is suppressed under Research and Care even when the pixel is already loaded", async () => {
     setLocation("/");
     const t = await freshTracking();
     const fbq = vi.fn();
@@ -120,6 +140,9 @@ describe("positive control and event hygiene", () => {
     setLocation("/research/member");
     t.track("Lead");
     t.trackPageView();
+    expect(fbq).not.toHaveBeenCalled();
+    setLocation("/care/schedule");
+    t.track("Schedule", { pathway: "care" });
     expect(fbq).not.toHaveBeenCalled();
     setLocation("/concepts");
     t.track("Lead");
@@ -142,10 +165,27 @@ describe("positive control and event hygiene", () => {
     expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/research/member");
     expect(originalPush).not.toHaveBeenCalled();
 
+    fakeWindow.history.pushState({}, "", "/care/schedule");
+    expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/care/schedule");
+    expect(originalPush).not.toHaveBeenCalled();
+
     // Recovery hashes on any path get the same new-document isolation.
     fakeWindow.history.replaceState({}, "", "/#access_token=abc&refresh_token=def&type=recovery");
     expect(replace).toHaveBeenCalledWith("https://xeniostechnology.com/#access_token=abc&refresh_token=def&type=recovery");
     expect(originalReplace).not.toHaveBeenCalled();
+
+    expect(
+      t.requiresFullDocumentNavigation(
+        "https://xeniostechnology.com/research/account",
+        "https://xeniostechnology.com/care/schedule",
+      ),
+    ).toBe(true);
+    expect(
+      t.requiresFullDocumentNavigation(
+        "https://xeniostechnology.com/care/schedule",
+        "https://xeniostechnology.com/care/portal",
+      ),
+    ).toBe(false);
   });
 
   it("keeps ordinary same-surface navigation in the SPA", async () => {

@@ -10,6 +10,10 @@ import {
 } from "./access";
 import { careCapabilityStatusForState } from "./capability";
 import { resolveTebraPublicConfiguration } from "./tebra-scheduling";
+import type {
+  TebraPublicActivationContext,
+  TebraPublicAuthoritySource,
+} from "./tebra-public-authority";
 
 export function carePageGate(req: Request, res: Response, next: NextFunction) {
   const requestPath = req.originalUrl || req.url || req.path;
@@ -20,10 +24,18 @@ export function carePageGate(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+export interface RegisterCareApiOptions {
+  env?: NodeJS.ProcessEnv;
+  tebraAuthoritySource?: TebraPublicAuthoritySource;
+  /** Independently resolved deployment identity; never supplied by the authority reader. */
+  currentReleaseSha?: string;
+  clock?: () => Date;
+}
+
 export function registerCareApi(
   app: Express,
   deps: CareAccessDependencies = unconfiguredCareAccessDependencies(),
-  options: { env?: NodeJS.ProcessEnv } = {},
+  options: RegisterCareApiOptions = {},
 ) {
   app.use("/api/care", (_req, res, next) => {
     res.set("Cache-Control", "no-store");
@@ -48,10 +60,25 @@ export function registerCareApi(
     } catch {
       capability = careCapabilityStatusForState("disabled");
     }
+
+    let activation: TebraPublicActivationContext | undefined;
+    if (capability.enabled && options.tebraAuthoritySource) {
+      try {
+        activation = {
+          currentReleaseSha: options.currentReleaseSha,
+          authorities: await options.tebraAuthoritySource.load(),
+          now: options.clock?.() ?? new Date(),
+        };
+      } catch {
+        // A durable-authority dependency failure is an unavailable public
+        // handoff, never permission to fall back to retained environment URLs.
+      }
+    }
     res.json(
       resolveTebraPublicConfiguration({
         env: options.env,
         careCapability: capability,
+        activation,
       }),
     );
   });
@@ -86,4 +113,5 @@ export * from "./prescription-repository";
 export * from "./prescription-routes";
 export * from "./waitlist";
 export * from "./tebra-csp";
+export * from "./tebra-public-authority";
 export * from "./tebra-scheduling";

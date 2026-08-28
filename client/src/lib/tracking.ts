@@ -1,4 +1,5 @@
 import { getConfig } from "./config";
+import { isCarePath } from "@shared/care/paths";
 import { isRecoveryHash } from "@shared/research/recovery";
 import { isResearchPath } from "@shared/research/paths";
 
@@ -23,17 +24,26 @@ type DocumentNavigator = {
 // and never while a Supabase recovery hash (#access_token...&type=recovery)
 // is present anywhere, because a tracking script that loads before the hash
 // is consumed can receive the full recovery URL. The durable rule: no
-// third-party tracking scripts anywhere under /research, and none while a
-// recovery hash is in the location. Full URLs, hashes, query parameters,
+// third-party tracking scripts anywhere under /research or /care, and none
+// while a recovery hash is in the location. Full URLs, hashes, query parameters,
 // member identifiers, email addresses, and tokens are never sent to
 // analytics. The recovery-hash detection reuses the canonical helper the
 // recovery flow itself uses (shared/research/recovery.ts); the hash is only
 // READ here, never stripped or mutated, so Supabase still consumes it.
 export function trackingBlockedHere(pathname: string, hash: string): boolean {
-  // isResearchPath normalizes exactly like the wouter router (decodeURI +
-  // lowercase), so case-variant AND percent-encoded research URLs are all
-  // blocked; the recovery-hash arm blocks a recovery landing on any path.
-  return isResearchPath(pathname) || isRecoveryHash(hash);
+  // The canonical Research and Care helpers fail closed around case,
+  // percent-encoding, separators, and malformed input; the recovery-hash arm
+  // blocks a recovery landing on any path.
+  return isResearchPath(pathname) || isCarePath(pathname) || isRecoveryHash(hash);
+}
+
+type DocumentPrivacyZone = "public" | "research" | "care" | "recovery";
+
+function documentPrivacyZone(pathname: string, hash: string): DocumentPrivacyZone {
+  if (isRecoveryHash(hash)) return "recovery";
+  if (isResearchPath(pathname)) return "research";
+  if (isCarePath(pathname)) return "care";
+  return "public";
 }
 
 export function requiresFullDocumentNavigation(currentHref: string, targetHref: string): boolean {
@@ -41,9 +51,10 @@ export function requiresFullDocumentNavigation(currentHref: string, targetHref: 
     const current = new URL(currentHref);
     const target = new URL(targetHref, current);
     if (current.origin !== target.origin) return false;
-    const currentSensitive = trackingBlockedHere(current.pathname, current.hash);
-    const targetSensitive = trackingBlockedHere(target.pathname, target.hash);
-    return currentSensitive !== targetSensitive;
+    return (
+      documentPrivacyZone(current.pathname, current.hash) !==
+      documentPrivacyZone(target.pathname, target.hash)
+    );
   } catch {
     return false;
   }
@@ -52,9 +63,11 @@ export function requiresFullDocumentNavigation(currentHref: string, targetHref: 
 // The marketing site and private Research surface share one React bundle.
 // Once Meta's code has executed, deleting its script tag or suppressing fbq
 // does not unload its observers. The only durable isolation boundary is a new
-// document. Intercept History API transitions that cross into or out of
-// Research (or a recovery hash) and use a full navigation before pushState can
-// expose the sensitive URL to an already-running third-party runtime.
+// document. Intercept History API transitions that cross the public, Research,
+// Care, or recovery boundaries and use a full navigation before pushState can
+// expose a sensitive URL to an already-running third-party runtime. Research
+// and Care are distinct zones so a future approved Tebra embed cannot remain
+// resident when the user enters the Research account surface.
 export function installResearchDocumentBoundary(
   targetWindow: Window = window,
   documentNavigator: DocumentNavigator = {

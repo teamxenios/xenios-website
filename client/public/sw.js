@@ -50,6 +50,47 @@ function isNeverCache(url) {
   return NEVER_CACHE_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));
 }
 
+const INVALID_CARE_PATH_CHARACTER = /[\\\s\u0000-\u001f\u007f]/u;
+const CARE_DOT_SEGMENT = /\/(?:\.{1,2})(?:\/|$)/u;
+
+// Mirrors the server's fail-closed Care path rules without decoding encoded
+// separators into routing boundaries. Invalid or ambiguous paths are not
+// treated as Care documents.
+function normalizeCarePath(pathname) {
+  if (
+    typeof pathname !== "string" ||
+    !pathname.startsWith("/") ||
+    INVALID_CARE_PATH_CHARACTER.test(pathname)
+  ) {
+    return null;
+  }
+
+  let decodedPath;
+  try {
+    decodedPath = decodeURI(pathname);
+  } catch {
+    return null;
+  }
+
+  if (
+    INVALID_CARE_PATH_CHARACTER.test(decodedPath) ||
+    decodedPath.includes("//") ||
+    CARE_DOT_SEGMENT.test(decodedPath)
+  ) {
+    return null;
+  }
+
+  const lowerPath = decodedPath.toLowerCase();
+  return lowerPath.length > 1 && lowerPath.endsWith("/")
+    ? lowerPath.slice(0, -1)
+    : lowerPath;
+}
+
+function isCareNavigationPath(pathname) {
+  const normalized = normalizeCarePath(pathname);
+  return normalized === "/care" || normalized?.startsWith("/care/") === true;
+}
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
@@ -65,6 +106,11 @@ self.addEventListener("fetch", (event) => {
   // to cache (an API response must never be served stale from a cache we do
   // not populate anyway).
   if (isNeverCache(url)) return;
+
+  // A Care document must come from the network with the server's per-request
+  // security headers. Never replace a failed Care navigation with the generic
+  // offline shell, which cannot carry those response headers.
+  if (request.mode === "navigate" && isCareNavigationPath(url.pathname)) return;
 
   // Navigations: network first, offline shell only when the network is gone.
   if (request.mode === "navigate") {

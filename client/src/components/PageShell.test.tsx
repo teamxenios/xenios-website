@@ -35,6 +35,7 @@ describe("PageShell skip link", () => {
     const main = view.host.querySelector("main");
     expect(main).not.toBeNull();
     expect(main?.id).toBe("site-main");
+    expect(main?.getAttribute("tabindex")).toBe("-1");
     expect(main?.querySelector('[data-testid="page-content"]')).not.toBeNull();
 
     view.unmount();

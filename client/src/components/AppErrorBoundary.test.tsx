@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot } from "react-dom/client";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AppErrorBoundary, { markFailedDocumentNoIndex } from "./AppErrorBoundary";
 
@@ -31,6 +33,14 @@ describe("markFailedDocumentNoIndex", () => {
 });
 
 describe("AppErrorBoundary", () => {
+  it("is composed around the application and PWA lifecycle", () => {
+    const mainSource = readFileSync(resolve(__dirname, "../main.tsx"), "utf8");
+    expect(mainSource).toContain("<AppErrorBoundary>");
+    expect(mainSource).toMatch(
+      /<AppErrorBoundary>[\s\S]*<App \/>[\s\S]*<PwaLifecycle \/>[\s\S]*<\/AppErrorBoundary>/u,
+    );
+  });
+
   it("renders a focused, actionable fallback without exposing exception text", () => {
     const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
     const host = document.createElement("div");
