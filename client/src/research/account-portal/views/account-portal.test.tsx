@@ -22,7 +22,11 @@ import {
   type MembershipDto,
 } from "@shared/research/customer-account/contract";
 import { AccountPortalShell } from "../AccountPortalShell";
-import { AccountResourceBoundary, useAccountResource } from "../resource";
+import {
+  AccountResourceBoundary,
+  accountDeniedSignInHref,
+  useAccountResource,
+} from "../resource";
 import { AccountCareView } from "./CareView";
 import { AccountDocumentsView } from "./DocumentsView";
 import { AccountOrdersView } from "./OrdersView";
@@ -698,5 +702,90 @@ describe("account resource states", () => {
     expect(loader).toHaveBeenCalledWith(null);
     expect(container.textContent).toContain("Your account could not be loaded");
     expect(container.textContent).not.toContain("Opening your private account");
+  });
+
+  describe("denied sign-in returnTo", () => {
+    it.each([
+      "/research/account",
+      "/research/account/orders",
+      "/research/account/subscription",
+      "/research/account/care",
+      "/research/account/documents",
+      "/research/account/support",
+    ])("preserves the exact registered static account path %s", (path) => {
+      const href = accountDeniedSignInHref(path);
+      expect(href).toBe(
+        `/research/sign-in?returnTo=${encodeURIComponent(path)}`,
+      );
+      expect(
+        new URLSearchParams(href.split("?", 2)[1]).get("returnTo"),
+      ).toBe(path);
+    });
+
+    it.each([
+      "https://outside.invalid/research/account",
+      "//outside.invalid/research/account",
+      "/research/accounting",
+      "/research/account.example/orders",
+      "/research/member/security",
+      "/care",
+      "/research/ACCOUNT/orders",
+      "/research/account/orders/../support",
+      "/research/account/orders/%2fetc",
+      "/research/account/orders\\outside",
+      " /research/account/orders",
+      "/research/account/orders ",
+      "not a path",
+      "",
+    ])("rejects external, cross-boundary, lookalike, or malformed input %s", (path) => {
+      expect(accountDeniedSignInHref(path)).toBe("/research/sign-in");
+    });
+
+    it.each([
+      "/research/account/orders?access_token=synthetic-secret",
+      "/research/account/orders?returnTo=https://outside.invalid",
+      "/research/account/orders#synthetic-token",
+      "/research/account/orders?code=synthetic#fragment",
+    ])("rejects direct query or fragment input without leaking it: %s", (path) => {
+      const href = accountDeniedSignInHref(path);
+      expect(href).toBe("/research/sign-in");
+      expect(href).not.toMatch(/token|secret|outside|code|fragment/i);
+    });
+
+    it("copies only window.location.pathname from a denied account page", async () => {
+      const previous = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.history.replaceState(
+        null,
+        "",
+        "/research/account/orders?access_token=synthetic-secret#synthetic-fragment",
+      );
+      try {
+        const container = await render(
+          <AccountResourceBoundary
+            snapshot={{ state: "denied", reason: "auth_required" }}
+          >
+            {() => <p>ready</p>}
+          </AccountResourceBoundary>,
+        );
+        const href = container
+          .querySelector<HTMLAnchorElement>("[data-testid=\"account-denied\"] a")
+          ?.getAttribute("href");
+        expect(href).toBe(
+          "/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders",
+        );
+        expect(href).not.toMatch(/token|secret|fragment/i);
+      } finally {
+        window.history.replaceState(null, "", previous || "/");
+      }
+    });
+
+    it.each([
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
+      "/research/account/orders/XRR-Fixture_01",
+    ])("keeps uncomposed extension destination closed: %s", (path) => {
+      expect(accountDeniedSignInHref(path)).toBe("/research/sign-in");
+    });
   });
 });

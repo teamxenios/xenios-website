@@ -17,7 +17,18 @@ import {
 import type { MembershipDto } from "@shared/research/customer-account/contract";
 
 function membershipWithRenewal(renewal: MembershipDto["renewal"]): MembershipDto {
-  return { ...FIXTURE_MEMBERSHIP_MANUAL, renewal };
+  if (renewal.state === "scheduled") {
+    return {
+      ...FIXTURE_MEMBERSHIP_MANUAL,
+      renewal,
+      nextRenewalAt: renewal.nextRenewalAt,
+    };
+  }
+  return {
+    ...FIXTURE_MEMBERSHIP_MANUAL,
+    renewal,
+    nextRenewalAt: null,
+  };
 }
 
 function legacyMembershipWithoutRenewal(): MembershipDto {
