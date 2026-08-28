@@ -39,8 +39,8 @@ function failure(res: Response, error: unknown): Response {
 
 /**
  * Global registration remains Lead-owned. Composition must inject read-only
- * source projections and a storage-scoped recommendation store, then mount
- * behind the existing requireSupabaseAdmin guard.
+ * source projections and one durable atomic Trust Dial/recommendation
+ * authority, then mount behind the existing requireSupabaseAdmin guard.
  */
 export function registerAdminCrmSupplierOperationsApi(
   app: Express,

@@ -221,36 +221,39 @@ describe("composite Admin CRM supplier operations repository", () => {
     });
   });
 
-  it("passes review records only through the durable atomic recommendation store", async () => {
-    const recordRecommendationWithAudit = vi.fn(async (record: any) => ({
-      recordId: "recommendation_001",
-      action: record.input.action,
-      targetType: record.input.targetType,
-      targetId: record.input.targetId,
-      recordState: record.recordState,
-      executionState: "not_executed" as const,
-      externalEffect: false as const,
-      executor: null,
-      requiresHumanApproval: true as const,
-      configuredTrustDial: record.configuredTrustDial,
-      evidenceSource: record.evidenceSource,
-      evidenceCheckedAt: record.evidenceCheckedAt,
-      createdAt: record.createdAt,
-      idempotentReplay: false,
+  it("passes candidates only through one durable atomic Trust Dial authority", async () => {
+    const adjudicateTrustDialAndRecordRecommendation = vi.fn(async (candidate: any) => ({
+      outcome: "recorded" as const,
+      currentModes: { workspaceMode: "queue" as const, actionMode: "ask" as const },
+      recordedModes: { workspaceMode: "queue" as const, actionMode: "ask" as const },
+      requestBinding: { actorId: candidate.actorId, input: candidate.input },
+      recommendation: {
+        recordId: "recommendation_001",
+        action: candidate.input.action,
+        targetType: candidate.input.targetType,
+        targetId: candidate.input.targetId,
+        recordState: "awaiting_human_review" as const,
+        executionState: "not_executed" as const,
+        externalEffect: false as const,
+        executor: null,
+        requiresHumanApproval: true as const,
+        configuredTrustDial: "ask" as const,
+        evidenceSource: candidate.evidenceSource,
+        evidenceCheckedAt: candidate.evidenceCheckedAt,
+        createdAt: candidate.createdAt,
+        idempotentReplay: false,
+      },
     }));
     const repository = createCompositeAdminCrmSupplierOperationsRepository({
-      trustDial: {
+      durableRecommendationAuthority: {
         readWorkspaceMode: async () => "queue",
-        readActionMode: async () => "ask",
+        adjudicateTrustDialAndRecordRecommendation,
       },
-      recommendationStore: { recordRecommendationWithAudit },
     }, () => at);
 
     expect((await repository.readSnapshot("admin_001")).trustDial).toBe("queue");
-    expect(await repository.readTrustDial("admin_001", "supplier_assignment")).toBe("ask");
-    await repository.recordRecommendationWithAudit({
+    await repository.adjudicateTrustDialAndRecordRecommendation({
       actorId: "admin_001",
-      configuredTrustDial: "ask",
       input: {
         action: "supplier_assignment",
         targetType: "supplier_assignment",
@@ -258,7 +261,6 @@ describe("composite Admin CRM supplier operations repository", () => {
         reason: "Queue a human review of supplier readiness evidence.",
         idempotencyKey: "ops:assignment_001:review:v1",
       },
-      recordState: "awaiting_human_review",
       executionState: "not_executed",
       externalEffect: false,
       executor: null,
@@ -267,12 +269,14 @@ describe("composite Admin CRM supplier operations repository", () => {
       evidenceCheckedAt: at,
       createdAt: at,
     });
-    expect(recordRecommendationWithAudit).toHaveBeenCalledTimes(1);
+    expect(adjudicateTrustDialAndRecordRecommendation).toHaveBeenCalledTimes(1);
+    expect(adjudicateTrustDialAndRecordRecommendation.mock.calls[0][0]).not.toHaveProperty("configuredTrustDial");
+    expect(adjudicateTrustDialAndRecordRecommendation.mock.calls[0][0]).not.toHaveProperty("recordState");
   });
 
-  it("fails closed when the recommendation store or snapshot clock is unavailable", async () => {
+  it("fails closed when the atomic recommendation authority or snapshot clock is unavailable", async () => {
     const repository = createUnavailableAdminCrmSupplierOperationsRepository(() => at);
-    await expect(repository.recordRecommendationWithAudit({} as any)).rejects.toMatchObject({
+    await expect(repository.adjudicateTrustDialAndRecordRecommendation({} as any)).rejects.toMatchObject({
       code: "operation_unavailable",
     });
 

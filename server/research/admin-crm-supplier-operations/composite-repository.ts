@@ -2,17 +2,16 @@ import {
   ADMIN_OPERATIONAL_CONTROL_AREAS,
   ADMIN_OPERATIONS_AVAILABILITY,
   ADMIN_OPERATIONS_SOURCE_KEYS,
-  type AdminCrmAction,
   type AdminOperationsCollectionMap,
   type AdminOperationsSource,
   type AdminOperationsSourceKey,
-  type AdminCrmActionRecommendation,
   type TrustDialMode,
 } from "@shared/research/admin-crm-supplier-operations";
 import {
   AdminCrmRefusal,
   type AdminCrmSupplierOperationsRepository,
-  type AdminCrmRecommendationRecord,
+  type AdminCrmRecommendationAtomicResult,
+  type AdminCrmRecommendationCandidate,
 } from "./service";
 import { parseAdminOperationsItems } from "./source-schemas";
 
@@ -31,20 +30,22 @@ export type AdminOperationsSourceReaders = {
   [K in AdminOperationsSourceKey]?: AdminOperationsSourceReader<K>;
 };
 
-export interface AdminOperationsTrustDialPort {
+/**
+ * A durable authority, never an in-memory or logger-backed implementation.
+ * `readWorkspaceMode` is projection-only. The adjudication method is the sole
+ * write authority and must enforce both current Trust Dial modes in the same
+ * transaction that records the recommendation and audit event.
+ */
+export interface AdminOperationsDurableRecommendationAuthorityPort {
   readWorkspaceMode(actorId: string): Promise<TrustDialMode>;
-  readActionMode(actorId: string, action: AdminCrmAction): Promise<TrustDialMode>;
-}
-
-/** The implementation must persist the non-executing record and audit event atomically. */
-export interface AdminOperationsRecommendationStorePort {
-  recordRecommendationWithAudit(record: AdminCrmRecommendationRecord): Promise<AdminCrmActionRecommendation>;
+  adjudicateTrustDialAndRecordRecommendation(
+    candidate: AdminCrmRecommendationCandidate,
+  ): Promise<AdminCrmRecommendationAtomicResult>;
 }
 
 export interface CompositeAdminCrmSupplierOperationsPorts {
   sources?: AdminOperationsSourceReaders;
-  trustDial?: AdminOperationsTrustDialPort;
-  recommendationStore?: AdminOperationsRecommendationStorePort;
+  durableRecommendationAuthority?: AdminOperationsDurableRecommendationAuthorityPort;
 }
 
 type NormalizedRead<K extends AdminOperationsSourceKey> = AdminOperationsSource<SnapshotCollection<K>>;
@@ -162,9 +163,9 @@ async function workspaceTrustDial(
   ports: CompositeAdminCrmSupplierOperationsPorts,
   actorId: string,
 ): Promise<TrustDialMode> {
-  if (!ports.trustDial || !ports.recommendationStore) return "never";
+  if (!ports.durableRecommendationAuthority) return "never";
   try {
-    const mode = await ports.trustDial.readWorkspaceMode(actorId);
+    const mode = await ports.durableRecommendationAuthority.readWorkspaceMode(actorId);
     return (TRUST_DIALS as readonly string[]).includes(mode) ? mode : "never";
   } catch {
     return "never";
@@ -240,24 +241,14 @@ export function createCompositeAdminCrmSupplierOperationsRepository(
       };
     },
 
-    async readTrustDial(actorId, action) {
-      if (!ports.trustDial || !ports.recommendationStore) return "never";
-      try {
-        const mode = await ports.trustDial.readActionMode(actorId, action);
-        return (TRUST_DIALS as readonly string[]).includes(mode) ? mode : "never";
-      } catch {
-        return "never";
-      }
-    },
-
-    async recordRecommendationWithAudit(record) {
-      if (!ports.recommendationStore) {
+    async adjudicateTrustDialAndRecordRecommendation(candidate) {
+      if (!ports.durableRecommendationAuthority) {
         throw new AdminCrmRefusal(
           "operation_unavailable",
-          "The durable recommendation store is not configured in this environment.",
+          "The durable atomic recommendation authority is not configured in this environment.",
         );
       }
-      return ports.recommendationStore.recordRecommendationWithAudit(record);
+      return ports.durableRecommendationAuthority.adjudicateTrustDialAndRecordRecommendation(candidate);
     },
   };
 }

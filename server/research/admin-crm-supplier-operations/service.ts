@@ -53,11 +53,9 @@ export class AdminCrmRefusal extends Error {
   }
 }
 
-export interface AdminCrmRecommendationRecord {
+export interface AdminCrmRecommendationCandidate {
   actorId: string;
-  configuredTrustDial: TrustDialMode;
   input: AdminCrmRecommendationInput;
-  recordState: AdminCrmActionRecommendation["recordState"];
   executionState: "not_executed";
   externalEffect: false;
   executor: null;
@@ -67,14 +65,76 @@ export interface AdminCrmRecommendationRecord {
   createdAt: string;
 }
 
+export interface AdminCrmTrustDialModes {
+  workspaceMode: TrustDialMode;
+  actionMode: TrustDialMode;
+}
+
+export interface AdminCrmPermittedTrustDialModes {
+  workspaceMode: Exclude<TrustDialMode, "never">;
+  actionMode: Exclude<TrustDialMode, "never">;
+}
+
+export interface AdminCrmRecommendationRequestBinding {
+  actorId: string;
+  input: AdminCrmRecommendationInput;
+}
+
+export type AdminCrmTrustDialRefusalReason =
+  | "workspace_never"
+  | "action_never"
+  | "workspace_and_action_never";
+
+export type AdminCrmRecommendationAtomicRefusal =
+  | {
+      outcome: "refused";
+      currentModes: { workspaceMode: "never"; actionMode: "never" };
+      reason: "workspace_and_action_never";
+    }
+  | {
+      outcome: "refused";
+      currentModes: {
+        workspaceMode: "never";
+        actionMode: AdminCrmPermittedTrustDialModes["actionMode"];
+      };
+      reason: "workspace_never";
+    }
+  | {
+      outcome: "refused";
+      currentModes: {
+        workspaceMode: AdminCrmPermittedTrustDialModes["workspaceMode"];
+        actionMode: "never";
+      };
+      reason: "action_never";
+    };
+
+export type AdminCrmRecommendationAtomicResult =
+  | AdminCrmRecommendationAtomicRefusal
+  | {
+      outcome: "recorded";
+      /** Modes locked and adjudicated for this request. */
+      currentModes: AdminCrmPermittedTrustDialModes;
+      /** Modes persisted with the original record; these can differ on replay. */
+      recordedModes: AdminCrmPermittedTrustDialModes;
+      /** Exact request identity checked against the idempotency record. */
+      requestBinding: AdminCrmRecommendationRequestBinding;
+      recommendation: AdminCrmActionRecommendation;
+    };
+
 /**
- * Storage implementations must record the non-executing recommendation and
- * its audit event in one transaction. No worker or executor port exists here.
+ * The recommendation method is the sole write authority. Its implementation
+ * must lock/read the current workspace mode, current action mode, and the
+ * idempotency identity in the same durable transaction. If either current mode
+ * is `never`, it must return a refusal without inserting a recommendation or
+ * audit event. Otherwise it must atomically persist the non-executing record
+ * and audit event, or return the immutable original record for an exact replay.
+ * No worker or executor port exists here.
  */
 export interface AdminCrmSupplierOperationsRepository {
   readSnapshot(actorId: string): Promise<AdminCrmSupplierOperationsSnapshot>;
-  readTrustDial(actorId: string, action: AdminCrmRecommendationInput["action"]): Promise<TrustDialMode>;
-  recordRecommendationWithAudit(record: AdminCrmRecommendationRecord): Promise<AdminCrmActionRecommendation>;
+  adjudicateTrustDialAndRecordRecommendation(
+    candidate: AdminCrmRecommendationCandidate,
+  ): Promise<AdminCrmRecommendationAtomicResult>;
 }
 
 export interface AdminCrmSupplierOperationsService {
@@ -115,6 +175,146 @@ function isNormalizedIsoTimestamp(value: unknown): value is string {
 
 function invalidSource(message: string): never {
   throw new AdminCrmRefusal("source_evidence_invalid", message);
+}
+
+function invalidRecommendationAuthority(): never {
+  throw new AdminCrmRefusal("operation_unavailable", "Recommendation authority returned an invalid receipt.");
+}
+
+function parseTrustDialModes(value: unknown): AdminCrmTrustDialModes | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const modes = value as Record<string, unknown>;
+  if (
+    !(TRUST_DIAL_MODES as readonly unknown[]).includes(modes.workspaceMode) ||
+    !(TRUST_DIAL_MODES as readonly unknown[]).includes(modes.actionMode)
+  ) {
+    return null;
+  }
+  return {
+    workspaceMode: modes.workspaceMode as TrustDialMode,
+    actionMode: modes.actionMode as TrustDialMode,
+  };
+}
+
+/** Conservative intersection: never > ask > queue > auto. */
+export function resolveAdminCrmEffectiveTrustDial(modes: AdminCrmTrustDialModes): TrustDialMode {
+  if (modes.workspaceMode === "never" || modes.actionMode === "never") return "never";
+  if (modes.workspaceMode === "ask" || modes.actionMode === "ask") return "ask";
+  if (modes.workspaceMode === "queue" || modes.actionMode === "queue") return "queue";
+  return "auto";
+}
+
+function expectedTrustDialRefusal(
+  modes: AdminCrmTrustDialModes,
+): AdminCrmTrustDialRefusalReason | null {
+  if (modes.workspaceMode === "never" && modes.actionMode === "never") {
+    return "workspace_and_action_never";
+  }
+  if (modes.workspaceMode === "never") return "workspace_never";
+  if (modes.actionMode === "never") return "action_never";
+  return null;
+}
+
+function requestBindingMatches(
+  value: unknown,
+  candidate: AdminCrmRecommendationCandidate,
+): value is AdminCrmRecommendationRequestBinding {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const binding = value as Record<string, unknown>;
+  if (!binding.input || typeof binding.input !== "object" || Array.isArray(binding.input)) return false;
+  const input = binding.input as Record<string, unknown>;
+  return binding.actorId === candidate.actorId &&
+    input.action === candidate.input.action &&
+    input.targetType === candidate.input.targetType &&
+    input.targetId === candidate.input.targetId &&
+    input.reason === candidate.input.reason &&
+    input.idempotencyKey === candidate.input.idempotencyKey;
+}
+
+function validateAtomicResult(
+  value: unknown,
+  candidate: AdminCrmRecommendationCandidate,
+): AdminCrmRecommendationAtomicResult {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return invalidRecommendationAuthority();
+  }
+  const result = value as Record<string, unknown>;
+  const currentModes = parseTrustDialModes(result.currentModes);
+  if (!currentModes) return invalidRecommendationAuthority();
+
+  if (result.outcome === "refused") {
+    const expectedReason = expectedTrustDialRefusal(currentModes);
+    if (
+      expectedReason === null ||
+      result.reason !== expectedReason ||
+      Object.prototype.hasOwnProperty.call(result, "recommendation") ||
+      Object.prototype.hasOwnProperty.call(result, "recordedModes")
+    ) {
+      return invalidRecommendationAuthority();
+    }
+    return {
+      outcome: "refused",
+      currentModes,
+      reason: expectedReason,
+    } as AdminCrmRecommendationAtomicRefusal;
+  }
+
+  if (
+    result.outcome !== "recorded" ||
+    Object.prototype.hasOwnProperty.call(result, "reason") ||
+    resolveAdminCrmEffectiveTrustDial(currentModes) === "never"
+  ) {
+    return invalidRecommendationAuthority();
+  }
+  const recordedModes = parseTrustDialModes(result.recordedModes);
+  if (!recordedModes || resolveAdminCrmEffectiveTrustDial(recordedModes) === "never") {
+    return invalidRecommendationAuthority();
+  }
+  if (!result.recommendation || typeof result.recommendation !== "object" || Array.isArray(result.recommendation)) {
+    return invalidRecommendationAuthority();
+  }
+  if (!requestBindingMatches(result.requestBinding, candidate)) {
+    return invalidRecommendationAuthority();
+  }
+
+  const persisted = result.recommendation as Partial<AdminCrmActionRecommendation>;
+  const recordedEffectiveMode = resolveAdminCrmEffectiveTrustDial(recordedModes);
+  const expectedRecordState: AdminCrmActionRecommendation["recordState"] = recordedEffectiveMode === "ask"
+    ? "awaiting_human_review"
+    : "recorded";
+  if (
+    typeof persisted.recordId !== "string" ||
+    !SAFE_RECORD_ID.test(persisted.recordId) ||
+    !isNormalizedIsoTimestamp(persisted.createdAt) ||
+    typeof persisted.idempotentReplay !== "boolean" ||
+    persisted.action !== candidate.input.action ||
+    persisted.targetType !== candidate.input.targetType ||
+    persisted.targetId !== candidate.input.targetId ||
+    persisted.configuredTrustDial !== recordedEffectiveMode ||
+    persisted.recordState !== expectedRecordState ||
+    persisted.executionState !== "not_executed" ||
+    persisted.externalEffect !== false ||
+    persisted.executor !== null ||
+    persisted.requiresHumanApproval !== true ||
+    persisted.evidenceSource !== candidate.evidenceSource ||
+    !isNormalizedIsoTimestamp(persisted.evidenceCheckedAt) ||
+    (!persisted.idempotentReplay && (
+      currentModes.workspaceMode !== recordedModes.workspaceMode ||
+      currentModes.actionMode !== recordedModes.actionMode ||
+      persisted.evidenceCheckedAt !== candidate.evidenceCheckedAt ||
+      persisted.createdAt !== candidate.createdAt
+    ))
+  ) {
+    return invalidRecommendationAuthority();
+  }
+
+  return {
+    outcome: "recorded",
+    currentModes: currentModes as AdminCrmPermittedTrustDialModes,
+    recordedModes: recordedModes as AdminCrmPermittedTrustDialModes,
+    requestBinding: result.requestBinding,
+    recommendation: persisted as AdminCrmActionRecommendation,
+  };
 }
 
 function assertSourceEvidence(snapshot: AdminCrmSupplierOperationsSnapshot): void {
@@ -222,43 +422,28 @@ export function createAdminCrmSupplierOperationsService(
     async recordRecommendation(actorId, input) {
       assertIdentifier(actorId, "actorId");
       validateInput(input);
-      const trustDial = await repository.readTrustDial(actorId, input.action);
-      if (trustDial === "never") {
-        throw new AdminCrmRefusal("trust_dial_never", "This action is disabled by the Trust Dial.");
-      }
-
       const snapshot = await readValidatedSnapshot(actorId);
-      if (snapshot.trustDial === "never") {
-        throw new AdminCrmRefusal(
-          "trust_dial_never",
-          "This workspace is disabled by the Trust Dial.",
-        );
-      }
       const evidence = ADMIN_CRM_ACTION_EVIDENCE[input.action];
       const evidenceSource = snapshot.sources[evidence.source];
       if (evidenceSource.availability === "unavailable") {
         throw new AdminCrmRefusal("operation_unavailable", "Authoritative target evidence is unavailable.");
       }
       const visibleEvidence = evidenceSource.items as unknown as Array<Record<string, unknown>>;
-      const targetExists = visibleEvidence.some((item) => item[evidence.idField] === input.targetId);
-      if (!targetExists) {
+      const matchingTargets = visibleEvidence.filter((item) => item[evidence.idField] === input.targetId);
+      if (matchingTargets.length === 0) {
         throw new AdminCrmRefusal("operation_unavailable", "The target is absent from the visible source evidence.");
       }
+      if (matchingTargets.length > 1) {
+        throw new AdminCrmRefusal("operation_unavailable", "The target is ambiguous in the visible source evidence.");
+      }
 
-      // Every mode except `never` records research for human review only.
-      // `auto` is configuration evidence, never execution permission.
-      const recordState: AdminCrmActionRecommendation["recordState"] = trustDial === "ask"
-        ? "awaiting_human_review"
-        : "recorded";
       const createdAt = now();
       if (!isNormalizedIsoTimestamp(createdAt)) {
         throw new AdminCrmRefusal("operation_unavailable", "Recommendation clock is unavailable.");
       }
-      const persisted = await repository.recordRecommendationWithAudit({
+      const candidate: AdminCrmRecommendationCandidate = {
         actorId,
-        configuredTrustDial: trustDial,
         input: { ...input, reason: input.reason.trim() },
-        recordState,
         executionState: "not_executed",
         externalEffect: false,
         executor: null,
@@ -266,33 +451,18 @@ export function createAdminCrmSupplierOperationsService(
         evidenceSource: evidence.source,
         evidenceCheckedAt: evidenceSource.checkedAt,
         createdAt,
-      });
-      if (
-        !persisted ||
-        !SAFE_RECORD_ID.test(persisted.recordId) ||
-        !isNormalizedIsoTimestamp(persisted.createdAt) ||
-        typeof persisted.idempotentReplay !== "boolean" ||
-        persisted.action !== input.action ||
-        persisted.targetType !== input.targetType ||
-        persisted.targetId !== input.targetId ||
-        !(TRUST_DIAL_MODES as readonly string[]).includes(persisted.configuredTrustDial) ||
-        persisted.configuredTrustDial === "never" ||
-        !(["recorded", "awaiting_human_review"] as const).includes(persisted.recordState) ||
-        persisted.executionState !== "not_executed" ||
-        persisted.externalEffect !== false ||
-        persisted.executor !== null ||
-        persisted.requiresHumanApproval !== true ||
-        persisted.evidenceSource !== evidence.source ||
-        !isNormalizedIsoTimestamp(persisted.evidenceCheckedAt) ||
-        (!persisted.idempotentReplay && (
-          persisted.configuredTrustDial !== trustDial ||
-          persisted.recordState !== recordState ||
-          persisted.evidenceCheckedAt !== evidenceSource.checkedAt ||
-          persisted.createdAt !== createdAt
-        ))
-      ) {
-        throw new AdminCrmRefusal("operation_unavailable", "Recommendation receipt is invalid.");
+      };
+      let rawResult: unknown;
+      try {
+        rawResult = await repository.adjudicateTrustDialAndRecordRecommendation(candidate);
+      } catch {
+        throw new AdminCrmRefusal("operation_unavailable", "Recommendation authority is unavailable.");
       }
+      const result = validateAtomicResult(rawResult, candidate);
+      if (result.outcome === "refused") {
+        throw new AdminCrmRefusal("trust_dial_never", "This action is disabled by the Trust Dial.");
+      }
+      const persisted = result.recommendation;
       return {
         recordId: persisted.recordId,
         action: input.action,
