@@ -91,6 +91,8 @@ function Section({
   description,
   source,
   count,
+  sourceCount = count,
+  filterActive = false,
   children,
 }: {
   id: string;
@@ -98,8 +100,20 @@ function Section({
   description: string;
   source: { availability: AdminOperationsAvailability; message: string; checkedAt: string };
   count: number;
+  sourceCount?: number;
+  filterActive?: boolean;
   children: React.ReactNode;
 }) {
+  const badgeLabel = source.availability === "unavailable"
+    ? "Source unavailable"
+    : source.availability === "partial"
+      ? filterActive
+        ? `${count} visible ${count === 1 ? "match" : "matches"} · ${sourceCount} visible source ${sourceCount === 1 ? "row" : "rows"} · total unknown`
+        : `${count} visible · total unknown`
+      : filterActive
+        ? `${count} ${count === 1 ? "match" : "matches"} · ${sourceCount} source ${sourceCount === 1 ? "item" : "items"}`
+        : `${count} ${count === 1 ? "item" : "items"}`;
+
   return (
     <section id={id} className="grid gap-4 scroll-mt-24" aria-labelledby={`${id}-heading`} data-testid={`section-${id}`}>
       <header className="flex items-start justify-between gap-4 flex-wrap">
@@ -109,11 +123,7 @@ function Section({
           <p className="mono-label text-ink-mute mt-2">Source checked {fmtDateTime(source.checkedAt)}</p>
         </div>
         <ResearchStatusBadge
-          label={source.availability === "unavailable"
-            ? "Source unavailable"
-            : source.availability === "partial"
-              ? `${count} visible · total unknown`
-              : `${count} ${count === 1 ? "item" : "items"}`}
+          label={badgeLabel}
           tone={source.availability === "unavailable" ? "danger" : source.availability === "partial" ? "warning" : count ? "info" : "neutral"}
         />
       </header>
@@ -125,7 +135,9 @@ function Section({
             This source returned partial evidence. Visible records are shown; the total remains unknown.
           </div>
           {count === 0
-            ? <ResearchEmptyState title="No records visible." body="The connected evidence window is partial, so this is not an authoritative zero." />
+            ? filterActive && sourceCount > 0
+              ? <ResearchEmptyState title="No visible records match this filter." body={`The partial evidence window still contains ${sourceCount} visible ${sourceCount === 1 ? "record" : "records"}; the authoritative total remains unknown.`} />
+              : <ResearchEmptyState title="No records visible." body="The connected evidence window is partial, so this is not an authoritative zero." />
             : children}
         </>
       ) : children}
@@ -133,8 +145,8 @@ function Section({
   );
 }
 
-function Empty({ body }: { body: string }) {
-  return <ResearchEmptyState title="No records to show." body={body} />;
+function Empty({ body, title = "No records to show." }: { body: string; title?: string }) {
+  return <ResearchEmptyState title={title} body={body} />;
 }
 
 export function AdminCrmSupplierOperationsWorkspace({
@@ -220,8 +232,8 @@ export function AdminCrmSupplierOperationsWorkspace({
         </nav>
       </section>
 
-      <Section id="buyer-queue" title="Buyer queue" source={sources.buyerQueue} count={buyers.length} description="One next action per buyer. Review requests are recorded for a person; this workspace never sends messages.">
-        {buyers.length === 0 ? <Empty body="New buyer conversations and quote requests will appear here." /> : (
+      <Section id="buyer-queue" title="Buyer queue" source={sources.buyerQueue} count={buyers.length} sourceCount={buyerQueue.length} filterActive={Boolean(needle) && buyerQueue.length > 0} description="One next action per buyer. Review requests are recorded for a person; this workspace never sends messages.">
+        {buyers.length === 0 ? <Empty title={needle && buyerQueue.length > 0 ? "No matching records." : undefined} body={needle && buyerQueue.length > 0 ? "No buyer records match this filter. Clear or change it to see the source rows." : "New buyer conversations and quote requests will appear here."} /> : (
           <div className="grid gap-3">{buyers.map((buyer) => (
             <article className="card flex items-center justify-between gap-4 flex-wrap" key={buyer.buyerId}>
               <div><p className="body-m font-700">{buyer.displayName}</p><p className="body-s text-ink-mute">{buyer.email} · {buyer.buyerType}</p><p className="body-s text-ink-2 mt-2">Next: {buyer.nextAction}</p></div>
@@ -231,16 +243,16 @@ export function AdminCrmSupplierOperationsWorkspace({
         )}
       </Section>
 
-      <Section id="organizations" title="B2B organizations" source={sources.organizations} count={organizations.length} description="Legal account, buyer coverage, payment terms, and commercial lifecycle—without private member wellness data.">
-        {organizations.length === 0 ? <Empty body="B2B prospects and active organizations will appear here." /> : (
+      <Section id="organizations" title="B2B organizations" source={sources.organizations} count={organizations.length} sourceCount={organizationRecords.length} filterActive={Boolean(needle) && organizationRecords.length > 0} description="Legal account, buyer coverage, payment terms, and commercial lifecycle—without private member wellness data.">
+        {organizations.length === 0 ? <Empty title={needle && organizationRecords.length > 0 ? "No matching records." : undefined} body={needle && organizationRecords.length > 0 ? "No organization records match this filter. Clear or change it to see the source rows." : "B2B prospects and active organizations will appear here."} /> : (
           <div className="grid gap-3">{organizations.map((org) => (
             <article className="card" key={org.organizationId}><div className="flex items-start justify-between gap-3 flex-wrap"><div><p className="body-m font-700">{org.legalName}</p><p className="body-s text-ink-mute">{org.buyerCount} buyers · owner {org.ownerLabel ?? "unassigned"}</p></div><ResearchStatusBadge label={words(org.accountState)} tone={tone(org.accountState)} /></div><p className="body-s text-ink-2 mt-3">Terms: {org.paymentTermsLabel ?? "not approved"} · open invoices {money(org.openInvoiceCents, org.currency)}</p><div className="mt-4"><QueueButton snapshot={snapshot} onQueue={onQueue} action="organization_review" targetType="organization" targetId={org.organizationId} reason="Human review of B2B organization account and commercial terms." label="Record account review" /></div></article>
           ))}</div>
         )}
       </Section>
 
-      <Section id="customer-360" title="Customer 360" source={sources.customers} count={customers.length} description="Operational account history only: identity, organization, orders, invoices, exceptions, and contact recency.">
-        {customers.length === 0 ? <Empty body="Customer operational summaries will appear after verified account activity." /> : (
+      <Section id="customer-360" title="Customer 360" source={sources.customers} count={customers.length} sourceCount={customerRecords.length} filterActive={Boolean(needle) && customerRecords.length > 0} description="Operational account history only: identity, organization, orders, invoices, exceptions, and contact recency.">
+        {customers.length === 0 ? <Empty title={needle && customerRecords.length > 0 ? "No matching records." : undefined} body={needle && customerRecords.length > 0 ? "No customer records match this filter. Clear or change it to see the source rows." : "Customer operational summaries will appear after verified account activity."} /> : (
           <div className="grid gap-3">{customers.map((customer) => (
             <article className="card" key={customer.customerId}><div className="flex items-start justify-between gap-3 flex-wrap"><div><p className="body-m font-700">{customer.displayName}</p><p className="body-s text-ink-mute">{customer.email}</p></div><ResearchStatusBadge label={words(customer.accountState)} tone={tone(customer.accountState)} /></div><dl className="grid sm:grid-cols-3 gap-3 mt-4 body-s"><div><dt className="text-ink-mute">Orders</dt><dd>{customer.orderCount}</dd></div><div><dt className="text-ink-mute">Open invoices</dt><dd>{customer.openInvoiceCount}</dd></div><div><dt className="text-ink-mute">Open exceptions</dt><dd>{customer.openExceptionCount}</dd></div></dl><p className="body-s text-ink-2 mt-3">Tags: {customer.tags.length ? customer.tags.join(", ") : "none"}</p></article>
           ))}</div>

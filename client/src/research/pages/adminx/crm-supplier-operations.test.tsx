@@ -228,7 +228,7 @@ describe("AdminCrmSupplierOperationsWorkspace", () => {
     expect(section.textContent).toContain("No records to show");
   });
 
-  it("filters CRM records without changing operational evidence", async () => {
+  it("labels filtered zero as no matches without overwriting authoritative source counts", async () => {
     const { view } = await render(snapshot);
     const search = view.querySelector('input[type="search"]') as HTMLInputElement;
     await act(async () => {
@@ -236,9 +236,69 @@ describe("AdminCrmSupplierOperationsWorkspace", () => {
       setter.call(search, "missing identity");
       search.dispatchEvent(new Event("input", { bubbles: true }));
     });
-    expect(view.querySelector('[data-testid="section-buyer-queue"]')?.textContent).toContain("No records to show");
-    expect(view.querySelector('[data-testid="section-organizations"]')?.textContent).toContain("No records to show");
-    expect(view.querySelector('[data-testid="section-customer-360"]')?.textContent).toContain("No records to show");
+    for (const id of ["buyer-queue", "organizations", "customer-360"]) {
+      const section = view.querySelector(`[data-testid="section-${id}"]`)!;
+      expect(section.textContent).toContain("0 matches · 1 source item");
+      expect(section.textContent).toContain("No matching records");
+      expect(section.textContent).not.toContain("0 items");
+      expect(section.textContent).not.toContain("No records to show");
+    }
     expect(view.querySelector('[data-testid="section-availability"]')?.textContent).toContain("Synthetic Recovery Bundle");
+  });
+
+  it("keeps available empty sources authoritative when a nonempty filter is entered", async () => {
+    const changed: AdminCrmSupplierOperationsSnapshot = {
+      ...snapshot,
+      sources: {
+        ...snapshot.sources,
+        buyerQueue: available("buyerQueue", []),
+        organizations: available("organizations", []),
+        customers: available("customers", []),
+      },
+    };
+    const { view } = await render(changed);
+    const search = view.querySelector('input[type="search"]') as HTMLInputElement;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+      setter.call(search, "missing identity");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    for (const id of ["buyer-queue", "organizations", "customer-360"]) {
+      const section = view.querySelector(`[data-testid="section-${id}"]`)!;
+      expect(section.textContent).toContain("0 items");
+      expect(section.textContent).toContain("No records to show");
+      expect(section.textContent).not.toContain("0 matches");
+      expect(section.textContent).not.toContain("No matching records");
+      expect(section.textContent).not.toContain("Clear or change it to see the source rows");
+    }
+  });
+
+  it("keeps a filtered partial-source zero explicitly non-authoritative", async () => {
+    const source = snapshot.sources.organizations;
+    if (source.availability === "unavailable") throw new Error("fixture");
+    const changed: AdminCrmSupplierOperationsSnapshot = {
+      ...snapshot,
+      sources: {
+        ...snapshot.sources,
+        organizations: {
+          ...source,
+          availability: "partial",
+          code: "source_partial",
+          message: "organizations source returned partial evidence.",
+        },
+      },
+    };
+    const { view } = await render(changed);
+    const search = view.querySelector('input[type="search"]') as HTMLInputElement;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+      setter.call(search, "missing identity");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const section = view.querySelector('[data-testid="section-organizations"]')!;
+    expect(section.textContent).toContain("0 visible matches · 1 visible source row · total unknown");
+    expect(section.textContent).toContain("No visible records match this filter");
+    expect(section.textContent).toContain("authoritative total remains unknown");
+    expect(section.textContent).not.toContain("0 items");
   });
 });
