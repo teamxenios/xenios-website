@@ -7,14 +7,12 @@
  * Early Access, application, partner-portal, or token-bearing routes.
  */
 
+import { normalizeResearchPath } from "@shared/research/paths";
+
 export const PUBLIC_RESEARCH_EXACT_PATHS = [
   "/research",
   "/research/access-hub",
-  "/research/catalog",
   "/research/how-it-works",
-  "/research/quality",
-  "/research/testing",
-  "/research/documents",
   "/research/organizations",
   "/research/partners",
   "/research/affiliates",
@@ -29,34 +27,20 @@ export const PUBLIC_RESEARCH_EXACT_PATHS = [
 ] as const;
 
 const PUBLIC_EXACT = new Set<string>(PUBLIC_RESEARCH_EXACT_PATHS);
-const PUBLIC_DESCENDANT_ROOTS = [
-  "/research/catalog/",
-  "/research/categories/",
-  "/research/lots/",
-  "/research/policies/",
-] as const;
-
-function normalizePathname(pathname: string): string {
-  const withoutQueryOrHash = pathname.split(/[?#]/, 1)[0] || "/";
-  let decoded = withoutQueryOrHash;
-  try {
-    decoded = decodeURI(withoutQueryOrHash);
-  } catch {
-    return "";
-  }
-  const lower = decoded.toLowerCase();
-  return lower.length > 1 ? lower.replace(/\/+$/, "") : lower;
-}
+const PUBLIC_POLICY_PATHS = new Set<string>([
+  "/research/policies/research-use",
+  "/research/policies/shipping",
+  "/research/policies/returns",
+] as const);
 
 export function isPublicResearchIndexRoute(pathname: string): boolean {
-  const normalized = normalizePathname(pathname);
+  // Callers must pass a pathname, not a token/referral-bearing URL. Treating a
+  // query or fragment as decoration previously made private resource variants
+  // indexable by accident.
+  if (pathname.includes("?") || pathname.includes("#")) return false;
+  const normalized = normalizeResearchPath(pathname);
   if (!normalized) return false;
-  if (PUBLIC_EXACT.has(normalized)) return true;
-  return PUBLIC_DESCENDANT_ROOTS.some((root) => {
-    if (!normalized.startsWith(root)) return false;
-    const descendant = normalized.slice(root.length);
-    return descendant.length > 0 && !descendant.includes("/");
-  });
+  return PUBLIC_EXACT.has(normalized) || PUBLIC_POLICY_PATHS.has(normalized);
 }
 
 export function researchRouteRobots(pathname: string): "index" | "noindex" {

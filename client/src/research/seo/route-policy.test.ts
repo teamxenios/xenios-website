@@ -6,16 +6,15 @@ import {
 } from "./route-policy";
 
 describe("Research SEO route policy", () => {
-  it("allows only the declared public editorial and catalog routes", () => {
+  it("allows only the declared public informational routes", () => {
     for (const path of PUBLIC_RESEARCH_EXACT_PATHS) {
       expect(isPublicResearchIndexRoute(path), path).toBe(true);
       expect(researchRouteRobots(path), path).toBe("index");
     }
     for (const path of [
-      "/research/catalog/bpc-157",
-      "/research/categories/peptides",
-      "/research/lots/lot-001",
+      "/research/policies/research-use",
       "/research/policies/shipping",
+      "/research/policies/returns",
     ]) {
       expect(isPublicResearchIndexRoute(path), path).toBe(true);
     }
@@ -27,6 +26,13 @@ describe("Research SEO route policy", () => {
       "/research/account/orders",
       "/research/member",
       "/research/member/catalog",
+      "/research/catalog",
+      "/research/catalog/bpc-157",
+      "/research/categories/peptides",
+      "/research/quality",
+      "/research/testing",
+      "/research/lots/lot-001",
+      "/research/documents",
       "/research/sign-in",
       "/research/reset-password",
       "/research/activate",
@@ -46,18 +52,20 @@ describe("Research SEO route policy", () => {
     }
   });
 
-  it("normalizes router-equivalent case, encoding, query, hash, and trailing slash forms", () => {
-    expect(isPublicResearchIndexRoute("/Research/Catalog/")).toBe(true);
-    expect(isPublicResearchIndexRoute("/%72esearch/catalog/bpc-157?ref=private#lot")).toBe(true);
-    expect(isPublicResearchIndexRoute("/research/account/?next=/research/catalog")).toBe(false);
+  it("normalizes router-equivalent case, encoding, and one trailing slash", () => {
+    expect(isPublicResearchIndexRoute("/Research/Partners/")).toBe(true);
+    expect(isPublicResearchIndexRoute("/%72esearch/organizations")).toBe(true);
+    expect(isPublicResearchIndexRoute("/research/account/")).toBe(false);
   });
 
   it("rejects lookalikes, malformed encodings, and nested descendants", () => {
     for (const path of [
       "/researchers",
       "/research/catalogue",
-      "/research/catalog/product/private",
-      "/research/categories/family/private",
+      "/research/partners?ref=private",
+      "/research/partners#private",
+      "/research/partners//",
+      "/research/policies/private",
       "/research/partners/dashboard/reports",
       "/research/%ZZ",
     ]) {

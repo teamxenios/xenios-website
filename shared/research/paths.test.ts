@@ -5,7 +5,9 @@ import {
   isResearchAdminPath,
   isResearchApplicationStatusPath,
   isResearchPath,
+  isPublicResearchDocumentPath,
   isResearchResetPasswordPath,
+  normalizeResearchPath,
 } from "./paths";
 
 // The path normalization must match the wouter router (decodeURI + case-fold)
@@ -47,6 +49,50 @@ describe("isResearchPath", () => {
   });
 });
 
+describe("canonical Research path normalization", () => {
+  it("matches router case, encoding, query, hash, and one optional slash", () => {
+    expect(normalizeResearchPath("/Research/Partners/")).toBe("/research/partners");
+    expect(normalizeResearchPath("/%72esearch/partners?ref=hidden#section")).toBe(
+      "/research/partners",
+    );
+  });
+
+  it("does not liberalize multiple slashes or throw on malformed encoding", () => {
+    expect(normalizeResearchPath("/research/partners//")).toBe("/research/partners/");
+    expect(() => normalizeResearchPath("/research/%ZZ")).not.toThrow();
+    expect(normalizeResearchPath("/research/%ZZ")).toBe("/research/%zz");
+  });
+});
+
+describe("isPublicResearchDocumentPath", () => {
+  it.each([
+    "/research",
+    "/Research/Partners/",
+    "/%72esearch/organizations",
+    "/research/affiliates",
+    "/research/policies/research-use",
+    "/research/policies/shipping",
+    "/research/policies/returns",
+  ])("admits the exact reviewed public document %s", (path) => {
+    expect(isPublicResearchDocumentPath(path)).toBe(true);
+  });
+
+  it.each([
+    "/research/apply",
+    "/research/sign-in",
+    "/research/early-access",
+    "/research/partners/apply",
+    "/research/partners/dashboard",
+    "/research/organizations/private",
+    "/research/affiliates/private",
+    "/research/policies/private",
+    "/research/partners//",
+    "/research/%ZZ",
+  ])("keeps the private, descendant, or malformed document %s closed", (path) => {
+    expect(isPublicResearchDocumentPath(path)).toBe(false);
+  });
+});
+
 describe("isResearchResetPasswordPath", () => {
   it("matches the reset page in plain, case, and encoded forms", () => {
     expect(isResearchResetPasswordPath("/research/reset-password")).toBe(true);
@@ -62,6 +108,7 @@ describe("isResearchResetPasswordPath", () => {
   it("does not match other research pages", () => {
     expect(isResearchResetPasswordPath("/research")).toBe(false);
     expect(isResearchResetPasswordPath("/research/member")).toBe(false);
+    expect(isResearchResetPasswordPath("/research/reset-password//")).toBe(false);
     expect(isResearchResetPasswordPath("/research/reset-password/extra")).toBe(false);
   });
 });
@@ -75,6 +122,7 @@ describe("isResearchActivatePath", () => {
   });
 
   it("fails closed for neighboring and malformed routes", () => {
+    expect(isResearchActivatePath("/research/activate//")).toBe(false);
     expect(isResearchActivatePath("/research/activate/extra")).toBe(false);
     expect(isResearchActivatePath("/research/application-status")).toBe(false);
     expect(isResearchActivatePath("/research/%ZZ")).toBe(false);
@@ -90,6 +138,7 @@ describe("isResearchAccessStatePath", () => {
   });
 
   it("fails closed for neighboring and malformed routes", () => {
+    expect(isResearchAccessStatePath("/research/access-state//")).toBe(false);
     expect(isResearchAccessStatePath("/research/access-state/extra")).toBe(false);
     expect(isResearchAccessStatePath("/research/access")).toBe(false);
     expect(isResearchAccessStatePath("/research/activate")).toBe(false);
@@ -109,6 +158,9 @@ describe("isResearchApplicationStatusPath", () => {
 
   it("fails closed for application and status lookalikes", () => {
     expect(isResearchApplicationStatusPath("/research/apply")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/apply/status//")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/application/status//")).toBe(false);
+    expect(isResearchApplicationStatusPath("/research/application-status//")).toBe(false);
     expect(isResearchApplicationStatusPath("/research/apply/status/extra")).toBe(false);
     expect(isResearchApplicationStatusPath("/research/activate")).toBe(false);
     expect(isResearchApplicationStatusPath("/research/%ZZ")).toBe(false);

@@ -8,7 +8,12 @@ import { registerResearchApi, researchPageGate } from "./index";
 // /research and never takes over the root. These tests exist because a root
 // redirect once shipped and was reversed; they keep it from coming back.
 
-const KEYS = ["RESEARCH_PUBLIC", "RESEARCH_ACCESS_PASSWORD", "RESEARCH_SESSION_SECRET"];
+const KEYS = [
+  "RESEARCH_PUBLIC",
+  "RESEARCH_ACCESS_PASSWORD",
+  "RESEARCH_SESSION_SECRET",
+  "RESEARCH_INDEXABLE",
+];
 const saved: Record<string, string | undefined> = {};
 
 function makeApp() {
@@ -101,6 +106,48 @@ describe("the homepage stays at the root domain", () => {
     const res = await request(app).get("/api/admin/research/products");
     expect(res.status).toBe(401);
     expect(res.headers["x-robots-tag"]).toBeUndefined();
+  });
+
+  it("keeps only exact reviewed informational documents public-cache eligible", async () => {
+    process.env.RESEARCH_PUBLIC = "true";
+    process.env.RESEARCH_INDEXABLE = "true";
+    const app = express();
+    app.use(researchPageGate);
+    app.use((_req, res) => res.send("spa"));
+
+    for (const path of [
+      "/research",
+      "/Research/Partners/",
+      "/%72esearch/organizations",
+      "/research/affiliates",
+      "/research/policies/research-use",
+    ]) {
+      const response = await request(app).get(path);
+      expect(response.status, path).toBe(200);
+      expect(response.headers["cache-control"], path).toBeUndefined();
+      expect(response.headers["referrer-policy"], path).toBeUndefined();
+      expect(response.headers["x-robots-tag"], path).toBeUndefined();
+    }
+
+    for (const path of [
+      "/research/apply",
+      "/research/sign-in",
+      "/research/early-access",
+      "/research/partners/apply",
+      "/research/partners/dashboard",
+      "/research/partners?ref=private",
+      "/research/organizations/private",
+      "/research/affiliates/private",
+      "/research/policies/private",
+      "/research/partners//",
+    ]) {
+      const response = await request(app).get(path);
+      expect(response.status, path).toBe(200);
+      expect(response.headers["cache-control"], path).toBe("no-store");
+      expect(response.headers.pragma, path).toBe("no-cache");
+      expect(response.headers["referrer-policy"], path).toBe("no-referrer");
+      expect(response.headers["x-robots-tag"], path).toBe("noindex, nofollow");
+    }
   });
 });
 

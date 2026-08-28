@@ -7,6 +7,7 @@ import {
   isResearchActivatePath,
   isResearchAdminPath,
   isResearchApplicationStatusPath,
+  isPublicResearchDocumentPath,
   isResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
@@ -189,7 +190,12 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
     return next();
   }
   if (!isResearchPath(req.path)) return next();
-  if (!indexable()) res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  const hasQuery = req.originalUrl.includes("?");
+  if (hasQuery || !isPublicResearchDocumentPath(req.path)) {
+    setResearchPrivateHeaders(res);
+  } else if (!indexable()) {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  }
   // Account-access pages are opened from email in a fresh browser and can
   // carry signed, purpose-scoped tokens. They are never cached, indexed, or
   // allowed to leak a referrer.

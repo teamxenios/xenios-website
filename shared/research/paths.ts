@@ -12,23 +12,50 @@
 // before comparing. The root homepage ("/") never matches, so it is never
 // misclassified as research.
 
-function normalize(pathname: string): string {
+export function normalizeResearchPath(pathname: string): string {
+  const rawPath = pathname.split(/[?#]/, 1)[0] || "/";
   let decoded: string;
   try {
-    decoded = decodeURI(pathname); // mirrors wouter's unescape()
+    decoded = decodeURI(rawPath); // mirrors wouter's unescape()
   } catch {
-    decoded = pathname; // wouter's fail-safe branch: leave it as-is
+    decoded = rawPath; // wouter's fail-safe branch: leave it as-is
   }
-  return decoded.toLowerCase();
+  const lower = decoded.toLowerCase();
+  return lower.length > 1 ? lower.replace(/\/$/u, "") : lower;
+}
+
+const PUBLIC_RESEARCH_DOCUMENT_PATHS = new Set([
+  "/research",
+  "/research/access-hub",
+  "/research/supplier-access",
+  "/research/organizations",
+  "/research/partners",
+  "/research/affiliates",
+  "/research/support",
+  "/research/about",
+  "/research/how-it-works",
+  "/research/faq",
+  "/research/policies",
+  "/research/policies/research-use",
+  "/research/policies/shipping",
+  "/research/policies/returns",
+  "/research/contact",
+  "/research/privacy",
+  "/research/terms",
+]);
+
+/** Public, read-only document paths that may omit private-document headers. */
+export function isPublicResearchDocumentPath(pathname: string): boolean {
+  return PUBLIC_RESEARCH_DOCUMENT_PATHS.has(normalizeResearchPath(pathname));
 }
 
 export function isResearchPath(pathname: string): boolean {
-  const p = normalize(pathname);
+  const p = normalizeResearchPath(pathname);
   return p === "/research" || p.startsWith("/research/");
 }
 
 export function isResearchAdminPath(pathname: string): boolean {
-  const p = normalize(pathname);
+  const p = normalizeResearchPath(pathname);
   return p === "/admin/research" || p.startsWith("/admin/research/");
 }
 
@@ -37,16 +64,16 @@ export function isResearchResetPasswordPath(pathname: string): boolean {
   // ^/research/reset-password/?$ — the router renders the reset page at
   // /research/reset-password/ too, so the sensitive-page headers must apply
   // there as well.
-  const p = normalize(pathname);
-  return p === "/research/reset-password" || p === "/research/reset-password/";
+  const p = normalizeResearchPath(pathname);
+  return p === "/research/reset-password";
 }
 
 export function isResearchActivatePath(pathname: string): boolean {
   // Activation links are opened from email in a fresh browser. The page must
   // render without the shared review cookie, while its API remains protected
   // by the member's own Bearer token.
-  const p = normalize(pathname);
-  return p === "/research/activate" || p === "/research/activate/";
+  const p = normalizeResearchPath(pathname);
+  return p === "/research/activate";
 }
 
 export function isResearchAccessStatePath(pathname: string): boolean {
@@ -55,20 +82,17 @@ export function isResearchAccessStatePath(pathname: string): boolean {
   // is exactly the visitor who is NOT an authenticated member — often in a
   // fresh browser mid password-recovery — so the page must render in the
   // isolated account chrome, never behind the shared review password.
-  const p = normalize(pathname);
-  return p === "/research/access-state" || p === "/research/access-state/";
+  const p = normalizeResearchPath(pathname);
+  return p === "/research/access-state";
 }
 
 export function isResearchApplicationStatusPath(pathname: string): boolean {
   // All three registered status aliases can carry a signed status or
   // account-claim token. Keep them in the same isolated account-access chrome.
-  const p = normalize(pathname);
+  const p = normalizeResearchPath(pathname);
   return (
     p === "/research/apply/status" ||
-    p === "/research/apply/status/" ||
     p === "/research/application/status" ||
-    p === "/research/application/status/" ||
-    p === "/research/application-status" ||
-    p === "/research/application-status/"
+    p === "/research/application-status"
   );
 }

@@ -5,6 +5,7 @@ import {
   isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchApplicationStatusPath,
+  normalizeResearchPath,
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
 import { useResearch } from "./core";
@@ -257,15 +258,6 @@ function MemberChrome({ children }: { children: ReactNode }) {
   );
 }
 
-function normalizeResearchPath(path: string): string | null {
-  try {
-    const rawPath = path.split(/[?#]/, 1)[0];
-    return decodeURIComponent(rawPath).replace(/\/+$/, "").toLowerCase() || "/";
-  } catch {
-    return null;
-  }
-}
-
 function isResearchSignInPath(path: string): boolean {
   return normalizeResearchPath(path) === "/research/sign-in";
 }
@@ -277,7 +269,7 @@ const ACCOUNT_PORTAL_PATHS = new Set<string>(Object.values(ACCOUNT_PORTAL_ROUTES
 
 function isAccountPortalPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
-  return normalized !== null && ACCOUNT_PORTAL_PATHS.has(normalized);
+  return ACCOUNT_PORTAL_PATHS.has(normalized);
 }
 
 function isPublicResearchPath(path: string): boolean {
