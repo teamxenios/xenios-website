@@ -15,6 +15,7 @@ describe("Research SEO route policy", () => {
       "/research/policies/research-use",
       "/research/policies/shipping",
       "/research/policies/returns",
+      "/research/policies/accessibility",
     ]) {
       expect(isPublicResearchIndexRoute(path), path).toBe(true);
     }

@@ -137,6 +137,7 @@ describe("public editorial page system", () => {
     expect(links).toContain("/research/policies/returns");
     expect(links).toContain("/research/privacy");
     expect(links).toContain("/research/terms");
+    expect(links).toContain("/research/policies/accessibility");
   });
 
   it("keeps Contact read-only, routes clinical questions away, and makes no SLA promise", async () => {

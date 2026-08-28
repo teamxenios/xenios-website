@@ -19,6 +19,7 @@ const PUBLIC_FOOTER_LINKS = [
   ...PUBLIC_EDITORIAL_LINKS,
   { href: "/research/privacy", label: "Privacy" },
   { href: "/research/terms", label: "Terms" },
+  { href: "/research/policies/accessibility", label: "Accessibility" },
 ] as const;
 
 function EditorialLinks({ current, mobile = false }: { current?: string; mobile?: boolean }) {

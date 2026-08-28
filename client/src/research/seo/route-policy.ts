@@ -34,6 +34,7 @@ const PUBLIC_POLICY_PATHS = new Set<string>([
   "/research/policies/research-use",
   "/research/policies/shipping",
   "/research/policies/returns",
+  "/research/policies/accessibility",
 ] as const);
 
 export function isPublicResearchIndexRoute(pathname: string): boolean {

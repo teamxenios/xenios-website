@@ -34,6 +34,12 @@ const POLICY_ENTRIES = [
     status: "Publication status unconfirmed",
     body: "Readable for review, but the source does not provide authoritative approval metadata. This index does not present it as final.",
   },
+  {
+    title: "Accessibility Statement",
+    href: "/research/policies/accessibility",
+    status: "Operational draft",
+    body: "The working WCAG 2.1 AA target, what the Research surfaces do today, known limitations, and how to ask for an alternative format. Counsel review and an external audit are still pending.",
+  },
 ] as const;
 
 export default function PoliciesIndex() {

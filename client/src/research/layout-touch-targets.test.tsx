@@ -109,7 +109,8 @@ describe("protected Research chrome pointer targets", () => {
       footer?.querySelectorAll<HTMLAnchorElement>('a[href^="/research/policies/"], a[href^="mailto:"]') ?? [],
     );
 
-    expect(policyAndSupport).toHaveLength(6);
+    // Five policy documents plus the Accessibility Statement, plus Support.
+    expect(policyAndSupport).toHaveLength(7);
     expect(policyAndSupport.every((link) => link.classList.contains("research-member-footer-target"))).toBe(true);
     expect(footer?.querySelector(".research-member-footer-wordmark > a")).not.toBeNull();
   });

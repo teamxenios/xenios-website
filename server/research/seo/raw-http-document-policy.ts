@@ -115,6 +115,7 @@ export const RAW_HTTP_PUBLIC_POLICY_PATHS = Object.freeze([
   "/research/policies/research-use",
   "/research/policies/shipping",
   "/research/policies/returns",
+  "/research/policies/accessibility",
 ] as const);
 
 const OPEN_JOB_TITLES = Object.freeze(

@@ -76,6 +76,7 @@ describe("isPublicResearchDocumentPath", () => {
     "/research/policies/research-use",
     "/research/policies/shipping",
     "/research/policies/returns",
+    "/research/policies/accessibility",
   ])("admits the exact reviewed public document %s", (path) => {
     expect(isPublicResearchDocumentPath(path)).toBe(true);
   });

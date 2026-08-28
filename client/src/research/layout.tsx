@@ -255,7 +255,7 @@ function MemberChrome({ children }: { children: ReactNode }) {
             <Wordmark size="sm" />
           </div>
           <div className="flex flex-wrap" style={{ gap: 32 }}>
-            {["research-use", "shipping", "returns", "privacy", "terms"].map((slug) => (
+            {["research-use", "shipping", "returns", "privacy", "terms", "accessibility"].map((slug) => (
               <Link key={slug} href={`/research/policies/${slug}`} className="body-s text-ink-2 hover:text-pulse transition-colors capitalize research-member-footer-target">
                 {slug.replace(/-/g, " ")}
               </Link>

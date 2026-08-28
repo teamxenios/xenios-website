@@ -42,6 +42,7 @@ const PUBLIC_RESEARCH_DOCUMENT_PATHS = new Set([
   "/research/policies/research-use",
   "/research/policies/shipping",
   "/research/policies/returns",
+  "/research/policies/accessibility",
   "/research/contact",
   "/research/privacy",
   "/research/terms",

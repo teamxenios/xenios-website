@@ -27,6 +27,19 @@ export const policies: Record<string, { title: string; updated: string; sections
       { heading: "Approved remedies", paragraphs: ["Depending on the facts and agreement, the remedy may include replacement, refund, credit, investigation, batch hold, or recall communication."] },
     ],
   },
+  accessibility: {
+    title: "Accessibility Statement",
+    updated: "August 2026",
+    sections: [
+      { heading: "Draft status", paragraphs: ["This statement is an operational draft prepared from the program's accessibility register (XR-PUB-006, version 0.1.0-draft, 2026-07-19). It describes intent and current state for the Research surfaces; qualified counsel has not yet reviewed it and no external conformance audit has been performed."] },
+      { heading: "Our commitment", paragraphs: ["Xenios Research intends its public, member, and account surfaces to be usable by people with disabilities. This statement is written to be honest rather than reassuring: the program is in its founding phase and accessibility work is ongoing."] },
+      { heading: "Conformance target", paragraphs: ["The working target is the Web Content Accessibility Guidelines (WCAG) 2.1 at Level AA, published by the W3C. Current status: partially conformant. Some surfaces and some documents do not yet fully meet the target, as described under known limitations."] },
+      { heading: "What the Research surfaces do", paragraphs: ["Interactive surfaces are built to work without a mouse, with visible focus, semantic structure, one main landmark per page, labelled form fields, and errors explained in plain language next to the field rather than by colour alone. Text and interface contrast are checked against the target. Motion respects the reduced-motion preference, and required controls target a minimum 44 by 44 pixel size on touch devices."], bullets: ["Keyboard access on public, member, and account pages", "Screen-reader structure: headings, labels, status and alert regions", "Contrast checked against WCAG 2.1 AA", "Reduced-motion and forced-colour compatibility", "Accessibility review is part of the release checklist for new surfaces"] },
+      { heading: "Known limitations", paragraphs: ["Being direct about current gaps:"], bullets: ["Supplier-issued quality documents and certificates of analysis are published as received and may not be tagged for screen readers; the substance of a document can be provided in an alternative format on request.", "Identity verification, payment, and provider scheduling run on third-party platforms whose accessibility Xenios does not control. Accessibility is considered in vendor selection, but those surfaces cannot be certified here.", "Some data visualisations may lack complete text equivalents.", "A formal external audit against the target has not yet been performed."] },
+      { heading: "Feedback and alternative access", paragraphs: ["If any part of the Research surfaces is difficult or impossible for you to use, email research@xeniostechnology.com with the page or document, what happened, and the assistive technology you use. Where reasonably possible the blocked content or function is provided in an alternative format, for example a document by accessible email or completing a step with human help over a supported channel. Accessibility feedback reaches the founder, who is the named accountable person for the program. Using an alternative format never costs extra and never reduces what you receive."] },
+      { heading: "Status of this statement", paragraphs: ["Prepared 2026-07-19 and adapted to the Research surfaces in August 2026. It will be reviewed when major surfaces launch or change, and on a recurring cadence to be confirmed. It describes intent and current state; it does not waive rights that cannot be waived under applicable law and does not relieve Xenios of duties imposed by law."] },
+    ],
+  },
   terms: {
     title: "Terms of Service",
     updated: "July 2026",

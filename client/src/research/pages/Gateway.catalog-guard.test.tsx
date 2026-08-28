@@ -170,6 +170,12 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/research/contact",
       "/research/privacy",
       "/research/terms",
+      "/research/policies/accessibility",
+      // Exact B2B informational roots composed by the Lead (DECISIONS 2026-08-28,
+      // "Exact B2B informational composition"): informational doors, never catalog.
+      "/research/organizations",
+      "/research/partners",
+      "/research/affiliates",
       "/research/support",
       "/care",
       "#research-main",

@@ -110,6 +110,7 @@ function ResearchFooter() {
           <Link href="/research/policies">Policy status</Link>
           <Link href="/research/privacy">Privacy</Link>
           <Link href="/research/terms">Terms</Link>
+          <Link href="/research/policies/accessibility">Accessibility</Link>
         </nav>
       </div>
       <div className="rg-shell rg-footer-legal">

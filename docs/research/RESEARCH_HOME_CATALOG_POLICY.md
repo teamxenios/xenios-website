@@ -16,6 +16,8 @@ account/access routes:
 - `/research/how-it-works`
 - `/research/faq`
 - `/research/policies`
+- `/research/policies/accessibility` (the Accessibility Statement, an operational draft; a notice, never a catalog door)
+- `/research/organizations`, `/research/partners`, `/research/affiliates` (exact informational B2B roots; Partner Apply, descendants, referral capture, and economics remain closed)
 - `/research/contact`
 - `/research/support`
 - `/research/apply`
