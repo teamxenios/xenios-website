@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import type { CustomerAccountResult } from "@shared/research/customer-account/contract";
 import { safeResearchReturnTo } from "../lib/member-routing";
@@ -46,32 +46,52 @@ export type AccountResourceState<T> =
   | Readonly<{ state: "denied"; reason: string }>
   | Readonly<{ state: "error" }>;
 
+type KeyedAccountResourceState<T> = Readonly<{
+  request: object;
+  snapshot: AccountResourceState<T>;
+}>;
+
 export function useAccountResource<T>(
   loader: (token: string | null) => Promise<CustomerAccountResult<T>>,
   token: string | null,
 ): AccountResourceState<T> {
-  const [snapshot, setSnapshot] = useState<AccountResourceState<T>>({ state: "loading" });
+  // A new request identity is created during the render that observes any
+  // loader or token transition. State from the previous request therefore
+  // becomes ineligible synchronously, before the old effect is cleaned up and
+  // before the new effect can reset anything to loading, so a token removal
+  // or an A-to-B principal swap can never render A's ready snapshot for even
+  // one frame.
+  const request = useMemo(() => ({ loader, token }), [loader, token]);
+  const [keyedSnapshot, setKeyedSnapshot] = useState<KeyedAccountResourceState<T>>(
+    () => ({ request, snapshot: { state: "loading" } }),
+  );
 
   useEffect(() => {
     let current = true;
-    setSnapshot({ state: "loading" });
-    void loader(token).then(
+    setKeyedSnapshot({ request, snapshot: { state: "loading" } });
+    void request.loader(request.token).then(
       (result) => {
         if (!current) return;
-        if (result.kind === "ok") setSnapshot({ state: "ready", data: result.data });
-        else if (result.kind === "denied") setSnapshot({ state: "denied", reason: result.reason });
-        else setSnapshot({ state: "error" });
+        if (result.kind === "ok") {
+          setKeyedSnapshot({ request, snapshot: { state: "ready", data: result.data } });
+        } else if (result.kind === "denied") {
+          setKeyedSnapshot({ request, snapshot: { state: "denied", reason: result.reason } });
+        } else {
+          setKeyedSnapshot({ request, snapshot: { state: "error" } });
+        }
       },
       () => {
-        if (current) setSnapshot({ state: "error" });
+        if (current) setKeyedSnapshot({ request, snapshot: { state: "error" } });
       },
     );
     return () => {
       current = false;
     };
-  }, [loader, token]);
+  }, [request]);
 
-  return snapshot;
+  return keyedSnapshot.request === request
+    ? keyedSnapshot.snapshot
+    : { state: "loading" };
 }
 
 function deniedCopy(reason: string): string {

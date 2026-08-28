@@ -69,15 +69,13 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
 
     const container = await renderWith(res.body.data);
     expect(container.textContent).toContain("Provider review");
-    expect(container.querySelectorAll(".care-status-step")).toHaveLength(10);
-    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
-    expect(container.querySelector('[aria-current="step"]')?.textContent).toContain("Provider review");
-    expect(container.textContent).toContain("Process orientation");
-    expect(container.textContent).toContain("Current recorded stage");
-    expect(container.textContent).toContain("Possible step");
+    expect(container.querySelector(".care-status-timeline")).toBeNull();
+    expect(container.textContent).not.toContain("Recorded");
+    expect(container.textContent).not.toContain("Account created");
+    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(0);
+    expect(container.textContent).toContain("current checkpoint only");
+    expect(container.textContent).not.toContain("Possible step");
     expect(container.textContent).not.toContain("authorized stage");
-    expect(Array.from(container.querySelectorAll(".care-status-timeline .ra-badge"))
-      .map((badge) => badge.textContent)).not.toContain("Recorded");
     expect(container.textContent).not.toContain("Not started");
     expect(container.textContent).not.toContain("Care not started");
     expect(container.textContent).not.toContain("Care status unavailable");

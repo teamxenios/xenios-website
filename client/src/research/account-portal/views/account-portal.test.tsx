@@ -16,6 +16,7 @@ import {
 } from "@shared/research/customer-account/fixtures";
 import {
   ORDER_HISTORY_SOURCE_LABELS,
+  type CareEnrollmentDto,
   type CarePharmacyHistoryAvailabilityDto,
   type CustomerAccountResult,
   type CustomerOrdersDto,
@@ -558,26 +559,36 @@ describe("customer account portal views", () => {
     expect(container.textContent).not.toContain("Not started");
   });
 
-  it("uses the canonical ten-stage Care order and marks only the current step", async () => {
+  it("renders only the authorized current Care stage without inventing prior history", async () => {
     // The view consumes the FULL enrollment DTO — the same shape the wire
     // carries — never a hand-unwrapped `.status` (P1-6).
     const container = await render(<AccountCareView data={FIXTURE_CARE_ENROLLED} />, "/research/account/care");
-    const steps = Array.from(container.querySelectorAll(".care-status-step"));
-    expect(steps).toHaveLength(10);
-    expect(steps.map((step) => step.querySelector("h3")?.textContent)).toEqual([
-      "Account created",
-      "Intake needed",
-      "Intake submitted",
-      "Provider review",
-      "Follow-up required",
-      "Appointment needed",
-      "Provider decision recorded",
-      "Pharmacy processing",
-      "Shipment",
-      "Completed",
-    ]);
-    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(container.querySelector("#care-current-heading")?.textContent).toBe("Provider review");
+    expect(container.querySelector(".care-status-timeline")).toBeNull();
+    expect(container.textContent).not.toContain("Recorded");
+    expect(container.textContent).not.toContain("Account created");
+    expect(container.textContent).not.toContain("Intake submitted");
     expect(container.textContent).toContain("Later steps are not guaranteed");
+  });
+
+  it("does not turn a late ordinal Care stage into evidence for every earlier stage", async () => {
+    const completedStage: CareEnrollmentDto = {
+      sourceState: "available",
+      enrolled: true,
+      pharmacyState: "none",
+      status: {
+        stage: "completed",
+        updatedAt: "2026-08-27T00:00:00.000Z",
+        neutralSummary: null,
+      },
+    };
+    const container = await render(<AccountCareView data={completedStage} />, "/research/account/care");
+    expect(container.querySelector("#care-current-heading")?.textContent).toBe("Completed");
+    expect(container.textContent).not.toContain("Recorded");
+    expect(container.textContent).not.toContain("Account created");
+    expect(container.textContent).not.toContain("Provider review");
+    expect(container.textContent).not.toContain("Pharmacy processing");
+    expect(container.textContent).toContain("does not claim that earlier checkpoints were completed");
   });
 
   it("renders an honest not-started Care state from a CONNECTED source", async () => {

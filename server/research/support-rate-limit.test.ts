@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import {
+  accountSupportSubmissionAllowed,
   SUPPORT_SUBMISSION_LIMIT_PER_HOUR,
   supportSubmissionAllowed,
 } from "./support-rate-limit";
@@ -30,6 +31,15 @@ describe("the ONE member-scoped support budget (P2-3)", () => {
     expect(await supportSubmissionAllowed(`fresh-${Math.random().toString(36).slice(2)}`)).toBe(true);
   });
 
+  it("fails account-support writes closed when the durable shared budget is absent", async () => {
+    const member = `account-durable-absent-${Math.random().toString(36).slice(2)}`;
+    expect(await accountSupportSubmissionAllowed(member)).toBe(false);
+    // The classic questions door intentionally retains the generic limiter's
+    // fallback posture; this also proves the account denial did not consume a
+    // process-local bucket and call it shared truth.
+    expect(await supportSubmissionAllowed(member)).toBe(true);
+  });
+
   // Source pins: every support-shaped write door consumes THIS authority.
   // A new independent bucket for the same class of write is a regression.
   it("both question doors and the account support source consume the shared authority", () => {
@@ -37,7 +47,7 @@ describe("the ONE member-scoped support budget (P2-3)", () => {
     const supportSource = readFileSync("server/research/customer-account/production-support.ts", "utf8");
     // Two call sites in questions.ts (web + Telegram), one in the support source.
     expect(questions.split("supportSubmissionAllowed(").length - 1).toBeGreaterThanOrEqual(2);
-    expect(supportSource).toContain("supportSubmissionAllowed(");
+    expect(supportSource).toContain("accountSupportSubmissionAllowed(");
     // The old independent buckets are gone.
     expect(questions).not.toContain("member-question:");
     expect(supportSource).not.toContain("customer-account-support:");

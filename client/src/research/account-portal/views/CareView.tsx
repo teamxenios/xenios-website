@@ -1,7 +1,5 @@
 import { Link } from "wouter";
 import type { CareEnrollmentDto, CareTimelineStage } from "@shared/research/customer-account/contract";
-import { CARE_TIMELINE_STAGES } from "@shared/research/customer-account/contract";
-import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { formatAccountDate } from "../format";
 
@@ -61,39 +59,17 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
   }
 
   return (
-    <div className="account-grid account-grid-main">
-      <section className="account-surface" aria-labelledby="care-current-heading">
-        <p className="account-section-label">Current Care stage</p>
-        <h2 id="care-current-heading" className="account-section-title">{STAGE_LABELS[stage]}</h2>
-        <p className="body-m text-ink-2 mt-4 max-w-[60ch]">{data.status.neutralSummary ?? "Your current operational status is recorded in the Care workflow."}</p>
-        <p className="mono-label text-ink-mute mt-4">Updated {formatAccountDate(data.status.updatedAt, true)}</p>
-        <div className="account-surface account-surface-warm mt-6">
-          <p className="body-s font-700">Care stages are operational checkpoints.</p>
-          <p className="body-s text-ink-2 mt-2">Later steps are not guaranteed. A provider decision is separate from pharmacy processing, and membership does not determine either outcome.</p>
-        </div>
-      </section>
-
-      <section className="account-surface" aria-labelledby="care-timeline-heading">
-        <p className="account-section-label">Care operations</p>
-        <h2 id="care-timeline-heading" className="account-section-title">Process orientation</h2>
-        <p className="body-s text-ink-2 mt-3" id="care-process-note">
-          This list explains possible Care checkpoints. It is not a history or a forecast; only the current recorded stage is marked as current.
-        </p>
-        <ol className="care-status-timeline mt-6" aria-describedby="care-process-note">
-          {CARE_TIMELINE_STAGES.map((possibleStage, index) => {
-            const isCurrent = possibleStage === stage;
-            const orientationLabel = isCurrent ? "Current recorded stage" : "Possible step";
-            return (
-              <li key={possibleStage} className={`care-status-step${isCurrent ? " care-status-step-current" : ""}`} aria-current={isCurrent ? "step" : undefined}>
-                <span className="care-status-index tabular" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <div className="min-w-0"><h3 className="body-m font-700">{STAGE_LABELS[possibleStage]}</h3></div>
-                <ResearchStatusBadge label={orientationLabel} tone={isCurrent ? "info" : "neutral"} />
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-    </div>
+    <section className="account-surface" aria-labelledby="care-current-heading">
+      <p className="account-section-label">Current Care stage</p>
+      <h2 id="care-current-heading" className="account-section-title">{STAGE_LABELS[stage]}</h2>
+      <p className="body-m text-ink-2 mt-4 max-w-[60ch]">{data.status.neutralSummary ?? "Your current operational status is recorded in the Care workflow."}</p>
+      <p className="mono-label text-ink-mute mt-4">Updated {formatAccountDate(data.status.updatedAt, true)}</p>
+      <div className="account-surface account-surface-warm mt-6">
+        <p className="body-s font-700">This account view shows the current checkpoint only.</p>
+        <p className="body-s text-ink-2 mt-2">It does not claim that earlier checkpoints were completed. Later steps are not guaranteed, a provider decision is separate from pharmacy processing, and membership does not determine either outcome.</p>
+      </div>
+      <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
+    </section>
   );
 }
 

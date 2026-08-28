@@ -26,7 +26,7 @@ import {
 } from "@shared/research/customer-account/contract";
 import { getSupabaseAdmin } from "../../supabase";
 import { MEMBER_QUESTIONS_TABLE, SLA_TARGET_HOURS } from "../questions";
-import { supportSubmissionAllowed } from "../support-rate-limit";
+import { accountSupportSubmissionAllowed } from "../support-rate-limit";
 import type { SupportCasesPort } from "./ports";
 
 export type SupportQuestionRow = {
@@ -47,7 +47,7 @@ export type MemberQuestionsSupportDeps = Readonly<{
   listRows: (memberId: string) => Promise<readonly SupportQuestionRow[]>;
   /** Throws when the durable write fails. */
   insertRow: (row: Record<string, unknown>) => Promise<SupportQuestionRow>;
-  /** Write throttle; resolves false when the budget is spent. */
+  /** Write throttle; false means the policy refuses, including unavailable durable truth. */
   allowWrite?: (memberId: string) => Promise<boolean>;
   now?: () => Date;
 }>;
@@ -170,8 +170,9 @@ export function createSupabaseMemberQuestionsSupportSource(): SupportCasesPort {
     },
     allowWrite(memberId) {
       // THE SAME budget as the classic questions door (P2-3): one shared
-      // member-scoped quota, one key — not a second independent bucket.
-      return supportSubmissionAllowed(memberId);
+      // member-scoped quota and key, but this private writer fails closed when
+      // the durable cross-instance authority is absent or errors.
+      return accountSupportSubmissionAllowed(memberId);
     },
   });
 }

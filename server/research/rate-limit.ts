@@ -6,10 +6,11 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 // (research_rate_limit_hit, supabase/research-referral-fraud.sql), so every
 // instance shares the same window.
 //
-// Failure posture: if the database call fails or Supabase is unconfigured,
-// we fall back to a per-process in-memory window rather than blocking the
-// request path. Rate limiting is a throttle, not a security gate; the
-// endpoints behind it keep their own privacy and validation guarantees.
+// Default failure posture: if the database call fails or Supabase is
+// unconfigured, we fall back to a per-process in-memory window rather than
+// blocking the request path. Callers that rely on one shared durable budget
+// can explicitly deny instead; they must never mistake this process-local
+// fallback for durable cross-instance truth.
 
 const memory = new Map<string, { count: number; resetAt: number }>();
 
@@ -30,8 +31,19 @@ function memoryHit(key: string, windowSeconds: number, maxHits: number): boolean
   return bucket.count <= maxHits;
 }
 
+export type RateLimitFailurePolicy = "memory_fallback" | "deny";
+
+export type RateLimitOptions = Readonly<{
+  durableFailurePolicy?: RateLimitFailurePolicy;
+}>;
+
 // Returns true when the hit is ALLOWED (inside the window's budget).
-export async function rateLimitHit(key: string, windowSeconds: number, maxHits: number): Promise<boolean> {
+export async function rateLimitHit(
+  key: string,
+  windowSeconds: number,
+  maxHits: number,
+  options: RateLimitOptions = {},
+): Promise<boolean> {
   if (supabaseConfigured()) {
     try {
       const client: any = getSupabaseAdmin();
@@ -44,9 +56,10 @@ export async function rateLimitHit(key: string, windowSeconds: number, maxHits: 
         if (!error && typeof data === "boolean") return data;
       }
     } catch (err) {
-      console.error("[rate limit] durable limiter failed, using memory fallback:", err);
+      console.error("[rate limit] durable limiter failed:", err);
     }
   }
+  if (options.durableFailurePolicy === "deny") return false;
   return memoryHit(key, windowSeconds, maxHits);
 }
 

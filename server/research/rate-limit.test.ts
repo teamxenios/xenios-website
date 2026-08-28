@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
   configured: true,
-  rpcMode: "allow" as "allow" | "deny" | "throw" | "missing",
+  rpcMode: "allow" as "allow" | "deny" | "error" | "throw" | "missing",
   rpcCalls: [] as any[],
 }));
 
@@ -18,6 +18,7 @@ vi.mock("../supabase", () => ({
       rpc: async (fn: string, args: any) => {
         state.rpcCalls.push({ fn, args });
         if (state.rpcMode === "throw") throw new Error("db down");
+        if (state.rpcMode === "error") return { data: null, error: new Error("permission denied") };
         return { data: state.rpcMode === "allow", error: null };
       },
     };
@@ -62,6 +63,28 @@ describe("durable rate limiting", () => {
     expect(await rateLimitHit(key, 600, 1)).toBe(true);
     expect(await rateLimitHit(key, 600, 1)).toBe(false);
     expect(state.rpcCalls).toHaveLength(0);
+  });
+
+  it("supports an explicit fail-closed policy for durable RPC error or absence", async () => {
+    const errorKey = `deny-error:${Date.now()}`;
+    state.rpcMode = "error";
+    expect(
+      await rateLimitHit(errorKey, 600, 2, { durableFailurePolicy: "deny" }),
+    ).toBe(false);
+
+    state.rpcMode = "missing";
+    expect(
+      await rateLimitHit(`deny-missing:${Date.now()}`, 600, 2, { durableFailurePolicy: "deny" }),
+    ).toBe(false);
+
+    state.configured = false;
+    const unconfiguredKey = `deny-unconfigured:${Date.now()}`;
+    expect(
+      await rateLimitHit(unconfiguredKey, 600, 2, { durableFailurePolicy: "deny" }),
+    ).toBe(false);
+    // The generic/default consumers retain their intentionally different
+    // process-local fallback, and the denied call did not consume that map.
+    expect(await rateLimitHit(unconfiguredKey, 600, 2)).toBe(true);
   });
 });
 
