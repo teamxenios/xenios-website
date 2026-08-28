@@ -103,7 +103,7 @@ export default function SignIn() {
             {busy ? "Signing in" : "Sign in"}
           </button>
           <p className="body-s text-ink-mute">
-            <Link href="/research/reset-password" className="underline" data-testid="link-forgot-password">Forgot your password?</Link>
+            <Link href="/research/reset-password" className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
           <p className="body-s text-ink-mute">
             Returning members do not need another approval email. If you have not created your account yet, use the one-time claim link in your approval email.
@@ -119,17 +119,17 @@ export default function SignIn() {
         */}
         <div className="max-w-[420px] mt-8 space-y-3 border-t border-line pt-6">
           <p className="body-s text-ink-mute">
-            <Link href="/research" className="underline" data-testid="link-signin-gateway">Back to gateway</Link>
+            <Link href="/research" className="underline ra-documentation-link" data-testid="link-signin-gateway">Back to gateway</Link>
           </p>
           <p className="body-s text-ink-mute">
-            Not a member yet? <Link href="/research/apply" className="underline" data-testid="link-signin-apply">Apply for membership</Link>
+            Not a member yet? <Link href="/research/apply" className="underline ra-documentation-link" data-testid="link-signin-apply">Apply for membership</Link>
           </p>
           <p className="body-s text-ink-mute">
-            <Link href="/research/policies/privacy" className="underline" data-testid="link-signin-privacy">Privacy</Link>
+            <Link href="/research/policies/privacy" className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>
             {" · "}
-            <Link href="/research/policies/terms" className="underline" data-testid="link-signin-terms">Terms</Link>
+            <Link href="/research/policies/terms" className="underline ra-documentation-link" data-testid="link-signin-terms">Terms</Link>
             {" · "}
-            <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-signin-support">Support</a>
+            <a href="mailto:research@xeniostechnology.com" className="underline ra-documentation-link" data-testid="link-signin-support">Support</a>
           </p>
         </div>
       </section>

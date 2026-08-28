@@ -138,11 +138,14 @@ function FaqAccordionItem({
           />
         </button>
       </h2>
-      {open && (
-        <div id={panelId} role="region" aria-labelledby={buttonId} style={{ padding: "0 24px 22px" }}>
-          <p className="body-m text-ink-2 max-w-[68ch]">{item.answer}</p>
-        </div>
-      )}
+      {/*
+        The panel stays in the DOM while collapsed so the trigger's
+        aria-controls always resolves to an element; `hidden` removes it from
+        layout and the accessibility tree until the trigger expands it.
+      */}
+      <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!open} style={{ padding: "0 24px 22px" }}>
+        <p className="body-m text-ink-2 max-w-[68ch]">{item.answer}</p>
+      </div>
     </div>
   );
 }

@@ -63,10 +63,22 @@ export const PAGE_AUDIT_SOURCE = String.raw`(() => {
     }
     const cs = getComputedStyle(el);
     const ox = cs.overflowX;
-    if ((ox === "hidden" || ox === "clip") && el.scrollWidth > el.clientWidth + 2 && el.textContent.trim() && clipped.length < 25) {
+    // Visually-hidden (sr-only) boxes are 1x1 clips by design; skip them.
+    const srOnly = el.clientWidth <= 1 && el.clientHeight <= 1;
+    if (!srOnly && (ox === "hidden" || ox === "clip") && el.scrollWidth > el.clientWidth + 2 && el.textContent.trim() && clipped.length < 25) {
       // Text that is cut off inside a hidden-overflow box with no ellipsis.
+      // Only count it when a text-carrying, non-decorative descendant actually
+      // extends past the box; decorative aria-hidden art bleeding out is fine.
       if (cs.textOverflow !== "ellipsis") {
-        clipped.push({ selector: describe(el), scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, text: text(el) });
+        const edge = r.right + 1;
+        const culprit = Array.from(el.querySelectorAll("*")).find((d) => {
+          if (isInert(d) || !isVisible(d)) return false;
+          if (!Array.from(d.childNodes).some((n) => n.nodeType === 3 && n.textContent.trim())) return false;
+          return d.getBoundingClientRect().right > edge;
+        });
+        if (culprit) {
+          clipped.push({ selector: describe(el), scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, text: text(culprit), culprit: describe(culprit) });
+        }
       }
     }
   }

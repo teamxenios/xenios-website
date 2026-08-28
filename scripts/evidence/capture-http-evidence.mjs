@@ -32,12 +32,23 @@ function parseArgs(argv) {
   return out;
 }
 
-async function fetchDocument(url) {
-  const res = await fetch(url, { redirect: "manual", headers: { accept: "text/html,application/xhtml+xml", "user-agent": "xenios-evidence/1 (raw-http)" } });
-  const headers = {};
-  for (const [k, v] of res.headers) headers[k.toLowerCase()] = v;
-  const body = await res.text();
-  return { status: res.status, headers, body };
+async function fetchDocument(url, { follow = 3 } = {}) {
+  const redirects = [];
+  let current = url;
+  for (let hop = 0; hop <= follow; hop++) {
+    const res = await fetch(current, { redirect: "manual", headers: { accept: "text/html,application/xhtml+xml", "user-agent": "xenios-evidence/1 (raw-http)" } });
+    const headers = {};
+    for (const [k, v] of res.headers) headers[k.toLowerCase()] = v;
+    const body = await res.text();
+    if (res.status >= 300 && res.status < 400 && headers.location && hop < follow) {
+      const next = new URL(headers.location, current).toString();
+      redirects.push({ from: current, status: res.status, to: next });
+      current = next;
+      continue;
+    }
+    return { status: res.status, headers, body, redirects, finalUrl: current };
+  }
+  throw new Error(`too many redirects from ${url}`);
 }
 
 export async function main(argv = process.argv.slice(2)) {
@@ -86,6 +97,8 @@ export async function main(argv = process.argv.slice(2)) {
         indexable: route.indexable,
         timestampUtc,
         status: res.status,
+        redirects: res.redirects,
+        finalUrl: res.finalUrl,
         headers: pick(res.headers, ["content-type", "x-robots-tag", "cache-control", "location", "content-security-policy", "x-frame-options", "strict-transport-security", "referrer-policy"]),
         metadata: meta,
         rawHtmlPath: file,
