@@ -5,6 +5,6 @@
   "branch": "fix/xenios-client-account-final-remediation-v2-20260827",
   "state": "active",
   "startedAt": "2026-08-27T23:58:08.561Z",
-  "heartbeatAt": "2026-08-27T23:58:08.567Z",
-  "note": "Round-3 surgical recut from failed 2239661: 7 evidence-model P1s (payment money-facts, history fabrication, billing presentation, Care source truth, activation approval evidence, invitation immutability, import zero-caller-text) + all 4 P2s. No deploy, no migration apply, no invitations."
+  "heartbeatAt": "2026-08-28T01:05:11.642Z",
+  "note": "V2 RECUT COMPLETE. 7 P1s + 4 P2s closed. Node 20.19.0: sequential full suite 10749/0 fail, e2e 53/53, tsc+build clean, census 399/408, scans 0/0, browser QA (one main per account page + confirmation section, XEC/XRR history note, count-unavailable, 44px targets). P1-F 12-attack v2 battery + v1 18/18 + rollback rehearsed (UNAPPLIED). 6-agent internal adversarial self-review: all PASS. Freezing + pushing for 3rd Codex review."
 }

@@ -22,14 +22,13 @@ docs/research-launch/XENIOS_CLIENT_ACCOUNT_FINAL_REMEDIATION_V2_2026-08-27.md.
 - typecheck (tsc --noEmit): PASS
 - production build: PASS
 - e2e (e2e/vitest.config.ts): 53/53 PASS
-- full repository suite: 736 files pass / 4 skipped · 10,748 tests pass / 43
-  intentionally skipped. On PARALLEL runs one heavy filesystem-scanner test
-  timed out (a DIFFERENT one each run — preview-harness.guard once,
-  kris-launch-a access-presentation once), both untouched by this change and
-  both green in isolation across repeated runs: this is the parallel-load
-  contention the prompt anticipates ("rerun independently and report
-  transparently"). A single authoritative `--no-file-parallelism` run is
-  recorded in the freeze report. No newly skipped tests.
+- full repository suite (authoritative `--no-file-parallelism` run):
+  **737 files pass / 4 skipped · 10,749 tests pass / 43 intentionally skipped
+  · 0 failed.** On PARALLEL runs one heavy filesystem-scanner test timed out
+  (a DIFFERENT one each run — preview-harness.guard once, kris-launch-a
+  access-presentation once), both untouched by this change and both green in
+  isolation across repeated runs: pure parallel-load contention, which the
+  sequential run eliminates. No newly skipped tests.
 - route census / release control plane: 399/408 UNCHANGED.
 - core-site protection incl. seam baselines: PASS (server/index.ts moved once,
   dated note; the P1-2/P1-10 notes from the prior recut carried forward).
