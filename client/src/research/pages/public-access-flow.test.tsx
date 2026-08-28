@@ -67,13 +67,19 @@ function assertKeyboardReachableActions(view: HTMLElement) {
 }
 
 describe("Research public application flow", () => {
-  it("keeps the gateway focused on Apply and Member Login with canonical public links", async () => {
+  it("keeps the editorial gateway on reviewed public access doors", async () => {
     const view = await render(<Gateway />);
     assertSinglePageHeading(view);
 
     const hrefs = links(view);
+    expect(hrefs).toContain("/research/access-hub");
     expect(hrefs).toContain("/research/apply");
     expect(hrefs).toContain("/research/sign-in");
+    expect(hrefs).toContain("/research/how-it-works");
+    expect(hrefs).toContain("/research/about");
+    expect(hrefs).toContain("/research/faq");
+    expect(hrefs).toContain("/research/policies");
+    expect(hrefs).toContain("/research/contact");
     expect(hrefs).toContain("/research/privacy");
     expect(hrefs).toContain("/research/terms");
     expect(hrefs).toContain("/research/support");
@@ -118,14 +124,15 @@ describe("Research public application flow", () => {
       expect(gateway.querySelectorAll("main")).toHaveLength(1);
       assertSinglePageHeading(gateway);
       expect(gateway.querySelector('[data-testid="link-gateway-apply"]')).not.toBeNull();
-      expect(gateway.querySelector('[data-testid="link-gateway-signin"]')).not.toBeNull();
+      expect(gateway.querySelector('[data-testid="link-gateway-pathways"]')).not.toBeNull();
+      expect(gateway.querySelector('[data-testid="link-gateway-access-hub"]')).not.toBeNull();
+      expect(gateway.querySelector<HTMLAnchorElement>('.rg-skip-link')?.getAttribute("href"))
+        .toBe("#research-main");
+      const hero = gateway.querySelector<HTMLImageElement>('.rg-hero-image');
+      expect(hero?.getAttribute("width")).toBe("1586");
+      expect(hero?.getAttribute("height")).toBe("992");
       assertKeyboardReachableActions(gateway);
-      const gatewayActions = Array.from(gateway.querySelectorAll<HTMLElement>(".btn"));
-      expect(
-        gatewayActions.every(
-          (action) => action.style.width === "100%" && action.style.maxWidth === "240px",
-        ),
-      ).toBe(true);
+      expect(gateway.querySelectorAll("nav[aria-label]").length).toBeGreaterThanOrEqual(3);
 
       act(() => root!.unmount());
       root = null;
@@ -262,5 +269,70 @@ describe("Research public application flow", () => {
         /accept|approve|submit|final/i.test(button.textContent ?? ""),
       ),
     ).toBe(false);
+  });
+
+  it("fails a rejected legacy policy request closed instead of loading forever", async () => {
+    window.history.replaceState({}, "", "/research/policies/privacy");
+    vi.mocked(fetchPolicies).mockRejectedValue(new Error("synthetic policy outage"));
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    expect(view.textContent).toContain("Policy documentation is temporarily unavailable");
+    expect(view.textContent).toContain("will not substitute starter text");
+    expect(view.querySelector('[data-testid="ra-loading"]')).toBeNull();
+    expect(links(view)).toContain("/research/support");
+    expect(view.querySelector("form")).toBeNull();
+    assertKeyboardReachableActions(view);
+  });
+
+  it("does not infer Shipping approval when the source omits publication metadata", async () => {
+    window.history.replaceState({}, "", "/research/policies/shipping");
+    vi.mocked(fetchPolicies).mockResolvedValue({
+      shipping: {
+        title: "Shipping Policy",
+        updated: "July 2026",
+        sections: [{
+          heading: "Fulfillment model",
+          paragraphs: ["Starter architecture language for review."],
+        }],
+      },
+    });
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    expect(view.textContent).toContain("Publication status unconfirmed");
+    expect(view.textContent).toContain("does not provide authoritative approval metadata");
+    expect(view.querySelector('[data-testid="policy-operational-draft"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="policy-served-document"]')).toBeNull();
+    expect(view.querySelector("form")).toBeNull();
+  });
+
+  it("labels Research-use as served without inventing publication approval", async () => {
+    window.history.replaceState({}, "", "/research/policies/research-use");
+    vi.mocked(fetchPolicies).mockResolvedValue({
+      "research-use": {
+        title: "Research Use Policy",
+        updated: "July 2026",
+        sections: [{
+          heading: "Purpose",
+          paragraphs: ["Served Research-use boundaries."],
+        }],
+      },
+    });
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    expect(view.querySelector('[data-testid="policy-served-document"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="policy-operational-draft"]')).toBeNull();
+    expect(view.textContent).not.toMatch(/approved policy|publication approved/i);
   });
 });

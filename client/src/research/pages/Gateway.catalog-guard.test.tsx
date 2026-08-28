@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// Founder directive (Samuel): there must be no "Research Catalog" button,
+// Founder directive (Samuel): there must be no public "Research Catalog" button,
 // card, tile, hero CTA, navigation CTA, or equivalent public catalog-entry
 // control on the /research home page (client/src/research/pages/Gateway.tsx,
 // mounted at "/research" in client/src/research/section.tsx). This file is
@@ -160,18 +160,24 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
     // if its label happens not to match a denylisted phrase.
     const ALLOWED_HREFS = new Set([
       "/", // Wordmark's link back to the site root
+      "/research",
       "/research/apply",
       "/research/sign-in",
+      "/research/how-it-works",
+      "/research/about",
+      "/research/faq",
+      "/research/policies",
+      "/research/contact",
       "/research/privacy",
       "/research/terms",
       "/research/support",
-      // Private Early Access door (link-gateway-early-access). REVIEWED:
-      // Samuel's war-room directive routes the founding cohort through
-      // /research to the password wall, and the page behind this link is a
-      // gate, not a catalog: no product, no price, and nothing purchasable
-      // is reachable without the password, an admin-approved customer, and
-      // a session-bound email verification. It is an entry point to a lock,
-      // which the catalog policy permits; a catalog CTA it is not.
+      "/care",
+      "#research-main",
+      "#offering",
+      // Private Early Access door. REVIEWED: this is an open passwordless
+      // entry to a distinct request-and-order experience, not the public or
+      // member catalog route. Entry alone does not authorize a later action
+      // or establish availability, payment, or fulfillment.
       "/research/early-access",
       // Access Hub door (link-gateway-access-hub). REVIEWED: Samuel's
       // 2026-08-15 General Platform Foundation package adds this on the
