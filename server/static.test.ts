@@ -141,7 +141,9 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text).toContain("<div id=\"root\">");
     const asset = await request(app).get("/research/hero.jpg");
     expect(asset.status).toBe(200);
-    expect(asset.text).toBe("not-really-a-jpeg");
+    expect(asset.headers["content-type"]).toContain("image/jpeg");
+    // supertest buffers image bodies (res.body is a Buffer, res.text is undefined)
+    expect(Buffer.from(asset.body).toString("utf8")).toBe("not-really-a-jpeg");
   });
 
   it("does not hand out the raw shell with its template schema at /index.html", async () => {
