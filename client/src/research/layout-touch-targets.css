@@ -1,0 +1,94 @@
+.research-chrome-target,
+.research-member-nav-target,
+.research-member-footer-target,
+.research-member-footer-wordmark > a {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.research-chrome-target,
+.research-member-footer-target,
+.research-member-footer-wordmark > a {
+  justify-content: center;
+}
+
+.research-chrome-wordmark {
+  max-width: 100%;
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.research-member-nav-scroll {
+  padding-inline: 4px;
+  padding-top: 4px;
+  scroll-padding-inline: 4px;
+}
+
+.research-member-nav-target {
+  flex: none;
+  justify-content: center;
+}
+
+.btn.research-member-signout {
+  min-width: 44px;
+  min-height: 44px;
+  height: auto;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.research-chrome-target:focus-visible,
+.research-member-nav-target:focus-visible,
+.btn.research-member-signout:focus-visible,
+.research-member-footer-target:focus-visible,
+.research-member-footer-wordmark > a:focus-visible {
+  outline: 2px solid var(--pulse);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .research-minimal-header-row,
+  .research-member-header-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding-block: 8px;
+  }
+}
+
+/* A 320px viewport at 200% zoom can expose roughly 160 CSS pixels. Keep the
+   chrome gutters bounded so each row can reflow instead of forcing page-wide
+   horizontal scrolling. */
+@media (max-width: 320px) {
+  .research-minimal-header-row,
+  .research-member-header-row {
+    padding-inline: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .research-chrome-target,
+  .research-member-nav-target,
+  .btn.research-member-signout,
+  .research-member-footer-target,
+  .research-member-footer-wordmark > a {
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .research-chrome-target:focus-visible,
+  .research-member-nav-target:focus-visible,
+  .btn.research-member-signout:focus-visible,
+  .research-member-footer-target:focus-visible,
+  .research-member-footer-wordmark > a:focus-visible {
+    outline-color: Highlight;
+  }
+
+  .research-member-nav-target[aria-current="page"] {
+    border-bottom: 2px solid Highlight;
+  }
+}

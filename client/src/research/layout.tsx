@@ -16,6 +16,7 @@ import {
   PublicEditorialFooter,
   PublicEditorialNav,
 } from "./pages/PublicEditorialNav";
+import "./layout-touch-targets.css";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
 // architecture):
@@ -148,12 +149,13 @@ function MinimalChrome({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
       <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
-        <div className="container-x flex items-center justify-between" style={{ minHeight: 60 }}>
-          <Link href="/research" className="wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
+        <div className="container-x flex items-center justify-between research-minimal-header-row" style={{ minHeight: 60 }}>
+          <Link href="/research" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
             <span className="wordmark-mark" aria-hidden="true"></span>
-            xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
+            <span className="wordmark-text">xenios</span>
+            <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
           </Link>
-          <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors">Back to gateway</Link>
+          <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors research-chrome-target">Back to gateway</Link>
         </div>
         <div className="container-x" style={{ paddingBottom: 12 }}>
           <PublicEditorialNav current={normalizedLocation} />
@@ -192,20 +194,22 @@ function MemberChrome({ children }: { children: ReactNode }) {
     <div>
       <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
         <div className="container-x">
-          <div className="flex items-center justify-between gap-4" style={{ minHeight: 60 }}>
-            <Link href="/research/member" className="wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
+          <div className="flex items-center justify-between gap-4 research-member-header-row" style={{ minHeight: 60 }}>
+            <Link href="/research/member" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
               <span className="wordmark-mark" aria-hidden="true"></span>
-              xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
+              <span className="wordmark-text">xenios</span>
+              <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
             </Link>
-            <nav className="hidden lg:flex items-center gap-5 overflow-x-auto" aria-label="Member navigation">
+            <nav className="hidden lg:flex items-center gap-5 overflow-x-auto research-member-nav-scroll" aria-label="Member navigation">
               {MEMBER_NAV.map((item) => {
                 const active = location === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`text-[13px] whitespace-nowrap transition-colors ${active ? "text-ink" : "text-ink-2 hover:text-pulse"}`}
+                    className={`research-member-nav-target text-[13px] whitespace-nowrap transition-colors ${active ? "text-ink" : "text-ink-2 hover:text-pulse"}`}
                     style={{ fontWeight: active ? 700 : 600 }}
+                    aria-current={active ? "page" : undefined}
                   >
                     {item.label}
                   </Link>
@@ -215,19 +219,27 @@ function MemberChrome({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => void signOutMember().then(() => navigate("/research"))}
-              className="btn btn-ghost"
-              style={{ height: 40, padding: "0 14px", fontSize: 13 }}
+              className="btn btn-ghost research-member-signout"
+              style={{ minHeight: 44, padding: "8px 14px", fontSize: 13 }}
               data-testid="button-member-signout"
             >
               {member ? `Sign out${member.firstName ? ` (${member.firstName})` : ""}` : "Sign out"}
             </button>
           </div>
-          <nav className="lg:hidden flex items-center gap-4 overflow-x-auto pb-3 -mt-1" aria-label="Member navigation (mobile)">
-            {MEMBER_NAV.map((item) => (
-              <Link key={item.href} href={item.href} className={`text-[13px] whitespace-nowrap ${location === item.href ? "text-ink font-700" : "text-ink-2"}`}>
-                {item.label}
-              </Link>
-            ))}
+          <nav className="lg:hidden flex items-center gap-4 overflow-x-auto pb-3 -mt-1 research-member-nav-scroll" aria-label="Member navigation (mobile)">
+            {MEMBER_NAV.map((item) => {
+              const active = location === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`research-member-nav-target text-[13px] whitespace-nowrap ${active ? "text-ink font-700" : "text-ink-2"}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </header>
@@ -239,14 +251,16 @@ function MemberChrome({ children }: { children: ReactNode }) {
           className="container-x flex flex-wrap items-center justify-between"
           style={{ paddingTop: 40, paddingBottom: 24, gap: 24 }}
         >
-          <Wordmark size="sm" />
+          <div className="research-member-footer-wordmark">
+            <Wordmark size="sm" />
+          </div>
           <div className="flex flex-wrap" style={{ gap: 32 }}>
             {["research-use", "shipping", "returns", "privacy", "terms"].map((slug) => (
-              <Link key={slug} href={`/research/policies/${slug}`} className="body-s text-ink-2 hover:text-pulse transition-colors capitalize">
+              <Link key={slug} href={`/research/policies/${slug}`} className="body-s text-ink-2 hover:text-pulse transition-colors capitalize research-member-footer-target">
                 {slug.replace(/-/g, " ")}
               </Link>
             ))}
-            <a href="mailto:research@xeniostechnology.com" className="body-s text-ink-2 hover:text-pulse transition-colors">Support</a>
+            <a href="mailto:research@xeniostechnology.com" className="body-s text-ink-2 hover:text-pulse transition-colors research-member-footer-target">Support</a>
           </div>
         </div>
         <div className="container-x" style={{ paddingBottom: 32 }}>
