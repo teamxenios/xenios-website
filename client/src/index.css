@@ -1111,8 +1111,28 @@ body {
 .ra-subnav-link:hover { color: var(--ra-selected); }
 .ra-subnav-link:focus-visible { outline: 2px solid var(--ra-focus); outline-offset: 2px; }
 .ra-subnav-active { color: var(--ra-selected); font-weight: 700; border-bottom: 2px solid var(--ra-selected); }
+.ra-documentation-link {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.ra-documentation-link:focus-visible {
+  outline: 2px solid var(--ra-focus);
+  outline-offset: 2px;
+}
 .ra-pagehead { margin-top: 8px; }
 .ra-admin-top { padding-bottom: 10px; border-bottom: 1px solid var(--ra-border); }
+.ra-admin-top-link {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.ra-admin-top-link:focus-visible {
+  outline: 2px solid var(--ra-focus);
+  outline-offset: 2px;
+}
 .ra-admin-nav {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
@@ -1172,7 +1192,7 @@ body {
   display: none;
 }
 .ra-admin-nav-link {
-  min-height: 40px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   padding: 8px 12px;
@@ -1201,7 +1221,15 @@ body {
 .ra-admin .mono-label, .ra-admin .mono-cap, .ra-admin .ra-badge { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 @media (max-width: 640px) {
   .ra-subnav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
-  .ra-subnav-link { padding: 12px 2px; white-space: nowrap; }
+  .ra-subnav-link {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 2px;
+    white-space: nowrap;
+  }
   .ra-admin-nav {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;

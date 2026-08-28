@@ -312,11 +312,11 @@ export function ResearchAdminShell({
   return (
     <div className="research-app ra-admin container-x" style={{ paddingTop: 20, paddingBottom: 64 }}>
       <div className="flex items-center justify-between gap-4 ra-admin-top">
-        <Link href="/admin" className="wordmark" style={{ fontSize: 16, textDecoration: "none" }}>
+        <Link href="/admin" className="wordmark ra-admin-top-link" style={{ fontSize: 16, textDecoration: "none" }}>
           <span className="wordmark-mark" aria-hidden="true"></span>
           xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research ops</span>
         </Link>
-        <Link href="/" className="body-s text-ink-mute" style={{ textDecoration: "none" }}>Back to site</Link>
+        <Link href="/" className="body-s text-ink-mute ra-admin-top-link" style={{ textDecoration: "none" }}>Back to site</Link>
       </div>
       <AdminGroupedNav />
       <PageHeader eyebrow="Operations" title={title} lead={lead} actions={actions} />

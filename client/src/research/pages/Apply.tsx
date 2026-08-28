@@ -57,10 +57,10 @@ export default function Apply() {
             className="mt-5 flex flex-wrap"
             style={{ columnGap: 24, rowGap: 8 }}
           >
-            <Link href={ACCESS_ROUTES.terms} className="body-s">
+            <Link href={ACCESS_ROUTES.terms} className="body-s ra-documentation-link">
               Terms status
             </Link>
-            <Link href={ACCESS_ROUTES.privacy} className="body-s">
+            <Link href={ACCESS_ROUTES.privacy} className="body-s ra-documentation-link">
               Privacy status
             </Link>
           </nav>
