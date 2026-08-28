@@ -79,7 +79,7 @@ export default function SupplierPartnershipPage() {
           id="supplier-onboarding-heading"
           eyebrow="Readiness sequence"
           title="Verified first. Assigned second."
-          body="Missing evidence produces a clear pending or held state. It never becomes a fabricated approval, available lot, shipment, delivery, or customer promise."
+          body="Missing evidence must remain a clear pending or held state. It never becomes a fabricated approval, available lot, shipment, delivery, or customer promise."
         />
         <ReviewSteps steps={SUPPLIER_STEPS} />
       </section>

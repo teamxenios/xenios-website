@@ -74,7 +74,8 @@ describe("public B2B pathway pages", () => {
 
     expect(view.querySelectorAll("h1")).toHaveLength(1);
     expect(view.querySelectorAll("main")).toHaveLength(0);
-    expect(view.querySelectorAll('[data-testid^="b2b-pathway-"]')).toHaveLength(7);
+    expect(view.querySelectorAll('[data-testid^="b2b-pathway-"]')).toHaveLength(8);
+    expect(view.textContent).toContain("Collective partnerships");
     expect(view.textContent).toContain("White-label interest");
     expect(view.textContent).toContain("Strategic partnerships");
     expect(view.textContent).toContain("Commercial relationships never control clinical decisions.");
