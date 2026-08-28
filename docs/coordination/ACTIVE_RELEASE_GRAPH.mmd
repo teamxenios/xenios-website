@@ -1,20 +1,35 @@
 flowchart LR
+  %% Current control-plane graph. Exact 2026-07-30 facts are preserved in
+  %% docs/coordination/history and are historical, not current attestations.
   PROD["Production 3daa3f4a<br/>AUDITED_BASELINE<br/>dep-da6vorqfngtc73brb0gg"]
   FAILED["Failed RC a1bbc2a1<br/>PROHIBITED<br/>DEVELOPMENT SOURCE ONLY"]
   EDITORIAL["Editorial homepage 8e8933ce<br/>SOURCE ONLY<br/>RECONCILIATION REQUIRED"]
+  PR117["PR117 821bf169<br/>HISTORICAL LINEAGE<br/>CURRENT RECONCILIATION REQUIRED"]
+  PR106["PR106 40d697c7<br/>HISTORICAL LINEAGE<br/>CURRENT RECONCILIATION REQUIRED"]
+  PR144["PR144 410e6878<br/>FROZEN<br/>RECONCILIATION REQUIRED"]
+  FOUNDER["Founder authority<br/>LOCKED<br/>release + pricing controls"]
+  ORDER_EVIDENCE["Immutable paid-order evidence<br/>BLOCKED"]
+  PAYOUT["Commission + payout activation<br/>BLOCKED"]
   HOME["Public homepage gate<br/>BLOCKED<br/>visual + responsive + a11y + catalog guard"]
   RC["Omega full-finish candidate<br/>NOT FROZEN"]
 
   PROD -->|development ancestor of| FAILED
   PROD -->|runtime baseline for| HOME
   EDITORIAL -->|semantic input to reconcile| HOME
+  PROD -->|current reconciliation baseline| PR117
+  PR117 -->|historically required to precede| PR106
+  FOUNDER -->|reconcile before acceptance| PR144
+  ORDER_EVIDENCE -->|required before| PAYOUT
+  PR106 -->|remains disabled until| PAYOUT
   HOME -->|required before| RC
 
   classDef baseline fill:#d9ead3,stroke:#274e13,color:#000;
   classDef prohibited fill:#f4cccc,stroke:#990000,color:#000;
   classDef gate fill:#fff2cc,stroke:#7f6000,color:#000;
+  classDef authority fill:#eadcf8,stroke:#5b2c6f,color:#000;
   classDef candidate fill:#d9eaf7,stroke:#134f5c,color:#000;
   class PROD baseline;
   class FAILED prohibited;
-  class EDITORIAL,HOME gate;
+  class EDITORIAL,PR117,PR106,PR144,ORDER_EVIDENCE,PAYOUT,HOME gate;
+  class FOUNDER authority;
   class RC candidate;

@@ -33,6 +33,7 @@ export type MigrationDag = {
   schemaVersion: number;
   identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
+  productionBaselineReconciledAt?: string;
   productionSha: string;
   checksumScope: string;
   migrations: MigrationNode[];

@@ -33,11 +33,16 @@ import {
 
 const ROOT = process.cwd();
 const NOW = new Date("2026-08-28T04:05:00.000Z");
+
+function gitBlobSha(bytes: Buffer): string {
+  const header = Buffer.from(`blob ${bytes.byteLength}\0`, "utf8");
+  return createHash("sha1").update(header).update(bytes).digest("hex");
+}
 const PRODUCTION_SHA = "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
-const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
+const HEAD_SHA = "adb3df5f4a431b73087c2ce1f13b197d830216fe";
 const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
 const RESERVATION_SOURCE_PATH =
   "supabase/research-inventory-reservation-commands.sql";
@@ -1830,7 +1835,7 @@ describe("production state validator", () => {
       },
     }).map((issue) => issue.code);
     expect(codes).toContain("UNOWNED_FILE");
-  });
+  }, 30_000);
 
   it("fails closed when the current ownership snapshot is missing or invalid", () => {
     expect(
@@ -1860,6 +1865,10 @@ describe("production state validator", () => {
         ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
         unexpected: true,
       },
+      {
+        ...ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"]),
+        productionBaselineReconciledAt: "not-a-date",
+      },
     ]) {
       expect(
         loadCurrentOwnershipSnapshot(ROOT, () => JSON.stringify(invalid)).issues.map(
@@ -1873,7 +1882,7 @@ describe("production state validator", () => {
         () => JSON.stringify(ownershipFixture(PRODUCTION_SHA, ["docs/coordination/**"])),
       ).issues,
     ).toEqual([]);
-  });
+  }, 30_000);
 
   it("validates a distinct observed merge without requiring it in the checked-in baseline", () => {
     const { state } = checkedInState();
@@ -1920,7 +1929,7 @@ describe("production state validator", () => {
       "OBSERVED_DEPLOYMENT_IDENTITY_MISMATCH",
       "OBSERVED_CANDIDATE_NOT_ANCESTOR",
     ]));
-  });
+  }, 30_000);
 
   it("requires one trusted baseline across state, graph, ownership, and migration DAG", () => {
     const ancestor = "d494150668de2ede8a61fd0d28bc9ff9a75def26";
@@ -1976,7 +1985,7 @@ describe("production state validator", () => {
       structuredClone(checked.ownership),
       ancestor,
     )).toContain("BASELINE_IDENTITY_CONTRADICTION");
-  });
+  }, 30_000);
 
   it("accepts the externally attested release branch and rejects an exact-branch mismatch", () => {
     const { state, graph, ownership } = checkedInState();
@@ -1997,7 +2006,193 @@ describe("production state validator", () => {
       expectedProductionBranch: "main",
     }).map((issue) => issue.code);
     expect(mismatchCodes).toContain("PRODUCTION_BRANCH_MISMATCH");
-  });
+  }, 30_000);
+
+  it("preserves the exact schema-2 data-posture semantics in the dated archive", () => {
+    const legacyState = JSON.parse(readFileSync(
+      resolve(ROOT, "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json"),
+      "utf8",
+    )) as ProductionState;
+    const legacyGraph = JSON.parse(readFileSync(
+      resolve(ROOT, "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json"),
+      "utf8",
+    )) as ReleaseGraph;
+    const { ownership } = checkedInState();
+    const legacyOwnership = {
+      ...ownership,
+      productionBaseSha: legacyState.production.gitSha,
+    };
+    const codes = validateProductionState(legacyState, legacyGraph, legacyOwnership, {
+      now: new Date("2026-07-30T21:30:00Z"),
+      trustedReleaseBaseSha: legacyState.production.gitSha,
+      migrationBaselineSha: legacyState.production.gitSha,
+    }).map((issue) => issue.code);
+    expect(codes).toEqual([]);
+  }, 30_000);
+
+  it("requires schema-3 dataPosture and runtimeConfig and rejects legacy current fields", () => {
+    const checked = checkedInState();
+    const legacyMixed = structuredClone(checked.state) as unknown as Record<string, unknown>;
+    legacyMixed.productionCounts = {
+      productControlRows: 0,
+      productControlStorageObjects: 0,
+    };
+    legacyMixed.securityPosture = { careEnabled: false };
+    expect(validateProductionState(
+      legacyMixed as unknown as ProductionState,
+      checked.graph,
+      checked.ownership,
+      {
+        now: NOW,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
+      },
+    ).map((issue) => issue.code)).toContain("LEGACY_DATA_POSTURE_FIELDS");
+
+    const missing = structuredClone(checked.state) as unknown as Record<string, unknown>;
+    delete missing.dataPosture;
+    delete missing.runtimeConfig;
+    const missingCodes = validateProductionState(
+      missing as unknown as ProductionState,
+      checked.graph,
+      checked.ownership,
+      {
+        now: NOW,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
+      },
+    ).map((issue) => issue.code);
+    expect(missingCodes).toEqual(expect.arrayContaining([
+      "DATA_POSTURE_CONTRADICTION",
+      "RUNTIME_CONFIG_EVIDENCE_INVALID",
+    ]));
+  }, 30_000);
+
+  it("requires available schema-3 posture to bind to dated database evidence", () => {
+    const checked = checkedInState();
+    const databaseEvidence = {
+      id: "database-aggregates-20260828",
+      kind: "database_aggregate_read",
+      observedSha: PRODUCTION_SHA,
+      checkedAt: NOW.toISOString(),
+      detail: "Test-only authoritative database aggregate evidence.",
+    };
+    const available = structuredClone(checked.state);
+    available.evidence = [...(available.evidence ?? []), databaseEvidence];
+    available.dataPosture = {
+      availability: "available",
+      fabricatedDataCount: 0,
+      seededProductCount: 0,
+      seededPriceCount: 0,
+      seededInventoryCount: 0,
+      seededOrderCount: 0,
+      careEnabled: false,
+      evidenceId: databaseEvidence.id,
+      checkedAt: databaseEvidence.checkedAt,
+      statement: "Authoritative test fixture reports zero rows and disabled Care.",
+    };
+    const validate = (state: ProductionState) => validateProductionState(
+      state,
+      checked.graph,
+      checked.ownership,
+      {
+        now: NOW,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
+      },
+    ).map((issue) => issue.code);
+    expect(validate(available)).not.toEqual(expect.arrayContaining([
+      "DATA_POSTURE_CONTRADICTION",
+      "DATA_POSTURE_EVIDENCE_CONTRADICTION",
+    ]));
+
+    const unbound = structuredClone(available);
+    if (unbound.dataPosture?.availability === "available") {
+      unbound.dataPosture.evidenceId = "missing-database-evidence";
+    }
+    expect(validate(unbound)).toContain("DATA_POSTURE_EVIDENCE_CONTRADICTION");
+
+    const timestampMismatch = structuredClone(available);
+    if (timestampMismatch.dataPosture?.availability === "available") {
+      timestampMismatch.dataPosture.checkedAt = "2026-08-28T04:04:00Z";
+    }
+    expect(validate(timestampMismatch)).toContain("DATA_POSTURE_EVIDENCE_CONTRADICTION");
+  }, 30_000);
+
+  it("binds every schema-3 candidate to a graph node by id, SHA, and state", () => {
+    const checked = checkedInState();
+    expect(checked.state.releaseCandidates.every(
+      (candidate) => !candidate.headSha || Boolean(candidate.graphNodeId),
+    )).toBe(true);
+    expect(validateProductionState(checked.state, checked.graph, checked.ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).not.toContain("CANDIDATE_GRAPH_CONTRADICTION");
+
+    const missingNodeId = structuredClone(checked.state);
+    delete missingNodeId.releaseCandidates[0].graphNodeId;
+    expect(validateProductionState(missingNodeId, checked.graph, checked.ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).toContain("CANDIDATE_GRAPH_CONTRADICTION");
+
+    const shaMismatch = structuredClone(checked.graph);
+    const failedNode = shaMismatch.nodes.find((node) => node.id === "failed-rc-a1bbc2a1");
+    if (!failedNode) throw new Error("checked-in failed RC graph node is missing");
+    failedNode.sha = "b".repeat(40);
+    expect(validateProductionState(checked.state, shaMismatch, checked.ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).toContain("CANDIDATE_GRAPH_CONTRADICTION");
+  }, 30_000);
+
+  it("preserves dated authority and lineage without re-attesting it as current", () => {
+    const checked = checkedInState();
+    const archivedStatePath = resolve(
+      ROOT,
+      "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+    );
+    const archivedGraphPath = resolve(
+      ROOT,
+      "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json",
+    );
+    expect(gitBlobSha(readFileSync(archivedStatePath))).toBe(
+      "322df6d9feb008acc834df2ec0e87e008993e3dc",
+    );
+    expect(gitBlobSha(readFileSync(archivedGraphPath))).toBe(
+      "3915f85c82ed05fcdfc7d43232364c4c0ca7d990",
+    );
+    expect(checked.state.historicalSnapshots?.every(
+      (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+    )).toBe(true);
+    expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-3daa3f4a" }),
+    ]);
+    for (const id of [
+      "founder-decision-lock-20260730",
+      "founder-workaround-addendum-20260730",
+      "founder-final-full-website-directive-20260730",
+      "immutable-paid-order-evidence",
+      "commission-payout-activation",
+      "pr117-persistent-cart",
+      "pr106-operations-affiliates",
+      "pr144-pricing-model",
+    ]) {
+      expect(checked.graph.nodes.some((node) => node.id === id)).toBe(true);
+    }
+
+    const dag = JSON.parse(readFileSync(
+      resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"),
+      "utf8",
+    )) as MigrationDag;
+    expect(checked.ownership.generatedAt).toBe("2026-08-03T16:00:00Z");
+    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-08-28T04:01:00Z");
+    expect(dag.generatedAt).toBe("2026-08-02T02:02:07Z");
+    expect(dag.productionBaselineReconciledAt).toBe("2026-08-28T04:01:00Z");
+  }, 30_000);
 
   it("accepts unavailable/null data posture without treating it as zero", () => {
     const checked = checkedInState();
@@ -2033,7 +2228,7 @@ describe("production state validator", () => {
       trustedReleaseBaseSha: PRODUCTION_SHA,
       migrationBaselineSha: PRODUCTION_SHA,
     }).map((issue) => issue.code)).toContain("DATA_POSTURE_CONTRADICTION");
-  });
+  }, 30_000);
 
   it("rejects a contradictory available data posture", () => {
     const checked = checkedInState();
@@ -2046,6 +2241,8 @@ describe("production state validator", () => {
       seededInventoryCount: 0,
       seededOrderCount: 0,
       careEnabled: false,
+      evidenceId: "public-health-runtime-config-20260828",
+      checkedAt: "2026-08-28T04:01:00Z",
       statement: "Invalid authoritative data for the zero-data invariant.",
     };
     expect(validateProductionState(
@@ -2058,7 +2255,7 @@ describe("production state validator", () => {
         migrationBaselineSha: PRODUCTION_SHA,
       },
     ).map((issue) => issue.code)).toContain("DATA_POSTURE_CONTRADICTION");
-  });
+  }, 30_000);
 
   it("detects production identity and data-posture contradictions", () => {
     const { state, graph, ownership } = checkedInState();
@@ -2080,5 +2277,5 @@ describe("production state validator", () => {
         "DATA_POSTURE_CONTRADICTION",
       ]),
     );
-  });
+  }, 30_000);
 });

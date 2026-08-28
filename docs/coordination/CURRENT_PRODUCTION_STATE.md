@@ -40,9 +40,34 @@ JSON snapshot is `null` with `availability: "unavailable"`.
 
 `null` means not observed. It must never be rendered or validated as zero,
 disabled, empty, complete, or safe. Older production counts and Care assertions
-were removed from the current snapshot rather than silently carried forward.
-Per-migration historical evidence remains in `MIGRATION_DAG.json`, clearly
-scoped to its own dated observations; it was not re-attested here.
+were retired from current fields rather than silently carried forward. Their
+exact dated source is preserved at
+`docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json` (original
+Git blob `322df6d9feb008acc834df2ec0e87e008993e3dc`) and is classified historical,
+not current. Per-migration historical evidence remains in `MIGRATION_DAG.json`,
+clearly scoped to its own dated observations; it was not re-attested here.
+
+## Preserved historical controls
+
+The exact 2026-07-30 release graph is preserved at
+`docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json` (original Git
+blob `3915f85c82ed05fcdfc7d43232364c4c0ca7d990`). That archive preserves the
+founder authority, safety gates, prior acceptance vocabulary, and supporting
+evidence without converting those observations into 2026-08-28 facts.
+
+The current graph carries the founder decision lock, workaround addendum, and
+final full-website directive forward as locked authority. Immutable paid-order
+evidence and commission/payout activation remain blocked. PR117 (`821bf169…`)
+and PR106 (`40d697c7…`) are unresolved historical lineage: their earlier
+accepted/pending dispositions are not current acceptance against `3daa…`.
+PR144 (`410e6878…`) remains frozen pending founder-locked pricing reconciliation
+and independent exact-SHA review.
+
+`FILE_OWNERSHIP.json` and `MIGRATION_DAG.json` retain their original
+whole-document `generatedAt` timestamps. Their separate
+`productionBaselineReconciledAt` fields scope the 2026-08-28 change only to the
+production-baseline reconciliation; no lane assignment, migration application,
+or database evidence was re-attested.
 
 ## Release gates
 

@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-28T04:01:00Z",
+  "generatedAt": "2026-08-03T16:00:00Z",
+  "productionBaselineReconciledAt": "2026-08-28T04:01:00Z",
   "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "lanes": [
     {

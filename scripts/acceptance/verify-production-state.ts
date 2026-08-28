@@ -18,6 +18,7 @@ type ProductionCandidate = {
   pullRequest?: number;
   lane?: string;
   headSha?: string;
+  graphNodeId?: string;
   baseSha?: string;
   sourceBaseSha?: string;
   integrationBaseSha?: string;
@@ -29,7 +30,7 @@ type ProductionCandidate = {
   scope?: string;
 };
 
-type ProductionEvidence = {
+export type ProductionEvidence = {
   id: string;
   kind: string;
   observedSha: string;
@@ -37,7 +38,16 @@ type ProductionEvidence = {
   detail: string;
 };
 
-type AvailableDataPosture = {
+export type RuntimeConfigEvidence = {
+  evidenceClassification: "VERIFIED_READ_ONLY_HTTP";
+  commerceEnabled: boolean;
+  publicHealthStatus: number;
+  renderOriginHealthStatus: number;
+  checkedAt: string;
+  limitation: string;
+};
+
+export type AvailableDataPosture = {
   availability: "available";
   fabricatedDataCount: number;
   seededProductCount: number;
@@ -45,10 +55,12 @@ type AvailableDataPosture = {
   seededInventoryCount: number;
   seededOrderCount: number;
   careEnabled: boolean;
+  evidenceId: string;
+  checkedAt: string;
   statement: string;
 };
 
-type UnavailableDataPosture = {
+export type UnavailableDataPosture = {
   availability: "unavailable";
   fabricatedDataCount: null;
   seededProductCount: null;
@@ -59,8 +71,37 @@ type UnavailableDataPosture = {
   statement: string;
 };
 
-export type ProductionState = {
-  schemaVersion: number;
+export type LegacyDataPosture = {
+  availability?: never;
+  fabricatedDataCount: number;
+  seededProductCount: number;
+  seededPriceCount: number;
+  seededInventoryCount: number;
+  seededOrderCount: number;
+  careEnabled: boolean;
+  statement: string;
+};
+
+export type HistoricalSnapshotReference = {
+  id: string;
+  classification: "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT";
+  observedAt: string;
+  source: string;
+  gitBlobSha: string;
+};
+
+type LegacyProductionCounts = {
+  productControlRows?: number;
+  productControlStorageObjects?: number;
+  [key: string]: unknown;
+};
+
+type LegacySecurityPosture = {
+  careEnabled?: boolean;
+  [key: string]: unknown;
+};
+
+type ProductionStateBase = {
   identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   production: {
@@ -83,18 +124,9 @@ export type ProductionState = {
     evidence: string[];
     smallestCorrection: string;
   }>;
-  dataPosture?: AvailableDataPosture | UnavailableDataPosture;
   evidence?: ProductionEvidence[];
+  evidenceLimitations?: string[];
   externalInputsDocument?: string;
-  productionCounts?: {
-    productControlRows?: number;
-    productControlStorageObjects?: number;
-    [key: string]: unknown;
-  };
-  securityPosture?: {
-    careEnabled?: boolean;
-    [key: string]: unknown;
-  };
   knownRisks?: Array<{
     id: string;
     state: string;
@@ -109,11 +141,32 @@ export type ProductionState = {
   };
 };
 
+export type ProductionStateV1V2 = ProductionStateBase & {
+  schemaVersion: 1 | 2;
+  runtimeConfig?: never;
+  dataPosture?: LegacyDataPosture;
+  productionCounts?: LegacyProductionCounts;
+  securityPosture?: LegacySecurityPosture;
+  historicalSnapshots?: never;
+};
+
+export type ProductionStateV3 = ProductionStateBase & {
+  schemaVersion: 3;
+  runtimeConfig: RuntimeConfigEvidence;
+  dataPosture: AvailableDataPosture | UnavailableDataPosture;
+  productionCounts?: never;
+  securityPosture?: never;
+  historicalSnapshots?: HistoricalSnapshotReference[];
+};
+
+export type ProductionState = ProductionStateV1V2 | ProductionStateV3;
+
 export type ReleaseGraph = {
   schemaVersion: number;
   identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   productionSha: string;
+  historicalSnapshots?: HistoricalSnapshotReference[];
   nodes: Array<{
     id: string;
     type: string;
@@ -173,7 +226,8 @@ const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const RENDER_DEPLOYMENT_PATTERN = /^dep-[a-z0-9]+$/;
 const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
 
-function parsedDate(value: string): Date | null {
+function parsedDate(value: unknown): Date | null {
+  if (typeof value !== "string") return null;
   const parsed = new Date(value);
   return Number.isFinite(parsed.getTime()) ? parsed : null;
 }
@@ -358,29 +412,102 @@ export function validateProductionState(
     if (age < -5 * 60_000) issues.push({ code: "FUTURE_PRODUCTION_EVIDENCE", message: "Production verification is future-dated." });
   }
 
-  const dataPosture = state.dataPosture;
-  const dataPostureContradiction =
-    dataPosture === undefined ||
-    (dataPosture.availability === "available"
-      ? dataPosture.fabricatedDataCount !== 0 ||
-        dataPosture.seededProductCount !== 0 ||
-        dataPosture.seededPriceCount !== 0 ||
-        dataPosture.seededInventoryCount !== 0 ||
-        dataPosture.seededOrderCount !== 0 ||
-        dataPosture.careEnabled !== false
-      : dataPosture.availability === "unavailable"
-        ? dataPosture.fabricatedDataCount !== null ||
-          dataPosture.seededProductCount !== null ||
-          dataPosture.seededPriceCount !== null ||
-          dataPosture.seededInventoryCount !== null ||
-          dataPosture.seededOrderCount !== null ||
-          dataPosture.careEnabled !== null
-        : true);
-  if (dataPostureContradiction) {
-    issues.push({
-      code: "DATA_POSTURE_CONTRADICTION",
-      message: "Data posture must be authoritative available zero/disabled facts or explicit unavailable/null facts; unavailable may never masquerade as zero.",
-    });
+  if (state.schemaVersion === 3) {
+    if ("productionCounts" in state || "securityPosture" in state) {
+      issues.push({
+        code: "LEGACY_DATA_POSTURE_FIELDS",
+        message: "Schema 3 must not carry legacy productionCounts or securityPosture fields; current truth belongs only in dataPosture.",
+      });
+    }
+
+    const runtimeConfig = state.runtimeConfig;
+    if (
+      !runtimeConfig ||
+      runtimeConfig.evidenceClassification !== "VERIFIED_READ_ONLY_HTTP" ||
+      typeof runtimeConfig.commerceEnabled !== "boolean" ||
+      runtimeConfig.publicHealthStatus !== 200 ||
+      runtimeConfig.renderOriginHealthStatus !== 200 ||
+      !parsedDate(runtimeConfig.checkedAt) ||
+      typeof runtimeConfig.limitation !== "string" ||
+      !runtimeConfig.limitation.trim()
+    ) {
+      issues.push({
+        code: "RUNTIME_CONFIG_EVIDENCE_INVALID",
+        message: "Schema 3 runtimeConfig must contain bounded, dated, read-only HTTP evidence for both healthy origins.",
+      });
+    }
+
+    const dataPosture = state.dataPosture;
+    const dataPostureContradiction =
+      dataPosture === undefined ||
+      typeof dataPosture?.statement !== "string" ||
+      !dataPosture.statement.trim() ||
+      (dataPosture.availability === "available"
+        ? dataPosture.fabricatedDataCount !== 0 ||
+          dataPosture.seededProductCount !== 0 ||
+          dataPosture.seededPriceCount !== 0 ||
+          dataPosture.seededInventoryCount !== 0 ||
+          dataPosture.seededOrderCount !== 0 ||
+          dataPosture.careEnabled !== false
+        : dataPosture.availability === "unavailable"
+          ? dataPosture.fabricatedDataCount !== null ||
+            dataPosture.seededProductCount !== null ||
+            dataPosture.seededPriceCount !== null ||
+            dataPosture.seededInventoryCount !== null ||
+            dataPosture.seededOrderCount !== null ||
+            dataPosture.careEnabled !== null
+          : true);
+    if (dataPostureContradiction) {
+      issues.push({
+        code: "DATA_POSTURE_CONTRADICTION",
+        message: "Schema 3 data posture must be authoritative available zero/disabled facts or explicit unavailable/null facts; unavailable may never masquerade as zero.",
+      });
+    }
+    if (dataPosture?.availability === "available") {
+      const boundEvidence = (state.evidence ?? []).find(
+        (entry) => entry.id === dataPosture.evidenceId,
+      );
+      if (
+        typeof dataPosture.evidenceId !== "string" ||
+        !dataPosture.evidenceId.trim() ||
+        !parsedDate(dataPosture.checkedAt) ||
+        !boundEvidence ||
+        boundEvidence.checkedAt !== dataPosture.checkedAt ||
+        typeof boundEvidence.kind !== "string" ||
+        !boundEvidence.kind.toLowerCase().includes("database")
+      ) {
+        issues.push({
+          code: "DATA_POSTURE_EVIDENCE_CONTRADICTION",
+          message: "Available schema-3 data posture must bind by id and timestamp to current database evidence.",
+        });
+      }
+    }
+  } else if (state.schemaVersion === 1 || state.schemaVersion === 2) {
+    if ("runtimeConfig" in state || "historicalSnapshots" in state) {
+      issues.push({
+        code: "LEGACY_SCHEMA3_FIELDS",
+        message: "Schema 1/2 snapshots must not carry schema-3 runtimeConfig or historicalSnapshots fields.",
+      });
+    }
+    const dataPosture = state.dataPosture;
+    const legacyDataContradiction =
+      dataPosture !== undefined
+        ? "availability" in dataPosture ||
+          dataPosture.fabricatedDataCount !== 0 ||
+          dataPosture.seededProductCount !== 0 ||
+          dataPosture.seededPriceCount !== 0 ||
+          dataPosture.seededInventoryCount !== 0 ||
+          dataPosture.seededOrderCount !== 0 ||
+          dataPosture.careEnabled !== false
+        : state.productionCounts?.productControlRows !== 0 ||
+          state.productionCounts?.productControlStorageObjects !== 0 ||
+          state.securityPosture?.careEnabled !== false;
+    if (legacyDataContradiction) {
+      issues.push({
+        code: "DATA_POSTURE_CONTRADICTION",
+        message: "Schema 1/2 snapshots must preserve their exact zero-data and disabled-Care semantics.",
+      });
+    }
   }
 
   if (state.evidence) {
@@ -415,6 +542,25 @@ export function validateProductionState(
     });
   }
 
+  if (state.schemaVersion === 3) {
+    for (const snapshot of state.historicalSnapshots ?? []) {
+      if (
+        snapshot.classification !== "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT" ||
+        typeof snapshot.id !== "string" ||
+        !snapshot.id.trim() ||
+        typeof snapshot.source !== "string" ||
+        !snapshot.source.trim() ||
+        !SHA_PATTERN.test(snapshot.gitBlobSha) ||
+        !parsedDate(snapshot.observedAt)
+      ) {
+        issues.push({
+          code: "HISTORICAL_SNAPSHOT_REFERENCE_INVALID",
+          message: "Historical snapshot references must be dated, immutable Git-blob identities explicitly excluded from current truth.",
+        });
+      }
+    }
+  }
+
   const deployed = graph.nodes.filter((node) => node.state === "AUDITED_BASELINE");
   if (
     deployed.length !== 1 ||
@@ -427,7 +573,13 @@ export function validateProductionState(
     });
   }
 
-  const nodeIds = new Set(graph.nodes.map((node) => node.id));
+  const nodeIds = new Set<string>();
+  for (const node of graph.nodes) {
+    if (nodeIds.has(node.id)) {
+      issues.push({ code: "DUPLICATE_GRAPH_NODE_ID", message: `Duplicate release-graph node id ${node.id}.` });
+    }
+    nodeIds.add(node.id);
+  }
   for (const edge of graph.edges) {
     if (!nodeIds.has(edge.from) || !nodeIds.has(edge.to)) {
       issues.push({ code: "GRAPH_EDGE_TARGET", message: `Release edge ${edge.from} -> ${edge.to} references a missing node.` });
@@ -480,15 +632,26 @@ export function validateProductionState(
         message: `PR #${candidate.pullRequest ?? "unassigned"} has invalid prohibited predecessor.`,
       });
     }
-    if (!candidate.pullRequest || !candidate.headSha) continue;
-    const node = graph.nodes.find(
-      (entry) => entry.pullRequest === candidate.pullRequest && entry.sha === candidate.headSha,
-    );
-    if (!node || node.state !== candidate.state) {
-      issues.push({
-        code: "CANDIDATE_GRAPH_CONTRADICTION",
-        message: `PR #${candidate.pullRequest} does not match its release-graph node.`,
-      });
+    if (candidate.headSha && (state.schemaVersion === 3 || candidate.pullRequest !== undefined)) {
+      const node = state.schemaVersion === 3
+        ? graph.nodes.find((entry) => entry.id === candidate.graphNodeId)
+        : graph.nodes.find(
+          (entry) => entry.pullRequest === candidate.pullRequest && entry.sha === candidate.headSha,
+        );
+      if (
+        (state.schemaVersion === 3 && (
+          typeof candidate.graphNodeId !== "string" || !candidate.graphNodeId.trim()
+        )) ||
+        !node ||
+        node.sha !== candidate.headSha ||
+        node.state !== candidate.state ||
+        (candidate.pullRequest !== undefined && node.pullRequest !== candidate.pullRequest)
+      ) {
+        issues.push({
+          code: "CANDIDATE_GRAPH_CONTRADICTION",
+          message: `${candidate.pullRequest ? `PR #${candidate.pullRequest}` : candidate.lane ?? "Unassigned candidate"} does not match a unique release-graph node by id, SHA, and state.`,
+        });
+      }
     }
     if (candidate.prohibitedPredecessor) {
       const predecessor = graph.nodes.find(

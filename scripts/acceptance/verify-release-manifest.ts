@@ -32,6 +32,7 @@ export type OwnershipLane = {
 export type OwnershipDocument = {
   schemaVersion: number;
   generatedAt: string;
+  productionBaselineReconciledAt?: string;
   productionBaseSha: string;
   lanes: OwnershipLane[];
   rules: OwnershipRule[];
@@ -168,6 +169,7 @@ export function trustedReleaseIdentityFromEnvironment(
 const OWNERSHIP_TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
   "generatedAt",
+  "productionBaselineReconciledAt",
   "productionBaseSha",
   "lanes",
   "rules",
@@ -244,6 +246,13 @@ export function parseOwnershipDocument(raw: Buffer | string): {
     document.schemaVersion !== 1 ||
     !nonEmptyString(document.generatedAt) ||
     !Number.isFinite(new Date(document.generatedAt).getTime()) ||
+    !(
+      document.productionBaselineReconciledAt === undefined ||
+      (
+        nonEmptyString(document.productionBaselineReconciledAt) &&
+        Number.isFinite(new Date(document.productionBaselineReconciledAt).getTime())
+      )
+    ) ||
     typeof document.productionBaseSha !== "string" ||
     !SHA_PATTERN.test(document.productionBaseSha) ||
     !Array.isArray(document.lanes) ||
@@ -337,6 +346,9 @@ export function parseOwnershipDocument(raw: Buffer | string): {
     document: {
       schemaVersion: document.schemaVersion,
       generatedAt: document.generatedAt,
+      ...(document.productionBaselineReconciledAt === undefined
+        ? {}
+        : { productionBaselineReconciledAt: document.productionBaselineReconciledAt }),
       productionBaseSha: document.productionBaseSha,
       lanes: parsedLanes,
       rules: parsedRules,

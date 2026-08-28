@@ -2,6 +2,22 @@
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-08-28T04:01:00Z",
+  "historicalSnapshots": [
+    {
+      "id": "production-state-20260730",
+      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+      "observedAt": "2026-07-30T21:25:26Z",
+      "source": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "gitBlobSha": "322df6d9feb008acc834df2ec0e87e008993e3dc"
+    },
+    {
+      "id": "release-graph-20260730",
+      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+      "observedAt": "2026-07-30T21:25:26Z",
+      "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json",
+      "gitBlobSha": "3915f85c82ed05fcdfc7d43232364c4c0ca7d990"
+    }
+  ],
   "production": {
     "gitSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
@@ -35,6 +51,7 @@
     {
       "lane": "Failed composite Research RC",
       "headSha": "a1bbc2a186ebbf96cead429a78dc30ffdc811005",
+      "graphNodeId": "failed-rc-a1bbc2a1",
       "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "state": "PROHIBITED",
       "reason": "Development source only. It is not deployed and must never be treated as a production or deployment candidate."
@@ -42,8 +59,33 @@
     {
       "lane": "Warm-silver editorial homepage source",
       "headSha": "8e8933cee58af2750edf69d672a463884df29634",
+      "graphNodeId": "editorial-homepage-8e8933ce",
       "state": "SOURCE_ONLY_RECONCILIATION_REQUIRED",
       "reason": "This separate editorial-homepage commit is not in the failed composite RC ancestry. Lane 02 and Lead must reconcile it deliberately and prove public visual, responsive, accessibility, and catalog-guard evidence before PASS."
+    },
+    {
+      "pullRequest": 117,
+      "lane": "Historical persistent-cart lineage",
+      "headSha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
+      "graphNodeId": "pr117-persistent-cart",
+      "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "reason": "The 2026-07-30 snapshot recorded this source as accepted with a protected migration pending. That dated acceptance is preserved historically but is not re-attested against current production 3daa; exact-SHA ancestry, contracts, migration state, and current review must be reconciled before any integration or apply."
+    },
+    {
+      "pullRequest": 106,
+      "lane": "Historical operations and affiliates lineage",
+      "headSha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
+      "graphNodeId": "pr106-operations-affiliates",
+      "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "reason": "The 2026-07-30 snapshot recorded this source as accepted with transfer and managed migrations pending. That dated acceptance is preserved historically but is not re-attested against current production 3daa; exact-SHA ancestry, contracts, migration state, and current review must be reconciled before integration."
+    },
+    {
+      "pullRequest": 144,
+      "lane": "Historical pricing-model lineage",
+      "headSha": "410e687898d6406a684023e8327dc5fb697b30d3",
+      "graphNodeId": "pr144-pricing-model",
+      "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "reason": "The 2026-07-30 snapshot froze this candidate pending reconciliation against founder-locked pricing authority. It remains frozen; no current acceptance or ancestry is claimed."
     }
   ],
   "knownRisks": [
@@ -61,6 +103,11 @@
       "id": "DATABASE_EVIDENCE_UNAVAILABLE",
       "state": "OPEN_EVIDENCE_GAP",
       "summary": "No current database aggregates or migration-ledger observations were refreshed in this read-only reconciliation."
+    },
+    {
+      "id": "HISTORICAL_PR_LINEAGE_UNRESOLVED",
+      "state": "OPEN_GATE",
+      "summary": "PR117, PR106, and PR144 facts remain preserved as dated historical evidence, but none is currently accepted against the 3daa production baseline."
     }
   ],
   "evidenceLimitations": [

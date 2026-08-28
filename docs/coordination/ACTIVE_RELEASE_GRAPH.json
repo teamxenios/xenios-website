@@ -3,6 +3,22 @@
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-08-28T04:01:00Z",
   "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "historicalSnapshots": [
+    {
+      "id": "production-state-20260730",
+      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+      "observedAt": "2026-07-30T21:25:26Z",
+      "source": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "gitBlobSha": "322df6d9feb008acc834df2ec0e87e008993e3dc"
+    },
+    {
+      "id": "release-graph-20260730",
+      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+      "observedAt": "2026-07-30T21:25:26Z",
+      "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json",
+      "gitBlobSha": "3915f85c82ed05fcdfc7d43232364c4c0ca7d990"
+    }
+  ],
   "nodes": [
     {
       "id": "production-3daa3f4a",
@@ -27,6 +43,73 @@
       "state": "SOURCE_ONLY_RECONCILIATION_REQUIRED",
       "sha": "8e8933cee58af2750edf69d672a463884df29634",
       "label": "Separate warm-silver editorial homepage source; absent from failed RC ancestry"
+    },
+    {
+      "id": "pr117-persistent-cart",
+      "type": "candidate",
+      "owner": "Lead",
+      "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "sha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
+      "pullRequest": 117,
+      "label": "Historical accepted/pending fact preserved; current 3daa ancestry, contracts, migration state, and exact-SHA review unresolved"
+    },
+    {
+      "id": "pr106-operations-affiliates",
+      "type": "candidate",
+      "owner": "Lead",
+      "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "sha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
+      "pullRequest": 106,
+      "label": "Historical accepted/transfer-pending fact preserved; current 3daa ancestry, contracts, migration state, and exact-SHA review unresolved"
+    },
+    {
+      "id": "pr144-pricing-model",
+      "type": "candidate",
+      "owner": "Lead / independent reviewer",
+      "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "sha": "410e687898d6406a684023e8327dc5fb697b30d3",
+      "pullRequest": 144,
+      "label": "Historical frozen disposition preserved; founder-locked pricing reconciliation and current exact-SHA acceptance remain required"
+    },
+    {
+      "id": "founder-decision-lock-20260730",
+      "type": "authority",
+      "owner": "Samuel",
+      "state": "LOCKED",
+      "sha": null,
+      "label": "Founder Decision Lock and Codex Execution Addendum; 2.5x pricing and sole Codex release control"
+    },
+    {
+      "id": "founder-workaround-addendum-20260730",
+      "type": "authority",
+      "owner": "Samuel",
+      "state": "LOCKED",
+      "sha": null,
+      "label": "Missing-inputs workaround and CRM activation addendum; source and workbook digests remain preserved in the dated historical snapshot"
+    },
+    {
+      "id": "founder-final-full-website-directive-20260730",
+      "type": "authority",
+      "owner": "Samuel",
+      "state": "LOCKED",
+      "sha": null,
+      "label": "Final full-website completion directive; Codex remains sole release operator and independent review remains required"
+    },
+    {
+      "id": "immutable-paid-order-evidence",
+      "type": "future_gate",
+      "owner": "Lead",
+      "state": "BLOCKED",
+      "sha": null,
+      "label": "Immutable paid-order economics evidence"
+    },
+    {
+      "id": "commission-payout-activation",
+      "type": "future_gate",
+      "owner": "Lead",
+      "state": "BLOCKED",
+      "sha": null,
+      "label": "Commission and payout activation"
     },
     {
       "id": "public-homepage-reconciliation",
@@ -62,6 +145,31 @@
       "relation": "source_requiring_semantic_reconciliation"
     },
     {
+      "from": "production-3daa3f4a",
+      "to": "pr117-persistent-cart",
+      "relation": "current_reconciliation_baseline_for"
+    },
+    {
+      "from": "pr117-persistent-cart",
+      "to": "pr106-operations-affiliates",
+      "relation": "historically_required_to_precede"
+    },
+    {
+      "from": "founder-decision-lock-20260730",
+      "to": "pr144-pricing-model",
+      "relation": "requires_reconciliation_before_acceptance"
+    },
+    {
+      "from": "immutable-paid-order-evidence",
+      "to": "commission-payout-activation",
+      "relation": "required_before"
+    },
+    {
+      "from": "pr106-operations-affiliates",
+      "to": "commission-payout-activation",
+      "relation": "remains_disabled_until"
+    },
+    {
       "from": "public-homepage-reconciliation",
       "to": "omega-full-finish-candidate",
       "relation": "required_before"
@@ -71,6 +179,8 @@
     "Use 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 as the sole attested production baseline.",
     "Treat a1bbc2a186ebbf96cead429a78dc30ffdc811005 only as prohibited development source; never deploy it.",
     "Reconcile 8e8933cee58af2750edf69d672a463884df29634 deliberately with the preserved production/Hino runtime and prove the public homepage gate.",
+    "Preserve founder authority and the dated PR117, PR106, and PR144 facts without treating their historical acceptance states as current; reconcile each exact SHA explicitly against 3daa before any use.",
+    "Keep paid-order economics, commission, and payout activation blocked until immutable evidence and independent acceptance exist.",
     "Integrate only tested and pushed lane handoffs by exact SHA, then compose Lead-owned protected files.",
     "Freeze one candidate SHA only after source, migration, security, accessibility, route, and runtime evidence is reproducible.",
     "No deployment or production mutation is authorized by this graph."
