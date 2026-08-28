@@ -1,0 +1,218 @@
+.xr-b2b-hero-band {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.xr-b2b-hero-band::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), color-mix(in srgb, var(--rule) 35%, transparent) 100%),
+    linear-gradient(0deg, transparent 0, transparent calc(100% - 1px), color-mix(in srgb, var(--rule) 28%, transparent) 100%);
+  background-size: 96px 96px;
+  mask-image: linear-gradient(to right, transparent, #000 52%, #000);
+  opacity: 0.45;
+}
+
+.xr-b2b-hero-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 24px;
+  align-items: end;
+  padding-block: clamp(32px, 6vw, 72px);
+}
+
+.xr-b2b-hero-actions,
+.xr-b2b-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.xr-b2b-section {
+  padding-block: clamp(44px, 7vw, 84px);
+}
+
+.xr-b2b-section + .xr-b2b-section {
+  border-top: 1px solid var(--rule);
+}
+
+.xr-b2b-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
+.xr-b2b-pathway-card {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: var(--paper);
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.xr-b2b-pathway-card .xr-b2b-card-actions {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.xr-b2b-review {
+  margin-top: 18px;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+
+.xr-b2b-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: var(--rule);
+}
+
+.xr-b2b-step {
+  min-height: 190px;
+  background: var(--paper);
+  padding: 24px;
+}
+
+.xr-b2b-step-number {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.xr-b2b-boundary {
+  border-left: 3px solid var(--pulse);
+  background: var(--paper-2);
+  padding: clamp(22px, 4vw, 36px);
+}
+
+.xr-b2b-checklist {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.xr-b2b-checklist li {
+  position: relative;
+  padding-left: 24px;
+}
+
+.xr-b2b-checklist li::before {
+  position: absolute;
+  top: 0.65em;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--ink-mute);
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.xr-b2b-inquiry {
+  border: 1px solid var(--rule);
+  border-radius: 22px;
+  background: var(--paper-2);
+  padding: clamp(22px, 5vw, 44px);
+}
+
+.xr-b2b-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.xr-b2b-field-wide {
+  grid-column: 1 / -1;
+}
+
+.xr-b2b-field .input-field {
+  min-height: 48px;
+}
+
+.xr-b2b-inquiry textarea.input-field {
+  height: auto;
+  min-height: 144px;
+  padding-block: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.xr-b2b-field .input-field[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+.xr-b2b-field-error {
+  margin-top: 8px;
+  color: var(--error);
+}
+
+.xr-b2b-form-errors,
+.xr-b2b-prepared {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  padding: 20px;
+}
+
+.xr-b2b-form-errors:focus-visible {
+  outline: 2px solid var(--pulse);
+  outline-offset: 3px;
+}
+
+.xr-b2b-form-errors ul {
+  display: grid;
+  gap: 6px;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.xr-b2b-summary {
+  min-height: 260px;
+  resize: vertical;
+  white-space: pre-wrap;
+}
+
+@media (min-width: 860px) {
+  .xr-b2b-hero-content {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 639px) {
+  .xr-b2b-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .xr-b2b-field-wide {
+    grid-column: auto;
+  }
+
+  .xr-b2b-hero-actions .btn,
+  .xr-b2b-card-actions .btn,
+  .xr-b2b-inquiry .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xr-b2b-pathway-card,
+  .xr-b2b-inquiry {
+    scroll-behavior: auto;
+  }
+}
