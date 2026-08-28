@@ -52,7 +52,7 @@ export default function IcpPage() {
           <h2 className="display-m text-paper mb-6 max-w-[24ch]">Ready to put your practice on one rail?</h2>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/waitlist" className="btn btn-primary btn-on-dark">Join the waitlist</Link>
-            <Link href="/for-practitioners" className="btn btn-ghost-on-dark">All categories</Link>
+            <Link href="/for-practitioners" className="btn btn-ghost btn-on-dark">All categories</Link>
           </div>
           <p className="mono-cap text-paper/60 mt-8">{SITE.location}</p>
         </div>
