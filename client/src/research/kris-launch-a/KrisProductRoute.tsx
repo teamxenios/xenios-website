@@ -32,9 +32,9 @@ export default function KrisProductRoute({
   if (!isKrisFamily(family) || slug.trim() === "") {
     const copy = KRIS_STATE_COPY.not_found;
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <ResearchEmptyState title={copy.title} body={copy.body} />
-      </main>
+      </div>
     );
   }
 

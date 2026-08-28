@@ -36,7 +36,7 @@ export function KrisDetail({
   ];
 
   return (
-    <main className="grid min-w-0 gap-6">
+    <div className="grid min-w-0 gap-6">
       <nav aria-label="Breadcrumb" className="min-w-0">
         <Link
           className="body-s underline-offset-4 hover:underline"
@@ -119,7 +119,7 @@ export function KrisDetail({
           </ul>
         </section>
       )}
-    </main>
+    </div>
   );
 }
 

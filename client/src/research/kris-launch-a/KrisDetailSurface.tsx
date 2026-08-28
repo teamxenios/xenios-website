@@ -73,12 +73,12 @@ export function KrisDetailSurface({
 
   if (state === "loading") {
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <p className="sr-only" role="status" aria-live="polite">
           Loading the item
         </p>
         <KrisDetailSkeleton />
-      </main>
+      </div>
     );
   }
 
@@ -86,7 +86,7 @@ export function KrisDetailSurface({
     const copy = KRIS_STATE_COPY[state === "ok" ? "unavailable" : state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <ResearchEmptyState
           title={copy.title}
           body={copy.body}
@@ -103,7 +103,7 @@ export function KrisDetailSurface({
             ) : undefined
           }
         />
-      </main>
+      </div>
     );
   }
 

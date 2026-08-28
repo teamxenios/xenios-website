@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { act } from "react";
@@ -14,6 +14,7 @@ const pagesRoot = dirname(fileURLToPath(import.meta.url));
 const indexCss = readFileSync(resolve(pagesRoot, "../../index.css"), "utf8");
 const gatewayCss = readFileSync(resolve(pagesRoot, "gateway-editorial.css"), "utf8");
 const signInSource = readFileSync(resolve(pagesRoot, "SignIn.tsx"), "utf8");
+const krisDir = resolve(pagesRoot, "../kris-launch-a");
 
 describe("TARGETS_44x44 — Sign in standalone links", () => {
   it("gives every standalone Sign in link the shared 44 px documentation-link box", () => {
@@ -29,6 +30,17 @@ describe("TARGETS_44x44 — Gateway skip link", () => {
   it("is at least 44 px tall when revealed by focus (measured 177x42 before)", () => {
     expect(gatewayCss).toMatch(/\.rg-skip-link \{[^}]*min-height: 44px;[^}]*display: inline-flex;[^}]*align-items: center;/);
     expect(gatewayCss).toMatch(/\.rg-skip-link:focus \{ transform: translateY\(0\); \}/);
+  });
+});
+
+describe("NO_NESTED_MAIN — Kris Launch A member catalog surfaces", () => {
+  it("renders no <main> of its own: the Research layout already owns the page's single main landmark", () => {
+    // /research/member/kris-catalog and /research/member/kris-catalog/:family/:slug
+    // mount through <L member> inside layout.tsx's <main className="flex-1">.
+    for (const file of readdirSync(krisDir).filter((f) => f.endsWith(".tsx") && !f.includes(".test."))) {
+      const source = readFileSync(resolve(krisDir, file), "utf8");
+      expect(source, file).not.toMatch(/<main[\s>]/);
+    }
   });
 });
 
