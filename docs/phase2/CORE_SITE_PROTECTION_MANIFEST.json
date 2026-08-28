@@ -550,7 +550,7 @@
       "client/src/pages/Home.tsx: old sha256:7fe88e0c954c8af9bd90f7e90399b7bdb11d2e20aeec8ef38420cbda52b7e463, new sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9 (e551082 fix(quality): harden public UX and indexing policy).",
       "server/routes.ts: old sha256:6b080fff3ed04fd48eb3af7aa9272d26cbc6f570c4f2c42a17979affe299f94f, new sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4 (a01d152 fix(privacy): constrain public attribution vocabulary).",
       "server/static.ts: old sha256:7ad68ceb8da0fe0b29af6d517e66cfc14f106a641de845aac4f1bd995ad24f4a, new sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897 (600e45a feat(seo): answer every document through the raw HTTP policy in static and dev serving).",
-      "server/static.ts: old sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897, new sha256:376f0cb4a7e96061e6aaeade1dece8bfb8036f2a11afb9060b3ca42beffd2238 (2026-08-28 Claude Lead fix(static), successor of 7931044a: /hino and every other static directory index under dist/public are served by express.static again exactly as production 3daa3f4a does; only GET / and GET /index.html are answered by the raw HTTP policy handler registered before express.static, as two statically resolvable registrations; the /{*path} policy fallback is unchanged)."
+      "server/static.ts: old sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897, new sha256:d3c629917bbf413b3217721673d491e6b1635683d89c6fbd0297f732f78125cf (2026-08-28 Claude Lead fix(static), successors of 7931044a: /hino and every other static directory index under dist/public are served by express.static again exactly as production 3daa3f4a does; only GET/HEAD / and /index.html are answered by the raw HTTP policy handler through a guarded app.use registered before express.static — not app.get, because document routes are not API routes and the census admits only explicit /api/ paths; the /{*path} policy fallback is unchanged; route census stays 399/408)."
     ],
     "files": {
       "client/index.html": "sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5",
@@ -571,7 +571,7 @@
       "client/public/sitemap.xml": "sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
-      "server/static.ts": "sha256:376f0cb4a7e96061e6aaeade1dece8bfb8036f2a11afb9060b3ca42beffd2238",
+      "server/static.ts": "sha256:d3c629917bbf413b3217721673d491e6b1635683d89c6fbd0297f732f78125cf",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
     }
