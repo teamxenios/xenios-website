@@ -38,6 +38,7 @@ import type {
   AssistedOrderAdminListPage,
   AssistedOrderDependencies,
   AssistedOrderGoogleMirrorRow,
+  AssistedOrderStatusAuthorityEvidenceKind,
   AssistedOrderStatusAuthorization,
   AssistedOrderViewer,
   ResolvedAssistedOrderLine,
@@ -99,11 +100,20 @@ const allowedTransitions: Readonly<Record<AssistedOrderStatus, readonly Assisted
     cancelled: [],
   });
 
-const uploadMimeTypes = new Set([
+type AssistedOrderUploadMimeType =
+  | "image/jpeg"
+  | "image/png"
+  | "application/pdf";
+
+const uploadMimeTypes = new Set<AssistedOrderUploadMimeType>([
   "image/jpeg",
   "image/png",
   "application/pdf",
 ]);
+
+function isUploadMimeType(value: string): value is AssistedOrderUploadMimeType {
+  return uploadMimeTypes.has(value as AssistedOrderUploadMimeType);
+}
 
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 const UPLOAD_TICKET_SECONDS = 15 * 60;
@@ -125,7 +135,27 @@ function requireCapability(
 }
 
 function viewerActorId(viewer: AssistedOrderViewer): string | null {
-  return viewer.memberId ?? viewer.earlyAccessSessionHash;
+  switch (viewer.actorType) {
+    case "member":
+      return viewer.memberId;
+    case "early_access_session":
+      return viewer.earlyAccessSessionHash;
+    case "admin":
+      return viewer.memberId ?? viewer.actorLabel ?? viewer.normalizedEmail;
+  }
+}
+
+function statusAuthorityEvidenceKinds(
+  evidence: AssistedOrderStatusUpdateInput["evidence"],
+): readonly AssistedOrderStatusAuthorityEvidenceKind[] {
+  if (!evidence) return Object.freeze([]);
+  const kinds: AssistedOrderStatusAuthorityEvidenceKind[] = [];
+  if (evidence.agreementAttestationId) kinds.push("agreement_attestation");
+  if (evidence.paymentVerificationId) kinds.push("payment_verification");
+  if (evidence.supplierAssignmentId) kinds.push("supplier_assignment");
+  if (evidence.trackingId) kinds.push("tracking");
+  if (evidence.cancellationReason) kinds.push("cancellation_reason_present");
+  return Object.freeze(kinds);
 }
 
 function nextStepsForModes(
@@ -842,7 +872,7 @@ export class AssistedOrderService {
           evidence: Object.freeze({
             from: current.status,
             to: updated.status,
-            authorityEvidence: input.evidence ?? {},
+            authorityEvidenceKinds: statusAuthorityEvidenceKinds(input.evidence),
           }),
           occurredAt: nowIso,
         }),
@@ -897,7 +927,7 @@ export class AssistedOrderService {
         "Identity documents may be uploaded only after Xenios requests them.",
       );
     }
-    if (!uploadMimeTypes.has(input.mimeType)) {
+    if (!isUploadMimeType(input.mimeType)) {
       throw new AssistedOrderValidationError(
         "mimeType",
         "Only JPEG, PNG, and PDF files are supported.",
@@ -931,15 +961,14 @@ export class AssistedOrderService {
       retentionExpiresAt,
     });
 
-    const ticket = await this.deps.documents.createUpload({
-      objectPath,
-      mimeType: input.mimeType,
-      sizeBytes: input.sizeBytes,
-      expiresInSeconds: UPLOAD_TICKET_SECONDS,
-    });
+    // Record authorization durably BEFORE asking storage to mint a signed
+    // capability. If the audit authority is absent or unavailable, no URL is
+    // created or exposed. The event is named "authorized", not "uploaded": a
+    // later storage call can still fail and there is no cross-service atomic
+    // transaction to pretend otherwise.
     await this.deps.audit.record({
       eventId: this.deps.ids.uuid(),
-      eventType: "assisted_order.document_upload_requested",
+      eventType: "assisted_order.document_upload_authorized",
       requestId,
       actorType: viewer.actorType,
       actorId: viewerActorId(viewer),
@@ -951,6 +980,12 @@ export class AssistedOrderService {
         sizeBytes: input.sizeBytes,
       }),
       occurredAt: now.toISOString(),
+    });
+    const ticket = await this.deps.documents.createUpload({
+      objectPath,
+      mimeType: input.mimeType,
+      sizeBytes: input.sizeBytes,
+      expiresInSeconds: UPLOAD_TICKET_SECONDS,
     });
     return Object.freeze({ ...ticket, documentId, objectPath });
   }
@@ -990,6 +1025,24 @@ export class AssistedOrderService {
       throw new AssistedOrderNotFoundError();
     }
     const nowIso = this.deps.clock.now().toISOString();
+    // Persist completion authorization before changing the domain row. That
+    // guarantees no uploaded state can exist without durable audit coverage,
+    // while the event name remains truthful if the later repository write
+    // fails. The repository's uploaded row is the completion fact; this
+    // separate store never pretends the two writes are one transaction.
+    await this.deps.audit.record({
+      eventId: this.deps.ids.uuid(),
+      eventType: "assisted_order.document_upload_completion_authorized",
+      requestId,
+      actorType: viewer.actorType,
+      actorId: viewerActorId(viewer),
+      evidence: Object.freeze({
+        documentId,
+        documentType: record.documentType,
+        sizeBytes: record.sizeBytes,
+      }),
+      occurredAt: nowIso,
+    });
     await this.deps.repository.completeDocument({
       requestId,
       documentId,
@@ -1015,19 +1068,6 @@ export class AssistedOrderService {
         }),
         dedupeKey: `assisted-order:${requestId}:document:${documentId}:uploaded`,
         createdAt: nowIso,
-      }),
-      this.deps.audit.record({
-        eventId: this.deps.ids.uuid(),
-        eventType: "assisted_order.document_uploaded",
-        requestId,
-        actorType: viewer.actorType,
-        actorId: viewerActorId(viewer),
-        evidence: Object.freeze({
-          documentId,
-          documentType: record.documentType,
-          sizeBytes: record.sizeBytes,
-        }),
-        occurredAt: nowIso,
       }),
     ]);
     effects.forEach((effect) => {
@@ -1057,20 +1097,23 @@ export class AssistedOrderService {
     if (!document || document.status === "deleted" || document.status === "expired") {
       throw new AssistedOrderNotFoundError();
     }
-    const ticket = await this.deps.documents.createDownload({
-      objectPath: document.objectPath,
-      expiresInSeconds: DOWNLOAD_TICKET_SECONDS,
-    });
+    // Authorization is the fact we can prove before capability creation. A
+    // signed URL does not prove bytes were downloaded, and no database write
+    // can be atomic with the storage provider's signer. Audit first so a sink
+    // failure can never leak an unrecorded capability.
     await this.deps.audit.record({
       eventId: this.deps.ids.uuid(),
-      eventType: "assisted_order.document_downloaded",
+      eventType: "assisted_order.document_download_authorized",
       requestId,
       actorType: "admin",
-      actorId: viewer.memberId,
+      actorId: viewerActorId(viewer),
       evidence: Object.freeze({ documentId }),
       occurredAt: this.deps.clock.now().toISOString(),
     });
-    return ticket;
+    return this.deps.documents.createDownload({
+      objectPath: document.objectPath,
+      expiresInSeconds: DOWNLOAD_TICKET_SECONDS,
+    });
   }
 
   // Fails closed: a submission is accepted only when every required

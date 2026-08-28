@@ -5,7 +5,9 @@ import type {
 } from "../../../shared/research/assisted-order/contract";
 import type {
   AssistedOrderCreateRecord,
+  AssistedOrderAuditSink,
   AssistedOrderDependencies,
+  AssistedOrderDocumentStore,
   AssistedOrderLegalPort,
   AssistedOrderNotificationIntent,
   AssistedOrderSubmissionStanding,
@@ -155,11 +157,13 @@ function harness(
   overrides: {
     legal?: AssistedOrderLegalPort | null;
     submissionStanding?: AssistedOrderSubmissionStanding | null;
+    auditRecord?: AssistedOrderAuditSink["record"];
+    documents?: AssistedOrderDocumentStore;
   } = {},
 ) {
   const repository = new InMemoryAssistedOrderRepository();
   const notifications: AssistedOrderNotificationIntent[] = [];
-  const audit = vi.fn(async () => undefined);
+  const audit = vi.fn(overrides.auditRecord ?? (async () => undefined));
   const mirror = vi.fn(async () => undefined);
   let sequence = 0;
   let referenceSequence = 0;
@@ -215,7 +219,7 @@ function harness(
       },
     },
     audit: { record: audit },
-    documents: {
+    documents: overrides.documents ?? {
       createUpload: async (request) => ({
         documentId: "assigned-by-service",
         uploadUrl: "https://storage.example/upload",
@@ -529,6 +533,15 @@ describe("AssistedOrderService", () => {
       evidence: { paymentVerificationId: "payment-verification-1" },
     });
     expect(updated.status).toBe("paid");
+    const auditEvent = h.audit.mock.calls
+      .map((call) => call[0])
+      .find((event) => event.eventType === "assisted_order.status_changed" && event.evidence.to === "paid");
+    expect(auditEvent?.evidence).toEqual({
+      from: "payment_review",
+      to: "paid",
+      authorityEvidenceKinds: ["payment_verification"],
+    });
+    expect(JSON.stringify(auditEvent)).not.toContain("payment-verification-1");
   });
 
   it("does not collect government ID until identity is requested", async () => {
@@ -567,6 +580,181 @@ describe("AssistedOrderService", () => {
     });
     expect(ticket.uploadUrl).toBe("https://storage.example/upload");
     expect(ticket.objectPath).toContain(receipt.requestId);
+  });
+
+  it("records durable upload authorization before asking storage for a signed capability", async () => {
+    const order: string[] = [];
+    const createUpload = vi.fn(async (request: Parameters<AssistedOrderDocumentStore["createUpload"]>[0]) => {
+      order.push("sign");
+      return {
+        documentId: "assigned-by-service",
+        uploadUrl: "https://storage.example/upload",
+        objectPath: request.objectPath,
+        expiresAt: "2026-08-15T12:15:00.000Z",
+        requiredHeaders: { "content-type": request.mimeType },
+      };
+    });
+    const h = harness(item(), {
+      auditRecord: async (event) => {
+        if (event.eventType === "assisted_order.document_upload_authorized") {
+          order.push("audit");
+        }
+      },
+      documents: {
+        createUpload,
+        createDownload: async () => ({
+          url: "https://storage.example/download",
+          expiresAt: "2026-08-15T12:05:00.000Z",
+        }),
+      },
+    });
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
+    await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
+      publicReference: receipt.publicReference,
+      statusToken: receipt.statusToken,
+      documentType: "government_id",
+      side: "front",
+      fileName: "id-front.jpg",
+      mimeType: "image/jpeg",
+      sizeBytes: 1000,
+    });
+    expect(order).toEqual(["audit", "sign"]);
+  });
+
+  it("never mints an upload capability when the durable audit refuses", async () => {
+    const createUpload = vi.fn();
+    const h = harness(item(), {
+      auditRecord: async (event) => {
+        if (event.eventType === "assisted_order.document_upload_authorized") {
+          throw new Error("audit unavailable");
+        }
+      },
+      documents: {
+        createUpload,
+        createDownload: vi.fn(),
+      },
+    });
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
+    await expect(
+      h.service.createDocumentUpload(memberViewer, receipt.requestId, {
+        publicReference: receipt.publicReference,
+        statusToken: receipt.statusToken,
+        documentType: "government_id",
+        side: "front",
+        fileName: "id-front.jpg",
+        mimeType: "image/jpeg",
+        sizeBytes: 1000,
+      }),
+    ).rejects.toThrow("audit unavailable");
+    expect(createUpload).not.toHaveBeenCalled();
+  });
+
+  it("never mints a download capability when the durable audit refuses", async () => {
+    const createDownload = vi.fn(async () => ({
+      url: "https://storage.example/download",
+      expiresAt: "2026-08-15T12:05:00.000Z",
+    }));
+    const h = harness(item(), {
+      auditRecord: async () => undefined,
+      documents: {
+        createUpload: async (request) => ({
+          documentId: "assigned-by-service",
+          uploadUrl: "https://storage.example/upload",
+          objectPath: request.objectPath,
+          expiresAt: "2026-08-15T12:15:00.000Z",
+          requiredHeaders: { "content-type": request.mimeType },
+        }),
+        createDownload,
+      },
+    });
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
+    const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
+      publicReference: receipt.publicReference,
+      statusToken: receipt.statusToken,
+      documentType: "government_id",
+      side: "front",
+      fileName: "id-front.jpg",
+      mimeType: "image/jpeg",
+      sizeBytes: 1000,
+    });
+    await h.service.completeDocumentUpload(
+      memberViewer,
+      receipt.requestId,
+      ticket.documentId,
+      receipt.publicReference,
+      receipt.statusToken,
+    );
+    h.audit.mockImplementation(async (event) => {
+      if (event.eventType === "assisted_order.document_download_authorized") {
+        throw new Error("audit unavailable");
+      }
+    });
+    await expect(
+      h.service.createDocumentDownload(adminViewer, receipt.requestId, ticket.documentId),
+    ).rejects.toThrow("audit unavailable");
+    expect(createDownload).not.toHaveBeenCalled();
+  });
+
+  it("never commits uploaded state when durable completion authorization audit refuses", async () => {
+    const h = harness(item(), {
+      auditRecord: async (event) => {
+        if (
+          event.eventType ===
+          "assisted_order.document_upload_completion_authorized"
+        ) {
+          throw new Error("audit unavailable");
+        }
+      },
+    });
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
+    const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
+      publicReference: receipt.publicReference,
+      statusToken: receipt.statusToken,
+      documentType: "government_id",
+      side: "front",
+      fileName: "id-front.jpg",
+      mimeType: "image/jpeg",
+      sizeBytes: 1000,
+    });
+    await expect(
+      h.service.completeDocumentUpload(
+        memberViewer,
+        receipt.requestId,
+        ticket.documentId,
+        receipt.publicReference,
+        receipt.statusToken,
+      ),
+    ).rejects.toThrow("audit unavailable");
+    expect(
+      await h.repository.getDocument({
+        requestId: receipt.requestId,
+        documentId: ticket.documentId,
+      }),
+    ).toMatchObject({ status: "upload_pending" });
+  });
+
+  it("keeps submitted and status truth durable in their domain transaction when supplemental audit fails", async () => {
+    const h = harness(item(), {
+      auditRecord: async () => {
+        throw new Error("supplemental audit unavailable");
+      },
+    });
+    const receipt = await h.service.submit(memberViewer, input());
+    const updated = await h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "reviewing",
+    });
+    expect(updated.timeline.map((event) => event.status)).toEqual([
+      "submitted",
+      "reviewing",
+    ]);
   });
 
   it("lets a manage-capability admin with no member row update status", async () => {

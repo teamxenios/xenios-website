@@ -222,18 +222,75 @@ export type AssistedOrderOutbox = Readonly<{
 
 export type AssistedOrderAuditEvent = Readonly<{
   eventId: string;
-  eventType:
-    | "assisted_order.submitted"
-    | "assisted_order.status_changed"
-    | "assisted_order.document_upload_requested"
-    | "assisted_order.document_uploaded"
-    | "assisted_order.document_downloaded";
   requestId: string;
   actorType: AssistedOrderViewer["actorType"] | "system";
   actorId: string | null;
-  evidence: Readonly<Record<string, unknown>>;
   occurredAt: string;
-}>;
+}> &
+  (
+    | Readonly<{
+        eventType: "assisted_order.submitted";
+        evidence: Readonly<{
+          lineCount: number;
+          workflowModes: readonly AssistedOrderWorkflowMode[];
+          requestFingerprint: string;
+        }>;
+      }>
+    | Readonly<{
+        eventType: "assisted_order.status_changed";
+        evidence: Readonly<{
+          from: AssistedOrderStatus;
+          to: AssistedOrderStatus;
+          /**
+           * Presence-only authority categories. The audit boundary never
+           * receives the evidence identifiers, cancellation text, internal
+           * note, or customer message carried by the status command.
+           */
+          authorityEvidenceKinds: readonly AssistedOrderStatusAuthorityEvidenceKind[];
+        }>;
+      }>
+    | Readonly<{
+        /**
+         * Durable authorization recorded before a signed upload capability is
+         * requested. It does not assert that signing or upload succeeded.
+         */
+        eventType: "assisted_order.document_upload_authorized";
+        evidence: Readonly<{
+          documentId: string;
+          documentType: AssistedOrderDocumentType;
+          side: AssistedOrderDocumentSide;
+          mimeType: "image/jpeg" | "image/png" | "application/pdf";
+          sizeBytes: number;
+        }>;
+      }>
+    | Readonly<{
+        /**
+         * Durable authorization recorded before the document repository may
+         * transition the row to uploaded. The row remains the success fact.
+         */
+        eventType: "assisted_order.document_upload_completion_authorized";
+        evidence: Readonly<{
+          documentId: string;
+          documentType: AssistedOrderDocumentType;
+          sizeBytes: number;
+        }>;
+      }>
+    | Readonly<{
+        /**
+         * Durable authorization recorded before a signed download capability
+         * is requested. It deliberately does not claim bytes were downloaded.
+         */
+        eventType: "assisted_order.document_download_authorized";
+        evidence: Readonly<{ documentId: string }>;
+      }>
+  );
+
+export type AssistedOrderStatusAuthorityEvidenceKind =
+  | "agreement_attestation"
+  | "payment_verification"
+  | "supplier_assignment"
+  | "tracking"
+  | "cancellation_reason_present";
 
 export type AssistedOrderAuditSink = Readonly<{
   record(event: AssistedOrderAuditEvent): Promise<void>;
