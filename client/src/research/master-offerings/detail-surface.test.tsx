@@ -54,6 +54,8 @@ const BAND: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-13T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -423,6 +425,8 @@ describe("detail surface", () => {
             ...BAND,
             productId: action.productId,
             variantId: action.variantId,
+            sku: action.sku,
+            evaluatedAt: action.evaluatedAt,
           }
         : null;
     };

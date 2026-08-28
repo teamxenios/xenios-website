@@ -19,7 +19,10 @@ import {
   type CatalogCartHandoff,
   type ExistingCart,
 } from "./catalog-cart-handoff";
-import type { AcceptedExactVariantQuantityCapability } from "./integration-packet";
+import {
+  isRuntimeAddToCartAction,
+  type AcceptedExactVariantQuantityCapability,
+} from "./integration-packet";
 import { MasterOfferingDetailSurface } from "./MasterOfferingDetailSurface";
 
 /**
@@ -33,19 +36,22 @@ const FOUNDER_QUANTITY_SOURCE_VERSION = `early-access-quantity:${EARLY_ACCESS_MI
 
 /**
  * The accepted exact-variant quantity capability for one server-resolved
- * purchase action. Only `add_to_cart` has one, and its identity is copied from
- * the action the server emitted, so the capability can never name a variant
- * the server did not authorize.
+ * purchase action. Only a runtime-valid `add_to_cart` has one, and its product,
+ * variant, SKU, and evaluation instant are copied from the browser-safe action
+ * the server emitted. This is quantity-policy correlation, not activation
+ * authority; durable activation evidence never enters the browser.
  */
 export function founderQuantityCapabilityFor(
   variant: MasterOfferingVariantView,
 ): AcceptedExactVariantQuantityCapability | null {
   const action = variant.action;
-  if (action.kind !== "add_to_cart") return null;
+  if (!isRuntimeAddToCartAction(action)) return null;
   return {
     source: "accepted_quantity_policy",
     productId: action.productId,
     variantId: action.variantId,
+    sku: action.sku,
+    evaluatedAt: action.evaluatedAt,
     minimum: EARLY_ACCESS_MIN_QUANTITY,
     maximum: EARLY_ACCESS_MAX_QUANTITY,
     aggregateMaximum: EARLY_ACCESS_MAX_QUANTITY,

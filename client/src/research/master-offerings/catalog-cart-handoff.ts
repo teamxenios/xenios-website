@@ -1,5 +1,6 @@
 import type { MasterOfferingAction } from "@shared/research/master-offerings/contract";
 import {
+  isRuntimeAddToCartAction,
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
 } from "./integration-packet";
@@ -87,16 +88,10 @@ export function buildCatalogCartRequest(
   quantity: number,
   capability: AcceptedExactVariantQuantityCapability | null,
 ): CatalogCartOutcome {
-  if (action.kind !== "add_to_cart") {
+  if (!isRuntimeAddToCartAction(action)) {
     // A request, waitlist, care, or unavailable action is not a purchase, at
-    // any quantity. This is the guard that keeps a real Care pathway a Care
-    // pathway rather than quietly becoming a checkout.
-    return { ok: false, reason: "not_purchasable" };
-  }
-  if (typeof action.sku !== "string" || action.sku.trim() === "") {
-    // The server validates the selection's SKU non-blank before it ever emits
-    // add_to_cart, so a blank one here is a malformed wire value, and a
-    // malformed purchase identity is refused rather than guessed at.
+    // any quantity. It also rejects a malformed browser-safe purchase residue
+    // before this function can dereference amount or construct an identity.
     return { ok: false, reason: "not_purchasable" };
   }
   const control = purchaseQuantityControl(action, capability);

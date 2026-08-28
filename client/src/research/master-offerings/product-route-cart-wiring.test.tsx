@@ -175,6 +175,8 @@ describe("the founder quantity capability", () => {
       source: "accepted_quantity_policy",
       productId: "pc_product_1",
       variantId: "pc_variant_1",
+      sku: "XEN-BPC-10",
+      evaluatedAt: "2026-08-13T12:00:00.000Z",
       minimum: EARLY_ACCESS_MIN_QUANTITY,
       maximum: EARLY_ACCESS_MAX_QUANTITY,
       aggregateMaximum: EARLY_ACCESS_MAX_QUANTITY,
@@ -194,6 +196,31 @@ describe("the founder quantity capability", () => {
         },
       }),
     ).toBeNull();
+  });
+
+  it("does not synthesize capability from malformed browser action identity", () => {
+    const response = detailResponse();
+    const view =
+      response.kind === "ok" && response.data.ok
+        ? response.data.product.variants[0]
+        : null;
+    expect(view).not.toBeNull();
+    if (!view || view.action.kind !== "add_to_cart") return;
+
+    for (const action of [
+      { ...view.action, sku: "" },
+      { ...view.action, sku: " XEN-BPC-10" },
+      { ...view.action, sku: undefined },
+      { ...view.action, evaluatedAt: "not-an-instant" },
+      { ...view.action, evaluatedAt: "2026-02-30T12:00:00.000Z" },
+      { ...view.action, evaluatedAt: undefined },
+      { ...view.action, kind: "add-to-basket" },
+      { ...view.action, amount: null },
+    ]) {
+      expect(
+        founderQuantityCapabilityFor({ ...view, action: action as never }),
+      ).toBeNull();
+    }
   });
 });
 

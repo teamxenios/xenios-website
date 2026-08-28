@@ -187,8 +187,11 @@ export function fullCatalogProductHref(
  */
 export interface AcceptedExactVariantQuantityCapability {
   source: "accepted_quantity_policy";
+  /** Browser-safe correlation only; durable activation evidence stays server-only. */
   productId: string;
   variantId: string;
+  sku: string;
+  evaluatedAt: string;
   minimum: number;
   maximum: number;
   aggregateMaximum: number;
@@ -205,6 +208,59 @@ export type PurchaseQuantityControl =
       sourceVersion: string;
     };
 
+const CANONICAL_EVALUATION_INSTANT =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+function exactNonBlank(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.trim() !== "" &&
+    value === value.trim()
+  );
+}
+
+function canonicalEvaluationInstant(value: unknown): value is string {
+  if (
+    typeof value !== "string" ||
+    !CANONICAL_EVALUATION_INSTANT.test(value)
+  ) {
+    return false;
+  }
+  const instant = Date.parse(value);
+  return Number.isFinite(instant) && new Date(instant).toISOString() === value;
+}
+
+/**
+ * Revalidate the browser-safe residue of the server action at runtime.
+ *
+ * Durable activation evidence deliberately never crosses this boundary. The
+ * fields that do cross still arrive as JSON, so TypeScript cannot prove them:
+ * a malformed action must disable presentation before a click can reach the
+ * cart handoff or dereference an invalid amount.
+ */
+export function isRuntimeAddToCartAction(
+  value: unknown,
+): value is Extract<MasterOfferingAction, { kind: "add_to_cart" }> {
+  if (value === null || typeof value !== "object") return false;
+  const action = value as Partial<
+    Extract<MasterOfferingAction, { kind: "add_to_cart" }>
+  >;
+  const amount = action.amount;
+  return (
+    action.kind === "add_to_cart" &&
+    action.label === "Add to Cart" &&
+    exactNonBlank(action.productId) &&
+    exactNonBlank(action.variantId) &&
+    exactNonBlank(action.sku) &&
+    amount !== null &&
+    typeof amount === "object" &&
+    Number.isSafeInteger(amount.amountCents) &&
+    (amount.amountCents ?? 0) > 0 &&
+    exactNonBlank(amount.currency) &&
+    canonicalEvaluationInstant(action.evaluatedAt)
+  );
+}
+
 function validCapability(
   value: AcceptedExactVariantQuantityCapability | null,
 ): value is AcceptedExactVariantQuantityCapability {
@@ -212,10 +268,10 @@ function validCapability(
     value !== null &&
     typeof value === "object" &&
     value.source === "accepted_quantity_policy" &&
-    typeof value.productId === "string" &&
-    value.productId.trim() !== "" &&
-    typeof value.variantId === "string" &&
-    value.variantId.trim() !== "" &&
+    exactNonBlank(value.productId) &&
+    exactNonBlank(value.variantId) &&
+    exactNonBlank(value.sku) &&
+    canonicalEvaluationInstant(value.evaluatedAt) &&
     Number.isSafeInteger(value.minimum) &&
     value.minimum > 0 &&
     Number.isSafeInteger(value.maximum) &&
@@ -233,10 +289,12 @@ export function purchaseQuantityControl(
   capability: AcceptedExactVariantQuantityCapability | null,
 ): PurchaseQuantityControl {
   if (
-    action.kind !== "add_to_cart" ||
+    !isRuntimeAddToCartAction(action) ||
     !validCapability(capability) ||
     capability.productId !== action.productId ||
-    capability.variantId !== action.variantId
+    capability.variantId !== action.variantId ||
+    capability.sku !== action.sku ||
+    capability.evaluatedAt !== action.evaluatedAt
   ) {
     return { visible: false };
   }

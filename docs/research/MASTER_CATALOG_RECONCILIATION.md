@@ -176,13 +176,18 @@ with `--retain-retired` it is carried into the new artifact with every display
 state set to `unavailable`, so its id and slug keep resolving and the surface
 says "not currently offered" rather than "not found".
 
-**A retired offering that is currently bound stays purchasable.** This is read
-off the shipped code, not assumed: `resolveMasterOfferingAction` in `action.ts`
-resolves `add_to_cart` from the Product Control binding and the resolved
-`CartProductSelection` **before** it looks at the display state. So retiring an
-offering in the catalog removes it from browse and detail, and does not revoke
-purchase authority. Only Product Control can do that. Withdraw the binding or
-the selection in Product Control first, then retire.
+**Retirement closes the catalog action, but is not durable revocation.**
+`resolveMasterOfferingAction` requires the exact offering and exact variant to
+both be `available_now`, plus a matching server-only selection with validated
+current/live activation authority. Removing the offering, or retaining it with
+every display state set to `unavailable`, therefore prevents this catalog from
+emitting `add_to_cart`.
+
+That presentation consequence does not revoke durable mutation authority or
+clean up Product Control identity. A binding left on a retired variant is stale
+or orphaned, and another mutation surface must not treat catalog retirement as
+revocation. Withdraw or repoint the binding and revoke the durable activation
+authority before the catalog swap.
 
 Binding outcomes the report emits per binding:
 

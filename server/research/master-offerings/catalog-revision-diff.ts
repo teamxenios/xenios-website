@@ -236,16 +236,18 @@ function changeRecord(offering: CatalogRevisionOffering): OfferingChangeRecord {
  * What actually happens to a retired offering that a Product Control binding
  * still points at. This is read off the shipped code, not assumed.
  *
- * resolveMasterOfferingAction decides Add to Cart from the binding and the
- * resolved CartProductSelection BEFORE it ever looks at the display state. So
- * retiring an offering out of the member-safe dataset does not revoke purchase
- * authority. It removes the offering from browse and detail (the slug stops
- * resolving and the detail route answers not found), while Product Control
- * keeps whatever authority it had. Retirement is a catalog state, and only
- * Product Control can withdraw the ability to buy.
+ * resolveMasterOfferingAction now requires the exact offering and variant to
+ * both be `available_now`, in addition to a matching server-only selection with
+ * validated current/live activation authority. Removing the offering, or
+ * retaining it as unavailable, therefore closes this catalog action path.
+ *
+ * Retirement still does not revoke durable mutation authority or clean up the
+ * Product Control identity. A stale binding or live activation record must be
+ * withdrawn explicitly before the swap so no other mutation surface can treat
+ * catalog retirement as revocation.
  */
 export const RETIRED_AND_BOUND_CONSEQUENCE =
-  "Retiring an offering removes it from the member catalog, so its slug stops resolving and the detail route answers not found. It does NOT revoke purchase authority: resolveMasterOfferingAction produces Add to Cart from the Product Control binding and selection before it reads any display state. A binding left pointing at a retired variant is therefore a live purchase path attached to a product the catalog no longer shows. Withdraw the binding or the Product Control selection in Product Control first, then retire.";
+  "Retiring an offering removes it from the member catalog, or retains it as unavailable when retired rows are preserved. resolveMasterOfferingAction requires the exact offering and variant to both be available_now plus a matching server-only selection with validated current/live activation authority, so retirement closes this catalog action path. Retirement does not itself revoke durable mutation authority or clean up Product Control identity: withdraw or repoint the stale binding and revoke durable activation authority before the swap.";
 
 export function buildCatalogRevisionDiff(
   current: CatalogRevision,

@@ -94,6 +94,8 @@ const CAPABILITY: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-12T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -221,6 +223,12 @@ describe("master offering detail", () => {
     const refusedCapabilities = [
       { ...CAPABILITY, productId: "pc_product_other" },
       { ...CAPABILITY, variantId: "pc_variant_other" },
+      { ...CAPABILITY, sku: "XEN-BPC-20" },
+      { ...CAPABILITY, evaluatedAt: "2026-08-12T12:00:01.000Z" },
+      { ...CAPABILITY, sku: "" },
+      { ...CAPABILITY, sku: undefined },
+      { ...CAPABILITY, evaluatedAt: "not-an-instant" },
+      { ...CAPABILITY, evaluatedAt: undefined },
       { ...CAPABILITY, minimum: 0 },
       { ...CAPABILITY, maximum: 0 },
       { ...CAPABILITY, aggregateMaximum: 49 },
@@ -263,6 +271,47 @@ describe("master offering detail", () => {
         ?.disabled,
     ).toBe(false);
     matched.unmount();
+  });
+
+  it("keeps malformed browser purchase actions disabled without throwing", () => {
+    const onAddToCart = vi.fn();
+    const refusedActions = [
+      { ...ADD_TO_CART, sku: "" },
+      { ...ADD_TO_CART, sku: " XEN-BPC-10" },
+      { ...ADD_TO_CART, sku: undefined },
+      { ...ADD_TO_CART, evaluatedAt: "not-an-instant" },
+      { ...ADD_TO_CART, evaluatedAt: "2026-02-30T12:00:00.000Z" },
+      { ...ADD_TO_CART, evaluatedAt: undefined },
+      { ...ADD_TO_CART, label: "Buy now" },
+      { ...ADD_TO_CART, amount: null },
+      { ...ADD_TO_CART, amount: { amountCents: 0, currency: "USD" } },
+      { ...ADD_TO_CART, amount: { amountCents: 9900, currency: "" } },
+    ];
+
+    for (const action of refusedActions) {
+      let rendered!: ReturnType<typeof render>;
+      expect(() => {
+        rendered = render(
+          <MasterOfferingDetail
+            product={detail({
+              variants: [variant({ action: action as never })],
+            })}
+            capabilityFor={() => CAPABILITY}
+            onAddToCart={onAddToCart}
+          />,
+        );
+      }).not.toThrow();
+      expect(
+        rendered.host.querySelector('[data-testid="mo-quantity"]'),
+      ).toBeNull();
+      const cta = rendered.host.querySelector<HTMLButtonElement>(
+        '[data-testid="mo-cta"]',
+      );
+      expect(cta?.disabled).toBe(true);
+      click(cta ?? null);
+      expect(onAddToCart).not.toHaveBeenCalled();
+      rendered.unmount();
+    }
   });
 
   it("keeps a valid quantity selection disabled when no cart handoff exists", () => {
@@ -358,7 +407,14 @@ describe("master offering detail", () => {
         initialQuantity={37}
         capabilityFor={(entry) =>
           entry.id === "mov_b"
-            ? { ...CAPABILITY, variantId: "pc_variant_2", maximum: 100, aggregateMaximum: 100 }
+            ? {
+                ...CAPABILITY,
+                variantId: "pc_variant_2",
+                sku: secondAction.sku,
+                evaluatedAt: secondAction.evaluatedAt,
+                maximum: 100,
+                aggregateMaximum: 100,
+              }
             : CAPABILITY
         }
       />,
