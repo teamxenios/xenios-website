@@ -13,6 +13,7 @@ import type {
   SupportRequestInput,
   SupportRequestResult,
 } from "./types";
+import { safeAccountPath } from "./format";
 
 const API_ROOT = "/api/research/customer-account";
 
@@ -30,16 +31,18 @@ export async function accountPortalFetch<T>(
   if (!token) return { kind: "denied", reason: "auth_required" };
 
   try {
+    const headers = new Headers(init?.headers);
+    headers.set("Accept", "application/json");
+    headers.set("Authorization", `Bearer ${token}`);
+    if (init?.body && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
     const response = await fetch(`${API_ROOT}${path}`, {
       ...init,
       cache: "no-store",
       credentials: "same-origin",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-        ...(init?.body ? { "Content-Type": "application/json" } : {}),
-        ...init?.headers,
-      },
+      // The verified member boundary wins over caller-supplied headers.
+      headers,
     });
     const body: unknown = await response.json().catch(() => null);
     if (isEnvelope<T>(body) && (response.ok || body.kind !== "ok")) return body;
@@ -92,12 +95,17 @@ export const loadAccountSubscription = async (token: string | null): Promise<Cus
     accountPortalFetch<readonly DocumentSummaryDto[]>(token, "/documents"),
   ]);
   if (subscription.kind !== "ok") return subscription;
-  if (documents.kind !== "ok") return documents;
+  // An authorization failure still closes the whole private view. A document
+  // service error, however, must not hide membership facts that were read
+  // successfully; it becomes an explicit unavailable subsection instead.
+  if (documents.kind === "denied") return documents;
   return {
     kind: "ok",
     data: {
       subscription: subscription.data,
-      billingDocuments: documents.data.filter((document) => document.kind === "receipt"),
+      billingDocuments: documents.kind === "ok"
+        ? documents.data.filter((document) => document.kind === "receipt")
+        : null,
     },
   };
 };
@@ -126,7 +134,7 @@ export async function downloadAccountDocument(
   downloadPath: string,
 ): Promise<"ok" | "denied" | "error"> {
   if (!token) return "denied";
-  if (!downloadPath.startsWith("/api/research/customer-account/documents/") || downloadPath.startsWith("//")) {
+  if (!safeAccountPath(downloadPath)) {
     return "error";
   }
   try {

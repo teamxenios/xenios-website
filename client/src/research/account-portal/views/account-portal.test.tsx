@@ -11,11 +11,18 @@ import {
   FIXTURE_CUSTOMER_ORDERS,
   FIXTURE_DOCUMENTS,
   FIXTURE_MEMBERSHIP_MANUAL,
+  FIXTURE_MEMBERSHIP_NONE,
   FIXTURE_SUPPORT_CASES,
 } from "@shared/research/customer-account/fixtures";
-import { ORDER_HISTORY_SOURCE_LABELS } from "@shared/research/customer-account/contract";
+import {
+  ORDER_HISTORY_SOURCE_LABELS,
+  type CarePharmacyHistoryAvailabilityDto,
+  type CustomerAccountResult,
+  type CustomerOrdersDto,
+  type MembershipDto,
+} from "@shared/research/customer-account/contract";
 import { AccountPortalShell } from "../AccountPortalShell";
-import { AccountResourceBoundary } from "../resource";
+import { AccountResourceBoundary, useAccountResource } from "../resource";
 import { AccountCareView } from "./CareView";
 import { AccountDocumentsView } from "./DocumentsView";
 import { AccountOrdersView } from "./OrdersView";
@@ -36,6 +43,28 @@ async function render(element: ReactElement, path = "/research/account") {
   return container;
 }
 
+async function enterValue(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  const prototype = element instanceof HTMLTextAreaElement
+    ? HTMLTextAreaElement.prototype
+    : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+  await act(async () => {
+    setter?.call(element, value);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
+function ordersWithCareHistory(
+  carePharmacyHistory: CarePharmacyHistoryAvailabilityDto,
+  carePharmacy = FIXTURE_CUSTOMER_ORDERS.carePharmacy,
+): CustomerOrdersDto {
+  return {
+    ...FIXTURE_CUSTOMER_ORDERS,
+    carePharmacy,
+    carePharmacyHistory,
+  };
+}
+
 afterEach(async () => {
   while (mounted.length) {
     const root = mounted.pop();
@@ -53,7 +82,7 @@ describe("customer account portal views", () => {
     const container = await render(<AccountOverviewView data={data} />);
     expect(container.textContent).toContain("Xenios membership");
     expect(container.textContent).toContain("Care enrollment");
-    expect(container.textContent).toContain("Research orders");
+    expect(container.textContent).toContain("Research commerce history");
     expect(container.textContent).toContain("does not guarantee treatment");
     expect(container.textContent).not.toContain("internal_partner_fixture");
     expect(container.textContent).not.toContain("Internal Owner Fixture");
@@ -71,12 +100,12 @@ describe("customer account portal views", () => {
     expect(container.textContent).not.toContain("up to date");
     expect(container.textContent).toContain("Status unavailable");
     // The open-orders count is unknown over a partial history, never 0.
-    expect(container.textContent).toContain("count unavailable — order history incomplete");
-    expect(container.textContent).toContain("Some order history is currently unavailable.");
+    expect(container.textContent).toContain("count unavailable — commerce history incomplete");
+    expect(container.textContent).toContain("Some commerce history is currently unavailable.");
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xec);
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xrr);
-    expect(container.textContent).not.toContain("No Research orders are attached");
-    expect(container.textContent).toContain("Order history is currently unavailable or incomplete");
+    expect(container.textContent).not.toContain("No Research commerce records are attached");
+    expect(container.textContent).toContain("Commerce history is currently unavailable or incomplete");
   });
 
   it("declares a provable all-clear only for a current standing over complete history", async () => {
@@ -86,6 +115,7 @@ describe("customer account portal views", () => {
       nextAdministrativeAction: null,
       orderHistory: {
         availability: "complete" as const,
+        authoritativeRecordCount: 2,
         sources: {
           commerce: { connected: true, complete: true },
           xea: { connected: true, complete: true },
@@ -97,19 +127,78 @@ describe("customer account portal views", () => {
     const container = await render(<AccountOverviewView data={data} />);
     expect(container.textContent).toContain("Your account is up to date.");
     expect(container.textContent).not.toContain("count unavailable");
-    expect(container.textContent).not.toContain("Some order history is currently unavailable.");
+    expect(container.textContent).not.toContain("Some commerce history is currently unavailable.");
+  });
+
+  it("does not contradict a positive authoritative count when overview rows are absent", async () => {
+    const data = {
+      ...FIXTURE_ACCOUNT_OVERVIEW,
+      researchOrders: [],
+      orderHistory: {
+        availability: "complete" as const,
+        authoritativeRecordCount: 2,
+        sources: {
+          commerce: { connected: true, complete: true },
+          xea: { connected: true, complete: true },
+          xec: { connected: true, complete: true },
+          xrr: { connected: true, complete: true },
+        },
+      },
+    };
+    const container = await render(<AccountOverviewView data={data} />);
+    expect(container.textContent).toContain("authoritative source reports commerce records");
+    expect(container.textContent).not.toContain("No Research commerce records are attached");
   });
 
   it("renders Care status unavailable, never not-enrolled, from an unavailable Care source", async () => {
     const data = { ...FIXTURE_ACCOUNT_OVERVIEW, careEnrollment: FIXTURE_CARE_UNAVAILABLE };
     const container = await render(<AccountOverviewView data={data} />);
-    expect(container.textContent).toContain("Care status unavailable");
+    expect(container.textContent).toContain("Care status is managed through the provider/Tebra workflow.");
     expect(container.textContent).not.toContain("Not enrolled");
   });
 
-  it("separates Research orders from Care and pharmacy fulfillment", async () => {
+  it("renders saved-interest vocabulary without inventing pharmacy or catalog lanes", async () => {
+    const data = {
+      ...FIXTURE_ACCOUNT_OVERVIEW,
+      productInterests: [
+        {
+          interestKey: "pending-synthetic",
+          displayLabel: "Pending synthetic interest",
+          availability: "pending_activation" as const,
+          recordedAt: "2026-08-20T00:00:00.000Z",
+        },
+        {
+          interestKey: "unavailable-synthetic",
+          displayLabel: "Unavailable synthetic interest",
+          availability: "unavailable" as const,
+          recordedAt: "2026-08-20T00:00:00.000Z",
+        },
+      ],
+    };
+    const container = await render(<AccountOverviewView data={data} />);
+    expect(container.textContent).toContain("Pending activation");
+    expect(container.textContent).toContain("Unavailable synthetic interest");
+    expect(container.textContent).not.toContain("Pharmacy activation pending");
+    expect(container.textContent).not.toContain("Request-only / Pending activation");
+  });
+
+  it("does not infer a Care stage for an enrolled overview with no recorded stage", async () => {
+    const careEnrollment = {
+      sourceState: "available" as const,
+      enrolled: true,
+      status: { stage: null, neutralSummary: null, updatedAt: null },
+      pharmacyState: "none" as const,
+    };
+    const container = await render(
+      <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, careEnrollment }} />,
+    );
+    expect(container.textContent).toContain("No stage recorded");
+    expect(container.textContent).not.toContain("Not started");
+  });
+
+  it("separates Research commerce records from Care and pharmacy fulfillment", async () => {
     const container = await render(<AccountOrdersView data={FIXTURE_CUSTOMER_ORDERS} />, "/research/account/orders");
-    expect(container.textContent).toContain("Research orders");
+    expect(container.textContent).toContain("Research commerce history");
     expect(container.textContent).toContain("Care / pharmacy");
     expect(container.textContent).toContain("Provider review");
     const tracking = container.querySelector('a[href^="https://tracking.invalid"]');
@@ -118,29 +207,163 @@ describe("customer account portal views", () => {
 
   it("names the disconnected sources behind a partial order history", async () => {
     const container = await render(<AccountOrdersView data={FIXTURE_CUSTOMER_ORDERS} />, "/research/account/orders");
-    expect(container.textContent).toContain("Some order history is currently unavailable.");
+    expect(container.textContent).toContain("Some commerce history is currently unavailable.");
+    expect(container.textContent).toContain("Partial history · total unavailable");
+    expect(container.textContent).not.toContain("2 records");
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xec);
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xrr);
     expect(container.textContent).not.toContain(ORDER_HISTORY_SOURCE_LABELS.commerce);
   });
 
-  it("renders detail-unavailable orders without a fabricated label or quantity", async () => {
+  it("renders an authoritative empty Research history as numeric zero", async () => {
+    const completeEmpty = {
+      ...FIXTURE_CUSTOMER_ORDERS,
+      research: [],
+      history: {
+        availability: "complete" as const,
+        authoritativeRecordCount: 0,
+        sources: {
+          commerce: { connected: true, complete: true },
+          xea: { connected: true, complete: true },
+          xec: { connected: true, complete: true },
+          xrr: { connected: true, complete: true },
+        },
+      },
+    };
+    const container = await render(<AccountOrdersView data={completeEmpty} />);
+    const researchSection = container.querySelector("#research-orders-heading")?.closest("section");
+    expect(researchSection?.textContent).toContain("0 records");
+    expect(researchSection?.textContent).toContain("No Research commerce records are attached");
+    expect(researchSection?.textContent).not.toContain("count unavailable");
+  });
+
+  it("does not call an unavailable Research history empty or numeric zero", async () => {
+    const unavailable = {
+      ...FIXTURE_CUSTOMER_ORDERS,
+      research: [],
+      history: {
+        availability: "unavailable" as const,
+        authoritativeRecordCount: null,
+        sources: {
+          commerce: { connected: false, complete: false },
+          xea: { connected: false, complete: false },
+          xec: { connected: false, complete: false },
+          xrr: { connected: false, complete: false },
+        },
+      },
+    };
+    const container = await render(<AccountOrdersView data={unavailable} />);
+    expect(container.textContent).toContain("History unavailable");
+    expect(container.textContent).not.toContain("0 records");
+    expect(container.textContent).not.toContain("No Research commerce records are attached");
+  });
+
+  it("does not contradict a positive authoritative count when rows are absent", async () => {
+    const completeWithoutRows = {
+      ...FIXTURE_CUSTOMER_ORDERS,
+      research: [],
+      history: {
+        availability: "complete" as const,
+        authoritativeRecordCount: 2,
+        sources: {
+          commerce: { connected: true, complete: true },
+          xea: { connected: true, complete: true },
+          xec: { connected: true, complete: true },
+          xrr: { connected: true, complete: true },
+        },
+      },
+    };
+    const container = await render(<AccountOrdersView data={completeWithoutRows} />);
+    expect(container.textContent).toContain("2 records");
+    expect(container.textContent).toContain("authoritative source reports commerce records");
+    expect(container.textContent).not.toContain("No Research commerce records are attached");
+  });
+
+  it("renders an authoritative empty Care/pharmacy history as numeric zero", async () => {
+    const container = await render(
+      <AccountOrdersView data={ordersWithCareHistory(
+        { availability: "available", authoritativeRecordCount: 0 },
+        [],
+      )} />,
+      "/research/account/orders",
+    );
+    const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
+    expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent).toBe("0 records");
+    expect(careSection?.textContent).toContain("0 records");
+    expect(careSection?.textContent).toContain("No Care or pharmacy fulfillment records are attached");
+    expect(careSection?.textContent).not.toContain("total unavailable");
+    expect(careSection?.textContent).not.toContain("cannot report a definitive zero");
+  });
+
+  it("renders known Care/pharmacy rows as partial without inventing a total", async () => {
+    const container = await render(
+      <AccountOrdersView data={ordersWithCareHistory({
+        availability: "partial",
+        authoritativeRecordCount: null,
+      })} />,
+      "/research/account/orders",
+    );
+    const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
+    expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent)
+      .toBe("Partial history · total unavailable");
+    expect(careSection?.textContent).toContain("Partial history · total unavailable");
+    expect(careSection?.textContent).toContain("Care fulfillment record");
+    expect(careSection?.textContent).toContain("known records only");
+    expect(careSection?.textContent).not.toMatch(/\b1 records?\b/);
+  });
+
+  it("does not turn an unavailable Care-history source into a definitive zero", async () => {
+    const container = await render(
+      <AccountOrdersView data={ordersWithCareHistory(
+        { availability: "unavailable", authoritativeRecordCount: null },
+        [],
+      )} />,
+      "/research/account/orders",
+    );
+    const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
+    expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent).toBe("History unavailable");
+    expect(careSection?.textContent).toContain("History unavailable");
+    expect(careSection?.textContent).toContain("provider/Tebra workflow");
+    expect(careSection?.textContent).toContain("cannot report a definitive zero");
+    expect(careSection?.textContent).not.toContain("0 records");
+    expect(careSection?.textContent).not.toContain("No Care or pharmacy fulfillment records");
+  });
+
+  it("keeps an authoritative Care count distinct from a partial row projection", async () => {
+    const container = await render(
+      <AccountOrdersView data={ordersWithCareHistory({
+        availability: "available",
+        authoritativeRecordCount: 2,
+      })} />,
+      "/research/account/orders",
+    );
+    const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
+    expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent).toBe("2 records");
+    expect(careSection?.textContent).toContain("2 records");
+    expect(careSection?.textContent).toContain("does not match the authoritative source count");
+    expect(careSection?.textContent).not.toContain("1 record");
+  });
+
+  it("renders detail-unavailable commerce records without a fabricated label or quantity", async () => {
     const detailUnavailable = {
       ...FIXTURE_CUSTOMER_ORDERS.research[0],
       detailAvailability: "unavailable" as const,
       itemLabel: null,
       variantLabel: null,
-      quantity: null,
+      quantity: 7,
     };
     const container = await render(
       <AccountOrdersView data={{ ...FIXTURE_CUSTOMER_ORDERS, research: [detailUnavailable] }} />,
       "/research/account/orders",
     );
-    expect(container.textContent).toContain("Order details unavailable");
+    expect(container.textContent).toContain("Commerce-record details unavailable");
     expect(container.textContent).not.toContain("Qty 0");
+    expect(container.textContent).not.toContain("Qty 7");
     expect(container.textContent).not.toContain("Variant recorded with order");
-    // The quantity cell states the unknown, never a synthesized 0.
-    expect(container.textContent).toContain("—");
+    const quantityRow = Array.from(container.querySelectorAll(".account-data-label"))
+      .find((label) => label.textContent === "Quantity")?.parentElement;
+    expect(quantityRow?.textContent).toContain("Not available");
+    expect(quantityRow?.textContent).not.toContain("7");
   });
 
   it("renders manual membership billing separately from Care enrollment", async () => {
@@ -154,6 +377,114 @@ describe("customer account portal views", () => {
     expect(container.textContent).toContain("Manual / offline");
     expect(container.textContent).toContain("Care enrollment is not a medication subscription");
     expect(container.querySelector('a[href="/research/account/support"]')).not.toBeNull();
+  });
+
+  it("treats a legacy renewal timestamp as compatibility-only evidence", async () => {
+    // @ts-expect-error Intentionally exercise a pre-contract runtime payload.
+    const legacyMembership: MembershipDto = {
+      state: FIXTURE_MEMBERSHIP_MANUAL.state,
+      billing: FIXTURE_MEMBERSHIP_MANUAL.billing,
+      planLabel: FIXTURE_MEMBERSHIP_MANUAL.planLabel,
+      nextRenewalAt: "2030-01-01",
+      manageUrl: FIXTURE_MEMBERSHIP_MANUAL.manageUrl,
+      manualBilling: FIXTURE_MEMBERSHIP_MANUAL.manualBilling,
+    };
+    const container = await render(
+      <AccountSubscriptionView data={{
+        subscription: {
+          membership: legacyMembership,
+          careEnrollment: FIXTURE_CARE_ENROLLED,
+        },
+        billingDocuments: [],
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(container.textContent).toContain("Renewal schedule unavailable");
+    expect(container.textContent).not.toContain("No renewal is scheduled");
+    expect(container.textContent).not.toContain("Not scheduled");
+  });
+
+  it("distinguishes unavailable receipt history from a proven empty history", async () => {
+    const unavailable = await render(
+      <AccountSubscriptionView data={{
+        subscription: { membership: FIXTURE_MEMBERSHIP_MANUAL, careEnrollment: FIXTURE_CARE_ENROLLED },
+        billingDocuments: null,
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(unavailable.textContent).toContain("Billing-document history is currently unavailable");
+    expect(unavailable.textContent).not.toContain("No membership receipts");
+  });
+
+  it("renders an authoritative no-membership state without inventing a billing pathway", async () => {
+    const subscription = await render(
+      <AccountSubscriptionView data={{
+        subscription: { membership: FIXTURE_MEMBERSHIP_NONE, careEnrollment: FIXTURE_CARE_ENROLLED },
+        billingDocuments: [],
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(subscription.textContent).toContain("No active membership");
+    expect(subscription.textContent).toContain("No billing method");
+    expect(subscription.textContent).not.toContain("Membership data unavailable");
+    expect(subscription.textContent).not.toContain("Manual / offline");
+
+    const overview = await render(
+      <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, membership: FIXTURE_MEMBERSHIP_NONE }} />,
+    );
+    expect(overview.textContent).toContain("No billing relationship");
+    expect(overview.textContent).not.toContain("Manual / offline");
+  });
+
+  it("renders billing-none independently from active membership access", async () => {
+    const activeWithoutBilling = {
+      ...FIXTURE_MEMBERSHIP_MANUAL,
+      state: "active" as const,
+      billing: "none" as const,
+      manualBilling: true,
+      manageUrl: "https://billing.stripe.com/p/synthetic-session",
+    };
+    const subscription = await render(
+      <AccountSubscriptionView data={{
+        subscription: { membership: activeWithoutBilling, careEnrollment: FIXTURE_CARE_ENROLLED },
+        billingDocuments: [],
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(subscription.textContent).toContain("No billing method");
+    expect(subscription.textContent).not.toContain("Manual / offline");
+    expect(subscription.querySelector('a[href^="https://billing.stripe.com/"]')).toBeNull();
+
+    const overview = await render(
+      <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, membership: activeWithoutBilling }} />,
+    );
+    expect(overview.textContent).toContain("No billing relationship");
+    expect(overview.textContent).not.toContain("Manual / offline");
+    expect(overview.querySelector('a[href^="https://billing.stripe.com/"]')).toBeNull();
+  });
+
+  it("keeps billing management available when billing evidence outlives access", async () => {
+    const endedAccessWithBilling = {
+      ...FIXTURE_MEMBERSHIP_NONE,
+      billing: "past_due" as const,
+      manualBilling: false,
+      manageUrl: "https://billing.stripe.com/p/synthetic-session",
+    };
+    const subscription = await render(
+      <AccountSubscriptionView data={{
+        subscription: { membership: endedAccessWithBilling, careEnrollment: FIXTURE_CARE_ENROLLED },
+        billingDocuments: [],
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(subscription.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')?.textContent)
+      .toContain("Open billing management");
+
+    const overview = await render(
+      <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, membership: endedAccessWithBilling }} />,
+    );
+    expect(overview.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')?.textContent)
+      .toContain("Open billing management");
   });
 
   it("renders disputed billing through the canonical presentation, never as current", async () => {
@@ -200,8 +531,26 @@ describe("customer account portal views", () => {
       }} />,
       "/research/account/subscription",
     );
-    expect(container.textContent).toContain("Care status unavailable");
+    expect(container.textContent).toContain("Care status is managed through the provider/Tebra workflow.");
     expect(container.textContent).not.toContain("Not enrolled");
+    expect(container.textContent).not.toContain("Not started");
+  });
+
+  it("does not infer a Care stage for an enrolled subscription with no recorded stage", async () => {
+    const careEnrollment = {
+      sourceState: "available" as const,
+      enrolled: true,
+      status: { stage: null, neutralSummary: null, updatedAt: null },
+      pharmacyState: "none" as const,
+    };
+    const container = await render(
+      <AccountSubscriptionView data={{
+        subscription: { membership: FIXTURE_MEMBERSHIP_MANUAL, careEnrollment },
+        billingDocuments: [],
+      }} />,
+      "/research/account/subscription",
+    );
+    expect(container.textContent).toContain("No stage recorded");
     expect(container.textContent).not.toContain("Not started");
   });
 
@@ -282,6 +631,11 @@ describe("customer account portal views", () => {
     expect(container.querySelector('label[for="support-category"]')).not.toBeNull();
     expect(container.querySelector('label[for="support-description"]')).not.toBeNull();
     expect(container.querySelector('a[href^="mailto:"]')).toBeNull();
+    await enterValue(container.querySelector<HTMLInputElement>("#support-subject")!, "Synthetic request");
+    await enterValue(
+      container.querySelector<HTMLTextAreaElement>("#support-description")!,
+      "Please review this synthetic account request.",
+    );
     const form = container.querySelector("form");
     await act(async () => form?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     expect(onSubmit).toHaveBeenCalledOnce();
@@ -310,6 +664,15 @@ describe("account portal shell landmarks", () => {
 });
 
 describe("account resource states", () => {
+  function ResourceHarness({
+    loader,
+  }: {
+    loader: (token: string | null) => Promise<CustomerAccountResult<string>>;
+  }) {
+    const snapshot = useAccountResource(loader, null);
+    return <AccountResourceBoundary snapshot={snapshot}>{(data) => <p>{data}</p>}</AccountResourceBoundary>;
+  }
+
   it.each([
     [{ state: "loading" } as const, "Opening your private account"],
     [{ state: "denied", reason: "auth_required" } as const, "Account access is required"],
@@ -323,5 +686,17 @@ describe("account resource states", () => {
   it("renders ready data", async () => {
     const container = await render(<AccountResourceBoundary snapshot={{ state: "ready", data: "ready data" }}>{(data) => <p>{data}</p>}</AccountResourceBoundary>);
     expect(container.textContent).toContain("ready data");
+  });
+
+  it("moves a rejected loader into the explicit error state", async () => {
+    const loader = vi.fn<(token: string | null) => Promise<CustomerAccountResult<string>>>()
+      .mockRejectedValue(new Error("synthetic loader failure"));
+    const container = await render(<ResourceHarness loader={loader} />);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(loader).toHaveBeenCalledWith(null);
+    expect(container.textContent).toContain("Your account could not be loaded");
+    expect(container.textContent).not.toContain("Opening your private account");
   });
 });

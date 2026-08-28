@@ -17,12 +17,17 @@ export function useAccountResource<T>(
   useEffect(() => {
     let current = true;
     setSnapshot({ state: "loading" });
-    void loader(token).then((result) => {
-      if (!current) return;
-      if (result.kind === "ok") setSnapshot({ state: "ready", data: result.data });
-      else if (result.kind === "denied") setSnapshot({ state: "denied", reason: result.reason });
-      else setSnapshot({ state: "error" });
-    });
+    void loader(token).then(
+      (result) => {
+        if (!current) return;
+        if (result.kind === "ok") setSnapshot({ state: "ready", data: result.data });
+        else if (result.kind === "denied") setSnapshot({ state: "denied", reason: result.reason });
+        else setSnapshot({ state: "error" });
+      },
+      () => {
+        if (current) setSnapshot({ state: "error" });
+      },
+    );
     return () => {
       current = false;
     };

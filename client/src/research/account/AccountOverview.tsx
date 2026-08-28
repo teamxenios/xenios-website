@@ -10,7 +10,7 @@ export default function AccountOverview() {
   return (
     <AccountPortalShell
       title="Your account, clearly organized."
-      lead="Membership, Research orders, Care operations, documents, and support—each with its own source of truth."
+      lead="Membership, commerce history, Care operations, documents, and support—each with its own source of truth."
     >
       <AccountResourceBoundary snapshot={snapshot}>
         {(page) => (

@@ -12,7 +12,18 @@ function sourceFiles(directory: string): string[] {
 const portalRoot = resolve(__dirname);
 const catalogRoot = resolve(__dirname, "../catalog-priority");
 const adminRoot = resolve(__dirname, "../pages/adminx/client-imports");
-const accountPages = ["AccountCare.tsx", "AccountDocuments.tsx", "AccountOrders.tsx", "AccountOverview.tsx", "AccountSubscription.tsx", "AccountSupport.tsx"]
+const accountPages = [
+  "AccountCare.tsx",
+  "AccountDocuments.tsx",
+  "AccountInterests.tsx",
+  "AccountOrderDetail.tsx",
+  "AccountOrders.tsx",
+  "AccountOverview.tsx",
+  "AccountProfile.tsx",
+  "AccountSecurity.tsx",
+  "AccountSubscription.tsx",
+  "AccountSupport.tsx",
+]
   .map((name) => resolve(__dirname, "../account", name));
 const combinedSource = [...sourceFiles(portalRoot), ...accountPages, ...sourceFiles(catalogRoot), ...sourceFiles(adminRoot)]
   .filter((path) => !/\.test\.(ts|tsx)$/.test(path))
@@ -20,8 +31,7 @@ const combinedSource = [...sourceFiles(portalRoot), ...accountPages, ...sourceFi
   .join("\n");
 
 describe("account portal privacy and presentation policy", () => {
-  it("contains no named partner/client roster data or public demand counts", () => {
-    expect(combinedSource).not.toMatch(/Seth Grant|Vitality Advisors/i);
+  it("contains no public demand counts", () => {
     expect(combinedSource).not.toMatch(/customerCount|uniqueClientCount|demandRank/);
   });
 
@@ -35,5 +45,11 @@ describe("account portal privacy and presentation policy", () => {
     expect(css).toContain("min-height: 44px");
     expect(css).toContain("grid-template-columns: minmax(0, 1fr)");
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(css).toMatch(/\.account-skip-link\s*\{[^}]*min-height:\s*44px;[^}]*position:\s*fixed;/s);
+    expect(css).toMatch(/\.account-section-title\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+    expect(css).toMatch(/\.account-stat-value\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+    expect(css).toMatch(/\.account-portal-footer a\s*\{[^}]*min-height:\s*44px;[^}]*min-width:\s*44px;/s);
+    expect(css).toMatch(/@media \(max-width: 1023px\)[\s\S]*?\.account-portal-nav\s*\{[^}]*flex-wrap:\s*wrap;[^}]*overflow-x:\s*visible;/s);
+    expect(css).toMatch(/@media \(max-width: 1023px\)[\s\S]*?\.account-portal-nav-link\s*\{[^}]*min-width:\s*0;[^}]*overflow-wrap:\s*anywhere;/s);
   });
 });

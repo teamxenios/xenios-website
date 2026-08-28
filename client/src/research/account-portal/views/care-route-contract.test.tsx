@@ -13,6 +13,7 @@ import { createRoot } from "react-dom/client";
 import express from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
+import type { CareEnrollmentDto } from "@shared/research/customer-account/contract";
 
 import {
   CUSTOMER_ACCOUNT_PATHS,
@@ -43,18 +44,18 @@ function buildServer() {
   return app;
 }
 
-async function renderWith(data: unknown): Promise<HTMLElement> {
+async function renderWith(data: CareEnrollmentDto): Promise<HTMLElement> {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   const container = document.createElement("div");
   const root = createRoot(container);
   await act(async () =>
-    root.render(<AccountCareView data={data as Parameters<typeof AccountCareView>[0]["data"]} />),
+    root.render(<AccountCareView data={data} />),
   );
   return container;
 }
 
 describe("Care route-to-view contract (real envelope, real view)", () => {
-  it("an ENROLLED member's wire payload renders the staged timeline, not 'not started'", async () => {
+  it("an ENROLLED member's wire payload marks only the current recorded stage", async () => {
     const res = await request(buildServer())
       .get(CUSTOMER_ACCOUNT_PATHS.care)
       .set("x-test-member", "member-fixture-1"); // seeded enrolled at provider_review
@@ -69,6 +70,15 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
     const container = await renderWith(res.body.data);
     expect(container.textContent).toContain("Provider review");
     expect(container.querySelectorAll(".care-status-step")).toHaveLength(10);
+    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(container.querySelector('[aria-current="step"]')?.textContent).toContain("Provider review");
+    expect(container.textContent).toContain("Process orientation");
+    expect(container.textContent).toContain("Current recorded stage");
+    expect(container.textContent).toContain("Possible step");
+    expect(container.textContent).not.toContain("authorized stage");
+    expect(Array.from(container.querySelectorAll(".care-status-timeline .ra-badge"))
+      .map((badge) => badge.textContent)).not.toContain("Recorded");
+    expect(container.textContent).not.toContain("Not started");
     expect(container.textContent).not.toContain("Care not started");
     expect(container.textContent).not.toContain("Care status unavailable");
   });
@@ -85,12 +95,30 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
 
     const container = await renderWith(res.body.data);
     expect(container.textContent).toContain("Care not started");
+    expect(container.querySelector('a[href="/research/care"]')).toBeNull();
+    expect(container.querySelector('a[href="/research/account/support"]')).not.toBeNull();
+    expect(container.querySelector(".care-status-timeline")).toBeNull();
+  });
+
+  it("an enrolled member with no recorded stage gets truthful canonical next actions", async () => {
+    const container = await renderWith({
+      sourceState: "available",
+      enrolled: true,
+      status: { stage: null, neutralSummary: null, updatedAt: null },
+      pharmacyState: "none",
+    });
+
+    expect(container.textContent).toContain("No operational stage is recorded yet");
+    expect(container.querySelector('a[href="/research/care"]')).toBeNull();
+    expect(container.querySelector('a[href="/research/account/support"]')).not.toBeNull();
     expect(container.querySelector(".care-status-timeline")).toBeNull();
   });
 
   it("an UNAVAILABLE Care source renders no enrollment claim, only unavailability", async () => {
     const container = await renderWith({ sourceState: "unavailable" });
     expect(container.textContent).toContain("Care status unavailable");
+    expect(container.textContent).toContain("Care status is managed through the provider/Tebra workflow.");
+    expect(container.querySelector('a[href="/research/account/support"]')).not.toBeNull();
     expect(container.textContent).not.toContain("Care not started");
     expect(container.textContent).not.toContain("Not enrolled");
     expect(container.querySelector(".care-status-timeline")).toBeNull();

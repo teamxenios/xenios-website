@@ -1,55 +1,35 @@
 import { Link } from "wouter";
 import type {
   CustomerAccountOverviewDto,
-  ProductInterestDto,
 } from "@shared/research/customer-account/contract";
 import {
   ORDER_HISTORY_SOURCE_KEYS,
   ORDER_HISTORY_SOURCE_LABELS,
 } from "@shared/research/customer-account/contract";
 import { billingPresentation } from "@shared/research/customer-account/billing-presentation";
-import type {
-  CatalogPriorityDto,
-  ProductActivationStatus,
-} from "@shared/research/product-activation/contract";
+import type { CatalogPriorityDto } from "@shared/research/product-activation/contract";
 import { ResearchStatusBadge } from "../../ui/kit";
 import { CurrentDemandCollection } from "../../catalog-priority/CurrentDemandCollection";
 import {
   projectActivationQueue,
   projectDemandDefinitions,
-  type PriorityCatalogItem,
 } from "../../catalog-priority/priority-config";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
-import { formatAccountDate, safeExternalUrl, sentenceCase, statusTone } from "../format";
-
-function interestStatus(availability: ProductInterestDto["availability"]): ProductActivationStatus {
-  return availability === "pending_activation" ? "pending_pharmacy_activation" : availability;
-}
-
-function interestAction(interest: ProductInterestDto): string | null {
-  if (interest.availability === "provider_required") return ACCOUNT_PORTAL_ROUTES.care;
-  if (interest.availability === "request_only" || interest.availability === "pending_activation") {
-    return ACCOUNT_PORTAL_ROUTES.support;
-  }
-  if (interest.availability === "live") return "/research/member/catalog";
-  return null;
-}
-
-function savedInterestItems(interests: readonly ProductInterestDto[]): readonly PriorityCatalogItem[] {
-  return interests.map((interest) => ({
-    key: interest.interestKey,
-    title: interest.displayLabel,
-    formulation: null,
-    lanes: interest.availability === "provider_required"
-      ? ["Provider / Care"]
-      : interest.availability === "pending_activation" || interest.availability === "request_only"
-        ? ["Request-only / Pending activation"]
-        : ["Research"],
-    activationStatus: interestStatus(interest.availability),
-    detailsPath: interest.availability === "live" ? "/research/member/catalog" : null,
-    actionPath: interestAction(interest),
-  }));
-}
+import { accountOrderDetailPath } from "../routes";
+import {
+  authoritativeOrderCount,
+  cleanAccountText,
+  commerceRecordPresentation,
+  fulfillmentStatusLabel,
+  formatAccountDate,
+  formatMembershipRenewal,
+  formatOrderQuantity,
+  safeBillingManagementUrl,
+  safeExternalUrl,
+  sentenceCase,
+  statusTone,
+} from "../format";
+import { AccountInterestsView } from "./InterestsView";
 
 export function AccountOverviewView({
   data,
@@ -71,25 +51,28 @@ export function AccountOverviewView({
     supportCases,
     nextAdministrativeAction,
   } = data;
-  const activeOrders = researchOrders.filter(
-    (order) => !["delivered", "cancelled"].includes(order.fulfillmentState),
-  );
-  const manageUrl = safeExternalUrl(membership.manageUrl);
+  const noBillingRelationship = membership.billing === "none";
+  const manageUrl = membership.billing !== "none"
+    ? safeBillingManagementUrl(membership.manageUrl)
+    : null;
   const billing = billingPresentation(membership.billing);
   const recentOrders = researchOrders.slice(0, 2);
-  const historyComplete = orderHistory.availability === "complete";
-  const disconnectedSources = ORDER_HISTORY_SOURCE_KEYS
+  const authoritativeResearchCount = authoritativeOrderCount(orderHistory);
+  const historyProjectionComplete = authoritativeResearchCount !== null
+    && authoritativeResearchCount === researchOrders.length;
+  const incompleteSources = ORDER_HISTORY_SOURCE_KEYS
     .filter((key) => !orderHistory.sources[key].connected || !orderHistory.sources[key].complete)
     .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
   // "Up to date" is a claim, never a default: it renders only when the server
   // proved it (accountStanding "current"). Indeterminate stays neutral.
+  const standingProvedCurrent = accountStanding === "current" && historyProjectionComplete;
   const standingHeadline = accountStanding === "attention"
     ? nextAdministrativeAction ?? "An administrative item needs your attention."
-    : accountStanding === "current"
+    : standingProvedCurrent
       ? "Your account is up to date."
       : "No administrative action is recorded, but some account information is currently unavailable.";
   const careStageLabel = careEnrollment.sourceState === "unavailable"
-    ? "Care status unavailable"
+    ? "Care status is managed through the provider/Tebra workflow."
     : !careEnrollment.enrolled
       ? "Not enrolled"
       : careEnrollment.status.stage
@@ -111,7 +94,7 @@ export function AccountOverviewView({
           </div>
           {accountStanding === "attention" ? (
             <Link className="btn btn-primary" href={ACCOUNT_PORTAL_ROUTES.support}>Review with support</Link>
-          ) : accountStanding === "current" ? (
+          ) : standingProvedCurrent ? (
             <ResearchStatusBadge label="Current" tone="success" />
           ) : (
             <ResearchStatusBadge label="Status unavailable" tone="neutral" />
@@ -122,21 +105,25 @@ export function AccountOverviewView({
       <section className="account-grid account-grid-3" aria-label="Account summary">
         <div className="account-stat">
           <p className="account-section-label">Membership</p>
-          <p className="account-stat-value mt-2">{membership.planLabel ?? "No plan"}</p>
+          <p className="account-stat-value mt-2">
+            {membership.planLabel ?? (membership.state === "none" ? "No plan" : "Plan unavailable")}
+          </p>
           <div className="mt-3"><ResearchStatusBadge label={sentenceCase(membership.state)} tone={statusTone(membership.state)} /></div>
         </div>
         <div className="account-stat">
-          <p className="account-section-label">Open orders</p>
-          {historyComplete ? (
-            <p className="account-stat-value mt-2 tabular">{activeOrders.length}</p>
+          <p className="account-section-label">Research history</p>
+          {authoritativeResearchCount !== null ? (
+            <p className="account-stat-value mt-2 tabular">{authoritativeResearchCount}</p>
           ) : (
             <>
-              {/* A count over a partial history is unknown, not zero (P1-B). */}
+              {/* Only Lane 01's complete-history authoritative count is numeric. */}
               <p className="account-stat-value mt-2 tabular">—</p>
-              <p className="body-s text-ink-mute mt-1">count unavailable — order history incomplete</p>
+              <p className="body-s text-ink-mute mt-1">
+                count unavailable — commerce history incomplete
+              </p>
             </>
           )}
-          <Link className="account-inline-link mt-3 inline-flex" href={ACCOUNT_PORTAL_ROUTES.orders}>View order status</Link>
+          <Link className="account-inline-link mt-3 inline-flex" href={ACCOUNT_PORTAL_ROUTES.orders}>View commerce history</Link>
         </div>
         <div className="account-stat">
           <p className="account-section-label">Care operations</p>
@@ -158,17 +145,19 @@ export function AccountOverviewView({
 
         <section className="account-surface account-surface-dark" aria-labelledby="membership-heading">
           <p className="account-section-label" style={{ color: "#c8c4bb" }}>Xenios membership</p>
-          <h2 id="membership-heading" className="account-section-title">{membership.planLabel ?? "No active membership"}</h2>
+          <h2 id="membership-heading" className="account-section-title">
+            {membership.planLabel ?? (membership.state === "none" ? "No active membership" : "Membership plan unavailable")}
+          </h2>
           {/* Billing truth renders ONLY through the canonical presentation (P1-C). */}
           <div className="mt-4"><ResearchStatusBadge label={`Billing: ${billing.label}`} tone={billing.tone} /></div>
           <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>
-            Renewal: {formatAccountDate(membership.nextRenewalAt)}
+            Renewal: {formatMembershipRenewal(membership)}
           </p>
           <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>
             Membership covers administrative and platform services. It does not guarantee treatment, a provider decision, or fulfillment.
           </p>
           {manageUrl ? (
-            <a className="btn btn-on-dark btn-primary mt-5" href={manageUrl} target="_blank" rel="noopener noreferrer">Manage billing securely</a>
+            <a className="btn btn-on-dark btn-primary mt-5" href={manageUrl} target="_blank" rel="noopener noreferrer">Open billing management</a>
           ) : (
             <Link className="btn btn-on-dark btn-ghost mt-5" href={ACCOUNT_PORTAL_ROUTES.subscription}>View billing details</Link>
           )}
@@ -178,37 +167,52 @@ export function AccountOverviewView({
       <div className="account-grid account-grid-2">
         <section className="account-surface" aria-labelledby="recent-orders-heading">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div><p className="account-section-label">Research orders</p><h2 id="recent-orders-heading" className="account-section-title">Recent activity</h2></div>
-            <Link className="account-inline-link" href={ACCOUNT_PORTAL_ROUTES.orders}>All orders</Link>
+            <div><p className="account-section-label">Research commerce history</p><h2 id="recent-orders-heading" className="account-section-title">Recent activity</h2></div>
+            <Link className="account-inline-link" href={ACCOUNT_PORTAL_ROUTES.orders}>All records</Link>
           </div>
-          {!historyComplete ? (
+          {!historyProjectionComplete ? (
             <div className="account-surface account-surface-warm mt-5" role="note">
-              <p className="body-s font-700">Some order history is currently unavailable.</p>
-              <p className="body-s text-ink-2 mt-2">Order records from these sources are not fully connected: {disconnectedSources.join(", ")}.</p>
+              <p className="body-s font-700">
+                {authoritativeResearchCount !== null
+                  ? "The visible commerce-record list does not match the authoritative source count."
+                  : orderHistory.availability === "complete"
+                    ? "Authoritative commerce-record count unavailable."
+                    : "Some commerce history is currently unavailable."}
+              </p>
+              <p className="body-s text-ink-2 mt-2">{incompleteSources.length ? `These sources do not provide a complete history: ${incompleteSources.join(", ")}.` : "This view cannot prove that the visible list is complete."}</p>
             </div>
           ) : null}
           {recentOrders.length ? (
             <div className="account-card-list mt-5">
               {recentOrders.map((order) => {
                 const trackingUrl = safeExternalUrl(order.trackingUrl);
+                const itemLabel = cleanAccountText(order.itemLabel);
+                const variantLabel = cleanAccountText(order.variantLabel);
+                const quantity = formatOrderQuantity(order.quantity);
+                const recordPresentation = commerceRecordPresentation(order.recordKind);
                 return (
                   <article className="account-list-card" key={order.reference}>
                     <div className="min-w-0">
-                      <p className="mono-label text-ink-mute">{order.reference} · {formatAccountDate(order.placedAt)}</p>
-                      {order.itemLabel ? (
-                        <h3 className="body-m font-700 mt-2 break-words">{order.itemLabel}</h3>
+                      <p className="mono-label text-ink-mute break-words">
+                        {recordPresentation.label} · {order.reference} · {recordPresentation.dateVerb} {formatAccountDate(order.placedAt)}
+                      </p>
+                      {order.detailAvailability === "available" && itemLabel ? (
+                        <h3 className="body-m font-700 mt-2 break-words">{itemLabel}</h3>
                       ) : (
-                        <h3 className="body-m mt-2 break-words text-ink-mute">Order details unavailable</h3>
+                        <h3 className="body-m mt-2 break-words text-ink-mute">Commerce-record details unavailable</h3>
                       )}
-                      {order.detailAvailability === "available" ? (
+                      {order.detailAvailability === "available" && itemLabel ? (
                         <p className="body-s text-ink-2 mt-1">
-                          {order.variantLabel ?? "Variant recorded with order"}
-                          {order.quantity != null ? ` · Qty ${order.quantity}` : null}
+                          {variantLabel ?? "Variant unavailable"}
+                          {quantity !== "Not available"
+                            ? ` · Qty ${quantity}`
+                            : null}
                         </p>
                       ) : null}
                     </div>
                     <div className="account-list-card-actions">
-                      <ResearchStatusBadge label={sentenceCase(order.fulfillmentState)} tone={statusTone(order.fulfillmentState)} />
+                      <ResearchStatusBadge label={fulfillmentStatusLabel(order.fulfillmentState)} tone={statusTone(order.fulfillmentState)} />
+                      <Link href={accountOrderDetailPath(order.reference)}>Open record details</Link>
                       {trackingUrl ? <a href={trackingUrl} target="_blank" rel="noopener noreferrer">Track shipment</a> : null}
                     </div>
                   </article>
@@ -217,9 +221,11 @@ export function AccountOverviewView({
             </div>
           ) : (
             <div className="account-empty mt-5">
-              {historyComplete
-                ? "No Research orders are attached to this account yet."
-                : "Order history is currently unavailable or incomplete — recent orders may not be shown."}
+              {authoritativeResearchCount === 0
+                ? "No Research commerce records are attached to this account yet."
+                : authoritativeResearchCount !== null
+                  ? "The authoritative source reports commerce records, but no recent record rows are visible in this account view."
+                : "Commerce history is currently unavailable or incomplete — recent records may not be shown."}
             </div>
           )}
         </section>
@@ -229,8 +235,8 @@ export function AccountOverviewView({
           <h2 id="care-summary-heading" className="account-section-title">Operational status</h2>
           <div className="mt-5">
             {/* An unavailable Care source carries no enrollment claim (P1-D). */}
-            <div className="account-data-row"><span className="account-data-label">Enrollment</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Care status unavailable" : careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</span></div>
-            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "Not started"}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Enrollment</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Care status is managed through the provider/Tebra workflow." : careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "No stage recorded"}</span></div>
             <div className="account-data-row"><span className="account-data-label">Pharmacy</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : sentenceCase(careEnrollment.pharmacyState)}</span></div>
           </div>
           <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.care}>Open Care status</Link>
@@ -238,18 +244,12 @@ export function AccountOverviewView({
       </div>
 
       {productInterests.length ? (
-        <CurrentDemandCollection
-          items={savedInterestItems(productInterests)}
-          title="Your saved interests"
-          headingId="saved-interests-title"
-          lead="Availability follows the current Research or Care pathway for each item. No interest is automatically an order."
-          showFilters={false}
-        />
+        <AccountInterestsView interests={productInterests} />
       ) : (
         <section className="account-surface" aria-labelledby="interests-empty-heading">
           <p className="account-section-label">Saved interests</p>
-          <h2 id="interests-empty-heading" className="account-section-title">No interests recorded.</h2>
-          <p className="body-s text-ink-2 mt-3">Availability requests can be reviewed with account support.</p>
+          <h2 id="interests-empty-heading" className="account-section-title">No interests are visible in this account view.</h2>
+          <p className="body-s text-ink-2 mt-3">Interest-history completeness is not reported here. Availability requests can be reviewed with account support.</p>
         </section>
       )}
 
@@ -277,17 +277,17 @@ export function AccountOverviewView({
       <section className="account-grid account-grid-3" aria-label="Account resources">
         <Link className="account-surface" href={ACCOUNT_PORTAL_ROUTES.documents}>
           <p className="account-section-label">Documents</p>
-          <p className="account-section-title tabular">{documents.length}</p>
+          <p className="account-section-title tabular">{documents.length ? `${documents.length} visible` : "Status unavailable"}</p>
           <p className="body-s text-ink-2 mt-3">Receipts, approved COAs, and account documents.</p>
         </Link>
         <Link className="account-surface" href={ACCOUNT_PORTAL_ROUTES.support}>
           <p className="account-section-label">Support</p>
-          <p className="account-section-title tabular">{supportCases.filter((item) => item.state !== "resolved").length} open</p>
+          <p className="account-section-title tabular">{supportCases.some((item) => item.state !== "resolved") ? `${supportCases.filter((item) => item.state !== "resolved").length} visible open` : "Status unavailable"}</p>
           <p className="body-s text-ink-2 mt-3">Order, account, Care, and pharmacy support.</p>
         </Link>
         <Link className="account-surface" href={ACCOUNT_PORTAL_ROUTES.subscription}>
           <p className="account-section-label">Billing</p>
-          <p className="account-section-title">{membership.manualBilling ? "Manual / offline" : "Online management"}</p>
+          <p className="account-section-title">{noBillingRelationship ? "No billing relationship" : membership.manualBilling ? "Manual / offline" : "Online management"}</p>
           <p className="body-s text-ink-2 mt-3">Membership billing remains separate from product fulfillment.</p>
         </Link>
       </section>

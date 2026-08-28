@@ -18,7 +18,8 @@ export type CustomerSubscriptionDto = Readonly<{
 
 export type SubscriptionPageDto = Readonly<{
   subscription: CustomerSubscriptionDto;
-  billingDocuments: readonly DocumentSummaryDto[];
+  /** Null means the document source could not be read; [] is a proven empty read. */
+  billingDocuments: readonly DocumentSummaryDto[] | null;
 }>;
 
 export type SupportRequestInput = Readonly<{

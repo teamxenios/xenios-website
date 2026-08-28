@@ -20,10 +20,15 @@ import {
 } from "../../catalog-priority/priority-config";
 import { ClientImportDryRunSummaryView } from "../../pages/adminx/client-imports";
 import { AccountPortalShell } from "../AccountPortalShell";
+import { ACCOUNT_PORTAL_EXTENSION_ROUTES } from "../routes";
 import { AccountCareView } from "../views/CareView";
 import { AccountDocumentsView } from "../views/DocumentsView";
+import { AccountInterestsView } from "../views/InterestsView";
+import { AccountOrderDetailView } from "../views/OrderDetailView";
 import { AccountOrdersView } from "../views/OrdersView";
 import { AccountOverviewView } from "../views/OverviewView";
+import { AccountProfileView } from "../views/ProfileView";
+import { AccountSecurityView } from "../views/SecurityView";
 import { AccountSubscriptionView } from "../views/SubscriptionView";
 import { AccountSupportView } from "../views/SupportView";
 import "../../../index.css";
@@ -32,10 +37,14 @@ import "./review.css";
 type ReviewScreen =
   | "overview"
   | "orders"
+  | "order-detail"
   | "subscription"
   | "care"
   | "documents"
   | "support"
+  | "profile"
+  | "security"
+  | "interests"
   | "catalog"
   | "pending"
   | "admin-import";
@@ -118,7 +127,9 @@ function Review() {
 
   switch (SCREEN) {
     case "orders":
-      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.orders} eyebrow="Orders + fulfillment" title="Orders, without ambiguity." lead="Research orders and Care/pharmacy fulfillment remain visibly separate."><AccountOrdersView data={FIXTURE_CUSTOMER_ORDERS} /></AccountFrame>;
+      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.orders} eyebrow="Commerce + fulfillment" title="Commerce history, without ambiguity." lead="Research commerce records and Care/pharmacy fulfillment remain visibly separate."><AccountOrdersView data={FIXTURE_CUSTOMER_ORDERS} /></AccountFrame>;
+    case "order-detail":
+      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.orders} eyebrow="Commerce history" title="Commerce record details." lead="Payment, fulfillment, and available line detail from one exact member-scoped record."><AccountOrderDetailView data={FIXTURE_CUSTOMER_ORDERS} reference={FIXTURE_CUSTOMER_ORDERS.research[1].reference} /></AccountFrame>;
     case "subscription":
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.subscription} eyebrow="Membership + billing" title="Membership, separated from Care." lead="Plan and renewal status without confusing membership with provider or pharmacy operations."><AccountSubscriptionView data={{ subscription: { membership: FIXTURE_MEMBERSHIP_MANUAL, careEnrollment: FIXTURE_CARE_ENROLLED }, billingDocuments: FIXTURE_DOCUMENTS.filter((document) => document.kind === "receipt") }} /></AccountFrame>;
     case "care":
@@ -127,6 +138,12 @@ function Review() {
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.documents} eyebrow="Secure records" title="Documents in one place." lead="Approved customer-facing account records only."><AccountDocumentsView documents={FIXTURE_DOCUMENTS} onDownload={async () => "ok"} /></AccountFrame>;
     case "support":
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.support} eyebrow="Account support" title="The right help, in the right lane." lead="Account, order, Care-operation, or pharmacy-operation support."><AccountSupportView cases={FIXTURE_SUPPORT_CASES} onSubmit={async (input) => ({ kind: "ok", data: { id: "case-synthetic-new", category: input.category, subject: input.subject, state: "open", lastUpdateAt: "2026-08-26T18:00:00.000Z", responseExpectation: "A response expectation will appear after routing." } })} /></AccountFrame>;
+    case "profile":
+      return <AccountFrame path={ACCOUNT_PORTAL_EXTENSION_ROUTES.profile} eyebrow="Account identity" title="Your profile." lead="The identity attached to this private account, shown as a read-only record."><AccountProfileView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
+    case "security":
+      return <AccountFrame path={ACCOUNT_PORTAL_EXTENSION_ROUTES.security} eyebrow="Account security" title="Security and recovery." lead="Use the existing recovery path, with unavailable controls described honestly."><AccountSecurityView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
+    case "interests":
+      return <AccountFrame path={ACCOUNT_PORTAL_EXTENSION_ROUTES.interests} eyebrow="Saved interests" title="Product interests." lead="Recorded interests and their account-visible availability without implied ordering."><AccountInterestsView interests={FIXTURE_ACCOUNT_OVERVIEW.productInterests} /></AccountFrame>;
     case "catalog":
       return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.home} eyebrow="Catalog priority" title="Demand, organized by pathway." lead="A review-only projection of the config-driven priority collection; no counts, prices, or unsupported activation claims."><CurrentDemandCollection items={REVIEW_DEMAND_ITEMS} /></AccountFrame>;
     case "pending":
@@ -135,7 +152,7 @@ function Review() {
       return <div className="account-review-admin"><ClientImportDryRunSummaryView report={SYNTHETIC_IMPORT_REPORT} attribution={{ sourcePartner: "Example advisory partner", relationshipOwner: "Assigned account lead" }} disposition={{ approved: 0, blocked: 31, skipped: 0 }} /></div>;
     case "overview":
     default:
-      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.home} title="Your account, clearly organized." lead="Membership, Research orders, Care operations, documents, and support—each with its own source of truth."><AccountOverviewView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
+      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.home} title="Your account, clearly organized." lead="Membership, commerce history, Care operations, documents, and support—each with its own source of truth."><AccountOverviewView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
   }
 }
 
