@@ -11,6 +11,7 @@ import {
 
 export const PUBLIC_QUALITY_DEPENDENCY_TIMEOUT_MS = 1_500;
 export const PUBLIC_QUALITY_DOCUMENT_MAX_BYTES = 20 * 1024 * 1024;
+export const PUBLIC_QUALITY_DOCUMENT_MAX_CHUNKS = 4_096;
 
 export type PublicLotLookupResult =
   | { kind: "available"; record: unknown | null }
@@ -18,7 +19,14 @@ export type PublicLotLookupResult =
   | { kind: "unavailable"; reason: "not_configured" | "dependency_unavailable" };
 
 export type PublicLotDocumentReadResult =
-  | { kind: "available"; bytes: Uint8Array; contentType: "application/pdf" }
+  | {
+      kind: "available";
+      /** Size from the immutable object revision's trusted metadata. */
+      trustedSizeBytes: number;
+      /** A lazy stream. Implementations must not pre-buffer the complete object. */
+      stream: AsyncIterable<Uint8Array>;
+      contentType: "application/pdf";
+    }
   | { kind: "not_found" }
   | { kind: "unavailable"; reason: "not_configured" | "dependency_unavailable" };
 
@@ -27,7 +35,11 @@ export interface PublicLotSource {
     lotCode: string,
     options: { signal: AbortSignal },
   ): Promise<PublicLotLookupResult>;
-  /** Atomically re-authorizes every exact publication revision before reading bytes. */
+  /**
+   * Atomically re-authorizes every exact publication revision and resolves
+   * trusted immutable-object size metadata before exposing a lazy byte stream.
+   * Implementations must not pre-buffer the complete object.
+   */
   readApprovedPublicDocument(input: {
     lotCode: string;
     documentId: string;
@@ -110,7 +122,12 @@ const publicLotDocumentReadResultEnvelopeSchema = z.discriminatedUnion("kind", [
   z
     .object({
       kind: z.literal("available"),
-      bytes: z.instanceof(Uint8Array),
+      trustedSizeBytes: z.number().int().safe().positive(),
+      stream: z.custom<AsyncIterable<Uint8Array>>(
+        (value) => typeof value === "object"
+          && value !== null
+          && typeof (value as AsyncIterable<Uint8Array>)[Symbol.asyncIterator] === "function",
+      ),
       contentType: z.literal("application/pdf"),
     })
     .strict(),
@@ -233,6 +250,111 @@ function isPdf(bytes: Uint8Array): boolean {
     && bytes[2] === 0x44
     && bytes[3] === 0x46
     && bytes[4] === 0x2d;
+}
+
+function streamFailure(): Error {
+  return new Error("public document stream unavailable");
+}
+
+function cancelDocumentStream(iterator: AsyncIterator<Uint8Array>): void {
+  try {
+    if (typeof iterator.return !== "function") return;
+    void Promise.resolve(iterator.return()).catch(() => undefined);
+  } catch {
+    // The request path is already failing closed. Never let hostile cleanup
+    // behavior replace the bounded public response or expose provider detail.
+  }
+}
+
+async function nextDocumentChunk(
+  iterator: AsyncIterator<Uint8Array>,
+  signal: AbortSignal,
+): Promise<IteratorResult<Uint8Array>> {
+  if (signal.aborted) throw streamFailure();
+  return await new Promise<IteratorResult<Uint8Array>>((resolve, reject) => {
+    let settled = false;
+    let onAbort: () => void = () => undefined;
+    const finish = (
+      continuation: () => void,
+    ) => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener("abort", onAbort);
+      continuation();
+    };
+    onAbort = () => finish(() => reject(streamFailure()));
+    signal.addEventListener("abort", onAbort, { once: true });
+    Promise.resolve()
+      .then(() => iterator.next())
+      .then(
+        (step) => finish(() => resolve(step)),
+        () => finish(() => reject(streamFailure())),
+      );
+  });
+}
+
+async function bufferTrustedDocumentStream(
+  read: Extract<PublicLotDocumentReadResult, { kind: "available" }>,
+  maxBytes: number,
+  signal: AbortSignal,
+): Promise<Buffer> {
+  // Refuse the trusted metadata before pulling even one chunk or allocating a
+  // response-sized buffer. The stream bound below independently rejects a
+  // source that lies about the metadata.
+  if (
+    !Number.isSafeInteger(read.trustedSizeBytes)
+    || read.trustedSizeBytes < 1
+    || read.trustedSizeBytes > maxBytes
+  ) {
+    throw streamFailure();
+  }
+  if (signal.aborted) throw streamFailure();
+
+  // Allocate before acquiring the iterator so an allocation failure cannot
+  // strand a provider stream that would then require cleanup.
+  const snapshot = Buffer.alloc(read.trustedSizeBytes);
+  let iterator: AsyncIterator<Uint8Array>;
+  try {
+    iterator = read.stream[Symbol.asyncIterator]();
+  } catch {
+    throw streamFailure();
+  }
+  if (!iterator || typeof iterator.next !== "function") throw streamFailure();
+
+  let offset = 0;
+  let chunkCount = 0;
+  let complete = false;
+  try {
+    while (true) {
+      const step = await nextDocumentChunk(iterator, signal);
+      if (
+        typeof step !== "object"
+        || step === null
+        || typeof step.done !== "boolean"
+      ) {
+        throw streamFailure();
+      }
+      if (step.done) {
+        if (offset !== read.trustedSizeBytes) throw streamFailure();
+        complete = true;
+        return snapshot;
+      }
+      const chunk = step.value;
+      chunkCount += 1;
+      if (
+        !(chunk instanceof Uint8Array)
+        || chunk.byteLength < 1
+        || chunkCount > PUBLIC_QUALITY_DOCUMENT_MAX_CHUNKS
+        || chunk.byteLength > read.trustedSizeBytes - offset
+      ) {
+        throw streamFailure();
+      }
+      snapshot.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+  } finally {
+    if (!complete) cancelDocumentStream(iterator);
+  }
 }
 
 function isCurrentlyApproved(record: PublicLotSourceRecord, nowMs: number): boolean {
@@ -476,36 +598,43 @@ export function registerPublicQualityApi(
         };
         const boundedRead = await runBounded(
           timeoutMs,
-          (signal) => dependencies.source.readApprovedPublicDocument({
-            lotCode,
-            documentId,
-            expectedPublication,
-            maxBytes: PUBLIC_QUALITY_DOCUMENT_MAX_BYTES,
-            signal,
-          }),
+          async (signal) => {
+            const rawRead = await dependencies.source.readApprovedPublicDocument({
+              lotCode,
+              documentId,
+              expectedPublication,
+              maxBytes: PUBLIC_QUALITY_DOCUMENT_MAX_BYTES,
+              signal,
+            });
+            const parsedRead = publicLotDocumentReadResultEnvelopeSchema.safeParse(rawRead);
+            if (!parsedRead.success) throw streamFailure();
+            if (parsedRead.data.kind !== "available") return parsedRead.data;
+            const bytes = await bufferTrustedDocumentStream(
+              parsedRead.data,
+              PUBLIC_QUALITY_DOCUMENT_MAX_BYTES,
+              signal,
+            );
+            return {
+              kind: "available" as const,
+              bytes,
+              contentType: parsedRead.data.contentType,
+            };
+          },
         );
         if (boundedRead.kind !== "value") {
           await auditPublicRead(dependencies, timeoutMs, { action: "document_read", outcome: "unavailable", lotCode, documentId });
           return unavailable(res);
         }
-        const parsedRead = publicLotDocumentReadResultEnvelopeSchema.safeParse(boundedRead.value);
-        if (!parsedRead.success || parsedRead.data.kind === "unavailable") {
+        const read = boundedRead.value;
+        if (read.kind === "unavailable") {
           await auditPublicRead(dependencies, timeoutMs, { action: "document_read", outcome: "unavailable", lotCode, documentId });
           return unavailable(res);
         }
-        const read = parsedRead.data;
         if (read.kind === "not_found") {
           const audited = await auditPublicRead(dependencies, timeoutMs, { action: "document_read", outcome: "not_found", lotCode, documentId });
           return audited ? documentNotFound(res) : unavailable(res);
         }
-        if (
-          read.bytes.byteLength < 1
-          || read.bytes.byteLength > PUBLIC_QUALITY_DOCUMENT_MAX_BYTES
-        ) {
-          await auditPublicRead(dependencies, timeoutMs, { action: "document_read", outcome: "unavailable", lotCode, documentId });
-          return unavailable(res);
-        }
-        const pdfBytes = Buffer.from(read.bytes);
+        const pdfBytes = read.bytes;
         if (!isPdf(pdfBytes)) {
           await auditPublicRead(dependencies, timeoutMs, { action: "document_read", outcome: "unavailable", lotCode, documentId });
           return unavailable(res);

@@ -6,6 +6,7 @@ import {
   PUBLIC_LOT_DOCUMENT_ROUTE,
   PUBLIC_LOT_ROUTE,
   PUBLIC_QUALITY_DOCUMENT_MAX_BYTES,
+  PUBLIC_QUALITY_DOCUMENT_MAX_CHUNKS,
   registerPublicQualityApi,
   type PublicLotSource,
   type PublicQualityApiDependencies,
@@ -51,6 +52,27 @@ const record = {
 const allow: RequestHandler = (_req, _res, next) => next();
 const pdfBytes = new TextEncoder().encode("%PDF-1.7\n% public test file");
 
+async function* byteStream(
+  ...chunks: readonly Uint8Array[]
+): AsyncIterable<Uint8Array> {
+  for (const chunk of chunks) yield chunk;
+}
+
+function availableDocument(
+  bytes: Uint8Array = pdfBytes,
+  options: {
+    trustedSizeBytes?: number;
+    chunks?: readonly Uint8Array[];
+  } = {},
+) {
+  return {
+    kind: "available" as const,
+    trustedSizeBytes: options.trustedSizeBytes ?? bytes.byteLength,
+    stream: byteStream(...(options.chunks ?? [bytes])),
+    contentType: "application/pdf" as const,
+  };
+}
+
 function buildApp(options: {
   source?: PublicLotSource;
   lookup?: PublicLotSource["lookupPublicLot"];
@@ -63,11 +85,7 @@ function buildApp(options: {
   const lookupImplementation: PublicLotSource["lookupPublicLot"] =
     options.lookup ?? (async () => ({ kind: "available", record }));
   const readImplementation: PublicLotSource["readApprovedPublicDocument"] =
-    options.read ?? (async () => ({
-      kind: "available",
-      bytes: pdfBytes,
-      contentType: "application/pdf" as const,
-    }));
+    options.read ?? (async () => availableDocument());
   const lookup = vi.fn(lookupImplementation);
   const read = vi.fn(readImplementation);
   const events: PublicQualityAuditEvent[] = [];
@@ -372,7 +390,7 @@ describe("public exact-lot quality API", () => {
     expect(harness.read).not.toHaveBeenCalled();
   });
 
-  it("requires the source to enforce the byte cap and serves only an audited PDF attachment", async () => {
+  it("passes the cap to the source and serves only a bounded, audited PDF attachment", async () => {
     const harness = buildApp();
     const response = await request(harness.app).get(documentUrl()).buffer(true);
     expect(response.status).toBe(200);
@@ -398,16 +416,55 @@ describe("public exact-lot quality API", () => {
     expectNoStore(response.headers);
   });
 
+  it("reassembles a segmented stream only after trusted size evidence passes", async () => {
+    const chunks = [pdfBytes.slice(0, 2), pdfBytes.slice(2, 7), pdfBytes.slice(7)];
+    const harness = buildApp({
+      read: async () => availableDocument(pdfBytes, { chunks }),
+    });
+
+    const response = await request(harness.app).get(documentUrl()).buffer(true);
+    expect(response.status).toBe(200);
+    expect(Buffer.isBuffer(response.body)).toBe(true);
+    expect(response.body.equals(Buffer.from(pdfBytes))).toBe(true);
+    expect(response.headers["content-length"]).toBe(String(pdfBytes.byteLength));
+  });
+
+  it("refuses over-cap trusted metadata before pulling or allocating stream bytes", async () => {
+    let opens = 0;
+    let pulls = 0;
+    const stream: AsyncIterable<Uint8Array> = {
+      [Symbol.asyncIterator]() {
+        opens += 1;
+        return {
+          async next() {
+            pulls += 1;
+            return { done: false, value: pdfBytes };
+          },
+        };
+      },
+    };
+    const harness = buildApp({
+      read: async () => ({
+        kind: "available",
+        trustedSizeBytes: PUBLIC_QUALITY_DOCUMENT_MAX_BYTES + 1,
+        stream,
+        contentType: "application/pdf",
+      }),
+    });
+
+    const response = await request(harness.app).get(documentUrl());
+    expect(response.status).toBe(503);
+    expect(opens).toBe(0);
+    expect(pulls).toBe(0);
+    expect(harness.events.at(-1)?.outcome).toBe("unavailable");
+  });
+
   it("snapshots approved PDF bytes before audit so later source mutation cannot change the response", async () => {
     const mutableBytes = new TextEncoder().encode("%PDF-1.7\n% immutable response snapshot");
     const expectedBytes = Buffer.from(mutableBytes);
     let mutatedDuringAudit = false;
     const harness = buildApp({
-      read: async () => ({
-        kind: "available",
-        bytes: mutableBytes,
-        contentType: "application/pdf",
-      }),
+      read: async () => availableDocument(mutableBytes),
       audit: async (event) => {
         if (event.action === "document_read" && event.outcome === "granted") {
           mutableBytes.fill(0x58);
@@ -483,6 +540,36 @@ describe("public exact-lot quality API", () => {
     expect((await request(hungRead.app).get(documentUrl())).status).toBe(503);
     expectAbortedSignal(readSignal);
 
+    let streamSignal: AbortSignal | null = null;
+    let streamCancelled = false;
+    const hungStream = buildApp({
+      timeoutMs: 5,
+      read: async (input) => {
+        streamSignal = input.signal;
+        return {
+          kind: "available",
+          trustedSizeBytes: pdfBytes.byteLength,
+          contentType: "application/pdf",
+          stream: {
+            [Symbol.asyncIterator]() {
+              return {
+                next: async () => await new Promise<IteratorResult<Uint8Array>>(
+                  () => undefined,
+                ),
+                return: async (): Promise<IteratorResult<Uint8Array>> => {
+                  streamCancelled = true;
+                  return { done: true, value: undefined as never };
+                },
+              };
+            },
+          },
+        };
+      },
+    });
+    expect((await request(hungStream.app).get(documentUrl())).status).toBe(503);
+    expectAbortedSignal(streamSignal);
+    await vi.waitFor(() => expect(streamCancelled).toBe(true));
+
     let auditSignal: AbortSignal | null = null;
     const hungAudit = buildApp({
       timeoutMs: 5,
@@ -497,11 +584,39 @@ describe("public exact-lot quality API", () => {
 
   it("fails closed for invalid bytes, over-cap bytes, thrown storage, and audit failure", async () => {
     const invalidReads: Array<PublicLotSource["readApprovedPublicDocument"]> = [
-      async () => ({ kind: "available", bytes: new Uint8Array(), contentType: "application/pdf" }),
-      async () => ({ kind: "available", bytes: new TextEncoder().encode("NOT A PDF"), contentType: "application/pdf" }),
-      async () => ({ kind: "available", bytes: new Uint8Array(PUBLIC_QUALITY_DOCUMENT_MAX_BYTES + 1), contentType: "application/pdf" }),
-      async () => ({ kind: "stale", bytes: pdfBytes, contentType: "application/pdf" } as never),
-      async () => ({ kind: "available", bytes: pdfBytes, contentType: "application/pdf", storageKey: "HOSTILE_EXTRA_FIELD" } as never),
+      async () => availableDocument(new Uint8Array()),
+      async () => availableDocument(new TextEncoder().encode("NOT A PDF")),
+      async () => availableDocument(pdfBytes, {
+        trustedSizeBytes: PUBLIC_QUALITY_DOCUMENT_MAX_BYTES + 1,
+      }),
+      async () => availableDocument(pdfBytes, {
+        trustedSizeBytes: 5,
+      }),
+      async () => availableDocument(pdfBytes, {
+        trustedSizeBytes: pdfBytes.byteLength + 1,
+      }),
+      async () => availableDocument(pdfBytes, {
+        chunks: [new Uint8Array(), pdfBytes],
+      }),
+      async () => ({
+        kind: "available",
+        trustedSizeBytes: PUBLIC_QUALITY_DOCUMENT_MAX_CHUNKS + 1,
+        contentType: "application/pdf",
+        stream: (async function* () {
+          const signature = [0x25, 0x50, 0x44, 0x46, 0x2d];
+          for (let index = 0; index <= PUBLIC_QUALITY_DOCUMENT_MAX_CHUNKS; index += 1) {
+            yield Uint8Array.of(signature[index] ?? 0x20);
+          }
+        }()),
+      }),
+      async () => ({
+        kind: "available",
+        trustedSizeBytes: 8,
+        contentType: "application/pdf",
+        stream: byteStream("HOSTILE" as never),
+      }),
+      async () => ({ kind: "stale", stream: byteStream(pdfBytes), contentType: "application/pdf" } as never),
+      async () => ({ ...availableDocument(), storageKey: "HOSTILE_EXTRA_FIELD" } as never),
       async () => ({ kind: "not_found", unexpected: true } as never),
       async () => ({ kind: "unavailable", reason: "unsupported" } as never),
       async () => { throw new Error("HOSTILE_STORAGE_ERROR"); },
