@@ -45,6 +45,11 @@ function buildApp(portsOverride?: Partial<CustomerAccountPorts>) {
   return app;
 }
 
+function expectPrivateNoStore(res: { headers: Record<string, string | string[] | undefined> }) {
+  expect(res.headers["cache-control"]).toBe("no-store");
+  expect(res.headers.pragma).toBe("no-cache");
+}
+
 describe("customer-account routes", () => {
   it("refuses every path without a member", async () => {
     const app = buildApp();
@@ -52,6 +57,7 @@ describe("customer-account routes", () => {
       const res = await request(app).get(path);
       expect(res.status).toBe(401);
       expect(res.body.kind).toBe("denied");
+      expectPrivateNoStore(res);
     }
   });
 
@@ -64,6 +70,7 @@ describe("customer-account routes", () => {
     expect(res.body.kind).toBe("ok");
     expect(res.body.data.identity.email).toBe("test.customer@example.invalid");
     expect(res.body.data.researchOrders).toHaveLength(2);
+    expectPrivateNoStore(res);
   });
 
   it("NEVER exposes partner attribution on the member surface", async () => {
@@ -181,6 +188,7 @@ describe("customer-account routes", () => {
         .send(bad);
       expect(res.status).toBe(400);
       expect(res.body.reason).toBe("invalid_support_case");
+      expectPrivateNoStore(res);
     }
   });
 
@@ -199,6 +207,7 @@ describe("customer-account routes", () => {
       .send({ category: "order", subject: "s", description: "d" });
     expect(res.status).toBe(429);
     expect(res.body.reason).toBe("rate_limited");
+    expectPrivateNoStore(res);
   });
 
   it("opens a valid support case for the acting member", async () => {
@@ -209,6 +218,7 @@ describe("customer-account routes", () => {
       .send({ category: "account", subject: "Update my email", description: "Please advise." });
     expect(res.status).toBe(201);
     expect(res.body.data.state).toBe("open");
+    expectPrivateNoStore(res);
     // and it shows up in that member's list, not the other member's
     const mine = await request(app)
       .get(CUSTOMER_ACCOUNT_PATHS.support)
@@ -273,6 +283,7 @@ describe("customer-account routes", () => {
       const res = await get(status);
       expect(res.status, status).toBe(403);
       expect(res.body.code).toBe(`status_${status}`);
+      expectPrivateNoStore(res);
     }
     expect(portReads).toBe(0); // no denied caller ever reached the projection
 
@@ -301,6 +312,7 @@ describe("customer-account routes", () => {
       .set("x-test-member", "member-fixture-1");
     expect(res.status).toBe(404);
     expect(res.body.reason).toBe("document_unavailable");
+    expectPrivateNoStore(res);
   });
 
   it("document download serves bytes for the OWNING member only", async () => {
@@ -324,17 +336,35 @@ describe("customer-account routes", () => {
     expect(owner.status).toBe(200);
     expect(owner.headers["content-type"]).toContain("application/pdf");
     expect(owner.headers["content-disposition"]).toContain("Receipt.pdf");
-    expect(owner.headers["cache-control"]).toBe("no-store");
+    expectPrivateNoStore(owner);
 
     const stranger = await request(app)
       .get(`${CUSTOMER_ACCOUNT_PATHS.documents}/doc-fixture-0001`)
       .set("x-test-member", "member-fixture-2");
     expect(stranger.status).toBe(404);
     expect(stranger.body.reason).toBe("document_unavailable");
+    expectPrivateNoStore(stranger);
 
     const anonymous = await request(app).get(
       `${CUSTOMER_ACCOUNT_PATHS.documents}/doc-fixture-0001`,
     );
     expect(anonymous.status).toBe(401);
+    expectPrivateNoStore(anonymous);
+  });
+
+  it("keeps unexpected private-handler errors out of every cache", async () => {
+    const app = buildApp({
+      orders: {
+        ordersFor: async () => {
+          throw new Error("private_store_unavailable");
+        },
+      },
+    });
+    const res = await request(app)
+      .get(CUSTOMER_ACCOUNT_PATHS.orders)
+      .set("x-test-member", "member-fixture-1");
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ kind: "error" });
+    expectPrivateNoStore(res);
   });
 });
