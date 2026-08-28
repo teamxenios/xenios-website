@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   EMPTY_ACTIVATION_CHECKLIST,
+  isValidActivationApproval,
   resolveActivationStatus,
   type ActivationChecklist,
   type ActivationOverlayEntry,
@@ -109,6 +110,17 @@ export function loadActivationOverlay(rootDir: string, relativePath = DEFAULT_CO
         const a = approval as Record<string, unknown>;
         if (typeof approval !== "object" || typeof a.approvedBy !== "string" || typeof a.approvedAt !== "string") {
           throw new MalformedOverlayError(where, "founderActivationApproval must be null or {approvedBy, approvedAt}");
+        }
+        // P1-E: an approval that is PRESENT but not real evidence (empty or
+        // whitespace approver, non-ISO / impossible / out-of-era timestamp)
+        // refuses the whole load. The resolver would already treat it as
+        // no-approval; failing loudly here means a config that CLAIMS an
+        // approval it cannot substantiate never serves anything at all.
+        if (!isValidActivationApproval({ approvedBy: a.approvedBy, approvedAt: a.approvedAt })) {
+          throw new MalformedOverlayError(
+            where,
+            "founderActivationApproval is not valid evidence (approvedBy must be substantive; approvedAt must be a strict, real, in-era ISO-8601 UTC instant)",
+          );
         }
       }
       entries.push({

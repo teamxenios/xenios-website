@@ -48,7 +48,6 @@ export type ImportSourceRow = Readonly<{ name: string; product: string }>;
 
 export type ImportDryRunInput = Readonly<{
   batchId: string;
-  sourceLabel: string;
   rows: readonly ImportSourceRow[];
   sourcePartner: string;
   relationshipOwner: string;
@@ -250,7 +249,7 @@ export function runImportDryRun(input: ImportDryRunInput): ImportDryRunOutcome {
 
   const report: ImportDryRunReportDto = {
     batchId: input.batchId,
-    sourceLabel: input.sourceLabel,
+    sourceType: "partner_client_import",
     dryRun: true,
     totalRows: input.rows.length,
     rejectedRows,

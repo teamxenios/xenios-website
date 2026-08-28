@@ -335,8 +335,10 @@ describe("the projection carries no private fact", () => {
     }
     expect(Object.keys(summary).sort()).toEqual([
       "orderId",
+      "payment",
       "placedAt",
       "shipments",
+      "shipmentsSource",
       "state",
       "totalCents",
     ]);

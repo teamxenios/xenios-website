@@ -95,3 +95,52 @@ Founder gate, independent review of THIS reworked file, `supabase/MIGRATIONS.md`
 ledger + DAG registration at apply time, and the post-apply acceptance query on
 `role_table_grants` against the table above. Synthetic rehearsal data
 ("Synthetic Person A/B") never left the container; the container was destroyed.
+
+---
+
+# Round 3 addendum — P1-F: immutable, evidence-bound approvals (v2 battery)
+
+Reworked the same date for the second adversarial review's P1-F finding:
+approval was governed but not BOUND — eligible data could be approved, then
+mutated, and still queue. The candidate (STILL UNAPPLIED) now binds every
+approval to an immutable snapshot and freezes the approved evidence:
+
+1. `research_client_import_staging.row_version` bumps on every update; the
+   guard trigger computes `approved_snapshot_hash` (built-in sha256 over
+   staging_id | batch | normalized identity | contact | consent | partner)
+   plus `approved_row_version` AT APPROVAL TIME — server-computed, never
+   caller-supplied — and every queue/sent advance RE-RESOLVES the staging row
+   and refuses on any mismatch, re-checks contact/consent eligibility, and
+   re-verifies the approving principal is STILL an active super_admin.
+2. Approval fields are immutable once written, for every writer; the
+   invitation can never be re-pointed at a different staged person.
+3. The staging row's evidence fields FREEZE while a founder_approved/queued/
+   sent invitation references them (revoke → edit → re-approve is the one path
+   to new evidence, and the re-approval snapshots the new truth).
+4. Constraint/trigger alignment: `draft → revoked` is legal WITHOUT approval
+   (the check constraint now exempts 'revoked'); there is ONE state machine.
+
+## v2 attack battery — fresh PostgreSQL 15 container, all refused
+
+| # | Attack | Result |
+|---|---|---|
+| V2-1 | draft → revoked without approval | ALLOWED (aligned machine — positive test) |
+| V2-2a/b | approve, then mutate consent / email on staging | refused: approved evidence is immutable |
+| V2-2c | superuser disables the freeze, mutates, re-enables, queues | refused: snapshot mismatch |
+| V2-3a/b/c | owner replaces approved_by / rewrites approved_at / swaps hash | refused: approval record is immutable |
+| V2-3d | owner re-points the invitation at another staged person | refused |
+| V2-4 | owner deletes the staged person behind a live approval | refused (FK) |
+| V2-5 | advance to sent after the approver's super_admin role was revoked | refused: re-approval required |
+| V2-6a | queue after revoked | refused: not in the state machine |
+| V2-6b | sent without queued | refused: not in the state machine |
+| V2-7 | revoke → edit evidence → re-approve → queue | ALLOWED with a FRESH snapshot (positive test) |
+
+The v1 battery (18 attacks: privileges, actor-text approval, contactless/
+unconsented approval, duplicate live invitation, owner-proof append-only
+audit, sequence lockdown) was re-run on a second fresh database: 18/18 still
+refused. Rollback (drop all five tables + cascade to the evidence-hash
+function) and clean re-apply were rehearsed. Container destroyed; synthetic
+data only.
+
+**Status unchanged: NOT READY FOR APPLY** — founder gate, independent review,
+ledger + DAG registration all still required before any environment runs it.

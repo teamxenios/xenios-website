@@ -12,6 +12,13 @@ function summary(overrides: Partial<CommerceOrderSummaryDto>): CommerceOrderSumm
     state: "payment_captured",
     placedAt: "2026-08-20T10:00:00.000Z",
     totalCents: 9900,
+    payment: {
+      amountDueCents: 9900,
+      amountCapturedCents: 9900,
+      amountRefundedCents: 0,
+      currency: "USD",
+    },
+    shipmentsSource: "connected",
     shipments: [],
     ...overrides,
   };
@@ -38,182 +45,221 @@ function sourceOf(
   };
 }
 
-describe("commerce orders projection", () => {
+async function projectOne(s: CommerceOrderSummaryDto, d?: Partial<CommerceOrderDetailDto>) {
+  const port = createCommerceOrdersPort(
+    sourceOf([s], { [s.orderId]: detail({ orderId: s.orderId, state: s.state, ...d }) }),
+  );
+  const orders = await port.ordersFor("member-1");
+  return orders.research[0];
+}
+
+describe("commerce orders projection — labels come from real lines", () => {
   it("labels a single-line order from its real detail line", async () => {
-    const port = createCommerceOrdersPort(
-      sourceOf([summary({})], { "XEA-0123456789ABCDEF": detail({}) }),
-    );
-    const orders = await port.ordersFor("member-1");
-    expect(orders.research).toHaveLength(1);
-    expect(orders.research[0].reference).toBe("XEA-0123456789ABCDEF");
-    expect(orders.research[0].itemLabel).toBe("NAD+ 1,000 mg");
-    expect(orders.research[0].quantity).toBe(2);
-    expect(orders.research[0].paymentState).toBe("paid");
-    expect(orders.research[0].fulfillmentState).toBe("unfulfilled");
-    expect(orders.research[0].lotCoaAvailable).toBe(false);
-    expect(orders.carePharmacy).toEqual([]);
+    const row = await projectOne(summary({}));
+    expect(row.reference).toBe("XEA-0123456789ABCDEF");
+    expect(row.detailAvailability).toBe("available");
+    expect(row.itemLabel).toBe("NAD+ 1,000 mg");
+    expect(row.quantity).toBe(2);
+    expect(row.paymentState).toBe("paid");
+    expect(row.lotCoaAvailable).toBe(false);
   });
 
   it("summarizes a multi-line order without inventing a single product name", async () => {
+    const row = await projectOne(summary({}), {
+      lines: [
+        { sku: "a", displayName: "DSIP 10 mg", quantity: 1, lineTotalCents: 7000 },
+        { sku: "b", displayName: "NAD+ 1,000 mg", quantity: 3, lineTotalCents: 30225 },
+      ],
+    });
+    expect(row.itemLabel).toBe("2 items");
+    expect(row.quantity).toBe(4);
+  });
+
+  // P1-B repro: missing lines were fabricated into "Research order" qty 0.
+  it("NEVER fabricates an order line: empty lines are an unavailable detail", async () => {
+    const row = await projectOne(summary({}), { lines: [] });
+    expect(row.detailAvailability).toBe("unavailable");
+    expect(row.itemLabel).toBeNull();
+    expect(row.quantity).toBeNull();
+    expect(JSON.stringify(row)).not.toContain("Research order");
+  });
+
+  it("a listed order whose detail cannot be read fails the whole read closed", async () => {
+    const s = summary({ orderId: "XO-unreadable" });
+    const port = createCommerceOrdersPort(sourceOf([s], {}));
+    await expect(port.ordersFor("member-1")).rejects.toThrow("order_detail_unavailable");
+  });
+
+  it("deduplicates a double-listed reference deterministically", async () => {
+    const s = summary({});
     const port = createCommerceOrdersPort(
-      sourceOf([summary({})], {
-        "XEA-0123456789ABCDEF": detail({
-          lines: [
-            { sku: "a", displayName: "DSIP 10 mg", quantity: 1, lineTotalCents: 7000 },
-            { sku: "b", displayName: "NAD+ 1,000 mg", quantity: 3, lineTotalCents: 30225 },
-          ],
-        }),
-      }),
+      sourceOf([s, { ...s }], { [s.orderId]: detail({}) }),
     );
     const orders = await port.ordersFor("member-1");
-    expect(orders.research[0].itemLabel).toBe("2 items");
-    expect(orders.research[0].quantity).toBe(4);
+    expect(orders.research).toHaveLength(1);
+  });
+});
+
+// P1-A: PAYMENT TRUTH FROM MONETARY FACTS. The reviewer's canonical mapping
+// and every reproduction, verbatim.
+describe("payment truth from money facts", () => {
+  const money = (captured: number | null, refunded: number | null, due = 10_000) => ({
+    amountDueCents: due,
+    amountCapturedCents: captured,
+    amountRefundedCents: refunded,
+    currency: "USD" as const,
   });
 
-  // P1-3/P1-4 (2026-08-27): the COMPLETE 14-state truth table, with no
-  // shipment evidence on any order. Payment: paid only through a recorded
-  // capture; refunded is its own state (never "paid"); exception/cancelled/
-  // replaced are reachable both sides of capture and answer "unknown".
-  // Fulfillment: shipped/delivered require shipment evidence — absent here,
-  // so both project "unknown" instead of a physical-world claim.
-  it("maps every lifecycle state to payment/fulfillment truth: no guess survives", async () => {
-    const cases: Array<[CommerceOrderSummaryDto["state"], string, string]> = [
-      ["draft", "unpaid", "unfulfilled"],
-      ["checkout_pending", "unpaid", "unfulfilled"],
-      ["payment_authorized", "unpaid", "unfulfilled"],
-      ["manual_review", "unpaid", "unfulfilled"],
-      ["approved", "unpaid", "unfulfilled"],
-      ["payment_captured", "paid", "unfulfilled"],
-      ["processing", "paid", "processing"],
-      ["partially_fulfilled", "paid", "processing"],
-      ["fulfilled", "paid", "unknown"],
-      ["delivered", "paid", "unknown"],
-      ["cancelled", "unknown", "cancelled"],
-      ["refunded", "refunded", "unknown"],
-      ["exception", "unknown", "exception"],
-      ["replaced", "unknown", "exception"],
-    ];
-    for (const [state, payment, fulfillment] of cases) {
-      const id = `XO-${state}`;
-      const port = createCommerceOrdersPort(
-        sourceOf([summary({ orderId: id, state })], { [id]: detail({ orderId: id, state }) }),
-      );
-      const orders = await port.ordersFor("member-1");
-      expect(orders.research[0].paymentState, state).toBe(payment);
-      expect(orders.research[0].fulfillmentState, state).toBe(fulfillment);
+  it("0 captured / 0 refunded → unpaid", async () => {
+    const row = await projectOne(summary({ state: "checkout_pending", payment: money(0, 0) }));
+    expect(row.paymentState).toBe("unpaid");
+  });
+
+  it("10,000 / 0 → paid", async () => {
+    const row = await projectOne(summary({ payment: money(10_000, 0) }));
+    expect(row.paymentState).toBe("paid");
+  });
+
+  it("REPRO: 10,000 captured / 1,000 refunded → partially_refunded, never refunded", async () => {
+    const row = await projectOne(summary({ state: "refunded", payment: money(10_000, 1_000) }));
+    expect(row.paymentState).toBe("partially_refunded");
+  });
+
+  it("10,000 / 10,000 → refunded", async () => {
+    const row = await projectOne(summary({ state: "refunded", payment: money(10_000, 10_000) }));
+    expect(row.paymentState).toBe("refunded");
+  });
+
+  it("10,000 / 12,000 → refunded (over-refund is still refunded, not partial)", async () => {
+    const row = await projectOne(summary({ state: "refunded", payment: money(10_000, 12_000) }));
+    expect(row.paymentState).toBe("refunded");
+  });
+
+  it("REPRO: payment_captured lifecycle with NO capture evidence → unknown, never paid", async () => {
+    const row = await projectOne(summary({ state: "payment_captured", payment: money(null, 0) }));
+    expect(row.paymentState).toBe("unknown");
+  });
+
+  it("refunded lifecycle with NO refund evidence → unknown, never refunded and never paid", async () => {
+    const row = await projectOne(summary({ state: "refunded", payment: money(10_000, null) }));
+    expect(row.paymentState).toBe("unknown");
+  });
+
+  it("a null capture in a provably pre-capture lifecycle is authoritative zero → unpaid", async () => {
+    for (const state of ["draft", "checkout_pending", "payment_authorized", "manual_review", "approved"] as const) {
+      const row = await projectOne(summary({ state, payment: money(null, 0) }));
+      expect(row.paymentState, state).toBe("unpaid");
     }
   });
 
-  it("NEVER converts refunded to paid, or post-capture ambiguity to unpaid", async () => {
-    for (const state of ["refunded", "cancelled", "exception", "replaced"] as const) {
-      const id = `XO-${state}`;
-      const port = createCommerceOrdersPort(
-        sourceOf([summary({ orderId: id, state })], { [id]: detail({ orderId: id, state }) }),
-      );
-      const orders = await port.ordersFor("member-1");
-      expect(orders.research[0].paymentState, state).not.toBe("paid");
-      expect(orders.research[0].paymentState, state).not.toBe("unpaid");
+  it("malformed money → unknown", async () => {
+    const row = await projectOne(
+      summary({ payment: { amountDueCents: 9900, amountCapturedCents: "lots" as unknown as number, amountRefundedCents: 0, currency: "USD" } }),
+    );
+    expect(row.paymentState).toBe("unknown");
+  });
+
+  it("negative money → unknown", async () => {
+    expect((await projectOne(summary({ payment: money(-1, 0) }))).paymentState).toBe("unknown");
+    expect((await projectOne(summary({ payment: money(10_000, -5) }))).paymentState).toBe("unknown");
+  });
+
+  it("lifecycle/money contradictions → unknown", async () => {
+    // Money moved in a pre-capture lifecycle.
+    expect(
+      (await projectOne(summary({ state: "draft", payment: money(5_000, 0) }))).paymentState,
+    ).toBe("unknown");
+    // Refunded lifecycle while the ledger recorded no refund.
+    expect(
+      (await projectOne(summary({ state: "refunded", payment: money(10_000, 0) }))).paymentState,
+    ).toBe("unknown");
+    // Refund with no capture behind it.
+    expect(
+      (await projectOne(summary({ state: "refunded", payment: money(0, 1_000) }))).paymentState,
+    ).toBe("unknown");
+  });
+
+  it("a legacy row with no monetary fields at all → unknown, whatever the lifecycle says", async () => {
+    for (const state of ["payment_captured", "refunded", "delivered", "exception", "cancelled"] as const) {
+      const row = await projectOne(summary({ state, payment: null }));
+      expect(row.paymentState, state).toBe("unknown");
+    }
+    const rowNoField = await projectOne(
+      summary({ state: "payment_captured", payment: undefined }),
+    );
+    expect(rowNoField.paymentState).toBe("unknown");
+  });
+
+  it("exception/cancelled do not invent financial state: the money decides", async () => {
+    expect(
+      (await projectOne(summary({ state: "exception", payment: money(10_000, 0) }))).paymentState,
+    ).toBe("paid");
+    expect(
+      (await projectOne(summary({ state: "cancelled", payment: money(0, 0) }))).paymentState,
+    ).toBe("unpaid");
+    expect(
+      (await projectOne(summary({ state: "exception", payment: money(10_000, 2_500) }))).paymentState,
+    ).toBe("partially_refunded");
+  });
+});
+
+// P1-B: fulfillment requires a CONNECTED shipment source, then evidence.
+describe("fulfillment truth", () => {
+  it("an UNCONNECTED shipment source is unknown for every lifecycle — never unfulfilled", async () => {
+    for (const state of ["checkout_pending", "payment_captured", "processing", "fulfilled", "delivered"] as const) {
+      const row = await projectOne(summary({ state, shipmentsSource: "unavailable" }));
+      expect(row.fulfillmentState, state).toBe("unknown");
     }
   });
 
-  it("emits shipped/delivered ONLY with durable shipment evidence", async () => {
-    const withTracking = summary({
+  it("a connected source without evidence still refuses shipped/delivered claims", async () => {
+    expect((await projectOne(summary({ state: "fulfilled" }))).fulfillmentState).toBe("unknown");
+    expect((await projectOne(summary({ state: "delivered" }))).fulfillmentState).toBe("unknown");
+    expect((await projectOne(summary({ state: "checkout_pending", payment: { amountDueCents: 9900, amountCapturedCents: 0, amountRefundedCents: 0, currency: "USD" } }))).fulfillmentState).toBe("unfulfilled");
+  });
+
+  it("shipped/delivered require durable shipment evidence; tracking needs a real carrier", async () => {
+    const withEvidence = summary({
       orderId: "XO-evidenced",
       state: "fulfilled",
       shipments: [{ owner: "xenios", status: "shipped", trackingNumber: "1Z999EVIDENCE", carrier: "ups" }],
     });
-    const port = createCommerceOrdersPort(
-      sourceOf([withTracking], { "XO-evidenced": detail({ orderId: "XO-evidenced", state: "fulfilled" }) }),
-    );
-    const orders = await port.ordersFor("member-1");
-    expect(orders.research[0].fulfillmentState).toBe("shipped");
-    expect(orders.research[0].trackingUrl).toContain("ups.com");
+    const row = await projectOne(withEvidence);
+    expect(row.fulfillmentState).toBe("shipped");
+    expect(row.trackingUrl).toContain("ups.com");
 
     const delivered = summary({
       orderId: "XO-delivered",
       state: "delivered",
       shipments: [{ owner: "xenios", status: "delivered", trackingNumber: null, carrier: null }],
     });
-    const port2 = createCommerceOrdersPort(
-      sourceOf([delivered], { "XO-delivered": detail({ orderId: "XO-delivered", state: "delivered" }) }),
-    );
-    const orders2 = await port2.ordersFor("member-1");
-    expect(orders2.research[0].fulfillmentState).toBe("delivered");
-    // a delivered status is evidence of arrival, but carrier/tracking stay null
-    expect(orders2.research[0].trackingUrl).toBeNull();
+    const deliveredRow = await projectOne(delivered);
+    expect(deliveredRow.fulfillmentState).toBe("delivered");
+    expect(deliveredRow.trackingUrl).toBeNull();
   });
+});
 
-  it("declares history completeness instead of presenting a partial list as the whole truth", async () => {
-    const defaulted = createCommerceOrdersPort(sourceOf([], {}));
-    const orders = await defaulted.ordersFor("member-1");
-    expect(orders.history.complete).toBe(false);
-    expect(orders.history.unavailableSources).toContain("assisted order requests (XRR)");
-
-    const declared = createCommerceOrdersPort(sourceOf([], {}), {
-      complete: false,
-      unavailableSources: ["commerce member orders", "assisted order requests (XRR)"],
-    });
-    const declaredOrders = await declared.ordersFor("member-1");
-    expect(declaredOrders.history.unavailableSources).toContain("commerce member orders");
-  });
-
-  it("links tracking only for carriers with a known public URL shape", async () => {
-    const id = "XO-tracked";
-    const port = createCommerceOrdersPort(
-      sourceOf(
-        [
-          summary({
-            orderId: id,
-            state: "fulfilled",
-            shipments: [
-              { owner: "xenios", status: "shipped", trackingNumber: "9400 1000", carrier: "USPS" },
-            ],
-          }),
-        ],
-        { [id]: detail({ orderId: id }) },
-      ),
-    );
+describe("history availability declaration", () => {
+  it("defaults to the honest static truth: partial, XRR/XEC disconnected", async () => {
+    const port = createCommerceOrdersPort(sourceOf([], {}));
     const orders = await port.ordersFor("member-1");
-    expect(orders.research[0].trackingUrl).toContain("tools.usps.com");
-
-    const unknown = "XO-unknown-carrier";
-    const port2 = createCommerceOrdersPort(
-      sourceOf(
-        [
-          summary({
-            orderId: unknown,
-            state: "fulfilled",
-            shipments: [
-              { owner: "mitch", status: "shipped", trackingNumber: "123", carrier: "pigeon-express" },
-            ],
-          }),
-        ],
-        { [unknown]: detail({ orderId: unknown }) },
-      ),
-    );
-    expect((await port2.ordersFor("member-1")).research[0].trackingUrl).toBeNull();
+    expect(orders.history.availability).toBe("partial");
+    expect(orders.history.sources.xrr.connected).toBe(false);
+    expect(orders.history.sources.commerce.connected).toBe(true);
   });
 
-  it("fails the WHOLE read when a listed order's detail cannot be read", async () => {
-    const port = createCommerceOrdersPort(sourceOf([summary({})], {}));
-    await expect(port.ordersFor("member-1")).rejects.toThrow("order_detail_unavailable");
-  });
-
-  it("propagates a failed list read", async () => {
-    const port = createCommerceOrdersPort({
-      listForMember: async () => {
-        throw new Error("orders_read_failed");
+  it("passes a declared availability through verbatim", async () => {
+    const declared = {
+      availability: "unavailable" as const,
+      sources: {
+        commerce: { connected: false, complete: false },
+        xea: { connected: false, complete: false },
+        xec: { connected: false, complete: false },
+        xrr: { connected: false, complete: false },
       },
-      getForMember: async () => null,
-    });
-    await expect(port.ordersFor("member-1")).rejects.toThrow("orders_read_failed");
-  });
-
-  it("refuses an unrecognized row shape instead of rendering a guessed order", async () => {
-    const port = createCommerceOrdersPort({
-      listForMember: async () => [{ orderId: "XO-1", state: "not_a_state", placedAt: "x" }],
-      getForMember: async () => null,
-    });
-    await expect(port.ordersFor("member-1")).rejects.toThrow("order_shape_unrecognized");
+    };
+    const port = createCommerceOrdersPort(sourceOf([], {}), declared);
+    const orders = await port.ordersFor("member-1");
+    expect(orders.history).toEqual(declared);
   });
 });

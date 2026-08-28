@@ -115,12 +115,23 @@ export type CareStatusDto = Readonly<{
   neutralSummary: string | null;
 }>;
 
-export type CareEnrollmentDto = Readonly<{
-  enrolled: boolean;
-  status: CareStatusDto;
-  /** Pharmacy fulfillment is its own station, never merged into provider review. */
-  pharmacyState: "none" | "processing" | "shipped" | "completed";
-}>;
+/**
+ * DISCRIMINATED Care source model (P1-D, 2026-08-27). "The adapter is not
+ * wired" and "this person is not enrolled" are different facts, and only one
+ * of them is knowable without a durable Care source. `sourceState:
+ * "unavailable"` carries NO enrollment claim at all — every surface renders
+ * it as "Care status unavailable", never as "not enrolled"/"not started".
+ * Enrollment truth (either way) exists only under `sourceState: "available"`.
+ */
+export type CareEnrollmentDto =
+  | Readonly<{
+      sourceState: "available";
+      enrolled: boolean;
+      status: CareStatusDto;
+      /** Pharmacy fulfillment is its own station, never merged into provider review. */
+      pharmacyState: "none" | "processing" | "shipped" | "completed";
+    }>
+  | Readonly<{ sourceState: "unavailable" }>;
 
 // ---------------------------------------------------------------------------
 // Orders — research orders and Care/pharmacy fulfillment listed separately.
@@ -165,9 +176,16 @@ export type OrderSummaryDto = Readonly<{
   /** XRR- / XEA- / XEC- / XO- reference, verbatim. */
   reference: string;
   placedAt: string;
-  itemLabel: string;
+  /**
+   * Line detail is never fabricated (P1-B): when the authoritative detail
+   * read yields no lines, `detailAvailability` is "unavailable" and the
+   * label/quantity are null — never a synthesized "Research order" with a
+   * fake quantity of 0.
+   */
+  detailAvailability: "available" | "unavailable";
+  itemLabel: string | null;
   variantLabel: string | null;
-  quantity: number;
+  quantity: number | null;
   paymentState: OrderPaymentDisplayState;
   fulfillmentState: OrderFulfillmentDisplayState;
   trackingUrl: string | null;
@@ -185,22 +203,49 @@ export type CareFulfillmentDto = Readonly<{
 }>;
 
 /**
- * Order-history completeness (P1-4): the projection declares which
- * authoritative sources it could actually read, so the client can say
- * "some historical order information is not yet available" instead of
- * presenting a silently-partial list as the whole truth. `complete` is true
- * ONLY when every known source of customer orders is connected and readable.
+ * Order-history availability (P1-B, 2026-08-27): a DISCRIMINATED model, per
+ * known source, so "unavailable" can never be encoded as an empty list and a
+ * partial read can never masquerade as the whole truth. Consumers must not
+ * make definitive claims ("no orders", counts, "up to date") unless
+ * `availability` is "complete"; counts over a partial history are unknown,
+ * not zero.
  */
-export type OrderHistoryCompletenessDto = Readonly<{
+export const ORDER_HISTORY_SOURCE_KEYS = ["commerce", "xea", "xec", "xrr"] as const;
+export type OrderHistorySourceKey = (typeof ORDER_HISTORY_SOURCE_KEYS)[number];
+
+export type OrderSourceStateDto = Readonly<{
+  /** The source's reader is wired into this composition. */
+  connected: boolean;
+  /** The source is connected AND its read covers the full history it owns. */
   complete: boolean;
-  /** Human-safe labels of the sources that are not connected/readable. */
-  unavailableSources: readonly string[];
 }>;
+
+export type OrderHistoryAvailabilityDto = Readonly<{
+  availability: "complete" | "partial" | "unavailable";
+  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+}>;
+
+export const ORDER_HISTORY_SOURCE_LABELS: Readonly<Record<OrderHistorySourceKey, string>> = {
+  commerce: "commerce member orders",
+  xea: "Early Access placements (XEA)",
+  xec: "Early Access cart checkouts (XEC)",
+  xrr: "assisted order requests (XRR)",
+};
+
+/** Derive the availability discriminant from the per-source truth. */
+export function orderHistoryAvailability(
+  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>,
+): "complete" | "partial" | "unavailable" {
+  const states = ORDER_HISTORY_SOURCE_KEYS.map((key) => sources[key]);
+  if (states.every((s) => s.connected && s.complete)) return "complete";
+  if (states.every((s) => !s.connected)) return "unavailable";
+  return "partial";
+}
 
 export type CustomerOrdersDto = Readonly<{
   research: readonly OrderSummaryDto[];
   carePharmacy: readonly CareFulfillmentDto[];
-  history: OrderHistoryCompletenessDto;
+  history: OrderHistoryAvailabilityDto;
 }>;
 
 // ---------------------------------------------------------------------------
@@ -290,6 +335,17 @@ export type CustomerAccountOverviewDto = Readonly<{
   membership: MembershipDto;
   careEnrollment: CareEnrollmentDto;
   researchOrders: readonly OrderSummaryDto[];
+  /** Availability of the order history the list above was read from (P1-B). */
+  orderHistory: OrderHistoryAvailabilityDto;
+  /**
+   * Whether the account may be DECLARED current (P1-B/P1-C). "attention" —
+   * an administrative action is outstanding. "current" — nothing is
+   * outstanding AND every backing source is connected and complete, so the
+   * all-clear is provable. "indeterminate" — nothing is recorded, but a
+   * source is unavailable/partial or billing truth is not affirmatively
+   * settled, so no green all-clear may be rendered.
+   */
+  accountStanding: "current" | "attention" | "indeterminate";
   productInterests: readonly ProductInterestDto[];
   documents: readonly DocumentSummaryDto[];
   supportCases: readonly SupportCaseSummaryDto[];

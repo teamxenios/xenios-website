@@ -151,3 +151,45 @@ describe("activation overlay config — strict parsing (fail closed)", () => {
     }).toThrow(/confirmationBasis/);
   });
 });
+
+// P1-E (round 3): a config that CLAIMS an approval it cannot substantiate
+// refuses the whole load.
+describe("activation overlay config — approval evidence attacks", () => {
+  function writeConfig(json) {
+    const root = mkdtempSync(join(tmpdir(), "overlay-approval-"));
+    const rel = "overlay.json";
+    writeFileSync(join(root, rel), JSON.stringify(json), "utf8");
+    return { root, rel };
+  }
+  const BASE_ENTRY = {
+    groupId: "GRP-0001",
+    label: "Fixture product",
+    confirmationBasis: "documented",
+    confirmedBy: "Fixture partner",
+    confirmedAt: "2026-08-27T00:00:00.000Z",
+    checklist: {},
+    held: false,
+  };
+
+  it("refuses empty/whitespace/invalid approval evidence instead of counting it", () => {
+    for (const approval of [
+      { approvedBy: "", approvedAt: "2026-08-27T12:00:00.000Z" },
+      { approvedBy: "   ", approvedAt: "2026-08-27T12:00:00.000Z" },
+      { approvedBy: "\t\n", approvedAt: "2026-08-27T12:00:00.000Z" },
+      { approvedBy: "Founder", approvedAt: "" },
+      { approvedBy: "Founder", approvedAt: "not-a-date" },
+      { approvedBy: "Founder", approvedAt: "2026-02-30T00:00:00.000Z" },
+      { approvedBy: "Founder", approvedAt: "1999-01-01T00:00:00.000Z" },
+    ]) {
+      const { root, rel } = writeConfig({ entries: [{ ...BASE_ENTRY, founderActivationApproval: approval }] });
+      expect(() => loadActivationOverlay(root, rel), JSON.stringify(approval)).toThrow(/founderActivationApproval/);
+    }
+  });
+
+  it("accepts a substantive approval record", () => {
+    const { root, rel } = writeConfig({
+      entries: [{ ...BASE_ENTRY, founderActivationApproval: { approvedBy: "Founder", approvedAt: "2026-08-27T12:00:00.000Z" } }],
+    });
+    expect(loadActivationOverlay(root, rel).entries).toHaveLength(1);
+  });
+});

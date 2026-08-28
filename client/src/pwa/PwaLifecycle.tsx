@@ -58,6 +58,7 @@ const pillStyle: React.CSSProperties = {
   boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
 };
 
+// Both controls keep a 44px minimum hit target (WCAG 2.5.5 / P2-1).
 const buttonStyle: React.CSSProperties = {
   appearance: "none",
   border: "1px solid #fff",
@@ -68,6 +69,7 @@ const buttonStyle: React.CSSProperties = {
   fontSize: "0.8rem",
   cursor: "pointer",
   whiteSpace: "nowrap",
+  minHeight: "44px",
 };
 
 const dismissStyle: React.CSSProperties = {
@@ -78,6 +80,11 @@ const dismissStyle: React.CSSProperties = {
   fontSize: "0.8rem",
   cursor: "pointer",
   padding: "0.25rem",
+  minWidth: "44px",
+  minHeight: "44px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 export function PwaLifecycle(): React.JSX.Element | null {

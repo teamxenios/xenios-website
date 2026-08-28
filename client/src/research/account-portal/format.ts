@@ -21,11 +21,15 @@ export function formatAccountDate(value: string | null, withTime = false): strin
   }).format(date);
 }
 
+// Access, order-payment, and fulfillment tones ONLY. Billing states render
+// exclusively through billingPresentation() (shared/research/customer-account/
+// billing-presentation.ts) — "current" and "disputed" are billing vocabulary
+// and deliberately absent here. past_due stays: membership ACCESS uses it too.
 export function statusTone(value: string): BadgeTone {
-  if (["active", "current", "paid", "delivered", "completed", "resolved", "shipped"].includes(value)) {
+  if (["active", "paid", "delivered", "completed", "resolved", "shipped"].includes(value)) {
     return "success";
   }
-  if (["past_due", "disputed", "exception", "cancelled", "canceled", "unavailable", "held"].includes(value)) {
+  if (["past_due", "exception", "cancelled", "canceled", "unavailable", "held"].includes(value)) {
     return "danger";
   }
   if (

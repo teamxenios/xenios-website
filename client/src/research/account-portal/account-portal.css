@@ -208,9 +208,12 @@
 
 .account-list-card a,
 .account-inline-link {
+  align-items: center;
   color: var(--account-black);
+  display: inline-flex;
   font-size: 13px;
   font-weight: 700;
+  min-height: 44px;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -266,7 +269,13 @@
   padding-top: 18px;
 }
 
-.account-portal-footer a { color: inherit; }
+.account-portal-footer a {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  min-height: 44px;
+  padding: 12px 0;
+}
 
 .care-status-timeline { list-style: none; margin: 0; padding: 0; }
 .care-status-step {
@@ -310,7 +319,8 @@
   .care-status-step { align-items: flex-start; grid-template-columns: 30px minmax(0, 1fr); }
   .care-status-step .ra-badge { grid-column: 2; justify-self: start; }
   .account-portal-footer { display: block; }
-  .account-portal-footer a { display: inline-block; margin-top: 12px; min-height: 44px; padding-top: 12px; }
+  /* Base rule already provides the 44px inline-flex target; only spacing here. */
+  .account-portal-footer a { margin-top: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

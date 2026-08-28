@@ -42,6 +42,7 @@ export const FIXTURE_MEMBERSHIP_PAST_DUE_BILLING: MembershipDto = Object.freeze(
 });
 
 export const FIXTURE_CARE_ENROLLED: CareEnrollmentDto = Object.freeze({
+  sourceState: "available" as const,
   enrolled: true,
   status: Object.freeze({
     stage: "provider_review" as const,
@@ -51,16 +52,24 @@ export const FIXTURE_CARE_ENROLLED: CareEnrollmentDto = Object.freeze({
   pharmacyState: "none" as const,
 });
 
+/** A CONNECTED Care source that reports no enrollment — a knowable fact. */
 export const FIXTURE_CARE_NONE: CareEnrollmentDto = Object.freeze({
+  sourceState: "available" as const,
   enrolled: false,
   status: Object.freeze({ stage: null, updatedAt: null, neutralSummary: null }),
   pharmacyState: "none" as const,
+});
+
+/** No durable Care source — carries NO enrollment claim at all (P1-D). */
+export const FIXTURE_CARE_UNAVAILABLE: CareEnrollmentDto = Object.freeze({
+  sourceState: "unavailable" as const,
 });
 
 export const FIXTURE_ORDERS: readonly OrderSummaryDto[] = Object.freeze([
   Object.freeze({
     reference: "XRR-20260820-TESTFIX01",
     placedAt: "2026-08-20T18:12:00.000Z",
+    detailAvailability: "available" as const,
     itemLabel: "Example Research Material A",
     variantLabel: "10 mg",
     quantity: 2,
@@ -72,6 +81,7 @@ export const FIXTURE_ORDERS: readonly OrderSummaryDto[] = Object.freeze([
   Object.freeze({
     reference: "XRR-20260811-TESTFIX02",
     placedAt: "2026-08-11T09:03:00.000Z",
+    detailAvailability: "available" as const,
     itemLabel: "Example Research Material B",
     variantLabel: "5 mg",
     quantity: 1,
@@ -94,8 +104,13 @@ export const FIXTURE_CUSTOMER_ORDERS: CustomerOrdersDto = Object.freeze({
     }),
   ]),
   history: Object.freeze({
-    complete: false,
-    unavailableSources: Object.freeze(["assisted order requests (XRR)"]) as readonly string[],
+    availability: "partial" as const,
+    sources: Object.freeze({
+      commerce: Object.freeze({ connected: true, complete: true }),
+      xea: Object.freeze({ connected: true, complete: true }),
+      xec: Object.freeze({ connected: false, complete: false }),
+      xrr: Object.freeze({ connected: false, complete: false }),
+    }),
   }),
 });
 
@@ -138,6 +153,16 @@ export const FIXTURE_ACCOUNT_OVERVIEW: CustomerAccountOverviewDto = Object.freez
   membership: FIXTURE_MEMBERSHIP_MANUAL,
   careEnrollment: FIXTURE_CARE_ENROLLED,
   researchOrders: FIXTURE_ORDERS,
+  orderHistory: Object.freeze({
+    availability: "partial" as const,
+    sources: Object.freeze({
+      commerce: Object.freeze({ connected: true, complete: true }),
+      xea: Object.freeze({ connected: true, complete: true }),
+      xec: Object.freeze({ connected: false, complete: false }),
+      xrr: Object.freeze({ connected: false, complete: false }),
+    }),
+  }),
+  accountStanding: "attention" as const,
   productInterests: Object.freeze([
     Object.freeze({
       interestKey: "bpc157-tb500",

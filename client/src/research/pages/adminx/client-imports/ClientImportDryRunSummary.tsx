@@ -39,7 +39,7 @@ export function ClientImportDryRunSummaryView({
           <div className="min-w-0">
             <p className="account-section-label" style={{ color: "#c8c4bb" }}>Admin-only staging review</p>
             <h1 className="account-section-title">Client import dry run</h1>
-            <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>{report.sourceLabel}</p>
+            <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>Source: partner client import · Batch {report.batchId}</p>
           </div>
           <ResearchStatusBadge label="Dry run · no sends" tone="pending" />
         </div>

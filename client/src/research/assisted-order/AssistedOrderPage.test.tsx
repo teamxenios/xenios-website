@@ -24,6 +24,7 @@ vi.mock("./api", async (importOriginal) => {
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 
 import { AssistedOrderApiError } from "./api";
+import { AssistedOrderConfirmationPage } from "./AssistedOrderConfirmationPage";
 import { AssistedOrderPage } from "./AssistedOrderPage";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
 
@@ -764,5 +765,25 @@ describe("AssistedOrderPage", () => {
     // Still on review, now showing the CURRENT server price.
     expect(document.body.textContent).toContain("$27.00");
     expect(window.location.pathname).toBe("/research/early-access/order-request");
+  });
+});
+
+describe("AssistedOrderConfirmationPage landmarks", () => {
+  it("renders no main element of its own — MinimalChrome supplies the page main (P2-4)", () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/research/early-access/order-request/confirmation/XRR-20260819-ABCDEF1234",
+    );
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() => root!.render(<AssistedOrderConfirmationPage />));
+
+    expect(host.querySelector("main")).toBeNull();
+    expect(host.querySelector("section.xenios-order-page")).not.toBeNull();
+    expect(byTestId("order-confirmation-reference")!.textContent).toContain(
+      "XRR-20260819-ABCDEF1234",
+    );
   });
 });

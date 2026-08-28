@@ -25,9 +25,7 @@ const ROWS: readonly ImportSourceRow[] = Object.freeze([
 
 function run(rows: readonly ImportSourceRow[] = ROWS) {
   return runImportDryRun({
-    batchId: "imp-test-0001",
-    sourceLabel: "synthetic-fixture-file",
-    rows,
+    batchId: "imp-test-0001",    rows,
     sourcePartner: "vitality_advisors",
     relationshipOwner: "Seth Grant",
   });

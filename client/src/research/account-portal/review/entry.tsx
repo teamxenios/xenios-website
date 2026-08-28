@@ -66,8 +66,7 @@ const REVIEW_DEMAND_ITEMS: readonly PriorityCatalogItem[] = CURRENT_CLIENT_DEMAN
 }));
 
 const SYNTHETIC_IMPORT_REPORT: ImportDryRunReportDto = Object.freeze({
-  batchId: "batch-synthetic-review-01",
-  sourceLabel: "Synthetic pilot intake workbook",
+  batchId: "batch-synthetic-review-01",  sourceType: "partner_client_import" as const,
   dryRun: true,
   totalRows: 48,
   rejectedRows: 2,

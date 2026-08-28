@@ -53,7 +53,7 @@ describe("production customer-account ports", () => {
   it("unwired concerns return truthful empty states, never inventions", async () => {
     const p = ports();
     expect((await p.orders.ordersFor("k")).research).toHaveLength(0);
-    expect((await p.care.careFor("k")).enrolled).toBe(false);
+    expect((await p.care.careFor("k")).sourceState).toBe("unavailable"); // P1-D: unwired is unknowable, never "not enrolled"
     expect(await p.documents.documentsFor("k")).toHaveLength(0);
     expect(await p.interests.interestsFor("k")).toHaveLength(0);
     expect(await p.attribution.attributionFor("k")).toBeNull();

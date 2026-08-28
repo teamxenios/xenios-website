@@ -220,6 +220,16 @@
       "startedAt": "2026-08-27T21:45:30.010Z",
       "heartbeatAt": "2026-08-27T22:52:18.209Z",
       "note": "RECUT COMPLETE. All 11 P1s fixed-or-disabled; Node 20.19.0 gates: full suite 10703/0 fail, e2e 53/53, tsc+build clean, census 399/408 unchanged, scans 0/0, browser QA 1440-320 zero overflow, Care timeline proven live. Freezing + pushing for Codex re-review."
+    },
+    {
+      "id": "claude-fable-final-remediation-v2-20260827",
+      "tool": "claude",
+      "lane": "client-account-final-remediation-v2",
+      "branch": "fix/xenios-client-account-final-remediation-v2-20260827",
+      "state": "active",
+      "startedAt": "2026-08-27T23:58:08.561Z",
+      "heartbeatAt": "2026-08-27T23:58:08.567Z",
+      "note": "Round-3 surgical recut from failed 2239661: 7 evidence-model P1s (payment money-facts, history fabrication, billing presentation, Care source truth, activation approval evidence, invitation immutability, import zero-caller-text) + all 4 P2s. No deploy, no migration apply, no invitations."
     }
   ]
 }

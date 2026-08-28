@@ -85,7 +85,9 @@ export function AccountPortalShell({
         {actions ? <div className="account-page-actions">{actions}</div> : null}
       </section>
 
-      <div className="account-page-body">{children}</div>
+      {/* The account routes render bare (no chrome main), so this is the page's
+          single main landmark (P2-2). */}
+      <main className="account-page-body">{children}</main>
       <footer className="account-portal-footer">
         <p>Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.</p>
         <Link href="/research/privacy">Privacy</Link>

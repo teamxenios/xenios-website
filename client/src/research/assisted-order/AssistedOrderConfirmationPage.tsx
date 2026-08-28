@@ -24,7 +24,9 @@ export function AssistedOrderConfirmationPage() {
   const statusHref = `/research/early-access/order-request/${encodeURIComponent(reference)}`;
 
   return (
-    <main className="xenios-order-page">
+    // MinimalChrome supplies the page's main landmark; nesting a second main
+    // inside it is invalid (P2-4), so this page renders a section.
+    <section className="xenios-order-page">
       <section className="xenios-order-panel">
         <p className="xenios-order-eyebrow">Request received</p>
         <h1 data-testid="order-confirmation-reference">Reference: {reference || "Unavailable"}</h1>
@@ -54,6 +56,6 @@ export function AssistedOrderConfirmationPage() {
         </div>
         <p className="xenios-order-small">Questions: research@xeniostechnology.com</p>
       </section>
-    </main>
+    </section>
   );
 }

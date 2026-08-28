@@ -218,11 +218,34 @@ export interface CheckoutRequest {
   paymentMethodReference?: string;
 }
 
+/**
+ * Monetary FACTS carried on the wire (P1-A, 2026-08-27). Payment display
+ * truth downstream is derived from these amounts, never from lifecycle state
+ * alone. `null` on an amount means "this fact is not available from an
+ * authoritative source" — it is NOT zero, and consumers must answer
+ * "unknown" rather than guess. Absent `payment` entirely means the producing
+ * source carries no authoritative payment record at all (legacy rows,
+ * unwired sources).
+ */
+export interface OrderPaymentEvidenceDto {
+  amountDueCents: number;
+  amountCapturedCents: number | null;
+  amountRefundedCents: number | null;
+  currency: "USD";
+}
+
 export interface OrderSummaryDto {
   orderId: string;
   state: OrderState;
   placedAt: string;
   totalCents: number;
+  payment?: OrderPaymentEvidenceDto | null;
+  /**
+   * Whether this row's producing source is CONNECTED to durable shipment
+   * facts (P1-B). "unavailable" means the shipments array asserts nothing —
+   * an empty list from an unconnected source is not "unfulfilled".
+   */
+  shipmentsSource?: "connected" | "unavailable";
   shipments: Array<{
     owner: "mitch" | "xenios";
     status: string;

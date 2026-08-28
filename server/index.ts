@@ -170,6 +170,7 @@ import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./requ
 import { registerCustomerAccountApi } from "./research/customer-account/routes";
 import { buildProductionCustomerAccountPorts } from "./research/customer-account/production";
 import { createCommerceOrdersPort } from "./research/customer-account/orders-projection";
+import { orderHistoryAvailability } from "@shared/research/customer-account/contract";
 import { createSupabaseMemberQuestionsSupportSource } from "./research/customer-account/production-support";
 import { createSupabasePlanDocumentsSource } from "./research/customer-account/production-documents";
 import { createCatalogPriorityPort } from "./research/product-activation/catalog-projection";
@@ -1128,25 +1129,33 @@ registerCustomerAccountApi(
       return error ? null : ((data as MemberRow | null) ?? null);
     },
     {
-      // P1-4: the projection DECLARES which order sources this composition
-      // could not read, computed from the same wiring facts used above —
-      // never assumed complete. XRR has no list-by-member read anywhere yet,
-      // so history is incomplete in every deployment today.
-      orders: createCommerceOrdersPort(commerceDependencies.orders, {
-        complete: false,
-        unavailableSources: [
-          "assisted order requests (XRR)",
-          ...(process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true"
-            ? []
-            : ["commerce member orders"]),
-          ...(earlyAccessPersistence.orderHistory === undefined
-            ? ["Early Access placements (XEA)"]
-            : []),
-          ...(process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true"
-            ? []
-            : ["Early Access cart checkouts (XEC)"]),
-        ],
-      }),
+      // P1-B: the projection DECLARES per-source availability, computed from
+      // the same wiring facts used above — never assumed complete. XRR has no
+      // list-by-member read anywhere yet, so availability is at best
+      // "partial" in every deployment today; the discriminant itself is
+      // derived by the shared helper so it can never disagree with the
+      // per-source truth.
+      orders: createCommerceOrdersPort(
+        commerceDependencies.orders,
+        (() => {
+          const sources = {
+            commerce: {
+              connected: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
+              complete: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
+            },
+            xea: {
+              connected: earlyAccessPersistence.orderHistory !== undefined,
+              complete: earlyAccessPersistence.orderHistory !== undefined,
+            },
+            xec: {
+              connected: process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true",
+              complete: process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true",
+            },
+            xrr: { connected: false, complete: false },
+          };
+          return { availability: orderHistoryAvailability(sources), sources };
+        })(),
+      ),
       support: createSupabaseMemberQuestionsSupportSource(),
       documents: createSupabasePlanDocumentsSource(),
       catalogPriority: createCatalogPriorityPort(process.cwd()),

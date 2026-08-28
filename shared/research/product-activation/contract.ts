@@ -94,6 +94,43 @@ export function activationBlockers(checklist: ActivationChecklist): readonly (ke
   );
 }
 
+// Strict ISO-8601 UTC instant: date, time, optional milliseconds, Z. Nothing
+// looser — an approval timestamp is evidence, not a vibe.
+const STRICT_ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+
+/**
+ * P1-E (2026-08-27): an approval RECORD is evidence only when both fields are
+ * substantive. An empty or whitespace approver, a string that does not parse
+ * as a real instant, a calendar-impossible date (2026-02-30 rolls over in
+ * Date.parse — the round-trip check refuses it), or a timestamp outside the
+ * era this system has existed in, is NOT approval. Everything that consumes
+ * an approval goes through this one predicate, so "" can never count.
+ *
+ * Deeper than validation: the overlay remains structurally incapable of
+ * PROMOTING a product — resolveActivationStatus clamps every outcome to be no
+ * more permissive than the canonical base, so even a fully valid approval
+ * record only lets the overlay STOP RESTRICTING; config-file text can never
+ * convert a non-orderable base state into an orderable one.
+ */
+export function isValidActivationApproval(
+  approval: Readonly<{ approvedBy: string; approvedAt: string }> | null,
+): boolean {
+  if (approval === null) return false;
+  if (typeof approval.approvedBy !== "string" || approval.approvedBy.trim() === "") return false;
+  if (typeof approval.approvedAt !== "string" || !STRICT_ISO_UTC.test(approval.approvedAt)) return false;
+  const parsed = new Date(approval.approvedAt);
+  if (Number.isNaN(parsed.getTime())) return false;
+  // Round-trip: normalize the input to millisecond precision and demand exact
+  // agreement, so a rolled-over calendar date (2026-02-30 → March 2) refuses.
+  const withMs = approval.approvedAt.includes(".")
+    ? approval.approvedAt.replace(/\.(\d{1,3})Z$/, (_, ms: string) => "." + ms.padEnd(3, "0") + "Z")
+    : approval.approvedAt.replace("Z", ".000Z");
+  if (parsed.toISOString() !== withMs) return false;
+  const year = parsed.getUTCFullYear();
+  if (year < 2020 || year > 2100) return false;
+  return true;
+}
+
 /**
  * The base status a catalog row projects BEFORE any overlay is considered,
  * from the member-safe artifact's display state. Informative mapping recorded
@@ -172,7 +209,11 @@ export function resolveActivationStatus(
     }
     // documented:
     if (activationBlockers(overlay.checklist).length > 0) return "pending_pharmacy_activation";
-    if (overlay.founderActivationApproval === null) return "pending_pharmacy_activation";
+    // P1-E: an approval that is not REAL EVIDENCE (empty/whitespace approver,
+    // unparseable or impossible or out-of-era timestamp) is no approval.
+    if (!isValidActivationApproval(overlay.founderActivationApproval)) {
+      return "pending_pharmacy_activation";
+    }
     return base;
   })();
   // The monotonic clamp: keep whichever of base/proposed is more restrictive.
@@ -185,7 +226,7 @@ export function activationComplete(overlay: ActivationOverlayEntry): boolean {
     !overlay.held &&
     overlay.confirmationBasis === "documented" &&
     activationBlockers(overlay.checklist).length === 0 &&
-    overlay.founderActivationApproval !== null
+    isValidActivationApproval(overlay.founderActivationApproval)
   );
 }
 

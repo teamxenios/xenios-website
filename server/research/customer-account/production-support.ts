@@ -25,8 +25,8 @@ import {
   type SupportCaseSummaryDto,
 } from "@shared/research/customer-account/contract";
 import { getSupabaseAdmin } from "../../supabase";
-import { MEMBER_QUESTIONS_TABLE, QUESTION_LIMIT_PER_HOUR, SLA_TARGET_HOURS } from "../questions";
-import { rateLimitHit } from "../rate-limit";
+import { MEMBER_QUESTIONS_TABLE, SLA_TARGET_HOURS } from "../questions";
+import { supportSubmissionAllowed } from "../support-rate-limit";
 import type { SupportCasesPort } from "./ports";
 
 export type SupportQuestionRow = {
@@ -169,8 +169,9 @@ export function createSupabaseMemberQuestionsSupportSource(): SupportCasesPort {
       return data as SupportQuestionRow;
     },
     allowWrite(memberId) {
-      // Same budget as the classic questions door: a throttle, not a judgment.
-      return rateLimitHit(`customer-account-support:${memberId}`, 3600, QUESTION_LIMIT_PER_HOUR);
+      // THE SAME budget as the classic questions door (P2-3): one shared
+      // member-scoped quota, one key — not a second independent bucket.
+      return supportSubmissionAllowed(memberId);
     },
   });
 }

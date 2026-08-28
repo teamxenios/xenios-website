@@ -150,12 +150,23 @@ export function registerCustomerAccountApi(
       res.status(400).json({ kind: "denied", reason: "invalid_support_case" });
       return;
     }
-    const created = await ports.support.openCase(memberKey, {
-      category: category as SupportCaseCategory,
-      subject: subject.trim(),
-      description: description.trim(),
-    });
-    res.status(201).json({ kind: "ok", data: created });
+    try {
+      const created = await ports.support.openCase(memberKey, {
+        category: category as SupportCaseCategory,
+        subject: subject.trim(),
+        description: description.trim(),
+      });
+      res.status(201).json({ kind: "ok", data: created });
+    } catch (err) {
+      // An exhausted shared support budget (P2-3) is a throttle, not a
+      // failure: 429 with the same machine-readable shape the questions door
+      // answers, never a generic 500.
+      if (err instanceof Error && err.message === "support_rate_limited") {
+        res.status(429).json({ kind: "denied", reason: "rate_limited" });
+        return;
+      }
+      throw err;
+    }
   }));
 
   // ACTIVE members only (P1-2): this projection is global availability

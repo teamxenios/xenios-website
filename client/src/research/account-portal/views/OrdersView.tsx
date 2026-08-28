@@ -1,10 +1,18 @@
 import { Link } from "wouter";
 import type { CustomerOrdersDto } from "@shared/research/customer-account/contract";
+import {
+  ORDER_HISTORY_SOURCE_KEYS,
+  ORDER_HISTORY_SOURCE_LABELS,
+} from "@shared/research/customer-account/contract";
 import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { formatAccountDate, safeExternalUrl, sentenceCase, statusTone } from "../format";
 
 export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
+  const historyComplete = data.history.availability === "complete";
+  const disconnectedSources = ORDER_HISTORY_SOURCE_KEYS
+    .filter((key) => !data.history.sources[key].connected || !data.history.sources[key].complete)
+    .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
   return (
     <div className="account-grid">
       <section className="account-surface" aria-labelledby="research-orders-heading">
@@ -16,11 +24,11 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           </div>
           <ResearchStatusBadge label={`${data.research.length} orders`} tone="neutral" />
         </div>
-        {!data.history.complete ? (
-          // P1-4: an incomplete read never masquerades as the whole truth.
+        {!historyComplete ? (
+          // P1-B: an incomplete read never masquerades as the whole truth.
           <div className="account-surface account-surface-warm mt-5" role="note">
-            <p className="body-s font-700">Some historical order information is not yet available.</p>
-            <p className="body-s text-ink-2 mt-2">Order records from these sources are not connected to this view yet: {data.history.unavailableSources.join(", ")}.</p>
+            <p className="body-s font-700">Some order history is currently unavailable.</p>
+            <p className="body-s text-ink-2 mt-2">Order records from these sources are not fully connected: {disconnectedSources.join(", ")}.</p>
           </div>
         ) : null}
         {data.research.length ? (
@@ -31,11 +39,18 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
                 <article className="account-list-card" key={order.reference}>
                   <div className="min-w-0">
                     <p className="mono-label text-ink-mute tabular">{order.reference}</p>
-                    <h3 className="body-l font-700 mt-2 break-words">{order.itemLabel}</h3>
-                    <p className="body-s text-ink-2 mt-1 break-words">{order.variantLabel ?? "Variant recorded with order"}</p>
+                    {/* P1-B: no fabricated line detail — an unavailable read says so. */}
+                    {order.detailAvailability === "available" ? (
+                      <>
+                        <h3 className="body-l font-700 mt-2 break-words">{order.itemLabel}</h3>
+                        <p className="body-s text-ink-2 mt-1 break-words">{order.variantLabel ?? "Variant recorded with order"}</p>
+                      </>
+                    ) : (
+                      <h3 className="body-l mt-2 break-words text-ink-mute">Order details unavailable</h3>
+                    )}
                     <dl className="account-grid account-grid-3 mt-5">
                       <div><dt className="account-data-label">Order date</dt><dd className="account-data-value mt-1">{formatAccountDate(order.placedAt)}</dd></div>
-                      <div><dt className="account-data-label">Quantity</dt><dd className="account-data-value mt-1 tabular">{order.quantity}</dd></div>
+                      <div><dt className="account-data-label">Quantity</dt><dd className="account-data-value mt-1 tabular">{order.quantity ?? "—"}</dd></div>
                       <div><dt className="account-data-label">Lot / COA</dt><dd className="account-data-value mt-1">{order.lotCoaAvailable ? "Approved document available" : "Not available"}</dd></div>
                     </dl>
                   </div>
@@ -51,7 +66,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           </div>
         ) : (
           <div className="account-empty mt-6">
-            {data.history.complete
+            {historyComplete
               ? "No Research orders are attached to this account."
               : "No Research orders are visible here yet — see the note above about sources that are not connected."}
           </div>

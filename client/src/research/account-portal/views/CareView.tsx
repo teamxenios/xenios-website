@@ -16,11 +16,23 @@ const STAGE_LABELS: Readonly<Record<CareTimelineStage, string>> = {
   completed: "Completed",
 };
 
-// This view consumes the canonical wire shape of GET /care — CareEnrollmentDto,
-// with the stage NESTED under `status` — so the loader, this prop, and the
-// server response are one type. Three truthful states, none inferred:
-// not enrolled; enrolled with no recorded stage (unavailable); enrolled staged.
+// This view consumes the canonical wire shape of GET /care — the DISCRIMINATED
+// CareEnrollmentDto, with the stage NESTED under `status` — so the loader,
+// this prop, and the server response are one type. Four truthful states, none
+// inferred, and none collapsed into another (P1-D): source unavailable (no
+// enrollment claim at all); connected but not enrolled; enrolled with no
+// recorded stage; enrolled and staged.
 export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
+  if (data.sourceState === "unavailable") {
+    return (
+      <section className="account-surface" aria-labelledby="care-unavailable-heading">
+        <p className="account-section-label">Care status</p>
+        <h2 id="care-unavailable-heading" className="account-section-title">Care status unavailable.</h2>
+        <p className="body-s text-ink-2 mt-3">No Care status source is connected for this account right now, so no enrollment status can be shown.</p>
+      </section>
+    );
+  }
+
   if (!data.enrolled) {
     return (
       <section className="account-surface" aria-labelledby="care-not-started-heading">
@@ -34,9 +46,9 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
   const stage = data.status.stage;
   if (!stage) {
     return (
-      <section className="account-surface" aria-labelledby="care-unavailable-heading">
+      <section className="account-surface" aria-labelledby="care-no-stage-heading">
         <p className="account-section-label">Care status</p>
-        <h2 id="care-unavailable-heading" className="account-section-title">Care status unavailable.</h2>
+        <h2 id="care-no-stage-heading" className="account-section-title">No operational stage is recorded yet.</h2>
         <p className="body-s text-ink-2 mt-3">Your Care enrollment is recorded, but no operational stage is available right now.</p>
       </section>
     );

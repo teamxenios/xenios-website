@@ -164,13 +164,14 @@ export function buildProductionCustomerAccountPorts(
       },
     },
     care: {
-      // Graduates to server/care once the capability leaves `disabled`.
+      // P1-D: no durable Care source is wired in production, and the absence
+      // of an adapter is NOT the fact "this person is not enrolled" — it is
+      // the fact "we cannot know". The discriminated sourceState carries
+      // exactly that, and every surface renders it as "Care status
+      // unavailable". Graduates to server/care once the capability leaves
+      // `disabled`; only then can "not enrolled" ever be asserted.
       async careFor() {
-        return {
-          enrolled: false,
-          status: { stage: null, updatedAt: null, neutralSummary: null },
-          pharmacyState: "none",
-        };
+        return { sourceState: "unavailable" };
       },
     },
     orders: sources?.orders ?? {
@@ -178,20 +179,16 @@ export function buildProductionCustomerAccountPorts(
       // member-orders projection (orders-projection.ts) over the ONE decorated
       // MemberOrdersService; XRR assisted-order request history additionally
       // needs a list-by-member RPC that does not exist yet. With NO source
-      // wired, the honest completeness claim is "nothing was readable" —
-      // never a silently-empty list presented as the whole truth (P1-4).
+      // wired, the honest claim is availability: "unavailable" — never a
+      // silently-empty list presented as the whole truth (P1-B).
       async ordersFor() {
+        const disconnected = { connected: false, complete: false };
         return {
           research: [],
           carePharmacy: [],
           history: {
-            complete: false,
-            unavailableSources: [
-              "commerce member orders",
-              "Early Access placements (XEA)",
-              "Early Access cart checkouts (XEC)",
-              "assisted order requests (XRR)",
-            ],
+            availability: "unavailable",
+            sources: { commerce: disconnected, xea: disconnected, xec: disconnected, xrr: disconnected },
           },
         };
       },

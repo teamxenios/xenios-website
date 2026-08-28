@@ -46,7 +46,8 @@ if (rows.length === 0) fail("no data rows found (expected name<TAB>product lines
 const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "").slice(0, 12);
 const { report } = runImportDryRun({
   batchId: `imp-cli-${stamp}`,
-  sourceLabel: `local-dry-run:${absolute.split(sep).pop() ?? "input"}`,
+  // No caller/file-derived label reaches the report (P1-G): the report's
+  // source identity is the server-authored enum inside the importer.
   rows,
   sourcePartner: process.env.IMPORT_SOURCE_PARTNER ?? "vitality_advisors",
   relationshipOwner: process.env.IMPORT_RELATIONSHIP_OWNER ?? "Seth Grant",

@@ -51,12 +51,13 @@ export function registerClientImportAdminApi(
 
   app.post(`${BASE}/dry-run`, guarded(async (req, res) => {
     const body = (req.body ?? {}) as Record<string, unknown>;
-    const sourceLabel = body.sourceLabel;
+    // P1-G: no caller-supplied source label exists anywhere in this surface —
+    // the report identifies its source with a server-authored enum and the
+    // server-created batch id, so there is nothing of the caller's to echo.
     const sourcePartner = body.sourcePartner;
     const relationshipOwner = body.relationshipOwner;
     const rows = body.rows;
     if (
-      typeof sourceLabel !== "string" || sourceLabel.trim() === "" ||
       typeof sourcePartner !== "string" || sourcePartner.trim() === "" ||
       typeof relationshipOwner !== "string" || relationshipOwner.trim() === "" ||
       !Array.isArray(rows) || rows.length === 0 || rows.length > MAX_ROWS ||
@@ -73,7 +74,6 @@ export function registerClientImportAdminApi(
     const batchId = (deps.newBatchId ?? (() => `imp-${Math.random().toString(36).slice(2, 10)}`))();
     const outcome = runImportDryRun({
       batchId,
-      sourceLabel: sourceLabel.trim(),
       rows,
       sourcePartner: sourcePartner.trim(),
       relationshipOwner: relationshipOwner.trim(),

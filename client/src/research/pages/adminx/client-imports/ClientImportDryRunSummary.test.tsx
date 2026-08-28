@@ -6,8 +6,7 @@ import type { ImportDryRunReportDto } from "@shared/research/client-import/contr
 import { ClientImportDryRunSummaryView } from "./ClientImportDryRunSummary";
 
 const report: ImportDryRunReportDto = {
-  batchId: "batch-synthetic-test",
-  sourceLabel: "Synthetic import fixture",
+  batchId: "batch-synthetic-test",  sourceType: "partner_client_import" as const,
   dryRun: true,
   totalRows: 24,
   rejectedRows: 2,

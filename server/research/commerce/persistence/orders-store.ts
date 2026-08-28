@@ -79,6 +79,8 @@ export interface OrderHeaderRow {
   total_cents: number;
   authorized_amount_cents: number | null;
   captured_amount_cents: number | null;
+  /** Accumulated by the refund lane (claims-store); read here so the wire can carry the fact (P1-A). */
+  refunded_cents: number | null;
   payment_reference: string | null;
   /** Client-supplied checkout key, written by the checkout flow, read here. */
   checkout_idempotency_key: string | null;
@@ -276,6 +278,9 @@ export function headerRowToOrder(
   }
   if (row.captured_amount_cents !== null && row.captured_amount_cents !== undefined) {
     record.capturedAmountCents = row.captured_amount_cents;
+  }
+  if (row.refunded_cents !== null && row.refunded_cents !== undefined) {
+    record.refundedCents = row.refunded_cents;
   }
   if (shipmentRows.length > 0) {
     record.shipments = shipmentRowsToRecords(shipmentRows);

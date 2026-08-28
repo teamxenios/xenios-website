@@ -25,9 +25,7 @@ function buildApp() {
   return app;
 }
 
-const VALID_BODY = {
-  sourceLabel: "synthetic-fixture-file",
-  sourcePartner: "vitality_advisors",
+const VALID_BODY = {  sourcePartner: "vitality_advisors",
   relationshipOwner: "Seth Grant",
   rows: [
     { name: "Alex Fixture", product: "BPC-157/TB-500 (15/15mg)" },
@@ -48,9 +46,7 @@ describe("client-import admin routes", () => {
     for (const bad of [
       {},
       { ...VALID_BODY, rows: [] },
-      { ...VALID_BODY, rows: [{ name: 1, product: "x" }] },
-      { ...VALID_BODY, sourceLabel: "" },
-    ]) {
+      { ...VALID_BODY, rows: [{ name: 1, product: "x" }] },    ]) {
       const res = await request(app)
         .post("/api/admin/research/client-imports/dry-run")
         .set("x-test-admin", "yes")
@@ -145,5 +141,49 @@ describe("client-import admin routes", () => {
       const res = await request(app).post(path).set("x-test-admin", "yes").send({});
       expect(res.status).toBe(404);
     }
+  });
+});
+
+// P1-G (round 3): ZERO caller text in any response, proven recursively. A
+// unique synthetic marker goes into EVERY caller-controlled string field; no
+// marker may appear anywhere in the serialized response — success or error.
+describe("zero caller-supplied text crosses the response boundary", () => {
+  it("markers planted in every caller field are absent from the success response", async () => {
+    const app = buildApp();
+    const M = "zqzq_marker";
+    const res = await request(app)
+      .post("/api/admin/research/client-imports/dry-run")
+      .set("x-test-admin", "yes")
+      .send({
+        sourcePartner: `${M}_partner`,
+        relationshipOwner: `${M} Owner`,
+        extraneousField: `${M}_extraneous`,
+        rows: [
+          { name: `${M} Person One`, product: `${M} Product Alpha` },
+          { name: `${M} Person Two`, product: `Unmappable ${M} Product Beta` },
+          { name: `${M} Person Two`, product: `${M} A & ${M} B` },
+        ],
+      });
+    expect(res.status).toBe(201);
+    const serialized = JSON.stringify(res.body);
+    expect(serialized).not.toContain(M);
+    // and the server-authored identity is what stands in for a label
+    expect(res.body.data.sourceType).toBe("partner_client_import");
+  });
+
+  it("markers are absent from ERROR responses too", async () => {
+    const app = buildApp();
+    const M = "zqzq_err_marker";
+    const bad = await request(app)
+      .post("/api/admin/research/client-imports/dry-run")
+      .set("x-test-admin", "yes")
+      .send({ sourcePartner: `${M}_p`, relationshipOwner: `${M}_o`, rows: "not-an-array" });
+    expect(bad.status).toBe(400);
+    expect(JSON.stringify(bad.body)).not.toContain(M);
+    const missing = await request(app)
+      .get(`/api/admin/research/client-imports/${M}-batch`)
+      .set("x-test-admin", "yes");
+    expect(missing.status).toBe(404);
+    expect(JSON.stringify(missing.body)).not.toContain(M);
   });
 });

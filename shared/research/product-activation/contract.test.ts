@@ -9,6 +9,7 @@ import {
   activationComplete,
   baseStatusFromDisplayState,
   isMoreRestrictive,
+  isValidActivationApproval,
   resolveActivationStatus,
 } from "./contract";
 
@@ -254,5 +255,79 @@ describe("resolveActivationStatus — monotonic restriction, exhaustively", () =
   it("an overlay hold restricts a live base but cannot LOOSEN an unavailable base", () => {
     expect(resolveActivationStatus("live", entry({ held: true }))).toBe("held");
     expect(resolveActivationStatus("unavailable", entry({ held: true }))).toBe("unavailable");
+  });
+});
+
+// P1-E (2026-08-27, round 3): approval must be REAL EVIDENCE. Empty strings,
+// whitespace, unparseable or impossible or out-of-era timestamps are not
+// approvals — and even a fully valid approval can only stop the overlay from
+// restricting; it can never promote past the canonical base.
+describe("isValidActivationApproval — evidence, not text", () => {
+  const good = { approvedBy: "Founder", approvedAt: "2026-08-27T12:00:00.000Z" };
+
+  it("accepts substantive approver + strict real in-era ISO instant", () => {
+    expect(isValidActivationApproval(good)).toBe(true);
+    expect(isValidActivationApproval({ ...good, approvedAt: "2026-08-27T12:00:00Z" })).toBe(true);
+  });
+
+  it("rejects empty, whitespace, tab and newline approvers", () => {
+    for (const approvedBy of ["", " ", "\t", "\n", " \t\n "]) {
+      expect(isValidActivationApproval({ approvedBy, approvedAt: good.approvedAt }), JSON.stringify(approvedBy)).toBe(false);
+    }
+  });
+
+  it("rejects empty, invalid, impossible, loose, and out-of-era timestamps", () => {
+    for (const approvedAt of [
+      "",
+      " ",
+      "not-a-date",
+      "2026-13-45T99:99:99Z",          // impossible fields fail the strict shape
+      "2026-02-30T00:00:00.000Z",      // rolls over in Date.parse; round-trip refuses
+      "2026-08-27",                    // date only
+      "2026-08-27T12:00:00",           // no Z
+      "2026-08-27T12:00:00+02:00",     // offsets are not the canonical instant form
+      "1999-01-01T00:00:00.000Z",      // before this system existed
+      "3026-01-01T00:00:00.000Z",      // absurd future
+    ]) {
+      expect(isValidActivationApproval({ approvedBy: "Founder", approvedAt }), approvedAt).toBe(false);
+    }
+  });
+
+  it("null is not approval", () => {
+    expect(isValidActivationApproval(null)).toBe(false);
+  });
+});
+
+describe("resolveActivationStatus — approval text cannot manufacture authority", () => {
+  it("empty-string approval fields never satisfy the documented ladder", () => {
+    for (const approval of [
+      { approvedBy: "", approvedAt: "2026-08-27T12:00:00.000Z" },
+      { approvedBy: "Founder", approvedAt: "" },
+      { approvedBy: " ", approvedAt: " " },
+      { approvedBy: "Founder", approvedAt: "not-a-date" },
+    ]) {
+      const overlay = entry({
+        confirmationBasis: "documented",
+        checklist: COMPLETE_CHECKLIST,
+        founderActivationApproval: approval,
+      });
+      expect(resolveActivationStatus("request_only", overlay), JSON.stringify(approval))
+        .toBe("pending_pharmacy_activation");
+      expect(activationComplete(overlay)).toBe(false);
+    }
+  });
+
+  it("even a VALID approval never promotes past the canonical base", () => {
+    const overlay = entry({
+      confirmationBasis: "documented",
+      checklist: COMPLETE_CHECKLIST,
+      founderActivationApproval: { approvedBy: "Founder", approvedAt: "2026-08-27T12:00:00.000Z" },
+    });
+    // The overlay may stop restricting; it may not grant. A non-orderable
+    // base stays exactly what the canonical catalog says it is.
+    expect(resolveActivationStatus("request_only", overlay)).toBe("request_only");
+    expect(resolveActivationStatus("provider_required", overlay)).toBe("provider_required");
+    expect(resolveActivationStatus("held", overlay)).toBe("held");
+    expect(resolveActivationStatus("unavailable", overlay)).toBe("unavailable");
   });
 });

@@ -87,6 +87,14 @@ export interface OrderRecord {
   updatedAt: string;
   /** Present once money has actually been taken, bounded by what was authorized. */
   capturedAmountCents?: number;
+  /**
+   * Cents refunded so far (P1-A, 2026-08-27). The refund lane accumulates
+   * this in research_orders.refunded_cents (claims-store writes it,
+   * bounded ≤ captured by the DB constraint); this field closes the loop so
+   * the wire can carry the fact instead of downstream code guessing from
+   * lifecycle state. Absent on legacy in-memory records that predate it.
+   */
+  refundedCents?: number;
   shipments?: OrderShipmentRecord[];
   approvedBy?: string | null;
   approvedAt?: string | null;
@@ -204,6 +212,18 @@ function toSummary(order: OrderRecord): OrderSummaryDto {
     state: order.state,
     placedAt: order.createdAt,
     totalCents: order.totals.totalCents,
+    // P1-A: monetary FACTS ride the wire. Amounts are what the record holds;
+    // null means the fact is unavailable, which downstream must render as
+    // unknown rather than guess. Wholesale/margin data is not involved —
+    // these are the member's own charge amounts.
+    payment: {
+      amountDueCents: order.totals.totalCents,
+      amountCapturedCents: order.capturedAmountCents ?? null,
+      amountRefundedCents: order.refundedCents ?? null,
+      currency: "USD",
+    },
+    // The commerce lane's shipments array IS its durable shipment source.
+    shipmentsSource: "connected",
     shipments: shipments.map((s) => ({
       owner: s.owner,
       status: s.status,

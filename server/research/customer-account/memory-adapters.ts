@@ -60,7 +60,15 @@ export function createMemoryCustomerAccountPorts(
           seedOf(memberKey)?.orders ?? {
             research: [],
             carePharmacy: [],
-            history: { complete: false, unavailableSources: ["assisted order requests (XRR)"] },
+            history: {
+              availability: "partial",
+              sources: {
+                commerce: { connected: true, complete: true },
+                xea: { connected: true, complete: true },
+                xec: { connected: false, complete: false },
+                xrr: { connected: false, complete: false },
+              },
+            },
           }
         );
       },

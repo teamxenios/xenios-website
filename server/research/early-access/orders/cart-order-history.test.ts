@@ -171,6 +171,8 @@ describe("cart checkouts in the member order history", () => {
         state: "payment_captured",
         placedAt: "2026-08-18T00:00:00.000Z",
         totalCents: 49_260,
+        payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+        shipmentsSource: "unavailable",
         shipments: [],
       },
     ]);
@@ -187,6 +189,8 @@ describe("cart checkouts in the member order history", () => {
       state: "payment_captured",
       placedAt: "2026-08-18T00:00:00.000Z",
       totalCents: 49_260,
+      payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+      shipmentsSource: "unavailable",
       shipments: [],
       lines: [{ sku: "SKU-1", displayName: "SKU-1", quantity: 3, lineTotalCents: 47_760 }],
       shippingCents: 1_500,

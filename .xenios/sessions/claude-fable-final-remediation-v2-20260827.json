@@ -1,0 +1,10 @@
+{
+  "id": "claude-fable-final-remediation-v2-20260827",
+  "tool": "claude",
+  "lane": "client-account-final-remediation-v2",
+  "branch": "fix/xenios-client-account-final-remediation-v2-20260827",
+  "state": "active",
+  "startedAt": "2026-08-27T23:58:08.561Z",
+  "heartbeatAt": "2026-08-27T23:58:08.567Z",
+  "note": "Round-3 surgical recut from failed 2239661: 7 evidence-model P1s (payment money-facts, history fabrication, billing presentation, Care source truth, activation approval evidence, invitation immutability, import zero-caller-text) + all 4 P2s. No deploy, no migration apply, no invitations."
+}

@@ -212,9 +212,19 @@ export function cartOrderSummary(entry: EarlyAccessCartHistoryEntry): OrderSumma
     state: entry.state,
     placedAt: entry.placedAt,
     totalCents: entry.totalCents,
-    // Cart fulfilment events live behind their own reads, one call per
-    // checkout, and a list of N orders must not become N further round trips.
-    // Empty asserts nothing false: the state is carried by `state`.
+    // P1-A monetary FACTS, same invariant as the placement lane: money counts
+    // as received only at verification (entry.state is "payment_captured"
+    // exactly when the checkout's payment was verified), and this lane has no
+    // refund concept, so refunded is authoritatively zero.
+    payment: {
+      amountDueCents: entry.totalCents,
+      amountCapturedCents: entry.state === "payment_captured" ? entry.totalCents : 0,
+      amountRefundedCents: 0,
+      currency: "USD",
+    },
+    // Cart fulfilment events live behind their own reads; this source is
+    // UNCONNECTED to shipment facts (P1-B) — an empty list asserts nothing.
+    shipmentsSource: "unavailable",
     shipments: [],
   };
 }

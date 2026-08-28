@@ -1012,11 +1012,20 @@
       "declaration computed from the composition wiring (XRR always unavailable;",
       "XEA/XEC/commerce per flag). Wrapper argument only; no route or path change.",
       "old sha256:f0ec4ba007223536ec80f2d92d524c97059e0dbe37bc7e4ab5832f0575fb4d12,",
-      "new sha256:5b8d1b7f47b9079b7603a9627207e4835bda21129ff31fa540936e3f76e3734f."
+      "new sha256:5b8d1b7f47b9079b7603a9627207e4835bda21129ff31fa540936e3f76e3734f.",
+      "",
+      "2026-08-27, final remediation v2 (fix/xenios-client-account-final-remediation-",
+      "v2-20260827): server/index.ts moved once — the customer-account orders port",
+      "registration now passes the discriminated per-source order-history",
+      "availability (P1-B) computed from the same wiring facts, plus the shared",
+      "orderHistoryAvailability import. Wrapper argument + one import only; no",
+      "route, path, or guard change; census unchanged.",
+      "old sha256:5b8d1b7f47b9079b7603a9627207e4835bda21129ff31fa540936e3f76e3734f,",
+      "new sha256:52877e449409970079fb81b410376e9d61b7a366dadf71d81f74648f4a005a92."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:5b8d1b7f47b9079b7603a9627207e4835bda21129ff31fa540936e3f76e3734f",
+      "server/index.ts": "sha256:52877e449409970079fb81b410376e9d61b7a366dadf71d81f74648f4a005a92",
       "server/research/index.ts": "sha256:26a9645d3d77898331b00b9c166ccb158b23a3cf49580226d48473ef5fa38763",
       "server/care/index.ts": "sha256:fea8c5ad5124dacf07350818e891396ee9f234983a93be65540911c1eafd81db",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"

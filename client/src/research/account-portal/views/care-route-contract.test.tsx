@@ -60,7 +60,9 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
       .set("x-test-member", "member-fixture-1"); // seeded enrolled at provider_review
     expect(res.status).toBe(200);
     expect(res.body.kind).toBe("ok");
-    // The wire truth this contract pins: nested status, top-level enrolled.
+    // The wire truth this contract pins: discriminated source, nested status,
+    // top-level enrolled (P1-D).
+    expect(res.body.data.sourceState).toBe("available");
     expect(res.body.data.enrolled).toBe(true);
     expect(res.body.data.status.stage).toBe("provider_review");
 
@@ -76,10 +78,21 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
       .get(CUSTOMER_ACCOUNT_PATHS.care)
       .set("x-test-member", "member-fixture-2"); // seeded with no Care relationship
     expect(res.status).toBe(200);
+    // A CONNECTED source reporting no enrollment is a knowable fact — only
+    // then may "not started" render.
+    expect(res.body.data.sourceState).toBe("available");
     expect(res.body.data.enrolled).toBe(false);
 
     const container = await renderWith(res.body.data);
     expect(container.textContent).toContain("Care not started");
+    expect(container.querySelector(".care-status-timeline")).toBeNull();
+  });
+
+  it("an UNAVAILABLE Care source renders no enrollment claim, only unavailability", async () => {
+    const container = await renderWith({ sourceState: "unavailable" });
+    expect(container.textContent).toContain("Care status unavailable");
+    expect(container.textContent).not.toContain("Care not started");
+    expect(container.textContent).not.toContain("Not enrolled");
     expect(container.querySelector(".care-status-timeline")).toBeNull();
   });
 });

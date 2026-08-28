@@ -95,8 +95,15 @@ export type ProductStringRef = Readonly<{ ref: string; occurrences: number }>;
  * never a person name, never a verbatim product cell.
  */
 export type ImportDryRunReportDto = Readonly<{
+  /** Server-created opaque batch reference — never caller text. */
   batchId: string;
-  sourceLabel: string;
+  /**
+   * SERVER-AUTHORED source identity (P1-G, 2026-08-27): the report carries a
+   * closed enum, never a caller-supplied label. There is no field on this
+   * DTO that echoes any string a caller sent — names, products, labels,
+   * partners, and request metadata all stop at the staging boundary.
+   */
+  sourceType: "partner_client_import";
   dryRun: true;
   totalRows: number;
   /** Rows refused outright; every one is counted, none silently dropped. */

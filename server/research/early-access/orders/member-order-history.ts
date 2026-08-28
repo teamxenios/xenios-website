@@ -258,10 +258,28 @@ export function earlyAccessOrderSummary(placement: EarlyAccessPlacement): OrderS
     state: PAYMENT_STATE_TO_ORDER_STATE[placement.paymentState] ?? "exception",
     placedAt: placement.placedAt,
     totalCents: placement.order.money.payableTotalCents,
+    // P1-A monetary FACTS: this lane's own invariant is that money counts as
+    // received ONLY at verification, so verified-captured is authoritatively
+    // the payable total on a verified placement and authoritatively zero on
+    // everything else (awaiting / under review / rejected — a customer's
+    // unverified claim of payment is not capture evidence). The lane has no
+    // refund concept, so refunded is authoritatively zero, never null.
+    payment: {
+      amountDueCents: placement.order.money.payableTotalCents,
+      amountCapturedCents:
+        placement.paymentState === "payment_verified"
+          ? placement.order.money.payableTotalCents
+          : 0,
+      amountRefundedCents: 0,
+      currency: "USD",
+    },
     // Early Access fulfilment events live behind their own reads, one call per
     // order, and a list of N orders must not become N further round trips.
-    // Empty asserts nothing false: the order's state is carried by `state`, and
-    // tracking is shown on the Early Access order surface that already reads it.
+    // The source declares itself UNCONNECTED to shipment facts here (P1-B), so
+    // an empty list asserts nothing — downstream renders fulfillment unknown
+    // rather than "unfulfilled"; tracking lives on the Early Access order
+    // surface that already reads it.
+    shipmentsSource: "unavailable",
     shipments: [],
   };
 }

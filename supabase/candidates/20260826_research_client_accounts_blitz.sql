@@ -48,6 +48,16 @@
 --                governed SECURITY DEFINER transition functions below
 --   audit:      service_role INSERT, SELECT (+ trigger blocks all rewrites)
 --
+-- INVITATION IMMUTABILITY (P1-F, 2026-08-27 round 3). An approval BINDS to an
+-- immutable snapshot of the exact evidence approved: the guard trigger
+-- computes a sha256 over (staging_id, batch, normalized identity, contact,
+-- consent, partner) plus the staging row_version at approval time, stores it
+-- on the invitation, and RE-VERIFIES it on every queue/sent advance — so
+-- approve-then-mutate, staging swaps, replaced approvers, and stale
+-- approvals all refuse. Approval fields are immutable once written, for
+-- every writer. As a second wall, the staging row's evidence fields FREEZE
+-- while a founder_approved/queued/sent invitation references them.
+--
 -- INVITATION GOVERNANCE (P1-9). An invitation:
 --   * must reference a real staging row (staging_id NOT NULL + FK);
 --   * may hold at most ONE live invitation per person (partial unique index);
@@ -134,6 +144,9 @@ create table public.research_client_import_staging (
   us_state text check (us_state is null or us_state ~ '^[A-Z]{2}$'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
+  -- P1-F: bumped on every update; approval snapshots bind to the exact
+  -- version they approved, so silent post-approval mutation is detectable.
+  row_version integer not null default 1,
   unique (batch_id, normalized_name_key)
 );
 
@@ -143,6 +156,29 @@ comment on table public.research_client_import_staging is
 create index research_client_import_staging_batch_idx
   on public.research_client_import_staging (batch_id);
 
+-- The canonical evidence string an approval binds to (P1-F). Everything an
+-- approval decision depends on is in here; sha256 is a PostgreSQL built-in
+-- (v11+), so no extension is required. The hash is computed BY THE TRIGGER,
+-- never accepted from a caller.
+create or replace function public.research_client_invitation_evidence_hash(
+  p_staging public.research_client_import_staging
+)
+returns text
+language sql
+immutable
+set search_path = public
+as $$
+  select encode(sha256(convert_to(
+    p_staging.staging_id
+      || '|' || p_staging.batch_id
+      || '|' || p_staging.normalized_name_key
+      || '|' || coalesce(p_staging.contact_email, '')
+      || '|' || coalesce(p_staging.contact_phone, '')
+      || '|' || p_staging.consent_status
+      || '|' || p_staging.source_partner,
+    'UTF8')), 'hex');
+$$;
+
 create or replace function public.research_client_import_staging_touch()
 returns trigger
 language plpgsql
@@ -150,6 +186,7 @@ set search_path = public
 as $$
 begin
   new.updated_at := now();
+  new.row_version := old.row_version + 1;
   return new;
 end;
 $$;
@@ -158,6 +195,43 @@ drop trigger if exists research_client_import_staging_touch on public.research_c
 create trigger research_client_import_staging_touch
   before update on public.research_client_import_staging
   for each row execute function public.research_client_import_staging_touch();
+
+-- P1-F option B, as belt to the snapshot's braces: once a person's invitation
+-- is founder-approved (or further along), the approved evidence fields on the
+-- staging row are FROZEN for every writer. Revoke the invitation first, then
+-- edit, then re-approve — the state machine forces the re-approval to see the
+-- new evidence.
+create or replace function public.research_client_import_staging_freeze()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if (new.contact_email is distinct from old.contact_email
+      or new.contact_phone is distinct from old.contact_phone
+      or new.consent_status is distinct from old.consent_status
+      or new.normalized_name_key is distinct from old.normalized_name_key
+      or new.source_name is distinct from old.source_name
+      or new.batch_id is distinct from old.batch_id
+      or new.source_partner is distinct from old.source_partner
+      or new.staging_id is distinct from old.staging_id)
+     and exists (
+       select 1 from public.research_customer_account_invitations i
+        where i.staging_id = old.staging_id
+          and i.state in ('founder_approved', 'queued', 'sent')
+     ) then
+    raise exception
+      'staging row % carries a live approved invitation; approved evidence is immutable — revoke the invitation before editing',
+      old.staging_id;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists research_client_import_staging_freeze on public.research_client_import_staging;
+create trigger research_client_import_staging_freeze
+  before update on public.research_client_import_staging
+  for each row execute function public.research_client_import_staging_freeze();
 
 -- ---------------------------------------------------------------------------
 -- Customer product interests: canonical keys on an ACTIVE customer account.
@@ -192,13 +266,28 @@ create table public.research_customer_account_invitations (
   -- super_admin assignments by the transition trigger — never free text.
   approved_by text check (approved_by is null or approved_by ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
   approved_at timestamptz,
+  -- P1-F: the immutable snapshot the approval BOUND TO — computed by the
+  -- guard trigger over the staging row's evidence at approval time, and
+  -- re-verified on every later transition. Never caller-supplied.
+  approved_snapshot_hash text check (approved_snapshot_hash is null or approved_snapshot_hash ~ '^[0-9a-f]{64}$'),
+  approved_row_version integer check (approved_row_version is null or approved_row_version >= 1),
   state text not null default 'draft'
     check (state in ('draft', 'founder_approved', 'queued', 'sent', 'accepted', 'expired', 'revoked')),
   state_changed_at timestamptz not null default now(),
-  -- Defense in depth alongside the trigger: a non-draft state without an
-  -- approval record is unrepresentable even if the trigger were dropped.
+  -- Defense in depth alongside the trigger, ALIGNED with the trigger's state
+  -- graph (P1-F): a draft may be revoked without ever being approved, so
+  -- 'revoked' is exempt; every other non-draft state requires the full
+  -- approval record including its evidence snapshot. ONE state machine.
   constraint invitation_requires_founder_approval
-    check (state = 'draft' or (approved_by is not null and approved_at is not null))
+    check (
+      state in ('draft', 'revoked')
+      or (
+        approved_by is not null
+        and approved_at is not null
+        and approved_snapshot_hash is not null
+        and approved_row_version is not null
+      )
+    )
 );
 
 comment on table public.research_customer_account_invitations is
@@ -217,6 +306,7 @@ as $$
 declare
   staging_row public.research_client_import_staging%rowtype;
   approver_ok boolean;
+  current_hash text;
 begin
   if tg_op = 'DELETE' then
     raise exception 'invitations are history: revoke or expire %, never delete it', old.invitation_id;
@@ -226,15 +316,33 @@ begin
     if new.state <> 'draft' then
       raise exception 'an invitation is born draft; % is not a birth state', new.state;
     end if;
-    if new.approved_by is not null or new.approved_at is not null then
+    if new.approved_by is not null or new.approved_at is not null
+       or new.approved_snapshot_hash is not null or new.approved_row_version is not null then
       raise exception 'a draft invitation carries no approval record';
     end if;
     return new;
   end if;
 
-  -- UPDATE: enforce the transition map.
+  -- P1-F IMMUTABILITY, before anything else: once an approval record exists,
+  -- none of its fields may ever change — for ANY writer through ANY path.
+  -- A replaced approver, a rewritten timestamp, or a swapped snapshot is
+  -- history tampering, not an edit.
+  if old.approved_by is not null and (
+       new.approved_by is distinct from old.approved_by
+       or new.approved_at is distinct from old.approved_at
+       or new.approved_snapshot_hash is distinct from old.approved_snapshot_hash
+       or new.approved_row_version is distinct from old.approved_row_version
+     ) then
+    raise exception 'invitation % approval record is immutable; revoke and re-approve instead of editing evidence', old.invitation_id;
+  end if;
+
+  -- The invitation is bound to ONE staged person forever.
+  if new.staging_id is distinct from old.staging_id then
+    raise exception 'invitation % may not be re-pointed at a different staged person', old.invitation_id;
+  end if;
+
+  -- UPDATE with unchanged state: only a draft's wave label is editable.
   if new.state = old.state then
-    -- Non-state edits (wave label) are allowed while still a draft only.
     if old.state <> 'draft' then
       raise exception 'invitation % is % and no longer editable', old.invitation_id, old.state;
     end if;
@@ -283,6 +391,47 @@ begin
     ) into approver_ok;
     if not approver_ok then
       raise exception 'approved_by % is not a currently-active super_admin; arbitrary actor text is not founder approval', new.approved_by;
+    end if;
+    -- P1-F: bind the approval to the EXACT evidence it approved. The trigger
+    -- computes the snapshot itself; a caller-supplied value is overwritten.
+    new.approved_snapshot_hash := public.research_client_invitation_evidence_hash(staging_row);
+    new.approved_row_version := staging_row.row_version;
+  end if;
+
+  if new.state in ('queued', 'sent') then
+    -- P1-F: every advance toward sending RE-RESOLVES the approved evidence
+    -- and refuses if anything moved since the founder looked at it.
+    select * into staging_row
+      from public.research_client_import_staging
+      where staging_id = new.staging_id;
+    if not found then
+      raise exception 'invitation % lost its staging row %; cannot advance', new.invitation_id, new.staging_id;
+    end if;
+    current_hash := public.research_client_invitation_evidence_hash(staging_row);
+    if current_hash is distinct from old.approved_snapshot_hash
+       or staging_row.row_version is distinct from old.approved_row_version then
+      raise exception
+        'invitation % approved evidence has changed since approval (snapshot mismatch); revoke and re-approve',
+        old.invitation_id;
+    end if;
+    -- Eligibility must still hold at the moment of advancing.
+    if staging_row.contact_email is null and staging_row.contact_phone is null then
+      raise exception 'staged person % no longer has contact information; cannot advance', new.staging_id;
+    end if;
+    if staging_row.consent_status <> 'granted' then
+      raise exception 'staged person % no longer has granted consent; cannot advance', new.staging_id;
+    end if;
+    -- The approving principal must still satisfy policy.
+    select exists (
+      select 1
+        from public.research_prelaunch_role_assignments a
+        where a.auth_user_id::text = old.approved_by
+          and a.role = 'super_admin'
+          and a.revoked_at is null
+          and (a.expires_at is null or a.expires_at > now())
+    ) into approver_ok;
+    if not approver_ok then
+      raise exception 'the approving principal for invitation % is no longer an active super_admin; re-approval required', old.invitation_id;
     end if;
   end if;
 
@@ -416,6 +565,8 @@ revoke all on function public.research_client_invitation_transition(uuid, text, 
 revoke all on function public.research_client_accounts_append_only() from public;
 revoke all on function public.research_client_invitation_guard() from public;
 revoke all on function public.research_client_import_staging_touch() from public;
+revoke all on function public.research_client_import_staging_freeze() from public;
+revoke all on function public.research_client_invitation_evidence_hash(public.research_client_import_staging) from public;
 
 grant insert, select on public.research_client_import_batches to service_role;
 grant insert, select, update on public.research_client_import_staging to service_role;

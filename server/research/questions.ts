@@ -13,7 +13,7 @@ import { requireActiveMember, type MemberRow } from "./member-auth";
 import { requireSupabaseAdmin } from "../routes";
 import { getSupabaseAdmin } from "../supabase";
 import { capabilityEnabled } from "./capabilities";
-import { rateLimitHit } from "./rate-limit";
+import { supportSubmissionAllowed, SUPPORT_SUBMISSION_LIMIT_PER_HOUR } from "./support-rate-limit";
 import type { MemberPlatformDeps } from "./member-platform-deps";
 import {
   TELEGRAM_NOTICES,
@@ -69,7 +69,9 @@ export const SLA_TARGET_HOURS = 12;
 
 // A member may ask ten questions an hour through any door. The limit is a
 // throttle against runaway automation, not a judgment about asking a lot.
-export const QUESTION_LIMIT_PER_HOUR = 10;
+// The question budget IS the shared support budget (P2-3): one member-scoped
+// quota across the questions doors and the customer-account support door.
+export const QUESTION_LIMIT_PER_HOUR = SUPPORT_SUBMISSION_LIMIT_PER_HOUR;
 
 // One-time link tokens are short-lived on purpose: the window only has to be
 // long enough to switch apps and press start.
@@ -465,7 +467,9 @@ export function registerQuestionsApi(app: Express, deps: MemberPlatformDeps) {
       const member = memberFrom(req);
       if (!member) return res.status(403).json({ ok: false, code: "membership_inactive" });
 
-      if (!(await rateLimitHit(`member-question:${member.id}`, 3600, QUESTION_LIMIT_PER_HOUR))) {
+      // ONE shared budget with the customer-account support door (P2-3): a
+      // member's support-shaped writes are bounded once across every door.
+      if (!(await supportSubmissionAllowed(member.id))) {
         return res
           .status(429)
           .json({ ok: false, code: "rate_limited", message: "Too many questions at once. Try again shortly." });
@@ -882,8 +886,9 @@ export function registerQuestionsApi(app: Express, deps: MemberPlatformDeps) {
         return sendConflict(res, "This chat is not linked to an active membership.");
       }
 
-      // Telegram does not get a cheaper budget than the website.
-      if (!(await rateLimitHit(`member-question:${memberId}`, 3600, QUESTION_LIMIT_PER_HOUR))) {
+      // Telegram does not get a cheaper budget than the website — and both
+      // draw from the ONE shared support budget (P2-3).
+      if (!(await supportSubmissionAllowed(memberId))) {
         return res
           .status(429)
           .json({ ok: false, code: "rate_limited", message: "Too many questions at once. Try again shortly." });

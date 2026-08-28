@@ -3,6 +3,11 @@ import type {
   CustomerAccountOverviewDto,
   ProductInterestDto,
 } from "@shared/research/customer-account/contract";
+import {
+  ORDER_HISTORY_SOURCE_KEYS,
+  ORDER_HISTORY_SOURCE_LABELS,
+} from "@shared/research/customer-account/contract";
+import { billingPresentation } from "@shared/research/customer-account/billing-presentation";
 import type {
   CatalogPriorityDto,
   ProductActivationStatus,
@@ -59,6 +64,8 @@ export function AccountOverviewView({
     membership,
     careEnrollment,
     researchOrders,
+    orderHistory,
+    accountStanding,
     productInterests,
     documents,
     supportCases,
@@ -68,7 +75,26 @@ export function AccountOverviewView({
     (order) => !["delivered", "cancelled"].includes(order.fulfillmentState),
   );
   const manageUrl = safeExternalUrl(membership.manageUrl);
+  const billing = billingPresentation(membership.billing);
   const recentOrders = researchOrders.slice(0, 2);
+  const historyComplete = orderHistory.availability === "complete";
+  const disconnectedSources = ORDER_HISTORY_SOURCE_KEYS
+    .filter((key) => !orderHistory.sources[key].connected || !orderHistory.sources[key].complete)
+    .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
+  // "Up to date" is a claim, never a default: it renders only when the server
+  // proved it (accountStanding "current"). Indeterminate stays neutral.
+  const standingHeadline = accountStanding === "attention"
+    ? nextAdministrativeAction ?? "An administrative item needs your attention."
+    : accountStanding === "current"
+      ? "Your account is up to date."
+      : "No administrative action is recorded, but some account information is currently unavailable.";
+  const careStageLabel = careEnrollment.sourceState === "unavailable"
+    ? "Care status unavailable"
+    : !careEnrollment.enrolled
+      ? "Not enrolled"
+      : careEnrollment.status.stage
+        ? sentenceCase(careEnrollment.status.stage)
+        : "No stage recorded";
 
   return (
     <div className="account-grid">
@@ -77,16 +103,18 @@ export function AccountOverviewView({
           <div className="min-w-0">
             <p className="account-section-label">Next administrative action</p>
             <h2 id="next-account-action" className="account-section-title">
-              {nextAdministrativeAction ?? "Your account is up to date."}
+              {standingHeadline}
             </h2>
             <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
               This is an account step only. It is not a medical recommendation or a promise of product approval.
             </p>
           </div>
-          {nextAdministrativeAction ? (
+          {accountStanding === "attention" ? (
             <Link className="btn btn-primary" href={ACCOUNT_PORTAL_ROUTES.support}>Review with support</Link>
-          ) : (
+          ) : accountStanding === "current" ? (
             <ResearchStatusBadge label="Current" tone="success" />
+          ) : (
+            <ResearchStatusBadge label="Status unavailable" tone="neutral" />
           )}
         </div>
       </section>
@@ -99,12 +127,20 @@ export function AccountOverviewView({
         </div>
         <div className="account-stat">
           <p className="account-section-label">Open orders</p>
-          <p className="account-stat-value mt-2 tabular">{activeOrders.length}</p>
+          {historyComplete ? (
+            <p className="account-stat-value mt-2 tabular">{activeOrders.length}</p>
+          ) : (
+            <>
+              {/* A count over a partial history is unknown, not zero (P1-B). */}
+              <p className="account-stat-value mt-2 tabular">—</p>
+              <p className="body-s text-ink-mute mt-1">count unavailable — order history incomplete</p>
+            </>
+          )}
           <Link className="account-inline-link mt-3 inline-flex" href={ACCOUNT_PORTAL_ROUTES.orders}>View order status</Link>
         </div>
         <div className="account-stat">
           <p className="account-section-label">Care operations</p>
-          <p className="account-stat-value mt-2">{careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "Not enrolled"}</p>
+          <p className="account-stat-value mt-2">{careStageLabel}</p>
           <Link className="account-inline-link mt-3 inline-flex" href={ACCOUNT_PORTAL_ROUTES.care}>View separate Care timeline</Link>
         </div>
       </section>
@@ -123,6 +159,8 @@ export function AccountOverviewView({
         <section className="account-surface account-surface-dark" aria-labelledby="membership-heading">
           <p className="account-section-label" style={{ color: "#c8c4bb" }}>Xenios membership</p>
           <h2 id="membership-heading" className="account-section-title">{membership.planLabel ?? "No active membership"}</h2>
+          {/* Billing truth renders ONLY through the canonical presentation (P1-C). */}
+          <div className="mt-4"><ResearchStatusBadge label={`Billing: ${billing.label}`} tone={billing.tone} /></div>
           <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>
             Renewal: {formatAccountDate(membership.nextRenewalAt)}
           </p>
@@ -143,6 +181,12 @@ export function AccountOverviewView({
             <div><p className="account-section-label">Research orders</p><h2 id="recent-orders-heading" className="account-section-title">Recent activity</h2></div>
             <Link className="account-inline-link" href={ACCOUNT_PORTAL_ROUTES.orders}>All orders</Link>
           </div>
+          {!historyComplete ? (
+            <div className="account-surface account-surface-warm mt-5" role="note">
+              <p className="body-s font-700">Some order history is currently unavailable.</p>
+              <p className="body-s text-ink-2 mt-2">Order records from these sources are not fully connected: {disconnectedSources.join(", ")}.</p>
+            </div>
+          ) : null}
           {recentOrders.length ? (
             <div className="account-card-list mt-5">
               {recentOrders.map((order) => {
@@ -151,8 +195,17 @@ export function AccountOverviewView({
                   <article className="account-list-card" key={order.reference}>
                     <div className="min-w-0">
                       <p className="mono-label text-ink-mute">{order.reference} · {formatAccountDate(order.placedAt)}</p>
-                      <h3 className="body-m font-700 mt-2 break-words">{order.itemLabel}</h3>
-                      <p className="body-s text-ink-2 mt-1">{order.variantLabel ?? "Variant recorded with order"} · Qty {order.quantity}</p>
+                      {order.itemLabel ? (
+                        <h3 className="body-m font-700 mt-2 break-words">{order.itemLabel}</h3>
+                      ) : (
+                        <h3 className="body-m mt-2 break-words text-ink-mute">Order details unavailable</h3>
+                      )}
+                      {order.detailAvailability === "available" ? (
+                        <p className="body-s text-ink-2 mt-1">
+                          {order.variantLabel ?? "Variant recorded with order"}
+                          {order.quantity != null ? ` · Qty ${order.quantity}` : null}
+                        </p>
+                      ) : null}
                     </div>
                     <div className="account-list-card-actions">
                       <ResearchStatusBadge label={sentenceCase(order.fulfillmentState)} tone={statusTone(order.fulfillmentState)} />
@@ -162,16 +215,23 @@ export function AccountOverviewView({
                 );
               })}
             </div>
-          ) : <div className="account-empty mt-5">No Research orders are attached to this account yet.</div>}
+          ) : (
+            <div className="account-empty mt-5">
+              {historyComplete
+                ? "No Research orders are attached to this account yet."
+                : "Order history is currently unavailable or incomplete — recent orders may not be shown."}
+            </div>
+          )}
         </section>
 
         <section className="account-surface" aria-labelledby="care-summary-heading">
           <p className="account-section-label">Care enrollment</p>
           <h2 id="care-summary-heading" className="account-section-title">Operational status</h2>
           <div className="mt-5">
-            <div className="account-data-row"><span className="account-data-label">Enrollment</span><span className="account-data-value">{careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</span></div>
-            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "Not started"}</span></div>
-            <div className="account-data-row"><span className="account-data-label">Pharmacy</span><span className="account-data-value">{sentenceCase(careEnrollment.pharmacyState)}</span></div>
+            {/* An unavailable Care source carries no enrollment claim (P1-D). */}
+            <div className="account-data-row"><span className="account-data-label">Enrollment</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Care status unavailable" : careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "Not started"}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Pharmacy</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : sentenceCase(careEnrollment.pharmacyState)}</span></div>
           </div>
           <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.care}>Open Care status</Link>
         </section>
