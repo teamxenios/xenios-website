@@ -105,6 +105,14 @@ function access(role: CareRole, subjectId: string): CareAccessDependencies {
   };
 }
 
+const CLINICAL_CAPABILITIES_ON = {
+  provider_actions: true,
+  prescribing: true,
+  clinical_fulfillment: true,
+  external_communications: true,
+  real_patient_data: true,
+} as const;
+
 function app(repository: CareAppointmentRepository, role: CareRole, subjectId: string) {
   const instance = express();
   instance.use(express.json());
@@ -113,6 +121,8 @@ function app(repository: CareAppointmentRepository, role: CareRole, subjectId: s
     access(role, subjectId),
     repository,
     () => new Date("2026-07-25T20:00:00.000Z"),
+    undefined,
+    { readFlags: () => CLINICAL_CAPABILITIES_ON },
   );
   return instance;
 }

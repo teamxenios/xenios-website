@@ -43,18 +43,36 @@ function consentComplete(consents: readonly CareConsentStatus[]): boolean {
   return consents.length > 0 && consents.every((consent) => consent.satisfied);
 }
 
+/**
+ * The assigned-review list has only a review record, so it receives this
+ * honest workflow-only subset. Patient id, clinician id, state code, and the
+ * decision source are deliberately absent.
+ */
+export type CareReviewListItem = Pick<
+  CareReviewQueueItem,
+  "reviewId" | "status" | "decision" | "version" | "updatedAt"
+>;
+
+export function toCareReviewListItem(
+  review: CareClinicianReview,
+): CareReviewListItem {
+  return {
+    reviewId: review.id,
+    status: review.status,
+    decision: review.finalDecision,
+    version: review.version,
+    updatedAt: review.updatedAt,
+  };
+}
+
 export function toCareReviewQueueItem(
   facts: CareReviewFacts,
 ): CareReviewQueueItem {
   return {
-    reviewId: facts.review.id,
-    status: facts.review.status,
-    decision: facts.review.finalDecision,
+    ...toCareReviewListItem(facts.review),
     appointmentStatus: facts.appointment?.status ?? null,
     intakeState: careReviewIntakeState(facts.intake),
     consentComplete: consentComplete(facts.consents),
-    version: facts.review.version,
-    updatedAt: facts.review.updatedAt,
   };
 }
 

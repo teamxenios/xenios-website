@@ -17,6 +17,11 @@ import {
 import { evaluateCareAppointmentReadiness } from "./appointment-readiness";
 import type { CareAppointmentRepository } from "./appointment-repository";
 import {
+  requireCareClinicalCapability,
+  type CareClinicalWriteGateOptions,
+} from "./clinical-write-gate";
+import { toCareReviewListItem } from "./review-detail";
+import {
   lazyCareClinicianReviewRepository,
   type CareClinicianReviewRepository,
 } from "./review-repository";
@@ -83,10 +88,12 @@ export function registerCareAppointmentApi(
   // owns /api/care/reviews. Registering it here keeps the new screen out of
   // the protected application and server seams entirely.
   reviewRepository: CareClinicianReviewRepository = lazyCareClinicianReviewRepository(),
+  gate: CareClinicalWriteGateOptions = {},
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.appointments,
     requireCarePermission("care:appointments_self", access),
+    requireCareClinicalCapability("appointment.read_self", gate),
     async (_req, res) => {
       res.set("Cache-Control", "no-store");
       const patientId = principal(res)?.patientId as CareRecordId | undefined;
@@ -111,6 +118,7 @@ export function registerCareAppointmentApi(
   app.post(
     CARE_ROUTE_CONTRACTS.appointments,
     requireCarePermission("care:appointments_self", access),
+    requireCareClinicalCapability("appointment.request", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = requestBody.safeParse(req.body);
@@ -134,6 +142,7 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/action"),
     requireCarePermission("care:appointments_self", access),
+    requireCareClinicalCapability("appointment.patient_action", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = patientActionBody.safeParse(req.body);
@@ -188,6 +197,7 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/assign"),
     requireCarePermission("care:administer", access),
+    requireCareClinicalCapability("appointment.assign_clinician", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = assignBody.safeParse(req.body);
@@ -212,6 +222,7 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/schedule"),
     requireCarePermission("care:administer", access),
+    requireCareClinicalCapability("appointment.schedule", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = scheduleBody.safeParse(req.body);
@@ -236,6 +247,7 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/no-show"),
     requireCarePermission("care:administer", access),
+    requireCareClinicalCapability("appointment.no_show", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = noShowBody.safeParse(req.body);
@@ -265,9 +277,10 @@ export function registerCareAppointmentApi(
       const clinicianUserId = principal(res)?.subjectId;
       if (!clinicianUserId) return safeFailure(res);
       try {
+        const reviews = await repository.listAssignedReviews(clinicianUserId);
         return res.json({
           ok: true,
-          reviews: await repository.listAssignedReviews(clinicianUserId),
+          reviews: reviews.map(toCareReviewListItem),
         });
       } catch {
         return safeFailure(res);
@@ -278,6 +291,7 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.appointments, "/:appointmentId/complete"),
     requireCarePermission("care:review_assigned", access),
+    requireCareClinicalCapability("appointment.clinician_complete", gate),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = completeBody.safeParse(req.body);
@@ -302,6 +316,11 @@ export function registerCareAppointmentApi(
   app.post(
     route(CARE_ROUTE_CONTRACTS.reviews, "/:reviewId/action"),
     requireCarePermission("care:review_assigned", access),
+    requireCareClinicalCapability(
+      "review.action",
+      gate,
+      (req) => (req.body as { action?: unknown } | undefined)?.action,
+    ),
     async (req: Request, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = reviewActionBody.safeParse(req.body);

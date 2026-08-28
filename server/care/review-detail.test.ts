@@ -14,6 +14,7 @@ import {
   readCareClinicalCapabilityFlags,
   sortCareReviewQueue,
   toCareReviewDetail,
+  toCareReviewListItem,
   toCareReviewQueueItem,
   type CareReviewFacts,
 } from "./review-detail";
@@ -102,6 +103,35 @@ function facts(overrides: Partial<CareReviewFacts> = {}): CareReviewFacts {
 }
 
 describe("Care clinician review projections", () => {
+  it("projects the assigned-review list through the narrow workflow-only shape", () => {
+    const item = toCareReviewListItem(
+      review({
+        status: "decided",
+        finalDecision: "approved",
+        finalDecisionSource: "human_clinician",
+        version: 4,
+      }),
+    );
+
+    expect(item).toEqual({
+      reviewId: REVIEW_ID,
+      status: "decided",
+      decision: "approved",
+      version: 4,
+      updatedAt: "2026-07-25T20:00:00.000Z",
+    });
+    const serialized = JSON.stringify(item);
+    for (const forbidden of [
+      PATIENT_ID,
+      CLINICIAN_ID,
+      APPOINTMENT_ID,
+      "IL",
+      "human_clinician",
+    ]) {
+      expect(serialized).not.toContain(forbidden);
+    }
+  });
+
   it("carries no patient, clinician, or location identifier into the projection", () => {
     const identifiers = [PATIENT_ID, CLINICIAN_ID, "IL", INTAKE_ID, APPOINTMENT_ID];
     const queueJson = JSON.stringify(toCareReviewQueueItem(facts()));
