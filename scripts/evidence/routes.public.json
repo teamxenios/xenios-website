@@ -43,6 +43,6 @@
     { "path": "/admin/research/fulfillment", "surface": "research-fulfillment", "state": "unauthorized", "indexable": false, "public": false },
     { "path": "/research/this-route-does-not-exist-xr-evidence", "surface": "not-found-error", "state": "error", "indexable": false, "public": true, "expectStatus": 404 },
     { "path": "/", "surface": "warm-silver-homepage-reconciliation", "state": "default", "indexable": true, "public": true, "label": "root-home" },
-    { "path": "/hino", "surface": "hino", "state": "unmounted", "indexable": false, "public": true, "expectStatus": 404 }
+    { "path": "/hino", "surface": "hino", "state": "default", "indexable": true, "public": true, "$comment": "Static site served at /hino/ (301 from /hino); observed mounted at 77d3f69 with no X-Robots-Tag. Set indexable per the Lead's indexing policy." }
   ]
 }
