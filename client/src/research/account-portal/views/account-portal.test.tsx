@@ -86,6 +86,9 @@ describe("customer account portal views", () => {
       nextAdministrativeAction: null,
       orderHistory: {
         availability: "complete" as const,
+        // Complete history is the only state that may carry a numeric
+        // authoritative count (Lane 01 contract); it matches FIXTURE_ORDERS.
+        authoritativeRecordCount: 2,
         sources: {
           commerce: { connected: true, complete: true },
           xea: { connected: true, complete: true },

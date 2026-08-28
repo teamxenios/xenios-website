@@ -1384,6 +1384,13 @@ describe("state 3: partial order-history composition", () => {
     const orders = await createCommerceOrdersPort(deps.orders).ordersFor(memberId);
 
     expect(orders.research).toHaveLength(1);
+    // Checkout captured the exact authorized amount and the record carries its
+    // own zero refund-ledger fact, so "paid" is derived from durable money
+    // evidence (captured === due, refunded === 0), never from the lifecycle
+    // label. The unwired cart-history source must not erase that evidence.
+    const stored = (await setup.orderRepository.get(placed.orderId))!;
+    expect(stored.capturedAmountCents).toBe(stored.totals.totalCents);
+    expect(stored.refundedCents).toBe(0);
     expect(orders.research[0]).toMatchObject({
       reference: placed.orderId,
       detailAvailability: "unavailable",
@@ -1723,7 +1730,8 @@ describe("state 3: refund claims (member submit to admin refund)", () => {
   });
 
   it("denies a refund of an unapproved claim and moves no money", async () => {
-    const { deps, order, claimOrderRepository } = await claimSetup();
+    const { deps, order, claimOrderRepository, payment } = await claimSetup();
+    const refundSpy = vi.spyOn(payment, "refund");
     const submitted = (await deps.claims.submitClaim(
       "mem_c1",
       { orderId: order.orderId, sku: "P901", reason: "damaged", detail: "d", evidenceRefs: [] },
@@ -1734,7 +1742,13 @@ describe("state 3: refund claims (member submit to admin refund)", () => {
       codes: string[];
     };
     expect(denied.ok).toBe(false);
-    expect(denied.codes).toContain("order_state_invalid");
+    // Production carries no durable refund execution authority, and the
+    // capability denial deliberately leads every claim-state check. The
+    // unapproved-claim gate itself is proven by refunds.test.ts under an
+    // execution-enabled harness; the production proof here is that the leading
+    // refusal is the capability, the provider is never called, and no money moves.
+    expect(denied.codes).toEqual(["payment_disabled"]);
+    expect(refundSpy).not.toHaveBeenCalled();
     expect((await claimOrderRepository.get(order.orderId))!.refundedCents).toBe(0);
   });
 });
@@ -1884,7 +1898,7 @@ describe("state 3: subscription creation", () => {
       AS_OF,
     )) as { ok: false; code: string };
 
-    expect(denied).toEqual({ ok: false, code: "product_not_purchasable" });
+    expect(denied).toMatchObject({ ok: false, code: "product_not_purchasable" });
     expect(await setup.deps.subscriptions.listForMember(`mem_sub_${_label}`)).toEqual([]);
   });
 

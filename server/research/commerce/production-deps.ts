@@ -825,6 +825,13 @@ function checkoutOrderToRecord(order: CheckoutOrder, asOf: Date): OrderRecord {
     createdAt: order.placedAt,
     updatedAt: asOf.toISOString(),
     ...(order.captured ? { capturedAmountCents: order.totalCents } : {}),
+    // This record IS the commerce lane's refund ledger (research_orders.
+    // refunded_cents, accumulated only by the claims store). At creation no
+    // refund can exist, so the ledger fact is exactly zero. Writing it here
+    // keeps the in-memory twin identical to the DB-defaulted row and lets the
+    // money projection render captured evidence as "paid" from durable facts
+    // instead of leaving the refund fact absent and the state "unknown".
+    refundedCents: 0,
     shipments: order.shipmentGroups.map((group) => ({
       owner: group.owner,
       status: "pending",
