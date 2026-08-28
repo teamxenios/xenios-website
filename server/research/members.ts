@@ -45,6 +45,21 @@ function hashedEmail(email: string): string {
   return crypto.createHash("sha256").update(email.toLowerCase()).digest("hex").slice(0, 32);
 }
 
+function memberCartScope(member: MemberRow): string | null {
+  const authUserId = typeof member.auth_user_id === "string"
+    ? member.auth_user_id.trim()
+    : "";
+  if (authUserId.length === 0) return null;
+  // This value partitions sessionStorage; it is never authorization evidence.
+  // Domain separation prevents reusing a hash that has another application
+  // meaning, and the browser never receives the underlying auth-user id here.
+  return crypto
+    .createHash("sha256")
+    .update("xenios-research-member-cart-scope-v1\0", "utf8")
+    .update(authUserId, "utf8")
+    .digest("hex");
+}
+
 // Small fixed-window limiter on claim attempts (per IP), durable across
 // instances via research_rate_limit_hit with an in-memory fallback.
 async function allowClaim(req: Request): Promise<boolean> {
@@ -270,13 +285,17 @@ export function registerMemberApi(app: Express) {
 
   // Session probe for the auth-aware navigation (V3 section 4.3).
   app.get("/api/research/member/me", requireResearchSubject, async (req, res) => {
+    res.set("Cache-Control", "no-store");
     const member = (req as any).researchMember as MemberRow;
+    const cartScope = memberCartScope(member);
+    if (cartScope === null) {
+      return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
+    }
     const { data: application } = await getSupabaseAdmin()
       .from(APPLICATIONS)
       .select("status")
       .eq("id", member.application_id)
       .maybeSingle();
-    res.set("Cache-Control", "no-store");
     res.json({
       ok: true,
       member: {
@@ -284,6 +303,7 @@ export function registerMemberApi(app: Express) {
         status: member.status,
         applicationStatus: (application as any)?.status ?? null,
         memberSince: member.created_at,
+        cartScope,
       },
     });
   });

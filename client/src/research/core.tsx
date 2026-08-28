@@ -12,6 +12,13 @@ import {
   isRecoveryErrorHash,
   markRecoveryFromAuthEvent,
 } from "@shared/research/recovery";
+import {
+  clearResearchCartStorage,
+  isResearchCartScope,
+  purgeLegacyResearchCartStorage,
+  readResearchCartForScope,
+  writeResearchCartForScope,
+} from "./cart-session";
 
 // xenios research: client core. All product data comes from the gated server
 // APIs; nothing in this bundle contains the catalog. The provider tracks the
@@ -118,6 +125,8 @@ export type MemberInfo = {
   firstName: string;
   status: string;
   applicationStatus: string | null;
+  /** Opaque server-derived namespace for browser cart isolation. */
+  cartScope?: string;
 };
 
 // Password-recovery flow state (founder decision, 2026-07-19): "pending"
@@ -168,7 +177,6 @@ const ResearchContext = createContext<ResearchContextValue | null>(null);
 // production builds render the gallery as an empty state and never use this.
 export { ResearchContext };
 export type { ResearchContextValue };
-const STORAGE_KEY = "xenios-research-cart-v1";
 
 export function ResearchProvider({ children }: { children: ReactNode }) {
   const [gate, setGate] = useState<GateStatus>("checking");
@@ -185,6 +193,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const verificationGenerationRef = useRef(0);
   const authEventGenerationRef = useRef(0);
   const catalogGenerationRef = useRef(0);
+  const cartScopeRef = useRef<string | null>(null);
+  const cartHydratedRef = useRef(false);
   const verificationInFlightRef = useRef<{
     token: string;
     promise: Promise<MemberInfo | null>;
@@ -220,6 +230,35 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   }, []);
   const peekMemberDenial = useCallback(() => memberDenialRef.current, []);
 
+  const resetCartSession = useCallback(() => {
+    cartScopeRef.current = null;
+    cartHydratedRef.current = false;
+    setItems([]);
+    if (typeof window !== "undefined") {
+      clearResearchCartStorage(window.sessionStorage, window.localStorage);
+    }
+  }, []);
+
+  const hydrateCartSession = useCallback((scopeValue: unknown) => {
+    const scope = isResearchCartScope(scopeValue) ? scopeValue : null;
+    if (scope === null) {
+      resetCartSession();
+      return;
+    }
+    if (cartHydratedRef.current && cartScopeRef.current === scope) return;
+    cartScopeRef.current = scope;
+    cartHydratedRef.current = true;
+    setItems(
+      typeof window === "undefined"
+        ? []
+        : readResearchCartForScope(
+            window.sessionStorage,
+            scope,
+            window.localStorage,
+          ),
+    );
+  }, [resetCartSession]);
+
   const clearMemberState = useCallback((status: Exclude<MemberSessionStatus, "checking" | "authenticated">) => {
     verificationGenerationRef.current += 1;
     catalogGenerationRef.current += 1;
@@ -229,7 +268,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     setMemberToken(null);
     setCatalog(null);
     setMemberSessionStatus(status);
-  }, []);
+    resetCartSession();
+  }, [resetCartSession]);
 
   // The member session: the member's own Supabase JWT. Membership itself is
   // verified SERVER-side (/api/research/member/me); the client only mirrors it.
@@ -263,6 +303,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         if (generation !== verificationGenerationRef.current) return null;
         if (res.ok && body?.ok && body.member) {
           const verifiedMember = body.member as MemberInfo;
+          hydrateCartSession(verifiedMember.cartScope);
           catalogGenerationRef.current += 1;
           memberRef.current = verifiedMember;
           memberTokenRef.current = accessToken;
@@ -303,7 +344,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       }
     });
     return promise;
-  }, [clearMemberState, noteMemberDenial]);
+  }, [clearMemberState, hydrateCartSession, noteMemberDenial]);
 
   const refreshMember = useCallback(async () => {
     if (recoveryRef.current === "pending") {
@@ -460,17 +501,21 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     }
   }, [member, memberToken, loadCatalog, recovery]);
 
-  // cart persistence
+  // Cart persistence is available only after the server verifies the member
+  // and supplies that member's opaque scope. The former global localStorage
+  // key is always purged and never migrated across an identity boundary.
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw) as CartItem[]);
-    } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
+    purgeLegacyResearchCartStorage(window.sessionStorage, window.localStorage);
   }, []);
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    const scope = cartScopeRef.current;
+    if (!cartHydratedRef.current || scope === null) return;
+    writeResearchCartForScope(
+      window.sessionStorage,
+      scope,
+      items,
+      window.localStorage,
+    );
   }, [items]);
 
   const submitPassword = useCallback(
@@ -489,9 +534,10 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await postJson("/api/research/logout", {});
+    resetCartSession();
     setCatalog(null);
     setGate("locked");
-  }, []);
+  }, [resetCartSession]);
 
   const addItem = useCallback((product: Product) => {
     setItems((current) => {
