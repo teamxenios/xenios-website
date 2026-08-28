@@ -116,6 +116,23 @@ describe("inventory Product Control integration", () => {
     );
   });
 
+  it("preserves a complete authoritative active price projection", async () => {
+    const priced = {
+      ...projection,
+      activePrice: {
+        amountCents: 14_900,
+        currency: "USD",
+        effectiveAt: "2026-08-01T00:00:00Z",
+        version: 3,
+      },
+    };
+    const reader = new SupabaseProductCommerceReadinessReader({
+      rpc: vi.fn().mockResolvedValue({ data: priced, error: null }),
+    } as never);
+
+    await expect(reader.getForVariant(projection.variantId)).resolves.toEqual(priced);
+  });
+
   it("fails closed for malformed projection or persistence errors", async () => {
     const malformed = new SupabaseProductCommerceReadinessReader({
       rpc: vi.fn().mockResolvedValue({
@@ -123,7 +140,32 @@ describe("inventory Product Control integration", () => {
         error: null,
       }),
     } as never);
-    await expect(malformed.getForVariant(projection.variantId)).resolves.toBeNull();
+    await expect(malformed.getForVariant(projection.variantId)).rejects.toMatchObject({
+      code: "inventory_product_projection_evidence_invalid",
+    });
+
+    const coercivePrice = new SupabaseProductCommerceReadinessReader({
+      rpc: vi.fn().mockResolvedValue({
+        data: {
+          ...projection,
+          activePrice: {
+            amountCents: "14900",
+            currency: "USD",
+            effectiveAt: "2026-08-01T00:00:00Z",
+            version: 1,
+          },
+        },
+        error: null,
+      }),
+    } as never);
+    await expect(coercivePrice.getForVariant(projection.variantId)).rejects.toMatchObject({
+      code: "inventory_product_projection_evidence_invalid",
+    });
+
+    const absent = new SupabaseProductCommerceReadinessReader({
+      rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+    } as never);
+    await expect(absent.getForVariant(projection.variantId)).resolves.toBeNull();
 
     const unavailable = new SupabaseProductCommerceReadinessReader({
       rpc: vi.fn().mockResolvedValue({

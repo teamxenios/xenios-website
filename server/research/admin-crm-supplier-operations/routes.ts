@@ -10,7 +10,7 @@ export interface AdminCrmSupplierOperationsRouteDependencies {
   service: AdminCrmSupplierOperationsService;
 }
 
-const queueActionSchema = z.object({
+const recommendationSchema = z.object({
   action: z.enum(ADMIN_CRM_ACTIONS),
   targetType: z.string().min(1).max(200),
   targetId: z.string().min(1).max(200),
@@ -26,23 +26,28 @@ async function actorFor(req: Request, deps: AdminCrmSupplierOperationsRouteDepen
 
 function failure(res: Response, error: unknown): Response {
   if (error instanceof AdminCrmRefusal) {
-    const status = error.code === "trust_dial_never" ? 403 : 400;
+    const status = error.code === "trust_dial_never"
+      ? 403
+      : error.code === "invalid_request" || error.code === "unsafe_request"
+        ? 400
+        : 503;
     return res.status(status).json({ ok: false, code: error.code, message: error.message });
   }
-  console.error("[admin crm supplier operations] unavailable", error);
+  console.error("[admin crm supplier operations] unavailable");
   return res.status(503).json({ ok: false, code: "unavailable", message: "Operations workspace unavailable." });
 }
 
 /**
- * Registration is deliberately not called by server/routes.ts in Pack 05.
- * Integration must rebase/recreate this slice, wire a storage-scoped
- * repository, then mount behind the existing requireSupabaseAdmin guard.
+ * Global registration remains Lead-owned. Composition must inject read-only
+ * source projections and a storage-scoped recommendation store, then mount
+ * behind the existing requireSupabaseAdmin guard.
  */
 export function registerAdminCrmSupplierOperationsApi(
   app: Express,
   deps: AdminCrmSupplierOperationsRouteDependencies,
 ): void {
   app.get("/api/admin/research/crm-supplier-operations", deps.requireAdmin, async (req, res) => {
+    res.set("Cache-Control", "no-store");
     try {
       const actorId = await actorFor(req, deps);
       if (!actorId) return res.status(403).json({ ok: false, code: "actor_not_permitted" });
@@ -54,15 +59,16 @@ export function registerAdminCrmSupplierOperationsApi(
   });
 
   app.post("/api/admin/research/crm-supplier-operations/actions", deps.requireAdmin, async (req, res) => {
+    res.set("Cache-Control", "no-store");
     try {
       const actorId = await actorFor(req, deps);
       if (!actorId) return res.status(403).json({ ok: false, code: "actor_not_permitted" });
-      const parsed = queueActionSchema.safeParse(req.body);
+      const parsed = recommendationSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ ok: false, code: "invalid_request", message: "Action request is invalid." });
+        return res.status(400).json({ ok: false, code: "invalid_request", message: "Review request is invalid." });
       }
-      const queued = await deps.service.queueAction(actorId, parsed.data);
-      return res.status(202).json({ ok: true, queued });
+      const recommendation = await deps.service.recordRecommendation(actorId, parsed.data);
+      return res.status(201).json({ ok: true, recommendation });
     } catch (error) {
       return failure(res, error);
     }

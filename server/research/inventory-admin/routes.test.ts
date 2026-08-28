@@ -3,6 +3,7 @@ import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { registerInventoryLotAdminApi } from "./routes";
 import {
+  InventoryAdminPersistenceError,
   SupabaseInventoryLotAdminRepository,
   SupabaseLotQualityAdminRepository,
 } from "./production";
@@ -64,6 +65,17 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
       expect(response.status, path).toBe(403);
       expect(response.body.code).toBe("prelaunch_role_required");
     }
+  });
+
+  it("reports malformed authoritative evidence as unavailable, not a client conflict", async () => {
+    const { app, inventory } = appFor();
+    inventory.listLots.mockRejectedValueOnce(
+      new InventoryAdminPersistenceError("inventory_lot_evidence_invalid"),
+    );
+
+    const response = await request(app).get("/api/admin/research/inventory/lots");
+    expect(response.status).toBe(503);
+    expect(response.body.code).toBe("inventory_lot_evidence_invalid");
   });
 
   it("passes the canonical server actor and never accepts a silent quantity overwrite", async () => {
@@ -232,7 +244,15 @@ describe("Website 4 accepted product-control and access-audit repository boundar
     }));
     return {
       from: vi.fn(() => query),
-      rpc: vi.fn(async () => ({ data: { version: 2 }, error: null })),
+      rpc: vi.fn(async (_name: string, input: { p_disposition: string }) => ({
+        data: {
+          lotId: LOT_ID,
+          disposition: input.p_disposition,
+          version: 2,
+          idempotentReplay: false,
+        },
+        error: null,
+      })),
     };
   }
 

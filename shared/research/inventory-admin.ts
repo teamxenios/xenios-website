@@ -17,6 +17,22 @@ export const INVENTORY_SOURCE_BUCKETS = [
 ] as const;
 export type InventorySourceBucket = (typeof INVENTORY_SOURCE_BUCKETS)[number];
 
+export const INVENTORY_LOT_DISPOSITIONS = [
+  "available",
+  "allocated",
+  "picked",
+  "packed",
+  "shipped",
+  "quarantined",
+  "quality_hold",
+  "temperature_hold",
+  "damaged",
+  "expired",
+  "recalled",
+  "destroyed",
+] as const;
+export type InventoryLotDisposition = (typeof INVENTORY_LOT_DISPOSITIONS)[number];
+
 export const LOT_QUALITY_TEST_KEYS = [
   "identity",
   "assay",
@@ -54,7 +70,7 @@ export type InventoryLotAdmin = {
   productId: string | null;
   variantId: string | null;
   owner: "mitch" | "xenios";
-  disposition: string;
+  disposition: InventoryLotDisposition;
   storageLocation: string | null;
   supplierReference: string | null;
   manufacturedDate: string | null;
@@ -128,6 +144,32 @@ export type InventoryMovementCommand = {
   expectedVersion: number;
   idempotencyKey: string;
   reason: string;
+};
+
+export type InventoryMovementReceipt = {
+  movementId: string;
+  lotId: string;
+  version: number;
+  idempotentReplay: boolean;
+  quantityAvailable: number;
+  quantityReserved: number;
+  quantityQuarantined: number;
+  quantityDamaged: number;
+};
+
+export type InventoryDispositionReceipt = {
+  lotId: string;
+  disposition: InventoryLotDisposition;
+  version: number;
+  idempotentReplay: boolean;
+};
+
+export type LotQualityDocumentReceipt = {
+  documentId: string;
+  documentState: LotQualityDocumentAdmin["documentState"];
+  verificationState: LotQualityDocumentAdmin["verificationState"];
+  version: number;
+  idempotentReplay: boolean;
 };
 
 export type CoaUploadPreparation = {

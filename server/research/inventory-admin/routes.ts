@@ -151,7 +151,16 @@ function noStore(res: Response): void {
 
 function failure(res: Response, error: unknown): Response {
   if (error instanceof InventoryAdminPersistenceError) {
-    const conflict = /rejected|conflict|mismatch|already|invalid/.test(error.code);
+    const conflict = new Set([
+      "inventory_product_binding_rejected",
+      "inventory_movement_rejected",
+      "inventory_lot_status_rejected",
+      "coa_upload_metadata_invalid",
+      "coa_upload_cancellation_rejected",
+      "coa_upload_confirmation_rejected",
+      "coa_review_rejected",
+      "coa_private_object_mismatch",
+    ]).has(error.code);
     return res.status(conflict ? 409 : 503).json({ ok: false, code: error.code });
   }
   return res.status(503).json({ ok: false, code: "inventory_admin_unavailable" });

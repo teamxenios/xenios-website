@@ -9,6 +9,9 @@ import {
   SupabaseInventoryLotAdminRepository,
   SupabaseLotQualityAdminRepository,
 } from "./production";
+import {
+  parseProductCommerceReadinessProjection,
+} from "./row-parsers";
 
 export type ProductCommerceReadinessDb = Pick<SupabaseClient, "rpc">;
 
@@ -21,46 +24,6 @@ const defaultWiring: InventoryAdminProductionWiring = {
   configured: supabaseConfigured,
   admin: getSupabaseAdmin,
 };
-
-function nullableString(value: unknown): string | null {
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-function validProjection(value: unknown): ProductCommerceReadinessProjection | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const row = value as Record<string, unknown>;
-  const productId = nullableString(row.productId);
-  const variantId = nullableString(row.variantId);
-  const sku = nullableString(row.sku);
-  if (
-    !productId ||
-    !variantId ||
-    !sku ||
-    typeof row.productApproved !== "boolean" ||
-    typeof row.productActive !== "boolean" ||
-    typeof row.variantApproved !== "boolean" ||
-    typeof row.variantActive !== "boolean" ||
-    !(row.shippingClass === null || typeof row.shippingClass === "string") ||
-    typeof row.exactLotCoaRequired !== "boolean" ||
-    typeof row.productDocumentationRequired !== "boolean" ||
-    row.activePrice !== null
-  ) {
-    return null;
-  }
-  return {
-    productId,
-    variantId,
-    sku,
-    productApproved: row.productApproved,
-    productActive: row.productActive,
-    variantApproved: row.variantApproved,
-    variantActive: row.variantActive,
-    activePrice: null,
-    shippingClass: row.shippingClass,
-    exactLotCoaRequired: row.exactLotCoaRequired,
-    productDocumentationRequired: row.productDocumentationRequired,
-  };
-}
 
 export class SupabaseProductCommerceReadinessReader
 implements ProductCommerceReadinessReader {
@@ -76,7 +39,8 @@ implements ProductCommerceReadinessReader {
     if (result.error) {
       throw new Error("inventory_product_control_unavailable");
     }
-    return validProjection(result.data);
+    if (result.data === null) return null;
+    return parseProductCommerceReadinessProjection(result.data);
   }
 }
 
