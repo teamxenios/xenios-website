@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { scrollToTopRespectingMotion } from "@/lib/motion";
 import type {
   EarlyAccessCartCheckout,
   EarlyAccessCartContact,
@@ -296,7 +297,7 @@ export function EarlyAccessMultiCartJourney({
     setStep(safe);
     if (mode === "replace") replaceEarlyAccessStep(safe);
     else pushEarlyAccessStep(safe);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToTopRespectingMotion();
   }, [safeStep]);
 
   const cartProducts = useMemo(

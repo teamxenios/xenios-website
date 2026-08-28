@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
+import { scrollToTopRespectingMotion } from "@/lib/motion";
 import {
   AssistedOrderCta,
   useAssistedOrderBridgeState,
@@ -608,14 +609,14 @@ export default function EarlyAccessRoute() {
                         setOrderRequest(null);
                         setSelection(nextSelection);
                         setCheckoutPhase("details");
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        scrollToTopRespectingMotion();
                       }}
                       onOrderRequest={(nextRequest) => {
                         if (!agreed || blocked !== null) return;
                         setPriceChanged(false);
                         setSelection(null);
                         setOrderRequest(nextRequest);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        scrollToTopRespectingMotion();
                       }}
                     />
                   </section>
