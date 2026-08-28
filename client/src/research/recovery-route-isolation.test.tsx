@@ -65,6 +65,9 @@ describe("recovery route chrome isolation", () => {
     "/research/faq",
     "/research/policies",
     "/research/contact",
+    "/research/organizations",
+    "/research/partners",
+    "/research/affiliates",
     "/research/support",
     "/research/privacy",
     "/research/terms",
@@ -76,6 +79,18 @@ describe("recovery route chrome isolation", () => {
     expect(view.querySelectorAll("main")).toHaveLength(1);
     expect(view.textContent).toContain("Back to gateway");
     expect(view.querySelector('nav[aria-label="Research information"]')).toBeTruthy();
+  });
+
+  it.each([
+    "/research/partners/apply",
+    "/research/partners/dashboard",
+    "/research/partners/payouts",
+    "/research/organizations/private",
+    "/research/affiliates/private",
+  ])("keeps B2B descendants behind the shared review gate at %s", (path) => {
+    const view = renderAt(path);
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeNull();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
   });
 
   it.each([

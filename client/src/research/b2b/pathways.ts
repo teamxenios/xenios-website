@@ -2,8 +2,8 @@ import { ACCESS_ROUTES, PARTNER_ROUTES } from "../lib/routes";
 
 export const B2B_PUBLIC_ROUTES = {
   partners: PARTNER_ROUTES.home,
-  organizations: "/research/organizations",
-  affiliates: "/research/affiliates",
+  organizations: ACCESS_ROUTES.organizations,
+  affiliates: ACCESS_ROUTES.affiliates,
   supplierAccess: ACCESS_ROUTES.supplierAccess,
   partnerApplication: PARTNER_ROUTES.apply,
   partnerDashboard: PARTNER_ROUTES.dashboard,

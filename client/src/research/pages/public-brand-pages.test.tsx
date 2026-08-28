@@ -94,9 +94,11 @@ describe("public editorial page system", () => {
   it("keeps the Access Hub public and fail-closed instead of linking to unprovisioned workspaces", async () => {
     const view = await renderPage(<AccessHub />);
     const links = hrefs(view);
-    expect(links).not.toContain("/research/partners");
+    expect(links).toContain("/research/organizations");
+    expect(links).toContain("/research/partners");
+    expect(links).toContain("/research/affiliates");
     expect(links).not.toContain("/research/partners/apply");
-    expect(links).not.toContain("/research/supplier-access");
+    expect(links).toContain("/research/supplier-access");
     expect(links).toContain("/research/support");
     expect(view.textContent).toContain("No public supplier workspace is promised");
     expect(view.textContent).toContain("must fail closed");
@@ -176,6 +178,9 @@ describe("editorial homepage reconciliation", () => {
     const links = hrefs(view);
     for (const required of [
       "/research/access-hub",
+      "/research/organizations",
+      "/research/partners",
+      "/research/affiliates",
       "/research/how-it-works",
       "/research/about",
       "/research/faq",
@@ -189,7 +194,6 @@ describe("editorial homepage reconciliation", () => {
       expect(links).toContain(required);
     }
     expect(links.some((href) => /\/research\/(catalog|products|member\/products)/i.test(href))).toBe(false);
-    expect(links).not.toContain("/research/partners");
   });
 
   it("pins the verified warm-silver asset and its intrinsic dimensions", () => {

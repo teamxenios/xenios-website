@@ -126,26 +126,9 @@ import {
   MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
 } from "./research/master-offerings/production-bindings";
 import {
-  affiliateCodesEnabled,
   affiliatePortalEnabled,
 } from "./research/affiliates/v2/feature-flags";
-import {
-  createReferralCaptureRouteTable,
-  referralCaptureExpressHandler,
-} from "./research/partners/referral-capture-routes";
-import {
-  createAttributionService,
-  createInMemoryAttributionRepository,
-} from "./research/partners/attribution";
 import { verifiedAttributionRefFromCookieHeader } from "./research/partners/attribution-cookie";
-import {
-  resolveAttributionTouchStore,
-  resolvePartnerLinkStore,
-} from "./research/commerce/persistence/partners-store";
-import {
-  DEFAULT_LAUNCH_PROGRAM,
-  resolveAffiliateProgram,
-} from "@shared/research/affiliate-program/config";
 import { registerPartnerPortalApi } from "./research/partners/portal-routes";
 import {
   partnerSubmissionsEnabled,
@@ -532,54 +515,12 @@ registerCommerceApi(app, commerceDependencies, {
 });
 
 // The affiliate attribution capture doors (Lane B integration, 2026-08-19).
-// Double-gated by env; with the flags off, no route exists at all. The secret
-// is the fail-closed core: without RESEARCH_PARTNER_LINK_SECRET the doors
-// still answer (302 / 204) but capture nothing.
+// Retained only for validating already-issued attribution cookies inside
+// separately guarded commerce flows. Public referral capture is intentionally
+// unmounted: its inherited signature-or-row authorization, revocation,
+// canonical-path, replay, and durable throttle contracts have not passed
+// release review.
 const partnerLinkSecret = process.env.RESEARCH_PARTNER_LINK_SECRET ?? null;
-if (affiliateCodesEnabled(process.env)) {
-  // verifyCode and deriveSubjectKey are pure over the secret; this service
-  // instance never touches its repository, so the in-memory one is only a
-  // constructor requirement. Durable state lives in the two stores below.
-  const referralAttribution = createAttributionService({
-    repository: createInMemoryAttributionRepository(),
-    linkSecret: partnerLinkSecret,
-    linkBaseUrl:
-      process.env.RESEARCH_PARTNER_LINK_BASE_URL ?? "https://xeniostechnology.com",
-  });
-  const referralRoutes = createReferralCaptureRouteTable({
-    linkSecret: partnerLinkSecret,
-    attribution: referralAttribution,
-    links: resolvePartnerLinkStore(),
-    touches: resolveAttributionTouchStore(),
-    // Cookie lifetime and attribution window only. Money stays behind
-    // AFFILIATE_PROGRAM_ENABLED inside the accrual bridge; an inactive
-    // program still captures honest touches under the seed's window.
-    program: resolveAffiliateProgram(process.env) ?? DEFAULT_LAUNCH_PROGRAM,
-  });
-  // Keep these two registrations explicit and literal: the release scanner
-  // must see every reachable door, while paths and handler bodies still come
-  // from the one authoritative descriptor table.
-  const referralDoor = (path: string): RequestHandler => {
-    const descriptor = referralRoutes.find((candidate) => candidate.path === path);
-    if (!descriptor) throw new Error(`referral descriptor missing: ${path}`);
-    return referralCaptureExpressHandler(descriptor);
-  };
-  // The short link mounts under /api because the route census accepts only
-  // explicit /api/ paths; the descriptor's handler reads :code from params,
-  // so the registration path may differ from the descriptor's canonical one.
-  // The pretty public /r/CODE form needs an App.tsx SPA redirect page (a
-  // pinned-seam change of its own) and is recorded as a follow-up; the
-  // canonical marketing entry today is /research?ref=CODE, captured by the
-  // client landing hook calling the capture door below.
-  app.get("/api/r/:code", referralDoor("/r/:code"));
-  // Deliberately OUTSIDE /api/research: the research wall (mounted at that
-  // prefix in server/research/index.ts) refuses anonymous callers, and a
-  // referral click is exactly an anonymous caller. Registered at line ~327's
-  // wall prefix boundary; admission here is harmless — the door verifies the
-  // signed code itself and an invalid code captures nothing.
-  app.get("/api/referral/capture", referralDoor("/api/research/referral/capture"));
-  log("affiliate referral capture doors mounted", "affiliates");
-}
 
 // The Gen 2 partner portal read surface: 16 authenticated, member-guarded
 // read paths. Mount-gated twice (system AND portal flags); the guard is the

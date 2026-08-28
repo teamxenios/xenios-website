@@ -19,8 +19,8 @@ const ACCESS_OPTIONS = [
     title: "Organization buyer",
     body: "Begin an organization or professional-buyer conversation for research context, documentation needs, volume requests, account review, and human follow-up.",
     availability: "Organization workspaces require review and may not yet be provisioned.",
-    primary: { label: "Organization support", href: "/research/support" },
-    secondary: { label: "How access works", href: "/research/how-it-works" },
+    primary: { label: "Explore organization access", href: "/research/organizations" },
+    secondary: { label: "Compare partnership paths", href: "/research/partners" },
   },
   {
     id: "partner",
@@ -28,8 +28,8 @@ const ACCESS_OPTIONS = [
     title: "Partner program",
     body: "Review relationship types, compliance boundaries, application and onboarding expectations, and the resources available only after approval.",
     availability: "No approval, commission, payout, or commercial term is implied publicly.",
-    primary: { label: "Ask about partner access", href: "/research/support" },
-    secondary: { label: "How access works", href: "/research/how-it-works" },
+    primary: { label: "Compare partnership paths", href: "/research/partners" },
+    secondary: { label: "Review affiliate access", href: "/research/affiliates" },
   },
   {
     id: "supplier",
@@ -37,7 +37,7 @@ const ACCESS_OPTIONS = [
     title: "Supplier access",
     body: "Supplier, laboratory, and fulfillment relationships begin with human review. Any future workspace must remain limited to assigned work and the minimum required operational information.",
     availability: "No public supplier workspace is promised. Access requires a provisioned, authorized relationship.",
-    primary: { label: "Ask about supplier access", href: "/research/support" },
+    primary: { label: "Review supplier access", href: "/research/supplier-access" },
     secondary: { label: "How access works", href: "/research/how-it-works" },
   },
   {

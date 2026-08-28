@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { ACCESS_ROUTES, ALL_MANIFEST_ROUTES } from "./lib/routes";
+import { ACCESS_ROUTES, ALL_MANIFEST_ROUTES, PARTNER_ROUTES } from "./lib/routes";
 
 // The route manifest is the single source of truth; this parity test fails
 // the build the moment a manifest route is missing from the routers.
@@ -46,5 +46,25 @@ describe("route manifest parity", () => {
     expect(sources).not.toContain(
       '<Route path="/research/faq"><Redirect to="/research/support" /></Route>',
     );
+  });
+
+  it("registers only the exact public B2B roots as open informational routes", () => {
+    const publicB2bRoutes = [
+      ACCESS_ROUTES.organizations,
+      PARTNER_ROUTES.home,
+      ACCESS_ROUTES.affiliates,
+    ];
+    expect(publicB2bRoutes).toEqual([
+      "/research/organizations",
+      "/research/partners",
+      "/research/affiliates",
+    ]);
+    for (const route of publicB2bRoutes) {
+      expect(ALL_MANIFEST_ROUTES.filter((candidate) => candidate === route)).toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu"))).toHaveLength(1);
+    }
+    expect(sources).toContain('<Route path="/research/partners/apply">');
+    expect(sources).not.toContain('<Route path="/research/organizations/');
+    expect(sources).not.toContain('<Route path="/research/affiliates/');
   });
 });

@@ -54,6 +54,7 @@ function ResearchHeader() {
         <span className="rg-brand-sub">Research</span>
       </Link>
       <nav className="rg-header-nav rg-header-nav-desktop" aria-label="Research information">
+        <Link href="/research/partners">Partners</Link>
         <Link href="/research/how-it-works">How it works</Link>
         <Link href="/research/about">About</Link>
         <Link href="/research/faq">FAQ</Link>
@@ -66,6 +67,9 @@ function ResearchHeader() {
         <summary aria-label="Research navigation menu">Menu</summary>
         <nav aria-label="Research mobile navigation">
           <Link href="/research/access-hub">Access Hub</Link>
+          <Link href="/research/organizations">Organizations</Link>
+          <Link href="/research/partners">Partners</Link>
+          <Link href="/research/affiliates">Affiliates</Link>
           <Link href="/research/how-it-works">How it works</Link>
           <Link href="/research/about">About</Link>
           <Link href="/research/faq">FAQ</Link>
@@ -95,7 +99,9 @@ function ResearchFooter() {
           <Link href="/research/how-it-works">How it works</Link>
           <Link href="/research/about">About</Link>
           <Link href="/research/faq">FAQ</Link>
-          <Link href="/research/access-hub">Organizations &amp; partners</Link>
+          <Link href="/research/organizations">Organizations</Link>
+          <Link href="/research/partners">Partners</Link>
+          <Link href="/research/affiliates">Affiliates</Link>
           <Link href="/care">Care</Link>
           <Link href="/research/early-access">Early Access</Link>
           <Link href="/research/sign-in">Member sign in</Link>
@@ -327,8 +333,9 @@ export default function Gateway() {
                 Research organizations, clinics, professional buyers, affiliates, suppliers, and strategic partners begin with context and review—not automatic approval.
               </p>
               <div className="rg-stacked-actions">
-                <Link href="/research/access-hub" className="rg-btn rg-btn-light">Choose a relationship path <Arrow /></Link>
-                <Link href="/research/support" className="rg-text-link">Ask about partner access <Arrow /></Link>
+                <Link href="/research/partners" className="rg-btn rg-btn-light">Choose a relationship path <Arrow /></Link>
+                <Link href="/research/organizations" className="rg-text-link">Review organization access <Arrow /></Link>
+                <Link href="/research/affiliates" className="rg-text-link">Review affiliate access <Arrow /></Link>
               </div>
             </div>
           </div>

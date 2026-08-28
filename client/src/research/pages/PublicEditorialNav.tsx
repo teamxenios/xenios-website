@@ -3,6 +3,7 @@ import "./public-editorial.css";
 
 export const PUBLIC_EDITORIAL_LINKS = [
   { href: "/research/access-hub", label: "Access Hub" },
+  { href: "/research/partners", label: "Partners" },
   { href: "/research/how-it-works", label: "How it works" },
   { href: "/research/about", label: "About" },
   { href: "/research/faq", label: "FAQ" },

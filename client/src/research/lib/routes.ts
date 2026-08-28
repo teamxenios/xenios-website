@@ -7,6 +7,8 @@ export const ACCESS_ROUTES = {
   gateway: "/research",
   accessHub: "/research/access-hub",
   supplierAccess: "/research/supplier-access",
+  organizations: "/research/organizations",
+  affiliates: "/research/affiliates",
   apply: "/research/apply",
   applicationStatus: "/research/application-status",
   signIn: "/research/sign-in",

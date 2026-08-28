@@ -10,7 +10,6 @@ import ResetPassword from "./pages/ResetPassword";
 import PolicyPage from "./pages/PolicyPage";
 import { RequireMember } from "./pages/MemberArea";
 import { memberDestination } from "./lib/member-routing";
-import { captureReferralFromLocation } from "./referral-capture";
 import { ResearchLoadingState } from "./ui/kit";
 
 // xenios research: the section router (Supreme build). Canonical route flow:
@@ -36,6 +35,8 @@ const Faq = lazy(() => import("./pages/Faq"));
 const PoliciesIndex = lazy(() => import("./pages/PoliciesIndex"));
 const ResearchContact = lazy(() => import("./pages/ResearchContact"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
+const OrganizationAccess = lazy(() => import("./b2b/OrganizationAccessPage"));
+const AffiliateAccess = lazy(() => import("./b2b/AffiliateAccessPage"));
 // The assisted-order wizard family. Inside the gated Early Access experience:
 // every page's own fetches carry the Early Access session and are refused
 // without it, and the wall admits only the exact API shapes behind them.
@@ -208,12 +209,6 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
-  // Referral capture: /research?ref=CODE fires ONE fire-and-forget call to
-  // the server capture door (204 either way; only the signed cookie differs).
-  // Module-latched per document load, so render churn and navigation never
-  // repeat it, and nothing here can throw into the render.
-  captureReferralFromLocation();
-
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -326,6 +321,11 @@ export default function ResearchSection() {
           <Route path="/research/faq">{() => <L component={Faq} />}</Route>
           <Route path="/research/policies">{() => <L component={PoliciesIndex} />}</Route>
           <Route path="/research/contact">{() => <L component={ResearchContact} />}</Route>
+          {/* Public relationship orientation only. Application, portal,
+              attribution, economics, and writes remain separately gated. */}
+          <Route path="/research/organizations">{() => <L component={OrganizationAccess} />}</Route>
+          <Route path="/research/partners">{() => <L component={PartnerLanding} />}</Route>
+          <Route path="/research/affiliates">{() => <L component={AffiliateAccess} />}</Route>
           <Route path="/research/policies/:policy" component={PolicyPage} />
 
           {/* Development-only visual gallery (fixture mode). The route is
@@ -384,8 +384,8 @@ export default function ResearchSection() {
           <Route path="/research/member/questions">{() => <L member component={Questions} />}</Route>
           <Route path="/research/member/referrals">{() => <L member component={ReferralsUpgrade} />}</Route>
 
-          {/* The partner portal (password-gated; its own shell) */}
-          <Route path="/research/partners">{() => <L component={PartnerLanding} />}</Route>
+          {/* Partner portal descendants stay behind the shared review gate.
+              The public informational root is registered above. */}
           <Route path="/research/partners/apply">{() => <L component={PartnerApply} />}</Route>
           <Route path="/research/partners/onboarding">{() => <L component={PartnerOnboarding} />}</Route>
           <Route path="/research/partners/training">{() => <L component={PartnerTraining} />}</Route>
