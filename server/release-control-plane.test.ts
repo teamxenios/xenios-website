@@ -1723,8 +1723,17 @@ describe("route uniqueness validator", () => {
     // surface is additionally admitted through the research wall's exact-path
     // customer-account entries (member-session-wall.test.ts pins both
     // directions).
-    expect(result.callSites).toBe(399);
-    expect(result.routes).toHaveLength(408);
+    // +2 (the Research full-site release candidate, 2026-08-28): server/static.ts
+    // registers GET / and GET /index.html as two statically resolvable
+    // app.get call sites so the root document and the shell file itself are
+    // answered by the raw HTTP document policy before express.static (exact
+    // status, robots, canonical and route-owned schema instead of the raw
+    // template). Every other directory index under dist/public — the static
+    // /hino subtree — keeps express.static's production behaviour. Neither
+    // registration is an API route; they are counted because the census scans
+    // every app/router registration in server/**.
+    expect(result.callSites).toBe(401);
+    expect(result.routes).toHaveLength(410);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 15_000);
 });

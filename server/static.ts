@@ -59,7 +59,8 @@ export function serveStatic(
   // metadata. Every OTHER directory index under dist/public — the static
   // /hino subtree above all — keeps express.static's production behaviour
   // (index.html served, "/hino" redirected to "/hino/"), byte-for-byte.
-  app.get(["/", "/index.html"], policyDocument);
+  app.get("/", policyDocument);
+  app.get("/index.html", policyDocument);
   app.use(express.static(distPath));
 
   // fall through to the policy for every remaining document request
