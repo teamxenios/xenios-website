@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true
+  },
+  "include": [
+    "../../server/research/commerce/checkout.test.ts",
+    "../../server/research/commerce/production-deps.ts",
+    "../../server/research/commerce/production-wiring.test.ts",
+    "../../server/research/commerce/refunds.ts",
+    "../../server/research/commerce/refunds.test.ts",
+    "../../server/research/commerce/refunds.atomic.test.ts",
+    "../../server/research/commerce/routes.ts",
+    "../../server/research/commerce/routes.test.ts",
+    "../../server/research/commerce/persistence/refund-command-candidate.test.ts",
+    "../../server/research/commerce/persistence/supabase-refund-command-store.ts",
+    "../../server/research/commerce/persistence/supabase-refund-command-store.test.ts",
+    "../../server/research/providers/payment.ts",
+    "../../server/research/providers/payment.test.ts"
+  ]
+}

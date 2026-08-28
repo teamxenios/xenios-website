@@ -23,6 +23,7 @@ import {
   transitionOrder,
   type OrderState,
 } from "@shared/research/commerce";
+import crypto from "crypto";
 import type { ProviderFailureCode } from "@shared/research/capability";
 import type { LotDisposition } from "../inventory/lots";
 import type { PaymentProvider } from "../providers/payment";
@@ -125,16 +126,127 @@ export interface ClaimOrderRepository {
   save(order: ClaimOrderView): Promise<void>;
 }
 
+export type RefundCommandState =
+  | "prepared"
+  | "provider_in_flight"
+  | "provider_retryable"
+  | "reconciliation_required"
+  | "terminal_refused"
+  | "applied";
+
+/**
+ * Durable identity for one refund attempt. The provider key is minted once by
+ * the store from claim + order + member + client key and is never replaced.
+ */
+export interface RefundCommand {
+  commandId: string;
+  claimId: string;
+  orderId: string;
+  memberId: string;
+  clientIdempotencyKey: string;
+  providerIdempotencyKey: string;
+  providerName: string;
+  paymentReference: string;
+  amountCents: number;
+  state: RefundCommandState;
+  attempt: number;
+}
+
+export type RefundCommandOutcome =
+  | "ready"
+  | "execute"
+  | "applied"
+  | "safe_retryable"
+  | "terminal_refused"
+  | "reconciliation_required"
+  | "refund_pending"
+  | "order_not_found"
+  | "order_state_invalid"
+  | "payment_failed"
+  | "idempotency_conflict"
+  | "capability_disabled";
+
+export interface RefundCommandResult {
+  outcome: RefundCommandOutcome;
+  command?: RefundCommand;
+}
+
+export interface RefundCommandStore {
+  /** Lock claim + order, validate the balance, then durably record intent. */
+  prepare(input: {
+    claimId: string;
+    adminId: string;
+    amountCents: number;
+    clientIdempotencyKey: string;
+    providerName: string;
+    asOf: Date;
+  }): Promise<RefundCommandResult>;
+  /** Atomically grant at most one ordinary caller permission to contact the provider. */
+  claimProviderExecution(input: {
+    commandId: string;
+    providerIdempotencyKey: string;
+    asOf: Date;
+  }): Promise<RefundCommandResult>;
+  /** Persist only a closed, non-success provider outcome. No domain money fact moves here. */
+  recordProviderOutcome(input: {
+    commandId: string;
+    providerIdempotencyKey: string;
+    attempt: number;
+    outcome: "safe_retryable" | "terminal_refused" | "reconciliation_required";
+    failureCode: ProviderFailureCode | "INVALID_SUCCESS_PROOF" | "PROVIDER_THROW";
+    providerRefundReference: string | null;
+    providerRefundedAmountCents: number | null;
+    asOf: Date;
+  }): Promise<RefundCommandResult>;
+  /**
+   * One atomic publish: provider proof + refund ledger + order state + claim
+   * resolution. This also accepts exact proof supplied by a trusted reconciler
+   * for a quarantined command; ordinary request retries never reach this method.
+   * A stale snapshot becomes reconciliation_required, never success.
+   */
+  complete(input: {
+    commandId: string;
+    providerIdempotencyKey: string;
+    attempt: number;
+    providerRefundReference: string;
+    providerRefundedAmountCents: number;
+    asOf: Date;
+  }): Promise<RefundCommandResult>;
+}
+
+/** Production-safe absence: no intent and no provider call can be authorized. */
+export const unavailableRefundCommandStore: RefundCommandStore = {
+  prepare: async () => ({ outcome: "capability_disabled" }),
+  claimProviderExecution: async () => ({ outcome: "capability_disabled" }),
+  recordProviderOutcome: async () => ({ outcome: "capability_disabled" }),
+  complete: async () => ({ outcome: "capability_disabled" }),
+};
+
+export type RefundCrashPoint =
+  | "after_intent_persisted"
+  | "after_execution_claimed"
+  | "after_provider_response"
+  | "after_atomic_publish";
+
 export interface RefundServiceDeps {
   claims: ClaimRepository;
   orders: ClaimOrderRepository;
+  refundCommands: RefundCommandStore;
   payment: PaymentProvider;
   commerceEnabled: boolean;
   /** Injected so claim ids are deterministic under test. */
   newClaimId?: (sequence: number) => string;
+  /** Test-only crash injector. Production leaves this absent. */
+  crashAt?: (point: RefundCrashPoint) => void | Promise<void>;
 }
 
-export type ClaimDenial = { ok: false; codes: CommerceDenialCode[] };
+export type RefundResolutionState = "pending" | "reconciliation_required";
+export type ClaimDenial = {
+  ok: false;
+  codes: CommerceDenialCode[];
+  /** Explicit financial uncertainty; wire routes still fail with a known 503 code. */
+  refundState?: RefundResolutionState;
+};
 export type ClaimOutcome = { ok: true; claim: ClaimDto } | ClaimDenial;
 
 /**
@@ -280,6 +392,24 @@ function refundDenialCode(code: ProviderFailureCode): CommerceDenialCode {
   return code === "DISABLED" || code === "MISCONFIGURED" ? "payment_disabled" : "payment_failed";
 }
 
+function commandDenial(outcome: RefundCommandOutcome): ClaimDenial {
+  if (outcome === "reconciliation_required") return refundBlocked("reconciliation_required");
+  if (outcome === "refund_pending") return refundBlocked("pending");
+  if (outcome === "capability_disabled") return deny("capability_disabled");
+  if (outcome === "idempotency_conflict") return deny("idempotency_conflict");
+  if (outcome === "order_not_found") return deny("order_not_found");
+  if (outcome === "order_state_invalid") return deny("order_state_invalid");
+  return deny("payment_failed");
+}
+
+function refundBlocked(refundState: RefundResolutionState): ClaimDenial {
+  return { ok: false, codes: ["capability_disabled"], refundState };
+}
+
+function boundedCommandText(value: string, max: number): boolean {
+  return value.length > 0 && value.length <= max && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
@@ -400,14 +530,45 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     idempotencyKey: string,
     asOf: Date,
   ): Promise<ResolutionOutcome> {
-    void asOf;
-    const claim = await deps.claims.get(claimId);
-    if (!claim) return deny("order_not_found");
+    // Every refusal in this block happens before intent persistence and therefore
+    // mutates nothing. A disabled provider is recognized by capability identity,
+    // not by attempting to build a command that could never run.
+    if (!deps.commerceEnabled) return deny("commerce_disabled");
+    if (deps.payment.name === "disabled") return deny("payment_disabled");
+    if (!Number.isInteger(amountCents) || amountCents <= 0) return deny("payment_failed");
+    if (!boundedCommandText(claimId, 255) || !boundedCommandText(adminId, 255)) return deny("forbidden");
+    if (!boundedCommandText(idempotencyKey, 255)) return deny("idempotency_conflict");
+    if (!boundedCommandText(deps.payment.name, 80)) return deny("payment_disabled");
+    if (!(asOf instanceof Date) || !Number.isFinite(asOf.getTime())) return deny("forbidden");
 
-    const replayScope = `${claimId}:${idempotencyKey}`;
-    // A replayed key is an absorbed no-op. It never issues a second refund, and it
-    // reports the claim as it already stands.
-    if (await deps.claims.hasRefundKey(replayScope)) {
+    let prepared: RefundCommandResult;
+    try {
+      prepared = await deps.refundCommands.prepare({
+        claimId,
+        adminId,
+        amountCents,
+        clientIdempotencyKey: idempotencyKey,
+        providerName: deps.payment.name,
+        asOf,
+      });
+    } catch {
+      return deny("capability_disabled");
+    }
+
+    async function appliedResolution(): Promise<ResolutionOutcome> {
+      let claim: ClaimRecord | null;
+      try {
+        claim = await deps.claims.get(claimId);
+      } catch {
+        return refundBlocked("reconciliation_required");
+      }
+      if (
+        !claim ||
+        claim.state !== "resolved" ||
+        (claim.resolution !== "refund" && claim.resolution !== "partial_refund")
+      ) {
+        return refundBlocked("reconciliation_required");
+      }
       return {
         ok: true,
         claim: toClaimDto(claim),
@@ -416,77 +577,123 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
       };
     }
 
-    if (claim.state !== "approved") return deny("order_state_invalid");
+    if (prepared.outcome === "applied") return appliedResolution();
+    if (prepared.outcome === "terminal_refused") return deny("payment_failed");
+    if (prepared.outcome !== "ready" || !prepared.command) return commandDenial(prepared.outcome);
+    await deps.crashAt?.("after_intent_persisted");
 
-    const order = await deps.orders.get(claim.orderId);
-    if (!order) return deny("order_not_found");
-
-    const denials = new Denials();
-
-    if (!deps.commerceEnabled) denials.add("commerce_disabled");
-
-    // Money is integer cents. A float or a non-positive amount is refused before any
-    // provider call, never rounded into something plausible.
-    if (!Number.isInteger(amountCents) || amountCents <= 0) denials.add("payment_failed");
-
-    const refundable = order.capturedAmountCents - order.refundedCents;
-    if (amountCents > refundable) denials.add("payment_failed");
-
-    if (order.paymentReference === null) denials.add("payment_failed");
-
-    // The order must be able to accept `refunded` BEFORE money moves. Refunding an
-    // order that cannot record the refund would leave the provider and the ledger
-    // disagreeing, so legality is checked first and the provider is never called.
-    if (TERMINAL_ORDER_STATES.has(order.state) || !canTransitionOrder(order.state, "refunded", "admin")) {
-      denials.add("order_state_invalid");
+    let execution: RefundCommandResult;
+    try {
+      execution = await deps.refundCommands.claimProviderExecution({
+        commandId: prepared.command.commandId,
+        providerIdempotencyKey: prepared.command.providerIdempotencyKey,
+        asOf,
+      });
+    } catch {
+      return refundBlocked("reconciliation_required");
     }
+    if (execution.outcome === "applied") return appliedResolution();
+    if (execution.outcome === "terminal_refused") return deny("payment_failed");
+    if (execution.outcome !== "execute" || !execution.command) return commandDenial(execution.outcome);
+    const command = execution.command;
+    await deps.crashAt?.("after_execution_claimed");
 
-    if (!denials.empty) return { ok: false, codes: denials.list };
+    let result: Awaited<ReturnType<PaymentProvider["refund"]>>;
+    try {
+      result = await deps.payment.refund(
+        command.paymentReference,
+        command.amountCents,
+        command.providerIdempotencyKey,
+      );
+    } catch {
+      try {
+        await deps.refundCommands.recordProviderOutcome({
+          commandId: command.commandId,
+          providerIdempotencyKey: command.providerIdempotencyKey,
+          attempt: command.attempt,
+          outcome: "reconciliation_required",
+          failureCode: "PROVIDER_THROW",
+          providerRefundReference: null,
+          providerRefundedAmountCents: null,
+          asOf,
+        });
+      } catch {
+        // The durable in-flight command is already the conservative truth.
+      }
+      return refundBlocked("reconciliation_required");
+    }
+    await deps.crashAt?.("after_provider_response");
 
-    const result = await deps.payment.refund(order.paymentReference as string, amountCents, idempotencyKey);
     if (!result.ok) {
-      // A disabled provider is not a resolution. The claim stays approved and unpaid,
-      // the order is untouched, and the key is not consumed so a retry after the
-      // capability is enabled still works.
-      return deny(refundDenialCode(result.code));
+      const providerOutcome =
+        result.code === "DISABLED" || result.code === "MISCONFIGURED"
+          ? "safe_retryable"
+          : result.code === "RETRYABLE"
+            ? "reconciliation_required"
+            : "terminal_refused";
+      try {
+        const recorded = await deps.refundCommands.recordProviderOutcome({
+          commandId: command.commandId,
+          providerIdempotencyKey: command.providerIdempotencyKey,
+          attempt: command.attempt,
+          outcome: providerOutcome,
+          failureCode: result.code,
+          providerRefundReference: null,
+          providerRefundedAmountCents: null,
+          asOf,
+        });
+        if (recorded.outcome !== providerOutcome) {
+          return refundBlocked("reconciliation_required");
+        }
+      } catch {
+        return refundBlocked("reconciliation_required");
+      }
+      return providerOutcome === "reconciliation_required"
+        ? refundBlocked("reconciliation_required")
+        : deny(refundDenialCode(result.code));
     }
 
-    // The order reaches `refunded` only on the reference the provider returned. An
-    // empty one is refused rather than substituted with anything of our own.
     const reference = result.value.providerReference;
-    if (!reference) return deny("payment_failed");
-
-    const moved = transitionOrder({
-      from: order.state,
-      to: "refunded",
-      actor: "admin",
-      providerConfirmation: reference,
-      idempotencyKey,
-      lastAppliedIdempotencyKey: order.lastAppliedIdempotencyKey,
-    });
-    if (!moved.ok) return deny("order_state_invalid");
-
-    // The provider reports what it refunded, but the ledger is ours. A figure that
-    // is not a positive integer, or that is smaller than what we asked for, would
-    // understate the total and leave room for a later over-refund, so the amount
-    // requested is the floor and the accumulator only ever moves up.
     const reported = result.value.refundedAmountCents;
-    const applied =
-      Number.isInteger(reported) && reported > amountCents ? reported : amountCents;
+    if (
+      result.value.status !== "refunded" ||
+      !boundedCommandText(reference, 255) ||
+      !Number.isInteger(reported) ||
+      reported !== command.amountCents
+    ) {
+      try {
+        await deps.refundCommands.recordProviderOutcome({
+          commandId: command.commandId,
+          providerIdempotencyKey: command.providerIdempotencyKey,
+          attempt: command.attempt,
+          outcome: "reconciliation_required",
+          failureCode: "INVALID_SUCCESS_PROOF",
+          providerRefundReference: boundedCommandText(reference, 255) ? reference : null,
+          providerRefundedAmountCents: Number.isInteger(reported) ? reported : null,
+          asOf,
+        });
+      } catch {
+        // The already-durable in-flight state remains fail closed.
+      }
+      return refundBlocked("reconciliation_required");
+    }
 
-    await deps.claims.recordRefundKey(replayScope, reference);
-    order.state = moved.state;
-    order.refundedCents = order.refundedCents + applied;
-    order.lastAppliedIdempotencyKey = idempotencyKey;
-    await deps.orders.save(order);
-
-    claim.state = "resolved";
-    claim.resolution = order.refundedCents >= order.capturedAmountCents ? "refund" : "partial_refund";
-    claim.reviewedBy = adminId;
-    await deps.claims.save(claim);
-
-    // A refunded unit is destroyed for the same reason a replaced one is.
-    return { ok: true, claim: toClaimDto(claim), restockedUnits: 0, returnedLotDisposition: "destroyed" };
+    let completed: RefundCommandResult;
+    try {
+      completed = await deps.refundCommands.complete({
+        commandId: command.commandId,
+        providerIdempotencyKey: command.providerIdempotencyKey,
+        attempt: command.attempt,
+        providerRefundReference: reference,
+        providerRefundedAmountCents: reported,
+        asOf,
+      });
+    } catch {
+      return refundBlocked("reconciliation_required");
+    }
+    if (completed.outcome !== "applied") return refundBlocked("reconciliation_required");
+    await deps.crashAt?.("after_atomic_publish");
+    return appliedResolution();
   }
 
   async function listForMember(memberId: string): Promise<ClaimDto[]> {
@@ -544,7 +751,7 @@ export function createInMemoryClaimRepository(seed: readonly ClaimRecord[] = [])
     return out;
   }
 
-  return {
+  const repository: ClaimRepository = {
     async get(claimId) {
       return byId.get(claimId) ?? null;
     },
@@ -567,6 +774,10 @@ export function createInMemoryClaimRepository(seed: readonly ClaimRecord[] = [])
       refundKeys.set(scope, refundReference);
     },
   };
+  Object.defineProperty(repository, MEMORY_CLAIM_STATE, {
+    value: { byId, order, refundKeys } satisfies MemoryClaimState,
+  });
+  return repository;
 }
 
 export function createInMemoryClaimOrderRepository(
@@ -574,12 +785,328 @@ export function createInMemoryClaimOrderRepository(
 ): ClaimOrderRepository {
   const byId = new Map<string, ClaimOrderView>();
   seed.forEach((order) => byId.set(order.orderId, order));
-  return {
+  const repository: ClaimOrderRepository = {
     async get(orderId) {
       return byId.get(orderId) ?? null;
     },
     async save(order) {
       byId.set(order.orderId, order);
+    },
+  };
+  Object.defineProperty(repository, MEMORY_ORDER_STATE, {
+    value: { byId } satisfies MemoryOrderState,
+  });
+  return repository;
+}
+
+const MEMORY_CLAIM_STATE = Symbol("xenios.memory.claims");
+const MEMORY_ORDER_STATE = Symbol("xenios.memory.claim-orders");
+
+interface MemoryClaimState {
+  byId: Map<string, ClaimRecord>;
+  order: string[];
+  refundKeys: Map<string, string>;
+}
+
+interface MemoryOrderState {
+  byId: Map<string, ClaimOrderView>;
+}
+
+interface MemoryRefundCommand extends RefundCommand {
+  adminId: string;
+  expectedOrderState: OrderState;
+  expectedRefundedCents: number;
+  providerRefundReference: string | null;
+  providerRefundedAmountCents: number | null;
+  failureCode: string | null;
+}
+
+interface MemoryRefundCoordinator {
+  commandsByScope: Map<string, MemoryRefundCommand>;
+  commandsById: Map<string, MemoryRefundCommand>;
+  tail: Promise<void>;
+}
+
+const MEMORY_COORDINATORS = new WeakMap<
+  ClaimRepository,
+  WeakMap<ClaimOrderRepository, MemoryRefundCoordinator>
+>();
+
+function memoryCoordinator(claims: ClaimRepository, orders: ClaimOrderRepository): MemoryRefundCoordinator {
+  let byOrders = MEMORY_COORDINATORS.get(claims);
+  if (!byOrders) {
+    byOrders = new WeakMap();
+    MEMORY_COORDINATORS.set(claims, byOrders);
+  }
+  let coordinator = byOrders.get(orders);
+  if (!coordinator) {
+    coordinator = { commandsByScope: new Map(), commandsById: new Map(), tail: Promise.resolve() };
+    byOrders.set(orders, coordinator);
+  }
+  return coordinator;
+}
+
+async function withMemoryRefundLock<T>(
+  coordinator: MemoryRefundCoordinator,
+  action: () => Promise<T> | T,
+): Promise<T> {
+  const prior = coordinator.tail;
+  let release!: () => void;
+  coordinator.tail = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await prior;
+  try {
+    return await action();
+  } finally {
+    release();
+  }
+}
+
+function publicCommand(command: MemoryRefundCommand): RefundCommand {
+  return {
+    commandId: command.commandId,
+    claimId: command.claimId,
+    orderId: command.orderId,
+    memberId: command.memberId,
+    clientIdempotencyKey: command.clientIdempotencyKey,
+    providerIdempotencyKey: command.providerIdempotencyKey,
+    providerName: command.providerName,
+    paymentReference: command.paymentReference,
+    amountCents: command.amountCents,
+    state: command.state,
+    attempt: command.attempt,
+  };
+}
+
+function existingCommandOutcome(command: MemoryRefundCommand): RefundCommandResult {
+  if (command.state === "applied") return { outcome: "applied", command: publicCommand(command) };
+  if (command.state === "terminal_refused") {
+    return { outcome: "terminal_refused", command: publicCommand(command) };
+  }
+  if (command.state === "provider_in_flight" || command.state === "reconciliation_required") {
+    return { outcome: "reconciliation_required", command: publicCommand(command) };
+  }
+  return { outcome: "ready", command: publicCommand(command) };
+}
+
+export interface InspectableInMemoryRefundCommandStore extends RefundCommandStore {
+  inspect(): RefundCommand[];
+}
+
+/**
+ * Single-process reference for attack tests. Its command coordinator is shared
+ * by every service built over the same in-memory claim + order repositories,
+ * so restart/race tests exercise the same durable lifecycle shape as the RPC.
+ */
+export function createInMemoryRefundCommandStore(input: {
+  claims: ClaimRepository;
+  orders: ClaimOrderRepository;
+}): InspectableInMemoryRefundCommandStore {
+  const claimState = (input.claims as ClaimRepository & { [MEMORY_CLAIM_STATE]?: MemoryClaimState })[
+    MEMORY_CLAIM_STATE
+  ];
+  const orderState = (input.orders as ClaimOrderRepository & { [MEMORY_ORDER_STATE]?: MemoryOrderState })[
+    MEMORY_ORDER_STATE
+  ];
+  const coordinator = memoryCoordinator(input.claims, input.orders);
+
+  const unavailable = (): RefundCommandResult => ({ outcome: "capability_disabled" });
+
+  return {
+    inspect: () => Array.from(coordinator.commandsById.values(), publicCommand),
+
+    prepare(request) {
+      return withMemoryRefundLock(coordinator, async () => {
+        if (!claimState || !orderState) return unavailable();
+        const scope = `${request.claimId}\u0000${request.clientIdempotencyKey}`;
+        const existing = coordinator.commandsByScope.get(scope);
+        if (existing) {
+          if (
+            existing.amountCents !== request.amountCents ||
+            existing.providerName !== request.providerName
+          ) {
+            return { outcome: "idempotency_conflict" };
+          }
+          return existingCommandOutcome(existing);
+        }
+
+        const claim = claimState.byId.get(request.claimId);
+        if (!claim) return { outcome: "order_not_found" };
+        if (claim.state !== "approved") return { outcome: "order_state_invalid" };
+        const order = orderState.byId.get(claim.orderId);
+        if (!order || order.memberId !== claim.memberId) return { outcome: "order_not_found" };
+        if (
+          !Number.isInteger(request.amountCents) ||
+          request.amountCents <= 0 ||
+          order.paymentReference === null ||
+          request.amountCents > order.capturedAmountCents - order.refundedCents
+        ) {
+          return { outcome: "payment_failed" };
+        }
+        if (
+          TERMINAL_ORDER_STATES.has(order.state) ||
+          !canTransitionOrder(order.state, "refunded", "admin")
+        ) {
+          return { outcome: "order_state_invalid" };
+        }
+        const anotherActive = Array.from(coordinator.commandsById.values()).some(
+          (command) =>
+            command.orderId === order.orderId &&
+            command.state !== "applied" &&
+            command.state !== "terminal_refused",
+        );
+        if (anotherActive) return { outcome: "refund_pending" };
+
+        const digest = crypto
+          .createHash("sha256")
+          .update(
+            [request.claimId, order.orderId, order.memberId, request.clientIdempotencyKey].join("|"),
+            "utf8",
+          )
+          .digest("hex");
+        const command: MemoryRefundCommand = {
+          commandId: `refund_command_${digest.slice(0, 32)}`,
+          claimId: request.claimId,
+          orderId: order.orderId,
+          memberId: order.memberId,
+          clientIdempotencyKey: request.clientIdempotencyKey,
+          providerIdempotencyKey: `xrrf_v1_${digest}`,
+          providerName: request.providerName,
+          paymentReference: order.paymentReference,
+          amountCents: request.amountCents,
+          state: "prepared",
+          attempt: 0,
+          adminId: request.adminId,
+          expectedOrderState: order.state,
+          expectedRefundedCents: order.refundedCents,
+          providerRefundReference: null,
+          providerRefundedAmountCents: null,
+          failureCode: null,
+        };
+        coordinator.commandsByScope.set(scope, command);
+        coordinator.commandsById.set(command.commandId, command);
+        return { outcome: "ready", command: publicCommand(command) };
+      });
+    },
+
+    claimProviderExecution(request) {
+      return withMemoryRefundLock(coordinator, () => {
+        const command = coordinator.commandsById.get(request.commandId);
+        if (!command || command.providerIdempotencyKey !== request.providerIdempotencyKey) {
+          return { outcome: "idempotency_conflict" };
+        }
+        if (command.state === "prepared" || command.state === "provider_retryable") {
+          command.state = "provider_in_flight";
+          command.attempt += 1;
+          return { outcome: "execute", command: publicCommand(command) };
+        }
+        return existingCommandOutcome(command);
+      });
+    },
+
+    recordProviderOutcome(request) {
+      return withMemoryRefundLock(coordinator, () => {
+        const command = coordinator.commandsById.get(request.commandId);
+        if (
+          !command ||
+          command.providerIdempotencyKey !== request.providerIdempotencyKey ||
+          command.attempt !== request.attempt
+        ) {
+          return { outcome: "idempotency_conflict" };
+        }
+        if (command.state === "applied") return { outcome: "applied", command: publicCommand(command) };
+        if (command.state !== "provider_in_flight") return existingCommandOutcome(command);
+        command.state =
+          request.outcome === "safe_retryable"
+            ? "provider_retryable"
+            : request.outcome === "terminal_refused"
+              ? "terminal_refused"
+              : "reconciliation_required";
+        command.failureCode = request.failureCode;
+        command.providerRefundReference = request.providerRefundReference;
+        command.providerRefundedAmountCents = request.providerRefundedAmountCents;
+        return { outcome: request.outcome, command: publicCommand(command) };
+      });
+    },
+
+    complete(request) {
+      return withMemoryRefundLock(coordinator, () => {
+        if (!claimState || !orderState) return unavailable();
+        const command = coordinator.commandsById.get(request.commandId);
+        if (
+          !command ||
+          command.providerIdempotencyKey !== request.providerIdempotencyKey ||
+          command.attempt !== request.attempt
+        ) {
+          return { outcome: "idempotency_conflict" };
+        }
+        if (command.state === "applied") return { outcome: "applied", command: publicCommand(command) };
+        if (
+          command.state !== "provider_in_flight" &&
+          command.state !== "reconciliation_required"
+        ) {
+          return existingCommandOutcome(command);
+        }
+
+        command.providerRefundReference = request.providerRefundReference;
+        command.providerRefundedAmountCents = request.providerRefundedAmountCents;
+        if (
+          !boundedCommandText(request.providerRefundReference, 255) ||
+          request.providerRefundedAmountCents !== command.amountCents
+        ) {
+          command.state = "reconciliation_required";
+          command.failureCode = "INVALID_SUCCESS_PROOF";
+          return { outcome: "reconciliation_required", command: publicCommand(command) };
+        }
+
+        const claim = claimState.byId.get(command.claimId);
+        const order = orderState.byId.get(command.orderId);
+        const moved = order
+          ? transitionOrder({
+              from: order.state,
+              to: "refunded",
+              actor: "admin",
+              providerConfirmation: request.providerRefundReference,
+              idempotencyKey: command.providerIdempotencyKey,
+              lastAppliedIdempotencyKey: order.lastAppliedIdempotencyKey,
+            })
+          : null;
+        if (
+          !claim ||
+          !order ||
+          claim.state !== "approved" ||
+          claim.orderId !== command.orderId ||
+          claim.memberId !== command.memberId ||
+          order.memberId !== command.memberId ||
+          order.state !== command.expectedOrderState ||
+          order.paymentReference !== command.paymentReference ||
+          order.refundedCents !== command.expectedRefundedCents ||
+          order.capturedAmountCents - order.refundedCents < command.amountCents ||
+          !moved?.ok
+        ) {
+          command.state = "reconciliation_required";
+          command.failureCode = "STALE_DOMAIN_SNAPSHOT";
+          return { outcome: "reconciliation_required", command: publicCommand(command) };
+        }
+
+        // This synchronous block is the in-memory equivalent of the SQL RPC's
+        // transaction: no await or injected crash can observe a partial publish.
+        order.state = moved.state;
+        order.refundedCents += command.amountCents;
+        order.lastAppliedIdempotencyKey = command.providerIdempotencyKey;
+        claim.state = "resolved";
+        claim.resolution =
+          order.refundedCents >= order.capturedAmountCents ? "refund" : "partial_refund";
+        claim.reviewedBy = command.adminId;
+        claimState.refundKeys.set(
+          `${command.claimId}:${command.clientIdempotencyKey}`,
+          request.providerRefundReference,
+        );
+        command.state = "applied";
+        command.failureCode = null;
+        return { outcome: "applied", command: publicCommand(command) };
+      });
     },
   };
 }

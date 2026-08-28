@@ -10,7 +10,11 @@ import { createInMemoryInventoryLotStore } from "./persistence/inventory-store";
 import { createInMemoryStoreCreditLedgerStore } from "./persistence/store-credit-store";
 import { createInMemorySubscriptionStore } from "./persistence/subscriptions-store";
 import { createInMemoryAdminQueuesStore } from "./persistence/admin-queues-store";
-import { createInMemoryClaimOrderRepository, createInMemoryClaimRepository } from "./refunds";
+import {
+  createInMemoryClaimOrderRepository,
+  createInMemoryClaimRepository,
+  createInMemoryRefundCommandStore,
+} from "./refunds";
 import { createInMemoryReservationStore } from "./persistence/reservations-store";
 import { createInMemoryWebhookEventStore } from "./webhooks";
 import { createOrderService } from "./orders";
@@ -224,6 +228,10 @@ async function liveSetup() {
   const creditLedger = createInMemoryStoreCreditLedgerStore();
   const claimRepository = createInMemoryClaimRepository();
   const claimOrderRepository = createInMemoryClaimOrderRepository();
+  const refundCommandStore = createInMemoryRefundCommandStore({
+    claims: claimRepository,
+    orders: claimOrderRepository,
+  });
   const webhookEventStore = createInMemoryWebhookEventStore();
   const partnerMemberStore = createInMemoryPartnerMemberStore();
   const partnerLinkStore = createInMemoryPartnerLinkStore();
@@ -268,6 +276,7 @@ async function liveSetup() {
     resolveOrderRepository: () => orderRepository,
     resolveClaimRepository: () => claimRepository,
     resolveClaimOrderRepository: () => claimOrderRepository,
+    resolveRefundCommandStore: () => refundCommandStore,
     resolveInventoryLotStore: () => lotStore,
     resolveReservationStore: () => reservationStore,
     resolveStoreCreditLedgerStore: () => creditLedger,

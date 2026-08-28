@@ -7,6 +7,7 @@ import {
   ACCEPTED_CLAIM_REASONS,
   createInMemoryClaimOrderRepository,
   createInMemoryClaimRepository,
+  createInMemoryRefundCommandStore,
   createRefundService,
   type ClaimOrderView,
   type ClaimOutcome,
@@ -94,7 +95,8 @@ function harness(orderOverrides: Partial<ClaimOrderView> = {}, commerceEnabled =
   const claims = createInMemoryClaimRepository();
   const order = deliveredOrder(orderOverrides);
   const orders = createInMemoryClaimOrderRepository([order]);
-  const service = createRefundService({ claims, orders, payment, commerceEnabled });
+  const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
+  const service = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled });
   return { service, payment, claims, order };
 }
 
@@ -124,8 +126,9 @@ describe("refund idempotency survives a process restart", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
+    const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
 
-    const first = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const first = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: true });
     const submitted = expectClaim(await first.submitClaim("mem_1", claimRequest(), NOW));
     const approved = expectClaim(
       await first.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW),
@@ -141,7 +144,7 @@ describe("refund idempotency survives a process restart", () => {
     expect(payment.refundCalls).toHaveLength(1);
 
     // The restart: same durable store, a service that has never seen the key.
-    const second = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const second = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: true });
     await second.resolveWithRefund(approved.claim.claimId, "adm_1", 12_000, "key_1", NOW);
 
     // The critical assertion: the provider was not asked to move money a second time.
@@ -352,12 +355,13 @@ describe("replacement never restocks", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
+    const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
     // Approve the claim while the capability is on, then take it away.
-    const enabled = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const enabled = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: true });
     const submitted = expectClaim(await enabled.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await enabled.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
-    const disabled = createRefundService({ claims, orders, payment, commerceEnabled: false });
+    const disabled = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: false });
     const outcome = await disabled.resolveWithReplacement(submitted.claim.claimId, "adm_1", NOW);
 
     expect(expectDenied(outcome)).toContain("commerce_disabled");
@@ -390,9 +394,13 @@ describe("refund", () => {
     const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 12_000, "key_1", NOW);
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.resolution).toBe("refund");
-    expect(h.payment.refundCalls).toEqual([
-      { reference: "auth_1", amountCents: 12_000, idempotencyKey: "key_1" },
-    ]);
+    expect(h.payment.refundCalls).toHaveLength(1);
+    expect(h.payment.refundCalls[0]).toMatchObject({
+      reference: "auth_1",
+      amountCents: 12_000,
+    });
+    expect(h.payment.refundCalls[0]!.idempotencyKey).toMatch(/^xrrf_v1_[0-9a-f]{64}$/);
+    expect(h.payment.refundCalls[0]!.idempotencyKey).not.toBe("key_1");
     expect(h.order.state).toBe("refunded");
     expect(h.order.refundedCents).toBe(12_000);
   });
@@ -467,9 +475,11 @@ describe("refund", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
+    const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
     const service = createRefundService({
       claims,
       orders,
+      refundCommands,
       payment: new DisabledPaymentProvider(),
       commerceEnabled: true,
     });
@@ -517,7 +527,8 @@ describe("refund", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
-    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
+    const service = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: true });
     const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
@@ -536,7 +547,7 @@ describe("refund", () => {
     expect(order.refundedCents).toBe(0);
   });
 
-  it("never lets a provider figure understate what was refunded", async () => {
+  it("quarantines a provider success whose amount does not exactly match the durable command", async () => {
     class UnderReportingProvider extends SpyPaymentProvider {
       async refund(
         reference: string,
@@ -555,7 +566,8 @@ describe("refund", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
-    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const refundCommands = createInMemoryRefundCommandStore({ claims, orders });
+    const service = createRefundService({ claims, orders, refundCommands, payment, commerceEnabled: true });
     const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
@@ -567,9 +579,11 @@ describe("refund", () => {
       NOW,
     );
 
-    expect(outcome.ok).toBe(true);
-    expect(order.refundedCents).toBe(6_000);
-    expect(order.capturedAmountCents - order.refundedCents).toBe(6_000);
+    expect(expectDenied(outcome)).toEqual(["capability_disabled"]);
+    if (!outcome.ok) expect(outcome.refundState).toBe("reconciliation_required");
+    expect(order.state).toBe("delivered");
+    expect(order.refundedCents).toBe(0);
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
   });
 
   it("refuses a refund on a claim that was never approved", async () => {

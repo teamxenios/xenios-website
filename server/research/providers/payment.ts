@@ -128,6 +128,7 @@ export class TestPaymentProvider implements PaymentProvider {
   private byIdempotencyKey = new Map<string, string>();
   /** Refund idempotency: key -> the refund result already produced for it. */
   private refundsByKey = new Map<string, PaymentRefund>();
+  private refundCounter = 0;
   private seenWebhookEvents = new Set<string>();
   private counter = 0;
 
@@ -231,9 +232,13 @@ export class TestPaymentProvider implements PaymentProvider {
       return { ok: false, code: "REJECTED", message: "Refund exceeds captured amount.", retryable: false };
     }
     auth.refunded += amountCents;
-    const refund: PaymentRefund = { providerReference: ref, refundedAmountCents: amountCents, status: "refunded" };
+    const refund: PaymentRefund = {
+      providerReference: `test_refund_${++this.refundCounter}`,
+      refundedAmountCents: amountCents,
+      status: "refunded",
+    };
     this.refundsByKey.set(idempotencyKey, refund);
-    return providerOk({ ...refund }, ref);
+    return providerOk({ ...refund }, refund.providerReference);
   }
 
   async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
@@ -789,9 +794,24 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (refund?.status !== "succeeded") {
       return unrecognizedProviderStatus("refund", refund?.status);
     }
+    const refundReference = readString(refund, "id");
+    const refundedAmountCents = readNumber(refund, "amount");
+    if (
+      !refundReference ||
+      !Number.isInteger(refundedAmountCents) ||
+      refundedAmountCents !== amountCents
+    ) {
+      return {
+        ok: false,
+        code: "RETRYABLE",
+        message:
+          "The provider reported refund success without exact reference and amount proof. Reconciliation is required.",
+        retryable: true,
+      };
+    }
     return providerOk<PaymentRefund>(
-      { providerReference: ref, refundedAmountCents: amountCents, status: "refunded" },
-      ref,
+      { providerReference: refundReference, refundedAmountCents, status: "refunded" },
+      refundReference,
     );
   }
 

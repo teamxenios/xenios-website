@@ -35,6 +35,8 @@ import {
   createRefundService,
   type ClaimOrderRepository,
   type ClaimRepository,
+  type RefundCommandStore,
+  unavailableRefundCommandStore,
 } from "./refunds";
 import { createSubscriptionService, type SubscriptionRepository } from "./subscriptions";
 import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
@@ -42,6 +44,7 @@ import { assertNoSyntheticDataInProduction } from "./production-guards";
 import { resolveCartStore, type AsyncCartStore } from "./persistence/cart-store";
 import { resolveOrderRepository } from "./persistence/orders-store";
 import { resolveClaimOrderRepository, resolveClaimRepository } from "./persistence/claims-store";
+import { resolveSupabaseRefundCommandStore } from "./persistence/supabase-refund-command-store";
 import { resolveInventoryLotStore, type InventoryLotRepository } from "./persistence/inventory-store";
 import {
   resolveStoreCreditLedgerStore,
@@ -220,6 +223,8 @@ export interface CommerceWiring {
   resolveOrderRepository(): OrderRepository;
   resolveClaimRepository(): ClaimRepository;
   resolveClaimOrderRepository(): ClaimOrderRepository;
+  /** Exact durable refund command/RPC capability. Absence disables refunds only. */
+  resolveRefundCommandStore?(env: NodeJS.ProcessEnv): RefundCommandStore | undefined;
   resolveInventoryLotStore(): InventoryLotRepository;
   resolveStoreCreditLedgerStore(): StoreCreditLedgerRepository;
   resolveSubscriptionRepository(): SubscriptionRepository;
@@ -319,6 +324,7 @@ function defaultWiring(): CommerceWiring {
     resolveOrderRepository,
     resolveClaimRepository,
     resolveClaimOrderRepository,
+    resolveRefundCommandStore: resolveSupabaseRefundCommandStore,
     resolveInventoryLotStore,
     resolveStoreCreditLedgerStore,
     resolveSubscriptionRepository,
@@ -909,6 +915,8 @@ function liveDependencies(
   const orderRepository = wiring.resolveOrderRepository();
   const claimRepository = wiring.resolveClaimRepository();
   const claimOrderRepository = wiring.resolveClaimOrderRepository();
+  const refundCommands =
+    wiring.resolveRefundCommandStore?.(env) ?? unavailableRefundCommandStore;
   const lotStore = wiring.resolveInventoryLotStore();
   const creditLedger = wiring.resolveStoreCreditLedgerStore();
   const subscriptionRepository = wiring.resolveSubscriptionRepository();
@@ -1079,8 +1087,12 @@ function liveDependencies(
   const refundService: RefundService = createRefundService({
     claims: claimRepository,
     orders: claimOrderRepository,
+    refundCommands,
     payment,
     commerceEnabled: true,
+    // research_claims.id is UUID in the durable schema. Test callers may still
+    // inject deterministic ids directly at the service seam.
+    newClaimId: () => randomUUID(),
   });
 
   // The provider webhook handler, over the SAME order repository checkout writes

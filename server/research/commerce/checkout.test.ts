@@ -23,6 +23,7 @@ import { createInMemoryReservationStore } from "./persistence/reservations-store
 import {
   createInMemoryClaimOrderRepository,
   createInMemoryClaimRepository,
+  createInMemoryRefundCommandStore,
   createRefundService,
 } from "./refunds";
 
@@ -1168,9 +1169,8 @@ describe("checkout through the real seam", () => {
     expect(await quantity(lots, "LOT-EARLY")).toBe(1);
 
     // The refund flow runs over the captured order, with the SAME payment provider.
-    const refunds = createRefundService({
-      claims: createInMemoryClaimRepository(),
-      orders: createInMemoryClaimOrderRepository([
+    const claims = createInMemoryClaimRepository();
+    const claimOrders = createInMemoryClaimOrderRepository([
         {
           orderId: outcome.order.orderId,
           memberId: "mem_1",
@@ -1180,7 +1180,11 @@ describe("checkout through the real seam", () => {
           refundedCents: 0,
           lines: [{ sku: "P001", lotId: "LOT-EARLY" }],
         },
-      ]),
+      ]);
+    const refunds = createRefundService({
+      claims,
+      orders: claimOrders,
+      refundCommands: createInMemoryRefundCommandStore({ claims, orders: claimOrders }),
       payment,
       commerceEnabled: true,
     });

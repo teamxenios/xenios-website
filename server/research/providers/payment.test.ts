@@ -427,14 +427,34 @@ describe("StripePaymentAdapter", () => {
     it("refunds within the captured amount and forwards the caller's idempotency key", async () => {
       const { adapter, requests } = stripeAdapter([
         { status: 200, body: capturedIntent },
-        { status: 200, body: { id: "re_1", status: "succeeded" } },
+        { status: 200, body: { id: "re_1", amount: 1000, status: "succeeded" } },
       ]);
       const r = await adapter.refund("pi_1", 1000, "refund_key_1");
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.value.refundedAmountCents).toBe(1000);
+      if (r.ok) {
+        expect(r.value.refundedAmountCents).toBe(1000);
+        expect(r.value.providerReference).toBe("re_1");
+      }
       expect(requests[1].path).toBe("/v1/refunds");
       expect(requests[1].idempotencyKey).toBe("refund_key_1");
       expect(requests[1].form?.amount).toBe("1000");
+    });
+
+    it.each([
+      { id: "re_1", status: "succeeded" },
+      { id: "re_1", amount: 999, status: "succeeded" },
+      { amount: 1000, status: "succeeded" },
+    ])("quarantines incomplete or mismatched provider success proof", async (refundResponse) => {
+      const { adapter } = stripeAdapter([
+        { status: 200, body: capturedIntent },
+        { status: 200, body: refundResponse },
+      ]);
+      const result = await adapter.refund("pi_1", 1000, "refund_proof_key");
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.code).toBe("RETRYABLE");
+        expect(result.message).toContain("Reconciliation is required");
+      }
     });
 
     it("refuses over-refund locally, before the refund call is ever made", async () => {

@@ -795,6 +795,7 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
         deps.now(),
       ),
       "claim",
+      true,
     );
   });
 
@@ -863,7 +864,12 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
  * no recognizable shape produces a generic refusal rather than leaking an internal
  * object. Unknown shapes fail closed.
  */
-function relay(res: Response, result: unknown, key: string): void {
+function relay(
+  res: Response,
+  result: unknown,
+  key: string,
+  capabilityUnavailableIsRetryable = false,
+): void {
   if (result && typeof result === "object" && "ok" in result) {
     const shaped = result as { ok: boolean; code?: string; codes?: string[]; message?: string };
     if (shaped.ok) {
@@ -872,7 +878,11 @@ function relay(res: Response, result: unknown, key: string): void {
       return;
     }
     const code = shaped.code ?? shaped.codes?.[0] ?? "forbidden";
-    const status = code === "commerce_disabled" ? 503 : 400;
+    const status =
+      code === "commerce_disabled" ||
+      (capabilityUnavailableIsRetryable && code === "capability_disabled")
+        ? 503
+        : 400;
     deny(res, status, code as CommerceDenialCode, shaped.message);
     return;
   }

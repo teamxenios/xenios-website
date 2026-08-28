@@ -828,6 +828,34 @@ describe("admin claim routes", () => {
     expect(captured.body).toMatchObject({ ok: true });
   });
 
+  it("returns a retryable 503 while durable refund reconciliation is required", async () => {
+    const routes = build(
+      deps({
+        claimsAdmin: {
+          listOpen: async () => [],
+          review: async () => ({ ok: true }),
+          refund: async () => ({
+            ok: false,
+            codes: ["capability_disabled"],
+            refundState: "reconciliation_required",
+          }),
+          replacement: async () => ({ ok: true }),
+        },
+      }),
+    );
+    const { res, captured } = fakeRes();
+    await route(routes, "post", "/api/admin/research/claims/:claimId/refund").handler(
+      reqWith(undefined, {
+        params: { claimId: "clm_1" },
+        body: { amountCents: 500, idempotencyKey: "k1" },
+      } as Partial<Request>),
+      res,
+    );
+    expect(captured.status).toBe(503);
+    expect(captured.body).toMatchObject({ ok: false, code: "capability_disabled" });
+    expect(captured.body).not.toHaveProperty("refundState");
+  });
+
   it("relays a replacement resolution", async () => {
     const routes = build();
     const { res, captured } = fakeRes();
