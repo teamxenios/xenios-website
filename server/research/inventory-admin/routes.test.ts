@@ -195,7 +195,7 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
     expect(quality.review).not.toHaveBeenCalled();
   });
 
-  it("requires an approved purpose and binds every private grant to the server actor", async () => {
+  it("requires an approved purpose and passes the server actor to the private-access port", async () => {
     const { app, quality } = appFor();
     const missingPurpose = await request(app)
       .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/file-access`)
@@ -226,6 +226,67 @@ describe("Website 4 inventory, lots, and exact-lot COA routes", () => {
       "reviewer-b",
       "compliance_review",
     );
+  });
+
+  it.each([
+    "coa_access_capability_unavailable",
+    "coa_upload_capability_lifetime_unavailable",
+  ])("reports %s as a private no-store 503", async (code) => {
+    const { app, quality } = appFor();
+    if (code === "coa_access_capability_unavailable") {
+      quality.createReadGrant.mockRejectedValueOnce(
+        new InventoryAdminPersistenceError(code),
+      );
+      const response = await request(app)
+        .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/file-access`)
+        .send({ purpose: "quality_review" });
+      expect(response.status).toBe(503);
+      expect(response.body).toEqual({ ok: false, code });
+      expect(response.headers["cache-control"]).toBe("no-store");
+      expect(response.headers["referrer-policy"]).toBe("no-referrer");
+      return;
+    }
+
+    quality.prepareUpload.mockRejectedValueOnce(
+      new InventoryAdminPersistenceError(code),
+    );
+    const response = await request(app)
+      .post("/api/admin/research/lot-quality-documents/upload")
+      .send({
+        lotId: LOT_ID,
+        filename: "synthetic.pdf",
+        contentType: "application/pdf",
+        sizeBytes: 100,
+        sha256: "a".repeat(64),
+        reportIssuer: "Synthetic Lab",
+        reportNumber: "SYNTHETIC-001",
+        reportDate: "2026-07-26",
+        idempotencyKey: "prepare-synthetic-001",
+      });
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({ ok: false, code });
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+  });
+
+  it("reports unavailable immutable-byte confirmation as a private no-store 503", async () => {
+    const { app, quality } = appFor();
+    const code = "coa_upload_confirmation_capability_unavailable";
+    quality.confirmUpload.mockRejectedValueOnce(
+      new InventoryAdminPersistenceError(code),
+    );
+
+    const response = await request(app)
+      .post(`/api/admin/research/lot-quality-documents/${DOC_ID}/confirm`)
+      .send({
+        expectedVersion: 1,
+        idempotencyKey: "confirm-synthetic-001",
+      });
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({ ok: false, code });
+    expect(response.headers["cache-control"]).toBe("no-store");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
   });
 });
 
@@ -331,16 +392,17 @@ describe("Website 4 accepted product-control and access-audit repository boundar
     );
   });
 
-  it("never asks Storage for a signed URL when the access audit RPC fails", async () => {
-    const createSignedUrl = vi.fn();
+  it("never asks the audit RPC or Storage for a private read capability", async () => {
+    const storageFrom = vi.fn();
     const db = {
-      rpc: vi.fn(async () => ({ data: null, error: { message: "audit rejected" } })),
-      storage: { from: vi.fn(() => ({ createSignedUrl })) },
+      rpc: vi.fn(),
+      storage: { from: storageFrom },
     };
     const repository = new SupabaseLotQualityAdminRepository(db as never);
     await expect(
       repository.createReadGrant(DOC_ID, "reviewer-a", "quality_review"),
-    ).rejects.toMatchObject({ code: "coa_access_audit_failed" });
-    expect(createSignedUrl).not.toHaveBeenCalled();
+    ).rejects.toMatchObject({ code: "coa_access_capability_unavailable" });
+    expect(db.rpc).not.toHaveBeenCalled();
+    expect(storageFrom).not.toHaveBeenCalled();
   });
 });

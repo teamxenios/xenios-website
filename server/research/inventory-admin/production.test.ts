@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import {
+  LOT_QUALITY_ACCESS_PURPOSES,
   LOT_QUALITY_TEST_KEYS,
   type InventoryMovementType,
   type InventorySourceBucket,
@@ -20,6 +20,7 @@ import {
   parseLotQualityDocumentRow,
   parseLotQualityTestRow,
   parseProductCommerceReadinessProjection,
+  parseSignedUrl,
 } from "./row-parsers";
 
 const PRODUCT_ID = "30000000-0000-4000-8000-000000000001";
@@ -27,6 +28,21 @@ const VARIANT_ID = "40000000-0000-4000-8000-000000000001";
 const LOT_ID = "50000000-0000-4000-8000-000000000001";
 const DOCUMENT_ID = "60000000-0000-4000-8000-000000000001";
 const MOVEMENT_ID = "70000000-0000-4000-8000-000000000001";
+const COA_MAX_BYTES = 20 * 1024 * 1024;
+
+function validUploadInput() {
+  return {
+    lotId: LOT_ID,
+    filename: "exact.pdf",
+    contentType: "application/pdf" as const,
+    sizeBytes: 100,
+    sha256: "a".repeat(64),
+    reportIssuer: "Verified Lab",
+    reportNumber: "REPORT-001",
+    reportDate: "2026-07-26",
+    idempotencyKey: "prepare-upload-001",
+  };
+}
 
 const lotInput: CreateInventoryLot = {
   lotCode: "LOT-RPC-001",
@@ -687,247 +703,98 @@ describe("Website 4 production repository command wiring", () => {
     });
   });
 
-  it("prepares every upload through the replayable RPC and signs its persisted identity", async () => {
-    const query = lotReadQuery();
-    const createSignedUploadUrl = vi.fn(async (storageKey: string) => ({
-      data: { signedUrl: `https://storage.invalid/${storageKey}` },
-      error: null,
-    }));
-    const storageFrom = vi.fn(() => ({ createSignedUploadUrl }));
-    const rpc = vi.fn(async (name: string) => {
-      expect(name).toBe("research_prepare_lot_quality_upload");
-      return {
-        data: {
-          documentId: DOCUMENT_ID,
-          documentVersion: 1,
-          storageKey: `lots/${LOT_ID}/${DOCUMENT_ID}-exact.pdf`,
-          objectConfirmed: false,
-          idempotentReplay: rpc.mock.calls.length > 1,
-        },
-        error: null,
-      };
-    });
-    const db = {
-      from: vi.fn(() => query),
+  it("accepts only exact-origin HTTPS Supabase Storage signed capabilities", () => {
+    const origin = "https://storage.invalid";
+    const valid = [
+      "https://storage.invalid/storage/v1/object/upload/sign/research-coa/lots/exact.pdf?token=upload-token",
+      "https://storage.invalid/storage/v1/object/sign/research-coa/lots/exact.pdf?token=read-token",
+    ];
+    for (const value of valid) {
+      expect(parseSignedUrl(value, "signed_url_invalid", origin)).toBe(value);
+    }
+    for (const value of [
+      "javascript:alert(1)",
+      "http://storage.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://other.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://user:secret@storage.invalid/storage/v1/object/sign/x?token=read-token",
+      "https://storage.invalid/storage/v1/object/sign/x#token=fragment",
+      "https://storage.invalid/storage/v1/object/sign/x",
+      "https://storage.invalid/not-storage/signed?token=read-token",
+      " https://storage.invalid/storage/v1/object/sign/x?token=read-token",
+    ]) {
+      expect(() => parseSignedUrl(value, "signed_url_invalid", origin)).toThrow(
+        "signed_url_invalid",
+      );
+    }
+    for (const invalidOrigin of [
+      "",
+      "http://storage.invalid",
+      "https://storage.invalid/path",
+      "https://user:secret@storage.invalid",
+    ]) {
+      expect(() => parseSignedUrl(valid[0], "signed_url_invalid", invalidOrigin)).toThrow(
+        "signed_url_invalid",
+      );
+    }
+  });
+
+  it.each(LOT_QUALITY_ACCESS_PURPOSES)("fails %s private reads closed before audit or signing when revocation cannot follow a Storage URL", async (purpose) => {
+    const rpc = vi.fn();
+    const storageFrom = vi.fn();
+    const repository = new SupabaseLotQualityAdminRepository({
       rpc,
       storage: { from: storageFrom },
-    };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
-    const input = {
-      lotId: LOT_ID,
-      filename: "exact.pdf",
-      contentType: "application/pdf" as const,
-      sizeBytes: 100,
-      sha256: "a".repeat(64),
-      reportIssuer: "Verified Lab",
-      reportNumber: "REPORT-001",
-      reportDate: "2026-07-26",
-      idempotencyKey: "prepare-upload-001",
-    };
-
-    const first = await repository.prepareUpload(input, "quality-reviewer");
-    const replay = await repository.prepareUpload(input, "quality-reviewer");
-
-    expect(rpc).toHaveBeenCalledTimes(2);
-    expect(rpc).toHaveBeenNthCalledWith(
-      1,
-      "research_prepare_lot_quality_upload",
-      expect.objectContaining({
-        p_lot_id: LOT_ID,
-        p_idempotency_key: "prepare-upload-001",
-        p_actor_id: "quality-reviewer",
-        p_upload: expect.objectContaining({
-          bucketId: "research-coa-production",
-          originalFilename: "exact.pdf",
-          reportNumber: "REPORT-001",
-        }),
-      }),
-    );
-    expect(first.documentId).toBe(DOCUMENT_ID);
-    expect(replay.documentId).toBe(DOCUMENT_ID);
-    expect(replay.storageKey).toBe(first.storageKey);
-    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(1, first.storageKey);
-    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(2, first.storageKey);
-    expect(query.insert).toBeUndefined();
-  });
-
-  it("does not sign a write grant for a malformed preparation receipt", async () => {
-    const query = lotReadQuery();
-    const createSignedUploadUrl = vi.fn();
-    const repository = new SupabaseLotQualityAdminRepository({
-      from: vi.fn(() => query),
-      rpc: vi.fn(async () => ({
-        data: {
-          documentId: DOCUMENT_ID,
-          documentVersion: 1,
-          storageKey: `lots/${LOT_ID}/${DOCUMENT_ID}-synthetic.pdf`,
-          objectConfirmed: "false",
-          idempotentReplay: false,
-        },
-        error: null,
-      })),
-      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
     } as never);
-
-    await expect(repository.prepareUpload({
-      lotId: LOT_ID,
-      filename: "synthetic.pdf",
-      contentType: "application/pdf",
-      sizeBytes: 100,
-      sha256: "e".repeat(64),
-      reportIssuer: "Synthetic Verification Lab",
-      reportNumber: "SYNTHETIC-REPORT-002",
-      reportDate: "2026-07-27",
-      idempotencyKey: "prepare-synthetic-002",
-    }, "synthetic-quality-reviewer")).rejects.toMatchObject({
-      code: "coa_upload_receipt_invalid",
-    });
-    expect(createSignedUploadUrl).not.toHaveBeenCalled();
-  });
-
-  it("does not reissue a write grant for a canceled preparation replay", async () => {
-    const query = lotReadQuery();
-    const createSignedUploadUrl = vi.fn();
-    const repository = new SupabaseLotQualityAdminRepository({
-      from: vi.fn(() => query),
-      rpc: vi.fn(async () => ({
-        data: {
-          documentId: DOCUMENT_ID,
-          documentVersion: 2,
-          storageKey: `lots/${LOT_ID}/${DOCUMENT_ID}-canceled.pdf`,
-          objectConfirmed: false,
-          idempotentReplay: true,
-        },
-        error: null,
-      })),
-      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
-    } as never);
-
-    await expect(repository.prepareUpload({
-      lotId: LOT_ID,
-      filename: "canceled.pdf",
-      contentType: "application/pdf",
-      sizeBytes: 100,
-      sha256: "f".repeat(64),
-      reportIssuer: "Synthetic Verification Lab",
-      reportNumber: "SYNTHETIC-CANCELED-001",
-      reportDate: "2026-07-27",
-      idempotencyKey: "prepare-canceled-001",
-    }, "synthetic-quality-reviewer")).rejects.toMatchObject({
-      code: "coa_upload_receipt_invalid",
-    });
-    expect(createSignedUploadUrl).not.toHaveBeenCalled();
-  });
-
-  it("recovers a signed-grant failure by replaying the same prepared document identity", async () => {
-    const query = lotReadQuery();
-    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-retry.pdf`;
-    const createSignedUploadUrl = vi
-      .fn()
-      .mockResolvedValueOnce({
-        data: null,
-        error: { message: "temporary signing failure" },
-      })
-      .mockResolvedValueOnce({
-        data: { signedUrl: `https://storage.invalid/${storageKey}` },
-        error: null,
-      });
-    const rpc = vi.fn(async () => ({
-      data: {
-        documentId: DOCUMENT_ID,
-        documentVersion: 1,
-        storageKey,
-        objectConfirmed: false,
-        idempotentReplay: rpc.mock.calls.length > 1,
-      },
-      error: null,
-    }));
-    const db = {
-      from: vi.fn(() => query),
-      rpc,
-      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
-    };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
-    const input = {
-      lotId: LOT_ID,
-      filename: "retry.pdf",
-      contentType: "application/pdf" as const,
-      sizeBytes: 100,
-      sha256: "b".repeat(64),
-      reportIssuer: "Verified Lab",
-      reportNumber: "REPORT-RETRY",
-      reportDate: "2026-07-27",
-      idempotencyKey: "prepare-upload-retry",
-    };
 
     await expect(
-      repository.prepareUpload(input, "quality-reviewer"),
-    ).rejects.toMatchObject({ code: "coa_upload_grant_failed" });
-    const replay = await repository.prepareUpload(input, "quality-reviewer");
-
-    expect(rpc).toHaveBeenCalledTimes(2);
-    expect(rpc.mock.calls[0]?.[1]).toMatchObject({
-      p_idempotency_key: "prepare-upload-retry",
-    });
-    expect(rpc.mock.calls[1]?.[1]).toMatchObject({
-      p_lot_id: rpc.mock.calls[0]?.[1].p_lot_id,
-      p_upload: rpc.mock.calls[0]?.[1].p_upload,
-      p_idempotency_key: rpc.mock.calls[0]?.[1].p_idempotency_key,
-      p_reason: rpc.mock.calls[0]?.[1].p_reason,
-      p_actor_id: rpc.mock.calls[0]?.[1].p_actor_id,
-    });
-    expect(replay).toMatchObject({
-      documentId: DOCUMENT_ID,
-      documentVersion: 1,
-      storageKey,
-    });
-    expect(createSignedUploadUrl).toHaveBeenCalledTimes(2);
-    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(1, storageKey);
-    expect(createSignedUploadUrl).toHaveBeenNthCalledWith(2, storageKey);
-    expect(query.insert).toBeUndefined();
+      repository.createReadGrant(DOCUMENT_ID, "synthetic-reviewer", purpose),
+    ).rejects.toMatchObject({ code: "coa_access_capability_unavailable" });
+    expect(rpc).not.toHaveBeenCalled();
+    expect(storageFrom).not.toHaveBeenCalled();
   });
 
-  it("does not mint a second write grant when preparation replays an already-confirmed object", async () => {
-    const query = lotReadQuery();
-    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-confirmed.pdf`;
-    const createSignedUploadUrl = vi.fn();
-    const db = {
-      from: vi.fn(() => query),
-      rpc: vi.fn(async () => ({
-        data: {
-          documentId: DOCUMENT_ID,
-          documentVersion: 2,
-          storageKey,
-          objectConfirmed: true,
-          idempotentReplay: true,
-        },
-        error: null,
-      })),
-      storage: { from: vi.fn(() => ({ createSignedUploadUrl })) },
-    };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
+  it.each([5, 100, COA_MAX_BYTES])("fails a valid %i-byte upload closed before metadata or Storage mutation when its capability lifetime is not revocable", async (sizeBytes) => {
+    const from = vi.fn();
+    const rpc = vi.fn();
+    const storageFrom = vi.fn();
+    const repository = new SupabaseLotQualityAdminRepository({
+      from,
+      rpc,
+      storage: { from: storageFrom },
+    } as never);
 
-    const replay = await repository.prepareUpload({
-      lotId: LOT_ID,
-      filename: "confirmed.pdf",
-      contentType: "application/pdf",
-      sizeBytes: 100,
-      sha256: "d".repeat(64),
-      reportIssuer: "Verified Lab",
-      reportNumber: "REPORT-CONFIRMED",
-      reportDate: "2026-07-27",
-      idempotencyKey: "prepare-upload-confirmed",
-    }, "quality-reviewer");
-
-    expect(replay).toEqual({
-      documentId: DOCUMENT_ID,
-      documentVersion: 2,
-      uploadRequired: false,
-      uploadUrl: null,
-      storageKey,
-      expiresAt: null,
+    await expect(
+      repository.prepareUpload(
+        { ...validUploadInput(), sizeBytes },
+        "quality-reviewer",
+      ),
+    ).rejects.toMatchObject({
+      code: "coa_upload_capability_lifetime_unavailable",
     });
-    expect(createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(from).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalled();
+    expect(storageFrom).not.toHaveBeenCalled();
+  });
+
+  it("still rejects malformed upload metadata without touching persistence", async () => {
+    const from = vi.fn();
+    const rpc = vi.fn();
+    const storageFrom = vi.fn();
+    const repository = new SupabaseLotQualityAdminRepository({
+      from,
+      rpc,
+      storage: { from: storageFrom },
+    } as never);
+
+    await expect(
+      repository.prepareUpload(
+        { ...validUploadInput(), sizeBytes: COA_MAX_BYTES + 1 },
+        "quality-reviewer",
+      ),
+    ).rejects.toMatchObject({ code: "coa_upload_metadata_invalid" });
+    expect(from).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalled();
+    expect(storageFrom).not.toHaveBeenCalled();
   });
 
   it("cancels an unconfirmed preparation only through the metadata-bound audited RPC", async () => {
@@ -976,84 +843,31 @@ describe("Website 4 production repository command wiring", () => {
     expect(result).toMatchObject({ version: 2, documentState: "withdrawn" });
   });
 
-  it("replays confirmation with the original version and command key after a lost response", async () => {
-    const bytes = new TextEncoder().encode("%PDF-confirm-replay");
-    const storageKey = `lots/${LOT_ID}/${DOCUMENT_ID}-confirm-replay.pdf`;
-    const documentQuery: any = {};
-    documentQuery.select = vi.fn(() => documentQuery);
-    documentQuery.eq = vi.fn(() => documentQuery);
-    documentQuery.maybeSingle = vi.fn(async () => ({
-      data: {
-        id: DOCUMENT_ID,
-        private_storage_key: storageKey,
-        size_bytes: bytes.byteLength,
-        content_type: "application/pdf",
-        sha256: createHash("sha256").update(bytes).digest("hex"),
-      },
-      error: null,
-    }));
-    const info = vi.fn(async () => ({
-      data: { contentType: "application/pdf", size: bytes.byteLength },
-      error: null,
-    }));
-    const download = vi.fn(async () => ({
-      data: new Blob([bytes], { type: "application/pdf" }),
-      error: null,
-    }));
-    const remove = vi.fn();
-    const rpc = vi
-      .fn()
-      .mockResolvedValueOnce({
-        data: null,
-        error: { message: "confirmation response lost after commit" },
-      })
-      .mockResolvedValueOnce({
-        data: {
-          documentId: DOCUMENT_ID,
-          documentState: "pending",
-          verificationState: "pending",
-          version: 2,
-          idempotentReplay: true,
-        },
-        error: null,
-      });
-    const db = {
-      from: vi.fn(() => documentQuery),
-      rpc,
-      storage: { from: vi.fn(() => ({ info, download, remove })) },
-    };
-    const repository = new SupabaseLotQualityAdminRepository(db as never);
+  it.each([1, 2_147_483_647])(
+    "fails confirmation version %i closed before metadata, Storage, or fetch work when immutable bytes cannot be bound through commit",
+    async (expectedVersion) => {
+      const from = vi.fn();
+      const rpc = vi.fn();
+      const storageFrom = vi.fn();
+      const repository = new SupabaseLotQualityAdminRepository({
+        from,
+        rpc,
+        storage: { from: storageFrom },
+      } as never);
 
-    await expect(
-      repository.confirmUpload(
-        DOCUMENT_ID,
-        1,
-        "confirm-upload-replay-001",
-        "quality-reviewer",
-      ),
-    ).rejects.toMatchObject({ code: "coa_upload_confirmation_rejected" });
-    const replay = await repository.confirmUpload(
-      DOCUMENT_ID,
-      1,
-      "confirm-upload-replay-001",
-      "quality-reviewer",
-    );
-
-    expect(rpc).toHaveBeenCalledTimes(2);
-    for (const call of rpc.mock.calls) {
-      expect(call[0]).toBe("research_manage_lot_quality_document");
-      expect(call[1]).toMatchObject({
-        p_document_id: DOCUMENT_ID,
-        p_action: "confirm_upload",
-        p_tests: [],
-        p_expected_version: 1,
-        p_idempotency_key: "confirm-upload-replay-001",
-        p_actor_id: "quality-reviewer",
+      await expect(
+        repository.confirmUpload(
+          DOCUMENT_ID,
+          expectedVersion,
+          "confirm-upload-unavailable",
+          "quality-reviewer",
+        ),
+      ).rejects.toMatchObject({
+        code: "coa_upload_confirmation_capability_unavailable",
       });
-    }
-    expect(replay).toMatchObject({ version: 2, idempotentReplay: true });
-    expect(info).toHaveBeenCalledTimes(2);
-    expect(download).toHaveBeenCalledTimes(2);
-    expect(remove).not.toHaveBeenCalled();
-  });
+      expect(from).not.toHaveBeenCalled();
+      expect(rpc).not.toHaveBeenCalled();
+      expect(storageFrom).not.toHaveBeenCalled();
+    },
+  );
 });

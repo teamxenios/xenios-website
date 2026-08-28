@@ -1,4 +1,3 @@
-import { createHash, randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   CoaUploadCancellation,
@@ -20,11 +19,9 @@ import type { ProductCommerceReadinessReader } from "../products-diagnostics/pro
 import {
   assertInventoryMovementCommandSource,
   InventoryAdminPersistenceError,
-  parseCoaUploadPreparationReceipt,
   parseEvidenceRows,
   parseInventoryDispositionReceipt,
   parseInventoryLotCreateReceipt,
-  parseInventoryLotReferenceRow,
   parseInventoryLotRow,
   parseInventoryMovementReceipt,
   parseInventoryMovementRow,
@@ -33,12 +30,8 @@ import {
   parseLotQualityDocumentRow,
   parseLotQualityTestRow,
   parseProductReadinessGateEvidence,
-  parseQualityAccessReceipt,
   parseQualityDocumentReceipt,
   parseReadinessEvidence,
-  parseSignedUrl,
-  parseStorageObjectInfo,
-  parseStoredQualityObjectReference,
 } from "./row-parsers";
 
 export { InventoryAdminPersistenceError } from "./row-parsers";
@@ -314,64 +307,13 @@ export class SupabaseLotQualityAdminRepository {
     ) {
       failed("coa_upload_metadata_invalid");
     }
-    const lot = await this.db
-      .from("research_inventory_lots")
-      .select("id,lot_id")
-      .eq("id", input.lotId)
-      .maybeSingle();
-    if (lot.error || !lot.data) failed("coa_lot_not_found");
-    parseInventoryLotReferenceRow(lot.data, input.lotId);
-
-    const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120);
-    const prepared = await this.db.rpc("research_prepare_lot_quality_upload", {
-      p_lot_id: input.lotId,
-      p_upload: {
-        bucketId: this.bucketName,
-        originalFilename: safeName,
-        contentType: input.contentType,
-        sizeBytes: input.sizeBytes,
-        sha256: input.sha256,
-        reportIssuer: input.reportIssuer.trim(),
-        reportNumber: input.reportNumber.trim(),
-        reportDate: input.reportDate,
-      },
-      p_idempotency_key: input.idempotencyKey,
-      p_reason: "Private exact-lot COA upload reference prepared",
-      p_actor_id: actorId,
-      p_occurred_at: new Date().toISOString(),
-    });
-    if (prepared.error) failed("coa_upload_reference_failed");
-    const preparation = parseCoaUploadPreparationReceipt(prepared.data, input.lotId);
-    const {
-      documentId,
-      documentVersion,
-      storageKey,
-      objectConfirmed,
-    } = preparation;
-
-    if (objectConfirmed) {
-      return {
-        documentId,
-        documentVersion,
-        uploadRequired: false,
-        uploadUrl: null,
-        storageKey,
-        expiresAt: null,
-      };
-    }
-    const { data, error } = await this.db.storage
-      .from(this.bucketName)
-      .createSignedUploadUrl(storageKey);
-    if (error) failed("coa_upload_grant_failed");
-    const uploadUrl = parseSignedUrl(data?.signedUrl, "coa_upload_grant_invalid");
-    return {
-      documentId,
-      documentVersion,
-      uploadRequired: true,
-      uploadUrl,
-      storageKey,
-      expiresAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
-    };
+    void actorId;
+    // The installed Storage SDK mints a browser-held upload capability whose
+    // lifetime cannot be selected or revoked here. Creating metadata first and
+    // returning a shorter DTO timestamp would leave a live capability behind.
+    // Stay unavailable before any database or Storage side effect until an
+    // atomic, revocable upload proxy exists.
+    failed("coa_upload_capability_lifetime_unavailable");
   }
 
   async cancelUpload(
@@ -412,56 +354,16 @@ export class SupabaseLotQualityAdminRepository {
     idempotencyKey: string,
     actorId: string,
   ): Promise<LotQualityDocumentReceipt> {
-    const document = await this.db
-      .from("research_lot_quality_documents")
-      .select("id,private_storage_key,size_bytes,content_type,sha256")
-      .eq("id", documentId)
-      .maybeSingle();
-    if (document.error || !document.data) {
-      failed("coa_upload_reference_not_found");
-    }
-    const reference = parseStoredQualityObjectReference(document.data, documentId);
-    const bucket = this.db.storage.from(this.bucketName);
-    const [{ data: info, error: infoError }, { data: file, error: fileError }] =
-      await Promise.all([
-        bucket.info(reference.privateStorageKey),
-        bucket.download(reference.privateStorageKey),
-      ]);
-    if (infoError || fileError || !info || !file) failed("coa_private_object_missing");
-    if (typeof (file as { arrayBuffer?: unknown }).arrayBuffer !== "function") {
-      failed("coa_storage_evidence_invalid");
-    }
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const signature = new TextDecoder().decode(bytes.slice(0, 5));
-    const digest = createHash("sha256").update(bytes).digest("hex");
-    const { contentType, size } = parseStorageObjectInfo(info);
-    if (
-      signature !== "%PDF-" ||
-      contentType !== reference.contentType ||
-      size !== reference.sizeBytes ||
-      bytes.byteLength !== size ||
-      digest !== reference.sha256
-    ) {
-      await bucket.remove([reference.privateStorageKey]);
-      failed("coa_private_object_mismatch");
-    }
-    const { data, error } = await this.db.rpc("research_manage_lot_quality_document", {
-      p_document_id: documentId,
-      p_action: "confirm_upload",
-      p_tests: [],
-      p_expected_version: expectedVersion,
-      p_idempotency_key: idempotencyKey,
-      p_reason: "Private exact-lot COA object verified",
-      p_actor_id: actorId,
-      p_occurred_at: new Date().toISOString(),
-    });
-    if (error) failed("coa_upload_confirmation_rejected");
-    return parseQualityDocumentReceipt(data, {
-      documentId,
-      expectedVersion,
-      documentState: "pending",
-      verificationState: "pending",
-    });
+    void documentId;
+    void expectedVersion;
+    void idempotencyKey;
+    void actorId;
+    // The installed interfaces cannot bind an immutable Storage object version
+    // or digest through the confirmation commit. A previously minted upload
+    // capability could replace the key after any byte read but before the RPC.
+    // Stay unavailable before reads or mutations; cancelUpload remains the only
+    // recovery path for legacy pending preparations.
+    failed("coa_upload_confirmation_capability_unavailable");
   }
 
   async review(
@@ -495,30 +397,13 @@ export class SupabaseLotQualityAdminRepository {
     actorId: string,
     purpose: LotQualityAccessPurpose,
   ): Promise<{ signedUrl: string; expiresAt: string }> {
-    const accessId = randomUUID();
-    const authorization = await this.db.rpc("research_authorize_lot_quality_access", {
-      p_document_id: documentId,
-      p_actor_id: actorId,
-      p_purpose: purpose,
-      p_access_id: accessId,
-      p_occurred_at: new Date().toISOString(),
-    });
-    if (authorization.error) failed("coa_access_audit_failed");
-    const authorized = parseQualityAccessReceipt(
-      authorization.data,
-      accessId,
-      this.bucketName,
-      documentId,
-    );
-    const { data, error } = await this.db.storage
-      .from(this.bucketName)
-      .createSignedUrl(authorized.storageKey, 60);
-    if (error) failed("coa_access_grant_failed");
-    const signedUrl = parseSignedUrl(data?.signedUrl, "coa_access_grant_invalid");
-    return {
-      signedUrl,
-      expiresAt: new Date(Date.now() + 60_000).toISOString(),
-    };
+    void documentId;
+    void actorId;
+    void purpose;
+    // A Storage signed URL remains usable after the publication row is
+    // withdrawn or replaced. Until byte delivery can be proxied through a
+    // final current-revision check, mint no private read capability at all.
+    failed("coa_access_capability_unavailable");
   }
 }
 
