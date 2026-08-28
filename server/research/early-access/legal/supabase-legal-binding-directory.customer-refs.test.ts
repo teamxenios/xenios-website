@@ -134,6 +134,44 @@ describe("customerRefsFor: a malformed answer is narrowed, never repaired", () =
   });
 });
 
+describe("customerRefsForHistory: lossless completeness evidence", () => {
+  it("marks a clean durable answer complete", async () => {
+    const { directory } = directoryWith([PRIMARY_REF, ALIAS_REF]);
+
+    await expect(directory.customerRefsForHistory(MEMBER)).resolves.toEqual({
+      refs: [ALIAS_REF, PRIMARY_REF],
+      complete: true,
+    });
+  });
+
+  it.each([
+    ["non-array", null],
+    ["malformed row", [PRIMARY_REF, null]],
+    ["invalid handle", [PRIMARY_REF, " eac_not_exact "]],
+    ["duplicate", [PRIMARY_REF, PRIMARY_REF]],
+  ])("marks a %s durable answer incomplete without exposing unsafe refs", async (_label, answer) => {
+    const { directory } = directoryWith(answer);
+
+    const read = await directory.customerRefsForHistory(MEMBER);
+
+    expect(read.complete).toBe(false);
+    expect(read.refs).toEqual(answer === null ? [] : [PRIMARY_REF]);
+    expect(Object.isFrozen(read)).toBe(true);
+    expect(Object.isFrozen(read.refs)).toBe(true);
+  });
+
+  it("marks an invalid member read incomplete without touching persistence", async () => {
+    const recorder: Recorder = { calls: [] };
+    const { directory } = directoryWith([PRIMARY_REF], recorder);
+
+    await expect(directory.customerRefsForHistory("not-a-member")).resolves.toEqual({
+      refs: [],
+      complete: false,
+    });
+    expect(recorder.calls).toEqual([]);
+  });
+});
+
 describe("customerRefsFor: an infrastructure failure is not an empty history", () => {
   it("re-throws the persistence error instead of swallowing it into []", async () => {
     // An empty answer means "you have no orders". A database that is down

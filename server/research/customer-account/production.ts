@@ -21,9 +21,10 @@
 //   attribution→ research_affiliate_customer_bindings (candidate, 20260819) +
 //                partner registry; staff projection only.
 
-import type {
-  MembershipBillingDisplayState,
-  MembershipDisplayState,
+import {
+  createMembershipDto,
+  type MembershipBillingDisplayState,
+  type MembershipDisplayState,
 } from "@shared/research/customer-account/contract";
 import { getMemberByAuthUserId, type MemberRow } from "../member-auth";
 import type {
@@ -153,14 +154,14 @@ export function buildProductionCustomerAccountPorts(
       async membershipFor(memberKey) {
         const row = await lookup(memberKey);
         const state = membershipStateOf(row);
-        return {
+        return createMembershipDto({
           state,
           billing: billingDisplayOf(row),
           planLabel: state === "none" ? null : "Xenios Research Membership",
-          nextRenewalAt: null,
+          renewal: { state: "unavailable", nextRenewalAt: null },
           manageUrl: null,
           manualBilling: true,
-        };
+        });
       },
     },
     care: {
@@ -186,8 +187,13 @@ export function buildProductionCustomerAccountPorts(
         return {
           research: [],
           carePharmacy: [],
+          carePharmacyHistory: {
+            availability: "unavailable",
+            authoritativeRecordCount: null,
+          },
           history: {
             availability: "unavailable",
+            authoritativeRecordCount: null,
             sources: { commerce: disconnected, xea: disconnected, xec: disconnected, xrr: disconnected },
           },
         };

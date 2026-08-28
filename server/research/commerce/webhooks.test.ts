@@ -1,11 +1,14 @@
+import crypto from "crypto";
+
 import { describe, expect, it } from "vitest";
 import { providerDisabled, providerOk, type ProviderResult } from "@shared/research/capability";
-import type {
-  PaymentAuthorization,
-  PaymentCapture,
-  PaymentProvider,
-  PaymentRefund,
-  WebhookVerification,
+import {
+  StripePaymentAdapter,
+  type PaymentAuthorization,
+  type PaymentCapture,
+  type PaymentProvider,
+  type PaymentRefund,
+  type WebhookVerification,
 } from "../providers/payment";
 import type {
   FulfillmentAcceptance,
@@ -13,8 +16,11 @@ import type {
   FulfillmentStatusUpdate,
 } from "../providers/fulfillment";
 import {
+  createInMemoryWebhookAtomicStore,
   createInMemoryWebhookEventStore,
   createWebhookHandler,
+  type WebhookAtomicApplyStore,
+  type WebhookAtomicEvent,
   type WebhookDeps,
   type WebhookEventStore,
   type WebhookOrder,
@@ -62,7 +68,15 @@ class FakePaymentProvider implements PaymentProvider {
     if (signature !== GOOD_SIGNATURE) {
       return { ok: false, code: "REJECTED", message: "Invalid signature.", retryable: false };
     }
-    let parsed: { id?: string; type?: string; providerReference?: string };
+    let parsed: {
+      id?: string;
+      type?: string;
+      providerReference?: string;
+      orderId?: string;
+      amountCents?: number;
+      currency?: string;
+      providerAccountId?: string;
+    };
     try {
       parsed = JSON.parse(rawBody);
     } catch {
@@ -75,6 +89,10 @@ class FakePaymentProvider implements PaymentProvider {
       eventId: parsed.id,
       eventType: parsed.type,
       providerReference: parsed.providerReference,
+      orderId: parsed.orderId,
+      amountCents: parsed.amountCents,
+      currency: parsed.currency,
+      providerAccountId: parsed.providerAccountId,
       verified: true as const,
     });
   }
@@ -89,6 +107,7 @@ class DisabledVerifyPaymentProvider extends FakePaymentProvider {
 class FakeFulfillmentProvider implements FulfillmentProvider {
   readonly name = "fake_fulfillment";
   readonly transportMode = "api" as const;
+  verifyCalls = 0;
 
   async submit(): Promise<ProviderResult<FulfillmentAcceptance>> {
     return providerDisabled<FulfillmentAcceptance>("mitch_fulfillment");
@@ -100,6 +119,7 @@ class FakeFulfillmentProvider implements FulfillmentProvider {
     rawBody: string,
     signature: string | undefined,
   ): Promise<ProviderResult<FulfillmentStatusUpdate>> {
+    this.verifyCalls += 1;
     if (signature !== GOOD_SIGNATURE) {
       return { ok: false, code: "REJECTED", message: "Invalid signature.", retryable: false };
     }
@@ -133,35 +153,53 @@ class RecordingEventStore implements WebhookEventStore {
 function orderStore(initial: WebhookOrder[]): {
   get(orderId: string): Promise<WebhookOrder | undefined>;
   save(order: WebhookOrder): Promise<void>;
+  atomic: WebhookAtomicApplyStore;
   saves: number;
 } {
-  const rows = new Map<string, WebhookOrder>();
-  initial.forEach((row) => rows.set(row.orderId, row));
+  const backing = createInMemoryWebhookAtomicStore(initial);
   return {
+    atomic: backing,
     saves: 0,
     async get(orderId: string) {
-      return rows.get(orderId);
+      return backing.get(orderId);
     },
     async save(order: WebhookOrder) {
-      rows.set(order.orderId, order);
+      await backing.save(order);
       this.saves += 1;
     },
   };
 }
 
 function approvedOrder(orderId = "ord_1"): WebhookOrder {
-  return { orderId, state: "approved", paymentReference: "auth_1", captured: false };
+  return {
+    orderId,
+    state: "approved",
+    paymentReference: "auth_1",
+    captured: false,
+    amountDueCents: 1_000,
+    authorizedAmountCents: 1_000,
+    capturedAmountCents: null,
+    refundedAmountCents: 0,
+    currency: "usd",
+    paymentProviderAccountId: null,
+  };
 }
 
 function deps(overrides: Partial<WebhookDeps> = {}): WebhookDeps {
-  return {
+  const orders = overrides.orders ?? orderStore([approvedOrder()]);
+  const result: WebhookDeps = {
     store: new RecordingEventStore(),
     payment: new FakePaymentProvider(),
     fulfillment: new FakeFulfillmentProvider(),
-    orders: orderStore([approvedOrder()]),
+    orders,
+    atomic: (orders as typeof orders & { atomic?: WebhookAtomicApplyStore }).atomic,
     commerceEnabled: true,
     ...overrides,
   };
+  if (Object.prototype.hasOwnProperty.call(overrides, "atomic")) {
+    result.atomic = overrides.atomic;
+  }
+  return result;
 }
 
 function captureBody(id = "evt_1", orderId = "ord_1"): string {
@@ -170,12 +208,56 @@ function captureBody(id = "evt_1", orderId = "ord_1"): string {
     type: "payment.captured",
     providerReference: "auth_1",
     orderId,
+    amountCents: 1_000,
+    currency: "usd",
   });
 }
 
 // ---------------------------------------------------------------------------
 
 describe("payment webhooks", () => {
+  it("routes a standard signed Stripe data.object metadata event and binds its money evidence", async () => {
+    const webhookSecret = "whsec_fake_webhook_test_only";
+    const eventBody = JSON.stringify({
+      id: "evt_stripe_standard",
+      type: "payment_intent.succeeded",
+      data: {
+        object: {
+          id: "pi_standard",
+          object: "payment_intent",
+          metadata: { orderId: "ord_1" },
+          amount_received: 1_000,
+          currency: "usd",
+        },
+      },
+    });
+    const timestamp = Math.floor(NOW.getTime() / 1_000);
+    const digest = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(`${timestamp}.${eventBody}`)
+      .digest("hex");
+    const payment = new StripePaymentAdapter({
+      secretKey: "sk_fake_webhook_test_only",
+      webhookSecret,
+      now: () => NOW.getTime(),
+      transport: async () => {
+        throw new Error("webhook verification must not call the provider API");
+      },
+    });
+    const orders = orderStore([{ ...approvedOrder(), paymentReference: "pi_standard" }]);
+    const handler = createWebhookHandler(deps({ payment, orders }));
+
+    await expect(
+      handler.handlePayment(eventBody, `t=${timestamp},v1=${digest}`, NOW),
+    ).resolves.toEqual({ ok: true, applied: true, eventId: "evt_stripe_standard" });
+    expect(await orders.get("ord_1")).toMatchObject({
+      state: "payment_captured",
+      paymentReference: "pi_standard",
+      captured: true,
+      capturedAmountCents: 1_000,
+    });
+  });
+
   it("moves an approved order to captured using the provider reference", async () => {
     const orders = orderStore([approvedOrder()]);
     const d = deps({ orders });
@@ -197,10 +279,98 @@ describe("payment webhooks", () => {
     const body = JSON.stringify({ id: "evt_2", type: "payment.captured", orderId: "ord_1" });
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
-    expect(result).toEqual({ ok: true, applied: false, eventId: "evt_2" });
+    expect(result).toEqual({ ok: false, code: "payment_evidence_mismatch" });
     expect((await orders.get("ord_1"))!.state).toBe("approved");
     expect((await orders.get("ord_1"))!.captured).toBe(false);
   });
+
+  it("does not claim a signed event whose payment reference is bound to another order", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+    const wrongReference = JSON.stringify({
+      id: "evt_bound",
+      type: "payment.captured",
+      providerReference: "auth_other",
+      orderId: "ord_1",
+      amountCents: 1_000,
+      currency: "usd",
+    });
+
+    await expect(handler.handlePayment(wrongReference, GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: false,
+      code: "payment_evidence_mismatch",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+
+    // The mismatch was not persisted as a consumed event. A corrected, signed
+    // redelivery with the same provider event id can still apply atomically.
+    const corrected = JSON.stringify({
+      id: "evt_bound",
+      type: "payment.captured",
+      providerReference: "auth_1",
+      orderId: "ord_1",
+      amountCents: 1_000,
+      currency: "usd",
+    });
+    await expect(handler.handlePayment(corrected, GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_bound",
+    });
+  });
+
+  it.each([
+    ["amount", { amountCents: 999 }],
+    ["currency", { currency: "eur" }],
+    ["provider account", { providerAccountId: "acct_other" }],
+  ])("rejects signed %s evidence that does not exactly match the stored order", async (_label, override) => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+    const body = JSON.stringify({
+      id: `evt_${String(_label).replace(/\s+/g, "_")}`,
+      type: "payment.captured",
+      providerReference: "auth_1",
+      orderId: "ord_1",
+      amountCents: 1_000,
+      currency: "usd",
+      ...override,
+    });
+
+    await expect(handler.handlePayment(body, GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: false,
+      code: "payment_evidence_mismatch",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+    expect((await orders.get("ord_1"))!.capturedAmountCents).toBeNull();
+  });
+
+  it.each([1_000, 900])(
+    "rejects capture amount %i when the stored authorization diverges from amount due",
+    async (captureAmount) => {
+      const orders = orderStore([
+        { ...approvedOrder(), authorizedAmountCents: 900 },
+      ]);
+      const handler = createWebhookHandler(deps({ orders }));
+      const body = JSON.stringify({
+        id: `evt_auth_divergence_${captureAmount}`,
+        type: "payment.captured",
+        providerReference: "auth_1",
+        orderId: "ord_1",
+        amountCents: captureAmount,
+        currency: "usd",
+      });
+
+      await expect(handler.handlePayment(body, GOOD_SIGNATURE, NOW)).resolves.toEqual({
+        ok: false,
+        code: "payment_evidence_mismatch",
+      });
+      expect((await orders.get("ord_1"))!).toMatchObject({
+        state: "approved",
+        captured: false,
+        capturedAmountCents: null,
+      });
+    },
+  );
 
   it("rejects an unsigned body and never records it as seen", async () => {
     const store = new RecordingEventStore();
@@ -240,9 +410,9 @@ describe("payment webhooks", () => {
 
     await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
     expect(payment.verifyCalls).toBe(2);
-    // The seen lookup happens only after a successful verification, and the record
-    // happens only after that lookup clears.
-    expect(store.calls).toEqual(["seen:evt_1", "record:evt_1"]);
+    // Legacy seen/record calls are not an atomic authority and are never used by
+    // the handler, even after successful verification.
+    expect(store.calls).toEqual([]);
   });
 
   it("absorbs a replayed event without moving state", async () => {
@@ -259,7 +429,87 @@ describe("payment webhooks", () => {
     expect(replay).toEqual({ ok: true, applied: false, eventId: "evt_1" });
     expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
     expect(orders.saves).toBe(savesAfterFirst);
-    expect(store.calls).toEqual(["seen:evt_1", "record:evt_1", "seen:evt_1"]);
+    expect(store.calls).toEqual([]);
+  });
+
+  it("serializes concurrent deliveries so exactly one owns and applies the event", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    const results = await Promise.all([
+      handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW),
+      handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW),
+    ]);
+
+    expect(results).toContainEqual({ ok: true, applied: true, eventId: "evt_1" });
+    expect(results).toContainEqual({ ok: true, applied: false, eventId: "evt_1" });
+    expect(results.filter((result) => result.ok && result.applied)).toHaveLength(1);
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("rejects the same provider event id when it is bound to different signed bytes", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
+    const conflictingBody = JSON.stringify({
+      id: "evt_1",
+      type: "payment.failed",
+      providerReference: "auth_other",
+      orderId: "ord_1",
+    });
+
+    expect(await handler.handlePayment(conflictingBody, GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "event_conflict",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("does not poison a retry when the atomic persistence operation fails", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const durable = orders.atomic;
+    let failOnce = true;
+    const atomic: WebhookAtomicApplyStore = {
+      async claimAndApply(event, decide) {
+        if (failOnce) {
+          failOnce = false;
+          throw new Error("injected transaction failure");
+        }
+        return durable.claimAndApply(event, decide);
+      },
+    };
+    const handler = createWebhookHandler(deps({ orders, atomic }));
+
+    await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).rejects.toThrow(
+      "injected transaction failure",
+    );
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+
+    await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
+  });
+
+  it("fails closed when only separate replay and order stores are wired", async () => {
+    const store = new RecordingEventStore();
+    const orders = orderStore([approvedOrder()]);
+    const payment = new FakePaymentProvider();
+    const handler = createWebhookHandler(deps({ store, orders, payment, atomic: undefined }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect(payment.verifyCalls).toBe(0);
+    expect(store.calls).toEqual([]);
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
   });
 
   it("reports an unknown order rather than crashing or retrying forever", async () => {
@@ -268,6 +518,22 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(captureBody("evt_9", "ord_missing"), GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: false, code: "unknown_order" });
+  });
+
+  it("does not claim an event for an unknown order, allowing a later durable-order retry", async () => {
+    const orders = orderStore([]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "unknown_order",
+    });
+    await orders.save(approvedOrder());
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
   });
 
   it("reports malformed when the body is not JSON", async () => {
@@ -286,7 +552,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: false, code: "malformed" });
-    expect(store.calls).toEqual(["seen:evt_3"]);
+    expect(store.calls).toEqual([]);
   });
 
   it("surfaces a disabled provider as capability_disabled", async () => {
@@ -312,7 +578,7 @@ describe("payment webhooks", () => {
     expect((await orders.get("ord_1"))!.state).toBe("approved");
     // Not recorded, because nothing happened. A redelivery after commerce is
     // enabled is a first application, not a second.
-    expect(store.calls).toEqual(["seen:evt_1"]);
+    expect(store.calls).toEqual([]);
   });
 
   it("acknowledges an unrecognised event type without guessing at a state", async () => {
@@ -329,7 +595,12 @@ describe("payment webhooks", () => {
   it("does not move an order along a transition a webhook may not drive", async () => {
     // payment_captured to refunded is an admin decision, never a provider one.
     const orders = orderStore([
-      { orderId: "ord_1", state: "payment_captured", paymentReference: "auth_1", captured: true },
+      {
+        ...approvedOrder(),
+        state: "payment_captured",
+        captured: true,
+        capturedAmountCents: 1_000,
+      },
     ]);
     const handler = createWebhookHandler(deps({ orders }));
 
@@ -338,6 +609,8 @@ describe("payment webhooks", () => {
       type: "payment.refunded",
       providerReference: "auth_1",
       orderId: "ord_1",
+      amountCents: 1_000,
+      currency: "usd",
     });
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
@@ -432,6 +705,26 @@ describe("fulfillment webhooks", () => {
     expect(store.calls).toEqual([]);
   });
 
+  it("does not invoke fulfillment verification without atomic inbox+effect authority", async () => {
+    const store = new RecordingEventStore();
+    const orders = orderStore([approvedOrder()]);
+    const fulfillment = new FakeFulfillmentProvider();
+    const handler = createWebhookHandler(deps({
+      store,
+      orders,
+      fulfillment,
+      atomic: undefined,
+    }));
+
+    expect(await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect(fulfillment.verifyCalls).toBe(0);
+    expect(store.calls).toEqual([]);
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+  });
+
   it("reports an unknown order", async () => {
     const handler = createWebhookHandler(deps());
 
@@ -452,5 +745,35 @@ describe("the in-memory event store", () => {
 
     expect(store.seen("provider_a", "evt_1")).toBe(true);
     expect(store.seen("provider_b", "evt_1")).toBe(false);
+  });
+});
+
+describe("the in-memory atomic inbox and order store", () => {
+  const event: WebhookAtomicEvent = {
+    providerName: "provider_a",
+    eventId: "evt_owner",
+    eventType: "payment.captured",
+    payloadSha256: "a".repeat(64),
+    receivedAt: NOW,
+    orderId: "ord_1",
+  };
+
+  it("rejects a decision that tries to write an order it does not own without burning the claim", async () => {
+    const store = createInMemoryWebhookAtomicStore([approvedOrder()]);
+
+    await expect(
+      store.claimAndApply(event, () => ({
+        kind: "apply",
+        order: { ...approvedOrder("ord_2"), state: "payment_captured", captured: true },
+      })),
+    ).rejects.toThrow("different order");
+
+    await expect(
+      store.claimAndApply(event, (order) => ({
+        kind: "apply",
+        order: { ...order!, state: "payment_captured", captured: true },
+      })),
+    ).resolves.toEqual({ outcome: "applied" });
+    expect((await store.get("ord_1"))!.state).toBe("payment_captured");
   });
 });

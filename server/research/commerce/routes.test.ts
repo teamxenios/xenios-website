@@ -461,6 +461,48 @@ describe("checkout relays the capability denial", () => {
 });
 
 describe("order ownership", () => {
+  it("propagates unavailable history detail instead of fabricating a 404", async () => {
+    const routes = build(deps({
+      orders: {
+        listForMember: async () => [],
+        getForMember: async () => {
+          throw new Error("order_history_incomplete");
+        },
+      },
+    }));
+    const { res, captured } = fakeRes();
+
+    await expect(
+      route(routes, "get", "/api/research/orders/:orderId").handler(
+        reqWith({ id: "mem_1" }, { params: { orderId: "XEC-POTENTIALLY-PAID" } } as Partial<Request>),
+        res,
+      ),
+    ).rejects.toThrow("order_history_incomplete");
+    expect(captured.status).not.toBe(404);
+    expect(captured.body).toBeUndefined();
+  });
+
+  it("propagates ambiguous history detail instead of selecting a source or fabricating a 404", async () => {
+    const routes = build(deps({
+      orders: {
+        listForMember: async () => [],
+        getForMember: async () => {
+          throw new Error("order_history_ambiguous");
+        },
+      },
+    }));
+    const { res, captured } = fakeRes();
+
+    await expect(
+      route(routes, "get", "/api/research/orders/:orderId").handler(
+        reqWith({ id: "mem_1" }, { params: { orderId: "opaque-same-member-collision" } } as Partial<Request>),
+        res,
+      ),
+    ).rejects.toThrow("order_history_ambiguous");
+    expect(captured.status).not.toBe(404);
+    expect(captured.body).toBeUndefined();
+  });
+
   // A foreign order and a missing order look identical, so a probe cannot use the
   // response to learn that someone else's order exists.
   it("404s a foreign order indistinguishably from a missing one", async () => {

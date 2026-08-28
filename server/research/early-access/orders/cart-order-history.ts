@@ -32,6 +32,7 @@
  */
 
 import type { OrderDetailDto, OrderSummaryDto } from "../../../../shared/research/commerce-api";
+import type { EarlyAccessCartSettlement } from "../../../../shared/research/early-access-cart";
 import type { OrderState } from "../../../../shared/research/commerce";
 import {
   expectArray,
@@ -62,6 +63,8 @@ const CUSTOMER_REF = /^eac_[a-f0-9]{32}$/;
 /** One durable read: the cart checkouts recorded against a set of handles. */
 export interface EarlyAccessCartOrderHistoryPort {
   checkoutsForCustomers(customerRefs: readonly string[]): Promise<readonly unknown[]>;
+  /** Optional exact money reader. Absence means capture evidence is unknown. */
+  settlement?(checkoutNumber: string): Promise<EarlyAccessCartSettlement | null>;
 }
 
 /**
@@ -168,18 +171,30 @@ export function readCartHistoryEntry(value: unknown): EarlyAccessCartHistoryEntr
   if (invoice === null) return null;
   // NO $0 RENDERING. A missing or malformed total is not free; it is not shown.
   if (invoice.currency !== "USD") return null;
+  if (!positiveInt(invoice.subtotalCents)) return null;
+  if (!nonNegativeInt(invoice.discountCents)) return null;
   if (!positiveInt(invoice.payableTotalCents)) return null;
   if (!nonNegativeInt(invoice.shippingCents)) return null;
+  if (!nonNegativeInt(invoice.taxCents)) return null;
+  if (invoice.discountCents > invoice.subtotalCents) return null;
+  const expectedPayable =
+    invoice.subtotalCents - invoice.discountCents + invoice.shippingCents + invoice.taxCents;
+  if (!Number.isSafeInteger(expectedPayable) || invoice.payableTotalCents !== expectedPayable) {
+    return null;
+  }
 
   const children = checkout.children;
   if (!Array.isArray(children) || children.length === 0) return null;
   const lines: Array<EarlyAccessCartHistoryEntry["lines"][number]> = [];
+  let merchandisePayableCents = 0;
   for (const child of children) {
     const line = record(child);
     if (line === null) return null;
     if (typeof line.sku !== "string" || line.sku === "") return null;
     if (!positiveInt(line.quantity)) return null;
     if (!positiveInt(line.payableCents)) return null;
+    merchandisePayableCents += line.payableCents;
+    if (!Number.isSafeInteger(merchandisePayableCents)) return null;
     lines.push(
       Object.freeze({
         sku: line.sku,
@@ -191,6 +206,7 @@ export function readCartHistoryEntry(value: unknown): EarlyAccessCartHistoryEntr
       }),
     );
   }
+  if (merchandisePayableCents !== invoice.subtotalCents - invoice.discountCents) return null;
 
   return Object.freeze({
     cartCheckoutNumber: row.checkoutNumber,
@@ -204,22 +220,58 @@ export function readCartHistoryEntry(value: unknown): EarlyAccessCartHistoryEntr
 }
 
 /** One cart checkout as a member order summary. */
-export function cartOrderSummary(entry: EarlyAccessCartHistoryEntry): OrderSummaryDto {
+export type CartHistoryPaymentEvidence = Readonly<{
+  amountCapturedCents: number | null;
+  amountRefundedCents: number | null;
+}>;
+
+const UNKNOWN_CART_PAYMENT_EVIDENCE: CartHistoryPaymentEvidence = Object.freeze({
+  amountCapturedCents: null,
+  amountRefundedCents: null,
+});
+
+/** Read capture only from the durable settlement; cart has no refund reader. */
+export async function cartHistoryPaymentEvidence(
+  port: EarlyAccessCartOrderHistoryPort | undefined,
+  entry: EarlyAccessCartHistoryEntry,
+): Promise<CartHistoryPaymentEvidence> {
+  if (port?.settlement === undefined) return UNKNOWN_CART_PAYMENT_EVIDENCE;
+  const settlement = await port.settlement(entry.cartCheckoutNumber);
+  if (
+    settlement === null ||
+    settlement.cartCheckoutNumber !== entry.cartCheckoutNumber ||
+    settlement.verifiedCurrency !== "USD" ||
+    !Number.isSafeInteger(settlement.verifiedAmountCents) ||
+    settlement.verifiedAmountCents <= 0
+  ) {
+    return UNKNOWN_CART_PAYMENT_EVIDENCE;
+  }
+  return Object.freeze({
+    amountCapturedCents: settlement.verifiedAmountCents,
+    // There is no cart refund authority in this composition. Null is unknown;
+    // zero would be an invented assertion that no refund occurred.
+    amountRefundedCents: null,
+  });
+}
+
+export function cartOrderSummary(
+  entry: EarlyAccessCartHistoryEntry,
+  evidence: CartHistoryPaymentEvidence = UNKNOWN_CART_PAYMENT_EVIDENCE,
+): OrderSummaryDto {
   return {
     // The cart checkout number, unchanged: the identifier the customer already
     // has on their invoice, so the two agree.
     orderId: entry.cartCheckoutNumber,
+    recordKind: "order",
     state: entry.state,
     placedAt: entry.placedAt,
     totalCents: entry.totalCents,
-    // P1-A monetary FACTS, same invariant as the placement lane: money counts
-    // as received only at verification (entry.state is "payment_captured"
-    // exactly when the checkout's payment was verified), and this lane has no
-    // refund concept, so refunded is authoritatively zero.
+    // P1-A monetary FACTS come only from injected durable readers. Lifecycle
+    // state never manufactures capture and an absent refund reader is unknown.
     payment: {
       amountDueCents: entry.totalCents,
-      amountCapturedCents: entry.state === "payment_captured" ? entry.totalCents : 0,
-      amountRefundedCents: 0,
+      amountCapturedCents: evidence.amountCapturedCents,
+      amountRefundedCents: evidence.amountRefundedCents,
       currency: "USD",
     },
     // Cart fulfilment events live behind their own reads; this source is
@@ -230,9 +282,12 @@ export function cartOrderSummary(entry: EarlyAccessCartHistoryEntry): OrderSumma
 }
 
 /** One cart checkout as a member order detail. */
-export function cartOrderDetail(entry: EarlyAccessCartHistoryEntry): OrderDetailDto {
+export function cartOrderDetail(
+  entry: EarlyAccessCartHistoryEntry,
+  evidence: CartHistoryPaymentEvidence = UNKNOWN_CART_PAYMENT_EVIDENCE,
+): OrderDetailDto {
   return {
-    ...cartOrderSummary(entry),
+    ...cartOrderSummary(entry, evidence),
     lines: entry.lines.map((line) => ({ ...line })),
     shippingCents: entry.shippingCents,
     // The cart applies no store credit. Zero is the true value, not a filler.

@@ -27,7 +27,10 @@ import {
   MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS,
 } from "@shared/research/member-catalog";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
-import { selectCartProduct } from "../commerce/cart-product-selection";
+import {
+  browserSafeCartProductSelection,
+  selectCartProduct,
+} from "../commerce/cart-product-selection";
 import {
   parseProductControlTimestamp,
   parseProductControlTimestampMicros,
@@ -378,6 +381,11 @@ function variantProjection(
           audienceEligibility: input.source.audienceEligibility,
           inventoryEligibility: inventory,
         },
+        // This synchronous projection has no durable activation-ledger reader.
+        // It may display catalog facts but must never manufacture a purchase
+        // selection from them. The request-time commerce authority supplies a
+        // resolved value in its own async composition.
+        null,
           );
 
   return {
@@ -400,7 +408,9 @@ function variantProjection(
         ? "available"
         : "unavailable",
     lotCoaState: lotCoa?.state ?? "required",
-    selection: selectionResult.ok ? selectionResult.selection : null,
+    selection: selectionResult.ok
+      ? browserSafeCartProductSelection(selectionResult.selection)
+      : null,
     selectionFailure: selectionResult.ok ? null : selectionResult.code,
   };
 }

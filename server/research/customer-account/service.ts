@@ -1,10 +1,11 @@
 // Composition of the customer account overview. Read-only, fail-closed.
 
-import type {
-  CareEnrollmentDto,
-  CustomerAccountOverviewDto,
-  CustomerOrdersDto,
-  MembershipDto,
+import {
+  membershipRenewalMirrorMatches,
+  type CareEnrollmentDto,
+  type CustomerAccountOverviewDto,
+  type CustomerOrdersDto,
+  type MembershipDto,
 } from "@shared/research/customer-account/contract";
 import type { CustomerAccountPorts } from "./ports";
 
@@ -62,7 +63,9 @@ export function accountStanding(
   if (action !== null) return "attention";
   const billingSettled = membership.billing === "current" || membership.billing === "none";
   const historyComplete = orders.history.availability === "complete";
-  const careKnowable = care.sourceState === "available";
+  const careKnowable =
+    care.sourceState === "available" &&
+    orders.carePharmacyHistory.availability === "available";
   return billingSettled && historyComplete && careKnowable ? "current" : "indeterminate";
 }
 
@@ -83,6 +86,9 @@ export function createCustomerAccountService(ports: CustomerAccountPorts) {
           ports.documents.documentsFor(memberKey),
           ports.support.casesFor(memberKey),
         ]);
+      if (!membershipRenewalMirrorMatches(membership)) {
+        throw new Error("membership_renewal_mirror_invalid");
+      }
       const partnerAttribution = view.staff
         ? await ports.attribution.attributionFor(memberKey)
         : null;

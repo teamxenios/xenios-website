@@ -87,6 +87,17 @@ const EMPTY_REFS: readonly string[] = Object.freeze([]);
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+/**
+ * Order-history-specific read evidence. `customerRefsFor` keeps the frozen
+ * identity-directory contract, while this envelope preserves whether the raw
+ * durable answer was losslessly decoded. Without the bit, a dropped malformed
+ * row is indistinguishable from a complete empty history.
+ */
+export type EarlyAccessHistoryCustomerRefsRead = Readonly<{
+  refs: readonly string[];
+  complete: boolean;
+}>;
+
 function refuse(
   code: "binding_absent" | "binding_unverified" | "binding_owner_mismatch",
 ): EarlyAccessBindingResolution {
@@ -254,8 +265,12 @@ export class SupabaseEarlyAccessLegalBindingDirectory
    * The caller still applies its own ownership rule to every record it finds,
    * so a mistake here cannot silently become an authorization.
    */
-  async customerRefsFor(memberId: string): Promise<readonly string[]> {
-    if (typeof memberId !== "string" || !UUID.test(memberId)) return EMPTY_REFS;
+  async customerRefsForHistory(
+    memberId: string,
+  ): Promise<EarlyAccessHistoryCustomerRefsRead> {
+    if (typeof memberId !== "string" || !UUID.test(memberId)) {
+      return Object.freeze({ refs: EMPTY_REFS, complete: false });
+    }
 
     let raw: unknown;
     try {
@@ -269,20 +284,36 @@ export class SupabaseEarlyAccessLegalBindingDirectory
       // error is re-thrown so the caller can answer "unavailable" instead of
       // rendering an empty history that looks like "you have no orders".
       if (error instanceof EarlyAccessPersistenceError) throw error;
-      return EMPTY_REFS;
+      return Object.freeze({ refs: EMPTY_REFS, complete: false });
     }
 
-    if (!Array.isArray(raw)) return EMPTY_REFS;
+    if (!Array.isArray(raw)) {
+      return Object.freeze({ refs: EMPTY_REFS, complete: false });
+    }
 
     const refs = new Set<string>();
+    let complete = true;
     for (const entry of raw) {
-      if (typeof entry !== "string") continue;
-      if (!EAC_HANDLE.test(entry)) continue;
+      if (typeof entry !== "string" || !EAC_HANDLE.test(entry)) {
+        complete = false;
+        continue;
+      }
+      if (refs.has(entry)) {
+        complete = false;
+        continue;
+      }
       refs.add(entry);
     }
     // Sorted so two calls against an unchanged database return an identical
     // list, which is what makes the order history above it deterministic.
-    return Object.freeze(Array.from(refs).sort());
+    return Object.freeze({
+      refs: Object.freeze(Array.from(refs).sort()),
+      complete,
+    });
+  }
+
+  async customerRefsFor(memberId: string): Promise<readonly string[]> {
+    return (await this.customerRefsForHistory(memberId)).refs;
   }
 
   /** The `customerRef` recorded on the checkout, or null when unreadable. */

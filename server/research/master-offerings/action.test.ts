@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { resolveMasterOfferingAction } from "./action";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 
 describe("master offering action authority", () => {
-  it("emits Add to Cart only for an exact Product Control binding and valid selection", () => {
+  it("emits Add to Cart only for an exact Product Control binding and valid selection", async () => {
     const product = offering();
     const presentation = product.variants[0];
-    const selection = cartSelection();
+    const selection = await cartSelection();
     expect(resolveMasterOfferingAction(product, presentation, {
       binding: {
         offeringVariantId: presentation.id,
@@ -27,7 +28,7 @@ describe("master offering action authority", () => {
     });
   });
 
-  it("never emits Add to Cart for a provider-pathway row, however complete its commerce is", () => {
+  it("never emits Add to Cart for a provider-pathway row, however complete its commerce is", async () => {
     // Care separation is a standing rule, not a flag-dependent one. This arm
     // used to check visibility and the binding only, and the purchase authority
     // behind it gates on Product Control facts, which carry no notion of the
@@ -36,7 +37,7 @@ describe("master offering action authority", () => {
     // and carrying the copy "Not available for direct purchase" — so all of
     // them would have offered Add to Cart the moment direct commerce was
     // enabled. It stayed invisible because the flag is off.
-    const selection = cartSelection();
+    const selection = await cartSelection();
     const binding = (presentation: { id: string }) => ({
       offeringVariantId: presentation.id,
       productId: selection.productId,
@@ -72,10 +73,10 @@ describe("master offering action authority", () => {
     expect(action.kind).toBe("request_access");
   });
 
-  it("removing the Product Control binding immediately removes Add to Cart", () => {
+  it("removing the Product Control binding immediately removes Add to Cart", async () => {
     const product = offering();
     const presentation = product.variants[0];
-    const selection = cartSelection();
+    const selection = await cartSelection();
     const bound = resolveMasterOfferingAction(product, presentation, {
       binding: {
         offeringVariantId: presentation.id,
@@ -92,10 +93,10 @@ describe("master offering action authority", () => {
     expect(unbound.kind).toBe("request_access");
   });
 
-  it("rejects mismatched identity, invalid amount, missing readiness, and ineligible inventory", () => {
+  it("rejects mismatched identity, invalid amount, missing readiness, and ineligible inventory", async () => {
     const product = offering();
     const presentation = product.variants[0];
-    const base = cartSelection();
+    const base = await cartSelection();
     const binding = {
       offeringVariantId: presentation.id,
       productId: base.productId,
@@ -109,6 +110,101 @@ describe("master offering action authority", () => {
     ];
     for (const selection of cases) {
       expect(resolveMasterOfferingAction(product, presentation, { binding, selection }).kind).not.toBe("add_to_cart");
+    }
+  });
+
+  it("direct binding never bypasses exact current live product+variant activation", async () => {
+    const product = offering();
+    const presentation = product.variants[0];
+    const base = await cartSelection();
+    const binding = {
+      offeringVariantId: presentation.id,
+      productId: base.productId,
+      variantId: base.variantId,
+    };
+    const resolve = (selection: unknown) =>
+      resolveMasterOfferingAction(product, presentation, {
+        binding,
+        selection: selection as never,
+      }).kind;
+
+    const { activationAuthority: _missing, ...withoutAuthority } = base;
+    expect(resolve(withoutAuthority)).not.toBe("add_to_cart");
+
+    for (const state of [
+      "held",
+      "pending",
+      "unavailable",
+      "retired",
+      "revoked",
+      "stale",
+      "ambiguous",
+      "conflicting",
+    ] as const) {
+      expect(
+        resolve({
+          ...base,
+          activationAuthority: {
+            state,
+            productId: base.productId,
+            variantId: base.variantId,
+            sku: base.sku,
+          },
+        }),
+        state,
+      ).not.toBe("add_to_cart");
+    }
+
+    const live = base.activationAuthority;
+    expect(live?.state).toBe("live");
+    if (live?.state !== "live") return;
+    for (const activationAuthority of [
+      { ...live, productId: "wrong-product" },
+      { ...live, variantId: "wrong-variant" },
+      { ...live, validThrough: base.evaluatedAt },
+      { ...live, evaluatedAt: "2026-08-09T12:00:00.001Z" },
+      { ...live, approvedByRole: "catalog_editor" as "founder" },
+      { ...live, evidenceFingerprint: "sha256:not-a-digest" },
+      { ...live, revokedAt: "2026-08-09T11:00:00.000Z" as unknown as null },
+    ]) {
+      expect(resolve({ ...base, activationAuthority })).not.toBe("add_to_cart");
+    }
+  });
+
+  it("every non-live offering or variant state stays non-orderable despite perfect binding", async () => {
+    const selection = await cartSelection();
+    const nonLive = [
+      "available_this_week",
+      "request_access",
+      "approval_required",
+      "temporarily_unavailable",
+      "coming_soon",
+      "care_pathway",
+      "planned",
+      "unavailable",
+    ] as const;
+    for (const displayState of nonLive) {
+      const product = offering({ variants: [variant({ displayState })] });
+      const presentation = product.variants[0];
+      const binding = {
+        offeringVariantId: presentation.id,
+        productId: selection.productId,
+        variantId: selection.variantId,
+      };
+      expect(
+        resolveMasterOfferingAction(product, presentation, { binding, selection }).kind,
+        `variant:${displayState}`,
+      ).not.toBe("add_to_cart");
+
+      const nonLiveOffering = { ...offering(), displayState };
+      const liveVariant = nonLiveOffering.variants[0];
+      expect(
+        resolveMasterOfferingAction(nonLiveOffering, liveVariant, {
+          binding: { ...binding, offeringVariantId: liveVariant.id },
+          selection,
+        }).kind,
+        `offering:${displayState}`,
+      ).not.toBe("add_to_cart");
     }
   });
 

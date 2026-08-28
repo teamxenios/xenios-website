@@ -94,8 +94,26 @@ describe("activation overlay config — strict parsing (fail closed)", () => {
     held: false,
   };
 
+  const VALID_QUEUE_ITEM = {
+    queueId: "Q-0001",
+    label: "Fixture queue item",
+    demandMentions: 1,
+    basis: "verbal",
+  };
+
+  function config(overrides: Record<string, unknown> = {}) {
+    return {
+      schemaVersion: 1,
+      recordedOn: "2026-08-27",
+      recordedBy: "Test fixture",
+      entries: [VALID_ENTRY],
+      activationQueue: [],
+      ...overrides,
+    };
+  }
+
   it("accepts a strictly-valid config", () => {
-    const { root, rel } = writeConfig({ recordedOn: "2026-08-27", entries: [VALID_ENTRY], activationQueue: [] });
+    const { root, rel } = writeConfig(config());
     const parsed = loadActivationOverlay(root, rel);
     expect(parsed.entries).toHaveLength(1);
     expect(parsed.entries[0]?.confirmationBasis).toBe("verbal");
@@ -103,59 +121,114 @@ describe("activation overlay config — strict parsing (fail closed)", () => {
 
   it("refuses a typo'd basis instead of degrading it to none", () => {
     for (const basis of ["Verbal", "VERBAL", "documented ", "verbal​", 1, null, undefined]) {
-      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, confirmationBasis: basis }] });
+      const { root, rel } = writeConfig(config({ entries: [{ ...VALID_ENTRY, confirmationBasis: basis }] }));
       expect(() => loadActivationOverlay(root, rel), JSON.stringify(basis)).toThrow(/confirmationBasis/);
     }
   });
 
   it("refuses a non-boolean held flag instead of silently losing the hold", () => {
     for (const held of ["true", 1, "yes", null, undefined]) {
-      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, held }] });
+      const { root, rel } = writeConfig(config({ entries: [{ ...VALID_ENTRY, held }] }));
       expect(() => loadActivationOverlay(root, rel), JSON.stringify(held)).toThrow(/held/);
     }
   });
 
   it("refuses a malformed entry instead of dropping it", () => {
     for (const entry of ["not-an-object", { ...VALID_ENTRY, groupId: "" }, { ...VALID_ENTRY, label: 7 }]) {
-      const { root, rel } = writeConfig({ entries: [entry] });
+      const { root, rel } = writeConfig(config({ entries: [entry] }));
       expect(() => loadActivationOverlay(root, rel)).toThrow(/malformed/);
     }
   });
 
   it("refuses an unreadable checklist and unknown checklist fields", () => {
     for (const checklist of ["nope", 3, ["a"], { unknownField: "x" }, { exactStrength: 5 }]) {
-      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, checklist }] });
+      const { root, rel } = writeConfig(config({ entries: [{ ...VALID_ENTRY, checklist }] }));
       expect(() => loadActivationOverlay(root, rel)).toThrow(/checklist/);
     }
   });
 
   it("refuses a malformed founder approval record", () => {
     for (const approval of ["Samuel", { approvedBy: "F" }, { approvedAt: "2026-08-27" }, 7]) {
-      const { root, rel } = writeConfig({ entries: [{ ...VALID_ENTRY, founderActivationApproval: approval }] });
+      const { root, rel } = writeConfig(config({ entries: [{ ...VALID_ENTRY, founderActivationApproval: approval }] }));
       expect(() => loadActivationOverlay(root, rel)).toThrow(/founderActivationApproval/);
     }
   });
 
   it("refuses malformed queue items and non-array sections", () => {
     expect(() => {
-      const { root, rel } = writeConfig({ entries: "x" });
+      const { root, rel } = writeConfig(config({ entries: "x" }));
       loadActivationOverlay(root, rel);
     }).toThrow(/entries/);
     expect(() => {
-      const { root, rel } = writeConfig({ activationQueue: [{ queueId: 1, label: "x" }] });
+      const { root, rel } = writeConfig(config({ activationQueue: [{ ...VALID_QUEUE_ITEM, queueId: 1 }] }));
       loadActivationOverlay(root, rel);
     }).toThrow(/queueId/);
     expect(() => {
-      const { root, rel } = writeConfig({ activationQueue: [{ queueId: "Q-1", label: "x", basis: "maybe" }] });
+      const { root, rel } = writeConfig(config({ activationQueue: [{ ...VALID_QUEUE_ITEM, basis: "maybe" }] }));
       loadActivationOverlay(root, rel);
     }).toThrow(/confirmationBasis/);
+  });
+
+  it("requires the exact root, entry, and queue vocabulary", () => {
+    for (const invalid of [
+      config({ unexpected: true }),
+      config({ schemaVersion: 2 }),
+      config({ recordedOn: "2026-02-30" }),
+      config({ recordedBy: 7 }),
+      config({ entries: [{ ...VALID_ENTRY, unexpected: true }] }),
+      config({ entries: [{ ...VALID_ENTRY, confirmedBy: undefined }] }),
+      config({ activationQueue: [{ ...VALID_QUEUE_ITEM, unexpected: true }] }),
+      config({ activationQueue: [{ ...VALID_QUEUE_ITEM, demandMentions: 1.5 }] }),
+    ]) {
+      const { root, rel } = writeConfig(invalid);
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/malformed/);
+    }
+  });
+
+  it("requires both sections instead of defaulting a missing section empty", () => {
+    const missingEntries: Record<string, unknown> = config();
+    delete missingEntries.entries;
+    const missingQueue: Record<string, unknown> = config();
+    delete missingQueue.activationQueue;
+    for (const invalid of [missingEntries, missingQueue]) {
+      const { root, rel } = writeConfig(invalid);
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/required field/);
+    }
+  });
+
+  it("rejects duplicate groupIds and queueIds", () => {
+    const duplicateGroup = config({ entries: [VALID_ENTRY, { ...VALID_ENTRY, label: "Second" }] });
+    const duplicateQueue = config({
+      activationQueue: [VALID_QUEUE_ITEM, { ...VALID_QUEUE_ITEM, label: "Second" }],
+    });
+    for (const invalid of [duplicateGroup, duplicateQueue]) {
+      const { root, rel } = writeConfig(invalid);
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/duplicate/);
+    }
+  });
+
+  it("rejects incomplete or contradictory confirmation provenance", () => {
+    for (const entry of [
+      { ...VALID_ENTRY, confirmedAt: null },
+      { ...VALID_ENTRY, confirmedBy: null },
+      {
+        ...VALID_ENTRY,
+        confirmationBasis: "none",
+        confirmedBy: "Someone",
+        confirmedAt: "2026-08-27T00:00:00.000Z",
+      },
+      { ...VALID_ENTRY, confirmedAt: "2026-02-30T00:00:00.000Z" },
+    ]) {
+      const { root, rel } = writeConfig(config({ entries: [entry] }));
+      expect(() => loadActivationOverlay(root, rel)).toThrow(/malformed/);
+    }
   });
 });
 
 // P1-E (round 3): a config that CLAIMS an approval it cannot substantiate
 // refuses the whole load.
 describe("activation overlay config — approval evidence attacks", () => {
-  function writeConfig(json) {
+  function writeConfig(json: unknown) {
     const root = mkdtempSync(join(tmpdir(), "overlay-approval-"));
     const rel = "overlay.json";
     writeFileSync(join(root, rel), JSON.stringify(json), "utf8");
@@ -171,6 +244,16 @@ describe("activation overlay config — approval evidence attacks", () => {
     held: false,
   };
 
+  function config(entries: readonly unknown[]) {
+    return {
+      schemaVersion: 1,
+      recordedOn: "2026-08-27",
+      recordedBy: "Test fixture",
+      entries,
+      activationQueue: [],
+    };
+  }
+
   it("refuses empty/whitespace/invalid approval evidence instead of counting it", () => {
     for (const approval of [
       { approvedBy: "", approvedAt: "2026-08-27T12:00:00.000Z" },
@@ -181,15 +264,15 @@ describe("activation overlay config — approval evidence attacks", () => {
       { approvedBy: "Founder", approvedAt: "2026-02-30T00:00:00.000Z" },
       { approvedBy: "Founder", approvedAt: "1999-01-01T00:00:00.000Z" },
     ]) {
-      const { root, rel } = writeConfig({ entries: [{ ...BASE_ENTRY, founderActivationApproval: approval }] });
+      const { root, rel } = writeConfig(config([{ ...BASE_ENTRY, founderActivationApproval: approval }]));
       expect(() => loadActivationOverlay(root, rel), JSON.stringify(approval)).toThrow(/founderActivationApproval/);
     }
   });
 
   it("accepts a substantive approval record", () => {
-    const { root, rel } = writeConfig({
-      entries: [{ ...BASE_ENTRY, founderActivationApproval: { approvedBy: "Founder", approvedAt: "2026-08-27T12:00:00.000Z" } }],
-    });
+    const { root, rel } = writeConfig(config([
+      { ...BASE_ENTRY, founderActivationApproval: { approvedBy: "Founder", approvedAt: "2026-08-27T12:00:00.000Z" } },
+    ]));
     expect(loadActivationOverlay(root, rel).entries).toHaveLength(1);
   });
 });

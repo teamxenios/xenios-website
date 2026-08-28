@@ -4,7 +4,8 @@ import {
   demandIntentForAction,
   toExistingMasterOfferingProductRequest,
 } from "./product-request-adapter";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 import {
   MASTER_OFFERINGS_MANUAL_PURCHASE_ENV_VAR,
   masterOfferingsManualPurchaseRequests,
@@ -35,7 +36,7 @@ describe("manual Early Access purchase CTA", () => {
     expect(action.label).toBe("Request Early Access Purchase");
   });
 
-  it("never shadows a real Add to Cart", () => {
+  it("never shadows a real Add to Cart", async () => {
     const action = resolveMasterOfferingAction(
       offering(),
       variant({ displayState: "available_now" }),
@@ -45,7 +46,7 @@ describe("manual Early Access purchase CTA", () => {
           productId: "pc_product_1",
           variantId: "pc_variant_1",
         },
-        selection: cartSelection(),
+        selection: await cartSelection(),
       },
       undefined,
       ON,

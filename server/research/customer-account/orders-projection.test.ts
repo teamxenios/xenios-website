@@ -1,10 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type {
   OrderDetailDto as CommerceOrderDetailDto,
   OrderSummaryDto as CommerceOrderSummaryDto,
 } from "@shared/research/commerce-api";
 import { createCommerceOrdersPort, type CommerceOrdersSource } from "./orders-projection";
+
+const COMPLETE_HISTORY_SOURCES = {
+  commerce: { connected: true, complete: true },
+  xea: { connected: true, complete: true },
+  xec: { connected: true, complete: true },
+  xrr: { connected: true, complete: true },
+} as const;
 
 function summary(overrides: Partial<CommerceOrderSummaryDto>): CommerceOrderSummaryDto {
   return {
@@ -38,16 +45,37 @@ function detail(overrides: Partial<CommerceOrderDetailDto>): CommerceOrderDetail
 function sourceOf(
   summaries: CommerceOrderSummaryDto[],
   details: Record<string, CommerceOrderDetailDto | null>,
+  historySources?: CommerceOrdersSource["historySources"],
 ): CommerceOrdersSource {
   return {
     listForMember: async () => summaries,
     getForMember: async (_memberId, orderId) => details[orderId] ?? null,
+    ...(historySources === undefined ? {} : { historySources }),
   };
 }
 
 async function projectOne(s: CommerceOrderSummaryDto, d?: Partial<CommerceOrderDetailDto>) {
+  const projectedDetail = detail({
+    orderId: s.orderId,
+    state: s.state,
+    recordKind: s.recordKind,
+    placedAt: s.placedAt,
+    totalCents: s.totalCents,
+    ...(s.payment === undefined
+      ? {}
+      : { payment: s.payment === null ? null : { ...s.payment } }),
+    ...(s.shipmentsSource === undefined ? {} : { shipmentsSource: s.shipmentsSource }),
+    shipments: s.shipments.map((shipment) => ({ ...shipment })),
+    ...d,
+  });
+  // `detail()` has a useful default payment object for most tests. When this
+  // case deliberately models a legacy row with the field absent, remove that
+  // default from the exact detail read too so summary/detail truth agrees.
+  if (s.payment === undefined && d?.payment === undefined) {
+    delete (projectedDetail as Partial<CommerceOrderDetailDto>).payment;
+  }
   const port = createCommerceOrdersPort(
-    sourceOf([s], { [s.orderId]: detail({ orderId: s.orderId, state: s.state, ...d }) }),
+    sourceOf([s], { [s.orderId]: projectedDetail }, COMPLETE_HISTORY_SOURCES),
   );
   const orders = await port.ordersFor("member-1");
   return orders.research[0];
@@ -57,6 +85,7 @@ describe("commerce orders projection — labels come from real lines", () => {
   it("labels a single-line order from its real detail line", async () => {
     const row = await projectOne(summary({}));
     expect(row.reference).toBe("XEA-0123456789ABCDEF");
+    expect(row.recordKind).toBe("unknown");
     expect(row.detailAvailability).toBe("available");
     expect(row.itemLabel).toBe("NAD+ 1,000 mg");
     expect(row.quantity).toBe(2);
@@ -86,17 +115,86 @@ describe("commerce orders projection — labels come from real lines", () => {
 
   it("a listed order whose detail cannot be read fails the whole read closed", async () => {
     const s = summary({ orderId: "XO-unreadable" });
-    const port = createCommerceOrdersPort(sourceOf([s], {}));
+    const port = createCommerceOrdersPort(sourceOf([s], {}, COMPLETE_HISTORY_SOURCES));
     await expect(port.ordersFor("member-1")).rejects.toThrow("order_detail_unavailable");
   });
 
-  it("deduplicates a double-listed reference deterministically", async () => {
-    const s = summary({});
+  it("rejects detail evidence whose embedded order id differs from the requested summary", async () => {
+    const s = summary({ orderId: "ord_A" });
     const port = createCommerceOrdersPort(
-      sourceOf([s, { ...s }], { [s.orderId]: detail({}) }),
+      sourceOf([s], { ord_A: detail({ orderId: "ord_B", lines: [
+        { sku: "sku-b", displayName: "Order B item", quantity: 9, lineTotalCents: 9900 },
+      ] }) }, COMPLETE_HISTORY_SOURCES),
+    );
+
+    await expect(port.ordersFor("member-1")).rejects.toThrow("order_detail_identity_mismatch");
+  });
+
+  it("rejects an exact-id detail whose payment facts conflict with the listed record", async () => {
+    const s = summary({});
+
+    await expect(projectOne(s, {
+      payment: {
+        amountDueCents: 9900,
+        amountCapturedCents: 0,
+        amountRefundedCents: 0,
+        currency: "USD",
+      },
+    })).rejects.toThrow("order_detail_truth_mismatch");
+  });
+
+  it("rejects an exact-id detail whose fulfillment facts conflict with the listed record", async () => {
+    const s = summary({
+      state: "delivered",
+      shipments: [{
+        owner: "xenios",
+        status: "delivered",
+        trackingNumber: "9400000000000000000000",
+        carrier: "USPS",
+      }],
+    });
+
+    await expect(projectOne(s, { shipments: [] })).rejects.toThrow(
+      "order_detail_truth_mismatch",
+    );
+  });
+
+  it("preserves colliding rows, refuses ambiguous detail binding, and downgrades completeness", async () => {
+    const paid = summary({ orderId: "opaque-collision", recordKind: "order" });
+    const unpaid = summary({
+      orderId: "opaque-collision",
+      recordKind: "request",
+      state: "checkout_pending",
+      payment: {
+        amountDueCents: 9900,
+        amountCapturedCents: 0,
+        amountRefundedCents: 0,
+        currency: "USD",
+      },
+    });
+    let detailReads = 0;
+    const port = createCommerceOrdersPort(
+      {
+        ...sourceOf([paid, unpaid], { "opaque-collision": detail({ orderId: "opaque-collision" }) }, {
+          commerce: { connected: true, complete: true },
+          xea: { connected: true, complete: true },
+          xec: { connected: true, complete: true },
+          xrr: { connected: true, complete: true },
+        }),
+        async getForMember() {
+          detailReads += 1;
+          return detail({ orderId: "opaque-collision" });
+        },
+      },
     );
     const orders = await port.ordersFor("member-1");
-    expect(orders.research).toHaveLength(1);
+    expect(detailReads).toBe(0);
+    expect(orders.research).toHaveLength(2);
+    expect(orders.research.map((row) => row.paymentState)).toEqual(["paid", "unpaid"]);
+    expect(orders.research.map((row) => row.recordKind)).toEqual(["unknown", "unknown"]);
+    expect(orders.research.every((row) => row.detailAvailability === "unavailable")).toBe(true);
+    expect(orders.history.availability).toBe("partial");
+    expect(orders.history.authoritativeRecordCount).toBeNull();
   });
 });
 
@@ -130,9 +228,9 @@ describe("payment truth from money facts", () => {
     expect(row.paymentState).toBe("refunded");
   });
 
-  it("10,000 / 12,000 → refunded (over-refund is still refunded, not partial)", async () => {
+  it("10,000 / 12,000 → unknown (over-refund is contradictory)", async () => {
     const row = await projectOne(summary({ state: "refunded", payment: money(10_000, 12_000) }));
-    expect(row.paymentState).toBe("refunded");
+    expect(row.paymentState).toBe("unknown");
   });
 
   it("REPRO: payment_captured lifecycle with NO capture evidence → unknown, never paid", async () => {
@@ -145,17 +243,83 @@ describe("payment truth from money facts", () => {
     expect(row.paymentState).toBe("unknown");
   });
 
-  it("a null capture in a provably pre-capture lifecycle is authoritative zero → unpaid", async () => {
+  it("a null capture stays unknown even in a pre-capture lifecycle", async () => {
     for (const state of ["draft", "checkout_pending", "payment_authorized", "manual_review", "approved"] as const) {
       const row = await projectOne(summary({ state, payment: money(null, 0) }));
-      expect(row.paymentState, state).toBe("unpaid");
+      expect(row.paymentState, state).toBe("unknown");
     }
+  });
+
+  it("uses only explicit producer evidence for request-versus-order kind", async () => {
+    const prefixedWithoutEvidence = await projectOne(
+      summary({ orderId: "XRR-LOOKS-LIKE-A-REQUEST" }),
+    );
+    expect(prefixedWithoutEvidence.recordKind).toBe("unknown");
+
+    const explicitRequest = await projectOne(
+      summary({ orderId: "opaque-1", recordKind: "request" }),
+    );
+    expect(explicitRequest.recordKind).toBe("request");
+  });
+
+  it.each([
+    { summaryKind: "request", detailKind: "order" },
+    { summaryKind: "request", detailKind: undefined },
+    { summaryKind: undefined, detailKind: "order" },
+  ] as const)("downgrades unreconciled exact kind evidence to unknown: $summaryKind / $detailKind", async ({ summaryKind, detailKind }) => {
+    const s = summary({
+      orderId: "XRR-OPAQUE",
+      ...(summaryKind === undefined ? {} : { recordKind: summaryKind }),
+    });
+    const port = createCommerceOrdersPort(
+      sourceOf([s], { [s.orderId]: detail({
+        orderId: s.orderId,
+        ...(detailKind === undefined ? {} : { recordKind: detailKind }),
+      }) }, COMPLETE_HISTORY_SOURCES),
+    );
+
+    const orders = await port.ordersFor("member-1");
+
+    expect(orders.research[0]?.recordKind).toBe("unknown");
+  });
+
+  it("undercapture and overcapture are unknown, never paid", async () => {
+    expect((await projectOne(summary({ payment: money(9_999, 0) }))).paymentState).toBe("unknown");
+    expect((await projectOne(summary({ payment: money(10_001, 0) }))).paymentState).toBe("unknown");
   });
 
   it("malformed money → unknown", async () => {
     const row = await projectOne(
       summary({ payment: { amountDueCents: 9900, amountCapturedCents: "lots" as unknown as number, amountRefundedCents: 0, currency: "USD" } }),
     );
+    expect(row.paymentState).toBe("unknown");
+  });
+
+  it.each([
+    [
+      "missing",
+      { amountDueCents: 9900, amountCapturedCents: 9900, amountRefundedCents: 0 },
+    ],
+    [
+      "unsupported EUR",
+      {
+        amountDueCents: 9900,
+        amountCapturedCents: 9900,
+        amountRefundedCents: 0,
+        currency: "EUR",
+      },
+    ],
+    [
+      "malformed",
+      {
+        amountDueCents: 9900,
+        amountCapturedCents: 9900,
+        amountRefundedCents: 0,
+        currency: 123,
+      },
+    ],
+  ])("%s payment currency → unknown", async (_label, payment) => {
+    const row = await projectOne(summary({ payment: payment as never }));
     expect(row.paymentState).toBe("unknown");
   });
 
@@ -237,29 +401,146 @@ describe("fulfillment truth", () => {
     expect(deliveredRow.fulfillmentState).toBe("delivered");
     expect(deliveredRow.trackingUrl).toBeNull();
   });
+
+  it("never upgrades tracking or shipped evidence into delivered", async () => {
+    for (const shipment of [
+      { owner: "xenios", status: null, trackingNumber: "1Z-LABEL-ONLY", carrier: "ups" },
+      { owner: "xenios", status: "shipped", trackingNumber: "1Z-SHIPPED", carrier: "ups" },
+      { owner: "xenios", status: "in_transit", trackingNumber: null, carrier: null },
+    ]) {
+      const row = await projectOne(summary({ state: "delivered", shipments: [shipment] }));
+      expect(row.fulfillmentState).toBe("unknown");
+    }
+  });
+
+  it("requires every shipment group to carry delivered evidence", async () => {
+    const fullyDelivered = await projectOne(
+      summary({
+        state: "delivered",
+        shipments: [
+          { owner: "xenios", status: "delivered", trackingNumber: null, carrier: null },
+          { owner: "mitch", status: "delivered", trackingNumber: null, carrier: null },
+        ],
+      }),
+    );
+    expect(fullyDelivered.fulfillmentState).toBe("delivered");
+
+    for (const secondStatus of ["in_transit", "shipped", null]) {
+      const mixed = await projectOne(
+        summary({
+          state: "delivered",
+          shipments: [
+            { owner: "xenios", status: "delivered", trackingNumber: null, carrier: null },
+            { owner: "mitch", status: secondStatus, trackingNumber: null, carrier: null },
+          ],
+        }),
+      );
+      expect(mixed.fulfillmentState, String(secondStatus)).toBe("unknown");
+    }
+  });
+
+  it("never emits tracking from an unavailable shipment source", async () => {
+    const row = await projectOne(
+      summary({
+        state: "fulfilled",
+        shipmentsSource: "unavailable",
+        shipments: [{ owner: "xenios", status: "shipped", trackingNumber: "1Z-LEAK", carrier: "ups" }],
+      }),
+    );
+    expect(row.fulfillmentState).toBe("unknown");
+    expect(row.trackingUrl).toBeNull();
+  });
 });
 
 describe("history availability declaration", () => {
-  it("defaults to the honest static truth: partial, XRR/XEC disconnected", async () => {
+  const completeSources = {
+    commerce: { connected: true, complete: true },
+    xea: { connected: true, complete: true },
+    xec: { connected: true, complete: true },
+    xrr: { connected: true, complete: true },
+  } as const;
+
+  it("fails closed when the exact source carries no capability metadata", async () => {
     const port = createCommerceOrdersPort(sourceOf([], {}));
     const orders = await port.ordersFor("member-1");
-    expect(orders.history.availability).toBe("partial");
+    expect(orders.history.availability).toBe("unavailable");
+    expect(orders.history.authoritativeRecordCount).toBeNull();
     expect(orders.history.sources.xrr.connected).toBe(false);
-    expect(orders.history.sources.commerce.connected).toBe(true);
+    expect(orders.history.sources.commerce.connected).toBe(false);
+    expect(orders.carePharmacyHistory).toEqual({
+      availability: "unavailable",
+      authoritativeRecordCount: null,
+    });
   });
 
-  it("passes a declared availability through verbatim", async () => {
-    const declared = {
-      availability: "unavailable" as const,
-      sources: {
-        commerce: { connected: false, complete: false },
-        xea: { connected: false, complete: false },
-        xec: { connected: false, complete: false },
-        xrr: { connected: false, complete: false },
-      },
-    };
-    const port = createCommerceOrdersPort(sourceOf([], {}), declared);
+  it("never calls colliding rows a complete authoritative history", async () => {
+    const s = summary({});
+    const port = createCommerceOrdersPort(
+      sourceOf([s, { ...s }], { [s.orderId]: detail({}) }, completeSources),
+    );
     const orders = await port.ordersFor("member-1");
-    expect(orders.history).toEqual(declared);
+    expect(orders.research).toHaveLength(2);
+    expect(orders.history.availability).toBe("partial");
+    expect(orders.history.authoritativeRecordCount).toBeNull();
+  });
+
+  it("uses per-read partial evidence and never turns known rows into an authoritative count", async () => {
+    const s = summary({ recordKind: "order" });
+    const source = sourceOf([s], {
+      [s.orderId]: detail({ orderId: s.orderId, recordKind: "request" }),
+    }, completeSources);
+    const detailRead = vi.fn(source.getForMember);
+    const port = createCommerceOrdersPort({
+      ...source,
+      getForMember: detailRead,
+      async listForMemberWithHistory() {
+        return {
+          rows: [s],
+          historySources: {
+            ...completeSources,
+            xea: { connected: true, complete: false },
+          },
+        };
+      },
+    });
+
+    const orders = await port.ordersFor("member-1");
+
+    expect(orders.research).toHaveLength(1);
+    expect(orders.research[0]?.detailAvailability).toBe("unavailable");
+    expect(orders.research[0]?.itemLabel).toBeNull();
+    expect(orders.research[0]?.recordKind).toBe("unknown");
+    expect(detailRead).not.toHaveBeenCalled();
+    expect(orders.history.availability).toBe("partial");
+    expect(orders.history.authoritativeRecordCount).toBeNull();
+  });
+
+  it("ignores a conflicting legacy declaration from the composition root", async () => {
+    const legacy = {
+      availability: "complete" as const,
+      sources: completeSources,
+    };
+    const port = createCommerceOrdersPort(sourceOf([], {}), legacy);
+    const orders = await port.ordersFor("member-1");
+    expect(orders.history.availability).toBe("unavailable");
+    expect(orders.history.authoritativeRecordCount).toBeNull();
+  });
+});
+
+describe("line evidence", () => {
+  it.each([
+    { displayName: "   ", quantity: 1 },
+    { displayName: "Valid", quantity: 0 },
+    { displayName: "Valid", quantity: -1 },
+    { displayName: "Valid", quantity: 1.5 },
+    { displayName: "Valid", quantity: Number.NaN },
+    { displayName: "Valid", quantity: Number.POSITIVE_INFINITY },
+    { displayName: "Valid", quantity: Number.MAX_SAFE_INTEGER + 1 },
+  ])("rejects malformed line evidence %#", async (line) => {
+    await expect(
+      projectOne(summary({}), {
+        lines: [{ sku: "sku", lineTotalCents: 100, ...line }],
+      }),
+    ).rejects.toThrow("order_shape_unrecognized");
   });
 });

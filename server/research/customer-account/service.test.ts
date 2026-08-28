@@ -10,7 +10,7 @@ import {
   FIXTURE_CARE_UNAVAILABLE,
   FIXTURE_MEMBERSHIP_MANUAL,
 } from "@shared/research/customer-account/fixtures";
-import { accountStanding, nextAdministrativeAction } from "./service";
+import { accountStanding, createCustomerAccountService, nextAdministrativeAction } from "./service";
 
 const membership = (overrides: Partial<MembershipDto> = {}): MembershipDto => ({
   ...FIXTURE_MEMBERSHIP_MANUAL,
@@ -20,14 +20,20 @@ const membership = (overrides: Partial<MembershipDto> = {}): MembershipDto => ({
 const orders = (
   availability: "complete" | "partial" | "unavailable",
   research: CustomerOrdersDto["research"] = [],
+  carePharmacyHistory: CustomerOrdersDto["carePharmacyHistory"] = {
+    availability: "available",
+    authoritativeRecordCount: 0,
+  },
 ): CustomerOrdersDto => {
   const on = { connected: true, complete: true };
   const off = { connected: false, complete: false };
   return {
     research,
     carePharmacy: [],
+    carePharmacyHistory,
     history: {
       availability,
+      authoritativeRecordCount: availability === "complete" ? research.length : null,
       sources:
         availability === "complete"
           ? { commerce: on, xea: on, xec: on, xrr: on }
@@ -71,7 +77,7 @@ describe("accountStanding — 'up to date' must be provable", () => {
     ).toBe("attention");
   });
 
-  it("current ONLY with settled billing, complete history, and a knowable Care source", () => {
+  it("current ONLY with settled billing, complete history, and authoritative Care sources", () => {
     expect(
       accountStanding(membership({ billing: "current" }), FIXTURE_CARE_ENROLLED, orders("complete"), null),
     ).toBe("current");
@@ -102,5 +108,59 @@ describe("accountStanding — 'up to date' must be provable", () => {
     expect(
       accountStanding(membership({ billing: "current" }), FIXTURE_CARE_UNAVAILABLE, orders("complete"), null),
     ).toBe("indeterminate");
+  });
+
+  it("partial or unavailable Care/pharmacy history blocks the all-clear", () => {
+    for (const carePharmacyHistory of [
+      { availability: "partial" as const, authoritativeRecordCount: null },
+      { availability: "unavailable" as const, authoritativeRecordCount: null },
+    ]) {
+      expect(
+        accountStanding(
+          membership({ billing: "current" }),
+          FIXTURE_CARE_ENROLLED,
+          orders("complete", [], carePharmacyHistory),
+          null,
+        ),
+        carePharmacyHistory.availability,
+      ).toBe("indeterminate");
+    }
+  });
+});
+
+describe("membership renewal producer boundary", () => {
+  it("fails the whole overview closed when a producer contradicts the renewal mirror", async () => {
+    const malformedMembership = {
+      ...FIXTURE_MEMBERSHIP_MANUAL,
+      renewal: { state: "scheduled", nextRenewalAt: "2026-10-01T00:00:00.000Z" },
+      nextRenewalAt: "2026-11-01T00:00:00.000Z",
+    } as unknown as MembershipDto;
+    const service = createCustomerAccountService({
+      identity: {
+        async identityFor(memberKey) {
+          return {
+            memberKey,
+            displayName: "Synthetic Member",
+            email: "synthetic.member@example.invalid",
+            accountStatus: "active",
+            memberSince: null,
+          };
+        },
+      },
+      membership: { async membershipFor() { return malformedMembership; } },
+      care: { async careFor() { return FIXTURE_CARE_UNAVAILABLE; } },
+      orders: { async ordersFor() { return orders("unavailable"); } },
+      interests: { async interestsFor() { return []; } },
+      documents: { async documentsFor() { return []; } },
+      support: {
+        async casesFor() { return []; },
+        async openCase() { throw new Error("not used"); },
+      },
+      attribution: { async attributionFor() { return null; } },
+    });
+
+    await expect(service.resolveOverview("member-synthetic", { staff: false })).resolves.toEqual({
+      kind: "error",
+    });
   });
 });

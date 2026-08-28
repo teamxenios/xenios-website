@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { resolveMasterOfferingAction } from "./action";
 import { createMasterOfferingProductControlResolver } from "./product-control-adapter";
-import { cartSelection, offering } from "./test-fixtures";
+import { offering } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 
 function exactBinding() {
   return {
@@ -13,7 +14,8 @@ function exactBinding() {
 
 describe("master offering Product Control adapter", () => {
   it("delegates exact identity to Product Control and never reconstructs commerce", async () => {
-    const select = vi.fn(() => ({ ok: true as const, selection: cartSelection() }));
+    const selection = await cartSelection();
+    const select = vi.fn(() => ({ ok: true as const, selection }));
     const resolver = createMasterOfferingProductControlResolver({
       bindings: { readBinding: exactBinding },
       selections: { select },
@@ -38,7 +40,8 @@ describe("master offering Product Control adapter", () => {
   });
 
   it("hands the session's audience fact through only when the composition resolved one", async () => {
-    const select = vi.fn(() => ({ ok: true as const, selection: cartSelection() }));
+    const selection = await cartSelection();
+    const select = vi.fn(() => ({ ok: true as const, selection }));
     const resolver = createMasterOfferingProductControlResolver({
       bindings: { readBinding: exactBinding },
       selections: { select },
@@ -71,7 +74,7 @@ describe("master offering Product Control adapter", () => {
     );
     // A blank fingerprint is no authorization: the session argument is omitted
     // entirely rather than sent half-empty.
-    const bare = vi.fn(() => ({ ok: true as const, selection: cartSelection() }));
+    const bare = vi.fn(() => ({ ok: true as const, selection }));
     const bareResolver = createMasterOfferingProductControlResolver({
       bindings: { readBinding: exactBinding },
       selections: { select: bare },

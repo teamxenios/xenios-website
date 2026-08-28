@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   SupabaseEarlyAccessCartOrderHistory,
+  cartHistoryPaymentEvidence,
   cartOrderDetail,
   cartOrderSummary,
   readCartHistoryEntry,
@@ -73,6 +74,24 @@ function historyDeps(rows: readonly unknown[]) {
     bindings: {
       async customerRefsFor(memberId: string) {
         return memberId === KRIS ? [KRIS_REF] : [];
+      },
+      async customerRefsForHistory(memberId: string) {
+        return { refs: memberId === KRIS ? [KRIS_REF] : [], complete: true };
+      },
+      async forCustomer(customerRef: string) {
+        return customerRef === KRIS_REF
+          ? {
+              ok: true as const,
+              binding: {
+                customerRef,
+                memberId: KRIS,
+                establishedBy: "verified_link" as const,
+                verifiedAt: "2026-08-01T00:00:00.000Z",
+                attestedBy: null,
+                aliasRefs: [],
+              },
+            }
+          : { ok: false as const, code: "binding_absent" as const };
       },
     },
     store: {
@@ -150,6 +169,17 @@ describe("readCartHistoryEntry", () => {
     expect(readCartHistoryEntry(zeroLine)).toBeNull();
   });
 
+  it("refuses internally contradictory invoice and line money", () => {
+    const badInvoiceArithmetic = cartRow();
+    (badInvoiceArithmetic.record as { invoice: Record<string, unknown> }).invoice.taxCents = 1;
+    expect(readCartHistoryEntry(badInvoiceArithmetic)).toBeNull();
+
+    const badLineSum = cartRow();
+    (badLineSum.record as { children: Array<Record<string, unknown>> }).children[0]
+      .payableCents = 47_759;
+    expect(readCartHistoryEntry(badLineSum)).toBeNull();
+  });
+
   it("fails closed on shapes that are not the deployed row", () => {
     expect(readCartHistoryEntry(null)).toBeNull();
     expect(readCartHistoryEntry("row")).toBeNull();
@@ -168,10 +198,11 @@ describe("cart checkouts in the member order history", () => {
     expect(orders).toEqual([
       {
         orderId: "XEC-0123456789ABCDEF",
+        recordKind: "order",
         state: "payment_captured",
         placedAt: "2026-08-18T00:00:00.000Z",
         totalCents: 49_260,
-        payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+        payment: { amountDueCents: 49_260, amountCapturedCents: null, amountRefundedCents: null, currency: "USD" },
         shipmentsSource: "unavailable",
         shipments: [],
       },
@@ -186,10 +217,11 @@ describe("cart checkouts in the member order history", () => {
     const detail = await service.getForMember(KRIS, "XEC-0123456789ABCDEF");
     expect(detail).toEqual({
       orderId: "XEC-0123456789ABCDEF",
+      recordKind: "order",
       state: "payment_captured",
       placedAt: "2026-08-18T00:00:00.000Z",
       totalCents: 49_260,
-      payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+      payment: { amountDueCents: 49_260, amountCapturedCents: null, amountRefundedCents: null, currency: "USD" },
       shipmentsSource: "unavailable",
       shipments: [],
       lines: [{ sku: "SKU-1", displayName: "SKU-1", quantity: 3, lineTotalCents: 47_760 }],
@@ -203,7 +235,9 @@ describe("cart checkouts in the member order history", () => {
     const { deps } = historyDeps([cartRow({ customerRef: STRANGER_REF })]);
     const service = withEarlyAccessOrderHistory(emptyBase, deps);
     await expect(service.listForMember(KRIS)).resolves.toEqual([]);
-    await expect(service.getForMember(KRIS, "XEC-0123456789ABCDEF")).resolves.toBeNull();
+    await expect(service.getForMember(KRIS, "XEC-0123456789ABCDEF")).rejects.toThrow(
+      "order_history_incomplete",
+    );
   });
 
   it("excludes a weakly bound checkout from the durable history", async () => {
@@ -224,6 +258,24 @@ describe("cart checkouts in the member order history", () => {
         async customerRefsFor() {
           return [KRIS_REF];
         },
+        async customerRefsForHistory() {
+          return { refs: [KRIS_REF], complete: true };
+        },
+        async forCustomer(customerRef: string) {
+          return customerRef === KRIS_REF
+            ? {
+                ok: true as const,
+                binding: {
+                  customerRef,
+                  memberId: KRIS,
+                  establishedBy: "verified_link" as const,
+                  verifiedAt: "2026-08-01T00:00:00.000Z",
+                  attestedBy: null,
+                  aliasRefs: [],
+                },
+              }
+            : { ok: false as const, code: "binding_absent" as const };
+        },
       },
       store: {
         async placementsForCustomers() {
@@ -240,6 +292,24 @@ describe("cart checkouts in the member order history", () => {
       bindings: {
         async customerRefsFor() {
           return [KRIS_REF];
+        },
+        async customerRefsForHistory() {
+          return { refs: [KRIS_REF], complete: true };
+        },
+        async forCustomer(customerRef: string) {
+          return customerRef === KRIS_REF
+            ? {
+                ok: true as const,
+                binding: {
+                  customerRef,
+                  memberId: KRIS,
+                  establishedBy: "verified_link" as const,
+                  verifiedAt: "2026-08-01T00:00:00.000Z",
+                  attestedBy: null,
+                  aliasRefs: [],
+                },
+              }
+            : { ok: false as const, code: "binding_absent" as const };
         },
       },
       store: {
@@ -303,5 +373,30 @@ describe("cart projections", () => {
     const detail = cartOrderDetail(entry);
     expect(detail).toMatchObject(summary);
     expect(detail.lines).toEqual([...entry.lines]);
+  });
+
+  it("reads capture from an explicit settlement reader and leaves refunds unknown", async () => {
+    const entry = readCartHistoryEntry(cartRow());
+    expect(entry).not.toBeNull();
+    if (entry === null) return;
+    const asked: string[] = [];
+    const evidence = await cartHistoryPaymentEvidence(
+      {
+        async checkoutsForCustomers() {
+          return [];
+        },
+        async settlement(checkoutNumber) {
+          asked.push(checkoutNumber);
+          return {
+            cartCheckoutNumber: checkoutNumber,
+            verifiedAmountCents: 49_260,
+            verifiedCurrency: "USD",
+          } as never;
+        },
+      },
+      entry,
+    );
+    expect(asked).toEqual(["XEC-0123456789ABCDEF"]);
+    expect(evidence).toEqual({ amountCapturedCents: 49_260, amountRefundedCents: null });
   });
 });

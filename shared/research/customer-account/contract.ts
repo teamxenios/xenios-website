@@ -63,18 +63,23 @@ export const MEMBERSHIP_BILLING_DISPLAY_STATES = [
 
 export type MembershipBillingDisplayState = (typeof MEMBERSHIP_BILLING_DISPLAY_STATES)[number];
 
-export type MembershipDto = Readonly<{
+/**
+ * Durable renewal evidence, kept separate from the compatibility timestamp.
+ * A missing timestamp is not itself proof that no renewal is scheduled:
+ * `not_scheduled` requires an affirmative durable answer, while an unwired or
+ * unreadable source is `unavailable`.
+ */
+export type MembershipRenewalEvidenceDto =
+  | Readonly<{ state: "scheduled"; nextRenewalAt: string }>
+  | Readonly<{ state: "not_scheduled"; nextRenewalAt: null }>
+  | Readonly<{ state: "unavailable"; nextRenewalAt: null }>;
+
+type MembershipDtoBase = Readonly<{
   /** Membership/ACCESS state, derived from research_members.status only. */
   state: MembershipDisplayState;
   /** Billing truth, derived from the stored billing_state only — never from the enforcement flag. */
   billing: MembershipBillingDisplayState;
   planLabel: string | null;
-  /**
-   * ISO timestamp of the next renewal/billing event, when one is actually
-   * scheduled in a durable source. Never invented: null until such a source
-   * exists.
-   */
-  nextRenewalAt: string | null;
   /**
    * Where "manage billing" points. Null while automated billing is not wired
    * (`RESEARCH_MEMBERSHIP_BILLING_ENABLED` off) — the UI then renders the
@@ -84,6 +89,70 @@ export type MembershipDto = Readonly<{
   /** True when billing runs manually/offline (no Stripe portal yet). */
   manualBilling: boolean;
 }>;
+
+type MembershipRenewalFields =
+  | Readonly<{
+      renewal: Extract<MembershipRenewalEvidenceDto, { state: "scheduled" }>;
+      nextRenewalAt: string;
+    }>
+  | Readonly<{
+      renewal: Extract<MembershipRenewalEvidenceDto, { state: "not_scheduled" }>;
+      nextRenewalAt: null;
+    }>
+  | Readonly<{
+      renewal: Extract<MembershipRenewalEvidenceDto, { state: "unavailable" }>;
+      nextRenewalAt: null;
+    }>;
+
+/**
+ * The legacy mirror is discriminated with the evidence object, so a scheduled
+ * renewal cannot be typed with a null mirror and negative/unavailable evidence
+ * cannot be typed with a timestamp. Use `createMembershipDto` so the two string
+ * values are also copied from one source rather than independently assigned.
+ */
+export type MembershipDto = Readonly<MembershipDtoBase & MembershipRenewalFields>;
+
+export type MembershipDtoInput = Readonly<MembershipDtoBase & {
+  renewal: MembershipRenewalEvidenceDto;
+}>;
+
+function isCanonicalInstantTimestamp(value: unknown): value is string {
+  if (typeof value !== "string" || value.trim() === "") return false;
+  const epochMillis = Date.parse(value);
+  return Number.isFinite(epochMillis) && new Date(epochMillis).toISOString() === value;
+}
+
+export function createMembershipDto(input: MembershipDtoInput): MembershipDto {
+  const renewal = input.renewal;
+  if (renewal.state === "scheduled" && !isCanonicalInstantTimestamp(renewal.nextRenewalAt)) {
+    throw new Error("membership_renewal_evidence_invalid");
+  }
+  const frozenRenewal = Object.freeze({ ...renewal }) as MembershipRenewalEvidenceDto;
+  return Object.freeze({
+    ...input,
+    renewal: frozenRenewal,
+    nextRenewalAt: frozenRenewal.nextRenewalAt,
+  }) as MembershipDto;
+}
+
+/** Runtime guard for untrusted/adapted producers before a DTO reaches a route. */
+export function membershipRenewalMirrorMatches(value: unknown): value is MembershipDto {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  const candidate = value as Record<string, unknown>;
+  const renewal = candidate.renewal;
+  if (renewal === null || typeof renewal !== "object" || Array.isArray(renewal)) return false;
+  const evidence = renewal as Record<string, unknown>;
+  if (evidence.state === "scheduled") {
+    return (
+      isCanonicalInstantTimestamp(evidence.nextRenewalAt) &&
+      candidate.nextRenewalAt === evidence.nextRenewalAt
+    );
+  }
+  if (evidence.state === "not_scheduled" || evidence.state === "unavailable") {
+    return evidence.nextRenewalAt === null && candidate.nextRenewalAt === null;
+  }
+  return false;
+}
 
 // ---------------------------------------------------------------------------
 // Care enrollment — a 10-station operational timeline, neutral language only.
@@ -175,6 +244,12 @@ export type OrderFulfillmentDisplayState = (typeof ORDER_FULFILLMENT_DISPLAY_STA
 export type OrderSummaryDto = Readonly<{
   /** XRR- / XEA- / XEC- / XO- reference, verbatim. */
   reference: string;
+  /**
+   * What the authoritative producer says this record is. `unknown` is the
+   * mandatory result when the source did not provide evidence; prefixes are
+   * identifiers only and never determine this value.
+   */
+  recordKind: "order" | "request" | "unknown";
   placedAt: string;
   /**
    * Line detail is never fabricated (P1-B): when the authoritative detail
@@ -220,10 +295,25 @@ export type OrderSourceStateDto = Readonly<{
   complete: boolean;
 }>;
 
-export type OrderHistoryAvailabilityDto = Readonly<{
-  availability: "complete" | "partial" | "unavailable";
-  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
-}>;
+type OrderHistorySourcesDto = Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+
+/**
+ * `availability` is the completeness of the aggregated Research history, not
+ * a generic source-reachability flag. Only a complete read may expose an
+ * authoritative numeric count. A partial list may contain known rows, but its
+ * length is never a total-count claim.
+ */
+export type OrderHistoryAvailabilityDto =
+  | Readonly<{
+      availability: "complete";
+      authoritativeRecordCount: number;
+      sources: OrderHistorySourcesDto;
+    }>
+  | Readonly<{
+      availability: "partial" | "unavailable";
+      authoritativeRecordCount: null;
+      sources: OrderHistorySourcesDto;
+    }>;
 
 export const ORDER_HISTORY_SOURCE_LABELS: Readonly<Record<OrderHistorySourceKey, string>> = {
   commerce: "commerce member orders",
@@ -242,9 +332,22 @@ export function orderHistoryAvailability(
   return "partial";
 }
 
+/**
+ * Care/pharmacy history has its own source-completeness truth. `available`
+ * means the source is connected and the returned rows are complete; it is the
+ * only state that may carry a definitive count. `partial` may accompany known
+ * rows but never a definitive count. `unavailable` carries no complete-source
+ * claim at all.
+ */
+export type CarePharmacyHistoryAvailabilityDto =
+  | Readonly<{ availability: "available"; authoritativeRecordCount: number }>
+  | Readonly<{ availability: "partial"; authoritativeRecordCount: null }>
+  | Readonly<{ availability: "unavailable"; authoritativeRecordCount: null }>;
+
 export type CustomerOrdersDto = Readonly<{
   research: readonly OrderSummaryDto[];
   carePharmacy: readonly CareFulfillmentDto[];
+  carePharmacyHistory: CarePharmacyHistoryAvailabilityDto;
   history: OrderHistoryAvailabilityDto;
 }>;
 

@@ -1,11 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import type {
   CartProductSelectionRequest,
   CartProductSelectionSource,
 } from "@shared/research/cart-product-selection";
+import type { ProductVariantActivationAuthorityEvidence } from "@shared/research/product-activation/contract";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
-import { selectCartProduct } from "./cart-product-selection";
+import { selectCartProduct as selectCartProductWithAuthority } from "./cart-product-selection";
+import {
+  canonicalProductVariantActivationFingerprint,
+  type ProductVariantActivationLedgerRecord,
+} from "../product-activation/authority-repository";
+import { resolveActivationAuthorityFromTestRows } from "../product-activation/testing/authority.test-support";
 
 const AT = "2026-07-26T22:00:00.000Z";
 const request: CartProductSelectionRequest = {
@@ -15,6 +21,66 @@ const request: CartProductSelectionRequest = {
   currency: "USD",
   evaluatedAt: AT,
 };
+
+async function activationFor(
+  selectionRequest: CartProductSelectionRequest,
+  selectionSource: CartProductSelectionSource,
+  overrides: Partial<Omit<ProductVariantActivationLedgerRecord, "evidenceFingerprint">> = {},
+): Promise<ProductVariantActivationAuthorityEvidence | null> {
+  const variant = selectionSource.variants.find(
+    (candidate) => candidate.id === selectionRequest.variantId,
+  );
+  if (variant === undefined) return null;
+  const parsedAt = Date.parse(selectionRequest.evaluatedAt);
+  const evaluatedAt = Number.isFinite(parsedAt)
+    ? new Date(parsedAt).toISOString()
+    : selectionRequest.evaluatedAt;
+  const unsigned = {
+    schemaVersion: 1 as const,
+    ledgerRevision: 7,
+    productId: selectionRequest.productId,
+    variantId: selectionRequest.variantId,
+    sku: variant.sku,
+    productState: "live" as const,
+    variantState: "live" as const,
+    approvalId: "11111111-1111-4111-8111-111111111111",
+    approvedByActorId: "22222222-2222-4222-8222-222222222222",
+    approvedByRole: "founder" as const,
+    approvedAt: "2026-07-20T00:00:00.000Z",
+    reviewedAt: "2026-07-21T00:00:00.000Z",
+    validFrom: "2026-07-22T00:00:00.000Z",
+    validThrough: "2026-08-26T00:00:00.000Z",
+    revokedAt: null,
+    ...overrides,
+  };
+  const row: ProductVariantActivationLedgerRecord = {
+    ...unsigned,
+    evidenceFingerprint: canonicalProductVariantActivationFingerprint(unsigned),
+  };
+  return resolveActivationAuthorityFromTestRows(
+    [row],
+    {
+      productId: row.productId,
+      variantId: row.variantId,
+      sku: row.sku,
+      evaluatedAt,
+    },
+  );
+}
+
+let defaultActivation: ProductVariantActivationAuthorityEvidence | null = null;
+
+function selectCartProduct(
+  selectionRequest: CartProductSelectionRequest,
+  selectionSource: CartProductSelectionSource,
+  activation: ProductVariantActivationAuthorityEvidence | null = defaultActivation,
+) {
+  return selectCartProductWithAuthority(
+    selectionRequest,
+    selectionSource,
+    activation,
+  );
+}
 
 function readiness(domain: string): DomainReadiness {
   return {
@@ -166,7 +232,67 @@ function source(): CartProductSelectionSource {
   };
 }
 
+beforeAll(async () => {
+  defaultActivation = await activationFor(request, source());
+  if (defaultActivation?.state !== "live") {
+    throw new Error("test activation fixture must resolve through the live durable resolver");
+  }
+});
+
 describe("Website 3 cart product selection", () => {
+  it("fails closed without exact current live activation authority", async () => {
+    const missing = source();
+    expect(selectCartProduct(request, missing, null)).toEqual({
+      ok: false,
+      code: "activation_authority_missing",
+    });
+
+    for (const state of [
+      "held",
+      "pending",
+      "unavailable",
+      "retired",
+      "revoked",
+      "stale",
+      "ambiguous",
+      "conflicting",
+    ] as const) {
+      expect(
+        selectCartProduct(request, source(), {
+          state,
+          productId: "product-a",
+          variantId: "variant-a",
+          sku: "SKU-A",
+        }),
+        state,
+      ).toEqual({
+        ok: false,
+        code:
+          state === "unavailable"
+            ? "activation_authority_missing"
+            : "activation_authority_not_live",
+      });
+    }
+
+    const mismatch = await activationFor(request, source(), {
+      variantId: "variant-other",
+    });
+    expect(selectCartProduct(request, source(), mismatch)).toEqual({
+      ok: false,
+      code: "activation_identity_mismatch",
+    });
+
+    const legitimate = await activationFor(request, source());
+    expect(legitimate?.state).toBe("live");
+    const forged = legitimate === null
+      ? null
+      : ({ ...legitimate } as ProductVariantActivationAuthorityEvidence);
+    expect(selectCartProduct(request, source(), forged)).toEqual({
+      ok: false,
+      code: "activation_evidence_invalid",
+    });
+  });
+
   it("fails closed when the exact product, variant, price, or inventory fact is missing", () => {
     const missingProduct = source();
     missingProduct.products = [];

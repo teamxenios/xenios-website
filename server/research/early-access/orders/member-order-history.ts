@@ -72,9 +72,19 @@
 
 import type { OrderDetailDto, OrderSummaryDto } from "../../../../shared/research/commerce-api";
 import type { OrderState } from "../../../../shared/research/commerce";
+import type {
+  OrderHistorySourceKey,
+  OrderSourceStateDto,
+} from "../../../../shared/research/customer-account/contract";
 import type { EarlyAccessLegalBindingDirectory } from "../hardening-contract";
 import type { EarlyAccessCommerceStore, EarlyAccessPlacement } from "../routes/store";
+import { readEarlyAccessRefundHistory } from "../commerce/refund";
 import {
+  earlyAccessPromotionDiscountCents,
+  earlyAccessPromotionVersion,
+} from "../commerce/promotion";
+import {
+  cartHistoryPaymentEvidence,
   cartOrderDetail,
   cartOrderSummary,
   readCartHistoryEntry,
@@ -123,8 +133,20 @@ export type EarlyAccessOrderHistoryDependencies = Readonly<{
   // member -> handles; the buyer-scoped pricing composition reads the forward
   // handle -> binding through the same object, so the two can never answer
   // from different records.
-  bindings: Pick<EarlyAccessLegalBindingDirectory, "customerRefsFor" | "forCustomer">;
-  store: Pick<EarlyAccessCommerceStore, "placementsForCustomers">;
+  bindings: Pick<EarlyAccessLegalBindingDirectory, "customerRefsFor" | "forCustomer"> &
+    Partial<Readonly<{
+      /**
+       * Lossless per-read evidence from the durable directory. A legacy
+       * directory that exposes only the filtered string list cannot prove a
+       * complete history and is therefore treated as partial.
+       */
+      customerRefsForHistory(memberId: string): Promise<Readonly<{
+        refs: readonly string[];
+        complete: boolean;
+      }>>;
+    }>>;
+  store: Pick<EarlyAccessCommerceStore, "placementsForCustomers"> &
+    Partial<Pick<EarlyAccessCommerceStore, "settlement" | "refunds">>;
   /**
    * Cart checkouts, the canonical launch order. OPTIONAL, and the absence is
    * the fail-closed state: until the founder applies the candidate read RPC
@@ -140,7 +162,14 @@ export type EarlyAccessOrderHistoryDependencies = Readonly<{
 /** The member-facing orders service this decorates. Structural on purpose. */
 export interface MemberOrdersService {
   listForMember(memberId: string): Promise<OrderSummaryDto[]>;
+  /** Rows plus completeness observed during this exact read. */
+  listForMemberWithHistory?(memberId: string): Promise<Readonly<{
+    rows: OrderSummaryDto[];
+    historySources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+  }>>;
   getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null>;
+  /** Completeness metadata carried by this exact constructed reader. */
+  readonly historySources?: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
 }
 
 /**
@@ -150,22 +179,265 @@ export interface MemberOrdersService {
  * directory failure is NOT caught here: it propagates, so the caller can fail
  * honestly instead of rendering an empty history.
  */
+type OwnedHandlesRead = Readonly<{
+  values: ReadonlySet<string>;
+  complete: boolean;
+}>;
+
 async function ownedHandles(
   deps: EarlyAccessOrderHistoryDependencies,
   memberId: unknown,
-): Promise<ReadonlySet<string>> {
-  if (typeof memberId !== "string" || memberId.trim() === "") return new Set();
+): Promise<OwnedHandlesRead> {
+  if (typeof memberId !== "string" || memberId.trim() === "") {
+    return { values: new Set(), complete: false };
+  }
 
-  const refs = await deps.bindings.customerRefsFor(memberId);
-  if (!Array.isArray(refs) || refs.length === 0) return new Set();
+  const read = deps.bindings.customerRefsForHistory
+    ? await deps.bindings.customerRefsForHistory(memberId)
+    : {
+        refs: await deps.bindings.customerRefsFor(memberId),
+        complete: false,
+      };
+  const refs = read.refs;
+  if (!Array.isArray(refs)) return { values: new Set(), complete: false };
+  if (refs.length === 0) {
+    return { values: new Set(), complete: read.complete === true };
+  }
 
   const owned = new Set<string>();
+  let complete = read.complete === true;
   for (const ref of refs) {
-    if (typeof ref !== "string" || ref === "") continue;
+    if (typeof ref !== "string" || ref.trim() === "") {
+      complete = false;
+      continue;
+    }
+    if (owned.has(ref)) {
+      complete = false;
+      continue;
+    }
+    if (owned.size >= MAX_HISTORY_CUSTOMER_REFS) {
+      complete = false;
+      continue;
+    }
+
+    // The inverse member->refs query is discovery, never authorization. Re-read
+    // each candidate through the distinct forward ref->binding authority before
+    // it may reach either history store. An overbroad inverse RPC can therefore
+    // downgrade the source, but cannot disclose another member's order.
+    let forward;
+    try {
+      forward = await deps.bindings.forCustomer(ref);
+    } catch {
+      complete = false;
+      continue;
+    }
+    if (
+      !forward.ok ||
+      forward.binding.memberId !== memberId ||
+      !HISTORY_GRADE_PROVENANCE.has(forward.binding.establishedBy) ||
+      (
+        forward.binding.customerRef !== ref &&
+        !forward.binding.aliasRefs.includes(ref)
+      )
+    ) {
+      complete = false;
+      continue;
+    }
     owned.add(ref);
-    if (owned.size >= MAX_HISTORY_CUSTOMER_REFS) break;
   }
-  return owned;
+  return { values: owned, complete };
+}
+
+type OwnedRowsRead<T> = Readonly<{
+  rows: readonly T[];
+  complete: boolean;
+  /** Exact opaque references observed more than once inside this source. */
+  ambiguousReferences: ReadonlySet<string>;
+}>;
+
+function historyRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function historyPositiveInt(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+}
+
+function historyNonNegativeInt(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+}
+
+function historyInstant(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const milliseconds = Date.parse(value);
+  return Number.isFinite(milliseconds) && new Date(milliseconds).toISOString() === value;
+}
+
+type HistoryMoney = Readonly<{
+  currency: "USD";
+  subtotalCents: number;
+  discountCents: number;
+  shippingCents: number;
+  taxCents: number;
+  payableTotalCents: number;
+}>;
+
+function readHistoryMoney(value: unknown): HistoryMoney | null {
+  const money = historyRecord(value);
+  if (money === null || money.currency !== "USD") return null;
+  if (!historyPositiveInt(money.subtotalCents)) return null;
+  if (!historyNonNegativeInt(money.discountCents)) return null;
+  if (!historyNonNegativeInt(money.shippingCents)) return null;
+  if (!historyNonNegativeInt(money.taxCents)) return null;
+  if (!historyPositiveInt(money.payableTotalCents)) return null;
+  if (money.discountCents > money.subtotalCents) return null;
+  const expected =
+    money.subtotalCents - money.discountCents + money.shippingCents + money.taxCents;
+  if (!Number.isSafeInteger(expected) || money.payableTotalCents !== expected) return null;
+  return {
+    currency: "USD",
+    subtotalCents: money.subtotalCents,
+    discountCents: money.discountCents,
+    shippingCents: money.shippingCents,
+    taxCents: money.taxCents,
+    payableTotalCents: money.payableTotalCents,
+  };
+}
+
+function historyMoneyMatches(left: HistoryMoney, right: HistoryMoney): boolean {
+  return (
+    left.currency === right.currency &&
+    left.subtotalCents === right.subtotalCents &&
+    left.discountCents === right.discountCents &&
+    left.shippingCents === right.shippingCents &&
+    left.taxCents === right.taxCents &&
+    left.payableTotalCents === right.payableTotalCents
+  );
+}
+
+/**
+ * Re-prove every durable placement field the member projection consumes.
+ *
+ * The persistence adapter transports JSON and therefore cannot make its TypeScript
+ * cast authoritative. A malformed row is not "not an order": it is evidence that
+ * this exact history read was incomplete, so the caller drops it and downgrades the
+ * source. Both the legacy wrapper money and any newer nested money must agree with
+ * the exact line, while invoice identity and money must agree with the order.
+ */
+function readPlacementHistoryEntry(value: unknown): EarlyAccessPlacement | null {
+  const placement = historyRecord(value);
+  if (placement === null) return null;
+  if (typeof placement.orderNumber !== "string" || placement.orderNumber.trim() === "") {
+    return null;
+  }
+  if (typeof placement.customerRef !== "string" || placement.customerRef.trim() === "") {
+    return null;
+  }
+  if (!historyInstant(placement.placedAt)) return null;
+  if (PAYMENT_STATE_TO_ORDER_STATE[String(placement.paymentState)] === undefined) return null;
+
+  const release = historyRecord(placement.order);
+  const order = historyRecord(release?.order);
+  const line = historyRecord(order?.line);
+  if (release === null || order === null || line === null) return null;
+  if (order.orderId !== placement.orderNumber || order.customerRef !== placement.customerRef) {
+    return null;
+  }
+  if (order.currency !== "USD" || line.currency !== "USD") return null;
+  if (typeof line.sku !== "string" || line.sku.trim() === "") return null;
+  if (!historyPositiveInt(line.quantity) || !historyPositiveInt(line.unitPriceCents)) return null;
+  if (!historyPositiveInt(line.lineTotalCents)) return null;
+  const expectedLineTotal = line.quantity * line.unitPriceCents;
+  if (!Number.isSafeInteger(expectedLineTotal) || line.lineTotalCents !== expectedLineTotal) {
+    return null;
+  }
+  if (order.orderTotalCents !== line.lineTotalCents) return null;
+  const orderInstant = order.createdAt ?? order.placedAt;
+  if (!historyInstant(orderInstant) || orderInstant !== placement.placedAt) return null;
+
+  const releaseMoney = readHistoryMoney(release.money);
+  if (releaseMoney === null || releaseMoney.subtotalCents !== line.lineTotalCents) return null;
+  if (order.money !== undefined) {
+    const nestedMoney = readHistoryMoney(order.money);
+    if (nestedMoney === null || !historyMoneyMatches(releaseMoney, nestedMoney)) return null;
+  }
+
+  const releasePromotion = historyRecord(release.promotion);
+  if (releasePromotion === null) return null;
+  if (
+    typeof releasePromotion.promotionId !== "string" ||
+    releasePromotion.promotionId.trim() === "" ||
+    releasePromotion.rule !== "bundle_quantity_percentage" ||
+    releasePromotion.eligibleQuantity !== line.quantity ||
+    !historyNonNegativeInt(releasePromotion.discountBasisPoints) ||
+    releasePromotion.discountBasisPoints > 10_000 ||
+    typeof releasePromotion.label !== "string" ||
+    releasePromotion.label.trim() === "" ||
+    typeof releasePromotion.promotionVersion !== "string" ||
+    releasePromotion.promotionVersion !== earlyAccessPromotionVersion({
+      promotionId: releasePromotion.promotionId,
+      rule: "bundle_quantity_percentage",
+      eligibleQuantity: releasePromotion.eligibleQuantity,
+      discountBasisPoints: releasePromotion.discountBasisPoints,
+      label: releasePromotion.label,
+    }) ||
+    releaseMoney.discountCents !==
+      earlyAccessPromotionDiscountCents(
+        releaseMoney.subtotalCents,
+        releasePromotion.discountBasisPoints,
+      )
+  ) {
+    return null;
+  }
+  const nestedPromotion = order.promotion;
+  if (releaseMoney.discountCents === 0) {
+    if (nestedPromotion !== null) return null;
+  } else {
+    const promotion = historyRecord(nestedPromotion);
+    if (
+      promotion === null ||
+      promotion.promotionId !== releasePromotion.promotionId ||
+      promotion.promotionVersion !== releasePromotion.promotionVersion ||
+      promotion.rule !== releasePromotion.rule ||
+      promotion.eligibleQuantity !== releasePromotion.eligibleQuantity ||
+      promotion.discountBasisPoints !== releasePromotion.discountBasisPoints ||
+      promotion.subtotalCents !== releaseMoney.subtotalCents ||
+      promotion.discountCents !== releaseMoney.discountCents ||
+      promotion.payableTotalCents !== releaseMoney.payableTotalCents
+    ) {
+      return null;
+    }
+  }
+
+  const invoice = historyRecord(placement.invoice);
+  if (invoice === null) return null;
+  if (invoice.orderId !== placement.orderNumber || invoice.customerRef !== placement.customerRef) {
+    return null;
+  }
+  if (invoice.currency !== "USD") return null;
+  if (
+    invoice.subtotalCents !== releaseMoney.subtotalCents ||
+    invoice.discountCents !== releaseMoney.discountCents ||
+    invoice.payableTotalCents !== releaseMoney.payableTotalCents
+  ) {
+    return null;
+  }
+  if (!historyInstant(invoice.issuedAt)) return null;
+  if (!Array.isArray(invoice.lines) || invoice.lines.length !== 1) return null;
+  const invoiceLine = historyRecord(invoice.lines[0]);
+  if (
+    invoiceLine === null ||
+    invoiceLine.sku !== line.sku ||
+    invoiceLine.quantity !== line.quantity ||
+    invoiceLine.unitPriceCents !== line.unitPriceCents ||
+    invoiceLine.lineTotalCents !== line.lineTotalCents
+  ) {
+    return null;
+  }
+
+  return placement as unknown as EarlyAccessPlacement;
 }
 
 /**
@@ -178,27 +450,49 @@ async function ownedHandles(
 async function ownedPlacements(
   deps: EarlyAccessOrderHistoryDependencies,
   memberId: unknown,
-): Promise<readonly EarlyAccessPlacement[]> {
-  const owned = await ownedHandles(deps, memberId);
-  if (owned.size === 0) return [];
+  handles?: OwnedHandlesRead,
+): Promise<OwnedRowsRead<EarlyAccessPlacement>> {
+  const bounded = handles ?? await ownedHandles(deps, memberId);
+  const owned = bounded.values;
+  if (owned.size === 0) {
+    return { rows: [], complete: bounded.complete, ambiguousReferences: new Set() };
+  }
 
   const placements = await deps.store.placementsForCustomers(Array.from(owned));
-  if (!Array.isArray(placements)) return [];
+  if (!Array.isArray(placements)) {
+    return { rows: [], complete: false, ambiguousReferences: new Set() };
+  }
 
   const seen = new Set<string>();
+  const ambiguousReferences = new Set<string>();
   const kept: EarlyAccessPlacement[] = [];
-  for (const placement of placements) {
-    if (placement === null || typeof placement !== "object") continue;
+  let complete = bounded.complete;
+  for (const candidate of placements) {
+    const placement = readPlacementHistoryEntry(candidate);
+    if (placement === null) {
+      complete = false;
+      continue;
+    }
     // THE RE-CHECK. The store filtered on these handles; it is checked again
     // here, because this is the read where being wrong means showing one
     // person another person's order.
-    if (!owned.has(placement.customerRef)) continue;
-    if (!HISTORY_GRADE_PROVENANCE.has(placement.bindingProvenance ?? "")) continue;
-    if (seen.has(placement.orderNumber)) continue;
+    if (!owned.has(placement.customerRef)) {
+      complete = false;
+      continue;
+    }
+    if (!HISTORY_GRADE_PROVENANCE.has(placement.bindingProvenance ?? "")) {
+      complete = false;
+      continue;
+    }
+    if (seen.has(placement.orderNumber)) {
+      ambiguousReferences.add(placement.orderNumber);
+      complete = false;
+      continue;
+    }
     seen.add(placement.orderNumber);
     kept.push(placement);
   }
-  return kept;
+  return { rows: kept, complete, ambiguousReferences };
 }
 
 /**
@@ -213,26 +507,46 @@ async function ownedPlacements(
 async function ownedCartEntries(
   deps: EarlyAccessOrderHistoryDependencies,
   memberId: unknown,
-): Promise<readonly EarlyAccessCartHistoryEntry[]> {
-  if (!deps.cartOrders) return [];
-  const owned = await ownedHandles(deps, memberId);
-  if (owned.size === 0) return [];
+  handles?: OwnedHandlesRead,
+): Promise<OwnedRowsRead<EarlyAccessCartHistoryEntry>> {
+  if (!deps.cartOrders) {
+    return { rows: [], complete: false, ambiguousReferences: new Set() };
+  }
+  const bounded = handles ?? await ownedHandles(deps, memberId);
+  const owned = bounded.values;
+  if (owned.size === 0) {
+    return { rows: [], complete: bounded.complete, ambiguousReferences: new Set() };
+  }
 
   const rows = await deps.cartOrders.checkoutsForCustomers(Array.from(owned));
-  if (!Array.isArray(rows)) return [];
+  if (!Array.isArray(rows)) {
+    return { rows: [], complete: false, ambiguousReferences: new Set() };
+  }
 
   const seen = new Set<string>();
+  const ambiguousReferences = new Set<string>();
   const kept: EarlyAccessCartHistoryEntry[] = [];
+  let complete = bounded.complete;
   for (const row of rows) {
     const entry = readCartHistoryEntry(row);
-    if (entry === null) continue;
+    if (entry === null) {
+      complete = false;
+      continue;
+    }
     // THE RE-CHECK, same reason as the placements above.
-    if (!owned.has(entry.customerRef)) continue;
-    if (seen.has(entry.cartCheckoutNumber)) continue;
+    if (!owned.has(entry.customerRef)) {
+      complete = false;
+      continue;
+    }
+    if (seen.has(entry.cartCheckoutNumber)) {
+      ambiguousReferences.add(entry.cartCheckoutNumber);
+      complete = false;
+      continue;
+    }
     seen.add(entry.cartCheckoutNumber);
     kept.push(entry);
   }
-  return kept;
+  return { rows: kept, complete, ambiguousReferences };
 }
 
 /**
@@ -250,27 +564,89 @@ async function ownedCartEntries(
  * merchandise subtotal and is deprecated for exactly this reason: a customer
  * shown the subtotal as their total believes they were overcharged.
  */
-export function earlyAccessOrderSummary(placement: EarlyAccessPlacement): OrderSummaryDto {
+export type EarlyAccessHistoryPaymentEvidence = Readonly<{
+  amountCapturedCents: number | null;
+  amountRefundedCents: number | null;
+}>;
+
+const UNKNOWN_EARLY_ACCESS_PAYMENT_EVIDENCE: EarlyAccessHistoryPaymentEvidence = Object.freeze({
+  amountCapturedCents: null,
+  amountRefundedCents: null,
+});
+
+/**
+ * Read payment facts from the settlement/refund ledgers. Missing or malformed
+ * readers remain unknown; the placement lifecycle never manufactures zero.
+ */
+export async function earlyAccessHistoryPaymentEvidence(
+  deps: EarlyAccessOrderHistoryDependencies,
+  placement: EarlyAccessPlacement,
+): Promise<EarlyAccessHistoryPaymentEvidence> {
+  if (deps.store.settlement === undefined) return UNKNOWN_EARLY_ACCESS_PAYMENT_EVIDENCE;
+  const settlement = await deps.store.settlement(placement.orderNumber);
+  const captured =
+    settlement !== null &&
+    settlement.orderNumber === placement.orderNumber &&
+    settlement.ledgerEntry.currency === "USD" &&
+    Number.isSafeInteger(settlement.ledgerEntry.amountCents) &&
+    settlement.ledgerEntry.amountCents > 0
+      ? settlement.ledgerEntry.amountCents
+      : null;
+
+  if (deps.store.refunds === undefined) {
+    return Object.freeze({ amountCapturedCents: captured, amountRefundedCents: null });
+  }
+  const refunds = readEarlyAccessRefundHistory(await deps.store.refunds(placement.orderNumber));
+  if (refunds === null) {
+    return Object.freeze({ amountCapturedCents: captured, amountRefundedCents: null });
+  }
+
+  // The generic parser proves each row's shape, not the authoritative history
+  // chain this projection needs. Re-prove the entire chain here so history
+  // truth does not depend on stronger semantics in the excluded refund module.
+  let refunded = 0;
+  for (let index = 0; index < refunds.length; index += 1) {
+    const refund = refunds[index];
+    if (
+      refund === undefined ||
+      refund.sequence !== index + 1 ||
+      refund.orderId !== placement.orderNumber ||
+      captured === null ||
+      refund.verifiedPaidCents !== captured ||
+      !Number.isSafeInteger(refund.amountCents) ||
+      refund.amountCents <= 0 ||
+      !Number.isSafeInteger(refund.priorRefundedCents) ||
+      refund.priorRefundedCents !== refunded
+    ) {
+      return Object.freeze({ amountCapturedCents: captured, amountRefundedCents: null });
+    }
+    const nextRefunded = refunded + refund.amountCents;
+    if (!Number.isSafeInteger(nextRefunded) || nextRefunded > captured) {
+      return Object.freeze({ amountCapturedCents: captured, amountRefundedCents: null });
+    }
+    refunded = nextRefunded;
+  }
+  return Object.freeze({ amountCapturedCents: captured, amountRefundedCents: refunded });
+}
+
+export function earlyAccessOrderSummary(
+  placement: EarlyAccessPlacement,
+  evidence: EarlyAccessHistoryPaymentEvidence = UNKNOWN_EARLY_ACCESS_PAYMENT_EVIDENCE,
+): OrderSummaryDto {
   return {
     // The Early Access order number, unchanged. It is the identifier the
     // customer already has on their invoice, so the two agree.
     orderId: placement.orderNumber,
+    recordKind: "order",
     state: PAYMENT_STATE_TO_ORDER_STATE[placement.paymentState] ?? "exception",
     placedAt: placement.placedAt,
     totalCents: placement.order.money.payableTotalCents,
-    // P1-A monetary FACTS: this lane's own invariant is that money counts as
-    // received ONLY at verification, so verified-captured is authoritatively
-    // the payable total on a verified placement and authoritatively zero on
-    // everything else (awaiting / under review / rejected — a customer's
-    // unverified claim of payment is not capture evidence). The lane has no
-    // refund concept, so refunded is authoritatively zero, never null.
+    // P1-A monetary FACTS come only from durable readers. A lifecycle label is
+    // context, not capture/refund evidence, and missing readers remain null.
     payment: {
       amountDueCents: placement.order.money.payableTotalCents,
-      amountCapturedCents:
-        placement.paymentState === "payment_verified"
-          ? placement.order.money.payableTotalCents
-          : 0,
-      amountRefundedCents: 0,
+      amountCapturedCents: evidence.amountCapturedCents,
+      amountRefundedCents: evidence.amountRefundedCents,
       currency: "USD",
     },
     // Early Access fulfilment events live behind their own reads, one call per
@@ -291,10 +667,13 @@ export function earlyAccessOrderSummary(placement: EarlyAccessPlacement): OrderS
  * Access placement stores no display name and inventing one would put a product
  * label on a customer's order that no catalogue ever approved.
  */
-export function earlyAccessOrderDetail(placement: EarlyAccessPlacement): OrderDetailDto {
+export function earlyAccessOrderDetail(
+  placement: EarlyAccessPlacement,
+  evidence: EarlyAccessHistoryPaymentEvidence = UNKNOWN_EARLY_ACCESS_PAYMENT_EVIDENCE,
+): OrderDetailDto {
   const line = placement.order.order.line;
   return {
-    ...earlyAccessOrderSummary(placement),
+    ...earlyAccessOrderSummary(placement, evidence),
     lines: [
       {
         sku: line.sku,
@@ -328,46 +707,151 @@ export function withEarlyAccessOrderHistory(
   base: MemberOrdersService,
   deps: EarlyAccessOrderHistoryDependencies,
 ): MemberOrdersService {
+  const unavailable = Object.freeze({ connected: false, complete: false });
+  const baseSources = base.historySources ?? Object.freeze({
+    commerce: unavailable,
+    xea: unavailable,
+    xec: unavailable,
+    xrr: unavailable,
+  });
+
+  async function readForMember(memberId: string): Promise<Readonly<{
+    rows: OrderSummaryDto[];
+    historySources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+  }>> {
+    const [baseRead, handles] = await Promise.all([
+      base.listForMemberWithHistory
+        ? base.listForMemberWithHistory(memberId)
+        : base.listForMember(memberId).then((rows) => ({ rows, historySources: baseSources })),
+      ownedHandles(deps, memberId),
+    ]);
+    if (!Array.isArray(baseRead.rows)) throw new Error("base_order_history_unavailable");
+
+    const [placementsRead, cartRead] = await Promise.all([
+      ownedPlacements(deps, memberId, handles),
+      deps.cartOrders === undefined
+        ? Promise.resolve({
+            rows: [] as readonly EarlyAccessCartHistoryEntry[],
+            complete: false,
+            ambiguousReferences: new Set<string>(),
+          })
+        : ownedCartEntries(deps, memberId, handles),
+    ]);
+    const [placementOrders, cartOrders] = await Promise.all([
+      Promise.all(
+        placementsRead.rows.map(async (placement) =>
+          earlyAccessOrderSummary(
+            placement,
+            await earlyAccessHistoryPaymentEvidence(deps, placement),
+          ),
+        ),
+      ),
+      Promise.all(
+        cartRead.rows.map(async (entry) =>
+          cartOrderSummary(entry, await cartHistoryPaymentEvidence(deps.cartOrders, entry)),
+        ),
+      ),
+    ]);
+    const rows = [
+      ...baseRead.rows,
+      ...placementOrders,
+      ...cartOrders,
+    ].sort((a, b) =>
+      a.placedAt === b.placedAt
+        ? a.orderId.localeCompare(b.orderId)
+        : b.placedAt.localeCompare(a.placedAt),
+    );
+    return {
+      rows,
+      historySources: Object.freeze({
+        ...baseRead.historySources,
+        xea: Object.freeze({ connected: true, complete: placementsRead.complete }),
+        xec:
+          deps.cartOrders === undefined
+            ? unavailable
+            : Object.freeze({ connected: true, complete: cartRead.complete }),
+      }),
+    };
+  }
+
   return {
+    // These legacy/static fields describe connection only. Completeness is a
+    // fact of an individual bounded read (bindings may exceed the cap or carry
+    // malformed rows), so callers that cannot consume listForMemberWithHistory
+    // must see partial rather than a timeless complete assertion.
+    historySources: Object.freeze({
+      ...baseSources,
+      xea: Object.freeze({ connected: true, complete: false }),
+      xec:
+        deps.cartOrders === undefined
+          ? unavailable
+          : Object.freeze({ connected: true, complete: false }),
+    }),
     async listForMember(memberId: string): Promise<OrderSummaryDto[]> {
-      const [own, placements, cartEntries] = await Promise.all([
-        base.listForMember(memberId),
-        ownedPlacements(deps, memberId),
-        ownedCartEntries(deps, memberId),
-      ]);
-      const merged = [
-        ...own,
-        ...placements.map(earlyAccessOrderSummary),
-        ...cartEntries.map(cartOrderSummary),
-      ];
-      return merged.sort((a, b) =>
-        a.placedAt === b.placedAt
-          ? a.orderId.localeCompare(b.orderId)
-          : b.placedAt.localeCompare(a.placedAt),
-      );
+      return (await readForMember(memberId)).rows;
+    },
+
+    async listForMemberWithHistory(memberId: string) {
+      return readForMember(memberId);
     },
 
     async getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null> {
-      // The base service owns its own id space and its own ownership rule, so
-      // it is asked first and its answer wins.
-      const own = await base.getForMember(memberId, orderId);
-      if (own !== null) return own;
       if (typeof orderId !== "string" || orderId === "") return null;
 
-      // Resolved through the SAME ownership path as the list, not by looking the
-      // order up and then asking whether it belongs to this member. A foreign
-      // order is therefore never read at all, so a probe cannot distinguish
-      // another member's order from one that does not exist.
-      const placements = await ownedPlacements(deps, memberId);
-      const match = placements.find((placement) => placement.orderNumber === orderId);
-      if (match !== undefined) return earlyAccessOrderDetail(match);
+      // Every source is independently member-scoped. Resolve them all before
+      // choosing a detail: references are opaque, so a base, placement, and cart
+      // row can carry the same exact value. Returning the first hit would turn a
+      // known cross-source collision into a definitive (and potentially wrong)
+      // record.
+      const [own, handles] = await Promise.all([
+        base.getForMember(memberId, orderId),
+        ownedHandles(deps, memberId),
+      ]);
+      const [placements, cartEntries] = await Promise.all([
+        ownedPlacements(deps, memberId, handles),
+        deps.cartOrders === undefined
+          ? Promise.resolve({
+              rows: [] as readonly EarlyAccessCartHistoryEntry[],
+              complete: false,
+              ambiguousReferences: new Set<string>(),
+            })
+          : ownedCartEntries(deps, memberId, handles),
+      ]);
+      const placementMatch = placements.rows.find((placement) => placement.orderNumber === orderId);
+      const cartMatch = cartEntries.rows.find((entry) => entry.cartCheckoutNumber === orderId);
+      const exactMatchCount =
+        (own === null ? 0 : 1) +
+        (placementMatch === undefined ? 0 : 1) +
+        (cartMatch === undefined ? 0 : 1);
+      if (
+        exactMatchCount > 1 ||
+        placements.ambiguousReferences.has(orderId) ||
+        cartEntries.ambiguousReferences.has(orderId)
+      ) {
+        throw new Error("order_history_ambiguous");
+      }
 
-      // Cart checkouts occupy their own id space (XEC- against XEA-), and take
-      // the same ownership-first resolution for the same probe-resistance
-      // reason.
-      const cartEntries = await ownedCartEntries(deps, memberId);
-      const cartMatch = cartEntries.find((entry) => entry.cartCheckoutNumber === orderId);
-      return cartMatch === undefined ? null : cartOrderDetail(cartMatch);
+      // References are opaque. An incomplete competing source may have omitted
+      // another row with this exact reference, so even a known hit cannot be
+      // selected definitively until every competing member-scoped read completed.
+      if (!placements.complete || !cartEntries.complete) {
+        throw new Error("order_history_incomplete");
+      }
+
+      if (own !== null) return own;
+      if (placementMatch !== undefined) {
+        return earlyAccessOrderDetail(
+          placementMatch,
+          await earlyAccessHistoryPaymentEvidence(deps, placementMatch),
+        );
+      }
+
+      return cartMatch === undefined
+        ? null
+        : cartOrderDetail(
+            cartMatch,
+            await cartHistoryPaymentEvidence(deps.cartOrders, cartMatch),
+          );
     },
   };
 }

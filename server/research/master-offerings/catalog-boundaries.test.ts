@@ -18,7 +18,8 @@ import {
   InMemoryMasterOfferingCatalogReader,
   MasterOfferingCatalogService,
 } from "./service";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 import {
   MASTER_OFFERINGS_ENABLED_ENV_VAR,
   MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY_ENV_VAR,
@@ -212,6 +213,7 @@ describe("adversarial: no private field crosses the HTTP boundary", () => {
   });
 
   it("emits Product Control identity only inside a resolved add_to_cart", async () => {
+    const selection = await cartSelection();
     const purchasable = new MasterOfferingCatalogService(
       new InMemoryMasterOfferingCatalogReader(loadedCatalog()),
       (_offering, entry) =>
@@ -222,7 +224,7 @@ describe("adversarial: no private field crosses the HTTP boundary", () => {
                 productId: "pc_product_1",
                 variantId: "pc_variant_1",
               },
-              selection: cartSelection(),
+              selection,
             }
           : { binding: null, selection: null },
     );

@@ -78,6 +78,7 @@ function deps(overrides: Partial<CheckoutDeps> = {}): CheckoutDeps {
     payment: new TestPaymentProvider(),
     shipping: new ConfiguredRateShippingProvider(),
     commerceEnabled: true,
+    durableCheckoutExecutionAvailable: true,
     serviceableStates: ["TX", "CA"],
     acceptedAgreementKeys: ["research_use_v1"],
     ...overrides,
@@ -85,6 +86,28 @@ function deps(overrides: Partial<CheckoutDeps> = {}): CheckoutDeps {
 }
 
 describe("commerce disabled (the state today)", () => {
+  it("refuses before every read or side effect when durable checkout execution is unavailable", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const cartRead = vi.fn(() => cart());
+    const shipping = new ConfiguredRateShippingProvider();
+    const shippingQuote = vi.spyOn(shipping, "quote");
+    const service = createCheckoutService(deps({
+      durableCheckoutExecutionAvailable: false,
+      cart: { revalidate: cartRead },
+      payment,
+      shipping,
+    }));
+
+    expect(await service.submit("mem_1", request(), NOW)).toEqual({
+      ok: false,
+      denials: ["payment_disabled"],
+    });
+    expect(cartRead).not.toHaveBeenCalled();
+    expect(shippingQuote).not.toHaveBeenCalled();
+    expect(authorize).not.toHaveBeenCalled();
+  });
+
   it("denies and never touches the payment provider", async () => {
     const payment = new TestPaymentProvider();
     const authorize = vi.spyOn(payment, "createAuthorization");
@@ -351,12 +374,27 @@ describe("large-order review", () => {
     const service = createCheckoutService(deps({ payment, cart: { revalidate: () => bigCart } }));
     const outcome = await service.submit("mem_1", request(), NOW);
 
-    expect(outcome.ok).toBe(true);
-    if (outcome.ok) {
-      expect(outcome.order.state).toBe("manual_review");
-      expect(outcome.order.paymentReference).toBeNull();
-    }
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.denials).toEqual(["payment_disabled"]);
     expect(authorize).not.toHaveBeenCalled();
+  });
+
+  it("does not bind or replay a review-held order whose authorization was refused", async () => {
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization").mockResolvedValue({
+      ok: false,
+      code: "REJECTED",
+      message: "Card declined.",
+      retryable: false,
+    });
+    const service = createCheckoutService(deps({ payment, cart: { revalidate: () => bigCart } }));
+
+    const first = await service.submit("mem_1", request(), NOW);
+    const retry = await service.submit("mem_1", request(), NOW);
+
+    expect(first.ok).toBe(false);
+    expect(retry.ok).toBe(false);
+    expect(authorize).toHaveBeenCalledTimes(2);
   });
 
   it("does not hold a normal quantity below the money threshold", async () => {
@@ -568,6 +606,10 @@ describe("idempotency", () => {
 
     expect(first.ok && second.ok).toBe(true);
     if (first.ok && second.ok) {
+      expect(first.order.orderId).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      );
+      expect(first.order.orderId).not.toMatch(/^ord_/);
       expect(second.order.orderId).toBe(first.order.orderId);
       expect(second.idempotent).toBe(true);
       expect(first.idempotent).toBe(false);
@@ -576,7 +618,9 @@ describe("idempotency", () => {
   });
 
   it("scopes the key per member so two members cannot collide", async () => {
-    const service = createCheckoutService(deps());
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createCheckoutService(deps({ payment }));
     const first = await service.submit("mem_1", request(), NOW);
     const second = await service.submit("mem_2", request(), NOW);
 
@@ -585,6 +629,14 @@ describe("idempotency", () => {
       expect(second.order.orderId).not.toBe(first.order.orderId);
       expect(second.order.memberId).toBe("mem_2");
     }
+    expect(authorize).toHaveBeenCalledTimes(2);
+    const firstProviderKey = authorize.mock.calls[0][0].idempotencyKey;
+    const secondProviderKey = authorize.mock.calls[1][0].idempotencyKey;
+    expect(firstProviderKey).toMatch(/^xr-checkout-v1-[a-f0-9]{64}$/);
+    expect(secondProviderKey).toMatch(/^xr-checkout-v1-[a-f0-9]{64}$/);
+    expect(firstProviderKey).not.toBe(secondProviderKey);
+    expect(firstProviderKey).not.toContain("mem_1");
+    expect(secondProviderKey).not.toContain("mem_2");
   });
 
   it("creates a distinct order for a distinct key", async () => {
@@ -797,11 +849,14 @@ describe("inventory reservation at checkout (counting seam)", () => {
     });
 
     const service = createCheckoutService(deps({ inventory: seam, payment }));
-    const outcome = await service.submit("mem_1", request(), NOW);
+    const first = await service.submit("mem_1", request(), NOW);
+    const retry = await service.submit("mem_1", request(), NOW);
 
-    expect(outcome.ok).toBe(false);
-    expect(calls).toEqual({ reserve: 1, release: 1, finalize: 0 });
-    expect(released).toEqual([["rsv_1"]]);
+    expect(first.ok).toBe(false);
+    expect(retry.ok).toBe(false);
+    expect(calls).toEqual({ reserve: 2, release: 2, finalize: 0 });
+    expect(released).toEqual([["rsv_1"], ["rsv_2"]]);
+    expect(payment.createAuthorization).toHaveBeenCalledTimes(2);
   });
 
   it("an idempotent replay returns the stored order before reserve is reached", async () => {
@@ -857,6 +912,41 @@ describe("inventory reservation at checkout (counting seam)", () => {
 
     expect(outcome.ok).toBe(true);
     if (outcome.ok) expect(outcome.order.captured).toBe(false);
+    expect(calls).toEqual({ reserve: 1, release: 0, finalize: 0 });
+  });
+
+  it.each([
+    ["wrong reference", { providerReference: "pay_other", capturedAmountCents: 21_095, currency: "usd", status: "captured" }],
+    ["wrong amount", { providerReference: "pay_exact", capturedAmountCents: 21_094, currency: "usd", status: "captured" }],
+    ["wrong currency", { providerReference: "pay_exact", capturedAmountCents: 21_095, currency: "eur", status: "captured" }],
+    ["wrong status", { providerReference: "pay_exact", capturedAmountCents: 21_095, currency: "usd", status: "pending" }],
+  ])("does not mark paid or finalize inventory on capture success with %s", async (_label, value) => {
+    const { seam, calls } = countingSeam();
+    const payment = new TestPaymentProvider();
+    vi.spyOn(payment, "createAuthorization").mockResolvedValue({
+      ok: true,
+      value: {
+        providerReference: "pay_exact",
+        amountCents: 21_095,
+        currency: "usd",
+        status: "authorized",
+        captureDeferred: true,
+      },
+    });
+    vi.spyOn(payment, "captureAuthorization").mockResolvedValue({
+      ok: true,
+      value,
+    } as never);
+
+    const outcome = await createCheckoutService(
+      deps({ inventory: seam, payment }),
+    ).submit("mem_1", request(), NOW);
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      expect(outcome.order.state).toBe("approved");
+      expect(outcome.order.captured).toBe(false);
+    }
     expect(calls).toEqual({ reserve: 1, release: 0, finalize: 0 });
   });
 
@@ -1183,6 +1273,7 @@ describe("checkout through the real seam", () => {
       ]),
       payment,
       commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
     });
 
     const claim = await refunds.submitClaim(

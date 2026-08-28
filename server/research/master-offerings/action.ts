@@ -1,10 +1,11 @@
-import type { CartProductSelection } from "@shared/research/cart-product-selection";
+import type { AuthoritativeCartProductSelection } from "../commerce/cart-product-selection";
 import type { MasterOfferingAction } from "@shared/research/master-offerings/contract";
 import {
   isDirectPurchaseForbidden,
   requiresProviderPathway,
 } from "@shared/research/master-offerings/pathway-authority";
 import { productRequestHref } from "@shared/research/product-request-sources";
+import { isResolvedCurrentLiveProductVariantActivationAuthority } from "../product-activation/authority-repository";
 import type {
   MasterOfferingCommerceIdentityBinding,
   MasterOfferingCommerceResolution,
@@ -93,8 +94,8 @@ function nonBlank(value: unknown): value is string {
  * trusted as validation because database and network values cross runtime seams.
  */
 export function isUsableCartSelection(
-  value: CartProductSelection | null,
-): value is CartProductSelection {
+  value: AuthoritativeCartProductSelection | null,
+): value is AuthoritativeCartProductSelection {
   if (value === null || typeof value !== "object") return false;
   return (
     nonBlank(value.productId) &&
@@ -106,15 +107,21 @@ export function isUsableCartSelection(
     Number.isSafeInteger(value.price?.amountCents) &&
     value.price.amountCents > 0 &&
     nonBlank(value.price.currency) &&
-    nonBlank(value.evaluatedAt)
+    nonBlank(value.evaluatedAt) &&
+    isResolvedCurrentLiveProductVariantActivationAuthority(value.activationAuthority, {
+      productId: value.productId,
+      variantId: value.variantId,
+      sku: value.sku,
+      evaluatedAt: value.evaluatedAt,
+    })
   );
 }
 
 function bindingMatches(
   variant: NormalizedMasterOfferingVariant,
   binding: MasterOfferingCommerceIdentityBinding | null,
-  selection: CartProductSelection | null,
-): selection is CartProductSelection {
+  selection: AuthoritativeCartProductSelection | null,
+): selection is AuthoritativeCartProductSelection {
   if (binding === null || !isUsableCartSelection(selection)) return false;
   return (
     binding.offeringVariantId === variant.id &&
@@ -174,6 +181,8 @@ export function resolveMasterOfferingAction(
     !forbidden &&
     offering.visibility === "member" &&
     variant.visibility === "member" &&
+    offering.displayState === "available_now" &&
+    variant.displayState === "available_now" &&
     bindingMatches(variant, commerce.binding, selection)
   ) {
     return {

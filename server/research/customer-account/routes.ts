@@ -21,6 +21,7 @@
 import type { Express, Request, Response } from "express";
 import {
   SUPPORT_CASE_CATEGORIES,
+  membershipRenewalMirrorMatches,
   type SupportCaseCategory,
 } from "@shared/research/customer-account/contract";
 import type { CustomerAccountPorts } from "./ports";
@@ -119,6 +120,9 @@ export function registerCustomerAccountApi(
       ports.membership.membershipFor(memberKey),
       ports.care.careFor(memberKey),
     ]);
+    if (!membershipRenewalMirrorMatches(membership)) {
+      throw new Error("membership_renewal_mirror_invalid");
+    }
     // Two objects, deliberately never merged: membership is administrative,
     // Care is operational, and neither implies the other.
     res.json({ kind: "ok", data: { membership, careEnrollment } });

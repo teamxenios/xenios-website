@@ -378,6 +378,15 @@ export function createInMemoryOrderStore(seed: readonly OrderRecord[] = []): Asy
     async listByMember(memberId) {
       return all().filter((order) => order.memberId === memberId);
     },
+    async findByCheckoutIdempotencyKey(memberId, key) {
+      const matches = all().filter(
+        (order) => order.memberId === memberId && order.checkoutIdempotencyKey === key,
+      );
+      if (matches.length > 1) {
+        throw new Error("order checkout idempotency lookup ambiguous");
+      }
+      return matches[0] ?? null;
+    },
     async findByIdempotencyKey(memberId, key) {
       const hit = all().find(
         (order) =>
@@ -499,6 +508,24 @@ export function createSupabaseOrderStore(
       const out: OrderRecord[] = [];
       for (const header of headers) out.push(await hydrate(header));
       return out;
+    },
+
+    async findByCheckoutIdempotencyKey(memberId, key) {
+      // This is checkout replay authority, not a history query. Bind both
+      // indexed durable columns in the database and fetch two rows so legacy
+      // duplicate corruption is detected instead of choosing arbitrarily.
+      const res = await client
+        .from(ORDERS)
+        .select("*")
+        .eq("member_id", memberId)
+        .eq("checkout_idempotency_key", key)
+        .limit(2);
+      if (res.error) throw new Error(`order checkout idempotency lookup failed: ${res.error.message}`);
+      const headers = (res.data ?? []) as OrderHeaderRow[];
+      if (headers.length > 1) {
+        throw new Error("order checkout idempotency lookup ambiguous");
+      }
+      return headers[0] ? hydrate(headers[0]) : null;
     },
 
     async findByIdempotencyKey(memberId, key) {

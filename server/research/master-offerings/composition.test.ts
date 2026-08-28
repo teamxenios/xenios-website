@@ -16,6 +16,7 @@ import {
 } from "./routes";
 import { InMemoryMasterOfferingCatalogReader } from "./service";
 import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 import {
   MASTER_OFFERINGS_ENABLED_ENV_VAR,
   MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY_ENV_VAR,
@@ -155,41 +156,12 @@ describe("composition", () => {
         selections: {
           select: async () => ({
             ok: true,
-            selection: {
+            selection: await cartSelection({
               productId: "pc_product_1",
               variantId: "pc_variant_1",
               sku: "XEN-BPC-5",
-              audience: "member",
-              audienceEligibility: {
-                audience: "member",
-                state: "authorized",
-                sourceVersion: "audience-v1",
-                evaluatedAt: EVALUATED_AT,
-              },
-              price: {
-                id: "price_1",
-                amountCents: 9900,
-                currency: "USD",
-                effectiveAt: "2026-08-01T00:00:00.000Z",
-                expiresAt: null,
-                version: 1,
-              },
-              media: { id: "m", kind: "primary_image", altText: "vial" },
-              canonicalReadiness: {
-                ready: true,
-                verifiedInputCount: 1,
-                inputVersions: [],
-                domainVersions: [],
-              },
-              inventoryEligibility: {
-                productId: "pc_product_1",
-                variantId: "pc_variant_1",
-                state: "eligible",
-                sourceVersion: "inv-1",
-                evaluatedAt: EVALUATED_AT,
-              },
               evaluatedAt: EVALUATED_AT,
-            },
+            }),
           }),
         } as never,
       }),

@@ -3,40 +3,44 @@
 // customer data must NEVER appear in this file, in any fixture, snapshot,
 // screenshot or test output — that rule is load-bearing, not stylistic.
 
-import type {
-  CareEnrollmentDto,
-  CustomerAccountOverviewDto,
-  CustomerOrdersDto,
-  DocumentSummaryDto,
-  MembershipDto,
-  OrderSummaryDto,
-  SupportCaseSummaryDto,
+import {
+  createMembershipDto,
+  type CareEnrollmentDto,
+  type CustomerAccountOverviewDto,
+  type CustomerOrdersDto,
+  type DocumentSummaryDto,
+  type MembershipDto,
+  type OrderSummaryDto,
+  type SupportCaseSummaryDto,
 } from "./contract";
 
-export const FIXTURE_MEMBERSHIP_MANUAL: MembershipDto = Object.freeze({
+export const FIXTURE_MEMBERSHIP_MANUAL: MembershipDto = createMembershipDto({
   state: "active",
   billing: "current",
   planLabel: "Xenios Research Membership",
-  nextRenewalAt: "2026-09-26T00:00:00.000Z",
+  renewal: Object.freeze({
+    state: "scheduled" as const,
+    nextRenewalAt: "2026-09-26T00:00:00.000Z",
+  }),
   manageUrl: null,
   manualBilling: true,
 });
 
-export const FIXTURE_MEMBERSHIP_NONE: MembershipDto = Object.freeze({
+export const FIXTURE_MEMBERSHIP_NONE: MembershipDto = createMembershipDto({
   state: "none",
   billing: "none",
   planLabel: null,
-  nextRenewalAt: null,
+  renewal: Object.freeze({ state: "not_scheduled" as const, nextRenewalAt: null }),
   manageUrl: null,
   manualBilling: true,
 });
 
 /** Access active while the billing ledger says past_due — the two truths diverge. */
-export const FIXTURE_MEMBERSHIP_PAST_DUE_BILLING: MembershipDto = Object.freeze({
+export const FIXTURE_MEMBERSHIP_PAST_DUE_BILLING: MembershipDto = createMembershipDto({
   state: "active",
   billing: "past_due",
   planLabel: "Xenios Research Membership",
-  nextRenewalAt: null,
+  renewal: Object.freeze({ state: "unavailable" as const, nextRenewalAt: null }),
   manageUrl: null,
   manualBilling: true,
 });
@@ -68,6 +72,7 @@ export const FIXTURE_CARE_UNAVAILABLE: CareEnrollmentDto = Object.freeze({
 export const FIXTURE_ORDERS: readonly OrderSummaryDto[] = Object.freeze([
   Object.freeze({
     reference: "XRR-20260820-TESTFIX01",
+    recordKind: "request" as const,
     placedAt: "2026-08-20T18:12:00.000Z",
     detailAvailability: "available" as const,
     itemLabel: "Example Research Material A",
@@ -80,6 +85,7 @@ export const FIXTURE_ORDERS: readonly OrderSummaryDto[] = Object.freeze([
   }),
   Object.freeze({
     reference: "XRR-20260811-TESTFIX02",
+    recordKind: "request" as const,
     placedAt: "2026-08-11T09:03:00.000Z",
     detailAvailability: "available" as const,
     itemLabel: "Example Research Material B",
@@ -103,14 +109,31 @@ export const FIXTURE_CUSTOMER_ORDERS: CustomerOrdersDto = Object.freeze({
       updatedAt: "2026-08-24T15:30:00.000Z",
     }),
   ]),
+  carePharmacyHistory: Object.freeze({
+    availability: "available" as const,
+    authoritativeRecordCount: 1,
+  }),
   history: Object.freeze({
     availability: "partial" as const,
+    authoritativeRecordCount: null,
     sources: Object.freeze({
       commerce: Object.freeze({ connected: true, complete: true }),
       xea: Object.freeze({ connected: true, complete: true }),
       xec: Object.freeze({ connected: false, complete: false }),
       xrr: Object.freeze({ connected: false, complete: false }),
     }),
+  }),
+});
+
+/**
+ * A Care source can return known records while still being incomplete. Its
+ * rows remain visible, but their array length is never promoted to a total.
+ */
+export const FIXTURE_CUSTOMER_ORDERS_CARE_PARTIAL: CustomerOrdersDto = Object.freeze({
+  ...FIXTURE_CUSTOMER_ORDERS,
+  carePharmacyHistory: Object.freeze({
+    availability: "partial" as const,
+    authoritativeRecordCount: null,
   }),
 });
 
@@ -155,6 +178,7 @@ export const FIXTURE_ACCOUNT_OVERVIEW: CustomerAccountOverviewDto = Object.freez
   researchOrders: FIXTURE_ORDERS,
   orderHistory: Object.freeze({
     availability: "partial" as const,
+    authoritativeRecordCount: null,
     sources: Object.freeze({
       commerce: Object.freeze({ connected: true, complete: true }),
       xea: Object.freeze({ connected: true, complete: true }),

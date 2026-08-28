@@ -115,6 +115,24 @@ export interface SubscriptionServiceDeps {
   requiredAgreementKeys: string[];
   /** Probed without side effects before a renewal may proceed. */
   payment: Pick<PaymentProvider, "retrieveStatus">;
+  /**
+   * Independent durable authority for the exact payment reference that may be
+   * probed for this subscription's next renewal. Production leaves this
+   * unavailable until such an authority is wired; member/catalog data is not a
+   * substitute and the legacy record field is not consulted.
+   */
+  resolveRenewalPaymentReference(
+    subscriptionId: string,
+    memberId: string,
+  ): Promise<string | null> | string | null;
+  /** Exact current/live Product Control product+variant+SKU authority. */
+  isCurrentLiveActivation(sku: string, asOf: Date): Promise<boolean> | boolean;
+  /**
+   * False in production until currentness validation and subscription mutation
+   * share one transaction/CAS/lease. Tests may explicitly exercise the domain
+   * transition logic with this true.
+   */
+  purchaseExpansionPersistenceAvailable?: boolean;
   /** Injected for tests; defaults to a UUID so ids are database-compatible. */
   newId?(): string;
 }
@@ -359,6 +377,15 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
         `${product.displayName} is not available as a subscription.`,
       );
     }
+    if (!deps.purchaseExpansionPersistenceAvailable) {
+      return denial(
+        "capability_disabled",
+        "Durable currentness-bound subscription persistence is not available.",
+      );
+    }
+    if (!(await deps.isCurrentLiveActivation(input.sku, asOf))) {
+      return denial("product_not_purchasable", "The exact product variant is not currently live.");
+    }
 
     const record: SubscriptionRecord = {
       subscriptionId: newId(),
@@ -435,6 +462,44 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
       }
     }
 
+    let skipFrom: Date | null = null;
+    if (req.action === "skip") {
+      const storedScheduleMs = record.nextRenewalAt === null
+        ? NaN
+        : new Date(record.nextRenewalAt).getTime();
+      if (!Number.isFinite(storedScheduleMs)) {
+        return denial(
+          "subscription_action_invalid",
+          "A skip requires a valid existing renewal schedule.",
+        );
+      }
+      skipFrom = new Date(Math.max(storedScheduleMs, asOf.getTime()));
+    }
+
+    const currentRenewalMs = record.nextRenewalAt === null
+      ? NaN
+      : new Date(record.nextRenewalAt).getTime();
+    const rescheduleExpandsPurchase =
+      req.action === "reschedule" &&
+      rescheduleTo !== null &&
+      (!Number.isFinite(currentRenewalMs) || rescheduleTo.getTime() < currentRenewalMs);
+    const expandsPurchaseCommitment =
+      req.action === "resume" ||
+      req.quantity !== undefined ||
+      req.frequencyDays !== undefined ||
+      rescheduleExpandsPurchase;
+    if (expandsPurchaseCommitment) {
+      if (!deps.purchaseExpansionPersistenceAvailable) {
+        return denial(
+          "capability_disabled",
+          "Durable currentness-bound subscription persistence is not available.",
+        );
+      }
+      if (!(await deps.isCurrentLiveActivation(record.sku, asOf))) {
+        return denial("product_not_purchasable", "The exact product variant is not currently live.");
+      }
+    }
+
     // Field updates ride along only when the transition itself is legal; they
     // are folded into `changes` and applied by the single write path.
     const changes: Partial<SubscriptionRecord> = {};
@@ -456,10 +521,10 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
         break;
       }
       case "skip": {
-        // Skipping pushes the renewal exactly one cycle past where it stood.
-        const base =
-          record.nextRenewalAt !== null ? new Date(record.nextRenewalAt) : asOf;
-        const next = addDays(base, frequencyDays);
+        // Skipping always pushes a valid stored schedule by a full cycle. When
+        // that schedule is stale, start at `asOf` so the result is genuinely in
+        // the future rather than immediately due again.
+        const next = addDays(skipFrom as Date, frequencyDays);
         changes.nextRenewalAt = next;
         changes.nextShipmentAt = next;
         effectiveAt = next;
@@ -535,6 +600,12 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
+    if (
+      !deps.purchaseExpansionPersistenceAvailable ||
+      !(await deps.isCurrentLiveActivation(record.sku, asOf))
+    ) {
+      return denial("capability_disabled", "Subscription activation is not durably currentness-bound.");
+    }
     const next = addDays(asOf, record.frequencyDays);
     return transition(
       record,
@@ -573,6 +644,12 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     if (!record) {
       return denial("subscription_not_found", `No subscription ${subscriptionId}.`);
     }
+    if (
+      !deps.purchaseExpansionPersistenceAvailable ||
+      !(await deps.isCurrentLiveActivation(record.sku, asOf))
+    ) {
+      return denial("capability_disabled", "Subscription reactivation is not durably currentness-bound.");
+    }
     const next = scheduleFrom(record, asOf);
     return transition(
       record,
@@ -605,11 +682,33 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
     return codes;
   }
 
-  /** Probes the provider without side effects, exactly as checkout does. */
-  async function paymentIsUsable(): Promise<boolean> {
-    const probe = await deps.payment.retrieveStatus("");
-    if (probe.ok) return true;
-    return probe.code !== "DISABLED" && probe.code !== "MISCONFIGURED";
+  /** Probes one independently-authorized provider reference without side effects. */
+  async function paymentIsUsable(record: SubscriptionRecord): Promise<boolean> {
+    let providerReference: string | null;
+    try {
+      providerReference = await deps.resolveRenewalPaymentReference(
+        record.subscriptionId,
+        record.memberId,
+      );
+    } catch {
+      return false;
+    }
+    if (
+      typeof providerReference !== "string" ||
+      providerReference.length === 0 ||
+      providerReference !== providerReference.trim()
+    ) {
+      return false;
+    }
+    try {
+      const probe = await deps.payment.retrieveStatus(providerReference);
+      // A successful transport result is not itself payment authority. Only an
+      // extant, uncaptured authorization is acceptable; captured/pending/
+      // cancelled and future unknown statuses all fail closed.
+      return probe.ok && probe.value.status === "authorized";
+    } catch {
+      return false;
+    }
   }
 
   async function evaluateRenewal(subscriptionId: string, asOf: Date): Promise<RenewalDecision> {
@@ -644,6 +743,10 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
 
     if (!deps.commerceEnabled) refuse("commerce_disabled");
 
+    if (!(await deps.isCurrentLiveActivation(record.sku, asOf))) {
+      refuse("product_not_purchasable");
+    }
+
     const product = deps.catalog.get(record.sku);
     if (!product) {
       refuse("product_not_found");
@@ -666,7 +769,7 @@ export function createSubscriptionService(deps: SubscriptionServiceDeps): Subscr
       for (const code of preciseLotRefusals(record.sku, allocation.rejected)) refuse(code);
     }
 
-    if (!(await paymentIsUsable())) refuse("payment_disabled");
+    if (!(await paymentIsUsable(record))) refuse("payment_disabled");
 
     for (const key of deps.requiredAgreementKeys) {
       if (!(await deps.hasEffectiveAgreement(record.memberId, key))) {

@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { DisabledPaymentProvider, TestPaymentProvider } from "../providers/payment";
 import {
+  authorizationProviderIdempotencyKey,
   createOrderService,
   type OrderRecord,
   type OrderRepository,
@@ -53,6 +54,13 @@ function repository(seed: OrderRecord[] = []): OrderRepository & { saves: number
     async listByMember(memberId: string): Promise<OrderRecord[]> {
       return all().filter((o) => o.memberId === memberId);
     },
+    async findByCheckoutIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null> {
+      const matches = all().filter(
+        (o) => o.memberId === memberId && o.checkoutIdempotencyKey === key,
+      );
+      if (matches.length > 1) throw new Error("order checkout idempotency lookup ambiguous");
+      return matches[0] ?? null;
+    },
     async findByIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null> {
       const hit = all().find((o) => o.memberId === memberId && o.lastIdempotencyKey === key);
       return hit ?? null;
@@ -69,11 +77,30 @@ function deps(overrides: Partial<OrderServiceDeps> = {}): OrderServiceDeps {
     repository: repository([order()]),
     payment: new TestPaymentProvider(),
     commerceEnabled: true,
+    durablePaymentExecutionAvailable: true,
     ...overrides,
   };
 }
 
 describe("order authorization", () => {
+  it("denies before provider use or idempotent replay when durable payment execution is unavailable", async () => {
+    const repo = repository([order({ lastIdempotencyKey: "authorize:ord_1", providerReference: "pi_stale" })]);
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createOrderService(deps({
+      repository: repo,
+      payment,
+      durablePaymentExecutionAvailable: false,
+    }));
+
+    const result = await service.authorize("ord_1", "system", NOW);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.denials).toEqual(["payment_disabled"]);
+    expect(authorize).not.toHaveBeenCalled();
+    expect(repo.saves).toBe(0);
+  });
+
   it("authorizes with a real provider reference and never invents one", async () => {
     const d = deps();
     const service = createOrderService(d);
@@ -199,6 +226,8 @@ describe("delayed capture", () => {
       order({
         state: "approved",
         providerReference: "auth_ref",
+        authorizedAmountCents: 21095,
+        authorizedCurrency: "usd",
         reviewTriggers: ["total_exceeds_threshold"],
       }),
     ]);
@@ -215,8 +244,11 @@ describe("delayed capture", () => {
   });
 
   it("refuses to capture a cancelled order", async () => {
-    const repo = repository([order({ state: "approved", providerReference: "test_auth_1" })]);
+    const repo = repository([order()]);
     const service = createOrderService(deps({ repository: repo }));
+
+    const authorized = await service.authorize("ord_1", "system", NOW);
+    expect(authorized.ok).toBe(true);
 
     const cancelled = await service.cancel("ord_1", "admin", "member changed their mind", NOW);
     expect(cancelled.ok).toBe(true);
@@ -251,7 +283,12 @@ describe("a disabled provider", () => {
   });
 
   it("never produces a paid state on capture", async () => {
-    const repo = repository([order({ state: "approved", providerReference: "auth_ref" })]);
+    const repo = repository([order({
+      state: "approved",
+      providerReference: "auth_ref",
+      authorizedAmountCents: 21095,
+      authorizedCurrency: "usd",
+    })]);
     const service = createOrderService(
       deps({ repository: repo, payment: new DisabledPaymentProvider() }),
     );
@@ -267,6 +304,41 @@ describe("a disabled provider", () => {
 });
 
 describe("idempotency", () => {
+  it("scopes the provider authorization key to the exact member and order intent", async () => {
+    const repo = repository([
+      order({ orderId: "ord_1", memberId: "mem_1" }),
+      order({ orderId: "ord_2", memberId: "mem_2" }),
+    ]);
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const service = createOrderService(deps({ repository: repo, payment }));
+
+    const first = await service.authorize("ord_1", "system", NOW, "shared-caller-key");
+    const second = await service.authorize("ord_2", "system", NOW, "shared-caller-key");
+
+    expect(first.ok).toBe(true);
+    expect(second.ok).toBe(true);
+    expect(authorize).toHaveBeenCalledTimes(2);
+    const firstKey = authorize.mock.calls[0]![0].idempotencyKey;
+    const secondKey = authorize.mock.calls[1]![0].idempotencyKey;
+    expect(firstKey).toBe(authorizationProviderIdempotencyKey({
+      memberId: "mem_1",
+      orderId: "ord_1",
+      amountCents: 21095,
+      callerKey: "shared-caller-key",
+    }));
+    expect(secondKey).toBe(authorizationProviderIdempotencyKey({
+      memberId: "mem_2",
+      orderId: "ord_2",
+      amountCents: 21095,
+      callerKey: "shared-caller-key",
+    }));
+    expect(firstKey).toMatch(/^xr-order-auth-v1-[a-f0-9]{64}$/);
+    expect(secondKey).not.toBe(firstKey);
+    expect(firstKey).not.toContain("mem_1");
+    expect(firstKey).not.toContain("ord_1");
+  });
+
   it("absorbs a repeated authorize key and returns the same order", async () => {
     const repo = repository([order()]);
     const service = createOrderService(deps({ repository: repo }));
@@ -298,7 +370,12 @@ describe("idempotency", () => {
     });
     expect(auth.ok).toBe(true);
     if (!auth.ok) return;
-    await repo.save({ ...(await repo.get("ord_1"))!, providerReference: auth.value.providerReference });
+    await repo.save({
+      ...(await repo.get("ord_1"))!,
+      providerReference: auth.value.providerReference,
+      authorizedAmountCents: auth.value.amountCents,
+      authorizedCurrency: auth.value.currency,
+    });
     const savesBefore = repo.saves;
 
     const first = await service.capture("ord_1", "system", NOW, "cap_a");
@@ -338,6 +415,29 @@ describe("the capture is bounded by the authorization", () => {
     expect(authorized.ok).toBe(true);
     if (!authorized.ok) return;
     expect(authorized.order.authorizedAmountCents).toBe(21095);
+    expect(authorized.order.authorizedCurrency).toBe("usd");
+  });
+
+  it.each([
+    ["missing amount", { authorizedAmountCents: undefined, authorizedCurrency: "usd" as const }],
+    ["missing currency", { authorizedAmountCents: 21095, authorizedCurrency: undefined }],
+    ["blank provider reference", { providerReference: "   ", authorizedAmountCents: 21095, authorizedCurrency: "usd" as const }],
+  ])("refuses legacy/corrupt authorization evidence: %s", async (_label, evidence) => {
+    const repo = repository([order({
+      state: "approved",
+      providerReference: "auth_ref",
+      ...evidence,
+    })]);
+    const payment = new TestPaymentProvider();
+    const capture = vi.spyOn(payment, "captureAuthorization");
+    const service = createOrderService(deps({ repository: repo, payment }));
+
+    const result = await service.capture("ord_1", "system", NOW);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.denials).toContain("payment_failed");
+    expect(capture).not.toHaveBeenCalled();
+    expect(repo.saves).toBe(0);
   });
 
   it("refuses to capture more than was authorized when the total grows after the hold", async () => {
@@ -350,7 +450,12 @@ describe("the capture is bounded by the authorization", () => {
       captureCalls.push(amountCents ?? 0);
       return {
         ok: true as const,
-        value: { providerReference: ref, capturedAmountCents: amountCents ?? 0, status: "captured" as const },
+        value: {
+          providerReference: ref,
+          capturedAmountCents: amountCents ?? 0,
+          currency: "usd" as const,
+          status: "captured" as const,
+        },
       };
     };
     const service = createOrderService(deps({ repository: repo, payment }));
@@ -374,9 +479,11 @@ describe("the capture is bounded by the authorization", () => {
     expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 
-  it("still captures a total that shrank after the hold", async () => {
+  it("refuses a total that shrank because partial capture is not an authorized feature", async () => {
     const repo = repository([order()]);
-    const service = createOrderService(deps({ repository: repo }));
+    const payment = new TestPaymentProvider();
+    const capture = vi.spyOn(payment, "captureAuthorization");
+    const service = createOrderService(deps({ repository: repo, payment }));
 
     await service.authorize("ord_1", "system", NOW);
     await service.approve("ord_1", "samuel", LATER);
@@ -385,9 +492,11 @@ describe("the capture is bounded by the authorization", () => {
 
     const result = await service.capture("ord_1", "system", LATER);
 
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.order.capturedAmountCents).toBe(10_000);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.denials).toContain("payment_failed");
+    expect(capture).not.toHaveBeenCalled();
+    expect((await repo.get("ord_1"))!.state).toBe("approved");
+    expect((await repo.get("ord_1"))!.capturedAmountCents).toBeUndefined();
   });
 
   it("refuses a fractional total rather than handing it to the provider", async () => {
@@ -442,16 +551,105 @@ describe("cancellation", () => {
     expect(result.order.authorizationReleaseFailed).toBe(false);
   });
 
-  it("flags a failed release rather than swallowing it", async () => {
-    const repo = repository([order({ providerReference: "unknown_ref" })]);
-    const service = createOrderService(deps({ repository: repo }));
+  it("refuses a failed release without persisting a cancelled order", async () => {
+    const repo = repository([order({
+      providerReference: "unknown_ref",
+      authorizedAmountCents: 21095,
+      authorizedCurrency: "usd",
+    })]);
+    const payment = new TestPaymentProvider();
+    const release = vi.spyOn(payment, "cancelAuthorization");
+    const service = createOrderService(deps({ repository: repo, payment }));
 
     const result = await service.cancel("ord_1", "admin", "test", NOW);
 
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.order.state).toBe("cancelled");
-    expect(result.order.authorizationReleaseFailed).toBe(true);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.denials).toEqual(["payment_failed"]);
+    expect((await repo.get("ord_1"))!.state).toBe("checkout_pending");
+    expect((await repo.get("ord_1"))!.cancellationReason).toBeUndefined();
+    expect(repo.saves).toBe(0);
+    expect(release).toHaveBeenCalledOnce();
+    expect(release).toHaveBeenCalledWith("unknown_ref");
+  });
+
+  it.each([
+    ["fractional capture", { capturedAmountCents: 0.5 }],
+    ["negative capture", { capturedAmountCents: -1 }],
+    ["positive capture", { capturedAmountCents: 1 }],
+    ["unsafe capture", { capturedAmountCents: Number.MAX_SAFE_INTEGER + 1 }],
+    ["captured evidence without a provider reference", {
+      providerReference: null,
+      capturedAmountCents: 0,
+      authorizedAmountCents: undefined,
+      authorizedCurrency: undefined,
+    }],
+    ["authorization evidence without a provider reference", {
+      providerReference: null,
+      capturedAmountCents: undefined,
+      authorizedAmountCents: 21095,
+      authorizedCurrency: "usd" as const,
+    }],
+    ["blank provider reference", { providerReference: " " }],
+    ["provider reference without exact authorization amount", {
+      authorizedAmountCents: undefined,
+      authorizedCurrency: undefined,
+    }],
+    ["provider reference with mismatched authorization amount", {
+      authorizedAmountCents: 21094,
+      authorizedCurrency: "usd" as const,
+    }],
+  ] as const)("refuses %s before provider release or order mutation", async (_label, overrides) => {
+    const repo = repository([order({
+      state: "manual_review",
+      providerReference: "pi_exact",
+      authorizedAmountCents: 21095,
+      authorizedCurrency: "usd",
+      ...overrides,
+    })]);
+    const payment = new TestPaymentProvider();
+    const release = vi.spyOn(payment, "cancelAuthorization");
+    const service = createOrderService(deps({ repository: repo, payment }));
+
+    const result = await service.cancel("ord_1", "admin", "hostile row", NOW);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.denials).toEqual(["payment_failed"]);
+    expect(release).not.toHaveBeenCalled();
+    expect(repo.saves).toBe(0);
+    expect((await repo.get("ord_1"))?.state).toBe("manual_review");
+    expect((await repo.get("ord_1"))?.cancellationReason).toBeUndefined();
+  });
+
+  it("fails closed before order mutation when release authority is disabled", async () => {
+    const repo = repository([
+      order({
+        state: "manual_review",
+        providerReference: "pi_preexisting",
+        authorizedAmountCents: 21095,
+        authorizedCurrency: "usd",
+      }),
+    ]);
+    const payment = new DisabledPaymentProvider();
+    const release = vi.spyOn(payment, "cancelAuthorization");
+    const service = createOrderService(deps({
+      repository: repo,
+      payment,
+      durablePaymentExecutionAvailable: false,
+    }));
+
+    const result = await service.cancel("ord_1", "admin", "review declined", NOW);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.denials).toEqual(["payment_disabled"]);
+    expect(await repo.get("ord_1")).toMatchObject({
+      state: "manual_review",
+      providerReference: "pi_preexisting",
+    });
+    expect((await repo.get("ord_1"))!.cancellationReason).toBeUndefined();
+    expect(repo.saves).toBe(0);
+    expect(release).not.toHaveBeenCalled();
   });
 
   it("refuses to cancel an already cancelled order", async () => {

@@ -14,7 +14,7 @@
 // Nothing here marks an order paid on its own: every advance goes through
 // `transitionOrder`, which requires a provider reference for a paid state.
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import {
   evaluateLargeOrderReview,
@@ -104,6 +104,12 @@ export interface CheckoutDeps {
   payment: PaymentProvider;
   shipping: ShippingProvider;
   commerceEnabled: boolean;
+  /**
+   * True only in deterministic test harnesses. Production checkout stays
+   * unavailable until reservation, provider settlement, credit spend, and
+   * order persistence share a durable saga/transaction authority.
+   */
+  durableCheckoutExecutionAvailable?: boolean;
   /** US state codes xenios may ship to. An empty list ships nowhere. */
   serviceableStates: string[];
   /** Agreement versions currently required at checkout. */
@@ -235,6 +241,58 @@ interface Evaluation {
   quote: ShippingQuote | null;
 }
 
+/**
+ * The caller's retry key is scoped to its member at our boundary. Providers
+ * need the same stable scope: forwarding the raw key lets two members collide
+ * in Stripe's account-wide idempotency namespace. Hash the exact tuple to keep
+ * it bounded and avoid disclosing member identifiers in provider metadata.
+ */
+function checkoutProviderIdempotencyKey(memberId: string, callerKey: string): string {
+  const scope = JSON.stringify(["xenios-checkout-provider-idempotency-v1", memberId, callerKey]);
+  return `xr-checkout-v1-${createHash("sha256").update(scope, "utf8").digest("hex")}`;
+}
+
+function checkoutAuthorizationEvidenceMatches(
+  value: Readonly<{
+    providerReference: string;
+    amountCents: number;
+    currency: string;
+    status: string;
+    captureDeferred: boolean;
+  }>,
+  amountCents: number,
+  requireDeferred: boolean,
+): boolean {
+  return (
+    typeof value.providerReference === "string" &&
+    value.providerReference.trim() !== "" &&
+    Number.isSafeInteger(value.amountCents) &&
+    value.amountCents === amountCents &&
+    value.currency === "usd" &&
+    value.status === "authorized" &&
+    (!requireDeferred || value.captureDeferred)
+  );
+}
+
+function checkoutCaptureEvidenceMatches(
+  value: Readonly<{
+    providerReference: string;
+    capturedAmountCents: number;
+    currency: string;
+    status: string;
+  }>,
+  providerReference: string,
+  amountCents: number,
+): boolean {
+  return (
+    value.providerReference === providerReference &&
+    Number.isSafeInteger(value.capturedAmountCents) &&
+    value.capturedAmountCents === amountCents &&
+    value.currency === "usd" &&
+    value.status === "captured"
+  );
+}
+
 export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
   const orders = new Map<string, CheckoutOrder>();
   /** Idempotency is scoped per member so two members cannot collide on one key. */
@@ -332,6 +390,9 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     req: CheckoutRequest,
     asOf: Date,
   ): Promise<CheckoutValidation> {
+    if (!deps.durableCheckoutExecutionAvailable) {
+      return { ok: false, denials: ["payment_disabled"] };
+    }
     const { denials } = await evaluate(memberId, req, asOf);
     return { ok: denials.empty, denials: denials.list };
   }
@@ -345,6 +406,11 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     req: CheckoutRequest,
     asOf: Date,
   ): Promise<CheckoutOutcome> {
+    // Authority leads replay. A prior in-process/durable key cannot manufacture
+    // success while production settlement is deliberately unavailable.
+    if (!deps.durableCheckoutExecutionAvailable) {
+      return { ok: false, denials: ["payment_disabled"] };
+    }
     const idempotencyScope = `${memberId}:${req.idempotencyKey}`;
 
     const existingId = byIdempotencyKey.get(idempotencyScope);
@@ -383,6 +449,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     if (!denials.empty || quote === null) {
       return { ok: false, denials: denials.list };
     }
+    const providerIdempotencyKey = checkoutProviderIdempotencyKey(memberId, req.idempotencyKey);
 
     /**
      * The inventory hold, taken only after every gate has passed and BEFORE any
@@ -445,7 +512,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // one durable repository (a restart, or a second app instance) must never
     // mint the same order id, because a colliding id lets a later save
     // silently overwrite another instance's projected order.
-    const orderId = `ord_${randomUUID()}`;
+    // research_orders.id is a native UUID column. Prefixing this value makes a
+    // future durable checkout fail only after the side-effect boundary, so mint
+    // the exact schema-compatible identity before any persistence handoff.
+    const orderId = randomUUID();
     const order: CheckoutOrder = {
       orderId,
       memberId,
@@ -473,6 +543,12 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
 
     orders.set(orderId, order);
     byIdempotencyKey.set(idempotencyScope, orderId);
+    const discardFailedAttempt = (): void => {
+      orders.delete(orderId);
+      if (byIdempotencyKey.get(idempotencyScope) === orderId) {
+        byIdempotencyKey.delete(idempotencyScope);
+      }
+    };
     await audit("reserved", orderId);
 
     const review = evaluateLargeOrderReview({
@@ -497,20 +573,29 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     if (review.requiresReview) {
       // A held order, not an error. Authorize only where the funds can be released
       // again without a capture, and never capture while Samuel has not decided.
-      if (deps.payment.supportsDeferredCapture) {
-        const auth = await deps.payment.createAuthorization({
-          amountCents: totalCents,
-          currency: "usd",
-          orderId,
-          memberId,
-          idempotencyKey: req.idempotencyKey,
-          paymentMethodReference: req.paymentMethodReference,
-        });
-        if (auth.ok) {
-          order.paymentReference = auth.value.providerReference;
-          await recordAppliedCredit();
-        }
+      if (!deps.payment.supportsDeferredCapture) {
+        await releaseReservations(orderId);
+        discardFailedAttempt();
+        return { ok: false, denials: ["payment_disabled"] };
       }
+      const auth = await deps.payment.createAuthorization({
+        amountCents: totalCents,
+        currency: "usd",
+        orderId,
+        memberId,
+        idempotencyKey: providerIdempotencyKey,
+        paymentMethodReference: req.paymentMethodReference,
+      });
+      if (
+        !auth.ok ||
+        !checkoutAuthorizationEvidenceMatches(auth.value, totalCents, true)
+      ) {
+        await releaseReservations(orderId);
+        discardFailedAttempt();
+        return { ok: false, denials: ["payment_failed"] };
+      }
+      order.paymentReference = auth.value.providerReference;
+      await recordAppliedCredit();
       const held = transitionOrder({ from: order.state, to: "manual_review", actor: "system" });
       if (held.ok) order.state = held.state;
       return { ok: true, order, idempotent: false };
@@ -521,7 +606,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       currency: "usd",
       orderId,
       memberId,
-      idempotencyKey: req.idempotencyKey,
+      idempotencyKey: providerIdempotencyKey,
       paymentMethodReference: req.paymentMethodReference,
     });
     if (!auth.ok) {
@@ -530,6 +615,15 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       await releaseReservations(orderId);
       const cancelled = transitionOrder({ from: order.state, to: "cancelled", actor: "system" });
       if (cancelled.ok) order.state = cancelled.state;
+      // This is a failed attempt, not a replayable order. Leaving either local
+      // binding behind makes the next submit report ok/idempotent for the
+      // cancelled, unpaid object instead of retrying the provider.
+      discardFailedAttempt();
+      return { ok: false, denials: ["payment_failed"] };
+    }
+    if (!checkoutAuthorizationEvidenceMatches(auth.value, totalCents, false)) {
+      await releaseReservations(orderId);
+      discardFailedAttempt();
       return { ok: false, denials: ["payment_failed"] };
     }
     order.paymentReference = auth.value.providerReference;
@@ -549,7 +643,10 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     order.state = approved.state;
 
     const capture = await deps.payment.captureAuthorization(auth.value.providerReference, totalCents);
-    if (!capture.ok) {
+    if (
+      !capture.ok ||
+      !checkoutCaptureEvidenceMatches(capture.value, auth.value.providerReference, totalCents)
+    ) {
       // The authorization stands and the order waits. It is never marked paid here.
       return { ok: true, order, idempotent: false };
     }

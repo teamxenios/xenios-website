@@ -51,6 +51,7 @@ const ORDER_COLS =
 
 // PostgREST unique-violation code, surfaced when a refund key is recorded twice.
 const UNIQUE_VIOLATION = "23505";
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 // ---------------------------------------------------------------------------
 // Row shapes (only the columns these repositories touch) and pure mappers.
@@ -253,6 +254,12 @@ export function createSupabaseClaimRepository(client: SupabaseClient = getSupaba
     },
 
     async save(claim) {
+      // research_claims.id is a native UUID column. Validate at the adapter
+      // boundary so a prefixed/text identifier cannot reach an upsert and fail
+      // only after a production-reachable claim flow has begun.
+      if (!UUID_PATTERN.test(claim.claimId)) {
+        throw new Error("claim save failed: claim id must be a schema-compatible UUID");
+      }
       const row = { ...claimRecordToRow(claim), updated_at: new Date().toISOString() };
       const res = await client.from(CLAIMS).upsert(row, { onConflict: "id" });
       if (res.error) throw new Error(`claim save failed: ${res.error.message}`);

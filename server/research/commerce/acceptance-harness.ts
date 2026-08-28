@@ -73,6 +73,12 @@ import { TestMitchProvider } from "../providers/fulfillment";
 import type { CheckoutRequest } from "@shared/research/commerce-api";
 import type { CatalogProduct, ProvenancedFact } from "@shared/research/catalog";
 import type { InventoryLot } from "../inventory/lots";
+import {
+  canonicalProductVariantActivationFingerprint,
+  type ProductVariantActivationBindingRepository,
+  type ProductVariantActivationLedgerRecord,
+  type ProductVariantActivationLedgerRepository,
+} from "../product-activation/authority-repository";
 
 // ---------------------------------------------------------------------------
 // Clock and identities
@@ -93,6 +99,34 @@ export const ELIGIBLE_SKU = "P950";
 export const INELIGIBLE_SKU = "P951";
 export const ELIGIBLE_SLUG = "acceptance-eligible";
 
+function acceptanceActivationRow(
+  sku: string,
+): ProductVariantActivationLedgerRecord {
+  const suffix = sku === INELIGIBLE_SKU ? "2" : "1";
+  const unsigned = {
+    schemaVersion: 1 as const,
+    ledgerRevision: sku === INELIGIBLE_SKU ? 951 : 950,
+    productId: `acceptance-product-${suffix}`,
+    variantId: `acceptance-variant-${suffix}`,
+    sku,
+    productState: "live" as const,
+    variantState: "live" as const,
+    approvalId: `11111111-1111-4111-8111-11111111111${suffix}`,
+    approvedByActorId: "22222222-2222-4222-8222-222222222222",
+    approvedByRole: "founder" as const,
+    approvedAt: "2026-07-01T00:00:00.000Z",
+    reviewedAt: "2026-07-02T00:00:00.000Z",
+    validFrom: "2026-07-03T00:00:00.000Z",
+    validThrough: "2027-07-03T00:00:00.000Z",
+    revokedAt: null,
+  };
+  return {
+    ...unsigned,
+    evidenceFingerprint:
+      canonicalProductVariantActivationFingerprint(unsigned),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // The injected environment. The commerce flag is on and the database reads as
 // configured, so buildCommerceDependencies composes STATE 3 (the real
@@ -102,6 +136,7 @@ export const ELIGIBLE_SLUG = "acceptance-eligible";
 
 export function acceptanceEnv(): NodeJS.ProcessEnv {
   return {
+    NODE_ENV: "test",
     NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
     SUPABASE_URL: "https://acceptance.supabase.co",
     SUPABASE_SERVICE_ROLE_KEY: "sb_secret_acceptance_key",
@@ -289,6 +324,10 @@ export interface AcceptanceContext {
   claimOrderRepository: ClaimOrderRepository;
   adminQueuesStore: AdminQueuesRepository;
   webhookEventStore: WebhookEventStore;
+  /** Fresh request-time authority shared across restart compositions. */
+  activationLedger: ProductVariantActivationLedgerRepository;
+  /** Exact-one SKU to Product Control identity binding, also read per request. */
+  activationBindings: ProductVariantActivationBindingRepository;
   partnerMemberStore: AsyncPartnerMemberStore;
   partnerLinkStore: AsyncPartnerLinkStore;
   commissionLedger: CommissionLedgerRepository;
@@ -334,6 +373,29 @@ export async function buildAcceptanceContext(
   const payment = reused ? reused.payment : new CountingPaymentProvider();
   const shipping = reused ? reused.shipping : new TestShippingProvider();
   const fulfillment = reused ? reused.fulfillment : new TestMitchProvider();
+  const activationLedger: ProductVariantActivationLedgerRepository = reused
+    ? reused.activationLedger
+    : {
+        readCurrentCandidates: async ({ sku }) =>
+          sku === ELIGIBLE_SKU || sku === INELIGIBLE_SKU
+            ? [acceptanceActivationRow(sku)]
+            : [],
+      };
+  const activationBindings: ProductVariantActivationBindingRepository = reused
+    ? reused.activationBindings
+    : {
+        readCurrentBindings: async ({ sku }) => {
+          if (sku !== ELIGIBLE_SKU && sku !== INELIGIBLE_SKU) return [];
+          const suffix = sku === INELIGIBLE_SKU ? "2" : "1";
+          return [
+            {
+              productId: `acceptance-product-${suffix}`,
+              variantId: `acceptance-variant-${suffix}`,
+              sku,
+            },
+          ];
+        },
+      };
 
   if (!reused) {
     for (const lot of options.lots ?? [releasedLot()]) {
@@ -343,6 +405,7 @@ export async function buildAcceptanceContext(
 
   const env = reused ? reused.env : options.env ?? acceptanceEnv();
   const deps = buildCommerceDependencies(NOW, env, {
+    testOnlyAllowNonAtomicCommerceMutations: true,
     catalogProducts: options.products ?? [acceptanceProduct(), ineligibleProduct()],
     resolveCartStore: () => cartStore,
     resolveOrderRepository: () => orderRepository,
@@ -354,6 +417,8 @@ export async function buildAcceptanceContext(
     resolveSubscriptionRepository: () => subscriptionStore,
     resolveAdminQueuesStore: () => adminQueuesStore,
     resolveWebhookEventStore: () => webhookEventStore,
+    resolveProductVariantActivationLedger: () => activationLedger,
+    resolveProductVariantActivationBindings: () => activationBindings,
     resolvePartnerMemberStore: () => partnerMemberStore,
     resolvePartnerLinkStore: () => partnerLinkStore,
     resolveCommissionLedgerStore: () => commissionLedger,
@@ -413,6 +478,8 @@ export async function buildAcceptanceContext(
     claimOrderRepository,
     adminQueuesStore,
     webhookEventStore,
+    activationLedger,
+    activationBindings,
     partnerMemberStore,
     partnerLinkStore,
     commissionLedger,

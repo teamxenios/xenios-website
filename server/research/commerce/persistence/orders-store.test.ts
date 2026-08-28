@@ -266,6 +266,41 @@ describe("createInMemoryOrderStore", () => {
     expect((await store.findByIdempotencyKey("mem_1", "webhook_key_later"))?.orderId).toBe("ord_1");
   });
 
+  it("looks up checkout replay by the immutable member-scoped key and rejects duplicates", async () => {
+    const store = createInMemoryOrderStore([
+      order({
+        orderId: "ord_old",
+        memberId: "mem_1",
+        checkoutIdempotencyKey: "old_checkout",
+        lastIdempotencyKey: "target_checkout",
+      }),
+      order({
+        orderId: "ord_target",
+        memberId: "mem_1",
+        checkoutIdempotencyKey: "target_checkout",
+      }),
+      order({
+        orderId: "ord_other_member",
+        memberId: "mem_2",
+        checkoutIdempotencyKey: "target_checkout",
+      }),
+    ]);
+
+    expect(
+      (await store.findByCheckoutIdempotencyKey("mem_1", "target_checkout"))?.orderId,
+    ).toBe("ord_target");
+    expect(await store.findByCheckoutIdempotencyKey("mem_1", "missing")).toBeNull();
+
+    await store.save(order({
+      orderId: "ord_duplicate",
+      memberId: "mem_1",
+      checkoutIdempotencyKey: "target_checkout",
+    }));
+    await expect(
+      store.findByCheckoutIdempotencyKey("mem_1", "target_checkout"),
+    ).rejects.toThrow("order checkout idempotency lookup ambiguous");
+  });
+
   it("lists all orders across members for the admin queue", async () => {
     const store = createInMemoryOrderStore([
       order({ orderId: "ord_1", memberId: "mem_1" }),
@@ -305,6 +340,7 @@ function fakeSupabase(): {
       op: string;
       single: boolean;
       filters: Record<string, unknown>;
+      limit?: number;
       payload?: unknown;
     } = { op: "select", single: false, filters: {} };
 
@@ -319,6 +355,12 @@ function fakeSupabase(): {
           if (state.filters.member_id !== undefined) {
             rows = rows.filter((r) => r.member_id === state.filters.member_id);
           }
+          if (state.filters.checkout_idempotency_key !== undefined) {
+            rows = rows.filter(
+              (r) => r.checkout_idempotency_key === state.filters.checkout_idempotency_key,
+            );
+          }
+          if (state.limit !== undefined) rows = rows.slice(0, state.limit);
           return { data: rows, error: null };
         }
         if (state.op === "upsert") {
@@ -407,6 +449,10 @@ function fakeSupabase(): {
       },
       delete() {
         state.op = "delete";
+        return api;
+      },
+      limit(count: number) {
+        state.limit = count;
         return api;
       },
       maybeSingle() {
@@ -549,6 +595,34 @@ describe("createSupabaseOrderStore (fake client)", () => {
     }));
     expect(orders.get("ord_c")?.checkout_idempotency_key).toBe("checkout_key");
     expect((await store.findByIdempotencyKey("mem_1", "checkout_key"))!.orderId).toBe("ord_c");
+    expect((await store.findByCheckoutIdempotencyKey("mem_1", "checkout_key"))!.orderId).toBe("ord_c");
+    expect(await store.findByCheckoutIdempotencyKey("mem_2", "checkout_key")).toBeNull();
+  });
+
+  it("rejects duplicate exact checkout-key rows instead of choosing one", async () => {
+    const { client, orders } = fakeSupabase();
+    orders.set("ord_first", orderToHeaderRow(order({
+      orderId: "ord_first",
+      memberId: "mem_1",
+      checkoutIdempotencyKey: "duplicate_checkout",
+    })));
+    orders.set("ord_second", orderToHeaderRow(order({
+      orderId: "ord_second",
+      memberId: "mem_1",
+      checkoutIdempotencyKey: "duplicate_checkout",
+    })));
+    orders.set("ord_cross_member", orderToHeaderRow(order({
+      orderId: "ord_cross_member",
+      memberId: "mem_2",
+      checkoutIdempotencyKey: "duplicate_checkout",
+    })));
+
+    await expect(
+      createSupabaseOrderStore(client).findByCheckoutIdempotencyKey(
+        "mem_1",
+        "duplicate_checkout",
+      ),
+    ).rejects.toThrow("order checkout idempotency lookup ambiguous");
   });
 
   it("refuses to replace the original checkout key on a later save", async () => {

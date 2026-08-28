@@ -2,19 +2,19 @@
 //
 // This is the most attackable surface in the commerce lane, because it is the one
 // place where an unauthenticated stranger can speak to the order state machine.
-// Three properties are enforced by the ORDER of operations in this file, not by
+// Three properties are enforced by the contracts in this file, not by
 // convention:
 //
 //   1. Signature verification runs before anything else. An unsigned or wrongly
 //      signed body never reaches the replay store, never reaches an order, and is
 //      never recorded as seen, so a forged body cannot burn a real event id and
 //      suppress the genuine event that follows it.
-//   2. Replay is checked before any effect. A duplicate is acknowledged so the
-//      provider stops retrying, and it changes nothing.
-//   3. The event id is recorded before the effect is applied. Delivery is
-//      at-least-once, so recording first means a crash between record and apply
-//      loses an effect, while recording last would double-apply it. Losing a
-//      state advance is recoverable by an operator; charging twice is not.
+//   2. Replay identity is bound to the exact signed payload, so reusing an event
+//      id for different bytes is a conflict rather than a duplicate.
+//   3. A recognized event can move an order only through one storage operation
+//      that atomically commits the inbox claim and the order effect. Separate
+//      `seen`, `record`, and `save` calls are deliberately never composed into a
+//      claim. Without that atomic capability the handler fails closed.
 //
 // No state is ever assigned. Every advance goes through `transitionOrder` with the
 // provider reference carried by the verified event, so a webhook cannot move an
@@ -23,8 +23,10 @@
 // Nothing here logs the raw body, the signature, or any payload field. Ids and
 // event types only.
 
+import crypto from "crypto";
+
 import { transitionOrder, type OrderState } from "@shared/research/commerce";
-import type { PaymentProvider } from "../providers/payment";
+import type { PaymentProvider, WebhookVerification } from "../providers/payment";
 import type { FulfillmentProvider } from "../providers/fulfillment";
 
 /**
@@ -49,6 +51,14 @@ export interface WebhookOrder {
   state: OrderState;
   paymentReference: string | null;
   captured: boolean;
+  /** Exact money facts used to bind a signed provider event to this order. */
+  amountDueCents?: number;
+  authorizedAmountCents?: number | null;
+  capturedAmountCents?: number | null;
+  refundedAmountCents?: number | null;
+  currency?: "usd";
+  /** Null/absent is the platform account; a Connect event must match exactly. */
+  paymentProviderAccountId?: string | null;
   /** Set to the event id that last moved this order, for transition idempotency. */
   lastWebhookEventId?: string;
   /**
@@ -60,16 +70,58 @@ export interface WebhookOrder {
 }
 
 /**
- * The replay guard. The signatures accept a synchronous OR a promised answer so
- * the durable database-backed guard (persistence/webhooks-store.ts, which must
- * await the UNIQUE-constraint insert) satisfies the same interface as the
- * in-memory reference; every call site awaits, which is a no-op on a plain
- * boolean. `record` carries the event type because the durable table requires
- * one; the in-memory reference is free to ignore it.
+ * Legacy replay observation. The two calls are inherently non-atomic with an
+ * order save and therefore never authorize a webhook effect. Retained only for
+ * compatibility and diagnostics while the durable atomic seam is implemented.
  */
 export interface WebhookEventStore {
   seen(providerName: string, eventId: string): boolean | Promise<boolean>;
   record(providerName: string, eventId: string, at: Date, eventType?: string): void | Promise<void>;
+}
+
+/**
+ * Identity and durable evidence for one signature-verified provider event.
+ * `payloadSha256` binds the provider event id to the exact verified bytes; it is
+ * not a business-field fingerprint and must be compared byte-for-byte.
+ */
+export interface WebhookAtomicEvent {
+  providerName: string;
+  eventId: string;
+  eventType: string;
+  payloadSha256: string;
+  receivedAt: Date;
+  /** Null only for a verified event type that intentionally has no order effect. */
+  orderId: string | null;
+}
+
+/** A pure decision made while the atomic store owns the event and order rows. */
+export type WebhookAtomicDecision =
+  | { kind: "apply"; order: WebhookOrder }
+  | { kind: "acknowledge" }
+  | { kind: "retry"; code: "unknown_order" | "payment_evidence_mismatch" };
+
+export type WebhookAtomicApplyResult =
+  | { outcome: "applied" }
+  | { outcome: "acknowledged" }
+  | { outcome: "duplicate" }
+  | { outcome: "conflict" }
+  | { outcome: "unknown_order" }
+  | { outcome: "payment_evidence_mismatch" };
+
+/**
+ * The only persistence authority a webhook handler may use for an order effect.
+ *
+ * An implementation MUST serialize the `(providerName,eventId)` inbox key and
+ * the addressed order, compare an existing claim's payload digest, run `decide`
+ * against the order read inside that same transaction, and commit the inbox row
+ * plus any returned order together. A throw or `retry` decision MUST commit
+ * neither. A two-call `seen`/`record` adapter does not satisfy this interface.
+ */
+export interface WebhookAtomicApplyStore {
+  claimAndApply(
+    event: WebhookAtomicEvent,
+    decide: (order: WebhookOrder | undefined) => WebhookAtomicDecision,
+  ): Promise<WebhookAtomicApplyResult>;
 }
 
 export interface WebhookOrderStore {
@@ -78,11 +130,17 @@ export interface WebhookOrderStore {
 }
 
 export interface WebhookDeps {
+  /**
+   * Legacy observation/replay seam. Retained for source compatibility only;
+   * the handler never uses it to authorize or deduplicate an order effect.
+   */
   store: WebhookEventStore;
   payment: PaymentProvider;
   /** Absent means the fulfillment capability is not wired. Absent is not an outage. */
   fulfillment?: FulfillmentProvider;
   orders: WebhookOrderStore;
+  /** Absent until a real inbox+order transaction is wired; absence fails closed. */
+  atomic?: WebhookAtomicApplyStore;
   commerceEnabled: boolean;
 }
 
@@ -90,7 +148,9 @@ export type WebhookDenialCode =
   | "invalid_signature"
   | "malformed"
   | "duplicate"
+  | "event_conflict"
   | "unknown_order"
+  | "payment_evidence_mismatch"
   | "capability_disabled";
 
 export type WebhookResult =
@@ -161,26 +221,75 @@ function classifyVerificationFailure(code: string, rawBody: string): WebhookDeni
   return parseJsonObject(rawBody) === null ? "malformed" : "invalid_signature";
 }
 
+function payloadSha256(rawBody: string): string {
+  return crypto.createHash("sha256").update(rawBody, "utf8").digest("hex");
+}
+
 // ---------------------------------------------------------------------------
 // Handler
 // ---------------------------------------------------------------------------
 
 export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
+  const combinedOrderStore = deps.orders as WebhookOrderStore &
+    Partial<WebhookAtomicApplyStore>;
+  const atomic =
+    deps.atomic ??
+    (typeof combinedOrderStore.claimAndApply === "function"
+      ? (combinedOrderStore as WebhookAtomicApplyStore)
+      : undefined);
+
   /**
-   * Applies a target state to an order.
+   * Computes an order transition without performing I/O. The atomic store calls
+   * this while it owns both the inbox key and the addressed order row.
    *
    * The event id is passed as the idempotency key on both sides of the
-   * transition, so an event that somehow reaches this point twice for the same
-   * order is absorbed by `transitionOrder` as well as by the event store. A
-   * denied transition is not an error to report upward: the event was genuine and
-   * the provider must stop retrying, so it is acknowledged with applied false.
+   * transition. A denied transition is acknowledged as a durable no-op; an
+   * unknown order is a retry decision and therefore claims no inbox row.
    */
-  async function applyTransition(
-    order: WebhookOrder,
+  function decideTransition(
+    order: WebhookOrder | undefined,
     to: OrderState,
     eventId: string,
-    providerConfirmation: string | undefined,
-  ): Promise<boolean> {
+    paymentEvidence: WebhookVerification | undefined,
+    shipmentUpdate?: WebhookShipmentUpdate,
+  ): WebhookAtomicDecision {
+    if (!order) return { kind: "retry", code: "unknown_order" };
+
+    const providerConfirmation = paymentEvidence?.providerReference;
+    if (paymentEvidence !== undefined) {
+      const accountMatches =
+        (paymentEvidence.providerAccountId ?? null) ===
+        (order.paymentProviderAccountId ?? null);
+      const referenceMatches =
+        typeof providerConfirmation === "string" &&
+        providerConfirmation !== "" &&
+        order.paymentReference === providerConfirmation;
+      if (!accountMatches || !referenceMatches) {
+        return { kind: "retry", code: "payment_evidence_mismatch" };
+      }
+
+      if (to === "payment_authorized" || to === "payment_captured" || to === "refunded") {
+        const amount = paymentEvidence.amountCents;
+        const expectedAmount =
+          to === "payment_authorized"
+            ? order.amountDueCents
+            : to === "payment_captured"
+              ? order.authorizedAmountCents
+              : order.capturedAmountCents;
+        if (
+          !Number.isSafeInteger(amount) ||
+          (amount as number) <= 0 ||
+          !Number.isSafeInteger(expectedAmount) ||
+          amount !== expectedAmount ||
+          (to === "payment_captured" && expectedAmount !== order.amountDueCents) ||
+          order.currency !== "usd" ||
+          paymentEvidence.currency !== order.currency
+        ) {
+          return { kind: "retry", code: "payment_evidence_mismatch" };
+        }
+      }
+    }
+
     const result = transitionOrder({
       from: order.state,
       to,
@@ -189,16 +298,50 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       idempotencyKey: eventId,
       lastAppliedIdempotencyKey: order.lastWebhookEventId,
     });
-    if (!result.ok || result.idempotent) return false;
+    if (!result.ok || result.idempotent) return { kind: "acknowledge" };
 
-    order.state = result.state;
-    order.lastWebhookEventId = eventId;
-    if (result.state === "payment_captured") order.captured = true;
-    if (providerConfirmation && !order.paymentReference) {
-      order.paymentReference = providerConfirmation;
+    const next: WebhookOrder = {
+      ...order,
+      state: result.state,
+      lastWebhookEventId: eventId,
+    };
+    if (result.state === "payment_authorized" && paymentEvidence?.amountCents !== undefined) {
+      next.authorizedAmountCents = paymentEvidence.amountCents;
     }
-    await deps.orders.save(order);
-    return true;
+    if (result.state === "payment_captured" && paymentEvidence?.amountCents !== undefined) {
+      next.captured = true;
+      next.capturedAmountCents = paymentEvidence.amountCents;
+    }
+    if (result.state === "refunded" && paymentEvidence?.amountCents !== undefined) {
+      next.refundedAmountCents = paymentEvidence.amountCents;
+    }
+    if (shipmentUpdate) next.shipmentUpdate = { ...shipmentUpdate };
+    return { kind: "apply", order: next };
+  }
+
+  async function atomicallyApply(
+    event: WebhookAtomicEvent,
+    decide: (order: WebhookOrder | undefined) => WebhookAtomicDecision,
+  ): Promise<WebhookResult> {
+    // The legacy event and order stores are deliberately not composed here:
+    // separate durable calls leave an unavoidable crash/race window. Until a
+    // transaction-capable adapter is wired, verified events fail closed.
+    if (!atomic) return { ok: false, code: "capability_disabled" };
+
+    const result = await atomic.claimAndApply(event, decide);
+    switch (result.outcome) {
+      case "applied":
+        return { ok: true, applied: true, eventId: event.eventId };
+      case "acknowledged":
+      case "duplicate":
+        return { ok: true, applied: false, eventId: event.eventId };
+      case "conflict":
+        return { ok: false, code: "event_conflict" };
+      case "unknown_order":
+        return { ok: false, code: "unknown_order" };
+      case "payment_evidence_mismatch":
+        return { ok: false, code: "payment_evidence_mismatch" };
+    }
   }
 
   async function handlePayment(
@@ -210,46 +353,54 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // store, or any order.
     if (!signature) return { ok: false, code: "invalid_signature" };
 
+    // Without atomic inbox+effect authority even verification must not run: a
+    // provider double or SDK may consume replay state while verifying. Refuse
+    // before that side effect so redelivery remains eligible after activation.
+    if (!atomic) return { ok: false, code: "capability_disabled" };
+
     const verified = await deps.payment.verifyWebhook(rawBody, signature);
     if (!verified.ok) {
       return { ok: false, code: classifyVerificationFailure(verified.code, rawBody) };
     }
 
-    const { eventId, eventType, providerReference } = verified.value;
+    const { eventId, eventType } = verified.value;
     const providerName = deps.payment.name;
 
-    // Step 2. Replay, before any effect and before the event is recorded.
-    if (await deps.store.seen(providerName, eventId)) {
-      return { ok: true, applied: false, eventId };
-    }
-
-    // A disabled capability acknowledges the event so the provider stops retrying,
-    // and applies nothing. The event is deliberately NOT recorded: nothing happened,
-    // so a redelivery once commerce is enabled is a first application, not a second.
+    // A disabled capability acknowledges and claims nothing. A redelivery after
+    // enablement therefore remains eligible for its first atomic application.
     if (!deps.commerceEnabled) {
       return { ok: true, applied: false, eventId };
     }
 
     const target = PAYMENT_EVENT_STATES[eventType];
     if (!target) {
-      // Unrecognized event types are RECORDED and acknowledged as a no-op: the
-      // verified event happened and belongs in the trail, and recording it means
-      // a redelivery is absorbed as a replay, but nothing is guessed at.
-      await deps.store.record(providerName, eventId, asOf, eventType);
-      return { ok: true, applied: false, eventId };
+      return atomicallyApply(
+        {
+          providerName,
+          eventId,
+          eventType,
+          payloadSha256: payloadSha256(rawBody),
+          receivedAt: asOf,
+          orderId: null,
+        },
+        () => ({ kind: "acknowledge" }),
+      );
     }
 
-    const body = parseJsonObject(rawBody);
-    const orderId = readString(body, "orderId");
+    const orderId = verified.value.orderId;
     if (!orderId) return { ok: false, code: "malformed" };
 
-    const order = await deps.orders.get(orderId);
-    if (!order) return { ok: false, code: "unknown_order" };
-
-    // Step 3. Record, then apply.
-    await deps.store.record(providerName, eventId, asOf, eventType);
-    const applied = await applyTransition(order, target, eventId, providerReference);
-    return { ok: true, applied, eventId };
+    return atomicallyApply(
+      {
+        providerName,
+        eventId,
+        eventType,
+        payloadSha256: payloadSha256(rawBody),
+        receivedAt: asOf,
+        orderId,
+      },
+      (order) => decideTransition(order, target, eventId, verified.value),
+    );
   }
 
   async function handleFulfillment(
@@ -258,6 +409,8 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     asOf: Date,
   ): Promise<WebhookResult> {
     if (!signature) return { ok: false, code: "invalid_signature" };
+
+    if (!atomic) return { ok: false, code: "capability_disabled" };
 
     const fulfillment = deps.fulfillment;
     if (!fulfillment) return { ok: false, code: "capability_disabled" };
@@ -269,6 +422,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
 
     const update = verified.value;
     const body = parseJsonObject(rawBody);
+    if (!body) return { ok: false, code: "malformed" };
     // A carrier status update does not always carry its own event id. When it does
     // not, the identity of the event is the state it reports, which is exactly what
     // a redelivery repeats.
@@ -278,40 +432,45 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       `${update.fulfillmentOrderId}:${update.status}:${update.trackingNumber ?? ""}`;
     const providerName = fulfillment.name;
 
-    if (await deps.store.seen(providerName, eventId)) {
-      return { ok: true, applied: false, eventId };
-    }
-
     if (!deps.commerceEnabled) {
       return { ok: true, applied: false, eventId };
     }
 
     const target = FULFILLMENT_STATUS_STATES[update.status];
     if (!target) {
-      // Same rule as the payment rail: recorded, acknowledged, nothing guessed.
-      await deps.store.record(providerName, eventId, asOf, update.status);
-      return { ok: true, applied: false, eventId };
+      return atomicallyApply(
+        {
+          providerName,
+          eventId,
+          eventType: update.status,
+          payloadSha256: payloadSha256(rawBody),
+          receivedAt: asOf,
+          orderId: null,
+        },
+        () => ({ kind: "acknowledge" }),
+      );
     }
 
     // The fulfillment order id is the order key. A partner never supplies a payment
     // reference, so no provider confirmation is carried from this surface, which is
     // why a fulfillment event can never reach a paid state.
-    const order = await deps.orders.get(update.fulfillmentOrderId);
-    if (!order) return { ok: false, code: "unknown_order" };
-
-    // The verified event's shipment status and tracking ride the save, so the
-    // member-visible shipment records advance with the order state. Attached
-    // only here (after verification), and only persisted when the transition
-    // actually applies, so a replayed or refused event changes no tracking.
-    order.shipmentUpdate = {
+    const shipmentUpdate: WebhookShipmentUpdate = {
       status: update.status,
       trackingNumber: update.trackingNumber ?? null,
       carrier: update.carrier ?? null,
     };
 
-    await deps.store.record(providerName, eventId, asOf, update.status);
-    const applied = await applyTransition(order, target, eventId, undefined);
-    return { ok: true, applied, eventId };
+    return atomicallyApply(
+      {
+        providerName,
+        eventId,
+        eventType: update.status,
+        payloadSha256: payloadSha256(rawBody),
+        receivedAt: asOf,
+        orderId: update.fulfillmentOrderId,
+      },
+      (order) => decideTransition(order, target, eventId, undefined, shipmentUpdate),
+    );
   }
 
   return { handlePayment, handleFulfillment };
@@ -322,15 +481,16 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
 // ---------------------------------------------------------------------------
 
 /**
- * The default event store.
+ * The legacy in-memory event observer.
  *
  * The key is composed of the provider name and the event id, so two providers
  * that independently number their events from one cannot suppress each other.
- * A durable store replaces this without changing the handler.
+ * This store is not consulted by the handler's atomic effect path.
  */
 export function createInMemoryWebhookEventStore(): WebhookEventStore {
   const seenAt = new Map<string, Date>();
-  const key = (providerName: string, eventId: string): string => `${providerName}:${eventId}`;
+  const key = (providerName: string, eventId: string): string =>
+    JSON.stringify([providerName, eventId]);
 
   return {
     seen(providerName: string, eventId: string): boolean {
@@ -338,6 +498,89 @@ export function createInMemoryWebhookEventStore(): WebhookEventStore {
     },
     record(providerName: string, eventId: string, at: Date): void {
       seenAt.set(key(providerName, eventId), at);
+    },
+  };
+}
+
+/**
+ * Transactional in-memory reference for tests and local composition. It owns
+ * both order rows and inbox claims, serializes every operation, and publishes
+ * neither write until the decision has completed and passed ownership checks.
+ */
+export interface InMemoryWebhookAtomicStore
+  extends WebhookAtomicApplyStore,
+    WebhookOrderStore {}
+
+export function createInMemoryWebhookAtomicStore(
+  seed: readonly WebhookOrder[] = [],
+): InMemoryWebhookAtomicStore {
+  const orders = new Map<string, WebhookOrder>();
+  const inbox = new Map<string, string>();
+  let tail: Promise<void> = Promise.resolve();
+
+  const clone = (order: WebhookOrder): WebhookOrder => ({
+    ...order,
+    ...(order.shipmentUpdate ? { shipmentUpdate: { ...order.shipmentUpdate } } : {}),
+  });
+  const inboxKey = (event: WebhookAtomicEvent): string =>
+    JSON.stringify([event.providerName, event.eventId]);
+
+  for (const order of seed) orders.set(order.orderId, clone(order));
+
+  async function exclusively<T>(work: () => T): Promise<T> {
+    const previous = tail;
+    let release!: () => void;
+    tail = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+    try {
+      return work();
+    } finally {
+      release();
+    }
+  }
+
+  return {
+    async claimAndApply(event, decide) {
+      return exclusively((): WebhookAtomicApplyResult => {
+        const key = inboxKey(event);
+        const existingDigest = inbox.get(key);
+        if (existingDigest !== undefined) {
+          return existingDigest === event.payloadSha256
+            ? { outcome: "duplicate" }
+            : { outcome: "conflict" };
+        }
+
+        const current = event.orderId === null ? undefined : orders.get(event.orderId);
+        const decision = decide(current ? clone(current) : undefined);
+        if (decision.kind === "retry") return { outcome: decision.code };
+
+        if (decision.kind === "apply") {
+          if (event.orderId === null || decision.order.orderId !== event.orderId) {
+            throw new Error("atomic webhook decision attempted to write a different order");
+          }
+          // These adjacent writes are one synchronous publication under the
+          // in-memory mutex. A durable implementation must use a DB transaction.
+          inbox.set(key, event.payloadSha256);
+          orders.set(event.orderId, clone(decision.order));
+          return { outcome: "applied" };
+        }
+
+        inbox.set(key, event.payloadSha256);
+        return { outcome: "acknowledged" };
+      });
+    },
+
+    async get(orderId) {
+      const order = orders.get(orderId);
+      return order ? clone(order) : undefined;
+    },
+
+    async save(order) {
+      await exclusively(() => {
+        orders.set(order.orderId, clone(order));
+      });
     },
   };
 }

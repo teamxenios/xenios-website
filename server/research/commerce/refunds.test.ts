@@ -8,6 +8,7 @@ import {
   createInMemoryClaimOrderRepository,
   createInMemoryClaimRepository,
   createRefundService,
+  refundProviderIdempotencyKey,
   type ClaimOrderView,
   type ClaimOutcome,
   type ClaimRepository,
@@ -44,8 +45,10 @@ class SpyPaymentProvider implements PaymentProvider {
     return {
       ok: true,
       value: {
-        providerReference: `refund_${this.refundCalls.length}`,
+        providerReference: `refund_${idempotencyKey}`,
+        paymentReference: reference,
         refundedAmountCents: amountCents,
+        currency: "usd",
         status: "refunded",
       },
     };
@@ -94,7 +97,14 @@ function harness(orderOverrides: Partial<ClaimOrderView> = {}, commerceEnabled =
   const claims = createInMemoryClaimRepository();
   const order = deliveredOrder(orderOverrides);
   const orders = createInMemoryClaimOrderRepository([order]);
-  const service = createRefundService({ claims, orders, payment, commerceEnabled });
+  const service = createRefundService({
+    claims,
+    orders,
+    payment,
+    commerceEnabled,
+    durableRefundExecutionAvailable: true,
+    durableReplacementExecutionAvailable: true,
+  });
   return { service, payment, claims, order };
 }
 
@@ -125,7 +135,13 @@ describe("refund idempotency survives a process restart", () => {
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
 
-    const first = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const first = createRefundService({
+      claims,
+      orders,
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
     const submitted = expectClaim(await first.submitClaim("mem_1", claimRequest(), NOW));
     const approved = expectClaim(
       await first.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW),
@@ -141,7 +157,13 @@ describe("refund idempotency survives a process restart", () => {
     expect(payment.refundCalls).toHaveLength(1);
 
     // The restart: same durable store, a service that has never seen the key.
-    const second = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const second = createRefundService({
+      claims,
+      orders,
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
     await second.resolveWithRefund(approved.claim.claimId, "adm_1", 12_000, "key_1", NOW);
 
     // The critical assertion: the provider was not asked to move money a second time.
@@ -191,6 +213,50 @@ describe("accepted reasons", () => {
       const outcome = await h.service.submitClaim("mem_1", claimRequest({ reason }), NOW);
       expect(expectClaim(outcome).claim.reason).toBe(reason);
     }
+  });
+});
+
+describe("claim identity survives a process restart", () => {
+  it("does not overwrite a different claim when two service instances share a repository", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const firstOrder = deliveredOrder({ orderId: "ord_restart_1" });
+    const secondOrder = deliveredOrder({ orderId: "ord_restart_2" });
+    const orders = createInMemoryClaimOrderRepository([firstOrder, secondOrder]);
+    const first = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const second = createRefundService({ claims, orders, payment, commerceEnabled: true });
+
+    const firstClaim = expectClaim(
+      await first.submitClaim("mem_1", claimRequest({ orderId: firstOrder.orderId }), NOW),
+    ).claim;
+    const secondClaim = expectClaim(
+      await second.submitClaim("mem_1", claimRequest({ orderId: secondOrder.orderId }), NOW),
+    ).claim;
+
+    expect(firstClaim.claimId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    expect(secondClaim.claimId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    expect(secondClaim.claimId).not.toBe(firstClaim.claimId);
+    expect((await claims.get(firstClaim.claimId))?.orderId).toBe(firstOrder.orderId);
+    expect((await claims.get(secondClaim.claimId))?.orderId).toBe(secondOrder.orderId);
+    expect(await claims.listByMember("mem_1")).toHaveLength(2);
+  });
+
+  it("refuses a prefixed generator before persistence because the durable id is UUID", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const service = createRefundService({
+      claims,
+      orders: createInMemoryClaimOrderRepository([deliveredOrder()]),
+      payment,
+      commerceEnabled: true,
+      newClaimId: () => "clm_11111111-1111-4111-8111-111111111111",
+    });
+
+    expect(await service.submitClaim("mem_1", claimRequest(), NOW)).toEqual({
+      ok: false,
+      codes: ["capability_disabled"],
+    });
+    expect(await claims.listOpen()).toEqual([]);
   });
 });
 
@@ -326,6 +392,24 @@ describe("review", () => {
 });
 
 describe("replacement never restocks", () => {
+  it("stays unavailable without durable replacement execution authority and mutates nothing", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const outcome = await service.resolveWithReplacement(submitted.claim.claimId, "adm_1", NOW);
+
+    expect(expectDenied(outcome)).toEqual(["capability_disabled"]);
+    expect(order.state).toBe("delivered");
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
+    expect((await claims.get(submitted.claim.claimId))?.resolution).toBeNull();
+    expect(payment.refundCalls).toEqual([]);
+  });
+
   it("resolves with a replacement and destroys the returned unit", async () => {
     const h = harness();
     const claimId = await approvedClaim(h);
@@ -384,6 +468,62 @@ describe("replacement never restocks", () => {
 });
 
 describe("refund", () => {
+  it("stays unavailable when no durable refund execution authority is wired", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const service = createRefundService({
+      claims,
+      orders: createInMemoryClaimOrderRepository([order]),
+      payment,
+      commerceEnabled: true,
+    });
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    await claims.recordRefundKey(
+      refundProviderIdempotencyKey({
+        orderId: order.orderId,
+        claimId: submitted.claim.claimId,
+        amountCents: 12_000,
+        callerKey: "key_1",
+      }),
+      "ref_crashed_before_persistence",
+    );
+
+    const outcome = await service.resolveWithRefund(
+      submitted.claim.claimId,
+      "adm_1",
+      12_000,
+      "key_1",
+      NOW,
+    );
+
+    expect(expectDenied(outcome)).toContain("payment_disabled");
+    expect(payment.refundCalls).toEqual([]);
+    expect(order.state).toBe("delivered");
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
+  });
+
+  it("never infers a completed refund from a key recorded before claim/order persistence", async () => {
+    const h = harness();
+    const claimId = await approvedClaim(h);
+    const scope = refundProviderIdempotencyKey({
+      orderId: h.order.orderId,
+      claimId,
+      amountCents: 6_000,
+      callerKey: "crash-key",
+    });
+    await h.claims.recordRefundKey(scope, "ref_provider_succeeded_then_process_crashed");
+
+    const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 6_000, "crash-key", NOW);
+
+    expect(expectDenied(outcome)).toEqual(["payment_failed"]);
+    expect(h.payment.refundCalls).toEqual([]);
+    expect(h.order.state).toBe("delivered");
+    expect(h.order.refundedCents).toBe(0);
+    expect((await h.claims.get(claimId))?.state).toBe("approved");
+  });
+
   it("refunds through the provider and carries its reference into the transition", async () => {
     const h = harness();
     const claimId = await approvedClaim(h);
@@ -391,7 +531,16 @@ describe("refund", () => {
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.resolution).toBe("refund");
     expect(h.payment.refundCalls).toEqual([
-      { reference: "auth_1", amountCents: 12_000, idempotencyKey: "key_1" },
+      {
+        reference: "auth_1",
+        amountCents: 12_000,
+        idempotencyKey: refundProviderIdempotencyKey({
+          orderId: "ord_1",
+          claimId,
+          amountCents: 12_000,
+          callerKey: "key_1",
+        }),
+      },
     ]);
     expect(h.order.state).toBe("refunded");
     expect(h.order.refundedCents).toBe(12_000);
@@ -404,6 +553,20 @@ describe("refund", () => {
     if (!outcome.ok) throw new Error("expected a resolution");
     expect(outcome.claim.resolution).toBe("partial_refund");
     expect(h.order.refundedCents).toBe(4_000);
+  });
+
+  it("refuses a fresh operation over a pre-existing refunded ledger before provider use", async () => {
+    const h = harness({ refundedCents: 1_000 });
+    const claimId = await approvedClaim(h);
+    const beforeOrder = structuredClone(h.order);
+    const beforeClaim = structuredClone(await h.claims.get(claimId));
+
+    const outcome = await h.service.resolveWithRefund(claimId, "adm_1", 5_000, "key_prior", NOW);
+
+    expect(expectDenied(outcome)).toContain("payment_failed");
+    expect(h.payment.refundCalls).toEqual([]);
+    expect(h.order).toEqual(beforeOrder);
+    expect(await h.claims.get(claimId)).toEqual(beforeClaim);
   });
 
   it("never restocks on a refund either", async () => {
@@ -443,6 +606,42 @@ describe("refund", () => {
     expect(h.payment.refundCalls).toHaveLength(0);
   });
 
+  it("refuses an unsafe-integer amount", async () => {
+    const h = harness({ capturedAmountCents: Number.MAX_SAFE_INTEGER });
+    const claimId = await approvedClaim(h);
+    const outcome = await h.service.resolveWithRefund(
+      claimId,
+      "adm_1",
+      Number.MAX_SAFE_INTEGER + 1,
+      "key_unsafe",
+      NOW,
+    );
+    expect(expectDenied(outcome)).toContain("payment_failed");
+    expect(h.payment.refundCalls).toHaveLength(0);
+  });
+
+  it.each([
+    ["fractional capture", { capturedAmountCents: 12_000.5 }],
+    ["unsafe capture", { capturedAmountCents: Number.MAX_SAFE_INTEGER + 1 }],
+    ["negative refunded ledger", { refundedCents: -1 }],
+    ["refund above capture", { capturedAmountCents: 12_000, refundedCents: 12_001 }],
+    ["empty provider reference", { paymentReference: "" }],
+  ])("refuses malformed stored money evidence: %s", async (_label, override) => {
+    const h = harness(override);
+    const claimId = await approvedClaim(h);
+
+    const outcome = await h.service.resolveWithRefund(
+      claimId,
+      "adm_1",
+      1_000,
+      "key_bad_ledger",
+      NOW,
+    );
+
+    expect(expectDenied(outcome)).toContain("payment_failed");
+    expect(h.payment.refundCalls).toHaveLength(0);
+  });
+
   it("refuses a zero or negative amount", async () => {
     const h = harness();
     const claimId = await approvedClaim(h);
@@ -472,6 +671,7 @@ describe("refund", () => {
       orders,
       payment: new DisabledPaymentProvider(),
       commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
     });
     const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
@@ -502,6 +702,148 @@ describe("refund", () => {
     expect(replay.claim.claimId).toBe(first.claim.claimId);
   });
 
+  it("does not absorb a different amount under a reused caller key", async () => {
+    const h = harness();
+    const claimId = await approvedClaim(h);
+    await expect(
+      h.service.resolveWithRefund(claimId, "adm_1", 6_000, "same-key", NOW),
+    ).resolves.toMatchObject({ ok: true });
+
+    const mismatchedReplay = await h.service.resolveWithRefund(
+      claimId,
+      "adm_1",
+      7_000,
+      "same-key",
+      NOW,
+    );
+
+    expect(expectDenied(mismatchedReplay)).toContain("order_state_invalid");
+    expect(h.payment.refundCalls).toHaveLength(1);
+    expect(h.order.refundedCents).toBe(6_000);
+  });
+
+  it("scopes a reused caller key to the exact claim and order before sending it to the provider", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const firstOrder = deliveredOrder({ orderId: "ord_1", paymentReference: "auth_1", capturedAmountCents: 5_000 });
+    const secondOrder = deliveredOrder({ orderId: "ord_2", paymentReference: "auth_2", capturedAmountCents: 5_000 });
+    const service = createRefundService({
+      claims,
+      orders: createInMemoryClaimOrderRepository([firstOrder, secondOrder]),
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
+
+    const firstSubmitted = expectClaim(
+      await service.submitClaim("mem_1", claimRequest({ orderId: "ord_1" }), NOW),
+    );
+    const secondSubmitted = expectClaim(
+      await service.submitClaim("mem_1", claimRequest({ orderId: "ord_2" }), NOW),
+    );
+    expectClaim(await service.reviewClaim(firstSubmitted.claim.claimId, "adm_1", "approved", NOW));
+    expectClaim(await service.reviewClaim(secondSubmitted.claim.claimId, "adm_1", "approved", NOW));
+
+    await expect(
+      service.resolveWithRefund(firstSubmitted.claim.claimId, "adm_1", 5_000, "same-caller-key", NOW),
+    ).resolves.toMatchObject({ ok: true });
+    await expect(
+      service.resolveWithRefund(secondSubmitted.claim.claimId, "adm_1", 5_000, "same-caller-key", NOW),
+    ).resolves.toMatchObject({ ok: true });
+
+    expect(payment.refundCalls).toHaveLength(2);
+    expect(payment.refundCalls[0].idempotencyKey).not.toBe("same-caller-key");
+    expect(payment.refundCalls[1].idempotencyKey).not.toBe("same-caller-key");
+    expect(payment.refundCalls[0].idempotencyKey).not.toBe(payment.refundCalls[1].idempotencyKey);
+    expect(payment.refundCalls.map((call) => call.reference)).toEqual(["auth_1", "auth_2"]);
+    expect(firstOrder.refundedCents).toBe(5_000);
+    expect(secondOrder.refundedCents).toBe(5_000);
+  });
+
+  it("rejects a provider success that is bound to a different payment reference", async () => {
+    class WrongReferenceProvider extends SpyPaymentProvider {
+      async refund(
+        reference: string,
+        amountCents: number,
+        idempotencyKey: string,
+      ): Promise<ProviderResult<PaymentRefund>> {
+        this.refundCalls.push({ reference, amountCents, idempotencyKey });
+        return {
+          ok: true,
+          value: {
+            providerReference: "refund_wrong-payment",
+            paymentReference: "auth_other",
+            refundedAmountCents: amountCents,
+            currency: "usd",
+            status: "refunded",
+          },
+        };
+      }
+    }
+    const payment = new WrongReferenceProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const service = createRefundService({
+      claims,
+      orders: createInMemoryClaimOrderRepository([order]),
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const outcome = await service.resolveWithRefund(submitted.claim.claimId, "adm_1", 6_000, "key_1", NOW);
+
+    expect(expectDenied(outcome)).toEqual(["payment_failed"]);
+    expect(order.state).toBe("delivered");
+    expect(order.refundedCents).toBe(0);
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
+  });
+
+  it.each([
+    ["empty refund reference", { providerReference: "", paymentReference: "auth_1", refundedAmountCents: 6_000, currency: "usd", status: "refunded" }],
+    ["wrong currency", { providerReference: "refund_1", paymentReference: "auth_1", refundedAmountCents: 6_000, currency: "eur", status: "refunded" }],
+    ["non-terminal status", { providerReference: "refund_1", paymentReference: "auth_1", refundedAmountCents: 6_000, currency: "usd", status: "pending" }],
+  ])("rejects provider success with %s after the call without mutating durable projections", async (_label, hostileValue) => {
+    class HostileSuccessProvider extends SpyPaymentProvider {
+      async refund(
+        reference: string,
+        amountCents: number,
+        idempotencyKey: string,
+      ): Promise<ProviderResult<PaymentRefund>> {
+        this.refundCalls.push({ reference, amountCents, idempotencyKey });
+        return { ok: true, value: hostileValue as unknown as PaymentRefund };
+      }
+    }
+    const payment = new HostileSuccessProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const service = createRefundService({
+      claims,
+      orders: createInMemoryClaimOrderRepository([order]),
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+
+    const outcome = await service.resolveWithRefund(submitted.claim.claimId, "adm_1", 6_000, "key_hostile", NOW);
+
+    expect(expectDenied(outcome)).toEqual(["payment_failed"]);
+    expect(payment.refundCalls).toHaveLength(1);
+    expect(order).toMatchObject({ state: "delivered", refundedCents: 0 });
+    expect(order.lastAppliedIdempotencyKey).toBeUndefined();
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
+    expect(await claims.hasRefundKey(refundProviderIdempotencyKey({
+      orderId: order.orderId,
+      claimId: submitted.claim.claimId,
+      amountCents: 6_000,
+      callerKey: "key_hostile",
+    }))).toBe(false);
+  });
+
   it("reports a misconfigured provider as a capability state, never as retryable", async () => {
     class MisconfiguredProvider extends SpyPaymentProvider {
       async refund(): Promise<ProviderResult<PaymentRefund>> {
@@ -517,7 +859,13 @@ describe("refund", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
-    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const service = createRefundService({
+      claims,
+      orders,
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
     const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
@@ -536,7 +884,7 @@ describe("refund", () => {
     expect(order.refundedCents).toBe(0);
   });
 
-  it("never lets a provider figure understate what was refunded", async () => {
+  it("rejects a provider amount that does not exactly match the requested refund", async () => {
     class UnderReportingProvider extends SpyPaymentProvider {
       async refund(
         reference: string,
@@ -547,7 +895,13 @@ describe("refund", () => {
         // A negative or short figure would inflate what is still refundable.
         return {
           ok: true,
-          value: { providerReference: "refund_1", refundedAmountCents: -6_000, status: "refunded" },
+          value: {
+            providerReference: "refund_wrong-amount",
+            paymentReference: reference,
+            refundedAmountCents: -6_000,
+            currency: "usd",
+            status: "refunded",
+          },
         };
       }
     }
@@ -555,7 +909,13 @@ describe("refund", () => {
     const claims = createInMemoryClaimRepository();
     const order = deliveredOrder();
     const orders = createInMemoryClaimOrderRepository([order]);
-    const service = createRefundService({ claims, orders, payment, commerceEnabled: true });
+    const service = createRefundService({
+      claims,
+      orders,
+      payment,
+      commerceEnabled: true,
+      durableRefundExecutionAvailable: true,
+    });
     const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
     expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
 
@@ -567,9 +927,10 @@ describe("refund", () => {
       NOW,
     );
 
-    expect(outcome.ok).toBe(true);
-    expect(order.refundedCents).toBe(6_000);
-    expect(order.capturedAmountCents - order.refundedCents).toBe(6_000);
+    expect(expectDenied(outcome)).toEqual(["payment_failed"]);
+    expect(order.state).toBe("delivered");
+    expect(order.refundedCents).toBe(0);
+    expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
   });
 
   it("refuses a refund on a claim that was never approved", async () => {

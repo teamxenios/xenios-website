@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { resolveMasterOfferingAction } from "./action";
 import { reviewedHeldSpecifications } from "./reviewed-holds";
 import type {
@@ -11,9 +11,15 @@ import type {
   NormalizedMasterOffering,
   NormalizedMasterOfferingVariant,
 } from "./model";
-import { cartSelection } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 import { projectMasterOfferingVariant } from "./customer-projection";
 import type { MasterOfferingPriceView } from "@shared/research/master-offerings/pricing-contract";
+
+let sealedCartSelection: Awaited<ReturnType<typeof cartSelection>>;
+
+beforeAll(async () => {
+  sealedCartSelection = await cartSelection();
+});
 
 // ---------------------------------------------------------------------------
 // ORDER INTAKE MATRIX — every canonical variant, at the layer that decides what
@@ -21,8 +27,10 @@ import type { MasterOfferingPriceView } from "@shared/research/master-offerings/
 //
 // The workbook matrix proves the SOURCE adds up. This proves the RESOLVER
 // agrees, which is a different question. It runs every shipped variant through
-// resolveMasterOfferingAction with commerce deliberately made perfect: a
-// matching binding and a fully valid Product Control selection.
+// resolveMasterOfferingAction with exact current presentation state plus a
+// matching binding and a fully valid Product Control selection. A separate
+// helper deliberately simulates publishing a request-access row as
+// available-now, so candidate counts never masquerade as current runtime truth.
 //
 // That inversion is the point. A test that withholds commerce proves nothing
 // about a routing rule, because everything refuses for the wrong reason. Here
@@ -90,7 +98,7 @@ function resolvedAction(row: Row) {
     sourceReferences: [],
   } as unknown as NormalizedMasterOffering;
 
-  const selection = cartSelection();
+  const selection = sealedCartSelection;
   return resolveMasterOfferingAction(
     offering,
     variant,
@@ -109,6 +117,15 @@ function resolvedAction(row: Row) {
 
 const orderable = (row: Row) => resolvedAction(row).kind === "add_to_cart";
 
+/** Candidate answer after the distinct presentation authority publishes a
+ * request-access row as available-now. Other states are left untouched. */
+const publicationCandidateOrderable = (row: Row) =>
+  resolvedAction(
+    row.displayState === "request_access" && row.variantDisplayState === "request_access"
+      ? { ...row, displayState: "available_now", variantDisplayState: "available_now" }
+      : row,
+  ).kind === "add_to_cart";
+
 describe("order intake matrix: what the customer's button says", () => {
   it("resolves every shipped variant, none skipped", () => {
     const rows = shippedRows();
@@ -118,9 +135,13 @@ describe("order intake matrix: what the customer's button says", () => {
     }
   });
 
-  it("offers direct ordering to all 106 confirmed-RUO peptides", () => {
+  it("emits no Add to Cart for the exact runtime artifact before available-now publication", () => {
+    expect(shippedRows().filter(orderable)).toEqual([]);
+  });
+
+  it("would offer direct ordering to 106 confirmed-RUO candidates only after explicit available-now publication", () => {
     const peptides = shippedRows().filter(
-      (row) => row.family === "research_peptides_materials" && orderable(row),
+      (row) => row.family === "research_peptides_materials" && publicationCandidateOrderable(row),
     );
 
     expect(peptides).toHaveLength(106);
@@ -129,7 +150,7 @@ describe("order intake matrix: what the customer's button says", () => {
     }
   });
 
-  it("also offers it to 25 NON-peptide rows, which is an open founder decision", () => {
+  it("would also offer it to 25 NON-peptide candidates after publication, which is an open founder decision", () => {
     // The founder's rule reads as an allowlist: direct order applies when the
     // canonical family is research_peptides_materials. Read that way, these 25
     // rows should not carry an order button in a PEPTIDE launch.
@@ -145,7 +166,7 @@ describe("order intake matrix: what the customer's button says", () => {
     // add these families to DIRECT_PURCHASE_EXCLUDED_FAMILIES and this test
     // flips to zero.
     const others = shippedRows().filter(
-      (row) => row.family !== "research_peptides_materials" && orderable(row),
+      (row) => row.family !== "research_peptides_materials" && publicationCandidateOrderable(row),
     );
     const counts: Record<string, number> = {};
     for (const row of others) counts[row.family] = (counts[row.family] ?? 0) + 1;
@@ -197,7 +218,7 @@ describe("order intake matrix: what the customer's button says", () => {
     // rather than read from it. Under the RUO classification with a perfect
     // selection, the hold is the only thing between it and a cart.
     expect(
-      orderable({
+      publicationCandidateOrderable({
         family: "research_peptides_materials",
         productName: "CJC-1295 + Ipamorelin",
         variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
@@ -207,12 +228,12 @@ describe("order intake matrix: what the customer's button says", () => {
     ).toBe(false);
   });
 
-  it("keeps the standalone WITH DAC strengths orderable", () => {
+  it("keeps the standalone WITH DAC strengths eligible after explicit available-now publication", () => {
     // Founder decision 2026-08-21: 2 mg and 5 mg are DIRECT. If a future
     // widening of the hold catches these, sellable rows leave the shelf.
     for (const label of ["CJC-1295 WITH DAC 2 mg", "CJC-1295 WITH DAC 5 mg"]) {
       expect(
-        orderable({
+        publicationCandidateOrderable({
           family: "research_peptides_materials",
           productName: "CJC-1295 With Dac",
           variantLabel: label,
@@ -224,9 +245,10 @@ describe("order intake matrix: what the customer's button says", () => {
   });
 
   it("records the gap between what ships today and the founder's target", () => {
-    // TODAY: 106 direct, because the reconciled artifact has not been
-    // regenerated into the repo. GRP-0425/0426 are absent, so the runtime still
-    // carries the PENDING twins of Hexarelin 5 mg and Oxytocin 10 mg.
+    // CANDIDATE AFTER AVAILABLE-NOW PUBLICATION: 106 direct. The exact runtime
+    // remains at zero above because the reconciled artifact has not been
+    // regenerated/published into the repo. GRP-0425/0426 are absent, so the
+    // runtime still carries the PENDING twins of Hexarelin 5 mg and Oxytocin 10 mg.
     //
     // TARGET: 139 canonical peptide variants = 111 direct + 1 formulation
     // blocked + 27 classification pending.
@@ -236,10 +258,10 @@ describe("order intake matrix: what the customer's button says", () => {
     const rows = shippedRows();
     expect(rows.filter((r) => r.family === "research_peptides_materials")).toHaveLength(135);
     expect(
-      rows.filter((r) => r.family === "research_peptides_materials" && orderable(r)),
+      rows.filter((r) => r.family === "research_peptides_materials" && publicationCandidateOrderable(r)),
     ).toHaveLength(106);
     // 131 = the 106 peptides plus the 25 non-peptide rows above.
-    expect(rows.filter(orderable)).toHaveLength(131);
+    expect(rows.filter(publicationCandidateOrderable)).toHaveLength(131);
 
     const TARGET = Object.freeze({
       canonicalPeptideVariants: 139,
@@ -306,7 +328,7 @@ function projectRow(row: Row, price: MasterOfferingPriceView) {
     sourceReferences: [],
   } as unknown as NormalizedMasterOffering;
 
-  const selection = cartSelection();
+  const selection = sealedCartSelection;
   return projectMasterOfferingVariant(
     offering,
     variant,
@@ -330,8 +352,8 @@ describe("a Request Order row still shows its retail price", () => {
         family: "research_peptides_materials",
         productName: "CJC-1295 + Ipamorelin",
         variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
-        displayState: "request_access",
-        variantDisplayState: "request_access",
+        displayState: "available_now",
+        variantDisplayState: "available_now",
       },
       RETAIL_PRICE,
     );
@@ -366,8 +388,8 @@ describe("a Request Order row still shows its retail price", () => {
         family: "research_peptides_materials",
         productName: "CJC-1295 + Ipamorelin",
         variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
-        displayState: "request_access",
-        variantDisplayState: "request_access",
+        displayState: "available_now",
+        variantDisplayState: "available_now",
       },
       RETAIL_PRICE,
     );
@@ -376,8 +398,8 @@ describe("a Request Order row still shows its retail price", () => {
         family: "research_peptides_materials",
         productName: "CJC-1295 With Dac",
         variantLabel: "CJC-1295 WITH DAC 5 mg",
-        displayState: "request_access",
-        variantDisplayState: "request_access",
+        displayState: "available_now",
+        variantDisplayState: "available_now",
       },
       RETAIL_PRICE,
     );

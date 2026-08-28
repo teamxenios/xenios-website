@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   NON_MERCHANDISE_FAMILIES,
   PROVIDER_PATHWAY_FAMILIES,
@@ -15,7 +15,14 @@ import {
 } from "@shared/research/master-offerings/contract";
 import { resolveMasterOfferingAction } from "./action";
 import { authorityFor } from "../assisted-order/production-catalog";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
+
+let sealedCartSelection: Awaited<ReturnType<typeof cartSelection>>;
+
+beforeAll(async () => {
+  sealedCartSelection = await cartSelection();
+});
 
 // ---------------------------------------------------------------------------
 // The pathway authority is the single answer to "may this row ever be a direct
@@ -81,7 +88,7 @@ describe("direct purchase refusal", () => {
 });
 
 describe("the action resolver consults the authority", () => {
-  const bindingFor = (presentation: { id: string }, selection = cartSelection()) => ({
+  const bindingFor = (presentation: { id: string }, selection = sealedCartSelection) => ({
     binding: {
       offeringVariantId: presentation.id,
       productId: selection.productId,
@@ -186,10 +193,10 @@ describe("the action resolver consults the authority", () => {
     // declaration, so this proves the hold is not simply refusing every combo.
     const product = offering({
       family: "research_peptides_materials",
-      displayState: "request_access",
+      displayState: "available_now",
       variants: [
         variant({
-          displayState: "request_access",
+          displayState: "available_now",
           label: "CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg",
         }),
       ],
@@ -201,7 +208,7 @@ describe("the action resolver consults the authority", () => {
   });
 
   it("still emits Add to Cart for an ordinary research row", () => {
-    const selection = cartSelection();
+    const selection = sealedCartSelection;
     const product = offering({ family: "research_peptides_materials" });
     const presentation = product.variants[0];
 

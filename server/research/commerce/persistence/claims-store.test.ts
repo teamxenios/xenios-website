@@ -15,13 +15,19 @@ import {
   type ClaimRow,
 } from "./claims-store";
 
+const CLAIM_ID_1 = "11111111-1111-4111-8111-111111111111";
+const CLAIM_ID_2 = "22222222-2222-4222-8222-222222222222";
+const CLAIM_ID_3 = "33333333-3333-4333-8333-333333333333";
+const CLAIM_ID_4 = "44444444-4444-4444-8444-444444444444";
+const CLAIM_ID_5 = "55555555-5555-4555-8555-555555555555";
+
 // ---------------------------------------------------------------------------
 // A claim record fixture, complete so mapping round-trips are exact.
 // ---------------------------------------------------------------------------
 
 function aClaim(overrides: Partial<ClaimRecord> = {}): ClaimRecord {
   return {
-    claimId: "clm_1",
+    claimId: CLAIM_ID_1,
     orderId: "ord_1",
     memberId: "mem_1",
     sku: "P001",
@@ -43,7 +49,7 @@ function aClaim(overrides: Partial<ClaimRecord> = {}): ClaimRecord {
 
 function aClaimRow(overrides: Partial<ClaimRow> = {}): ClaimRow {
   return {
-    id: "clm_1",
+    id: CLAIM_ID_1,
     order_id: "ord_1",
     member_id: "mem_1",
     sku: "P001",
@@ -66,7 +72,7 @@ describe("claimRowToRecord", () => {
 
   it("defaults a null lot, null evidence, null resolution, and null notes safely", () => {
     const row = aClaimRow({
-      id: "clm_2",
+      id: CLAIM_ID_2,
       order_id: "ord_2",
       member_id: "mem_2",
       sku: "P002",
@@ -80,7 +86,7 @@ describe("claimRowToRecord", () => {
       notes: null, // a row predating the fidelity migration
     });
     expect(claimRowToRecord(row)).toEqual({
-      claimId: "clm_2",
+      claimId: CLAIM_ID_2,
       orderId: "ord_2",
       memberId: "mem_2",
       sku: "P002",
@@ -106,7 +112,7 @@ describe("claimRecordToRow", () => {
   it("projects the persistable columns including notes (fidelity migration column)", () => {
     const record = aClaim({ notes: "operator only detail", resolution: "replacement", state: "approved", reviewedBy: "admin_3" });
     expect(claimRecordToRow(record)).toEqual({
-      id: "clm_1",
+      id: CLAIM_ID_1,
       order_id: "ord_1",
       member_id: "mem_1",
       sku: "P001",
@@ -365,27 +371,37 @@ describe("createSupabaseClaimRepository (fake client)", () => {
 
     // The fidelity migration adds the notes column, so the Supabase round trip
     // now matches the in-memory reference field for field, notes included.
-    expect(await repo.get("clm_1")).toEqual(record);
-    expect(await repo.get("clm_1")).toEqual(await reference.get("clm_1"));
+    expect(await repo.get(CLAIM_ID_1)).toEqual(record);
+    expect(await repo.get(CLAIM_ID_1)).toEqual(await reference.get(CLAIM_ID_1));
+  });
+
+  it("rejects a prefixed id before a production-shaped UUID-column upsert", async () => {
+    const { client, db } = fakeSupabase();
+    const repo = createSupabaseClaimRepository(client);
+
+    await expect(
+      repo.save(aClaim({ claimId: `clm_${CLAIM_ID_1}` })),
+    ).rejects.toThrow(/claim id must be a schema-compatible UUID/);
+    expect(db.claims.size).toBe(0);
   });
 
   it("get drops a stored row that carries an unknown enum value (drop, never guess)", async () => {
     const { client, db } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
     await repo.save(aClaim());
-    db.claims.set("clm_1", { ...db.claims.get("clm_1")!, state: "escalated_to_legal" });
-    expect(await repo.get("clm_1")).toBeNull();
+    db.claims.set(CLAIM_ID_1, { ...db.claims.get(CLAIM_ID_1)!, state: "escalated_to_legal" });
+    expect(await repo.get(CLAIM_ID_1)).toBeNull();
   });
 
   it("lists drop an unknown-enum row while keeping the valid rows", async () => {
     const { client, db } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    await repo.save(aClaim({ claimId: "clm_ok" }));
-    await repo.save(aClaim({ claimId: "clm_bad" }));
-    db.claims.set("clm_bad", { ...db.claims.get("clm_bad")!, reason: "buyer_remorse" });
-    expect((await repo.listByMember("mem_1")).map((c) => c.claimId)).toEqual(["clm_ok"]);
-    expect((await repo.listByOrder("ord_1")).map((c) => c.claimId)).toEqual(["clm_ok"]);
-    expect((await repo.listOpen()).map((c) => c.claimId)).toEqual(["clm_ok"]);
+    await repo.save(aClaim({ claimId: CLAIM_ID_1 }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_2 }));
+    db.claims.set(CLAIM_ID_2, { ...db.claims.get(CLAIM_ID_2)!, reason: "buyer_remorse" });
+    expect((await repo.listByMember("mem_1")).map((c) => c.claimId)).toEqual([CLAIM_ID_1]);
+    expect((await repo.listByOrder("ord_1")).map((c) => c.claimId)).toEqual([CLAIM_ID_1]);
+    expect((await repo.listOpen()).map((c) => c.claimId)).toEqual([CLAIM_ID_1]);
   });
 
   it("save updates an existing claim in place rather than duplicating", async () => {
@@ -394,33 +410,33 @@ describe("createSupabaseClaimRepository (fake client)", () => {
     await repo.save(aClaim());
     await repo.save(aClaim({ state: "approved", reviewedBy: "admin_1" }));
     expect(db.claims.size).toBe(1);
-    expect((await repo.get("clm_1"))!.state).toBe("approved");
+    expect((await repo.get(CLAIM_ID_1))!.state).toBe("approved");
   });
 
   it("lists a member's claims and never crosses to another member", async () => {
     const { client } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    await repo.save(aClaim({ claimId: "clm_1", memberId: "mem_1" }));
-    await repo.save(aClaim({ claimId: "clm_2", memberId: "mem_2", orderId: "ord_2" }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_1, memberId: "mem_1" }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_2, memberId: "mem_2", orderId: "ord_2" }));
     const forMember1 = await repo.listByMember("mem_1");
-    expect(forMember1.map((c) => c.claimId)).toEqual(["clm_1"]);
+    expect(forMember1.map((c) => c.claimId)).toEqual([CLAIM_ID_1]);
   });
 
   it("lists claims by order", async () => {
     const { client } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    await repo.save(aClaim({ claimId: "clm_1", orderId: "ord_1" }));
-    await repo.save(aClaim({ claimId: "clm_2", orderId: "ord_2" }));
-    expect((await repo.listByOrder("ord_1")).map((c) => c.claimId)).toEqual(["clm_1"]);
+    await repo.save(aClaim({ claimId: CLAIM_ID_1, orderId: "ord_1" }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_2, orderId: "ord_2" }));
+    expect((await repo.listByOrder("ord_1")).map((c) => c.claimId)).toEqual([CLAIM_ID_1]);
   });
 
   it("listOpen excludes resolved and declined claims", async () => {
     const { client } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    await repo.save(aClaim({ claimId: "clm_open", state: "under_review" }));
-    await repo.save(aClaim({ claimId: "clm_done", state: "resolved" }));
-    await repo.save(aClaim({ claimId: "clm_no", state: "declined" }));
-    expect((await repo.listOpen()).map((c) => c.claimId)).toEqual(["clm_open"]);
+    await repo.save(aClaim({ claimId: CLAIM_ID_3, state: "under_review" }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_4, state: "resolved" }));
+    await repo.save(aClaim({ claimId: CLAIM_ID_5, state: "declined" }));
+    expect((await repo.listOpen()).map((c) => c.claimId)).toEqual([CLAIM_ID_3]);
   });
 });
 
@@ -528,7 +544,7 @@ describe("in-memory references (re-exported)", () => {
   it("createInMemoryClaimRepository saves and loads a claim", async () => {
     const repo = createInMemoryClaimRepository();
     await repo.save(aClaim({ notes: "kept in memory" }));
-    expect((await repo.get("clm_1"))!.notes).toBe("kept in memory");
+    expect((await repo.get(CLAIM_ID_1))!.notes).toBe("kept in memory");
   });
 
   it("createInMemoryClaimOrderRepository saves and loads an order view", async () => {

@@ -18,6 +18,33 @@ const baseInput = {
   idempotencyKey: "key_1",
 };
 
+function authorizationIntent(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    id: "pi_1",
+    status: "requires_capture",
+    amount: baseInput.amountCents,
+    amount_capturable: baseInput.amountCents,
+    currency: "usd",
+    metadata: { orderId: baseInput.orderId, memberId: baseInput.memberId },
+    ...overrides,
+  };
+}
+
+function retrievedIntent(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    id: "pi_1",
+    status: "requires_capture",
+    amount: baseInput.amountCents,
+    amount_capturable: baseInput.amountCents,
+    currency: "usd",
+    ...overrides,
+  };
+}
+
 describe("DisabledPaymentProvider (the production default)", () => {
   const p = new DisabledPaymentProvider();
 
@@ -50,9 +77,19 @@ describe("TestPaymentProvider", () => {
     }
   });
 
-  it("rejects a non-positive amount", async () => {
+  it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    "rejects malformed authorization cents %s",
+    async (amountCents) => {
+      const p = new TestPaymentProvider();
+      const r = await p.createAuthorization({ ...baseInput, amountCents });
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.code).toBe("MISCONFIGURED");
+    },
+  );
+
+  it("rejects a runtime non-USD authorization despite the compile-time literal", async () => {
     const p = new TestPaymentProvider();
-    const r = await p.createAuthorization({ ...baseInput, amountCents: 0 });
+    const r = await p.createAuthorization({ ...baseInput, currency: "eur" as never });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.code).toBe("MISCONFIGURED");
   });
@@ -96,6 +133,34 @@ describe("TestPaymentProvider", () => {
     expect(r.ok).toBe(false);
   });
 
+  it.each([
+    ["amount", { amountCents: baseInput.amountCents + 1 }],
+    ["order", { orderId: "ord_other" }],
+    ["member", { memberId: "mem_other" }],
+    ["payment method", { paymentMethodReference: "pm_other" }],
+    ["description", { description: "different" }],
+  ])("rejects an authorization key replay with different %s", async (_label, override) => {
+    const p = new TestPaymentProvider();
+    const first = await p.createAuthorization(baseInput);
+    expect(first.ok).toBe(true);
+    const replay = await p.createAuthorization({ ...baseInput, ...override });
+    expect(replay.ok).toBe(false);
+    if (!replay.ok) expect(replay.code).toBe("PERMANENT_FAILURE");
+  });
+
+  it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    "refuses malformed capture cents %s without corrupting the authorization",
+    async (amountCents) => {
+      const p = new TestPaymentProvider();
+      const auth = await p.createAuthorization(baseInput);
+      if (!auth.ok) throw new Error("setup failed");
+      expect((await p.captureAuthorization(auth.value.providerReference, amountCents)).ok).toBe(false);
+      expect(
+        (await p.captureAuthorization(auth.value.providerReference, baseInput.amountCents)).ok,
+      ).toBe(true);
+    },
+  );
+
   it("refuses to capture an unknown or cancelled authorization", async () => {
     const p = new TestPaymentProvider();
     expect((await p.captureAuthorization("nope")).ok).toBe(false);
@@ -128,6 +193,20 @@ describe("TestPaymentProvider", () => {
     const ok = await p.refund(auth.value.providerReference, 100, "r2");
     expect(ok.ok).toBe(true);
   });
+
+  it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    "refuses malformed refund cents %s without changing the refundable balance",
+    async (amountCents) => {
+      const p = new TestPaymentProvider();
+      const auth = await p.createAuthorization(baseInput);
+      if (!auth.ok) throw new Error("setup failed");
+      await p.captureAuthorization(auth.value.providerReference);
+      expect((await p.refund(auth.value.providerReference, amountCents, `bad_${amountCents}`)).ok).toBe(false);
+      expect(
+        (await p.refund(auth.value.providerReference, baseInput.amountCents, "valid_full_refund")).ok,
+      ).toBe(true);
+    },
+  );
 
   it("refuses to refund something never captured", async () => {
     const p = new TestPaymentProvider();
@@ -165,6 +244,30 @@ describe("TestPaymentProvider", () => {
     expect((await p.refund(auth.value.providerReference, 400, "new_key")).ok).toBe(true);
   });
 
+  it("rejects a refund key replay bound to a different amount or payment reference", async () => {
+    const p = new TestPaymentProvider();
+    const firstAuth = await p.createAuthorization({ ...baseInput, amountCents: 1000 });
+    const secondAuth = await p.createAuthorization({
+      ...baseInput,
+      amountCents: 1000,
+      orderId: "ord_2",
+      idempotencyKey: "auth_key_2",
+    });
+    if (!firstAuth.ok || !secondAuth.ok) throw new Error("setup failed");
+    await p.captureAuthorization(firstAuth.value.providerReference, 1000);
+    await p.captureAuthorization(secondAuth.value.providerReference, 1000);
+    expect((await p.refund(firstAuth.value.providerReference, 400, "refund_key")).ok).toBe(true);
+
+    const wrongAmount = await p.refund(firstAuth.value.providerReference, 500, "refund_key");
+    const wrongReference = await p.refund(secondAuth.value.providerReference, 400, "refund_key");
+    expect(wrongAmount.ok).toBe(false);
+    expect(wrongReference.ok).toBe(false);
+    if (!wrongAmount.ok) expect(wrongAmount.code).toBe("PERMANENT_FAILURE");
+    if (!wrongReference.ok) expect(wrongReference.code).toBe("PERMANENT_FAILURE");
+    expect((await p.refund(firstAuth.value.providerReference, 600, "refund_key_2")).ok).toBe(true);
+    expect((await p.refund(secondAuth.value.providerReference, 1000, "refund_key_3")).ok).toBe(true);
+  });
+
   describe("webhook verification", () => {
     it("rejects a missing or wrong signature", async () => {
       const p = new TestPaymentProvider();
@@ -180,20 +283,32 @@ describe("TestPaymentProvider", () => {
 
     it("accepts a well formed signed event", async () => {
       const p = new TestPaymentProvider();
-      const body = JSON.stringify({ id: "evt_1", type: "payment.captured", providerReference: "x" });
+      const body = JSON.stringify({
+        id: "evt_1",
+        type: "payment.captured",
+        providerReference: "x",
+        orderId: "ord_1",
+        amountCents: 1_000,
+        currency: "usd",
+      });
       const r = await p.verifyWebhook(body, "test-signature");
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.value.verified).toBe(true);
+      if (r.ok) {
+        expect(r.value).toMatchObject({
+          verified: true,
+          orderId: "ord_1",
+          amountCents: 1_000,
+          currency: "usd",
+        });
+      }
     });
 
-    // Replay protection is required by the build directive.
-    it("rejects a replayed event id", async () => {
+    it("does not consume an event id during verification", async () => {
       const p = new TestPaymentProvider();
       const body = JSON.stringify({ id: "evt_dup", type: "payment.captured" });
       expect((await p.verifyWebhook(body, "test-signature")).ok).toBe(true);
       const replay = await p.verifyWebhook(body, "test-signature");
-      expect(replay.ok).toBe(false);
-      if (!replay.ok) expect(replay.message).toContain("Duplicate");
+      expect(replay.ok).toBe(true);
     });
   });
 });
@@ -208,12 +323,16 @@ const FAKE_SECRET_KEY = "sk_fake_unit_test_only";
 const FAKE_WEBHOOK_SECRET = "whsec_fake_unit_test_only";
 const NOW_MS = Date.parse("2026-07-22T12:00:00Z");
 
-function stripeAdapter(responses: Array<{ status: number; body: unknown }>) {
+function stripeAdapter(
+  responses: Array<{ status: number; body: unknown }>,
+  options: { providerAccountId?: string | null } = {},
+) {
   const requests: StripeRequest[] = [];
   const queue = [...responses];
   const adapter = new StripePaymentAdapter({
     secretKey: FAKE_SECRET_KEY,
     webhookSecret: FAKE_WEBHOOK_SECRET,
+    providerAccountId: options.providerAccountId ?? null,
     now: () => NOW_MS,
     transport: async (request) => {
       requests.push(request);
@@ -238,6 +357,17 @@ describe("StripePaymentAdapter", () => {
     expect(() => new StripePaymentAdapter({ secretKey: FAKE_SECRET_KEY, webhookSecret: "" })).toThrow();
   });
 
+  it("refuses Connect mode over the built-in platform-only transport", () => {
+    expect(
+      () =>
+        new StripePaymentAdapter({
+          secretKey: FAKE_SECRET_KEY,
+          webhookSecret: FAKE_WEBHOOK_SECRET,
+          providerAccountId: "acct_connected",
+        }),
+    ).toThrow(/Connect|account-bound/i);
+  });
+
   it("declares the credential names it needs, without any values", () => {
     expect(StripePaymentAdapter.requiredEnvironmentVariables).toEqual([
       "STRIPE_SECRET_KEY",
@@ -248,7 +378,7 @@ describe("StripePaymentAdapter", () => {
   describe("createAuthorization", () => {
     it("creates a manual-capture payment intent and forwards the caller's idempotency key", async () => {
       const { adapter, requests } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "requires_capture", amount: 33999 } },
+        { status: 200, body: authorizationIntent() },
       ]);
       const r = await adapter.createAuthorization({ ...baseInput, paymentMethodReference: "pm_1" });
       expect(r.ok).toBe(true);
@@ -267,9 +397,41 @@ describe("StripePaymentAdapter", () => {
       expect(requests[0].form?.confirm).toBe("true");
     });
 
-    it("refuses a non-positive amount before any provider call", async () => {
+    it.each([
+      ["non-PaymentIntent reference", { id: "ch_wrong" }],
+      ["wrong amount", { amount: 33998 }],
+      ["wrong capturable amount", { amount_capturable: 33998 }],
+      ["wrong currency", { currency: "eur" }],
+      ["wrong order metadata", { metadata: { orderId: "ord_other", memberId: "mem_1" } }],
+      ["wrong member metadata", { metadata: { orderId: "ord_1", memberId: "mem_other" } }],
+    ])("rejects authorization success with %s", async (_label, override) => {
+      const { adapter } = stripeAdapter([
+        { status: 200, body: authorizationIntent(override) },
+      ]);
+
+      const result = await adapter.createAuthorization({
+        ...baseInput,
+        paymentMethodReference: "pm_1",
+      });
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
+    });
+
+    it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+      "refuses malformed authorization cents %s before any provider call",
+      async (amountCents) => {
       const { adapter, requests } = stripeAdapter([]);
-      const r = await adapter.createAuthorization({ ...baseInput, amountCents: 0 });
+      const r = await adapter.createAuthorization({ ...baseInput, amountCents });
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.code).toBe("MISCONFIGURED");
+      expect(requests).toHaveLength(0);
+      },
+    );
+
+    it("refuses a runtime non-USD authorization before any provider call", async () => {
+      const { adapter, requests } = stripeAdapter([]);
+      const r = await adapter.createAuthorization({ ...baseInput, currency: "eur" as never });
       expect(r.ok).toBe(false);
       if (!r.ok) expect(r.code).toBe("MISCONFIGURED");
       expect(requests).toHaveLength(0);
@@ -277,7 +439,10 @@ describe("StripePaymentAdapter", () => {
 
     it("never fakes success for an intent that is not authorized yet", async () => {
       const { adapter } = stripeAdapter([
-        { status: 200, body: { id: "pi_2", status: "requires_payment_method" } },
+        {
+          status: 200,
+          body: authorizationIntent({ id: "pi_2", status: "requires_payment_method" }),
+        },
       ]);
       const r = await adapter.createAuthorization(baseInput);
       expect(r.ok).toBe(false);
@@ -335,7 +500,10 @@ describe("StripePaymentAdapter", () => {
 
     it("refuses an unknown provider status explicitly instead of guessing", async () => {
       const { adapter } = stripeAdapter([
-        { status: 200, body: { id: "pi_3", status: "some_future_status" } },
+        {
+          status: 200,
+          body: authorizationIntent({ id: "pi_3", status: "some_future_status" }),
+        },
       ]);
       const r = await adapter.createAuthorization(baseInput);
       expect(r.ok).toBe(false);
@@ -349,19 +517,64 @@ describe("StripePaymentAdapter", () => {
   describe("captureAuthorization", () => {
     it("captures up to the provider's own capturable amount", async () => {
       const { adapter, requests } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "requires_capture", amount_capturable: 33999 } },
-        { status: 200, body: { id: "pi_1", status: "succeeded", amount_received: 33999 } },
+        { status: 200, body: retrievedIntent() },
+        {
+          status: 200,
+          body: { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "usd" },
+        },
       ]);
       const r = await adapter.captureAuthorization("pi_1", 33999);
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.value.capturedAmountCents).toBe(33999);
+      if (r.ok) {
+        expect(r.value).toEqual({
+          providerReference: "pi_1",
+          capturedAmountCents: 33999,
+          currency: "usd",
+          status: "captured",
+        });
+      }
       expect(requests[1].path).toBe("/v1/payment_intents/pi_1/capture");
       expect(requests[1].form?.amount_to_capture).toBe("33999");
     });
 
+    it.each([
+      ["wrong retrieved id", retrievedIntent({ id: "pi_other" })],
+      ["wrong retrieved currency", retrievedIntent({ currency: "eur" })],
+      ["missing intent amount", retrievedIntent({ amount: undefined })],
+      ["fractional intent amount", retrievedIntent({ amount: 33999.5 })],
+      ["unsafe intent amount", retrievedIntent({ amount: Number.MAX_SAFE_INTEGER + 1 })],
+      ["larger intent amount", retrievedIntent({ amount: 34000 })],
+      ["fractional capturable amount", retrievedIntent({ amount_capturable: 33999.5 })],
+      ["unsafe capturable amount", retrievedIntent({ amount_capturable: Number.MAX_SAFE_INTEGER + 1 })],
+      ["larger capturable amount", retrievedIntent({ amount_capturable: 34000 })],
+    ])("refuses %s before issuing the capture POST", async (_label, body) => {
+      const { adapter, requests } = stripeAdapter([{ status: 200, body }]);
+
+      expect((await adapter.captureAuthorization("pi_1", 33999)).ok).toBe(false);
+      expect(requests).toHaveLength(1);
+    });
+
+    it.each([
+      ["wrong returned id", { id: "pi_other", status: "succeeded", amount_received: 33999, currency: "usd" }],
+      ["wrong returned amount", { id: "pi_1", status: "succeeded", amount_received: 33998, currency: "usd" }],
+      ["fractional returned amount", { id: "pi_1", status: "succeeded", amount_received: 33999.5, currency: "usd" }],
+      ["wrong returned currency", { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "eur" }],
+    ])("rejects capture success with %s", async (_label, body) => {
+      const { adapter, requests } = stripeAdapter([
+        { status: 200, body: retrievedIntent() },
+        { status: 200, body },
+      ]);
+
+      const result = await adapter.captureAuthorization("pi_1", 33999);
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
+      expect(requests).toHaveLength(2);
+    });
+
     it("refuses over-capture locally, before the capture call is ever made", async () => {
       const { adapter, requests } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "requires_capture", amount_capturable: 33999 } },
+        { status: 200, body: retrievedIntent() },
       ]);
       const r = await adapter.captureAuthorization("pi_1", 34000);
       expect(r.ok).toBe(false);
@@ -371,7 +584,10 @@ describe("StripePaymentAdapter", () => {
 
     it("refuses a second capture of an already captured payment", async () => {
       const { adapter } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "succeeded", amount_received: 33999 } },
+        {
+          status: 200,
+          body: { id: "pi_1", status: "succeeded", amount_received: 33999, currency: "usd" },
+        },
       ]);
       const r = await adapter.captureAuthorization("pi_1");
       expect(r.ok).toBe(false);
@@ -379,7 +595,9 @@ describe("StripePaymentAdapter", () => {
     });
 
     it("refuses to capture a cancelled payment", async () => {
-      const { adapter } = stripeAdapter([{ status: 200, body: { id: "pi_1", status: "canceled" } }]);
+      const { adapter } = stripeAdapter([
+        { status: 200, body: retrievedIntent({ status: "canceled" }) },
+      ]);
       const r = await adapter.captureAuthorization("pi_1");
       expect(r.ok).toBe(false);
       if (!r.ok) expect(r.message).toContain("cancelled");
@@ -397,10 +615,26 @@ describe("StripePaymentAdapter", () => {
 
   describe("cancelAuthorization", () => {
     it("cancels an authorization", async () => {
-      const { adapter, requests } = stripeAdapter([{ status: 200, body: { id: "pi_1", status: "canceled" } }]);
+      const { adapter, requests } = stripeAdapter([
+        { status: 200, body: { id: "pi_1", status: "canceled", currency: "usd", amount_received: 0 } },
+      ]);
       const r = await adapter.cancelAuthorization("pi_1");
       expect(r.ok).toBe(true);
       expect(requests[0].path).toBe("/v1/payment_intents/pi_1/cancel");
+    });
+
+    it.each([
+      ["missing captured amount", { id: "pi_1", status: "canceled", currency: "usd" }],
+      ["fractional captured amount", { id: "pi_1", status: "canceled", currency: "usd", amount_received: 0.5 }],
+      ["unsafe captured amount", { id: "pi_1", status: "canceled", currency: "usd", amount_received: Number.MAX_SAFE_INTEGER + 1 }],
+      ["partially captured amount", { id: "pi_1", status: "canceled", currency: "usd", amount_received: 1 }],
+    ])("rejects cancellation success with %s", async (_label, body) => {
+      const { adapter } = stripeAdapter([{ status: 200, body }]);
+
+      const result = await adapter.cancelAuthorization("pi_1");
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
     });
 
     it("maps the provider's refusal to cancel a captured payment", async () => {
@@ -421,20 +655,73 @@ describe("StripePaymentAdapter", () => {
       id: "pi_1",
       status: "succeeded",
       amount_received: 33999,
+      currency: "usd",
       latest_charge: { id: "ch_1", amount_refunded: 0 },
     };
 
     it("refunds within the captured amount and forwards the caller's idempotency key", async () => {
       const { adapter, requests } = stripeAdapter([
         { status: 200, body: capturedIntent },
-        { status: 200, body: { id: "re_1", status: "succeeded" } },
+        {
+          status: 200,
+          body: {
+            id: "re_1",
+            status: "succeeded",
+            payment_intent: "pi_1",
+            amount: 1000,
+            currency: "usd",
+          },
+        },
       ]);
       const r = await adapter.refund("pi_1", 1000, "refund_key_1");
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.value.refundedAmountCents).toBe(1000);
+      if (r.ok) {
+        expect(r.value).toEqual({
+          providerReference: "re_1",
+          paymentReference: "pi_1",
+          refundedAmountCents: 1000,
+          currency: "usd",
+          status: "refunded",
+        });
+      }
       expect(requests[1].path).toBe("/v1/refunds");
       expect(requests[1].idempotencyKey).toBe("refund_key_1");
       expect(requests[1].form?.amount).toBe("1000");
+    });
+
+    it.each([
+      ["wrong retrieved id", { ...capturedIntent, id: "pi_other" }],
+      ["wrong retrieved currency", { ...capturedIntent, currency: "eur" }],
+    ])("refuses %s before issuing the refund POST", async (_label, intent) => {
+      const { adapter, requests } = stripeAdapter([{ status: 200, body: intent }]);
+
+      expect((await adapter.refund("pi_1", 1000, "refund_preflight_attack")).ok).toBe(false);
+      expect(requests).toHaveLength(1);
+    });
+
+    it.each([
+      ["missing payment reference", { id: "re_1", status: "succeeded", amount: 1000, currency: "usd" }],
+      ["missing refund id", { status: "succeeded", payment_intent: "pi_1", amount: 1000, currency: "usd" }],
+      ["non-refund id", { id: "pi_1", status: "succeeded", payment_intent: "pi_1", amount: 1000, currency: "usd" }],
+      ["wrong reference", { id: "re_1", status: "succeeded", payment_intent: "pi_other", amount: 1000, currency: "usd" }],
+      ["missing amount", { id: "re_1", status: "succeeded", payment_intent: "pi_1", currency: "usd" }],
+      ["wrong amount", { id: "re_1", status: "succeeded", payment_intent: "pi_1", amount: 999, currency: "usd" }],
+      ["malformed amount", { id: "re_1", status: "succeeded", payment_intent: "pi_1", amount: 1000.5, currency: "usd" }],
+      ["missing currency", { id: "re_1", status: "succeeded", payment_intent: "pi_1", amount: 1000 }],
+      ["wrong currency", { id: "re_1", status: "succeeded", payment_intent: "pi_1", amount: 1000, currency: "eur" }],
+    ])("rejects succeeded refund evidence with %s", async (_label, body) => {
+      const { adapter } = stripeAdapter([
+        { status: 200, body: capturedIntent },
+        { status: 200, body },
+      ]);
+
+      const result = await adapter.refund("pi_1", 1000, "refund_evidence_attack");
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.code).toBe("PERMANENT_FAILURE");
+        expect(result.message).toContain("did not match");
+      }
     });
 
     it("refuses over-refund locally, before the refund call is ever made", async () => {
@@ -459,7 +746,15 @@ describe("StripePaymentAdapter", () => {
 
     it("refuses to refund a payment that never captured", async () => {
       const { adapter } = stripeAdapter([
-        { status: 200, body: { id: "pi_1", status: "requires_capture", amount_received: 0 } },
+        {
+          status: 200,
+          body: {
+            id: "pi_1",
+            status: "requires_capture",
+            amount_received: 0,
+            currency: "usd",
+          },
+        },
       ]);
       const r = await adapter.refund("pi_1", 100, "refund_key_4");
       expect(r.ok).toBe(false);
@@ -472,12 +767,41 @@ describe("StripePaymentAdapter", () => {
       expect(requests).toHaveLength(0);
     });
 
+    it("refuses an unsafe-integer refund amount before any provider call", async () => {
+      const { adapter, requests } = stripeAdapter([]);
+      const unsafe = Number.MAX_SAFE_INTEGER + 1;
+      expect((await adapter.refund("pi_1", unsafe, "refund_unsafe")).ok).toBe(false);
+      expect(requests).toHaveLength(0);
+    });
+
+    it.each([
+      ["missing captured amount", { ...capturedIntent, amount_received: undefined }],
+      ["fractional captured amount", { ...capturedIntent, amount_received: 33999.5 }],
+      ["missing prior-refund amount", { ...capturedIntent, latest_charge: { id: "ch_1" } }],
+      ["negative prior-refund amount", { ...capturedIntent, latest_charge: { id: "ch_1", amount_refunded: -1 } }],
+      ["prior refund above capture", { ...capturedIntent, latest_charge: { id: "ch_1", amount_refunded: 34000 } }],
+    ])("refuses %s before issuing a refund", async (_label, intent) => {
+      const { adapter, requests } = stripeAdapter([{ status: 200, body: intent }]);
+
+      expect((await adapter.refund("pi_1", 1000, "refund_ledger_attack")).ok).toBe(false);
+      expect(requests).toHaveLength(1);
+    });
+
     // A pending refund can still fail asynchronously; recording it as refunded
     // would permanently record money returned that may never return.
     it("never reports a pending refund as refunded: retryable, not success", async () => {
       const { adapter } = stripeAdapter([
         { status: 200, body: capturedIntent },
-        { status: 200, body: { id: "re_1", status: "pending" } },
+        {
+          status: 200,
+          body: {
+            id: "re_1",
+            status: "pending",
+            payment_intent: "pi_1",
+            amount: 1000,
+            currency: "usd",
+          },
+        },
       ]);
       const r = await adapter.refund("pi_1", 1000, "refund_key_6");
       expect(r.ok).toBe(false);
@@ -486,6 +810,26 @@ describe("StripePaymentAdapter", () => {
         expect(r.retryable).toBe(true);
         expect(r.message).toContain("not settled");
       }
+    });
+
+    it.each([
+      ["missing refund id", { status: "pending", payment_intent: "pi_1", amount: 1000, currency: "usd" }],
+      ["non-refund id", { id: "pi_1", status: "pending", payment_intent: "pi_1", amount: 1000, currency: "usd" }],
+      ["missing payment reference", { id: "re_1", status: "pending", amount: 1000, currency: "usd" }],
+      ["wrong payment reference", { id: "re_1", status: "pending", payment_intent: "pi_other", amount: 1000, currency: "usd" }],
+      ["wrong amount", { id: "re_1", status: "pending", payment_intent: "pi_1", amount: 999, currency: "usd" }],
+      ["fractional amount", { id: "re_1", status: "pending", payment_intent: "pi_1", amount: 1000.5, currency: "usd" }],
+      ["wrong currency", { id: "re_1", status: "pending", payment_intent: "pi_1", amount: 1000, currency: "eur" }],
+    ])("rejects pending refund evidence with %s", async (_label, body) => {
+      const { adapter } = stripeAdapter([
+        { status: 200, body: capturedIntent },
+        { status: 200, body },
+      ]);
+
+      const result = await adapter.refund("pi_1", 1000, "refund_pending_attack");
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.code).toBe("PERMANENT_FAILURE");
     });
 
     it("refuses an unrecognized refund status (failed, canceled) instead of guessing", async () => {
@@ -509,7 +853,9 @@ describe("StripePaymentAdapter", () => {
         ["requires_payment_method", "pending"],
       ];
       for (const [provider, domain] of cases) {
-        const { adapter } = stripeAdapter([{ status: 200, body: { id: "pi_1", status: provider } }]);
+        const { adapter } = stripeAdapter([
+          { status: 200, body: { id: "pi_1", status: provider, currency: "usd" } },
+        ]);
         const r = await adapter.retrieveStatus("pi_1");
         expect(r.ok).toBe(true);
         if (r.ok) expect(r.value.status).toBe(domain);
@@ -517,7 +863,9 @@ describe("StripePaymentAdapter", () => {
     });
 
     it("refuses an unknown status explicitly, never passing it through", async () => {
-      const { adapter } = stripeAdapter([{ status: 200, body: { id: "pi_1", status: "brand_new" } }]);
+      const { adapter } = stripeAdapter([
+        { status: 200, body: { id: "pi_1", status: "brand_new", currency: "usd" } },
+      ]);
       const r = await adapter.retrieveStatus("pi_1");
       expect(r.ok).toBe(false);
       if (!r.ok) expect(r.code).toBe("PERMANENT_FAILURE");
@@ -529,7 +877,15 @@ describe("StripePaymentAdapter", () => {
     const eventBody = JSON.stringify({
       id: "evt_1",
       type: "payment_intent.succeeded",
-      data: { object: { id: "pi_1", object: "payment_intent" } },
+      data: {
+        object: {
+          id: "pi_1",
+          object: "payment_intent",
+          metadata: { orderId: "ord_1" },
+          amount_received: 12_345,
+          currency: "usd",
+        },
+      },
     });
 
     it("accepts a correctly signed event and translates the event type", async () => {
@@ -540,6 +896,9 @@ describe("StripePaymentAdapter", () => {
         expect(r.value.eventId).toBe("evt_1");
         expect(r.value.eventType).toBe("payment.captured");
         expect(r.value.providerReference).toBe("pi_1");
+        expect(r.value.orderId).toBe("ord_1");
+        expect(r.value.amountCents).toBe(12_345);
+        expect(r.value.currency).toBe("usd");
         expect(r.value.verified).toBe(true);
       }
     });
@@ -602,14 +961,41 @@ describe("StripePaymentAdapter", () => {
       const body = JSON.stringify({
         id: "evt_3",
         type: "charge.refunded",
-        data: { object: { id: "ch_1", payment_intent: "pi_7" } },
+        data: {
+          object: {
+            id: "ch_1",
+            payment_intent: "pi_7",
+            metadata: { orderId: "ord_7" },
+            amount_refunded: 7_500,
+            currency: "usd",
+          },
+        },
       });
       const r = await adapter.verifyWebhook(body, sign(body, nowSeconds));
       expect(r.ok).toBe(true);
       if (r.ok) {
         expect(r.value.eventType).toBe("payment.refunded");
         expect(r.value.providerReference).toBe("pi_7");
+        expect(r.value.orderId).toBe("ord_7");
+        expect(r.value.amountCents).toBe(7_500);
+        expect(r.value.currency).toBe("usd");
       }
+    });
+
+    it("binds a connected-account event to the configured Stripe account", async () => {
+      const { adapter } = stripeAdapter([], { providerAccountId: "acct_expected" });
+      const event = JSON.parse(eventBody) as Record<string, unknown>;
+      const matchingBody = JSON.stringify({ ...event, account: "acct_expected" });
+      const mismatchedBody = JSON.stringify({ ...event, account: "acct_other" });
+
+      await expect(adapter.verifyWebhook(matchingBody, sign(matchingBody, nowSeconds))).resolves.toMatchObject({
+        ok: true,
+        value: { providerAccountId: "acct_expected" },
+      });
+      await expect(adapter.verifyWebhook(mismatchedBody, sign(mismatchedBody, nowSeconds))).resolves.toMatchObject({
+        ok: false,
+        code: "REJECTED",
+      });
     });
   });
 });
@@ -698,38 +1084,45 @@ describe("resolvePaymentProvider", () => {
     expect(p.name).toBe("disabled");
   });
 
-  it("constructs the stripe adapter only from a complete configuration", () => {
+  it("keeps Stripe disabled even with complete credentials until durable execution is mounted", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENTS_PROVIDER: "stripe",
       STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
       STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
     } as NodeJS.ProcessEnv);
-    expect(p.name).toBe("stripe");
+    expect(p.name).toBe("disabled");
   });
 
-  it("honors the earlier singular PAYMENT_PROVIDER spelling", () => {
+  it("keeps unsupported Stripe Connect configuration disabled", () => {
+    const p = resolvePaymentProvider({
+      NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+      PAYMENTS_PROVIDER: "stripe",
+      STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
+      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_ACCOUNT_ID: "acct_live_connected",
+    } as NodeJS.ProcessEnv);
+    expect(p.name).toBe("disabled");
+  });
+
+  it("keeps the earlier singular PAYMENT_PROVIDER spelling disabled too", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENT_PROVIDER: "stripe",
       STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
       STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
     } as NodeJS.ProcessEnv);
-    expect(p.name).toBe("stripe");
+    expect(p.name).toBe("disabled");
   });
 
-  // The synthetic-data production guard, wired at the construction chokepoint:
-  // the commerce flag makes the process production-like, so a sandbox-marked
-  // credential can never become the live payment path.
-  it("refuses to construct the live adapter over a synthetic-marked configuration", () => {
-    expect(() =>
-      resolvePaymentProvider({
-        NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
-        PAYMENTS_PROVIDER: "stripe",
-        STRIPE_SECRET_KEY: "sk_synthetic_test_fixture_123",
-        STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
-      } as NodeJS.ProcessEnv),
-    ).toThrow(/Synthetic fixture data/);
+  it("does not construct any adapter for a synthetic-marked Stripe configuration", () => {
+    const p = resolvePaymentProvider({
+      NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+      PAYMENTS_PROVIDER: "stripe",
+      STRIPE_SECRET_KEY: "sk_synthetic_test_fixture_123",
+      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+    } as NodeJS.ProcessEnv);
+    expect(p.name).toBe("disabled");
   });
 });
 
@@ -742,5 +1135,8 @@ describe("TestPaymentProvider production guard", () => {
   it("refuses to construct in production", () => {
     process.env.NODE_ENV = "production";
     expect(() => new TestPaymentProvider()).toThrow(/not available in production/);
+    expect(() => Reflect.construct(TestPaymentProvider, [{ allowInProduction: true }])).toThrow(
+      /not available in production/,
+    );
   });
 });

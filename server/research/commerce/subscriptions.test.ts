@@ -90,7 +90,7 @@ function lot(overrides: Partial<InventoryLot> = {}): InventoryLot {
 function usablePayment(): SubscriptionServiceDeps["payment"] {
   return {
     async retrieveStatus(): Promise<ProviderResult<{ status: string }>> {
-      return { ok: true, value: { status: "usable" } };
+      return { ok: true, value: { status: "authorized" } };
     },
   };
 }
@@ -115,6 +115,9 @@ function deps(overrides: Partial<SubscriptionServiceDeps> = {}): SubscriptionSer
     hasEffectiveAgreement: () => true,
     requiredAgreementKeys: ["research_use_only"],
     payment: usablePayment(),
+    resolveRenewalPaymentReference: () => "pi_renewal_authority_1",
+    isCurrentLiveActivation: () => true,
+    purchaseExpansionPersistenceAvailable: true,
     newId: () => `sub_${++seq}`,
   };
   return { ...base, ...overrides };
@@ -374,6 +377,51 @@ describe("activation", () => {
 });
 
 describe("member actions", () => {
+  it.each([
+    ["resume", { action: "resume" }],
+    ["quantity smuggled onto pause", { action: "pause", quantity: 3 }],
+    ["frequency smuggled onto cancel", { action: "cancel", frequencyDays: 60 }],
+    ["earlier reschedule", { action: "reschedule", rescheduleTo: "2026-08-01T00:00:00.000Z" }],
+  ] as const)("refuses %s without currentness-bound persistence and appends nothing", async (_label, command) => {
+    const repository = createInMemorySubscriptionRepository();
+    const d = deps({ repository, purchaseExpansionPersistenceAvailable: true });
+    const id = await activeSubscription(d);
+    if (command.action === "resume") {
+      expect((await createSubscriptionService(d).apply(MEMBER, id, { action: "pause" }, NOW)).ok).toBe(true);
+    }
+    const service = createSubscriptionService({
+      ...d,
+      purchaseExpansionPersistenceAvailable: false,
+      isCurrentLiveActivation: () => false,
+    });
+    const before = await repository.get(id);
+    const eventsBefore = await repository.listEvents(id);
+
+    expect(await service.apply(MEMBER, id, command as SubscriptionActionRequest, NOW)).toMatchObject({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect(await repository.get(id)).toEqual(before);
+    expect(await repository.listEvents(id)).toEqual(eventsBefore);
+  });
+
+  it("refuses a resume when exact product+variant authority was revoked", async () => {
+    const repository = createInMemorySubscriptionRepository();
+    const d = deps({ repository });
+    const id = await activeSubscription(d);
+    const service = createSubscriptionService({ ...d, isCurrentLiveActivation: () => false });
+    expect((await service.apply(MEMBER, id, { action: "pause" }, NOW)).ok).toBe(true);
+    const before = await repository.get(id);
+    const eventsBefore = await repository.listEvents(id);
+
+    expect(await service.apply(MEMBER, id, { action: "resume" }, NOW)).toMatchObject({
+      ok: false,
+      code: "product_not_purchasable",
+    });
+    expect(await repository.get(id)).toEqual(before);
+    expect(await repository.listEvents(id)).toEqual(eventsBefore);
+  });
+
   it("pauses an active subscription and resumes it with a fresh schedule", async () => {
     const d = deps();
     const id = await activeSubscription(d);
@@ -705,6 +753,17 @@ describe("evaluateRenewal", () => {
     expect(decision.subscription.subscriptionId).toBe(id);
   });
 
+  it("refuses renewal when exact product+variant authority is no longer current/live", async () => {
+    const d = deps({ isCurrentLiveActivation: () => false });
+    const id = await activeSubscription({ ...d, isCurrentLiveActivation: () => true });
+    const service = createSubscriptionService(d);
+
+    const decision = await service.evaluateRenewal(id, DUE);
+
+    expect(decision.ok).toBe(false);
+    if (!decision.ok) expect(decision.refusals).toContain("product_not_purchasable");
+  });
+
   it("refuses a renewal that is not due yet, so the same cycle cannot be approved early or twice", async () => {
     const d = deps();
     const id = await activeSubscription(d);
@@ -855,6 +914,151 @@ describe("evaluateRenewal", () => {
 
     const decision = await service.evaluateRenewal(id, DUE);
     expect(decision.ok).toBe(true);
+  });
+
+  it("resolves and probes the exact authoritative renewal payment reference", async () => {
+    const resolved: Array<[string, string]> = [];
+    const probed: string[] = [];
+    const d = deps({
+      resolveRenewalPaymentReference(subscriptionId, memberId) {
+        resolved.push([subscriptionId, memberId]);
+        return "pi_exact_renewal_authority";
+      },
+      payment: {
+        async retrieveStatus(providerReference) {
+          probed.push(providerReference);
+          return { ok: true, value: { status: "authorized" } };
+        },
+      },
+    });
+    const id = await activeSubscription(d);
+
+    const decision = await createSubscriptionService(d).evaluateRenewal(id, DUE);
+
+    expect(decision.ok).toBe(true);
+    expect(resolved).toEqual([[id, MEMBER]]);
+    expect(probed).toEqual(["pi_exact_renewal_authority"]);
+    expect(probed).not.toContain("pm_ref_1");
+    expect(probed).not.toContain("");
+  });
+
+  it.each([null, "", " ", " pi_padded "])(
+    "refuses an unavailable or malformed authoritative payment reference (%j) without probing",
+    async (providerReference) => {
+      let probes = 0;
+      const d = deps({
+        resolveRenewalPaymentReference: () => providerReference,
+        payment: {
+          async retrieveStatus() {
+            probes += 1;
+            return { ok: true, value: { status: "authorized" } };
+          },
+        },
+      });
+      const id = await activeSubscription(d);
+
+      const decision = await createSubscriptionService(d).evaluateRenewal(id, DUE);
+
+      expect(decision.ok).toBe(false);
+      if (!decision.ok) expect(decision.refusals).toContain("payment_disabled");
+      expect(probes).toBe(0);
+    },
+  );
+
+  it.each(["DISABLED", "MISCONFIGURED", "REJECTED", "RETRYABLE", "PERMANENT_FAILURE"] as const)(
+    "fails closed on provider failure %s",
+    async (code) => {
+      const d = deps({
+        payment: {
+          async retrieveStatus() {
+            return { ok: false as const, code, message: "hostile provider failure", retryable: code === "RETRYABLE" };
+          },
+        },
+      });
+      const id = await activeSubscription(d);
+
+      const decision = await createSubscriptionService(d).evaluateRenewal(id, DUE);
+
+      expect(decision.ok).toBe(false);
+      if (!decision.ok) expect(decision.refusals).toContain("payment_disabled");
+    },
+  );
+
+  it.each(["captured", "pending", "processing", "cancelled", "usable", "accepted", "future_status"])(
+    "fails closed on non-allowlisted provider status %s",
+    async (status) => {
+      const d = deps({
+        payment: {
+          async retrieveStatus() {
+            return { ok: true as const, value: { status } };
+          },
+        },
+      });
+      const id = await activeSubscription(d);
+
+      const decision = await createSubscriptionService(d).evaluateRenewal(id, DUE);
+
+      expect(decision.ok).toBe(false);
+      if (!decision.ok) expect(decision.refusals).toContain("payment_disabled");
+    },
+  );
+
+  it("fails closed when renewal payment authority or the provider throws", async () => {
+    const throwingOverrides: Partial<SubscriptionServiceDeps>[] = [
+      {
+        resolveRenewalPaymentReference: () => {
+          throw new Error("authority unavailable");
+        },
+      },
+      {
+        payment: {
+          async retrieveStatus(): Promise<ProviderResult<{ status: string }>> {
+            throw new Error("provider unavailable");
+          },
+        },
+      },
+    ];
+    for (const overrides of throwingOverrides) {
+      const d = deps(overrides);
+      const id = await activeSubscription(d);
+      const decision = await createSubscriptionService(d).evaluateRenewal(id, DUE);
+      expect(decision.ok).toBe(false);
+      if (!decision.ok) expect(decision.refusals).toContain("payment_disabled");
+    }
+  });
+
+  it.each([null, "not-a-date"])(
+    "refuses skip with missing or malformed stored schedule (%j) without a write",
+    async (nextRenewalAt) => {
+      const seeded = { ...persistedRecord(1), nextRenewalAt, nextShipmentAt: nextRenewalAt };
+      const repository = createInMemorySubscriptionRepository([seeded]);
+      const service = createSubscriptionService(deps({ repository }));
+      const before = await repository.get(seeded.subscriptionId);
+      const eventsBefore = await repository.listEvents(seeded.subscriptionId);
+
+      const result = await service.apply(MEMBER, seeded.subscriptionId, { action: "skip" }, NOW);
+
+      expect(result).toMatchObject({ ok: false, code: "subscription_action_invalid" });
+      expect(await repository.get(seeded.subscriptionId)).toEqual(before);
+      expect(await repository.listEvents(seeded.subscriptionId)).toEqual(eventsBefore);
+    },
+  );
+
+  it("advances a deeply stale schedule from asOf so skip cannot remain immediately due", async () => {
+    const seeded = {
+      ...persistedRecord(1),
+      nextRenewalAt: "2026-01-01T00:00:00.000Z",
+      nextShipmentAt: "2026-01-01T00:00:00.000Z",
+    };
+    const repository = createInMemorySubscriptionRepository([seeded]);
+    const service = createSubscriptionService(deps({ repository }));
+
+    const result = await service.apply(MEMBER, seeded.subscriptionId, { action: "skip" }, NOW);
+
+    expect(result).toMatchObject({
+      ok: true,
+      subscription: { nextChargeAt: "2026-08-19T00:00:00.000Z" },
+    });
   });
 
   it("refuses when the payment provider is unavailable", async () => {

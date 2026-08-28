@@ -7,22 +7,52 @@ import type {
   CartProductSelection,
   CartProductSelectionFailureCode,
   CartProductSelectionRequest,
-  CartProductSelectionResult,
   CartProductSelectionSource,
 } from "@shared/research/cart-product-selection";
 import { CART_PURCHASE_AUDIENCES } from "@shared/research/cart-product-selection";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
+import {
+  isResolvedCurrentLiveProductVariantActivationAuthority,
+} from "../product-activation/authority-repository";
+import type { ProductVariantActivationAuthorityEvidence } from "@shared/research/product-activation/contract";
 import {
   parseProductControlTimestamp,
   resolveProductControlPrice,
   type ProductControlPriceFailureCode,
 } from "../products-diagnostics/product-control-price-resolver";
 
+/**
+ * Server-only selection authority. The durable activation proof is deliberately
+ * absent from the shared/browser DTO and is consumed only while resolving a
+ * server action. Copying or serializing a browser selection cannot recreate it.
+ */
+export type AuthoritativeCartProductSelection = CartProductSelection &
+  Readonly<{
+    activationAuthority: Extract<
+      ProductVariantActivationAuthorityEvidence,
+      { state: "live" }
+    >;
+  }>;
+
+export type AuthoritativeCartProductSelectionResult =
+  | { ok: true; selection: AuthoritativeCartProductSelection }
+  | { ok: false; code: CartProductSelectionFailureCode };
+
+/** Explicit trust-boundary projection: never serialize durable authority. */
+export function browserSafeCartProductSelection(
+  selection: AuthoritativeCartProductSelection,
+): CartProductSelection {
+  const { activationAuthority: _serverOnly, ...browserSafe } = selection;
+  return browserSafe;
+}
+
 const REQUIRED_DOMAINS = Array.from(
   new Set(PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
 ).sort();
 
-function blocked(code: CartProductSelectionFailureCode): CartProductSelectionResult {
+function blocked(
+  code: CartProductSelectionFailureCode,
+): AuthoritativeCartProductSelectionResult {
   return { ok: false, code };
 }
 
@@ -59,7 +89,7 @@ function mapPriceFailure(
 function approvedPrimaryMedia(
   media: readonly AdminProductMedia[],
   productId: string,
-): CartProductSelectionResult | { media: AdminProductMedia } {
+): AuthoritativeCartProductSelectionResult | { media: AdminProductMedia } {
   const primary = media.filter(
     (item) => item.productId === productId && item.kind === "primary_image",
   );
@@ -80,7 +110,7 @@ function exactRequiredInputs(
   values: readonly RequiredInput[],
   productId: string,
 ):
-  | CartProductSelectionResult
+  | AuthoritativeCartProductSelectionResult
   | { inputs: RequiredInput[] } {
   const active = values.filter(
     (input) =>
@@ -119,7 +149,7 @@ function exactRequiredInputs(
 
 function exactDomainReadiness(
   values: readonly DomainReadiness[],
-): CartProductSelectionResult | { domains: DomainReadiness[] } {
+): AuthoritativeCartProductSelectionResult | { domains: DomainReadiness[] } {
   const domains: DomainReadiness[] = [];
   for (const domain of REQUIRED_DOMAINS) {
     const match = exactOne(values, (item) => item.domain === domain);
@@ -151,7 +181,8 @@ function exactDomainReadiness(
 export function selectCartProduct(
   request: CartProductSelectionRequest,
   source: CartProductSelectionSource,
-): CartProductSelectionResult {
+  activation: ProductVariantActivationAuthorityEvidence | null,
+): AuthoritativeCartProductSelectionResult {
   const evaluatedAt = parseProductControlTimestamp(request.evaluatedAt);
   if (
     !request.productId.trim() ||
@@ -214,6 +245,28 @@ export function selectCartProduct(
   }
   if (!variant.sku.trim()) return blocked("variant_sku_missing");
 
+  if (activation === null || activation.state === "unavailable") {
+    return blocked("activation_authority_missing");
+  }
+  if (activation.state !== "live") return blocked("activation_authority_not_live");
+  if (
+    activation.productId !== product.id ||
+    activation.variantId !== variant.id ||
+    activation.sku !== variant.sku
+  ) {
+    return blocked("activation_identity_mismatch");
+  }
+  if (
+    !isResolvedCurrentLiveProductVariantActivationAuthority(activation, {
+      productId: product.id,
+      variantId: variant.id,
+      sku: variant.sku,
+      evaluatedAt: new Date(evaluatedAt).toISOString(),
+    })
+  ) {
+    return blocked("activation_evidence_invalid");
+  }
+
   const priceResult = resolveProductControlPrice({
     productId: request.productId,
     variant,
@@ -247,7 +300,7 @@ export function selectCartProduct(
     return blocked("inventory_unavailable");
   }
 
-  const selection: CartProductSelection = {
+  const selection: AuthoritativeCartProductSelection = {
     productId: product.id,
     variantId: variant.id,
     sku: variant.sku,
@@ -291,6 +344,7 @@ export function selectCartProduct(
       sourceVersion: inventory.sourceVersion,
       evaluatedAt: new Date(evaluatedAt).toISOString(),
     },
+    activationAuthority: activation,
     evaluatedAt: new Date(evaluatedAt).toISOString(),
   };
   return { ok: true, selection };

@@ -15,7 +15,6 @@ import {
   providerOk,
   type ProviderResult,
 } from "@shared/research/capability";
-import { assertNoSyntheticDataInProduction } from "../commerce/production-guards";
 
 export interface CreateAuthorizationInput {
   /** Minor units. Always computed server-side from the catalog, never from a client. */
@@ -47,12 +46,17 @@ export interface PaymentAuthorization {
 export interface PaymentCapture {
   providerReference: string;
   capturedAmountCents: number;
+  currency: "usd";
   status: "captured";
 }
 
 export interface PaymentRefund {
+  /** The provider's refund-object reference (Stripe `re_...`), never the payment id. */
   providerReference: string;
+  /** The exact payment/authorization reference the provider says was refunded. */
+  paymentReference: string;
   refundedAmountCents: number;
+  currency: "usd";
   status: "refunded";
 }
 
@@ -60,6 +64,14 @@ export interface WebhookVerification {
   eventId: string;
   eventType: string;
   providerReference?: string;
+  /** Server-authored order metadata carried inside the signed provider object. */
+  orderId?: string;
+  /** Exact provider-reported minor units for the translated money event. */
+  amountCents?: number;
+  /** Provider-reported ISO currency, normalized by the provider (Stripe uses lowercase). */
+  currency?: string;
+  /** Present for connected-account events after adapter-level account binding. */
+  providerAccountId?: string;
   /** The provider-signed payload, already verified. */
   verified: true;
 }
@@ -123,29 +135,58 @@ export class TestPaymentProvider implements PaymentProvider {
 
   private authorizations = new Map<
     string,
-    { amountCents: number; captured: number; refunded: number; cancelled: boolean; orderId: string }
+    {
+      amountCents: number;
+      captured: number;
+      refunded: number;
+      cancelled: boolean;
+      orderId: string;
+      memberId: string;
+      currency: "usd";
+      paymentMethodReference?: string;
+      description?: string;
+    }
   >();
   private byIdempotencyKey = new Map<string, string>();
-  /** Refund idempotency: key -> the refund result already produced for it. */
-  private refundsByKey = new Map<string, PaymentRefund>();
-  private seenWebhookEvents = new Set<string>();
+  /** Refund idempotency: key -> the exact operation and result already produced. */
+  private refundsByKey = new Map<
+    string,
+    { reference: string; amountCents: number; result: PaymentRefund }
+  >();
   private counter = 0;
 
-  constructor(options: { allowInProduction?: boolean } = {}) {
-    if (process.env.NODE_ENV === "production" && !options.allowInProduction) {
+  constructor() {
+    if (process.env.NODE_ENV === "production") {
       throw new Error("TestPaymentProvider is not available in production");
     }
   }
 
   async createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>> {
-    if (input.amountCents <= 0) {
-      return providerMisconfigured<PaymentAuthorization>("Authorization amount must be positive.");
+    if (!Number.isSafeInteger(input.amountCents) || input.amountCents <= 0 || input.currency !== "usd") {
+      return providerMisconfigured<PaymentAuthorization>(
+        "Authorization requires a positive integer amount of USD cents.",
+      );
     }
 
     // Idempotency: the same key returns the original authorization, never a second one.
     const existingRef = this.byIdempotencyKey.get(input.idempotencyKey);
     if (existingRef) {
       const existing = this.authorizations.get(existingRef)!;
+      if (
+        existing.amountCents !== input.amountCents ||
+        existing.currency !== input.currency ||
+        existing.orderId !== input.orderId ||
+        existing.memberId !== input.memberId ||
+        existing.paymentMethodReference !== input.paymentMethodReference ||
+        existing.description !== input.description
+      ) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Authorization idempotency key was already used for different parameters.",
+          retryable: false,
+        };
+      }
       return providerOk(
         {
           providerReference: existingRef,
@@ -165,6 +206,10 @@ export class TestPaymentProvider implements PaymentProvider {
       refunded: 0,
       cancelled: false,
       orderId: input.orderId,
+      memberId: input.memberId,
+      currency: input.currency,
+      paymentMethodReference: input.paymentMethodReference,
+      description: input.description,
     });
     this.byIdempotencyKey.set(input.idempotencyKey, ref);
 
@@ -192,11 +237,17 @@ export class TestPaymentProvider implements PaymentProvider {
       return { ok: false, code: "REJECTED", message: "Authorization already captured.", retryable: false };
     }
     const amount = amountCents ?? auth.amountCents;
+    if (!Number.isSafeInteger(amount) || amount <= 0) {
+      return { ok: false, code: "REJECTED", message: "Capture amount must be a positive integer of cents.", retryable: false };
+    }
     if (amount > auth.amountCents) {
       return { ok: false, code: "REJECTED", message: "Capture exceeds authorized amount.", retryable: false };
     }
     auth.captured = amount;
-    return providerOk({ providerReference: ref, capturedAmountCents: amount, status: "captured" as const }, ref);
+    return providerOk(
+      { providerReference: ref, capturedAmountCents: amount, currency: "usd", status: "captured" as const },
+      ref,
+    );
   }
 
   async cancelAuthorization(ref: string): Promise<ProviderResult<void>> {
@@ -212,10 +263,23 @@ export class TestPaymentProvider implements PaymentProvider {
   }
 
   async refund(ref: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>> {
+    if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
+      return { ok: false, code: "REJECTED", message: "Refund amount must be a positive integer of cents.", retryable: false };
+    }
     // Idempotency first, as the real adapter's provider behaves: replaying the
     // same key returns the original refund and never moves money twice.
     const replayed = this.refundsByKey.get(idempotencyKey);
-    if (replayed) return providerOk({ ...replayed }, replayed.providerReference);
+    if (replayed) {
+      if (replayed.reference !== ref || replayed.amountCents !== amountCents) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Refund idempotency key was already used for different parameters.",
+          retryable: false,
+        };
+      }
+      return providerOk({ ...replayed.result }, replayed.result.providerReference);
+    }
 
     const auth = this.authorizations.get(ref);
     if (!auth) {
@@ -231,9 +295,16 @@ export class TestPaymentProvider implements PaymentProvider {
       return { ok: false, code: "REJECTED", message: "Refund exceeds captured amount.", retryable: false };
     }
     auth.refunded += amountCents;
-    const refund: PaymentRefund = { providerReference: ref, refundedAmountCents: amountCents, status: "refunded" };
-    this.refundsByKey.set(idempotencyKey, refund);
-    return providerOk({ ...refund }, ref);
+    const refundReference = `test_ref_${this.refundsByKey.size + 1}`;
+    const refund: PaymentRefund = {
+      providerReference: refundReference,
+      paymentReference: ref,
+      refundedAmountCents: amountCents,
+      currency: "usd",
+      status: "refunded",
+    };
+    this.refundsByKey.set(idempotencyKey, { reference: ref, amountCents, result: refund });
+    return providerOk({ ...refund }, refundReference);
   }
 
   async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
@@ -246,8 +317,9 @@ export class TestPaymentProvider implements PaymentProvider {
   }
 
   /**
-   * Replay protection is modelled here rather than left to the caller, because a
-   * replayed capture event is the classic way an order double-advances.
+   * Verification is deliberately stateless. Replay authority belongs to the
+   * caller's atomic inbox+order persistence so a valid event is not burned by
+   * an unknown-order lookup or a failed commit.
    */
   async verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>> {
     if (!signatureHeader) {
@@ -256,7 +328,15 @@ export class TestPaymentProvider implements PaymentProvider {
     if (signatureHeader !== "test-signature") {
       return { ok: false, code: "REJECTED", message: "Invalid signature.", retryable: false };
     }
-    let parsed: { id?: string; type?: string; providerReference?: string };
+    let parsed: {
+      id?: string;
+      type?: string;
+      providerReference?: string;
+      orderId?: string;
+      amountCents?: number;
+      currency?: string;
+      providerAccountId?: string;
+    };
     try {
       parsed = JSON.parse(rawBody);
     } catch {
@@ -265,14 +345,14 @@ export class TestPaymentProvider implements PaymentProvider {
     if (!parsed.id || !parsed.type) {
       return { ok: false, code: "REJECTED", message: "Webhook missing id or type.", retryable: false };
     }
-    if (this.seenWebhookEvents.has(parsed.id)) {
-      return { ok: false, code: "REJECTED", message: "Duplicate webhook event.", retryable: false };
-    }
-    this.seenWebhookEvents.add(parsed.id);
     return providerOk({
       eventId: parsed.id,
       eventType: parsed.type,
       providerReference: parsed.providerReference,
+      orderId: parsed.orderId,
+      amountCents: parsed.amountCents,
+      currency: parsed.currency,
+      providerAccountId: parsed.providerAccountId,
       verified: true as const,
     });
   }
@@ -482,6 +562,12 @@ function readNumber(source: Record<string, unknown> | null, key: string): number
 export interface StripePaymentConfig {
   secretKey: string;
   webhookSecret: string;
+  /**
+   * Expected Stripe Connect account id. Null/absent means platform-account
+   * events only; an event carrying a different account is rejected after
+   * signature verification and before any domain routing.
+   */
+  providerAccountId?: string | null;
   /** Injected in every test. Defaults to the fetch transport only at resolution time. */
   transport?: StripeTransport;
   /** Injectable clock (milliseconds) for webhook tolerance tests. */
@@ -559,6 +645,7 @@ export class StripePaymentAdapter implements PaymentProvider {
 
   private readonly transport: StripeTransport;
   private readonly webhookSecret: string;
+  private readonly providerAccountId: string | null;
   private readonly now: () => number;
   private readonly toleranceSeconds: number;
 
@@ -569,8 +656,14 @@ export class StripePaymentAdapter implements PaymentProvider {
           "Use resolvePaymentProvider, which falls back to Disabled when they are absent.",
       );
     }
+    if (config.providerAccountId && !config.transport) {
+      throw new Error(
+        "Stripe Connect requires an explicitly account-bound transport; the built-in platform transport is not Connect-aware.",
+      );
+    }
     this.transport = config.transport ?? buildFetchStripeTransport(config.secretKey);
     this.webhookSecret = config.webhookSecret;
+    this.providerAccountId = config.providerAccountId ?? null;
     this.now = config.now ?? Date.now;
     this.toleranceSeconds = config.toleranceSeconds ?? STRIPE_WEBHOOK_TOLERANCE_SECONDS;
   }
@@ -595,16 +688,25 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (!response) return stripeTransportFailure();
     if (response.status !== 200) return mapStripeFailure(response.status, response.body);
     const intent = asJsonObject(response.body);
-    if (!intent || typeof intent.id !== "string") {
-      return unrecognizedProviderStatus("payment retrieval", "unparseable response");
+    if (
+      intent === null ||
+      readString(intent, "id") !== ref ||
+      readString(intent, "currency") !== "usd"
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe payment retrieval evidence did not match the requested payment and USD account.",
+        retryable: false,
+      };
     }
     return providerOk(intent);
   }
 
   async createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>> {
-    if (!Number.isInteger(input.amountCents) || input.amountCents <= 0) {
+    if (!Number.isSafeInteger(input.amountCents) || input.amountCents <= 0 || input.currency !== "usd") {
       return providerMisconfigured<PaymentAuthorization>(
-        "Authorization amount must be a positive integer of cents.",
+        "Authorization requires a positive integer amount of USD cents.",
       );
     }
     const form: Record<string, string> = {
@@ -633,13 +735,43 @@ export class StripePaymentAdapter implements PaymentProvider {
     const reference = readString(intent, "id");
     const status = intent?.status;
     if (!reference) return unrecognizedProviderStatus("authorization", "response without an id");
+    const returnedAmount = readNumber(intent, "amount");
+    const returnedCurrency = readString(intent, "currency");
+    const returnedMetadata = asJsonObject(intent?.metadata);
+    if (
+      !reference.startsWith("pi_") ||
+      !Number.isSafeInteger(returnedAmount) ||
+      returnedAmount !== input.amountCents ||
+      returnedCurrency !== input.currency ||
+      readString(returnedMetadata, "orderId") !== input.orderId ||
+      readString(returnedMetadata, "memberId") !== input.memberId
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe authorization evidence did not match the requested order, amount, or currency.",
+        retryable: false,
+      };
+    }
 
     if (status === "requires_capture") {
+      const returnedCapturable = readNumber(intent, "amount_capturable");
+      if (
+        !Number.isSafeInteger(returnedCapturable) ||
+        returnedCapturable !== returnedAmount
+      ) {
+        return {
+          ok: false,
+          code: "PERMANENT_FAILURE",
+          message: "Stripe authorization did not prove the exact capturable amount.",
+          retryable: false,
+        };
+      }
       return providerOk<PaymentAuthorization>(
         {
           providerReference: reference,
-          amountCents: input.amountCents,
-          currency: "usd",
+          amountCents: returnedAmount as number,
+          currency: returnedCurrency,
           status: "authorized",
           captureDeferred: true,
         },
@@ -697,16 +829,36 @@ export class StripePaymentAdapter implements PaymentProvider {
       };
     }
 
-    const capturable = readNumber(intent, "amount_capturable") ?? 0;
+    const authorized = readNumber(intent, "amount");
+    const capturable = readNumber(intent, "amount_capturable");
     const amount = amountCents ?? capturable;
-    if (!Number.isInteger(amount) || amount <= 0) {
+    if (
+      !Number.isSafeInteger(authorized) ||
+      (authorized as number) <= 0 ||
+      !Number.isSafeInteger(capturable) ||
+      (capturable as number) <= 0 ||
+      !Number.isSafeInteger(amount) ||
+      (amount as number) <= 0
+    ) {
       return { ok: false, code: "REJECTED", message: "Capture amount must be a positive integer of cents.", retryable: false };
     }
     // The upstream state machine enforces capture <= authorization; the adapter
     // refuses again against the provider's own number, so neither side alone
     // can over-capture.
-    if (amount > capturable) {
+    if ((amount as number) > (capturable as number)) {
       return { ok: false, code: "REJECTED", message: "Capture exceeds authorized amount.", retryable: false };
+    }
+    // Xenios never performs a partial capture. The exact intent amount and the
+    // exact amount still capturable must both equal this order's amount before
+    // the side-effecting POST. A rebound or externally enlarged intent is not
+    // acceptable merely because Stripe would allow the requested subset.
+    if (authorized !== amount || capturable !== amount) {
+      return {
+        ok: false,
+        code: "REJECTED",
+        message: "Capture amount does not exactly match the authorized payment intent.",
+        retryable: false,
+      };
     }
 
     const response = await this.call({
@@ -720,9 +872,30 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (captured?.status !== "succeeded") {
       return unrecognizedProviderStatus("capture", captured?.status);
     }
+    const returnedReference = readString(captured, "id");
+    const returnedAmount = readNumber(captured, "amount_received");
+    const returnedCurrency = readString(captured, "currency");
+    if (
+      returnedReference !== ref ||
+      !Number.isSafeInteger(returnedAmount) ||
+      returnedAmount !== amount ||
+      returnedCurrency !== "usd"
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe capture evidence did not match the requested payment, amount, or currency.",
+        retryable: false,
+      };
+    }
     return providerOk<PaymentCapture>(
-      { providerReference: ref, capturedAmountCents: amount, status: "captured" },
-      ref,
+      {
+        providerReference: returnedReference,
+        capturedAmountCents: returnedAmount as number,
+        currency: "usd",
+        status: "captured",
+      },
+      returnedReference,
     );
   }
 
@@ -737,11 +910,24 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (intent?.status !== "canceled") {
       return unrecognizedProviderStatus("cancellation", intent?.status);
     }
+    if (
+      readString(intent, "id") !== ref ||
+      readString(intent, "currency") !== "usd" ||
+      !Number.isSafeInteger(readNumber(intent, "amount_received")) ||
+      readNumber(intent, "amount_received") !== 0
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe cancellation evidence did not prove the requested USD payment released with zero captured amount.",
+        retryable: false,
+      };
+    }
     return providerOk(undefined as void, ref);
   }
 
   async refund(ref: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>> {
-    if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
       return { ok: false, code: "REJECTED", message: "Refund amount must be a positive integer of cents.", retryable: false };
     }
 
@@ -749,15 +935,27 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (!current.ok) return current;
     const intent = current.value;
 
-    const captured = readNumber(intent, "amount_received") ?? 0;
-    if (captured <= 0) {
+    const captured = readNumber(intent, "amount_received");
+    if (!Number.isSafeInteger(captured) || (captured as number) <= 0) {
       return { ok: false, code: "REJECTED", message: "Nothing captured to refund.", retryable: false };
     }
     const latestCharge = asJsonObject(intent.latest_charge);
-    const alreadyRefunded = readNumber(latestCharge, "amount_refunded") ?? 0;
+    const alreadyRefunded = readNumber(latestCharge, "amount_refunded");
+    if (
+      !Number.isSafeInteger(alreadyRefunded) ||
+      (alreadyRefunded as number) < 0 ||
+      (alreadyRefunded as number) > (captured as number)
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe refund ledger evidence was missing or malformed.",
+        retryable: false,
+      };
+    }
     // Refund <= capture, enforced against the provider's own captured and
     // already-refunded numbers, so a repeated partial refund cannot overshoot.
-    if (amountCents > captured - alreadyRefunded) {
+    if (amountCents > (captured as number) - (alreadyRefunded as number)) {
       return { ok: false, code: "REJECTED", message: "Refund exceeds captured amount.", retryable: false };
     }
 
@@ -770,7 +968,31 @@ export class StripePaymentAdapter implements PaymentProvider {
     if (!response) return stripeTransportFailure();
     if (response.status !== 200) return mapStripeFailure(response.status, response.body);
     const refund = asJsonObject(response.body);
-    if (refund?.status === "pending") {
+    if (refund?.status !== "pending" && refund?.status !== "succeeded") {
+      return unrecognizedProviderStatus("refund", refund?.status);
+    }
+    // A pending result is still evidence that Stripe accepted a side effect.
+    // Bind it to the exact payment, amount, and currency before choosing the
+    // pending-vs-settled outcome.
+    const refundReference = readString(refund, "id");
+    const returnedPaymentReference = readString(refund, "payment_intent");
+    const returnedAmount = readNumber(refund, "amount");
+    const returnedCurrency = readString(refund, "currency");
+    if (
+      !refundReference?.startsWith("re_") ||
+      returnedPaymentReference !== ref ||
+      !Number.isSafeInteger(returnedAmount) ||
+      returnedAmount !== amountCents ||
+      returnedCurrency !== "usd"
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe refund evidence did not match the requested payment, amount, or currency.",
+        retryable: false,
+      };
+    }
+    if (refund.status === "pending") {
       // The provider accepted the refund but it has NOT settled, and a pending
       // refund can still fail asynchronously. Reporting "refunded" here would
       // permanently record money returned that may never return (and could
@@ -786,12 +1008,15 @@ export class StripePaymentAdapter implements PaymentProvider {
         retryable: true,
       };
     }
-    if (refund?.status !== "succeeded") {
-      return unrecognizedProviderStatus("refund", refund?.status);
-    }
     return providerOk<PaymentRefund>(
-      { providerReference: ref, refundedAmountCents: amountCents, status: "refunded" },
-      ref,
+      {
+        providerReference: refundReference,
+        paymentReference: returnedPaymentReference,
+        refundedAmountCents: returnedAmount as number,
+        currency: "usd",
+        status: "refunded",
+      },
+      refundReference,
     );
   }
 
@@ -839,17 +1064,46 @@ export class StripePaymentAdapter implements PaymentProvider {
       return { ok: false, code: "REJECTED", message: "Webhook missing id or type.", retryable: false };
     }
 
-    // Replay of a verified event id is handled by the caller's event store.
+    const eventProviderAccountId = readString(event, "account") ?? null;
+    if (eventProviderAccountId !== this.providerAccountId) {
+      return {
+        ok: false,
+        code: "REJECTED",
+        message: "Webhook provider account does not match the configured payment account.",
+        retryable: false,
+      };
+    }
+
+    // Replay of a verified event id is handled only by the caller's atomic
+    // inbox+order store. Verification itself is deliberately stateless so an
+    // unknown-order or failed persistence attempt cannot burn a legitimate id.
     // The adapter's job is the cryptographic boundary and the type translation.
     const dataObject = asJsonObject(asJsonObject(event.data)?.object);
+    const metadata = asJsonObject(dataObject?.metadata);
     const objectId = readString(dataObject, "id");
     const providerReference =
       objectId && objectId.startsWith("pi_") ? objectId : readString(dataObject, "payment_intent");
+    const eventType = STRIPE_PAYMENT_EVENT_TYPES[stripeType] ?? stripeType;
+    const amountField =
+      eventType === "payment.authorized"
+        ? "amount_capturable"
+        : eventType === "payment.captured"
+          ? "amount_received"
+          : eventType === "payment.refunded"
+            ? "amount_refunded"
+            : null;
+    const amountCents = amountField === null ? undefined : readNumber(dataObject, amountField);
+    const currency = readString(dataObject, "currency");
+    const orderId = readString(metadata, "orderId");
 
     return providerOk<WebhookVerification>({
       eventId,
-      eventType: STRIPE_PAYMENT_EVENT_TYPES[stripeType] ?? stripeType,
+      eventType,
       providerReference,
+      orderId,
+      amountCents,
+      currency,
+      ...(eventProviderAccountId === null ? {} : { providerAccountId: eventProviderAccountId }),
       verified: true,
     });
   }
@@ -879,16 +1133,15 @@ export function resolvePaymentProvider(env: NodeJS.ProcessEnv = process.env): Pa
     return new TestPaymentProvider();
   }
   if (selected === "stripe") {
-    const config = validateStripeConfig(env);
-    if (!config.ok) return new DisabledPaymentProvider();
-    // The synthetic-data guard: a live payment adapter must never construct
-    // over sandbox fixtures while the process is production-like. Throws
-    // loudly BEFORE the adapter (and any provider call) exists.
-    assertNoSyntheticDataInProduction(
-      { stripeConfig: { secretKey: config.secretKey, webhookSecret: config.webhookSecret } },
-      env,
-    );
-    return new StripePaymentAdapter({ secretKey: config.secretKey, webhookSecret: config.webhookSecret });
+    // The adapter is fully executable and attack-tested in isolation, but the
+    // running composition has no durable payment intent/saga that can reconcile
+    // a provider success across a crash before order persistence. Mounting the
+    // adapter here would expose checkout, admin capture/cancel, and refund to
+    // that window. Until a reviewed durable execution adapter owns those
+    // effects, the production resolver remains structurally disabled even when
+    // credentials are present. Injected test compositions can still exercise
+    // StripePaymentAdapter directly without creating a production mutation path.
+    return new DisabledPaymentProvider();
   }
   return new DisabledPaymentProvider();
 }

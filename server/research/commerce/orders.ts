@@ -16,6 +16,7 @@
 // member's order rather than the order, so a cross-member read is impossible
 // rather than merely unlikely.
 
+import { createHash } from "node:crypto";
 import type {
   CommerceDenialCode,
   OrderDetailDto,
@@ -75,6 +76,8 @@ export interface OrderRecord {
    * placed cannot take more than the member agreed to.
    */
   authorizedAmountCents?: number;
+  /** Exact provider-reported currency bound at authorization time. */
+  authorizedCurrency?: "usd";
   /**
    * The customer-supplied key that created this order. It is immutable for the
    * lifetime of the order and remains the checkout replay identity even after
@@ -111,6 +114,12 @@ export interface OrderRepository {
   get(orderId: string): Promise<OrderRecord | null>;
   save(order: OrderRecord): Promise<void>;
   listByMember(memberId: string): Promise<OrderRecord[]>;
+  /**
+   * Exact immutable checkout replay authority. Implementations must scope by
+   * member + checkoutIdempotencyKey and reject duplicate matches rather than
+   * choosing an arbitrary row.
+   */
+  findByCheckoutIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null>;
   findByIdempotencyKey(memberId: string, key: string): Promise<OrderRecord | null>;
   /** Admin-only cross-member listing. The review queue has no single member. */
   listAll(): Promise<OrderRecord[]>;
@@ -120,6 +129,8 @@ export interface OrderServiceDeps {
   repository: OrderRepository;
   payment: PaymentProvider;
   commerceEnabled: boolean;
+  /** False in production until payment side effects and order saves share durable reconciliation. */
+  durablePaymentExecutionAvailable?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -201,6 +212,29 @@ function deny(codes: CommerceDenialCode[], message: string): OrderDenial {
   return denied(acc, message);
 }
 
+/**
+ * Provider keys live in an account-wide namespace, while the caller-facing key
+ * is intentionally only member-scoped. Hash the exact authorization intent so
+ * the same caller key on another member/order cannot poison the provider replay
+ * cache or disclose member/order identifiers in provider metadata.
+ */
+export function authorizationProviderIdempotencyKey(input: Readonly<{
+  memberId: string;
+  orderId: string;
+  amountCents: number;
+  callerKey: string;
+}>): string {
+  const scope = JSON.stringify([
+    "xenios-order-authorization-v1",
+    input.memberId,
+    input.orderId,
+    input.amountCents,
+    "usd",
+    input.callerKey,
+  ]);
+  return `xr-order-auth-v1-${createHash("sha256").update(scope, "utf8").digest("hex")}`;
+}
+
 // ---------------------------------------------------------------------------
 // Serialization
 // ---------------------------------------------------------------------------
@@ -209,6 +243,7 @@ function toSummary(order: OrderRecord): OrderSummaryDto {
   const shipments = order.shipments ?? [];
   return {
     orderId: order.orderId,
+    recordKind: "order",
     state: order.state,
     placedAt: order.createdAt,
     totalCents: order.totals.totalCents,
@@ -326,6 +361,10 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
+    if (!deps.durablePaymentExecutionAvailable) {
+      return deny(["payment_disabled"], "Durable payment execution is not available.");
+    }
+
     const key = idempotencyKey ?? `authorize:${orderId}`;
     const replay = await replayCheck(order, key, isAuthorized);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
@@ -342,7 +381,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     }
     // Money is integer minor units. A fractional total is refused before it can be
     // handed to a provider that would round it into something plausible.
-    if (!Number.isInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
+    if (!Number.isSafeInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
       denials.add("quantity_invalid");
     }
     if (!denials.empty) return denied(denials, `Order ${orderId} cannot be authorized.`);
@@ -352,10 +391,25 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       currency: "usd",
       orderId,
       memberId: order.memberId,
-      idempotencyKey: key,
+      idempotencyKey: authorizationProviderIdempotencyKey({
+        memberId: order.memberId,
+        orderId,
+        amountCents: order.totals.totalCents,
+        callerKey: key,
+      }),
     });
     if (!auth.ok) {
       return deny(paymentDenials(auth.code), auth.message);
+    }
+    if (
+      typeof auth.value.providerReference !== "string" ||
+      auth.value.providerReference.trim() === "" ||
+      !Number.isSafeInteger(auth.value.amountCents) ||
+      auth.value.amountCents !== order.totals.totalCents ||
+      auth.value.currency !== "usd" ||
+      auth.value.status !== "authorized"
+    ) {
+      return deny(["payment_failed"], "Payment authorization evidence did not match the order.");
     }
 
     const authorized = await move(order, "payment_authorized", actor, asOf, {
@@ -363,6 +417,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       changes: {
         providerReference: auth.value.providerReference,
         authorizedAmountCents: auth.value.amountCents,
+        authorizedCurrency: auth.value.currency,
         lastIdempotencyKey: key,
       },
     });
@@ -399,6 +454,10 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     const order = await deps.repository.get(orderId);
     if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
 
+    if (!deps.durablePaymentExecutionAvailable) {
+      return deny(["payment_disabled"], "Durable payment execution is not available.");
+    }
+
     const key = idempotencyKey ?? `capture:${orderId}`;
     const replay = await replayCheck(order, key, isCaptured);
     if (replay.kind === "replay") return { ok: true, order: replay.order, idempotent: true };
@@ -414,16 +473,24 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!canTransitionOrder(order.state, "payment_captured", actor)) {
       denials.add("order_state_invalid");
     }
-    if (!order.providerReference) denials.add("payment_failed");
-    if (!Number.isInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
+    if (
+      typeof order.providerReference !== "string" ||
+      order.providerReference.trim() === ""
+    ) {
+      denials.add("payment_failed");
+    }
+    if (!Number.isSafeInteger(order.totals.totalCents) || order.totals.totalCents <= 0) {
       denials.add("quantity_invalid");
     }
-    // A capture may never exceed the hold the member agreed to. The total is
-    // recomputed by other services, so a total that grew after the authorization
-    // is refused here rather than charged.
+    // Capture is not a partial-capture feature. The durable order must carry the
+    // exact positive amount and currency the provider returned at authorization,
+    // and the current total must still match that evidence. Missing legacy facts,
+    // growth, and shrinkage all fail before the provider can move money.
     if (
-      order.authorizedAmountCents !== undefined &&
-      order.totals.totalCents > order.authorizedAmountCents
+      !Number.isSafeInteger(order.authorizedAmountCents) ||
+      (order.authorizedAmountCents ?? 0) <= 0 ||
+      order.totals.totalCents !== order.authorizedAmountCents ||
+      order.authorizedCurrency !== "usd"
     ) {
       denials.add("payment_failed");
     }
@@ -439,6 +506,15 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     if (!captured.ok) {
       // The authorization stands and the order waits. It is never marked paid here.
       return deny(paymentDenials(captured.code), captured.message);
+    }
+    if (
+      captured.value.providerReference !== reference ||
+      !Number.isSafeInteger(captured.value.capturedAmountCents) ||
+      captured.value.capturedAmountCents !== order.totals.totalCents ||
+      captured.value.currency !== "usd" ||
+      captured.value.status !== "captured"
+    ) {
+      return deny(["payment_failed"], "Payment capture evidence did not match the authorized order.");
     }
 
     return move(order, "payment_captured", actor, asOf, {
@@ -463,15 +539,61 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
       return deny(["order_state_invalid"], `Order ${orderId} cannot be cancelled from ${order.state}.`);
     }
 
-    let releaseFailed = false;
-    const uncaptured = (order.capturedAmountCents ?? 0) === 0;
-    if (order.providerReference && uncaptured) {
-      const released = await deps.payment.cancelAuthorization(order.providerReference);
-      releaseFailed = !released.ok;
+    const providerReference =
+      order.providerReference === null
+        ? null
+        : typeof order.providerReference === "string" && order.providerReference.trim() !== ""
+          ? order.providerReference
+          : undefined;
+    const capturedEvidenceIsAbsent = order.capturedAmountCents === undefined;
+    const capturedEvidenceIsExactZero =
+      Number.isSafeInteger(order.capturedAmountCents) && order.capturedAmountCents === 0;
+    if (
+      providerReference === undefined ||
+      (!capturedEvidenceIsAbsent && !capturedEvidenceIsExactZero)
+    ) {
+      return deny(["payment_failed"], "Stored payment evidence does not prove an uncaptured order.");
+    }
+
+    if (providerReference === null) {
+      // A pre-authorization order may be cancelled without a provider call.
+      // Any stored authorization/capture evidence without its exact provider
+      // reference is contradictory and must not be turned into "cancelled".
+      if (
+        !capturedEvidenceIsAbsent ||
+        order.authorizedAmountCents !== undefined ||
+        order.authorizedCurrency !== undefined ||
+        order.state === "payment_authorized" ||
+        order.state === "manual_review" ||
+        order.state === "approved"
+      ) {
+        return deny(["payment_failed"], "Stored payment evidence is missing its provider reference.");
+      }
+    } else {
+      if (
+        !Number.isSafeInteger(order.totals.totalCents) ||
+        order.totals.totalCents <= 0 ||
+        !Number.isSafeInteger(order.authorizedAmountCents) ||
+        (order.authorizedAmountCents ?? 0) <= 0 ||
+        order.authorizedAmountCents !== order.totals.totalCents ||
+        order.authorizedCurrency !== "usd"
+      ) {
+        return deny(["payment_failed"], "Stored authorization evidence does not match the order.");
+      }
+      if (!deps.durablePaymentExecutionAvailable) {
+        return deny(["payment_disabled"], "Durable authorization release is not available.");
+      }
+      const released = await deps.payment.cancelAuthorization(providerReference);
+      if (!released.ok) {
+        // A failed or unavailable release is not evidence that the hold was
+        // cancelled. Keep the durable order unchanged so a later reviewed
+        // reconciliation can retry without contradicting provider truth.
+        return deny(paymentDenials(released.code), released.message);
+      }
     }
 
     return move(order, "cancelled", actor, asOf, {
-      changes: { cancellationReason: reason, authorizationReleaseFailed: releaseFailed },
+      changes: { cancellationReason: reason, authorizationReleaseFailed: false },
     });
   }
 

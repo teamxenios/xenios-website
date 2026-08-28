@@ -1,8 +1,8 @@
 import type {
   CartAudienceEligibility,
   CartProductSelectionRequest,
-  CartProductSelectionResult,
 } from "@shared/research/cart-product-selection";
+import type { AuthoritativeCartProductSelectionResult } from "../commerce/cart-product-selection";
 import type {
   AsyncMasterOfferingCommerceResolver,
   MasterOfferingCommerceIdentityBinding,
@@ -41,7 +41,9 @@ export interface ProductControlSelectionAuthority {
      * facts fails closed when they are absent rather than inventing them.
      */
     session?: ProductControlSelectionSessionContext,
-  ): Promise<CartProductSelectionResult> | CartProductSelectionResult;
+  ):
+    | Promise<AuthoritativeCartProductSelectionResult>
+    | AuthoritativeCartProductSelectionResult;
 }
 
 export interface MasterOfferingProductControlContext {

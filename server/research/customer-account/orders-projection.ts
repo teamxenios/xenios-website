@@ -6,8 +6,10 @@
 //
 // Truthfulness rules:
 //   - Item labels and quantities come from the order DETAIL lines, never
-//     invented. A listed order whose detail cannot be read fails the WHOLE
-//     read (ports contract: throw, don't compose a partially-true page).
+//     invented. A complete history requires the matching detail or fails the
+//     whole read. A source-declared partial history preserves its validated
+//     summaries but leaves detail unavailable, because an omitted competing
+//     row can make an opaque reference ambiguous.
 //   - trackingUrl is emitted only for carriers with a known public tracking
 //     URL shape (USPS/UPS/FedEx); an unknown carrier yields null rather than
 //     a guessed link.
@@ -20,9 +22,12 @@
 import type {
   OrderFulfillmentDisplayState,
   OrderHistoryAvailabilityDto,
+  OrderHistorySourceKey,
+  OrderSourceStateDto,
   OrderPaymentDisplayState,
   OrderSummaryDto as PortalOrderSummaryDto,
 } from "@shared/research/customer-account/contract";
+import { orderHistoryAvailability } from "@shared/research/customer-account/contract";
 import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type { CustomerOrdersPort } from "./ports";
 
@@ -34,7 +39,22 @@ import type { CustomerOrdersPort } from "./ports";
  */
 export type CommerceOrdersSource = Readonly<{
   listForMember(memberId: string): Promise<unknown[]>;
+  /**
+   * Optional per-read envelope. Readers whose completeness depends on bounded
+   * or malformed upstream data return the rows and the exact source states
+   * from the same read, avoiding a static declaration that can overclaim.
+   */
+  listForMemberWithHistory?(memberId: string): Promise<Readonly<{
+    rows: unknown[];
+    historySources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+  }>>;
   getForMember(memberId: string, orderId: string): Promise<unknown>;
+  /**
+   * Capabilities carried by this exact constructed reader. Composition-time
+   * environment guesses are deliberately ignored: absent metadata fails
+   * closed to an unavailable history.
+   */
+  historySources?: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
 }>;
 
 type ShipmentShape = Readonly<{
@@ -46,11 +66,14 @@ type PaymentFactsShape = Readonly<{
   amountDueCents: number;
   amountCapturedCents: number | null;
   amountRefundedCents: number | null;
+  currency: "USD";
 }>;
 type SummaryShape = Readonly<{
   orderId: string;
+  recordKind: "order" | "request" | "unknown";
   state: OrderState;
   placedAt: string;
+  totalCents: number;
   shipments: readonly ShipmentShape[];
   /** Monetary FACTS from the wire, null when the source carries none (P1-A). */
   payment: PaymentFactsShape | null;
@@ -64,10 +87,13 @@ function asSummary(value: unknown): SummaryShape {
   const orderId = record.orderId;
   const state = record.state;
   const placedAt = record.placedAt;
+  const totalCents = record.totalCents;
   if (
     typeof orderId !== "string" ||
     orderId === "" ||
     typeof placedAt !== "string" ||
+    !Number.isSafeInteger(totalCents) ||
+    (totalCents as number) < 0 ||
     typeof state !== "string" ||
     !(ORDER_STATES as readonly string[]).includes(state)
   ) {
@@ -97,20 +123,40 @@ function asSummary(value: unknown): SummaryShape {
   if (typeof rawPayment === "object" && rawPayment !== null) {
     const p = rawPayment as Record<string, unknown>;
     const field = (v: unknown): number | null | "malformed" =>
-      v === null ? null : typeof v === "number" && Number.isInteger(v) ? v : "malformed";
+      v === null ? null : typeof v === "number" && Number.isSafeInteger(v) ? v : "malformed";
     const due = field(p.amountDueCents);
     const captured = field(p.amountCapturedCents);
     const refunded = field(p.amountRefundedCents);
-    if (due !== "malformed" && due !== null && captured !== "malformed" && refunded !== "malformed") {
+    if (
+      due !== "malformed" &&
+      due !== null &&
+      captured !== "malformed" &&
+      refunded !== "malformed" &&
+      p.currency === "USD"
+    ) {
       payment = {
         amountDueCents: due,
         amountCapturedCents: captured,
         amountRefundedCents: refunded,
+        currency: "USD",
       };
     }
   }
   const shipmentsSource = record.shipmentsSource === "connected" ? "connected" : "unavailable";
-  return { orderId, state: state as OrderState, placedAt, shipments, payment, shipmentsSource };
+  const recordKind =
+    record.recordKind === "order" || record.recordKind === "request"
+      ? record.recordKind
+      : "unknown";
+  return {
+    orderId,
+    recordKind,
+    state: state as OrderState,
+    placedAt,
+    totalCents: totalCents as number,
+    shipments,
+    payment,
+    shipmentsSource,
+  };
 }
 
 function asLines(value: unknown): readonly LineShape[] {
@@ -118,16 +164,61 @@ function asLines(value: unknown): readonly LineShape[] {
   if (!Array.isArray(record.lines)) return [];
   return record.lines.map((raw) => {
     const line = (raw ?? {}) as Record<string, unknown>;
-    if (typeof line.displayName !== "string" || typeof line.quantity !== "number") {
+    if (
+      typeof line.displayName !== "string" ||
+      line.displayName.trim() === "" ||
+      !Number.isSafeInteger(line.quantity) ||
+      (line.quantity as number) <= 0
+    ) {
       throw new Error("order_shape_unrecognized");
     }
-    return { displayName: line.displayName, quantity: line.quantity };
+    return { displayName: line.displayName.trim(), quantity: line.quantity as number };
   });
 }
 
-// States reachable only BEFORE any capture, per the shared transition table.
-// In these states an absent capture amount is the authoritative fact that no
-// money has been taken — the one place lifecycle may CONTEXTUALIZE a null.
+function paymentFactsAgree(left: PaymentFactsShape | null, right: PaymentFactsShape | null): boolean {
+  if (left === null || right === null) return left === right;
+  return (
+    left.amountDueCents === right.amountDueCents &&
+    left.amountCapturedCents === right.amountCapturedCents &&
+    left.amountRefundedCents === right.amountRefundedCents &&
+    left.currency === right.currency
+  );
+}
+
+function shipmentFactsAgree(
+  left: readonly ShipmentShape[],
+  right: readonly ShipmentShape[],
+): boolean {
+  return (
+    left.length === right.length &&
+    left.every((shipment, index) => {
+      const candidate = right[index];
+      return (
+        candidate !== undefined &&
+        shipment.trackingNumber === candidate.trackingNumber &&
+        shipment.carrier === candidate.carrier &&
+        shipment.status === candidate.status
+      );
+    })
+  );
+}
+
+/** Summary and detail are two reads of one durable record, not competing truth sources. */
+function summaryFactsAgree(left: SummaryShape, right: SummaryShape): boolean {
+  return (
+    left.state === right.state &&
+    left.placedAt === right.placedAt &&
+    left.totalCents === right.totalCents &&
+    left.shipmentsSource === right.shipmentsSource &&
+    paymentFactsAgree(left.payment, right.payment) &&
+    shipmentFactsAgree(left.shipments, right.shipments)
+  );
+}
+
+// States reachable only before capture. A positive capture in one of these is
+// a contradiction, but a null monetary fact is still unknown — lifecycle is
+// not a substitute for ledger evidence.
 const PRE_CAPTURE_STATES: ReadonlySet<OrderState> = new Set<OrderState>([
   "draft",
   "checkout_pending",
@@ -142,53 +233,59 @@ const PRE_CAPTURE_STATES: ReadonlySet<OrderState> = new Set<OrderState>([
 //   captured 0,  refunded 0            → unpaid
 //   captured >0, refunded 0            → paid
 //   captured >0, 0 < refunded < capt.  → partially_refunded
-//   captured >0, refunded ≥ captured   → refunded
+//   captured = due, refunded = captured → refunded
 //   inconsistent/malformed/negative    → unknown
-// Lifecycle state provides CONTEXT only: it may interpret a null capture as
-// zero in provably pre-capture states, and it may flag a money/lifecycle
-// contradiction as unknown. It may never independently produce financial
-// truth — a "payment_captured" lifecycle with no capture evidence is unknown,
-// and a "refunded" lifecycle with no refund evidence is unknown.
+// Lifecycle may flag a contradiction but never fills a missing money fact.
 function paymentFromFacts(
   facts: PaymentFactsShape | null,
   state: OrderState,
 ): OrderPaymentDisplayState {
   if (facts === null) return "unknown";
 
-  let captured = facts.amountCapturedCents;
-  let refunded = facts.amountRefundedCents;
-
-  // Contextual interpretation of ABSENT facts, never of present ones:
-  if (captured === null) {
-    if (PRE_CAPTURE_STATES.has(state)) captured = 0; // nothing was ever taken
-    else return "unknown"; // post-capture lifecycle without capture evidence
-  }
-  if (refunded === null) {
-    if (state === "refunded") return "unknown"; // refund lifecycle without refund evidence
-    refunded = 0;
-  }
+  const captured = facts.amountCapturedCents;
+  const refunded = facts.amountRefundedCents;
+  if (captured === null || refunded === null) return "unknown";
 
   // Malformed or contradictory money is never presented as a state:
-  if (captured < 0 || refunded < 0) return "unknown";
-  if (facts.amountDueCents < 0) return "unknown";
+  if (captured < 0 || refunded < 0 || facts.amountDueCents < 0) return "unknown";
   if (captured > 0 && PRE_CAPTURE_STATES.has(state)) return "unknown"; // money moved in a pre-capture lifecycle
   if (state === "refunded" && refunded === 0) return "unknown"; // lifecycle says refunded, money says nothing came back
+  if (captured > facts.amountDueCents) return "unknown"; // over-capture is an exception, never "paid"
+  if (captured > 0 && captured < facts.amountDueCents) return "unknown"; // no partial-payment display state
+  if (refunded > captured) return "unknown"; // more returned than captured is contradictory
+  if (
+    captured === 0 &&
+    !PRE_CAPTURE_STATES.has(state) &&
+    state !== "cancelled" &&
+    state !== "exception"
+  ) {
+    return "unknown";
+  }
 
   if (captured === 0 && refunded === 0) return "unpaid";
   if (captured > 0 && refunded === 0) return "paid";
   if (captured > 0 && refunded > 0 && refunded < captured) return "partially_refunded";
-  if (captured > 0 && refunded >= captured) return "refunded";
+  if (captured > 0 && refunded === captured) return "refunded";
   // captured === 0 with refunded > 0: money came back that never went out.
   return "unknown";
 }
 
-/** A shipment fact that actually evidences movement: a tracking number, or a carrier-reported moving/arrived status. */
-function hasShipmentEvidence(shipments: readonly ShipmentShape[]): boolean {
+/** Carrier-reported movement evidence. A label/tracking number alone is not handoff. */
+function hasShippedEvidence(shipments: readonly ShipmentShape[]): boolean {
   return shipments.some((shipment) => {
-    const tracking = (shipment.trackingNumber ?? "").trim();
     const status = (shipment.status ?? "").trim().toLowerCase();
-    return tracking !== "" || status === "shipped" || status === "in_transit" || status === "delivered";
+    return status === "shipped" || status === "in_transit" || status === "delivered";
   });
+}
+
+/** Delivered is strictly stronger than shipped; only an arrived status proves it. */
+function hasDeliveredEvidence(shipments: readonly ShipmentShape[]): boolean {
+  return (
+    shipments.length > 0 &&
+    shipments.every(
+      (shipment) => (shipment.status ?? "").trim().toLowerCase() === "delivered",
+    )
+  );
 }
 
 // Fulfillment truth (P1-B): a source that is NOT connected to durable
@@ -209,9 +306,9 @@ function fulfillmentOf(
     case "partially_fulfilled":
       return "processing";
     case "fulfilled":
-      return hasShipmentEvidence(shipments) ? "shipped" : "unknown";
+      return hasShippedEvidence(shipments) ? "shipped" : "unknown";
     case "delivered":
-      return hasShipmentEvidence(shipments) ? "delivered" : "unknown";
+      return hasDeliveredEvidence(shipments) ? "delivered" : "unknown";
     case "cancelled":
       return "cancelled";
     case "refunded":
@@ -232,7 +329,11 @@ const CARRIER_TRACKING: Readonly<Record<string, (trackingNumber: string) => stri
     fedex: (n: string) => `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(n)}`,
   });
 
-function trackingUrlOf(shipments: readonly ShipmentShape[]): string | null {
+function trackingUrlOf(
+  shipments: readonly ShipmentShape[],
+  shipmentsSource: "connected" | "unavailable",
+): string | null {
+  if (shipmentsSource !== "connected") return null;
   for (const shipment of shipments) {
     const carrier = (shipment.carrier ?? "").trim().toLowerCase();
     const trackingNumber = (shipment.trackingNumber ?? "").trim();
@@ -260,52 +361,139 @@ function labelsFrom(lines: readonly LineShape[]): {
     };
   }
   if (lines.length > 1) {
+    const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
+    if (!Number.isSafeInteger(quantity)) throw new Error("order_shape_unrecognized");
     return {
       detailAvailability: "available",
       itemLabel: `${lines.length} items`,
       variantLabel: null,
-      quantity: lines.reduce((sum, line) => sum + line.quantity, 0),
+      quantity,
     };
   }
   return { detailAvailability: "unavailable", itemLabel: null, variantLabel: null, quantity: null };
 }
 
 /**
- * The DEFAULT availability declaration is the honest static truth of this
- * codebase today (P1-B): the assisted-order lane (XRR-) has no list-by-member
- * read at all, and the Early Access cart lane (XEC-) exists only behind an
- * unapplied candidate RPC. A composition that wires more must SAY so
- * explicitly; nothing defaults to "complete".
+ * A reader without self-described capabilities is unavailable. Specific
+ * production branches attach their own `historySources`; the composition root
+ * cannot upgrade this default with environment flags.
  */
-export const DEFAULT_ORDER_HISTORY_AVAILABILITY: OrderHistoryAvailabilityDto = Object.freeze({
-  availability: "partial",
-  sources: Object.freeze({
-    commerce: Object.freeze({ connected: true, complete: true }),
-    xea: Object.freeze({ connected: false, complete: false }),
-    xec: Object.freeze({ connected: false, complete: false }),
-    xrr: Object.freeze({ connected: false, complete: false }),
-  }),
+const DISCONNECTED_HISTORY_SOURCES: Readonly<
+  Record<OrderHistorySourceKey, OrderSourceStateDto>
+> = Object.freeze({
+  commerce: Object.freeze({ connected: false, complete: false }),
+  xea: Object.freeze({ connected: false, complete: false }),
+  xec: Object.freeze({ connected: false, complete: false }),
+  xrr: Object.freeze({ connected: false, complete: false }),
 });
+
+export const DEFAULT_ORDER_HISTORY_AVAILABILITY: OrderHistoryAvailabilityDto = Object.freeze({
+  availability: "unavailable",
+  authoritativeRecordCount: null,
+  sources: DISCONNECTED_HISTORY_SOURCES,
+});
+
+function normalizedHistorySources(
+  declared: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>> | undefined,
+): Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>> {
+  if (declared === undefined) return DISCONNECTED_HISTORY_SOURCES;
+  const normalized = {} as Record<OrderHistorySourceKey, OrderSourceStateDto>;
+  for (const key of ["commerce", "xea", "xec", "xrr"] as const) {
+    const state = declared[key];
+    if (
+      state === undefined ||
+      typeof state.connected !== "boolean" ||
+      typeof state.complete !== "boolean" ||
+      (state.complete && !state.connected)
+    ) {
+      return DISCONNECTED_HISTORY_SOURCES;
+    }
+    normalized[key] = Object.freeze({ connected: state.connected, complete: state.complete });
+  }
+  return Object.freeze(normalized);
+}
+
+function historyOf(
+  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>,
+  recordCount: number,
+): OrderHistoryAvailabilityDto {
+  const availability = orderHistoryAvailability(sources);
+  return availability === "complete"
+    ? Object.freeze({ availability, authoritativeRecordCount: recordCount, sources })
+    : Object.freeze({ availability, authoritativeRecordCount: null, sources });
+}
+
+type LegacyHistoryDeclaration = Readonly<{
+  availability: "complete" | "partial" | "unavailable";
+  sources: Readonly<{
+    readonly commerce: OrderSourceStateDto;
+    readonly xea: OrderSourceStateDto;
+    readonly xec: OrderSourceStateDto;
+    readonly xrr: OrderSourceStateDto;
+  }>;
+}>;
 
 export function createCommerceOrdersPort(
   source: CommerceOrdersSource,
-  history: OrderHistoryAvailabilityDto = DEFAULT_ORDER_HISTORY_AVAILABILITY,
+  // Kept temporarily so the protected composition root compiles while Lead
+  // removes its environment-derived declaration. It is intentionally ignored:
+  // only metadata on the exact constructed source is authoritative.
+  _legacyHistory?: LegacyHistoryDeclaration,
 ): CustomerOrdersPort {
   return {
     async ordersFor(memberKey) {
-      const rows = await source.listForMember(memberKey);
+      const read = source.listForMemberWithHistory
+        ? await source.listForMemberWithHistory(memberKey)
+        : {
+            rows: await source.listForMember(memberKey),
+            historySources: normalizedHistorySources(source.historySources),
+          };
+      if (!Array.isArray(read.rows)) throw new Error("order_history_rows_unavailable");
+      const rows = read.rows;
+      const prepared = rows.map((row) => ({ row, summary: asSummary(row) }));
+      const declaredSources = normalizedHistorySources(read.historySources);
+      const referenceCounts = new Map<string, number>();
+      for (const { summary } of prepared) {
+        referenceCounts.set(summary.orderId, (referenceCounts.get(summary.orderId) ?? 0) + 1);
+      }
+      const hasReferenceCollision = Array.from(referenceCounts.values()).some((count) => count > 1);
+      const detailReferencesAreDefinitive =
+        !hasReferenceCollision && orderHistoryAvailability(declaredSources) === "complete";
       const research: PortalOrderSummaryDto[] = await Promise.all(
-        rows.map(async (row) => {
-          const summary = asSummary(row);
-          const detail = await source.getForMember(memberKey, summary.orderId);
-          if (detail === null || detail === undefined) {
-            // Listed but unreadable: fail the whole read closed rather than
-            // render an order row with invented contents.
-            throw new Error("order_detail_unavailable");
+        prepared.map(async ({ summary }) => {
+          const referenceIsAmbiguous = (referenceCounts.get(summary.orderId) ?? 0) > 1;
+          // A partial source or ambiguous reference prevents the independent
+          // detail read that would reconcile producer kind evidence. Keep the
+          // row, but do not turn the unreconciled summary into a definitive
+          // order/request claim.
+          let recordKind: PortalOrderSummaryDto["recordKind"] =
+            detailReferencesAreDefinitive ? summary.recordKind : "unknown";
+          let labels = labelsFrom([]);
+          if (!referenceIsAmbiguous && detailReferencesAreDefinitive) {
+            const detail = await source.getForMember(memberKey, summary.orderId);
+            if (detail === null || detail === undefined) {
+              // Listed but unreadable: fail the whole read closed rather than
+              // render an order row with invented contents.
+              throw new Error("order_detail_unavailable");
+            }
+            const detailSummary = asSummary(detail);
+            if (detailSummary.orderId !== summary.orderId) {
+              throw new Error("order_detail_identity_mismatch");
+            }
+            if (!summaryFactsAgree(summary, detailSummary)) {
+              throw new Error("order_detail_truth_mismatch");
+            }
+            // An identifier prefix is never evidence. For a unique reference,
+            // retain a specific kind only when the two exact producer views
+            // agree; unknown or conflicting evidence stays neutral.
+            recordKind = detailSummary.recordKind === summary.recordKind
+              ? summary.recordKind
+              : "unknown";
+            labels = labelsFrom(asLines(detail));
           }
-          const labels = labelsFrom(asLines(detail));
           return {
             reference: summary.orderId,
+            recordKind,
             placedAt: summary.placedAt,
             detailAvailability: labels.detailAvailability,
             itemLabel: labels.itemLabel,
@@ -313,22 +501,38 @@ export function createCommerceOrdersPort(
             quantity: labels.quantity,
             paymentState: paymentFromFacts(summary.payment, summary.state),
             fulfillmentState: fulfillmentOf(summary.state, summary.shipments, summary.shipmentsSource),
-            trackingUrl: trackingUrlOf(summary.shipments),
+            trackingUrl: trackingUrlOf(summary.shipments, summary.shipmentsSource),
             lotCoaAvailable: false,
           };
         }),
       );
-      // P1-B dedupe: id spaces are disjoint by design, so a repeated
-      // reference can only come from a source double-listing a row. First
-      // occurrence wins deterministically (list order is the service's
-      // newest-first sort with an id tiebreak).
-      const seen = new Set<string>();
-      const deduped = research.filter((order) => {
-        if (seen.has(order.reference)) return false;
-        seen.add(order.reference);
-        return true;
-      });
-      return { research: deduped, carePharmacy: [], history };
+      // References are opaque. A repeated value may be two real records from
+      // different stores, so prefixes cannot justify discarding either one or
+      // binding both to one ambiguous detail lookup. Preserve every summary and
+      // downgrade every connected source: the combined result is not complete.
+      const historySources = hasReferenceCollision
+        ? Object.freeze(Object.fromEntries(
+            (Object.keys(declaredSources) as OrderHistorySourceKey[]).map((key) => [
+              key,
+              declaredSources[key].connected
+                ? Object.freeze({ connected: true, complete: false })
+                : declaredSources[key],
+            ]),
+          )) as Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>
+        : declaredSources;
+      const history = historyOf(
+        historySources,
+        research.length,
+      );
+      return {
+        research,
+        carePharmacy: [],
+        carePharmacyHistory: {
+          availability: "unavailable",
+          authoritativeRecordCount: null,
+        },
+        history,
+      };
     },
   };
 }

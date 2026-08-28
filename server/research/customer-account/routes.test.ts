@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { CustomerAccountPorts } from "./ports";
 import { CUSTOMER_ACCOUNT_PATHS, registerCustomerAccountApi } from "./routes";
 import { createMemoryCustomerAccountPorts, defaultMemorySeeds } from "./memory-adapters";
+import { FIXTURE_MEMBERSHIP_MANUAL } from "@shared/research/customer-account/fixtures";
 
 // Test guards with the production shape: requireMember attaches researchMember
 // from a test header or answers 401; requireActiveMember additionally applies
@@ -105,6 +106,54 @@ describe("customer-account routes", () => {
     expect(res.body.data.careEnrollment.enrolled).toBe(true);
     // An active membership must not leak into Care truth: pharmacy untouched.
     expect(res.body.data.careEnrollment.pharmacyState).toBe("none");
+  });
+
+  it("fails subscription closed when an adapted producer contradicts the renewal mirror", async () => {
+    const app = buildApp({
+      membership: {
+        async membershipFor() {
+          return {
+            ...FIXTURE_MEMBERSHIP_MANUAL,
+            renewal: {
+              state: "scheduled",
+              nextRenewalAt: "2026-10-01T00:00:00.000Z",
+            },
+            nextRenewalAt: "2026-11-01T00:00:00.000Z",
+          } as never;
+        },
+      },
+    });
+
+    const res = await request(app)
+      .get(CUSTOMER_ACCOUNT_PATHS.subscription)
+      .set("x-test-member", "member-fixture-1");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ kind: "error" });
+    expect(JSON.stringify(res.body)).not.toContain("2026-10");
+    expect(JSON.stringify(res.body)).not.toContain("2026-11");
+  });
+
+  it("fails subscription closed when scheduled renewal evidence is not a timestamp", async () => {
+    const app = buildApp({
+      membership: {
+        async membershipFor() {
+          return {
+            ...FIXTURE_MEMBERSHIP_MANUAL,
+            renewal: { state: "scheduled", nextRenewalAt: "not-a-date" },
+            nextRenewalAt: "not-a-date",
+          } as never;
+        },
+      },
+    });
+
+    const res = await request(app)
+      .get(CUSTOMER_ACCOUNT_PATHS.subscription)
+      .set("x-test-member", "member-fixture-1");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ kind: "error" });
+    expect(JSON.stringify(res.body)).not.toContain("not-a-date");
   });
 
   it("orders lists research and care/pharmacy lanes separately", async () => {

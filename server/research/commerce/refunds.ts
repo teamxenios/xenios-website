@@ -16,6 +16,8 @@
 // provider returned. A disabled provider leaves the claim approved and unpaid, which is
 // an honest state, rather than resolved, which would be a lie about money.
 
+import crypto from "crypto";
+
 import type { ClaimDto, ClaimReason, CommerceDenialCode, CreateClaimRequest } from "@shared/research/commerce-api";
 import {
   TERMINAL_ORDER_STATES,
@@ -130,7 +132,22 @@ export interface RefundServiceDeps {
   orders: ClaimOrderRepository;
   payment: PaymentProvider;
   commerceEnabled: boolean;
-  /** Injected so claim ids are deterministic under test. */
+  /**
+   * Explicit proof that the caller has supplied the durable refund
+   * intent/reconciliation authority required around the provider call.
+   *
+   * Production deliberately leaves this absent until that adapter exists. The
+   * in-memory service tests opt in so they can exercise the pure money rules;
+   * setting general commerce enabled must never silently enable refunds.
+   */
+  durableRefundExecutionAvailable?: boolean;
+  /**
+   * Explicit proof that replacement fulfillment and the terminal order/claim
+   * transition are owned by a durable atomic adapter. General commerce being
+   * enabled does not establish either fact.
+   */
+  durableReplacementExecutionAvailable?: boolean;
+  /** Injected only when a test needs deterministic claim ids. */
   newClaimId?: (sequence: number) => string;
 }
 
@@ -280,12 +297,38 @@ function refundDenialCode(code: ProviderFailureCode): CommerceDenialCode {
   return code === "DISABLED" || code === "MISCONFIGURED" ? "payment_disabled" : "payment_failed";
 }
 
+/**
+ * Provider idempotency is scoped to the exact refund operation, not to an
+ * operator-supplied token that may be reused on another order. The raw key is
+ * never sent to the provider. JSON tuple framing prevents delimiter aliases;
+ * the fixed digest stays well within provider header limits.
+ */
+export function refundProviderIdempotencyKey(input: Readonly<{
+  orderId: string;
+  claimId: string;
+  amountCents: number;
+  callerKey: string;
+}>): string {
+  const scope = JSON.stringify([
+    "xenios-refund-provider-idempotency-v1",
+    input.orderId,
+    input.claimId,
+    input.amountCents,
+    "usd",
+    input.callerKey,
+  ]);
+  return `xr-refund-v1-${crypto.createHash("sha256").update(scope, "utf8").digest("hex")}`;
+}
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
 
 export function createRefundService(deps: RefundServiceDeps): RefundService {
-  const mintId = deps.newClaimId ?? ((sequence: number): string => `clm_${sequence}`);
+  // A process-local counter restarts and can overwrite another instance's
+  // durable UPSERT row. UUIDs make the default safe across restarts/instances;
+  // deterministic sequences remain an explicit test-only injection.
+  const mintId = deps.newClaimId ?? ((_sequence: number): string => crypto.randomUUID());
   let counter = 0;
 
   async function submitClaim(memberId: string, req: CreateClaimRequest, asOf: Date): Promise<ClaimOutcome> {
@@ -327,8 +370,15 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
       );
     if (open) return { ok: true, claim: toClaimDto(open) };
 
+    const claimId = mintId(++counter);
+    // The durable research_claims.id column is UUID, not text. Refuse a bad
+    // injected generator before persistence instead of relying on a database
+    // cast error after a production-reachable claim submission.
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(claimId)) {
+      return deny("capability_disabled");
+    }
     const record: ClaimRecord = {
-      claimId: mintId(++counter),
+      claimId,
       orderId: req.orderId,
       memberId,
       sku: req.sku,
@@ -373,6 +423,7 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     // A replacement commits a physical shipment and moves the order to a terminal
     // state, so it is gated on the capability exactly as a refund is.
     if (!deps.commerceEnabled) return deny("commerce_disabled");
+    if (!deps.durableReplacementExecutionAvailable) return deny("capability_disabled");
     if (claim.state !== "approved") return deny("order_state_invalid");
 
     const order = await deps.orders.get(claim.orderId);
@@ -404,10 +455,38 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     const claim = await deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
 
-    const replayScope = `${claimId}:${idempotencyKey}`;
-    // A replayed key is an absorbed no-op. It never issues a second refund, and it
-    // reports the claim as it already stands.
+    // Capability authority leads every replay path. A stale/pre-recorded key
+    // must never turn a production-disabled or commerce-disabled operation
+    // into a reported success.
+    const capabilityDenials = new Denials();
+    if (!deps.commerceEnabled) capabilityDenials.add("commerce_disabled");
+    if (!deps.durableRefundExecutionAvailable) capabilityDenials.add("payment_disabled");
+    if (!capabilityDenials.empty) return { ok: false, codes: capabilityDenials.list };
+
+    if (typeof idempotencyKey !== "string" || idempotencyKey.trim() === "") {
+      return deny("payment_failed");
+    }
+    const providerIdempotencyKey = refundProviderIdempotencyKey({
+      orderId: claim.orderId,
+      claimId,
+      amountCents,
+      callerKey: idempotencyKey,
+    });
+    const replayScope = providerIdempotencyKey;
+    const order = await deps.orders.get(claim.orderId);
+    if (!order) return deny("order_not_found");
+
+    // A key alone is not completion evidence: a crash can record it before the
+    // order and claim saves. Absorb a replay only when every durable projection
+    // proves this exact scoped operation already committed.
     if (await deps.claims.hasRefundKey(replayScope)) {
+      const completed =
+        claim.state === "resolved" &&
+        (claim.resolution === "refund" || claim.resolution === "partial_refund") &&
+        order.state === "refunded" &&
+        order.lastAppliedIdempotencyKey === replayScope &&
+        order.refundedCents === amountCents;
+      if (!completed) return deny("payment_failed");
       return {
         ok: true,
         claim: toClaimDto(claim),
@@ -418,21 +497,40 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 
     if (claim.state !== "approved") return deny("order_state_invalid");
 
-    const order = await deps.orders.get(claim.orderId);
-    if (!order) return deny("order_not_found");
-
     const denials = new Denials();
 
-    if (!deps.commerceEnabled) denials.add("commerce_disabled");
+    // Every ledger value must be a bounded integer before arithmetic or a
+    // provider call. Unsafe/fractional/negative stored facts are unavailable
+    // evidence, not numbers to round or subtract through.
+    const moneyFactsValid =
+      Number.isSafeInteger(order.capturedAmountCents) &&
+      order.capturedAmountCents > 0 &&
+      Number.isSafeInteger(order.refundedCents) &&
+      order.refundedCents >= 0 &&
+      order.refundedCents <= order.capturedAmountCents;
+    if (!Number.isSafeInteger(amountCents) || amountCents <= 0 || !moneyFactsValid) {
+      denials.add("payment_failed");
+    }
 
-    // Money is integer cents. A float or a non-positive amount is refused before any
-    // provider call, never rounded into something plausible.
-    if (!Number.isInteger(amountCents) || amountCents <= 0) denials.add("payment_failed");
-
-    const refundable = order.capturedAmountCents - order.refundedCents;
+    const refundable = moneyFactsValid
+      ? order.capturedAmountCents - order.refundedCents
+      : 0;
     if (amountCents > refundable) denials.add("payment_failed");
 
-    if (order.paymentReference === null) denials.add("payment_failed");
+    // One claim resolution makes the order terminal. Supporting another refund
+    // operation would require a durable per-operation cumulative ledger; the
+    // current replay evidence stores only this operation's scoped key. Refuse a
+    // pre-existing refunded balance before the provider call so a successful
+    // first execution can always prove its exact replay with
+    // `refundedCents === amountCents`.
+    if (moneyFactsValid && order.refundedCents !== 0) denials.add("payment_failed");
+
+    if (
+      typeof order.paymentReference !== "string" ||
+      order.paymentReference.trim() === ""
+    ) {
+      denials.add("payment_failed");
+    }
 
     // The order must be able to accept `refunded` BEFORE money moves. Refunding an
     // order that cannot record the refund would leave the provider and the ledger
@@ -443,7 +541,12 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 
     if (!denials.empty) return { ok: false, codes: denials.list };
 
-    const result = await deps.payment.refund(order.paymentReference as string, amountCents, idempotencyKey);
+    const paymentReference = order.paymentReference as string;
+    const result = await deps.payment.refund(
+      paymentReference,
+      amountCents,
+      providerIdempotencyKey,
+    );
     if (!result.ok) {
       // A disabled provider is not a resolution. The claim stays approved and unpaid,
       // the order is untouched, and the key is not consumed so a retry after the
@@ -453,31 +556,34 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
 
     // The order reaches `refunded` only on the reference the provider returned. An
     // empty one is refused rather than substituted with anything of our own.
-    const reference = result.value.providerReference;
-    if (!reference) return deny("payment_failed");
+    const refundReference = result.value.providerReference;
+    const reported = result.value.refundedAmountCents;
+    if (
+      typeof refundReference !== "string" ||
+      refundReference.trim() === "" ||
+      result.value.paymentReference !== paymentReference ||
+      !Number.isSafeInteger(reported) ||
+      reported !== amountCents ||
+      result.value.currency !== "usd" ||
+      result.value.status !== "refunded"
+    ) {
+      return deny("payment_failed");
+    }
 
     const moved = transitionOrder({
       from: order.state,
       to: "refunded",
       actor: "admin",
-      providerConfirmation: reference,
-      idempotencyKey,
+      providerConfirmation: refundReference,
+      idempotencyKey: providerIdempotencyKey,
       lastAppliedIdempotencyKey: order.lastAppliedIdempotencyKey,
     });
     if (!moved.ok) return deny("order_state_invalid");
 
-    // The provider reports what it refunded, but the ledger is ours. A figure that
-    // is not a positive integer, or that is smaller than what we asked for, would
-    // understate the total and leave room for a later over-refund, so the amount
-    // requested is the floor and the accumulator only ever moves up.
-    const reported = result.value.refundedAmountCents;
-    const applied =
-      Number.isInteger(reported) && reported > amountCents ? reported : amountCents;
-
-    await deps.claims.recordRefundKey(replayScope, reference);
+    await deps.claims.recordRefundKey(replayScope, refundReference);
     order.state = moved.state;
-    order.refundedCents = order.refundedCents + applied;
-    order.lastAppliedIdempotencyKey = idempotencyKey;
+    order.refundedCents = order.refundedCents + reported;
+    order.lastAppliedIdempotencyKey = providerIdempotencyKey;
     await deps.orders.save(order);
 
     claim.state = "resolved";

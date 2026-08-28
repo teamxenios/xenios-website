@@ -1,4 +1,3 @@
-import type { CartProductSelection } from "@shared/research/cart-product-selection";
 import type {
   NormalizedMasterOffering,
   NormalizedMasterOfferingVariant,
@@ -72,51 +71,6 @@ export function offering(
     visibility: "member",
     variants: [defaultVariant],
     sourceReferences: [],
-    ...overrides,
-  };
-}
-
-export function cartSelection(
-  overrides: Partial<CartProductSelection> = {},
-): CartProductSelection {
-  return {
-    productId: "pc_product_1",
-    variantId: "pc_variant_1",
-    sku: "XEN-BPC-10",
-    audience: "member",
-    audienceEligibility: {
-      audience: "member",
-      state: "authorized",
-      sourceVersion: "audience-v1",
-      evaluatedAt: "2026-08-09T12:00:00.000Z",
-    },
-    price: {
-      id: "price_1",
-      amountCents: 9900,
-      currency: "USD",
-      effectiveAt: "2026-08-09T00:00:00.000Z",
-      expiresAt: null,
-      version: 1,
-    },
-    media: {
-      id: "media_1",
-      kind: "primary_image",
-      altText: "BPC-157 vial",
-    },
-    canonicalReadiness: {
-      ready: true,
-      verifiedInputCount: 4,
-      inputVersions: [{ id: "input_1", version: 1 }],
-      domainVersions: [{ domain: "commerce", version: 1 }],
-    },
-    inventoryEligibility: {
-      productId: "pc_product_1",
-      variantId: "pc_variant_1",
-      state: "eligible",
-      sourceVersion: "inventory-v1",
-      evaluatedAt: "2026-08-09T12:00:00.000Z",
-    },
-    evaluatedAt: "2026-08-09T12:00:00.000Z",
     ...overrides,
   };
 }

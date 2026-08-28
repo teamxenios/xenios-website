@@ -7,7 +7,8 @@ import {
   InMemoryMasterOfferingCatalogReader,
   MasterOfferingCatalogService,
 } from "./service";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 
 const PRODUCT = offering({
   variants: [
@@ -91,6 +92,7 @@ describe("catalog pricing", () => {
   });
 
   it("gives the card the same server-resolved action the detail resolves", async () => {
+    const selection = await cartSelection();
     const service = new MasterOfferingCatalogService(
       new InMemoryMasterOfferingCatalogReader([PRODUCT]),
       () => ({
@@ -99,7 +101,7 @@ describe("catalog pricing", () => {
           productId: "pc_product_1",
           variantId: "pc_variant_1",
         },
-        selection: cartSelection(),
+        selection,
       }),
       createMasterOfferingPriceAuthority({
         bindings: {

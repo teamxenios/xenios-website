@@ -8,7 +8,8 @@ import {
 import { isFormulationHeld } from "@shared/research/master-offerings/formulation-hold";
 import { isDirectPurchaseForbidden } from "@shared/research/master-offerings/pathway-authority";
 import { resolveMasterOfferingAction } from "./action";
-import { cartSelection, offering, variant } from "./test-fixtures";
+import { offering, variant } from "./test-fixtures";
+import { cartSelection } from "./testing/cart-selection.test-support";
 
 // The specification the RECONCILED catalog gives the held product. Note what is
 // absent: the workbook's "(split pending)" marker. A customer must not read our
@@ -69,14 +70,14 @@ describe("the reviewed commerce holds", () => {
     ).toBe(true);
   });
 
-  it("never reaches Add to Cart, even with a perfect binding and selection", () => {
+  it("never reaches Add to Cart, even with a perfect binding and selection", async () => {
     const product = offering({
       family: "research_peptides_materials",
-      displayState: "request_access",
-      variants: [variant({ displayState: "request_access", label: CANONICAL_HELD_SPEC })],
+      displayState: "available_now",
+      variants: [variant({ displayState: "available_now", label: CANONICAL_HELD_SPEC })],
     });
     const presentation = product.variants[0];
-    const selection = cartSelection();
+    const selection = await cartSelection();
 
     const action = resolveMasterOfferingAction(
       product,
@@ -95,16 +96,16 @@ describe("the reviewed commerce holds", () => {
     expect(action.kind).not.toBe("add_to_cart");
   });
 
-  it("sells the same row the moment the founder removes the entry", () => {
+  it("sells the same row the moment the founder removes the entry", async () => {
     // The record says releasing it needs no code change. This proves that: an
     // empty hold set and the row is purchasable again.
     const product = offering({
       family: "research_peptides_materials",
-      displayState: "request_access",
-      variants: [variant({ displayState: "request_access", label: CANONICAL_HELD_SPEC })],
+      displayState: "available_now",
+      variants: [variant({ displayState: "available_now", label: CANONICAL_HELD_SPEC })],
     });
     const presentation = product.variants[0];
-    const selection = cartSelection();
+    const selection = await cartSelection();
 
     const action = resolveMasterOfferingAction(
       product,
@@ -145,16 +146,16 @@ describe("the hold is on by default", () => {
     expect(source).toContain("reviewedFormulationHolds: reviewedHeldSpecifications(");
   });
 
-  it("leaves the held row purchasable if the reviewed set is not supplied", () => {
+  it("leaves the held row purchasable if the reviewed set is not supplied", async () => {
     // Documents the exact regression the composition line prevents, so anyone
     // who deletes that line sees this test explain what they just switched off.
     const product = offering({
       family: "research_peptides_materials",
-      displayState: "request_access",
-      variants: [variant({ displayState: "request_access", label: CANONICAL_HELD_SPEC })],
+      displayState: "available_now",
+      variants: [variant({ displayState: "available_now", label: CANONICAL_HELD_SPEC })],
     });
     const presentation = product.variants[0];
-    const selection = cartSelection();
+    const selection = await cartSelection();
     const commerce = {
       binding: {
         offeringVariantId: presentation.id,
