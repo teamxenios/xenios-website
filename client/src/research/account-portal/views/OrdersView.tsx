@@ -6,11 +6,46 @@ import {
 } from "@shared/research/customer-account/contract";
 import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
-import { formatAccountDate, safeExternalUrl, sentenceCase, statusTone } from "../format";
+import { accountOrderDetailPath } from "../routes";
+import {
+  authoritativeCarePharmacyCount,
+  authoritativeOrderCount,
+  carePharmacyHistoryAvailability,
+  cleanAccountText,
+  commerceRecordPresentation,
+  formatAccountDate,
+  formatOrderQuantity,
+  fulfillmentStatusLabel,
+  paymentStatusLabel,
+  safeExternalUrl,
+  sentenceCase,
+  statusTone,
+} from "../format";
 
 export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
-  const historyComplete = data.history.availability === "complete";
-  const disconnectedSources = ORDER_HISTORY_SOURCE_KEYS
+  const authoritativeResearchCount = authoritativeOrderCount(data.history);
+  const rowProjectionComplete = authoritativeResearchCount !== null
+    && authoritativeResearchCount === data.research.length;
+  const researchCountLabel = authoritativeResearchCount !== null
+    ? `${authoritativeResearchCount} ${authoritativeResearchCount === 1 ? "record" : "records"}`
+    : data.history.availability === "partial"
+      ? "Partial history · total unavailable"
+      : data.history.availability === "unavailable"
+        ? "History unavailable"
+        : "Authoritative count unavailable";
+  const careHistory = data.carePharmacyHistory;
+  const careHistoryAvailability = carePharmacyHistoryAvailability(careHistory);
+  const authoritativeCareCount = authoritativeCarePharmacyCount(careHistory);
+  const careProjectionComplete = authoritativeCareCount !== null
+    && authoritativeCareCount === data.carePharmacy.length;
+  const careCountLabel = authoritativeCareCount !== null
+    ? `${authoritativeCareCount} ${authoritativeCareCount === 1 ? "record" : "records"}`
+    : careHistoryAvailability === "partial"
+      ? "Partial history · total unavailable"
+      : careHistoryAvailability === "unavailable"
+        ? "History unavailable"
+        : "Authoritative count unavailable";
+  const incompleteSources = ORDER_HISTORY_SOURCE_KEYS
     .filter((key) => !data.history.sources[key].connected || !data.history.sources[key].complete)
     .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
   return (
@@ -18,45 +53,56 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
       <section className="account-surface" aria-labelledby="research-orders-heading">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="account-section-label">Research orders</p>
-            <h2 id="research-orders-heading" className="account-section-title">Orders and shipment status</h2>
-            <p className="body-s text-ink-2 mt-3 max-w-[64ch]">Payment, fulfillment, tracking, and approved lot-document availability are shown from the order record.</p>
+            <p className="account-section-label">Research commerce history</p>
+            <h2 id="research-orders-heading" className="account-section-title">Records and available status</h2>
+            <p className="body-s text-ink-2 mt-3 max-w-[64ch]">Payment, fulfillment, tracking, and approved lot-document availability are shown only when the commerce record carries that evidence.</p>
           </div>
-          <ResearchStatusBadge label={`${data.research.length} orders`} tone="neutral" />
+          <ResearchStatusBadge label={researchCountLabel} tone="neutral" />
         </div>
-        {!historyComplete ? (
+        {!rowProjectionComplete ? (
           // P1-B: an incomplete read never masquerades as the whole truth.
           <div className="account-surface account-surface-warm mt-5" role="note">
-            <p className="body-s font-700">Some order history is currently unavailable.</p>
-            <p className="body-s text-ink-2 mt-2">Order records from these sources are not fully connected: {disconnectedSources.join(", ")}.</p>
+            <p className="body-s font-700">
+              {authoritativeResearchCount !== null
+                ? "The visible commerce-record list does not match the authoritative source count."
+                : data.history.availability === "complete"
+                  ? "Authoritative commerce-record count unavailable."
+                  : "Some commerce history is currently unavailable."}
+            </p>
+            <p className="body-s text-ink-2 mt-2">{incompleteSources.length ? `These sources do not provide a complete history: ${incompleteSources.join(", ")}.` : "This view cannot prove that the visible list is complete."}</p>
           </div>
         ) : null}
         {data.research.length ? (
           <div className="account-card-list mt-6">
             {data.research.map((order) => {
               const trackingUrl = safeExternalUrl(order.trackingUrl);
+              const itemLabel = cleanAccountText(order.itemLabel);
+              const variantLabel = cleanAccountText(order.variantLabel);
+              const recordPresentation = commerceRecordPresentation(order.recordKind);
               return (
                 <article className="account-list-card" key={order.reference}>
                   <div className="min-w-0">
-                    <p className="mono-label text-ink-mute tabular">{order.reference}</p>
+                    <p className="account-section-label">{recordPresentation.label}</p>
+                    <p className="mono-label text-ink-mute tabular break-words">{order.reference}</p>
                     {/* P1-B: no fabricated line detail — an unavailable read says so. */}
-                    {order.detailAvailability === "available" ? (
+                    {order.detailAvailability === "available" && itemLabel ? (
                       <>
-                        <h3 className="body-l font-700 mt-2 break-words">{order.itemLabel}</h3>
-                        <p className="body-s text-ink-2 mt-1 break-words">{order.variantLabel ?? "Variant recorded with order"}</p>
+                        <h3 className="body-l font-700 mt-2 break-words">{itemLabel}</h3>
+                        <p className="body-s text-ink-2 mt-1 break-words">{variantLabel ?? "Variant unavailable"}</p>
                       </>
                     ) : (
-                      <h3 className="body-l mt-2 break-words text-ink-mute">Order details unavailable</h3>
+                      <h3 className="body-l mt-2 break-words text-ink-mute">Commerce-record details unavailable</h3>
                     )}
                     <dl className="account-grid account-grid-3 mt-5">
-                      <div><dt className="account-data-label">Order date</dt><dd className="account-data-value mt-1">{formatAccountDate(order.placedAt)}</dd></div>
-                      <div><dt className="account-data-label">Quantity</dt><dd className="account-data-value mt-1 tabular">{order.quantity ?? "—"}</dd></div>
-                      <div><dt className="account-data-label">Lot / COA</dt><dd className="account-data-value mt-1">{order.lotCoaAvailable ? "Approved document available" : "Not available"}</dd></div>
+                      <div><dt className="account-data-label">{recordPresentation.dateVerb}</dt><dd className="account-data-value mt-1">{formatAccountDate(order.placedAt)}</dd></div>
+                      <div><dt className="account-data-label">Quantity</dt><dd className="account-data-value mt-1 tabular">{order.detailAvailability === "available" && itemLabel ? formatOrderQuantity(order.quantity) : "Not available"}</dd></div>
+                      <div><dt className="account-data-label">Lot / COA</dt><dd className="account-data-value mt-1">{order.lotCoaAvailable ? "Approved document available" : "Approved document not shown"}</dd></div>
                     </dl>
                   </div>
                   <div className="account-list-card-actions">
-                    <ResearchStatusBadge label={sentenceCase(order.paymentState)} tone={statusTone(order.paymentState)} />
-                    <ResearchStatusBadge label={sentenceCase(order.fulfillmentState)} tone={statusTone(order.fulfillmentState)} />
+                    <ResearchStatusBadge label={paymentStatusLabel(order.paymentState)} tone={statusTone(order.paymentState)} />
+                    <ResearchStatusBadge label={fulfillmentStatusLabel(order.fulfillmentState)} tone={statusTone(order.fulfillmentState)} />
+                    <Link href={accountOrderDetailPath(order.reference)}>Open record details</Link>
                     {trackingUrl ? <a href={trackingUrl} target="_blank" rel="noopener noreferrer">Track shipment</a> : null}
                     {order.lotCoaAvailable ? <Link href={ACCOUNT_PORTAL_ROUTES.documents}>Open documents</Link> : null}
                   </div>
@@ -66,9 +112,11 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           </div>
         ) : (
           <div className="account-empty mt-6">
-            {historyComplete
-              ? "No Research orders are attached to this account."
-              : "No Research orders are visible here yet — see the note above about sources that are not connected."}
+            {authoritativeResearchCount === 0
+              ? "No Research commerce records are attached to this account."
+              : authoritativeResearchCount !== null
+                ? "The authoritative source reports commerce records, but no record rows are visible in this account view."
+              : "No Research commerce records are visible here yet — see the availability and completeness note above."}
           </div>
         )}
       </section>
@@ -78,10 +126,30 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           <div>
             <p className="account-section-label">Care / pharmacy</p>
             <h2 id="care-fulfillment-heading" className="account-section-title">Separate operational fulfillment</h2>
-            <p className="body-s text-ink-2 mt-3 max-w-[64ch]">Care intake, provider review, and pharmacy fulfillment remain separate from Research orders and membership.</p>
+            <p className="body-s text-ink-2 mt-3 max-w-[64ch]">Care intake, provider review, and pharmacy fulfillment remain separate from Research commerce records and membership.</p>
           </div>
-          <ResearchStatusBadge label={`${data.carePharmacy.length} records`} tone="neutral" />
+          <ResearchStatusBadge label={careCountLabel} tone="neutral" />
         </div>
+        {!careProjectionComplete ? (
+          <div className="account-surface mt-5" role="note">
+            <p className="body-s font-700">
+              {authoritativeCareCount !== null
+                ? "The visible Care/pharmacy list does not match the authoritative source count."
+                : careHistoryAvailability === "partial"
+                  ? "Care/pharmacy history is partial."
+                  : careHistoryAvailability === "unavailable"
+                    ? "Care/pharmacy history is unavailable."
+                    : "Authoritative Care/pharmacy count unavailable."}
+            </p>
+            <p className="body-s text-ink-2 mt-2">
+              {careHistoryAvailability === "partial"
+                ? "The records below are known records only; their number is not an authoritative total."
+                : careHistoryAvailability === "unavailable"
+                  ? "This page cannot prove that the visible list is complete or empty, so it cannot report a definitive zero."
+                  : "The source-owned count is kept separate from the visible row projection."}
+            </p>
+          </div>
+        ) : null}
         {data.carePharmacy.length ? (
           <div className="account-card-list mt-6">
             {data.carePharmacy.map((item, index) => {
@@ -105,7 +173,17 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
               );
             })}
           </div>
-        ) : <div className="account-empty mt-6">No Care or pharmacy fulfillment records are attached to this account.</div>}
+        ) : (
+          <div className="account-empty mt-6">
+            {authoritativeCareCount === 0
+              ? "No Care or pharmacy fulfillment records are attached to this account."
+              : authoritativeCareCount !== null
+                ? "The authoritative source reports Care/pharmacy records, but no record rows are visible in this account view."
+                : careHistoryAvailability === "partial"
+                  ? "No known Care or pharmacy fulfillment records are visible in this partial history; the total is unavailable."
+                  : "Care status is managed through the provider/Tebra workflow. Care/pharmacy history is unavailable, so this page cannot report a definitive zero."}
+          </div>
+        )}
       </section>
     </div>
   );

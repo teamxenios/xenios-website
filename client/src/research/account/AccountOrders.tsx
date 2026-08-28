@@ -9,9 +9,9 @@ export default function AccountOrders() {
   const snapshot = useAccountResource(loadAccountOrders, memberToken);
   return (
     <AccountPortalShell
-      eyebrow="Orders + fulfillment"
-      title="Orders, without ambiguity."
-      lead="Research orders and Care/pharmacy fulfillment remain visibly separate, with the latest payment and shipment status."
+      eyebrow="Commerce + fulfillment"
+      title="Commerce history, without ambiguity."
+      lead="Research records and Care/pharmacy fulfillment remain visibly separate, with only available payment and fulfillment evidence shown."
     >
       <AccountResourceBoundary snapshot={snapshot}>
         {(data) => <AccountOrdersView data={data} />}

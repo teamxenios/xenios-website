@@ -1,7 +1,9 @@
+import { Link } from "wouter";
 import type { CareEnrollmentDto, CareTimelineStage } from "@shared/research/customer-account/contract";
 import { CARE_TIMELINE_STAGES } from "@shared/research/customer-account/contract";
 import { ResearchStatusBadge } from "../../ui/kit";
-import { formatAccountDate, sentenceCase } from "../format";
+import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
+import { formatAccountDate } from "../format";
 
 const STAGE_LABELS: Readonly<Record<CareTimelineStage, string>> = {
   account_created: "Account created",
@@ -28,7 +30,9 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
       <section className="account-surface" aria-labelledby="care-unavailable-heading">
         <p className="account-section-label">Care status</p>
         <h2 id="care-unavailable-heading" className="account-section-title">Care status unavailable.</h2>
-        <p className="body-s text-ink-2 mt-3">No Care status source is connected for this account right now, so no enrollment status can be shown.</p>
+        <p className="body-s text-ink-2 mt-3">Care status is managed through the provider/Tebra workflow.</p>
+        <p className="body-s text-ink-2 mt-2">That source is not available in this account right now, so no enrollment or operational-stage claim can be shown here.</p>
+        <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
       </section>
     );
   }
@@ -39,6 +43,7 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
         <p className="account-section-label">Care status</p>
         <h2 id="care-not-started-heading" className="account-section-title">Care not started.</h2>
         <p className="body-s text-ink-2 mt-3">Membership and Research access can exist without a Care relationship.</p>
+        <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
       </section>
     );
   }
@@ -50,11 +55,11 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
         <p className="account-section-label">Care status</p>
         <h2 id="care-no-stage-heading" className="account-section-title">No operational stage is recorded yet.</h2>
         <p className="body-s text-ink-2 mt-3">Your Care enrollment is recorded, but no operational stage is available right now.</p>
+        <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
       </section>
     );
   }
 
-  const currentIndex = CARE_TIMELINE_STAGES.indexOf(stage);
   return (
     <div className="account-grid account-grid-main">
       <section className="account-surface" aria-labelledby="care-current-heading">
@@ -70,15 +75,19 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
 
       <section className="account-surface" aria-labelledby="care-timeline-heading">
         <p className="account-section-label">Care operations</p>
-        <h2 id="care-timeline-heading" className="account-section-title">Status timeline</h2>
-        <ol className="care-status-timeline mt-6">
-          {CARE_TIMELINE_STAGES.map((stage, index) => {
-            const state = index < currentIndex ? "Recorded" : index === currentIndex ? "Current" : "Not started";
+        <h2 id="care-timeline-heading" className="account-section-title">Process orientation</h2>
+        <p className="body-s text-ink-2 mt-3" id="care-process-note">
+          This list explains possible Care checkpoints. It is not a history or a forecast; only the current recorded stage is marked as current.
+        </p>
+        <ol className="care-status-timeline mt-6" aria-describedby="care-process-note">
+          {CARE_TIMELINE_STAGES.map((possibleStage, index) => {
+            const isCurrent = possibleStage === stage;
+            const orientationLabel = isCurrent ? "Current recorded stage" : "Possible step";
             return (
-              <li key={stage} className={`care-status-step care-status-step-${state.toLowerCase().replace(" ", "-")}`} aria-current={index === currentIndex ? "step" : undefined}>
+              <li key={possibleStage} className={`care-status-step${isCurrent ? " care-status-step-current" : ""}`} aria-current={isCurrent ? "step" : undefined}>
                 <span className="care-status-index tabular" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <div className="min-w-0"><h3 className="body-m font-700">{STAGE_LABELS[stage]}</h3><p className="body-s text-ink-mute mt-1">{state}</p></div>
-                <ResearchStatusBadge label={state} tone={index < currentIndex ? "success" : index === currentIndex ? "info" : "neutral"} />
+                <div className="min-w-0"><h3 className="body-m font-700">{STAGE_LABELS[possibleStage]}</h3></div>
+                <ResearchStatusBadge label={orientationLabel} tone={isCurrent ? "info" : "neutral"} />
               </li>
             );
           })}

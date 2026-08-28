@@ -8,6 +8,20 @@
   padding-bottom: 56px;
 }
 
+.account-skip-link {
+  background: var(--account-black);
+  color: #fff;
+  left: 12px;
+  min-height: 44px;
+  padding: 12px 16px;
+  position: fixed;
+  top: 12px;
+  transform: translateY(calc(-100% - 24px));
+  z-index: 1000;
+}
+
+.account-skip-link:focus-visible { transform: translateY(0); }
+
 .client-import-dry-run {
   --account-black: #11110f;
   --account-graphite: #2b2a27;
@@ -74,6 +88,20 @@
   min-height: 44px;
   padding: 8px 15px;
   text-decoration: none;
+}
+
+@media (max-width: 1023px) {
+  .account-portal-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .account-portal-nav-link {
+    flex: 1 1 120px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
 }
 
 .account-portal-nav-link:hover,
@@ -174,6 +202,7 @@
   letter-spacing: -.025em;
   line-height: 1.08;
   margin-top: 8px;
+  overflow-wrap: anywhere;
 }
 
 .account-data-row {
@@ -235,6 +264,7 @@
   font-weight: 650;
   letter-spacing: -.035em;
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .account-empty {
@@ -273,8 +303,10 @@
   align-items: center;
   color: inherit;
   display: inline-flex;
+  justify-content: center;
   min-height: 44px;
-  padding: 12px 0;
+  min-width: 44px;
+  padding: 12px 4px;
 }
 
 .care-status-timeline { list-style: none; margin: 0; padding: 0; }
@@ -291,7 +323,15 @@
 .care-status-step-current { border-left: 2px solid var(--account-black); padding-left: 14px; }
 
 .support-request-form { display: grid; gap: 18px; }
-.support-request-form .input-field { width: 100%; }
+.support-request-form .input-field { min-height: 44px; width: 100%; }
+.support-request-form [role="alert"] a {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .support-request-description { min-height: 140px; resize: vertical; }
 
 @keyframes account-pulse {
