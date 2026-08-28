@@ -26,7 +26,7 @@ function buildApp() {
 }
 
 const VALID_BODY = {  sourcePartner: "vitality_advisors",
-  relationshipOwner: "Seth Grant",
+  relationshipOwner: "Vitality Advisors relationship owner",
   rows: [
     { name: "Alex Fixture", product: "BPC-157/TB-500 (15/15mg)" },
     { name: "Blake Sample", product: "R (20mg)" },

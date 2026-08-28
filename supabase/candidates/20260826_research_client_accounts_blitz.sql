@@ -12,7 +12,7 @@
 -- ##  that would depend on it stays disabled.                               ##
 -- ############################################################################
 --
--- WHY THIS EXISTS. A partner (Vitality Advisors / Seth Grant) brings ~109
+-- WHY THIS EXISTS. A partner (Vitality Advisors / the partner principal) brings ~109
 -- existing relationships expressed as a name + product-interest list with no
 -- contact fields. The operating rule the founder set: those people become
 -- customers only through consent — staging import → contact enrichment →

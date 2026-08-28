@@ -211,6 +211,6 @@ export const FIXTURE_ACCOUNT_OVERVIEW_STAFF: CustomerAccountOverviewDto = Object
   ...FIXTURE_ACCOUNT_OVERVIEW,
   partnerAttribution: Object.freeze({
     sourcePartner: "vitality_advisors",
-    relationshipOwner: "Seth Grant",
+    relationshipOwner: "Vitality Advisors relationship owner",
   }),
 });

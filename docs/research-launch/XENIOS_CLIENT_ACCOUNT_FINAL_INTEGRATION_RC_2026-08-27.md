@@ -181,7 +181,7 @@ appears in the report output.
 | Production build (`node script/build.mjs`) | **pass** (client + 1.5MB server bundle) |
 | Browser QA | all 16 flows + 8 widths + 200% green — `docs/review/client-account-final-integration-20260826/` |
 | Secret scan (whole integration diff) | clean (single match is a test-fixture literal `"do-not-expose"`) |
-| PII/name scan (whole integration diff vs all 109 imported names) | clean — the ONLY match is "Seth Grant" himself as the intended partner attribution in internal fleet documents; the client-side policy suite pins partner identity out of every customer-facing surface |
+| PII/name scan (whole integration diff vs all 109 imported names) | clean — the ONLY match is "the partner principal" himself as the intended partner attribution in internal fleet documents; the client-side policy suite pins partner identity out of every customer-facing surface |
 
 Final verification (re-run at HEAD with every commit included):
 
@@ -230,7 +230,7 @@ Final verification (re-run at HEAD with every commit included):
    a member with a billing problem can still ask for help; tighten if desired.
 5. Catalog-data release packet (56% of mapped demand is one data release away)
    — separate GO, untouched by this RC.
-6. Partner seed (Vitality Advisors / Seth Grant) and any invitation wave —
+6. Partner seed (Vitality Advisors / the partner principal) and any invitation wave —
    blocked on contact/consent data AND founder approval by design.
 
 ## 27–29. Final identity

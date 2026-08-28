@@ -132,7 +132,7 @@ export function defaultMemorySeeds(): readonly MemoryCustomerSeed[] {
       interests: FIXTURE_ACCOUNT_OVERVIEW.productInterests,
       documents: FIXTURE_ACCOUNT_OVERVIEW.documents,
       supportCases: FIXTURE_ACCOUNT_OVERVIEW.supportCases,
-      attribution: { sourcePartner: "vitality_advisors", relationshipOwner: "Seth Grant" },
+      attribution: { sourcePartner: "vitality_advisors", relationshipOwner: "Vitality Advisors relationship owner" },
     },
     {
       identity: {

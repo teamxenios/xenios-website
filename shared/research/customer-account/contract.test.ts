@@ -69,7 +69,7 @@ describe("fixtures", () => {
   it("the staff projection carries attribution as slug + owner", () => {
     expect(FIXTURE_ACCOUNT_OVERVIEW_STAFF.partnerAttribution).toEqual({
       sourcePartner: "vitality_advisors",
-      relationshipOwner: "Seth Grant",
+      relationshipOwner: "Vitality Advisors relationship owner",
     });
   });
 

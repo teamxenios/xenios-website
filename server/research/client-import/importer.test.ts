@@ -27,7 +27,7 @@ function run(rows: readonly ImportSourceRow[] = ROWS) {
   return runImportDryRun({
     batchId: "imp-test-0001",    rows,
     sourcePartner: "vitality_advisors",
-    relationshipOwner: "Seth Grant",
+    relationshipOwner: "Vitality Advisors relationship owner",
   });
 }
 
@@ -79,7 +79,7 @@ describe("runImportDryRun — aggregation", () => {
       expect(record.accountStatus).toBe("not_invited");
       expect(record.contactEmail).toBeNull();
       expect(record.sourcePartner).toBe("vitality_advisors");
-      expect(record.relationshipOwner).toBe("Seth Grant");
+      expect(record.relationshipOwner).toBe("Vitality Advisors relationship owner");
     }
     expect(report.missingContact).toBe(report.uniquePeople);
     expect(report.invitationEligible).toBe(0);

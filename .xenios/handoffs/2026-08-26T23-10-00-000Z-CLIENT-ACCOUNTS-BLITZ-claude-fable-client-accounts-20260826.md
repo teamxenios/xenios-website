@@ -36,7 +36,7 @@ PRODUCTION MUTATED: NO — no deploy, no migration applied, no email, no real ac
   surface, cross-customer isolation tested. Registration DEFERRED per the
   protected-seam protocol (server/index.ts hash-pinned) — wiring lines below.
 - **Client-import dry run**: parse → normalize (47 canonical keys, 0 unmapped)
-  → dedupe → aggregate → attribute (vitality_advisors / Seth Grant) → consent
+  → dedupe → aggregate → attribute (vitality_advisors / the partner principal) → consent
   pending / not_invited → aggregate report. REHEARSED against the real partner
   file OUTSIDE git via `scripts/research/client-import-dry-run.ts`: 201 rows,
   109 unique people, 92 duplicate rows, 45 multi-interest people, 109 missing
@@ -121,4 +121,4 @@ merge this branch → merge the Codex UI branch (resolve section.tsx +
 lib/routes.ts mounts, keep routes-parity green) → release authority adds the
 two registrations above WITH the core-site-protection manifest update → full
 suite + e2e 53 → founder decisions on: catalog data release packet, candidate
-SQL apply, partner seed (Vitality Advisors / Seth Grant), invitation wave.
+SQL apply, partner seed (Vitality Advisors / the partner principal), invitation wave.

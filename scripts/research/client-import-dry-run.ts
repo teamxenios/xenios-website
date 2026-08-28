@@ -50,7 +50,7 @@ const { report } = runImportDryRun({
   // source identity is the server-authored enum inside the importer.
   rows,
   sourcePartner: process.env.IMPORT_SOURCE_PARTNER ?? "vitality_advisors",
-  relationshipOwner: process.env.IMPORT_RELATIONSHIP_OWNER ?? "Seth Grant",
+  relationshipOwner: process.env.IMPORT_RELATIONSHIP_OWNER ?? "Vitality Advisors relationship owner",
 });
 
 process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
