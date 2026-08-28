@@ -1,278 +1,78 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-07-30T21:25:26Z",
-  "productionSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+  "generatedAt": "2026-08-28T04:01:00Z",
+  "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "nodes": [
     {
-      "id": "production-696d75b",
+      "id": "production-3daa3f4a",
       "type": "production_baseline",
-      "owner": "Website 2",
+      "owner": "Lead",
       "state": "AUDITED_BASELINE",
-      "sha": "696d75b997fa95770aaba56afb2bc640560ed678",
-      "label": "Audited production baseline / PR #166 postdeploy live"
+      "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "label": "Read-only attested production: dep-da6vorqfngtc73brb0gg on release/early-access-code-session-checkout"
     },
     {
-      "id": "high-capabilities-route",
-      "type": "finding",
-      "owner": "Website 2",
-      "state": "CLOSED_PRODUCTION_ACCEPTED",
-      "sha": null,
-      "label": "Canonical GET /api/research/capabilities ownership"
-    },
-    {
-      "id": "high-admin-page-privacy",
-      "type": "finding",
-      "owner": "Website 2",
-      "state": "CLOSED_PRODUCTION_ACCEPTED",
-      "sha": null,
-      "label": "Private /admin/research document headers"
-    },
-    {
-      "id": "pr80-f646708d",
+      "id": "failed-rc-a1bbc2a1",
       "type": "candidate",
-      "owner": "Website 4",
+      "owner": "Lead",
       "state": "PROHIBITED",
-      "sha": "f646708d45d4a6e4e7acf4e2653e44746baef184",
-      "pullRequest": 80,
-      "label": "Wave 2 inventory/lots/COA"
+      "sha": "a1bbc2a186ebbf96cead429a78dc30ffdc811005",
+      "label": "Failed composite Research RC; development source only; never deploy"
     },
     {
-      "id": "pr85-12759c25",
-      "type": "candidate",
-      "owner": "Website 3",
-      "state": "PROHIBITED",
-      "sha": "12759c2567246ee83ed71aad9ffa4b517d31e8aa",
-      "pullRequest": 85,
-      "label": "Initial member catalog/detail"
+      "id": "editorial-homepage-8e8933ce",
+      "type": "source",
+      "owner": "Lane 02 / Lead",
+      "state": "SOURCE_ONLY_RECONCILIATION_REQUIRED",
+      "sha": "8e8933cee58af2750edf69d672a463884df29634",
+      "label": "Separate warm-silver editorial homepage source; absent from failed RC ancestry"
     },
     {
-      "id": "pr85-30b0f6b7",
-      "type": "candidate",
-      "owner": "Website 3",
-      "state": "PROHIBITED",
-      "sha": "30b0f6b708c936e2ba1631e4a57f1c5b8c2c54c4",
-      "pullRequest": 85,
-      "label": "Rejected member catalog/detail replacement"
-    },
-    {
-      "id": "pr85-0472905d",
-      "type": "candidate",
-      "owner": "Website 3",
-      "state": "PROHIBITED",
-      "sha": "0472905dff10c45239b7f95834e1086c3b3c5f59",
-      "pullRequest": 85,
-      "label": "Rejected second member catalog/detail replacement"
-    },
-    {
-      "id": "pr85-dc11623d",
-      "type": "candidate",
-      "owner": "Website 3",
-      "state": "ACCEPTED_INTEGRATION_PENDING",
-      "sha": "dc11623d27fa59cb51b6cfe653f143633c7ae9ed",
-      "pullRequest": 85,
-      "label": "Accepted member catalog/detail source"
-    },
-    {
-      "id": "pr86-22545561",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "PROHIBITED",
-      "sha": "225455615eda0c420996929379a5a1f9d535b4e8",
-      "pullRequest": 86,
-      "label": "Rejected capabilities/privacy hotfix"
-    },
-    {
-      "id": "pr86-4f71648a",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "MERGED_DEPLOYED_POSTDEPLOY_ACCEPTED",
-      "sha": "4f71648aa5684ebec70f14b7e09268331c522969",
-      "pullRequest": 86,
-      "label": "Accepted capabilities/privacy hotfix"
-    },
-    {
-      "id": "pr87-release-control-plane",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "MERGED_DEPLOYED_POSTDEPLOY_CHANGES_REQUIRED",
-      "sha": "0276112499ed029e70f09c2cd53bf9191d851601",
-      "pullRequest": 87,
-      "label": "Accepted release control plane; production snapshot fix-forward required"
-    },
-    {
-      "id": "wave3-checkout-enablement",
+      "id": "public-homepage-reconciliation",
       "type": "future_gate",
-      "owner": "Website 2",
+      "owner": "Lane 02 / Lead",
       "state": "BLOCKED",
       "sha": null,
-      "label": "Persistent cart, checkout, and order enablement"
+      "label": "Semantic homepage reconciliation plus public visual, responsive, accessibility, and catalog-guard evidence"
     },
     {
-      "id": "pr117-persistent-cart",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "ACCEPTED_PROTECTED_MIGRATION_PENDING",
-      "sha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
-      "pullRequest": 117,
-      "label": "Accepted persistent-cart source; managed migration present in Git and unapplied in production"
-    },
-    {
-      "id": "pr132-pr106-ownership-policy",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "MERGED_DEPLOYED_POSTDEPLOY_ACCEPTED",
-      "sha": "8f1797a14fc782b92f29cc42a8d64adc76231216",
-      "pullRequest": 132,
-      "label": "Accepted PR106 exact-path ownership policy"
-    },
-    {
-      "id": "pr106-operations-affiliates",
-      "type": "candidate",
-      "owner": "Website 2",
-      "state": "ACCEPTED_SOURCE_CURRENT_BASE_TRANSFER_PENDING",
-      "sha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
-      "pullRequest": 106,
-      "label": "Accepted operations and affiliates source; both managed migrations present in Git and unapplied in production"
-    },
-    {
-      "id": "pr144-pricing-model",
-      "type": "candidate",
-      "owner": "Claude Fable 5",
-      "state": "FROZEN_RECONCILIATION_REQUIRED",
-      "sha": "410e687898d6406a684023e8327dc5fb697b30d3",
-      "pullRequest": 144,
-      "label": "Unaccepted pricing-model candidate; outside the current Codex control-plane lease"
-    },
-    {
-      "id": "founder-decision-lock-20260730",
-      "type": "authority",
-      "owner": "Samuel",
-      "state": "LOCKED",
+      "id": "omega-full-finish-candidate",
+      "type": "future_candidate",
+      "owner": "Lead",
+      "state": "NOT_FROZEN",
       "sha": null,
-      "label": "Founder Decision Lock and Codex Execution Addendum; 2.5x pricing and sole Codex release control"
-    },
-    {
-      "id": "founder-workaround-addendum-20260730",
-      "type": "authority",
-      "owner": "Samuel",
-      "state": "LOCKED",
-      "sha": null,
-      "label": "Missing-inputs workaround and CRM activation addendum; source SHA-256 1850fa49256e8722717f02c4ed4344511fe354f8f6fccde648e69d44066d05ce; workbook SHA-256 345787a2a00ceab988c7222f5d73f5dcaa1928fce643757aad387c8e4cd4aaeb"
-    },
-    {
-      "id": "founder-final-full-website-directive-20260730",
-      "type": "authority",
-      "owner": "Samuel",
-      "state": "LOCKED",
-      "sha": null,
-      "label": "Final full-website completion master; SHA-256 aeef43961c57f5740600aca45c9a5a0b0801f033d68643869bcbf6cedcf01373; Codex sole release operator; Claude independent reviewer"
-    },
-    {
-      "id": "immutable-paid-order-evidence",
-      "type": "future_gate",
-      "owner": "Website 2",
-      "state": "BLOCKED",
-      "sha": null,
-      "label": "Immutable paid-order economics evidence"
-    },
-    {
-      "id": "commission-payout-activation",
-      "type": "future_gate",
-      "owner": "Website 2",
-      "state": "BLOCKED",
-      "sha": null,
-      "label": "Commission and payout activation"
+      "label": "Full-finish RC; exact SHA exists only after tested lane handoffs and protected Lead composition"
     }
   ],
   "edges": [
     {
-      "from": "pr86-4f71648a",
-      "to": "pr87-release-control-plane",
-      "relation": "preceded"
+      "from": "production-3daa3f4a",
+      "to": "failed-rc-a1bbc2a1",
+      "relation": "development_ancestor_of"
     },
     {
-      "from": "pr132-pr106-ownership-policy",
-      "to": "production-696d75b",
-      "relation": "deployed_as"
+      "from": "production-3daa3f4a",
+      "to": "public-homepage-reconciliation",
+      "relation": "runtime_baseline_for"
     },
     {
-      "from": "production-696d75b",
-      "to": "high-capabilities-route",
-      "relation": "closes"
+      "from": "editorial-homepage-8e8933ce",
+      "to": "public-homepage-reconciliation",
+      "relation": "source_requiring_semantic_reconciliation"
     },
     {
-      "from": "production-696d75b",
-      "to": "high-admin-page-privacy",
-      "relation": "closes"
-    },
-    {
-      "from": "pr85-12759c25",
-      "to": "pr85-30b0f6b7",
-      "relation": "superseded_by"
-    },
-    {
-      "from": "pr85-30b0f6b7",
-      "to": "pr85-0472905d",
-      "relation": "superseded_by"
-    },
-    {
-      "from": "pr85-0472905d",
-      "to": "pr85-dc11623d",
-      "relation": "superseded_by"
-    },
-    {
-      "from": "production-696d75b",
-      "to": "pr85-dc11623d",
-      "relation": "integration_base_for"
-    },
-    {
-      "from": "pr86-22545561",
-      "to": "pr86-4f71648a",
-      "relation": "superseded_by"
-    },
-    {
-      "from": "pr80-f646708d",
-      "to": "wave3-checkout-enablement",
-      "relation": "must_be_replaced_and_accepted_before"
-    },
-    {
-      "from": "pr85-dc11623d",
-      "to": "wave3-checkout-enablement",
-      "relation": "must_be_integrated_before"
-    },
-    {
-      "from": "production-696d75b",
-      "to": "pr117-persistent-cart",
-      "relation": "integration_base_for"
-    },
-    {
-      "from": "pr117-persistent-cart",
-      "to": "pr106-operations-affiliates",
-      "relation": "must_precede"
-    },
-    {
-      "from": "immutable-paid-order-evidence",
-      "to": "commission-payout-activation",
+      "from": "public-homepage-reconciliation",
+      "to": "omega-full-finish-candidate",
       "relation": "required_before"
-    },
-    {
-      "from": "pr106-operations-affiliates",
-      "to": "commission-payout-activation",
-      "relation": "remains_disabled_until"
-    },
-    {
-      "from": "founder-decision-lock-20260730",
-      "to": "pr144-pricing-model",
-      "relation": "requires_reconciliation_before_acceptance"
     }
   ],
   "releaseOrder": [
-    "Reconcile current production, founder authority, ownership, managed migration completeness, and provider ledger truth in a control-plane-only candidate.",
-    "Keep PR144 frozen until it is reconciled against the founder-locked ROUND(cost * 2.5, 2) rule and receives independent exact-SHA acceptance.",
-    "Integrate only through Website 2 / Codex from exact current production.",
-    "Apply migrations only in MIGRATION_DAG.json order and run production smoke.",
-    "Persistent cart must precede fulfillment, affiliates, pricing lineage, and RLS retro hardening.",
-    "Commission and payout activation remains blocked until immutable paid-order economics evidence is live and independently accepted."
+    "Use 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 as the sole attested production baseline.",
+    "Treat a1bbc2a186ebbf96cead429a78dc30ffdc811005 only as prohibited development source; never deploy it.",
+    "Reconcile 8e8933cee58af2750edf69d672a463884df29634 deliberately with the preserved production/Hino runtime and prove the public homepage gate.",
+    "Integrate only tested and pushed lane handoffs by exact SHA, then compose Lead-owned protected files.",
+    "Freeze one candidate SHA only after source, migration, security, accessibility, route, and runtime evidence is reproducible.",
+    "No deployment or production mutation is authorized by this graph."
   ]
 }

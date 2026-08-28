@@ -1,42 +1,20 @@
 flowchart LR
-  PROD["Audited baseline 4a45b898<br/>Render dep-d9l8s8m7bikc73f9bj0g<br/>LIVE when captured"]
-  CAP["Capabilities route ownership<br/>CLOSED"]
-  PRIV["Admin document privacy<br/>CLOSED"]
-  PR80["PR #80 f646708d<br/>PROHIBITED"]
-  PR85OLD["PR #85 12759c25<br/>PROHIBITED"]
-  PR85MID["PR #85 30b0f6b7<br/>PROHIBITED"]
-  PR85LAST["PR #85 0472905d<br/>PROHIBITED"]
-  PR85["PR #85 dc11623d<br/>ACCEPTED / INTEGRATION PENDING"]
-  PR86OLD["PR #86 22545561<br/>PROHIBITED"]
-  PR86["PR #86 4f71648a<br/>DEPLOYED / POSTDEPLOY ACCEPTED"]
-  PR87["PR #87 02761124<br/>MERGED / DEPLOYED / POSTDEPLOY CHANGES REQUIRED"]
-  PR144["PR #144 410e6878<br/>FROZEN / RECONCILIATION REQUIRED"]
-  FOUNDER["Founder Decision Lock 2026-07-30<br/>LOCKED / CODEX SOLE RELEASE CONTROL"]
-  WORKAROUND["Founder Workaround Addendum 2026-07-30<br/>LOCKED / OPERATIONAL STATES"]
-  FINAL["Final Full Website Directive 2026-07-30<br/>LOCKED / COMPLETE RELEASE PROGRAM"]
-  CHECKOUT["Wave 3 checkout enablement<br/>BLOCKED"]
+  PROD["Production 3daa3f4a<br/>AUDITED_BASELINE<br/>dep-da6vorqfngtc73brb0gg"]
+  FAILED["Failed RC a1bbc2a1<br/>PROHIBITED<br/>DEVELOPMENT SOURCE ONLY"]
+  EDITORIAL["Editorial homepage 8e8933ce<br/>SOURCE ONLY<br/>RECONCILIATION REQUIRED"]
+  HOME["Public homepage gate<br/>BLOCKED<br/>visual + responsive + a11y + catalog guard"]
+  RC["Omega full-finish candidate<br/>NOT FROZEN"]
 
-  PR86 -->|preceded| PR87
-  PR87 -->|deployed as| PROD
-  PROD -->|closes| CAP
-  PROD -->|closes| PRIV
-  PR86OLD -->|superseded by| PR86
-  PR85OLD -->|superseded by| PR85MID
-  PR85MID -->|superseded by| PR85LAST
-  PR85LAST -->|superseded by| PR85
-  PROD -->|integration base for| PR85
-  PROD -->|candidate based on| PR87
-  PR80 -->|replace + accept first| CHECKOUT
-  PR85 -->|integrate first| CHECKOUT
-  FOUNDER -->|requires reconciliation| PR144
-  WORKAROUND -->|defines nonblocking workarounds| CHECKOUT
-  FINAL -->|supersedes conflicting program instructions| CHECKOUT
+  PROD -->|development ancestor of| FAILED
+  PROD -->|runtime baseline for| HOME
+  EDITORIAL -->|semantic input to reconcile| HOME
+  HOME -->|required before| RC
 
-  classDef live fill:#d8f3dc,stroke:#1b4332,color:#081c15
-  classDef closed fill:#d8f3dc,stroke:#1b4332,color:#081c15
-  classDef prohibited fill:#f8d7da,stroke:#842029,color:#58151c
-  classDef pending fill:#fff3cd,stroke:#664d03,color:#332701
-  class PROD,PR86,FOUNDER,WORKAROUND,FINAL live
-  class CAP,PRIV closed
-  class PR80,PR85OLD,PR85MID,PR85LAST,PR86OLD prohibited
-  class PR85,PR87,PR144,CHECKOUT pending
+  classDef baseline fill:#d9ead3,stroke:#274e13,color:#000;
+  classDef prohibited fill:#f4cccc,stroke:#990000,color:#000;
+  classDef gate fill:#fff2cc,stroke:#7f6000,color:#000;
+  classDef candidate fill:#d9eaf7,stroke:#134f5c,color:#000;
+  class PROD baseline;
+  class FAILED prohibited;
+  class EDITORIAL,HOME gate;
+  class RC candidate;

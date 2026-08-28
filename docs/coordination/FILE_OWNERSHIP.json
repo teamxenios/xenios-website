@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-03T16:00:00Z",
-  "productionBaseSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+  "generatedAt": "2026-08-28T04:01:00Z",
+  "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "lanes": [
     {
       "owner": "Website 1",
@@ -993,8 +993,8 @@
     "One active writer per repository file.",
     "Review-only lanes own no write patterns.",
     "A prohibited or frozen head may be corrected only by its owning lane.",
-    "Website 2 alone owns shared integration, migration application, merge, deployment, and rollback decisions.",
+    "The designated Lead/release-manager owner alone owns shared integration, migration application, merge, deployment, and rollback decisions; this policy grants no production mutation authority by itself.",
     "Takeover governance and session check-in rules are exact-path status/evidence leases only and authorize no runtime, migration, data, provider, Care implementation, or production action.",
-    "A new unit must start from the exact externally observed current production SHA supplied by Website 2; checked-in productionBaseSha remains the policy-origin baseline."
+    "A new unit must reconcile against the exact externally attested production identity: commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 on release/early-access-code-session-checkout. The checked-in productionBaseSha is a trusted policy baseline, not a prediction or authorization of a future deployment."
   ]
 }

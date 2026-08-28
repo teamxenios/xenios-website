@@ -32,8 +32,9 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-07-30T21:25:26.000Z");
-const PRODUCTION_SHA = "696d75b997fa95770aaba56afb2bc640560ed678";
+const NOW = new Date("2026-08-28T04:05:00.000Z");
+const PRODUCTION_SHA = "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212";
+const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
 const HEAD_SHA = "12759c2567246ee83ed71aad9ffa4b517d31e8aa";
@@ -891,6 +892,10 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(LAUNCH_CART_MIGRATIONS_SOURCE_SHA);
           } else {
             expect(sourceSha).toBe(PRODUCTION_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
           }
           return execFileSync("git", ["cat-file", "blob", `HEAD:${path}`], {
             cwd: ROOT,
@@ -904,10 +909,11 @@ describe("migration DAG validator", () => {
           }),
       }),
     ).toEqual([]);
-    // One git cat-file per DAG node; at 16 nodes this exceeds the 5 s default
-    // under full-suite parallelism on a loaded machine (measures ~3.4 s
-    // isolated). Same treatment as the production-state snapshot test below.
-  }, 30_000);
+    // This performs one immutable Git-blob read per DAG node. The current DAG
+    // is substantially larger than the original 16-node fixture and Windows
+    // worktree Git reads can exceed 30 s under fleet contention. This timeout
+    // is execution headroom, not a performance assertion.
+  }, 120_000);
 
   it("requires every managed ledger migration exactly once in the DAG", () => {
     const dag = JSON.parse(
@@ -1747,17 +1753,18 @@ describe("production state validator", () => {
         now: NOW,
         trustedReleaseBaseSha: PRODUCTION_SHA,
         migrationBaselineSha: PRODUCTION_SHA,
+        expectedProductionBranch: PRODUCTION_BRANCH,
         repoFiles,
       }),
     ).toEqual([]);
     // Ownership validation is O(repo files x rules) and already measures
     // 4.7s to 6.8s on current main, so the 5s default timeout makes this
     // assertion machine dependent. The assertion itself is unchanged.
-    // 15s was breached too on the integration machine under a concurrent
-    // full-suite load (the run itself completes; only the pin fires), so the
-    // pin now carries the same headroom the PG verifier grants: a timeout,
-    // not a performance assertion.
-  }, 120_000);
+    // 15 s and 120 s were both breached on the Windows integration machine
+    // under a concurrent fleet run (the validator continues to make progress;
+    // only the pin fires). This carries bounded execution headroom and is not
+    // a performance assertion.
+  }, 300_000);
 
   it("separates trusted-base diff authorization from the current production ownership snapshot", () => {
     const { state, graph, ownership: currentOwnership } = checkedInState();
@@ -1901,7 +1908,7 @@ describe("production state validator", () => {
       `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
     );
     expect(productionAcceptanceMessage(state)).toBe(
-      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-d9lrs8bncjis73ce41j0.`,
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-da6vorqfngtc73brb0gg.`,
     );
     expect(
       validateObservedDeployment(
@@ -1969,6 +1976,88 @@ describe("production state validator", () => {
       structuredClone(checked.ownership),
       ancestor,
     )).toContain("BASELINE_IDENTITY_CONTRADICTION");
+  });
+
+  it("accepts the externally attested release branch and rejects an exact-branch mismatch", () => {
+    const { state, graph, ownership } = checkedInState();
+    const acceptedCodes = validateProductionState(state, graph, ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+      expectedProductionBranch: PRODUCTION_BRANCH,
+    }).map((issue) => issue.code);
+    expect(acceptedCodes).not.toEqual(
+      expect.arrayContaining(["PRODUCTION_BRANCH", "PRODUCTION_BRANCH_MISMATCH"]),
+    );
+
+    const mismatchCodes = validateProductionState(state, graph, ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+      expectedProductionBranch: "main",
+    }).map((issue) => issue.code);
+    expect(mismatchCodes).toContain("PRODUCTION_BRANCH_MISMATCH");
+  });
+
+  it("accepts unavailable/null data posture without treating it as zero", () => {
+    const checked = checkedInState();
+    expect(checked.state.dataPosture).toEqual({
+      availability: "unavailable",
+      fabricatedDataCount: null,
+      seededProductCount: null,
+      seededPriceCount: null,
+      seededInventoryCount: null,
+      seededOrderCount: null,
+      careEnabled: null,
+      statement: expect.stringContaining("Null means unavailable"),
+    });
+    expect(validateProductionState(checked.state, checked.graph, checked.ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).not.toContain("DATA_POSTURE_CONTRADICTION");
+
+    const mixed = structuredClone(checked.state);
+    mixed.dataPosture = {
+      availability: "unavailable",
+      fabricatedDataCount: 0,
+      seededProductCount: null,
+      seededPriceCount: null,
+      seededInventoryCount: null,
+      seededOrderCount: null,
+      careEnabled: null,
+      statement: "Invalid: unavailable cannot carry an authoritative zero.",
+    } as unknown as ProductionState["dataPosture"];
+    expect(validateProductionState(mixed, checked.graph, checked.ownership, {
+      now: NOW,
+      trustedReleaseBaseSha: PRODUCTION_SHA,
+      migrationBaselineSha: PRODUCTION_SHA,
+    }).map((issue) => issue.code)).toContain("DATA_POSTURE_CONTRADICTION");
+  });
+
+  it("rejects a contradictory available data posture", () => {
+    const checked = checkedInState();
+    const contradictory = structuredClone(checked.state);
+    contradictory.dataPosture = {
+      availability: "available",
+      fabricatedDataCount: 1,
+      seededProductCount: 0,
+      seededPriceCount: 0,
+      seededInventoryCount: 0,
+      seededOrderCount: 0,
+      careEnabled: false,
+      statement: "Invalid authoritative data for the zero-data invariant.",
+    };
+    expect(validateProductionState(
+      contradictory,
+      checked.graph,
+      checked.ownership,
+      {
+        now: NOW,
+        trustedReleaseBaseSha: PRODUCTION_SHA,
+        migrationBaselineSha: PRODUCTION_SHA,
+      },
+    ).map((issue) => issue.code)).toContain("DATA_POSTURE_CONTRADICTION");
   });
 
   it("detects production identity and data-posture contradictions", () => {

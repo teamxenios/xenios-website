@@ -1,8 +1,8 @@
 {
  "schemaVersion": 1,
  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
- "generatedAt": "2026-08-02T02:02:07Z",
- "productionSha": "696d75b997fa95770aaba56afb2bc640560ed678",
+ "generatedAt": "2026-08-28T04:01:00Z",
+ "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
  "checksumScope": "canonical Git blob bytes at each migration sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; managed copies must byte-match the pinned source",
  "migrations": [
   {
@@ -732,6 +732,7 @@
   "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
   "Pending migrations in this DAG create no operational product, price, inventory, lot, COA, order, role, or Care records. The strength gate's only reviewed seed is the non-operational founder-locked dispute registry public.research_catalog_founder_locked_variant.",
   "Every checked-in managed migration file is represented exactly once. Pending nodes pin immutable Git bytes, remain appliedToProduction false with managedMigrationId PENDING, and do not imply production application.",
+  "The two nodes without sourceSha were byte-verified at productionSha 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 before this baseline changed. No current database aggregate or managed-ledger observation was refreshed on 2026-08-28; per-node applied-state claims retain only their own dated historical evidence and must not be generalized into current counts.",
   "The protected order requires both reservation commands and the variant strength write gate before persistent cart, followed by fulfillment supplier operations -> affiliate professional operations -> pricing lineage -> RLS retro hardening.",
   "No pending migration may be marked applied until the authenticated managed ledger shows its exact version and the post-apply security, privilege, row-count, and dependency invariants pass."
  ]

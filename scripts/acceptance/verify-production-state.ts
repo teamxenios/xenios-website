@@ -37,16 +37,41 @@ type ProductionEvidence = {
   detail: string;
 };
 
+type AvailableDataPosture = {
+  availability: "available";
+  fabricatedDataCount: number;
+  seededProductCount: number;
+  seededPriceCount: number;
+  seededInventoryCount: number;
+  seededOrderCount: number;
+  careEnabled: boolean;
+  statement: string;
+};
+
+type UnavailableDataPosture = {
+  availability: "unavailable";
+  fabricatedDataCount: null;
+  seededProductCount: null;
+  seededPriceCount: null;
+  seededInventoryCount: null;
+  seededOrderCount: null;
+  careEnabled: null;
+  statement: string;
+};
+
 export type ProductionState = {
   schemaVersion: number;
   identitySemantics: "TRUSTED_RELEASE_BASELINE";
   generatedAt: string;
   production: {
     gitSha: string;
+    renderWorkspaceId?: string;
+    renderServiceId?: string;
     renderDeploymentId: string;
     status: string;
     verifiedAt?: string;
     branch: string;
+    autoDeploy?: boolean;
     publicOrigin: string;
   };
   releaseCandidates: ProductionCandidate[];
@@ -58,15 +83,7 @@ export type ProductionState = {
     evidence: string[];
     smallestCorrection: string;
   }>;
-  dataPosture?: {
-    fabricatedDataCount: number;
-    seededProductCount: number;
-    seededPriceCount: number;
-    seededInventoryCount: number;
-    seededOrderCount: number;
-    careEnabled: boolean;
-    statement: string;
-  };
+  dataPosture?: AvailableDataPosture | UnavailableDataPosture;
   evidence?: ProductionEvidence[];
   externalInputsDocument?: string;
   productionCounts?: {
@@ -117,6 +134,7 @@ export type ProductionValidationOptions = {
   trustedReleaseBaseSha?: string;
   baselineAncestorOfTrustedBase?: boolean;
   migrationBaselineSha?: string;
+  expectedProductionBranch?: string;
   repoFiles?: string[];
 };
 
@@ -267,8 +285,8 @@ export function validateProductionState(
   const now = options.now ?? new Date();
   const maxAge = options.maxEvidenceAgeMs ?? DEFAULT_MAX_EVIDENCE_AGE_MS;
 
-  if (![1, 2].includes(state.schemaVersion) || graph.schemaVersion !== 1) {
-    issues.push({ code: "STATE_SCHEMA_VERSION", message: "Production state schemaVersion must be 1 or 2 and release graph schemaVersion must be 1." });
+  if (![1, 2, 3].includes(state.schemaVersion) || graph.schemaVersion !== 1) {
+    issues.push({ code: "STATE_SCHEMA_VERSION", message: "Production state schemaVersion must be 1, 2, or 3 and release graph schemaVersion must be 1." });
   }
   if (
     state.identitySemantics !== "TRUSTED_RELEASE_BASELINE" ||
@@ -288,8 +306,27 @@ export function validateProductionState(
   if (state.production?.status !== "LIVE") {
     issues.push({ code: "PRODUCTION_NOT_LIVE", message: "Production status must be LIVE." });
   }
-  if (state.production?.branch !== "main") {
-    issues.push({ code: "PRODUCTION_BRANCH", message: "Production branch must be main." });
+  const productionBranch = state.production?.branch ?? "";
+  if (
+    !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(productionBranch) ||
+    productionBranch.startsWith("/") ||
+    productionBranch.endsWith("/") ||
+    productionBranch.includes("\\") ||
+    /(^|\/)\.\.(\/|$)/.test(productionBranch)
+  ) {
+    issues.push({
+      code: "PRODUCTION_BRANCH",
+      message: "Production branch must be a non-empty, repository-safe Git branch name.",
+    });
+  }
+  if (
+    options.expectedProductionBranch !== undefined &&
+    productionBranch !== options.expectedProductionBranch
+  ) {
+    issues.push({
+      code: "PRODUCTION_BRANCH_MISMATCH",
+      message: `Recorded production branch ${productionBranch || "<missing>"} does not match expected ${options.expectedProductionBranch}.`,
+    });
   }
   if (
     options.trustedReleaseBaseSha &&
@@ -321,23 +358,28 @@ export function validateProductionState(
     if (age < -5 * 60_000) issues.push({ code: "FUTURE_PRODUCTION_EVIDENCE", message: "Production verification is future-dated." });
   }
 
-  const v1DataContradiction =
-    state.dataPosture !== undefined &&
-    (state.dataPosture.fabricatedDataCount !== 0 ||
-      state.dataPosture.seededProductCount !== 0 ||
-      state.dataPosture.seededPriceCount !== 0 ||
-      state.dataPosture.seededInventoryCount !== 0 ||
-      state.dataPosture.seededOrderCount !== 0 ||
-      state.dataPosture.careEnabled !== false);
-  const v2DataContradiction =
-    state.dataPosture === undefined &&
-    (state.productionCounts?.productControlRows !== 0 ||
-      state.productionCounts?.productControlStorageObjects !== 0 ||
-      state.securityPosture?.careEnabled !== false);
-  if (v1DataContradiction || v2DataContradiction) {
+  const dataPosture = state.dataPosture;
+  const dataPostureContradiction =
+    dataPosture === undefined ||
+    (dataPosture.availability === "available"
+      ? dataPosture.fabricatedDataCount !== 0 ||
+        dataPosture.seededProductCount !== 0 ||
+        dataPosture.seededPriceCount !== 0 ||
+        dataPosture.seededInventoryCount !== 0 ||
+        dataPosture.seededOrderCount !== 0 ||
+        dataPosture.careEnabled !== false
+      : dataPosture.availability === "unavailable"
+        ? dataPosture.fabricatedDataCount !== null ||
+          dataPosture.seededProductCount !== null ||
+          dataPosture.seededPriceCount !== null ||
+          dataPosture.seededInventoryCount !== null ||
+          dataPosture.seededOrderCount !== null ||
+          dataPosture.careEnabled !== null
+        : true);
+  if (dataPostureContradiction) {
     issues.push({
       code: "DATA_POSTURE_CONTRADICTION",
-      message: "Control-plane snapshot must preserve zero fabricated commerce data and disabled Care.",
+      message: "Data posture must be authoritative available zero/disabled facts or explicit unavailable/null facts; unavailable may never masquerade as zero.",
     });
   }
 
@@ -514,13 +556,13 @@ export function validateObservedDeployment(
   if (observation.observedMainSha !== observation.observedRenderSha) {
     issues.push({
       code: "OBSERVED_DEPLOYMENT_IDENTITY_MISMATCH",
-      message: "Observed main and Render Git identities differ.",
+      message: "Observed Git-branch and Render deployment identities differ.",
     });
   }
   if (binding.checkoutHeadSha !== observation.observedMainSha) {
     issues.push({
       code: "OBSERVED_CHECKOUT_MISMATCH",
-      message: "The validator checkout HEAD does not equal the externally observed main identity.",
+      message: "The validator checkout HEAD does not equal the externally observed branch identity.",
     });
   }
   if (
@@ -681,11 +723,16 @@ if (isCli()) {
         state.production.gitSha !== trusted.identity?.baseSha &&
         isAncestor(root, state.production.gitSha, trusted.identity?.baseSha ?? ""),
       migrationBaselineSha: migrationDag.productionSha,
+      expectedProductionBranch: process.env.XENIOS_EXPECTED_PRODUCTION_BRANCH,
       repoFiles,
     }),
   ];
   let observedAcceptance: ObservedDeployment | null = null;
-  const observedMainSha = process.env.XENIOS_OBSERVED_MAIN_SHA;
+  // XENIOS_OBSERVED_MAIN_SHA is retained as a compatibility name for the
+  // previously main-only post-deploy interface. It now means the exact SHA at
+  // the externally observed configured production branch.
+  const observedMainSha =
+    process.env.XENIOS_OBSERVED_BRANCH_SHA ?? process.env.XENIOS_OBSERVED_MAIN_SHA;
   const observedRenderSha = process.env.XENIOS_OBSERVED_RENDER_SHA;
   const observedRenderDeploymentId = process.env.XENIOS_OBSERVED_RENDER_DEPLOYMENT_ID;
   const acceptedCandidateSha = process.env.XENIOS_ACCEPTED_CANDIDATE_SHA;
@@ -707,7 +754,7 @@ if (isCli()) {
     if (observedInputs.some((value) => value === undefined)) {
       issues.push({
         code: "OBSERVED_DEPLOYMENT_INPUTS_REQUIRED",
-        message: "Post-deploy validation requires observed main SHA, Render SHA, deployment id, and accepted candidate SHA.",
+        message: "Post-deploy validation requires observed branch SHA, Render SHA, deployment id, and accepted candidate SHA.",
       });
     } else {
       const baselineSha = state.production.gitSha;

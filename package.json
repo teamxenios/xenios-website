@@ -19,6 +19,8 @@
     "sync": "node script/sync-github.mjs",
     "test": "vitest run",
     "test:release-control-plane": "vitest run server/release-control-plane.test.ts",
+    "test:release-diff-scan": "node --test scripts/acceptance/verify-release-diff-scan.node-test.mjs",
+    "verify:release-diff-scan": "node scripts/acceptance/verify-release-diff-scan.mjs",
     "verify:release-manifest": "tsx scripts/acceptance/verify-release-manifest.ts",
     "verify:migration-dag": "tsx scripts/acceptance/verify-migration-dag.ts",
     "verify:route-uniqueness": "tsx scripts/acceptance/verify-route-uniqueness.ts",
