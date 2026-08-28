@@ -5,6 +5,9 @@ import {
   type CommerceWiring,
 } from "./production-deps";
 import { createInMemoryCartStore } from "./persistence/cart-store";
+import {
+  createInMemoryActivationCartAuthorityControl,
+} from "./persistence/activation-cart-command-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
 import { createInMemoryInventoryLotStore } from "./persistence/inventory-store";
 import { createInMemoryStoreCreditLedgerStore } from "./persistence/store-credit-store";
@@ -97,6 +100,9 @@ function refusingWiring(): { wiring: Partial<CommerceWiring>; spies: Record<stri
   };
   const wiring = {
     resolveCartStore: refuse("resolveCartStore"),
+    resolveActivationBoundCartCommands: refuse(
+      "resolveActivationBoundCartCommands",
+    ),
     resolveOrderRepository: refuse("resolveOrderRepository"),
     resolveClaimRepository: refuse("resolveClaimRepository"),
     resolveClaimOrderRepository: refuse("resolveClaimOrderRepository"),
@@ -257,6 +263,39 @@ async function liveSetup() {
       activationBindingsBySku.get(sku) ?? [],
     ),
   };
+  const activationCartControl = createInMemoryActivationCartAuthorityControl({
+    cartRepository: cartStore,
+    bindings: new Map([
+      [
+        "P901",
+        [
+          {
+            productId: "product-wiring-1",
+            variantId: "variant-wiring-1",
+            sku: "P901",
+            productRevision: 1,
+            variantRevision: 1,
+          },
+        ],
+      ],
+      [
+        "P902",
+        [
+          {
+            productId: "product-wiring-2",
+            variantId: "variant-wiring-2",
+            sku: "P902",
+            productRevision: 1,
+            variantRevision: 1,
+          },
+        ],
+      ],
+    ]),
+    activationRows: new Map([
+      ["P901", [activationRowForSku("P901")]],
+      ["P902", [activationRowForSku("P902")]],
+    ]),
+  });
   await lotStore.save(cleanLot());
   await lotStore.save({ ...cleanLot(), lotId: "LOTW2", sku: "P902" });
   // The wiring table is returned so a test can build a SECOND composition over
@@ -265,6 +304,8 @@ async function liveSetup() {
   const wiring: Partial<CommerceWiring> = {
     catalogProducts: [purchasableProduct(), coldChainProduct()],
     resolveCartStore: () => cartStore,
+    resolveActivationBoundCartCommands: () =>
+      activationCartControl.commandStore,
     resolveOrderRepository: () => orderRepository,
     resolveClaimRepository: () => claimRepository,
     resolveClaimOrderRepository: () => claimOrderRepository,
@@ -306,6 +347,7 @@ async function liveSetup() {
     activationRowsBySku,
     activationBindings,
     activationBindingsBySku,
+    activationCartControl,
   };
 }
 
@@ -627,7 +669,10 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       },
     ]) {
       const setup = await liveSetup();
-      setup.activationRowsBySku.set("P901", testCase.rows);
+      await setup.activationCartControl.replaceActivationRows(
+        "P901",
+        testCase.rows,
+      );
       expect(
         await setup.deps.cart.addLine(
           `mem_direct_${testCase.label}`,
@@ -664,7 +709,14 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       bindings: ProductVariantActivationBinding[];
     }>) {
       const setup = await liveSetup();
-      setup.activationBindingsBySku.set("P901", testCase.bindings);
+      await setup.activationCartControl.replaceBindings(
+        "P901",
+        testCase.bindings.map((value) => ({
+          ...value,
+          productRevision: 1,
+          variantRevision: 1,
+        })),
+      );
       expect(
         await setup.deps.cart.addLine(
           `mem_${testCase.label}`,
@@ -689,7 +741,7 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       ),
     ).toMatchObject({ ok: true });
 
-    setup.activationRowsBySku.set("P901", [
+    await setup.activationCartControl.replaceActivationRows("P901", [
       activationRowForSku("P901", {
         revokedAt: "2026-07-21T23:59:59.000Z",
       }),
@@ -700,8 +752,8 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
     expect((await setup.cartStore.load(memberId))?.lines).toEqual([
       { sku: "P901", quantity: 1, purchaseMode: "one_time" },
     ]);
-    expect(setup.activationBindings.readCurrentBindings).toHaveBeenCalledTimes(2);
-    expect(setup.activationLedger.readCurrentCandidates).toHaveBeenCalledTimes(2);
+    expect(setup.activationBindings.readCurrentBindings).not.toHaveBeenCalled();
+    expect(setup.activationLedger.readCurrentCandidates).not.toHaveBeenCalled();
   });
 
   it("re-reads authority at checkout and refuses a variant revoked after it entered the cart", async () => {
@@ -731,8 +783,8 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       codes: ["product_not_purchasable"],
     });
     expect(await setup.deps.orders.listForMember("mem_revoked_checkout")).toEqual([]);
-    expect(setup.activationBindings.readCurrentBindings).toHaveBeenCalledTimes(2);
-    expect(setup.activationLedger.readCurrentCandidates).toHaveBeenCalledTimes(2);
+    expect(setup.activationBindings.readCurrentBindings).toHaveBeenCalledTimes(1);
+    expect(setup.activationLedger.readCurrentCandidates).toHaveBeenCalledTimes(1);
   });
 
   it("revalidates retired, stale, and changed exact bindings before checkout", async () => {

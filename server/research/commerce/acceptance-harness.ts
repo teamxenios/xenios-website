@@ -33,6 +33,10 @@ import { registerCommerceApi, type CommerceGuards } from "./routes";
 import { registerMemberCapabilityApi } from "../capabilities";
 import { buildCommerceDependencies, CHECKOUT_REQUIRED_AGREEMENT_KEYS } from "./production-deps";
 import { createInMemoryCartStore, type AsyncCartStore } from "./persistence/cart-store";
+import {
+  createInMemoryActivationCartAuthorityControl,
+  type InMemoryActivationCartAuthorityControl,
+} from "./persistence/activation-cart-command-store";
 import { createInMemoryOrderStore, type AsyncOrderStore } from "./persistence/orders-store";
 import {
   createInMemoryInventoryLotStore,
@@ -327,6 +331,8 @@ export interface AcceptanceContext {
   activationLedger: ProductVariantActivationLedgerRepository;
   /** Exact-one SKU to Product Control identity binding, also read per request. */
   activationBindings: ProductVariantActivationBindingRepository;
+  /** Atomic add/update authority; shared across restart compositions. */
+  activationCartControl: InMemoryActivationCartAuthorityControl;
   partnerMemberStore: AsyncPartnerMemberStore;
   partnerLinkStore: AsyncPartnerLinkStore;
   commissionLedger: CommissionLedgerRepository;
@@ -395,6 +401,34 @@ export async function buildAcceptanceContext(
           ];
         },
       };
+  const activationCartControl = reused
+    ? reused.activationCartControl
+    : createInMemoryActivationCartAuthorityControl({
+        cartRepository: cartStore,
+        bindings: new Map(
+          [ELIGIBLE_SKU, INELIGIBLE_SKU].map((sku) => {
+            const suffix = sku === INELIGIBLE_SKU ? "2" : "1";
+            return [
+              sku,
+              [
+                {
+                  productId: `acceptance-product-${suffix}`,
+                  variantId: `acceptance-variant-${suffix}`,
+                  sku,
+                  productRevision: 1,
+                  variantRevision: 1,
+                },
+              ],
+            ] as const;
+          }),
+        ),
+        activationRows: new Map(
+          [ELIGIBLE_SKU, INELIGIBLE_SKU].map((sku) => [
+            sku,
+            [acceptanceActivationRow(sku)],
+          ]),
+        ),
+      });
 
   if (!reused) {
     for (const lot of options.lots ?? [releasedLot()]) {
@@ -406,6 +440,8 @@ export async function buildAcceptanceContext(
   const deps = buildCommerceDependencies(NOW, env, {
     catalogProducts: options.products ?? [acceptanceProduct(), ineligibleProduct()],
     resolveCartStore: () => cartStore,
+    resolveActivationBoundCartCommands: () =>
+      activationCartControl.commandStore,
     resolveOrderRepository: () => orderRepository,
     resolveClaimRepository: () => claimRepository,
     resolveClaimOrderRepository: () => claimOrderRepository,
@@ -478,6 +514,7 @@ export async function buildAcceptanceContext(
     webhookEventStore,
     activationLedger,
     activationBindings,
+    activationCartControl,
     partnerMemberStore,
     partnerLinkStore,
     commissionLedger,

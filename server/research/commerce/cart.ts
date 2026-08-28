@@ -144,8 +144,58 @@ function highestPriority(reasons: readonly CommerceDenialCode[]): CommerceDenial
  */
 export const MAX_LINE_QUANTITY = EARLY_ACCESS_MAX_QUANTITY;
 
-function isValidQuantity(quantity: number): boolean {
+export function isValidCartLineQuantity(quantity: number): boolean {
   return Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_LINE_QUANTITY;
+}
+
+/** Pure request validation shared with the production atomic cart command. */
+export function validateAddCartLineRequest(
+  deps: Pick<CartServiceDeps, "catalog" | "commerceEnabled">,
+  req: AddCartLineRequest,
+): CartDenial | null {
+  if (!isValidCartLineQuantity(req.quantity)) {
+    return {
+      ok: false,
+      code: "quantity_invalid",
+      message: `Quantity must be a whole number between 1 and ${MAX_LINE_QUANTITY}.`,
+    };
+  }
+  const product = deps.catalog.get(req.sku);
+  if (!product) {
+    return {
+      ok: false,
+      code: "product_not_found",
+      message: `Unknown SKU ${req.sku}.`,
+    };
+  }
+  if (!deps.commerceEnabled) {
+    return {
+      ok: false,
+      code: "commerce_disabled",
+      message: "Product commerce is not enabled.",
+    };
+  }
+  if (req.purchaseMode === "subscription") {
+    const frequency = req.subscriptionFrequencyDays;
+    if (
+      frequency === undefined ||
+      !SUBSCRIPTION_FREQUENCIES.includes(frequency)
+    ) {
+      return {
+        ok: false,
+        code: "subscription_action_invalid",
+        message: "A subscription needs a frequency of 30, 60, or 90 days.",
+      };
+    }
+    if (!product.subscriptionEligible) {
+      return {
+        ok: false,
+        code: "subscription_action_invalid",
+        message: `${product.displayName} is not available as a subscription.`,
+      };
+    }
+  }
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -189,7 +239,7 @@ function evaluateLine(
 
   const asSubscription = stored.purchaseMode === "subscription";
 
-  if (!isValidQuantity(stored.quantity)) {
+  if (!isValidCartLineQuantity(stored.quantity)) {
     reasons.push("quantity_invalid");
   }
 
@@ -221,13 +271,13 @@ function evaluateLine(
 
   const unitPriceCents = priceDisplayable ? priceFact.value : null;
   const lineTotalCents =
-    unitPriceCents !== null && isValidQuantity(stored.quantity)
+    unitPriceCents !== null && isValidCartLineQuantity(stored.quantity)
       ? unitPriceCents * stored.quantity
       : null;
 
   // A lot that is expired, quarantined, or carries an unknown expiry contributes
   // nothing here, because allocateFefo refuses it before counting it.
-  if (isValidQuantity(stored.quantity)) {
+  if (isValidCartLineQuantity(stored.quantity)) {
     const allocation = allocateFefo(deps.lots, stored.sku, stored.quantity, asOf);
     if (!allocation.ok) reasons.push("insufficient_stock");
   }
@@ -341,44 +391,8 @@ export function createCartService(deps: CartServiceDeps): CartService {
      * because both conditions vary with time and revalidation is what catches them.
      */
     async addLine(memberId, req, asOf) {
-      if (!isValidQuantity(req.quantity)) {
-        return {
-          ok: false,
-          code: "quantity_invalid",
-          message: `Quantity must be a whole number between 1 and ${MAX_LINE_QUANTITY}.`,
-        };
-      }
-
-      const product = deps.catalog.get(req.sku);
-      if (!product) {
-        return { ok: false, code: "product_not_found", message: `Unknown SKU ${req.sku}.` };
-      }
-
-      if (!deps.commerceEnabled) {
-        return {
-          ok: false,
-          code: "commerce_disabled",
-          message: "Product commerce is not enabled.",
-        };
-      }
-
-      if (req.purchaseMode === "subscription") {
-        const frequency = req.subscriptionFrequencyDays;
-        if (frequency === undefined || !SUBSCRIPTION_FREQUENCIES.includes(frequency)) {
-          return {
-            ok: false,
-            code: "subscription_action_invalid",
-            message: "A subscription needs a frequency of 30, 60, or 90 days.",
-          };
-        }
-        if (!product.subscriptionEligible) {
-          return {
-            ok: false,
-            code: "subscription_action_invalid",
-            message: `${product.displayName} is not available as a subscription.`,
-          };
-        }
-      }
+      const invalid = validateAddCartLineRequest(deps, req);
+      if (invalid !== null) return invalid;
 
       const cart = await loadCart(memberId, deps);
       const existing = cart.lines.find((line) => line.sku === req.sku);
@@ -386,7 +400,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
       // The bound applies to the resulting line, not just to this request, so
       // repeated adds cannot walk a line past the ceiling one call at a time.
       const combinedQuantity = (existing?.quantity ?? 0) + req.quantity;
-      if (!isValidQuantity(combinedQuantity)) {
+      if (!isValidCartLineQuantity(combinedQuantity)) {
         return {
           ok: false,
           code: "quantity_invalid",
@@ -411,7 +425,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
     },
 
     async updateLine(memberId, sku, quantity, asOf) {
-      if (!isValidQuantity(quantity)) {
+      if (!isValidCartLineQuantity(quantity)) {
         return {
           ok: false,
           code: "quantity_invalid",

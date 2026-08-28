@@ -17,7 +17,13 @@ import type { InventoryLot } from "../inventory/lots";
 import { products as legacyProducts } from "../products-data";
 import { adaptLegacyCatalog } from "../catalog/legacy-adapter";
 import { createCatalogService, type CatalogService } from "../catalog/catalog-service";
-import { createCartService, type CartService } from "./cart";
+import {
+  createCartService,
+  isValidCartLineQuantity,
+  MAX_LINE_QUANTITY,
+  validateAddCartLineRequest,
+  type CartService,
+} from "./cart";
 import {
   createCheckoutService,
   createInventoryReservationSeam,
@@ -40,6 +46,11 @@ import { createSubscriptionService, type SubscriptionRepository } from "./subscr
 import type { SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { assertNoSyntheticDataInProduction } from "./production-guards";
 import { resolveCartStore, type AsyncCartStore } from "./persistence/cart-store";
+import {
+  resolveActivationBoundCartCommandStore,
+  type ActivationBoundCartCommandStore,
+  type ActivationCartCommandDenialCode,
+} from "./persistence/activation-cart-command-store";
 import { resolveOrderRepository } from "./persistence/orders-store";
 import { resolveClaimOrderRepository, resolveClaimRepository } from "./persistence/claims-store";
 import { resolveInventoryLotStore, type InventoryLotRepository } from "./persistence/inventory-store";
@@ -217,6 +228,14 @@ export interface CommerceWiring {
    */
   earlyAccessOrderHistory?: EarlyAccessOrderHistoryDependencies;
   resolveCartStore(): AsyncCartStore;
+  /**
+   * The only production mutation authority for add/update. Its implementation
+   * owns exact SKU binding, activation adjudication, and cart CAS in one
+   * durable serialized command. The default refuses every mutation.
+   */
+  resolveActivationBoundCartCommands(
+    env: NodeJS.ProcessEnv,
+  ): ActivationBoundCartCommandStore;
   resolveOrderRepository(): OrderRepository;
   resolveClaimRepository(): ClaimRepository;
   resolveClaimOrderRepository(): ClaimOrderRepository;
@@ -316,6 +335,7 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
 function defaultWiring(): CommerceWiring {
   return {
     resolveCartStore,
+    resolveActivationBoundCartCommands: resolveActivationBoundCartCommandStore,
     resolveOrderRepository,
     resolveClaimRepository,
     resolveClaimOrderRepository,
@@ -906,6 +926,7 @@ function liveDependencies(
   );
 
   const cartStore = wiring.resolveCartStore();
+  const activationCartCommands = wiring.resolveActivationBoundCartCommands(env);
   const orderRepository = wiring.resolveOrderRepository();
   const claimRepository = wiring.resolveClaimRepository();
   const claimOrderRepository = wiring.resolveClaimOrderRepository();
@@ -1008,6 +1029,23 @@ function liveDependencies(
       quantumCommerceEnabled: quantumEnabled,
       requiredAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
     });
+  }
+
+  function atomicCartDenial(
+    code: ActivationCartCommandDenialCode,
+  ): Readonly<{ ok: false; code: CommerceDenialCode; message?: string }> {
+    switch (code) {
+      case "product_not_found":
+        return { ok: false, code: "product_not_found" };
+      case "quantity_invalid":
+        return { ok: false, code: "quantity_invalid" };
+      case "authority_unavailable":
+      case "activation_not_live":
+      case "cart_conflict":
+        // Member-safe: do not reveal which durable authority fact is absent or
+        // racing. Operators retain the precise command result at the port.
+        return { ok: false, code: "product_not_purchasable" };
+    }
   }
 
   // One checkout service per process, exactly per createCheckoutService's
@@ -1281,37 +1319,58 @@ function liveDependencies(
     cart: {
       getCart: async (memberId, asOf) => (await cartServiceFor(memberId, asOf)).getCart(memberId, asOf),
       addLine: async (memberId, req, asOf) => {
-        if (
-          catalogBySku.has(req.sku) &&
-          !(await currentLiveActivationForSku(req.sku, asOf))
-        ) {
-          return {
-            ok: false as const,
-            code: "product_not_purchasable" as const,
-          };
-        }
-        return (await cartServiceFor(memberId, asOf, req.sku)).addLine(
-          memberId,
+        const invalid = validateAddCartLineRequest(
+          { catalog: catalogBySku, commerceEnabled: true },
           req,
-          asOf,
         );
+        if (invalid !== null) return invalid;
+        const outcome = await activationCartCommands.mutateLine({
+          kind: "add",
+          memberId,
+          sku: req.sku,
+          quantityDelta: req.quantity,
+          purchaseMode: req.purchaseMode,
+          ...(req.purchaseMode === "subscription" &&
+          req.subscriptionFrequencyDays !== undefined
+            ? { subscriptionFrequencyDays: req.subscriptionFrequencyDays }
+            : {}),
+          evaluatedAt: asOf.toISOString(),
+          maxLineQuantity: MAX_LINE_QUANTITY,
+        });
+        if (!outcome.ok) return atomicCartDenial(outcome.code);
+        return {
+          ok: true as const,
+          cart: await (
+            await cartServiceFor(memberId, asOf, req.sku)
+          ).getCart(memberId, asOf),
+        };
       },
       updateLine: async (memberId, sku, quantity, asOf) => {
-        if (
-          catalogBySku.has(sku) &&
-          !(await currentLiveActivationForSku(sku, asOf))
-        ) {
+        if (!isValidCartLineQuantity(quantity)) {
           return {
             ok: false as const,
-            code: "product_not_purchasable" as const,
+            code: "quantity_invalid" as const,
+            message: `Quantity must be a whole number between 1 and ${MAX_LINE_QUANTITY}.`,
           };
         }
-        return (await cartServiceFor(memberId, asOf)).updateLine(
+        if (!catalogBySku.has(sku)) {
+          return { ok: false as const, code: "product_not_found" as const };
+        }
+        const outcome = await activationCartCommands.mutateLine({
+          kind: "set_quantity",
           memberId,
           sku,
           quantity,
-          asOf,
-        );
+          evaluatedAt: asOf.toISOString(),
+          maxLineQuantity: MAX_LINE_QUANTITY,
+        });
+        if (!outcome.ok) return atomicCartDenial(outcome.code);
+        return {
+          ok: true as const,
+          cart: await (
+            await cartServiceFor(memberId, asOf)
+          ).getCart(memberId, asOf),
+        };
       },
       // The service returns the bare CartDto here; the routes relay expects a
       // discriminated result, so the success envelope is added in this file.
