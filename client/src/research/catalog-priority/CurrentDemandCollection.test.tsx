@@ -88,4 +88,3 @@ describe("priority catalog activation UX", () => {
     expect(JSON.stringify(projected)).not.toMatch(/customerCount|mentions|Seth|Vitality/i);
   });
 });
-

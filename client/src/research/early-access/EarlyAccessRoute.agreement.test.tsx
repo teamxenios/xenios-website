@@ -308,7 +308,7 @@ describe("signed in, but the session is not bound to an approved customer", () =
       "value",
     )?.set;
     act(() => {
-      valueSetter?.call(token, "verified-session-token");
+      valueSetter?.call(token, "verified.session.token");
       token?.dispatchEvent(new Event("input", { bubbles: true }));
     });
     act(() => {
@@ -320,7 +320,7 @@ describe("signed in, but the session is not bound to an approved customer", () =
 
     expect(
       posted.find((call) => call.path.endsWith("/early-access/verify"))?.body,
-    ).toEqual({ token: "verified-session-token" });
+    ).toEqual({ token: "verified.session.token" });
     expect(host.querySelector('[data-testid="early-access-agreement-unverified"]')).toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).not.toBeNull();
     // Verification establishes identity, but the policy is still required.

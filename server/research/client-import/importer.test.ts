@@ -25,7 +25,8 @@ const ROWS: readonly ImportSourceRow[] = Object.freeze([
 
 function run(rows: readonly ImportSourceRow[] = ROWS) {
   return runImportDryRun({
-    batchId: "imp-test-0001",    rows,
+    batchId: "imp-test-0001",
+    rows,
     sourcePartner: "vitality_advisors",
     relationshipOwner: "Vitality Advisors relationship owner",
   });

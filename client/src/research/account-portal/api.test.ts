@@ -106,4 +106,3 @@ describe("customer account API adapter", () => {
     });
   });
 });
-

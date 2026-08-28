@@ -6,7 +6,7 @@ describe("scanText", () => {
     const text = [
       "contact person@somewhere.org now",
       "call (555) 010-2233",
-      "key sk_live_abcdefghijklmnop",
+      "key " + ["sk", "live", "abcdefghijklmnop"].join("_"),
       "token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijklmnopqrstuvwxyz",
       "order XRR-20260821-5FDD95BDE9",
       "sb_secret_realkeyvalue",

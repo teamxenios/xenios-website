@@ -72,4 +72,3 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
     </section>
   );
 }
-

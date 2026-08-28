@@ -64,4 +64,3 @@ const CLOSED_PRESENTATION: Readonly<Record<ProductActivationStatus, ActivationPr
 export function activationPresentation(status: ProductActivationStatus): ActivationPresentation {
   return CLOSED_PRESENTATION[status] ?? CLOSED_PRESENTATION.unavailable;
 }
-

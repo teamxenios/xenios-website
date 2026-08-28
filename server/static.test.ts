@@ -39,6 +39,10 @@ beforeAll(() => {
   fs.mkdirSync(path.join(distDir, "hino", "story"), { recursive: true });
   fs.writeFileSync(path.join(distDir, "hino", "index.html"), "<!doctype html><html><head><title>hino-static</title></head><body>hino</body></html>", "utf8");
   fs.writeFileSync(path.join(distDir, "hino", "story", "index.html"), "<!doctype html><html><head><title>hino-story-static</title></head><body>story</body></html>", "utf8");
+  // An asset-only directory that shares its name with an SPA document (the
+  // candidate ships client/public/research/*.jpg): it must never redirect.
+  fs.mkdirSync(path.join(distDir, "research"), { recursive: true });
+  fs.writeFileSync(path.join(distDir, "research", "hero.jpg"), "not-really-a-jpeg", "utf8");
   app = express();
   serveStatic(app, distDir);
 });
@@ -128,6 +132,16 @@ describe("the production static server answers documents through the raw HTTP po
     const bare = await request(app).get("/hino");
     expect(bare.status).toBe(301);
     expect(bare.headers.location).toBe("/hino/");
+  });
+
+  it("never redirects an SPA document whose path is also an asset-only directory", async () => {
+    const res = await request(app).get("/research");
+    expect(res.status).toBe(200);
+    expect(res.headers.location).toBeUndefined();
+    expect(res.text).toContain("<div id=\"root\">");
+    const asset = await request(app).get("/research/hero.jpg");
+    expect(asset.status).toBe(200);
+    expect(asset.text).toBe("not-really-a-jpeg");
   });
 
   it("does not hand out the raw shell with its template schema at /index.html", async () => {

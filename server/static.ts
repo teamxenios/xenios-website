@@ -30,6 +30,17 @@ export function sendRawHttpDocument(
   res.status(document.status).set(document.headers).send(document.html);
 }
 
+function isStaticIndexDirectory(distPath: string, requestPath: string): boolean {
+  const root = path.resolve(distPath);
+  const candidate = path.resolve(root, "." + requestPath);
+  if (!candidate.startsWith(root + path.sep)) return false;
+  try {
+    return fs.statSync(candidate).isDirectory() && fs.statSync(path.join(candidate, "index.html")).isFile();
+  } catch {
+    return false;
+  }
+}
+
 export function serveStatic(
   app: Express,
   distPath: string = path.resolve(__dirname, "public"),
@@ -64,10 +75,20 @@ export function serveStatic(
   // explicit /api/ paths for app.get registrations.
   app.use((req, res, next) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
-    if (req.path !== "/" && req.path !== "/index.html") return next();
-    policyDocument(req, res, next);
+    if (req.path === "/" || req.path === "/index.html") return policyDocument(req, res, next);
+    // Production parity for static microsites: a directory that carries its own
+    // index.html (the /hino subtree) is reached through its slash form, exactly
+    // as express.static's default redirect answered it. Directories that only
+    // hold assets (dist/public/research/*.jpg, /brand, /og, /assets) must never
+    // redirect, so an SPA document such as /research keeps flowing to the
+    // policy below instead of becoming a 301 to /research/.
+    if (!req.path.endsWith("/") && isStaticIndexDirectory(distPath, req.path)) {
+      const queryIndex = req.url.indexOf("?");
+      return res.redirect(301, req.path + "/" + (queryIndex === -1 ? "" : req.url.slice(queryIndex)));
+    }
+    next();
   });
-  app.use(express.static(distPath));
+  app.use(express.static(distPath, { redirect: false }));
 
   // fall through to the policy for every remaining document request
   app.use("/{*path}", policyDocument);

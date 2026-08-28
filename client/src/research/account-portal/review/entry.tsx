@@ -75,7 +75,8 @@ const REVIEW_DEMAND_ITEMS: readonly PriorityCatalogItem[] = CURRENT_CLIENT_DEMAN
 }));
 
 const SYNTHETIC_IMPORT_REPORT: ImportDryRunReportDto = Object.freeze({
-  batchId: "batch-synthetic-review-01",  sourceType: "partner_client_import" as const,
+  batchId: "batch-synthetic-review-01",
+  sourceType: "partner_client_import" as const,
   dryRun: true,
   totalRows: 48,
   rejectedRows: 2,
@@ -158,4 +159,3 @@ function Review() {
 
 document.title = `Xenios account review · ${SCREEN}`;
 createRoot(document.getElementById("root")!).render(<StrictMode><div className="account-review-root"><Review /></div></StrictMode>);
-

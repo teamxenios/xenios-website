@@ -45,4 +45,3 @@ describe("customer account portal routes", () => {
     expect(section).not.toContain('path="/research/account/claim-history"');
   });
 });
-

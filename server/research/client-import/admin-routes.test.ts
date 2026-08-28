@@ -25,7 +25,8 @@ function buildApp() {
   return app;
 }
 
-const VALID_BODY = {  sourcePartner: "vitality_advisors",
+const VALID_BODY = {
+  sourcePartner: "vitality_advisors",
   relationshipOwner: "Vitality Advisors relationship owner",
   rows: [
     { name: "Alex Fixture", product: "BPC-157/TB-500 (15/15mg)" },
@@ -46,7 +47,8 @@ describe("client-import admin routes", () => {
     for (const bad of [
       {},
       { ...VALID_BODY, rows: [] },
-      { ...VALID_BODY, rows: [{ name: 1, product: "x" }] },    ]) {
+      { ...VALID_BODY, rows: [{ name: 1, product: "x" }] },
+    ]) {
       const res = await request(app)
         .post("/api/admin/research/client-imports/dry-run")
         .set("x-test-admin", "yes")

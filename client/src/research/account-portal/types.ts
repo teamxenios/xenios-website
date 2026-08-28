@@ -29,4 +29,3 @@ export type SupportRequestInput = Readonly<{
 }>;
 
 export type SupportRequestResult = SupportCaseSummaryDto;
-
