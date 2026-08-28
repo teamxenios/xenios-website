@@ -4,6 +4,8 @@ import request from "supertest";
 import { buildHealthPayload, healthHandler } from "./routes";
 import { requestId } from "./request-logging";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 // /api/health is liveness plus config PRESENCE booleans. These tests pin:
 // the backward-compatible status field and 200, the exact payload shape,
 // booleans-only (no env VALUES ever leak into the body), the requestId echo,
@@ -119,10 +121,11 @@ describe("GET /api/health", () => {
     expect(res.body.config.commerceEnabled).toBe(false);
   });
 
-  it("echoes the sanitized correlation id when the requestId middleware is mounted", async () => {
+  it("echoes a fresh server correlation id instead of an inbound identifier", async () => {
     const res = await request(buildApp(true)).get("/api/health").set("x-request-id", "deploy-check-7");
-    expect(res.headers["x-request-id"]).toBe("deploy-check-7");
-    expect(res.body.requestId).toBe("deploy-check-7");
+    expect(res.headers["x-request-id"]).toMatch(UUID_RE);
+    expect(res.headers["x-request-id"]).not.toBe("deploy-check-7");
+    expect(res.body.requestId).toBe(res.headers["x-request-id"]);
   });
 
   it("echoes the generated UUID, never a rejected hostile inbound id", async () => {

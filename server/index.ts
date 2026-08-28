@@ -152,6 +152,7 @@ import {
   resolvePartnerPortalPort,
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
+import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import {
   assistedOrderExpressHandler,
   createAssistedOrderViewerResolvers,
@@ -167,7 +168,15 @@ import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
 import { logEmailStartupDiagnostics } from "./services/email-config";
 import { serveStatic } from "./static";
-import { formatWithRequestId, requestId, shouldLogApiResponseBody } from "./request-logging";
+import {
+  apiLogPath,
+  formatWithRequestId,
+  httpErrorLogLine,
+  publicHttpErrorMessage,
+  requestId,
+  safeHttpErrorStatus,
+  shouldLogApiResponseBody,
+} from "./request-logging";
 import { registerCustomerAccountApi } from "./research/customer-account/routes";
 import { buildProductionCustomerAccountPorts } from "./research/customer-account/production";
 import { createCommerceOrdersPort } from "./research/customer-account/orders-projection";
@@ -335,12 +344,15 @@ export function log(message: string, source = "express") {
 
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const responseBodyPath = req.path;
+  const mayLogResponseBody = shouldLogApiResponseBody(responseBodyPath);
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
+    // Never retain private response bodies merely for observability. Only the
+    // same three exact diagnostic paths permitted to log a body are captured.
+    if (mayLogResponseBody) capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
@@ -349,9 +361,10 @@ app.use((req, res, next) => {
   // and future member/admin/config routes cannot leak through a missed prefix.
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse && shouldLogApiResponseBody(path)) {
+    const logPath = apiLogPath(req);
+    if (logPath) {
+      let logLine = `${req.method} ${logPath} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse && mayLogResponseBody) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 
@@ -917,7 +930,7 @@ const assistedOrderComposition = buildAssistedOrderProduction({
     ? (getSupabaseAdmin().storage as unknown as AssistedOrderStorageClient)
     : null,
   auditWrite: async (event) => {
-    log(`assisted-order audit ${JSON.stringify(event)}`, "assisted-order");
+    log(assistedOrderAuditLogLine(event), "assisted-order");
   },
   log,
 });
@@ -1260,11 +1273,14 @@ startOutboxWorker(log);
 (async () => {
   await registerRoutes(httpServer, app);
 
-  app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+  app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+    const status = safeHttpErrorStatus(err);
+    const message = publicHttpErrorMessage(status);
 
-    console.error("Internal Server Error:", err);
+    // Exception text, stacks, causes, request values, and record identifiers
+    // are never copied into logs. Operators retain a server-generated request
+    // id, a safe route template/category, an error category, and the status.
+    console.error(httpErrorLogLine(req, status));
 
     if (res.headersSent) {
       return next(err);

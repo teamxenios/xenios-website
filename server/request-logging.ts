@@ -13,33 +13,89 @@ export function shouldLogApiResponseBody(path: string): boolean {
   return SAFE_API_RESPONSE_BODY_PATHS.has(path);
 }
 
+// Log declared route templates when Express provides one (for example,
+// `/api/care/appointments/:appointmentId`). A template preserves useful
+// route-level health and latency evidence without putting the member's actual
+// record identifier in a log line. Unknown, nested-router, and fallback paths
+// are reduced to a coarse API bucket instead of ever echoing req.path.
+const SAFE_DECLARED_API_ROUTE =
+  /^\/api(?:\/(?:[A-Za-z0-9][A-Za-z0-9._~-]{0,63}|:[A-Za-z][A-Za-z0-9_]{0,63}))*$/;
+
+function isAtOrUnder(path: string, prefix: string): boolean {
+  return path === prefix || path.startsWith(`${prefix}/`);
+}
+
+export function apiLogPath(req: Pick<Request, "path" | "route">): string | null {
+  const rawPath = typeof req.path === "string" ? req.path : "";
+  if (!isAtOrUnder(rawPath, "/api")) return null;
+
+  const declaredPath = req.route?.path;
+  if (typeof declaredPath === "string" && SAFE_DECLARED_API_ROUTE.test(declaredPath)) {
+    return declaredPath;
+  }
+
+  // These exact paths are already approved for bounded diagnostic response
+  // logging, so their static path labels are safe as well.
+  if (SAFE_API_RESPONSE_BODY_PATHS.has(rawPath)) return rawPath;
+
+  if (isAtOrUnder(rawPath, "/api/care") || isAtOrUnder(rawPath, "/api/tebra")) {
+    return "/api/care/[redacted]";
+  }
+  if (isAtOrUnder(rawPath, "/api/admin")) return "/api/admin/[redacted]";
+  if (isAtOrUnder(rawPath, "/api/research")) return "/api/research/[redacted]";
+  return "/api/[redacted]";
+}
+
+export function safeHttpErrorStatus(error: unknown): number {
+  if (!error || typeof error !== "object") return 500;
+  let candidate: unknown;
+  try {
+    const value = error as { status?: unknown; statusCode?: unknown };
+    candidate = value.status ?? value.statusCode;
+  } catch {
+    return 500;
+  }
+  if (
+    typeof candidate !== "number"
+    || !Number.isInteger(candidate)
+    || candidate < 400
+    || candidate > 599
+  ) {
+    return 500;
+  }
+  return candidate;
+}
+
+export function publicHttpErrorMessage(status: number): string {
+  return status >= 500 ? "Internal Server Error" : "Request failed";
+}
+
+export function httpErrorLogLine(req: Request, status: number): string {
+  const category = status >= 500 ? "server_failure" : "request_rejected";
+  const route = apiLogPath(req) ?? "[non-api]";
+  return formatWithRequestId(
+    `request_error category=${category} route=${route} status=${status}`,
+    req,
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Request correlation ids.
 //
-// One id per request, reused from a trusted-looking inbound X-Request-Id or
-// generated fresh, stamped on the response, and available to any log line.
-// The id is the ONLY header value this module ever reads or surfaces, and it
-// is surfaced only after sanitization, so a hostile header cannot inject log
-// content. The response-body allowlist above is unchanged by any of this.
+// One fresh server-generated id per request, stamped on the response and
+// available to log lines. Inbound X-Request-Id values are never adopted: even
+// a syntactically safe value can be a customer, clinical, or external-system
+// identifier and therefore must not become durable log content.
 //
-// ADOPTION IN server/index.ts (leased to another lane; exactly two one-line
-// changes, no other edits needed):
-//   1. Immediately after `const app = express();` (before helmet and the body
-//      parsers, so every request including parse failures carries an id):
-//        app.use(requestId());
-//   2. In the request logger's finish handler, swap
-//        log(logLine);
-//      for
-//        log(formatWithRequestId(logLine, req));
-// The /api/health endpoint (server/routes.ts) already echoes the id from the
-// X-Request-Id response header once the middleware is mounted.
+// server/index.ts mounts this middleware before body parsers so parse failures
+// also carry the server id. /api/health echoes the assigned response header.
 // ---------------------------------------------------------------------------
 
 export const REQUEST_ID_HEADER = "X-Request-Id";
 
-// Reuse an inbound id only when it is unambiguous and log-safe: a single
-// value, bounded length, and characters that cannot break a log line, a
-// header, or JSON. Everything else gets a fresh UUID instead.
+// Retained as a compatibility validator for callers that need to reject
+// hostile header syntax. Request logging deliberately does not use it to
+// adopt an external value.
 const MAX_REQUEST_ID_LENGTH = 64;
 const SAFE_REQUEST_ID = /^[A-Za-z0-9_-]+$/;
 
@@ -59,7 +115,7 @@ const requestIds = new WeakMap<Request, string>();
 // the response so clients and upstream proxies can correlate too.
 export function requestId(): RequestHandler {
   return function requestIdMiddleware(req: Request, res: Response, next: NextFunction): void {
-    const id = sanitizeRequestId(req.headers["x-request-id"]) ?? randomUUID();
+    const id = randomUUID();
     requestIds.set(req, id);
     res.setHeader(REQUEST_ID_HEADER, id);
     next();
