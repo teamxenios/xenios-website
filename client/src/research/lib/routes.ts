@@ -1,4 +1,5 @@
 import { PUBLIC_QUALITY_ROUTES } from "../quality/routes";
+import { ACCOUNT_PORTAL_EXTENSION_ROUTES } from "../account-portal/routes";
 
 // The canonical route manifest for the Supreme frontend (single source of
 // truth; a parity test asserts every manifest route is registered in the
@@ -45,6 +46,9 @@ export const ACCOUNT_PORTAL_ROUTES = {
   care: "/research/account/care",
   documents: "/research/account/documents",
   support: "/research/account/support",
+  // Lane 04 extension: one bounded detail family plus three static pages.
+  // Ten entries total; ALL_MANIFEST_ROUTES consumes Object.values() once.
+  ...ACCOUNT_PORTAL_EXTENSION_ROUTES,
 } as const;
 
 // Parked account-identity and organization routes remain named for their

@@ -76,7 +76,7 @@ describe("safeResearchReturnTo", () => {
 });
 
 describe("safeResearchReturnTo for the account portal", () => {
-  it("allows exactly the six registered account-portal routes", () => {
+  it("allows exactly the nine registered static account-portal routes", () => {
     for (const path of [
       "/research/account",
       "/research/account/orders",
@@ -84,9 +84,32 @@ describe("safeResearchReturnTo for the account portal", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
     ]) {
       expect(safeResearchReturnTo(path)).toBe(path);
     }
+  });
+
+  it("preserves a safe case-sensitive opaque order-detail reference, with its query", () => {
+    expect(safeResearchReturnTo("/research/account/orders/XRR-Fixture_01")).toBe("/research/account/orders/XRR-Fixture_01");
+    expect(safeResearchReturnTo("/research/account/orders/xrr-fixture-01?tab=payment")).toBe("/research/account/orders/xrr-fixture-01?tab=payment");
+  });
+
+  it.each([
+    "/research/account/orders/:reference",
+    "/Research/account/orders/XRR-Fixture_01",
+    "/research/Account/orders/XRR-Fixture_01",
+    "/research/account/orders/XRR-Fixture_01/extra",
+    "/research/account/orders/XRR%2DFixture",
+    "/research/account/orders/.hidden",
+    "/research/account/orders/",
+    `/research/account/orders/${"a".repeat(193)}`,
+    "/research/account/orders/XRR Fixture",
+    "/research/account/orders/../../admin",
+  ])("refuses a crafted order-detail returnTo: %s", (value) => {
+    expect(safeResearchReturnTo(value)).toBeNull();
   });
 
   it("keeps the allowlist closed: parked and unregistered account paths are rejected", () => {

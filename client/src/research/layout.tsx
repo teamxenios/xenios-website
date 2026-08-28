@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
+import { isAccountOrderDetailPath } from "./account-portal/routes";
 import Wordmark from "@/components/Wordmark";
 import {
   isResearchAccessStatePath,
@@ -265,11 +266,16 @@ function isResearchSignInPath(path: string): boolean {
 // The six REGISTERED account-portal routes, exactly — never a prefix, so the
 // parked identity/organization family under /research/account stays gated
 // until it is mounted on purpose.
-const ACCOUNT_PORTAL_PATHS = new Set<string>(Object.values(ACCOUNT_PORTAL_ROUTES));
+const ACCOUNT_PORTAL_PATHS = new Set<string>(
+  Object.values(ACCOUNT_PORTAL_ROUTES).filter((route) => !route.includes(":")),
+);
 
 function isAccountPortalPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
-  return ACCOUNT_PORTAL_PATHS.has(normalized);
+  // The original path reaches the detail recognizer so a safe uppercase opaque
+  // order reference stays valid without widening the lowercase route prefix.
+  return (normalized !== null && ACCOUNT_PORTAL_PATHS.has(normalized))
+    || isAccountOrderDetailPath(path);
 }
 
 function isPublicResearchPath(path: string): boolean {
