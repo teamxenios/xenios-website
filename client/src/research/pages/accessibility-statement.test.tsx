@@ -27,7 +27,7 @@ describe("Accessibility Statement (unmounted source)", () => {
     expect(host.querySelectorAll("h1")).toHaveLength(1);
     expect(host.querySelector("h1")?.textContent).toBe("Accessibility statement");
     for (const section of Array.from(host.querySelectorAll("section[aria-labelledby]"))) {
-      expect(host.querySelector(`#${section.getAttribute("aria-labelledby")}`), section.getAttribute("aria-labelledby")).not.toBeNull();
+      expect(host.querySelector(`#${section.getAttribute("aria-labelledby")}`), section.getAttribute("aria-labelledby") ?? undefined).not.toBeNull();
     }
     expect(host.querySelectorAll('[data-testid="list-a11y-limitations"] li')).toHaveLength(ACCESSIBILITY_KNOWN_LIMITATIONS.length);
     const report = host.querySelector<HTMLAnchorElement>('[data-testid="link-a11y-report"]');

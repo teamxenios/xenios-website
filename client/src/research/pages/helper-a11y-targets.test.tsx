@@ -26,6 +26,13 @@ describe("TARGETS_44x44 — Sign in standalone links", () => {
   });
 });
 
+describe("TARGETS_44x44 — Admin Research sign-in reset link", () => {
+  it("gives the /admin/research password-reset pointer the 44 px box (measured 190x22 before)", () => {
+    const adminHome = readFileSync(resolve(pagesRoot, "adminx/AdminResearchHome.tsx"), "utf8");
+    expect(adminHome).toMatch(/className="body-s underline text-ink-mute ra-documentation-link"[^>]*>\s*Password reset lives on \/admin/);
+  });
+});
+
 describe("TARGETS_44x44 — Gateway skip link", () => {
   it("is at least 44 px tall when revealed by focus (measured 177x42 before)", () => {
     expect(gatewayCss).toMatch(/\.rg-skip-link \{[^}]*min-height: 44px;[^}]*display: inline-flex;[^}]*align-items: center;/);

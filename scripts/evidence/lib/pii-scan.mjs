@@ -21,6 +21,10 @@ export const DEFAULT_ALLOWLIST = [
   /@example\.(?:com|org|net)$/i,
   /^sb_secret_preview_placeholder$/,
   /^noreply@/i,
+  // Published business contact addresses rendered on the public site
+  // (support/contact pages, footer). Not personal data; a personal mailbox at
+  // the same domain would still be a finding under the reviewer's manual pass.
+  /^(?:team|research|support|hello|press|careers|security|privacy)@xeniostechnology\.com$/i,
 ];
 
 export function scanText(text, { allowlist = DEFAULT_ALLOWLIST, source = "" } = {}) {

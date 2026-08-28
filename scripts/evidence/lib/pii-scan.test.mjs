@@ -20,8 +20,10 @@ describe("scanText", () => {
     }
   });
 
-  it("ignores fixture values on the allowlist", () => {
+  it("ignores fixture values and published business contact addresses on the allowlist", () => {
     expect(scanText("a@example.com and sb_secret_preview_placeholder and noreply@x.test")).toEqual([]);
+    expect(scanText("write to research@xeniostechnology.com or team@xeniostechnology.com")).toEqual([]);
+    expect(scanText("someone.private@xeniostechnology.com").map((f) => f.id)).toEqual(["EMAIL"]);
   });
 
   it("is clean on ordinary page text", () => {

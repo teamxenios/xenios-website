@@ -143,7 +143,7 @@ function AdminSignInForm({ session }: { session: AdminSession }) {
         <button type="submit" className="btn btn-primary" disabled={session.signingIn}>
           {session.signingIn ? "Signing in..." : "Sign in"}
         </button>
-        <a href="/admin" className="body-s underline text-ink-mute">
+        <a href="/admin" className="body-s underline text-ink-mute ra-documentation-link">
           Password reset lives on /admin
         </a>
       </div>
