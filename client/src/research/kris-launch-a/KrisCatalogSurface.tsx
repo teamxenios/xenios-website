@@ -109,7 +109,7 @@ export function KrisCatalogSurface({
     const copy = KRIS_STATE_COPY[state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <header className="grid min-w-0 gap-2">
           <p className="mono-label text-ink-mute">Xenios Research</p>
           <h1 className="display-s">Partner catalog</h1>
@@ -130,7 +130,7 @@ export function KrisCatalogSurface({
             ) : undefined
           }
         />
-      </main>
+      </div>
     );
   }
 

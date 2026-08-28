@@ -1,0 +1,48 @@
+{
+  "$comment": "Route inventory for the evidence matrix. `surface` values are the packet's requiredSurfaces ids. `indexable` drives the SEO expectations (RESEARCH_INDEXABLE is false at this head, so public Research documents are captured but expected noindex until the Lead composes indexing). Private routes are captured in their unauthenticated state only; authenticated states require a Lead session.",
+  "widthsCssPx": [1440, 1024, 768, 430, 390, 375, 360, 320],
+  "zoomEquivalents": [
+    { "label": "200pct", "widthCssPx": 720, "deviceScaleFactor": 2, "zoomPercent": 200, "method": "1440 px screen at 200% browser zoom == 720 CSS px viewport at deviceScaleFactor 2 (WCAG 1.4.10 reflow equivalent)" }
+  ],
+  "metadataRestoration": [
+    { "public": "/research/about", "private": "/research/account", "backTo": "/research/about" }
+  ],
+  "routes": [
+    { "path": "/research", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/access-hub", "surface": "access-hub", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/early-access", "surface": "early-access", "state": "default", "indexable": false, "public": true, "fixture": "preview-placeholder-catalog" },
+    { "path": "/research/early-access/order-request", "surface": "order-flow", "state": "default", "indexable": false, "public": true, "fixture": "preview-placeholder-catalog" },
+    { "path": "/research/apply", "surface": "access-hub", "state": "default", "indexable": false, "public": true, "label": "apply" },
+    { "path": "/research/sign-in", "surface": "account-overview", "state": "unauthorized", "indexable": false, "public": true, "label": "sign-in" },
+    { "path": "/research/support", "surface": "support", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/about", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true, "label": "about" },
+    { "path": "/research/how-it-works", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true, "label": "how-it-works" },
+    { "path": "/research/faq", "surface": "support", "state": "default", "indexable": false, "public": true, "label": "faq" },
+    { "path": "/research/quality", "surface": "quality-testing", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/testing", "surface": "quality-testing", "state": "default", "indexable": false, "public": true, "label": "testing" },
+    { "path": "/research/lots/XR-EVIDENCE-NEGATIVE-LOT", "surface": "public-lot-lookup-negative-state", "state": "unavailable", "indexable": false, "public": true },
+    { "path": "/research/documents", "surface": "documents", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/policies", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true, "label": "policies" },
+    { "path": "/research/contact", "surface": "support", "state": "default", "indexable": false, "public": true, "label": "contact" },
+    { "path": "/research/privacy", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true, "label": "privacy" },
+    { "path": "/research/terms", "surface": "public-research-homepage", "state": "default", "indexable": false, "public": true, "label": "terms" },
+    { "path": "/research/partners", "surface": "partners", "state": "default", "indexable": false, "public": true },
+    { "path": "/research/organizations", "surface": "partners", "state": "default", "indexable": false, "public": true, "label": "organizations" },
+    { "path": "/research/affiliates", "surface": "partners", "state": "default", "indexable": false, "public": true, "label": "affiliates" },
+    { "path": "/research/account", "surface": "account-overview", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/account/orders", "surface": "orders", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/account/subscription", "surface": "membership", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/account/care", "surface": "care-account", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/account/documents", "surface": "documents", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/account/support", "surface": "support", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/member", "surface": "account-overview", "state": "unauthorized", "indexable": false, "public": false, "label": "member" },
+    { "path": "/research/member/catalog", "surface": "catalog", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/care", "surface": "care", "state": "default", "indexable": false, "public": true },
+    { "path": "/care/appointments", "surface": "tebra-scheduler", "state": "disabled", "indexable": false, "public": true },
+    { "path": "/admin/research", "surface": "admin-critical", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/admin/research/fulfillment", "surface": "research-fulfillment", "state": "unauthorized", "indexable": false, "public": false },
+    { "path": "/research/this-route-does-not-exist-xr-evidence", "surface": "not-found-error", "state": "error", "indexable": false, "public": true, "expectStatus": 404 },
+    { "path": "/", "surface": "warm-silver-homepage-reconciliation", "state": "default", "indexable": true, "public": true, "label": "root-home" },
+    { "path": "/hino", "surface": "hino", "state": "default", "indexable": true, "public": true, "$comment": "Static site served at /hino/ (301 from /hino); observed mounted at 77d3f69 with no X-Robots-Tag. Set indexable per the Lead's indexing policy." }
+  ]
+}
