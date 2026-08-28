@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   MasterOfferingAction,
   MasterOfferingDetailView,
@@ -8,6 +8,7 @@ import {
   MASTER_OFFERING_PRICE_BASIS_LABEL,
   MASTER_OFFERING_PRICE_ON_REQUEST_LABEL,
 } from "@shared/research/master-offerings/pricing-contract";
+import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import {
   purchaseQuantityControl,
@@ -24,7 +25,8 @@ import {
  * exact-variant quantity capability matches that exact identity.
  *
  * QUANTITY IS NOT A ROUTE. Under the founder quantity decision the normal band
- * is 1 through 50 with no review threshold inside it, and this lane could not
+ * is supplied by the accepted shared policy with no review threshold inside
+ * it, and this lane could not
  * create one even if it wanted to: quantity is not an input to action
  * resolution anywhere in the catalog. The action is already decided before a
  * quantity exists, and the band comes from the injected capability rather than
@@ -53,8 +55,8 @@ export function MasterOfferingVariantAction({
   productName: string;
   variant: MasterOfferingVariantView;
   capability?: AcceptedExactVariantQuantityCapability | null;
-  quantity?: number;
-  onQuantityChange?: (next: number) => void;
+  quantity?: string;
+  onQuantityChange?: (next: string) => void;
   onAddToCart?: (action: Extract<MasterOfferingAction, { kind: "add_to_cart" }>, quantity: number) => void;
 }) {
   const action = variant.action;
@@ -70,61 +72,97 @@ export function MasterOfferingVariantAction({
   }
 
   if (action.kind === "add_to_cart") {
-    const chosen = quantity ?? (control.visible ? control.minimum : 1);
+    const capabilityRefusalId = `mo-capability-refusal-${variant.id}`;
+    if (!control.visible) {
+      return (
+        <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
+          <p
+            id={capabilityRefusalId}
+            className="body-s text-ink-mute min-w-0 break-words"
+            data-testid="mo-capability-refusal"
+          >
+            Direct checkout is unavailable because an approved quantity range
+            is not available for this exact variant.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary min-h-[44px]"
+            data-testid="mo-cta"
+            disabled
+            aria-describedby={capabilityRefusalId}
+            aria-label={actionName(productName, variant.label, action.label)}
+          >
+            {action.label}
+          </button>
+        </div>
+      );
+    }
+
+    const chosenText = quantity ?? String(control.minimum);
+    const chosen = /^(?:0|[1-9]\d*)$/.test(chosenText)
+      ? Number(chosenText)
+      : null;
     const quantityId = `mo-quantity-${variant.id}`;
-    // Refuse, never clamp. Silently rewriting 51 to 50 would tell the buyer
-    // they asked for something they did not. The server re-reads the quantity
+    // Refuse, never clamp. Silently rewriting an out-of-band quantity to the
+    // maximum would tell the buyer they asked for something they did not. The server re-reads the quantity
     // and remains the authority; this only stops an obviously out-of-band
     // submit from making a pointless round trip.
     const outOfBand =
-      control.visible &&
-      (!Number.isSafeInteger(chosen) ||
-        chosen < control.minimum ||
-        chosen > control.maximum);
+      chosen === null ||
+      !Number.isSafeInteger(chosen) ||
+      chosen < control.minimum ||
+      chosen > control.maximum;
+    const cartUnavailable = onAddToCart === undefined;
+    const cartRefusalId = `mo-cart-refusal-${variant.id}`;
     return (
       <div className="grid min-w-0 gap-3" data-testid="mo-variant-action">
-        {control.visible && (
-          <label className="grid min-w-0 gap-2 max-w-[12rem]" htmlFor={quantityId}>
-            <span className="form-label">
-              Quantity, {productName}, {variant.label}
+        <label className="grid min-w-0 gap-2 max-w-[12rem]" htmlFor={quantityId}>
+          <span className="form-label">
+            Quantity, {productName}, {variant.label}
+          </span>
+          <input
+            id={quantityId}
+            className="input-field"
+            type="number"
+            inputMode="numeric"
+            min={control.minimum}
+            max={control.maximum}
+            step={1}
+            value={chosenText}
+            data-testid="mo-quantity"
+            aria-invalid={outOfBand || undefined}
+            aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
+            onChange={(event) => onQuantityChange?.(event.target.value)}
+          />
+          {outOfBand && (
+            <span
+              id={`${quantityId}-band`}
+              className="body-s text-ink-mute"
+              data-testid="mo-quantity-band-note"
+            >
+              Choose between {control.minimum} and {control.maximum}.
             </span>
-            <input
-              id={quantityId}
-              className="input-field"
-              type="number"
-              inputMode="numeric"
-              min={control.minimum}
-              max={control.maximum}
-              step={1}
-              value={chosen}
-              data-testid="mo-quantity"
-              aria-invalid={outOfBand || undefined}
-              aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
-              onChange={(event) => {
-                const next = Number(event.target.value);
-                if (Number.isSafeInteger(next)) onQuantityChange?.(next);
-              }}
-            />
-            {outOfBand && (
-              <span
-                id={`${quantityId}-band`}
-                className="body-s text-ink-mute"
-                data-testid="mo-quantity-band-note"
-              >
-                Choose between {control.minimum} and {control.maximum}.
-              </span>
-            )}
-          </label>
+          )}
+        </label>
+        {cartUnavailable && (
+          <p
+            id={cartRefusalId}
+            className="body-s text-ink-mute min-w-0 break-words"
+            data-testid="mo-cart-refusal"
+          >
+            Direct checkout is not available in this view.
+          </p>
         )}
         <button
           type="button"
           className="btn btn-primary min-h-[44px]"
           data-testid="mo-cta"
-          disabled={outOfBand}
+          disabled={outOfBand || cartUnavailable}
+          aria-describedby={cartUnavailable ? cartRefusalId : undefined}
           aria-label={actionName(productName, variant.label, action.label)}
           onClick={() => {
-            if (outOfBand) return;
-            onAddToCart?.(action, chosen);
+            if (outOfBand || chosen === null || cartUnavailable) return;
+            onAddToCart(action, chosen);
           }}
         >
           {action.label}
@@ -149,10 +187,15 @@ export function MasterOfferingVariantAction({
 
 export function MasterOfferingDetail({
   product,
+  initialVariantId = null,
+  initialQuantity = null,
   capabilityFor,
   onAddToCart,
 }: {
   product: MasterOfferingDetailView;
+  /** A validated continuation hint. Fresh server data must still contain it. */
+  initialVariantId?: string | null;
+  initialQuantity?: number | null;
   /**
    * Supplied by the composition root from the accepted quantity authority. It
    * is deliberately not derivable from anything on this page.
@@ -166,25 +209,25 @@ export function MasterOfferingDetail({
   ) => void;
 }) {
   const variants = product.variants;
-  const [selectedId, setSelectedId] = useState(variants[0]?.id ?? "");
-  const [quantity, setQuantity] = useState<number | undefined>(undefined);
+  const initialVariant = variants.find((variant) => variant.id === initialVariantId);
+  const [selectedId, setSelectedId] = useState(
+    initialVariant?.id ?? variants[0]?.id ?? "",
+  );
+  const [quantity, setQuantity] = useState<string | undefined>(
+    initialVariant && initialQuantity !== null
+      ? String(initialQuantity)
+      : undefined,
+  );
 
   const selected = useMemo(
     () => variants.find((entry) => entry.id === selectedId) ?? variants[0],
     [variants, selectedId],
   );
 
-  useEffect(() => {
-    // A new variant is a new price and a new authority verdict. Carrying the
-    // previous quantity across would silently apply one variant's limit to
-    // another.
-    setQuantity(undefined);
-  }, [selectedId]);
-
   const capability = selected && capabilityFor ? capabilityFor(selected) : null;
 
   return (
-    <main className="grid min-w-0 gap-6">
+    <div className="grid min-w-0 gap-6">
       <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">{product.familyLabel}</p>
         <h1 className="display-s min-w-0 break-words">{product.displayName}</h1>
@@ -234,7 +277,12 @@ export function MasterOfferingDetail({
                       value={variant.id}
                       checked={variant.id === selected.id}
                       aria-label={`${variant.label}, ${product.displayName}, ${variant.displayLabel}`}
-                      onChange={() => setSelectedId(variant.id)}
+                      onChange={() => {
+                        // A new variant is a new price and a new authority
+                        // verdict. Never carry another variant's quantity.
+                        setSelectedId(variant.id);
+                        setQuantity(undefined);
+                      }}
                     />
                     <span className="font-700 min-w-0 break-words">{variant.label}</span>
                   </span>
@@ -281,6 +329,8 @@ export function MasterOfferingDetail({
         </section>
       )}
 
+      <CatalogEvidenceNotice />
+
       <section aria-labelledby="mo-detail-disclosures" className="grid min-w-0 gap-2">
         <h2 id="mo-detail-disclosures" className="body-l font-700">
           What this listing does and does not mean
@@ -296,7 +346,7 @@ export function MasterOfferingDetail({
           Private catalog. Not indexed, and not for redistribution.
         </ResearchSecureNotice>
       </section>
-    </main>
+    </div>
   );
 }
 

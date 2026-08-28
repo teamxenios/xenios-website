@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { MasterOfferingCatalogSurface } from "./MasterOfferingCatalogSurface";
@@ -59,7 +59,21 @@ function okPage() {
         pageSize: 24,
         total: 0,
         totalPages: 0,
+        sort: "relevance" as const,
         products: [],
+        facets: {
+          families: [
+            { value: "research_vials" as const, label: "Research Vials", count: 10 },
+            { value: "supplements" as const, label: "Supplements", count: 5 },
+          ],
+          states: [
+            { value: "available_now" as const, label: "Available Now", count: 8 },
+            { value: "coming_soon" as const, label: "Coming Soon", count: 2 },
+          ],
+          categories: [
+            { value: "peptides-research", label: "Peptides & Research", count: 9 },
+          ],
+        },
       },
     },
   };
@@ -96,14 +110,19 @@ function setValue(element: HTMLInputElement | HTMLSelectElement, value: string) 
 
 describe("catalog url state, through the real address bar", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     window.history.replaceState(null, "", CATALOG_PATH);
   });
 
-  it("restores search, family, availability, page and page size from a pasted link", async () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("restores every discovery control, page and page size from a pasted link", async () => {
     window.history.replaceState(
       null,
       "",
-      `${CATALOG_PATH}?q=bpc&families=research_vials&states=available_now&page=3&pageSize=48`,
+      `${CATALOG_PATH}?q=bpc&families=research_vials&states=available_now&categories=peptides-research&sort=availability&page=3&pageSize=48`,
     );
 
     const first = await mountFromAddressBar();
@@ -111,6 +130,8 @@ describe("catalog url state, through the real address bar", () => {
       q: "bpc",
       families: ["research_vials"],
       states: ["available_now"],
+      categories: ["peptides-research"],
+      sort: "availability",
       page: 3,
       pageSize: 48,
     };
@@ -124,6 +145,12 @@ describe("catalog url state, through the real address bar", () => {
     expect(
       first.host.querySelector<HTMLSelectElement>("#mo-catalog-state")?.value,
     ).toBe("available_now");
+    expect(
+      first.host.querySelector<HTMLSelectElement>("#mo-catalog-category")?.value,
+    ).toBe("peptides-research");
+    expect(
+      first.host.querySelector<HTMLSelectElement>("#mo-catalog-sort")?.value,
+    ).toBe("availability");
     first.unmount();
 
     // The reload: a brand new mount with nothing but the address bar.
@@ -141,15 +168,23 @@ describe("catalog url state, through the real address bar", () => {
       first.host.querySelector<HTMLSelectElement>("#mo-catalog-family");
     const state =
       first.host.querySelector<HTMLSelectElement>("#mo-catalog-state");
+    const category =
+      first.host.querySelector<HTMLSelectElement>("#mo-catalog-category");
+    const sort = first.host.querySelector<HTMLSelectElement>("#mo-catalog-sort");
     const search =
       first.host.querySelector<HTMLInputElement>("#mo-catalog-search");
-    expect(family && state && search).toBeTruthy();
+    expect(family && state && category && sort && search).toBeTruthy();
 
     if (family) setValue(family, "supplements");
     await settle();
     if (state) setValue(state, "coming_soon");
     await settle();
+    if (category) setValue(category, "peptides-research");
+    await settle();
+    if (sort) setValue(sort, "name_asc");
+    await settle();
     if (search) setValue(search, "nad");
+    act(() => vi.advanceTimersByTime(250));
     await settle();
 
     expect(window.location.pathname).toBe(CATALOG_PATH);
@@ -157,6 +192,8 @@ describe("catalog url state, through the real address bar", () => {
       q: "nad",
       families: ["supplements"],
       states: ["coming_soon"],
+      categories: ["peptides-research"],
+      sort: "name_asc",
     });
     first.unmount();
 
@@ -165,6 +202,8 @@ describe("catalog url state, through the real address bar", () => {
       q: "nad",
       families: ["supplements"],
       states: ["coming_soon"],
+      categories: ["peptides-research"],
+      sort: "name_asc",
     });
     expect(
       second.host.querySelector<HTMLSelectElement>("#mo-catalog-family")?.value,
@@ -172,6 +211,12 @@ describe("catalog url state, through the real address bar", () => {
     expect(
       second.host.querySelector<HTMLSelectElement>("#mo-catalog-state")?.value,
     ).toBe("coming_soon");
+    expect(
+      second.host.querySelector<HTMLSelectElement>("#mo-catalog-category")?.value,
+    ).toBe("peptides-research");
+    expect(
+      second.host.querySelector<HTMLSelectElement>("#mo-catalog-sort")?.value,
+    ).toBe("name_asc");
     expect(
       second.host.querySelector<HTMLInputElement>("#mo-catalog-search")?.value,
     ).toBe("nad");
@@ -190,6 +235,7 @@ describe("catalog url state, through the real address bar", () => {
     expect(search?.value).toBe("bpc");
 
     if (search) setValue(search, "");
+    act(() => vi.advanceTimersByTime(250));
     await settle();
     // Emptying the box used to hand back the query it came from, so the old
     // search stayed in the URL and in the results, and there was no way to
@@ -237,6 +283,8 @@ describe("catalog url state, through the real address bar", () => {
       q: "bpc-157",
       families: ["research_vials"] as const,
       states: ["available_now"] as const,
+      categories: ["peptides-research"],
+      sort: "name_desc" as const,
       page: 4,
       pageSize: 48,
     };

@@ -10,6 +10,7 @@ import {
   type PublicStorefrontDetail,
   type PublicStorefrontVariant,
 } from "@shared/research/storefront/contract";
+import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import {
   APPLY_HREF,
@@ -48,7 +49,12 @@ function ContinuationPanel({
   variant: PublicStorefrontVariant;
 }) {
   const wantsQuantity = intentCarriesQuantity(variant);
-  const [quantity, setQuantity] = useState(EARLY_ACCESS_MIN_QUANTITY);
+  const [quantityText, setQuantityText] = useState(
+    String(EARLY_ACCESS_MIN_QUANTITY),
+  );
+  const quantity = /^(?:0|[1-9]\d*)$/.test(quantityText)
+    ? Number(quantityText)
+    : null;
 
   const intent = useMemo(
     () =>
@@ -56,10 +62,20 @@ function ContinuationPanel({
         family: product.family,
         slug: product.slug,
         variantId: variant.id,
-        quantity: wantsQuantity ? quantity : EARLY_ACCESS_MIN_QUANTITY,
+        quantity:
+          wantsQuantity && quantity !== null
+            ? quantity
+            : EARLY_ACCESS_MIN_QUANTITY,
         action: variant.action,
       }),
-    [product.family, product.slug, variant.id, variant.action, quantity, wantsQuantity],
+    [
+      product.family,
+      product.slug,
+      variant.id,
+      variant.action,
+      quantity,
+      wantsQuantity,
+    ],
   );
 
   const label = PUBLIC_STOREFRONT_ACTION_LABELS[variant.action];
@@ -69,7 +85,7 @@ function ContinuationPanel({
       <div className="grid min-w-0 gap-3" data-testid="sf-continuation">
         <p className="body-s text-ink-mute" data-testid="sf-detail-status">
           {variant.action === "TEMPORARILY_HELD"
-            ? "This option is temporarily unavailable. Members are notified first when it returns."
+            ? "This option is temporarily unavailable. Check this catalog for any future status change."
             : "This option is not available."}
         </p>
         <div className="flex flex-wrap gap-3">
@@ -106,9 +122,11 @@ function ContinuationPanel({
 
   const quantityId = `sf-qty-${variant.id}`;
   const outOfBand =
-    !Number.isSafeInteger(quantity) ||
-    quantity < EARLY_ACCESS_MIN_QUANTITY ||
-    quantity > EARLY_ACCESS_MAX_QUANTITY;
+    wantsQuantity &&
+    (quantity === null ||
+      !Number.isSafeInteger(quantity) ||
+      quantity < EARLY_ACCESS_MIN_QUANTITY ||
+      quantity > EARLY_ACCESS_MAX_QUANTITY);
 
   return (
     <div className="grid min-w-0 gap-3" data-testid="sf-continuation">
@@ -123,16 +141,18 @@ function ContinuationPanel({
             min={EARLY_ACCESS_MIN_QUANTITY}
             max={EARLY_ACCESS_MAX_QUANTITY}
             step={1}
-            value={quantity}
+            value={quantityText}
             data-testid="sf-detail-quantity"
             aria-invalid={outOfBand || undefined}
-            onChange={(event) => {
-              const next = Number(event.target.value);
-              if (Number.isSafeInteger(next)) setQuantity(next);
-            }}
+            aria-describedby={outOfBand ? `${quantityId}-band` : undefined}
+            onChange={(event) => setQuantityText(event.target.value)}
           />
           {outOfBand && (
-            <span className="body-s text-ink-mute" data-testid="sf-qty-band">
+            <span
+              id={`${quantityId}-band`}
+              className="body-s text-ink-mute"
+              data-testid="sf-qty-band"
+            >
               Choose between {EARLY_ACCESS_MIN_QUANTITY} and{" "}
               {EARLY_ACCESS_MAX_QUANTITY}.
             </span>
@@ -140,14 +160,26 @@ function ContinuationPanel({
         </label>
       )}
 
-      <Link
-        href={signInHrefForIntent(intent)}
-        className="btn btn-primary min-h-[44px]"
-        data-testid="sf-detail-cta"
-        aria-label={`${label}, ${product.displayName}, ${variant.label}`}
-      >
-        {label}
-      </Link>
+      {outOfBand ? (
+        <button
+          type="button"
+          className="btn btn-primary min-h-[44px]"
+          data-testid="sf-detail-cta"
+          aria-label={`${label}, ${product.displayName}, ${variant.label}`}
+          disabled
+        >
+          {label}
+        </button>
+      ) : (
+        <Link
+          href={signInHrefForIntent(intent)}
+          className="btn btn-primary min-h-[44px]"
+          data-testid="sf-detail-cta"
+          aria-label={`${label}, ${product.displayName}, ${variant.label}`}
+        >
+          {label}
+        </Link>
+      )}
 
       <p className="body-s text-ink-mute max-w-[60ch]" data-testid="sf-detail-continue-note">
         You will be asked to sign in, and we will bring you straight back to
@@ -157,14 +189,14 @@ function ContinuationPanel({
       <div className="flex flex-wrap gap-3">
         <Link
           href={EARLY_ACCESS_HREF}
-          className="body-s underline text-ink-mute"
+          className="body-s inline-flex min-h-[44px] min-w-[44px] items-center underline text-ink-mute"
           data-testid="sf-detail-early-access"
         >
           Have an early access password?
         </Link>
         <Link
           href={APPLY_HREF}
-          className="body-s underline text-ink-mute"
+          className="body-s inline-flex min-h-[44px] min-w-[44px] items-center underline text-ink-mute"
           data-testid="sf-detail-apply"
         >
           Apply for membership
@@ -187,14 +219,14 @@ export function StorefrontProductPage({
   );
 
   return (
-    <main
+    <div
       className="container-x grid min-w-0 gap-6"
       style={{ paddingTop: 32, paddingBottom: 64 }}
     >
       <nav aria-label="Breadcrumb">
         <Link
           href="/research/catalog"
-          className="body-s text-ink-mute underline"
+          className="body-s inline-flex min-h-[44px] min-w-[44px] items-center text-ink-mute underline"
           data-testid="sf-back-to-catalog"
         >
           Back to catalog
@@ -278,10 +310,16 @@ export function StorefrontProductPage({
                 {publicPriceLabel(selected)}
               </p>
             </div>
-            <ContinuationPanel product={product} variant={selected} />
+            <ContinuationPanel
+              key={selected.id}
+              product={product}
+              variant={selected}
+            />
           </div>
         </section>
       )}
+
+      <CatalogEvidenceNotice />
 
       <section aria-labelledby="sf-disclosures" className="grid min-w-0 gap-2">
         <h2 id="sf-disclosures" className="body-l font-700">
@@ -298,7 +336,7 @@ export function StorefrontProductPage({
           Research materials are not for human or veterinary use.
         </ResearchSecureNotice>
       </section>
-    </main>
+    </div>
   );
 }
 

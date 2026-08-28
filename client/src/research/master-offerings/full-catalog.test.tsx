@@ -18,6 +18,9 @@ import {
   parseCatalogQueryFromSearch,
 } from "./integration-packet";
 
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
+  true;
+
 function render(ui: React.ReactElement) {
   const host = document.createElement("div");
   document.body.appendChild(host);
@@ -110,7 +113,7 @@ function page(
 }
 
 describe("full catalog page", () => {
-  it("renders one h1 and a labelled search, family, and availability control", () => {
+  it("renders one h1 and labelled discovery controls without adding a nested main", () => {
     const { host, unmount } = render(
       <FullCatalogPage query={{}} page={page()} onQueryChange={() => {}} />,
     );
@@ -118,7 +121,9 @@ describe("full catalog page", () => {
     for (const id of [
       "mo-catalog-search",
       "mo-catalog-family",
+      "mo-catalog-category",
       "mo-catalog-state",
+      "mo-catalog-sort",
     ]) {
       const control = host.querySelector(`#${id}`);
       expect(control).not.toBeNull();
@@ -126,6 +131,106 @@ describe("full catalog page", () => {
         host.querySelector(`label[for="${id}"]`)?.textContent?.trim(),
       ).toBeTruthy();
     }
+    // ResearchLayout owns the one page-level main landmark.
+    expect(host.querySelector("main")).toBeNull();
+    const mobileToggle = host.querySelector<HTMLButtonElement>(
+      '[data-testid="mo-filter-toggle"]',
+    );
+    expect(mobileToggle?.getAttribute("aria-controls")).toBe(
+      "mo-catalog-filter-fields",
+    );
+    expect(mobileToggle?.getAttribute("aria-expanded")).toBe("false");
+    act(() => mobileToggle?.click());
+    expect(mobileToggle?.getAttribute("aria-expanded")).toBe("true");
+    expect(host.textContent).toContain(
+      "direct checkout, a request, Care, updates, or no current action",
+    );
+    expect(host.textContent).not.toContain(
+      "Anything without direct checkout can still be requested",
+    );
+    unmount();
+  });
+
+  it("renders server-owned category facets with counts and resets paging on selection", () => {
+    const onQueryChange = vi.fn();
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{ page: 2 }}
+        page={page({
+          facets: {
+            families: [
+              { value: "research_vials", label: "Research Vials", count: 12 },
+            ],
+            states: [
+              { value: "available_now", label: "Available Now", count: 7 },
+            ],
+            categories: [
+              { value: "peptides-research", label: "Peptides & Research", count: 9 },
+            ],
+          },
+        })}
+        onQueryChange={onQueryChange}
+      />,
+    );
+
+    expect(
+      host.querySelector<HTMLOptionElement>(
+        '#mo-catalog-category option[value="peptides-research"]',
+      )?.textContent,
+    ).toBe("Peptides & Research (9)");
+    expect(
+      host.querySelector<HTMLOptionElement>(
+        '#mo-catalog-family option[value="research_vials"]',
+      )?.textContent,
+    ).toBe("Research Vials (12)");
+
+    const category = host.querySelector<HTMLSelectElement>("#mo-catalog-category");
+    if (category) {
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLSelectElement.prototype,
+        "value",
+      )?.set;
+      setter?.call(category, "peptides-research");
+      act(() => category.dispatchEvent(new Event("change", { bubbles: true })));
+    }
+    expect(onQueryChange).toHaveBeenCalledWith({
+      categories: ["peptides-research"],
+    });
+    unmount();
+  });
+
+  it("clears filters and a non-default sort in one explicit action", () => {
+    const onQueryChange = vi.fn();
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{
+          q: "bpc",
+          categories: ["peptides-research"],
+          sort: "name_desc",
+          page: 2,
+        }}
+        page={page({
+          sort: "name_desc",
+          facets: {
+            families: [],
+            states: [],
+            categories: [
+              { value: "peptides-research", label: "Peptides & Research", count: 9 },
+            ],
+          },
+        })}
+        onQueryChange={onQueryChange}
+      />,
+    );
+    expect(
+      host.querySelector('[data-testid="mo-active-filter-count"]')?.textContent,
+    ).toBe("2 active filters");
+    const clear = host.querySelector<HTMLButtonElement>(
+      '[data-testid="mo-clear-filters"]',
+    );
+    expect(clear?.disabled).toBe(false);
+    act(() => clear?.click());
+    expect(onQueryChange).toHaveBeenCalledWith({});
     unmount();
   });
 
@@ -181,7 +286,7 @@ describe("full catalog page", () => {
       />,
     );
     // The card renders the server-resolved action and nothing stronger: a
-    // planned variant gets its request path, never a Buy button and never a
+    // planned variant gets its updates path, never a Buy button and never a
     // zero standing in for a missing price.
     expect(host.textContent).not.toContain("Add to Cart");
     expect(host.textContent).not.toContain("Buy Now");
@@ -194,6 +299,81 @@ describe("full catalog page", () => {
     expect(
       host.querySelector('[data-testid="mo-card-price"]')?.textContent,
     ).toBe("Price on request");
+    unmount();
+  });
+
+  it("keeps Care, planned, notification-only, and no-action paths distinct", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{}}
+        page={page({
+          products: [
+            card({
+              variantCount: 4,
+              variants: [
+                {
+                  id: "mov_care",
+                  label: "Care option",
+                  displayState: "care_pathway",
+                  displayLabel: "Care Pathway",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "explore_care",
+                    label: "Explore Care",
+                    href: "/research/member/metabolic-care",
+                  },
+                },
+                {
+                  id: "mov_planned",
+                  label: "Planned option",
+                  displayState: "planned",
+                  displayLabel: "Planned",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "get_updates",
+                    label: "Get Updates",
+                    href: "/research/member/product-updates",
+                  },
+                },
+                {
+                  id: "mov_notify",
+                  label: "Notification option",
+                  displayState: "coming_soon",
+                  displayLabel: "Coming Soon",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: {
+                    kind: "notify_me",
+                    label: "Notify Me",
+                    href: "/research/member/product-updates",
+                  },
+                },
+                {
+                  id: "mov_none",
+                  label: "Unavailable option",
+                  displayState: "unavailable",
+                  displayLabel: "Unavailable",
+                  price: MASTER_OFFERING_PRICE_ON_REQUEST,
+                  action: { kind: "none", label: null, href: null },
+                },
+              ],
+            }),
+          ],
+        })}
+        onQueryChange={() => {}}
+      />,
+    );
+    const rows = Array.from(
+      host.querySelectorAll<HTMLElement>('[data-testid="mo-variant-row"]'),
+    );
+    expect(rows[0]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Explore Care");
+    expect(rows[1]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Get Updates");
+    expect(rows[2]?.querySelector('[data-testid="mo-card-action"]')?.textContent)
+      .toBe("Notify Me");
+    expect(rows[3]?.querySelector('[data-testid="mo-card-action"]')).toBeNull();
+    expect(rows[3]?.querySelector('[data-testid="mo-card-no-action"]')?.textContent)
+      .toBe("Not available");
     unmount();
   });
 
@@ -303,37 +483,48 @@ describe("full catalog page", () => {
     unmount();
   });
 
-  it("pages forward and resets the page when the search changes", () => {
-    const onQueryChange = vi.fn();
-    const { host, unmount } = render(
-      <FullCatalogPage
-        query={{ page: 2 }}
-        page={page({ page: 2, totalPages: 3, total: 60 })}
-        onQueryChange={onQueryChange}
-      />,
-    );
-    expect(
-      host.querySelector('[data-testid="mo-page-position"]')?.textContent,
-    ).toBe("Page 2 of 3");
-    const next = Array.from(host.querySelectorAll("button")).find(
-      (button) => button.textContent === "Next page",
-    );
-    act(() => next?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
-    expect(onQueryChange).toHaveBeenCalledWith({ page: 3 });
-
-    const search = host.querySelector<HTMLInputElement>("#mo-catalog-search");
-    if (search) {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        "value",
-      )?.set;
-      setter?.call(search, "bpc");
-      act(() =>
-        search.dispatchEvent(new Event("input", { bubbles: true })),
+  it("pages forward and debounces search into a replace-style callback", () => {
+    vi.useFakeTimers();
+    try {
+      const onQueryChange = vi.fn();
+      const onSearchChange = vi.fn();
+      const { host, unmount } = render(
+        <FullCatalogPage
+          query={{ page: 2 }}
+          page={page({ page: 2, totalPages: 3, total: 60 })}
+          onQueryChange={onQueryChange}
+          onSearchChange={onSearchChange}
+        />,
       );
+      expect(
+        host.querySelector('[data-testid="mo-page-position"]')?.textContent,
+      ).toBe("Page 2 of 3");
+      const next = Array.from(host.querySelectorAll("button")).find(
+        (button) => button.textContent === "Next page",
+      );
+      act(() => next?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+      expect(onQueryChange).toHaveBeenCalledWith({ page: 3 });
+
+      const search = host.querySelector<HTMLInputElement>("#mo-catalog-search");
+      if (search) {
+        const setter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          "value",
+        )?.set;
+        setter?.call(search, "bpc");
+        act(() =>
+          search.dispatchEvent(new Event("input", { bubbles: true })),
+        );
+      }
+      expect(onSearchChange).not.toHaveBeenCalled();
+      act(() => vi.advanceTimersByTime(249));
+      expect(onSearchChange).not.toHaveBeenCalled();
+      act(() => vi.advanceTimersByTime(1));
+      expect(onSearchChange).toHaveBeenCalledWith({ q: "bpc" });
+      unmount();
+    } finally {
+      vi.useRealTimers();
     }
-    expect(onQueryChange).toHaveBeenLastCalledWith({ q: "bpc" });
-    unmount();
   });
 
   it("shows an empty state rather than a blank grid", () => {
@@ -358,6 +549,8 @@ describe("catalog url state", () => {
       q: "bpc",
       families: ["research_vials"] as const,
       states: ["available_now"] as const,
+      categories: ["peptides-research"],
+      sort: "availability" as const,
       page: 3,
     };
     expect(parseCatalogQueryFromSearch(catalogQueryToSearch(query))).toEqual(

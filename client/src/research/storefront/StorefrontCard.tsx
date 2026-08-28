@@ -66,7 +66,7 @@ export function StorefrontCard({ product }: { product: CardView }) {
             </p>
             <h3 id={headingId} className="body-l font-700 mt-1 min-w-0 break-words">
               <Link
-                className="underline-offset-4 hover:underline"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center underline-offset-4 hover:underline"
                 href={href}
                 data-testid="sf-card-link"
               >

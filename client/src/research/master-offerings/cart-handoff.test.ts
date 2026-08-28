@@ -13,6 +13,8 @@ const BAND: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-13T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -59,15 +61,27 @@ describe("catalog to cart handoff", () => {
     });
   });
 
-  it("refuses an add_to_cart whose SKU arrived blank rather than guessing one", () => {
-    // The server validates the selection SKU non-blank before it can emit
-    // add_to_cart, so a blank one is a malformed wire value. The handoff
-    // refuses it; it never substitutes a variant id or an empty string the
-    // SKU-keyed cart would misread.
-    for (const sku of ["", "   "]) {
-      expect(
-        buildCatalogCartRequest({ ...ADD_TO_CART, sku }, 1, BAND),
-      ).toEqual({ ok: false, reason: "not_purchasable" });
+  it("refuses malformed browser action identity without throwing", () => {
+    const malformed = [
+      { ...ADD_TO_CART, sku: "" },
+      { ...ADD_TO_CART, sku: "   " },
+      { ...ADD_TO_CART, sku: undefined },
+      { ...ADD_TO_CART, evaluatedAt: "not-an-instant" },
+      { ...ADD_TO_CART, evaluatedAt: "2026-02-30T12:00:00.000Z" },
+      { ...ADD_TO_CART, evaluatedAt: undefined },
+      { ...ADD_TO_CART, kind: "add-to-basket" },
+      { ...ADD_TO_CART, amount: null },
+      { ...ADD_TO_CART, amount: { amountCents: 0, currency: "USD" } },
+      { ...ADD_TO_CART, amount: { amountCents: 9900, currency: "" } },
+    ];
+    for (const action of malformed) {
+      expect(() =>
+        buildCatalogCartRequest(action as never, 1, BAND),
+      ).not.toThrow();
+      expect(buildCatalogCartRequest(action as never, 1, BAND)).toEqual({
+        ok: false,
+        reason: "not_purchasable",
+      });
     }
   });
 
@@ -124,7 +138,7 @@ describe("catalog to cart handoff", () => {
     });
   });
 
-  it("refuses when no accepted capability names the exact variant", () => {
+  it("refuses when no accepted capability names the exact action identity", () => {
     expect(buildCatalogCartRequest(ADD_TO_CART, 5, null)).toEqual({
       ok: false,
       reason: "quantity_unauthorized",
@@ -133,6 +147,24 @@ describe("catalog to cart handoff", () => {
       buildCatalogCartRequest(ADD_TO_CART, 5, {
         ...BAND,
         variantId: "pc_variant_other",
+      }),
+    ).toEqual({ ok: false, reason: "quantity_unauthorized" });
+    expect(
+      buildCatalogCartRequest(ADD_TO_CART, 5, {
+        ...BAND,
+        sku: "XEN-BPC-20",
+      }),
+    ).toEqual({ ok: false, reason: "quantity_unauthorized" });
+    expect(
+      buildCatalogCartRequest(ADD_TO_CART, 5, {
+        ...BAND,
+        sku: undefined,
+      } as never),
+    ).toEqual({ ok: false, reason: "quantity_unauthorized" });
+    expect(
+      buildCatalogCartRequest(ADD_TO_CART, 5, {
+        ...BAND,
+        evaluatedAt: "2026-08-13T12:00:01.000Z",
       }),
     ).toEqual({ ok: false, reason: "quantity_unauthorized" });
   });

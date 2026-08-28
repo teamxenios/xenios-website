@@ -51,6 +51,8 @@ const BAND_1_50: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-13T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -215,6 +217,30 @@ describe("quantity 1 through 50", () => {
     expect(
       host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')?.value,
     ).toBe("51");
+    unmount();
+  });
+
+  it("refuses blank and fractional input without coercing either value", () => {
+    const onAddToCart = vi.fn();
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail()}
+        capabilityFor={() => BAND_1_50}
+        onAddToCart={onAddToCart}
+      />,
+    );
+    for (const value of ["", "1.5"]) {
+      typeQuantity(host, value);
+      const input = host.querySelector<HTMLInputElement>(
+        '[data-testid="mo-quantity"]',
+      );
+      const cta = host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]');
+      expect(input?.value).toBe(value);
+      expect(input?.getAttribute("aria-invalid")).toBe("true");
+      expect(cta?.disabled).toBe(true);
+      act(() => cta?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    }
+    expect(onAddToCart).not.toHaveBeenCalled();
     unmount();
   });
 

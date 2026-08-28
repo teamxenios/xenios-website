@@ -20,7 +20,11 @@ function render(ui: React.ReactElement) {
   document.body.appendChild(host);
   const root = createRoot(host);
   act(() => root.render(ui));
-  return { host, unmount: () => act(() => root.unmount()) };
+  return {
+    host,
+    rerender: (next: React.ReactElement) => act(() => root.render(next)),
+    unmount: () => act(() => root.unmount()),
+  };
 }
 
 async function settle() {
@@ -35,10 +39,23 @@ function click(element: Element | null | undefined) {
   act(() => element?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
 }
 
+function typeQuantity(host: HTMLElement, value: string) {
+  const input = host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]');
+  const setter = Object.getOwnPropertyDescriptor(
+    window.HTMLInputElement.prototype,
+    "value",
+  )?.set;
+  if (!input) throw new Error("no quantity control rendered");
+  setter?.call(input, value);
+  act(() => input.dispatchEvent(new Event("input", { bubbles: true })));
+}
+
 const BAND: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-13T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -286,9 +303,9 @@ describe("detail surface", () => {
   });
 
   it("tells the truth when the cart answers commerce_disabled", async () => {
-    // No fake success and no "try again" lie: the cart is off, the request
-    // path still works, and the copy says exactly that. Routed on the machine
-    // code, never on a message.
+    // No fake success, no "try again" lie, and no invented request path: the
+    // cart is off and the copy says exactly that. Routed on the machine code,
+    // never on a message.
     const cart: ExistingCart = {
       addExactVariant: async () => ({ ok: false, code: "commerce_disabled" }),
     };
@@ -307,7 +324,7 @@ describe("detail surface", () => {
     await settle();
     const refusal = host.querySelector('[data-testid="mo-add-refusal"]');
     expect(refusal?.textContent).toBe(
-      "Direct checkout is not enabled yet. This variant can still be requested through the request option.",
+      "Direct checkout is not enabled.",
     );
     expect(refusal?.textContent).not.toContain("commerce_disabled");
     // The button is not dead: it remains enabled for a retry after the state
@@ -346,7 +363,7 @@ describe("detail surface", () => {
     unmount();
   });
 
-  it("shows no cart affordance at all when no cart is injected", async () => {
+  it("disables the cart affordance when no cart is injected", async () => {
     const { host, unmount } = render(
       <MasterOfferingDetailSurface
         memberToken="token"
@@ -357,9 +374,95 @@ describe("detail surface", () => {
       />,
     );
     await settle();
-    click(host.querySelector('[data-testid="mo-cta"]'));
-    await settle();
+    const cta = host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]');
+    expect(cta?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="mo-cart-refusal"]')).not.toBeNull();
+    click(cta);
     expect(host.querySelector('[data-testid="mo-add-refusal"]')).toBeNull();
+    unmount();
+  });
+
+  it("resets quantity when navigation replaces the exact product identity", async () => {
+    function responseFor(
+      slug: string,
+      displayName: string,
+      productId: string,
+      variantId: string,
+    ): ApiResult<MasterOfferingCatalogDetailResponse> {
+      const response = detailResponse({
+        ...ADD_TO_CART,
+        productId,
+        variantId,
+      });
+      if (response.kind !== "ok" || response.data?.ok !== true) return response;
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          product: {
+            ...response.data.product,
+            id: `mo_${slug}`,
+            slug,
+            displayName,
+            canonicalName: displayName,
+          },
+        },
+      };
+    }
+
+    const fetchDetail = vi.fn(
+      async (_token: string | null, _family: string, slug: string) =>
+        slug === "second-product"
+          ? responseFor("second-product", "Second Product", "pc_product_2", "pc_variant_2")
+          : responseFor("first-product", "First Product", "pc_product_1", "pc_variant_1"),
+    );
+    const capabilityFor = (
+      entry: Parameters<NonNullable<Parameters<typeof MasterOfferingDetailSurface>[0]["capabilityFor"]>>[0],
+    ) => {
+      const action = entry.action;
+      return action.kind === "add_to_cart"
+        ? {
+            ...BAND,
+            productId: action.productId,
+            variantId: action.variantId,
+            sku: action.sku,
+            evaluatedAt: action.evaluatedAt,
+          }
+        : null;
+    };
+    const cart = createCatalogCartHandoff(recordingCart());
+    const first = (
+      <MasterOfferingDetailSurface
+        memberToken="token"
+        family="research_vials"
+        slug="first-product"
+        fetchDetail={fetchDetail as never}
+        capabilityFor={capabilityFor}
+        cart={cart}
+      />
+    );
+    const { host, rerender, unmount } = render(first);
+    await settle();
+    typeQuantity(host, "7");
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')?.value,
+    ).toBe("7");
+
+    rerender(
+      <MasterOfferingDetailSurface
+        memberToken="token"
+        family="research_vials"
+        slug="second-product"
+        fetchDetail={fetchDetail as never}
+        capabilityFor={capabilityFor}
+        cart={cart}
+      />,
+    );
+    await settle();
+    expect(host.querySelector("h1")?.textContent).toBe("Second Product");
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')?.value,
+    ).toBe("1");
     unmount();
   });
 

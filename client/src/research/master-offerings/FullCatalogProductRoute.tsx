@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useLocation, useParams } from "wouter";
+import { useLocation, useParams, useSearch } from "wouter";
 import {
   isMasterOfferingFamily,
   type MasterOfferingVariantView,
@@ -12,13 +12,17 @@ import { addCartLine } from "../adapters/commerce";
 import { useResearch } from "../core";
 import { MEMBER_ROUTES } from "../lib/routes";
 import { ResearchEmptyState } from "../ui/kit";
+import { preselectionFromSearch } from "../storefront/entry-intent";
 import { MASTER_OFFERING_STATE_COPY } from "./catalogApi";
 import {
   createCatalogCartHandoff,
   type CatalogCartHandoff,
   type ExistingCart,
 } from "./catalog-cart-handoff";
-import type { AcceptedExactVariantQuantityCapability } from "./integration-packet";
+import {
+  isRuntimeAddToCartAction,
+  type AcceptedExactVariantQuantityCapability,
+} from "./integration-packet";
 import { MasterOfferingDetailSurface } from "./MasterOfferingDetailSurface";
 
 /**
@@ -32,19 +36,22 @@ const FOUNDER_QUANTITY_SOURCE_VERSION = `early-access-quantity:${EARLY_ACCESS_MI
 
 /**
  * The accepted exact-variant quantity capability for one server-resolved
- * purchase action. Only `add_to_cart` has one, and its identity is copied from
- * the action the server emitted, so the capability can never name a variant
- * the server did not authorize.
+ * purchase action. Only a runtime-valid `add_to_cart` has one, and its product,
+ * variant, SKU, and evaluation instant are copied from the browser-safe action
+ * the server emitted. This is quantity-policy correlation, not activation
+ * authority; durable activation evidence never enters the browser.
  */
 export function founderQuantityCapabilityFor(
   variant: MasterOfferingVariantView,
 ): AcceptedExactVariantQuantityCapability | null {
   const action = variant.action;
-  if (action.kind !== "add_to_cart") return null;
+  if (!isRuntimeAddToCartAction(action)) return null;
   return {
     source: "accepted_quantity_policy",
     productId: action.productId,
     variantId: action.variantId,
+    sku: action.sku,
+    evaluatedAt: action.evaluatedAt,
     minimum: EARLY_ACCESS_MIN_QUANTITY,
     maximum: EARLY_ACCESS_MAX_QUANTITY,
     aggregateMaximum: EARLY_ACCESS_MAX_QUANTITY,
@@ -115,6 +122,7 @@ export default function FullCatalogProductRoute() {
   }>();
   const { memberToken } = useResearch();
   const [, navigate] = useLocation();
+  const search = useSearch();
 
   // One handoff per member session on this page: the in-flight set inside it
   // is what turns a double click into one add, so it must not be rebuilt on
@@ -123,13 +131,18 @@ export default function FullCatalogProductRoute() {
     () => createCatalogCartHandoff(createMemberCartAdapter(memberToken)),
     [memberToken],
   );
+  const preselection = useMemo(
+    () =>
+      preselectionFromSearch(search),
+    [search],
+  );
 
   if (!isMasterOfferingFamily(family) || slug.trim() === "") {
     const copy = MASTER_OFFERING_STATE_COPY.not_found;
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <ResearchEmptyState title={copy.title} body={copy.body} />
-      </main>
+      </div>
     );
   }
 
@@ -138,6 +151,8 @@ export default function FullCatalogProductRoute() {
       memberToken={memberToken}
       family={family}
       slug={slug}
+      initialVariantId={preselection.variantId}
+      initialQuantity={preselection.quantity}
       cart={cart}
       capabilityFor={founderQuantityCapabilityFor}
       // A successful add lands the member on the existing cart page, where the

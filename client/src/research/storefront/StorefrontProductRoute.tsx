@@ -50,7 +50,7 @@ function NotAvailable({
 }) {
   const copy = PUBLIC_STOREFRONT_STATE_COPY[state];
   return (
-    <main
+    <div
       className="container-x grid min-w-0 gap-6"
       style={{ paddingTop: 48, paddingBottom: 64 }}
     >
@@ -86,7 +86,7 @@ function NotAvailable({
           </div>
         }
       />
-    </main>
+    </div>
   );
 }
 

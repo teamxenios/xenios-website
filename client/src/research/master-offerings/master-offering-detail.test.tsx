@@ -94,6 +94,8 @@ const CAPABILITY: AcceptedExactVariantQuantityCapability = {
   source: "accepted_quantity_policy",
   productId: "pc_product_1",
   variantId: "pc_variant_1",
+  sku: "XEN-BPC-10",
+  evaluatedAt: "2026-08-12T12:00:00.000Z",
   minimum: 1,
   maximum: 50,
   aggregateMaximum: 50,
@@ -111,7 +113,7 @@ const ADD_TO_CART = {
 } as const;
 
 describe("master offering detail", () => {
-  it("renders one h1 and exactly one CTA for the selected variant", () => {
+  it("renders one h1 and exactly one CTA without adding a nested main", () => {
     const { host, unmount } = render(
       <MasterOfferingDetail
         product={detail({
@@ -126,6 +128,25 @@ describe("master offering detail", () => {
     expect(host.querySelectorAll("h1")).toHaveLength(1);
     expect(host.querySelectorAll('[data-testid="mo-cta"]')).toHaveLength(1);
     expect(host.querySelectorAll('input[type="radio"]')).toHaveLength(3);
+    expect(host.querySelector("main")).toBeNull();
+    unmount();
+  });
+
+  it("states the catalog evidence boundary without inventing documents or storage", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail product={detail()} />,
+    );
+    const evidence = host.querySelector('[data-testid="catalog-evidence-notice"]');
+    expect(evidence?.textContent).toContain(
+      "This catalog view does not publish product-specific documents.",
+    );
+    expect(evidence?.textContent).toContain(
+      "No lot-specific COA is attached to this catalog view.",
+    );
+    expect(evidence?.textContent).toContain(
+      "no approved product-specific storage statement",
+    );
+    expect(evidence?.textContent).not.toMatch(/\b(2–8|2-8|refrigerat|freeze)\b/i);
     unmount();
   });
 
@@ -173,33 +194,70 @@ describe("master offering detail", () => {
     unmount();
   });
 
-  it("shows the quantity control only when the capability matches the exact identity", () => {
+  it("keeps add-to-cart disabled for absent, mismatched, or malformed capabilities", () => {
     const purchasable = detail({
       variants: [variant({ action: ADD_TO_CART })],
     });
+    const onAddToCart = vi.fn();
 
-    const without = render(<MasterOfferingDetail product={purchasable} />);
-    expect(without.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
-    expect(without.host.querySelector('[data-testid="mo-cta"]')?.textContent).toBe(
-      "Add to Cart",
-    );
-    without.unmount();
-
-    const mismatched = render(
+    const without = render(
       <MasterOfferingDetail
         product={purchasable}
-        capabilityFor={() => ({ ...CAPABILITY, variantId: "pc_variant_other" })}
+        onAddToCart={onAddToCart}
       />,
     );
+    expect(without.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
+    const absentCta = without.host.querySelector<HTMLButtonElement>(
+      '[data-testid="mo-cta"]',
+    );
+    expect(absentCta?.textContent).toBe("Add to Cart");
+    expect(absentCta?.disabled).toBe(true);
     expect(
-      mismatched.host.querySelector('[data-testid="mo-quantity"]'),
-    ).toBeNull();
-    mismatched.unmount();
+      without.host.querySelector('[data-testid="mo-capability-refusal"]')
+        ?.textContent,
+    ).toContain("approved quantity range");
+    click(absentCta);
+    expect(onAddToCart).not.toHaveBeenCalled();
+    without.unmount();
+
+    const refusedCapabilities = [
+      { ...CAPABILITY, productId: "pc_product_other" },
+      { ...CAPABILITY, variantId: "pc_variant_other" },
+      { ...CAPABILITY, sku: "XEN-BPC-20" },
+      { ...CAPABILITY, evaluatedAt: "2026-08-12T12:00:01.000Z" },
+      { ...CAPABILITY, sku: "" },
+      { ...CAPABILITY, sku: undefined },
+      { ...CAPABILITY, evaluatedAt: "not-an-instant" },
+      { ...CAPABILITY, evaluatedAt: undefined },
+      { ...CAPABILITY, minimum: 0 },
+      { ...CAPABILITY, maximum: 0 },
+      { ...CAPABILITY, aggregateMaximum: 49 },
+      { ...CAPABILITY, sourceVersion: null },
+      { ...CAPABILITY, sourceVersion: "   " },
+    ];
+    for (const refusedCapability of refusedCapabilities) {
+      const refused = render(
+        <MasterOfferingDetail
+          product={purchasable}
+          capabilityFor={() => refusedCapability as never}
+          onAddToCart={onAddToCart}
+        />,
+      );
+      expect(refused.host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
+      const refusedCta = refused.host.querySelector<HTMLButtonElement>(
+        '[data-testid="mo-cta"]',
+      );
+      expect(refusedCta?.disabled).toBe(true);
+      click(refusedCta);
+      expect(onAddToCart).not.toHaveBeenCalled();
+      refused.unmount();
+    }
 
     const matched = render(
       <MasterOfferingDetail
         product={purchasable}
         capabilityFor={() => CAPABILITY}
+        onAddToCart={() => undefined}
       />,
     );
     const quantity = matched.host.querySelector<HTMLInputElement>(
@@ -208,7 +266,69 @@ describe("master offering detail", () => {
     expect(quantity?.getAttribute("min")).toBe("1");
     expect(quantity?.getAttribute("max")).toBe("50");
     expect(quantity?.value).toBe("1");
+    expect(
+      matched.host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]')
+        ?.disabled,
+    ).toBe(false);
     matched.unmount();
+  });
+
+  it("keeps malformed browser purchase actions disabled without throwing", () => {
+    const onAddToCart = vi.fn();
+    const refusedActions = [
+      { ...ADD_TO_CART, sku: "" },
+      { ...ADD_TO_CART, sku: " XEN-BPC-10" },
+      { ...ADD_TO_CART, sku: undefined },
+      { ...ADD_TO_CART, evaluatedAt: "not-an-instant" },
+      { ...ADD_TO_CART, evaluatedAt: "2026-02-30T12:00:00.000Z" },
+      { ...ADD_TO_CART, evaluatedAt: undefined },
+      { ...ADD_TO_CART, label: "Buy now" },
+      { ...ADD_TO_CART, amount: null },
+      { ...ADD_TO_CART, amount: { amountCents: 0, currency: "USD" } },
+      { ...ADD_TO_CART, amount: { amountCents: 9900, currency: "" } },
+    ];
+
+    for (const action of refusedActions) {
+      let rendered!: ReturnType<typeof render>;
+      expect(() => {
+        rendered = render(
+          <MasterOfferingDetail
+            product={detail({
+              variants: [variant({ action: action as never })],
+            })}
+            capabilityFor={() => CAPABILITY}
+            onAddToCart={onAddToCart}
+          />,
+        );
+      }).not.toThrow();
+      expect(
+        rendered.host.querySelector('[data-testid="mo-quantity"]'),
+      ).toBeNull();
+      const cta = rendered.host.querySelector<HTMLButtonElement>(
+        '[data-testid="mo-cta"]',
+      );
+      expect(cta?.disabled).toBe(true);
+      click(cta ?? null);
+      expect(onAddToCart).not.toHaveBeenCalled();
+      rendered.unmount();
+    }
+  });
+
+  it("keeps a valid quantity selection disabled when no cart handoff exists", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail({ variants: [variant({ action: ADD_TO_CART })] })}
+        capabilityFor={() => CAPABILITY}
+      />,
+    );
+    expect(host.querySelector('[data-testid="mo-quantity"]')).not.toBeNull();
+    expect(
+      host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]')?.disabled,
+    ).toBe(true);
+    expect(
+      host.querySelector('[data-testid="mo-cart-refusal"]')?.textContent,
+    ).toContain("not available in this view");
+    unmount();
   });
 
   it("hands the server action and the chosen quantity back untouched", () => {
@@ -266,6 +386,66 @@ describe("master offering detail", () => {
     // The second variant's own minimum, not the seven the buyer typed for the
     // first one.
     expect(quantity()?.value).toBe("2");
+    unmount();
+  });
+
+  it("restores a validated exact-variant and quantity continuation", () => {
+    const secondAction = {
+      ...ADD_TO_CART,
+      variantId: "pc_variant_2",
+      sku: "XEN-BPC-20",
+    } as const;
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail({
+          variants: [
+            variant({ action: ADD_TO_CART }),
+            variant({ id: "mov_b", label: "10 mg vial", action: secondAction }),
+          ],
+        })}
+        initialVariantId="mov_b"
+        initialQuantity={37}
+        capabilityFor={(entry) =>
+          entry.id === "mov_b"
+            ? {
+                ...CAPABILITY,
+                variantId: "pc_variant_2",
+                sku: secondAction.sku,
+                evaluatedAt: secondAction.evaluatedAt,
+                maximum: 100,
+                aggregateMaximum: 100,
+              }
+            : CAPABILITY
+        }
+      />,
+    );
+    expect(
+      host.querySelector<HTMLInputElement>('#mo-variant-mov_b')?.checked,
+    ).toBe(true);
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')?.value,
+    ).toBe("37");
+    expect(
+      host.querySelector('[data-testid="mo-selected-variant"]')?.textContent,
+    ).toContain("10 mg vial");
+    unmount();
+  });
+
+  it("ignores a continuation variant that is absent from the fresh DTO", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail({ variants: [variant({ action: ADD_TO_CART })] })}
+        initialVariantId="mov_missing"
+        initialQuantity={37}
+        capabilityFor={() => CAPABILITY}
+      />,
+    );
+    expect(
+      host.querySelector<HTMLInputElement>('#mo-variant-mov_a')?.checked,
+    ).toBe(true);
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')?.value,
+    ).toBe("1");
     unmount();
   });
 

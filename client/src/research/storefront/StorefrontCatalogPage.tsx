@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   MASTER_OFFERING_FAMILY_LABELS,
@@ -15,6 +15,7 @@ import { ResearchEmptyState } from "../ui/kit";
 import { StorefrontCard } from "./StorefrontCard";
 
 const ALL = "all";
+const SEARCH_DEBOUNCE_MS = 250;
 
 /**
  * Search, category, and sort for the public catalog.
@@ -29,32 +30,93 @@ export function StorefrontControls({
   query,
   page,
   onChange,
+  onSearchChange,
 }: {
   query: MasterOfferingCatalogQuery;
   page: PublicStorefrontPage;
   onChange: (next: MasterOfferingCatalogQuery) => void;
+  onSearchChange?: (next: MasterOfferingCatalogQuery) => void;
 }) {
   const family = query.families?.[0] ?? ALL;
   const category = query.categories?.[0] ?? ALL;
   const sort = query.sort ?? ALL;
+  const [searchDraft, setSearchDraft] = useState(query.q ?? "");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const queryRef = useRef(query);
+  const searchCallbackRef = useRef(onSearchChange ?? onChange);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  queryRef.current = query;
+  searchCallbackRef.current = onSearchChange ?? onChange;
+
+  useEffect(() => {
+    if (searchTimer.current !== null) {
+      clearTimeout(searchTimer.current);
+      searchTimer.current = null;
+    }
+    setSearchDraft(query.q ?? "");
+  }, [query]);
+
+  useEffect(
+    () => () => {
+      if (searchTimer.current !== null) clearTimeout(searchTimer.current);
+    },
+    [],
+  );
+
+  function cancelPendingSearch() {
+    if (searchTimer.current !== null) {
+      clearTimeout(searchTimer.current);
+      searchTimer.current = null;
+    }
+  }
+
+  function currentQueryWithDraft(): MasterOfferingCatalogQuery {
+    const { page: _page, q: _q, ...rest } = queryRef.current;
+    const q = searchDraft.trim().slice(0, 160);
+    return q ? { ...rest, q } : rest;
+  }
+
+  function scheduleSearch(value: string) {
+    const bounded = value.slice(0, 160);
+    setSearchDraft(bounded);
+    cancelPendingSearch();
+    searchTimer.current = setTimeout(() => {
+      const { page: _page, q: _q, ...rest } = queryRef.current;
+      const q = bounded.trim();
+      searchCallbackRef.current(q ? { ...rest, q } : rest);
+      searchTimer.current = null;
+    }, SEARCH_DEBOUNCE_MS);
+  }
 
   return (
-    <div className="card grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="card grid min-w-0 gap-4" data-testid="sf-controls">
+      <button
+        type="button"
+        className="btn btn-secondary min-h-[44px] md:hidden"
+        aria-expanded={filtersOpen}
+        aria-controls="sf-filter-fields"
+        data-testid="sf-filter-toggle"
+        onClick={() => setFiltersOpen((current) => !current)}
+      >
+        {filtersOpen ? "Hide filters" : "Show filters"}
+      </button>
+
+      <div
+        id="sf-filter-fields"
+        className={`${filtersOpen ? "grid" : "hidden"} min-w-0 gap-4 md:grid md:grid-cols-2 xl:grid-cols-4`}
+      >
       <label className="grid min-w-0 gap-2" htmlFor="sf-search">
         <span className="form-label">Search</span>
         <input
           id="sf-search"
-          className="input-field"
+          className="input-field min-h-[44px]"
           type="search"
           maxLength={160}
-          value={query.q ?? ""}
+          value={searchDraft}
           placeholder="Product or strength"
           data-testid="sf-search"
-          onChange={(event) => {
-            const q = event.target.value;
-            const { page: _page, q: _q, ...rest } = query;
-            onChange(q.trim() ? { ...rest, q } : rest);
-          }}
+          onChange={(event) => scheduleSearch(event.target.value)}
         />
       </label>
 
@@ -62,12 +124,13 @@ export function StorefrontControls({
         <span className="form-label">Category</span>
         <select
           id="sf-family"
-          className="input-field"
+          className="input-field min-h-[44px]"
           value={family}
           data-testid="sf-family"
           onChange={(event) => {
+            cancelPendingSearch();
             const value = event.target.value;
-            const { page: _page, families: _families, ...rest } = query;
+            const { families: _families, ...rest } = currentQueryWithDraft();
             onChange(
               isMasterOfferingFamily(value)
                 ? { ...rest, families: [value as MasterOfferingFamily] }
@@ -91,12 +154,13 @@ export function StorefrontControls({
         <span className="form-label">Type</span>
         <select
           id="sf-category"
-          className="input-field"
+          className="input-field min-h-[44px]"
           value={category}
           data-testid="sf-category"
           onChange={(event) => {
+            cancelPendingSearch();
             const value = event.target.value;
-            const { page: _page, categories: _categories, ...rest } = query;
+            const { categories: _categories, ...rest } = currentQueryWithDraft();
             onChange(value === ALL ? rest : { ...rest, categories: [value] });
           }}
         >
@@ -115,12 +179,13 @@ export function StorefrontControls({
         <span className="form-label">Sort</span>
         <select
           id="sf-sort"
-          className="input-field"
+          className="input-field min-h-[44px]"
           value={sort}
           data-testid="sf-sort"
           onChange={(event) => {
+            cancelPendingSearch();
             const value = event.target.value;
-            const { page: _page, sort: _sort, ...rest } = query;
+            const { sort: _sort, ...rest } = currentQueryWithDraft();
             onChange(
               isMasterOfferingSort(value)
                 ? { ...rest, sort: value as MasterOfferingSort }
@@ -136,6 +201,7 @@ export function StorefrontControls({
           ))}
         </select>
       </label>
+      </div>
     </div>
   );
 }
@@ -189,11 +255,13 @@ export function StorefrontCatalogPage({
   query,
   page,
   onQueryChange,
+  onSearchChange,
   loading = false,
 }: {
   query: MasterOfferingCatalogQuery;
   page: PublicStorefrontPage;
   onQueryChange: (next: MasterOfferingCatalogQuery) => void;
+  onSearchChange?: (next: MasterOfferingCatalogQuery) => void;
   loading?: boolean;
 }) {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
@@ -209,32 +277,40 @@ export function StorefrontCatalogPage({
   }, [currentPage]);
 
   return (
-    <main className="container-x grid min-w-0 gap-6" style={{ paddingTop: 32, paddingBottom: 64 }}>
+    <div className="container-x grid min-w-0 gap-6" style={{ paddingTop: 32, paddingBottom: 64 }}>
       <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">Xenios Research</p>
         <h1 className="display-s">Research catalog</h1>
         <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
-          Browse what we carry, with its current availability and its price
-          where one is published. Where a price is not published yet, it says
-          so. Anything you cannot order directly can still be requested, and a
-          person picks it up.
+          Browse the product listings and statuses this catalog currently
+          publishes, with a price where one is included. Where this view has no
+          price or direct continuation, the listing says so.
         </p>
         <p className="body-s text-ink-mute">
           <Link
             href="/research/sign-in"
-            className="underline"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center underline"
             data-testid="sf-catalog-signin"
           >
             Member sign in
           </Link>
           {" · "}
-          <Link href="/research/apply" className="underline" data-testid="sf-catalog-apply">
+          <Link
+            href="/research/apply"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center underline"
+            data-testid="sf-catalog-apply"
+          >
             Apply for membership
           </Link>
         </p>
       </header>
 
-      <StorefrontControls query={query} page={page} onChange={onQueryChange} />
+      <StorefrontControls
+        query={query}
+        page={page}
+        onChange={onQueryChange}
+        onSearchChange={onSearchChange}
+      />
 
       <section aria-labelledby="sf-results" className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
@@ -289,7 +365,7 @@ export function StorefrontCatalogPage({
           onPage={(next) => onQueryChange({ ...query, page: next })}
         />
       </section>
-    </main>
+    </div>
   );
 }
 
