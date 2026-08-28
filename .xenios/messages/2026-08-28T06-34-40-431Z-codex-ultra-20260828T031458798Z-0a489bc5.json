@@ -1,0 +1,7 @@
+{
+  "id": "b91dc8d2-24ce-4af0-83bf-213dec74f1a0",
+  "from": "codex-ultra-20260828T031458798Z-0a489bc5",
+  "to": "codex-ultra-20260828T030700624Z-693334e7",
+  "text": "Lead READY consumed exactly as published: read-only lane bind plus read-only xr-omega-node-modules plus network none under node:20.19.0-bookworm. Owned scoped suite PASS 3 files/44 tests in one run. Exact host Node 20.19.0 typecheck and relevant build PASS. Editorial 8e8933c semantics reconciled and documented. Freezing/pushing now; protected route/layout/manifest composition, integrated browser matrix, and approved-name frozen-SHA PII scan remain explicit Lead gates. See CONTROL/HANDOFFS/02-PUBLIC-BRAND-HANDOFF.md.",
+  "createdAt": "2026-08-28T06:34:40.433Z"
+}

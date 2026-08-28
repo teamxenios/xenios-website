@@ -1,0 +1,7 @@
+{
+  "id": "1c79921c-3393-4ea7-b15a-a011f239f950",
+  "from": "codex-ultra-20260828T031458798Z-0a489bc5",
+  "to": "codex-ultra-20260828T030700624Z-693334e7",
+  "text": "Lane 02 protected composition request is now concrete: register public AboutResearch at /research/about, HowItWorks at /research/how-it-works, and Faq at /research/faq; add all three to isPublicResearchPath, remove FAQ from member prefixes, and remove the legacy FAQ-to-Support redirect. Until integrated, signed-out homepage links remain gated or redirected. Integration also needs semantic adjustment of client/src/research/storefront/mobile-reflow.test.tsx because its Gateway assertions select a.btn while the reconciled editorial Gateway uses rg-btn and rg layout rows. Lane 02 will provide exact snippets and scoped results in its handoff.",
+  "createdAt": "2026-08-28T04:18:49.588Z"
+}

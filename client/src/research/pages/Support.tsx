@@ -3,6 +3,7 @@ import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
 import { ResearchSecureNotice } from "../ui/kit";
 import { ACCESS_ROUTES } from "../lib/routes";
+import "./public-editorial.css";
 
 // ---------------------------------------------------------------------------
 // Support (/research/support). Pre-member support under the section's minimal
@@ -11,7 +12,7 @@ import { ACCESS_ROUTES } from "../lib/routes";
 // anything about the shared gateway credential.
 // ---------------------------------------------------------------------------
 
-const SUPPORT_EMAIL = "research@xeniostechnology.com";
+export const RESEARCH_SUPPORT_EMAIL = "research@xeniostechnology.com";
 
 export default function Support() {
   return (
@@ -24,21 +25,21 @@ export default function Support() {
       <ResearchPublicShell
         eyebrow="Support"
         title="How to reach us"
-        lead="Every message is read by a person. Pick the path that matches where you are."
+        lead="Pick the path that matches where you are. Research Support handles operational questions and account help; clinical questions stay with the authorized Care or provider workflow."
       >
         {/* Contact */}
-        <section aria-labelledby="ra-support-contact" className="card">
+        <section aria-labelledby="ra-support-contact" className="card mt-6">
           <h2 id="ra-support-contact" className="body-m font-700">
             Email support
           </h2>
           <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-            For anything at all, applications, membership, orders, access, or a question this page does not
-            answer, email us directly.
+            For applications, membership, Research requests, orders, access, documents, organization inquiries,
+            or an operational question this page does not answer, email Research Support directly.
           </p>
           <div className="mt-4">
             <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="btn btn-primary"
+              href={`mailto:${RESEARCH_SUPPORT_EMAIL}`}
+              className="btn btn-primary public-editorial-action"
               style={{
                 maxWidth: "100%",
                 minHeight: 52,
@@ -50,11 +51,11 @@ export default function Support() {
                 textAlign: "center",
               }}
             >
-              Email {SUPPORT_EMAIL}
+              Email {RESEARCH_SUPPORT_EMAIL}
             </a>
           </div>
           <p className="body-s text-ink-mute mt-4">
-            We will reply as soon as a member of the xenios team is available.
+            A member of the Xenios team will respond when support coverage is available. No response time is promised here.
           </p>
         </section>
 
@@ -64,11 +65,12 @@ export default function Support() {
             Check your application
           </h2>
           <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-            If you applied for membership, your status page shows exactly where the review stands. The link in
-            any email we sent you opens it directly.
+            If you received a valid secure status link, it opens the application status returned by the current
+            source. Links can expire or be unavailable; the status page also offers a generic request for another
+            link without disclosing whether an address has an application.
           </p>
           <div className="mt-4">
-            <Link href={ACCESS_ROUTES.applicationStatus} className="btn btn-secondary">
+            <Link href={ACCESS_ROUTES.applicationStatus} className="btn btn-secondary public-editorial-action">
               Application status
             </Link>
           </div>
@@ -81,8 +83,8 @@ export default function Support() {
           </h2>
           <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
             Use the secure link in your approval email. It opens your status page, where you create your member
-            account and choose your own password. If you cannot find the email, contact support and a person
-            will resend it after verifying you.
+            account and choose your own password. If the link is missing or expired, use Application status above
+            to request another status link. The response remains generic for privacy.
           </p>
         </section>
 
@@ -96,7 +98,7 @@ export default function Support() {
             has expired, simply request a new one.
           </p>
           <div className="mt-4">
-            <Link href={ACCESS_ROUTES.resetPassword} className="btn btn-secondary">
+            <Link href={ACCESS_ROUTES.resetPassword} className="btn btn-secondary public-editorial-action">
               Reset password
             </Link>
           </div>
@@ -108,6 +110,18 @@ export default function Support() {
             email you.
           </ResearchSecureNotice>
         </div>
+
+        <section aria-labelledby="ra-support-boundary" className="card bg-paper-2 mt-6">
+          <h2 id="ra-support-boundary" className="body-m font-700">Research Support does not make clinical decisions.</h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
+            Support cannot diagnose, recommend treatment, prescribe, interpret a personal clinical result, or promise pharmacy fulfillment.
+            Use the provider-governed Care path for those questions.
+          </p>
+          <div className="mt-4 public-editorial-actions">
+            <Link href="/care" className="btn btn-secondary public-editorial-action">Open Care</Link>
+            <Link href="/research/faq" className="btn btn-ghost public-editorial-action">Read the FAQ</Link>
+          </div>
+        </section>
       </ResearchPublicShell>
     </>
   );

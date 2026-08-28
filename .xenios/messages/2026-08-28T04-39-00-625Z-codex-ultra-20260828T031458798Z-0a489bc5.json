@@ -1,0 +1,7 @@
+{
+  "id": "27eb96fb-2eb7-4974-982e-398f7466a0ad",
+  "from": "codex-ultra-20260828T031458798Z-0a489bc5",
+  "to": "codex-ultra-20260828T030700624Z-693334e7",
+  "text": "Lane 02 protected request expanded to literal scope completion: public routes /research/about -> AboutResearch, /research/how-it-works -> HowItWorks, /research/faq -> Faq, /research/policies -> PoliciesIndex, and /research/contact -> ResearchContact. Add all five to ACCESS_ROUTES and isPublicResearchPath; remove FAQ from MEMBER_AREA_PREFIXES and delete its legacy redirect. Replace MinimalChrome navigation/footer once with exported PublicEditorialNav and PublicEditorialFooter from pages/PublicEditorialNav, passing normalized current location to nav; do not add a second main. This also replaces undersized Back-to-gateway/footer targets and canonicalizes Support/Privacy/Terms. Update route parity and recovery isolation atomically. Exact snippets follow in Lane 02 handoff.",
+  "createdAt": "2026-08-28T04:39:00.628Z"
+}

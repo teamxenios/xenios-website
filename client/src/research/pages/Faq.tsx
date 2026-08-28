@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { ChevronDown } from "lucide-react";
 import SeoHead from "@/components/SeoHead";
 import { NoticeBar, PageIntro } from "../components";
+import "./public-editorial.css";
 
 type FaqItem = {
   question: string;
@@ -11,84 +12,94 @@ type FaqItem = {
 
 const FAQ_ITEMS: FaqItem[] = [
   {
-    question: "What is xenios research?",
+    question: "What is Xenios Research?",
     answer:
-      "xenios research is a membership-based platform for research materials, the Quantum research category, supplements, and human-led programs. Research products are provided for legitimate nonclinical research only, and access to them runs through an application and review process rather than an open storefront.",
+      "Xenios Research is a product-access and operating platform for legitimate nonclinical research. It brings exact product identity, current access state, available documentation, requests, orders, fulfillment, documents, and support into one coherent customer experience.",
   },
   {
-    question: "What does membership cost?",
+    question: "What does research use only mean?",
     answer:
-      "There is one Founding Membership, and payment starts only after your application is approved: $50 is due at activation, and it includes your activation and your first 30 days of membership. After that, membership is $25 for each additional 30-day period. Your first renewal date is calculated when your activation payment is verified. There is no annual plan.",
+      "Research-designated materials are for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not for human or veterinary use, and Xenios Research does not provide dosing, reconstitution, administration, injection, protocol, cycling, stacking, or personal-use guidance.",
   },
   {
-    question: "Is the application free?",
+    question: "How is Research different from Care?",
     answer:
-      "Yes. Submitting an application costs nothing. Payment begins only after your application has been reviewed and approved: $50 due at activation, which includes your first 30 days of membership. If you are not approved, you pay nothing.",
+      "Research handles nonclinical research materials and their operational lifecycle. Where configured and legally available, Care is a separate provider-governed pathway for scheduling, independent clinical review, protected clinical records, prescribing where appropriate, and pharmacy coordination. A Research action never establishes a Care decision.",
   },
   {
-    question: "Is any of it recurring?",
+    question: "Does membership guarantee access to a product?",
     answer:
-      "Nothing recurs automatically. The $50 activation payment is made once and covers your first 30 days. Each additional 30-day period is $25, and you initiate that renewal payment yourself; nothing is charged automatically, and there is no annual commitment.",
+      "No. Membership or account access does not guarantee that an exact product or variant is available, orderable, or supported by a specific document. Research does not establish clinical appropriateness; that belongs exclusively to authorized provider review in the separate Care pathway. Every offering keeps its own current status and authorized next action.",
   },
   {
-    question: "Does approval guarantee product access?",
+    question: "What do product status labels mean?",
     answer:
-      "No. Approval makes you a member, but access to research products is reviewed separately and is never guaranteed. Individual products may require additional review, may be restricted to professional accounts, or may be unavailable while documentation is under review.",
+      "An offering may be live for an authorized action, request-only, provider-required, documentation-pending, held, unavailable, or unknown. Status controls the next action. A visible listing or price never creates purchase permission by itself.",
   },
   {
-    question: "How is my information used?",
+    question: "Does a submitted request become an order immediately?",
     answer:
-      "The information you provide is used for two purposes only: reviewing your application and preparing your Whole-Life Blueprint. It is never sold. You can update it at any time, and you can ask for your account to be closed by contacting support.",
+      "Not necessarily. A request records what you asked Xenios to review. It becomes an order only through the authorized conversion path. Confirmation pages and account history keep requests, orders, payment, and fulfillment separate.",
   },
   {
-    question: "What is the Whole-Life Blueprint?",
+    question: "How are payment and refunds shown?",
     answer:
-      "The Whole-Life Blueprint is an educational document prepared for each approved member. It is built from the information you share in your application and reviewed by a human before it reaches you. It is meant to organize and educate, not to diagnose or prescribe.",
+      "Payment and refund status depends on durable amount-due, captured, and refunded evidence. Missing, incomplete, or contradictory evidence must remain unknown or unavailable rather than being presented as paid, zero-refund, or complete.",
   },
   {
-    question: "Is the Blueprint medical advice?",
+    question: "How are shipping and tracking shown?",
     answer:
-      "No. The Blueprint is educational material, reviewed by a human, and it is not medical advice. It does not diagnose, treat, or prescribe, and it is not a substitute for a relationship with a licensed clinician.",
+      "Shipped and delivered require different evidence. Tracking may appear only when an available authoritative source provides it. If that source is unavailable, the safe state withholds a carrier, tracking link, delivery event, and definitive zero-history result.",
   },
   {
-    question: "Can I update my information?",
+    question: "What quality documents may be available?",
     answer:
-      "Yes. Members can update their information at any time from their account, or by contacting support. Keeping your information current helps the review process and keeps your Blueprint accurate.",
+      "An exact offering or lot may have approved specifications, COAs, or testing documentation. Availability varies by item and lot. Documents are shown only when the applicable source, access rules, and current approval support them.",
   },
   {
-    question: "Can I cancel or delete my account?",
+    question: "Does every item receive every type of testing?",
     answer:
-      "Yes. You can close your account at any time by contacting support, and because renewals are member-initiated, simply not renewing ends your membership at the end of the period you have paid for. Nothing renews automatically.",
+      "No. Identity, purity, assay, sterility, endotoxin, microbial, heavy-metal, residual-solvent, or other testing may apply in different circumstances. Xenios describes only the testing actually associated with the exact offering or lot.",
   },
   {
-    question: "What are research products?",
+    question: "How does Care scheduling work?",
     answer:
-      "Research products are materials provided for legitimate nonclinical research only. They are never for human or veterinary use, and xenios provides no personal-use guidance of any kind. Each listing presents specifications, evidence context, and batch documentation for research purposes.",
+      "When a Care scheduling route is actually configured, the authorized provider system remains authoritative for schedules and appointments. An unavailable configuration stays unavailable, and scheduling does not guarantee treatment or a prescription.",
   },
   {
-    question: "What is Quantum?",
+    question: "Where are clinical messages and records managed?",
     answer:
-      "Quantum is a standalone research category within the platform, currently under documentation review. It has its own page and its own research access path, separate from peptides, supplements, and programs.",
+      "Protected clinical messages, health information, lab results, clinical documents, and provider-side statements remain in the authorized provider or patient-portal workflow that is actually supplied. Xenios does not recreate an electronic health record inside the Research account.",
   },
   {
-    question: "How does xenios evaluate evidence?",
+    question: "What is Private Early Access?",
     answer:
-      "Every claim is classified by the kind of evidence behind it: human evidence, early evidence, preclinical research, manufacturer-reported data, or unverified. Listings keep these distinctions visible so a research profile never blurs the line between what is established and what is not.",
+      "Private Early Access is a separate passwordless request and ordering experience with an open entry route. Opening it does not establish approval for any later action or guarantee product availability, a completed order, payment, shipment, or a Care decision.",
   },
   {
-    question: "How are quality documents handled?",
+    question: "Where can I review membership and billing?",
     answer:
-      "Quality documents are batch-specific. Identity, purity, assay, and other required documentation are reviewed for each batch before a product goes live. Nothing is published as verified until it has passed that review.",
+      "Signed-in customers review access, billing, and renewal information in the account experience. Unknown renewal evidence stays unknown or unavailable; Xenios shows “Not scheduled” only when a durable source explicitly proves that state.",
   },
   {
-    question: "How do professionals apply?",
+    question: "How do organizations and professional buyers begin?",
     answer:
-      "Professionals apply through the same application as everyone else, marked as a professional application. The review considers the professional context you provide, and professional accounts may receive access appropriate to that context.",
+      "Organizations begin through the organization or business-support pathway with context, eligibility, and human review. An inquiry does not automatically create an account, approve commercial terms, or authorize any specific product.",
   },
   {
-    question: "How does wholesale review work?",
+    question: "How do affiliates and partners work with Xenios?",
     answer:
-      "Wholesale interest goes through the same application, marked as a professional application. The review covers your organization and intended research context, and wholesale terms are discussed only after approval. Approval does not guarantee access to any specific product.",
+      "Potential affiliates, clinics, providers, suppliers, and strategic partners use the applicable partner pathway. Approval, attribution, allowed claims, commission status, and resources remain governed. No partner can influence prescribing or clinical decisions.",
+  },
+  {
+    question: "How is my information protected?",
+    answer:
+      "Access to private account and document data depends on server-authorized identity and scope. Review the public Privacy Policy for the currently served language and its publication status. Avoid placing passwords, tokens, clinical details, or unnecessary private information in public URLs or messages.",
+  },
+  {
+    question: "How do I get help?",
+    answer:
+      "Use Research Support for account access, requests, orders, documents, organization inquiries, or operational questions. Support does not provide clinical advice; clinical questions stay with the authorized Care or provider workflow.",
   },
 ];
 
@@ -107,7 +118,7 @@ function FaqAccordionItem({
   const panelId = `faq-panel-${index}`;
   return (
     <div className="card" style={{ padding: 0 }}>
-      <h3 className="h3" style={{ margin: 0 }}>
+      <h2 className="h3" style={{ margin: 0 }}>
         <button
           type="button"
           id={buttonId}
@@ -115,7 +126,7 @@ function FaqAccordionItem({
           aria-controls={panelId}
           onClick={onToggle}
           className="w-full flex items-center justify-between gap-4 text-left hover:text-pulse transition-colors"
-          style={{ padding: "20px 24px", background: "none", border: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
+          style={{ minHeight: 64, padding: "18px 24px", background: "none", border: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
           data-testid={`button-faq-${index}`}
         >
           <span style={{ minWidth: 0 }}>{item.question}</span>
@@ -126,7 +137,7 @@ function FaqAccordionItem({
             style={open ? { transform: "rotate(180deg)" } : undefined}
           />
         </button>
-      </h3>
+      </h2>
       {open && (
         <div id={panelId} role="region" aria-labelledby={buttonId} style={{ padding: "0 24px 22px" }}>
           <p className="body-m text-ink-2 max-w-[68ch]">{item.answer}</p>
@@ -142,21 +153,21 @@ export default function Faq() {
   return (
     <>
       <SeoHead
-        title="Frequently asked questions, xenios research"
-        description="Clear answers about the Founding Membership and its activation, the Whole-Life Blueprint, research products, Quantum, evidence classification, quality documents, and professional applications."
+        title="Frequently asked questions | Xenios Research"
+        description="Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support."
         path="/research/faq"
       />
       <PageIntro
         eyebrow="Questions, answered plainly"
-        title="Frequently asked questions."
-        lead="Membership, the application, the Blueprint, research products, and how review actually works. If something is not covered here, contact support and a person will answer."
+        title="Understand the boundary before you continue."
+        lead="Research access, Care, product status, documentation, requests, orders, billing, fulfillment, and support each mean something different."
       />
       <NoticeBar>
-        Research products are for legitimate nonclinical research only, never for human or veterinary use. The Whole-Life Blueprint is educational and is not medical advice.
+        Research-designated materials are for legitimate nonclinical research only, never for human or veterinary use. Clinical decisions belong to appropriately licensed providers.
       </NoticeBar>
 
       <section className="container-x section-y">
-        <div className="grid grid-cols-1 gap-4 max-w-[860px]" style={{ minWidth: 0 }}>
+        <div className="grid grid-cols-1 gap-4 max-w-[900px]" style={{ minWidth: 0 }}>
           {FAQ_ITEMS.map((item, index) => (
             <FaqAccordionItem
               key={item.question}
@@ -172,17 +183,17 @@ export default function Faq() {
       <section className="container-x section-y rule-top">
         <div className="card bg-paper-2 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center" style={{ padding: "clamp(28px, 5vw, 56px)" }}>
           <div style={{ minWidth: 0 }}>
-            <p className="mono-cap text-ink-mute mb-4">Still deciding</p>
-            <h2 className="display-s max-w-[20ch]">Apply when you are ready.</h2>
+            <p className="mono-cap text-ink-mute mb-4">Need a specific answer?</p>
+            <h2 className="display-s max-w-[20ch]">A person can help route the question.</h2>
           </div>
           <div style={{ minWidth: 0 }}>
             <p className="body-l text-ink-2 max-w-[52ch]">
-              The application is free, the review is human, and payment begins only after approval. Read how membership works, or start the application now.
+              Use Research Support for account, product-access, document, order, or organization questions. Use Care for provider-governed clinical questions.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
-              <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
-              <Link href="/research/membership" className="btn btn-secondary">How membership works</Link>
-              <Link href="/research/quality" className="btn btn-ghost">Quality standards</Link>
+            <div className="mt-8 public-editorial-actions">
+              <Link href="/research/support" className="btn btn-primary public-editorial-action">Open Research Support</Link>
+              <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Compare access paths</Link>
+              <Link href="/care" className="btn btn-ghost public-editorial-action">Understand Care</Link>
             </div>
           </div>
         </div>
