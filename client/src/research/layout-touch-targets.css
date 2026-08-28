@@ -92,3 +92,13 @@
     border-bottom: 2px solid Highlight;
   }
 }
+
+/* Documentation links on the isolated account chrome (sign-in, denied,
+   recovery) render outside .research-app, where --ra-focus is scoped, so the
+   shared outline resolved to an invalid colour and no focus ring was visible
+   (browser matrix FOCUS_VISIBLE_PRESENT on /research/sign-in and
+   /research/account). Fall back through --pulse to currentColor. */
+.ra-documentation-link:focus-visible {
+  outline: 2px solid var(--ra-focus, var(--pulse, currentColor));
+  outline-offset: 2px;
+}

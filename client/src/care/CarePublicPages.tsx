@@ -137,7 +137,7 @@ export function CareHomePage() {
       <section className="container-x py-16 rule-y" aria-labelledby="care-boundaries-title">
         <p className="mono-cap text-ink-mute mb-6">WHAT THIS MEANS</p>
         <h2 id="care-boundaries-title" className="display-s max-w-[20ch]">A request is not a clinical decision.</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10">
           <article className="card">
             <h3 className="h3">Scheduling</h3>
             <p className="body-m text-ink-2 mt-3">When enabled, Tebra accepts an appointment request for practice review—not a guaranteed appointment.</p>
