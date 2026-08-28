@@ -101,7 +101,7 @@ describe("status to CTA matrix, card", () => {
         );
         const control = host.querySelector<HTMLAnchorElement>('[data-testid="mo-card-action"]');
         expect(control?.textContent).toBe(action.label);
-        expect(control?.getAttribute("href")).toBe(action.href);
+        expect(control?.getAttribute("href")).toBe("href" in action ? action.href : null);
         expect(control?.getAttribute("data-customer-action")).toBe("ASSISTED_ORDER");
         expect(host.querySelector('[data-testid="mo-card-buy-now"]')).toBeNull();
         expect(host.textContent).not.toContain("Buy Now");
@@ -300,7 +300,7 @@ describe("status to CTA matrix, detail", () => {
       );
       const cta = host.querySelector<HTMLAnchorElement>('a[data-testid="mo-cta"]');
       expect(cta?.textContent).toBe(action.label);
-      expect(cta?.getAttribute("href")).toBe(action.href);
+      expect(cta?.getAttribute("href")).toBe("href" in action ? action.href : null);
       expect(host.querySelector("button")).toBeNull();
       expect(host.querySelector('[data-testid="mo-quantity"]')).toBeNull();
       expect(host.textContent).not.toContain("Add to Cart");
