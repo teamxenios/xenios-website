@@ -410,6 +410,14 @@ export function parseInventoryMovementRow(value: unknown): InventoryMovementAdmi
   const sourceBucket = row.source_bucket === null
     ? null
     : enumValue<InventorySourceBucket>(row.source_bucket, SOURCE_BUCKETS, code);
+  try {
+    assertInventoryMovementCommandSource({ movementType, sourceBucket });
+  } catch {
+    // Stored/read evidence must obey the same canonical bucket semantics as
+    // commands. A mathematically valid delta with the wrong source label is
+    // ambiguous audit evidence, not an authoritative movement.
+    invalid(code);
+  }
 
   const availableBefore = nonNegativeInteger(row, "available_before", code);
   const availableAfter = nonNegativeInteger(row, "available_after", code);

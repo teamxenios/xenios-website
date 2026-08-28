@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import {
   LOT_QUALITY_TEST_KEYS,
+  type InventoryMovementType,
+  type InventorySourceBucket,
   type LotQualityTestKey,
   type LotQualityTestState,
 } from "@shared/research/inventory-admin";
@@ -117,6 +119,37 @@ function movementRow() {
     actor_id: "synthetic-operations-admin",
     occurred_at: "2026-07-26T00:00:00.000Z",
   };
+}
+
+function canonicalMovementRow(
+  movementType: Exclude<InventoryMovementType, "adjust" | "reconcile" | "damage">,
+  sourceBucket: InventorySourceBucket | null,
+) {
+  const common = {
+    ...movementRow(),
+    movement_type: movementType,
+    quantity: 4,
+    source_bucket: sourceBucket,
+    available_before: 10,
+    available_after: 10,
+    reserved_before: 6,
+    reserved_after: 6,
+    quarantined_before: 6,
+    quarantined_after: 6,
+  };
+
+  switch (movementType) {
+    case "receipt":
+      return { ...common, quarantined_after: 10 };
+    case "reserve":
+      return { ...common, available_after: 6, reserved_after: 10 };
+    case "release":
+      return { ...common, available_after: 14, reserved_after: 2 };
+    case "quarantine":
+      return { ...common, available_after: 6, quarantined_after: 10 };
+    case "quarantine_release":
+      return { ...common, available_after: 14, quarantined_after: 2 };
+  }
 }
 
 function qualityDocumentRow() {
@@ -325,6 +358,38 @@ describe("Website 4 production repository command wiring", () => {
       sourceBucket: "available",
       quantity: 4,
     });
+  });
+
+  it("requires canonical source-bucket labels on stored movement evidence", () => {
+    const canonical = [
+      ["receipt", null],
+      ["reserve", "available"],
+      ["release", "reserved"],
+      ["quarantine", "available"],
+      ["quarantine_release", "quarantined"],
+    ] as const;
+
+    for (const [movementType, sourceBucket] of canonical) {
+      expect(parseInventoryMovementRow(
+        canonicalMovementRow(movementType, sourceBucket),
+      )).toMatchObject({ movementType, sourceBucket });
+    }
+
+    const mislabeled = [
+      ["receipt", "available"],
+      ["reserve", "reserved"],
+      ["release", "available"],
+      ["quarantine", "reserved"],
+      ["quarantine_release", "available"],
+    ] as const;
+
+    for (const [movementType, sourceBucket] of mislabeled) {
+      expect(() => parseInventoryMovementRow(
+        canonicalMovementRow(movementType, sourceBucket),
+      )).toThrowError(expect.objectContaining({
+        code: "inventory_movement_evidence_invalid",
+      }));
+    }
   });
 
   it("accepts a current-version create replay but keeps fresh creates at version one", () => {
