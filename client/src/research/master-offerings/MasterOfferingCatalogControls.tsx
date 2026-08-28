@@ -127,7 +127,11 @@ export function MasterOfferingCatalogControls({
         data-testid="mo-filter-toggle"
         onClick={() => setFiltersOpen((current) => !current)}
       >
-        {filtersOpen ? "Hide filters" : "Show filters"}
+        {filtersOpen
+          ? "Hide filters"
+          : activeFilterCount === 0
+            ? "Show filters"
+            : `Show filters (${activeFilterCount} active)`}
       </button>
 
       <div

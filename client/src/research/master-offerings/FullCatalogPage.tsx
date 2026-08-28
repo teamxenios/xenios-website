@@ -1,9 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   MasterOfferingCatalogPage,
   MasterOfferingCatalogQuery,
 } from "@shared/research/master-offerings/contract";
 import { ResearchEmptyState, ResearchSecureNotice } from "../ui/kit";
+import {
+  CATALOG_ACCESS_PATH_LABELS,
+  refineCardsByAccessPath,
+  type CatalogAccessPath,
+} from "./catalog-access-path";
+import {
+  CatalogAccessPathRefine,
+  CatalogActiveFilters,
+  activeCatalogFilters,
+} from "./CatalogActiveFilters";
 import { MasterOfferingCard } from "./MasterOfferingCard";
 import {
   MasterOfferingCatalogControls,
@@ -77,6 +87,10 @@ export function FullCatalogPage({
   const resultsHeading = useRef<HTMLHeadingElement>(null);
   const currentPage = page.page;
   const firstRender = useRef(true);
+  // Page-local, deliberately not in the URL: the shared query contract has no
+  // access-path member, so a link cannot carry it and the server cannot count
+  // it. See CatalogAccessPathRefine for why it is still worth having.
+  const [accessPath, setAccessPath] = useState<CatalogAccessPath | null>(null);
 
   useEffect(() => {
     // Move focus to the results heading after an explicit page change, so a
@@ -89,6 +103,10 @@ export function FullCatalogPage({
   }, [currentPage]);
 
   const showing = page.products.length;
+  const refined = refineCardsByAccessPath(page.products, accessPath);
+  const hasFilters = activeCatalogFilters(query, page.facets).some(
+    (filter) => filter.key !== "sort",
+  );
 
   return (
     <div className="grid min-w-0 gap-6">
@@ -113,6 +131,11 @@ export function FullCatalogPage({
         onChange={onQueryChange}
         onSearchChange={onSearchChange}
       />
+      <CatalogActiveFilters
+        query={query}
+        facets={page.facets}
+        onChange={onQueryChange}
+      />
       <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
       <section aria-labelledby="mo-catalog-results" className="min-w-0">
@@ -134,21 +157,80 @@ export function FullCatalogPage({
             {loading
               ? "Loading the catalog"
               : page.total === 0
-                ? "No offerings match these filters"
-                : `Showing ${showing} of ${page.total} offerings`}
+                ? hasFilters
+                  ? "No offerings match these filters"
+                  : "No offerings to show yet"
+                : accessPath === null
+                  ? `Showing ${showing} of ${page.total} offerings`
+                  : `Showing ${refined.length} of ${showing} on this page, ${page.total} in the catalog`}
           </p>
         </div>
 
+        {!loading && page.total > 0 && (
+          <div className="mt-4">
+            <CatalogAccessPathRefine
+              products={page.products}
+              value={accessPath}
+              onChange={setAccessPath}
+            />
+          </div>
+        )}
+
         {!loading && page.total === 0 ? (
           <div className="mt-4">
+            {hasFilters ? (
+              <ResearchEmptyState
+                title="Nothing matches these filters."
+                body="Clear the search or widen the family, category, or listing-state filters."
+                action={
+                  <button
+                    type="button"
+                    className="btn btn-secondary min-h-[44px]"
+                    data-testid="mo-no-results-clear"
+                    onClick={() =>
+                      onQueryChange(query.pageSize ? { pageSize: query.pageSize } : {})
+                    }
+                  >
+                    Clear filters
+                  </button>
+                }
+              />
+            ) : (
+              // No filters and no rows is a different fact from "your filters
+              // are too narrow": it is the catalog telling the truth that it
+              // has nothing to show this member yet. Blaming the filters here
+              // would send a member clearing controls that are already clear.
+              <ResearchEmptyState
+                title="There is nothing in the catalog to show yet."
+                body="Nothing is wrong with your account. Offerings appear here as they are prepared."
+              />
+            )}
+          </div>
+        ) : !loading && refined.length === 0 ? (
+          <div className="mt-4">
             <ResearchEmptyState
-              title="Nothing matches these filters."
-              body="Clear the search or widen the family, category, or listing-state filters."
+              title={`No card on this page has ${
+                accessPath === null ? "that next step" : CATALOG_ACCESS_PATH_LABELS[accessPath]
+              } as a next step.`}
+              body="Other pages may. Choose Any next step to see this whole page again, or page through the catalog."
+              action={
+                <button
+                  type="button"
+                  className="btn btn-secondary min-h-[44px]"
+                  data-testid="mo-refine-clear"
+                  onClick={() => setAccessPath(null)}
+                >
+                  Any next step
+                </button>
+              }
             />
           </div>
         ) : (
-          <ul className="grid min-w-0 gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3">
-            {page.products.map((product) => (
+          <ul
+            className="grid min-w-0 gap-4 mt-4 md:grid-cols-2 xl:grid-cols-3"
+            data-testid="mo-card-list"
+          >
+            {refined.map((product) => (
               <MasterOfferingCard key={product.id} product={product} />
             ))}
           </ul>
