@@ -7,7 +7,19 @@
 // and createAssistedOrderProductionComposition — never the isolated service,
 // so re-dropping either wire fails HERE, before a packet is written.
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import {
+  ASSISTED_ORDER_AUDIT_ACTOR_HMAC_KEY_ENV_VAR,
+  ASSISTED_ORDER_AUDIT_ACTOR_KEY_ID_ENV_VAR,
+  ASSISTED_ORDER_AUDIT_ATTESTATION,
+  ASSISTED_ORDER_AUDIT_ATTESTATION_ENV_VAR,
+  ASSISTED_ORDER_AUDIT_ENABLED_ENV_VAR,
+  ASSISTED_ORDER_AUDIT_SCHEMA_ENV_VAR,
+  ASSISTED_ORDER_AUDIT_SCHEMA_VERSION,
+  assistedOrderAuditActorTypes,
+  assistedOrderAuditEventTypes,
+  resolveAssistedOrderAuditAuthority,
+} from "./audit-store";
 import type {
   AssistedOrderSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
@@ -64,21 +76,46 @@ const otherMemberViewer: AssistedOrderViewer = Object.freeze({
 });
 
 const fakeRpc: SupabaseRpcClient = {
-  rpc: async () => ({ data: null, error: null }),
+  rpc: async (name) => ({
+    data:
+      name === "research_assisted_order_audit_authority"
+        ? {
+            schemaVersion: ASSISTED_ORDER_AUDIT_SCHEMA_VERSION,
+            attestation: ASSISTED_ORDER_AUDIT_ATTESTATION,
+            eventTypes: assistedOrderAuditEventTypes,
+            actorTypes: assistedOrderAuditActorTypes,
+            evidencePolicy: "bounded_allowlist_v1",
+            actorIdentityPolicy: "hmac_sha256_alias_v1",
+            appendOnly: true,
+          }
+        : null,
+    error: null,
+  }),
 };
 
 const fakeStorage = {
   from: () => ({}),
 } as unknown as SupabaseStorageClient;
 
-function wiring(
+async function wiring(
   overrides: Partial<AssistedOrderProductionWiring> = {},
-): AssistedOrderProductionWiring {
-  return {
-    env: {
+): Promise<AssistedOrderProductionWiring> {
+  const env = {
       [ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR]: "true",
       [ASSISTED_ORDER_ADMIN_EMAIL_ENV_VAR]: "research@xeniostechnology.com",
-    } as NodeJS.ProcessEnv,
+      [ASSISTED_ORDER_AUDIT_ENABLED_ENV_VAR]: "true",
+      [ASSISTED_ORDER_AUDIT_SCHEMA_ENV_VAR]: ASSISTED_ORDER_AUDIT_SCHEMA_VERSION,
+      [ASSISTED_ORDER_AUDIT_ATTESTATION_ENV_VAR]: ASSISTED_ORDER_AUDIT_ATTESTATION,
+      [ASSISTED_ORDER_AUDIT_ACTOR_KEY_ID_ENV_VAR]: "test-key-1",
+      [ASSISTED_ORDER_AUDIT_ACTOR_HMAC_KEY_ENV_VAR]: Buffer.alloc(32, 7).toString("base64url"),
+    } as NodeJS.ProcessEnv;
+  const resolution = await resolveAssistedOrderAuditAuthority({
+    env,
+    rpc: fakeRpc,
+  });
+  if (!resolution.available) throw new Error(resolution.refusalReason);
+  return {
+    env,
     requiredAgreements: REQUIRED_AGREEMENTS,
     agreementGate: { accepted: async () => true },
     masterOfferingServiceFor: () => null,
@@ -87,22 +124,22 @@ function wiring(
     catalogVersion: "catalog-v1",
     supabaseRpc: fakeRpc,
     supabaseStorage: fakeStorage,
-    auditWrite: async () => undefined,
+    auditAuthority: resolution.authority,
     log: () => undefined,
     ...overrides,
   };
 }
 
 describe("buildAssistedOrderProduction (the layer that dropped the legal port)", () => {
-  it("stays dark when the flag is off", () => {
-    const composition = buildAssistedOrderProduction(wiring({ env: {} as NodeJS.ProcessEnv }));
+  it("stays dark when the flag is off", async () => {
+    const composition = buildAssistedOrderProduction(await wiring({ env: {} as NodeJS.ProcessEnv }));
     expect(composition.enabled).toBe(false);
     expect(composition.service).toBeNull();
     expect(composition.refusalReason).toBe("assisted_order_bridge_disabled");
   });
 
   it("carries the canonical legal port into the live service: config reports enabled with the exact required pairs", async () => {
-    const composition = buildAssistedOrderProduction(wiring());
+    const composition = buildAssistedOrderProduction(await wiring());
     expect(composition.refusalReason).toBeNull();
     expect(composition.service).not.toBeNull();
     const config = await composition.service!.config(memberViewer);
@@ -115,7 +152,7 @@ describe("buildAssistedOrderProduction (the layer that dropped the legal port)",
 
   it("fails closed up front when the canonical agreement list is absent", async () => {
     const composition = buildAssistedOrderProduction(
-      wiring({ requiredAgreements: undefined }),
+      await wiring({ requiredAgreements: undefined }),
     );
     // The service still composes; the feature truthfully reports itself
     // unavailable (D-005) instead of inventing an agreement version.
@@ -127,32 +164,42 @@ describe("buildAssistedOrderProduction (the layer that dropped the legal port)",
   });
 
   it("fails closed up front when the canonical agreement list is empty", async () => {
-    const composition = buildAssistedOrderProduction(wiring({ requiredAgreements: [] }));
+    const composition = buildAssistedOrderProduction(await wiring({ requiredAgreements: [] }));
     expect(composition.service).not.toBeNull();
     const config = await composition.service!.config(memberViewer);
     expect(config.enabled).toBe(false);
     expect(config.code).toBe("legal_requirements_unavailable");
   });
 
-  it("never falls back to memory: a missing repository or document store is a named refusal", () => {
-    const noRpc = buildAssistedOrderProduction(wiring({ supabaseRpc: null }));
+  it("never falls back to memory: a missing repository or document store is a named refusal", async () => {
+    const noRpc = buildAssistedOrderProduction(await wiring({ supabaseRpc: null }));
     expect(noRpc.service).toBeNull();
     expect(noRpc.refusalReason).toContain("repository");
 
-    const noStorage = buildAssistedOrderProduction(wiring({ supabaseStorage: null }));
+    const noStorage = buildAssistedOrderProduction(await wiring({ supabaseStorage: null }));
     expect(noStorage.service).toBeNull();
     expect(noStorage.refusalReason).toContain("documents");
   });
 
-  it("refuses production composition without the durable agreement gate", () => {
-    const composition = buildAssistedOrderProduction(wiring({ agreementGate: null }));
+  it("refuses production composition without the durable agreement gate", async () => {
+    const composition = buildAssistedOrderProduction(await wiring({ agreementGate: null }));
     expect(composition.service).toBeNull();
     expect(composition.refusalReason).toContain("submissionStanding");
   });
 
-  it("refuses without the admin notification email", () => {
+  it("refuses a legacy audit callback because an operational log is not durable authority", async () => {
+    const auditWrite = vi.fn(async () => undefined);
     const composition = buildAssistedOrderProduction(
-      wiring({
+      await wiring({ auditAuthority: null, auditWrite }),
+    );
+    expect(composition.service).toBeNull();
+    expect(composition.refusalReason).toContain("audit");
+    expect(auditWrite).not.toHaveBeenCalled();
+  });
+
+  it("refuses without the admin notification email", async () => {
+    const composition = buildAssistedOrderProduction(
+      await wiring({
         env: {
           [ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR]: "true",
         } as NodeJS.ProcessEnv,

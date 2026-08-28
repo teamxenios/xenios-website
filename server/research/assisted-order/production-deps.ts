@@ -21,12 +21,12 @@ import {
   type SupabaseStorageClient,
 } from "./supabase-document-store";
 import type {
-  AssistedOrderAuditSink,
   AssistedOrderLegalPort,
   AssistedOrderOutbox,
   AssistedOrderSubmissionStanding,
   AssistedOrderViewer,
 } from "./ports";
+import type { ResolvedAssistedOrderAuditAuthority } from "./audit-store";
 import { enqueueNotificationOnce } from "../outbox";
 import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
 
@@ -62,8 +62,18 @@ export type AssistedOrderProductionWiring = Readonly<{
   /** The service-role Supabase client, or null when unconfigured. */
   supabaseRpc: SupabaseRpcClient | null;
   supabaseStorage: SupabaseStorageClient | null;
-  /** Structured research audit writer (the canonical sink). */
-  auditWrite(event: Readonly<Record<string, unknown>>): Promise<void>;
+  /**
+   * Exact, schema-probed append-only audit authority. It is deliberately
+   * optional at this compatibility seam so an older protected composition
+   * still compiles, but omission keeps the entire bridge unavailable.
+   */
+  auditAuthority?: ResolvedAssistedOrderAuditAuthority | null;
+  /**
+   * @deprecated A callback/logger is not durable audit authority. Retained
+   * temporarily so the protected composition can be updated in one Lead-owned
+   * change; it is never invoked or accepted as an audit sink.
+   */
+  auditWrite?(event: Readonly<Record<string, unknown>>): Promise<void>;
   log(message: string, source?: string): void;
 }>;
 
@@ -141,11 +151,10 @@ export function buildAssistedOrderProduction(
     },
   };
 
-  const audit: AssistedOrderAuditSink = {
-    record: async (event) => {
-      await wiring.auditWrite({ ...event });
-    },
-  };
+  // A plain callback used to serialize these events into an operational log.
+  // That is neither durable nor append-only. Only the branded result of the
+  // exact schema/attestation probe can satisfy production composition now.
+  const audit = wiring.auditAuthority?.sink ?? null;
 
   const composition = createAssistedOrderProductionComposition({
     enabled,

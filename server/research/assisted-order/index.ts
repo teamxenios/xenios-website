@@ -8,3 +8,4 @@ export * from "./supabase-repository";
 export * from "./supabase-document-store";
 export * from "./google-mirror";
 export * from "./production";
+export * from "./audit-store";
