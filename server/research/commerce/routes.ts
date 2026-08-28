@@ -713,9 +713,15 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
           secure(res).status(200).json({ ok: true, applied: result.applied, eventId: result.eventId });
           return;
         }
-        // A capability that is not ready is retryable later; everything else is a
-        // rejection of this delivery and must not be retried into success.
-        const status = result.code === "capability_disabled" ? 503 : 400;
+        // Missing capability, missing order, and a verified event that arrived
+        // before its prerequisite order state are all non-claiming outcomes: a
+        // 503 asks the provider to redeliver. Every other denial is permanent.
+        const status =
+          result.code === "capability_disabled" ||
+          result.code === "unknown_order" ||
+          result.code === "retryable"
+            ? 503
+            : 400;
         secure(res).status(status).json({ ok: false, code: result.code });
       } catch {
         // A store or provider failure is retryable. The error detail (which could

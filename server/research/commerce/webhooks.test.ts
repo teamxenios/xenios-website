@@ -315,12 +315,12 @@ describe("payment webhooks", () => {
     const durable = orders.atomic;
     let failOnce = true;
     const atomic: WebhookAtomicApplyStore = {
-      async claimAndApply(event, decide) {
+      async claimAndApply(event, intent) {
         if (failOnce) {
           failOnce = false;
           throw new Error("injected transaction failure");
         }
-        return durable.claimAndApply(event, decide);
+        return durable.claimAndApply(event, intent);
       },
     };
     const handler = createWebhookHandler(deps({ orders, atomic }));
@@ -331,6 +331,34 @@ describe("payment webhooks", () => {
     expect((await orders.get("ord_1"))!.state).toBe("approved");
 
     await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
+  });
+
+  it("leaves an early capture event unclaimed so it can apply after approval", async () => {
+    const orders = orderStore([
+      {
+        orderId: "ord_1",
+        state: "payment_authorized",
+        paymentReference: "auth_1",
+        captured: false,
+      },
+    ]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "retryable",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("payment_authorized");
+
+    await orders.save({
+      ...(await orders.get("ord_1"))!,
+      state: "approved",
+    });
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
       ok: true,
       applied: true,
       eventId: "evt_1",
@@ -447,6 +475,14 @@ describe("payment webhooks", () => {
 
     expect(result).toEqual({ ok: true, applied: false, eventId: "evt_5" });
     expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+
+    // The target is permanently actor-forbidden for provider_webhook, so the
+    // identical delivery is safely absorbed instead of retried forever.
+    expect(await handler.handlePayment(body, GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: false,
+      eventId: "evt_5",
+    });
   });
 });
 
@@ -506,6 +542,29 @@ describe("fulfillment webhooks", () => {
 
     expect(replay).toEqual({ ok: true, applied: false, eventId: "ff_evt_1" });
     expect((await orders.get("ord_1"))!.state).toBe("delivered");
+  });
+
+  it("leaves an early delivery unclaimed so it can apply once fulfillment completes", async () => {
+    const orders = orderStore([
+      { orderId: "ord_1", state: "processing", paymentReference: "auth_1", captured: true },
+    ]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "retryable",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("processing");
+
+    await orders.save({
+      ...(await orders.get("ord_1"))!,
+      state: "fulfilled",
+    });
+    expect(await handler.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: true,
+      eventId: "ff_evt_1",
+    });
   });
 
   it("derives a stable event id when the partner sends none", async () => {
@@ -573,17 +632,59 @@ describe("the in-memory atomic inbox and order store", () => {
     const store = createInMemoryWebhookAtomicStore([approvedOrder()]);
 
     await expect(
-      store.claimAndApply(event, () => ({
-        kind: "apply",
-        order: { ...approvedOrder("ord_2"), state: "payment_captured", captured: true },
-      })),
+      store.claimAndApply(event, {
+        kind: "transition",
+        orderId: "ord_2",
+        to: "payment_captured",
+        providerConfirmation: "auth_1",
+      }),
     ).rejects.toThrow("different order");
 
     await expect(
-      store.claimAndApply(event, (order) => ({
-        kind: "apply",
-        order: { ...order!, state: "payment_captured", captured: true },
-      })),
+      store.claimAndApply(event, {
+        kind: "transition",
+        orderId: "ord_1",
+        to: "payment_captured",
+        providerConfirmation: "auth_1",
+      }),
+    ).resolves.toEqual({ outcome: "applied" });
+    expect((await store.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("refuses conflicting provider evidence without claiming the event", async () => {
+    const store = createInMemoryWebhookAtomicStore([approvedOrder()]);
+    const conflicting = {
+      kind: "transition" as const,
+      orderId: "ord_1",
+      to: "payment_captured" as const,
+      providerConfirmation: "auth_other",
+    };
+
+    await expect(store.claimAndApply(event, conflicting)).resolves.toEqual({
+      outcome: "conflict",
+    });
+    expect((await store.get("ord_1"))!.state).toBe("approved");
+
+    await expect(
+      store.claimAndApply(event, {
+        ...conflicting,
+        providerConfirmation: "auth_1",
+      }),
+    ).resolves.toEqual({ outcome: "applied" });
+  });
+
+  it("does not treat an order-local last key as provider replay authority", async () => {
+    const store = createInMemoryWebhookAtomicStore([
+      { ...approvedOrder(), lastWebhookEventId: event.eventId },
+    ]);
+
+    await expect(
+      store.claimAndApply(event, {
+        kind: "transition",
+        orderId: "ord_1",
+        to: "payment_captured",
+        providerConfirmation: "auth_1",
+      }),
     ).resolves.toEqual({ outcome: "applied" });
     expect((await store.get("ord_1"))!.state).toBe("payment_captured");
   });

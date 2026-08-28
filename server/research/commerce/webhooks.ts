@@ -51,7 +51,10 @@ export interface WebhookOrder {
   state: OrderState;
   paymentReference: string | null;
   captured: boolean;
-  /** Set to the event id that last moved this order, for transition idempotency. */
+  /**
+   * Legacy/in-memory audit mirror only. The durable atomic path never treats an
+   * order-local key as replay authority; only its payload-bound inbox may do so.
+   */
   lastWebhookEventId?: string;
   /**
    * Present only while an APPLYING fulfillment event is being saved: the
@@ -86,32 +89,50 @@ export interface WebhookAtomicEvent {
   orderId: string | null;
 }
 
-/** A pure decision made while the atomic store owns the event and order rows. */
-export type WebhookAtomicDecision =
-  | { kind: "apply"; order: WebhookOrder }
+/**
+ * A closed effect requested from the atomic persistence boundary.
+ *
+ * The handler supplies only the verified provider facts and the target named by
+ * its closed event map. The store remains responsible for reading the current
+ * order while locked, applying the provider-webhook transition table, and
+ * publishing the inbox claim plus every resulting fact in one transaction.
+ * This shape is intentionally data-only: a JavaScript callback cannot execute
+ * inside a remote PostgreSQL transaction and therefore cannot be an honest
+ * production contract.
+ */
+export type WebhookAtomicIntent =
   | { kind: "acknowledge" }
-  | { kind: "retry"; code: "unknown_order" };
+  | {
+      kind: "transition";
+      orderId: string;
+      to: OrderState;
+      providerConfirmation: string | null;
+      shipmentUpdate?: WebhookShipmentUpdate;
+    };
 
 export type WebhookAtomicApplyResult =
   | { outcome: "applied" }
   | { outcome: "acknowledged" }
   | { outcome: "duplicate" }
   | { outcome: "conflict" }
-  | { outcome: "unknown_order" };
+  | { outcome: "unknown_order" }
+  | { outcome: "retryable" }
+  | { outcome: "capability_disabled" };
 
 /**
  * The only persistence authority a webhook handler may use for an order effect.
  *
  * An implementation MUST serialize the `(providerName,eventId)` inbox key and
- * the addressed order, compare an existing claim's payload digest, run `decide`
- * against the order read inside that same transaction, and commit the inbox row
- * plus any returned order together. A throw or `retry` decision MUST commit
- * neither. A two-call `seen`/`record` adapter does not satisfy this interface.
+ * the addressed order, compare an existing claim's payload digest, validate the
+ * closed intent against the order read inside that same transaction, and commit
+ * the inbox row plus any order/state-event/shipment facts together. An unknown
+ * order, retryable ordering refusal, capability refusal, or throw MUST commit
+ * nothing. A two-call `seen`/`record` adapter does not satisfy this interface.
  */
 export interface WebhookAtomicApplyStore {
   claimAndApply(
     event: WebhookAtomicEvent,
-    decide: (order: WebhookOrder | undefined) => WebhookAtomicDecision,
+    intent: WebhookAtomicIntent,
   ): Promise<WebhookAtomicApplyResult>;
 }
 
@@ -141,6 +162,7 @@ export type WebhookDenialCode =
   | "duplicate"
   | "event_conflict"
   | "unknown_order"
+  | "retryable"
   | "capability_disabled";
 
 export type WebhookResult =
@@ -228,56 +250,16 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       ? (combinedOrderStore as WebhookAtomicApplyStore)
       : undefined);
 
-  /**
-   * Computes an order transition without performing I/O. The atomic store calls
-   * this while it owns both the inbox key and the addressed order row.
-   *
-   * The event id is passed as the idempotency key on both sides of the
-   * transition. A denied transition is acknowledged as a durable no-op; an
-   * unknown order is a retry decision and therefore claims no inbox row.
-   */
-  function decideTransition(
-    order: WebhookOrder | undefined,
-    to: OrderState,
-    eventId: string,
-    providerConfirmation: string | undefined,
-    shipmentUpdate?: WebhookShipmentUpdate,
-  ): WebhookAtomicDecision {
-    if (!order) return { kind: "retry", code: "unknown_order" };
-
-    const result = transitionOrder({
-      from: order.state,
-      to,
-      actor: "provider_webhook",
-      providerConfirmation,
-      idempotencyKey: eventId,
-      lastAppliedIdempotencyKey: order.lastWebhookEventId,
-    });
-    if (!result.ok || result.idempotent) return { kind: "acknowledge" };
-
-    const next: WebhookOrder = {
-      ...order,
-      state: result.state,
-      lastWebhookEventId: eventId,
-    };
-    if (result.state === "payment_captured") next.captured = true;
-    if (providerConfirmation && !next.paymentReference) {
-      next.paymentReference = providerConfirmation;
-    }
-    if (shipmentUpdate) next.shipmentUpdate = { ...shipmentUpdate };
-    return { kind: "apply", order: next };
-  }
-
   async function atomicallyApply(
     event: WebhookAtomicEvent,
-    decide: (order: WebhookOrder | undefined) => WebhookAtomicDecision,
+    intent: WebhookAtomicIntent,
   ): Promise<WebhookResult> {
     // The legacy event and order stores are deliberately not composed here:
     // separate durable calls leave an unavoidable crash/race window. Until a
     // transaction-capable adapter is wired, verified events fail closed.
     if (!atomic) return { ok: false, code: "capability_disabled" };
 
-    const result = await atomic.claimAndApply(event, decide);
+    const result = await atomic.claimAndApply(event, intent);
     switch (result.outcome) {
       case "applied":
         return { ok: true, applied: true, eventId: event.eventId };
@@ -288,6 +270,10 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
         return { ok: false, code: "event_conflict" };
       case "unknown_order":
         return { ok: false, code: "unknown_order" };
+      case "retryable":
+        return { ok: false, code: "retryable" };
+      case "capability_disabled":
+        return { ok: false, code: "capability_disabled" };
     }
   }
 
@@ -325,7 +311,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
           receivedAt: asOf,
           orderId: null,
         },
-        () => ({ kind: "acknowledge" }),
+        { kind: "acknowledge" },
       );
     }
 
@@ -342,7 +328,12 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
         receivedAt: asOf,
         orderId,
       },
-      (order) => decideTransition(order, target, eventId, providerReference),
+      {
+        kind: "transition",
+        orderId,
+        to: target,
+        providerConfirmation: providerReference ?? null,
+      },
     );
   }
 
@@ -388,7 +379,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
           receivedAt: asOf,
           orderId: null,
         },
-        () => ({ kind: "acknowledge" }),
+        { kind: "acknowledge" },
       );
     }
 
@@ -410,7 +401,13 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
         receivedAt: asOf,
         orderId: update.fulfillmentOrderId,
       },
-      (order) => decideTransition(order, target, eventId, undefined, shipmentUpdate),
+      {
+        kind: "transition",
+        orderId: update.fulfillmentOrderId,
+        to: target,
+        providerConfirmation: null,
+        shipmentUpdate,
+      },
     );
   }
 
@@ -452,6 +449,40 @@ export interface InMemoryWebhookAtomicStore
   extends WebhookAtomicApplyStore,
     WebhookOrderStore {}
 
+/**
+ * A verified event that arrived before its one legal provider transition is not
+ * a permanent no-op. Claiming it would make the provider's later redelivery a
+ * duplicate even after the order reached the prerequisite state. These are the
+ * only predecessor sets with a path to the exact provider-webhook transition.
+ * Everything else is stale, terminal, or an actor-forbidden target and can be
+ * acknowledged without inviting an infinite retry loop.
+ */
+function isRetryableWebhookPredecessor(from: OrderState, to: OrderState): boolean {
+  if (to === "payment_authorized") return from === "draft";
+  if (to === "payment_captured") {
+    return (
+      from === "draft" ||
+      from === "checkout_pending" ||
+      from === "payment_authorized" ||
+      from === "manual_review"
+    );
+  }
+  if (to === "delivered") {
+    return (
+      from === "draft" ||
+      from === "checkout_pending" ||
+      from === "payment_authorized" ||
+      from === "manual_review" ||
+      from === "approved" ||
+      from === "payment_captured" ||
+      from === "processing" ||
+      from === "partially_fulfilled" ||
+      from === "exception"
+    );
+  }
+  return false;
+}
+
 export function createInMemoryWebhookAtomicStore(
   seed: readonly WebhookOrder[] = [],
 ): InMemoryWebhookAtomicStore {
@@ -483,8 +514,15 @@ export function createInMemoryWebhookAtomicStore(
   }
 
   return {
-    async claimAndApply(event, decide) {
+    async claimAndApply(event, intent) {
       return exclusively((): WebhookAtomicApplyResult => {
+        if (
+          intent.kind === "transition" &&
+          (event.orderId === null || intent.orderId !== event.orderId)
+        ) {
+          throw new Error("atomic webhook intent attempted to write a different order");
+        }
+
         const key = inboxKey(event);
         const existingDigest = inbox.get(key);
         if (existingDigest !== undefined) {
@@ -493,23 +531,58 @@ export function createInMemoryWebhookAtomicStore(
             : { outcome: "conflict" };
         }
 
-        const current = event.orderId === null ? undefined : orders.get(event.orderId);
-        const decision = decide(current ? clone(current) : undefined);
-        if (decision.kind === "retry") return { outcome: "unknown_order" };
-
-        if (decision.kind === "apply") {
-          if (event.orderId === null || decision.order.orderId !== event.orderId) {
-            throw new Error("atomic webhook decision attempted to write a different order");
-          }
-          // These adjacent writes are one synchronous publication under the
-          // in-memory mutex. A durable implementation must use a DB transaction.
+        if (intent.kind === "acknowledge") {
           inbox.set(key, event.payloadSha256);
-          orders.set(event.orderId, clone(decision.order));
-          return { outcome: "applied" };
+          return { outcome: "acknowledged" };
         }
 
+        const current = orders.get(intent.orderId);
+        if (!current) return { outcome: "unknown_order" };
+        if (
+          intent.providerConfirmation !== null &&
+          current.paymentReference !== null &&
+          current.paymentReference !== intent.providerConfirmation
+        ) {
+          return { outcome: "conflict" };
+        }
+
+        const transition = transitionOrder({
+          from: current.state,
+          to: intent.to,
+          actor: "provider_webhook",
+          providerConfirmation: intent.providerConfirmation ?? undefined,
+          idempotencyKey: event.eventId,
+        });
+        if (
+          !transition.ok &&
+          (intent.to === "delivered" || intent.providerConfirmation !== null) &&
+          isRetryableWebhookPredecessor(current.state, intent.to)
+        ) {
+          return { outcome: "retryable" };
+        }
+        if (!transition.ok || transition.idempotent) {
+          inbox.set(key, event.payloadSha256);
+          return { outcome: "acknowledged" };
+        }
+
+        const next: WebhookOrder = {
+          ...clone(current),
+          state: transition.state,
+          lastWebhookEventId: event.eventId,
+        };
+        if (transition.state === "payment_captured") next.captured = true;
+        if (intent.providerConfirmation !== null && next.paymentReference === null) {
+          next.paymentReference = intent.providerConfirmation;
+        }
+        if (intent.shipmentUpdate) {
+          next.shipmentUpdate = { ...intent.shipmentUpdate };
+        }
+
+        // These adjacent writes are one synchronous publication under the
+        // in-memory mutex. A durable implementation must use a DB transaction.
         inbox.set(key, event.payloadSha256);
-        return { outcome: "acknowledged" };
+        orders.set(intent.orderId, clone(next));
+        return { outcome: "applied" };
       });
     },
 

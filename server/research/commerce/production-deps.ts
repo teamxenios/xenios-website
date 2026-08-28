@@ -59,10 +59,12 @@ import {
   createWebhookHandler,
   createInMemoryWebhookEventStore,
   type WebhookEventStore,
+  type WebhookAtomicApplyStore,
   type WebhookOrder,
   type WebhookOrderStore,
 } from "./webhooks";
 import { createSupabaseWebhookReplayGuard } from "./persistence/webhooks-store";
+import { resolveSupabaseWebhookAtomicApplyStore } from "./persistence/supabase-webhook-atomic-apply-store";
 import {
   resolvePartnerLinkStore,
   resolvePartnerMemberStore,
@@ -238,6 +240,12 @@ export interface CommerceWiring {
    */
   resolveWebhookEventStore(): WebhookEventStore;
   /**
+   * One-RPC inbox + order/state-event/shipment transaction. The production
+   * resolver returns absent unless the exact reviewed capability id is enabled;
+   * the adapter also verifies that id in every RPC response.
+   */
+  resolveWebhookAtomicApplyStore(env: NodeJS.ProcessEnv): WebhookAtomicApplyStore | undefined;
+  /**
    * Exact product+variant durable activation authority. The production default
    * remains unavailable until a reviewed ledger adapter is mounted; absence
    * disables cart mutation and checkout rather than trusting catalog flags or
@@ -325,6 +333,7 @@ function defaultWiring(): CommerceWiring {
     resolveAdminQueuesStore,
     resolveReservationStore,
     resolveWebhookEventStore: resolveDurableWebhookEventStore,
+    resolveWebhookAtomicApplyStore: resolveSupabaseWebhookAtomicApplyStore,
     resolveProductVariantActivationLedger: () =>
       unavailableProductVariantActivationLedger,
     resolveProductVariantActivationBindings: () =>
@@ -915,6 +924,7 @@ function liveDependencies(
   const adminQueuesStore = wiring.resolveAdminQueuesStore();
   const reservationStore = wiring.resolveReservationStore();
   const webhookEventStore = wiring.resolveWebhookEventStore();
+  const webhookAtomicApplyStore = wiring.resolveWebhookAtomicApplyStore(env);
   const activationLedger = wiring.resolveProductVariantActivationLedger();
   const activationBindings = wiring.resolveProductVariantActivationBindings();
   const partnerMemberStore = wiring.resolvePartnerMemberStore();
@@ -1083,17 +1093,18 @@ function liveDependencies(
     commerceEnabled: true,
   });
 
-  // The provider webhook handler, over the SAME order repository checkout writes
-  // (through the narrow projection) and the durable replay guard, so a verified
-  // event advances the order every surface reads and a replayed delivery is
-  // absorbed by the database, not by process memory. The fulfillment provider
-  // rides the same handler, so a partner status webhook is signature-gated and
-  // replay-guarded identically to a payment event.
+  // The provider webhook handler keeps the legacy projections for compatibility,
+  // but only the exact atomic RPC adapter authorizes an effect. That routine owns
+  // the inbox claim, locked order transition, state-event evidence, and shipment
+  // facts in one transaction. With the candidate schema unapplied or the exact
+  // capability id unset, this value is absent and the handler keeps returning
+  // capability_disabled without touching either legacy store.
   const webhookHandler = createWebhookHandler({
     store: webhookEventStore,
     payment,
     fulfillment,
     orders: webhookOrderStoreOverOrders(orderRepository),
+    atomic: webhookAtomicApplyStore,
     commerceEnabled: true,
   });
 

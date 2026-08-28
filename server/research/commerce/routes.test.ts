@@ -570,6 +570,22 @@ describe("payment webhook route", () => {
     expect(captured.status).toBe(503);
   });
 
+  it.each(["retryable", "unknown_order"] as const)(
+    "maps the non-claiming %s outcome to a provider-retryable 503",
+    async (code) => {
+      const routes = build(
+        deps({ webhooks: { handlePayment: async () => ({ ok: false, code }) } }),
+      );
+      const { res, captured } = fakeRes();
+      await route(routes, "post", PATH).handler(
+        webhookReq({ raw: Buffer.from("{}"), signature: "s" }),
+        res,
+      );
+      expect(captured.status).toBe(503);
+      expect(captured.body).toEqual({ ok: false, code });
+    },
+  );
+
   it("answers a handler crash with a 500 that leaks NOTHING about the failure", async () => {
     const routes = build(
       deps({
@@ -982,6 +998,24 @@ describe("fulfillment webhook route", () => {
     const { res, captured } = fakeRes();
     await route(routes, "post", PATH).handler(fulfillmentReq({ raw: Buffer.from("{}"), signature: "s" }), res);
     expect(captured.status).toBe(503);
+  });
+
+  it("maps an out-of-order fulfillment delivery to a retryable 503", async () => {
+    const routes = build(
+      deps({
+        webhooks: {
+          handlePayment: async () => ({ ok: true, applied: false, eventId: "x" }),
+          handleFulfillment: async () => ({ ok: false, code: "retryable" }),
+        },
+      }),
+    );
+    const { res, captured } = fakeRes();
+    await route(routes, "post", PATH).handler(
+      fulfillmentReq({ raw: Buffer.from("{}"), signature: "s" }),
+      res,
+    );
+    expect(captured.status).toBe(503);
+    expect(captured.body).toEqual({ ok: false, code: "retryable" });
   });
 
   it("maps an invalid signature to a 400 that will not be retried into success", async () => {

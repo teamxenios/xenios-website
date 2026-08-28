@@ -12,7 +12,11 @@ import { createInMemorySubscriptionStore } from "./persistence/subscriptions-sto
 import { createInMemoryAdminQueuesStore } from "./persistence/admin-queues-store";
 import { createInMemoryClaimOrderRepository, createInMemoryClaimRepository } from "./refunds";
 import { createInMemoryReservationStore } from "./persistence/reservations-store";
-import { createInMemoryWebhookEventStore } from "./webhooks";
+import {
+  createInMemoryWebhookAtomicStore,
+  createInMemoryWebhookEventStore,
+} from "./webhooks";
+import { RESEARCH_COMMERCE_WEBHOOK_ATOMIC_APPLY_CAPABILITY } from "./persistence/supabase-webhook-atomic-apply-store";
 import { createOrderService } from "./orders";
 import { TestMitchProvider } from "../providers/fulfillment";
 import {
@@ -106,6 +110,7 @@ function refusingWiring(): { wiring: Partial<CommerceWiring>; spies: Record<stri
     resolveAdminQueuesStore: refuse("resolveAdminQueuesStore"),
     resolveReservationStore: refuse("resolveReservationStore"),
     resolveWebhookEventStore: refuse("resolveWebhookEventStore"),
+    resolveWebhookAtomicApplyStore: refuse("resolveWebhookAtomicApplyStore"),
     resolveProductVariantActivationLedger: refuse(
       "resolveProductVariantActivationLedger",
     ),
@@ -1056,6 +1061,44 @@ describe("state 3: payment webhook", () => {
     );
     expect(storeReplay).toEqual({ ok: false, code: "capability_disabled" });
     expect((await orderRepository.get("ord_wh1"))!.state).toBe("approved");
+  });
+
+  it("uses the explicitly wired exact atomic capability for one claim-and-apply", async () => {
+    const setup = await liveSetup();
+    const atomic = createInMemoryWebhookAtomicStore([
+      {
+        orderId: "ord_atomic_wh",
+        state: "approved",
+        paymentReference: "test_capture_atomic",
+        captured: false,
+      },
+    ]);
+    const deps = buildCommerceDependencies(
+      NOW,
+      {
+        ...LIVE_ENV,
+        RESEARCH_COMMERCE_WEBHOOK_ATOMIC_APPLY_CAPABILITY:
+          RESEARCH_COMMERCE_WEBHOOK_ATOMIC_APPLY_CAPABILITY,
+      },
+      {
+        ...setup.wiring,
+        resolveWebhookAtomicApplyStore: () => atomic,
+      },
+    );
+
+    await expect(
+      deps.webhooks.handlePayment(
+        eventBody(
+          "evt_atomic_wh",
+          "payment.captured",
+          "ord_atomic_wh",
+          "test_capture_atomic",
+        ),
+        "test-signature",
+        AS_OF,
+      ),
+    ).resolves.toEqual({ ok: true, applied: true, eventId: "evt_atomic_wh" });
+    expect((await atomic.get("ord_atomic_wh"))!.state).toBe("payment_captured");
   });
 
   it("refuses an invalid signature before any store is consulted", async () => {
