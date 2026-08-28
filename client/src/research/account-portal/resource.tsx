@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { CustomerAccountResult } from "@shared/research/customer-account/contract";
+import { safeResearchReturnTo } from "../lib/member-routing";
 
 export type AccountResourceState<T> =
   | Readonly<{ state: "loading" }>
@@ -43,6 +44,13 @@ function deniedCopy(reason: string): string {
   return "This private account area is not available for the current sign-in.";
 }
 
+export function accountSignInHref(requestedReturnTo: string): string {
+  const returnTo = safeResearchReturnTo(requestedReturnTo);
+  return returnTo
+    ? `/research/sign-in?returnTo=${encodeURIComponent(returnTo)}`
+    : "/research/sign-in";
+}
+
 export function AccountResourceBoundary<T>({
   snapshot,
   children,
@@ -50,6 +58,12 @@ export function AccountResourceBoundary<T>({
   snapshot: AccountResourceState<T>;
   children: (data: T) => ReactNode;
 }) {
+  const [location] = useLocation();
+  const requestedReturnTo = typeof window === "undefined"
+    ? location
+    : `${window.location.pathname}${window.location.search}`;
+  const signInHref = accountSignInHref(requestedReturnTo);
+
   if (snapshot.state === "loading") {
     return (
       <div className="account-state" role="status" aria-live="polite" data-testid="account-loading">
@@ -65,7 +79,7 @@ export function AccountResourceBoundary<T>({
         <p className="mono-cap">Private account</p>
         <h2 className="body-l font-700 mt-2">Account access is required.</h2>
         <p className="body-s mt-2">{deniedCopy(snapshot.reason)}</p>
-        <Link className="btn btn-primary mt-5" href="/research/sign-in">Sign in</Link>
+        <Link className="btn btn-primary mt-5" href={signInHref}>Sign in</Link>
       </div>
     );
   }

@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 // The account-portal gate exemption (release integration, 2026-08-27).
 //
-// The six registered portal routes render bare through ResearchLayout even
+// The nine static portal routes and bounded detail family render bare through
+// ResearchLayout even
 // while the shared review gate is locked, because RequireMember + the Bearer
 // API boundary are the real protection there — the review password would only
 // LOCK OUT a signed-out customer before the sign-in redirect could capture
@@ -65,6 +66,10 @@ describe("account portal review-gate exemption", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
+      "/research/account/orders/XRR-Fixture_01",
     ]) {
       const view = renderLayout(path);
       expect(view.querySelector('[data-testid="route-content"]'), path).not.toBeNull();
@@ -77,7 +82,15 @@ describe("account portal review-gate exemption", () => {
   });
 
   it("keeps an unregistered sibling under /research/account behind the review gate", () => {
-    for (const path of ["/research/account/sign-in", "/research/account/anything-else"]) {
+    for (const path of [
+      "/research/account/sign-in",
+      "/research/account/anything-else",
+      "/research/account/orders/:reference",
+      "/RESEARCH/ACCOUNT/ORDERS/XRR-Fixture_01",
+      "/research/account/orders/XRR-Fixture_01/extra",
+      "/research/account/orders/XRR%2FFixture_01",
+      "/research/account/orders/.invalid",
+    ]) {
       const view = renderLayout(path);
       expect(view.querySelector('[data-testid="route-content"]'), path).toBeNull();
       expect(view.textContent, path).toContain("This area is under review.");

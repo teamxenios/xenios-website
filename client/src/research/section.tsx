@@ -66,6 +66,10 @@ const AccountSubscription = lazy(() => import("./account/AccountSubscription"));
 const AccountCare = lazy(() => import("./account/AccountCare"));
 const AccountDocuments = lazy(() => import("./account/AccountDocuments"));
 const AccountSupport = lazy(() => import("./account/AccountSupport"));
+const AccountOrderDetail = lazy(() => import("./account/AccountOrderDetail"));
+const AccountProfile = lazy(() => import("./account/AccountProfile"));
+const AccountSecurity = lazy(() => import("./account/AccountSecurity"));
+const AccountInterests = lazy(() => import("./account/AccountInterests"));
 
 export function LegacyMemberWelcome() {
   const { member, memberChecking } = useResearch();
@@ -327,10 +331,14 @@ export default function ResearchSection() {
           )}
 
           {/* Personal customer account: no organization-table dependency. */}
+          <Route path="/research/account/orders/:reference">{() => <L member component={AccountOrderDetail} />}</Route>
           <Route path="/research/account/orders">{() => <L member component={AccountOrders} />}</Route>
           <Route path="/research/account/subscription">{() => <L member component={AccountSubscription} />}</Route>
           <Route path="/research/account/care">{() => <L member component={AccountCare} />}</Route>
           <Route path="/research/account/documents">{() => <L member component={AccountDocuments} />}</Route>
+          <Route path="/research/account/profile">{() => <L member component={AccountProfile} />}</Route>
+          <Route path="/research/account/security">{() => <L member component={AccountSecurity} />}</Route>
+          <Route path="/research/account/interests">{() => <L member component={AccountInterests} />}</Route>
           <Route path="/research/account/support">{() => <L member component={AccountSupport} />}</Route>
           <Route path="/research/account">{() => <L member component={AccountOverview} />}</Route>
 

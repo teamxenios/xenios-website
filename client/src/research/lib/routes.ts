@@ -1,3 +1,5 @@
+import { ACCOUNT_PORTAL_EXTENSION_ROUTES } from "../account-portal/routes";
+
 // The canonical route manifest for the Supreme frontend (single source of
 // truth; a parity test asserts every manifest route is registered in the
 // section router). Legacy aliases stay registered in section.tsx but are not
@@ -22,7 +24,8 @@ export const ACCESS_ROUTES = {
   earlyAccess: "/research/early-access",
 } as const;
 
-// The personal customer account portal: six routes, MOUNTED (section.tsx)
+// The personal customer account portal: ten route entries (nine static pages
+// and one bounded detail family), MOUNTED (section.tsx)
 // and present in ALL_MANIFEST_ROUTES, each behind RequireMember with every
 // read on the customer-account API's own Bearer boundary — never the legacy
 // shared review password. Organization reads are not required: the portal
@@ -36,6 +39,7 @@ export const ACCOUNT_PORTAL_ROUTES = {
   care: "/research/account/care",
   documents: "/research/account/documents",
   support: "/research/account/support",
+  ...ACCOUNT_PORTAL_EXTENSION_ROUTES,
 } as const;
 
 // Parked account-identity and organization routes remain named for their

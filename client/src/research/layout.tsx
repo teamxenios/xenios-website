@@ -8,6 +8,7 @@ import {
   isResearchResetPasswordPath,
 } from "@shared/research/paths";
 import { useResearch } from "./core";
+import { isAccountOrderDetailPath } from "./account-portal/routes";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -270,14 +271,17 @@ function isResearchSignInPath(path: string): boolean {
   return normalizeResearchPath(path) === "/research/sign-in";
 }
 
-// The six REGISTERED account-portal routes, exactly — never a prefix, so the
-// parked identity/organization family under /research/account stays gated
-// until it is mounted on purpose.
-const ACCOUNT_PORTAL_PATHS = new Set<string>(Object.values(ACCOUNT_PORTAL_ROUTES));
+// The nine static account-portal routes plus the one bounded order-detail
+// family — never a broad prefix, so the parked identity/organization family
+// under /research/account stays gated until it is mounted on purpose.
+const ACCOUNT_PORTAL_PATHS = new Set<string>(
+  Object.values(ACCOUNT_PORTAL_ROUTES).filter((path) => !path.includes(":")),
+);
 
 function isAccountPortalPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
-  return normalized !== null && ACCOUNT_PORTAL_PATHS.has(normalized);
+  return (normalized !== null && ACCOUNT_PORTAL_PATHS.has(normalized))
+    || isAccountOrderDetailPath(path);
 }
 
 function isPublicResearchPath(path: string): boolean {
@@ -341,9 +345,9 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   ) {
     return <RecoveryChrome>{children}</RecoveryChrome>;
   }
-  // THE CUSTOMER ACCOUNT PORTAL (release integration, 2026-08-27). The six
-  // registered account routes are member-guarded at mount (RequireMember) and
-  // Bearer-guarded at every API read, so the shared review password adds no
+  // THE CUSTOMER ACCOUNT PORTAL (release integration, 2026-08-27). The nine
+  // static routes and bounded detail family use RequireMember at mount and a
+  // Bearer guard on every API read, so the shared review password adds no
   // protection here — only a lockout: a signed-out customer must land on
   // sign-in with the exact returnTo, not on the reviewer password page. Bare
   // children on purpose: AccountPortalShell is the sole chrome, the same

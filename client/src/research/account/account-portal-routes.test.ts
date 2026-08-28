@@ -6,7 +6,7 @@ import { ACCOUNT_PORTAL_ROUTES, ALL_MANIFEST_ROUTES } from "../lib/routes";
 const section = readFileSync(resolve(__dirname, "../section.tsx"), "utf8");
 
 describe("customer account portal routes", () => {
-  it("registers exactly the six portal routes through the member guard", () => {
+  it("registers exactly nine portal pages and one detail family through the member guard", () => {
     const routes = Object.values(ACCOUNT_PORTAL_ROUTES);
     expect(routes).toEqual([
       "/research/account",
@@ -15,6 +15,10 @@ describe("customer account portal routes", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/orders/:reference",
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
     ]);
     for (const route of routes) {
       expect(ALL_MANIFEST_ROUTES).toContain(route);

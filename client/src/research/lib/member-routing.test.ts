@@ -76,7 +76,7 @@ describe("safeResearchReturnTo", () => {
 });
 
 describe("safeResearchReturnTo for the account portal", () => {
-  it("allows exactly the six registered account-portal routes", () => {
+  it("allows the nine static account pages and preserves a bounded opaque detail reference", () => {
     for (const path of [
       "/research/account",
       "/research/account/orders",
@@ -84,9 +84,14 @@ describe("safeResearchReturnTo for the account portal", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
     ]) {
       expect(safeResearchReturnTo(path)).toBe(path);
     }
+    expect(safeResearchReturnTo("/research/account/orders/XRR-Fixture_01?from=list"))
+      .toBe("/research/account/orders/XRR-Fixture_01?from=list");
   });
 
   it("keeps the allowlist closed: parked and unregistered account paths are rejected", () => {
@@ -95,6 +100,11 @@ describe("safeResearchReturnTo for the account portal", () => {
     expect(safeResearchReturnTo("/research/account/organizations/abc")).toBeNull();
     expect(safeResearchReturnTo("/research/account/nonexistent")).toBeNull();
     expect(safeResearchReturnTo("/research/account/orders/../../admin")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/orders/:reference")).toBeNull();
+    expect(safeResearchReturnTo("/RESEARCH/ACCOUNT/ORDERS/XRR-Fixture_01")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/orders/XRR-Fixture_01/extra")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/orders/XRR%2FFixture_01")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/orders/.invalid")).toBeNull();
   });
 });
 
@@ -106,6 +116,8 @@ describe("memberDestination", () => {
   it("returns an active member to the exact account-portal route they asked for", () => {
     expect(memberDestination(active, "/research/account/orders")).toBe("/research/account/orders");
     expect(memberDestination(active, "/research/account")).toBe("/research/account");
+    expect(memberDestination(active, "/research/account/orders/XRR-Fixture_01?from=list"))
+      .toBe("/research/account/orders/XRR-Fixture_01?from=list");
   });
 
   it("never lets an account returnTo bypass activation or billing routing", () => {

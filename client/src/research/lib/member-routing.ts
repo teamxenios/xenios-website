@@ -1,13 +1,16 @@
 import type { MemberInfo } from "../core";
+import { isAccountOrderDetailPath } from "../account-portal/routes";
 import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES } from "./routes";
 
 const MEMBER_ROOT = "/research/member";
 const ACCOUNT_ROOT = "/research/account";
 const ACTIVATION_ROOT = "/research/activate";
-// The closed allowlist: registered member routes plus the six registered
+// The closed allowlist: registered member routes plus the nine static
 // account-portal routes. The portal set stays enumerated (never a
 // startsWith("/research/account") check) so the parked identity/organization
-// family under the same prefix remains unreturnable until it is mounted.
+// family under the same prefix remains unreturnable until it is mounted. The
+// order-detail family is admitted separately by its bounded one-segment parser
+// so case-sensitive opaque references survive without widening the prefix.
 const STATIC_MEMBER_PATHS = new Set<string>(
   [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter(
     (path) => !path.includes(":"),
@@ -45,13 +48,15 @@ export function safeResearchReturnTo(value: string | null | undefined): string |
   try {
     const base = new URL("https://xenios.invalid");
     const parsed = new URL(value, base);
-    const pathname = parsed.pathname.toLowerCase();
     if (parsed.origin !== base.origin) return null;
-    if (parsed.pathname !== pathname) return null;
+    const normalizedPathname = parsed.pathname.toLowerCase();
+    const accountOrderDetail = isAccountOrderDetailPath(parsed.pathname);
+    if (!accountOrderDetail && parsed.pathname !== normalizedPathname) return null;
     if (
-      pathname !== "/research" &&
-      pathname !== ACTIVATION_ROOT &&
-      !isRegisteredMemberPath(pathname)
+      normalizedPathname !== "/research" &&
+      normalizedPathname !== ACTIVATION_ROOT &&
+      !isRegisteredMemberPath(normalizedPathname) &&
+      !accountOrderDetail
     ) return null;
     return `${parsed.pathname}${parsed.search}`;
   } catch {
