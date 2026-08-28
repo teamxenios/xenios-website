@@ -510,7 +510,10 @@
         "docs/research/CLIENT_ACCOUNT_MIGRATION_REHEARSAL_2026-08-26.md",
         "docs/research-launch/XENIOS_CLIENT_ACCOUNT_FINAL_INTEGRATION_RC_2026-08-27.md"
       ],
-      "dependsOn": ["STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825", "CLIENT-ACCOUNT-PORTAL-UI-20260826"],
+      "dependsOn": [
+        "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+        "CLIENT-ACCOUNT-PORTAL-UI-20260826"
+      ],
       "pathsNote": "Release-authority integration pass per the 2026-08-26 blitz plan: the seam edits ride the protected-seam protocol with chained manifest notes. No deploy, no migration apply, no invitation, no activation, no production mutation. Founder decisions enumerated in the RC report section 26.",
       "claimedAt": "2026-08-27T17:30:00.000Z",
       "handoff": {
@@ -519,6 +522,37 @@
         "file": ".xenios/handoffs/2026-08-27T21-45-00-000Z-CLIENT-ACCOUNT-FINAL-RC-claude-fable-final-integrator-20260827.md",
         "at": "2026-08-27T21:45:00.000Z"
       }
+    },
+    {
+      "id": "OMEGA-FULL-FINISH-LEAD-20260828",
+      "title": "Lead and integrate the Xenios Research Omega full-site release candidate without production mutation",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ultra-20260828T030700624Z-693334e7",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/layout.tsx",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_CAPABILITY_MATRIX_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_TEBRA_INTEGRATION_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_ROLLBACK_PLAN_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_HUMAN_ONLY_BLOCKERS_2026-08-28.md",
+        "docs/review/xenios-research-full-site-20260828/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-ultra-20260828T030700624Z-693334e7.json",
+        ".xenios/handoffs/*OMEGA-FULL-FINISH-LEAD-20260828*",
+        ".xenios/messages/*codex-ultra-20260828T030700624Z-693334e7*"
+      ],
+      "dependsOn": [],
+      "pathsNote": "New exact-scope Lead task authorized by the 2026-08-28 Omega full-site program. The failed SHA a1bbc2a is development input only. No deploy, production/release merge, production/shared-staging migration, real account/import/invitation, product/pricing/payment mutation, clinical/pharmacy action, or external communication is authorized.",
+      "claimedAt": "2026-08-28T03:15:35.420Z"
     }
   ]
 }

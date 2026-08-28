@@ -328,6 +328,35 @@
       "state": "handoff",
       "claimedAt": "2026-08-26T22:20:42.475Z",
       "heartbeatAt": "2026-08-27T00:22:10.366Z"
+    },
+    {
+      "id": "e81ba424-525c-4592-a728-8b7ecd1e2efc",
+      "task": "OMEGA-FULL-FINISH-LEAD-20260828",
+      "session": "codex-ultra-20260828T030700624Z-693334e7",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/layout.tsx",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_CAPABILITY_MATRIX_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_TEBRA_INTEGRATION_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_ROLLBACK_PLAN_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_HUMAN_ONLY_BLOCKERS_2026-08-28.md",
+        "docs/review/xenios-research-full-site-20260828/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-ultra-20260828T030700624Z-693334e7.json",
+        ".xenios/handoffs/*OMEGA-FULL-FINISH-LEAD-20260828*",
+        ".xenios/messages/*codex-ultra-20260828T030700624Z-693334e7*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-28T03:15:35.424Z",
+      "heartbeatAt": "2026-08-28T03:15:35.985Z"
     }
   ],
   "rules": [
