@@ -157,6 +157,7 @@ export function buildProductionCustomerAccountPorts(
           state,
           billing: billingDisplayOf(row),
           planLabel: state === "none" ? null : "Xenios Research Membership",
+          renewal: { state: "unavailable", nextRenewalAt: null },
           nextRenewalAt: null,
           manageUrl: null,
           manualBilling: true,
@@ -186,8 +187,13 @@ export function buildProductionCustomerAccountPorts(
         return {
           research: [],
           carePharmacy: [],
+          carePharmacyHistory: {
+            availability: "unavailable",
+            authoritativeRecordCount: null,
+          },
           history: {
             availability: "unavailable",
+            authoritativeRecordCount: null,
             sources: { commerce: disconnected, xea: disconnected, xec: disconnected, xrr: disconnected },
           },
         };

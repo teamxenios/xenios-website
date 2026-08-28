@@ -278,7 +278,8 @@ describe("product control state", () => {
       (item) => item.productId === "pc_gamma",
     );
     // The consequence is stated, not implied.
-    expect(retired?.note).toContain("does NOT revoke purchase authority");
+    expect(retired?.note).toContain("refuses Add to Cart");
+    expect(retired?.note).toContain("does not itself revoke durable purchase authority");
     expect(withBindings.summary.bindingsAtRisk).toBe(3);
   });
 });

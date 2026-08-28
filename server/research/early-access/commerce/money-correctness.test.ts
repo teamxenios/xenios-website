@@ -937,6 +937,25 @@ describe("refunds are bounded by the money that actually arrived", () => {
     expect(exact.ok).toBe(true);
   });
 
+  it("refuses a prior refund trail bound to a different verified-paid amount", () => {
+    const projection = verified(3, 47_760);
+    const first = refund(projection, 1_000);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+
+    expect(
+      recordRefund({
+        verifiedOrder: { ...projection },
+        refunds: [{ ...first.value, verifiedPaidCents: 50_000 }],
+        actor: FOUNDER,
+        amountCents: 1_000,
+        currency: "USD",
+        reason: "Refunding another supported amount.",
+        refundedAt: REFUNDED_AT,
+      }),
+    ).toEqual({ ok: false, code: "refund_history_invalid" });
+  });
+
   it("refuses a refund above the payable total unless the overpayment path allows it", () => {
     const exception = overpaymentException();
     const projection = verified(3, 59_700, { exception: { ...exception } });

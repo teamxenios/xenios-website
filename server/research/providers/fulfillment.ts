@@ -435,12 +435,6 @@ export class MitchFulfillmentProvider implements FulfillmentProvider {
   private readonly deadLetterSink?: FulfillmentDeadLetterSink;
   private readonly auditRecorder?: FulfillmentAuditRecorder;
   private readonly now: () => number;
-  /**
-   * Event id -> when it was seen (ms). A stale timestamp is already rejected
-   * beyond the tolerance window, so entries older than twice the window are
-   * pruned on every insert; the map stays bounded on a long-lived process.
-   */
-  private readonly seenWebhookEventIds = new Map<string, number>();
 
   constructor(options: MitchProviderOptions = {}) {
     this.transportMode = options.transportMode ?? "manual_export";
@@ -683,22 +677,15 @@ export class MitchFulfillmentProvider implements FulfillmentProvider {
       return rejected("Webhook missing eventId, fulfillment order id, or status.");
     }
 
-    // Replay protection within the tolerance window. Durable replay protection
-    // belongs to the persistence layer via a unique constraint on the event id;
-    // this set stops a same-process replay without waiting for that write.
-    if (this.seenWebhookEventIds.has(eventId)) return rejected("Duplicate webhook event.");
-
     const status = mapMitchStatus(rawStatus);
     if (status === null) {
       return rejected(`Unknown fulfillment status "${rawStatus}". Refusing to guess.`);
     }
 
-    const nowMs = this.now();
-    const horizonMs = nowMs - MITCH_WEBHOOK_TOLERANCE_SECONDS * 2 * 1000;
-    this.seenWebhookEventIds.forEach((seenAtMs, seenId) => {
-      if (seenAtMs < horizonMs) this.seenWebhookEventIds.delete(seenId);
-    });
-    this.seenWebhookEventIds.set(eventId, nowMs);
+    // Verification is intentionally retry-safe. It does not burn an event id in
+    // process memory: only the handler's durable atomic inbox+effect transaction
+    // may decide whether these exact signed bytes are new, duplicate, or a
+    // conflicting reuse of an id. If persistence fails, the provider can retry.
     const update = buildStatusUpdate(parsed, fulfillmentOrderId, status);
     await this.audit({
       type: "webhook_accepted",

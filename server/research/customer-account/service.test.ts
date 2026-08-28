@@ -20,14 +20,20 @@ const membership = (overrides: Partial<MembershipDto> = {}): MembershipDto => ({
 const orders = (
   availability: "complete" | "partial" | "unavailable",
   research: CustomerOrdersDto["research"] = [],
+  carePharmacyHistory: CustomerOrdersDto["carePharmacyHistory"] = {
+    availability: "available",
+    authoritativeRecordCount: 0,
+  },
 ): CustomerOrdersDto => {
   const on = { connected: true, complete: true };
   const off = { connected: false, complete: false };
   return {
     research,
     carePharmacy: [],
+    carePharmacyHistory,
     history: {
       availability,
+      authoritativeRecordCount: availability === "complete" ? research.length : null,
       sources:
         availability === "complete"
           ? { commerce: on, xea: on, xec: on, xrr: on }
@@ -71,7 +77,7 @@ describe("accountStanding — 'up to date' must be provable", () => {
     ).toBe("attention");
   });
 
-  it("current ONLY with settled billing, complete history, and a knowable Care source", () => {
+  it("current ONLY with settled billing, complete history, and authoritative Care sources", () => {
     expect(
       accountStanding(membership({ billing: "current" }), FIXTURE_CARE_ENROLLED, orders("complete"), null),
     ).toBe("current");
@@ -102,5 +108,22 @@ describe("accountStanding — 'up to date' must be provable", () => {
     expect(
       accountStanding(membership({ billing: "current" }), FIXTURE_CARE_UNAVAILABLE, orders("complete"), null),
     ).toBe("indeterminate");
+  });
+
+  it("partial or unavailable Care/pharmacy history blocks the all-clear", () => {
+    for (const carePharmacyHistory of [
+      { availability: "partial" as const, authoritativeRecordCount: null },
+      { availability: "unavailable" as const, authoritativeRecordCount: null },
+    ]) {
+      expect(
+        accountStanding(
+          membership({ billing: "current" }),
+          FIXTURE_CARE_ENROLLED,
+          orders("complete", [], carePharmacyHistory),
+          null,
+        ),
+        carePharmacyHistory.availability,
+      ).toBe("indeterminate");
+    }
   });
 });

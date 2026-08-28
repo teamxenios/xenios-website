@@ -1,10 +1,17 @@
 import type {
   CartProductSelectionRequest,
-  CartProductSelectionResult,
   CartProductSelectionSource,
 } from "@shared/research/cart-product-selection";
-import { selectCartProduct } from "../commerce/cart-product-selection";
+import {
+  selectCartProduct,
+  type AuthoritativeCartProductSelectionResult,
+} from "../commerce/cart-product-selection";
 import type { ProductControlSelectionAuthority } from "./product-control-adapter";
+import {
+  resolveCurrentProductVariantActivationAuthority,
+  unavailableProductVariantActivationLedger,
+  type ProductVariantActivationLedgerRepository,
+} from "../product-activation/authority-repository";
 
 /**
  * The founder gate for direct commerce on the v2 member catalog.
@@ -39,7 +46,7 @@ export function masterOfferingsDirectCommerceEnabled(
  * mounted. Exported so the flag-gated replacement provably answers the same
  * shape when the flag is off, not a near-copy that drifts.
  */
-export const MASTER_OFFERINGS_COMMERCE_REFUSAL: CartProductSelectionResult = {
+export const MASTER_OFFERINGS_COMMERCE_REFUSAL: AuthoritativeCartProductSelectionResult = {
   ok: false,
   code: "product_commerce_unapproved",
 };
@@ -73,6 +80,8 @@ export interface CartSelectionFactsReader {
  */
 export function createProductControlSelectionAuthority(
   facts: CartSelectionFactsReader,
+  activationRepository: ProductVariantActivationLedgerRepository =
+    unavailableProductVariantActivationLedger,
 ): ProductControlSelectionAuthority {
   return {
     async select(request, session) {
@@ -89,7 +98,24 @@ export function createProductControlSelectionAuthority(
           source.audienceEligibility === null && session !== undefined
             ? { ...source, audienceEligibility: session.audienceEligibility }
             : source;
-        return selectCartProduct(request, evaluated);
+        const variant = evaluated.variants.find(
+          (candidate) =>
+            candidate.id === request.variantId &&
+            candidate.productId === request.productId,
+        );
+        if (variant === undefined || !variant.sku.trim()) {
+          return MASTER_OFFERINGS_COMMERCE_REFUSAL;
+        }
+        const activation = await resolveCurrentProductVariantActivationAuthority(
+          activationRepository,
+          {
+            productId: request.productId,
+            variantId: request.variantId,
+            sku: variant.sku,
+            evaluatedAt: new Date(request.evaluatedAt).toISOString(),
+          },
+        );
+        return selectCartProduct(request, evaluated, activation);
       } catch {
         return MASTER_OFFERINGS_COMMERCE_REFUSAL;
       }

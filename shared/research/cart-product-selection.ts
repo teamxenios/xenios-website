@@ -98,6 +98,10 @@ export const CART_PRODUCT_SELECTION_FAILURE_CODES = [
   "inventory_eligibility_missing",
   "inventory_identity_mismatch",
   "inventory_unavailable",
+  "activation_authority_missing",
+  "activation_authority_not_live",
+  "activation_identity_mismatch",
+  "activation_evidence_invalid",
   "invalid_projection",
 ] as const;
 

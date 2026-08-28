@@ -11,6 +11,7 @@ import {
   FIXTURE_ACCOUNT_OVERVIEW,
   FIXTURE_ACCOUNT_OVERVIEW_STAFF,
   FIXTURE_CUSTOMER_ORDERS,
+  FIXTURE_CUSTOMER_ORDERS_CARE_PARTIAL,
 } from "./fixtures";
 
 describe("care timeline vocabulary", () => {
@@ -82,5 +83,34 @@ describe("fixtures", () => {
     expect(FIXTURE_ACCOUNT_OVERVIEW.careEnrollment.status.stage).toBe("provider_review");
     // An active membership does not imply pharmacy fulfillment.
     expect(FIXTURE_ACCOUNT_OVERVIEW.careEnrollment.pharmacyState).toBe("none");
+  });
+
+  it("partial Research history and available Care history keep distinct count truth", () => {
+    expect(FIXTURE_CUSTOMER_ORDERS.history).toMatchObject({
+      availability: "partial",
+      authoritativeRecordCount: null,
+    });
+    expect(FIXTURE_CUSTOMER_ORDERS.carePharmacyHistory).toEqual({
+      availability: "available",
+      authoritativeRecordCount: 1,
+    });
+  });
+
+  it("partial Care history preserves known records without claiming their length is total", () => {
+    expect(FIXTURE_CUSTOMER_ORDERS_CARE_PARTIAL.carePharmacy).toEqual(
+      FIXTURE_CUSTOMER_ORDERS.carePharmacy,
+    );
+    expect(FIXTURE_CUSTOMER_ORDERS_CARE_PARTIAL.carePharmacy.length).toBeGreaterThan(0);
+    expect(FIXTURE_CUSTOMER_ORDERS_CARE_PARTIAL.carePharmacyHistory).toEqual({
+      availability: "partial",
+      authoritativeRecordCount: null,
+    });
+  });
+
+  it("renewal evidence distinguishes scheduled, not scheduled, and unavailable", () => {
+    expect(FIXTURE_ACCOUNT_OVERVIEW.membership.renewal).toEqual({
+      state: "scheduled",
+      nextRenewalAt: "2026-09-26T00:00:00.000Z",
+    });
   });
 });

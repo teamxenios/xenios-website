@@ -42,25 +42,87 @@ class MalformedOverlayError extends Error {
   }
 }
 
-function checklistFrom(raw: unknown, where: string): ActivationChecklist {
+function recordFrom(raw: unknown, where: string): Record<string, unknown> {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
-    throw new MalformedOverlayError(where, "checklist must be an object");
+    throw new MalformedOverlayError(where, "must be an object");
   }
-  const source = raw as Record<string, unknown>;
-  const out: Record<string, string | null> = { ...EMPTY_ACTIVATION_CHECKLIST };
+  return raw as Record<string, unknown>;
+}
+
+function assertExactKeys(
+  source: Record<string, unknown>,
+  where: string,
+  allowed: readonly string[],
+  required: readonly string[] = allowed,
+): void {
+  const allowedSet = new Set(allowed);
   for (const key of Object.keys(source)) {
-    if (!(key in EMPTY_ACTIVATION_CHECKLIST)) {
-      throw new MalformedOverlayError(where, `unknown checklist field "${key}"`);
+    if (!allowedSet.has(key)) {
+      throw new MalformedOverlayError(where, `unknown field "${key}"`);
     }
   }
+  for (const key of required) {
+    if (!Object.prototype.hasOwnProperty.call(source, key)) {
+      throw new MalformedOverlayError(where, `required field "${key}" is missing`);
+    }
+  }
+}
+
+function exactNonEmptyString(raw: unknown, where: string): string {
+  if (typeof raw !== "string" || raw.trim() === "" || raw !== raw.trim()) {
+    throw new MalformedOverlayError(where, "must be a non-empty, whitespace-canonical string");
+  }
+  return raw;
+}
+
+function nullableExactString(raw: unknown, where: string): string | null {
+  return raw === null ? null : exactNonEmptyString(raw, where);
+}
+
+const STRICT_UTC_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+
+function strictUtcInstant(raw: unknown, where: string): string {
+  const value = exactNonEmptyString(raw, where);
+  if (!STRICT_UTC_INSTANT.test(value)) {
+    throw new MalformedOverlayError(where, "must be a strict ISO-8601 UTC instant");
+  }
+  const parsed = new Date(value);
+  const canonical = value.includes(".")
+    ? value.replace(/\.(\d{1,3})Z$/, (_, ms: string) => `.${ms.padEnd(3, "0")}Z`)
+    : value.replace("Z", ".000Z");
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString() !== canonical) {
+    throw new MalformedOverlayError(where, "must be a real calendar instant");
+  }
+  return value;
+}
+
+function strictDate(raw: unknown, where: string): string {
+  const value = exactNonEmptyString(raw, where);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new MalformedOverlayError(where, "must be a YYYY-MM-DD date");
+  }
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) {
+    throw new MalformedOverlayError(where, "must be a real calendar date");
+  }
+  return value;
+}
+
+function checklistFrom(raw: unknown, where: string): ActivationChecklist {
+  const source = recordFrom(raw, `${where}.checklist`);
+  const out: Record<string, string | null> = { ...EMPTY_ACTIVATION_CHECKLIST };
+  assertExactKeys(
+    source,
+    `${where}.checklist`,
+    Object.keys(EMPTY_ACTIVATION_CHECKLIST),
+    [],
+  );
   for (const key of Object.keys(EMPTY_ACTIVATION_CHECKLIST)) {
     const value = source[key];
     if (value === undefined || value === null) {
       out[key] = null;
-    } else if (typeof value === "string") {
-      out[key] = value.trim() === "" ? null : value;
     } else {
-      throw new MalformedOverlayError(where, `checklist field "${key}" must be a string`);
+      out[key] = exactNonEmptyString(value, `${where}.checklist.${key}`);
     }
   }
   return out as ActivationChecklist;
@@ -83,40 +145,92 @@ function basisFrom(raw: unknown, where: string): SupplyConfirmationBasis {
  * degraded default nor a silently-dropped restriction.
  */
 export function loadActivationOverlay(rootDir: string, relativePath = DEFAULT_CONFIG_RELATIVE): ActivationOverlay {
-  const parsed = JSON.parse(readFileSync(join(rootDir, relativePath), "utf8")) as Record<string, unknown>;
-  const entries: ActivationOverlayEntry[] = [];
-  if (parsed.entries !== undefined && !Array.isArray(parsed.entries)) {
-    throw new MalformedOverlayError("entries", "must be an array when present");
+  const parsed = recordFrom(
+    JSON.parse(readFileSync(join(rootDir, relativePath), "utf8")) as unknown,
+    "root",
+  );
+  assertExactKeys(
+    parsed,
+    "root",
+    ["$comment", "schemaVersion", "recordedOn", "recordedBy", "entries", "activationQueue"],
+    ["schemaVersion", "recordedOn", "recordedBy", "entries", "activationQueue"],
+  );
+  if (parsed.schemaVersion !== 1) {
+    throw new MalformedOverlayError("schemaVersion", "must be exactly 1");
   }
-  if (Array.isArray(parsed.entries)) {
-    parsed.entries.forEach((raw, index) => {
+  const recordedOn = strictDate(parsed.recordedOn, "recordedOn");
+  exactNonEmptyString(parsed.recordedBy, "recordedBy");
+  if (parsed.$comment !== undefined) {
+    if (!Array.isArray(parsed.$comment) || !parsed.$comment.every((line) => typeof line === "string")) {
+      throw new MalformedOverlayError("$comment", "must be an array of strings when present");
+    }
+  }
+  if (!Array.isArray(parsed.entries)) {
+    throw new MalformedOverlayError("entries", "must be an array");
+  }
+  if (!Array.isArray(parsed.activationQueue)) {
+    throw new MalformedOverlayError("activationQueue", "must be an array");
+  }
+
+  const entries: ActivationOverlayEntry[] = [];
+  const groupIds = new Set<string>();
+  parsed.entries.forEach((raw, index) => {
       const where = `entries[${index}]`;
-      if (typeof raw !== "object" || raw === null) {
-        throw new MalformedOverlayError(where, "must be an object");
+      const e = recordFrom(raw, where);
+      assertExactKeys(e, where, [
+        "groupId",
+        "label",
+        "confirmationBasis",
+        "confirmedBy",
+        "confirmedAt",
+        "checklist",
+        "founderActivationApproval",
+        "held",
+      ]);
+      const groupId = exactNonEmptyString(e.groupId, `${where}.groupId`);
+      if (groupIds.has(groupId)) {
+        throw new MalformedOverlayError(where, `duplicate groupId "${groupId}"`);
       }
-      const e = raw as Record<string, unknown>;
-      if (typeof e.groupId !== "string" || e.groupId.trim() === "") {
-        throw new MalformedOverlayError(where, "groupId must be a non-empty string");
-      }
-      if (typeof e.label !== "string" || e.label.trim() === "") {
-        throw new MalformedOverlayError(where, "label must be a non-empty string");
-      }
+      groupIds.add(groupId);
+      const label = exactNonEmptyString(e.label, `${where}.label`);
       if (typeof e.held !== "boolean") {
         // A hold someone typed as "true"/1/"yes" is a hold someone MEANT.
         throw new MalformedOverlayError(where, "held must be a boolean");
       }
+      const confirmationBasis = basisFrom(e.confirmationBasis, where);
+      const confirmedBy = nullableExactString(e.confirmedBy, `${where}.confirmedBy`);
+      const confirmedAt = e.confirmedAt === null
+        ? null
+        : strictUtcInstant(e.confirmedAt, `${where}.confirmedAt`);
+      if ((confirmedBy === null) !== (confirmedAt === null)) {
+        throw new MalformedOverlayError(where, "confirmedBy and confirmedAt must both be present or both be null");
+      }
+      if (confirmationBasis === "none" && (confirmedBy !== null || confirmedAt !== null)) {
+        throw new MalformedOverlayError(where, "basis none cannot carry confirmation provenance");
+      }
+      if (confirmationBasis !== "none" && (confirmedBy === null || confirmedAt === null)) {
+        throw new MalformedOverlayError(where, "verbal/documented basis requires confirmation provenance");
+      }
       const approval = e.founderActivationApproval;
-      if (approval !== null && approval !== undefined) {
-        const a = approval as Record<string, unknown>;
-        if (typeof approval !== "object" || typeof a.approvedBy !== "string" || typeof a.approvedAt !== "string") {
-          throw new MalformedOverlayError(where, "founderActivationApproval must be null or {approvedBy, approvedAt}");
-        }
+      if (approval !== null) {
+        const a = recordFrom(approval, `${where}.founderActivationApproval`);
+        assertExactKeys(a, `${where}.founderActivationApproval`, ["approvedBy", "approvedAt"]);
+        const approvedBy = exactNonEmptyString(
+          a.approvedBy,
+          `${where}.founderActivationApproval.approvedBy`,
+        );
+        const approvedAt = strictUtcInstant(
+          a.approvedAt,
+          `${where}.founderActivationApproval.approvedAt`,
+        );
         // P1-E: an approval that is PRESENT but not real evidence (empty or
         // whitespace approver, non-ISO / impossible / out-of-era timestamp)
         // refuses the whole load. The resolver would already treat it as
         // no-approval; failing loudly here means a config that CLAIMS an
         // approval it cannot substantiate never serves anything at all.
-        if (!isValidActivationApproval({ approvedBy: a.approvedBy, approvedAt: a.approvedAt })) {
+        if (
+          !isValidActivationApproval({ approvedBy, approvedAt })
+        ) {
           throw new MalformedOverlayError(
             where,
             "founderActivationApproval is not valid evidence (approvedBy must be substantive; approvedAt must be a strict, real, in-era ISO-8601 UTC instant)",
@@ -124,14 +238,14 @@ export function loadActivationOverlay(rootDir: string, relativePath = DEFAULT_CO
         }
       }
       entries.push({
-        groupId: e.groupId,
-        label: e.label,
-        confirmationBasis: basisFrom(e.confirmationBasis, where),
-        confirmedBy: typeof e.confirmedBy === "string" ? e.confirmedBy : null,
-        confirmedAt: typeof e.confirmedAt === "string" ? e.confirmedAt : null,
+        groupId,
+        label,
+        confirmationBasis,
+        confirmedBy,
+        confirmedAt,
         checklist: checklistFrom(e.checklist, where),
         founderActivationApproval:
-          approval === null || approval === undefined
+          approval === null
             ? null
             : {
                 approvedBy: (approval as Record<string, string>).approvedBy,
@@ -140,26 +254,31 @@ export function loadActivationOverlay(rootDir: string, relativePath = DEFAULT_CO
         held: e.held,
       });
     });
-  }
+
   const queue: ActivationQueueItem[] = [];
-  if (parsed.activationQueue !== undefined && !Array.isArray(parsed.activationQueue)) {
-    throw new MalformedOverlayError("activationQueue", "must be an array when present");
-  }
-  if (Array.isArray(parsed.activationQueue)) {
-    parsed.activationQueue.forEach((raw, index) => {
+  const queueIds = new Set<string>();
+  parsed.activationQueue.forEach((raw, index) => {
       const where = `activationQueue[${index}]`;
-      if (typeof raw !== "object" || raw === null) {
-        throw new MalformedOverlayError(where, "must be an object");
+      const q = recordFrom(raw, where);
+      assertExactKeys(q, where, ["queueId", "label", "demandMentions", "basis"]);
+      const queueId = exactNonEmptyString(q.queueId, `${where}.queueId`);
+      if (queueIds.has(queueId)) {
+        throw new MalformedOverlayError(where, `duplicate queueId "${queueId}"`);
       }
-      const q = raw as Record<string, unknown>;
-      if (typeof q.queueId !== "string" || typeof q.label !== "string") {
-        throw new MalformedOverlayError(where, "queueId and label must be strings");
+      queueIds.add(queueId);
+      const label = exactNonEmptyString(q.label, `${where}.label`);
+      if (
+        typeof q.demandMentions !== "number" ||
+        !Number.isSafeInteger(q.demandMentions) ||
+        q.demandMentions < 0
+      ) {
+        throw new MalformedOverlayError(where, "demandMentions must be a non-negative safe integer");
       }
       const basis = basisFrom(q.basis, where);
       queue.push({
-        queueId: q.queueId,
-        label: q.label,
-        demandMentions: typeof q.demandMentions === "number" ? q.demandMentions : 0,
+        queueId,
+        label,
+        demandMentions: q.demandMentions,
         basis,
         status:
           basis === "verbal"
@@ -169,9 +288,8 @@ export function loadActivationOverlay(rootDir: string, relativePath = DEFAULT_CO
               : "unavailable",
       });
     });
-  }
   return {
-    recordedOn: typeof parsed.recordedOn === "string" ? parsed.recordedOn : "unknown",
+    recordedOn,
     entries,
     queue,
   };
@@ -181,7 +299,11 @@ export function overlayEntryFor(
   overlay: ActivationOverlay,
   groupId: string,
 ): ActivationOverlayEntry | null {
-  return overlay.entries.find((e) => e.groupId === groupId) ?? null;
+  const matches = overlay.entries.filter((entry) => entry.groupId === groupId);
+  if (matches.length > 1) {
+    throw new MalformedOverlayError("entries", `groupId "${groupId}" is ambiguous`);
+  }
+  return matches[0] ?? null;
 }
 
 /** Convenience projection used by admin surfaces and (later) catalog badges. */

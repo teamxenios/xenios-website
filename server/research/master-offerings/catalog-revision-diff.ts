@@ -236,16 +236,16 @@ function changeRecord(offering: CatalogRevisionOffering): OfferingChangeRecord {
  * What actually happens to a retired offering that a Product Control binding
  * still points at. This is read off the shipped code, not assumed.
  *
- * resolveMasterOfferingAction decides Add to Cart from the binding and the
- * resolved CartProductSelection BEFORE it ever looks at the display state. So
- * retiring an offering out of the member-safe dataset does not revoke purchase
- * authority. It removes the offering from browse and detail (the slug stops
- * resolving and the detail route answers not found), while Product Control
- * keeps whatever authority it had. Retirement is a catalog state, and only
- * Product Control can withdraw the ability to buy.
+ * resolveMasterOfferingAction now requires both the offering and exact variant
+ * to remain `available_now`, so a retired catalog row cannot keep an Add to
+ * Cart action. Catalog retirement still is not durable activation revocation:
+ * direct SKU mutation and checkout intentionally adjudicate the Product
+ * Control ledger independently of presentation. Operators must therefore
+ * retire/revoke that exact product+variant authority in the same controlled
+ * change, not rely on the hidden catalog row as a purchase control.
  */
 export const RETIRED_AND_BOUND_CONSEQUENCE =
-  "Retiring an offering removes it from the member catalog, so its slug stops resolving and the detail route answers not found. It does NOT revoke purchase authority: resolveMasterOfferingAction produces Add to Cart from the Product Control binding and selection before it reads any display state. A binding left pointing at a retired variant is therefore a live purchase path attached to a product the catalog no longer shows. Withdraw the binding or the Product Control selection in Product Control first, then retire.";
+  "Retiring an offering removes it from the member catalog, so its slug stops resolving, the detail route answers not found, and resolveMasterOfferingAction refuses Add to Cart because the offering and exact variant are no longer available_now. Catalog retirement does not itself revoke durable purchase authority used by direct cart mutation and checkout. Retire or revoke the exact Product Control product+variant activation in the same controlled change, then retire the catalog row.";
 
 export function buildCatalogRevisionDiff(
   current: CatalogRevision,

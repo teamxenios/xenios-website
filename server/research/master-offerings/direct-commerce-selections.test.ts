@@ -11,11 +11,16 @@ import type {
 import {
   MASTER_OFFERINGS_COMMERCE_REFUSAL,
   RESEARCH_MASTER_OFFERINGS_DIRECT_COMMERCE_ENV_VAR,
-  createProductControlSelectionAuthority,
+  createProductControlSelectionAuthority as createProductControlSelectionAuthorityWithActivation,
   masterOfferingSelectionAuthorityFromEnv,
   masterOfferingsDirectCommerceEnabled,
   refusedMasterOfferingSelections,
 } from "./direct-commerce-selections";
+import {
+  canonicalProductVariantActivationFingerprint,
+  type ProductVariantActivationLedgerRecord,
+  type ProductVariantActivationLedgerRepository,
+} from "../product-activation/authority-repository";
 
 const AT = "2026-08-19T12:00:00.000Z";
 
@@ -26,6 +31,46 @@ const request: CartProductSelectionRequest = {
   currency: "USD",
   evaluatedAt: AT,
 };
+
+function activationRow(
+  overrides: Partial<Omit<ProductVariantActivationLedgerRecord, "evidenceFingerprint">> = {},
+): ProductVariantActivationLedgerRecord {
+  const unsigned = {
+    schemaVersion: 1 as const,
+    ledgerRevision: 12,
+    productId: "product-a",
+    variantId: "variant-a",
+    sku: "SKU-A",
+    productState: "live" as const,
+    variantState: "live" as const,
+    approvalId: "11111111-1111-4111-8111-111111111111",
+    approvedByActorId: "22222222-2222-4222-8222-222222222222",
+    approvedByRole: "founder" as const,
+    approvedAt: "2026-08-10T00:00:00.000Z",
+    reviewedAt: "2026-08-11T00:00:00.000Z",
+    validFrom: "2026-08-12T00:00:00.000Z",
+    validThrough: "2026-09-19T00:00:00.000Z",
+    revokedAt: null,
+    ...overrides,
+  };
+  return {
+    ...unsigned,
+    evidenceFingerprint: canonicalProductVariantActivationFingerprint(unsigned),
+  };
+}
+
+function liveActivationRepository(
+  rows: readonly ProductVariantActivationLedgerRecord[] = [activationRow()],
+): ProductVariantActivationLedgerRepository {
+  return { readCurrentCandidates: vi.fn(async () => rows) };
+}
+
+function createProductControlSelectionAuthority(
+  facts: Parameters<typeof createProductControlSelectionAuthorityWithActivation>[0],
+  activation: ProductVariantActivationLedgerRepository = liveActivationRepository(),
+) {
+  return createProductControlSelectionAuthorityWithActivation(facts, activation);
+}
 
 function readiness(domain: string): DomainReadiness {
   return {
@@ -230,6 +275,74 @@ describe("the direct-commerce flag", () => {
 });
 
 describe("the real selection authority fails closed on every seam", () => {
+  it("keeps the protected one-argument composition fail-closed until a durable adapter is wired", async () => {
+    const authority = createProductControlSelectionAuthorityWithActivation({
+      readSelectionSource: () => source(),
+    });
+    expect(await authority.select(request)).toEqual({
+      ok: false,
+      code: "activation_authority_missing",
+    });
+  });
+
+  it("looks up the durable ledger on every request and observes revocation immediately", async () => {
+    let rows: readonly ProductVariantActivationLedgerRecord[] = [activationRow()];
+    const repository: ProductVariantActivationLedgerRepository = {
+      readCurrentCandidates: vi.fn(async () => rows),
+    };
+    const authority = createProductControlSelectionAuthority(
+      { readSelectionSource: () => source() },
+      repository,
+    );
+    expect((await authority.select(request)).ok).toBe(true);
+    rows = [activationRow({ revokedAt: "2026-08-19T11:59:59.000Z" })];
+    expect(await authority.select(request)).toEqual({
+      ok: false,
+      code: "activation_authority_not_live",
+    });
+    expect(repository.readCurrentCandidates).toHaveBeenCalledTimes(2);
+  });
+
+  it("refuses missing, retired, stale, duplicate, and fingerprint-conflicting ledger evidence", async () => {
+    const cases: Array<{
+      label: string;
+      rows: readonly ProductVariantActivationLedgerRecord[];
+      code: string;
+    }> = [
+      { label: "missing", rows: [], code: "activation_authority_missing" },
+      {
+        label: "retired",
+        rows: [activationRow({ variantState: "retired" })],
+        code: "activation_authority_not_live",
+      },
+      {
+        label: "stale",
+        rows: [activationRow({ validThrough: AT })],
+        code: "activation_authority_not_live",
+      },
+      {
+        label: "duplicate",
+        rows: [activationRow(), activationRow({ ledgerRevision: 13 })],
+        code: "activation_authority_not_live",
+      },
+      {
+        label: "fingerprint conflict",
+        rows: [{ ...activationRow(), evidenceFingerprint: `sha256:${"0".repeat(64)}` }],
+        code: "activation_authority_not_live",
+      },
+    ];
+    for (const testCase of cases) {
+      const authority = createProductControlSelectionAuthority(
+        { readSelectionSource: () => source() },
+        liveActivationRepository(testCase.rows),
+      );
+      expect(await authority.select(request), testCase.label).toEqual({
+        ok: false,
+        code: testCase.code,
+      });
+    }
+  });
+
   it("refuses when the facts reader answers null", async () => {
     const authority = createProductControlSelectionAuthority({
       readSelectionSource: () => null,

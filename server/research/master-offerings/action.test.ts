@@ -112,6 +112,101 @@ describe("master offering action authority", () => {
     }
   });
 
+  it("direct binding never bypasses exact current live product+variant activation", () => {
+    const product = offering();
+    const presentation = product.variants[0];
+    const base = cartSelection();
+    const binding = {
+      offeringVariantId: presentation.id,
+      productId: base.productId,
+      variantId: base.variantId,
+    };
+    const resolve = (selection: unknown) =>
+      resolveMasterOfferingAction(product, presentation, {
+        binding,
+        selection: selection as never,
+      }).kind;
+
+    const { activationAuthority: _missing, ...withoutAuthority } = base;
+    expect(resolve(withoutAuthority)).not.toBe("add_to_cart");
+
+    for (const state of [
+      "held",
+      "pending",
+      "unavailable",
+      "retired",
+      "revoked",
+      "stale",
+      "ambiguous",
+      "conflicting",
+    ] as const) {
+      expect(
+        resolve({
+          ...base,
+          activationAuthority: {
+            state,
+            productId: base.productId,
+            variantId: base.variantId,
+            sku: base.sku,
+          },
+        }),
+        state,
+      ).not.toBe("add_to_cart");
+    }
+
+    const live = base.activationAuthority;
+    expect(live?.state).toBe("live");
+    if (live?.state !== "live") return;
+    for (const activationAuthority of [
+      { ...live, productId: "wrong-product" },
+      { ...live, variantId: "wrong-variant" },
+      { ...live, validThrough: base.evaluatedAt },
+      { ...live, evaluatedAt: "2026-08-09T12:00:00.001Z" },
+      { ...live, approvedByRole: "catalog_editor" as "founder" },
+      { ...live, evidenceFingerprint: "sha256:not-a-digest" },
+      { ...live, revokedAt: "2026-08-09T11:00:00.000Z" as unknown as null },
+    ]) {
+      expect(resolve({ ...base, activationAuthority })).not.toBe("add_to_cart");
+    }
+  });
+
+  it("every non-live offering or variant state stays non-orderable despite perfect binding", () => {
+    const selection = cartSelection();
+    const nonLive = [
+      "available_this_week",
+      "request_access",
+      "approval_required",
+      "temporarily_unavailable",
+      "coming_soon",
+      "care_pathway",
+      "planned",
+      "unavailable",
+    ] as const;
+    for (const displayState of nonLive) {
+      const product = offering({ variants: [variant({ displayState })] });
+      const presentation = product.variants[0];
+      const binding = {
+        offeringVariantId: presentation.id,
+        productId: selection.productId,
+        variantId: selection.variantId,
+      };
+      expect(
+        resolveMasterOfferingAction(product, presentation, { binding, selection }).kind,
+        `variant:${displayState}`,
+      ).not.toBe("add_to_cart");
+
+      const nonLiveOffering = { ...offering(), displayState };
+      const liveVariant = nonLiveOffering.variants[0];
+      expect(
+        resolveMasterOfferingAction(nonLiveOffering, liveVariant, {
+          binding: { ...binding, offeringVariantId: liveVariant.id },
+          selection,
+        }).kind,
+        `offering:${displayState}`,
+      ).not.toBe("add_to_cart");
+    }
+  });
+
   it("resolves every noncommerce state to the closed customer action vocabulary", () => {
     const expectations = {
       available_now: "request_access",

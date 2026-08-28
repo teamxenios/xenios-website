@@ -617,13 +617,12 @@ describe("MitchFulfillmentProvider webhook verification", () => {
     expect((await provider.verifyInboundWebhook(future.body, future.signature)).ok).toBe(false);
   });
 
-  it("rejects a replayed event id", async () => {
+  it("does not burn an event id during verification, so persistence failures can retry", async () => {
     const { provider } = configuredProvider();
     const { body, signature } = signedBody();
     expect((await provider.verifyInboundWebhook(body, signature)).ok).toBe(true);
     const replay = await provider.verifyInboundWebhook(body, signature);
-    expect(replay.ok).toBe(false);
-    if (!replay.ok) expect(replay.message).toContain("Duplicate");
+    expect(replay.ok).toBe(true);
   });
 
   it("rejects an unknown status word by name instead of faking a mapping", async () => {

@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   SupabaseEarlyAccessCartOrderHistory,
+  cartHistoryPaymentEvidence,
   cartOrderDetail,
   cartOrderSummary,
   readCartHistoryEntry,
@@ -168,10 +169,11 @@ describe("cart checkouts in the member order history", () => {
     expect(orders).toEqual([
       {
         orderId: "XEC-0123456789ABCDEF",
+        recordKind: "order",
         state: "payment_captured",
         placedAt: "2026-08-18T00:00:00.000Z",
         totalCents: 49_260,
-        payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+        payment: { amountDueCents: 49_260, amountCapturedCents: null, amountRefundedCents: null, currency: "USD" },
         shipmentsSource: "unavailable",
         shipments: [],
       },
@@ -186,10 +188,11 @@ describe("cart checkouts in the member order history", () => {
     const detail = await service.getForMember(KRIS, "XEC-0123456789ABCDEF");
     expect(detail).toEqual({
       orderId: "XEC-0123456789ABCDEF",
+      recordKind: "order",
       state: "payment_captured",
       placedAt: "2026-08-18T00:00:00.000Z",
       totalCents: 49_260,
-      payment: { amountDueCents: 49_260, amountCapturedCents: 49_260, amountRefundedCents: 0, currency: "USD" },
+      payment: { amountDueCents: 49_260, amountCapturedCents: null, amountRefundedCents: null, currency: "USD" },
       shipmentsSource: "unavailable",
       shipments: [],
       lines: [{ sku: "SKU-1", displayName: "SKU-1", quantity: 3, lineTotalCents: 47_760 }],
@@ -303,5 +306,30 @@ describe("cart projections", () => {
     const detail = cartOrderDetail(entry);
     expect(detail).toMatchObject(summary);
     expect(detail.lines).toEqual([...entry.lines]);
+  });
+
+  it("reads capture from an explicit settlement reader and leaves refunds unknown", async () => {
+    const entry = readCartHistoryEntry(cartRow());
+    expect(entry).not.toBeNull();
+    if (entry === null) return;
+    const asked: string[] = [];
+    const evidence = await cartHistoryPaymentEvidence(
+      {
+        async checkoutsForCustomers() {
+          return [];
+        },
+        async settlement(checkoutNumber) {
+          asked.push(checkoutNumber);
+          return {
+            cartCheckoutNumber: checkoutNumber,
+            verifiedAmountCents: 49_260,
+            verifiedCurrency: "USD",
+          } as never;
+        },
+      },
+      entry,
+    );
+    expect(asked).toEqual(["XEC-0123456789ABCDEF"]);
+    expect(evidence).toEqual({ amountCapturedCents: 49_260, amountRefundedCents: null });
   });
 });

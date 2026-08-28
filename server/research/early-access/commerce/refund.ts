@@ -169,12 +169,26 @@ export function readEarlyAccessRefundHistory(value: unknown): readonly EarlyAcce
   if (!entries) return null;
 
   const records: EarlyAccessRefund[] = [];
+  let orderId: string | null = null;
+  let verifiedPaidCents: number | null = null;
+  let cumulativeRefundedCents = 0;
   for (let index = 0; index < entries.length; index += 1) {
     const refund = readEarlyAccessRefund(entries[index]);
     if (!refund) return null;
     if (refund.sequence !== index + 1) return null;
-    const previous = records[index - 1];
-    if (previous !== undefined && refund.orderId !== previous.orderId) return null;
+    if (orderId === null) orderId = refund.orderId;
+    else if (refund.orderId !== orderId) return null;
+    if (verifiedPaidCents === null) verifiedPaidCents = refund.verifiedPaidCents;
+    else if (refund.verifiedPaidCents !== verifiedPaidCents) return null;
+    if (refund.priorRefundedCents !== cumulativeRefundedCents) return null;
+    const nextCumulative = cumulativeRefundedCents + refund.amountCents;
+    if (
+      !Number.isSafeInteger(nextCumulative) ||
+      nextCumulative > refund.verifiedPaidCents
+    ) {
+      return null;
+    }
+    cumulativeRefundedCents = nextCumulative;
     records.push(refund);
   }
   return Object.freeze(records);
@@ -218,6 +232,9 @@ export function recordRefund(input: unknown): RefundResult {
   const history = readEarlyAccessRefundHistory(record.refunds);
   if (!history) return refused("refund_history_invalid");
   if (history.some((refund) => refund.orderId !== verified.orderId)) {
+    return refused("refund_history_invalid");
+  }
+  if (history.some((refund) => refund.verifiedPaidCents !== verified.verifiedAmountCents)) {
     return refused("refund_history_invalid");
   }
   if (history.length >= EARLY_ACCESS_MAX_REFUNDS_PER_ORDER) return refused("refund_limit_reached");

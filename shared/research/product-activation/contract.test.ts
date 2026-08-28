@@ -98,13 +98,13 @@ describe("resolveActivationStatus — documentation ladder", () => {
     expect(resolveActivationStatus("request_only", overlay)).toBe("pending_pharmacy_activation");
   });
 
-  it("documented + complete + approved ⇒ the BASE status stands (overlay cannot grant)", () => {
+  it("documented + complete + config-approved still cannot resolve a live base live", () => {
     const overlay = entry({
       confirmationBasis: "documented",
       checklist: COMPLETE_CHECKLIST,
       founderActivationApproval: { approvedBy: "Founder", approvedAt: "2026-08-26T00:00:00.000Z" },
     });
-    expect(resolveActivationStatus("live", overlay)).toBe("live");
+    expect(resolveActivationStatus("live", overlay)).toBe("pending_pharmacy_activation");
     expect(resolveActivationStatus("request_only", overlay)).toBe("request_only");
     expect(resolveActivationStatus("provider_required", overlay)).toBe("provider_required");
   });
@@ -160,7 +160,7 @@ describe("activationComplete", () => {
     ).toBe(false);
   });
 
-  it("is true exactly for documented + complete + approved + not held", () => {
+  it("marks config documentation complete without conferring live authority", () => {
     expect(
       activationComplete(
         entry({

@@ -91,6 +91,15 @@ import {
   type EarlyAccessOrderHistoryDependencies,
   type MemberOrdersService,
 } from "../early-access/orders/member-order-history";
+import {
+  isResolvedCurrentLiveProductVariantActivationAuthority,
+  resolveCurrentProductVariantActivationBinding,
+  resolveCurrentProductVariantActivationAuthority,
+  unavailableProductVariantActivationBindings,
+  unavailableProductVariantActivationLedger,
+  type ProductVariantActivationBindingRepository,
+  type ProductVariantActivationLedgerRepository,
+} from "../product-activation/authority-repository";
 
 // ---------------------------------------------------------------------------
 // Production commerce dependencies (integration lane): the three-state composition.
@@ -222,8 +231,21 @@ export interface CommerceWiring {
    * so a checkout reserves real FEFO stock before any money moves.
    */
   resolveReservationStore(): ReservationRepository;
-  /** The durable webhook replay guard (DB-backed when the database is configured). */
+  /**
+   * Legacy webhook event observer. It is not mutation authority: inbound
+   * handlers require an atomic claim-and-apply store, and refuse when this
+   * compatibility port is all production can provide.
+   */
   resolveWebhookEventStore(): WebhookEventStore;
+  /**
+   * Exact product+variant durable activation authority. The production default
+   * remains unavailable until a reviewed ledger adapter is mounted; absence
+   * disables cart mutation and checkout rather than trusting catalog flags or
+   * a browser-posted SKU.
+   */
+  resolveProductVariantActivationLedger(): ProductVariantActivationLedgerRepository;
+  /** Durable exact-one Product Control identity for each legacy commerce SKU. */
+  resolveProductVariantActivationBindings(): ProductVariantActivationBindingRepository;
   resolvePartnerMemberStore(): AsyncPartnerMemberStore;
   resolvePartnerLinkStore(): AsyncPartnerLinkStore;
   resolveCommissionLedgerStore(): CommissionLedgerRepository;
@@ -242,10 +264,11 @@ export interface CommerceWiring {
 }
 
 /**
- * The durable webhook replay guard behind the (now async-capable) event-store
- * interface. Whether an event was seen is answered by the DATABASE via the
- * UNIQUE (provider_name, event_id) constraint; without a configured database the
- * in-memory reference stands in (and state 3 always has the database).
+ * Legacy database-backed event observation. The split `seen`/`record` shape
+ * cannot atomically bind a verified payload to its order transition, so the
+ * webhook handler never treats this adapter as authority. Production remains
+ * retryably capability-disabled until a reviewed transaction/RPC implements
+ * `claimAndApply`; the in-memory form is only a non-authorizing reference.
  */
 function resolveDurableWebhookEventStore(): WebhookEventStore {
   if (!supabaseConfigured()) return createInMemoryWebhookEventStore();
@@ -302,6 +325,10 @@ function defaultWiring(): CommerceWiring {
     resolveAdminQueuesStore,
     resolveReservationStore,
     resolveWebhookEventStore: resolveDurableWebhookEventStore,
+    resolveProductVariantActivationLedger: () =>
+      unavailableProductVariantActivationLedger,
+    resolveProductVariantActivationBindings: () =>
+      unavailableProductVariantActivationBindings,
     resolvePartnerMemberStore,
     resolvePartnerLinkStore,
     resolveCommissionLedgerStore,
@@ -888,6 +915,8 @@ function liveDependencies(
   const adminQueuesStore = wiring.resolveAdminQueuesStore();
   const reservationStore = wiring.resolveReservationStore();
   const webhookEventStore = wiring.resolveWebhookEventStore();
+  const activationLedger = wiring.resolveProductVariantActivationLedger();
+  const activationBindings = wiring.resolveProductVariantActivationBindings();
   const partnerMemberStore = wiring.resolvePartnerMemberStore();
   const partnerLinkStore = wiring.resolvePartnerLinkStore();
   const commissionLedger = wiring.resolveCommissionLedgerStore();
@@ -912,6 +941,48 @@ function liveDependencies(
   });
 
   const catalogBySku = new Map<string, CatalogProduct>(products.map((p) => [p.sku, p]));
+
+  async function currentLiveActivationForSku(
+    sku: string,
+    asOf: Date,
+  ): Promise<boolean> {
+    const evaluatedAt = asOf.toISOString();
+    const binding = await resolveCurrentProductVariantActivationBinding(
+      activationBindings,
+      { sku, evaluatedAt },
+    );
+    if (binding === null) return false;
+    const authority = await resolveCurrentProductVariantActivationAuthority(
+      activationLedger,
+      {
+        productId: binding.productId,
+        variantId: binding.variantId,
+        sku: binding.sku,
+        evaluatedAt,
+      },
+    );
+    return isResolvedCurrentLiveProductVariantActivationAuthority(authority, {
+      productId: binding.productId,
+      variantId: binding.variantId,
+      sku: binding.sku,
+      evaluatedAt,
+    });
+  }
+
+  async function everyStoredCartLineIsCurrentlyLive(
+    memberId: string,
+    asOf: Date,
+  ): Promise<boolean> {
+    const stored = await cartStore.load(memberId);
+    const skus = Array.from(
+      new Set((stored?.lines ?? []).map(({ sku }) => sku)),
+    );
+    if (skus.length === 0) return true;
+    const decisions = await Promise.all(
+      skus.map((sku) => currentLiveActivationForSku(sku, asOf)),
+    );
+    return decisions.every(Boolean);
+  }
 
   /**
    * A per-request cart composition. The cart service evaluates against a
@@ -974,6 +1045,19 @@ function liveDependencies(
     commerceEnabled: true,
   });
 
+  // Capabilities travel with the exact reader the account projection receives.
+  // This live branch has durable commerce history; other sources remain
+  // unavailable until their decorators are actually present.
+  const unavailableHistorySource = Object.freeze({ connected: false, complete: false });
+  const liveOrderService: MemberOrdersService = Object.assign(orderService, {
+    historySources: Object.freeze({
+      commerce: Object.freeze({ connected: true, complete: true }),
+      xea: unavailableHistorySource,
+      xec: unavailableHistorySource,
+      xrr: unavailableHistorySource,
+    }),
+  });
+
   // THE MEMBER'S OWN ORDERS, FROM EVERY STORE THEY BOUGHT FROM.
   //
   // Early Access orders are keyed on an opaque customerRef and member-commerce
@@ -989,8 +1073,8 @@ function liveDependencies(
   // paid that they had bought nothing.
   const memberOrders: MemberOrdersService =
     wiring.earlyAccessOrderHistory === undefined
-      ? orderService
-      : withEarlyAccessOrderHistory(orderService, wiring.earlyAccessOrderHistory);
+      ? liveOrderService
+      : withEarlyAccessOrderHistory(liveOrderService, wiring.earlyAccessOrderHistory);
 
   const refundService: RefundService = createRefundService({
     claims: claimRepository,
@@ -1196,10 +1280,39 @@ function liveDependencies(
     guides,
     cart: {
       getCart: async (memberId, asOf) => (await cartServiceFor(memberId, asOf)).getCart(memberId, asOf),
-      addLine: async (memberId, req, asOf) =>
-        (await cartServiceFor(memberId, asOf, req.sku)).addLine(memberId, req, asOf),
-      updateLine: async (memberId, sku, quantity, asOf) =>
-        (await cartServiceFor(memberId, asOf)).updateLine(memberId, sku, quantity, asOf),
+      addLine: async (memberId, req, asOf) => {
+        if (
+          catalogBySku.has(req.sku) &&
+          !(await currentLiveActivationForSku(req.sku, asOf))
+        ) {
+          return {
+            ok: false as const,
+            code: "product_not_purchasable" as const,
+          };
+        }
+        return (await cartServiceFor(memberId, asOf, req.sku)).addLine(
+          memberId,
+          req,
+          asOf,
+        );
+      },
+      updateLine: async (memberId, sku, quantity, asOf) => {
+        if (
+          catalogBySku.has(sku) &&
+          !(await currentLiveActivationForSku(sku, asOf))
+        ) {
+          return {
+            ok: false as const,
+            code: "product_not_purchasable" as const,
+          };
+        }
+        return (await cartServiceFor(memberId, asOf)).updateLine(
+          memberId,
+          sku,
+          quantity,
+          asOf,
+        );
+      },
       // The service returns the bare CartDto here; the routes relay expects a
       // discriminated result, so the success envelope is added in this file.
       removeLine: async (memberId, sku, asOf) => ({
@@ -1224,6 +1337,16 @@ function liveDependencies(
           if (settled) {
             return { ok: true as const, order: orderRecordToMemberConfirmation(settled) };
           }
+        }
+        // Re-read exact durable product+variant authority for every stored SKU
+        // immediately before checkout. A hidden CTA, a direct POST, a retired
+        // variant, or a stale/revoked earlier decision cannot reach payment.
+        if (!(await everyStoredCartLineIsCurrentlyLive(memberId, asOf))) {
+          return {
+            ok: false as const,
+            code: "product_not_purchasable" as const,
+            codes: ["product_not_purchasable" as const],
+          };
         }
         const outcome = await checkoutService.submit(memberId, req, asOf);
         if (!outcome.ok) {

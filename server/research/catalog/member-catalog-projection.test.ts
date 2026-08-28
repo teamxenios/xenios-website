@@ -224,7 +224,12 @@ describe("member catalog projection", () => {
         {
           id: "product-a",
           slug: "product-a",
-          displayState: "available",
+          // Catalog facts remain visible, but this synchronous projection has
+          // no request-time durable activation lookup and therefore cannot
+          // advertise an orderable state or mint a selection.
+          displayState: "unavailable",
+          readiness: null,
+          selection: null,
           price: {
             id: "product-a-price",
             effectiveAt: "2026-07-01T00:00:00.123Z",
@@ -639,7 +644,7 @@ describe("member catalog projection", () => {
     expect(JSON.stringify(result)).not.toContain("Prescribing workflow");
   });
 
-  it("projects exact detail identity, related products, variants, and lot-COA state", () => {
+  it("projects exact detail identity and lot-COA state without minting purchase authority", () => {
     const alpha = product();
     const related = product("product-c", { category: alpha.category });
     const result = projectMemberProductDetail(
@@ -652,14 +657,12 @@ describe("member catalog projection", () => {
         {
           id: "product-a-variant",
           lotCoaState: "verified",
-          selection: {
-            productId: "product-a",
-            variantId: "product-a-variant",
-          },
+          selection: null,
+          selectionFailure: "activation_authority_missing",
         },
       ],
       relatedProducts: [{ id: "product-c" }],
-      readiness: { ready: true, verifiedInputCount: 4 },
+      readiness: null,
     });
     expect(
       projectMemberProductDetail(source([alpha]), "missing"),

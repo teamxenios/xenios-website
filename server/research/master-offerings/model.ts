@@ -3,7 +3,7 @@ import type {
   MasterOfferingDisplayState,
   MasterOfferingFamily,
 } from "@shared/research/master-offerings/contract";
-import type { CartProductSelection } from "@shared/research/cart-product-selection";
+import type { AuthoritativeCartProductSelection } from "../commerce/cart-product-selection";
 
 /**
  * One source row from the private master workbook. Server and tooling only.
@@ -136,7 +136,7 @@ export interface MasterOfferingCommerceIdentityBinding {
  */
 export interface MasterOfferingCommerceResolution {
   binding: MasterOfferingCommerceIdentityBinding | null;
-  selection: CartProductSelection | null;
+  selection: AuthoritativeCartProductSelection | null;
 }
 
 export type MasterOfferingCommerceResolver = (

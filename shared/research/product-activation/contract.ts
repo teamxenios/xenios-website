@@ -27,6 +27,66 @@ export const PRODUCT_ACTIVATION_STATUSES = [
 
 export type ProductActivationStatus = (typeof PRODUCT_ACTIVATION_STATUSES)[number];
 
+export const NONLIVE_PRODUCT_VARIANT_ACTIVATION_STATES = [
+  "held",
+  "pending",
+  "unavailable",
+  "retired",
+  "revoked",
+  "stale",
+  "ambiguous",
+  "conflicting",
+] as const;
+
+export type NonliveProductVariantActivationState =
+  (typeof NONLIVE_PRODUCT_VARIANT_ACTIVATION_STATES)[number];
+
+/**
+ * Server-side, exact-unit activation evidence. A live certificate is intended
+ * to be produced only by the durable activation ledger; JSON overlays and UI
+ * state are structurally different and cannot satisfy this contract.
+ */
+export type ProductVariantActivationAuthorityEvidence =
+  | Readonly<{
+      state: "live";
+      productState: "live";
+      variantState: "live";
+      productId: string;
+      variantId: string;
+      sku: string;
+      source: "durable_activation_ledger";
+      /** Immutable database revision included in the canonical fingerprint. */
+      ledgerRevision: number;
+      approvalId: string;
+      approvedByActorId: string;
+      approvedByRole: "founder" | "super_admin";
+      approvedAt: string;
+      reviewedAt: string;
+      evaluatedAt: string;
+      validFrom: string;
+      validThrough: string;
+      evidenceFingerprint: string;
+      revokedAt: null;
+    }>
+  | Readonly<{
+      state: NonliveProductVariantActivationState;
+      productId: string | null;
+      variantId: string | null;
+      sku: string | null;
+    }>;
+
+/**
+ * Deliberately no shape-only `isCurrent...` predicate is exported here.
+ *
+ * This value is evidence returned by the server's request-time durable-ledger
+ * resolver; it is not a bearer certificate and its fields are never sufficient
+ * to authorize a purchase by themselves. The server resolver recomputes the
+ * canonical fingerprint (including `ledgerRevision`), resolves duplicate and
+ * conflicting rows, and checks current revocation state before producing a
+ * live value. Callers that merely receive JSON cannot mint authority by copying
+ * this shape.
+ */
+
 /**
  * What a supply confirmation is grounded on. "verbal" is a real, recorded
  * business signal — and it is structurally incapable of producing "live".
@@ -79,8 +139,10 @@ export type ActivationOverlayEntry = Readonly<{
   confirmedAt: string | null;
   checklist: ActivationChecklist;
   /**
-   * The founder's explicit activation approval for THIS product, recorded as
-   * actor + ISO timestamp. Absent ⇒ "live" is unreachable, whatever else says.
+   * Historical/config provenance that an activation review was recorded.
+   * This JSON field is not durable orderability authority and is structurally
+   * incapable of resolving a product live; only the exact product+variant
+   * durable authority contract above can authorize an order action.
    */
   founderActivationApproval: Readonly<{ approvedBy: string; approvedAt: string }> | null;
   /** An explicit hold always wins over everything below it. */
@@ -106,11 +168,10 @@ const STRICT_ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
  * era this system has existed in, is NOT approval. Everything that consumes
  * an approval goes through this one predicate, so "" can never count.
  *
- * Deeper than validation: the overlay remains structurally incapable of
- * PROMOTING a product — resolveActivationStatus clamps every outcome to be no
- * more permissive than the canonical base, so even a fully valid approval
- * record only lets the overlay STOP RESTRICTING; config-file text can never
- * convert a non-orderable base state into an orderable one.
+ * Deeper than validation: this value remains config provenance, not release
+ * authority. resolveActivationStatus clamps every outcome to be no more
+ * permissive than the canonical base and never lets a present config overlay
+ * resolve `live`, even when this record and the checklist are complete.
  */
 export function isValidActivationApproval(
   approval: Readonly<{ approvedBy: string; approvedAt: string }> | null,
@@ -190,11 +251,10 @@ export function isMoreRestrictive(a: ProductActivationStatus, b: ProductActivati
  *      orderable — even if every checklist field were filled in.
  *   4. A documented confirmation with an incomplete checklist, or without a
  *      founder approval record, proposes `pending_pharmacy_activation`.
- *   5. Documented + complete + approved proposes the base: the overlay is
- *      satisfied and can only confirm what the catalog already permits —
- *      it cannot skip the provider pathway, and it never invents live
- *      (a live base additionally requires the founder release ledger,
- *      enforced elsewhere).
+ *   5. Documented + complete + config-approved may stop restricting a
+ *      non-live base. Over a live base it still proposes
+ *      `pending_pharmacy_activation`: JSON provenance cannot stand in for the
+ *      exact durable product+variant activation authority.
  */
 export function resolveActivationStatus(
   base: ProductActivationStatus,
@@ -214,13 +274,16 @@ export function resolveActivationStatus(
     if (!isValidActivationApproval(overlay.founderActivationApproval)) {
       return "pending_pharmacy_activation";
     }
-    return base;
+    return base === "live" ? "pending_pharmacy_activation" : base;
   })();
   // The monotonic clamp: keep whichever of base/proposed is more restrictive.
   return isMoreRestrictive(base, proposed) ? base : proposed;
 }
 
-/** True only when nothing stands between this entry and founder-approved life. */
+/**
+ * True only when the config documentation bundle is complete. This is a
+ * provenance/checklist helper, never an orderability or durable-live gate.
+ */
 export function activationComplete(overlay: ActivationOverlayEntry): boolean {
   return (
     !overlay.held &&

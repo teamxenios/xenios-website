@@ -12,10 +12,12 @@ import { describe, expect, it } from "vitest";
 import {
   MAX_HISTORY_CUSTOMER_REFS,
   earlyAccessOrderDetail,
+  earlyAccessHistoryPaymentEvidence,
   earlyAccessOrderSummary,
   withEarlyAccessOrderHistory,
   type MemberOrdersService,
 } from "./member-order-history";
+import { readEarlyAccessRefundHistory } from "../commerce/refund";
 import type { EarlyAccessPlacement } from "../routes/store";
 
 const KRIS = "9f1b1d2c-8a4e-4c31-9b77-1c2d3e4f5a6b";
@@ -24,6 +26,32 @@ const STRANGER = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d";
 const KRIS_REF = "eac_" + "a".repeat(32);
 const KRIS_ALIAS = "eac_" + "b".repeat(32);
 const STRANGER_REF = "eac_" + "c".repeat(32);
+
+function refundRow(
+  overrides: Partial<{
+    orderId: string;
+    sequence: number;
+    amountCents: number;
+    verifiedPaidCents: number;
+    priorRefundedCents: number;
+  }> = {},
+): Record<string, unknown> {
+  const orderId = overrides.orderId ?? "XEA-0000000000000001";
+  const sequence = overrides.sequence ?? 1;
+  return {
+    refundId: `early-access-refund:${orderId}:${sequence}`,
+    orderId,
+    amountCents: overrides.amountCents ?? 1_000,
+    currency: "USD",
+    verifiedPaidCents: overrides.verifiedPaidCents ?? 9_000,
+    priorRefundedCents: overrides.priorRefundedCents ?? 0,
+    reason: "Synthetic test refund",
+    actorId: "test-operator",
+    actorRole: "founder_admin",
+    refundedAt: `2026-08-${String(sequence + 1).padStart(2, "0")}T00:00:00.000Z`,
+    sequence,
+  };
+}
 
 function placement(over: Partial<EarlyAccessPlacement> = {}): EarlyAccessPlacement {
   return {
@@ -118,6 +146,26 @@ function deps(
 }
 
 describe("a member sees their own Early Access orders", () => {
+  it("carries exact constructed-source completeness with the decorated service", () => {
+    const base: MemberOrdersService = {
+      ...emptyBase,
+      historySources: {
+        commerce: { connected: true, complete: true },
+        xea: { connected: false, complete: false },
+        xec: { connected: false, complete: false },
+        xrr: { connected: false, complete: false },
+      },
+    };
+    const { deps: d } = deps({ [KRIS]: [KRIS_REF] }, []);
+    const service = withEarlyAccessOrderHistory(base, d);
+    expect(service.historySources).toEqual({
+      commerce: { connected: true, complete: true },
+      xea: { connected: true, complete: true },
+      xec: { connected: false, complete: false },
+      xrr: { connected: false, complete: false },
+    });
+  });
+
   it("resolves one handle to that handle's orders", async () => {
     const { deps: d } = deps({ [KRIS]: [KRIS_REF] }, [placement()]);
     const orders = await withEarlyAccessOrderHistory(emptyBase, d).listForMember(KRIS);
@@ -337,6 +385,7 @@ describe("the projection carries no private fact", () => {
       "orderId",
       "payment",
       "placedAt",
+      "recordKind",
       "shipments",
       "shipmentsSource",
       "state",
@@ -367,5 +416,134 @@ describe("the projection carries no private fact", () => {
     expect(detail.lines).toEqual([
       { sku: "SKU-1", displayName: "SKU-1", quantity: 2, lineTotalCents: 10000 },
     ]);
+  });
+});
+
+describe("payment evidence comes from durable readers", () => {
+  it("requires one continuous refund chain with stable order and verified-paid authority", () => {
+    const first = refundRow();
+    const second = refundRow({ sequence: 2, priorRefundedCents: 1_000 });
+    expect(readEarlyAccessRefundHistory([first, second])).toHaveLength(2);
+
+    const otherOrder = "XEA-0000000000000002";
+    const invalidHistories: Array<[string, readonly unknown[]]> = [
+      [
+        "prior-refunded discontinuity",
+        [first, refundRow({ sequence: 2, priorRefundedCents: 0 })],
+      ],
+      [
+        "verified-paid authority changed",
+        [
+          first,
+          refundRow({ sequence: 2, priorRefundedCents: 1_000, verifiedPaidCents: 10_000 }),
+        ],
+      ],
+      [
+        "order identity changed",
+        [first, refundRow({ orderId: otherOrder, sequence: 2, priorRefundedCents: 1_000 })],
+      ],
+      [
+        "cumulative refund exceeded verified paid",
+        [
+          refundRow({ amountCents: 8_000 }),
+          refundRow({ sequence: 2, amountCents: 2_000, priorRefundedCents: 8_000 }),
+        ],
+      ],
+    ];
+    for (const [label, history] of invalidHistories) {
+      expect(readEarlyAccessRefundHistory(history), label).toBeNull();
+    }
+  });
+
+  it("uses settlement and a validated refund trail, never lifecycle synthesis", async () => {
+    const p = placement();
+    const calls: string[] = [];
+    const d = {
+      bindings: {
+        async customerRefsFor() {
+          return [KRIS_REF];
+        },
+      },
+      store: {
+        async placementsForCustomers() {
+          return [p];
+        },
+        async settlement(orderNumber: string) {
+          calls.push(`settlement:${orderNumber}`);
+          return {
+            orderNumber,
+            ledgerEntry: { amountCents: 9_000, currency: "USD" },
+          } as never;
+        },
+        async refunds(orderNumber: string) {
+          calls.push(`refunds:${orderNumber}`);
+          return [
+            {
+              refundId: `early-access-refund:${orderNumber}:1`,
+              orderId: orderNumber,
+              amountCents: 1_000,
+              currency: "USD",
+              verifiedPaidCents: 9_000,
+              priorRefundedCents: 0,
+              reason: "Synthetic test refund",
+              actorId: "test-operator",
+              actorRole: "founder_admin",
+              refundedAt: "2026-08-02T00:00:00.000Z",
+              sequence: 1,
+            },
+          ];
+        },
+      },
+    } as unknown as Parameters<typeof earlyAccessHistoryPaymentEvidence>[0];
+    await expect(earlyAccessHistoryPaymentEvidence(d, p)).resolves.toEqual({
+      amountCapturedCents: 9_000,
+      amountRefundedCents: 1_000,
+    });
+    expect(calls).toEqual([
+      `settlement:${p.orderNumber}`,
+      `refunds:${p.orderNumber}`,
+    ]);
+  });
+
+  it("rejects refund evidence whose verified-paid authority conflicts with settlement", async () => {
+    const p = placement();
+    const d = {
+      bindings: {
+        async customerRefsFor() {
+          return [KRIS_REF];
+        },
+      },
+      store: {
+        async placementsForCustomers() {
+          return [p];
+        },
+        async settlement(orderNumber: string) {
+          return {
+            orderNumber,
+            ledgerEntry: { amountCents: 9_000, currency: "USD" },
+          } as never;
+        },
+        async refunds(orderNumber: string) {
+          return [refundRow({ orderId: orderNumber, verifiedPaidCents: 10_000 })];
+        },
+      },
+    } as unknown as Parameters<typeof earlyAccessHistoryPaymentEvidence>[0];
+    await expect(earlyAccessHistoryPaymentEvidence(d, p)).resolves.toEqual({
+      amountCapturedCents: 9_000,
+      amountRefundedCents: null,
+    });
+  });
+
+  it("missing readers yield null facts even when lifecycle says verified", async () => {
+    const p = placement({ paymentState: "payment_verified" });
+    const { deps: d } = deps({ [KRIS]: [KRIS_REF] }, [p]);
+    await expect(earlyAccessHistoryPaymentEvidence(d, p)).resolves.toEqual({
+      amountCapturedCents: null,
+      amountRefundedCents: null,
+    });
+    expect(earlyAccessOrderSummary(p).payment).toMatchObject({
+      amountCapturedCents: null,
+      amountRefundedCents: null,
+    });
   });
 });

@@ -29,6 +29,13 @@ import type { CartDto, CheckoutRequest, ShippingQuoteRequest } from "@shared/res
 import type { PartnerSelfSource } from "./routes";
 import type { InventoryLot } from "../inventory/lots";
 import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
+import {
+  canonicalProductVariantActivationFingerprint,
+  type ProductVariantActivationBinding,
+  type ProductVariantActivationBindingRepository,
+  type ProductVariantActivationLedgerRecord,
+  type ProductVariantActivationLedgerRepository,
+} from "../product-activation/authority-repository";
 
 // ---------------------------------------------------------------------------
 // Three-state proof of the production commerce composition.
@@ -47,6 +54,35 @@ import { v3PreviewCatalogProducts } from "../catalog/v3-preview-catalog";
 
 const NOW = () => new Date("2026-07-22T00:00:00Z");
 const AS_OF = new Date("2026-07-22T00:00:00Z");
+
+function activationRowForSku(
+  sku: string,
+  overrides: Partial<Omit<ProductVariantActivationLedgerRecord, "evidenceFingerprint">> = {},
+): ProductVariantActivationLedgerRecord {
+  const suffix = sku === "P902" ? "2" : "1";
+  const unsigned = {
+    schemaVersion: 1 as const,
+    ledgerRevision: sku === "P902" ? 902 : 901,
+    productId: `product-wiring-${suffix}`,
+    variantId: `variant-wiring-${suffix}`,
+    sku,
+    productState: "live" as const,
+    variantState: "live" as const,
+    approvalId: `11111111-1111-4111-8111-11111111111${suffix}`,
+    approvedByActorId: "22222222-2222-4222-8222-222222222222",
+    approvedByRole: "founder" as const,
+    approvedAt: "2026-07-01T00:00:00.000Z",
+    reviewedAt: "2026-07-02T00:00:00.000Z",
+    validFrom: "2026-07-03T00:00:00.000Z",
+    validThrough: "2027-07-03T00:00:00.000Z",
+    revokedAt: null,
+    ...overrides,
+  };
+  return {
+    ...unsigned,
+    evidenceFingerprint: canonicalProductVariantActivationFingerprint(unsigned),
+  };
+}
 
 // Every resolver as a spy that THROWS if invoked, so states 1 and 2 prove
 // structurally that no store is touched and no provider is constructed.
@@ -70,6 +106,12 @@ function refusingWiring(): { wiring: Partial<CommerceWiring>; spies: Record<stri
     resolveAdminQueuesStore: refuse("resolveAdminQueuesStore"),
     resolveReservationStore: refuse("resolveReservationStore"),
     resolveWebhookEventStore: refuse("resolveWebhookEventStore"),
+    resolveProductVariantActivationLedger: refuse(
+      "resolveProductVariantActivationLedger",
+    ),
+    resolveProductVariantActivationBindings: refuse(
+      "resolveProductVariantActivationBindings",
+    ),
     resolvePartnerMemberStore: refuse("resolvePartnerMemberStore"),
     resolvePartnerLinkStore: refuse("resolvePartnerLinkStore"),
     resolveCommissionLedgerStore: refuse("resolveCommissionLedgerStore"),
@@ -188,6 +230,33 @@ async function liveSetup() {
   const commissionLedger = createInMemoryCommissionLedgerStore();
   const payment = new TestPaymentProvider();
   const fulfillment = new TestMitchProvider();
+  const activationRowsBySku = new Map<string, readonly ProductVariantActivationLedgerRecord[]>([
+    ["P901", [activationRowForSku("P901")]],
+    ["P902", [activationRowForSku("P902")]],
+  ]);
+  const activationLedger: ProductVariantActivationLedgerRepository = {
+    readCurrentCandidates: vi.fn(async ({ sku }) =>
+      activationRowsBySku.get(sku) ?? [],
+    ),
+  };
+  const activationBindingsBySku = new Map<
+    string,
+    readonly ProductVariantActivationBinding[]
+  >([
+    [
+      "P901",
+      [{ productId: "product-wiring-1", variantId: "variant-wiring-1", sku: "P901" }],
+    ],
+    [
+      "P902",
+      [{ productId: "product-wiring-2", variantId: "variant-wiring-2", sku: "P902" }],
+    ],
+  ]);
+  const activationBindings: ProductVariantActivationBindingRepository = {
+    readCurrentBindings: vi.fn(async ({ sku }) =>
+      activationBindingsBySku.get(sku) ?? [],
+    ),
+  };
   await lotStore.save(cleanLot());
   await lotStore.save({ ...cleanLot(), lotId: "LOTW2", sku: "P902" });
   // The wiring table is returned so a test can build a SECOND composition over
@@ -205,6 +274,8 @@ async function liveSetup() {
     resolveSubscriptionRepository: () => createInMemorySubscriptionStore(),
     resolveAdminQueuesStore: () => createInMemoryAdminQueuesStore(),
     resolveWebhookEventStore: () => webhookEventStore,
+    resolveProductVariantActivationLedger: () => activationLedger,
+    resolveProductVariantActivationBindings: () => activationBindings,
     resolvePartnerMemberStore: () => partnerMemberStore,
     resolvePartnerLinkStore: () => partnerLinkStore,
     resolveCommissionLedgerStore: () => commissionLedger,
@@ -231,6 +302,10 @@ async function liveSetup() {
     commissionLedger,
     payment,
     fulfillment,
+    activationLedger,
+    activationRowsBySku,
+    activationBindings,
+    activationBindingsBySku,
   };
 }
 
@@ -488,6 +563,252 @@ describe("state 2: flag on, commerce database not provisioned", () => {
 // ---------------------------------------------------------------------------
 
 describe("state 3: flag on and configured (sandbox stores + test payment provider)", () => {
+  it("blocks a direct known-SKU POST for every non-live or conflicting activation row", async () => {
+    for (const testCase of [
+      {
+        label: "missing",
+        rows: [],
+      },
+      {
+        label: "held",
+        rows: [activationRowForSku("P901", { productState: "held" })],
+      },
+      {
+        label: "pending",
+        rows: [activationRowForSku("P901", { variantState: "pending" })],
+      },
+      {
+        label: "unavailable",
+        rows: [activationRowForSku("P901", { variantState: "unavailable" })],
+      },
+      {
+        label: "retired",
+        rows: [activationRowForSku("P901", { variantState: "retired" })],
+      },
+      {
+        label: "revoked",
+        rows: [
+          activationRowForSku("P901", {
+            revokedAt: "2026-07-21T23:59:59.000Z",
+          }),
+        ],
+      },
+      {
+        label: "stale",
+        rows: [
+          activationRowForSku("P901", {
+            validThrough: AS_OF.toISOString(),
+          }),
+        ],
+      },
+      {
+        label: "ambiguous",
+        rows: [
+          activationRowForSku("P901"),
+          activationRowForSku("P901", { ledgerRevision: 999 }),
+        ],
+      },
+      {
+        label: "wrong product",
+        rows: [activationRowForSku("P901", { productId: "product-wiring-other" })],
+      },
+      {
+        label: "wrong variant",
+        rows: [activationRowForSku("P901", { variantId: "variant-wiring-other" })],
+      },
+      {
+        label: "fingerprint conflict",
+        rows: [
+          {
+            ...activationRowForSku("P901"),
+            evidenceFingerprint: `sha256:${"0".repeat(64)}`,
+          },
+        ],
+      },
+    ]) {
+      const setup = await liveSetup();
+      setup.activationRowsBySku.set("P901", testCase.rows);
+      expect(
+        await setup.deps.cart.addLine(
+          `mem_direct_${testCase.label}`,
+          { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+          AS_OF,
+        ),
+        testCase.label,
+      ).toEqual({ ok: false, code: "product_not_purchasable" });
+      expect(await setup.cartStore.load(`mem_direct_${testCase.label}`)).toBeNull();
+    }
+  });
+
+  it("blocks direct mutation when the SKU binding is missing, ambiguous, or mismatched", async () => {
+    for (const testCase of [
+      {
+        label: "missing-binding",
+        bindings: [],
+      },
+      {
+        label: "ambiguous-binding",
+        bindings: [
+          { productId: "product-wiring-1", variantId: "variant-wiring-1", sku: "P901" },
+          { productId: "product-wiring-1", variantId: "variant-wiring-other", sku: "P901" },
+        ],
+      },
+      {
+        label: "sku-mismatch",
+        bindings: [
+          { productId: "product-wiring-1", variantId: "variant-wiring-1", sku: "P902" },
+        ],
+      },
+    ] satisfies Array<{
+      label: string;
+      bindings: ProductVariantActivationBinding[];
+    }>) {
+      const setup = await liveSetup();
+      setup.activationBindingsBySku.set("P901", testCase.bindings);
+      expect(
+        await setup.deps.cart.addLine(
+          `mem_${testCase.label}`,
+          { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+          AS_OF,
+        ),
+        testCase.label,
+      ).toEqual({ ok: false, code: "product_not_purchasable" });
+      expect(await setup.cartStore.load(`mem_${testCase.label}`)).toBeNull();
+      expect(setup.activationLedger.readCurrentCandidates).not.toHaveBeenCalled();
+    }
+  });
+
+  it("re-reads exact activation before updateLine and leaves the stored quantity unchanged", async () => {
+    const setup = await liveSetup();
+    const memberId = "mem_update_revoked";
+    expect(
+      await setup.deps.cart.addLine(
+        memberId,
+        { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+        AS_OF,
+      ),
+    ).toMatchObject({ ok: true });
+
+    setup.activationRowsBySku.set("P901", [
+      activationRowForSku("P901", {
+        revokedAt: "2026-07-21T23:59:59.000Z",
+      }),
+    ]);
+    expect(
+      await setup.deps.cart.updateLine(memberId, "P901", 2, AS_OF),
+    ).toEqual({ ok: false, code: "product_not_purchasable" });
+    expect((await setup.cartStore.load(memberId))?.lines).toEqual([
+      { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+    ]);
+    expect(setup.activationBindings.readCurrentBindings).toHaveBeenCalledTimes(2);
+    expect(setup.activationLedger.readCurrentCandidates).toHaveBeenCalledTimes(2);
+  });
+
+  it("re-reads authority at checkout and refuses a variant revoked after it entered the cart", async () => {
+    const setup = await liveSetup();
+    expect(
+      await setup.deps.cart.addLine(
+        "mem_revoked_checkout",
+        { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+        AS_OF,
+      ),
+    ).toMatchObject({ ok: true });
+    setup.activationRowsBySku.set("P901", [
+      activationRowForSku("P901", {
+        revokedAt: "2026-07-21T23:59:59.000Z",
+      }),
+    ]);
+
+    expect(
+      await setup.deps.checkout.submit(
+        "mem_revoked_checkout",
+        checkoutRequest({ idempotencyKey: "revoked-at-checkout" }),
+        AS_OF,
+      ),
+    ).toEqual({
+      ok: false,
+      code: "product_not_purchasable",
+      codes: ["product_not_purchasable"],
+    });
+    expect(await setup.deps.orders.listForMember("mem_revoked_checkout")).toEqual([]);
+    expect(setup.activationBindings.readCurrentBindings).toHaveBeenCalledTimes(2);
+    expect(setup.activationLedger.readCurrentCandidates).toHaveBeenCalledTimes(2);
+  });
+
+  it("revalidates retired, stale, and changed exact bindings before checkout", async () => {
+    for (const testCase of [
+      {
+        label: "retired",
+        mutate(setup: Awaited<ReturnType<typeof liveSetup>>) {
+          setup.activationRowsBySku.set("P901", [
+            activationRowForSku("P901", { variantState: "retired" }),
+          ]);
+        },
+      },
+      {
+        label: "stale",
+        mutate(setup: Awaited<ReturnType<typeof liveSetup>>) {
+          setup.activationRowsBySku.set("P901", [
+            activationRowForSku("P901", { validThrough: AS_OF.toISOString() }),
+          ]);
+        },
+      },
+      {
+        label: "binding-missing",
+        mutate(setup: Awaited<ReturnType<typeof liveSetup>>) {
+          setup.activationBindingsBySku.set("P901", []);
+        },
+      },
+      {
+        label: "binding-ambiguous",
+        mutate(setup: Awaited<ReturnType<typeof liveSetup>>) {
+          setup.activationBindingsBySku.set("P901", [
+            { productId: "product-wiring-1", variantId: "variant-wiring-1", sku: "P901" },
+            { productId: "product-wiring-1", variantId: "variant-wiring-other", sku: "P901" },
+          ]);
+        },
+      },
+    ]) {
+      const setup = await liveSetup();
+      const memberId = `mem_checkout_${testCase.label}`;
+      expect(
+        await setup.deps.cart.addLine(
+          memberId,
+          { sku: "P901", quantity: 1, purchaseMode: "one_time" },
+          AS_OF,
+        ),
+      ).toMatchObject({ ok: true });
+      testCase.mutate(setup);
+
+      expect(
+        await setup.deps.checkout.submit(
+          memberId,
+          checkoutRequest({ idempotencyKey: `checkout-${testCase.label}` }),
+          AS_OF,
+        ),
+        testCase.label,
+      ).toEqual({
+        ok: false,
+        code: "product_not_purchasable",
+        codes: ["product_not_purchasable"],
+      });
+      expect(await setup.deps.orders.listForMember(memberId)).toEqual([]);
+    }
+  });
+
+  it("keeps unknown SKU semantics while never consulting activation for an unknown catalog row", async () => {
+    const setup = await liveSetup();
+    expect(
+      await setup.deps.cart.addLine(
+        "mem_unknown_sku",
+        { sku: "NO-SUCH-SKU", quantity: 1, purchaseMode: "one_time" },
+        AS_OF,
+      ),
+    ).toMatchObject({ ok: false, code: "product_not_found" });
+    expect(setup.activationBindings.readCurrentBindings).not.toHaveBeenCalled();
+    expect(setup.activationLedger.readCurrentCandidates).not.toHaveBeenCalled();
+  });
+
   it("runs the full cart to checkout happy path and lands the order in member history", async () => {
     const { deps, orderRepository } = await liveSetup();
 
@@ -683,7 +1004,7 @@ describe("state 3: payment webhook", () => {
     return JSON.stringify({ id, type, orderId, providerReference });
   }
 
-  it("verifies, records, applies, and is idempotent on replay, against the member-visible order", async () => {
+  it("verifies but fails closed without an atomic inbox+order adapter", async () => {
     const { deps, orderRepository, webhookEventStore } = await liveSetup();
 
     // An approved order awaiting its capture confirmation, in the SAME
@@ -707,13 +1028,13 @@ describe("state 3: payment webhook", () => {
       "test-signature",
       AS_OF,
     );
-    expect(first).toEqual({ ok: true, applied: true, eventId: "evt_w1" });
-    expect((await orderRepository.get("ord_wh1"))!.state).toBe("payment_captured");
-    expect(webhookEventStore.seen("test", "evt_w1")).toBe(true);
+    expect(first).toEqual({ ok: false, code: "capability_disabled" });
+    expect((await orderRepository.get("ord_wh1"))!.state).toBe("approved");
+    expect(webhookEventStore.seen("test", "evt_w1")).toBe(false);
 
     // The advance is visible to the member through the ordinary order surface.
     const detail = (await deps.orders.getForMember("mem_wh", "ord_wh1")) as { state: string };
-    expect(detail.state).toBe("payment_captured");
+    expect(detail.state).toBe("approved");
 
     // Replay, layer 1: the test provider's own duplicate-event guard refuses the
     // second delivery outright. Either way, nothing is applied twice.
@@ -723,19 +1044,18 @@ describe("state 3: payment webhook", () => {
       new Date(AS_OF.getTime() + 60_000),
     )) as { ok: boolean };
     expect(replay.ok).toBe(false);
-    expect((await orderRepository.get("ord_wh1"))!.state).toBe("payment_captured");
+    expect((await orderRepository.get("ord_wh1"))!.state).toBe("approved");
 
-    // Replay, layer 2: the durable event store is the guard production relies
-    // on. An event id it has already seen (recorded here as if by a previous
-    // process) is acknowledged as applied:false without touching the order.
+    // A legacy replay observer is not atomic authority. Even a pre-recorded id
+    // cannot make the handler acknowledge or apply an order effect.
     webhookEventStore.record("test", "evt_w9", AS_OF, "payment.captured");
     const storeReplay = await deps.webhooks.handlePayment(
       eventBody("evt_w9", "payment.captured", "ord_wh1", "test_capture_wh"),
       "test-signature",
       new Date(AS_OF.getTime() + 120_000),
     );
-    expect(storeReplay).toEqual({ ok: true, applied: false, eventId: "evt_w9" });
-    expect((await orderRepository.get("ord_wh1"))!.state).toBe("payment_captured");
+    expect(storeReplay).toEqual({ ok: false, code: "capability_disabled" });
+    expect((await orderRepository.get("ord_wh1"))!.state).toBe("approved");
   });
 
   it("refuses an invalid signature before any store is consulted", async () => {
@@ -749,25 +1069,25 @@ describe("state 3: payment webhook", () => {
     expect(webhookEventStore.seen("test", "evt_w2")).toBe(false);
   });
 
-  it("records an unknown event type and acknowledges it as a no-op", async () => {
+  it("does not record even an unknown event type without atomic claim authority", async () => {
     const { deps, webhookEventStore } = await liveSetup();
     const result = await deps.webhooks.handlePayment(
       eventBody("evt_w3", "payment.something_new", "ord_none"),
       "test-signature",
       AS_OF,
     );
-    expect(result).toEqual({ ok: true, applied: false, eventId: "evt_w3" });
-    expect(webhookEventStore.seen("test", "evt_w3")).toBe(true);
+    expect(result).toEqual({ ok: false, code: "capability_disabled" });
+    expect(webhookEventStore.seen("test", "evt_w3")).toBe(false);
   });
 
-  it("reports an unknown order without recording the event", async () => {
+  it("fails at the atomic capability boundary before an order lookup or claim", async () => {
     const { deps, webhookEventStore } = await liveSetup();
     const result = await deps.webhooks.handlePayment(
       eventBody("evt_w4", "payment.captured", "ord_missing"),
       "test-signature",
       AS_OF,
     );
-    expect(result).toEqual({ ok: false, code: "unknown_order" });
+    expect(result).toEqual({ ok: false, code: "capability_disabled" });
     expect(webhookEventStore.seen("test", "evt_w4")).toBe(false);
   });
 });
@@ -962,7 +1282,7 @@ describe("state 3: admin order lifecycle", () => {
 // ---------------------------------------------------------------------------
 
 describe("state 3: fulfillment webhook", () => {
-  it("verifies, applies, lands tracking on the shipments, and absorbs a replay via the durable event store", async () => {
+  it("verifies but applies nothing without an atomic inbox+order adapter", async () => {
     const setup = await liveSetup();
     const order = await placeOrder(setup.deps, "mem_ff", "ff-key-1");
 
@@ -982,22 +1302,21 @@ describe("state 3: fulfillment webhook", () => {
       trackingNumber: "TRACKW1",
       carrier: "test-carrier",
     });
+    const before = await setup.orderRepository.get(order.orderId);
     const first = await setup.deps.webhooks.handleFulfillment(body, "test-signature", AS_OF);
-    expect(first).toEqual({ ok: true, applied: true, eventId: "ff_evt_w1" });
+    expect(first).toEqual({ ok: false, code: "capability_disabled" });
 
-    // The order every surface reads advanced, and the verified event's
-    // tracking landed on the member-visible shipment records.
+    // The split legacy replay observer and order store are never composed into
+    // authority, so neither the order nor its tracking projection changes.
     const stored = (await setup.orderRepository.get(order.orderId))!;
-    expect(stored.state).toBe("delivered");
-    expect(stored.shipments).toEqual([
-      { owner: "xenios", status: "delivered", trackingNumber: "TRACKW1", carrier: "test-carrier" },
-    ]);
+    expect(stored).toEqual(before);
+    expect(setup.webhookEventStore.seen("test", "ff_evt_w1")).toBe(false);
 
-    // TestMitchProvider does not deduplicate, so the redelivery proves the
-    // durable EVENT STORE's replay gate: acknowledged, applied false, no move.
+    // The provider is re-verifiable, and every delivery remains retryable until
+    // a transaction-capable durable adapter is wired.
     const replay = await setup.deps.webhooks.handleFulfillment(body, "test-signature", AS_OF);
-    expect(replay).toEqual({ ok: true, applied: false, eventId: "ff_evt_w1" });
-    expect((await setup.orderRepository.get(order.orderId))!.state).toBe("delivered");
+    expect(replay).toEqual({ ok: false, code: "capability_disabled" });
+    expect(await setup.orderRepository.get(order.orderId)).toEqual(before);
   });
 
   it("refuses a forged signature before any store is consulted", async () => {

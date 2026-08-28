@@ -62,7 +62,9 @@ export function accountStanding(
   if (action !== null) return "attention";
   const billingSettled = membership.billing === "current" || membership.billing === "none";
   const historyComplete = orders.history.availability === "complete";
-  const careKnowable = care.sourceState === "available";
+  const careKnowable =
+    care.sourceState === "available" &&
+    orders.carePharmacyHistory.availability === "available";
   return billingSettled && historyComplete && careKnowable ? "current" : "indeterminate";
 }
 

@@ -73,18 +73,37 @@ describe("catalog-priority projection (fail-closed parsing)", () => {
   }
   const emptyOverlay = { recordedOn: "2026-08-27", entries: [], queue: [] } as const;
 
-  it("drops entries with unknown base statuses instead of repairing them", () => {
+  function config(entries: readonly unknown[], overrides: Record<string, unknown> = {}) {
+    return {
+      schemaVersion: 1,
+      recordedOn: "2026-08-27",
+      entries,
+      ...overrides,
+    };
+  }
+
+  function entry(overrides: Record<string, unknown> = {}) {
+    return {
+      key: "fixture",
+      baseStatus: "request_only",
+      groupId: null,
+      evidence: "Fixture evidence",
+      ...overrides,
+    };
+  }
+
+  it("rejects unknown base statuses or blank keys instead of dropping them", () => {
     const dir = withConfig(
-      JSON.stringify({
-        entries: [
-          { key: "good", baseStatus: "request_only", groupId: null },
-          { key: "bad", baseStatus: "totally_live_trust_me", groupId: null },
-          { key: "", baseStatus: "live", groupId: null },
-        ],
-      }),
+      JSON.stringify(config([entry({ baseStatus: "totally_live_trust_me" })])),
     );
-    const projection = loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json");
-    expect(projection.statuses).toEqual({ good: "request_only" });
+    expect(() => loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json")).toThrow(
+      /baseStatus/,
+    );
+
+    const blankDir = withConfig(JSON.stringify(config([entry({ key: "" })])));
+    expect(() => loadCatalogPriorityProjection(blankDir, emptyOverlay, "projection.json")).toThrow(
+      /entries\[0\]\.key/,
+    );
   });
 
   it("throws on an unreadable config rather than answering permissively", () => {
@@ -92,13 +111,106 @@ describe("catalog-priority projection (fail-closed parsing)", () => {
     expect(() => loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json")).toThrow();
   });
 
-  it("a groupId with no overlay entry leaves the reviewed base untouched", () => {
+  it("a mapped groupId must join exactly one overlay entry", () => {
     const dir = withConfig(
-      JSON.stringify({
-        entries: [{ key: "mapped", baseStatus: "request_only", groupId: "GRP-9999" }],
-      }),
+      JSON.stringify(config([entry({ key: "mapped", groupId: "GRP-9999" })])),
     );
-    const projection = loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json");
-    expect(projection.statuses["mapped"]).toBe("request_only");
+    expect(() => loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json")).toThrow(
+      /has no overlay entry/,
+    );
+  });
+
+  it("rejects ambiguous overlay joins even when an injected overlay bypasses the file parser", () => {
+    const overlayEntry = {
+      groupId: "GRP-0001",
+      label: "Fixture",
+      confirmationBasis: "verbal",
+      confirmedBy: "Fixture partner",
+      confirmedAt: "2026-08-27T00:00:00.000Z",
+      checklist: {
+        exactFormulation: null,
+        exactStrength: null,
+        dosageForm: null,
+        pharmacyLane: null,
+        stateAvailability: null,
+        providerRequirements: null,
+        pharmacyPricing: null,
+        turnaround: null,
+        shippingModel: null,
+        documentationTesting: null,
+        contractingApproval: null,
+      },
+      founderActivationApproval: null,
+      held: false,
+    } as const;
+    const ambiguous = {
+      recordedOn: "2026-08-27",
+      entries: [overlayEntry, { ...overlayEntry, label: "Duplicate" }],
+      queue: [],
+    } as const;
+    const dir = withConfig(
+      JSON.stringify(config([entry({ groupId: "GRP-0001" })])),
+    );
+    expect(() => loadCatalogPriorityProjection(dir, ambiguous, "projection.json")).toThrow(
+      /ambiguous/,
+    );
+  });
+
+  it("rejects duplicate projection keys and exact-vocabulary violations", () => {
+    for (const invalid of [
+      config([entry(), entry({ evidence: "Second evidence" })]),
+      config([entry({ unexpected: true })]),
+      config([entry({ evidence: 7 })]),
+      config([entry()], { unexpected: true }),
+      config([entry()], { schemaVersion: 2 }),
+      config([entry()], { recordedOn: "2026-02-30" }),
+    ]) {
+      const dir = withConfig(JSON.stringify(invalid));
+      expect(() => loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json")).toThrow();
+    }
+  });
+
+  it("requires the entries section instead of defaulting it empty", () => {
+    const invalid: Record<string, unknown> = config([]);
+    delete invalid.entries;
+    const dir = withConfig(JSON.stringify(invalid));
+    expect(() => loadCatalogPriorityProjection(dir, emptyOverlay, "projection.json")).toThrow(
+      /required field/,
+    );
+  });
+
+  it("never lets config approval resolve a mapped live base live", () => {
+    const documented = {
+      groupId: "GRP-0001",
+      label: "Fixture",
+      confirmationBasis: "documented",
+      confirmedBy: "Fixture partner",
+      confirmedAt: "2026-08-27T00:00:00.000Z",
+      checklist: {
+        exactFormulation: "evidence",
+        exactStrength: "evidence",
+        dosageForm: "evidence",
+        pharmacyLane: "evidence",
+        stateAvailability: "evidence",
+        providerRequirements: "evidence",
+        pharmacyPricing: "evidence",
+        turnaround: "evidence",
+        shippingModel: "evidence",
+        documentationTesting: "evidence",
+        contractingApproval: "evidence",
+      },
+      founderActivationApproval: {
+        approvedBy: "Founder",
+        approvedAt: "2026-08-27T00:00:00.000Z",
+      },
+      held: false,
+    } as const;
+    const overlay = { recordedOn: "2026-08-27", entries: [documented], queue: [] } as const;
+    const dir = withConfig(
+      JSON.stringify(config([entry({ baseStatus: "live", groupId: "GRP-0001" })])),
+    );
+    expect(loadCatalogPriorityProjection(dir, overlay, "projection.json").statuses.fixture).toBe(
+      "pending_pharmacy_activation",
+    );
   });
 });

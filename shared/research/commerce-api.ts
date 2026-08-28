@@ -236,6 +236,12 @@ export interface OrderPaymentEvidenceDto {
 
 export interface OrderSummaryDto {
   orderId: string;
+  /**
+   * Explicit producer evidence for what this record represents. Optional only
+   * for legacy/unmigrated producers; consumers must treat absence as unknown
+   * and must never infer it from an identifier prefix.
+   */
+  recordKind?: "order" | "request";
   state: OrderState;
   placedAt: string;
   totalCents: number;

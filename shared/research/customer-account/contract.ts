@@ -63,16 +63,28 @@ export const MEMBERSHIP_BILLING_DISPLAY_STATES = [
 
 export type MembershipBillingDisplayState = (typeof MEMBERSHIP_BILLING_DISPLAY_STATES)[number];
 
+/**
+ * Durable renewal evidence, kept separate from the compatibility timestamp.
+ * A missing timestamp is not itself proof that no renewal is scheduled:
+ * `not_scheduled` requires an affirmative durable answer, while an unwired or
+ * unreadable source is `unavailable`.
+ */
+export type MembershipRenewalEvidenceDto =
+  | Readonly<{ state: "scheduled"; nextRenewalAt: string }>
+  | Readonly<{ state: "not_scheduled"; nextRenewalAt: null }>
+  | Readonly<{ state: "unavailable"; nextRenewalAt: null }>;
+
 export type MembershipDto = Readonly<{
   /** Membership/ACCESS state, derived from research_members.status only. */
   state: MembershipDisplayState;
   /** Billing truth, derived from the stored billing_state only — never from the enforcement flag. */
   billing: MembershipBillingDisplayState;
   planLabel: string | null;
+  renewal: MembershipRenewalEvidenceDto;
   /**
-   * ISO timestamp of the next renewal/billing event, when one is actually
-   * scheduled in a durable source. Never invented: null until such a source
-   * exists.
+   * Compatibility mirror for existing consumers. Read `renewal.state` before
+   * interpreting null: null may mean either affirmatively not scheduled or
+   * unavailable evidence.
    */
   nextRenewalAt: string | null;
   /**
@@ -175,6 +187,12 @@ export type OrderFulfillmentDisplayState = (typeof ORDER_FULFILLMENT_DISPLAY_STA
 export type OrderSummaryDto = Readonly<{
   /** XRR- / XEA- / XEC- / XO- reference, verbatim. */
   reference: string;
+  /**
+   * What the authoritative producer says this record is. `unknown` is the
+   * mandatory result when the source did not provide evidence; prefixes are
+   * identifiers only and never determine this value.
+   */
+  recordKind: "order" | "request" | "unknown";
   placedAt: string;
   /**
    * Line detail is never fabricated (P1-B): when the authoritative detail
@@ -220,10 +238,25 @@ export type OrderSourceStateDto = Readonly<{
   complete: boolean;
 }>;
 
-export type OrderHistoryAvailabilityDto = Readonly<{
-  availability: "complete" | "partial" | "unavailable";
-  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
-}>;
+type OrderHistorySourcesDto = Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
+
+/**
+ * `availability` is the completeness of the aggregated Research history, not
+ * a generic source-reachability flag. Only a complete read may expose an
+ * authoritative numeric count. A partial list may contain known rows, but its
+ * length is never a total-count claim.
+ */
+export type OrderHistoryAvailabilityDto =
+  | Readonly<{
+      availability: "complete";
+      authoritativeRecordCount: number;
+      sources: OrderHistorySourcesDto;
+    }>
+  | Readonly<{
+      availability: "partial" | "unavailable";
+      authoritativeRecordCount: null;
+      sources: OrderHistorySourcesDto;
+    }>;
 
 export const ORDER_HISTORY_SOURCE_LABELS: Readonly<Record<OrderHistorySourceKey, string>> = {
   commerce: "commerce member orders",
@@ -242,9 +275,22 @@ export function orderHistoryAvailability(
   return "partial";
 }
 
+/**
+ * Care/pharmacy history has its own source-completeness truth. `available`
+ * means the source is connected and the returned rows are complete; it is the
+ * only state that may carry a definitive count. `partial` may accompany known
+ * rows but never a definitive count. `unavailable` carries no complete-source
+ * claim at all.
+ */
+export type CarePharmacyHistoryAvailabilityDto =
+  | Readonly<{ availability: "available"; authoritativeRecordCount: number }>
+  | Readonly<{ availability: "partial"; authoritativeRecordCount: null }>
+  | Readonly<{ availability: "unavailable"; authoritativeRecordCount: null }>;
+
 export type CustomerOrdersDto = Readonly<{
   research: readonly OrderSummaryDto[];
   carePharmacy: readonly CareFulfillmentDto[];
+  carePharmacyHistory: CarePharmacyHistoryAvailabilityDto;
   history: OrderHistoryAvailabilityDto;
 }>;
 

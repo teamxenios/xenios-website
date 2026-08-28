@@ -753,7 +753,7 @@ describe("process-restart idempotency over the same wiring stores", () => {
 // ---------------------------------------------------------------------------
 // The large-order journey: test authorization -> manual review -> admin
 // approve and capture over HTTP -> Mitch test transmission -> fulfillment
-// webhook over HTTP -> tracking visible to the member
+// webhook held retryably until an atomic production adapter exists
 // ---------------------------------------------------------------------------
 
 describe("the large-order journey to fulfillment", () => {
@@ -765,7 +765,7 @@ describe("the large-order journey to fulfillment", () => {
       .send(body);
   }
 
-  it("holds for review, admin-approves and captures over HTTP, transmits a minimized Mitch payload, and the delivered webhook lands tracking the member sees", async () => {
+  it("holds for review, captures over HTTP, transmits a minimized Mitch payload, and refuses non-atomic webhook mutation", async () => {
     const ctx = await buildAcceptanceContext();
     await addEligibleLine(ctx, MEMBER_A, LARGE_QUANTITY);
 
@@ -868,8 +868,9 @@ describe("the large-order journey to fulfillment", () => {
     expect((await orders.markFulfilled(orderId, "system", AS_OF, transmitted.value.partnerReference)).ok).toBe(true);
 
     // 4. The partner's delivered webhook arrives over HTTP: raw body plus
-    // signature, verified by the composed fulfillment provider, replay-guarded
-    // by the durable event store, advancing the SAME order every surface reads.
+    // signature. Production deliberately has no split-store fallback; until a
+    // transaction-capable inbox+order adapter is wired, it remains retryable
+    // and cannot advance the order or publish tracking.
     const deliveredBody = JSON.stringify({
       eventId: "evt_mitch_delivered_1",
       fulfillmentOrderId: orderId,
@@ -877,23 +878,30 @@ describe("the large-order journey to fulfillment", () => {
       trackingNumber: "TEST00000001",
       carrier: "test-carrier",
     });
+    const beforeWebhook = await ctx.orderRepository.get(orderId);
     const applied = await fulfillmentWebhookPost(ctx, deliveredBody);
-    expect(applied.status).toBe(200);
-    expect(applied.body).toEqual({ ok: true, applied: true, eventId: "evt_mitch_delivered_1" });
+    expect(applied.status).toBe(503);
+    expect(applied.body).toEqual({ ok: false, code: "capability_disabled" });
+    expect(await ctx.orderRepository.get(orderId)).toEqual(beforeWebhook);
 
-    // The member sees DELIVERED with the carrier's tracking on the shipment,
-    // entirely over HTTP.
+    // The member continues to see only the last durably applied state and no
+    // webhook-supplied tracking claim.
     const finalView = await asMember(ctx, MEMBER_A).get(`/api/research/orders/${orderId}`);
-    expect(finalView.body.order.state).toBe("delivered");
-    expect(finalView.body.order.shipments).toEqual([
-      { owner: "xenios", status: "delivered", trackingNumber: "TEST00000001", carrier: "test-carrier" },
-    ]);
+    expect(finalView.body.order.state).toBe("fulfilled");
+    expect(finalView.body.order.shipments).toEqual(
+      (beforeWebhook?.shipments ?? []).map((shipment) => ({
+        owner: shipment.owner,
+        status: shipment.status,
+        trackingNumber: shipment.trackingNumber,
+        carrier: shipment.carrier,
+      })),
+    );
 
-    // A redelivery of the same event is absorbed by the durable event store.
+    // Redelivery remains retryable; the failed attempt did not burn the event.
     const replay = await fulfillmentWebhookPost(ctx, deliveredBody);
-    expect(replay.status).toBe(200);
-    expect(replay.body).toEqual({ ok: true, applied: false, eventId: "evt_mitch_delivered_1" });
-    expect((await ctx.orderRepository.get(orderId))?.state).toBe("delivered");
+    expect(replay.status).toBe(503);
+    expect(replay.body).toEqual({ ok: false, code: "capability_disabled" });
+    expect(await ctx.orderRepository.get(orderId)).toEqual(beforeWebhook);
   });
 
   it("refuses a forged or unsigned fulfillment webhook and applies nothing", async () => {
@@ -1048,7 +1056,7 @@ describe("the payment webhook route", () => {
     return req.send(body);
   }
 
-  it("applies a valid signed capture event to the order every surface reads", async () => {
+  it("fails a valid signed event closed until atomic inbox+order persistence is wired", async () => {
     const ctx = await buildAcceptanceContext();
     await ctx.orderRepository.save(seedableOrder({ orderId: "ord_wh_http_1" }));
 
@@ -1059,20 +1067,20 @@ describe("the payment webhook route", () => {
       providerReference: "test_auth_http_1",
     });
     const res = await webhookPost(ctx, body, "test-signature");
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({ ok: true, applied: true, eventId: "evt_http_1" });
+    expect(res.status).toBe(503);
+    expect(res.body).toEqual({ ok: false, code: "capability_disabled" });
 
     const stored = await ctx.orderRepository.get("ord_wh_http_1");
-    expect(stored?.state).toBe("payment_captured");
-    expect(stored?.providerReference).toBe("test_auth_http_1");
-    expect(stored?.lastIdempotencyKey).toBe("evt_http_1");
+    expect(stored?.state).toBe("approved");
+    expect(stored?.providerReference).toBeNull();
+    expect(stored?.lastIdempotencyKey).toBeNull();
 
-    // The webhook-advanced state is immediately the member's order status.
+    // The member sees only the unchanged durable state.
     const view = await asMember(ctx, MEMBER_A).get("/api/research/orders/ord_wh_http_1");
-    expect(view.body.order.state).toBe("payment_captured");
+    expect(view.body.order.state).toBe("approved");
   });
 
-  it("rejects the identical second delivery and the order does not move again", async () => {
+  it("does not apply or claim the first delivery when atomic persistence is absent", async () => {
     const ctx = await buildAcceptanceContext();
     await ctx.orderRepository.save(seedableOrder({ orderId: "ord_wh_http_2" }));
     const body = JSON.stringify({
@@ -1083,8 +1091,8 @@ describe("the payment webhook route", () => {
     });
 
     const first = await webhookPost(ctx, body, "test-signature");
-    expect(first.status).toBe(200);
-    expect(first.body.applied).toBe(true);
+    expect(first.status).toBe(503);
+    expect(first.body).toEqual({ ok: false, code: "capability_disabled" });
 
     // The provider's replay protection fires at verification, so the replayed
     // delivery is refused outright. (The durable event-store replay path,
@@ -1094,8 +1102,8 @@ describe("the payment webhook route", () => {
     expect(second.body).toEqual({ ok: false, code: "invalid_signature" });
 
     const stored = await ctx.orderRepository.get("ord_wh_http_2");
-    expect(stored?.state).toBe("payment_captured");
-    expect(stored?.lastIdempotencyKey).toBe("evt_http_replay_1");
+    expect(stored?.state).toBe("approved");
+    expect(stored?.lastIdempotencyKey).toBeNull();
   });
 
   it("refuses a missing or invalid signature and an unknown order, applying nothing", async () => {
@@ -1118,14 +1126,15 @@ describe("the payment webhook route", () => {
 
     expect((await ctx.orderRepository.get("ord_wh_http_3"))?.state).toBe("approved");
 
-    // A verified event naming an order that does not exist is refused.
+    // With no atomic adapter, verified events stop at the capability boundary
+    // before any order lookup or event claim.
     const unknown = await webhookPost(
       ctx,
       JSON.stringify({ id: "evt_http_unknown_1", type: "payment.captured", orderId: "ord_missing_1" }),
       "test-signature",
     );
-    expect(unknown.status).toBe(400);
-    expect(unknown.body.code).toBe("unknown_order");
+    expect(unknown.status).toBe(503);
+    expect(unknown.body.code).toBe("capability_disabled");
   });
 
   it("classifies a non-JSON body as malformed through the route-level raw parser", async () => {

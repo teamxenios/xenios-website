@@ -209,6 +209,7 @@ function toSummary(order: OrderRecord): OrderSummaryDto {
   const shipments = order.shipments ?? [];
   return {
     orderId: order.orderId,
+    recordKind: "order",
     state: order.state,
     placedAt: order.createdAt,
     totalCents: order.totals.totalCents,

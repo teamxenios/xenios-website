@@ -60,8 +60,13 @@ export function createMemoryCustomerAccountPorts(
           seedOf(memberKey)?.orders ?? {
             research: [],
             carePharmacy: [],
+            carePharmacyHistory: {
+              availability: "unavailable",
+              authoritativeRecordCount: null,
+            },
             history: {
               availability: "partial",
+              authoritativeRecordCount: null,
               sources: {
                 commerce: { connected: true, complete: true },
                 xea: { connected: true, complete: true },

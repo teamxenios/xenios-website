@@ -36,6 +36,7 @@ describe("production customer-account ports", () => {
     expect(m.manualBilling).toBe(true);
     expect(m.manageUrl).toBeNull();
     expect(m.nextRenewalAt).toBeNull();
+    expect(m.renewal).toEqual({ state: "unavailable", nextRenewalAt: null });
   });
 
   it("no member row means no membership — and no fabricated plan", async () => {
@@ -103,6 +104,7 @@ describe("production customer-account ports", () => {
     const dto = await ports({ ...MEMBER, billing_state: "past_due" }).membership.membershipFor("x");
     expect(dto.billing).toBe("past_due");
     expect(dto.nextRenewalAt).toBeNull(); // and no renewal date is invented
+    expect(dto.renewal.state).toBe("unavailable");
   });
 
   it("surfaces every non-active status without fabricating an active plan", async () => {
@@ -126,7 +128,9 @@ describe("production customer-account ports", () => {
           research: [
             {
               reference: "XEA-TEST",
+              recordKind: "order",
               placedAt: "2026-08-20T10:00:00.000Z",
+              detailAvailability: "available",
               itemLabel: "DSIP 10 mg",
               variantLabel: null,
               quantity: 1,
@@ -137,6 +141,20 @@ describe("production customer-account ports", () => {
             },
           ],
           carePharmacy: [],
+          carePharmacyHistory: {
+            availability: "unavailable",
+            authoritativeRecordCount: null,
+          },
+          history: {
+            availability: "complete",
+            authoritativeRecordCount: 1,
+            sources: {
+              commerce: { connected: true, complete: true },
+              xea: { connected: true, complete: true },
+              xec: { connected: true, complete: true },
+              xrr: { connected: true, complete: true },
+            },
+          },
         }),
       },
       support: {

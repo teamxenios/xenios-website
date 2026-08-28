@@ -20,9 +20,12 @@
 import type {
   OrderFulfillmentDisplayState,
   OrderHistoryAvailabilityDto,
+  OrderHistorySourceKey,
+  OrderSourceStateDto,
   OrderPaymentDisplayState,
   OrderSummaryDto as PortalOrderSummaryDto,
 } from "@shared/research/customer-account/contract";
+import { orderHistoryAvailability } from "@shared/research/customer-account/contract";
 import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type { CustomerOrdersPort } from "./ports";
 
@@ -35,6 +38,12 @@ import type { CustomerOrdersPort } from "./ports";
 export type CommerceOrdersSource = Readonly<{
   listForMember(memberId: string): Promise<unknown[]>;
   getForMember(memberId: string, orderId: string): Promise<unknown>;
+  /**
+   * Capabilities carried by this exact constructed reader. Composition-time
+   * environment guesses are deliberately ignored: absent metadata fails
+   * closed to an unavailable history.
+   */
+  historySources?: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
 }>;
 
 type ShipmentShape = Readonly<{
@@ -46,9 +55,11 @@ type PaymentFactsShape = Readonly<{
   amountDueCents: number;
   amountCapturedCents: number | null;
   amountRefundedCents: number | null;
+  currency: "USD";
 }>;
 type SummaryShape = Readonly<{
   orderId: string;
+  recordKind: "order" | "request" | "unknown";
   state: OrderState;
   placedAt: string;
   shipments: readonly ShipmentShape[];
@@ -97,20 +108,39 @@ function asSummary(value: unknown): SummaryShape {
   if (typeof rawPayment === "object" && rawPayment !== null) {
     const p = rawPayment as Record<string, unknown>;
     const field = (v: unknown): number | null | "malformed" =>
-      v === null ? null : typeof v === "number" && Number.isInteger(v) ? v : "malformed";
+      v === null ? null : typeof v === "number" && Number.isSafeInteger(v) ? v : "malformed";
     const due = field(p.amountDueCents);
     const captured = field(p.amountCapturedCents);
     const refunded = field(p.amountRefundedCents);
-    if (due !== "malformed" && due !== null && captured !== "malformed" && refunded !== "malformed") {
+    if (
+      due !== "malformed" &&
+      due !== null &&
+      captured !== "malformed" &&
+      refunded !== "malformed" &&
+      p.currency === "USD"
+    ) {
       payment = {
         amountDueCents: due,
         amountCapturedCents: captured,
         amountRefundedCents: refunded,
+        currency: "USD",
       };
     }
   }
   const shipmentsSource = record.shipmentsSource === "connected" ? "connected" : "unavailable";
-  return { orderId, state: state as OrderState, placedAt, shipments, payment, shipmentsSource };
+  const recordKind =
+    record.recordKind === "order" || record.recordKind === "request"
+      ? record.recordKind
+      : "unknown";
+  return {
+    orderId,
+    recordKind,
+    state: state as OrderState,
+    placedAt,
+    shipments,
+    payment,
+    shipmentsSource,
+  };
 }
 
 function asLines(value: unknown): readonly LineShape[] {
@@ -118,16 +148,21 @@ function asLines(value: unknown): readonly LineShape[] {
   if (!Array.isArray(record.lines)) return [];
   return record.lines.map((raw) => {
     const line = (raw ?? {}) as Record<string, unknown>;
-    if (typeof line.displayName !== "string" || typeof line.quantity !== "number") {
+    if (
+      typeof line.displayName !== "string" ||
+      line.displayName.trim() === "" ||
+      !Number.isSafeInteger(line.quantity) ||
+      (line.quantity as number) <= 0
+    ) {
       throw new Error("order_shape_unrecognized");
     }
-    return { displayName: line.displayName, quantity: line.quantity };
+    return { displayName: line.displayName.trim(), quantity: line.quantity as number };
   });
 }
 
-// States reachable only BEFORE any capture, per the shared transition table.
-// In these states an absent capture amount is the authoritative fact that no
-// money has been taken — the one place lifecycle may CONTEXTUALIZE a null.
+// States reachable only before capture. A positive capture in one of these is
+// a contradiction, but a null monetary fact is still unknown — lifecycle is
+// not a substitute for ledger evidence.
 const PRE_CAPTURE_STATES: ReadonlySet<OrderState> = new Set<OrderState>([
   "draft",
   "checkout_pending",
@@ -142,53 +177,59 @@ const PRE_CAPTURE_STATES: ReadonlySet<OrderState> = new Set<OrderState>([
 //   captured 0,  refunded 0            → unpaid
 //   captured >0, refunded 0            → paid
 //   captured >0, 0 < refunded < capt.  → partially_refunded
-//   captured >0, refunded ≥ captured   → refunded
+//   captured = due, refunded = captured → refunded
 //   inconsistent/malformed/negative    → unknown
-// Lifecycle state provides CONTEXT only: it may interpret a null capture as
-// zero in provably pre-capture states, and it may flag a money/lifecycle
-// contradiction as unknown. It may never independently produce financial
-// truth — a "payment_captured" lifecycle with no capture evidence is unknown,
-// and a "refunded" lifecycle with no refund evidence is unknown.
+// Lifecycle may flag a contradiction but never fills a missing money fact.
 function paymentFromFacts(
   facts: PaymentFactsShape | null,
   state: OrderState,
 ): OrderPaymentDisplayState {
   if (facts === null) return "unknown";
 
-  let captured = facts.amountCapturedCents;
-  let refunded = facts.amountRefundedCents;
-
-  // Contextual interpretation of ABSENT facts, never of present ones:
-  if (captured === null) {
-    if (PRE_CAPTURE_STATES.has(state)) captured = 0; // nothing was ever taken
-    else return "unknown"; // post-capture lifecycle without capture evidence
-  }
-  if (refunded === null) {
-    if (state === "refunded") return "unknown"; // refund lifecycle without refund evidence
-    refunded = 0;
-  }
+  const captured = facts.amountCapturedCents;
+  const refunded = facts.amountRefundedCents;
+  if (captured === null || refunded === null) return "unknown";
 
   // Malformed or contradictory money is never presented as a state:
-  if (captured < 0 || refunded < 0) return "unknown";
-  if (facts.amountDueCents < 0) return "unknown";
+  if (captured < 0 || refunded < 0 || facts.amountDueCents < 0) return "unknown";
   if (captured > 0 && PRE_CAPTURE_STATES.has(state)) return "unknown"; // money moved in a pre-capture lifecycle
   if (state === "refunded" && refunded === 0) return "unknown"; // lifecycle says refunded, money says nothing came back
+  if (captured > facts.amountDueCents) return "unknown"; // over-capture is an exception, never "paid"
+  if (captured > 0 && captured < facts.amountDueCents) return "unknown"; // no partial-payment display state
+  if (refunded > captured) return "unknown"; // more returned than captured is contradictory
+  if (
+    captured === 0 &&
+    !PRE_CAPTURE_STATES.has(state) &&
+    state !== "cancelled" &&
+    state !== "exception"
+  ) {
+    return "unknown";
+  }
 
   if (captured === 0 && refunded === 0) return "unpaid";
   if (captured > 0 && refunded === 0) return "paid";
   if (captured > 0 && refunded > 0 && refunded < captured) return "partially_refunded";
-  if (captured > 0 && refunded >= captured) return "refunded";
+  if (captured > 0 && refunded === captured) return "refunded";
   // captured === 0 with refunded > 0: money came back that never went out.
   return "unknown";
 }
 
-/** A shipment fact that actually evidences movement: a tracking number, or a carrier-reported moving/arrived status. */
-function hasShipmentEvidence(shipments: readonly ShipmentShape[]): boolean {
+/** Carrier-reported movement evidence. A label/tracking number alone is not handoff. */
+function hasShippedEvidence(shipments: readonly ShipmentShape[]): boolean {
   return shipments.some((shipment) => {
-    const tracking = (shipment.trackingNumber ?? "").trim();
     const status = (shipment.status ?? "").trim().toLowerCase();
-    return tracking !== "" || status === "shipped" || status === "in_transit" || status === "delivered";
+    return status === "shipped" || status === "in_transit" || status === "delivered";
   });
+}
+
+/** Delivered is strictly stronger than shipped; only an arrived status proves it. */
+function hasDeliveredEvidence(shipments: readonly ShipmentShape[]): boolean {
+  return (
+    shipments.length > 0 &&
+    shipments.every(
+      (shipment) => (shipment.status ?? "").trim().toLowerCase() === "delivered",
+    )
+  );
 }
 
 // Fulfillment truth (P1-B): a source that is NOT connected to durable
@@ -209,9 +250,9 @@ function fulfillmentOf(
     case "partially_fulfilled":
       return "processing";
     case "fulfilled":
-      return hasShipmentEvidence(shipments) ? "shipped" : "unknown";
+      return hasShippedEvidence(shipments) ? "shipped" : "unknown";
     case "delivered":
-      return hasShipmentEvidence(shipments) ? "delivered" : "unknown";
+      return hasDeliveredEvidence(shipments) ? "delivered" : "unknown";
     case "cancelled":
       return "cancelled";
     case "refunded":
@@ -232,7 +273,11 @@ const CARRIER_TRACKING: Readonly<Record<string, (trackingNumber: string) => stri
     fedex: (n: string) => `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(n)}`,
   });
 
-function trackingUrlOf(shipments: readonly ShipmentShape[]): string | null {
+function trackingUrlOf(
+  shipments: readonly ShipmentShape[],
+  shipmentsSource: "connected" | "unavailable",
+): string | null {
+  if (shipmentsSource !== "connected") return null;
   for (const shipment of shipments) {
     const carrier = (shipment.carrier ?? "").trim().toLowerCase();
     const trackingNumber = (shipment.trackingNumber ?? "").trim();
@@ -260,36 +305,85 @@ function labelsFrom(lines: readonly LineShape[]): {
     };
   }
   if (lines.length > 1) {
+    const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
+    if (!Number.isSafeInteger(quantity)) throw new Error("order_shape_unrecognized");
     return {
       detailAvailability: "available",
       itemLabel: `${lines.length} items`,
       variantLabel: null,
-      quantity: lines.reduce((sum, line) => sum + line.quantity, 0),
+      quantity,
     };
   }
   return { detailAvailability: "unavailable", itemLabel: null, variantLabel: null, quantity: null };
 }
 
 /**
- * The DEFAULT availability declaration is the honest static truth of this
- * codebase today (P1-B): the assisted-order lane (XRR-) has no list-by-member
- * read at all, and the Early Access cart lane (XEC-) exists only behind an
- * unapplied candidate RPC. A composition that wires more must SAY so
- * explicitly; nothing defaults to "complete".
+ * A reader without self-described capabilities is unavailable. Specific
+ * production branches attach their own `historySources`; the composition root
+ * cannot upgrade this default with environment flags.
  */
-export const DEFAULT_ORDER_HISTORY_AVAILABILITY: OrderHistoryAvailabilityDto = Object.freeze({
-  availability: "partial",
-  sources: Object.freeze({
-    commerce: Object.freeze({ connected: true, complete: true }),
-    xea: Object.freeze({ connected: false, complete: false }),
-    xec: Object.freeze({ connected: false, complete: false }),
-    xrr: Object.freeze({ connected: false, complete: false }),
-  }),
+const DISCONNECTED_HISTORY_SOURCES: Readonly<
+  Record<OrderHistorySourceKey, OrderSourceStateDto>
+> = Object.freeze({
+  commerce: Object.freeze({ connected: false, complete: false }),
+  xea: Object.freeze({ connected: false, complete: false }),
+  xec: Object.freeze({ connected: false, complete: false }),
+  xrr: Object.freeze({ connected: false, complete: false }),
 });
+
+export const DEFAULT_ORDER_HISTORY_AVAILABILITY: OrderHistoryAvailabilityDto = Object.freeze({
+  availability: "unavailable",
+  authoritativeRecordCount: null,
+  sources: DISCONNECTED_HISTORY_SOURCES,
+});
+
+function normalizedHistorySources(
+  source: CommerceOrdersSource,
+): Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>> {
+  const declared = source.historySources;
+  if (declared === undefined) return DISCONNECTED_HISTORY_SOURCES;
+  const normalized = {} as Record<OrderHistorySourceKey, OrderSourceStateDto>;
+  for (const key of ["commerce", "xea", "xec", "xrr"] as const) {
+    const state = declared[key];
+    if (
+      state === undefined ||
+      typeof state.connected !== "boolean" ||
+      typeof state.complete !== "boolean" ||
+      (state.complete && !state.connected)
+    ) {
+      return DISCONNECTED_HISTORY_SOURCES;
+    }
+    normalized[key] = Object.freeze({ connected: state.connected, complete: state.complete });
+  }
+  return Object.freeze(normalized);
+}
+
+function historyOf(
+  sources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>,
+  recordCount: number,
+): OrderHistoryAvailabilityDto {
+  const availability = orderHistoryAvailability(sources);
+  return availability === "complete"
+    ? Object.freeze({ availability, authoritativeRecordCount: recordCount, sources })
+    : Object.freeze({ availability, authoritativeRecordCount: null, sources });
+}
+
+type LegacyHistoryDeclaration = Readonly<{
+  availability: "complete" | "partial" | "unavailable";
+  sources: Readonly<{
+    readonly commerce: OrderSourceStateDto;
+    readonly xea: OrderSourceStateDto;
+    readonly xec: OrderSourceStateDto;
+    readonly xrr: OrderSourceStateDto;
+  }>;
+}>;
 
 export function createCommerceOrdersPort(
   source: CommerceOrdersSource,
-  history: OrderHistoryAvailabilityDto = DEFAULT_ORDER_HISTORY_AVAILABILITY,
+  // Kept temporarily so the protected composition root compiles while Lead
+  // removes its environment-derived declaration. It is intentionally ignored:
+  // only metadata on the exact constructed source is authoritative.
+  _legacyHistory?: LegacyHistoryDeclaration,
 ): CustomerOrdersPort {
   return {
     async ordersFor(memberKey) {
@@ -306,6 +400,7 @@ export function createCommerceOrdersPort(
           const labels = labelsFrom(asLines(detail));
           return {
             reference: summary.orderId,
+            recordKind: summary.recordKind,
             placedAt: summary.placedAt,
             detailAvailability: labels.detailAvailability,
             itemLabel: labels.itemLabel,
@@ -313,7 +408,7 @@ export function createCommerceOrdersPort(
             quantity: labels.quantity,
             paymentState: paymentFromFacts(summary.payment, summary.state),
             fulfillmentState: fulfillmentOf(summary.state, summary.shipments, summary.shipmentsSource),
-            trackingUrl: trackingUrlOf(summary.shipments),
+            trackingUrl: trackingUrlOf(summary.shipments, summary.shipmentsSource),
             lotCoaAvailable: false,
           };
         }),
@@ -328,7 +423,16 @@ export function createCommerceOrdersPort(
         seen.add(order.reference);
         return true;
       });
-      return { research: deduped, carePharmacy: [], history };
+      const history = historyOf(normalizedHistorySources(source), deduped.length);
+      return {
+        research: deduped,
+        carePharmacy: [],
+        carePharmacyHistory: {
+          availability: "unavailable",
+          authoritativeRecordCount: null,
+        },
+        history,
+      };
     },
   };
 }

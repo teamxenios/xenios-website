@@ -13,8 +13,11 @@ import type {
   FulfillmentStatusUpdate,
 } from "../providers/fulfillment";
 import {
+  createInMemoryWebhookAtomicStore,
   createInMemoryWebhookEventStore,
   createWebhookHandler,
+  type WebhookAtomicApplyStore,
+  type WebhookAtomicEvent,
   type WebhookDeps,
   type WebhookEventStore,
   type WebhookOrder,
@@ -133,17 +136,18 @@ class RecordingEventStore implements WebhookEventStore {
 function orderStore(initial: WebhookOrder[]): {
   get(orderId: string): Promise<WebhookOrder | undefined>;
   save(order: WebhookOrder): Promise<void>;
+  atomic: WebhookAtomicApplyStore;
   saves: number;
 } {
-  const rows = new Map<string, WebhookOrder>();
-  initial.forEach((row) => rows.set(row.orderId, row));
+  const backing = createInMemoryWebhookAtomicStore(initial);
   return {
+    atomic: backing,
     saves: 0,
     async get(orderId: string) {
-      return rows.get(orderId);
+      return backing.get(orderId);
     },
     async save(order: WebhookOrder) {
-      rows.set(order.orderId, order);
+      await backing.save(order);
       this.saves += 1;
     },
   };
@@ -154,14 +158,20 @@ function approvedOrder(orderId = "ord_1"): WebhookOrder {
 }
 
 function deps(overrides: Partial<WebhookDeps> = {}): WebhookDeps {
-  return {
+  const orders = overrides.orders ?? orderStore([approvedOrder()]);
+  const result: WebhookDeps = {
     store: new RecordingEventStore(),
     payment: new FakePaymentProvider(),
     fulfillment: new FakeFulfillmentProvider(),
-    orders: orderStore([approvedOrder()]),
+    orders,
+    atomic: (orders as typeof orders & { atomic?: WebhookAtomicApplyStore }).atomic,
     commerceEnabled: true,
     ...overrides,
   };
+  if (Object.prototype.hasOwnProperty.call(overrides, "atomic")) {
+    result.atomic = overrides.atomic;
+  }
+  return result;
 }
 
 function captureBody(id = "evt_1", orderId = "ord_1"): string {
@@ -240,9 +250,9 @@ describe("payment webhooks", () => {
 
     await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
     expect(payment.verifyCalls).toBe(2);
-    // The seen lookup happens only after a successful verification, and the record
-    // happens only after that lookup clears.
-    expect(store.calls).toEqual(["seen:evt_1", "record:evt_1"]);
+    // Legacy seen/record calls are not an atomic authority and are never used by
+    // the handler, even after successful verification.
+    expect(store.calls).toEqual([]);
   });
 
   it("absorbs a replayed event without moving state", async () => {
@@ -259,7 +269,85 @@ describe("payment webhooks", () => {
     expect(replay).toEqual({ ok: true, applied: false, eventId: "evt_1" });
     expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
     expect(orders.saves).toBe(savesAfterFirst);
-    expect(store.calls).toEqual(["seen:evt_1", "record:evt_1", "seen:evt_1"]);
+    expect(store.calls).toEqual([]);
+  });
+
+  it("serializes concurrent deliveries so exactly one owns and applies the event", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    const results = await Promise.all([
+      handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW),
+      handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW),
+    ]);
+
+    expect(results).toContainEqual({ ok: true, applied: true, eventId: "evt_1" });
+    expect(results).toContainEqual({ ok: true, applied: false, eventId: "evt_1" });
+    expect(results.filter((result) => result.ok && result.applied)).toHaveLength(1);
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("rejects the same provider event id when it is bound to different signed bytes", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
+    const conflictingBody = JSON.stringify({
+      id: "evt_1",
+      type: "payment.failed",
+      providerReference: "auth_other",
+      orderId: "ord_1",
+    });
+
+    expect(await handler.handlePayment(conflictingBody, GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "event_conflict",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("does not poison a retry when the atomic persistence operation fails", async () => {
+    const orders = orderStore([approvedOrder()]);
+    const durable = orders.atomic;
+    let failOnce = true;
+    const atomic: WebhookAtomicApplyStore = {
+      async claimAndApply(event, decide) {
+        if (failOnce) {
+          failOnce = false;
+          throw new Error("injected transaction failure");
+        }
+        return durable.claimAndApply(event, decide);
+      },
+    };
+    const handler = createWebhookHandler(deps({ orders, atomic }));
+
+    await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).rejects.toThrow(
+      "injected transaction failure",
+    );
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
+
+    await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
+  });
+
+  it("fails closed when only separate replay and order stores are wired", async () => {
+    const store = new RecordingEventStore();
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({ store, orders, atomic: undefined }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect(store.calls).toEqual([]);
+    expect((await orders.get("ord_1"))!.state).toBe("approved");
   });
 
   it("reports an unknown order rather than crashing or retrying forever", async () => {
@@ -268,6 +356,22 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(captureBody("evt_9", "ord_missing"), GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: false, code: "unknown_order" });
+  });
+
+  it("does not claim an event for an unknown order, allowing a later durable-order retry", async () => {
+    const orders = orderStore([]);
+    const handler = createWebhookHandler(deps({ orders }));
+
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: false,
+      code: "unknown_order",
+    });
+    await orders.save(approvedOrder());
+    expect(await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_1",
+    });
   });
 
   it("reports malformed when the body is not JSON", async () => {
@@ -286,7 +390,7 @@ describe("payment webhooks", () => {
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
     expect(result).toEqual({ ok: false, code: "malformed" });
-    expect(store.calls).toEqual(["seen:evt_3"]);
+    expect(store.calls).toEqual([]);
   });
 
   it("surfaces a disabled provider as capability_disabled", async () => {
@@ -312,7 +416,7 @@ describe("payment webhooks", () => {
     expect((await orders.get("ord_1"))!.state).toBe("approved");
     // Not recorded, because nothing happened. A redelivery after commerce is
     // enabled is a first application, not a second.
-    expect(store.calls).toEqual(["seen:evt_1"]);
+    expect(store.calls).toEqual([]);
   });
 
   it("acknowledges an unrecognised event type without guessing at a state", async () => {
@@ -452,5 +556,35 @@ describe("the in-memory event store", () => {
 
     expect(store.seen("provider_a", "evt_1")).toBe(true);
     expect(store.seen("provider_b", "evt_1")).toBe(false);
+  });
+});
+
+describe("the in-memory atomic inbox and order store", () => {
+  const event: WebhookAtomicEvent = {
+    providerName: "provider_a",
+    eventId: "evt_owner",
+    eventType: "payment.captured",
+    payloadSha256: "a".repeat(64),
+    receivedAt: NOW,
+    orderId: "ord_1",
+  };
+
+  it("rejects a decision that tries to write an order it does not own without burning the claim", async () => {
+    const store = createInMemoryWebhookAtomicStore([approvedOrder()]);
+
+    await expect(
+      store.claimAndApply(event, () => ({
+        kind: "apply",
+        order: { ...approvedOrder("ord_2"), state: "payment_captured", captured: true },
+      })),
+    ).rejects.toThrow("different order");
+
+    await expect(
+      store.claimAndApply(event, (order) => ({
+        kind: "apply",
+        order: { ...order!, state: "payment_captured", captured: true },
+      })),
+    ).resolves.toEqual({ outcome: "applied" });
+    expect((await store.get("ord_1"))!.state).toBe("payment_captured");
   });
 });
