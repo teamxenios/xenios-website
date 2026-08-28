@@ -1,6 +1,7 @@
 import type { Express, Request, RequestHandler, Response } from "express";
 import {
   FULFILLMENT_ACTIONS,
+  FULFILLMENT_STATES,
   SUPPLIER_PERMITTED_ACTIONS,
   type FulfillmentAction,
   type FulfillmentActor,
@@ -10,7 +11,11 @@ import {
 } from "@shared/research/fulfillment/contracts";
 import { projectCustomerFulfillmentStatus } from "@shared/research/fulfillment/customer-status";
 import type { FulfillmentOperationsPort } from "./port";
-import { isFulfillmentError, type FulfillmentErrorCode } from "./errors";
+import {
+  isFulfillmentError,
+  isFulfillmentPersistenceError,
+  type FulfillmentErrorCode,
+} from "./errors";
 
 /**
  * HTTP surface for the fulfillment engine. This module never mounts itself:
@@ -81,8 +86,22 @@ function sendError(res: Response, error: unknown): void {
     });
     return;
   }
-  const message = error instanceof Error ? error.message : "Invalid request.";
-  res.status(422).json({ ok: false, code: "INVALID_INPUT", message });
+  if (isFulfillmentPersistenceError(error)) {
+    res.status(503).json({
+      ok: false,
+      code: "FULFILLMENT_UNAVAILABLE",
+      message: "Fulfillment data is temporarily unavailable.",
+    });
+    return;
+  }
+  // Persistence and adapter failures can contain database identifiers, query
+  // fragments, or customer data. Those details belong in bounded server-side
+  // observability, never in the HTTP response.
+  res.status(422).json({
+    ok: false,
+    code: "INVALID_INPUT",
+    message: "The fulfillment request could not be completed.",
+  });
 }
 
 function notConfigured(res: Response, capability: string): void {
@@ -112,19 +131,52 @@ function optionalStringField(
   return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
-function parseStates(value: unknown): FulfillmentState[] | undefined {
-  if (typeof value !== "string" || value.length === 0) return undefined;
+const FULFILLMENT_STATE_SET = new Set<string>(FULFILLMENT_STATES);
+
+type ParsedFilter<T> =
+  | { ok: true; value: T | undefined }
+  | { ok: false };
+
+function parseStates(value: unknown): ParsedFilter<FulfillmentState[]> {
+  if (value === undefined) return { ok: true, value: undefined };
+  if (typeof value !== "string" || value.length === 0) return { ok: false };
   const requested = value.split(",").map((item) => item.trim());
-  const known = new Set<string>([
-    "assigned", "acknowledged", "picking", "packed", "tracking_created",
-    "shipped", "delivered", "exception", "returned", "replacement",
-    "refunded", "damaged", "lost", "recalled", "cancelled",
-  ]);
-  const states = requested.filter((item): item is FulfillmentState =>
-    known.has(item),
-  );
-  return states.length > 0 ? states : undefined;
+  if (
+    requested.length === 0 ||
+    requested.length > FULFILLMENT_STATE_SET.size ||
+    requested.some((item) => item.length === 0 || !FULFILLMENT_STATE_SET.has(item)) ||
+    new Set(requested).size !== requested.length
+  ) {
+    return { ok: false };
+  }
+  return { ok: true, value: requested as FulfillmentState[] };
 }
+
+function parseLimit(value: unknown): ParsedFilter<number> {
+  if (value === undefined) return { ok: true, value: undefined };
+  if (typeof value !== "string" || !/^\d{1,3}$/.test(value)) {
+    return { ok: false };
+  }
+  const limit = Number(value);
+  return Number.isSafeInteger(limit) && limit >= 1 && limit <= 200
+    ? { ok: true, value: limit }
+    : { ok: false };
+}
+
+function sendInvalidQueueFilter(res: Response): void {
+  res.status(400).json({
+    ok: false,
+    code: "INVALID_FILTER",
+    message: "Fulfillment queue filters are invalid.",
+  });
+}
+
+const privateResponseHeaders: RequestHandler = (_req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  res.set("Pragma", "no-cache");
+  res.set("Referrer-Policy", "no-referrer");
+  next();
+};
 
 function transitionInputFromRequest(
   actor: FulfillmentActor,
@@ -204,17 +256,19 @@ export function registerFulfillmentRoutes(
 
   app.get(
     FULFILLMENT_ADMIN_QUEUE_PATH,
+    privateResponseHeaders,
     deps.requireAdmin,
     withInternalActor(async (req, res, actor) => {
-      const limitRaw = req.query.limit;
-      const limit =
-        typeof limitRaw === "string" && /^\d{1,3}$/.test(limitRaw)
-          ? Number(limitRaw)
-          : undefined;
+      const states = parseStates(req.query.states);
+      const limit = parseLimit(req.query.limit);
+      if (!states.ok || !limit.ok) {
+        sendInvalidQueueFilter(res);
+        return;
+      }
       const assignments = await deps.service.listAssignments({
         actor,
-        states: parseStates(req.query.states),
-        ...(limit !== undefined ? { limit } : {}),
+        states: states.value,
+        ...(limit.value !== undefined ? { limit: limit.value } : {}),
       });
       res.json({ ok: true, assignments });
     }),
@@ -222,6 +276,7 @@ export function registerFulfillmentRoutes(
 
   app.post(
     FULFILLMENT_ADMIN_ASSIGN_PATH,
+    privateResponseHeaders,
     deps.requireAdmin,
     withInternalActor(async (req, res, actor) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
@@ -248,6 +303,7 @@ export function registerFulfillmentRoutes(
 
   app.post(
     FULFILLMENT_ADMIN_TRANSITION_PATH,
+    privateResponseHeaders,
     deps.requireAdmin,
     withInternalActor(async (req, res, actor) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
@@ -269,10 +325,16 @@ export function registerFulfillmentRoutes(
 
   app.get(
     FULFILLMENT_SUPPLIER_QUEUE_PATH,
+    privateResponseHeaders,
     withSupplierActor(async (req, res, actor) => {
+      const states = parseStates(req.query.states);
+      if (!states.ok) {
+        sendInvalidQueueFilter(res);
+        return;
+      }
       const assignments = await deps.service.listAssignments({
         actor,
-        states: parseStates(req.query.states),
+        states: states.value,
       });
       res.json({ ok: true, assignments });
     }),
@@ -280,6 +342,7 @@ export function registerFulfillmentRoutes(
 
   app.post(
     FULFILLMENT_SUPPLIER_TRANSITION_PATH,
+    privateResponseHeaders,
     withSupplierActor(async (req, res, actor) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
       const action = stringField(body, "action");
@@ -299,7 +362,7 @@ export function registerFulfillmentRoutes(
     }),
   );
 
-  app.get(FULFILLMENT_CUSTOMER_STATUS_PATH, async (req, res) => {
+  app.get(FULFILLMENT_CUSTOMER_STATUS_PATH, privateResponseHeaders, async (req, res) => {
     if (!deps.customerReads) {
       notConfigured(res, "Customer fulfillment status");
       return;

@@ -17,6 +17,24 @@ export class FulfillmentError extends Error {
   }
 }
 
+/**
+ * Bounded marker for unavailable or malformed durable evidence. The original
+ * adapter/database detail is deliberately not retained on this public-facing
+ * error object.
+ */
+export class FulfillmentPersistenceError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "FulfillmentPersistenceError";
+  }
+}
+
 export function isFulfillmentError(value: unknown): value is FulfillmentError {
   return value instanceof FulfillmentError;
+}
+
+export function isFulfillmentPersistenceError(
+  value: unknown,
+): value is FulfillmentPersistenceError {
+  return value instanceof FulfillmentPersistenceError;
 }
