@@ -36,6 +36,10 @@ import {
 import { supabaseConfigured, getSupabaseAnon } from "./supabase";
 import { denyRecoveryPurposeSession } from "./research/member-auth";
 import { verifyTurnstile } from "./turnstile";
+import {
+  sanitizeMarketingAttributionPath,
+  sanitizeMarketingAttributionValue,
+} from "@shared/marketing-attribution";
 
 const WAITLIST_STATUSES = ["New", "Contacted", "Qualified", "Not a fit", "Converted", "Archived"];
 const LOI_STATUSES = ["New", "Reviewing", "Followed up", "Signed", "Not moving forward"];
@@ -91,16 +95,22 @@ function s(v: unknown, max: number): string | null {
   return typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null;
 }
 
-function readAttribution(body: any) {
+export function readAttribution(body: unknown) {
+  const input =
+    typeof body === "object" && body !== null && !Array.isArray(body)
+      ? (body as Record<string, unknown>)
+      : {};
   return {
-    source_page: s(body?.source_page, 300),
-    landing_page: s(body?.landing_page, 300),
-    referrer_url: s(body?.referrer_url, 500),
-    utm_source: s(body?.utm_source, 200),
-    utm_medium: s(body?.utm_medium, 200),
-    utm_campaign: s(body?.utm_campaign, 200),
-    utm_content: s(body?.utm_content, 200),
-    utm_term: s(body?.utm_term, 200),
+    source_page: sanitizeMarketingAttributionPath(input.source_page),
+    landing_page: sanitizeMarketingAttributionPath(input.landing_page),
+    // No approved referrer-origin vocabulary exists. Direct callers cannot
+    // bypass the browser's fail-closed policy and make storage/email collect it.
+    referrer_url: null,
+    utm_source: sanitizeMarketingAttributionValue("utm_source", input.utm_source),
+    utm_medium: sanitizeMarketingAttributionValue("utm_medium", input.utm_medium),
+    utm_campaign: sanitizeMarketingAttributionValue("utm_campaign", input.utm_campaign),
+    utm_content: sanitizeMarketingAttributionValue("utm_content", input.utm_content),
+    utm_term: sanitizeMarketingAttributionValue("utm_term", input.utm_term),
   };
 }
 

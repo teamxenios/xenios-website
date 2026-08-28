@@ -1,6 +1,11 @@
 import { isCarePath } from "@shared/care/paths";
+import {
+  MARKETING_ATTRIBUTION_UTM_FIELDS,
+  sanitizeMarketingAttributionPath,
+  sanitizeMarketingAttributionValue,
+} from "@shared/marketing-attribution";
 import { isRecoveryHash } from "@shared/research/recovery";
-import { isResearchPath } from "@shared/research/paths";
+import { isResearchAdminPath, isResearchPath } from "@shared/research/paths";
 
 // Captures deliberately narrow marketing attribution for waitlist and
 // early-interest submissions. Sensitive surfaces are an isolation boundary:
@@ -10,10 +15,9 @@ import { isResearchPath } from "@shared/research/paths";
 const LANDING_KEY = "xen_landing_page";
 const UTM_KEY = "xen_utm";
 const REFERRER_KEY = "xen_referrer";
+const ATTRIBUTION_SCHEMA_KEY = "xen_attribution_schema";
+const ATTRIBUTION_SCHEMA_VERSION = "2";
 
-const UTM_FIELDS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
-
-const SAFE_MARKETING_VALUE = /^[A-Za-z0-9][A-Za-z0-9 ._~+-]{0,99}$/u;
 
 export interface Attribution {
   source_page: string;
@@ -27,18 +31,37 @@ export interface Attribution {
 }
 
 function isSensitiveAttributionLocation(pathname: string, hash: string): boolean {
-  return isResearchPath(pathname) || isCarePath(pathname) || isRecoveryHash(hash);
+  let normalized = pathname;
+  try {
+    normalized = decodeURI(pathname).toLowerCase();
+  } catch {
+    // A malformed path is never eligible for attribution below.
+  }
+  return (
+    isResearchPath(pathname) ||
+    isResearchAdminPath(pathname) ||
+    normalized === "/admin" ||
+    normalized.startsWith("/admin/") ||
+    isCarePath(pathname) ||
+    isRecoveryHash(hash)
+  );
 }
 
 function clearStoredAttribution(): void {
   sessionStorage.removeItem(LANDING_KEY);
   sessionStorage.removeItem(UTM_KEY);
   sessionStorage.removeItem(REFERRER_KEY);
+  sessionStorage.removeItem(ATTRIBUTION_SCHEMA_KEY);
 }
 
-function safeMarketingValue(value: unknown): string | null {
-  const trimmed = typeof value === "string" ? value.trim() : "";
-  return SAFE_MARKETING_VALUE.test(trimmed) ? trimmed : null;
+function ensureCurrentStorageSchema(): void {
+  if (sessionStorage.getItem(ATTRIBUTION_SCHEMA_KEY) === ATTRIBUTION_SCHEMA_VERSION) {
+    return;
+  }
+  // Values written before this vocabulary existed were arbitrary free text.
+  // They cannot be reclassified safely, so migration is deletion.
+  clearStoredAttribution();
+  sessionStorage.setItem(ATTRIBUTION_SCHEMA_KEY, ATTRIBUTION_SCHEMA_VERSION);
 }
 
 function parseStoredUtm(value: string | null): Record<string, unknown> {
@@ -57,24 +80,24 @@ function safePublicPath(value: string, origin: string): string {
     }
     // Query strings are intentionally represented only by the allowlisted UTM
     // fields below. Arbitrary parameters never become an attribution payload.
-    return parsed.pathname;
+    const normalized = decodeURI(parsed.pathname).toLowerCase();
+    const staticPath = sanitizeMarketingAttributionPath(normalized);
+    if (staticPath) return staticPath;
+    // Dynamic public pages are reported only as a route category. Their raw
+    // segment is intentionally discarded because a URL segment is free text.
+    if (/^\/for\/[^/]+$/u.test(normalized)) return "/for/:slug";
+    if (/^\/careers\/[^/]+$/u.test(normalized)) return "/careers/:slug";
+    return "";
   } catch {
     return "";
   }
 }
 
-function safeReferrerOrigin(value: string): string {
-  if (!value) return "";
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return "";
-    if (isSensitiveAttributionLocation(parsed.pathname, parsed.hash)) return "";
-    // Attribution needs, at most, the referring site. Never retain its path,
-    // query, credentials, or fragment.
-    return parsed.origin;
-  } catch {
-    return "";
-  }
+function safeReferrerOrigin(_value: string): string {
+  // There is no approved referrer-origin vocabulary in the repository. An
+  // arbitrary hostname can itself identify a person or customer, so the safe
+  // default is no referrer capture until a reviewed finite list is published.
+  return "";
 }
 
 function emptyAttribution(): Attribution {
@@ -97,12 +120,21 @@ export function initAttribution(): void {
       clearStoredAttribution();
       return;
     }
+    ensureCurrentStorageSchema();
     if (!sessionStorage.getItem(LANDING_KEY)) {
-      sessionStorage.setItem(LANDING_KEY, window.location.pathname);
+      const landing = safePublicPath(
+        window.location.pathname,
+        window.location.origin,
+      );
+      if (!landing) {
+        clearStoredAttribution();
+        return;
+      }
+      sessionStorage.setItem(LANDING_KEY, landing);
       const params = new URLSearchParams(window.location.search);
       const utm: Record<string, string> = {};
-      for (const f of UTM_FIELDS) {
-        const value = safeMarketingValue(params.get(f));
+      for (const f of MARKETING_ATTRIBUTION_UTM_FIELDS) {
+        const value = sanitizeMarketingAttributionValue(f, params.get(f));
         if (value) utm[f] = value;
       }
       sessionStorage.setItem(UTM_KEY, JSON.stringify(utm));
@@ -131,7 +163,16 @@ export function getAttribution(): Attribution {
   let referrer = "";
   let utm: Record<string, unknown> = {};
   const sourcePage = safePublicPath(window.location.pathname, window.location.origin);
+  if (!sourcePage) {
+    try {
+      clearStoredAttribution();
+    } catch {
+      // Storage may be unavailable; the returned payload still fails closed.
+    }
+    return emptyAttribution();
+  }
   try {
+    ensureCurrentStorageSchema();
     landing = safePublicPath(
       sessionStorage.getItem(LANDING_KEY) || sourcePage,
       window.location.origin,
@@ -147,10 +188,10 @@ export function getAttribution(): Attribution {
     source_page: sourcePage,
     landing_page: landing,
     referrer_url: referrer || "",
-    utm_source: safeMarketingValue(utm.utm_source ?? null),
-    utm_medium: safeMarketingValue(utm.utm_medium ?? null),
-    utm_campaign: safeMarketingValue(utm.utm_campaign ?? null),
-    utm_content: safeMarketingValue(utm.utm_content ?? null),
-    utm_term: safeMarketingValue(utm.utm_term ?? null),
+    utm_source: sanitizeMarketingAttributionValue("utm_source", utm.utm_source ?? null),
+    utm_medium: sanitizeMarketingAttributionValue("utm_medium", utm.utm_medium ?? null),
+    utm_campaign: sanitizeMarketingAttributionValue("utm_campaign", utm.utm_campaign ?? null),
+    utm_content: sanitizeMarketingAttributionValue("utm_content", utm.utm_content ?? null),
+    utm_term: sanitizeMarketingAttributionValue("utm_term", utm.utm_term ?? null),
   };
 }
