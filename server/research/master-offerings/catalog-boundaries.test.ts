@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import express, { type Express } from "express";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { FULL_CATALOG_VISIBILITY_ENV_VAR } from "../catalog-display/visibility";
 import { noMasterOfferingCommerce } from "./customer-projection";
 import type { NormalizedMasterOffering } from "./model";
@@ -355,6 +355,16 @@ function sourceFiles(): ReadonlyArray<{ rel: string; source: string }> {
 }
 
 describe("boundaries: the ingestion model stays on the server", () => {
+  // The walk reads ~1,400 source files synchronously. On a cold Docker bind
+  // mount that alone exceeded the 60 s per-test budget in an independent
+  // review run (>60 s cold-in-aggregate, 19 s cold-isolated, 9 s warm), so a
+  // timeout could masquerade as a boundary failure. Pay the I/O once here
+  // under an explicit hook budget; the assertions below keep their own budget
+  // and every expectation is unchanged.
+  beforeAll(() => {
+    sourceFiles();
+  }, 180_000);
+
     // The two boundary assertions above and below walk 1,378 files and about
     // 5.5 MB synchronously. Under vitest's default five second budget they
     // pass alone in roughly two seconds and time out under parallel load,
