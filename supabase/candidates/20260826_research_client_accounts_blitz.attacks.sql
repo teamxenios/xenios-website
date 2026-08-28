@@ -1,6 +1,8 @@
 \set ON_ERROR_STOP on
 \pset pager off
 
+select set_config('rehearsal.pass_number', :'rehearsal_pass', false);
+
 -- Synthetic setup through the exact service_role surface.
 set role service_role;
 
@@ -538,6 +540,14 @@ select rehearsal.assert_true(
       'research_product_activation_overlay_audit'
     )
     and grantee in ('PUBLIC', 'anon', 'authenticated', 'service_role'))
+);
+
+reset role;
+reset request.jwt.claim.sub;
+select rehearsal.record_phase(
+  :'rehearsal_pass'::integer,
+  'broad-attacks',
+  jsonb_build_object('refusedAttacks', 37, 'positiveInvariants', 11)
 );
 
 select 'PASS attack battery: 37 attacks refused; 11 positive invariants proved.' as rehearsal_result;

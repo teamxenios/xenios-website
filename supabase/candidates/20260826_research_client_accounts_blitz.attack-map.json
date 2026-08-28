@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "candidate": "20260826_research_client_accounts_blitz.sql",
+  "countedTargets": {
+    "v1": 18,
+    "v2": 12
+  },
+  "attacks": [
+    {
+      "historicalId": "A1",
+      "suite": "v1",
+      "historicalExpected": "anon direct staging read is refused",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 42501: permission denied for the staging table",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A1.anon-staging-read"]
+    },
+    {
+      "historicalId": "A2",
+      "suite": "v1",
+      "historicalExpected": "service_role direct invitation INSERT is refused",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 42501 because service_role is SELECT-only on invitations",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A2.service-direct-insert"]
+    },
+    {
+      "historicalId": "A4",
+      "suite": "v1",
+      "historicalExpected": "an owner cannot create an invitation already founder_approved",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the birth-state guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A4.owner-approved-birth"]
+    },
+    {
+      "historicalId": "A6",
+      "suite": "v1",
+      "historicalExpected": "draft cannot skip founder approval and queue",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the state-machine guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A6.draft-to-queued"]
+    },
+    {
+      "historicalId": "A7",
+      "suite": "v1",
+      "historicalExpected": "a non-admin actor cannot approve",
+      "constructibility": "constructible_via_authenticated_actor",
+      "currentDisposition": "refused because auth.uid() is not a currently-active super_admin",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A7.non-admin-approval"]
+    },
+    {
+      "historicalId": "A8",
+      "suite": "v1",
+      "historicalExpected": "a revoked super_admin cannot approve",
+      "constructibility": "constructible_via_authenticated_actor",
+      "currentDisposition": "refused because the authenticated super_admin assignment is revoked",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A8.revoked-admin-approval"]
+    },
+    {
+      "historicalId": "A9",
+      "suite": "v1",
+      "historicalExpected": "owner-supplied actor text must not manufacture founder approval",
+      "constructibility": "constructible_as_exact_historical_owner_update",
+      "currentDisposition": "refused exactly because auth.uid() is absent; caller-supplied approved_by text is not authority",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A9.unauthenticated-actor-text"]
+    },
+    {
+      "historicalId": "A10",
+      "suite": "v1",
+      "historicalExpected": "a staged person without contact information cannot be approved",
+      "constructibility": "constructible",
+      "currentDisposition": "refused because enrichment must precede approval",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A10.missing-contact"]
+    },
+    {
+      "historicalId": "A11",
+      "suite": "v1",
+      "historicalExpected": "pending consent cannot be approved",
+      "constructibility": "constructible",
+      "currentDisposition": "refused because only granted consent is eligible",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A11.pending-consent"]
+    },
+    {
+      "historicalId": "A12",
+      "suite": "v1",
+      "historicalExpected": "one staged identity cannot receive a second invitation history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the one-history unique index",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A12.second-history"]
+    },
+    {
+      "historicalId": "A13",
+      "suite": "v1",
+      "historicalExpected": "founder_approved cannot skip queued and become sent",
+      "constructibility": "constructible",
+      "currentDisposition": "refused exactly by the state-machine guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A13.approved-to-sent"]
+    },
+    {
+      "historicalId": "A14",
+      "suite": "v1",
+      "historicalExpected": "accepted cannot rewind to queued",
+      "constructibility": "not_constructible_current",
+      "currentDisposition": "superseded: accepted is excluded from both persisted state CHECK vocabularies; the executable replacements prove that exclusion and that the nearest representable terminal rewind, sent to queued, is refused",
+      "countedIn18Plus12": true,
+      "executableIds": [
+        "narrative.A14.accepted-unrepresentable",
+        "narrative.A14.sent-to-queued"
+      ]
+    },
+    {
+      "historicalId": "A15",
+      "suite": "v1",
+      "historicalExpected": "an owner cannot delete invitation history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the history guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A15.owner-delete-invitation"]
+    },
+    {
+      "historicalId": "A16a",
+      "suite": "v1",
+      "historicalExpected": "service_role cannot UPDATE activation audit history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 42501",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A16a.service-audit-update"]
+    },
+    {
+      "historicalId": "A16b",
+      "suite": "v1",
+      "historicalExpected": "service_role cannot DELETE activation audit history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 42501",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A16b.service-audit-delete"]
+    },
+    {
+      "historicalId": "A16c",
+      "suite": "v1",
+      "historicalExpected": "service_role cannot call nextval on the activation-audit identity sequence",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 42501",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A16c.service-audit-nextval"]
+    },
+    {
+      "historicalId": "A16d",
+      "suite": "v1",
+      "historicalExpected": "an owner cannot UPDATE activation audit history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the append-only trigger",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A16d.owner-audit-update"]
+    },
+    {
+      "historicalId": "A16e",
+      "suite": "v1",
+      "historicalExpected": "an owner cannot DELETE activation audit history",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the append-only trigger",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.A16e.owner-audit-delete"]
+    },
+    {
+      "historicalId": "V2-1",
+      "suite": "v2",
+      "historicalExpected": "draft to revoked succeeds without manufacturing approval",
+      "constructibility": "constructible_positive",
+      "currentDisposition": "succeeds and leaves the entire approval bundle null",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-1.draft-revoked-null-bundle"]
+    },
+    {
+      "historicalId": "V2-2a",
+      "suite": "v2",
+      "historicalExpected": "consent cannot change beneath a live approved invitation",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the staging freeze guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-2a.mutate-consent"]
+    },
+    {
+      "historicalId": "V2-2b",
+      "suite": "v2",
+      "historicalExpected": "email cannot change beneath a live approved invitation",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the staging freeze guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-2b.mutate-email"]
+    },
+    {
+      "historicalId": "V2-2c",
+      "suite": "v2",
+      "historicalExpected": "disabling the freeze trigger cannot make a stale approval queueable",
+      "constructibility": "constructible_superuser_rehearsal_only",
+      "currentDisposition": "after evidence mutation and trigger re-enable, queue is refused with snapshot mismatch and the freeze trigger finishes enabled",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-2c.trigger-bypass-snapshot-mismatch"]
+    },
+    {
+      "historicalId": "V2-3a",
+      "suite": "v2",
+      "historicalExpected": "approved_by is immutable",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the exact approval-bundle guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-3a.mutate-approver"]
+    },
+    {
+      "historicalId": "V2-3b",
+      "suite": "v2",
+      "historicalExpected": "approved_at is immutable",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the exact approval-bundle guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-3b.mutate-approved-at"]
+    },
+    {
+      "historicalId": "V2-3c",
+      "suite": "v2",
+      "historicalExpected": "approved_snapshot_hash is immutable",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the exact approval-bundle guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-3c.mutate-hash"]
+    },
+    {
+      "historicalId": "V2-3d",
+      "suite": "v2",
+      "historicalExpected": "an invitation cannot be re-pointed to a different staging identity",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the exact identity-and-birth guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-3d.repoint-staging"]
+    },
+    {
+      "historicalId": "V2-4",
+      "suite": "v2",
+      "historicalExpected": "approved staging evidence cannot be deleted",
+      "constructibility": "constructible",
+      "currentDisposition": "refused with SQLSTATE 23503 by the invitation staging foreign key",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-4.delete-approved-staging"]
+    },
+    {
+      "historicalId": "V2-5",
+      "suite": "v2",
+      "historicalExpected": "sent is refused if the approving role was revoked after queue",
+      "constructibility": "constructible",
+      "currentDisposition": "refused because the approving principal is no longer an active super_admin",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-5.revoked-approver-before-sent"]
+    },
+    {
+      "historicalId": "V2-6a",
+      "suite": "v2",
+      "historicalExpected": "a revoked invitation cannot queue",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the terminal-state guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-6a.queue-after-revoked"]
+    },
+    {
+      "historicalId": "V2-6b",
+      "suite": "v2",
+      "historicalExpected": "an approved invitation cannot become sent without first queueing",
+      "constructibility": "constructible",
+      "currentDisposition": "refused by the state-machine guard",
+      "countedIn18Plus12": true,
+      "executableIds": ["narrative.V2-6b.sent-without-queued"]
+    },
+    {
+      "historicalId": "V2-7",
+      "suite": "v2",
+      "historicalExpected": "historically expected revoke, edit evidence, re-approve, and queue to succeed with a fresh snapshot",
+      "constructibility": "historical_only_superseded",
+      "currentDisposition": "superseded by the stricter model: revoked is terminal and the one-history invariant prevents replacement; re-approval and a second history are both refused",
+      "countedIn18Plus12": false,
+      "executableIds": [
+        "narrative.V2-7.reapprove-revoked-refused",
+        "narrative.V2-7.second-history-refused"
+      ]
+    }
+  ]
+}
