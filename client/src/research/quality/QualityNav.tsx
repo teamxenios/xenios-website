@@ -23,4 +23,3 @@ export function QualityNav({ current }: { current: (typeof LINKS)[number]["href"
     </nav>
   );
 }
-

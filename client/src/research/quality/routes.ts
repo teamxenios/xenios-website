@@ -13,4 +13,3 @@ export function publicLotRoute(rawLotCode: string): string | null {
     ? null
     : `/research/lots/${encodeURIComponent(lotCode)}`;
 }
-

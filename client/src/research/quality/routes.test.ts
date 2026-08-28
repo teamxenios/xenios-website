@@ -20,4 +20,3 @@ describe("public quality route handoff", () => {
     expect(publicLotRoute("LOT/../../private")).toBeNull();
   });
 });
-
