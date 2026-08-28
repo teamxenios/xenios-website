@@ -135,6 +135,23 @@ describe("customer-account routes", () => {
     }
   });
 
+  it("an exhausted support budget answers 429 rate_limited, never a generic 500", async () => {
+    const app = buildApp({
+      support: {
+        casesFor: async () => [],
+        openCase: async () => {
+          throw new Error("support_rate_limited");
+        },
+      },
+    });
+    const res = await request(app)
+      .post(CUSTOMER_ACCOUNT_PATHS.support)
+      .set("x-test-member", "member-fixture-1")
+      .send({ category: "order", subject: "s", description: "d" });
+    expect(res.status).toBe(429);
+    expect(res.body.reason).toBe("rate_limited");
+  });
+
   it("opens a valid support case for the acting member", async () => {
     const app = buildApp();
     const res = await request(app)
