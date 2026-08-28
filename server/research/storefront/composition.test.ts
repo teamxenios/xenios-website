@@ -6,15 +6,15 @@ import { toPublicStorefrontPage } from "./projection";
  * The VISITOR COMPOSITION's one load-bearing property, proven here rather
  * than asserted in a document.
  *
- * `docs/research-launch/INTEGRATION-LANE-STOREFRONT.md` tells the composition
- * root to serve the storefront from the existing master-offerings composition
- * with a viewer that carries NO PRICING GRANT. The safety of the entire
- * public surface rests on that, and prose drifts from wiring silently.
+ * The eventual durable publication adapter must still source price/action from
+ * the existing master-offerings composition with a viewer that carries NO
+ * PRICING GRANT. That is necessary but no longer sufficient: routes also
+ * require the separate durable publication authority in publication.ts.
  *
  * WHAT THIS FILE PROVES, and what it deliberately leaves to its owner:
  *
- *   Here: the exact viewer literal the packet tells the composition root to
- *   pass resolves to a null pricing identity, through the real derivation
+ *   Here: the exact visitor viewer resolves to a null pricing identity through
+ *   the real derivation
  *   (`pricingIdentityFromViewer`) rather than a restatement of it. If someone
  *   later changes the packet's viewer, or that derivation starts inventing an
  *   audience, this fails.
@@ -66,14 +66,13 @@ describe("public storefront visitor composition", () => {
 
   it("projects an empty catalog page without inventing a product or a price", () => {
     const projected = toPublicStorefrontPage({
-      ok: true,
       page: 1,
       pageSize: 24,
       total: 0,
       totalPages: 0,
       sort: "relevance",
       products: [],
-      facets: { families: [], states: [], categories: [] },
+      facets: { families: [], categories: [] },
     });
     expect(projected.products).toEqual([]);
     expect(projected.total).toBe(0);

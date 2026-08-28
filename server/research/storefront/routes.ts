@@ -4,9 +4,7 @@ import {
   isMasterOfferingCategorySlug,
   isMasterOfferingFamily,
   isMasterOfferingSort,
-  type MasterOfferingCatalogPage,
   type MasterOfferingCatalogQuery,
-  type MasterOfferingDetailView,
   type MasterOfferingFamily,
   type MasterOfferingSort,
 } from "@shared/research/master-offerings/contract";
@@ -17,17 +15,30 @@ import type {
 } from "@shared/research/storefront/contract";
 import type { VisibilityEnv } from "../catalog-display/visibility";
 import { toPublicStorefrontDetail, toPublicStorefrontPage } from "./projection";
+import {
+  authorizePublicStorefrontCandidates,
+  authorizePublicStorefrontDetail,
+  findCurrentPublicStorefrontPublication,
+  isPublicStorefrontPublicationSnapshotCurrent,
+  parsePublicStorefrontCatalogCandidateSnapshot,
+  parsePublicStorefrontPublicationSnapshot,
+  publicStorefrontPublicationSnapshotFingerprint,
+  publicStorefrontPublicationScope,
+  selectPublishedPublicStorefront,
+  type PublicCatalogReadService,
+  type PublicStorefrontPublicationAuthority,
+} from "./publication";
+
+export type { PublicCatalogReadService } from "./publication";
 
 /**
  * The public storefront HTTP layer: two read-only doors for a signed-out
  * visitor, fail closed behind one default-off flag.
  *
- * NO AUTHENTICATION ON PURPOSE, AND NO AUTHORITY BECAUSE OF IT. The catalog
- * service these handlers consume is composed by the root for a viewer with no
- * pricing grant, so the strongest thing this surface can ever say is what the
- * member catalog already says to a viewer who has proven nothing: display
- * facts, on-request prices, and request-family actions. It sells nothing,
- * mounts no cart, and carries no session.
+ * NO AUTHENTICATION ON PURPOSE. Every response does require a fresh durable
+ * approved-copy publication snapshot, then reads the canonical catalog at the
+ * exact revision that snapshot names for a viewer with no pricing grant. It
+ * sells nothing, mounts no cart, and carries no session.
  *
  * Setting RESEARCH_PUBLIC_STOREFRONT_ENABLED=true in any production
  * environment is a production mutation and requires Samuel's current explicit
@@ -55,11 +66,6 @@ export function publicStorefrontEnabled(
  * lane: the composition root, which already owns the lane, supplies the real
  * service. Nothing here can reach the lane's internals.
  */
-export interface PublicCatalogReadService {
-  list(query: MasterOfferingCatalogQuery): Promise<MasterOfferingCatalogPage>;
-  detail(slug: string): Promise<MasterOfferingDetailView | null>;
-}
-
 export interface PublicStorefrontApiDependencies {
   /**
    * A NEW catalog service per request, composed by the root for the one
@@ -70,6 +76,14 @@ export interface PublicStorefrontApiDependencies {
   serviceForVisitor():
     | Promise<PublicCatalogReadService>
     | PublicCatalogReadService;
+  /**
+   * Mandatory durable approved-copy authority. Omitting this dependency makes
+   * handler construction fail, so the old no-authority source cannot be
+   * mounted accidentally.
+   */
+  publicationAuthority: PublicStorefrontPublicationAuthority;
+  /** Server clock seam for exact snapshot freshness tests. */
+  now?: () => string;
   env?: VisibilityEnv;
 }
 
@@ -194,12 +208,18 @@ function setPublicHeaders(res: Response): void {
 export function createPublicStorefrontApiHandlers(
   dependencies: PublicStorefrontApiDependencies,
 ): PublicStorefrontApiHandlers {
-  if (!dependencies || typeof dependencies.serviceForVisitor !== "function") {
+  if (
+    !dependencies ||
+    typeof dependencies.serviceForVisitor !== "function" ||
+    !dependencies.publicationAuthority ||
+    typeof dependencies.publicationAuthority.readCurrentSnapshot !== "function"
+  ) {
     throw new Error(
-      "createPublicStorefrontApiHandlers refused: dependencies required",
+      "createPublicStorefrontApiHandlers refused: durable publication dependencies required",
     );
   }
   const env = dependencies.env ?? process.env;
+  const now = dependencies.now ?? (() => new Date().toISOString());
 
   const publicHeaders = (
     _req: Request,
@@ -221,10 +241,61 @@ export function createPublicStorefrontApiHandlers(
         res.status(400).json(RESPONSES.invalid);
         return;
       }
+      const publicationValue =
+        await dependencies.publicationAuthority.readCurrentSnapshot();
+      const publicationReadAt = now();
+      const publication = parsePublicStorefrontPublicationSnapshot(
+        publicationValue,
+        publicationReadAt,
+      );
+      if (publication === null) throw new Error("publication unavailable");
       const service = await dependencies.serviceForVisitor();
+      if (!service || typeof service.readCandidates !== "function") {
+        throw new Error("catalog source unavailable");
+      }
+      const candidates = parsePublicStorefrontCatalogCandidateSnapshot(
+        await service.readCandidates(
+          publicStorefrontPublicationScope(publication),
+        ),
+        publication.catalogRevisionId,
+      );
+      if (candidates === null) throw new Error("catalog snapshot invalid");
+      const currentPublicationValue =
+        await dependencies.publicationAuthority.readCurrentSnapshot();
+      const currentReadAt = now();
+      const currentPublication = parsePublicStorefrontPublicationSnapshot(
+        currentPublicationValue,
+        currentReadAt,
+      );
+      if (
+        currentPublication === null ||
+        currentPublication.authorityRevisionId !==
+          publication.authorityRevisionId ||
+        currentPublication.catalogRevisionId !== publication.catalogRevisionId ||
+        publicStorefrontPublicationSnapshotFingerprint(currentPublication) !==
+          publicStorefrontPublicationSnapshotFingerprint(publication)
+      ) {
+        throw new Error("publication changed during read");
+      }
+      const authorized = authorizePublicStorefrontCandidates(
+        currentPublication,
+        candidates,
+        currentReadAt,
+      );
+      if (
+        authorized === null ||
+        !isPublicStorefrontPublicationSnapshotCurrent(
+          currentPublication,
+          currentReadAt,
+        )
+      ) {
+        throw new Error("publication changed during read");
+      }
       const body: PublicStorefrontCatalogResponse = {
         ok: true,
-        catalog: toPublicStorefrontPage(await service.list(query)),
+        catalog: toPublicStorefrontPage(
+          selectPublishedPublicStorefront(authorized, query),
+        ),
       };
       res.json(body);
     } catch {
@@ -244,11 +315,82 @@ export function createPublicStorefrontApiHandlers(
         res.status(400).json(RESPONSES.invalid);
         return;
       }
-      const service = await dependencies.serviceForVisitor();
-      const product = await service.detail(slug);
-      if (product === null || product.family !== family) {
+      const publicationValue =
+        await dependencies.publicationAuthority.readCurrentSnapshot();
+      const publicationReadAt = now();
+      const publication = parsePublicStorefrontPublicationSnapshot(
+        publicationValue,
+        publicationReadAt,
+      );
+      if (publication === null) throw new Error("publication unavailable");
+      const published = findCurrentPublicStorefrontPublication(
+        publication,
+        family,
+        slug,
+        publicationReadAt,
+      );
+      // Publication is checked before the catalog detail source is touched.
+      // An unpublished and an absent address therefore have the same response
+      // and neither becomes a direct-lookup oracle.
+      if (published === null) {
         res.status(404).json(RESPONSES.notFound);
         return;
+      }
+      const service = await dependencies.serviceForVisitor();
+      if (!service || typeof service.readDetail !== "function") {
+        throw new Error("catalog source unavailable");
+      }
+      const candidate = await service.readDetail({
+        ...publicStorefrontPublicationScope(publication),
+        offeringId: published.offeringId,
+        family: published.family,
+        slug: published.slug,
+        publicationRevisionId: published.publicationRevisionId,
+        copyRevisionId: published.copyRevisionId,
+      });
+      const currentPublicationValue =
+        await dependencies.publicationAuthority.readCurrentSnapshot();
+      const currentReadAt = now();
+      const currentPublication = parsePublicStorefrontPublicationSnapshot(
+        currentPublicationValue,
+        currentReadAt,
+      );
+      if (
+        currentPublication === null ||
+        currentPublication.authorityRevisionId !==
+          publication.authorityRevisionId ||
+        currentPublication.catalogRevisionId !== publication.catalogRevisionId ||
+        publicStorefrontPublicationSnapshotFingerprint(currentPublication) !==
+          publicStorefrontPublicationSnapshotFingerprint(publication)
+      ) {
+        throw new Error("publication changed during detail read");
+      }
+      const currentPublished = findCurrentPublicStorefrontPublication(
+        currentPublication,
+        family,
+        slug,
+        currentReadAt,
+      );
+      if (
+        currentPublished === null ||
+        currentPublished.publicationRevisionId !==
+          published.publicationRevisionId ||
+        currentPublished.copyRevisionId !== published.copyRevisionId
+      ) {
+        throw new Error("publication changed during detail read");
+      }
+      const product = authorizePublicStorefrontDetail(
+        candidate,
+        currentPublished,
+      );
+      if (
+        product === null ||
+        !isPublicStorefrontPublicationSnapshotCurrent(
+          currentPublication,
+          currentReadAt,
+        )
+      ) {
+        throw new Error("published detail mismatch");
       }
       const body: PublicStorefrontDetailResponse = {
         ok: true,

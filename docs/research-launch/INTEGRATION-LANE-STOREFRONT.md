@@ -2,6 +2,20 @@
 
 Branch: `lane/launch-public-storefront`. Base: `5bb3fa9`.
 
+> **2026-08-28 publication-authority correction:** the composition snippet in
+> section 1 is superseded and must not be mounted. A no-grant member catalog
+> service is necessary but no longer sufficient. The current server contract
+> additionally requires (1) a fresh atomic durable publication snapshot bound
+> to exact authority, catalog, publication, and copy revisions, and (2) a
+> complete candidate snapshot for that exact catalog revision. The server
+> filters exact digest-matched `approved` copy before search, totals, facets,
+> sorting, and pagination, and authorizes an exact address before detail lookup.
+> No reviewed durable adapter exists in this packet, so the public storefront
+> must remain unavailable and unmounted. Do not synthesize publication from
+> catalog presence, copy workflow state, activation, price, availability, or
+> demand. See `server/research/storefront/publication.ts` and its hostile route
+> tests for the replacement contract.
+
 This document contains every change the lane needs in a file it does not own,
 exactly as it should be pasted, plus the tests to run afterwards. Everything
 else ships inside the lane's own paths and is inert until the flag below is

@@ -2,19 +2,17 @@
  * The public storefront projection: canonical catalog answer in, customer-safe
  * public shapes out.
  *
- * Pure and framework free. Everything consequential was already decided by the
- * MasterOfferingCatalogService for a viewer with no pricing grant; this module
- * copies the safe subset field by field and translates each variant's resolved
- * action into the closed six-word launch vocabulary. Field-by-field on
- * purpose: a spread would silently forward whatever the member contract grows
- * next, and the whole point of a public projection is that nothing crosses it
- * unless someone wrote its name here.
+ * Pure and framework free. Its inputs are opaque authorized wrappers produced
+ * only after exact durable publication evidence matches the current copy; the
+ * MasterOfferingCatalogService has already resolved price and action for a
+ * viewer with no pricing grant. This module then copies the safe subset field
+ * by field and translates each variant's action into the closed six-word
+ * vocabulary. A spread would silently forward whatever the member contract
+ * grows next, so nothing crosses unless someone wrote its name here.
  */
 
 import type {
   MasterOfferingCardView,
-  MasterOfferingCatalogPage,
-  MasterOfferingDetailView,
   MasterOfferingVariantSummary,
 } from "@shared/research/master-offerings/contract";
 import { isDisplayablePrice } from "@shared/research/master-offerings/pricing-contract";
@@ -23,11 +21,15 @@ import {
   strongestPublicAction,
   type PublicStorefrontCard,
   type PublicStorefrontDetail,
-  type PublicStorefrontFacets,
   type PublicStorefrontPage,
   type PublicStorefrontPriceView,
   type PublicStorefrontVariant,
 } from "@shared/research/storefront/contract";
+import type {
+  AuthorizedPublicStorefrontCard,
+  AuthorizedPublicStorefrontDetail,
+  PublishedPublicStorefrontSelection,
+} from "./publication";
 
 function toPublicPrice(
   variant: MasterOfferingVariantSummary,
@@ -61,9 +63,7 @@ function toPublicVariant(
   };
 }
 
-export function toPublicStorefrontCard(
-  product: MasterOfferingCardView,
-): PublicStorefrontCard {
+function projectCard(product: MasterOfferingCardView): PublicStorefrontCard {
   const variants = product.variants.map(toPublicVariant);
   return {
     slug: product.slug,
@@ -82,35 +82,25 @@ export function toPublicStorefrontCard(
   };
 }
 
+export function toPublicStorefrontCard(
+  authorized: AuthorizedPublicStorefrontCard,
+): PublicStorefrontCard {
+  return projectCard(authorized.product);
+}
+
 export function toPublicStorefrontDetail(
-  product: MasterOfferingDetailView,
+  authorized: AuthorizedPublicStorefrontDetail,
 ): PublicStorefrontDetail {
+  const product = authorized.product;
   return {
-    ...toPublicStorefrontCard(product),
+    ...projectCard(product),
     overview: product.overview,
     disclosures: product.disclosures,
   };
 }
 
-function toPublicFacets(
-  facets: MasterOfferingCatalogPage["facets"],
-): PublicStorefrontFacets {
-  return {
-    families: facets.families.map((bucket) => ({
-      value: bucket.value,
-      label: bucket.label,
-      count: bucket.count,
-    })),
-    categories: facets.categories.map((bucket) => ({
-      value: bucket.value,
-      label: bucket.label,
-      count: bucket.count,
-    })),
-  };
-}
-
 export function toPublicStorefrontPage(
-  page: MasterOfferingCatalogPage,
+  page: PublishedPublicStorefrontSelection,
 ): PublicStorefrontPage {
   return {
     page: page.page,
@@ -119,6 +109,6 @@ export function toPublicStorefrontPage(
     totalPages: page.totalPages,
     sort: page.sort,
     products: page.products.map(toPublicStorefrontCard),
-    facets: toPublicFacets(page.facets),
+    facets: page.facets,
   };
 }

@@ -1,13 +1,15 @@
 /**
  * The public storefront contract: what a SIGNED-OUT visitor may see.
  *
- * This is a projection, never an authority. Every field here is copied from
- * the canonical master-offerings catalog answer the server already resolved
- * for a viewer with no pricing grant, reduced to the customer-safe subset a
- * public browser may hold. The projection can only restate or narrow what the
- * catalog said: it carries no SKU, no Product Control identity, no price
- * provenance, no capability, and no href the server resolved for a member
- * surface.
+ * This is a projection, never an authority. Before anything reaches this
+ * shape, the server requires fresh durable publication evidence for the exact
+ * catalog and copy revisions, filters the complete candidate set, and derives
+ * totals/facets/pagination from that published set. Every field is then copied
+ * from the canonical master-offerings answer resolved for a viewer with no
+ * pricing grant and reduced to the customer-safe subset a public browser may
+ * hold. The projection can only restate or narrow what the catalog said: it
+ * carries no SKU, no Product Control identity, no price provenance, no
+ * capability, and no href the server resolved for a member surface.
  *
  * Prices are the server's to supply. A variant either carries the exact
  * customer-safe price view the pricing authority resolved, or it carries the
