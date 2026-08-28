@@ -218,6 +218,17 @@ describe("accessibility, structural", () => {
     unmount();
   });
 
+  it("gives the exact member-card title link a 44 by 44 target floor", () => {
+    const { host, unmount } = render(
+      <FullCatalogPage query={{}} page={PAGE} onQueryChange={() => {}} />,
+    );
+    const cardLink = host.querySelector('[data-testid="mo-card-link"]');
+    expect(cardLink).not.toBeNull();
+    expect(cardLink?.className).toContain("min-h-[44px]");
+    expect(cardLink?.className).toContain("min-w-[44px]");
+    unmount();
+  });
+
   it("states availability in words, never in colour alone", () => {
     const { host, unmount } = render(
       <FullCatalogPage query={{}} page={PAGE} onQueryChange={() => {}} />,

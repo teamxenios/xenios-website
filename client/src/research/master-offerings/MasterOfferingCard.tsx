@@ -185,7 +185,7 @@ export function MasterOfferingCard({
                   the card reads as a dead link. A wouter Link keeps this a
                   client-side navigation, like every other member page. */}
               <Link
-                className="underline-offset-4 hover:underline"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center underline-offset-4 hover:underline"
                 href={fullCatalogProductHref(product.family, product.slug)}
                 data-testid="mo-card-link"
               >
