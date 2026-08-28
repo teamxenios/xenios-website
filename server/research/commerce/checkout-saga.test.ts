@@ -383,6 +383,36 @@ describe("durable checkout financial saga", () => {
     expect(spends).toBe(800);
   });
 
+  it("lets only one idempotency key consume an exact cart snapshot before any losing side effect", async () => {
+    const reserve = vi.fn(async () => ({
+      ok: true as const,
+      reservationIds: ["99999999-9999-4999-8999-999999999999"],
+    }));
+    const control = createInMemoryCheckoutSagaControl({
+      reserve,
+      storeCreditBalanceCents: async () => 1_600,
+    });
+    const payment = new TestPaymentProvider();
+    const authorize = vi.spyOn(payment, "createAuthorization");
+    const capture = vi.spyOn(payment, "captureAuthorization");
+    const first = createAtomicCheckoutService(deps({ control, payment, credit: 800 }));
+    const second = createAtomicCheckoutService(deps({ control, payment, credit: 800 }));
+
+    const results = await Promise.all([
+      first.submit(MEMBER, request("same-cart-key-a", 800), NOW),
+      second.submit(MEMBER, request("same-cart-key-b", 800), NOW),
+    ]);
+
+    expect(results.filter((result) => result.ok)).toHaveLength(1);
+    expect(results.filter((result) => !result.ok)).toEqual([
+      expect.objectContaining({ ok: false, denials: ["idempotency_conflict"] }),
+    ]);
+    expect(reserve).toHaveBeenCalledTimes(1);
+    expect(authorize).toHaveBeenCalledTimes(1);
+    expect(capture).toHaveBeenCalledTimes(1);
+    expect(await control.accounting()).toEqual({ commandCount: 1, activeCreditHoldCents: 0 });
+  });
+
   it("does not run completion effects when the atomic completion transaction crashes", async () => {
     let completions = 0;
     const control = createInMemoryCheckoutSagaControl({ complete: async () => { completions += 1; } });

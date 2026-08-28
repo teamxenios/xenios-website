@@ -4,7 +4,7 @@
   "baseCommit": "ace92fd65ab46213aa5899a1591d4c565099fd0f",
   "candidate": {
     "path": "supabase/candidates/20260828_research_commerce_checkout_atomic_saga.sql",
-    "sha256": "e6c75c19946b40575a48e75b71d9fc4bda26ab11ac45b3ef51fff1e23ed9fdec"
+    "sha256": "af8ec8e14f2287639d8af9723e32035e4b254a75fa7d48cfb130600b5b8f13cb"
   },
   "migrationDagEntry": false,
   "productionLedgerEntry": false,
@@ -15,7 +15,7 @@
   },
   "postgresHarness": {
     "script": "scripts/acceptance/verify-checkout-atomic-saga-postgres.ps1",
-    "scenario": "two independent PostgreSQL sessions race one credit balance; completion rollback is proven empty before same-command recovery",
+    "scenario": "two independent PostgreSQL sessions race one credit balance; an adversarial rejected-activation fixture mints two intents while checkout admits one cart version; completion rollback is proven empty before same-command recovery",
     "image": "postgres:16",
     "imageId": "sha256:33f923b05f64ca54ac4401c01126a6b92afe839a0aa0a52bc5aeb5cc958e5f20",
     "result": "passed"

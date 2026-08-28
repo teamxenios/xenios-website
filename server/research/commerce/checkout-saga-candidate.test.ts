@@ -32,11 +32,16 @@ describe("unapplied checkout atomicity candidate", () => {
 
   it("claims before the provider boundary and keeps complete/compensate atomic", () => {
     const begin = source.indexOf("create function public.research_checkout_command_begin_v1");
+    const cartLock = source.indexOf("research-checkout-cart:", begin);
     const claim = source.indexOf("research_checkout_activation_intent_claim_v1", begin);
     const insert = source.indexOf("insert into public.research_checkout_commands", begin);
     expect(begin).toBeGreaterThan(-1);
+    expect(cartLock).toBeGreaterThan(begin);
+    expect(claim).toBeGreaterThan(cartLock);
     expect(claim).toBeGreaterThan(begin);
     expect(insert).toBeGreaterThan(claim);
+    expect(source).toContain("research_checkout_commands_cart_snapshot_unique");
+    expect(source).toContain("research-checkout-cart:");
     expect(source).toContain("research_checkout_activation_intent_consume_v1");
     expect(source).toContain("research_finalize_inventory_reservations");
     expect(source).toContain("research_checkout_activation_intent_cancel_v1");

@@ -1023,6 +1023,10 @@ export interface InMemoryCheckoutSagaEffects {
 export interface InMemoryCheckoutSagaControl {
   store: CheckoutSagaStore;
   inspect(commandId: string): Promise<CheckoutSagaSnapshot | null>;
+  accounting(): Promise<Readonly<{
+    commandCount: number;
+    activeCreditHoldCents: number;
+  }>>;
   setCrashPoint(point: "record_authorization" | "mark_reconciliation" | "complete" | "compensate" | null): void;
 }
 
@@ -1104,9 +1108,15 @@ export function createInMemoryCheckoutSagaControl(
   const serialize = serialQueue();
   const byScope = new Map<string, CheckoutSagaSnapshot>();
   const byCommand = new Map<string, CheckoutSagaSnapshot>();
+  const byCartSnapshot = new Map<string, CheckoutSagaSnapshot>();
   let crashPoint: "record_authorization" | "mark_reconciliation" | "complete" | "compensate" | null = null;
 
   const scope = (memberId: string, keyHash: string) => `${memberId.length}:${memberId}:${keyHash}`;
+  const cartScope = (command: CheckoutSagaCommand) => canonicalCheckoutJson([
+    command.memberId,
+    command.activation.cartId,
+    command.activation.cartVersion,
+  ]);
   const response = (snapshot: CheckoutSagaSnapshot, idempotent: boolean): CheckoutSagaMutationResult => ({
     ok: true,
     snapshot: cloneSnapshot(snapshot),
@@ -1138,6 +1148,12 @@ export function createInMemoryCheckoutSagaControl(
             : ({ ok: false as const, code: "idempotency_conflict" as const });
         }
         if (byCommand.has(command.commandId)) return { ok: false as const, code: "idempotency_conflict" as const };
+        // A cart version is a single-use financial object. Different checkout
+        // keys cannot turn the same activation/cart snapshot into two commands.
+        // This check precedes every reservation, credit hold, and provider call.
+        if (byCartSnapshot.has(cartScope(command))) {
+          return { ok: false as const, code: "idempotency_conflict" as const };
+        }
         if (command.totals.storeCreditAppliedCents > 0) {
           if (!effects.storeCreditBalanceCents) {
             return { ok: false as const, code: "credit_unavailable" as const };
@@ -1184,6 +1200,7 @@ export function createInMemoryCheckoutSagaControl(
         };
         byScope.set(key, snapshot);
         byCommand.set(command.commandId, snapshot);
+        byCartSnapshot.set(cartScope(command), snapshot);
         return response(snapshot, false);
       }),
 
@@ -1299,6 +1316,13 @@ export function createInMemoryCheckoutSagaControl(
         const value = byCommand.get(commandId);
         return value ? cloneSnapshot(value) : null;
       }),
+    accounting: () =>
+      serialize(async () => ({
+        commandCount: byCommand.size,
+        activeCreditHoldCents: Array.from(byCommand.values())
+          .filter((value) => value.state !== "completed" && value.state !== "rejected")
+          .reduce((sum, value) => sum + value.command.totals.storeCreditAppliedCents, 0),
+      })),
     setCrashPoint(point) {
       crashPoint = point;
     },

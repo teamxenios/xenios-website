@@ -54,7 +54,9 @@ create table public.research_checkout_commands (
   command_payload jsonb not null check (jsonb_typeof(command_payload) = 'object'),
   command_digest text not null check (command_digest ~ '^sha256:[a-f0-9]{64}$'),
   activation_intent_id uuid not null
-    references public.research_checkout_activation_intents(id),
+    references public.research_checkout_activation_intents(id) unique,
+  cart_id uuid not null,
+  cart_version bigint not null check (cart_version > 0),
   cart_fingerprint text not null check (cart_fingerprint ~ '^sha256:[a-f0-9]{64}$'),
   order_id uuid not null unique,
   state text not null check (state in (
@@ -82,6 +84,8 @@ create table public.research_checkout_commands (
   rejected_at timestamptz,
   constraint research_checkout_commands_member_key_unique
     unique (member_id, checkout_idempotency_key_hash),
+  constraint research_checkout_commands_cart_snapshot_unique
+    unique (member_id, cart_id, cart_version),
   constraint research_checkout_commands_capture_exact check (
     captured_amount_cents is null or captured_amount_cents = authorized_amount_cents
   ),
@@ -223,6 +227,8 @@ begin
      or new.command_payload <> old.command_payload
      or new.command_digest <> old.command_digest
      or new.activation_intent_id <> old.activation_intent_id
+     or new.cart_id <> old.cart_id
+     or new.cart_version <> old.cart_version
      or new.cart_fingerprint <> old.cart_fingerprint
      or new.order_id <> old.order_id
      or new.reservation_ids <> old.reservation_ids
@@ -495,6 +501,23 @@ begin
     );
   end if;
 
+  -- A cart version is a single-use financial object even when callers choose
+  -- different checkout idempotency keys. Fingerprint disagreement for the same
+  -- version also refuses rather than opening a second lane. Serialize and stop
+  -- the loser before claim, reservation, credit hold, or provider I/O.
+  perform pg_advisory_xact_lock(hashtextextended(
+    'research-checkout-cart:' || v_member_id::text || ':' || v_cart_id::text || ':' ||
+    v_cart_version::text, 0
+  ));
+  if exists (
+    select 1 from public.research_checkout_commands c
+     where c.member_id = v_member_id
+       and c.cart_id = v_cart_id
+       and c.cart_version = v_cart_version
+  ) then
+    return jsonb_build_object('ok', false, 'code', 'idempotency_conflict');
+  end if;
+
   select * into v_intent from public.research_checkout_activation_intents i
    where i.id = v_intent_id and i.member_id = v_member_id
      and i.checkout_idempotency_key_hash = v_key_hash
@@ -584,11 +607,13 @@ begin
 
   insert into public.research_checkout_commands (
     command_id, member_id, checkout_idempotency_key_hash, command_payload,
-    command_digest, activation_intent_id, cart_fingerprint, order_id, state,
+    command_digest, activation_intent_id, cart_id, cart_version,
+    cart_fingerprint, order_id, state,
     reservation_ids, created_at, updated_at
   ) values (
     v_command_id, v_member_id, v_key_hash, p_command,
-    v_digest, v_intent_id, v_cart_fingerprint, v_order_id, 'authorization_pending',
+    v_digest, v_intent_id, v_cart_id, v_cart_version,
+    v_cart_fingerprint, v_order_id, 'authorization_pending',
     v_reservation_ids, v_at, v_at
   );
   if v_credit > 0 then

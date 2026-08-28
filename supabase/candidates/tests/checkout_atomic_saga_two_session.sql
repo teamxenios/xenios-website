@@ -126,6 +126,53 @@ end $$;
 select dblink_disconnect('session_a');
 select dblink_disconnect('session_b');
 
+-- Adversarial compatibility fixture: this bootstrap deliberately reproduces
+-- the now-rejected activation behavior that can mint two live intents for one
+-- exact cart snapshot. That is NOT an acceptable combined-state invariant; the
+-- corrected activation candidate must refuse the second authorization. The
+-- checkout boundary independently keeps the version single-use, and the loser
+-- stops before claim/reservation/credit/provider even against this bad input.
+insert into public.research_store_credit_ledger values(
+  '79111111-1111-4111-8111-111111111111','71111111-1111-4111-8111-111111111111',
+  1000,'approved','service_recovery','2026-08-01',null,'system',null,'2026-08-01',null
+);
+select public.test_insert_activation('71111111-1111-4111-8111-111111111111','same-cart-a','72111111-1111-4111-8111-111111111111','74111111-1111-4111-8111-111111111111');
+select public.test_insert_activation('71111111-1111-4111-8111-111111111111','same-cart-b','73111111-1111-4111-8111-111111111111','74111111-1111-4111-8111-111111111111');
+
+select dblink_connect('cart_session_a','host=127.0.0.1 dbname=postgres user=postgres password=checkout-test-only');
+select dblink_connect('cart_session_b','host=127.0.0.1 dbname=postgres user=postgres password=checkout-test-only');
+select dblink_send_query('cart_session_a', format(
+  'select public.research_checkout_command_begin_v1(%L::jsonb)',
+  public.test_checkout_command(
+    '71111111-1111-4111-8111-111111111111','same-cart-a','72111111-1111-4111-8111-111111111111',
+    '74111111-1111-4111-8111-111111111111','75111111-1111-4111-8111-111111111111',
+    '77111111-1111-4111-8111-111111111111',200
+  )::text
+));
+select dblink_send_query('cart_session_b', format(
+  'select public.research_checkout_command_begin_v1(%L::jsonb)',
+  public.test_checkout_command(
+    '71111111-1111-4111-8111-111111111111','same-cart-b','73111111-1111-4111-8111-111111111111',
+    '74111111-1111-4111-8111-111111111111','76111111-1111-4111-8111-111111111111',
+    '78111111-1111-4111-8111-111111111111',200
+  )::text
+));
+create temporary table cart_snapshot_race_results(result jsonb);
+insert into cart_snapshot_race_results select result from dblink_get_result('cart_session_a') as t(result jsonb);
+insert into cart_snapshot_race_results select result from dblink_get_result('cart_session_b') as t(result jsonb);
+do $$ begin
+  if (select count(*) from cart_snapshot_race_results where result->>'ok'='true') <> 1 then raise exception 'same cart snapshot did not yield exactly one winner'; end if;
+  if (select count(*) from cart_snapshot_race_results where result->>'code'='idempotency_conflict') <> 1 then raise exception 'same cart snapshot loser did not fail before provider'; end if;
+  if (select count(*) from public.research_checkout_commands where member_id='71111111-1111-4111-8111-111111111111') <> 1 then raise exception 'same cart snapshot created multiple commands'; end if;
+  if (select count(*) from public.research_checkout_activation_intents where member_id='71111111-1111-4111-8111-111111111111' and state='claimed') <> 1 then raise exception 'same cart snapshot claimed multiple intents'; end if;
+  if (select count(*) from public.research_checkout_activation_intents where member_id='71111111-1111-4111-8111-111111111111' and state='authorized') <> 1 then raise exception 'adversarial losing activation intent was not left unclaimed'; end if;
+  if (select count(*) from public.test_inventory_reservations where member_id='71111111-1111-4111-8111-111111111111' and status='held') <> 1 then raise exception 'same cart snapshot created extra reservation'; end if;
+  if (select count(*) from public.research_checkout_credit_holds where member_id='71111111-1111-4111-8111-111111111111' and state='held' and amount_cents=200) <> 1 then raise exception 'same cart snapshot created extra credit hold'; end if;
+  if (select count(*) from public.research_checkout_command_events e join public.research_checkout_commands c using(command_id) where c.member_id='71111111-1111-4111-8111-111111111111' and e.event_kind='begun') <> 1 then raise exception 'same cart snapshot emitted extra begin event'; end if;
+end $$;
+select dblink_disconnect('cart_session_a');
+select dblink_disconnect('cart_session_b');
+
 -- A completion transaction that is rolled back must publish no partial order,
 -- credit spend, reservation finalization, activation consume, or terminal state.
 select public.test_insert_activation('61111111-1111-4111-8111-111111111111','rollback-case','62111111-1111-4111-8111-111111111111','63111111-1111-4111-8111-111111111111');
