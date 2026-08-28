@@ -9,6 +9,11 @@ import {
 } from "@shared/research/launch/customer-action";
 import { Link } from "wouter";
 import { ResearchStatusBadge, type BadgeTone } from "../ui/kit";
+import {
+  accessPathOfVariant,
+  accessPathsOfCard,
+  isContradictoryPurchase,
+} from "./catalog-access-path";
 import { fullCatalogProductHref } from "./integration-packet";
 
 /**
@@ -56,6 +61,23 @@ function VariantActionControl({
     variant.price,
   );
   const name = `${product.displayName}, ${variant.label}`;
+
+  if (isContradictoryPurchase(variant)) {
+    // A purchase action on a variant whose own listing state is not
+    // available_now is evidence that disagrees with itself. The server's
+    // resolver cannot produce this pairing, so the browser presents no
+    // purchase affordance rather than choosing which half to believe. The
+    // detail page re-resolves from fresh server data and remains the authority.
+    return (
+      <span
+        className="body-s text-ink-mute"
+        data-testid="mo-card-contradiction"
+        data-customer-action={accessPathOfVariant(variant)}
+      >
+        {CUSTOMER_ACTION_LABELS.NOT_AVAILABLE}
+      </span>
+    );
+  }
 
   if (action.kind === "add_to_cart" && customerAction === "BUY_NOW") {
     return (
@@ -131,6 +153,9 @@ export function MasterOfferingVariantRow({
     <li
       className="grid min-w-0 gap-2 border-t pt-2 body-s"
       data-testid="mo-variant-row"
+      data-variant-id={variant.id}
+      data-display-state={variant.displayState}
+      data-access-path={accessPathOfVariant(variant)}
     >
       <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
         {/* A long variant label wraps inside the card. It never widens the row,
@@ -172,6 +197,9 @@ export function MasterOfferingCard({
         className="card grid min-w-0 gap-3"
         aria-labelledby={headingId}
         data-testid="mo-card"
+        data-offering-id={product.id}
+        data-display-state={product.displayState}
+        data-access-paths={accessPathsOfCard(product).join(" ")}
       >
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
