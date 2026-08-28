@@ -15,6 +15,10 @@ import {
   sendCareTemporarilyUnavailable,
   type CareAccessDependencies,
 } from "./access";
+import {
+  requireCareClinicalCapability,
+  type CareClinicalWriteGateOptions,
+} from "./clinical-write-gate";
 import type { CareEligibilityRepository } from "./eligibility-repository";
 import type { CareIntakeRepository } from "./intake-repository";
 import { evaluateCareEligibility } from "./eligibility";
@@ -99,10 +103,12 @@ export function registerCareIntakeApi(
   eligibilityRepository: CareEligibilityRepository,
   intakeRepository: CareIntakeRepository,
   now: () => Date = () => new Date(),
+  gate: CareClinicalWriteGateOptions = {},
 ) {
   app.get(
     CARE_ROUTE_CONTRACTS.intake,
     requireCarePermission("care:intake_self", access),
+    requireCareClinicalCapability("intake.read", gate),
     async (_req, res) => {
       res.set("Cache-Control", "no-store");
       const id = patientId(res);
@@ -130,6 +136,7 @@ export function registerCareIntakeApi(
   app.post(
     CARE_ROUTE_CONTRACTS.intake,
     requireCarePermission("care:intake_self", access),
+    requireCareClinicalCapability("intake.start", gate),
     async (req, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = startBody.safeParse(req.body);
@@ -177,6 +184,7 @@ export function registerCareIntakeApi(
   app.patch(
     `${CARE_ROUTE_CONTRACTS.intake}/:intakeId/autosave`,
     requireCarePermission("care:intake_self", access),
+    requireCareClinicalCapability("intake.autosave", gate),
     async (req, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = autosaveBody.safeParse(req.body);
@@ -230,6 +238,7 @@ export function registerCareIntakeApi(
   app.post(
     `${CARE_ROUTE_CONTRACTS.intake}/:intakeId/submit`,
     requireCarePermission("care:intake_self", access),
+    requireCareClinicalCapability("intake.submit", gate),
     async (req, res) => {
       res.set("Cache-Control", "no-store");
       const parsed = submitBody.safeParse(req.body);
