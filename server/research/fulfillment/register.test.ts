@@ -1,10 +1,12 @@
 import express, { type Express, type Request } from "express";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { FulfillmentActor } from "@shared/research/fulfillment/contracts";
 import { createInMemoryFulfillmentStore, type InMemoryFulfillmentStore } from "./in-memory";
 import { createFulfillmentOperationsService } from "./service";
 import { createPaidOrderReleaseGate } from "./release-gate";
+import type { FulfillmentOperationsPort } from "./port";
+import { FulfillmentPersistenceError } from "./errors";
 import {
   registerFulfillmentRoutes,
   type FulfillmentHttpDependencies,
@@ -29,6 +31,7 @@ const AT = "2026-08-19T12:00:00.000Z";
 interface Harness {
   app: Express;
   store: InMemoryFulfillmentStore;
+  service: FulfillmentOperationsPort;
 }
 
 function build(overrides: Partial<FulfillmentHttpDependencies> = {}): Harness {
@@ -86,7 +89,7 @@ function build(overrides: Partial<FulfillmentHttpDependencies> = {}): Harness {
     now: () => AT,
     ...overrides,
   });
-  return { app, store };
+  return { app, store, service };
 }
 
 function assignBody(idempotencyKey = "assign:xen-1001") {
@@ -116,6 +119,20 @@ async function assignPaid(harness: Harness): Promise<string> {
 }
 
 describe("fulfillment HTTP surface", () => {
+  it("marks private route families non-cacheable before identity guards run", async () => {
+    const { app } = build();
+    const responses = await Promise.all([
+      request(app).get("/api/research/fulfillment/admin/assignments"),
+      request(app).get("/api/research/fulfillment/supplier/assignments"),
+      request(app).get("/api/research/fulfillment/orders/XEN-1001/status"),
+    ]);
+    for (const response of responses) {
+      expect(response.headers["cache-control"]).toBe("no-store");
+      expect(response.headers.pragma).toBe("no-cache");
+      expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    }
+  });
+
   it("walls admin routes behind the injected admin guard", async () => {
     const { app } = build();
     await request(app)
@@ -152,6 +169,60 @@ describe("fulfillment HTTP surface", () => {
       .send(assignBody());
     expect(replay.status).toBe(200);
     expect(replay.body.result.idempotentReplay).toBe(true);
+  });
+
+  it("accepts only exact bounded queue filters", async () => {
+    const harness = build();
+    const list = vi.spyOn(harness.service, "listAssignments");
+    const response = await request(harness.app)
+      .get("/api/research/fulfillment/admin/assignments?states=assigned&limit=1")
+      .set("x-test-admin", "yes");
+    expect(response.status).toBe(200);
+    expect(list).toHaveBeenCalledWith(expect.objectContaining({
+      states: ["assigned"],
+      limit: 1,
+    }));
+  });
+
+  it("refuses malformed filters instead of broadening the queue", async () => {
+    const harness = build();
+    const list = vi.spyOn(harness.service, "listAssignments");
+    for (const path of [
+      "/api/research/fulfillment/admin/assignments?states=assigned,not_real",
+      "/api/research/fulfillment/admin/assignments?states=assigned,assigned",
+      "/api/research/fulfillment/admin/assignments?states=",
+      "/api/research/fulfillment/admin/assignments?limit=0",
+      "/api/research/fulfillment/admin/assignments?limit=201",
+      "/api/research/fulfillment/admin/assignments?limit=all",
+    ]) {
+      const response = await request(harness.app).get(path).set("x-test-admin", "yes");
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe("INVALID_FILTER");
+    }
+    const supplier = await request(harness.app)
+      .get("/api/research/fulfillment/supplier/assignments?states=not_real")
+      .set("x-test-supplier", SUPPLIER_A_ID);
+    expect(supplier.status).toBe(400);
+    expect(list).not.toHaveBeenCalled();
+  });
+
+  it("never exposes persistence error details", async () => {
+    const harness = build();
+    vi.spyOn(harness.service, "listAssignments").mockRejectedValueOnce(
+      new FulfillmentPersistenceError(
+        "relation private_table failed for private@example.invalid",
+      ),
+    );
+    const response = await request(harness.app)
+      .get("/api/research/fulfillment/admin/assignments")
+      .set("x-test-admin", "yes");
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      ok: false,
+      code: "FULFILLMENT_UNAVAILABLE",
+      message: "Fulfillment data is temporarily unavailable.",
+    });
+    expect(JSON.stringify(response.body)).not.toMatch(/private_table|private@example/i);
   });
 
   it("records acknowledgement, tracking, and exception through admin transitions", async () => {
