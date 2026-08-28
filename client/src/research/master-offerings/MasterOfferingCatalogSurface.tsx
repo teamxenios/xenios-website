@@ -71,7 +71,7 @@ export function MasterOfferingCatalogSurface({
   history?: CatalogHistory;
   fetchCatalog?: typeof getMasterOfferingCatalog;
 }) {
-  const { query, setQuery } = useCatalogQueryState(history);
+  const { query, setQuery, replaceQuery } = useCatalogQueryState(history);
   const [page, setPage] = useState<MasterOfferingCatalogPage>(EMPTY_PAGE);
   const [state, setState] = useState<MasterOfferingSurfaceState>("loading");
   const generation = useRef(0);
@@ -109,7 +109,7 @@ export function MasterOfferingCatalogSurface({
     const copy = MASTER_OFFERING_STATE_COPY[state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <header className="grid min-w-0 gap-2">
           <p className="mono-label text-ink-mute">Xenios Research</p>
           <h1 className="display-s">Full catalog</h1>
@@ -130,7 +130,7 @@ export function MasterOfferingCatalogSurface({
             ) : undefined
           }
         />
-      </main>
+      </div>
     );
   }
 
@@ -140,6 +140,7 @@ export function MasterOfferingCatalogSurface({
         query={query}
         page={page}
         onQueryChange={setQuery}
+        onSearchChange={replaceQuery}
         loading={state === "loading"}
         memberToken={memberToken}
       />

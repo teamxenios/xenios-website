@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -13,6 +13,10 @@ import { useCatalogQueryState, type CatalogHistory } from "./useCatalogQueryStat
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
   true;
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 function render(ui: React.ReactElement) {
   const host = document.createElement("div");
@@ -267,6 +271,80 @@ describe("catalog surface", () => {
     });
 
     act(() => history.back());
+    await settle();
+    expect(history.search()).toBe("");
+    expect(fetchCatalog).toHaveBeenLastCalledWith("token", {});
+    unmount();
+  });
+
+  it("debounces search and replaces rather than stacking history entries", async () => {
+    vi.useFakeTimers();
+    const history = testHistory();
+    const fetchCatalog = vi.fn(async () => okPage(["BPC-157"]));
+    const { host, unmount } = render(
+      <MasterOfferingCatalogSurface
+        memberToken="token"
+        history={history}
+        fetchCatalog={fetchCatalog as never}
+      />,
+    );
+    await settle();
+    const search = host.querySelector<HTMLInputElement>("#mo-catalog-search");
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    for (const value of ["b", "bp", "bpc"]) {
+      setter?.call(search, value);
+      act(() => search?.dispatchEvent(new Event("input", { bubbles: true })));
+    }
+    expect(history.entries).toHaveLength(1);
+    expect(history.search()).toBe("");
+    act(() => vi.advanceTimersByTime(249));
+    expect(history.search()).toBe("");
+    act(() => vi.advanceTimersByTime(1));
+    await settle();
+    expect(history.search()).toBe("?q=bpc");
+    expect(history.entries).toEqual(["?q=bpc"]);
+    expect(fetchCatalog).toHaveBeenLastCalledWith("token", { q: "bpc" });
+    unmount();
+  });
+
+  it("cancels a pending search when Back restores a different query", async () => {
+    vi.useFakeTimers();
+    const history = testHistory();
+    const fetchCatalog = vi.fn(async () => okPage(["BPC-157"]));
+    const { host, unmount } = render(
+      <MasterOfferingCatalogSurface
+        memberToken="token"
+        history={history}
+        fetchCatalog={fetchCatalog as never}
+      />,
+    );
+    await settle();
+
+    const family = host.querySelector<HTMLSelectElement>("#mo-catalog-family");
+    const selectSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      "value",
+    )?.set;
+    selectSetter?.call(family, "supplements");
+    act(() => family?.dispatchEvent(new Event("change", { bubbles: true })));
+    await settle();
+    expect(history.search()).toBe("?families=supplements");
+
+    const search = host.querySelector<HTMLInputElement>("#mo-catalog-search");
+    const inputSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    inputSetter?.call(search, "pending");
+    act(() => search?.dispatchEvent(new Event("input", { bubbles: true })));
+
+    act(() => history.back());
+    await settle();
+    expect(history.search()).toBe("");
+    act(() => vi.advanceTimersByTime(250));
     await settle();
     expect(history.search()).toBe("");
     expect(fetchCatalog).toHaveBeenLastCalledWith("token", {});

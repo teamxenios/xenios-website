@@ -62,12 +62,14 @@ export function FullCatalogPage({
   query,
   page,
   onQueryChange,
+  onSearchChange,
   loading = false,
   memberToken = null,
 }: {
   query: MasterOfferingCatalogQuery;
   page: MasterOfferingCatalogPage;
   onQueryChange: (next: MasterOfferingCatalogQuery) => void;
+  onSearchChange?: (next: MasterOfferingCatalogQuery) => void;
   loading?: boolean;
   /** Passed straight to the price-list download, which authenticates. */
   memberToken?: string | null;
@@ -89,7 +91,7 @@ export function FullCatalogPage({
   const showing = page.products.length;
 
   return (
-    <main className="grid min-w-0 gap-6">
+    <div className="grid min-w-0 gap-6">
       <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">Xenios Research</p>
         <h1 className="display-s">Full catalog</h1>
@@ -104,7 +106,13 @@ export function FullCatalogPage({
         </ResearchSecureNotice>
       </header>
 
-      <MasterOfferingCatalogControls query={query} onChange={onQueryChange} />
+      <MasterOfferingCatalogControls
+        query={query}
+        facets={page.facets}
+        loading={loading}
+        onChange={onQueryChange}
+        onSearchChange={onSearchChange}
+      />
       <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
       <section aria-labelledby="mo-catalog-results" className="min-w-0">
@@ -135,7 +143,7 @@ export function FullCatalogPage({
           <div className="mt-4">
             <ResearchEmptyState
               title="Nothing matches these filters."
-              body="Clear the search or widen the family and availability filters."
+              body="Clear the search or widen the family, category, or listing-state filters."
             />
           </div>
         ) : (
@@ -152,7 +160,7 @@ export function FullCatalogPage({
           onPage={(next) => onQueryChange({ ...query, page: next })}
         />
       </section>
-    </main>
+    </div>
   );
 }
 

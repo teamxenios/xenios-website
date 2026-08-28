@@ -61,7 +61,7 @@ export function StorefrontCatalogSurface({
   history?: CatalogHistory;
   fetchCatalog?: typeof getPublicStorefrontCatalog;
 }) {
-  const { query, setQuery } = useCatalogQueryState(history);
+  const { query, setQuery, replaceQuery } = useCatalogQueryState(history);
   const [page, setPage] = useState<PublicStorefrontPage>(EMPTY_PAGE);
   const [state, setState] = useState<PublicStorefrontSurfaceState>("loading");
   const generation = useRef(0);
@@ -97,7 +97,7 @@ export function StorefrontCatalogSurface({
     const copy = PUBLIC_STOREFRONT_STATE_COPY[state];
     const recoverable = state === "error";
     return (
-      <main
+      <div
         className="container-x grid min-w-0 gap-6"
         style={{ paddingTop: 48, paddingBottom: 64 }}
       >
@@ -137,7 +137,7 @@ export function StorefrontCatalogSurface({
             </div>
           }
         />
-      </main>
+      </div>
     );
   }
 
@@ -147,6 +147,7 @@ export function StorefrontCatalogSurface({
         query={query}
         page={page}
         onQueryChange={setQuery}
+        onSearchChange={replaceQuery}
         loading={state === "loading"}
       />
       {state === "loading" && page.total === 0 && <CatalogSkeleton />}

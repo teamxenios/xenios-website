@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useLocation, useParams } from "wouter";
+import { useLocation, useParams, useSearch } from "wouter";
 import {
   isMasterOfferingFamily,
   type MasterOfferingVariantView,
@@ -12,6 +12,7 @@ import { addCartLine } from "../adapters/commerce";
 import { useResearch } from "../core";
 import { MEMBER_ROUTES } from "../lib/routes";
 import { ResearchEmptyState } from "../ui/kit";
+import { preselectionFromSearch } from "../storefront/entry-intent";
 import { MASTER_OFFERING_STATE_COPY } from "./catalogApi";
 import {
   createCatalogCartHandoff,
@@ -115,6 +116,7 @@ export default function FullCatalogProductRoute() {
   }>();
   const { memberToken } = useResearch();
   const [, navigate] = useLocation();
+  const search = useSearch();
 
   // One handoff per member session on this page: the in-flight set inside it
   // is what turns a double click into one add, so it must not be rebuilt on
@@ -123,13 +125,18 @@ export default function FullCatalogProductRoute() {
     () => createCatalogCartHandoff(createMemberCartAdapter(memberToken)),
     [memberToken],
   );
+  const preselection = useMemo(
+    () =>
+      preselectionFromSearch(search),
+    [search],
+  );
 
   if (!isMasterOfferingFamily(family) || slug.trim() === "") {
     const copy = MASTER_OFFERING_STATE_COPY.not_found;
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <ResearchEmptyState title={copy.title} body={copy.body} />
-      </main>
+      </div>
     );
   }
 
@@ -138,6 +145,8 @@ export default function FullCatalogProductRoute() {
       memberToken={memberToken}
       family={family}
       slug={slug}
+      initialVariantId={preselection.variantId}
+      initialQuantity={preselection.quantity}
       cart={cart}
       capabilityFor={founderQuantityCapabilityFor}
       // A successful add lands the member on the existing cart page, where the

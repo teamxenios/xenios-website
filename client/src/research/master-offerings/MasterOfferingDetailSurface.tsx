@@ -72,6 +72,8 @@ export function MasterOfferingDetailSurface({
   memberToken,
   family,
   slug,
+  initialVariantId = null,
+  initialQuantity = null,
   capabilityFor,
   cart,
   fetchDetail = getMasterOfferingDetail,
@@ -80,6 +82,9 @@ export function MasterOfferingDetailSurface({
   memberToken: string | null;
   family: MasterOfferingFamily;
   slug: string;
+  /** Validated URL intent; it selects only a variant present in the fresh DTO. */
+  initialVariantId?: string | null;
+  initialQuantity?: number | null;
   capabilityFor?: (
     variant: MasterOfferingVariantView,
   ) => AcceptedExactVariantQuantityCapability | null;
@@ -156,12 +161,12 @@ export function MasterOfferingDetailSurface({
 
   if (state === "loading") {
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <p className="sr-only" role="status" aria-live="polite">
           Loading the product
         </p>
         <DetailSkeleton />
-      </main>
+      </div>
     );
   }
 
@@ -169,7 +174,7 @@ export function MasterOfferingDetailSurface({
     const copy = MASTER_OFFERING_STATE_COPY[state === "ok" ? "unavailable" : state];
     const recoverable = state === "error" || state === "unavailable";
     return (
-      <main className="grid min-w-0 gap-6">
+      <div className="grid min-w-0 gap-6">
         <ResearchEmptyState
           title={copy.title}
           body={copy.body}
@@ -186,14 +191,17 @@ export function MasterOfferingDetailSurface({
             ) : undefined
           }
         />
-      </main>
+      </div>
     );
   }
 
   return (
     <>
       <MasterOfferingDetail
+        key={`${initialVariantId ?? ""}:${initialQuantity ?? ""}`}
         product={product}
+        initialVariantId={initialVariantId}
+        initialQuantity={initialQuantity}
         capabilityFor={capabilityFor}
         onAddToCart={cart ? (action, quantity) => void handleAdd(action, quantity) : undefined}
       />

@@ -218,6 +218,30 @@ describe("quantity 1 through 50", () => {
     unmount();
   });
 
+  it("refuses blank and fractional input without coercing either value", () => {
+    const onAddToCart = vi.fn();
+    const { host, unmount } = render(
+      <MasterOfferingDetail
+        product={detail()}
+        capabilityFor={() => BAND_1_50}
+        onAddToCart={onAddToCart}
+      />,
+    );
+    for (const value of ["", "1.5"]) {
+      typeQuantity(host, value);
+      const input = host.querySelector<HTMLInputElement>(
+        '[data-testid="mo-quantity"]',
+      );
+      const cta = host.querySelector<HTMLButtonElement>('[data-testid="mo-cta"]');
+      expect(input?.value).toBe(value);
+      expect(input?.getAttribute("aria-invalid")).toBe("true");
+      expect(cta?.disabled).toBe(true);
+      act(() => cta?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    }
+    expect(onAddToCart).not.toHaveBeenCalled();
+    unmount();
+  });
+
   it("shows no quantity control at all on a request path", () => {
     const requestOnly = detail();
     const product: MasterOfferingDetailView = {

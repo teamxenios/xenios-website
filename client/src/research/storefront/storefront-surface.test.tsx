@@ -4,6 +4,10 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_MASTER_OFFERING_SORT } from "@shared/research/master-offerings/contract";
 import {
+  EARLY_ACCESS_MAX_QUANTITY,
+  EARLY_ACCESS_MIN_QUANTITY,
+} from "@shared/research/early-access-quantity";
+import {
   EMPTY_PUBLIC_STOREFRONT_FACETS,
   type PublicStorefrontCard,
   type PublicStorefrontCatalogResponse,
@@ -36,22 +40,38 @@ async function settle() {
 }
 
 function testHistory(initial = ""): CatalogHistory {
+  return recordingHistory(initial).history;
+}
+
+function recordingHistory(initial = "") {
   let search = initial;
   const listeners: Array<() => void> = [];
+  const pushes: string[] = [];
+  const replacements: string[] = [];
   return {
-    search: () => search,
-    push(next) {
+    history: {
+      search: () => search,
+      push(next: string) {
+        search = next;
+        pushes.push(next);
+      },
+      replace(next: string) {
+        search = next;
+        replacements.push(next);
+      },
+      subscribe(listener: () => void) {
+        listeners.push(listener);
+        return () => {
+          const at = listeners.indexOf(listener);
+          if (at >= 0) listeners.splice(at, 1);
+        };
+      },
+    } satisfies CatalogHistory,
+    pushes,
+    replacements,
+    navigate(next: string) {
       search = next;
-    },
-    replace(next) {
-      search = next;
-    },
-    subscribe(listener) {
-      listeners.push(listener);
-      return () => {
-        const at = listeners.indexOf(listener);
-        if (at >= 0) listeners.splice(at, 1);
-      };
+      for (const listener of [...listeners]) listener();
     },
   };
 }
@@ -124,6 +144,110 @@ function catalogOk(
 }
 
 describe("public catalog surface", () => {
+  it("offers an accessible mobile filter toggle and debounces search", async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchCatalog = vi.fn(catalogOk([card()]));
+      const view = render(
+        <StorefrontCatalogSurface
+          history={testHistory()}
+          fetchCatalog={fetchCatalog}
+        />,
+      );
+      await settle();
+
+      const toggle = view.host.querySelector<HTMLButtonElement>(
+        '[data-testid="sf-filter-toggle"]',
+      );
+      expect(toggle?.getAttribute("aria-controls")).toBe("sf-filter-fields");
+      expect(toggle?.getAttribute("aria-expanded")).toBe("false");
+      act(() => toggle?.click());
+      expect(toggle?.getAttribute("aria-expanded")).toBe("true");
+
+      const search = view.host.querySelector<HTMLInputElement>(
+        '[data-testid="sf-search"]',
+      );
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      )?.set;
+      setter?.call(search, "bpc");
+      act(() => search?.dispatchEvent(new Event("input", { bubbles: true })));
+      expect(fetchCatalog).toHaveBeenCalledTimes(1);
+      act(() => vi.advanceTimersByTime(249));
+      expect(fetchCatalog).toHaveBeenCalledTimes(1);
+      await act(async () => {
+        vi.advanceTimersByTime(1);
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+      expect(fetchCatalog).toHaveBeenLastCalledWith({ q: "bpc" });
+      view.unmount();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("replaces debounced search history, pushes filters, and cancels search on Back", async () => {
+    vi.useFakeTimers();
+    try {
+      const recorded = recordingHistory("?q=old");
+      const fetchCatalog = vi.fn(catalogOk([card()]));
+      const view = render(
+        <StorefrontCatalogSurface
+          history={recorded.history}
+          fetchCatalog={fetchCatalog}
+        />,
+      );
+      await settle();
+
+      const inputSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      )?.set;
+      const search = view.host.querySelector<HTMLInputElement>(
+        '[data-testid="sf-search"]',
+      );
+      inputSetter?.call(search, "updated");
+      act(() => search?.dispatchEvent(new Event("input", { bubbles: true })));
+      await act(async () => {
+        vi.advanceTimersByTime(250);
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+      expect(recorded.replacements).toEqual(["?q=updated"]);
+      expect(recorded.pushes).toEqual([]);
+
+      const selectSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLSelectElement.prototype,
+        "value",
+      )?.set;
+      const sort = view.host.querySelector<HTMLSelectElement>(
+        '[data-testid="sf-sort"]',
+      );
+      selectSetter?.call(sort, "name_asc");
+      act(() => sort?.dispatchEvent(new Event("change", { bubbles: true })));
+      expect(recorded.pushes).toEqual([
+        "?q=updated&sort=name_asc",
+      ]);
+
+      inputSetter?.call(search, "stale");
+      act(() => search?.dispatchEvent(new Event("input", { bubbles: true })));
+      act(() => recorded.navigate("?q=back"));
+      expect(search?.value).toBe("back");
+      await act(async () => {
+        vi.advanceTimersByTime(250);
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+      expect(recorded.replacements).toEqual(["?q=updated"]);
+      expect(fetchCatalog).toHaveBeenLastCalledWith({ q: "back" });
+      view.unmount();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("renders cards with server prices and never invents one", async () => {
     const view = render(
       <StorefrontCatalogSurface
@@ -149,6 +273,19 @@ describe("public catalog surface", () => {
     expect(text).toContain("Price on request");
     expect(text).not.toContain("$0.00");
     expect(view.host.querySelectorAll('[data-testid="sf-card"]')).toHaveLength(2);
+    for (const testId of [
+      "sf-card-link",
+      "sf-catalog-signin",
+      "sf-catalog-apply",
+    ]) {
+      const target = view.host.querySelector<HTMLElement>(
+        `[data-testid="${testId}"]`,
+      );
+      expect(target?.className).toContain("min-h-[44px]");
+      expect(target?.className).toContain("min-w-[44px]");
+    }
+    // ResearchLayout supplies the page-level main landmark.
+    expect(view.host.querySelector("main")).toBeNull();
     view.unmount();
   });
 
@@ -265,6 +402,21 @@ describe("public product surface", () => {
     expect(returnTo).toBe(
       "/research/member/catalog/research_vials/research-vials-bpc-157?variant=mov_v1&qty=1&intent=buy_now",
     );
+    expect(
+      view.host.querySelector('[data-testid="catalog-evidence-notice"]')?.textContent,
+    ).toContain("No lot-specific COA is attached to this catalog view.");
+    for (const testId of [
+      "sf-back-to-catalog",
+      "sf-detail-early-access",
+      "sf-detail-apply",
+    ]) {
+      const target = view.host.querySelector<HTMLElement>(
+        `[data-testid="${testId}"]`,
+      );
+      expect(target?.className).toContain("min-h-[44px]");
+      expect(target?.className).toContain("min-w-[44px]");
+    }
+    expect(view.host.querySelector("main")).toBeNull();
     view.unmount();
   });
 
@@ -289,6 +441,84 @@ describe("public product surface", () => {
     view.unmount();
   });
 
+  it("keeps an invalid public quantity from creating a continuation link", async () => {
+    const view = render(
+      <StorefrontProductSurface
+        family="research_vials"
+        slug="research-vials-bpc-157"
+        fetchDetail={okDetail(detail())}
+      />,
+    );
+    await settle();
+    const quantity = view.host.querySelector<HTMLInputElement>(
+      '[data-testid="sf-detail-quantity"]',
+    );
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    setter?.call(quantity, String(EARLY_ACCESS_MAX_QUANTITY + 1));
+    act(() => quantity?.dispatchEvent(new Event("input", { bubbles: true })));
+    const cta = view.host.querySelector<HTMLButtonElement>(
+      '[data-testid="sf-detail-cta"]',
+    );
+    expect(cta?.tagName).toBe("BUTTON");
+    expect(cta?.disabled).toBe(true);
+    expect(cta?.getAttribute("href")).toBeNull();
+    const describedBy = quantity?.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(view.host.querySelector(`#${describedBy}`)).not.toBeNull();
+    expect(view.host.textContent).toContain(
+      `Choose between ${EARLY_ACCESS_MIN_QUANTITY} and ${EARLY_ACCESS_MAX_QUANTITY}.`,
+    );
+    view.unmount();
+  });
+
+  it("resets invalid quantity when the visitor chooses another variant", async () => {
+    const view = render(
+      <StorefrontProductSurface
+        family="research_vials"
+        slug="research-vials-bpc-157"
+        fetchDetail={okDetail(
+          detail({
+            variants: [
+              variant(),
+              variant({ id: "mov_v2", label: "20 mg vial" }),
+            ],
+          }),
+        )}
+      />,
+    );
+    await settle();
+    const quantity = view.host.querySelector<HTMLInputElement>(
+      '[data-testid="sf-detail-quantity"]',
+    );
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    setter?.call(quantity, "");
+    act(() => quantity?.dispatchEvent(new Event("input", { bubbles: true })));
+    expect(
+      view.host.querySelector<HTMLButtonElement>('[data-testid="sf-detail-cta"]')
+        ?.disabled,
+    ).toBe(true);
+
+    const nextVariant = view.host.querySelector<HTMLInputElement>(
+      'input[name="sf-variant"][value="mov_v2"]',
+    );
+    act(() => nextVariant?.click());
+    expect(
+      view.host.querySelector<HTMLInputElement>(
+        '[data-testid="sf-detail-quantity"]',
+      )?.value,
+    ).toBe(String(EARLY_ACCESS_MIN_QUANTITY));
+    expect(
+      view.host.querySelector('[data-testid="sf-detail-cta"]')?.tagName,
+    ).toBe("A");
+    view.unmount();
+  });
+
   it("states a held variant truthfully and offers no order button", async () => {
     const view = render(
       <StorefrontProductSurface
@@ -307,6 +537,8 @@ describe("public product surface", () => {
     await settle();
     expect(view.host.querySelector('[data-testid="sf-detail-cta"]')).toBeNull();
     expect(view.host.textContent).toContain("temporarily unavailable");
+    expect(view.host.textContent).toContain("future status change");
+    expect(view.host.textContent).not.toContain("notified");
     expect(view.host.querySelector('[data-testid="sf-detail-apply"]')).not.toBeNull();
     view.unmount();
   });

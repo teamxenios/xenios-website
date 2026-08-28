@@ -141,11 +141,11 @@ function click(element: Element | null | undefined) {
   act(() => element?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
 }
 
-function mountRoute() {
+function mountRoute(search = "") {
   window.history.replaceState(
     null,
     "",
-    fullCatalogProductHref("research_vials", "research-vials-bpc-157"),
+    `${fullCatalogProductHref("research_vials", "research-vials-bpc-157")}${search}`,
   );
   return render(
     <Router>
@@ -243,6 +243,52 @@ describe("the member cart adapter", () => {
 });
 
 describe("the routed page wires the handoff", () => {
+  it("updates restored intent when the mounted route search changes", async () => {
+    const { host, unmount } = mountRoute();
+    await settle();
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')
+        ?.value,
+    ).toBe("1");
+
+    act(() => {
+      window.history.pushState(
+        null,
+        "",
+        `${fullCatalogProductHref(
+          "research_vials",
+          "research-vials-bpc-157",
+        )}?variant=mov_a&qty=7&intent=buy_now`,
+      );
+    });
+    await settle();
+    expect(
+      host.querySelector<HTMLInputElement>('[data-testid="mo-quantity"]')
+        ?.value,
+    ).toBe("7");
+    unmount();
+  });
+
+  it("restores a validated exact-variant quantity intent before the add", async () => {
+    addCartLine.mockResolvedValue({ kind: "ok", data: { cart: {} } });
+    const { host, unmount } = mountRoute("?variant=mov_a&qty=7&intent=buy_now");
+    await settle();
+
+    const quantity = host.querySelector<HTMLInputElement>(
+      '[data-testid="mo-quantity"]',
+    );
+    expect(quantity?.value).toBe("7");
+
+    click(host.querySelector('[data-testid="mo-cta"]'));
+    await settle();
+    expect(addCartLine).toHaveBeenCalledExactlyOnceWith("member-token", {
+      sku: "XEN-BPC-10",
+      quantity: 7,
+      purchaseMode: "one_time",
+    });
+    unmount();
+  });
+
   it("clicking Add to Cart reaches the cart with the server's own values", async () => {
     addCartLine.mockResolvedValue({ kind: "ok", data: { cart: {} } });
     const { host, unmount } = mountRoute();
