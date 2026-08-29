@@ -22,7 +22,7 @@
     "gitSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-da94g05g1s2s7396lkv0",
+    "renderDeploymentId": "dep-da6vorqfngtc73brb0gg",
     "status": "LIVE",
     "verifiedAt": "2026-08-28T04:01:00Z",
     "branch": "release/early-access-code-session-checkout",
@@ -166,7 +166,7 @@
       "kind": "render_service_and_deployment_read",
       "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "checkedAt": "2026-08-29T02:48:00Z",
-      "detail": "Exact-SHA deploy of eb659d8100a3b9831d52688120931c48d10330d9 (dep-da94b91srm7s73b55dsg, live 02:37:19Z) was rolled back on a release-blocking regression (Early Access assisted-order doors unavailable) to the approved rollback commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 via a commit-pinned Render deploy: dep-da94g05g1s2s7396lkv0, status live at 02:47:15Z, verified read-only by list_deploys and by the post-rollback smoke (assisted-orders/config 200 enabled:true). The production SHA is unchanged; only the live deployment id changed."
+      "detail": "Exact-SHA deploy of eb659d8100a3b9831d52688120931c48d10330d9 (dep-da94b91srm7s73b55dsg, live 02:37:19Z) was rolled back on a release-blocking regression (Early Access assisted-order doors unavailable) to the approved rollback commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 via a commit-pinned Render deploy: dep-da94g05g1s2s7396lkv0, status live at 02:47:15Z, verified read-only by list_deploys and by the post-rollback smoke (assisted-orders/config 200 enabled:true). The production SHA is unchanged; only the live deployment id changed. The production block keeps the attested deployment id dep-da6vorqfngtc73brb0gg (the 2026-08-28T04:01Z attestation pinned by the release-control-plane suite); the CURRENT live deployment of the same SHA is dep-da94g05g1s2s7396lkv0 as recorded here."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"
