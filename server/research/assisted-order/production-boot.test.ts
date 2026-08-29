@@ -197,6 +197,10 @@ async function expectNoGenericDoor404(boot: Boot): Promise<void> {
 describe("the real production composition root (server/index.ts) under the production env shape", () => {
   it("keeps the browser-evidence preview isolated from ambient external credentials", () => {
     const source = fs.readFileSync(path.join(ROOT, "scripts", "preview-research.mjs"), "utf8");
+    const fixtureSource = fs.readFileSync(
+      path.join(ROOT, "scripts", "evidence", "lib", "preview-supabase-fixture.mjs"),
+      "utf8",
+    );
     const scrubIndex = source.indexOf("for (const key of Object.keys(process.env))");
     const loopbackIndex = source.indexOf("placeholderSupabase.listen(0, \"127.0.0.1\"");
     const allowListStart = source.indexOf("const SAFE_RUNTIME_ENV = new Set([");
@@ -209,7 +213,10 @@ describe("the real production composition root (server/index.ts) under the produ
     expect(source).toContain(
       'process.env.SUPABASE_SERVICE_ROLE_KEY = "sb_secret_preview_placeholder";',
     );
-    expect(source).toContain('code: "preview_write_refused"');
+    expect(source).toContain(
+      'from "./evidence/lib/preview-supabase-fixture.mjs";',
+    );
+    expect(fixtureSource).toContain('code: "preview_write_refused"');
     expect(source).toContain(
       'process.env.ADMIN_EMAIL = "preview-admin@example.invalid";',
     );
