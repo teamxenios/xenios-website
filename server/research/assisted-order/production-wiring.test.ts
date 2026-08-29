@@ -187,14 +187,62 @@ describe("buildAssistedOrderProduction (the layer that dropped the legal port)",
     expect(composition.refusalReason).toContain("submissionStanding");
   });
 
-  it("refuses a legacy audit callback because an operational log is not durable authority", async () => {
+  it("names the durable audit mode when the branded authority resolved", async () => {
+    const composition = buildAssistedOrderProduction(await wiring());
+    expect(composition.service).not.toBeNull();
+    expect(composition.auditMode).toBe("durable_store");
+  });
+
+  it("refuses a legacy audit callback when durable audit is EXPLICITLY enabled but the authority did not resolve", async () => {
+    // RESEARCH_ASSISTED_ORDER_AUDIT_ENABLED=true is the operator asking for
+    // durable audit; nothing weaker may stand in, so the bridge refuses and the
+    // callback is never used as a sink.
     const auditWrite = vi.fn(async () => undefined);
     const composition = buildAssistedOrderProduction(
       await wiring({ auditAuthority: null, auditWrite }),
     );
     expect(composition.service).toBeNull();
     expect(composition.refusalReason).toContain("audit");
+    expect(composition.auditMode).toBe("unavailable");
     expect(auditWrite).not.toHaveBeenCalled();
+  });
+
+  it("keeps the production-baseline log-line audit when durable audit is not enabled (2026-08-29 incident)", async () => {
+    // Production has RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true and NO
+    // RESEARCH_ASSISTED_ORDER_AUDIT_* key: the live bridge has audited through
+    // the operational log line since the 2026-08-21 launch. The composition
+    // must mount with that exact, truthfully non-durable mode instead of
+    // refusing and letting the doors vanish into a generic 404.
+    const auditWrite = vi.fn(async () => undefined);
+    const composition = buildAssistedOrderProduction(
+      await wiring({
+        env: {
+          [ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR]: "true",
+          [ASSISTED_ORDER_ADMIN_EMAIL_ENV_VAR]: "research@xeniostechnology.com",
+        } as NodeJS.ProcessEnv,
+        auditAuthority: null,
+        auditWrite,
+      }),
+    );
+    expect(composition.refusalReason).toBeNull();
+    expect(composition.service).not.toBeNull();
+    expect(composition.auditMode).toBe("log_line_nondurable");
+  });
+
+  it("refuses without any audit sink when durable audit is not enabled and no log-line sink is wired", async () => {
+    const composition = buildAssistedOrderProduction(
+      await wiring({
+        env: {
+          [ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR]: "true",
+          [ASSISTED_ORDER_ADMIN_EMAIL_ENV_VAR]: "research@xeniostechnology.com",
+        } as NodeJS.ProcessEnv,
+        auditAuthority: null,
+        auditWrite: undefined,
+      }),
+    );
+    expect(composition.service).toBeNull();
+    expect(composition.refusalReason).toContain("audit");
+    expect(composition.auditMode).toBe("unavailable");
   });
 
   it("refuses without the admin notification email", async () => {
@@ -252,6 +300,7 @@ const fixtureDocuments: AssistedOrderDocumentStore = {
 function composedService(repository = new InMemoryAssistedOrderRepository()) {
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
+    auditMode: "log_line_nondurable",
     legal: {
       requiredAgreements: async () => REQUIRED_AGREEMENTS.map((pair) => ({ ...pair })),
     },

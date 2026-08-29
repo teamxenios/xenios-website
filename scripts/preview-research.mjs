@@ -39,6 +39,21 @@ process.env.RESEARCH_EARLY_ACCESS_ENABLED =
   process.env.RESEARCH_EARLY_ACCESS_ENABLED || "true";
 process.env.RESEARCH_EARLY_ACCESS_OPEN_ACCESS =
   process.env.RESEARCH_EARLY_ACCESS_OPEN_ACCESS || "true";
+// PRODUCTION PARITY FOR THE ASSISTED-ORDER BRIDGE (2026-08-29 incident). The
+// live service runs with the bridge ENABLED, an admin notification address and
+// a required-agreements list; without these three the composition refuses and
+// the Early Access order-request doors look "dark", which is exactly how the
+// missing-dependency regression hid inside the evidence run. The values below
+// are placeholders; the SHAPE is what matters. A 404 on
+// /api/research/early-access/assisted-orders/config is a defect, never noise.
+process.env.RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED =
+  process.env.RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED || "true";
+process.env.RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL =
+  process.env.RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL ||
+  "preview-assisted-orders@example.invalid";
+process.env.RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS =
+  process.env.RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS ||
+  JSON.stringify([{ kind: "early_access_terms", version: "v1" }]);
 process.env.RESEARCH_EARLY_ACCESS_SESSION_SECRET =
   process.env.RESEARCH_EARLY_ACCESS_SESSION_SECRET ||
   "preview-early-access-secret-not-production";

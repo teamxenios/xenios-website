@@ -7,6 +7,7 @@
 
 import {
   createAssistedOrderProductionComposition,
+  type AssistedOrderAuditMode,
   type AssistedOrderProductionComposition,
 } from "./production";
 import { CallbackAssistedOrderCatalogAdapter } from "./catalog-adapter";
@@ -21,12 +22,16 @@ import {
   type SupabaseStorageClient,
 } from "./supabase-document-store";
 import type {
+  AssistedOrderAuditSink,
   AssistedOrderLegalPort,
   AssistedOrderOutbox,
   AssistedOrderSubmissionStanding,
   AssistedOrderViewer,
 } from "./ports";
-import type { ResolvedAssistedOrderAuditAuthority } from "./audit-store";
+import {
+  ASSISTED_ORDER_AUDIT_ENABLED_ENV_VAR,
+  type ResolvedAssistedOrderAuditAuthority,
+} from "./audit-store";
 import { enqueueNotificationOnce } from "../outbox";
 import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
 
@@ -63,15 +68,19 @@ export type AssistedOrderProductionWiring = Readonly<{
   supabaseRpc: SupabaseRpcClient | null;
   supabaseStorage: SupabaseStorageClient | null;
   /**
-   * Exact, schema-probed append-only audit authority. It is deliberately
-   * optional at this compatibility seam so an older protected composition
-   * still compiles, but omission keeps the entire bridge unavailable.
+   * Exact, schema-probed append-only audit authority (audit mode
+   * `durable_store`). Resolved by the composition root only when
+   * RESEARCH_ASSISTED_ORDER_AUDIT_ENABLED=true; when that flag is set and the
+   * authority is absent the composition refuses rather than downgrading.
    */
   auditAuthority?: ResolvedAssistedOrderAuditAuthority | null;
   /**
-   * @deprecated A callback/logger is not durable audit authority. Retained
-   * temporarily so the protected composition can be updated in one Lead-owned
-   * change; it is never invoked or accepted as an audit sink.
+   * The production-baseline audit sink (audit mode `log_line_nondurable`):
+   * every audit event is serialized into the operational log, exactly as the
+   * live bridge has done since the 2026-08-21 launch. It is NOT durable
+   * evidence and is used only while durable audit is not enabled. Omitting it
+   * while durable audit is not enabled composes to a refusal (audit mode
+   * `unavailable`).
    */
   auditWrite?(event: Readonly<Record<string, unknown>>): Promise<void>;
   log(message: string, source?: string): void;
@@ -151,10 +160,45 @@ export function buildAssistedOrderProduction(
     },
   };
 
-  // A plain callback used to serialize these events into an operational log.
-  // That is neither durable nor append-only. Only the branded result of the
-  // exact schema/attestation probe can satisfy production composition now.
-  const audit = wiring.auditAuthority?.sink ?? null;
+  // Audit resolution, stated as an explicit mode so a bridge can never mount
+  // with an audit posture nobody can read back (2026-08-29 incident: the
+  // durable authority became mandatory while production had no audit-store
+  // migration, the composition refused, and the live doors vanished into a
+  // generic 404).
+  //
+  //   durable_store       RESEARCH_ASSISTED_ORDER_AUDIT_ENABLED=true and the
+  //                       branded schema/attestation-probed authority resolved.
+  //   (refusal)           RESEARCH_ASSISTED_ORDER_AUDIT_ENABLED=true but the
+  //                       authority did not resolve: the operator asked for
+  //                       durable audit, so nothing weaker may stand in.
+  //   log_line_nondurable durable audit NOT enabled: the production-baseline
+  //                       sink since the 2026-08-21 launch — every event is
+  //                       serialized into the operational log through
+  //                       `auditWrite`. Truthfully non-durable; never presented
+  //                       as evidence; never touches the unapplied audit table.
+  //   unavailable         no sink of any kind; the composition refuses.
+  const auditExplicitlyEnabled =
+    wiring.env[ASSISTED_ORDER_AUDIT_ENABLED_ENV_VAR] === "true";
+  let audit: AssistedOrderAuditSink | null;
+  let auditMode: AssistedOrderAuditMode;
+  if (wiring.auditAuthority) {
+    audit = wiring.auditAuthority.sink;
+    auditMode = "durable_store";
+  } else if (auditExplicitlyEnabled) {
+    audit = null;
+    auditMode = "unavailable";
+  } else if (wiring.auditWrite) {
+    const write = wiring.auditWrite;
+    audit = {
+      record: async (event) => {
+        await write({ ...event });
+      },
+    };
+    auditMode = "log_line_nondurable";
+  } else {
+    audit = null;
+    auditMode = "unavailable";
+  }
 
   const composition = createAssistedOrderProductionComposition({
     enabled,
@@ -167,6 +211,7 @@ export function buildAssistedOrderProduction(
     repository,
     outbox,
     audit,
+    auditMode,
     documents,
     googleMirror: null,
     adminNotificationEmail:
@@ -179,7 +224,7 @@ export function buildAssistedOrderProduction(
   });
   if (enabled && composition.refusalReason !== null) {
     wiring.log(
-      `assisted-order bridge refused: ${composition.refusalReason}`,
+      `assisted-order bridge refused: ${composition.refusalReason} (audit mode: ${composition.auditMode})`,
       "assisted-order",
     );
   }

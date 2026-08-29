@@ -1,17 +1,19 @@
-const SAFE_EVENT_TYPES = new Set([
-  "assisted_order.submitted",
-  "assisted_order.status_changed",
-  "assisted_order.document_upload_requested",
-  "assisted_order.document_uploaded",
-  "assisted_order.document_downloaded",
-]);
+import {
+  assistedOrderAuditActorTypes,
+  assistedOrderAuditEventTypes,
+} from "./audit-store";
 
-const SAFE_ACTOR_TYPES = new Set([
-  "member",
-  "early_access_session",
-  "admin",
-  "system",
-]);
+// The allowlists are the ONE audit vocabulary (audit-store.ts), never a copy:
+// the 2026-08-29 recut found this projection still naming the pre-197eeeb
+// event names, so three of the five events the service emits logged as
+// `event=unknown`. A category is allowlisted, never the payload.
+const SAFE_EVENT_TYPES: ReadonlySet<string> = new Set<string>(
+  assistedOrderAuditEventTypes,
+);
+
+const SAFE_ACTOR_TYPES: ReadonlySet<string> = new Set<string>(
+  assistedOrderAuditActorTypes,
+);
 
 function allowlisted(value: unknown, allowed: ReadonlySet<string>): string {
   return typeof value === "string" && allowed.has(value) ? value : "unknown";

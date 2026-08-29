@@ -323,6 +323,8 @@ export async function buildStep1PreviewApp(
   const audited: unknown[] = [];
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
+    // preview harness: events are collected in memory, truthfully non-durable
+    auditMode: "log_line_nondurable",
     legal: {
       requiredAgreements: async () => [STEP1_PREVIEW_REQUIRED_AGREEMENT],
     },

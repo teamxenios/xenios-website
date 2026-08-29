@@ -35,16 +35,37 @@ export type AssistedOrderProductionInputs = Readonly<{
   legal: AssistedOrderLegalPort | null;
   /** Durable, server-recorded Early Access agreement standing. */
   submissionStanding: AssistedOrderSubmissionStanding | null;
+  /**
+   * How the audit sink above was obtained. Stated explicitly so the boot log,
+   * the production boot test and the release packet can name it; a bridge
+   * must never mount with an audit mode nobody can read back.
+   */
+  auditMode: AssistedOrderAuditMode;
   googleMirror?: AssistedOrderGoogleMirrorQueue | null;
   adminNotificationEmail: string | null;
   documentBucketName?: string | null;
   logger?: AssistedOrderLogger;
 }>;
 
+/**
+ * - `durable_store`: the exact schema-probed append-only audit authority
+ *   (RESEARCH_ASSISTED_ORDER_AUDIT_ENABLED=true and the authority resolved).
+ * - `log_line_nondurable`: the production-baseline behaviour since the
+ *   2026-08-21 launch — every audit event is serialized into the operational
+ *   log line. Truthfully NOT durable evidence; used only while the durable
+ *   authority is not enabled.
+ * - `unavailable`: no audit sink at all; the composition refuses.
+ */
+export type AssistedOrderAuditMode =
+  | "durable_store"
+  | "log_line_nondurable"
+  | "unavailable";
+
 export type AssistedOrderProductionComposition = Readonly<{
   enabled: boolean;
   service: AssistedOrderService | null;
   refusalReason: string | null;
+  auditMode: AssistedOrderAuditMode;
 }>;
 
 /**
@@ -59,6 +80,7 @@ export function createAssistedOrderProductionComposition(
       enabled: false,
       service: null,
       refusalReason: "assisted_order_bridge_disabled",
+      auditMode: inputs.auditMode,
     });
   }
   const missing: string[] = [];
@@ -76,10 +98,12 @@ export function createAssistedOrderProductionComposition(
       enabled: false,
       service: null,
       refusalReason: `assisted_order_dependencies_missing:${missing.join(",")}`,
+      auditMode: inputs.audit ? inputs.auditMode : "unavailable",
     });
   }
   return Object.freeze({
     enabled: true,
+    auditMode: inputs.auditMode,
     service: new AssistedOrderService({
       legal: inputs.legal,
       submissionStanding: inputs.submissionStanding,

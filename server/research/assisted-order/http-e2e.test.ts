@@ -137,6 +137,7 @@ function buildApp(
   const repository = new InMemoryAssistedOrderRepository();
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
+    auditMode: "log_line_nondurable",
     legal: {
       requiredAgreements: async () => [
         { kind: "assisted_order_request_notice", version: "v1" },

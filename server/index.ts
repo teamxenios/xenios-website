@@ -136,6 +136,7 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
+import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
 import {
   assistedOrderExpressHandler,
   createAssistedOrderViewerResolvers,
@@ -820,8 +821,42 @@ for (const binding of Array.from(assistedOrderBindingIndex.values())) {
     binding.offeringVariantId,
   );
 }
-const assistedOrderComposition = buildAssistedOrderProduction({
+// Explicit unavailable answers for every assisted-order door. A refused or
+// disabled composition must never look like a missing route (2026-08-29
+// incident: the composition refused at boot, the doors were never registered,
+// and the live Early Access order-request flow answered a generic 404). The
+// config door keeps its documented `enabled:false` + `code` shape so the client
+// renders its truthful unavailable state; every other door answers the named
+// 503 refusal. No dependency is invented and nothing is mutated.
+const assistedOrderUnavailableDoor = (path: string, reason: string): RequestHandler =>
+  (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    if (path.endsWith("/assisted-orders/config")) {
+      res.status(200).json({ enabled: false, code: "assisted_order_unavailable", reason });
+      return;
+    }
+    res.status(503).json({
+      error: "assisted_order_unavailable",
+      message: "The assisted order service is temporarily unavailable.",
+      reason,
+    });
+  };
+
+// Composed inside the async boot section (below) so the durable audit
+// authority can be awaited before the doors are registered. The nine literal
+// registrations are UNCONDITIONAL: the release scanner sees them and a customer
+// can never receive a generic 404 for an assisted-order door; when the
+// composition is refused or disabled they answer the explicit state above.
+async function composeAssistedOrderBridge(): Promise<void> {
+  const assistedOrderAudit = await resolveAssistedOrderAuditAuthority({
+    env: process.env,
+    rpc: supabaseConfigured()
+      ? (getSupabaseAdmin() as unknown as AssistedOrderRpcClient)
+      : null,
+  });
+  const assistedOrderComposition = buildAssistedOrderProduction({
   env: process.env,
+  auditAuthority: assistedOrderAudit.authority,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
   agreementGate: earlyAccessPersistence.options.agreements ?? null,
   masterOfferingServiceFor: (viewer) => {
@@ -874,8 +909,7 @@ const assistedOrderComposition = buildAssistedOrderProduction({
     log(assistedOrderAuditLogLine(event), "assisted-order");
   },
   log,
-});
-if (assistedOrderComposition.service) {
+  });
   const assistedOrderViewers = createAssistedOrderViewerResolvers({
     resolveMember: async (req) => {
       const member = await resolveActiveMemberSilently(req);
@@ -896,7 +930,9 @@ if (assistedOrderComposition.service) {
       earlyAccessPersistence.orderHistory?.bindings ?? null,
     adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),
   });
-  const assistedOrderRoutes = createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
+  const assistedOrderRoutes = assistedOrderComposition.service === null
+    ? null
+    : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
     assistedOrderComposition.service,
     assistedOrderViewers,
     // Server-derived affiliate attribution: the verified xr_aff cookie is the
@@ -911,6 +947,12 @@ if (assistedOrderComposition.service) {
     method: "GET" | "POST" | "PATCH",
     path: string,
   ): RequestHandler => {
+    if (assistedOrderRoutes === null) {
+      return assistedOrderUnavailableDoor(
+        path,
+        assistedOrderComposition.refusalReason ?? "assisted_order_unavailable",
+      );
+    }
     const descriptor = assistedOrderRoutes.find(
       (candidate) => candidate.method === method && candidate.path === path,
     );
@@ -940,12 +982,17 @@ if (assistedOrderComposition.service) {
   app.get("/api/admin/research/assisted-orders/:requestId", requireSupabaseAdmin, assistedOrderDoor("GET", "/api/admin/research/assisted-orders/:requestId"));
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
-  log("assisted order bridge mounted", "assisted-order");
-} else {
-  log(
-    `assisted order bridge not mounted: ${assistedOrderComposition.refusalReason}`,
-    "assisted-order",
-  );
+  if (assistedOrderComposition.service) {
+    log(
+      `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,
+      "assisted-order",
+    );
+  } else {
+    log(
+      `assisted order bridge not mounted: ${assistedOrderComposition.refusalReason} (audit mode: ${assistedOrderComposition.auditMode}); every door answers the explicit unavailable state`,
+      "assisted-order",
+    );
+  }
 }
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
@@ -1212,6 +1259,7 @@ void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 
 (async () => {
+  await composeAssistedOrderBridge();
   await registerRoutes(httpServer, app);
 
   app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
@@ -1244,7 +1292,9 @@ startOutboxWorker(log);
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (process.env.NODE_ENV === "production") {
-    serveStatic(app);
+    // XENIOS_STATIC_DIST_DIR: the production boot test points a built-shell
+    // fixture here so the real composition root boots without writing dist.
+    serveStatic(app, process.env.XENIOS_STATIC_DIST_DIR || undefined);
   } else {
     const { setupVite } = await import("./vite");
     await setupVite(httpServer, app);
