@@ -52,6 +52,7 @@ PII, or production embed code to this file.
 | Research indexing (`RESEARCH_INDEXABLE`) and sitemap publication of Research editorial pages | enable after raw-HTTP evidence review / keep noindex | FOUNDER DECISION PENDING |
 | Public storefront mount (`RESEARCH_PUBLIC_STOREFRONT_ENABLED`) | keep off until publication authority and approved copy exist / enable later | FOUNDER DECISION PENDING (engineering gates also open) |
 | Global marketing-shell touch-target fixes (Navbar/Footer/TopRibbon, hard-tripwire protected) | accept a reviewed global-shell change / defer | FOUNDER DECISION PENDING |
+| Six hard-tripwire files re-pinned to reviewed candidate bytes (`Home.tsx` hero CTA class `e551082`; `index.css` additive `.ra-*` 44×44 selectors `9c404d7`; `PageShell.tsx` skip-link focus target and `main.tsx` `b41de5a`; `server/routes.ts` attribution privacy `a01d152`; `server/static.ts` raw HTTP policy `600e45a`…`679564fc`) — `index.html`, Navbar, Footer, TopRibbon blob-identical to production | acknowledge each re-pin as reviewed (chained notes in `docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json`) / reject any of them (a rejection requires a code recut) | FOUNDER DECISION PENDING |
 | Partner-name history purge and first-name mention cleanup | rewrite history + rename report / leave history, scrub only the candidate tree (done) | FOUNDER DECISION PENDING |
 | FILE_OWNERSHIP re-baseline for integration candidates — the release-manifest verifier reads exact-file, single-lane ownership rules from the 3daa production base; 483 of the candidate's 583 changed files have no base owner and 20 belong to historical lanes, so its ownership check fails for any integration RC while every other manifest check passes. Exact file/rule reconciliation and the proposed (unapplied) rule: `XENIOS_RESEARCH_OWNERSHIP_RECONCILIATION_2026-08-28.md`, `XENIOS_RESEARCH_OWNERSHIP_REBASELINE_PROPOSAL_2026-08-28.json` | accept the disclosed result for this RC and authorize the release-manager re-baseline at the next production base (smallest approval statement in the reconciliation document) / require per-lane manifests before acceptance | FOUNDER DECISION PENDING |
 
@@ -84,6 +85,6 @@ surface for a finished one:
 | Field | Value |
 | --- | --- |
 | External inputs still required | 16 listed above (1 provided) |
-| Founder decisions still required | 10 listed above |
+| Founder decisions still required | 11 listed above |
 | All non-human engineering work complete | YES for everything not classified PRODUCTION DISABLED above; the disabled items carry exact residual work in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json` |
 | Ready for Samuel deploy review | See the RC document's final verdict |

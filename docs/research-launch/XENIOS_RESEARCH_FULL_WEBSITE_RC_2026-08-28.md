@@ -11,7 +11,7 @@ Production deploy: **not performed** · Migration: **not applied** · Real accou
 | Codex Lead checkpoint (preserved, untouched) | `1a065e0cd55eabbee09654c1a4c0a8d73693824f` (`CONTROL/HANDOFFS/CODEX-TO-CLAUDE-FINAL-HANDOFF.md`, `HANDOFF_READY: YES`) |
 | Claude branch | `claude/xenios-research-full-finish-takeover-20260828` |
 | **Code-frozen SHA (every gate below ran on this exact tree)** | **`679564fc8cb29289e2277836eb32e2deac3d8bec`** |
-| Final branch HEAD (docs, evidence packet, coordination JSON and evidence-tooling expectations only on top of the code freeze — no runtime file) | `the commit that contains this document (a docs/evidence/coordination/evidence-tooling successor of the code freeze; its SHA is recorded in CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md, CONTROL/CLAUDE_EVIDENCE_LEDGER.json and the pushed branch head)` — `git diff --stat 679564fc..the comm`: tracked changes 7 files changed, 107 insertions(+), 44 deletions(-); new files 79 (six release documents, the review packet, the release manifest, the continuity handoff); runtime files changed: 0 — proven after commit by `git diff --name-only 679564fc..<final>` and recorded in the final handoff |
+| Final branch HEAD (docs, evidence packet, coordination JSON, `.xenios` continuity and evidence-tooling expectations only on top of the code freeze — no runtime file) | `the commit that contains this document (a docs/evidence/coordination/evidence-tooling successor of the code freeze; its SHA is recorded in CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md, CONTROL/CLAUDE_EVIDENCE_LEDGER.json and the pushed branch head)` — exact `git diff --stat 679564fc..<final>` recorded in `CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md`; nature of the delta: six release documents plus the ownership reconciliation, the review packet (README, 4 JSON evidence files, 68 screenshots), the release manifest, coordination JSON, .xenios continuity records, scripts/evidence expectations; runtime files changed: 0 (proven per successor by git diff --name-only in the final handoff) |
 | Rejected ancestry excluded | `ace92fd65ab46213aa5899a1591d4c565099fd0f` is **not** an ancestor of the candidate (`git merge-base --is-ancestor` exit 1); every lane/root branch carrying it was replayed by content, never merged |
 | Worktree / gate clone | `C:\Users\sboad\projects\xenios-research-claude-takeover-20260828` (linked worktree, authoring) · `C:\Users\sboad\projects\xenios-research-rc-lf-20260828` (standalone LF clone, `core.autocrlf=false`, all gates) |
 | Runtime | `node:20.19.0-bookworm` container: Node **v20.19.0**, npm **10.8.2**; `--network none`; source and `node_modules` volume mounted read-only; `npm ci` exit 0 on volume `xr-claude-node-modules` |
@@ -40,11 +40,11 @@ Mode vocabulary: REPLAYED = applied as content onto the Claude branch with ident
 
 | Item | Name | Mode | Into / disposition |
 | --- | --- | --- | --- |
-| 1 | refund authority | SEMANTIC_REPLAY_ONLY |  |
-| 2 | activation/cart authority | SEMANTIC_REPLAY_ONLY |  |
+| 1 | refund authority | SEMANTIC_REPLAY_ONLY | PRODUCTION DISABLED — `durableRefundExecutionAvailable` hard-wired false; capability denial precedes every effect |
+| 2 | activation/cart authority | SEMANTIC_REPLAY_ONLY | PRODUCTION DISABLED — activation/cart mutation authority unavailable; fail closed, no add-to-cart |
 | 3 | private COA capability lifecycle | REPLAYED | c9b12a85 (with storage-url-origin c7f3d1c1) |
 | 4 | public-lot bounded byte stream | REPLAYED | 6342c25 |
-| 5 | Care public-configuration read boundary | DEFERRED |  |
+| 5 | Care public-configuration read boundary | DEFERRED | DEFERRED — default 503 broke Care coverage contract; reverted; endpoint unthrottled as at the Codex checkpoint |
 | 6 | admin CRM filtered-zero truth | REPLAYED | cf482a2 |
 | 7 | reduced-motion Early Access scrolling | REPLAYED | 75f68fe |
 | 8 | admin Research Home 320px grid | REPLAYED | 1fd1c30 |
@@ -55,8 +55,8 @@ Mode vocabulary: REPLAYED = applied as content onto the Claude branch with ident
 | 13 | Lane 03 discovery completion | REPLAYED (dormant, unmounted) | 43a72023 |
 | 14 | Lead-protected Research chrome touch targets | REPLAYED | 460138b |
 | 15 | raw HTTP / SEO document policy | REPLAYED | 0a2ef2b |
-| 16 | member-catalog bounded-read + media signing | REJECTED |  |
-| 17 | Lane 08 inventory aggregate truth | REJECTED |  |
+| 16 | member-catalog bounded-read + media signing | REJECTED | REJECTED (TTL and forgeable-signer findings) — production 503 |
+| 17 | Lane 08 inventory aggregate truth | REJECTED | REJECTED (completeness/parity findings) — production 503 |
 | 18 | account truth/isolation | REPLAYED (semantic) | 880686c8 |
 
 ### 2.3 Committed root branches outside the numbered queue
@@ -105,7 +105,7 @@ Mode vocabulary: REPLAYED = applied as content onto the Claude branch with ident
 | dc70fb17 | RESEARCH_INDEXABLE production parity at the HTTP layer: buildRawHttpDocumentResponse indexable input; static.ts passes the flag; public documents noindex at header+meta until true; tests; static.ts tripwire re-pinned 75ab3f6a |
 | 679564fc | Indexing gate scoped to Research documents by original pathname (marketing site indexable as in production); tripwire re-pinned 0f2cf4ab |
 
-Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lists) is in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json`; every runtime observation is in `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (E-00 … E-63); every adjudication is in `CONTROL/CLAUDE_DECISION_LOG.md`.
+Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lists) is in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json`; every runtime observation is in `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (E-00 … E-64); every adjudication is in `CONTROL/CLAUDE_DECISION_LOG.md`.
 
 ## 3. Gates on the code-frozen SHA `679564fc` (LF clone, pinned container)
 
@@ -116,14 +116,14 @@ Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lis
 | Type check | `./node_modules/.bin/tsc --noEmit --incremental false` | **0 errors** — exit 0 |
 | Production build | `npm run build` (`node script/build.mjs`) | exit 0 — `dist/public` 7.2M (includes `dist/public/hino/index.html`) |
 | Canonical e2e | `vitest run --config /test-config-e2e.mjs --configLoader runner --no-file-parallelism --testTimeout 60000` | **4 files / 53 tests passed** — exit 0 |
-| Complete sequential suite | `vitest run --config /test-config.mjs --configLoader runner --no-file-parallelism --testTimeout 60000` | **Test Files 796 passed | 4 skipped (800); Tests 11954 passed | 43 skipped (11997); 710.02s** — exit 0 |
+| Complete sequential suite | `vitest run --config /test-config.mjs --configLoader runner --no-file-parallelism --testTimeout 60000` | **Test Files 796 passed / 4 skipped (800); Tests 11954 passed / 43 skipped (11997); 710.02s** — exit 0 |
 | Route census / uniqueness | `tsx scripts/acceptance/verify-route-uniqueness.ts --sha 679564fc` | exit 0 — 409 static Express API registrations across 400 call sites at 679564fc8cb29289e2277836eb32e2deac3d8bec |
-| Migration DAG / ledger | `tsx scripts/acceptance/verify-migration-dag.ts` | exit 0 — Migration DAG accepted: 35 nodes, canonical checksums verified. |
+| Migration DAG / ledger | `tsx scripts/acceptance/verify-migration-dag.ts` | exit 0 — Migration DAG accepted: 35 nodes, canonical checksums verified. (`MIGRATION_DAG.json` `productionSha` was reconciled `696d75b9` → `3daa3f4a` at the Codex checkpoint with a dated note; node set unchanged) |
 | Production state + release graph | `tsx scripts/acceptance/verify-production-state.ts` | exit 0 — Trusted release baseline accepted: 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 / dep-da6vorqfngtc73brb0gg. |
 | Release manifest | `tsx scripts/acceptance/verify-release-manifest.ts <manifest>` | **exit 1 — OWNERSHIP POLICY ONLY (disclosed, founder decision)**: schema, identity (base 3daa3f4a / head 679564fc), file inventory = exact git diff (583 files), routes (73), tests (5 × PASS with exact commands) all pass; the ownership policy the verifier reads from the trusted BASE commit (`3daa3f4a:docs/coordination/FILE_OWNERSHIP.json`, exact-file rules written for single-lane PRs) covers only 100 of the 583 changed files → 483 `UNOWNED_FILE` + 20 `WRONG_LANE_OWNER` (files owned at the base by wave2-inventory-lot-coa 5, v3-products-diagnostics-checkin 5, research-application-ui-completion 6, care-tebra-security 4; manifest lane `release-manager`). An integration RC cannot satisfy a base-anchored single-lane ownership policy; re-baselining `FILE_OWNERSHIP.json` is a release-manager decision recorded in the human-only blockers. Full verifier output: `CONTROL/EVIDENCE/gates-679564fc-lf/13-release-manifest-x12-from-worktree.txt` |
-| Release control plane | `npm run check:release-control-plane` + `vitest run server/release-control-plane.test.ts` | check exit 0; test exit 0 — 43 passed | 1 skipped (44) |
+| Release control plane | `npm run check:release-control-plane` + `vitest run server/release-control-plane.test.ts` | check exit 0; test exit 0 — 43 passed / 1 skipped (44) |
 | Core-site protection | `node scripts/acceptance/verify-core-site-protection.mjs 3daa3f4a… 679564fc` | exit 1 — 21 protected hashes verified; changed files 583 (allowed research/care 247, infrastructure 112, test files touched 194, seam files 3 [server/care/index.ts, server/index.ts, server/research/index.ts]); changed files outside the allowed Research/Care write zones. — 27 reviewed global-shell files listed by design (classifier not widened; founder review item) |
-| Secret scan | `node scripts/acceptance/scan-release-diff.mjs 3daa3f4a… 679564fc` | exit 0 — secret findings: 0 over 70237 added lines / 541 files |
+| Secret scan | `node scripts/acceptance/scan-release-diff.mjs 3daa3f4a… 679564fc` (secret-only invocation; its `pii scan: SKIPPED` line is by design — the PII gate is the wrapper row below) | exit 0 — secret findings: 0 over 70237 added lines / 541 files |
 | Approved-name PII scan (never SKIPPED) | `node scripts/acceptance/verify-release-diff-scan.mjs --production-base-sha 3daa3f4a… --candidate-sha 679564fc --pii-names-file <approved corpus, outside Git, SHA-256 C7DA9838…>` | exit 0 — pii findings: 0; non-SKIPPED (wrapper requires exactly one 'secret findings: 0' and one 'pii findings: 0') |
 | Disposable Postgres migration rehearsal | `bash scripts/rehearse-research-assisted-order-audit-store.sh` (host Docker, pinned `postgres@sha256:33f923b0…`, throwaway container destroyed) | **No migration ships with this deploy** (`supabase/candidates/*` unapplied, outside `MIGRATION_DAG.json`; MIGRATION REQUIRED FOR THIS DEPLOY: NO). Informational rehearsal of the assisted-order audit-store candidate on the frozen tree: **PASS** — precheck, apply, authority, grants, RLS, concurrency, replay, conflict, rollback, immutability, reapply (8.5 s; candidate SHA-256 a6814b1c…, pre 8ecd2366…, post db0354ee…). The client-account migration harness was REJECTED (trust/TOCTOU/EOL/manifest gaps) and stays PRODUCTION DISABLED. Nothing applied to any real or shared database |
 
@@ -131,7 +131,7 @@ Gate logs: `scratchpad/gates-679564fc-lf/*.txt` (mirrored into `CONTROL/EVIDENCE
 
 ### 3.1 Gates re-run on the docs successor
 
-The successor commit changes no runtime file; the release control-plane verifiers (route uniqueness, migration DAG, production state, release manifest), the release control-plane check + suite, the core-site protection gate and both scans are re-run on that exact HEAD from the LF clone and recorded in `CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md` and `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (a document cannot carry the hash of the commit that contains it).
+The successor commit changes no runtime file (its non-`docs/` paths are `scripts/evidence/**` expectations, `.xenios/**` continuity records and one handoff — none read at runtime); the release control-plane verifiers (route uniqueness, migration DAG, production state, release manifest), the release control-plane check + suite, the core-site protection gate and both scans are re-run on that exact HEAD from the LF clone and recorded in `CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md` and `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (a document cannot carry the hash of the commit that contains it). On the successor the release-manifest verifier additionally reports 2 x `HEAD_SHA_MISMATCH` by design: the manifest `headSha` is the code freeze while the verifier expected head is the successor.
 
 ## 4. Browser and raw-HTTP evidence on `679564fc`
 
@@ -157,10 +157,10 @@ Tooling: `scripts/evidence/*` (raw CDP over the repo's `ws`, host Chromium, host
 
 ## 5. Protected files and seams
 
-- Hard tripwires (`docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json`): 21 hashes verified; `server/static.ts` and `server/vite.ts` re-pinned at `ea4e294` and again at `679564fc` for the `/hino` correction.
+- Hard tripwires (`docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json`): 21 hashes verified **against the manifest, which was re-pinned to reviewed candidate bytes with chained dated notes** — so "verified" proves candidate integrity, not production parity. **Six of the 21 tripwire files differ from production `3daa3f4a`** (`git diff --numstat`): `client/src/pages/Home.tsx` (+1/−1: hero CTA class `btn-ghost-on-dark` → `btn btn-ghost btn-on-dark`, `e551082`, Codex lineage inside the handed-off checkpoint), `client/src/index.css` (+30/−2: additive `.ra-*` Research 44×44 target selectors, `9c404d7`), `client/src/components/PageShell.tsx` (+1/−1: `main#site-main tabIndex=-1` skip-link focus target, `b41de5a`), `client/src/main.tsx` (+3/−2, `b41de5a` Care privacy/activation authority), `server/routes.ts` (+19/−9, `a01d152` attribution privacy), `server/static.ts` (+93/−7, the raw HTTP policy composition `600e45a` … `679564fc`). `index.html`, Navbar, Footer and TopRibbon are blob-identical to production. Every re-pin is a founder-review item (blockers document).
 - Seams composed by the Lead only: `server/index.ts` (Codex compositions + request/error log redaction `40bae71`), `server/research/index.ts`, `server/care/index.ts` (clinical write gate `aefac85`), `client/src/research/lib/routes.ts` / `section.tsx` / `layout.tsx` / `lib/member-routing.ts` (ten-entry account-portal manifest, opaque order-detail return `0415a82e`; Accessibility Statement footer `602311ad`).
 - Classifier not widened: 27 reviewed global-shell files remain listed as zone violations by design (founder review item; "Do not widen the manifest to pass").
-- Global marketing shell (`Home.tsx`, `index.css`, `index.html`, Navbar/Footer/TopRibbon) **unchanged**.
+- Global marketing shell: `index.html`, Navbar, Footer and TopRibbon **unchanged**; `Home.tsx` and `index.css` carry the two reviewed changes named above (one CTA class name; additive `.ra-*` selectors) — NOT byte-identical to production, listed among the 27 zone violations for founder review.
 
 ## 6. Routes
 
@@ -177,7 +177,7 @@ See `XENIOS_RESEARCH_CAPABILITY_MATRIX_2026-08-28.md` for the full table. Summar
 
 ## 8. Human-only inputs and founder decisions
 
-`XENIOS_RESEARCH_HUMAN_ONLY_BLOCKERS_2026-08-28.md`: 16 external inputs (1 provided — the approved PII corpus, hash-verified), 10 founder decisions PENDING. None was guessed; each ships in its truthful disabled/pending state.
+`XENIOS_RESEARCH_HUMAN_ONLY_BLOCKERS_2026-08-28.md`: 16 external inputs (1 provided — the approved PII corpus, hash-verified), 11 founder decisions PENDING. None was guessed; each ships in its truthful disabled/pending state.
 
 ## 9. Independent review
 
