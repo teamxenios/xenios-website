@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-29T01:20:00Z",
+  "updatedAt": "2026-08-29T02:58:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "500bc88",
@@ -65,13 +65,14 @@
   "researchFullSiteCandidate": {
     "codeSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
     "branch": "claude/xenios-research-full-finish-takeover-20260828",
-    "state": "FROZEN_INDEPENDENT_REVIEW_PENDING",
+    "state": "DEPLOYED_20260829T0237Z_ROLLED_BACK_20260829T0247Z_RECUT_REQUIRED",
     "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "rcDocument": "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md",
     "runbook": "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
     "reviewPacket": "docs/review/xenios-research-full-site-20260828/",
     "deployed": false,
     "migrationsApplied": false,
-    "note": "Frozen by the Claude Lead takeover on 2026-08-28; every gate, evidence run and the independent review reference this exact code tree. Nothing was deployed, merged, migrated, activated, invited, priced, paid, refunded, or messaged."
+    "note": "Frozen by the Claude Lead takeover on 2026-08-28; every gate, evidence run and the independent review reference this exact code tree. Nothing was deployed, merged, migrated, activated, invited, priced, paid, refunded, or messaged.",
+    "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); recut required"
   }
 }
