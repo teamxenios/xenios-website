@@ -87,6 +87,26 @@ describe("PAGE_AUDIT_SOURCE", () => {
     expect(result.targets.undersized.find((target) => target.selector.includes("#small-check")))
       .toMatchObject({ width: 80, height: 20 });
   });
+
+  it("excludes controls hidden inside closed details while retaining its summary", () => {
+    document.body.innerHTML = `
+      <details>
+        <summary>Menu</summary>
+        <nav><a href="/hidden">Hidden link</a></nav>
+      </details>`;
+    const visibleRect = {
+      left: 0, top: 0, right: 100, bottom: 44,
+      width: 100, height: 44, x: 0, y: 0,
+      toJSON() {},
+    };
+    for (const element of document.querySelectorAll("summary,a")) {
+      element.getBoundingClientRect = () => visibleRect;
+    }
+
+    expect(audit().targets.total).toBe(1);
+    document.querySelector("details").setAttribute("open", "");
+    expect(audit().targets.total).toBe(2);
+  });
 });
 
 describe("FOCUS_PROBE_SOURCE", () => {
@@ -138,6 +158,22 @@ describe("FOCUS_PROBE_SOURCE", () => {
     const captured = baseline();
     expect(captured.tabbableIdentities).toHaveLength(2);
     expect(captured.tabbableIdentities.every((identity) => /^focusable-\d+@/u.test(identity))).toBe(true);
+  });
+
+  it("does not expect Tab to reach descendants of closed details", () => {
+    document.body.innerHTML = `
+      <details>
+        <summary>Menu</summary>
+        <nav><a href="/hidden">Hidden link</a></nav>
+      </details>`;
+    for (const element of document.querySelectorAll("summary,a")) {
+      element.getClientRects = () => [{ width: 100, height: 44 }];
+    }
+
+    expect(baseline().tabbableIdentities).toHaveLength(1);
+    document.querySelector("details").setAttribute("open", "");
+    resetBaseline();
+    expect(baseline().tabbableIdentities).toHaveLength(2);
   });
 
   it("resets the unfocused visual baseline between responsive-width walks", () => {

@@ -632,11 +632,21 @@ export class PageSession {
         }),
       });
     }
+    if (
+      !Number.isFinite(maxHeight) ||
+      maxHeight < 1 ||
+      maxHeight > MAX_FULL_PAGE_HEIGHT_CSS_PX
+    ) {
+      throw new Error(
+        `full-page screenshot maxHeight must be between 1 and the hard safety ceiling of ` +
+          `${MAX_FULL_PAGE_HEIGHT_CSS_PX} CSS px`,
+      );
+    }
     const metrics = await this.send("Page.getLayoutMetrics");
     const size = metrics.cssContentSize ?? metrics.contentSize;
     const width = Math.ceil(size.width);
     const height = Math.max(1, Math.ceil(size.height));
-    if (!Number.isFinite(maxHeight) || maxHeight < 1 || height > maxHeight) {
+    if (height > maxHeight) {
       throw new Error(
         `full-page screenshot requires ${height} CSS px but the declared safety ceiling is ${maxHeight}; ` +
           "capture refused instead of truncating",

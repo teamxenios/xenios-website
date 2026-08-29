@@ -217,7 +217,7 @@ Full-page screenshots must cover the entire measured CSS content box. Capture
 records the CSS dimensions, device-pixel ratio, expected bitmap dimensions, and
 actual PNG dimensions, then remeasures the layout after capture and refuses any
 growth or drift; the manifest also parses the artifact's PNG header and rechecks
-them. Content taller than the declared 12,000 CSS-pixel safety ceiling is refused
+them. Content taller than the hard 24,000 CSS-pixel safety ceiling is refused
 instead of silently truncated.
 
 Every route carries a non-empty route-specific semantic contract. Every public

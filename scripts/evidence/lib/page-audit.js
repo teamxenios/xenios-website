@@ -10,7 +10,16 @@ export const PAGE_AUDIT_SOURCE = String.raw`(() => {
   const vw = de.clientWidth;
   const vh = de.clientHeight;
 
+  const isHiddenByClosedDetails = (el) => {
+    for (let current = el.parentElement; current; current = current.parentElement) {
+      if (current.localName !== "details" || current.hasAttribute("open")) continue;
+      const summary = Array.from(current.children).find((child) => child.localName === "summary");
+      if (!summary || !summary.contains(el)) return true;
+    }
+    return false;
+  };
   const isVisible = (el) => {
+    if (isHiddenByClosedDetails(el)) return false;
     const cs = getComputedStyle(el);
     if (cs.display === "none" || cs.visibility === "hidden" || cs.visibility === "collapse") return false;
     if (Number(cs.opacity) === 0) return false;
@@ -279,8 +288,16 @@ export const FOCUS_BASELINE_SOURCE = String.raw`(() => {
     }
     return false;
   };
+  const isHiddenByClosedDetails = (node) => {
+    for (let current = node.parentElement; current; current = current.parentElement) {
+      if (current.localName !== "details" || current.hasAttribute("open")) continue;
+      const summary = Array.from(current.children).find((child) => child.localName === "summary");
+      if (!summary || !summary.contains(node)) return true;
+    }
+    return false;
+  };
   const isRendered = (node) => {
-    if (!node.isConnected || isInert(node)) return false;
+    if (!node.isConnected || isInert(node) || isHiddenByClosedDetails(node)) return false;
     const style = getComputedStyle(node);
     return style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse" && node.getClientRects().length > 0;
   };

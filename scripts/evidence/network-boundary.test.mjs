@@ -209,6 +209,8 @@ describe("live CDP evidence boundary regressions", () => {
       await page.enforceNetworkBoundary(fixture.origin);
       await page.setViewport({ width: 800, height: 600, deviceScaleFactor: 1 });
       await page.navigate(`${fixture.origin}/`, { quietMs: 50, maxSettleMs: 3000 });
+      await expect(page.screenshot({ fullPage: true, maxHeight: 24001 }))
+        .rejects.toThrow(/hard safety ceiling of 24000 CSS px/u);
       await expect(page.screenshot({ fullPage: true, maxHeight: 12000 }))
         .rejects.toThrow(/capture refused instead of truncating/u);
       const screenshot = await page.screenshot({ fullPage: true });
