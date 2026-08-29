@@ -135,11 +135,11 @@
     {
       "method": "GET",
       "path": "/care",
-      "rationale": "The reviewed Care document policy adds a self-only CSP and exact private noindex/noarchive semantics, removes inherited root canonical and og:url metadata, and strips inherited template JSON-LD.",
+      "rationale": "The reviewed Care document policy adds a self-only CSP and exact private noindex/noarchive semantics, removes inherited root canonical and og:url metadata plus incompatible third-party font requests, and strips inherited template JSON-LD.",
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header content-security-policy: - -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests$",
-        "^shape-fingerprint a906b74ad1353da1 -> 480ed707987a60f2$",
+        "^shape-fingerprint a906b74ad1353da1 -> 344400cb54ed4d18$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
