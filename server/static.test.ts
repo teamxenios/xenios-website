@@ -155,6 +155,11 @@ describe("the production static server answers documents through the raw HTTP po
     const previous = process.env.RESEARCH_INDEXABLE;
     try {
       delete process.env.RESEARCH_INDEXABLE;
+      // the marketing site is never gated by the Research flag (production parity)
+      const marketing = await request(app).get("/");
+      expect(marketing.status).toBe(200);
+      expect(marketing.headers["x-robots-tag"]).toContain("index,follow");
+      expect(marketing.headers["x-robots-tag"]).not.toContain("noindex");
       const gated = await request(app).get("/research");
       expect(gated.status).toBe(200);
       expect(gated.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");

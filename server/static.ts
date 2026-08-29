@@ -1,6 +1,7 @@
 import express, { type Express, type Request, type Response } from "express";
 import fs from "fs";
 import path from "path";
+import { isResearchPath } from "@shared/research/paths";
 import { buildRawHttpDocumentResponse } from "./research/seo/raw-http-document-policy";
 
 /**
@@ -22,13 +23,19 @@ export function sendRawHttpDocument(
   templateHtml: string,
   structuredData: readonly unknown[] = [],
 ): void {
+  const requestTarget = req.originalUrl || req.url;
+  // req.path is rewritten relative to the mount inside app.use("/{*path}"),
+  // so the document class is taken from the ORIGINAL pathname.
+  const originalPathname = requestTarget.split("?")[0].split("#")[0];
   const document = buildRawHttpDocumentResponse({
-    requestTarget: req.originalUrl || req.url,
+    requestTarget,
     templateHtml,
     structuredData,
-    // Production parity: until RESEARCH_INDEXABLE is "true" every public
-    // document stays noindex at the HTTP layer as well as in the client.
-    indexable: process.env.RESEARCH_INDEXABLE === "true",
+    // Production parity: the research middleware gated ONLY /research documents
+    // (isResearchPath) behind RESEARCH_INDEXABLE; the marketing site (/, careers,
+    // ICP pages) was always indexable. Until the flag is "true" every public
+    // Research document stays noindex at the HTTP layer as well as in the client.
+    indexable: !isResearchPath(originalPathname) || process.env.RESEARCH_INDEXABLE === "true",
   });
   res.status(document.status).set(document.headers).send(document.html);
 }
