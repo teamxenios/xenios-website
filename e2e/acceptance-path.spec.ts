@@ -148,13 +148,17 @@ describe("acceptance path: the customer is told the truth about what just happen
     }
   });
 
-  it("gives the customer a status path to their own request", async () => {
+  it("keeps the status credential out of email while preserving the safe reference", async () => {
     const { app, enqueued } = buildDoor();
     const response = await submitAs(app, submission());
     const customer = byKind(enqueued, "customer")[0];
 
-    expect(String((customer.payload ?? {}).statusPath)).toContain(
+    expect((customer.payload ?? {}).publicReference).toBe(
       response.body.publicReference,
+    );
+    expect(customer.payload ?? {}).not.toHaveProperty("statusPath");
+    expect(JSON.stringify(customer.payload ?? {})).not.toContain(
+      response.body.statusToken,
     );
   });
 
