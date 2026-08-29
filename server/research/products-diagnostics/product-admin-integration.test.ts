@@ -61,7 +61,7 @@ describe("Product Control shared integration", () => {
       "registerProductAdminApi(app, {",
     );
     const apiFallback = serverSource.indexOf('app.use("/api/{*rest}"');
-    const productionSpa = serverSource.indexOf("serveStatic(app)");
+    const productionSpa = serverSource.indexOf("serveStatic(app,");
     const developmentSpa = serverSource.indexOf("setupVite(");
 
     expect(registration).toBeGreaterThan(-1);

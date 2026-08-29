@@ -112,7 +112,7 @@ describe("Care document baseline CSP", () => {
     const indexSource = readFileSync(resolve(__dirname, "index.ts"), "utf8");
     const cspIndex = indexSource.indexOf("app.use(careDocumentCsp)");
     const privacyIndex = indexSource.indexOf("app.use(carePageGate)");
-    const staticIndex = indexSource.indexOf("serveStatic(app)");
+    const staticIndex = indexSource.indexOf("serveStatic(app,");
     const viteIndex = indexSource.indexOf("await setupVite(httpServer, app)");
 
     expect(cspIndex).toBeGreaterThan(-1);

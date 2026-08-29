@@ -52,7 +52,7 @@ describe("API 404 guard", () => {
   it("is wired in server/index.ts before the SPA fallback", () => {
     const src = fs.readFileSync(path.resolve(__dirname, "index.ts"), "utf8");
     const guardIdx = src.indexOf('app.use("/api/{*rest}"');
-    const serveStaticIdx = src.indexOf("serveStatic(app)");
+    const serveStaticIdx = src.indexOf("serveStatic(app,");
     const viteIdx = src.indexOf("setupVite(");
     expect(guardIdx).toBeGreaterThan(-1);
     // The guard must come before both the production (serveStatic) and dev (vite)

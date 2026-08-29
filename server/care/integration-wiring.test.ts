@@ -30,7 +30,7 @@ describe("Care shared integration wiring", () => {
       "registerCarePrescriptionApi(app, careAccess, carePrescriptions)",
     );
     const apiFallback = serverSource.indexOf('app.use("/api/{*rest}"');
-    const productionSpa = serverSource.indexOf("serveStatic(app)");
+    const productionSpa = serverSource.indexOf("serveStatic(app,");
     const developmentSpa = serverSource.indexOf("setupVite(");
 
     expect(serverSource).toContain("app.use(carePageGate)");
