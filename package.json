@@ -27,6 +27,8 @@
     "verify:production-state": "tsx scripts/acceptance/verify-production-state.ts"
   },
   "dependencies": {
+    "@fontsource/inter-tight": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@octokit/rest": "^21.1.1",

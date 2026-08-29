@@ -14,14 +14,15 @@ import type {
   MasterOfferingDetailView,
 } from "@shared/research/master-offerings/contract";
 import type { ApiResult } from "../../lib/api";
+import "../../../fonts";
 import "../../../index.css";
 import { MasterOfferingCatalogSurface } from "../MasterOfferingCatalogSurface";
 import { MasterOfferingDetail } from "../MasterOfferingDetail";
 
 const LONG_NAME =
-  "BPC157TB500ExtendedReleaseCompoundedResearchBlendMultiDoseVialListing";
+  "BPC-157 / TB-500 Extended Release Compounded Research Blend";
 const LONG_VARIANT =
-  "10mg2mLmultidosepreservativefreelyophilisedvialconfigurationBatchQ4";
+  "10 mg / 2 mL multi-dose preservative-free lyophilized vial, Q4 batch";
 
 function priced(cents: number) {
   return {
@@ -201,15 +202,15 @@ const DETAIL: MasterOfferingDetailView = {
 const root = createRoot(document.getElementById("root")!);
 root.render(
   window.location.hash === "#detail" ? (
-    <div className="research-app" style={{ padding: 16 }}>
+    <main className="research-app" style={{ padding: 16 }}>
       <MasterOfferingDetail product={DETAIL} />
-    </div>
+    </main>
   ) : (
-    <div className="research-app" style={{ padding: 16 }}>
+    <main className="research-app" style={{ padding: 16 }}>
       <MasterOfferingCatalogSurface
         memberToken="harness-token"
         fetchCatalog={fetchCatalog}
       />
-    </div>
+    </main>
   ),
 );

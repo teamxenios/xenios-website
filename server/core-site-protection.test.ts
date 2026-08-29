@@ -93,16 +93,16 @@ describe("the changed-file classifier", () => {
     expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
   });
 
-  it("FAILS a change set that touches the global stylesheet or the HTML shell", () => {
+  it("FAILS unrelated global presentation changes while reporting the hash-locked shell seam", () => {
     const result = classifyChangedFiles(
       ["client/src/index.css", "client/index.html", "client/src/components/Navbar.tsx"],
       manifest,
     );
     expect(result.violations.sort()).toEqual([
-      "client/index.html",
       "client/src/components/Navbar.tsx",
       "client/src/index.css",
     ]);
+    expect(result.seam).toEqual(["client/index.html"]);
   });
 
   it("PASSES a permitted seam file but REPORTS it as a seam, not as an ordinary allowed change", () => {
@@ -139,9 +139,42 @@ describe("the changed-file classifier", () => {
     ]);
   });
 
-  it("FAILS a dependency change, so no candidate can add a browser harness by stealth", () => {
-    const result = classifyChangedFiles(["package.json", "package-lock.json"], manifest);
-    expect(result.violations.sort()).toEqual(["package-lock.json", "package.json"]);
+  it("admits only the reviewed global typography files as reported, hash-locked seams", () => {
+    const typographyFiles = [
+      "client/index.html",
+      "client/src/main.tsx",
+      "client/src/fonts.ts",
+      "package.json",
+      "package-lock.json",
+    ];
+    const result = classifyChangedFiles(typographyFiles, manifest);
+
+    expect(result.violations).toEqual([]);
+    expect(result.allowed).toEqual([]);
+    expect(result.seam.sort()).toEqual([...typographyFiles].sort());
+    const hashLockedSeams = manifest.permittedSeamFiles.files
+      .filter((entry: { seam: string }) => entry.seam.startsWith("hash-locked"))
+      .map((entry: { path: string }) => entry.path)
+      .sort();
+    expect(hashLockedSeams).toEqual([...typographyFiles].sort());
+    for (const path of typographyFiles) {
+      expect(manifest.fileHashes.files[path], `${path} must be hard hash-pinned`).toMatch(
+        /^sha256:[0-9a-f]{64}$/,
+      );
+    }
+  });
+
+  it("still FAILS adjacent font and dependency paths instead of widening a subtree", () => {
+    const result = classifyChangedFiles(
+      ["client/src/fonts-remote.ts", "client/src/theme/fonts.ts", "package.preview.json"],
+      manifest,
+    );
+    expect(result.seam).toEqual([]);
+    expect(result.violations.sort()).toEqual([
+      "client/src/fonts-remote.ts",
+      "client/src/theme/fonts.ts",
+      "package.preview.json",
+    ]);
   });
 
   it("allows the gate's own infrastructure so the protection tooling can exist in the repo", () => {
@@ -236,6 +269,26 @@ describe("the protected file hash tripwire", () => {
     expect(result.mismatches).toHaveLength(1);
     expect(result.mismatches[0].path).toBe(target);
     expect(result.mismatches[0].actual).not.toBe(result.mismatches[0].expected);
+  });
+
+  it("FAILS every mutation of the reviewed typography and dependency seam bytes", () => {
+    for (const target of [
+      "client/index.html",
+      "client/src/main.tsx",
+      "client/src/fonts.ts",
+      "package.json",
+      "package-lock.json",
+    ]) {
+      const tampered = fakeReader({
+        [target]: `${read(target)}\n/* mutation must fail */\n`,
+      });
+      const result = verifyHashes(
+        { [target]: manifest.fileHashes.files[target] },
+        tampered,
+      );
+      expect(result.mismatches, target).toHaveLength(1);
+      expect(result.mismatches[0].path).toBe(target);
+    }
   });
 
   it("FAILS when a protected file is deleted", () => {

@@ -310,7 +310,6 @@ export type AssistedOrderCatalogQuery = Readonly<{
 
 export type AssistedOrderUploadRequest = Readonly<{
   publicReference: string;
-  statusToken?: string;
   documentType: AssistedOrderDocumentType;
   side: AssistedOrderDocumentSide;
   fileName: string;
@@ -320,7 +319,6 @@ export type AssistedOrderUploadRequest = Readonly<{
 
 export type AssistedOrderUploadCompleteInput = Readonly<{
   publicReference: string;
-  statusToken?: string;
 }>;
 
 export type AssistedOrderUploadTicket = Readonly<{

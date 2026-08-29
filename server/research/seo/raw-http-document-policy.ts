@@ -2,6 +2,17 @@ import {
   ALL_MANIFEST_ROUTES,
 } from "../../../client/src/research/lib/routes";
 import {
+  CAREERS_ROLES,
+  OPEN_ROLES,
+} from "../../../client/src/lib/careers";
+import {
+  buildJobPostingJsonLd,
+} from "../../../client/src/lib/careers-schema";
+import {
+  ICP_BY_SLUG,
+  PAGES,
+} from "../../../client/src/lib/content";
+import {
   PUBLIC_QUALITY_ROUTES,
   publicLotRoute,
 } from "../../../client/src/research/quality/routes";
@@ -62,20 +73,12 @@ export const RAW_HTTP_GLOBAL_PUBLIC_PATHS = Object.freeze([
  * The adjacent source test pins this compact server projection bidirectionally
  * to that authoritative content source, including open/cohort classification.
  */
-export const RAW_HTTP_CAREER_DETAILS = Object.freeze([
-  {
-    path: "/careers/founding-designer",
-    jobPostingTitle: "Founding Designer",
-  },
-  {
-    path: "/careers/founding-senior-ai-software-engineer",
-    jobPostingTitle: "Founding Senior AI Software Engineer",
-  },
-  {
-    path: "/careers/founding-coach-cohort",
-    jobPostingTitle: null,
-  },
-] as const);
+export const RAW_HTTP_CAREER_DETAILS = Object.freeze(
+  CAREERS_ROLES.map((role) => Object.freeze({
+    path: `/careers/${role.slug}`,
+    jobPostingTitle: role.group === "open" ? role.title : null,
+  })),
+);
 
 /**
  * The live /for/:slug identities from client/src/lib/content.ts. Keeping the
@@ -123,6 +126,225 @@ const OPEN_JOB_TITLES = Object.freeze(
     detail.jobPostingTitle === null ? [] : [detail.jobPostingTitle],
   ),
 );
+
+export const RAW_HTTP_HOMEPAGE_STRUCTURED_DATA = Object.freeze([
+  Object.freeze({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${RAW_HTTP_SITE_ORIGIN}/#org`,
+    name: "xenios",
+    alternateName: "Xenios Technologies",
+    legalName: "Xenios Technologies, Inc.",
+    url: RAW_HTTP_SITE_ORIGIN,
+    logo: `${RAW_HTTP_SITE_ORIGIN}/brand/xenios-mark.png`,
+    email: "team@xeniostechnology.com",
+    description: "An AI workspace for health and performance professionals.",
+    areaServed: "US",
+    foundingLocation: Object.freeze({
+      "@type": "Place",
+      address: Object.freeze({
+        "@type": "PostalAddress",
+        addressLocality: "Austin",
+        addressRegion: "TX",
+        addressCountry: "US",
+      }),
+    }),
+    sameAs: Object.freeze([
+      "https://www.instagram.com/officialxenios",
+      "https://www.linkedin.com/company/officialxenios",
+    ]),
+  }),
+  Object.freeze({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    url: RAW_HTTP_SITE_ORIGIN,
+    name: "xenios",
+    publisher: Object.freeze({ "@id": `${RAW_HTTP_SITE_ORIGIN}/#org` }),
+  }),
+] as const);
+
+/** Exact route-owned schemas supplied by production composition, never parsed from the SPA template. */
+export function rawHttpStructuredDataForPath(path: string): readonly unknown[] {
+  if (path === "/") return RAW_HTTP_HOMEPAGE_STRUCTURED_DATA;
+  const roles = path === "/careers"
+    ? OPEN_ROLES
+    : OPEN_ROLES.filter((role) => `/careers/${role.slug}` === path);
+  return Object.freeze(roles.map((role) => Object.freeze(buildJobPostingJsonLd(role))));
+}
+
+export interface RawHttpDocumentMetadata {
+  readonly title: string;
+  readonly description: string;
+}
+
+const metadata = (title: string, description: string): RawHttpDocumentMetadata =>
+  Object.freeze({ title, description });
+
+/**
+ * Exact client-owned identities for literals that are not sourced from
+ * PAGES/ICP/careers data. Evidence compares these raw values with the browser
+ * values so a client literal cannot drift silently.
+ */
+const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentMetadata>> =
+  Object.freeze({
+    "/": metadata(
+      "xenios | The operating system for proactive health",
+      "The professional stays in front. Xen and Athena carry the work behind them.",
+    ),
+    "/product": metadata(
+      "Product, xenios",
+      "See how xenios works across one inbox, one client record, AI drafting, weekly check-ins, and the Client Attention Queue.",
+    ),
+    "/for-coaches": metadata(
+      "For Coaches, xenios",
+      "xenios helps high-touch coaches manage more clients without losing the human relationship. The AI drafts, the coach decides.",
+    ),
+    "/about": metadata(
+      "About, xenios",
+      "Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure.",
+    ),
+    "/careers": metadata(
+      "Careers, xenios",
+      "Open founding roles and the founding coach cohort at xenios.",
+    ),
+    "/security": metadata(
+      "Security, xenios",
+      "xenios treats client context and AI boundaries as product responsibilities, with scoped access, approval gates, and a security-first posture.",
+    ),
+    "/compliance": metadata(
+      "Compliance, xenios",
+      "xenios keeps compliance language honest, with clear AI boundaries, scope of practice rules, and a roadmap for trust documentation.",
+    ),
+    "/investors": metadata(
+      "Investors, xenios",
+      "xenios is building the AI-native operating layer for proactive health professionals, starting with coaches and the client attention workflow.",
+    ),
+    "/book": metadata("Book a call with xenios", "Book a call with the xenios team."),
+    "/early-interest": metadata(
+      "Early interest in xenios",
+      "Share your interest in the founding group of coaches.",
+    ),
+    "/concepts": metadata(
+      "Early concepts from xenios",
+      "A look at early concepts in development at xenios.",
+    ),
+    "/mvps": metadata(
+      "xenios MVP Lab",
+      "Functional synthetic demos for testing the xenios product system. Synthetic data only.",
+    ),
+    "/disclosures": metadata(
+      "Disclosures - xenios",
+      "Cookie and tracking, AI disclosure, medical disclaimer, and data deletion for xenios.",
+    ),
+    "/research": metadata(
+      "Xenios Research | Clear, evidence-aware research access",
+      "Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway.",
+    ),
+    "/research/access-hub": metadata(
+      "Access Xenios Research",
+      "Choose the Xenios Research access path that matches your intended relationship or question.",
+    ),
+    "/research/how-it-works": metadata(
+      "How Xenios Research works",
+      "Understand the Xenios Research journey from access selection and exact product review to truthful request, order, document, and support status.",
+    ),
+    "/research/quality": metadata(
+      "Quality system | Xenios Research",
+      "See how Xenios Research handles receiving, lot identity, quarantine, evidence review, release decisions, documents, storage, and fulfillment traceability.",
+    ),
+    "/research/testing": metadata(
+      "Testing explained | Xenios Research",
+      "Understand identity, purity, assay, microbial, contaminant, and stability evidence—and the limits of every result.",
+    ),
+    "/research/documents": metadata(
+      "Quality documents | Xenios Research",
+      "Find approved public lot records or sign in for secure, ownership-scoped account documents.",
+    ),
+    "/research/organizations": metadata(
+      "Organization access | Xenios Research",
+      "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners.",
+    ),
+    "/research/partners": metadata(
+      "Business partnerships | Xenios Research",
+      "Reviewed pathways for research organizations, clinics, medical spas, providers, affiliates, collectives, suppliers, white-label teams, and strategic partners.",
+    ),
+    "/research/affiliates": metadata(
+      "Affiliate access | Xenios Research",
+      "A compliance-first affiliate pathway with reviewed applications, approved resources, durable attribution, and no influence over clinical decisions.",
+    ),
+    "/research/supplier-access": metadata(
+      "Supplier and laboratory access | Xenios Research",
+      "Prospective supplier, laboratory, and fulfillment pathways with minimum-data boundaries, evidence requirements, and human review.",
+    ),
+    "/research/about": metadata(
+      "About Xenios Research",
+      "Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations.",
+    ),
+    "/research/faq": metadata(
+      "Frequently asked questions | Xenios Research",
+      "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support.",
+    ),
+    "/research/support": metadata(
+      "Support, xenios research",
+      "Contact xenios research support, check an application, claim an approved account, or reset a password.",
+    ),
+    "/research/policies": metadata(
+      "Research policies | Xenios Research",
+      "Find the public Xenios Research-use, privacy, terms, shipping, and returns documents with their current publication status shown plainly.",
+    ),
+    "/research/contact": metadata(
+      "Contact Xenios Research",
+      "Contact Xenios Research for operational support, account help, documents, organization context, or help choosing the correct Research or Care pathway.",
+    ),
+    "/research/privacy": metadata(
+      "Privacy Policy, xenios research",
+      "The privacy policy for the xenios research section.",
+    ),
+    "/research/terms": metadata(
+      "Terms of Service, xenios research",
+      "The terms of service for the xenios research section.",
+    ),
+    "/research/policies/research-use": metadata(
+      "Research Use Policy, xenios research",
+      "Research Use Policy for the xenios research section.",
+    ),
+    "/research/policies/shipping": metadata(
+      "Shipping Policy, xenios research",
+      "Shipping Policy for the xenios research section.",
+    ),
+    "/research/policies/returns": metadata(
+      "Returns and Replacements, xenios research",
+      "Returns and Replacements for the xenios research section.",
+    ),
+    "/research/policies/accessibility": metadata(
+      "Accessibility Statement, xenios research",
+      "Accessibility Statement for the xenios research section.",
+    ),
+  });
+
+export function rawHttpDocumentMetadataForPath(path: string): RawHttpDocumentMetadata | null {
+  const literal = RAW_HTTP_LITERAL_PUBLIC_METADATA[path];
+  if (literal) return literal;
+  const contentPage = Object.values(PAGES).find((page) => page.path === path);
+  if (contentPage && path !== "/404") {
+    return metadata(contentPage.title, contentPage.description);
+  }
+  if (path.startsWith("/for/")) {
+    const icp = ICP_BY_SLUG[path.slice("/for/".length)];
+    if (icp) return metadata(`${icp.label}, xenios`, icp.oneLiner);
+  }
+  if (path.startsWith("/careers/")) {
+    const role = CAREERS_ROLES.find((candidate) => `/careers/${candidate.slug}` === path);
+    if (role) return metadata(`${role.title}, xenios`, role.summary);
+  }
+  if (/^\/research\/lots\/[^/]+$/u.test(path)) {
+    return metadata(
+      "Verify a lot | Xenios Research",
+      "Check an exact lot code against the approved Xenios Research public quality record.",
+    );
+  }
+  return null;
+}
 
 const KNOWN_NOINDEX_EXACT_PATHS = Object.freeze([
   // Top-level admin/auth and client redirects.
@@ -383,9 +605,6 @@ function publicSchemaForPath(path: string): RawHttpSchemaAllowance {
   if (path === "/") {
     return schemaAllowance(["Organization", "WebSite"]);
   }
-  if (path === "/research/faq") {
-    return schemaAllowance(["FAQPage"]);
-  }
   if (path === "/careers") {
     return schemaAllowance([], OPEN_JOB_TITLES);
   }
@@ -604,7 +823,8 @@ export interface BuildRawHttpDocumentResponseInput {
    * Environment indexing gate (RESEARCH_INDEXABLE === "true"). While false,
    * every public_index document is answered noindex at the header AND the
    * meta tag — the same gate production applied through the research
-   * middleware's X-Robots-Tag — while keeping its exact status and canonical.
+   * middleware's X-Robots-Tag — and loses canonical/Open Graph/schema
+   * authority until indexing is explicitly enabled.
    * Defaults to true so the policy tables keep describing each document's
    * intended indexability; the environment decides whether it is in force.
    */
@@ -663,7 +883,9 @@ function normalizedHtmlAttribute(tag: string, name: string): string | null {
     : decodeHtmlAttributeEntities(value).trim().toLowerCase();
 }
 
-function stripTemplateSeoAuthority(templateHtml: string): string {
+function stripTemplateSeoAuthority(
+  templateHtml: string,
+): string {
   let html = templateHtml.replace(
     /<script\b[^>]*>[\s\S]*?<\/script\s*>/giu,
     (element) => {
@@ -675,6 +897,10 @@ function stripTemplateSeoAuthority(templateHtml: string): string {
     },
   );
 
+  // A route must never inherit the SPA template's title. The policy injects
+  // one exact route-owned title below.
+  html = html.replace(/<title\b[^>]*>[\s\S]*?<\/title\s*>/giu, "");
+
   html = html.replace(/<meta\b[^>]*>/giu, (tag) => {
     const name = normalizedHtmlAttribute(tag, "name");
     const property = normalizedHtmlAttribute(tag, "property");
@@ -682,7 +908,9 @@ function stripTemplateSeoAuthority(templateHtml: string): string {
     return name === "robots"
       || name === "googlebot"
       || name === "bingbot"
-      || property === "og:url"
+      || name === "description"
+      || name?.startsWith("twitter:")
+      || property?.startsWith("og:")
       || httpEquiv === "x-robots-tag"
       ? ""
       : tag;
@@ -924,15 +1152,43 @@ function renderPolicyHead(
   policy: RawHttpDocumentPolicy,
   structuredData: readonly unknown[],
 ): string {
+  const path = policy.canonicalPath ?? policy.normalizedPath;
+  const routeMetadata = path === null ? null : rawHttpDocumentMetadataForPath(path);
+  const neutralMetadata = policy.status === 404
+    ? metadata("Not found, xenios", "That page is not here.")
+    : metadata(
+        "Private document, xenios",
+        "This document is private and carries no public search or social authority.",
+      );
+  if (policy.routeKind === "public" && routeMetadata === null) {
+    throw new Error(`raw HTTP public route is missing exact client metadata: ${path ?? "(missing path)"}`);
+  }
+  const { title, description } = policy.routeKind === "public"
+    ? routeMetadata!
+    : neutralMetadata;
   const lines = [
+    `<title>${escapeHtmlAttribute(title)}</title>`,
+    `<meta name="description" content="${escapeHtmlAttribute(description)}" data-raw-http-policy="description" />`,
     `<meta name="robots" content="${escapeHtmlAttribute(policy.robots)}" data-raw-http-policy="robots" />`,
   ];
 
   if (policy.canonicalUrl !== null) {
     const canonicalUrl = escapeHtmlAttribute(policy.canonicalUrl);
+    const escapedTitle = escapeHtmlAttribute(title);
+    const escapedDescription = escapeHtmlAttribute(description);
+    const image = `${RAW_HTTP_SITE_ORIGIN}/og/xenios-og-image-v2.png`;
     lines.push(
       `<link rel="canonical" href="${canonicalUrl}" data-raw-http-policy="canonical" />`,
+      `<meta property="og:title" content="${escapedTitle}" data-raw-http-policy="og-title" />`,
+      `<meta property="og:description" content="${escapedDescription}" data-raw-http-policy="og-description" />`,
+      `<meta property="og:image" content="${image}" data-raw-http-policy="og-image" />`,
       `<meta property="og:url" content="${canonicalUrl}" data-raw-http-policy="og-url" />`,
+      `<meta property="og:type" content="website" data-raw-http-policy="og-type" />`,
+      `<meta name="twitter:card" content="summary_large_image" data-raw-http-policy="twitter-card" />`,
+      `<meta name="twitter:site" content="@officialxenios" data-raw-http-policy="twitter-site" />`,
+      `<meta name="twitter:title" content="${escapedTitle}" data-raw-http-policy="twitter-title" />`,
+      `<meta name="twitter:description" content="${escapedDescription}" data-raw-http-policy="twitter-description" />`,
+      `<meta name="twitter:image" content="${image}" data-raw-http-policy="twitter-image" />`,
     );
   }
 
@@ -952,7 +1208,14 @@ export function buildRawHttpDocumentResponse(
   const resolved = resolver.resolve(input.requestTarget);
   const policy: RawHttpDocumentPolicy =
     input.indexable === false && resolved.indexable
-      ? Object.freeze({ ...resolved, indexable: false, robots: RAW_HTTP_NOINDEX_ROBOTS })
+      ? Object.freeze({
+          ...resolved,
+          indexable: false,
+          robots: RAW_HTTP_NOINDEX_ROBOTS,
+          canonicalPath: null,
+          canonicalUrl: null,
+          schema: EMPTY_SCHEMA,
+        })
       : resolved;
   const sanitized = stripTemplateSeoAuthority(input.templateHtml);
   const closingHead = /<\/head\s*>/iu.exec(sanitized);

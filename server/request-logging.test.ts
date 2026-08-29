@@ -105,7 +105,11 @@ describe("HTTP error disclosure policy", () => {
       "/api/care/appointments/private-record-7",
       "/api/care/appointments/:appointmentId",
     ) as Request;
-    (req as any).headers = { "x-request-id": "customer-selected-id" };
+    const statusCredential = "opaque-status-credential-must-never-log";
+    (req as any).headers = {
+      "x-request-id": "customer-selected-id",
+      "x-xenios-order-status-token": statusCredential,
+    };
     const headers: Record<string, unknown> = {};
     const res = { setHeader: (key: string, value: unknown) => (headers[key] = value) } as Response;
     requestId()(req, res, () => {});
@@ -117,6 +121,8 @@ describe("HTTP error disclosure policy", () => {
     expect(line).toContain("status=500");
     expect(line).not.toContain("private-record-7");
     expect(line).not.toContain("customer-selected-id");
+    expect(line).not.toContain("x-xenios-order-status-token");
+    expect(line).not.toContain(statusCredential);
   });
 
   it("keeps the global logger wired to the bounded helpers", () => {

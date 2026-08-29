@@ -305,6 +305,7 @@
       "client/public/**",
       "client/src/App.tsx",
       "client/src/main.tsx",
+      "client/src/fonts.ts",
       "client/src/index.css",
       "client/src/pages/**",
       "client/src/components/**",
@@ -461,7 +462,7 @@
   "permittedSeamFiles": {
     "$comment": [
       "The ONLY protected files a Research or Care candidate may touch, and only for a",
-      "minimal integration seam (registering a route, mounting a router, adding a flag).",
+      "minimal integration seam or the exact hash-locked Omega typography change set.",
       "Every edit here requires ALL of:",
       "  1. an exclusive lease on the file for the duration of the change,",
       "  2. the minimum possible diff (a registration line, not a refactor),",
@@ -475,6 +476,36 @@
         "seam": "route registration only",
         "allowed": "add or remove a <Route> for a /research or /care path, and its lazy import plus Suspense wrapper, following the existing ResearchRoutes/CareRoutes pattern",
         "forbidden": "changing any protected route, its component, its order relative to protected routes, the ScrollToTop behavior, or the provider tree in App()"
+      },
+      {
+        "path": "client/index.html",
+        "seam": "hash-locked same-origin typography shell change only",
+        "allowed": "the reviewed removal of the Google Fonts preconnect and stylesheet elements recorded in fileHashes; the current complete file is hash-pinned",
+        "forbidden": "any other metadata, structured-data, script, route-shell, icon, manifest, title, or document change; any byte change fails the fileHashes tripwire"
+      },
+      {
+        "path": "client/src/main.tsx",
+        "seam": "hash-locked same-origin typography entry import only",
+        "allowed": "the reviewed import of client/src/fonts.ts before client/src/index.css recorded in fileHashes; the current complete file is hash-pinned",
+        "forbidden": "any provider, initialization, tracking, attribution, render-order, application, or additional import change; any byte change fails the fileHashes tripwire"
+      },
+      {
+        "path": "client/src/fonts.ts",
+        "seam": "hash-locked Fontsource import entry only",
+        "allowed": "the seven reviewed Fontsource 5.3.0 weight imports recorded in fileHashes; the current complete file is hash-pinned",
+        "forbidden": "any external URL, @import, additional package, family, style, weight, executable statement, or other byte change"
+      },
+      {
+        "path": "package.json",
+        "seam": "hash-locked Fontsource dependency declarations only",
+        "allowed": "the exact @fontsource/inter-tight and @fontsource/jetbrains-mono 5.3.0 dependency declarations recorded in fileHashes; the current complete file is hash-pinned",
+        "forbidden": "any script, engine, dependency, version, package metadata, or other byte change"
+      },
+      {
+        "path": "package-lock.json",
+        "seam": "hash-locked Fontsource lock entries only",
+        "allowed": "the exact npm lockfile produced by the two reviewed Fontsource 5.3.0 dependencies and recorded in fileHashes; the current complete file is hash-pinned",
+        "forbidden": "any package, resolved URL, integrity, dependency graph, lock metadata, or other byte change"
       },
       {
         "path": "server/index.ts",
@@ -510,7 +541,10 @@
       "an unconditional FAIL, because none of these can be part of a legitimate",
       "Research or Care seam. Not the whole tree, by design: this is a tripwire for an",
       "accidental edit, not a lockfile.",
-      "Seam files are NOT hashed here; their baselines live in seamBaselineHashes.",
+      "Ordinary seam files are NOT hashed here; their baselines live in seamBaselineHashes.",
+      "The five Omega typography seams are deliberately different: their complete reviewed",
+      "bytes are hash-locked here, so the classifier can admit this one reviewed change set",
+      "without allowing any successor mutation to those global or dependency files.",
       "",
       "2026-08-14, ROMAN_RELEASE_0_2 (PWA shell), reviewed by the lead: client/index.html",
       "old sha256:67b9d426ed7cbb3478dd2c62bb7761bd80d62fccfde9ac96e382fee7ff68e0a6,",
@@ -558,12 +592,17 @@
       "client/src/components/Footer.tsx: old sha256:7c51c77b06c0f1ebfe9b3dbfe5ca2040d81b0dca9d386501a161fb14d4e0404c, new sha256:cef8d1891e42b2213dd90324fafea257a7164d762af7ef7bb05ea14b30176247 (contact, social, and navigation links gain 44 px target height with redundant vertical spacing removed).",
       "client/src/components/TopRibbon.tsx: old sha256:7c17c36f6a54a2eb9bcadf8489d266254115cae2f88e845e003d2c2cc4a2c440, new sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666 (dismiss control gains an exact minimum 44x44 target).",
       "client/src/components/Wordmark.tsx: old sha256:b910c8bf6a0b890612378aae0f95691adfb989cf0b37bc89ccc2da8eac541cb3, new sha256:878c3f3710b7d1c1cedf841268cee65061148af24173788a354023d8b5c90ec6 (linked wordmark gains a 44 px minimum target height).",
-      "server/static.ts: old sha256:2a23f84e01d6fa02a26e743b07eb211cf41d1f6aac2d18b8913f222c26f8f901, new sha256:92b5e6d421d42a3c69e375ee1cf2b40137ad7d85f1478ede4243f9a6a15f27d9 (Care documents strip only the shared Google Fonts links that their reviewed self-only CSP blocks; /favicon.ico is an alias of the shipped favicon.png so protected Hino documents stay byte-identical and no longer trigger a candidate-only 404. Covered by server/static.test.ts)."
+      "server/static.ts: old sha256:2a23f84e01d6fa02a26e743b07eb211cf41d1f6aac2d18b8913f222c26f8f901, new sha256:92b5e6d421d42a3c69e375ee1cf2b40137ad7d85f1478ede4243f9a6a15f27d9 (Care documents strip only the shared Google Fonts links that their reviewed self-only CSP blocks; /favicon.ico is an alias of the shipped favicon.png so protected Hino documents stay byte-identical and no longer trigger a candidate-only 404. Covered by server/static.test.ts).",
+      "server/static.ts: old sha256:92b5e6d421d42a3c69e375ee1cf2b40137ad7d85f1478ede4243f9a6a15f27d9, new sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924 (2026-08-29 Omega raw-SEO authority repair: the static handler supplies only route-owned structured data selected by the raw HTTP policy when no explicit caller override is present, preserving exact reviewed Organization/WebSite schema on / and buildJobPostingJsonLd output on open career routes while continuing to strip arbitrary template JSON-LD. Covered by server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts).",
+      "2026-08-29, Omega same-origin typography hardening. The shell removes only the network-generating Google Fonts stylesheet; title, metadata, routes, structured data, application order, and rendered font-family names/weights are unchanged. client/src/main.tsx adds one import of client/src/fonts.ts before the existing index.css import, and package.json pins Fontsource 5.3.0 assets for the exact Inter Tight 500/600/700/800/900 and JetBrains Mono 500/600 families already declared by the site. This eliminates third-party dispatch and fallback-font evidence while preserving the reviewed typography. Covered by server/static.test.ts, scripts/evidence/capture-browser-matrix.test.mjs, the blocking SELF_HOSTED_FONTS_LOADED browser assertion, and the production build.",
+      "client/index.html: old sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5, new sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659 (removed only the external Google Fonts stylesheet request).",
+      "client/src/main.tsx: old sha256:16d3f1bc4b1ead4d554da8d3862b94df768e7c37e08a0b54d42412b07b54ff15, new sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162 (added only the pinned same-origin font entry import before index.css)."
     ],
     "files": {
-      "client/index.html": "sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5",
+      "client/index.html": "sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659",
       "client/src/index.css": "sha256:c674bfe3cb6d1af28e49283eac037828d3b82bcfbd13e89ebfb04db70143b3fc",
-      "client/src/main.tsx": "sha256:16d3f1bc4b1ead4d554da8d3862b94df768e7c37e08a0b54d42412b07b54ff15",
+      "client/src/main.tsx": "sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
+      "client/src/fonts.ts": "sha256:643c7a1a30fcf0f6a1a300c0bf7a044cf2e426e579405493cc4251474f4a73a5",
       "client/src/components/Navbar.tsx": "sha256:a4d414440431bc646811f82b6551d5d877667e3a755484eda4e1b1de01746fad",
       "client/src/components/Footer.tsx": "sha256:cef8d1891e42b2213dd90324fafea257a7164d762af7ef7bb05ea14b30176247",
       "client/src/components/PageShell.tsx": "sha256:c4d279945f15efde4f1304b507a2e56e7f3ea3b92739fc23528789205d7fbe15",
@@ -579,7 +618,9 @@
       "client/public/sitemap.xml": "sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
-      "server/static.ts": "sha256:92b5e6d421d42a3c69e375ee1cf2b40137ad7d85f1478ede4243f9a6a15f27d9",
+      "server/static.ts": "sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924",
+      "package.json": "sha256:10033e478592a124a66283217f5767c61ceb352578b60ff868c10a5260336066",
+      "package-lock.json": "sha256:93652919603004f95b2fbd3eb6cae68804f1965668d6cef0e8027a59d5d54e4d",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
     }

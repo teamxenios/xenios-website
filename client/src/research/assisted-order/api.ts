@@ -8,6 +8,7 @@ import type {
   AssistedOrderStatusUpdateInput,
   AssistedOrderStatusView,
   AssistedOrderSubmitInput,
+  AssistedOrderUploadCompleteInput,
   AssistedOrderUploadRequest,
   AssistedOrderUploadTicket,
 } from "../../../../shared/research/assisted-order/contract";
@@ -15,6 +16,9 @@ import {
   parseAssistedOrderConfig,
   type AssistedOrderWizardConfig,
 } from "./wizard-state";
+
+export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
+  "x-xenios-order-status-token";
 
 export class AssistedOrderApiError extends Error {
   public constructor(
@@ -167,32 +171,40 @@ export function loadAssistedOrderStatus(
   publicReference: string,
   statusToken?: string,
 ): Promise<AssistedOrderStatusView> {
-  const params = new URLSearchParams();
-  if (statusToken) params.set("token", statusToken);
-  const suffix = params.toString() ? `?${params.toString()}` : "";
   return request(
     `/api/research/early-access/assisted-orders/${encodeURIComponent(
       publicReference,
-    )}${suffix}`,
+    )}`,
+    statusToken
+      ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
+      : {},
   );
 }
 
 export function createAssistedOrderUploadTicket(
   requestId: string,
   input: AssistedOrderUploadRequest,
+  statusToken?: string,
 ): Promise<AssistedOrderUploadTicket> {
   return request(
     `/api/research/early-access/assisted-orders/${encodeURIComponent(
       requestId,
     )}/documents/upload-url`,
-    { method: "POST", body: JSON.stringify(input) },
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+      ...(statusToken
+        ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
+        : {}),
+    },
   );
 }
 
 export async function uploadAssistedOrderDocument(
   ticket: AssistedOrderUploadTicket,
   file: File,
-  authorization: { publicReference: string; statusToken?: string },
+  completion: AssistedOrderUploadCompleteInput,
+  statusToken?: string,
 ): Promise<void> {
   const response = await fetch(ticket.uploadUrl, {
     method: "PUT",
@@ -213,7 +225,13 @@ export async function uploadAssistedOrderDocument(
     `/api/research/early-access/assisted-orders/${encodeURIComponent(
       ticket.objectPath.split("/")[0],
     )}/documents/${encodeURIComponent(ticket.documentId)}/complete`,
-    { method: "POST", body: JSON.stringify(authorization) },
+    {
+      method: "POST",
+      body: JSON.stringify(completion),
+      ...(statusToken
+        ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
+        : {}),
+    },
   );
 }
 

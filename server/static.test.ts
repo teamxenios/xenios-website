@@ -22,10 +22,10 @@ const SHELL = `<!doctype html>
     <title>xenios | shell</title>
     <meta name="robots" content="index,follow" />
     <meta property="og:url" content="https://xeniostechnology.com" />
+    <meta property="og:title" content="Inherited title" />
+    <meta property="og:image" content="https://xeniostechnology.com/og/xenios-og-image-v2.png" />
     <link rel="canonical" href="https://xeniostechnology.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight&amp;display=swap" rel="stylesheet" />
+    <link href="/assets/fonts.css" rel="stylesheet" />
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"template-organization"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","name":"template-faq"}</script>
   </head>
@@ -87,7 +87,7 @@ describe("the production static server answers documents through the raw HTTP po
     expect(Buffer.from(favicon.body).toString("utf8")).toBe("test-favicon");
   });
 
-  it("serves the homepage as an indexable document with its own canonical and no template schema", async () => {
+  it("serves the homepage with route-owned metadata and Organization/WebSite schema", async () => {
     const res = await request(app).get("/");
     expect(res.status).toBe(200);
     expect(res.headers["content-type"]).toMatch(/text\/html/u);
@@ -98,9 +98,23 @@ describe("the production static server answers documents through the raw HTTP po
     // The template's global JSON-LD is never route authority.
     expect(res.text).not.toContain("template-organization");
     expect(res.text).not.toContain("template-faq");
-    expect(res.text).not.toContain("application/ld+json");
+    expect(res.text.match(/data-raw-http-schema="Organization"/gu)).toHaveLength(1);
+    expect(res.text.match(/data-raw-http-schema="WebSite"/gu)).toHaveLength(1);
+    expect(res.text.match(/application\/ld\+json/gu)).toHaveLength(2);
+    expect(res.text).toContain("xenios | The operating system for proactive health");
+    expect(res.text).toContain("The professional stays in front. Xen and Athena carry the work behind them.");
     // Exactly one robots directive survives: the policy's.
     expect(res.text.match(/name="robots"/gu)).toHaveLength(1);
+  });
+
+  it("serves only reviewed JobPosting schema on careers routes", async () => {
+    const careers = await request(app).get("/careers");
+    expect(careers.text.match(/data-raw-http-schema="JobPosting:/gu)).toHaveLength(2);
+    const detail = await request(app).get("/careers/founding-designer");
+    expect(detail.text.match(/data-raw-http-schema="JobPosting:Founding Designer"/gu))
+      .toHaveLength(1);
+    const closed = await request(app).get("/careers/founding-coach-cohort");
+    expect(closed.text).not.toContain('data-raw-http-schema="JobPosting:');
   });
 
   it("serves a public Research editorial page as indexable with an exact canonical", async () => {
@@ -110,25 +124,46 @@ describe("the production static server answers documents through the raw HTTP po
     expect(canonical(res.text)).toBe("https://xeniostechnology.com/research/quality");
   });
 
-  it("keeps a private member document at 200 but noindex, with no canonical or og:url", async () => {
+  it("keeps a private member document at 200 but noindex, with no canonical or Open Graph authority", async () => {
     const res = await request(app).get("/research/member/orders");
     expect(res.status).toBe(200);
     expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
     expect(robots(res.text)).toBe("noindex,nofollow,noarchive");
     expect(canonical(res.text)).toBeNull();
-    expect(res.text).not.toContain('property="og:url"');
+    expect(res.text).not.toContain('property="og:');
+    expect(res.text).not.toContain('name="twitter:');
+    expect(res.text).not.toContain("xenios | shell");
     expect(res.headers.link).toBeUndefined();
   });
 
-  it("removes external font requests only from Care documents with a self-only CSP", async () => {
+  it("keeps the self-hosted font asset same-origin for Care and marketing documents", async () => {
     const care = await request(app).get("/care");
     expect(care.status).toBe(200);
     expect(care.text).not.toContain("fonts.googleapis.com");
     expect(care.text).not.toContain("fonts.gstatic.com");
+    expect(care.text).toContain('href="/assets/fonts.css"');
 
     const marketing = await request(app).get("/");
-    expect(marketing.text).toContain("fonts.googleapis.com");
-    expect(marketing.text).toContain("fonts.gstatic.com");
+    expect(marketing.text).not.toContain("fonts.googleapis.com");
+    expect(marketing.text).not.toContain("fonts.gstatic.com");
+    expect(marketing.text).toContain('href="/assets/fonts.css"');
+  });
+
+  it("pins production typography to same-origin Fontsource packages", () => {
+    const clientIndex = fs.readFileSync(path.resolve("client/index.html"), "utf8");
+    const fontEntry = fs.readFileSync(path.resolve("client/src/fonts.ts"), "utf8");
+    expect(clientIndex).not.toMatch(/fonts\.(?:googleapis|gstatic)\.com/u);
+    for (const asset of [
+      "@fontsource/inter-tight/500.css",
+      "@fontsource/inter-tight/600.css",
+      "@fontsource/inter-tight/700.css",
+      "@fontsource/inter-tight/800.css",
+      "@fontsource/inter-tight/900.css",
+      "@fontsource/jetbrains-mono/500.css",
+      "@fontsource/jetbrains-mono/600.css",
+    ]) {
+      expect(fontEntry).toContain(`import \"${asset}\";`);
+    }
   });
 
   it("answers an unknown document with an authoritative 404 and noindex", async () => {
@@ -137,6 +172,9 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
     expect(robots(res.text)).toBe("noindex,nofollow,noarchive");
     expect(canonical(res.text)).toBeNull();
+    expect(res.text).not.toContain('property="og:');
+    expect(res.text).not.toContain('name="twitter:');
+    expect(res.text).not.toContain("xenios | shell");
   });
 
   it("no longer soft-404s an unknown career slug", async () => {
@@ -190,7 +228,8 @@ describe("the production static server answers documents through the raw HTTP po
       expect(gated.status).toBe(200);
       expect(gated.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
       expect(gated.text).toContain('<meta name="robots" content="noindex,nofollow,noarchive" data-raw-http-policy="robots" />');
-      expect(gated.text).toContain('<link rel="canonical" href="https://xeniostechnology.com/research" data-raw-http-policy="canonical" />');
+      expect(gated.text).not.toContain('rel="canonical"');
+      expect(gated.text).not.toContain('property="og:');
       process.env.RESEARCH_INDEXABLE = "true";
       const open = await request(app).get("/research");
       expect(open.headers["x-robots-tag"]).toContain("index,follow");

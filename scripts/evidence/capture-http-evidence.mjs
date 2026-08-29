@@ -6,14 +6,29 @@
 // Open Graph, meta robots, JSON-LD types; plus sitemap parity against
 // /sitemap.xml and the authoritative-404 probe. Writes http-evidence.json and
 // the raw HTML of each response under raw-html/ for review.
+import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { evaluateHttpHead, extractHtmlMetadata, parseSitemapLocs } from "./lib/html-metadata.mjs";
+import {
+  evaluateHttpHead,
+  evaluateRobotsTxt,
+  evaluateSitemapLocs,
+  extractHtmlMetadata,
+  parseSitemapLocs,
+} from "./lib/html-metadata.mjs";
 import { slug } from "./lib/report.mjs";
 import { gitSha } from "./capture-browser-matrix.mjs";
+import {
+  assertCleanCandidateCheckout,
+  assertPinnedExecutingRuntime,
+  fetchPreviewProvenance,
+} from "./lib/provenance.mjs";
+import { assertExternalMicrositeInventory } from "./lib/route-contract.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "../..");
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 function parseArgs(argv) {
   const out = { routes: join(here, "routes.public.json"), only: null };
@@ -31,21 +46,31 @@ function parseArgs(argv) {
   return out;
 }
 
-async function fetchDocument(url, { follow = 3 } = {}) {
+export function assertEvidenceHttpUrl(rawUrl, allowedOrigin) {
+  const url = new URL(rawUrl);
+  if (url.protocol !== "http:" || url.origin !== allowedOrigin) {
+    throw new Error(`HTTP evidence refused off-origin URL ${url.toString()}`);
+  }
+  return url.toString();
+}
+
+async function fetchDocument(url, { follow = 3, allowedOrigin } = {}) {
+  if (!allowedOrigin) throw new Error("HTTP evidence requires an explicit allowed origin");
   const redirects = [];
-  let current = url;
+  let current = assertEvidenceHttpUrl(url, allowedOrigin);
   for (let hop = 0; hop <= follow; hop++) {
     const res = await fetch(current, { redirect: "manual", headers: { accept: "text/html,application/xhtml+xml", "user-agent": "xenios-evidence/1 (raw-http)" } });
     const headers = {};
     for (const [k, v] of res.headers) headers[k.toLowerCase()] = v;
-    const body = await res.text();
+    const bodyBytes = Buffer.from(await res.arrayBuffer());
+    const body = bodyBytes.toString("utf8");
     if (res.status >= 300 && res.status < 400 && headers.location && hop < follow) {
-      const next = new URL(headers.location, current).toString();
+      const next = assertEvidenceHttpUrl(new URL(headers.location, current), allowedOrigin);
       redirects.push({ from: current, status: res.status, to: next });
       current = next;
       continue;
     }
-    return { status: res.status, headers, body, redirects, finalUrl: current };
+    return { status: res.status, headers, body, bodyBytes, redirects, finalUrl: current };
   }
   throw new Error(`too many redirects from ${url}`);
 }
@@ -56,25 +81,56 @@ export async function main(argv = process.argv.slice(2)) {
     console.log("usage: capture-http-evidence.mjs --base-url <url> --out-dir <dir> [--sha <sha>] [--routes <json>] [--only /a,/b]");
     process.exit(args.help ? 0 : 2);
   }
-  const outDir = resolve(args.outDir);
-  mkdirSync(join(outDir, "raw-html"), { recursive: true });
+  const captureRuntime = assertPinnedExecutingRuntime();
   const inventory = JSON.parse(readFileSync(resolve(args.routes), "utf8"));
+  assertExternalMicrositeInventory(inventory.routes);
   const routes = inventory.routes.filter((r) => !args.only || args.only.includes(r.path));
   const sha = args.sha ?? gitSha() ?? "UNKNOWN";
+  const checkout = assertCleanCandidateCheckout({ sha });
+  const provenance = await fetchPreviewProvenance(args.baseUrl, checkout);
+  const outDir = resolve(args.outDir);
+  mkdirSync(join(outDir, "raw-html"), { recursive: true });
   const origin = new URL(args.baseUrl).origin;
+  const sitemapSourcePath = join(repoRoot, "client", "public", "sitemap.xml");
+  const robotsSourcePath = join(repoRoot, "client", "public", "robots.txt");
+  const sitemapSource = readFileSync(sitemapSourcePath);
+  const robotsSource = readFileSync(robotsSourcePath);
 
   let sitemap = { status: null, locs: null, error: null };
   try {
-    const res = await fetchDocument(new URL("/sitemap.xml", args.baseUrl).toString());
-    sitemap = { status: res.status, locs: res.status === 200 ? parseSitemapLocs(res.body) : null, error: null, count: res.status === 200 ? parseSitemapLocs(res.body).length : 0 };
-    writeFileSync(join(outDir, "raw-html", "sitemap.xml"), res.body);
+    const res = await fetchDocument(new URL("/sitemap.xml", args.baseUrl).toString(), { allowedOrigin: origin });
+    const locs = res.status === 200 ? parseSitemapLocs(res.body) : null;
+    sitemap = {
+      status: res.status,
+      locs,
+      error: null,
+      count: locs?.length ?? 0,
+      bodyPath: "raw-html/sitemap.xml",
+      bodySha256: sha256(res.bodyBytes),
+      bodyBytes: res.bodyBytes.length,
+      sourcePath: "client/public/sitemap.xml",
+      sourceSha256: sha256(sitemapSource),
+      exactSourceMatch: res.bodyBytes.equals(sitemapSource),
+      locsValidation: evaluateSitemapLocs(locs),
+    };
+    writeFileSync(join(outDir, sitemap.bodyPath), res.bodyBytes);
   } catch (e) {
     sitemap.error = String(e.message ?? e);
   }
-  let robots = { status: null, body: null };
+  let robots = { status: null };
   try {
-    const res = await fetchDocument(new URL("/robots.txt", args.baseUrl).toString());
-    robots = { status: res.status, body: res.body.slice(0, 4000) };
+    const res = await fetchDocument(new URL("/robots.txt", args.baseUrl).toString(), { allowedOrigin: origin });
+    robots = {
+      status: res.status,
+      bodyPath: "raw-html/robots.txt",
+      bodySha256: sha256(res.bodyBytes),
+      bodyBytes: res.bodyBytes.length,
+      sourcePath: "client/public/robots.txt",
+      sourceSha256: sha256(robotsSource),
+      exactSourceMatch: res.bodyBytes.equals(robotsSource),
+      directivesValidation: evaluateRobotsTxt(res.body),
+    };
+    writeFileSync(join(outDir, robots.bodyPath), res.bodyBytes);
   } catch (e) {
     robots.error = String(e.message ?? e);
   }
@@ -84,10 +140,10 @@ export async function main(argv = process.argv.slice(2)) {
     const url = new URL(route.path, args.baseUrl).toString();
     const timestampUtc = new Date().toISOString();
     try {
-      const res = await fetchDocument(url);
+      const res = await fetchDocument(url, { allowedOrigin: origin });
       const meta = extractHtmlMetadata(res.body);
       const file = `raw-html/${slug(route.path === "/" ? "root" : route.path)}.html`;
-      writeFileSync(join(outDir, file), res.body);
+      writeFileSync(join(outDir, file), res.bodyBytes);
       const assertions = evaluateHttpHead({ route, status: res.status, headers: res.headers, meta, sitemapLocs: sitemap.locs, origin });
       records.push({
         candidateSha: sha,
@@ -101,6 +157,7 @@ export async function main(argv = process.argv.slice(2)) {
         headers: pick(res.headers, ["content-type", "x-robots-tag", "cache-control", "location", "content-security-policy", "x-frame-options", "strict-transport-security", "referrer-policy"]),
         metadata: meta,
         rawHtmlPath: file,
+        rawHtmlSha256: sha256(res.bodyBytes),
         assertions,
         result: assertions.some((a) => a.result === "FAIL") ? "AUTOMATED_FAIL" : "AUTOMATED_PASS",
       });
@@ -110,14 +167,19 @@ export async function main(argv = process.argv.slice(2)) {
       console.log(`AUTOMATED_FAIL  ERR ${route.path}  ${e.message}`);
     }
   }
+  const finalProvenance = await fetchPreviewProvenance(args.baseUrl, checkout);
+  if (JSON.stringify(finalProvenance) !== JSON.stringify(provenance)) {
+    throw new Error("preview provenance changed during raw HTTP evidence capture");
+  }
   const doc = {
     schemaVersion: 2,
     kind: "http-evidence",
     candidateSha: sha,
     baseUrl: args.baseUrl,
+    provenance,
     capturedAtUtc: new Date().toISOString(),
-    tool: { name: "scripts/evidence/capture-http-evidence.mjs", node: process.version },
-    sitemap: { status: sitemap.status, count: sitemap.count ?? null, error: sitemap.error },
+    tool: { name: "scripts/evidence/capture-http-evidence.mjs", node: captureRuntime.nodeVersion, npm: captureRuntime.npmVersion },
+    sitemap,
     robots,
     records,
     summary: {

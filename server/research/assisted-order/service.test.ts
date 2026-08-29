@@ -550,13 +550,12 @@ describe("AssistedOrderService", () => {
     await expect(
       h.service.createDocumentUpload(memberViewer, receipt.requestId, {
         publicReference: receipt.publicReference,
-        statusToken: receipt.statusToken,
         documentType: "government_id",
         side: "front",
         fileName: "id-front.jpg",
         mimeType: "image/jpeg",
         sizeBytes: 1000,
-      }),
+      }, receipt.statusToken),
     ).rejects.toMatchObject({ code: "identity_not_requested" });
   });
 
@@ -571,13 +570,12 @@ describe("AssistedOrderService", () => {
     });
     const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
       publicReference: receipt.publicReference,
-      statusToken: receipt.statusToken,
       documentType: "government_id",
       side: "front",
       fileName: "id-front.jpg",
       mimeType: "image/jpeg",
       sizeBytes: 1000,
-    });
+    }, receipt.statusToken);
     expect(ticket.uploadUrl).toBe("https://storage.example/upload");
     expect(ticket.objectPath).toContain(receipt.requestId);
   });
@@ -613,13 +611,12 @@ describe("AssistedOrderService", () => {
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
     await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
       publicReference: receipt.publicReference,
-      statusToken: receipt.statusToken,
       documentType: "government_id",
       side: "front",
       fileName: "id-front.jpg",
       mimeType: "image/jpeg",
       sizeBytes: 1000,
-    });
+    }, receipt.statusToken);
     expect(order).toEqual(["audit", "sign"]);
   });
 
@@ -642,13 +639,12 @@ describe("AssistedOrderService", () => {
     await expect(
       h.service.createDocumentUpload(memberViewer, receipt.requestId, {
         publicReference: receipt.publicReference,
-        statusToken: receipt.statusToken,
         documentType: "government_id",
         side: "front",
         fileName: "id-front.jpg",
         mimeType: "image/jpeg",
         sizeBytes: 1000,
-      }),
+      }, receipt.statusToken),
     ).rejects.toThrow("audit unavailable");
     expect(createUpload).not.toHaveBeenCalled();
   });
@@ -676,13 +672,12 @@ describe("AssistedOrderService", () => {
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
     const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
       publicReference: receipt.publicReference,
-      statusToken: receipt.statusToken,
       documentType: "government_id",
       side: "front",
       fileName: "id-front.jpg",
       mimeType: "image/jpeg",
       sizeBytes: 1000,
-    });
+    }, receipt.statusToken);
     await h.service.completeDocumentUpload(
       memberViewer,
       receipt.requestId,
@@ -717,13 +712,12 @@ describe("AssistedOrderService", () => {
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
     const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
       publicReference: receipt.publicReference,
-      statusToken: receipt.statusToken,
       documentType: "government_id",
       side: "front",
       fileName: "id-front.jpg",
       mimeType: "image/jpeg",
       sizeBytes: 1000,
-    });
+    }, receipt.statusToken);
     await expect(
       h.service.completeDocumentUpload(
         memberViewer,

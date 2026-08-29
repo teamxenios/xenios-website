@@ -21,6 +21,9 @@ import type {
   AssistedOrderViewer,
 } from "./ports";
 
+export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
+  "x-xenios-order-status-token";
+
 export type AssistedOrderHttpRequest = Readonly<{
   method: string;
   path: string;
@@ -100,6 +103,47 @@ function catalogQuery(
     page: parsePositiveInt(request.query.page, 1, 100_000),
     pageSize: parsePositiveInt(request.query.pageSize, 24, 100),
   });
+}
+
+function hasOwnCredentialField(
+  value: unknown,
+): "token" | "statusToken" | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+  for (const field of ["token", "statusToken"] as const) {
+    if (Object.prototype.hasOwnProperty.call(value, field)) {
+      return field;
+    }
+  }
+  return null;
+}
+
+function statusTokenFromHeader(
+  request: AssistedOrderHttpRequest,
+  options: Readonly<{ rejectBodyCredential?: boolean }> = {},
+): string | undefined {
+  const queryField = request.query.token !== undefined
+    ? "token"
+    : request.query.statusToken !== undefined
+      ? "statusToken"
+      : null;
+  if (queryField !== null) {
+    throw new AssistedOrderValidationError(
+      queryField,
+      "Status credentials must be sent in the secure request header.",
+    );
+  }
+  const bodyField = options.rejectBodyCredential
+    ? hasOwnCredentialField(request.body)
+    : null;
+  if (bodyField !== null) {
+    throw new AssistedOrderValidationError(
+      bodyField,
+      "Status credentials must be sent in the secure request header.",
+    );
+  }
+  return request.headers[ASSISTED_ORDER_STATUS_TOKEN_HEADER];
 }
 
 function errorResponse(error: unknown): AssistedOrderHttpResponse {
@@ -212,10 +256,11 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       auth: "early_access_or_member",
       handler: (request) =>
         handle(async () => {
+          const statusToken = statusTokenFromHeader(request);
           const status = await service.status(
             await viewer(request),
             request.params.publicReference ?? "",
-            request.query.token,
+            statusToken,
           );
           return ok(200, status);
         }),
@@ -226,10 +271,14 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       auth: "early_access_or_member",
       handler: (request) =>
         handle(async () => {
+          const statusToken = statusTokenFromHeader(request, {
+            rejectBodyCredential: true,
+          });
           const ticket = await service.createDocumentUpload(
             await viewer(request),
             request.params.requestId ?? "",
             request.body as AssistedOrderUploadRequest,
+            statusToken,
           );
           return ok(201, ticket);
         }),
@@ -240,12 +289,15 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       auth: "early_access_or_member",
       handler: (request) =>
         handle(async () => {
+          const statusToken = statusTokenFromHeader(request, {
+            rejectBodyCredential: true,
+          });
           await service.completeDocumentUpload(
             await viewer(request),
             request.params.requestId ?? "",
             request.params.documentId ?? "",
             (request.body as { publicReference?: string }).publicReference ?? "",
-            (request.body as { statusToken?: string }).statusToken,
+            statusToken,
           );
           return ok(204, null);
         }),

@@ -46,7 +46,7 @@ export function findChromium(root = playwrightBrowsersRoot()) {
  * Launch headless Chromium with an ephemeral profile and return
  * { process, port, wsUrl, browserName, browserVersion, close() }.
  */
-export async function launchChromium({ chromePath, timeoutMs = 20000 } = {}) {
+export async function launchChromium({ chromePath, timeoutMs = 20000, extraArgs = [] } = {}) {
   const found = chromePath ? { path: chromePath, revision: "arg" } : findChromium();
   if (!found) {
     throw new Error(
@@ -63,11 +63,20 @@ export async function launchChromium({ chromePath, timeoutMs = 20000 } = {}) {
     "--disable-gpu",
     "--disable-extensions",
     "--disable-background-networking",
+    // Defense in depth for protocols outside the HTTP proxy/CDP Fetch
+    // boundary. The injected RTCPeerConnection constructor guard is the
+    // primary pre-dispatch control; this flag additionally prevents Chromium
+    // from exposing non-proxied UDP candidates if that API surface changes.
+    "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+    // Defense in depth beneath CDP interception: any external preconnect or
+    // browser-internal request is sent only to a closed loopback proxy.
+    "--proxy-server=http://127.0.0.1:9",
     "--disable-sync",
     "--disable-features=Translate,OptimizationHints,MediaRouter",
     "--hide-scrollbars",
     "--force-device-scale-factor=1",
     "--window-size=1440,900",
+    ...extraArgs,
     "about:blank",
   ];
   const child = spawn(found.path, args, { stdio: ["ignore", "ignore", "pipe"] });

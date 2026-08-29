@@ -6,11 +6,13 @@ import type {
   AssistedOrderCatalogItem,
   AssistedOrderCatalogPage,
   AssistedOrderReceipt,
+  AssistedOrderStatusView,
 } from "../../../../shared/research/assisted-order/contract";
 
 const api = vi.hoisted(() => ({
   loadAssistedOrderCatalog: vi.fn(),
   loadAssistedOrderConfig: vi.fn(),
+  loadAssistedOrderStatus: vi.fn(),
   submitAssistedOrder: vi.fn(),
 }));
 
@@ -26,7 +28,12 @@ vi.mock("./assisted-order.css", () => ({ default: {} }));
 import { AssistedOrderApiError } from "./api";
 import { AssistedOrderConfirmationPage } from "./AssistedOrderConfirmationPage";
 import { AssistedOrderPage } from "./AssistedOrderPage";
+import { AssistedOrderStatusPage } from "./AssistedOrderStatusPage";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
+import {
+  assistedOrderReceiptKey,
+  storeAssistedOrderReceipt,
+} from "./storage";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -234,6 +241,7 @@ beforeEach(() => {
   window.history.replaceState({}, "", "/research/early-access/order-request");
   api.loadAssistedOrderCatalog.mockReset();
   api.loadAssistedOrderConfig.mockReset();
+  api.loadAssistedOrderStatus.mockReset();
   api.submitAssistedOrder.mockReset();
   api.loadAssistedOrderCatalog.mockResolvedValue(
     catalogPage([directRuoItem, careItem, pricePendingItem, pendingItem, heldItem]),
@@ -775,6 +783,7 @@ describe("AssistedOrderConfirmationPage landmarks", () => {
       "",
       "/research/early-access/order-request/confirmation/XRR-20260819-ABCDEF1234",
     );
+    storeAssistedOrderReceipt(receipt);
     host = document.createElement("div");
     document.body.appendChild(host);
     root = createRoot(host);
@@ -785,5 +794,171 @@ describe("AssistedOrderConfirmationPage landmarks", () => {
     expect(byTestId("order-confirmation-reference")!.textContent).toContain(
       "XRR-20260819-ABCDEF1234",
     );
+  });
+
+  it("does not report a server-accepted request as failed when the sessionStorage getter is denied", async () => {
+    api.submitAssistedOrder.mockResolvedValue(receipt);
+    render();
+    await settle();
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
+    click(byTestId("order-continue-contact"));
+    fillContact();
+    click(byTestId("order-continue-review"));
+    await settle(20);
+    checkAllAcknowledgments();
+    vi.spyOn(window, "sessionStorage", "get").mockImplementation((): Storage => {
+      throw new DOMException("Storage denied", "SecurityError");
+    });
+
+    click(byTestId("order-submit"));
+    await settle(20);
+
+    expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+    expect(window.location.pathname).toBe(
+      `/research/early-access/order-request/confirmation/${receipt.publicReference}`,
+    );
+    expect(byTestId("order-error")).toBeNull();
+  });
+
+  it("never claims received or submitted from an arbitrary URL alone", () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/research/early-access/order-request/confirmation/XRR-20260819-ABCDEF1234",
+    );
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() => root!.render(<AssistedOrderConfirmationPage />));
+
+    expect(byTestId("order-confirmation-unavailable")).not.toBeNull();
+    expect(host.textContent).toContain("Confirmation unavailable");
+    expect(host.textContent).not.toMatch(/request received|status:\s*submitted/i);
+    expect(host.querySelectorAll("h1")).toHaveLength(1);
+  });
+
+  it("stays neutral when the browser denies the sessionStorage getter", () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/research/early-access/order-request/confirmation/XRR-20260819-ABCDEF1234",
+    );
+    vi.spyOn(window, "sessionStorage", "get").mockImplementation((): Storage => {
+      throw new DOMException("Storage denied", "SecurityError");
+    });
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+
+    expect(() => act(() => root!.render(<AssistedOrderConfirmationPage />))).not.toThrow();
+    expect(byTestId("order-confirmation-unavailable")).not.toBeNull();
+    expect(host.textContent).not.toMatch(/request received|status:\s*submitted/i);
+  });
+
+  it("rejects a malformed path and a receipt whose embedded reference does not match", () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/research/early-access/order-request/confirmation/XRR-20260819-ABCDEF1234",
+    );
+    sessionStorage.setItem(
+      assistedOrderReceiptKey(receipt.publicReference),
+      JSON.stringify({
+        ...receipt,
+        statusToken: undefined,
+        publicReference: "XRR-20260819-0000000000",
+      }),
+    );
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() => root!.render(<AssistedOrderConfirmationPage />));
+    expect(byTestId("order-confirmation-unavailable")).not.toBeNull();
+    unmount();
+
+    window.history.replaceState(
+      {},
+      "",
+      "/research/early-access/order-request/confirmation/%E0%A4%A",
+    );
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    expect(() => act(() => root!.render(<AssistedOrderConfirmationPage />))).not.toThrow();
+    expect(byTestId("order-confirmation-unavailable")).not.toBeNull();
+  });
+});
+
+const statusView: AssistedOrderStatusView = {
+  requestId: "req-1",
+  publicReference: receipt.publicReference,
+  status: "submitted",
+  createdAt: "2026-08-19T00:00:00.000Z",
+  updatedAt: "2026-08-19T00:00:00.000Z",
+  estimatedTotalCents: 5000,
+  currency: "USD",
+  lines: [],
+  timeline: [
+    {
+      status: "submitted",
+      occurredAt: "2026-08-19T00:00:00.000Z",
+      customerMessage: "Request received for review.",
+    },
+  ],
+  documents: [],
+  actionRequired: null,
+};
+
+describe("AssistedOrderStatusPage verified identity", () => {
+  function renderStatus() {
+    host = document.createElement("div");
+    document.body.appendChild(host);
+    root = createRoot(host);
+    act(() => root!.render(<AssistedOrderStatusPage />));
+  }
+
+  it("does not echo an arbitrary reference before the server verifies it", async () => {
+    const pending = deferred<AssistedOrderStatusView>();
+    api.loadAssistedOrderStatus.mockReturnValue(pending.promise);
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus();
+
+    expect(byTestId("order-status-heading")?.textContent).toBe("Request status");
+    expect(host!.textContent).not.toContain(receipt.publicReference);
+    pending.resolve(statusView);
+    await settle(20);
+    expect(byTestId("order-status-heading")?.textContent).toBe(receipt.publicReference);
+    expect(host!.textContent).toContain("Request received for review.");
+    expect(
+      host!.querySelector('a.xenios-order-return-link[href="/research/early-access"]')
+        ?.textContent,
+    ).toContain("Return to Early Access");
+  });
+
+  it("keeps a refused or missing request neutral", async () => {
+    api.loadAssistedOrderStatus.mockRejectedValue(
+      new AssistedOrderApiError(404, "not_found", "upstream text must not render"),
+    );
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus();
+    await settle(20);
+
+    expect(byTestId("order-status-heading")?.textContent).toBe("Request status");
+    expect(host!.textContent).not.toContain(receipt.publicReference);
+    expect(host!.textContent).toContain("not valid or has expired");
+    expect(host!.textContent).not.toContain("upstream text");
+    expect(
+      host!.querySelector('a.xenios-order-return-link[href="/research/early-access"]'),
+    ).not.toBeNull();
+  });
+
+  it("rejects a malformed reference without calling the API", async () => {
+    window.history.replaceState({}, "", "/research/early-access/order-request/not-a-reference");
+    renderStatus();
+    await settle(5);
+
+    expect(api.loadAssistedOrderStatus).not.toHaveBeenCalled();
+    expect(byTestId("order-status-heading")?.textContent).toBe("Request status");
+    expect(host!.textContent).toContain("not valid or has expired");
   });
 });

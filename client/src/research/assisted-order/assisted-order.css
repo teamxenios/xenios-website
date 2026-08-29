@@ -32,10 +32,11 @@
 .xenios-order-page label { display: grid; gap: 7px; color: var(--ink); font-size: .9rem; font-weight: 650; }
 .xenios-order-page input, .xenios-order-page select, .xenios-order-page textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: inherit; padding: 12px 14px; }
 .xenios-order-page input:focus, .xenios-order-page select:focus, .xenios-order-page textarea:focus, .xenios-order-page button:focus-visible, .xenios-order-page a:focus-visible { outline: 3px solid rgba(24, 61, 45, .32); outline-offset: 2px; }
-.xenios-order-check { grid-template-columns: auto 1fr; align-items: start; margin-top: 18px; font-weight: 500 !important; line-height: 1.5; }
+.xenios-order-check { grid-template-columns: auto 1fr; align-items: start; min-height: 44px; margin-top: 18px; font-weight: 500 !important; line-height: 1.5; }
 .xenios-order-check input { width: 18px; height: 18px; margin-top: 2px; }
 .xenios-order-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 28px; }
 .xenios-order-actions button, .xenios-order-pagination button { min-height: 44px; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 999px; padding: 11px 18px; font: inherit; font-weight: 700; }
+.xenios-order-return-link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 11px 12px; }
 .xenios-order-retry { min-height: 44px; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 999px; padding: 11px 18px; font: inherit; font-weight: 700; }
 .xenios-order-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; border: 0 !important; background: var(--accent) !important; color: var(--accent-ink) !important; border-radius: 999px; padding: 12px 20px; font: inherit; font-weight: 750; cursor: pointer; text-decoration: none; }
 .xenios-order-button:disabled { opacity: .55; cursor: not-allowed; }
@@ -105,7 +106,7 @@
   .xenios-order-grid, .xenios-order-cards, .xenios-order-filters, .xenios-order-review-contact { grid-template-columns: 1fr; }
   .xenios-order-grid .is-wide { grid-column: auto; }
   .xenios-order-actions { align-items: stretch; flex-direction: column-reverse; }
-  .xenios-order-actions button { width: 100%; }
+  .xenios-order-actions button, .xenios-order-actions .xenios-order-return-link { width: 100%; }
   .xenios-order-card__header { display: grid; }
   .xenios-order-filter-actions { align-items: stretch; }
   .xenios-order-filter-actions button { width: 100%; }

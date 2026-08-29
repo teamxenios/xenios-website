@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CAREERS_ROLES } from "../../../client/src/lib/careers";
+import { buildJobPostingJsonLd } from "../../../client/src/lib/careers-schema";
 import { ICP_BY_SLUG } from "../../../client/src/lib/content";
 import { ALL_MANIFEST_ROUTES } from "../../../client/src/research/lib/routes";
 import { PUBLIC_QUALITY_ROUTES } from "../../../client/src/research/quality/routes";
@@ -19,6 +20,7 @@ import {
   RAW_HTTP_SITE_ORIGIN,
   buildRawHttpDocumentResponse,
   createRawHttpDocumentPolicyResolver,
+  rawHttpStructuredDataForPath,
 } from "./raw-http-document-policy";
 
 const repositoryRoot = resolve(__dirname, "../../..");
@@ -123,6 +125,8 @@ const inheritedTemplate = `<!doctype html>
     <meta http-equiv="x-robots-tag" content="index" />
     <meta property="og:url" content="https://xeniostechnology.com" />
     <meta property="og&#58;url" content="https://xeniostechnology.com/stale" />
+    <meta property="og:title" content="Inherited title" />
+    <meta property="og:image" content="https://xeniostechnology.com/og/xenios-og-image-v2.png" />
     <link rel="canonical" href="https://xeniostechnology.com" />
     <link rel="c&#97;nonical" href="https://xeniostechnology.com/stale" />
     <link rel="alternate" hreflang="en" href="https://xeniostechnology.com" />
@@ -191,6 +195,25 @@ describe("raw HTTP route authority", () => {
         .map((match) => match[1])
         .sort(),
     ).toEqual([...RAW_HTTP_PUBLIC_POLICY_PATHS].sort());
+  });
+
+  it("reuses exact reviewed homepage and career schema without reducing or fabricating it", () => {
+    const indexHtml = readRepositoryFile("client/index.html");
+    const reviewedHomepageSchemas = [...indexHtml.matchAll(
+      /<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/gu,
+    )]
+      .map((match) => JSON.parse(match[1]))
+      .filter((value) => ["Organization", "WebSite"].includes(value["@type"]));
+    expect(rawHttpStructuredDataForPath("/")).toEqual(reviewedHomepageSchemas);
+
+    const openRoles = CAREERS_ROLES.filter((role) => role.group === "open");
+    expect(rawHttpStructuredDataForPath("/careers")).toEqual(
+      openRoles.map(buildJobPostingJsonLd),
+    );
+    for (const role of CAREERS_ROLES) {
+      expect(rawHttpStructuredDataForPath(`/careers/${role.slug}`), role.slug)
+        .toEqual(role.group === "open" ? [buildJobPostingJsonLd(role)] : []);
+    }
   });
 
   it("pins public identities to the actual production composition graph", () => {
@@ -563,7 +586,7 @@ describe("raw HTTP HTML and schema policy", () => {
       expect(response.html, requestTarget).toContain(RAW_HTTP_NOINDEX_ROBOTS);
       expect(response.html, requestTarget).not.toContain("application/ld+json");
       expect(response.html, requestTarget).not.toContain('rel="canonical"');
-      expect(response.html, requestTarget).not.toContain('property="og:url"');
+      expect(response.html, requestTarget).not.toContain('property="og:');
       expect(response.html, requestTarget).not.toContain('rel="alternate"');
       expect(schemaIdentities(response.html), requestTarget).toEqual([]);
     }
@@ -594,7 +617,10 @@ describe("raw HTTP HTML and schema policy", () => {
       templateHtml: inheritedTemplate,
       structuredData: [faq(), organization(), website()],
     });
-    expect(schemaIdentities(faqPage.html)).toEqual(["FAQPage"]);
+    // FAQ schema remains excluded until an exact reviewed route-owned graph is
+    // supplied and added to the route contract; page copy alone is not schema
+    // authority.
+    expect(schemaIdentities(faqPage.html)).toEqual([]);
 
     const duplicatedFaq = buildRawHttpDocumentResponse({
       requestTarget: "/research/faq",
@@ -702,10 +728,10 @@ describe("raw HTTP HTML and schema policy", () => {
     const circular = organization() as Record<string, unknown>;
     circular.self = circular;
     const response = buildRawHttpDocumentResponse({
-      requestTarget: "/research/faq",
+      requestTarget: "/",
       templateHtml: inheritedTemplate,
       structuredData: [
-        faq('</script><script>alert("schema")</script>&\u2028'),
+        organization('</script><script>alert("schema")</script>&\u2028'),
         circular,
         {
           "@context": "https://schema.org",
@@ -715,7 +741,7 @@ describe("raw HTTP HTML and schema policy", () => {
       ],
     });
 
-    expect(schemaIdentities(response.html)).toEqual(["FAQPage"]);
+    expect(schemaIdentities(response.html)).toEqual(["Organization"]);
     expect(response.html).not.toContain('</script><script>alert("schema")');
     expect(response.html).toContain("\\u003c/script\\u003e");
     expect(response.html).toContain("\\u0026");
@@ -737,13 +763,16 @@ describe("raw HTTP HTML and schema policy", () => {
 
 describe("environment indexing gate", () => {
   const template = "<!doctype html><html><head><title>t</title></head><body><div id=\"root\"></div></body></html>";
-  it("answers a public_index document noindex while the environment gate is closed, keeping status and canonical", () => {
-    const gated = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: template, indexable: false });
+  it("answers a public_index document noindex with no SEO authority while the environment gate is closed", () => {
+    const gated = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: inheritedTemplate, indexable: false });
     expect(gated.status).toBe(200);
     expect(gated.headers["X-Robots-Tag"]).toBe("noindex,nofollow,noarchive");
     expect(gated.policy.indexable).toBe(false);
-    expect(gated.policy.canonicalUrl).toBe("https://xeniostechnology.com/research");
+    expect(gated.policy.canonicalUrl).toBeNull();
     expect(gated.html).toContain('content="noindex,nofollow,noarchive" data-raw-http-policy="robots"');
+    expect(gated.html).not.toContain('rel="canonical"');
+    expect(gated.html).not.toContain('property="og:');
+    expect(gated.html).not.toContain("application/ld+json");
   });
   it("leaves the policy untouched when the gate is open or unspecified", () => {
     const open = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: template, indexable: true });

@@ -12,6 +12,11 @@ export const PATTERNS = [
   { id: "JWT", re: /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g, redact: true },
   { id: "SUPABASE_SECRET", re: /\bsb_secret_[A-Za-z0-9_]{6,}/g, redact: true },
   { id: "BEARER_TOKEN", re: /\bBearer\s+[A-Za-z0-9._-]{20,}/g, redact: true },
+  {
+    id: "STATUS_TOKEN",
+    re: /(?:statusToken["']?\s*[:=]\s*["']?|x-xenios-order-status-token["']?\s*[:=]\s*["']?|[?&]token=)[A-Za-z0-9_-]{43}(?=["'&\s}]|$)/gi,
+    redact: true,
+  },
   { id: "AWS_ACCESS_KEY", re: /\bAKIA[0-9A-Z]{16}\b/g, redact: true },
   { id: "ORDER_REFERENCE", re: /\bXRR-\d{8}-[A-F0-9]{10}\b/g, redact: true },
 ];
@@ -19,6 +24,17 @@ export const PATTERNS = [
 /** Values that are fixtures by construction and never real data. */
 export const DEFAULT_ALLOWLIST = [
   /@example\.(?:com|org|net)$/i,
+  // Exact local-preview personas used by the synthetic account evidence
+  // harness. Keep this narrower than the reserved `.invalid` TLD so a new or
+  // mistyped address still fails closed until it is explicitly reviewed.
+  /^fixture[12]@preview\.invalid$/i,
+  // Exact synthetic contact fixture used by the assisted-order UI harness.
+  // Other 555 values remain findings because the scanner cannot infer intent.
+  /^\+1 555 010 2000$/,
+  // Reserved, deterministic non-customer reference used only to prove that a
+  // valid-shaped forged URL stays neutral. Every other XRR reference remains
+  // a finding and the successful synthetic journey is redacted before write.
+  /^XRR-20000101-0000000000$/,
   /^sb_secret_preview_placeholder$/,
   /^noreply@/i,
   // Published business contact addresses rendered on the public site

@@ -162,7 +162,6 @@ export function renderAssistedOrderOutboxEmail(
   const reference = text(payload.publicReference);
 
   if (templateKey === "research.assisted_order.submitted.customer") {
-    const statusPath = text(payload.statusPath);
     const lineCount = count(payload.lineCount);
     return {
       subject: `Xenios Research order request received (${reference})`,
@@ -180,7 +179,8 @@ export function renderAssistedOrderOutboxEmail(
         `charged automatically.`,
         ``,
         ...nextStepBlock(payload),
-        statusPath ? `Track your request: ${SITE_ORIGIN}${statusPath}` : "",
+        `Keep this reference. To check status, return to the browser where you submitted`,
+        `or contact research@xeniostechnology.com. Email does not carry a secure status credential.`,
         ``,
         `Xenios Research products are for research use only.`,
       ].filter((line) => line !== "").join("\n"),
@@ -243,7 +243,8 @@ export function renderAssistedOrderOutboxEmail(
         message ? `` : "",
         message,
         ``,
-        `Track your request: ${SITE_ORIGIN}/research/early-access/order-request/${reference}`,
+        `To check status, return to the browser where you submitted or contact`,
+        `research@xeniostechnology.com with your reference.`,
       ].filter((line) => line !== "").join("\n"),
     };
   }

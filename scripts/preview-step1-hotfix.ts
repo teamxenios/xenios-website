@@ -287,6 +287,20 @@ export async function buildStep1PreviewApp(
   const agreements = agreementMemory();
   let doorSources: DoorSources | null = null;
   const app = express();
+  // The production SPA reads runtime config before mounting any Research
+  // route. Keep that read deterministic and local: no marketing runtime and a
+  // loopback-only synthetic auth origin that this journey never exercises.
+  app.get("/api/config", (req, res) => {
+    const origin = "http://" + (req.headers.host ?? "127.0.0.1");
+    res.set("Cache-Control", "no-store");
+    res.json({
+      metaPixelId: null,
+      turnstileSiteKey: null,
+      calendlyUrl: "https://calendly.com/example/preview",
+      supabaseUrl: origin + "/preview-auth",
+      supabaseAnonKey: "preview-anon-key-not-a-secret",
+    });
+  });
   app.use(express.json());
   app.use(researchPageGate);
   app.use(step1PreviewApiBoundary);

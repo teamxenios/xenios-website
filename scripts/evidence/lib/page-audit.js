@@ -89,10 +89,24 @@ export const PAGE_AUDIT_SOURCE = String.raw`(() => {
   const undersized = [];
   for (const el of document.querySelectorAll(interactiveSelector)) {
     if (!isVisible(el) || isInert(el)) continue;
+    let r = el.getBoundingClientRect();
     if (el.matches("input[type=radio], input[type=checkbox]") && el.labels && el.labels.length) {
-      // Labelled checkboxes/radios: the label is the target; size the union.
+      // A native label forwards clicks to its checkbox/radio. Measure the
+      // union of the visible, non-inert labels and the input itself; measuring
+      // only the 13-18 px native glyph falsely fails a genuinely 44 px target.
+      // A short label still fails because its union remains undersized.
+      const labelledRects = Array.from(el.labels)
+        .filter((label) => isVisible(label) && !isInert(label))
+        .map((label) => label.getBoundingClientRect());
+      if (labelledRects.length) {
+        const rects = [r, ...labelledRects];
+        const left = Math.min(...rects.map((rect) => rect.left));
+        const top = Math.min(...rects.map((rect) => rect.top));
+        const right = Math.max(...rects.map((rect) => rect.right));
+        const bottom = Math.max(...rects.map((rect) => rect.bottom));
+        r = { left, top, right, bottom, width: right - left, height: bottom - top };
+      }
     }
-    const r = el.getBoundingClientRect();
     const cs = getComputedStyle(el);
     // WCAG 2.5.8 exempts inline links in a block of text.
     const parentText = el.parentElement ? (el.parentElement.textContent || "").trim() : "";
@@ -167,6 +181,7 @@ export const PAGE_AUDIT_SOURCE = String.raw`(() => {
   return {
     url: location.href,
     title: document.title,
+    description: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? null,
     lang: de.getAttribute("lang") || null,
     viewport: { width: vw, height: vh, devicePixelRatio: window.devicePixelRatio },
     overflow: {
@@ -197,6 +212,118 @@ export const PAGE_AUDIT_SOURCE = String.raw`(() => {
   };
 })()`;
 
+/**
+ * Capture every currently tabbable element while it is unfocused.
+ *
+ * The state stays inside the page realm between CDP evaluations. Identities
+ * contain only a document-order ordinal plus tag/nth-of-type ancestry: no
+ * text, id, class, URL, or operator-local data can enter the artifact. Calling
+ * this source again is an incremental refresh for controls revealed during a
+ * walk; an already-captured baseline is never overwritten while focused.
+ */
+export const FOCUS_BASELINE_RESET_SOURCE = String.raw`(() => {
+  delete window.__xeniosEvidenceFocusStateV2;
+  return true;
+})()`;
+
+export const FOCUS_BASELINE_SOURCE = String.raw`(() => {
+  const stateKey = "__xeniosEvidenceFocusStateV2";
+  const visualProperties = [
+    "outline", "outlineStyle", "outlineWidth", "outlineColor", "outlineOffset",
+    "boxShadow",
+    "borderTopStyle", "borderTopWidth", "borderTopColor",
+    "borderRightStyle", "borderRightWidth", "borderRightColor",
+    "borderBottomStyle", "borderBottomWidth", "borderBottomColor",
+    "borderLeftStyle", "borderLeftWidth", "borderLeftColor",
+    "backgroundColor", "backgroundImage", "color",
+    "textDecorationLine", "textDecorationColor", "textDecorationThickness",
+    "transform", "filter", "opacity", "top", "right", "bottom", "left",
+    "clip", "clipPath"
+  ];
+  const structuralPath = (node) => {
+    const parts = [];
+    for (let current = node; current && current.nodeType === 1; current = current.parentElement) {
+      const tag = current.localName || current.tagName.toLowerCase();
+      let ordinal = 1;
+      for (let sibling = current.previousElementSibling; sibling; sibling = sibling.previousElementSibling) {
+        if ((sibling.localName || sibling.tagName.toLowerCase()) === tag) ordinal++;
+      }
+      parts.push(tag + ":nth-of-type(" + ordinal + ")");
+    }
+    return parts.reverse().join(">");
+  };
+  const signature = (node) => {
+    const style = getComputedStyle(node);
+    return Object.fromEntries(visualProperties.map((property) => [property, String(style[property] ?? "")]));
+  };
+  const visualTargets = (node) => {
+    const targets = [];
+    let current = node;
+    for (let depth = 0; current && depth < 4; depth++, current = current.parentElement) {
+      targets.push({ node: current, scope: depth === 0 ? "self" : "ancestor-" + depth, signature: signature(current) });
+    }
+    return targets;
+  };
+  const state = window[stateKey] || {
+    baselines: new WeakMap(),
+    nextOrdinal: 1,
+    visualProperties,
+    structuralPath,
+    signature,
+    visualTargets,
+  };
+  window[stateKey] = state;
+  const isInert = (node) => {
+    for (let current = node; current; current = current.parentElement) {
+      if (current.hasAttribute("inert") || current.getAttribute("aria-hidden") === "true") return true;
+    }
+    return false;
+  };
+  const isRendered = (node) => {
+    if (!node.isConnected || isInert(node)) return false;
+    const style = getComputedStyle(node);
+    return style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse" && node.getClientRects().length > 0;
+  };
+  const isRadioTabStop = (node, candidates) => {
+    if (!(node instanceof HTMLInputElement) || node.type !== "radio" || !node.name) return true;
+    const group = Array.from(candidates).filter((other) =>
+      other instanceof HTMLInputElement &&
+      other.type === "radio" &&
+      other.name === node.name &&
+      other.form === node.form &&
+      !other.matches(":disabled") &&
+      other.tabIndex >= 0 &&
+      isRendered(other)
+    );
+    const checked = group.find((other) => other.checked);
+    return checked ? checked === node : group[0] === node;
+  };
+  const candidates = document.querySelectorAll([
+    "a[href]", "area[href]", "button", "input", "select", "textarea",
+    "summary", "iframe", "object", "embed", "audio[controls]", "video[controls]",
+    "[contenteditable]:not([contenteditable='false'])", "[tabindex]"
+  ].join(","));
+  let added = 0;
+  for (const node of candidates) {
+    if (state.baselines.has(node) || node === document.activeElement) continue;
+    const path = state.structuralPath(node);
+    const ordinal = state.nextOrdinal++;
+    state.baselines.set(node, {
+      identity: "focusable-" + ordinal + "@" + path,
+      path,
+      targets: state.visualTargets(node),
+    });
+    added++;
+  }
+  const tabbableIdentities = [];
+  for (const node of candidates) {
+    if (node.matches(":disabled") || node.tabIndex < 0 || !isRendered(node) || !isRadioTabStop(node, candidates)) continue;
+    const baseline = state.baselines.get(node);
+    if (baseline?.identity) tabbableIdentities.push(baseline.identity);
+  }
+  return { captured: candidates.length, added, tabbableIdentities };
+})()`;
+
 /** Describe the currently focused element (evaluated after each Tab press). */
 export const FOCUS_PROBE_SOURCE = String.raw`(() => {
   const el = document.activeElement;
@@ -210,19 +337,35 @@ export const FOCUS_PROBE_SOURCE = String.raw`(() => {
     if (cls.length) s += "." + cls.join(".");
     return s;
   };
-  const outlineVisible = cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) > 0;
-  const boxShadow = Boolean(cs.boxShadow) && cs.boxShadow !== "none";
-  // Compare against the element's unfocused styling to detect an indicator.
+  const state = window.__xeniosEvidenceFocusStateV2;
+  const baseline = state?.baselines?.get(el) ?? null;
+  const changedVisualProperties = [];
+  if (baseline && state) {
+    for (const target of baseline.targets) {
+      if (!target.node?.isConnected) continue;
+      const current = state.signature(target.node);
+      for (const property of state.visualProperties) {
+        if (current[property] !== target.signature[property]) {
+          changedVisualProperties.push(target.scope + "." + property);
+        }
+      }
+    }
+  }
   const focusVisible = el.matches(":focus-visible");
+  const baselineCaptured = Boolean(baseline);
+  const focusVisualDelta = changedVisualProperties.length > 0;
   return {
     body: false,
+    identity: baseline?.identity ?? null,
+    structuralPath: baseline?.path ?? null,
     selector: describe(el),
     tag: el.tagName.toLowerCase(),
     text: (el.getAttribute("aria-label") || el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 50),
     focusVisible,
-    outlineVisible,
-    boxShadow,
-    indicator: Boolean(outlineVisible || boxShadow),
+    baselineCaptured,
+    focusVisualDelta,
+    changedVisualProperties: changedVisualProperties.slice(0, 24),
+    indicator: Boolean(focusVisible && baselineCaptured && focusVisualDelta),
     inViewport: r.bottom > 0 && r.top < innerHeight,
     width: Math.round(r.width),
     height: Math.round(r.height),

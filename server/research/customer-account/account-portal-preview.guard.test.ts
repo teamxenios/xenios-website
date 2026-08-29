@@ -23,13 +23,27 @@ describe("account-portal preview harness guard", () => {
     for (const path of [
       "/api/research/questions",
       "/api/research/products",
-      "/api/research/catalog",
       "/api/research/early-access/catalog",
     ]) {
       const res = await request(app).get(path).set("Authorization", `Bearer ${TOKEN_1}`);
       expect(res.status, path).toBe(404);
       expect(res.body.error, path).toBe("account_portal_preview_route_not_available");
     }
+  });
+
+  it("serves only a read-only, commerce-disabled synthetic catalog projection", async () => {
+    const { app } = buildAccountPortalPreviewApp({});
+    const active = await request(app)
+      .get("/api/research/catalog")
+      .set("Authorization", `Bearer ${TOKEN_1}`);
+    expect(active.status).toBe(200);
+    expect(active.body).toEqual({
+      products: [],
+      commerce: { research: false, consumer: false },
+      email: "research@xeniostechnology.com",
+    });
+    expect(active.headers["cache-control"]).toBe("no-store");
+    expect((await request(app).get("/api/research/catalog")).status).toBe(401);
   });
 
   it("authenticates only the preview personas with the preview password", async () => {

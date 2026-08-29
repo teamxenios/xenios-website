@@ -16,12 +16,21 @@ export const ASSERTION_IDS = [
   "FOCUS_ORDER_REACHABLE",
   "FOCUS_VISIBLE_PRESENT",
   "EXPECTED_HTTP_FAILURES_OBSERVED",
+  "SAME_ORIGIN_NETWORK_BOUNDARY",
   "CONSOLE_CLEAN",
   "NETWORK_CLEAN",
 ];
 
 /** Evaluate one page audit (plus optional focus walk, console, network) into assertions. */
-export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords = [], network = [], allowNetwork = [], expectedHttpFailures = [] } = {}) {
+export function evaluateAudit(audit, {
+  focusWalk = null,
+  console: consoleRecords = [],
+  network = [],
+  networkBoundaryViolations = [],
+  networkBoundaryFulfillments = [],
+  allowNetwork = [],
+  expectedHttpFailures = [],
+} = {}) {
   const assertions = [];
   const push = (id, pass, detail, count) => assertions.push({ id, result: pass ? "PASS" : "FAIL", detail, ...(count !== undefined ? { count } : {}) });
   const pushResult = (id, result, detail, count) => assertions.push({ id, result, detail, ...(count !== undefined ? { count } : {}) });
@@ -52,8 +61,41 @@ export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords
   if (focusWalk) {
     const stops = focusWalk.stops ?? [];
     const withoutIndicator = stops.filter((s) => !s.indicator);
-    push("FOCUS_ORDER_REACHABLE", stops.length > 0 && !focusWalk.trapped, focusWalk.trapped ? `focus trapped at ${focusWalk.trappedAt}` : `${stops.length} tab stops reached (cycled: ${focusWalk.cycled})`, stops.length);
-    push("FOCUS_VISIBLE_PRESENT", withoutIndicator.length === 0, summarise(withoutIndicator, (s) => `${s.selector} "${s.text}"`), withoutIndicator.length);
+    const focusComplete = stops.length > 0
+      && focusWalk.cycled === true
+      && !focusWalk.trapped
+      && !focusWalk.truncated
+      && focusWalk.identityComplete === true
+      && focusWalk.completeSetCovered === true;
+    push(
+      "FOCUS_ORDER_REACHABLE",
+      focusComplete,
+      focusWalk.trapped
+        ? `focus trapped at ${focusWalk.trappedAt}`
+        : focusWalk.truncated
+          ? `${stops.length} tab stops reached but the walk hit its ${focusWalk.maxStops ?? "configured"}-stop limit before cycling`
+          : focusWalk.identityComplete !== true
+            ? `${stops.length} tab stops reached but one or more lacked a deterministic DOM identity`
+          : focusWalk.completeSetCovered !== true
+            ? `${stops.length} tab stops reached but ${focusWalk.missingIdentityCount ?? "unknown"} baseline tab stops were never reached`
+            : `${stops.length} of ${focusWalk.expectedIdentityCount} baseline tab stops reached (cycled: ${focusWalk.cycled === true})`,
+      stops.length,
+    );
+    push(
+      "FOCUS_VISIBLE_PRESENT",
+      withoutIndicator.length === 0,
+      summarise(withoutIndicator, (s) => {
+        const reason = s.baselineCaptured !== true
+          ? "unfocused baseline missing"
+          : s.focusVisible !== true
+            ? ":focus-visible did not match"
+            : s.focusVisualDelta !== true
+              ? "no focus-induced visual delta"
+              : "indicator missing";
+        return `${s.selector} "${s.text}" (${reason})`;
+      }),
+      withoutIndicator.length,
+    );
   } else {
     assertions.push({ id: "FOCUS_ORDER_REACHABLE", result: "NOT_RUN", detail: "focus walk not executed" });
     assertions.push({ id: "FOCUS_VISIBLE_PRESENT", result: "NOT_RUN", detail: "focus walk not executed" });
@@ -100,6 +142,20 @@ export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords
             unexpectedConsoleErrors.length ? `unexpected console: ${summarise(unexpectedConsoleErrors, (record) => `[${record.level}] ${record.text}`)}` : null,
           ].filter(Boolean).join("; "),
     observations.reduce((sum, observation) => sum + observation.networkCount, 0),
+  );
+
+  push(
+    "SAME_ORIGIN_NETWORK_BOUNDARY",
+    networkBoundaryViolations.length === 0,
+    networkBoundaryViolations.length === 0
+      ? networkBoundaryFulfillments.length === 0
+        ? "all page traffic remained on the evidence preview origin; WebSockets disabled"
+        : `all dispatched traffic remained on origin; ${networkBoundaryFulfillments.length} exact external resource request(s) fulfilled locally without dispatch: ${summarise(networkBoundaryFulfillments, (record) => `${record.url} body=${record.responseBodySha256}`)}`
+      : summarise(
+          networkBoundaryViolations,
+          (record) => `${record.method ?? "GET"} ${record.url ?? "(missing URL)"}: ${record.reason ?? "blocked"}`,
+        ),
+    networkBoundaryViolations.length,
   );
 
   if (unexpectedConsoleErrors.length > 0) {
@@ -184,7 +240,7 @@ export function summarise(items, fmt, limit = 8) {
 }
 
 /** Roll a run's assertion list into a coarse per-run verdict. Never a release verdict. */
-export function runVerdict(assertions, { informational = ["CONSOLE_CLEAN", "NETWORK_CLEAN", "SINGLE_H1"] } = {}) {
+export function runVerdict(assertions, { informational = [] } = {}) {
   const failing = assertions.filter((a) => a.result === "FAIL");
   const blocking = failing.filter((a) => !informational.includes(a.id));
   if (blocking.length) return "AUTOMATED_FAIL";
@@ -212,7 +268,18 @@ export function aggregateAccessibility(runs) {
     singleMainLandmark: byId("SINGLE_MAIN_LANDMARK"),
     headings: byId("SINGLE_H1"),
     targetSize44x44: byId("TARGETS_44x44"),
-    reducedMotion: reduced.length === 0 ? "PENDING" : reduced.every((r) => r.audit?.reducedMotionApplied) ? "AUTOMATED_RENDERED" : "AUTOMATED_FAIL",
+    reducedMotion: reduced.length === 0
+      ? "PENDING"
+      : reduced.every((r) => r.reducedMotionApplied ?? r.audit?.reducedMotionApplied)
+        ? "AUTOMATED_RENDERED"
+        : "AUTOMATED_FAIL",
+    forcedColors: runs.filter((r) => r.mediaVariant === "forced-colors").length === 0
+      ? "PENDING"
+      : runs
+          .filter((r) => r.mediaVariant === "forced-colors")
+          .every((r) => r.forcedColorsActive ?? r.audit?.forcedColorsActive)
+        ? "AUTOMATED_RENDERED"
+        : "AUTOMATED_FAIL",
     zoom200Percent: zoomOverflow.length === 0 ? "PENDING" : zoomOverflow.some((a) => a.result === "FAIL") ? "AUTOMATED_FAIL" : "AUTOMATED_PASS",
     automatedScan: runs.length ? "RUN" : "PENDING",
     manualReview: "PENDING",
@@ -234,26 +301,38 @@ export function slug(s) {
 }
 
 /** Analyse a focus walk (list of probes after each Tab). */
-export function analyseFocusWalk(probes, { maxStops }) {
+export function analyseFocusWalk(probes, { maxStops, expectedIdentities }) {
   const stops = [];
   const seen = new Set();
+  const expectedInputValid = Array.isArray(expectedIdentities)
+    && expectedIdentities.length > 0
+    && expectedIdentities.every((identity) => typeof identity === "string" && identity.length > 0);
+  const expected = expectedInputValid ? [...new Set(expectedIdentities)] : [];
+  let identityComplete = expectedInputValid;
   let cycled = false;
+  let earlyCycle = false;
   let trapped = false;
   let trappedAt = null;
   let repeat = 0;
   let last = null;
-  for (const p of probes) {
+  for (const [probeIndex, p] of probes.entries()) {
     if (p.body) {
-      if (stops.length) cycled = true;
+      if (stops.length && expected.every((identity) => seen.has(identity))) cycled = true;
+      else if (stops.length) earlyCycle = true;
       break;
     }
-    const key = `${p.selector}|${p.text}`;
+    const hasIdentity = typeof p.identity === "string" && p.identity.length > 0;
+    if (!hasIdentity) identityComplete = false;
+    // A missing identity must never collapse two distinct controls into a
+    // false cycle. Its per-probe sentinel instead forces a conservative
+    // incomplete/truncated result.
+    const key = hasIdentity ? p.identity : `__missing_identity_${probeIndex}`;
     if (last === key) {
       // Same element after another Tab: a trap once it repeats three times.
       repeat++;
       if (repeat >= 3) {
         trapped = true;
-        trappedAt = p.selector;
+        trappedAt = p.identity ?? p.selector;
         break;
       }
       continue;
@@ -261,11 +340,29 @@ export function analyseFocusWalk(probes, { maxStops }) {
     repeat = 0;
     last = key;
     if (seen.has(key) && stops.length > 1) {
-      cycled = true;
+      if (expected.every((identity) => seen.has(identity))) cycled = true;
+      else earlyCycle = true;
       break;
     }
     seen.add(key);
     stops.push(p);
   }
-  return { stops, cycled, trapped, trappedAt, truncated: !cycled && !trapped && probes.length >= maxStops };
+  const missingIdentities = expected.filter((identity) => !seen.has(identity));
+  const completeSetCovered = identityComplete && missingIdentities.length === 0;
+  return {
+    stops,
+    cycled,
+    earlyCycle,
+    trapped,
+    trappedAt,
+    maxStops,
+    identityComplete,
+    expectedIdentities: expected,
+    expectedIdentityCount: expected.length,
+    visitedIdentityCount: expected.length - missingIdentities.length,
+    missingIdentities,
+    missingIdentityCount: missingIdentities.length,
+    completeSetCovered,
+    truncated: !cycled && !trapped && !earlyCycle && probes.length >= maxStops,
+  };
 }

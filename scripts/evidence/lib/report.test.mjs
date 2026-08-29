@@ -15,7 +15,7 @@ const cleanAudit = () => ({
 
 describe("evaluateAudit", () => {
   it("passes a clean audit with a complete focus walk", () => {
-    const a = evaluateAudit(cleanAudit(), { focusWalk: { stops: [{ indicator: true }], cycled: true, trapped: false } });
+    const a = evaluateAudit(cleanAudit(), { focusWalk: { stops: [{ indicator: true }], cycled: true, trapped: false, truncated: false, identityComplete: true, completeSetCovered: true, expectedIdentityCount: 1 } });
     expect(a.every((x) => x.result === "PASS")).toBe(true);
     expect(a.map((x) => x.id)).toContain("FOCUS_VISIBLE_PRESENT");
   });
@@ -46,6 +46,20 @@ describe("evaluateAudit", () => {
     expect(bad.find((x) => x.id === "NETWORK_CLEAN").count).toBe(1);
     const allowed = evaluateAudit(base, { network: [{ url: "http://x/api/config", status: 500 }], allowNetwork: [/\/api\/config$/] });
     expect(allowed.find((x) => x.id === "NETWORK_CLEAN").result).toBe("PASS");
+  });
+
+  it("blocks every attempted escape from the preview network boundary", () => {
+    const assertions = evaluateAudit(cleanAudit(), {
+      networkBoundaryViolations: [{
+        method: "GET",
+        url: "https://xeniostechnology.com/api/customer",
+        reason: "off-origin request blocked before dispatch",
+      }],
+    });
+    const boundary = assertions.find((assertion) => assertion.id === "SAME_ORIGIN_NETWORK_BOUNDARY");
+    expect(boundary).toMatchObject({ result: "FAIL", count: 1 });
+    expect(boundary.detail).toContain("https://xeniostechnology.com/api/customer");
+    expect(runVerdict(assertions)).toBe("AUTOMATED_FAIL");
   });
 
   it("records exact declared fail-closed HTTP responses as pass-with-notes", () => {
@@ -148,9 +162,9 @@ describe("reviewed historical target findings", () => {
 });
 
 describe("runVerdict", () => {
-  it("separates blocking failures from informational ones", () => {
+  it("treats every failed assertion as release-blocking", () => {
     expect(runVerdict([{ id: "TARGETS_44x44", result: "PASS" }])).toBe("AUTOMATED_PASS");
-    expect(runVerdict([{ id: "CONSOLE_CLEAN", result: "FAIL" }])).toBe("AUTOMATED_PASS_WITH_NOTES");
+    expect(runVerdict([{ id: "CONSOLE_CLEAN", result: "FAIL" }])).toBe("AUTOMATED_FAIL");
     expect(runVerdict([{ id: "TARGETS_44x44", result: "FAIL" }])).toBe("AUTOMATED_FAIL");
   });
   it("never yields a bare PASS string", () => {
@@ -159,22 +173,93 @@ describe("runVerdict", () => {
 });
 
 describe("analyseFocusWalk", () => {
-  const stop = (s, indicator = true) => ({ body: false, selector: s, text: s, indicator });
+  const stop = (s, indicator = true, identity = s) => ({
+    body: false,
+    identity,
+    selector: s,
+    text: s,
+    indicator,
+    baselineCaptured: true,
+    focusVisible: true,
+    focusVisualDelta: indicator,
+  });
+  const expected = (...identities) => ({ maxStops: 10, expectedIdentities: identities });
   it("records stops until the walk cycles back to body", () => {
-    const w = analyseFocusWalk([stop("a"), stop("b"), { body: true }], { maxStops: 10 });
+    const w = analyseFocusWalk([stop("a"), stop("b"), { body: true }], expected("a", "b"));
     expect(w.stops).toHaveLength(2);
     expect(w.cycled).toBe(true);
     expect(w.trapped).toBe(false);
+    expect(w.completeSetCovered).toBe(true);
   });
   it("detects a focus trap when the same element repeats", () => {
-    const w = analyseFocusWalk([stop("a"), stop("b"), stop("b"), stop("b"), stop("b")], { maxStops: 10 });
+    const w = analyseFocusWalk([stop("a"), stop("b"), stop("b"), stop("b"), stop("b")], expected("a", "b"));
     expect(w.trapped).toBe(true);
     expect(w.trappedAt).toBe("b");
   });
   it("detects a cycle when a previously seen stop recurs", () => {
-    const w = analyseFocusWalk([stop("a"), stop("b"), stop("a")], { maxStops: 10 });
+    const w = analyseFocusWalk([stop("a"), stop("b"), stop("a")], expected("a", "b"));
     expect(w.cycled).toBe(true);
     expect(w.stops.map((s) => s.selector)).toEqual(["a", "b"]);
+  });
+  it("rejects an A,B,A cycle when a baseline C tab stop was never reached", () => {
+    const w = analyseFocusWalk(
+      [stop("a"), stop("b"), stop("a")],
+      expected("a", "b", "c"),
+    );
+    expect(w).toMatchObject({
+      cycled: false,
+      earlyCycle: true,
+      completeSetCovered: false,
+      missingIdentities: ["c"],
+      missingIdentityCount: 1,
+    });
+    const assertion = evaluateAudit(cleanAudit(), { focusWalk: w })
+      .find((candidate) => candidate.id === "FOCUS_ORDER_REACHABLE");
+    expect(assertion).toMatchObject({ result: "FAIL" });
+    expect(assertion.detail).toContain("1 baseline tab stops were never reached");
+  });
+  it("does not confuse distinct duplicate-looking controls with a completed cycle", () => {
+    const duplicateLooking = (identity) => stop("a.nav-link", true, identity);
+    const w = analyseFocusWalk([
+      duplicateLooking("focusable-1@html>body>nav>a"),
+      duplicateLooking("focusable-2@html>body>footer>a"),
+    ], { maxStops: 2, expectedIdentities: [
+      "focusable-1@html>body>nav>a",
+      "focusable-2@html>body>footer>a",
+    ] });
+    expect(w).toMatchObject({ cycled: false, truncated: true, identityComplete: true });
+    expect(w.stops).toHaveLength(2);
+  });
+  it("makes a missing deterministic identity release-blocking", () => {
+    const w = analyseFocusWalk([
+      { ...stop("a"), identity: null },
+      { ...stop("a"), identity: null },
+      { body: true },
+    ], expected("a"));
+    expect(w).toMatchObject({ identityComplete: false, completeSetCovered: false });
+    const assertion = evaluateAudit(cleanAudit(), { focusWalk: w })
+      .find((candidate) => candidate.id === "FOCUS_ORDER_REACHABLE");
+    expect(assertion).toMatchObject({ result: "FAIL" });
+    expect(assertion.detail).toContain("deterministic DOM identity");
+  });
+  it("rejects a permanent visual style with no focus-induced delta", () => {
+    const w = analyseFocusWalk([
+      { ...stop("button", false), focusVisible: true, baselineCaptured: true, focusVisualDelta: false },
+      { body: true },
+    ], expected("button"));
+    const assertion = evaluateAudit(cleanAudit(), { focusWalk: w })
+      .find((candidate) => candidate.id === "FOCUS_VISIBLE_PRESENT");
+    expect(assertion).toMatchObject({ result: "FAIL", count: 1 });
+    expect(assertion.detail).toContain("no focus-induced visual delta");
+  });
+  it("makes a max-stop truncation release-blocking instead of accepting a partial walk", () => {
+    const w = analyseFocusWalk([stop("a")], { maxStops: 1, expectedIdentities: ["a"] });
+    expect(w).toMatchObject({ cycled: false, trapped: false, truncated: true, maxStops: 1 });
+    const assertions = evaluateAudit(cleanAudit(), { focusWalk: w });
+    const focus = assertions.find((assertion) => assertion.id === "FOCUS_ORDER_REACHABLE");
+    expect(focus).toMatchObject({ result: "FAIL", count: 1 });
+    expect(focus.detail).toContain("1-stop limit");
+    expect(runVerdict(assertions)).toBe("AUTOMATED_FAIL");
   });
 });
 
@@ -192,13 +277,15 @@ describe("aggregateAccessibility", () => {
   it("rolls runs up into the manifest block without ever emitting a bare PASS", () => {
     const runs = [
       { mediaVariant: "default", zoomPercent: 100, assertions: [{ id: "TARGETS_44x44", result: "PASS" }, { id: "FOCUS_VISIBLE_PRESENT", result: "PASS" }, { id: "SINGLE_MAIN_LANDMARK", result: "FAIL" }] },
-      { mediaVariant: "reduced-motion", zoomPercent: 100, audit: { reducedMotionApplied: true }, assertions: [] },
+      { mediaVariant: "reduced-motion", zoomPercent: 100, reducedMotionApplied: true, assertions: [] },
+      { mediaVariant: "forced-colors", zoomPercent: 100, forcedColorsActive: true, assertions: [] },
       { mediaVariant: "default", zoomPercent: 200, assertions: [{ id: "NO_HORIZONTAL_OVERFLOW", result: "PASS" }] },
     ];
     const agg = aggregateAccessibility(runs);
     expect(agg.targetSize44x44).toBe("AUTOMATED_PASS");
     expect(agg.singleMainLandmark).toBe("AUTOMATED_FAIL");
     expect(agg.reducedMotion).toBe("AUTOMATED_RENDERED");
+    expect(agg.forcedColors).toBe("AUTOMATED_RENDERED");
     expect(agg.zoom200Percent).toBe("AUTOMATED_PASS");
     expect(agg.manualReview).toBe("PENDING");
     expect(Object.values(agg)).not.toContain("PASS");

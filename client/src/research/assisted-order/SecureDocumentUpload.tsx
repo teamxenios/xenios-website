@@ -40,19 +40,24 @@ export function SecureDocumentUpload(props: {
     setBusy(true);
     setMessage(null);
     try {
-      const ticket = await createAssistedOrderUploadTicket(props.requestId, {
-        publicReference: props.publicReference,
-        statusToken: props.statusToken,
-        documentType,
-        side,
-        fileName: file.name,
-        mimeType: file.type,
-        sizeBytes: file.size,
-      });
-      await uploadAssistedOrderDocument(ticket, file, {
-        publicReference: props.publicReference,
-        statusToken: props.statusToken,
-      });
+      const ticket = await createAssistedOrderUploadTicket(
+        props.requestId,
+        {
+          publicReference: props.publicReference,
+          documentType,
+          side,
+          fileName: file.name,
+          mimeType: file.type,
+          sizeBytes: file.size,
+        },
+        props.statusToken,
+      );
+      await uploadAssistedOrderDocument(
+        ticket,
+        file,
+        { publicReference: props.publicReference },
+        props.statusToken,
+      );
       setMessage({ tone: "success", text: "Document received securely." });
       setFile(null);
       props.onUploaded();

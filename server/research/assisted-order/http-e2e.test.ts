@@ -592,6 +592,37 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     expect(status.status).toBe(200);
     expect(status.body.requestId).toBe(submitted.body.requestId);
 
+    const tokenStatus = await request(app)
+      .get(`/api/research/early-access/assisted-orders/${reference}`)
+      .set("x-xenios-order-status-token", submitted.body.statusToken);
+    expect(tokenStatus.status).toBe(200);
+    expect(tokenStatus.body.requestId).toBe(submitted.body.requestId);
+
+    // A bare or forged status link never establishes request existence. The
+    // customer email intentionally carries only the reference until a
+    // separately reviewed secure-link lifecycle exists.
+    const bareStatus = await request(app).get(
+      `/api/research/early-access/assisted-orders/${reference}`,
+    );
+    expect(bareStatus.status).toBe(403);
+    const queryToken = await request(app).get(
+      `/api/research/early-access/assisted-orders/${reference}?token=${encodeURIComponent(submitted.body.statusToken)}`,
+    );
+    expect(queryToken.status).toBe(400);
+    expect(queryToken.body).toMatchObject({
+      error: "validation_error",
+      field: "token",
+    });
+    expect(JSON.stringify(queryToken.body)).not.toContain(submitted.body.statusToken);
+    const wrongToken = await request(app)
+      .get(`/api/research/early-access/assisted-orders/${reference}`)
+      .set("x-xenios-order-status-token", "wrong-token");
+    expect(wrongToken.status).toBe(404);
+    const arbitraryReference = await request(app)
+      .get("/api/research/early-access/assisted-orders/XRR-20000101-0000000000")
+      .set("x-xenios-order-status-token", submitted.body.statusToken);
+    expect(arbitraryReference.status).toBe(404);
+
     // 6. The admin queue answers only behind the guard.
     const unguarded = await request(app).get("/api/admin/research/assisted-orders");
     expect(unguarded.status).toBe(401);
@@ -624,10 +655,34 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
       .send({ status: "identity_requested" });
     expect(identityRequested.status).toBe(200);
 
-    const upload = await request(app)
+    const queryCredentialUpload = await request(app)
+      .post(
+        `/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/upload-url?token=${encodeURIComponent(submitted.body.statusToken)}`,
+      )
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send({
+        publicReference: reference,
+        documentType: "government_id",
+        side: "front",
+        fileName: "id-front.jpg",
+        mimeType: "image/jpeg",
+        sizeBytes: 1000,
+      });
+    expect(queryCredentialUpload.status).toBe(400);
+    expect(queryCredentialUpload.body).toMatchObject({
+      error: "validation_error",
+      field: "token",
+    });
+    expect(JSON.stringify(queryCredentialUpload.body)).not.toContain(
+      submitted.body.statusToken,
+    );
+
+    const bodyCredentialUpload = await request(app)
       .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/upload-url`)
       .set("x-test-member", "1")
       .set("Cookie", EARLY_ACCESS_COOKIE)
+      .set("x-xenios-order-status-token", submitted.body.statusToken)
       .send({
         publicReference: reference,
         statusToken: submitted.body.statusToken,
@@ -637,14 +692,71 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
         mimeType: "image/jpeg",
         sizeBytes: 1000,
       });
+    expect(bodyCredentialUpload.status).toBe(400);
+    expect(bodyCredentialUpload.body).toMatchObject({
+      error: "validation_error",
+      field: "statusToken",
+    });
+    expect(JSON.stringify(bodyCredentialUpload.body)).not.toContain(
+      submitted.body.statusToken,
+    );
+
+    const upload = await request(app)
+      .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/upload-url`)
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .set("x-xenios-order-status-token", submitted.body.statusToken)
+      .send({
+        publicReference: reference,
+        documentType: "government_id",
+        side: "front",
+        fileName: "id-front.jpg",
+        mimeType: "image/jpeg",
+        sizeBytes: 1000,
+      });
     expect(upload.status).toBe(201);
     expect(upload.body.uploadUrl).toBe("https://storage.example/upload");
+
+    const queryCredentialCompletion = await request(app)
+      .post(
+        `/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/complete?token=${encodeURIComponent(submitted.body.statusToken)}`,
+      )
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send({ publicReference: reference });
+    expect(queryCredentialCompletion.status).toBe(400);
+    expect(queryCredentialCompletion.body).toMatchObject({
+      error: "validation_error",
+      field: "token",
+    });
+    expect(JSON.stringify(queryCredentialCompletion.body)).not.toContain(
+      submitted.body.statusToken,
+    );
+
+    const bodyCredentialCompletion = await request(app)
+      .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/complete`)
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .set("x-xenios-order-status-token", submitted.body.statusToken)
+      .send({
+        publicReference: reference,
+        statusToken: submitted.body.statusToken,
+      });
+    expect(bodyCredentialCompletion.status).toBe(400);
+    expect(bodyCredentialCompletion.body).toMatchObject({
+      error: "validation_error",
+      field: "statusToken",
+    });
+    expect(JSON.stringify(bodyCredentialCompletion.body)).not.toContain(
+      submitted.body.statusToken,
+    );
 
     const completed = await request(app)
       .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/complete`)
       .set("x-test-member", "1")
       .set("Cookie", EARLY_ACCESS_COOKIE)
-      .send({ publicReference: reference, statusToken: submitted.body.statusToken });
+      .set("x-xenios-order-status-token", submitted.body.statusToken)
+      .send({ publicReference: reference });
     expect(completed.status).toBe(204);
 
     const unguardedDownload = await request(app)

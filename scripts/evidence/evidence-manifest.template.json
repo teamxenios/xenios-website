@@ -418,15 +418,18 @@
     "public-research-homepage",
     "warm-silver-homepage-reconciliation",
     "global-marketing-root",
+    "global-marketing-public-pages",
     "access-hub",
     "catalog",
     "product-detail",
     "early-access",
     "order-flow",
+    "order-status",
     "care",
     "tebra-scheduler",
     "care-appointments",
     "account-overview",
+    "account-settings",
     "orders",
     "membership",
     "care-account",
@@ -438,24 +441,67 @@
     "admin-critical",
     "research-fulfillment",
     "hino",
-    "not-found-error"
+    "not-found-error",
+    "member-auth"
+  ],
+  "requiredRepresentativeSurfaces": [
+    "catalog",
+    "product-detail",
+    "order-flow",
+    "order-status",
+    "account-overview",
+    "orders",
+    "membership"
+  ],
+  "requiredRepresentativeJourneys": [
+    { "surface": "catalog", "state": "default", "widthsCssPx": [1440, 390] },
+    { "surface": "product-detail", "state": "default", "widthsCssPx": [1440, 390] },
+    { "surface": "account-overview", "state": "rich", "widthsCssPx": [1440, 390] },
+    { "surface": "orders", "state": "rich", "widthsCssPx": [1440, 390] },
+    { "surface": "orders", "state": "empty", "widthsCssPx": [1440, 390] },
+    { "surface": "membership", "state": "rich", "widthsCssPx": [1440, 390] },
+    { "surface": "order-flow", "state": "review", "widthsCssPx": [1440, 390] },
+    { "surface": "order-flow", "state": "confirmation", "widthsCssPx": [1440, 390] },
+    { "surface": "order-status", "state": "neutral-error", "widthsCssPx": [1440, 390] },
+    { "surface": "order-status", "state": "server-verified", "widthsCssPx": [1440, 390] }
   ],
   "requiredStates": [
     "default",
-    "loading",
     "empty",
     "unavailable",
+    "neutral-error",
     "unauthorized",
     "disabled",
-    "unmounted",
     "error"
+  ],
+  "testBackedStates": [
+    {
+      "state": "loading",
+      "evidenceClass": "exact-candidate-automated-test",
+      "evidenceRefs": [
+        "client/src/research/ui/kit.test.tsx",
+        "client/src/research/storefront/storefront-surface.test.tsx"
+      ],
+      "claimScope": "functional state; not counted as a browser screenshot"
+    },
+    {
+      "state": "unmounted",
+      "evidenceClass": "exact-candidate-automated-test",
+      "evidenceRefs": [
+        "client/src/research/routes-parity.test.ts",
+        "server/research/affiliates/v2/unenforced-flags.test.ts"
+      ],
+      "claimScope": "route/mount state; not counted as a browser screenshot"
+    }
   ],
   "httpHeadEvidence": {
     "result": "PENDING",
     "records": [],
     "requiredAssertions": [
       "STATUS_CODE",
+      "CONTENT_TYPE_HTML",
       "X_ROBOTS_TAG",
+      "ROBOTS_META",
       "RAW_HTML_TITLE",
       "CANONICAL",
       "OPEN_GRAPH",
@@ -473,6 +519,7 @@
     "headings": "PENDING",
     "targetSize44x44": "PENDING",
     "reducedMotion": "PENDING",
+    "forcedColors": "PENDING",
     "zoom200Percent": "PENDING",
     "automatedScan": "PENDING",
     "manualReview": "PENDING"

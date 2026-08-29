@@ -51,7 +51,7 @@ function v2Payload(overrides: Record<string, unknown> = {}) {
 }
 
 describe("the customer confirmation email", () => {
-  it("carries the reference, every item with its retail money, and the status link", () => {
+  it("carries the reference and every item with retail money without promising a credential-less status link", () => {
     const mail = renderAssistedOrderOutboxEmail(CUSTOMER, v2Payload());
     expect(mail).not.toBeNull();
     expect(mail?.subject).toContain("XRR-20260820-A1B2C3D4E5");
@@ -64,7 +64,9 @@ describe("the customer confirmation email", () => {
     expect(body).toContain("$65.00 each");
     expect(body).toContain("nothing is due yet");
     expect(body).toContain("A specialist confirms your agreements and pricing.");
-    expect(body).toContain("/research/early-access/order-request/XRR-20260820-A1B2C3D4E5");
+    expect(body).toContain("return to the browser where you submitted");
+    expect(body).toContain("Email does not carry a secure status credential");
+    expect(body).not.toContain("/research/early-access/order-request/XRR-20260820-A1B2C3D4E5");
   });
 
   it("never shows the customer an operator surface", () => {
@@ -239,6 +241,7 @@ describe("rows queued before the v2 payload existed", () => {
     expect(mail!.text).toContain("XRR-20260819-99AABBCCDD");
     expect(mail!.text).toContain("Requested items: 3");
     expect(mail!.text).not.toContain("Items:");
+    expect(mail!.text).not.toContain("/research/early-access/order-request/");
   });
 
   it("still renders the v1 admin payload", () => {

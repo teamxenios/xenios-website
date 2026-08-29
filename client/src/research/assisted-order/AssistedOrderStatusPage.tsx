@@ -9,8 +9,14 @@ import "./assisted-order.css";
 
 function referenceFromPath(): string {
   const parts = window.location.pathname.split("/").filter(Boolean);
-  return decodeURIComponent(parts[parts.length - 1] ?? "");
+  try {
+    return decodeURIComponent(parts[parts.length - 1] ?? "");
+  } catch {
+    return "";
+  }
 }
+
+const PUBLIC_REFERENCE = /^XRR-\d{8}-[0-9A-F]{10}$/u;
 
 export function AssistedOrderStatusPage() {
   const reference = useMemo(referenceFromPath, []);
@@ -25,8 +31,19 @@ export function AssistedOrderStatusPage() {
   const refresh = useCallback(() => {
     setLoading(true);
     setError(null);
+    setStatus(null);
+    if (!PUBLIC_REFERENCE.test(reference)) {
+      setError("This secure status link is not valid or has expired. Contact Xenios Research for help.");
+      setLoading(false);
+      return;
+    }
     loadAssistedOrderStatus(reference, token)
-      .then(setStatus)
+      .then((view) => {
+        if (view.publicReference !== reference) {
+          throw new Error("status_reference_mismatch");
+        }
+        setStatus(view);
+      })
       .catch((reason) => setError(assistedOrderStatusErrorCopy(reason)))
       .finally(() => setLoading(false));
   }, [reference, token]);
@@ -37,10 +54,14 @@ export function AssistedOrderStatusPage() {
     <div className="xenios-order-page">
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Early Access request</p>
-        <h1>{reference}</h1>
-        <p>Track your request and complete any actions Xenios requests.</p>
+        <h1 data-testid="order-status-heading">{status ? status.publicReference : "Request status"}</h1>
+        <p>
+          {status
+            ? "Track your request and complete any actions Xenios requests."
+            : "We verify this link before showing any request details."}
+        </p>
       </header>
-      {loading ? <p className="xenios-order-loading">Loading request…</p> : null}
+      {loading ? <p className="xenios-order-loading">Checking request…</p> : null}
       {error ? <div className="xenios-order-error" role="alert">{error}</div> : null}
       {status ? (
         <>
@@ -89,6 +110,11 @@ export function AssistedOrderStatusPage() {
           ) : null}
         </>
       ) : null}
+      <p>
+        <a className="xenios-order-return-link" href="/research/early-access">
+          Return to Early Access
+        </a>
+      </p>
     </div>
   );
 }

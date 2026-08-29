@@ -27,9 +27,73 @@
 // stepper navigation, form fields and validation, and client-side console or
 // network errors. It deliberately refuses every ambient external credential;
 // use a separately reviewed harness for any data-dependent verification.
-import { createServer } from "node:http";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { createServer, request as httpRequest } from "node:http";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  createImmutableDistSnapshot,
+  importImmutableDistEntry,
+  inventoryDirectory,
+  inventorySha256,
+} from "./evidence/lib/immutable-dist.mjs";
+import {
+  assertCleanCandidateCheckout,
+  assertPinnedExecutingRuntime,
+  validatePreviewProvenance,
+} from "./evidence/lib/provenance.mjs";
 
 const requestedPort = process.env.PORT || "5199";
+const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "..");
+const distRoot = join(repoRoot, "dist");
+const git = (...args) => execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" }).trim();
+const candidateSha = git("rev-parse", "HEAD");
+const checkout = assertCleanCandidateCheckout({ sha: candidateSha, cwd: repoRoot });
+const executingRuntime = assertPinnedExecutingRuntime();
+const provenance = JSON.parse(readFileSync(join(distRoot, "evidence-provenance.json"), "utf8"));
+const validatedProvenance = validatePreviewProvenance(provenance, checkout);
+if (
+  validatedProvenance.nodeVersion !== executingRuntime.nodeVersion ||
+  validatedProvenance.npmVersion !== executingRuntime.npmVersion
+) {
+  throw new Error("preview-research executing runtime differs from the verified build runtime");
+}
+const currentDistInventory = inventoryDirectory(distRoot, new Set(["evidence-provenance.json"]));
+const currentDistHash = inventorySha256(currentDistInventory);
+if (
+  provenance.distFileCount !== currentDistInventory.length ||
+  provenance.distInventorySha256 !== currentDistHash ||
+  JSON.stringify(provenance.fileInventory) !== JSON.stringify(currentDistInventory)
+) {
+  throw new Error("preview-research distribution is not bound to the clean exact checkout");
+}
+// Serve an immutable copy. `dist/` is ignored and a concurrent build can replace
+// an asset after the startup inventory check; express.static reads assets on
+// demand, so serving the authoring directory would make cached provenance lie.
+const immutableDist = createImmutableDistSnapshot({
+  repoRoot,
+  sourceDistRoot: distRoot,
+  expectedInventory: provenance.fileInventory,
+  expectedInventorySha256: provenance.distInventorySha256,
+});
+process.once("exit", () => {
+  try {
+    immutableDist.dispose();
+  } catch {}
+});
+const portReservation = createServer();
+await new Promise((resolveListen, reject) => {
+  portReservation.once("error", reject);
+  portReservation.listen(0, "127.0.0.1", resolveListen);
+});
+const reservationAddress = portReservation.address();
+if (!reservationAddress || typeof reservationAddress === "string") {
+  throw new Error("preview-research could not reserve an internal port");
+}
+const innerPort = reservationAddress.port;
+await new Promise((resolveClose) => portReservation.close(resolveClose));
 
 // Treat the launching shell as hostile input. Retain only operating-system
 // process basics; every application/service variable is removed before the
@@ -68,7 +132,7 @@ for (const key of Object.keys(process.env)) {
 }
 
 process.env.NODE_ENV = "production";
-process.env.PORT = requestedPort;
+process.env.PORT = String(innerPort);
 process.env.RESEARCH_ACCESS_PASSWORD = "preview";
 process.env.RESEARCH_SESSION_SECRET = "preview-secret-not-production";
 // Keep unauthenticated admin-boundary probes production-shaped (401 rather
@@ -143,4 +207,76 @@ console.warn(
     "[preview] banner. Use this preview for layout, gating and form behaviour only.",
 );
 
-await import("../dist/index.cjs");
+await importImmutableDistEntry(immutableDist);
+
+let applicationReady = false;
+for (let attempt = 0; attempt < 200; attempt += 1) {
+  try {
+    const response = await fetch(`http://127.0.0.1:${innerPort}/api/config`, {
+      signal: AbortSignal.timeout(500),
+    });
+    if (response.status > 0) {
+      applicationReady = true;
+      break;
+    }
+  } catch {}
+  await new Promise((resolveWait) => setTimeout(resolveWait, 50));
+}
+if (!applicationReady) throw new Error("preview-research application did not become ready");
+
+const evidenceProxy = createServer((req, res) => {
+  const requestUrl = new URL(req.url || "/", `http://${req.headers.host || `127.0.0.1:${requestedPort}`}`);
+  if (requestUrl.pathname === "/__xenios_evidence_provenance") {
+    try {
+      immutableDist.assertUnchanged();
+    } catch (error) {
+      res.statusCode = 409;
+      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.end(JSON.stringify({ code: "preview_snapshot_changed" }));
+      return;
+    }
+    res.statusCode = 200;
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({
+      kind: provenance.kind,
+      candidateSha: provenance.candidateSha,
+      sourceTree: provenance.sourceTree,
+      distInventorySha256: provenance.distInventorySha256,
+      distFileCount: provenance.distFileCount,
+      builtAtUtc: provenance.builtAtUtc,
+      nodeVersion: provenance.nodeVersion,
+      npmVersion: provenance.npmVersion,
+      packageLockSha256: provenance.packageLockSha256,
+      installMethod: provenance.installMethod,
+    }));
+    return;
+  }
+  const upstream = httpRequest({
+    hostname: "127.0.0.1",
+    port: innerPort,
+    method: req.method,
+    path: req.url,
+    headers: req.headers,
+  }, (upstreamResponse) => {
+    res.writeHead(upstreamResponse.statusCode ?? 502, upstreamResponse.headers);
+    upstreamResponse.pipe(res);
+  });
+  upstream.on("error", (error) => {
+    if (res.headersSent) return res.destroy(error);
+    res.statusCode = 502;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ code: "preview_upstream_unavailable" }));
+  });
+  req.pipe(upstream);
+});
+evidenceProxy.on("clientError", (_error, socket) => socket.destroy());
+await new Promise((resolveListen, reject) => {
+  evidenceProxy.once("error", reject);
+  evidenceProxy.listen(Number(requestedPort), "127.0.0.1", resolveListen);
+});
+console.log(
+  `[preview] evidence-bound candidate ${candidateSha} on http://127.0.0.1:${requestedPort} ` +
+    `(inner application port ${innerPort}, dist inventory ${currentDistHash})`,
+);

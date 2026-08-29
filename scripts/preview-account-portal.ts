@@ -254,6 +254,29 @@ export function buildAccountPortalPreviewApp(previewEnv: NodeJS.ProcessEnv = pro
     });
   });
 
+  // ResearchContext performs this active-member read after every successful
+  // sign-in even when the customer navigates directly to the account portal.
+  // Serve an intentionally empty, commerce-disabled preview projection so the
+  // production bundle completes that read without invoking the real catalog
+  // guard or any provider. This route is read-only and preview-persona gated.
+  app.get("/api/research/catalog", (req, res) => {
+    const persona = personaByToken(bearerOf(req) ?? "");
+    if (!persona) {
+      res.status(401).json({ ok: false, message: "Preview member required." });
+      return;
+    }
+    if (persona.status !== "active") {
+      res.status(403).json({ ok: false, message: "Preview active member required." });
+      return;
+    }
+    res.set("Cache-Control", "no-store");
+    res.json({
+      products: [],
+      commerce: { research: false, consumer: false },
+      email: "research@xeniostechnology.com",
+    });
+  });
+
   app.use(researchPageGate);
 
   // Preview API boundary: only the doors this preview is FOR stay reachable;
@@ -261,6 +284,7 @@ export function buildAccountPortalPreviewApp(previewEnv: NodeJS.ProcessEnv = pro
   // can touch a real dependency.
   const PREVIEW_GET_DOORS = new Set([
     "/me",
+    "/catalog",
     "/customer-account/overview",
     "/customer-account/orders",
     "/customer-account/subscription",

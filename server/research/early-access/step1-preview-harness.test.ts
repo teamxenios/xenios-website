@@ -59,6 +59,15 @@ describe("Step 1 real-browser preview composition", () => {
     });
     const browser = request(built.app);
 
+    const runtimeConfig = await browser.get("/api/config");
+    expect(runtimeConfig.status).toBe(200);
+    expect(runtimeConfig.headers["cache-control"]).toBe("no-store");
+    expect(runtimeConfig.body).toMatchObject({
+      metaPixelId: null,
+      turnstileSiteKey: null,
+      supabaseAnonKey: "preview-anon-key-not-a-secret",
+    });
+
     const blockedAdmin = await browser.get("/api/admin/research/assisted-orders");
     expect(blockedAdmin.status).toBe(404);
     expect(blockedAdmin.body.error).toBe("step1_preview_route_not_available");
@@ -125,6 +134,15 @@ describe("Step 1 real-browser preview composition", () => {
       "Temporarily Unavailable",
     ]);
 
+    const forgedStatus = await browser.get(
+      "/api/research/early-access/assisted-orders/XRR-20000101-0000000000",
+    ).set("Cookie", cookieHeader!);
+    expect(forgedStatus.status).toBe(404);
+    expect(forgedStatus.text).toBe(
+      '{"error":"not_found","message":"The request was not found."}',
+    );
+    expect(forgedStatus.text).not.toContain("XRR-20000101-0000000000");
+
     const searched = await browser.get(
       "/api/research/early-access/assisted-orders/catalog?q=Wellness",
     ).set("Cookie", cookieHeader!);
@@ -155,6 +173,13 @@ describe("Step 1 real-browser preview composition", () => {
       `/api/research/early-access/assisted-orders/${placed.body.publicReference}`,
     ).set("Cookie", cookieHeader!);
     expect(ownStatus.status).toBe(200);
+
+    const tokenVerifiedStatus = await browser.get(
+      `/api/research/early-access/assisted-orders/${placed.body.publicReference}`,
+    ).set("x-xenios-order-status-token", placed.body.statusToken);
+    expect(tokenVerifiedStatus.status).toBe(200);
+    expect(tokenVerifiedStatus.body.publicReference).toBe(placed.body.publicReference);
+    expect(tokenVerifiedStatus.body.status).toBe("submitted");
 
     const logout = await browser
       .post("/api/research/early-access/logout")

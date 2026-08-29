@@ -3,7 +3,10 @@ import fs from "fs";
 import path from "path";
 import { isCarePath } from "@shared/care/paths";
 import { isResearchPath } from "@shared/research/paths";
-import { buildRawHttpDocumentResponse } from "./research/seo/raw-http-document-policy";
+import {
+  buildRawHttpDocumentResponse,
+  rawHttpStructuredDataForPath,
+} from "./research/seo/raw-http-document-policy";
 
 const EXTERNAL_FONT_LINK =
   /\s*<link\b(?=[^>]*\bhref=["']https:\/\/fonts\.(?:googleapis|gstatic)\.com(?:\/[^"']*)?["'])[^>]*>\s*/giu;
@@ -46,7 +49,9 @@ export function sendRawHttpDocument(
   const document = buildRawHttpDocumentResponse({
     requestTarget,
     templateHtml: routeTemplate,
-    structuredData,
+    structuredData: structuredData.length > 0
+      ? structuredData
+      : rawHttpStructuredDataForPath(originalPathname),
     // Production parity: the research middleware gated ONLY /research documents
     // (isResearchPath) behind RESEARCH_INDEXABLE; the marketing site (/, careers,
     // ICP pages) was always indexable. Until the flag is "true" every public

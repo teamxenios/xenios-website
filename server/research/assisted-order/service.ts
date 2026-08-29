@@ -667,7 +667,6 @@ export class AssistedOrderService {
             lines: notificationLines,
             paymentState,
             nextSteps: receipt.nextSteps,
-            statusPath: `/research/early-access/order-request/${receipt.publicReference}`,
           }),
           dedupeKey: `assisted-order:${storedRequestId}:submitted:customer`,
           createdAt: nowIso,
@@ -732,8 +731,10 @@ export class AssistedOrderService {
     );
     // Recorded decision: a presented status token is verified against the
     // request first, and a match grants read access to THAT request only,
-    // regardless of viewer capabilities (the emailed 30-day link must keep
-    // working after the session lapses). The lookup stays bound to the exact
+    // regardless of viewer capabilities. The browser stores this credential
+    // separately from the receipt for the same-session status journey. It is
+    // deliberately not placed in customer email until a separately reviewed
+    // credential-link lifecycle exists. The lookup stays bound to the exact
     // public reference, so a token can never enumerate other references.
     if (rawStatusToken) {
       const tokenAuthorization: AssistedOrderStatusAuthorization =
@@ -897,6 +898,7 @@ export class AssistedOrderService {
     viewer: AssistedOrderViewer,
     requestId: string,
     input: AssistedOrderUploadRequest,
+    rawStatusToken?: string,
   ): Promise<AssistedOrderUploadTicket> {
     requireCapability(viewer, "assisted_orders:read_own");
     const authorizedStatus = await this.deps.repository.getStatus({
@@ -907,8 +909,8 @@ export class AssistedOrderService {
         input.publicReference,
         80,
       ),
-      statusTokenHash: input.statusToken
-        ? this.deps.hasher.hash(input.statusToken)
+      statusTokenHash: rawStatusToken
+        ? this.deps.hasher.hash(rawStatusToken)
         : null,
     });
     if (!authorizedStatus || authorizedStatus.requestId !== requestId) {

@@ -20,6 +20,36 @@ export function assistedOrderReceiptKey(publicReference: string): string {
 /** The receipt as persisted: everything except the credential. */
 export type StoredAssistedOrderReceipt = Omit<AssistedOrderReceipt, "statusToken">;
 
+const PUBLIC_REFERENCE = /^XRR-\d{8}-[0-9A-F]{10}$/u;
+
+function isStoredAssistedOrderReceipt(
+  value: unknown,
+  expectedPublicReference: string,
+): value is StoredAssistedOrderReceipt {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const receipt = value as Record<string, unknown>;
+  return (
+    receipt.publicReference === expectedPublicReference &&
+    PUBLIC_REFERENCE.test(expectedPublicReference) &&
+    typeof receipt.requestId === "string" &&
+    receipt.requestId.trim().length > 0 &&
+    receipt.status === "submitted" &&
+    typeof receipt.createdAt === "string" &&
+    receipt.createdAt.trim().length > 0 &&
+    (receipt.estimatedTotalCents === null ||
+      (Number.isSafeInteger(receipt.estimatedTotalCents) &&
+        Number(receipt.estimatedTotalCents) >= 0)) &&
+    receipt.currency === "USD" &&
+    Array.isArray(receipt.lines) &&
+    receipt.lines.every((line) => typeof line === "object" && line !== null) &&
+    Array.isArray(receipt.nextSteps) &&
+    receipt.nextSteps.every((step) => typeof step === "string") &&
+    !("statusToken" in receipt)
+  );
+}
+
 export function receiptForStorage(
   receipt: AssistedOrderReceipt,
 ): StoredAssistedOrderReceipt {
@@ -27,8 +57,12 @@ export function receiptForStorage(
   return rest;
 }
 
-function defaultStorage(): Storage {
-  return window.sessionStorage;
+function defaultStorage(): Storage | null {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -37,21 +71,25 @@ function defaultStorage(): Storage {
  */
 export function storeAssistedOrderReceipt(
   receipt: AssistedOrderReceipt,
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): boolean {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return false;
+  }
   const tokenKey = assistedOrderTokenKey(receipt.publicReference);
   const receiptKey = assistedOrderReceiptKey(receipt.publicReference);
   try {
     // Write the non-secret half first and the credential last. If either write
     // fails, remove both halves so a quota/privacy fault cannot leave a bearer
     // token stranded without the receipt it belongs to.
-    storage.setItem(receiptKey, JSON.stringify(receiptForStorage(receipt)));
-    storage.setItem(tokenKey, receipt.statusToken);
+    target.setItem(receiptKey, JSON.stringify(receiptForStorage(receipt)));
+    target.setItem(tokenKey, receipt.statusToken);
     return true;
   } catch {
     for (const key of [tokenKey, receiptKey]) {
       try {
-        storage.removeItem(key);
+        target.removeItem(key);
       } catch {
         // Best effort per half. The accepted server request remains durable;
         // the confirmation path still carries its non-secret reference.
@@ -63,24 +101,36 @@ export function storeAssistedOrderReceipt(
 
 export function readAssistedOrderToken(
   publicReference: string,
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): string | null {
-  return storage.getItem(assistedOrderTokenKey(publicReference));
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return null;
+  }
+  try {
+    return target.getItem(assistedOrderTokenKey(publicReference));
+  } catch {
+    // Some privacy modes expose Storage but reject reads. A denied read is the
+    // same as a missing credential; it must not crash the neutral status page.
+    return null;
+  }
 }
 
 export function readStoredAssistedOrderReceipt(
   publicReference: string,
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): StoredAssistedOrderReceipt | null {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return null;
+  }
   try {
-    const raw = storage.getItem(assistedOrderReceiptKey(publicReference));
+    const raw = target.getItem(assistedOrderReceiptKey(publicReference));
     if (!raw) {
       return null;
     }
     const parsed: unknown = JSON.parse(raw);
-    return typeof parsed === "object" && parsed !== null
-      ? (parsed as StoredAssistedOrderReceipt)
-      : null;
+    return isStoredAssistedOrderReceipt(parsed, publicReference) ? parsed : null;
   } catch {
     return null;
   }
@@ -93,7 +143,7 @@ export function readStoredAssistedOrderReceipt(
  */
 export function recomposeAssistedOrderReceipt(
   publicReference: string,
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): AssistedOrderReceipt | null {
   const stored = readStoredAssistedOrderReceipt(publicReference, storage);
   const token = readAssistedOrderToken(publicReference, storage);
@@ -109,21 +159,25 @@ export function recomposeAssistedOrderReceipt(
  * least of all the status credential, survives for whoever unlocks next.
  */
 export function clearAssistedOrderStorage(
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): void {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return;
+  }
   // Snapshot the key family first. Removing while walking the live Storage
   // index can skip entries, and one browser/privacy failure must not prevent a
   // later bearer-token key from being attempted.
   const keys: string[] = [];
   let length = 0;
   try {
-    length = storage.length;
+    length = target.length;
   } catch {
     return;
   }
   for (let index = 0; index < length; index += 1) {
     try {
-      const key = storage.key(index);
+      const key = target.key(index);
       if (key !== null && key.startsWith(ASSISTED_ORDER_STORAGE_PREFIX)) {
         keys.push(key);
       }
@@ -133,7 +187,7 @@ export function clearAssistedOrderStorage(
   }
   for (const key of keys) {
     try {
-      storage.removeItem(key);
+      target.removeItem(key);
     } catch {
       // Best effort is per key: a failed draft/receipt deletion must not stop
       // the subsequent status-token deletions.

@@ -37,8 +37,12 @@ export type AssistedOrderDraft = Readonly<{
   savedAt: string;
 }>;
 
-function defaultStorage(): Storage {
-  return window.sessionStorage;
+function defaultStorage(): Storage | null {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
 }
 
 function isCatalogItem(value: unknown): value is AssistedOrderCatalogItem {
@@ -83,10 +87,14 @@ function parseSelection(value: unknown): AssistedOrderSelection | null {
  * wizard starts clean rather than rendering garbage or throwing.
  */
 export function readAssistedOrderDraft(
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): AssistedOrderDraft | null {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return null;
+  }
   try {
-    const raw = storage.getItem(ASSISTED_ORDER_DRAFT_KEY);
+    const raw = target.getItem(ASSISTED_ORDER_DRAFT_KEY);
     if (!raw) {
       return null;
     }
@@ -139,10 +147,14 @@ export function storeAssistedOrderDraft(
     selections: AssistedOrderSelectionMap;
     generalNotes: string;
   }>,
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): void {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return;
+  }
   try {
-    storage.setItem(
+    target.setItem(
       ASSISTED_ORDER_DRAFT_KEY,
       JSON.stringify({
         idempotencyKey: draft.idempotencyKey,
@@ -159,10 +171,14 @@ export function storeAssistedOrderDraft(
 
 /** Called after a successful submission so the next request starts clean. */
 export function clearAssistedOrderDraft(
-  storage: Storage = defaultStorage(),
+  storage?: Storage | null,
 ): void {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return;
+  }
   try {
-    storage.removeItem(ASSISTED_ORDER_DRAFT_KEY);
+    target.removeItem(ASSISTED_ORDER_DRAFT_KEY);
   } catch {
     // Nothing to do: an unclearable draft is re-validated on every read.
   }
