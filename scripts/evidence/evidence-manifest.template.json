@@ -404,7 +404,7 @@
       "networkResult",
       "piiPhiReview"
     ],
-    "artifactPathMustBeUnder": "docs/review/xenios-research-full-site-20260828/",
+    "artifactPathMustBeUnder": "docs/review/xenios-research-full-site-20260829/",
     "realCustomerDataAllowed": false
   },
   "browserMatrix": {
@@ -417,6 +417,7 @@
   "requiredSurfaces": [
     "public-research-homepage",
     "warm-silver-homepage-reconciliation",
+    "global-marketing-root",
     "access-hub",
     "catalog",
     "product-detail",

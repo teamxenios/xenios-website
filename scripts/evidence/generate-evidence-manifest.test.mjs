@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildManifest } from "./generate-evidence-manifest.mjs";
+import { buildManifest, parseArgs } from "./generate-evidence-manifest.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const template = JSON.parse(readFileSync(join(here, "evidence-manifest.template.json"), "utf8"));
@@ -44,7 +44,7 @@ const matrix = (runs) => ({
 
 describe("buildManifest", () => {
   it("keeps schemaVersion 2 and every capture carries the packet's required fields", () => {
-    const m = buildManifest({ template, matrix: matrix([run()]), http: null, pii: null, sha: SHA, reviewer: "lead", artifactRoot: "docs/review/xenios-research-full-site-20260828/browser" });
+    const m = buildManifest({ template, matrix: matrix([run()]), http: null, pii: null, sha: SHA, reviewer: "lead", artifactRoot: "docs/review/xenios-research-full-site-20260829/browser" });
     expect(m.schemaVersion).toBe(2);
     expect(m.candidate.sha).toBe(SHA);
     for (const field of template.captureSchema.requiredFields) expect(m.captures[0]).toHaveProperty(field);
@@ -126,5 +126,14 @@ describe("buildManifest", () => {
     const before = JSON.stringify(template);
     buildManifest({ template, matrix: matrix([run()]), http: null, pii: null, sha: SHA, artifactRoot: "x" });
     expect(JSON.stringify(template)).toBe(before);
+  });
+
+  it("defaults new capture references to the 20260829 final recut packet", () => {
+    const args = parseArgs([]);
+    expect(args.artifactRoot).toBe("docs/review/xenios-research-full-site-20260829/browser");
+    expect(args.artifactRoot).not.toContain("20260828");
+    expect(template.captureSchema.artifactPathMustBeUnder).toBe(
+      "docs/review/xenios-research-full-site-20260829/",
+    );
   });
 });

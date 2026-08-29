@@ -550,7 +550,8 @@
       "client/src/pages/Home.tsx: old sha256:7fe88e0c954c8af9bd90f7e90399b7bdb11d2e20aeec8ef38420cbda52b7e463, new sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9 (e551082 fix(quality): harden public UX and indexing policy).",
       "server/routes.ts: old sha256:6b080fff3ed04fd48eb3af7aa9272d26cbc6f570c4f2c42a17979affe299f94f, new sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4 (a01d152 fix(privacy): constrain public attribution vocabulary).",
       "server/static.ts: old sha256:7ad68ceb8da0fe0b29af6d517e66cfc14f106a641de845aac4f1bd995ad24f4a, new sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897 (600e45a feat(seo): answer every document through the raw HTTP policy in static and dev serving).",
-      "server/static.ts: old sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897, new sha256:0f2cf4ab28ab6caf082fb139f89015cf089243f606217b16d03ec44e49fc70ae (2026-08-28 Claude Lead fix(static), successors of 7931044a: only GET/HEAD / and /index.html are answered by the raw HTTP policy handler through a guarded app.use registered before express.static; express.static runs with redirect:false and the handler itself answers the production-parity 301 for directories that carry their own index.html (the /hino subtree), so asset-only directories such as dist/public/research/ never turn an SPA document into a redirect; every other static directory index is served as production 3daa3f4a serves it; the /{*path} policy fallback is unchanged; route census 400/409).; RESEARCH_INDEXABLE parity: the policy is built with indexable = !isResearchPath(path) || RESEARCH_INDEXABLE === 'true', so public RESEARCH documents stay noindex at the HTTP layer until the flag is set while the marketing site (/, careers, ICP pages) stays indexable — exactly the production research middleware's gate)."
+      "server/static.ts: old sha256:20db1e40d5f167ae348570126f3628685c01dc5d1212b0ebfa5424a058ff0897, new sha256:0f2cf4ab28ab6caf082fb139f89015cf089243f606217b16d03ec44e49fc70ae (2026-08-28 Claude Lead fix(static), successors of 7931044a: only GET/HEAD / and /index.html are answered by the raw HTTP policy handler through a guarded app.use registered before express.static; express.static runs with redirect:false and the handler itself answers the production-parity 301 for directories that carry their own index.html (the /hino subtree), so asset-only directories such as dist/public/research/ never turn an SPA document into a redirect; every other static directory index is served as production 3daa3f4a serves it; the /{*path} policy fallback is unchanged; route census 400/409).; RESEARCH_INDEXABLE parity: the policy is built with indexable = !isResearchPath(path) || RESEARCH_INDEXABLE === 'true', so public RESEARCH documents stay noindex at the HTTP layer until the flag is set while the marketing site (/, careers, ICP pages) stays indexable — exactly the production research middleware's gate).",
+      "server/static.ts: old sha256:0f2cf4ab28ab6caf082fb139f89015cf089243f606217b16d03ec44e49fc70ae, new sha256:2a23f84e01d6fa02a26e743b07eb211cf41d1f6aac2d18b8913f222c26f8f901 (2026-08-29 Omega redirect-parity repair: a dedicated default express.static instance now owns redirects for real index directories, preserving the historical serve-static HTML redirect body, text/html content type, default-src 'none' CSP, and nosniff header on /hino; the primary asset server remains redirect:false, so asset-only directories such as dist/public/research/ still cannot redirect an SPA document; the raw HTTP document policy and /{*path} fallback are unchanged. Covered by server/static.test.ts)."
     ],
     "files": {
       "client/index.html": "sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5",
@@ -571,7 +572,7 @@
       "client/public/sitemap.xml": "sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
-      "server/static.ts": "sha256:0f2cf4ab28ab6caf082fb139f89015cf089243f606217b16d03ec44e49fc70ae",
+      "server/static.ts": "sha256:2a23f84e01d6fa02a26e743b07eb211cf41d1f6aac2d18b8913f222c26f8f901",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
     }
@@ -1074,7 +1075,8 @@
       "The assisted-order block is wrapped in async composeAssistedOrderBridge(),",
       "awaited at the top of the existing async boot section BEFORE registerRoutes,",
       "so the durable audit authority can be resolved before the doors register.",
-      "All nine assisted-order door registrations are UNCONDITIONAL: a refused or",
+      "The config probe plus nine operational assisted-order doors - ten registrations",
+      "total - are UNCONDITIONAL: a refused or",
       "disabled composition answers 200 {enabled:false, code:",
       "assisted_order_unavailable} on the config door and a named 503 on every",
       "other door - the generic API 404 is structurally impossible on these paths.",
@@ -1083,11 +1085,18 @@
       "file with a built-shell fixture. No protected route moved, no guard",
       "weakened, no registration removed; route census unchanged (409/400).",
       "old sha256:a880a68c19c26aec84e7b83ee26e255f77e06d1caa2ed6f2e94d14d36343f644,",
-      "new sha256:b192c603e0f71e105712f73ce7322abeb20f97a74f83e46ae24d7e22561b3c04."
+      "new sha256:b192c603e0f71e105712f73ce7322abeb20f97a74f83e46ae24d7e22561b3c04.",
+      "",
+      "2026-08-29, Omega assisted-order count correction: server/index.ts comments now",
+      "state the executable topology exactly: one config probe plus nine operational",
+      "doors, for ten unconditional literal registrations. This is comment-only; no",
+      "executable token, route, registration order, guard, or fallback behavior changed.",
+      "old sha256:b192c603e0f71e105712f73ce7322abeb20f97a74f83e46ae24d7e22561b3c04,",
+      "new sha256:bf6b8b035c3b10d8e22e257d16ff012fd249ee8f8440545d78938cf3640f4e45."
     ],
     "files": {
       "client/src/App.tsx": "sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c",
-      "server/index.ts": "sha256:b192c603e0f71e105712f73ce7322abeb20f97a74f83e46ae24d7e22561b3c04",
+      "server/index.ts": "sha256:bf6b8b035c3b10d8e22e257d16ff012fd249ee8f8440545d78938cf3640f4e45",
       "server/research/index.ts": "sha256:9ad57c66aa414c883eeca362a6951b4eb75e796100743d1c721e914550579d32",
       "server/care/index.ts": "sha256:9c5083d9452fbc402c2c2a61f4b3dd8c36383c7e6fcbaba01b390a77be79a3d9",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"

@@ -843,8 +843,9 @@ const assistedOrderUnavailableDoor = (path: string, reason: string): RequestHand
   };
 
 // Composed inside the async boot section (below) so the durable audit
-// authority can be awaited before the doors are registered. The nine literal
-// registrations are UNCONDITIONAL: the release scanner sees them and a customer
+// authority can be awaited before the doors are registered. The config probe
+// plus nine operational doors are ten UNCONDITIONAL literal registrations: the
+// release scanner sees them and a customer
 // can never receive a generic 404 for an assisted-order door; when the
 // composition is refused or disabled they answer the explicit state above.
 async function composeAssistedOrderBridge(): Promise<void> {
@@ -961,8 +962,9 @@ async function composeAssistedOrderBridge(): Promise<void> {
     }
     return assistedOrderExpressHandler(descriptor);
   };
-  // Keep these nine registrations explicit and literal: the release scanner
-  // must see every reachable door, while their paths and handler bodies still
+  // Keep the config probe plus nine operational doors (ten registrations total)
+  // explicit and literal: the release scanner must see every reachable door,
+  // while their paths and handler bodies still
   // come from the one authoritative descriptor table. Literal paths precede
   // the parameterized ones so /config and /catalog can never be captured by
   // :publicReference. OPTIONS descriptors are deliberately NOT registered:

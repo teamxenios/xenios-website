@@ -270,8 +270,12 @@ function buildApp(
   app.get("/api/research/early-access/assisted-orders/catalog", door("GET", "/api/research/early-access/assisted-orders/catalog"));
   app.post("/api/research/early-access/assisted-orders", door("POST", "/api/research/early-access/assisted-orders"));
   app.get("/api/research/early-access/assisted-orders/:publicReference", door("GET", "/api/research/early-access/assisted-orders/:publicReference"));
+  app.post("/api/research/early-access/assisted-orders/:requestId/documents/upload-url", door("POST", "/api/research/early-access/assisted-orders/:requestId/documents/upload-url"));
+  app.post("/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete", door("POST", "/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete"));
   app.get("/api/admin/research/assisted-orders", requireAdmin, door("GET", "/api/admin/research/assisted-orders"));
   app.get("/api/admin/research/assisted-orders/:requestId", requireAdmin, door("GET", "/api/admin/research/assisted-orders/:requestId"));
+  app.patch("/api/admin/research/assisted-orders/:requestId/status", requireAdmin, door("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
+  app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireAdmin, door("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   return app;
 }
 
@@ -605,6 +609,53 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
       .get(`/api/admin/research/assisted-orders/${submitted.body.requestId}`)
       .set("authorization", ADMIN_BEARER);
     expect(detail.status).toBe(200);
+
+    // 8. The two remaining admin/customer write doors are real descriptor-backed
+    // registrations too: request identity evidence, mint the private upload,
+    // complete it, then let only the guarded admin mint a download capability.
+    const reviewing = await request(app)
+      .patch(`/api/admin/research/assisted-orders/${submitted.body.requestId}/status`)
+      .set("authorization", ADMIN_BEARER)
+      .send({ status: "reviewing" });
+    expect(reviewing.status).toBe(200);
+    const identityRequested = await request(app)
+      .patch(`/api/admin/research/assisted-orders/${submitted.body.requestId}/status`)
+      .set("authorization", ADMIN_BEARER)
+      .send({ status: "identity_requested" });
+    expect(identityRequested.status).toBe(200);
+
+    const upload = await request(app)
+      .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/upload-url`)
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send({
+        publicReference: reference,
+        statusToken: submitted.body.statusToken,
+        documentType: "government_id",
+        side: "front",
+        fileName: "id-front.jpg",
+        mimeType: "image/jpeg",
+        sizeBytes: 1000,
+      });
+    expect(upload.status).toBe(201);
+    expect(upload.body.uploadUrl).toBe("https://storage.example/upload");
+
+    const completed = await request(app)
+      .post(`/api/research/early-access/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/complete`)
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send({ publicReference: reference, statusToken: submitted.body.statusToken });
+    expect(completed.status).toBe(204);
+
+    const unguardedDownload = await request(app)
+      .post(`/api/admin/research/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/download-url`);
+    expect(unguardedDownload.status).toBe(401);
+    const download = await request(app)
+      .post(`/api/admin/research/assisted-orders/${submitted.body.requestId}/documents/${upload.body.documentId}/download-url`)
+      .set("authorization", ADMIN_BEARER);
+    expect(download.status).toBe(200);
+    expect(download.body.url).toBe("https://storage.example/download");
+
     const surfaces = JSON.stringify([submitted.body, status.body, catalog.body]).toLowerCase();
     for (const banned of ["wholesale", "margin", "suppliercost", "grossprofit"]) {
       expect(surfaces).not.toContain(banned);

@@ -1,8 +1,8 @@
 // Evidence manifest generator (schemaVersion 2, same shape as the draft packet's
-// docs/review/xenios-research-full-site-20260828/evidence-manifest.json).
+// docs/review/xenios-research-full-site-20260829/evidence-manifest.json).
 //
 //   node scripts/evidence/generate-evidence-manifest.mjs --out-dir <dir> [--template <existing-manifest.json>]
-//        [--sha <sha>] [--reviewer <name>] [--artifact-root docs/review/xenios-research-full-site-20260828/browser]
+//        [--sha <sha>] [--reviewer <name>] [--artifact-root docs/review/xenios-research-full-site-20260829/browser]
 //        [--output <path>]
 //
 // Reads browser-matrix.json, http-evidence.json and pii-scan.json from --out-dir
@@ -20,8 +20,8 @@ import { gitSha } from "./capture-browser-matrix.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-function parseArgs(argv) {
-  const out = { template: join(here, "evidence-manifest.template.json"), reviewer: null, artifactRoot: "docs/review/xenios-research-full-site-20260828/browser" };
+export function parseArgs(argv) {
+  const out = { template: join(here, "evidence-manifest.template.json"), reviewer: null, artifactRoot: "docs/review/xenios-research-full-site-20260829/browser" };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const next = () => argv[++i];

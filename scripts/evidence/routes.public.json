@@ -29,7 +29,7 @@
   "routes": [
     {
       "path": "/research",
-      "surface": "public-research-homepage",
+      "surface": "warm-silver-homepage-reconciliation",
       "state": "default",
       "indexable": false,
       "public": true
@@ -285,7 +285,7 @@
     },
     {
       "path": "/",
-      "surface": "warm-silver-homepage-reconciliation",
+      "surface": "global-marketing-root",
       "state": "default",
       "indexable": true,
       "public": true,

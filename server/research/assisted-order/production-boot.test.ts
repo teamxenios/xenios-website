@@ -23,14 +23,60 @@ const CONFIG_DOOR = "/api/research/early-access/assisted-orders/config";
 const CATALOG_DOOR = "/api/research/early-access/assisted-orders/catalog";
 const SUBMIT_DOOR = "/api/research/early-access/assisted-orders";
 const ADMIN_LIST_DOOR = "/api/admin/research/assisted-orders";
+const PROBE_REQUEST_ID = "11111111-1111-4111-8111-111111111111";
+const PROBE_DOCUMENT_ID = "22222222-2222-4222-8222-222222222222";
+const PROBE_PUBLIC_REFERENCE = "XRR-20260829-A1B2C3D4E5";
 // Every door with the method it is registered for. A probe with the wrong
 // method is a legitimate 404 (no such registration); the contract under test is
 // that the REGISTERED method never falls through to the generic API 404.
-const DOORS: ReadonlyArray<Readonly<{ method: "GET" | "POST"; path: string }>> = [
-  { method: "GET", path: CONFIG_DOOR },
-  { method: "GET", path: CATALOG_DOOR },
-  { method: "POST", path: SUBMIT_DOOR },
-  { method: "GET", path: ADMIN_LIST_DOOR },
+type DoorMethod = "GET" | "POST" | "PATCH";
+type Door = Readonly<{
+  method: DoorMethod;
+  registrationPath: string;
+  probePath: string;
+  admin: boolean;
+}>;
+const DOORS: readonly Door[] = [
+  { method: "GET", registrationPath: CONFIG_DOOR, probePath: CONFIG_DOOR, admin: false },
+  { method: "GET", registrationPath: CATALOG_DOOR, probePath: CATALOG_DOOR, admin: false },
+  { method: "POST", registrationPath: SUBMIT_DOOR, probePath: SUBMIT_DOOR, admin: false },
+  {
+    method: "GET",
+    registrationPath: "/api/research/early-access/assisted-orders/:publicReference",
+    probePath: `/api/research/early-access/assisted-orders/${PROBE_PUBLIC_REFERENCE}`,
+    admin: false,
+  },
+  {
+    method: "POST",
+    registrationPath: "/api/research/early-access/assisted-orders/:requestId/documents/upload-url",
+    probePath: `/api/research/early-access/assisted-orders/${PROBE_REQUEST_ID}/documents/upload-url`,
+    admin: false,
+  },
+  {
+    method: "POST",
+    registrationPath: "/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete",
+    probePath: `/api/research/early-access/assisted-orders/${PROBE_REQUEST_ID}/documents/${PROBE_DOCUMENT_ID}/complete`,
+    admin: false,
+  },
+  { method: "GET", registrationPath: ADMIN_LIST_DOOR, probePath: ADMIN_LIST_DOOR, admin: true },
+  {
+    method: "GET",
+    registrationPath: "/api/admin/research/assisted-orders/:requestId",
+    probePath: `/api/admin/research/assisted-orders/${PROBE_REQUEST_ID}`,
+    admin: true,
+  },
+  {
+    method: "PATCH",
+    registrationPath: "/api/admin/research/assisted-orders/:requestId/status",
+    probePath: `/api/admin/research/assisted-orders/${PROBE_REQUEST_ID}/status`,
+    admin: true,
+  },
+  {
+    method: "POST",
+    registrationPath: "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url",
+    probePath: `/api/admin/research/assisted-orders/${PROBE_REQUEST_ID}/documents/${PROBE_DOCUMENT_ID}/download-url`,
+    admin: true,
+  },
 ];
 
 const BOOT_TIMEOUT_MS = 120_000;
@@ -71,7 +117,7 @@ type Probe = Readonly<{ status: number; body: string; json: unknown }>;
 type Boot = Readonly<{
   port: number;
   log: () => string;
-  request: (method: "GET" | "POST", route: string) => Promise<Probe>;
+  request: (method: DoorMethod, route: string) => Promise<Probe>;
   get: (route: string) => Promise<Probe>;
   stop: () => void;
 }>;
@@ -102,12 +148,14 @@ async function bootProductionRoot(envOverrides: Record<string, string | undefine
   child.stdout?.on("data", (chunk) => { output += String(chunk); });
   child.stderr?.on("data", (chunk) => { output += String(chunk); });
   const base = `http://127.0.0.1:${port}`;
-  const request = async (method: "GET" | "POST", route: string): Promise<Probe> => {
+  const request = async (method: DoorMethod, route: string): Promise<Probe> => {
+    const carriesJsonBody = method !== "GET";
     const response = await fetch(base + route, {
       method,
       redirect: "manual",
-      headers: method === "POST" ? { "content-type": "application/json" } : undefined,
-      body: method === "POST" ? "{}" : undefined,
+      signal: AbortSignal.timeout(10_000),
+      headers: carriesJsonBody ? { "content-type": "application/json" } : undefined,
+      body: carriesJsonBody ? "{}" : undefined,
     });
     const body = await response.text();
     let json: unknown = null;
@@ -140,13 +188,63 @@ async function bootProductionRoot(envOverrides: Record<string, string | undefine
 
 async function expectNoGenericDoor404(boot: Boot): Promise<void> {
   for (const door of DOORS) {
-    const probe = await boot.request(door.method, door.path);
-    expect(probe.status, `${door.method} ${door.path} must never fall through to the generic API 404`).not.toBe(404);
-    expect(probe.body, `${door.method} ${door.path} answered the generic API fallback body`).not.toBe("{\"message\":\"Not Found\"}");
+    const probe = await boot.request(door.method, door.probePath);
+    expect(probe.status, `${door.method} ${door.registrationPath} must never fall through to the generic API 404`).not.toBe(404);
+    expect(probe.body, `${door.method} ${door.registrationPath} answered the generic API fallback body`).not.toBe("{\"message\":\"Not Found\"}");
   }
 }
 
 describe("the real production composition root (server/index.ts) under the production env shape", () => {
+  it("keeps the browser-evidence preview isolated from ambient external credentials", () => {
+    const source = fs.readFileSync(path.join(ROOT, "scripts", "preview-research.mjs"), "utf8");
+    const scrubIndex = source.indexOf("for (const key of Object.keys(process.env))");
+    const loopbackIndex = source.indexOf("placeholderSupabase.listen(0, \"127.0.0.1\"");
+    const allowListStart = source.indexOf("const SAFE_RUNTIME_ENV = new Set([");
+    const allowListEnd = source.indexOf("]);", allowListStart);
+    const allowListSource = source.slice(allowListStart, allowListEnd);
+    expect(allowListStart).toBeGreaterThan(-1);
+    expect(allowListEnd).toBeGreaterThan(allowListStart);
+    expect(scrubIndex).toBeGreaterThan(-1);
+    expect(loopbackIndex).toBeGreaterThan(scrubIndex);
+    expect(source).toContain(
+      'process.env.SUPABASE_SERVICE_ROLE_KEY = "sb_secret_preview_placeholder";',
+    );
+    expect(source).toContain('code: "preview_write_refused"');
+    expect(source).toContain(
+      'process.env.ADMIN_EMAIL = "preview-admin@example.invalid";',
+    );
+    expect(source).toContain('process.env.RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED = "true";');
+    expect(source).toContain('process.env.RESEARCH_EARLY_ACCESS_OWNER_ID =');
+    expect(source).not.toMatch(/SUPABASE_(?:URL|SERVICE_ROLE_KEY|ANON_KEY)\s*=\s*process\.env\./);
+    for (const key of [
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_ANON_KEY",
+      "DATABASE_URL",
+      "ADMIN_EMAIL",
+      "RESEND_API_KEY",
+      "ORDER_WEBHOOK_URL",
+    ]) {
+      expect(allowListSource, `${key} must not survive the preview allow-list`).not.toContain(`"${key}"`);
+    }
+  });
+
+  it("keeps exactly ten literal registrations in their guarded, collision-safe source order", () => {
+    const source = fs.readFileSync(path.join(ROOT, "server", "index.ts"), "utf8");
+    let previousIndex = -1;
+    for (const door of DOORS) {
+      const expressMethod = door.method.toLowerCase();
+      const guard = door.admin ? "requireSupabaseAdmin, " : "";
+      const literal = `app.${expressMethod}("${door.registrationPath}", ${guard}assistedOrderDoor("${door.method}", "${door.registrationPath}"));`;
+      expect(source.split(literal).length - 1, literal).toBe(1);
+      const sourceIndex = source.indexOf(literal);
+      expect(sourceIndex, `${literal} must follow the preceding assisted-order registration`).toBeGreaterThan(previousIndex);
+      previousIndex = sourceIndex;
+    }
+    expect(DOORS.filter((door) => door.admin)).toHaveLength(4);
+    expect(DOORS.filter((door) => !door.admin)).toHaveLength(6);
+  });
+
   it("mounts the assisted-order bridge with the production-baseline audit mode and answers the config door 200 enabled:true", async () => {
     const boot = await bootProductionRoot({});
     try {
@@ -163,7 +261,11 @@ describe("the real production composition root (server/index.ts) under the produ
       expect([400, 401, 403]).toContain((await boot.request("POST", SUBMIT_DOOR)).status);
       // admin doors refuse without the admin session
       expect([401, 403]).toContain((await boot.get(ADMIN_LIST_DOOR)).status);
-      await expectNoGenericDoor404(boot);
+      // The in-memory HTTP E2E suite exercises all ten enabled handlers. This
+      // real-root test keeps the enabled smoke on the four non-mutating/guarded
+      // probes above so placeholder production dependencies are never queried;
+      // all ten real registrations are probed below in every unavailable state,
+      // which is the incident mode this regression test exists to lock down.
       // the production shell still serves and the health door is up
       expect((await boot.get("/")).status).toBe(200);
       expect((await boot.get("/hino/")).status).toBe(200);

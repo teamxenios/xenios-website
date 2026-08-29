@@ -137,6 +137,10 @@ describe("the production static server answers documents through the raw HTTP po
     const bare = await request(app).get("/hino");
     expect(bare.status).toBe(301);
     expect(bare.headers.location).toBe("/hino/");
+    expect(bare.headers["content-type"]).toBe("text/html; charset=UTF-8");
+    expect(bare.headers["content-security-policy"]).toBe("default-src 'none'");
+    expect(bare.headers["x-content-type-options"]).toBe("nosniff");
+    expect(bare.text).toContain("Redirecting to /hino/");
   });
 
   it("never redirects an SPA document whose path is also an asset-only directory", async () => {

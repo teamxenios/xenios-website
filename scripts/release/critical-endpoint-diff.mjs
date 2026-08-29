@@ -35,12 +35,12 @@ export const DEFAULT_ENDPOINTS = Object.freeze([
   ["GET", "/research/early-access/order-request", "research-document"],
   ["GET", "/research/access-hub", "research-document"],
   ["GET", "/research/policies/accessibility", "research-document"],
-  ["GET", "/research/quality", "research-document"],
-  ["GET", "/research/partners", "research-document"],
   ["GET", "/api/research/early-access/assisted-orders/config", "assisted-order-config-door"],
   ["GET", "/api/research/early-access/assisted-orders/catalog", "assisted-order-read-door"],
+  ["GET", "/api/research/early-access/assisted-orders/XRR-20260829-A1B2C3D4E5", "assisted-order-status-door"],
+  ["GET", "/api/admin/research/assisted-orders", "assisted-order-admin-list-door"],
+  ["GET", "/api/admin/research/assisted-orders/11111111-1111-4111-8111-111111111111", "assisted-order-admin-detail-door"],
   ["GET", "/api/research/early-access/session", "early-access-session"],
-  ["GET", "/api/research/early-access/cart/capability", "early-access-cart-capability"],
   ["GET", "/api/research/early-access/catalog", "catalog-read"],
   ["GET", "/research/sign-in", "sign-in-boundary"],
   ["GET", "/research/account", "account-unauthorized-boundary"],
@@ -48,16 +48,89 @@ export const DEFAULT_ENDPOINTS = Object.freeze([
   ["GET", "/api/care/status", "care-public-status"],
   ["GET", "/api/care/tebra/configuration", "care-tebra-public-config"],
   ["GET", "/care", "care-document"],
-  ["GET", "/care/appointments", "care-document"],
   ["GET", "/hino", "static-microsite-redirect"],
   ["GET", "/hino/", "static-microsite"],
+  ["GET", "/hino/story/", "static-microsite"],
   ["GET", "/robots.txt", "robots"],
   ["GET", "/sitemap.xml", "sitemap"],
   ["GET", "/research/this-route-does-not-exist-xr-critical-diff", "authoritative-404"],
   ["GET", "/api/this-route-does-not-exist-xr-critical-diff", "api-404"],
 ]);
 
-const SAFE_HEADERS = ["content-type", "x-robots-tag", "cache-control", "location", "content-security-policy", "referrer-policy"];
+export const SAFE_HEADERS = ["content-type", "x-robots-tag", "cache-control", "location", "link", "content-security-policy", "referrer-policy"];
+const HTML_MARKERS = Object.freeze([
+  ["root", "root"],
+  ["metaRobots", "meta-robots"],
+  ["canonical", "canonical"],
+  ["ogUrl", "og-url"],
+  ["jsonLd", "json-ld"],
+  ["jsonLdTypes", "json-ld-types"],
+  ["title", "title"],
+]);
+
+const FEATURE_STATE_KEYS = new Set([
+  "authenticated",
+  "available",
+  "careAvailable",
+  "enabled",
+  "mode",
+  "openAccess",
+  "state",
+  "status",
+]);
+
+function safeFeatureState(value) {
+  const found = [];
+  const visit = (candidate, prefix, depth) => {
+    if (depth > 4 || Array.isArray(candidate) || !candidate || typeof candidate !== "object") return;
+    for (const [key, child] of Object.entries(candidate)) {
+      const field = prefix ? `${prefix}.${key}` : key;
+      if (FEATURE_STATE_KEYS.has(key)) {
+        if (typeof child === "boolean") found.push(`${field}=${child}`);
+        else if (typeof child === "string" && /^[a-z][a-z0-9_.-]{0,63}$/u.test(child)) {
+          found.push(`${field}=${child}`);
+        }
+      }
+      visit(child, field, depth + 1);
+    }
+  };
+  visit(value, "", 0);
+  return found.sort();
+}
+
+function jsonLdMarkers(body) {
+  const scripts = [...body.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/giu)]
+    .filter((match) => /\btype\s*=\s*(?:"application\/ld\+json"|'application\/ld\+json'|application\/ld\+json)(?:\s|$)/iu.test(match[1]));
+  const types = [];
+  for (const script of scripts) {
+    try {
+      const parsed = JSON.parse(script[2]);
+      const pending = [parsed];
+      let inspected = 0;
+      while (pending.length > 0 && inspected < 512) {
+        const candidate = pending.pop();
+        inspected += 1;
+        if (Array.isArray(candidate)) {
+          pending.push(...candidate);
+          continue;
+        }
+        if (!candidate || typeof candidate !== "object") continue;
+        const rawTypes = Array.isArray(candidate["@type"])
+          ? candidate["@type"]
+          : [candidate["@type"]];
+        for (const type of rawTypes) {
+          if (typeof type === "string" && /^[A-Za-z][A-Za-z0-9._:-]{0,63}$/u.test(type)) {
+            types.push(type);
+          }
+        }
+        pending.push(...Object.values(candidate));
+      }
+    } catch {
+      types.push("<unparseable>");
+    }
+  }
+  return { count: scripts.length, types: types.sort() };
+}
 
 export function shapeFingerprint(contentType, body) {
   const ct = (contentType || "").toLowerCase();
@@ -80,15 +153,14 @@ export function shapeFingerprint(contentType, body) {
       walk(parsed, "");
       // A few booleans carry the FEATURE STATE, not customer data: keep them so
       // "enabled:true -> enabled:false" is a visible change, never a hidden one.
-      const state = parsed && typeof parsed === "object" && !Array.isArray(parsed)
-        ? Object.entries(parsed).filter(([k, v]) => typeof v === "boolean" && /^(enabled|authenticated|openAccess|available|status)$/.test(k)).map(([k, v]) => `${k}=${v}`)
-        : [];
+      const state = safeFeatureState(parsed);
       return { kind: "json", fingerprint: sha(paths.join("\n")), keyPaths: paths.length, state };
     } catch {
-      return { kind: "json-unparseable", fingerprint: sha(body.length.toString()), keyPaths: 0, state: [] };
+      return { kind: "json-unparseable", fingerprint: sha(body), keyPaths: 0, state: [] };
     }
   }
   if (ct.includes("text/html")) {
+    const jsonLd = jsonLdMarkers(body);
     const skeleton = body
       .replace(/<script[\s\S]*?<\/script>/gi, "<script/>")
       .replace(/<style[\s\S]*?<\/style>/gi, "<style/>")
@@ -99,23 +171,39 @@ export function shapeFingerprint(contentType, body) {
       root: /id="root"/.test(body),
       metaRobots: (body.match(/<meta name="robots" content="([^"]*)"/) || [])[1] || null,
       canonical: (body.match(/<link rel="canonical" href="([^"]*)"/) || [])[1] || null,
-      jsonLd: (body.match(/application\/ld\+json/g) || []).length,
+      ogUrl: (body.match(/<meta property="og:url" content="([^"]*)"/) || [])[1] || null,
+      jsonLd: jsonLd.count,
+      jsonLdTypes: jsonLd.types,
       title: (body.match(/<title>([^<]*)<\/title>/) || [])[1] || null,
     };
     return { kind: "html", fingerprint: sha(skeleton), markers };
   }
-  return { kind: ct.split(";")[0] || "unknown", fingerprint: sha(body.length + ":" + body.slice(0, 64)) };
+  // Public text/XML endpoints must detect a change anywhere in the document,
+  // while remaining insensitive to Git checkout line endings. The evidence
+  // stores only the digest, never the response body.
+  const normalizedBody = body.replace(/\r\n?/g, "\n");
+  return { kind: ct.split(";")[0] || "unknown", fingerprint: sha(normalizedBody) };
 }
 
 function sha(text) {
   return createHash("sha256").update(text, "utf8").digest("hex").slice(0, 16);
 }
 
-export async function captureEndpoint(baseUrl, method, route) {
+function markerValue(value) {
+  if (value === null || value === undefined || value === "") return "-";
+  return JSON.stringify(value);
+}
+
+export async function captureEndpoint(baseUrl, method, route, timeoutMs = 10_000) {
   const url = baseUrl.replace(/\/$/, "") + route;
   const startedAt = Date.now();
   try {
-    const response = await fetch(url, { method, redirect: "manual", headers: { accept: "*/*" } });
+    const response = await fetch(url, {
+      method,
+      redirect: "manual",
+      headers: { accept: "*/*" },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
     const body = await response.text();
     const headers = {};
     for (const name of SAFE_HEADERS) {
@@ -167,7 +255,23 @@ export function classify(baseline, candidate, expectations) {
     const stateBefore = (before.shape.state || []).join(","); const stateAfter = (after.shape.state || []).join(",");
     if (stateBefore !== stateAfter) diffs.push(`feature-state ${stateBefore || "-"} -> ${stateAfter || "-"}`);
     if (before.shape.kind !== after.shape.kind) diffs.push(`shape-kind ${before.shape.kind} -> ${after.shape.kind}`);
-    else if (before.shape.fingerprint !== after.shape.fingerprint) diffs.push("shape-fingerprint changed");
+    else {
+      if (before.shape.fingerprint !== after.shape.fingerprint) {
+        diffs.push(
+          `shape-fingerprint ${before.shape.fingerprint || "-"} -> ${after.shape.fingerprint || "-"}`,
+        );
+      }
+      if (before.shape.kind === "html") {
+        const beforeMarkers = before.shape.markers || {};
+        const afterMarkers = after.shape.markers || {};
+        for (const [key, label] of HTML_MARKERS) {
+          const x = beforeMarkers[key]; const y = afterMarkers[key];
+          if (JSON.stringify(x ?? null) !== JSON.stringify(y ?? null)) {
+            diffs.push(`html-marker ${label}: ${markerValue(x)} -> ${markerValue(y)}`);
+          }
+        }
+      }
+    }
     const disappeared = isLive(before.status) && !isLive(after.status);
     if (diffs.length === 0) { results.push({ key, classification: "SAME", diffs }); continue; }
     const rule = allowed.get(key);
@@ -184,11 +288,22 @@ export function classify(baseline, candidate, expectations) {
       results.push({ key, classification: "REGRESSION", reason: "change not covered by the expectation: " + unexplained.join("; "), diffs });
       continue;
     }
-    // shape-only fingerprint drift on an HTML document with unchanged status/headers/markers is reviewable, not blocking
-    const onlyShape = diffs.every((d) => d === "shape-fingerprint changed");
+    // Shape-only fingerprint drift on an otherwise unchanged endpoint is
+    // reviewable, not blocking. The exact before/after digests stay in the
+    // diagnostic so an intentional-change expectation can pin ONE reviewed
+    // transition instead of allowing every possible skeleton drift.
+    const onlyShape = diffs.every((d) => /^shape-fingerprint [a-f0-9]{16} -> [a-f0-9]{16}$/u.test(d));
     results.push({ key, classification: onlyShape ? "HUMAN_REVIEW_REQUIRED" : "REGRESSION", reason: onlyShape ? "document skeleton changed without an expectation entry" : diffs.join("; "), diffs });
   }
-  for (const key of c.keys()) if (!b.has(key)) results.push({ key, classification: "INTENTIONAL_CHANGE", rationale: "endpoint absent from the baseline capture (new)", diffs: [] });
+  for (const key of c.keys()) {
+    if (b.has(key)) continue;
+    const rule = allowed.get(key);
+    if (rule?.allowNew === true) {
+      results.push({ key, classification: "INTENTIONAL_CHANGE", rationale: rule.rationale, diffs: [] });
+    } else {
+      results.push({ key, classification: "REGRESSION", reason: "endpoint absent from the baseline capture without an allowNew expectation", diffs: [] });
+    }
+  }
   const counts = { SAME: 0, INTENTIONAL_CHANGE: 0, REGRESSION: 0, HUMAN_REVIEW_REQUIRED: 0 };
   for (const r of results) counts[r.classification] += 1;
   return { schemaVersion: 1, kind: "critical-endpoint-diff", baseline: { baseUrl: baseline.baseUrl, capturedAt: baseline.capturedAt }, candidate: { baseUrl: candidate.baseUrl, capturedAt: candidate.capturedAt }, counts, results, verdict: counts.REGRESSION > 0 ? "REGRESSION" : counts.HUMAN_REVIEW_REQUIRED > 0 ? "HUMAN_REVIEW_REQUIRED" : "PASS" };

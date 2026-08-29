@@ -64,6 +64,10 @@ export function serveStatic(
   // The built shell is read once; the policy is applied per request because
   // status, robots, and canonical are properties of the request target.
   const templatePath = path.resolve(distPath, "index.html");
+  // Keep serve-static's own redirect response for real index directories. It
+  // carries the historical HTML body, CSP, nosniff and content type; replacing
+  // it with Express res.redirect changed those public /hino bytes and headers.
+  const staticDirectoryRedirect = express.static(distPath);
   let template: string | null = null;
   const policyDocument = (req: Request, res: Response, next: express.NextFunction) => {
     try {
@@ -93,8 +97,7 @@ export function serveStatic(
     // redirect, so an SPA document such as /research keeps flowing to the
     // policy below instead of becoming a 301 to /research/.
     if (!req.path.endsWith("/") && isStaticIndexDirectory(distPath, req.path)) {
-      const queryIndex = req.url.indexOf("?");
-      return res.redirect(301, req.path + "/" + (queryIndex === -1 ? "" : req.url.slice(queryIndex)));
+      return staticDirectoryRedirect(req, res, next);
     }
     next();
   });
