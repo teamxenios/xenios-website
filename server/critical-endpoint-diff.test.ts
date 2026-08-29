@@ -22,6 +22,22 @@ const CLI = path.join(
 );
 const CAPTURED_AT = "2026-08-29T12:00:00.000Z";
 
+function hasUnescapedAlternation(pattern: string): boolean {
+  for (let index = 0; index < pattern.length; index += 1) {
+    if (pattern[index] !== "|") continue;
+    let precedingBackslashes = 0;
+    for (
+      let cursor = index - 1;
+      cursor >= 0 && pattern[cursor] === "\\";
+      cursor -= 1
+    ) {
+      precedingBackslashes += 1;
+    }
+    if (precedingBackslashes % 2 === 0) return true;
+  }
+  return false;
+}
+
 type Shape = {
   kind: string;
   fingerprint: string;
@@ -167,9 +183,15 @@ describe("checked-in intentional-change expectations", () => {
     for (const pattern of patterns) {
       expect(pattern.startsWith("^")).toBe(true);
       expect(pattern.endsWith("$")).toBe(true);
-      expect(pattern).not.toMatch(/(^|[^\\])\|/u);
+      expect(hasUnescapedAlternation(pattern)).toBe(false);
       expect(() => new RegExp(pattern)).not.toThrow();
     }
+  });
+
+  it("detects alternation after an even backslash run", () => {
+    expect(hasUnescapedAlternation(String.raw`^foo\|bar$`)).toBe(false);
+    expect(hasUnescapedAlternation(String.raw`^foo\\|bar$`)).toBe(true);
+    expect(new RegExp(String.raw`^foo\\|bar$`).test("bar")).toBe(true);
   });
 
   it("rejects unrelated title mutations from every title allowance", () => {
