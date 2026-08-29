@@ -29,7 +29,7 @@ export default function TopRibbon() {
             onClick={() => setHidden(true)}
             aria-label="Dismiss announcement"
             data-testid="button-ribbon-dismiss"
-            className="text-paper/70 hover:text-paper text-base px-2 -mr-2"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-paper/70 hover:text-paper text-base px-2 -mr-2"
           >
             ×
           </button>

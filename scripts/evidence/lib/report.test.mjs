@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateAccessibility, analyseFocusWalk, artifactName, evaluateAudit, runVerdict, slug } from "./report.mjs";
+import { aggregateAccessibility, analyseFocusWalk, applyReviewedAssertionNotes, artifactName, evaluateAudit, runVerdict, slug, targetFindingFingerprint } from "./report.mjs";
 
 const cleanAudit = () => ({
   lang: "en",
@@ -46,6 +46,104 @@ describe("evaluateAudit", () => {
     expect(bad.find((x) => x.id === "NETWORK_CLEAN").count).toBe(1);
     const allowed = evaluateAudit(base, { network: [{ url: "http://x/api/config", status: 500 }], allowNetwork: [/\/api\/config$/] });
     expect(allowed.find((x) => x.id === "NETWORK_CLEAN").result).toBe("PASS");
+  });
+
+  it("records exact declared fail-closed HTTP responses as pass-with-notes", () => {
+    const expected = {
+      url: "http://x/api/care/appointments",
+      method: "GET",
+      status: 503,
+      count: 1,
+      responseBodySha256: "a".repeat(64),
+      consoleText: "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    };
+    const assertions = evaluateAudit(cleanAudit(), {
+      console: [{ level: "log:error", url: expected.url, text: expected.consoleText }],
+      network: [{ url: expected.url, method: "GET", status: 503, bodySha256: expected.responseBodySha256 }],
+      expectedHttpFailures: [expected],
+    });
+    const byId = Object.fromEntries(assertions.map((assertion) => [assertion.id, assertion]));
+    expect(byId.EXPECTED_HTTP_FAILURES_OBSERVED.result).toBe("PASS");
+    expect(byId.CONSOLE_CLEAN.result).toBe("PASS_WITH_NOTES");
+    expect(byId.NETWORK_CLEAN.result).toBe("PASS_WITH_NOTES");
+    expect(runVerdict(assertions)).toBe("AUTOMATED_PASS_WITH_NOTES");
+  });
+
+  it("keeps a status or count drift in a declared HTTP failure blocking", () => {
+    const assertions = evaluateAudit(cleanAudit(), {
+      network: [{ url: "http://x/api/care/appointments", method: "GET", status: 500, bodySha256: "b".repeat(64) }],
+      expectedHttpFailures: [{ url: "http://x/api/care/appointments", method: "GET", status: 503, count: 1, responseBodySha256: "a".repeat(64) }],
+    });
+    const byId = Object.fromEntries(assertions.map((assertion) => [assertion.id, assertion]));
+    expect(byId.EXPECTED_HTTP_FAILURES_OBSERVED.result).toBe("FAIL");
+    expect(byId.NETWORK_CLEAN.result).toBe("FAIL");
+  });
+
+  it("blocks an additional undeclared failure beside an exact declared response", () => {
+    const url = "http://x/api/care/appointments";
+    const expected = { url, method: "GET", status: 503, count: 1, responseBodySha256: "a".repeat(64) };
+    const assertions = evaluateAudit(cleanAudit(), {
+      network: [
+        { url, method: "GET", status: 503, bodySha256: expected.responseBodySha256 },
+        { url, method: "GET", status: 500, bodySha256: "b".repeat(64) },
+      ],
+      expectedHttpFailures: [expected],
+    });
+    expect(assertions.find((assertion) => assertion.id === "EXPECTED_HTTP_FAILURES_OBSERVED").result).toBe("FAIL");
+    expect(runVerdict(assertions)).toBe("AUTOMATED_FAIL");
+  });
+
+  it.each([0, 2])("blocks a declared response with %i matching console signals", (consoleCount) => {
+    const url = "http://x/api/care/appointments";
+    const expected = {
+      url,
+      method: "GET",
+      status: 503,
+      count: 1,
+      responseBodySha256: "a".repeat(64),
+      consoleText: "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    };
+    const assertions = evaluateAudit(cleanAudit(), {
+      network: [{ url, method: "GET", status: 503, bodySha256: expected.responseBodySha256 }],
+      console: Array.from({ length: consoleCount }, () => ({ level: "log:error", url, text: expected.consoleText })),
+      expectedHttpFailures: [expected],
+    });
+    expect(assertions.find((assertion) => assertion.id === "EXPECTED_HTTP_FAILURES_OBSERVED").result).toBe("FAIL");
+    expect(runVerdict(assertions)).toBe("AUTOMATED_FAIL");
+  });
+});
+
+describe("reviewed historical target findings", () => {
+  it("only converts an exact target-finding fingerprint to pass-with-notes", () => {
+    const audit = cleanAudit();
+    audit.targets = {
+      total: 1,
+      undersizedCount: 1,
+      undersized: [{ selector: "a.legacy", tag: "a", role: null, text: "Legacy", width: 40, height: 20, inlineText: false, offscreen: false }],
+    };
+    const original = evaluateAudit(audit);
+    const fingerprint = targetFindingFingerprint(audit);
+    const reviewed = applyReviewedAssertionNotes(original, audit, [{
+      id: "TARGETS_44x44",
+      allowedFindingFingerprints: [fingerprint],
+      reason: "byte-identical protected microsite matches live production",
+      productionCommit: "3daa",
+      productionEvidence: "evidence/live-hino.json",
+      sourceBindingVerified: true,
+      candidateSourceBinding: { candidateSha: "c".repeat(40), path: "client/public/hino" },
+    }]);
+    expect(reviewed.find((assertion) => assertion.id === "TARGETS_44x44")).toMatchObject({
+      result: "PASS_WITH_NOTES",
+      originalResult: "FAIL",
+      findingFingerprint: fingerprint,
+    });
+    const notReviewed = applyReviewedAssertionNotes(original, audit, [{
+      id: "TARGETS_44x44",
+      allowedFindingFingerprints: ["0".repeat(64)],
+      reason: "wrong fingerprint",
+      sourceBindingVerified: true,
+    }]);
+    expect(notReviewed.find((assertion) => assertion.id === "TARGETS_44x44").result).toBe("FAIL");
   });
 });
 

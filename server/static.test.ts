@@ -23,6 +23,9 @@ const SHELL = `<!doctype html>
     <meta name="robots" content="index,follow" />
     <meta property="og:url" content="https://xeniostechnology.com" />
     <link rel="canonical" href="https://xeniostechnology.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight&amp;display=swap" rel="stylesheet" />
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"template-organization"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","name":"template-faq"}</script>
   </head>
@@ -39,6 +42,7 @@ beforeAll(() => {
   fs.mkdirSync(path.join(distDir, "assets"));
   fs.writeFileSync(path.join(distDir, "assets", "app.js"), "console.log('app');\n", "utf8");
   fs.writeFileSync(path.join(distDir, "robots.txt"), "User-agent: *\nAllow: /\n", "utf8");
+  fs.writeFileSync(path.join(distDir, "favicon.png"), "test-favicon", "utf8");
   // A static microsite subtree exactly as client/public/hino is built: its own
   // index documents must be served as files, never through the SPA policy.
   fs.mkdirSync(path.join(distDir, "hino", "story"), { recursive: true });
@@ -76,6 +80,13 @@ describe("the production static server answers documents through the raw HTTP po
     expect(robotsTxt.text).toContain("User-agent");
   });
 
+  it("answers the conventional favicon.ico request from the shipped PNG", async () => {
+    const favicon = await request(app).get("/favicon.ico");
+    expect(favicon.status).toBe(200);
+    expect(favicon.headers["content-type"]).toMatch(/^image\/png/u);
+    expect(Buffer.from(favicon.body).toString("utf8")).toBe("test-favicon");
+  });
+
   it("serves the homepage as an indexable document with its own canonical and no template schema", async () => {
     const res = await request(app).get("/");
     expect(res.status).toBe(200);
@@ -107,6 +118,17 @@ describe("the production static server answers documents through the raw HTTP po
     expect(canonical(res.text)).toBeNull();
     expect(res.text).not.toContain('property="og:url"');
     expect(res.headers.link).toBeUndefined();
+  });
+
+  it("removes external font requests only from Care documents with a self-only CSP", async () => {
+    const care = await request(app).get("/care");
+    expect(care.status).toBe(200);
+    expect(care.text).not.toContain("fonts.googleapis.com");
+    expect(care.text).not.toContain("fonts.gstatic.com");
+
+    const marketing = await request(app).get("/");
+    expect(marketing.text).toContain("fonts.googleapis.com");
+    expect(marketing.text).toContain("fonts.gstatic.com");
   });
 
   it("answers an unknown document with an authoritative 404 and noindex", async () => {

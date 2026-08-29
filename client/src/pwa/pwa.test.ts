@@ -256,5 +256,12 @@ describe("lifecycle UX (update banner + install education)", () => {
     expect(lifecycle).toContain("sessionStorage");
     expect(lifecycle).not.toContain("localStorage");
     expect(lifecycle).toMatch(/DISMISS_KEY = "xenios-pwa-hint-dismissed"/);
+    expect(lifecycle).toContain("if (!wasHintDismissed()) setInstallPrompt");
+  });
+
+  it("keeps lifecycle messages readable within narrow viewports", () => {
+    expect(lifecycle).toContain('width: "min(calc(100vw - 2rem), 26rem)"');
+    expect(lifecycle).toContain('flexWrap: "wrap"');
+    expect(lifecycle).toContain('flex: "1 1 10rem"');
   });
 });

@@ -21,13 +21,19 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { launchChromium } from "./lib/chrome.mjs";
 import { CdpConnection, PageSession } from "./lib/cdp.mjs";
 import { PAGE_AUDIT_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
-import { analyseFocusWalk, artifactName, evaluateAudit, runVerdict, slug } from "./lib/report.mjs";
+import { analyseFocusWalk, applyReviewedAssertionNotes, artifactName, evaluateAudit, runVerdict, slug } from "./lib/report.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+export const EVIDENCE_PWA_DISMISSAL_SOURCE = `
+  try {
+    window.sessionStorage.setItem("xenios-pwa-hint-dismissed", "1");
+  } catch {}
+`;
 
 export function parseArgs(argv) {
   const out = { focusWalk: true, mediaVariants: true, zoom: true, maxTabStops: 80, reviewer: "automated", widths: null, only: null, routes: join(here, "routes.public.json") };
@@ -72,6 +78,74 @@ async function focusWalk(page, maxStops) {
   return analyseFocusWalk(probes, { maxStops });
 }
 
+export function compileExpectedHttpFailures(route, baseUrl) {
+  const base = new URL(baseUrl);
+  const compiled = (route.expectedHttpFailures ?? []).map((expected) => {
+    if (!/^\/api\//u.test(expected.path ?? "")) throw new Error(`expected HTTP failure path must be an exact /api/ path: ${expected.path}`);
+    if (!Number.isInteger(expected.status) || expected.status < 400 || expected.status > 599) throw new Error(`expected HTTP failure needs an exact 4xx/5xx status: ${expected.path}`);
+    if (!['GET', 'HEAD'].includes(String(expected.method ?? "").toUpperCase())) throw new Error(`expected HTTP failure needs GET or HEAD: ${expected.path}`);
+    if (Number(expected.count ?? 0) < 1) throw new Error(`expected HTTP failure needs a positive count: ${expected.path}`);
+    if (!/^[a-f0-9]{64}$/u.test(expected.responseBodySha256 ?? "")) throw new Error(`expected HTTP failure needs an exact response-body SHA-256: ${expected.path}`);
+    if (!expected.consoleText || !expected.reason || !expected.productionEvidence) throw new Error(`expected HTTP failure needs consoleText, reason, and productionEvidence: ${expected.path}`);
+    const url = new URL(expected.path, base);
+    if (url.origin !== base.origin) throw new Error(`expected HTTP failure must stay on the preview origin: ${expected.path}`);
+    return { ...expected, method: expected.method.toUpperCase(), url: url.toString() };
+  });
+  const keys = compiled.map((expected) => `${expected.method} ${expected.url}`);
+  if (new Set(keys).size !== keys.length) throw new Error("expected HTTP failure declarations must use unique method + URL pairs");
+  return compiled;
+}
+
+export function bindReviewedAssertionNotes(routes, { sha, cwd = process.cwd(), resolveGitObject } = {}) {
+  const resolver = resolveGitObject ?? ((candidateSha, sourcePath) =>
+    execFileSync("git", ["rev-parse", "--verify", `${candidateSha}:${sourcePath}`], {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim());
+  return routes.map((route) => {
+    if (!(route.reviewedAssertionNotes ?? []).length) return route;
+    if (route.path !== "/hino" || route.externalMicrosite !== true) {
+      throw new Error(`reviewed assertion notes are limited to the protected /hino external microsite: ${route.path}`);
+    }
+    if (!/^[a-f0-9]{40}$/u.test(sha ?? "")) throw new Error(`reviewed assertion notes require an exact 40-character candidate SHA: ${route.path}`);
+    return {
+      ...route,
+      reviewedAssertionNotes: route.reviewedAssertionNotes.map((note) => {
+        if (note.id !== "TARGETS_44x44"
+          || !/^[a-f0-9]{40}$/u.test(note.productionCommit ?? "")
+          || !note.reason
+          || !note.productionEvidence
+          || !(note.allowedFindingFingerprints ?? []).length
+          || !note.allowedFindingFingerprints.every((fingerprint) => /^[a-f0-9]{64}$/u.test(fingerprint))) {
+          throw new Error(`reviewed assertion note is incomplete or unsupported: ${route.path}`);
+        }
+        const source = note.candidateSource ?? {};
+        if (!/^client\/public\/hino$/u.test(source.path ?? "") || !/^[a-f0-9]{40}$/u.test(source.gitTree ?? "")) {
+          throw new Error(`reviewed assertion note has an invalid candidate source binding: ${route.path}`);
+        }
+        const actualGitTree = resolver(sha, source.path);
+        const productionGitTree = resolver(note.productionCommit, source.path);
+        if (actualGitTree !== source.gitTree || productionGitTree !== source.gitTree || actualGitTree !== productionGitTree) {
+          throw new Error(`reviewed assertion source tree mismatch for ${route.path}: declared ${source.gitTree}, candidate ${actualGitTree}, production ${productionGitTree}`);
+        }
+        return {
+          ...note,
+          sourceBindingVerified: true,
+          candidateSourceBinding: {
+            candidateSha: sha,
+            path: source.path,
+            expectedGitTree: source.gitTree,
+            actualGitTree,
+            productionCommit: note.productionCommit,
+            productionGitTree,
+          },
+        };
+      }),
+    };
+  });
+}
+
 async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, zoomPercent, variant, media, doFocusWalk, maxTabStops, outDir, sha, browser, reviewer, sequence }) {
   const url = new URL(route.path, baseUrl).toString();
   await page.setViewport({ width, height, deviceScaleFactor, mobile: width <= 768 });
@@ -102,9 +176,13 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
     writeFileSync(join(outDir, "captures", fileName.replace(/\.png$/, ".text.txt")), await page.evaluate("document.body ? document.body.innerText : ''"));
     artifactPath = `captures/${fileName}`;
   }
-  const assertions = audit
-    ? evaluateAudit(audit, { focusWalk: walk, console: consoleRecords, network, allowNetwork: route.allowNetwork?.map((s) => new RegExp(s)) ?? [] })
+  const expectedHttpFailures = compileExpectedHttpFailures(route, baseUrl);
+  const rawAssertions = audit
+    ? evaluateAudit(audit, { focusWalk: walk, console: consoleRecords, network, allowNetwork: route.allowNetwork?.map((s) => new RegExp(s)) ?? [], expectedHttpFailures })
     : [{ id: "NAVIGATION", result: "FAIL", detail: navError }];
+  const assertions = audit
+    ? applyReviewedAssertionNotes(rawAssertions, audit, route.reviewedAssertionNotes ?? [])
+    : rawAssertions;
   const consoleErrors = consoleRecords.filter((c) => c.level !== "warning" && c.level !== "log:warning");
   const failedNet = network.filter((n) => (n.failed && !n.canceled) || n.status >= 400);
   return {
@@ -123,6 +201,7 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
     colorScheme: media.forcedColors ? "forced-colors" : media.colorScheme,
     mediaVariant: variant || "default",
     syntheticFixtureId: route.fixture ?? "none",
+    pwaInstallHintState: "SESSION_DISMISSED_BEFORE_DOCUMENT",
     timestampUtc: started.toISOString(),
     reviewer,
     navigationMs,
@@ -149,11 +228,15 @@ export async function main(argv = process.argv.slice(2)) {
   mkdirSync(join(outDir, "runs"), { recursive: true });
   const inventory = JSON.parse(readFileSync(resolve(args.routes), "utf8"));
   const widths = args.widths ?? inventory.widthsCssPx;
-  const routes = inventory.routes.filter((r) => !args.only || args.only.includes(r.path));
   const sha = args.sha ?? gitSha() ?? "UNKNOWN";
+  const routes = bindReviewedAssertionNotes(inventory.routes, { sha })
+    .filter((r) => !args.only || args.only.includes(r.path));
   const browser = await launchChromium();
   const conn = await new CdpConnection(browser.wsUrl).open();
   const page = await PageSession.create(conn);
+  await page.send("Page.addScriptToEvaluateOnNewDocument", {
+    source: EVIDENCE_PWA_DISMISSAL_SOURCE,
+  });
   const runs = [];
   const startedAt = new Date().toISOString();
   let index = 0;
@@ -207,7 +290,7 @@ export async function main(argv = process.argv.slice(2)) {
       baseUrl: args.baseUrl,
       startedAtUtc: startedAt,
       finishedAtUtc: new Date().toISOString(),
-      tool: { name: "scripts/evidence/capture-browser-matrix.mjs", node: process.version, browserName: browser.browserName, browserVersion: browser.browserVersion, chromiumRevision: browser.revision, protocolVersion: browser.protocolVersion, driver: "raw CDP over ws" },
+      tool: { name: "scripts/evidence/capture-browser-matrix.mjs", node: process.version, browserName: browser.browserName, browserVersion: browser.browserVersion, chromiumRevision: browser.revision, protocolVersion: browser.protocolVersion, driver: "raw CDP over ws", controlledUiState: { pwaInstallHint: "session-dismissed before every document" } },
       widthsCssPx: widths,
       zoomEquivalents: args.zoom ? inventory.zoomEquivalents : [],
       routesFile: resolve(args.routes),

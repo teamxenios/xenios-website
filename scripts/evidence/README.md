@@ -4,7 +4,8 @@ Deterministic, re-runnable scripts that produce the evidence the review packet
 (`docs/review/xenios-research-full-site-20260828/evidence-manifest.json`,
 schemaVersion 2) asks for. Built by helper `A11Y-EVIDENCE` for the Lead to run on
 the **final frozen SHA**. Nothing here claims a release verdict: every result the
-tools write is `AUTOMATED_PASS` / `AUTOMATED_FAIL` / `PENDING`, never a reviewer
+tools write is `AUTOMATED_PASS` / `AUTOMATED_PASS_WITH_NOTES` /
+`AUTOMATED_FAIL` / `PENDING`, never a reviewer
 `PASS`, and `finalVerdict` / `readyForSamuelDeployReview` are never set.
 
 ## Zero new dependencies
@@ -74,12 +75,18 @@ Per route × width (`capture-browser-matrix.mjs`, in-page audit `lib/page-audit.
 | `DOCUMENT_LANG` | `html[lang]` present |
 | `FOCUS_ORDER_REACHABLE` | real `Tab` key walk (CDP `Input.dispatchKeyEvent`) reaches stops and does not trap |
 | `FOCUS_VISIBLE_PRESENT` | every stop reached shows an outline or box-shadow while `:focus-visible` |
-| `CONSOLE_CLEAN` / `NETWORK_CLEAN` | no console errors/exceptions; no failed or ≥400 responses (informational; `allowNetwork` regexes per route) |
+| `EXPECTED_HTTP_FAILURES_OBSERVED` | every route-declared fail-closed API response occurs at its exact URL, method, status, response-body SHA-256, network count, and console text/count |
+| `CONSOLE_CLEAN` / `NETWORK_CLEAN` | no unexpected console errors/exceptions or failed/≥400 responses; exact declared fail-closed responses are `PASS_WITH_NOTES` and retain their raw records |
 
 Also recorded per run: `main` selectors, heading outline, landmark counts, live-region
 count, dialog semantics (`aria-modal`, labelled), skip-link target existence,
 `prefers-reduced-motion`/`forced-colors` match state, rendered page text
 (`*.text.txt`, used by the PII scan), console records, failed requests.
+
+The route matrix preloads the product's session-only PWA dismissal flag before
+every document. This prevents the install-education pill from covering the route
+under review; every run and the matrix tool metadata record that controlled UI
+state. PWA lifecycle behavior remains covered by its dedicated tests.
 
 Media variants (at 390 px): `reduced-motion` (`Emulation.setEmulatedMedia`
 `prefers-reduced-motion: reduce`) and `forced-colors` (`forced-colors: active`, with a
@@ -119,17 +126,24 @@ references or tokens (the PII scan checks file names too).
 ## Route inventory
 
 `routes.public.json` maps every route to a packet `surface` id, a `state`, an
-`indexable` expectation and an optional `syntheticFixtureId`. Private routes
+`indexable` expectation and an optional `syntheticFixtureId`. `/care/schedule`
+is the public Tebra surface; `/care/appointments` is captured separately in its
+private, disabled state. Private routes
 (`/research/account*`, `/research/member*`, `/admin/research*`) are captured in their
 **unauthenticated** state only; authenticated states require a Lead-provided synthetic
 session and are recorded as `requires Lead session` in the handoff. `RESEARCH_INDEXABLE`
 is false at this head, so every Research document is expected `noindex`; flip
 `indexable` per route when the Lead composes indexing.
 
-The preview server (`scripts/preview-research.mjs`) runs against a placeholder Supabase;
+The preview server (`scripts/preview-research.mjs`) runs against an owned,
+read-empty loopback adapter;
 data-backed surfaces render their fallback/empty states, which is what the
 `loading`/`empty`/`unavailable` captures document. Console/network assertions on those
-routes will note the refused upstream (`allowNetwork` can whitelist it).
+routes record exact expected fail-closed responses with method/status/count and
+production-parity evidence. Broad URL failure allowlists are not used by the
+release inventory. Hino's protected historical target-size debt is the sole
+reviewed assertion note and is bound to the exact live-production finding
+fingerprints; any selector, count, or dimension drift remains blocking.
 
 ## Determinism
 

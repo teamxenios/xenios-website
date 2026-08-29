@@ -5,7 +5,7 @@ import Wordmark from "./Wordmark";
 import Counter from "./Counter";
 
 function FooterLink({ label, href, external }: { label: string; href: string; external?: boolean }) {
-  const className = "block text-[15px] font-600 text-ink hover:text-pulse transition-colors";
+  const className = "flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors";
   if (external) {
     return <a href={href} className={className}>{label}</a>;
   }
@@ -24,12 +24,12 @@ export default function Footer() {
             <div className="mt-6">
               <Counter variant="line" suffix="on the waitlist" />
             </div>
-            <div className="mt-6 space-y-2">
-              <a href={`mailto:${contactEmail}`} data-testid="link-footer-email" className="block text-[15px] font-600 text-ink hover:text-pulse transition-colors">
+            <div className="mt-6">
+              <a href={`mailto:${contactEmail}`} data-testid="link-footer-email" className="flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors">
                 {contactEmail}
               </a>
               {navSocials.map((social) => (
-                <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" data-testid={`link-social-${social.label.split(",")[0].toLowerCase()}`} className="block text-[15px] font-600 text-ink hover:text-pulse transition-colors">
+                <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" data-testid={`link-social-${social.label.split(",")[0].toLowerCase()}`} className="flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors">
                   {social.label}
                 </a>
               ))}
@@ -39,7 +39,7 @@ export default function Footer() {
           {menuGroups.map((group) => (
             <nav key={group.label} aria-label={`${group.label} footer links`}>
               <p className="mono-cap text-ink-mute mb-5">{group.label}</p>
-              <div className="space-y-3">
+              <div>
                 {group.items.map((item) => (
                   <FooterLink key={`${group.label}-${item.href}`} {...item} />
                 ))}

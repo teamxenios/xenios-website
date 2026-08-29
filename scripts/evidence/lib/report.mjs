@@ -1,4 +1,5 @@
 // Pure evaluation of audit results into assertions. No I/O, unit-tested.
+import { createHash } from "node:crypto";
 
 export const ASSERTION_IDS = [
   "NO_HORIZONTAL_OVERFLOW",
@@ -14,14 +15,16 @@ export const ASSERTION_IDS = [
   "DOCUMENT_LANG",
   "FOCUS_ORDER_REACHABLE",
   "FOCUS_VISIBLE_PRESENT",
+  "EXPECTED_HTTP_FAILURES_OBSERVED",
   "CONSOLE_CLEAN",
   "NETWORK_CLEAN",
 ];
 
 /** Evaluate one page audit (plus optional focus walk, console, network) into assertions. */
-export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords = [], network = [], allowNetwork = [] } = {}) {
+export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords = [], network = [], allowNetwork = [], expectedHttpFailures = [] } = {}) {
   const assertions = [];
   const push = (id, pass, detail, count) => assertions.push({ id, result: pass ? "PASS" : "FAIL", detail, ...(count !== undefined ? { count } : {}) });
+  const pushResult = (id, result, detail, count) => assertions.push({ id, result, detail, ...(count !== undefined ? { count } : {}) });
 
   const o = audit.overflow ?? {};
   push(
@@ -57,11 +60,120 @@ export function evaluateAudit(audit, { focusWalk = null, console: consoleRecords
   }
 
   const consoleErrors = consoleRecords.filter((c) => c.level !== "warning" && c.level !== "log:warning");
-  push("CONSOLE_CLEAN", consoleErrors.length === 0, summarise(consoleErrors, (c) => `[${c.level}] ${c.text}`), consoleErrors.length);
-  const failedNet = network.filter((n) => (n.failed && !n.canceled) || n.status >= 400).filter((n) => !allowNetwork.some((re) => re.test(n.url)));
-  push("NETWORK_CLEAN", failedNet.length === 0, summarise(failedNet, (n) => `${n.status || n.error} ${n.url}`), failedNet.length);
+  const failedNetwork = network.filter((n) => (n.failed && !n.canceled) || n.status >= 400);
+  const matchesExpectedNetwork = (record, expected) =>
+    record.url === expected.url
+    && Number(record.status) === Number(expected.status)
+    && String(record.method ?? "GET").toUpperCase() === String(expected.method ?? "GET").toUpperCase()
+    && record.bodySha256 === expected.responseBodySha256;
+  const observations = expectedHttpFailures.map((expected) => ({
+    expected,
+    networkCount: failedNetwork.filter((record) => matchesExpectedNetwork(record, expected)).length,
+    consoleCount: consoleErrors.filter((record) =>
+      record.url === expected.url && record.text === expected.consoleText).length,
+  }));
+  const mismatchedExpectations = observations.filter(({ expected, networkCount, consoleCount }) =>
+    networkCount !== Number(expected.count ?? 1) || consoleCount !== Number(expected.count ?? 1));
+  const expectedNetwork = failedNetwork.filter((record) => expectedHttpFailures.some((expected) => matchesExpectedNetwork(record, expected)));
+  const unexpectedNetwork = failedNetwork
+    .filter((record) => !expectedNetwork.includes(record))
+    .filter((record) => !allowNetwork.some((re) => re.test(record.url)));
+
+  const expectedConsoleErrors = consoleErrors.filter((record) =>
+    expectedHttpFailures.some((expected) =>
+      record.url === expected.url && record.text === expected.consoleText));
+  const unexpectedConsoleErrors = consoleErrors.filter((record) => !expectedConsoleErrors.includes(record));
+
+  const exactDeclarationDrift = expectedHttpFailures.length > 0
+    ? mismatchedExpectations.length + unexpectedNetwork.length + unexpectedConsoleErrors.length
+    : mismatchedExpectations.length;
+  push(
+    "EXPECTED_HTTP_FAILURES_OBSERVED",
+    exactDeclarationDrift === 0,
+    expectedHttpFailures.length === 0
+      ? "none declared"
+      : exactDeclarationDrift === 0
+        ? `${expectedHttpFailures.length} declared failure(s) observed with exact URL, method, status, count, body hash, and console signal`
+        : [
+            summarise(mismatchedExpectations, ({ expected, networkCount, consoleCount }) => `${expected.method ?? "GET"} ${expected.status} ${expected.url} body=${expected.responseBodySha256}: expected ${expected.count ?? 1}, observed network=${networkCount}, console=${consoleCount}`),
+            unexpectedNetwork.length ? `unexpected network: ${summarise(unexpectedNetwork, (record) => `${record.method ?? "GET"} ${record.status || record.error} ${record.url} body=${record.bodySha256 ?? "unavailable"}`)}` : null,
+            unexpectedConsoleErrors.length ? `unexpected console: ${summarise(unexpectedConsoleErrors, (record) => `[${record.level}] ${record.text}`)}` : null,
+          ].filter(Boolean).join("; "),
+    observations.reduce((sum, observation) => sum + observation.networkCount, 0),
+  );
+
+  if (unexpectedConsoleErrors.length > 0) {
+    push("CONSOLE_CLEAN", false, summarise(unexpectedConsoleErrors, (c) => `[${c.level}] ${c.text}`), unexpectedConsoleErrors.length);
+  } else if (expectedConsoleErrors.length > 0) {
+    pushResult("CONSOLE_CLEAN", "PASS_WITH_NOTES", summarise(expectedConsoleErrors, (c) => `[declared] ${c.text} @ ${c.url}`), expectedConsoleErrors.length);
+  } else {
+    push("CONSOLE_CLEAN", true, "none", 0);
+  }
+
+  if (unexpectedNetwork.length > 0) {
+    push("NETWORK_CLEAN", false, summarise(unexpectedNetwork, (n) => `${n.status || n.error} ${n.url}`), unexpectedNetwork.length);
+  } else if (expectedNetwork.length > 0) {
+    pushResult("NETWORK_CLEAN", "PASS_WITH_NOTES", summarise(expectedNetwork, (n) => `[declared] ${n.method ?? "GET"} ${n.status} ${n.url}`), expectedNetwork.length);
+  } else {
+    push("NETWORK_CLEAN", true, "none", 0);
+  }
 
   return assertions;
+}
+
+/** Stable fingerprint for a route's complete raw target-size finding set. */
+export function targetFindingFingerprint(audit) {
+  const findings = (audit?.targets?.undersized ?? []).map((finding) => ({
+    selector: finding.selector,
+    tag: finding.tag,
+    role: finding.role ?? null,
+    text: finding.text,
+    width: finding.width,
+    height: finding.height,
+    inlineText: Boolean(finding.inlineText),
+    offscreen: Boolean(finding.offscreen),
+  }));
+  const payload = {
+    viewport: {
+      width: audit?.viewport?.width ?? null,
+      height: audit?.viewport?.height ?? null,
+      devicePixelRatio: audit?.viewport?.devicePixelRatio ?? null,
+    },
+    reducedMotionApplied: Boolean(audit?.reducedMotionApplied),
+    forcedColorsActive: Boolean(audit?.forcedColorsActive),
+    findings,
+  };
+  return createHash("sha256").update(JSON.stringify(payload)).digest("hex");
+}
+
+/**
+ * Convert only an exact, reviewed historical target-size finding fingerprint
+ * into a pass-with-notes result. The raw audit and original failure remain in
+ * the run artifact; any added, removed, or resized finding changes the hash
+ * and stays blocking.
+ */
+export function applyReviewedAssertionNotes(assertions, audit, notes = []) {
+  return assertions.map((assertion) => {
+    if (assertion.result !== "FAIL") return assertion;
+    const note = notes.find((candidate) => candidate.id === assertion.id);
+    if (!note || assertion.id !== "TARGETS_44x44" || note.sourceBindingVerified !== true) return assertion;
+    const findingFingerprint = targetFindingFingerprint(audit);
+    if (!(note.allowedFindingFingerprints ?? []).includes(findingFingerprint)) return assertion;
+    return {
+      ...assertion,
+      result: "PASS_WITH_NOTES",
+      originalResult: assertion.result,
+      originalDetail: assertion.detail,
+      findingFingerprint,
+      reviewedNote: {
+        reason: note.reason,
+        productionCommit: note.productionCommit,
+        productionEvidence: note.productionEvidence,
+        candidateSourceBinding: note.candidateSourceBinding,
+      },
+      detail: `exact reviewed historical-parity finding ${findingFingerprint}; ${note.reason}`,
+    };
+  });
 }
 
 export function summarise(items, fmt, limit = 8) {
@@ -77,6 +189,7 @@ export function runVerdict(assertions, { informational = ["CONSOLE_CLEAN", "NETW
   const blocking = failing.filter((a) => !informational.includes(a.id));
   if (blocking.length) return "AUTOMATED_FAIL";
   if (failing.length) return "AUTOMATED_PASS_WITH_NOTES";
+  if (assertions.some((a) => a.result === "PASS_WITH_NOTES")) return "AUTOMATED_PASS_WITH_NOTES";
   return "AUTOMATED_PASS";
 }
 
@@ -87,6 +200,7 @@ export function aggregateAccessibility(runs) {
     if (seen.length === 0) return "PENDING";
     if (seen.some((a) => a.result === "FAIL")) return "AUTOMATED_FAIL";
     if (seen.every((a) => a.result === "NOT_RUN")) return "PENDING";
+    if (seen.some((a) => a.result === "PASS_WITH_NOTES")) return "AUTOMATED_PASS_WITH_NOTES";
     return "AUTOMATED_PASS";
   };
   const reduced = runs.filter((r) => r.mediaVariant === "reduced-motion");

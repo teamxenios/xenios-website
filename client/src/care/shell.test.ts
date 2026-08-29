@@ -70,6 +70,7 @@ describe("Care public shell and explicit dispatcher", () => {
     expect(publicSurfaceSource).not.toContain("Georgia");
     expect(publicSurfaceSource).not.toContain("gradient");
     expect(publicSurfaceSource).not.toContain("--care-");
+    expect(pagesSource).toContain('className="m-0 flex list-none flex-wrap gap-3 p-0"');
   });
 
   it("does not claim a provider, state, pharmacy, price, product, or launch date", () => {

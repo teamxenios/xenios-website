@@ -255,11 +255,41 @@
       "public": true
     },
     {
-      "path": "/care/appointments",
+      "path": "/care/schedule",
       "surface": "tebra-scheduler",
       "state": "disabled",
       "indexable": false,
-      "public": true
+      "public": true,
+      "$comment": "The actual public Tebra scheduling surface. Provider activation remains disabled and fail-closed at this candidate."
+    },
+    {
+      "path": "/care/appointments",
+      "surface": "care-appointments",
+      "state": "disabled",
+      "indexable": false,
+      "public": false,
+      "expectedHttpFailures": [
+        {
+          "path": "/api/care/appointments",
+          "method": "GET",
+          "status": 503,
+          "count": 1,
+          "responseBodySha256": "adb9e34fe5df2e4e5a9c1bd51d7bd608d22eafa4d0bbd15b22c2b30b216d01ef",
+          "consoleText": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+          "reason": "The disabled Care gate intentionally returns care_disabled before authentication; the page consumes this response as its fail-closed state.",
+          "productionEvidence": "Production 3daa3f4a parity probe captured 2026-08-29; response-body SHA-256 adb9e34fe5df2e4e5a9c1bd51d7bd608d22eafa4d0bbd15b22c2b30b216d01ef."
+        },
+        {
+          "path": "/api/care/appointments/admin/readiness",
+          "method": "GET",
+          "status": 503,
+          "count": 1,
+          "responseBodySha256": "adb9e34fe5df2e4e5a9c1bd51d7bd608d22eafa4d0bbd15b22c2b30b216d01ef",
+          "consoleText": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+          "reason": "The readiness panel consumes the same production-parity care_disabled response while Care remains disabled.",
+          "productionEvidence": "Production 3daa3f4a parity probe captured 2026-08-29; response-body SHA-256 adb9e34fe5df2e4e5a9c1bd51d7bd608d22eafa4d0bbd15b22c2b30b216d01ef."
+        }
+      ]
     },
     {
       "path": "/admin/research",
@@ -298,7 +328,32 @@
       "indexable": false,
       "public": true,
       "$comment": "Static Hino microsite served as files at /hino/ (301 from /hino), byte-identical to production 3daa3f4a and outside the raw HTTP document policy. Its own index.html carries meta robots noindex,nofollow,nocache and its own JSON-LD (production content, not a candidate decision): status and robots are asserted; sitemap parity and structured-data scope are not applicable.",
-      "externalMicrosite": true
+      "externalMicrosite": true,
+      "reviewedAssertionNotes": [
+        {
+          "id": "TARGETS_44x44",
+          "allowedFindingFingerprints": [
+            "eea23d4f7e8d126bb76bcf6c956740ee3323eca28eb357183f9d64075144be71",
+            "27c0dbe988b4acb6ad56a5be0997731e021bb8f413b788c8007071ebad2ae80e",
+            "37725c5a4a3a0f6a547fbefd6254fa4e0da0ef17279527c29ac57827cd52d950",
+            "b7e835b83eac31853e032d4929072c6178ec468e29f61ed0d32a7fdd6157e0ea",
+            "11817ceaeb7de7ac6d0d25637a8f20a2d566eaff561a43162947feda0466b118",
+            "153b9438377392d24bdfe6f19ee607ca2bdacad2173287af0b6e02d2cccb7c10",
+            "2dd050a780c661ba0489b5af945b27a29fea3de307f7d776307a2124f83ccee3",
+            "03954d78297f910327eeb9b3254e9f13fcda7056fe04c0ff1e3e7cccbc9622ed",
+            "6ffb343ff49cd8059a65578f99b9ba0cc0aca37143b2b455dac5555e054a9299",
+            "48f78a2e9bc20ad3581c03580dd8b24bd6318d5e6f04ba684b667a04ccb66a04",
+            "7316dea692930df4becd249dd0fd290432a2eee66b91fb360dd8adc8d5cedcc3"
+          ],
+          "reason": "Protected Hino HTML/CSS/JS are byte-identical to production and every raw undersized-target record matches the live 11-variant audit exactly; remediation requires a separately authorized Hino release.",
+          "productionCommit": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+          "productionEvidence": "Live Hino matrix captured 2026-08-29, SHA-256 EA225AF024270122303D040AC79348D514A70ACBD2A5B19FF06A9B39275DE0B8; Hino tree f952c7b7744533aae65bd0ac7ab31767cb352247.",
+          "candidateSource": {
+            "path": "client/public/hino",
+            "gitTree": "f952c7b7744533aae65bd0ac7ab31767cb352247"
+          }
+        }
+      ]
     },
     {
       "path": "/research/policies/accessibility",

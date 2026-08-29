@@ -27,7 +27,7 @@ const careNavigation = [
 function CareNavigation({ currentPath }: { currentPath: string }) {
   return (
     <nav className="container-x pb-10" aria-label="Care pages">
-      <ul className="flex flex-wrap gap-3">
+      <ul className="m-0 flex list-none flex-wrap gap-3 p-0">
         {careNavigation.map(([label, href]) => (
           <li key={href}>
             <Link

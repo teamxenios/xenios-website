@@ -20,7 +20,7 @@ export default function Wordmark({ size = "md", className = "", asLink = true }:
     </span>
   );
   return asLink ? (
-    <Link href="/" data-testid="link-home" className="inline-flex" aria-label="xenios">
+    <Link href="/" data-testid="link-home" className="inline-flex min-h-[44px] items-center" aria-label="xenios">
       {inner}
     </Link>
   ) : inner;

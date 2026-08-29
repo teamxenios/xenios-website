@@ -1,8 +1,21 @@
 import express, { type Express, type Request, type Response } from "express";
 import fs from "fs";
 import path from "path";
+import { isCarePath } from "@shared/care/paths";
 import { isResearchPath } from "@shared/research/paths";
 import { buildRawHttpDocumentResponse } from "./research/seo/raw-http-document-policy";
+
+const EXTERNAL_FONT_LINK =
+  /\s*<link\b(?=[^>]*\bhref=["']https:\/\/fonts\.(?:googleapis|gstatic)\.com(?:\/[^"']*)?["'])[^>]*>\s*/giu;
+
+/**
+ * Care documents run with a self-only font/style CSP. Remove the shared
+ * marketing shell's Google Fonts hints and stylesheet before it reaches the
+ * browser, so the fail-closed policy does not generate blocked requests.
+ */
+export function stripExternalFontLinksForCare(templateHtml: string): string {
+  return templateHtml.replace(EXTERNAL_FONT_LINK, "\n");
+}
 
 /**
  * Answer a non-file document request through the raw HTTP document policy.
@@ -27,9 +40,12 @@ export function sendRawHttpDocument(
   // req.path is rewritten relative to the mount inside app.use("/{*path}"),
   // so the document class is taken from the ORIGINAL pathname.
   const originalPathname = requestTarget.split("?")[0].split("#")[0];
+  const routeTemplate = isCarePath(originalPathname)
+    ? stripExternalFontLinksForCare(templateHtml)
+    : templateHtml;
   const document = buildRawHttpDocumentResponse({
     requestTarget,
-    templateHtml,
+    templateHtml: routeTemplate,
     structuredData,
     // Production parity: the research middleware gated ONLY /research documents
     // (isResearchPath) behind RESEARCH_INDEXABLE; the marketing site (/, careers,
@@ -64,6 +80,7 @@ export function serveStatic(
   // The built shell is read once; the policy is applied per request because
   // status, robots, and canonical are properties of the request target.
   const templatePath = path.resolve(distPath, "index.html");
+  const fallbackFaviconPath = path.resolve(distPath, "favicon.png");
   // Keep serve-static's own redirect response for real index directories. It
   // carries the historical HTML body, CSP, nosniff and content type; replacing
   // it with Express res.redirect changed those public /hino bytes and headers.
@@ -89,6 +106,12 @@ export function serveStatic(
   // explicit /api/ paths for app.get registrations.
   app.use((req, res, next) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
+    // Legacy static documents such as Hino do not declare an icon, so Chromium
+    // asks for /favicon.ico. Alias that conventional request to the shipped PNG
+    // without changing any protected microsite bytes.
+    if (req.path === "/favicon.ico" && fs.existsSync(fallbackFaviconPath)) {
+      return res.type("image/png").sendFile(fallbackFaviconPath);
+    }
     if (req.path === "/" || req.path === "/index.html") return policyDocument(req, res, next);
     // Production parity for static microsites: a directory that carries its own
     // index.html (the /hino subtree) is reached through its slash form, exactly

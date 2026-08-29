@@ -39,6 +39,14 @@ function isIosSafari(): boolean {
   return ios && safari;
 }
 
+function wasHintDismissed(): boolean {
+  try {
+    return window.sessionStorage.getItem(DISMISS_KEY) === "1";
+  } catch {
+    return true;
+  }
+}
+
 const pillStyle: React.CSSProperties = {
   position: "fixed",
   bottom: "1rem",
@@ -46,7 +54,9 @@ const pillStyle: React.CSSProperties = {
   transform: "translateX(-50%)",
   zIndex: 2147483000,
   display: "flex",
+  flexWrap: "wrap",
   alignItems: "center",
+  justifyContent: "center",
   gap: "0.75rem",
   background: "#000",
   color: "#fff",
@@ -54,8 +64,15 @@ const pillStyle: React.CSSProperties = {
   borderRadius: "9999px",
   padding: "0.5rem 1rem",
   fontSize: "0.85rem",
-  maxWidth: "min(92vw, 26rem)",
+  width: "min(calc(100vw - 2rem), 26rem)",
+  maxWidth: "26rem",
   boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+};
+
+const messageStyle: React.CSSProperties = {
+  flex: "1 1 10rem",
+  minWidth: 0,
+  textAlign: "center",
 };
 
 // Both controls keep a 44px minimum hit target (WCAG 2.5.5 / P2-1).
@@ -104,7 +121,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
 
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
-      setInstallPrompt(event as InstallPromptEvent);
+      if (!wasHintDismissed()) setInstallPrompt(event as InstallPromptEvent);
     };
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
 
@@ -112,7 +129,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
       if (
         !isStandalone() &&
         isIosSafari() &&
-        window.sessionStorage.getItem(DISMISS_KEY) !== "1"
+        !wasHintDismissed()
       ) {
         setShowIosHint(true);
       }
@@ -141,7 +158,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
   if (updateRegistration) {
     return (
       <div style={pillStyle} role="status" aria-live="polite">
-        <span>A new version of xenios is ready.</span>
+        <span style={messageStyle}>A new version of xenios is ready.</span>
         <button
           style={buttonStyle}
           onClick={() => applyPwaUpdate(updateRegistration)}
@@ -157,7 +174,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
   if (installPrompt) {
     return (
       <div style={pillStyle} role="status" aria-live="polite">
-        <span>Add xenios to your home screen.</span>
+        <span style={messageStyle}>Add xenios to your home screen.</span>
         <button
           style={buttonStyle}
           onClick={() => {
@@ -177,7 +194,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
   if (showIosHint) {
     return (
       <div style={pillStyle} role="status" aria-live="polite">
-        <span>
+        <span style={messageStyle}>
           Install xenios: tap Share, then “Add to Home Screen”.
         </span>
         <button style={dismissStyle} onClick={dismiss} aria-label="Dismiss">

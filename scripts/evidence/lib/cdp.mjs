@@ -1,4 +1,5 @@
 // Minimal Chrome DevTools Protocol client on top of `ws` (flat session mode).
+import { createHash } from "node:crypto";
 import WebSocket from "ws";
 
 export class CdpConnection {
@@ -122,11 +123,35 @@ export class PageSession {
         "Network.responseReceived",
         (p) => {
           const req = page.inflight.get(p.requestId);
-          page.network.push({ url: p.response.url, status: p.response.status, type: p.type, method: req?.method ?? "GET" });
+          const record = { url: p.response.url, status: p.response.status, type: p.type, method: req?.method ?? "GET" };
+          page.network.push(record);
+          if (req) req.responseRecord = record;
         },
         sessionId,
       ),
-      conn.on("Network.loadingFinished", (p) => page.inflight.delete(p.requestId), sessionId),
+      conn.on(
+        "Network.loadingFinished",
+        (p) => {
+          const req = page.inflight.get(p.requestId);
+          const record = req?.responseRecord;
+          if (!record || record.status < 400) {
+            page.inflight.delete(p.requestId);
+            return;
+          }
+          page.send("Network.getResponseBody", { requestId: p.requestId })
+            .then(({ body = "", base64Encoded = false }) => {
+              const bytes = base64Encoded ? Buffer.from(body, "base64") : Buffer.from(body, "utf8");
+              record.bodySha256 = createHash("sha256").update(bytes).digest("hex");
+              record.bodyBytes = bytes.length;
+            })
+            .catch(() => {
+              record.bodySha256 = null;
+              record.bodyBytes = null;
+            })
+            .finally(() => page.inflight.delete(p.requestId));
+        },
+        sessionId,
+      ),
       conn.on(
         "Network.loadingFailed",
         (p) => {

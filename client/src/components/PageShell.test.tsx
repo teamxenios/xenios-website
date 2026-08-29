@@ -68,4 +68,39 @@ describe("PageShell skip link", () => {
     expect(css).toMatch(/\.input-field:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--pulse\)/);
     expect(css).toMatch(/\.cs-fld-input:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--pulse\)/);
   });
+
+  it("only points aria-controls at the mobile navigation overlay while that target exists", () => {
+    const view = render(
+      <PageShell>
+        <p>content</p>
+      </PageShell>,
+    );
+    const trigger = view.host.querySelector(
+      '[data-testid="button-menu-toggle"]',
+    ) as HTMLButtonElement;
+
+    expect(trigger.getAttribute("aria-controls")).toBeNull();
+    expect(view.host.querySelector("#nav-mobile-overlay")).toBeNull();
+
+    act(() => trigger.click());
+
+    expect(trigger.getAttribute("aria-controls")).toBe("nav-mobile-overlay");
+    expect(view.host.querySelector("#nav-mobile-overlay")).not.toBeNull();
+    view.unmount();
+  });
+
+  it("gives every desktop primary navigation link a 44 by 44 minimum target", () => {
+    const view = render(
+      <PageShell>
+        <p>content</p>
+      </PageShell>,
+    );
+    const links = [...view.host.querySelectorAll('nav[aria-label="Primary"] a')];
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link.classList.contains("min-h-[44px]")).toBe(true);
+      expect(link.classList.contains("min-w-[44px]")).toBe(true);
+    }
+    view.unmount();
+  });
 });

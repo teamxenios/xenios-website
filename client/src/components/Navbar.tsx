@@ -88,7 +88,7 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     data-testid={`link-nav-${item.label.replace(/[^a-z]+/gi, "-").toLowerCase()}`}
-                    className={`text-[14px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
+                    className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-[14px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
                     style={{ fontWeight: active ? 700 : 600 }}
                   >
                     {item.label}
@@ -106,7 +106,7 @@ export default function Navbar() {
                 style={{ height: 44, padding: "0 14px", fontSize: 14 }}
                 aria-label="Open full site menu"
                 aria-expanded={open}
-                aria-controls={OVERLAY_ID}
+                aria-controls={open ? OVERLAY_ID : undefined}
                 data-testid="button-menu-toggle"
               >
                 <span aria-hidden="true" className="mr-2">☰</span>
@@ -160,9 +160,9 @@ export default function Navbar() {
                   {earlyAccessCta.label}
                 </Link>
                 <div className="mt-8 space-y-2">
-                  <a href={`mailto:${contactEmail}`} className="block body-m text-ink hover:text-pulse transition-colors">{contactEmail}</a>
+                  <a href={`mailto:${contactEmail}`} className="flex min-h-[44px] items-center body-m text-ink hover:text-pulse transition-colors">{contactEmail}</a>
                   {navSocials.map((social) => (
-                    <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="block body-m text-ink-2 hover:text-pulse transition-colors">
+                    <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex min-h-[44px] items-center body-m text-ink-2 hover:text-pulse transition-colors">
                       {social.label}
                     </a>
                   ))}
@@ -181,7 +181,7 @@ export default function Navbar() {
                             key={`${group.label}-${item.href}`}
                             item={item}
                             onClick={closeMenu}
-                            className={`block text-[15px] font-600 transition-colors ${active ? "text-pulse" : "text-ink hover:text-pulse"}`}
+                            className={`flex min-h-[44px] items-center text-[15px] font-600 transition-colors ${active ? "text-pulse" : "text-ink hover:text-pulse"}`}
                           />
                         );
                       })}
