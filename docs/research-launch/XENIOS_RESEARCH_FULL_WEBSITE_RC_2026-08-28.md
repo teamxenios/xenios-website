@@ -105,7 +105,7 @@ Mode vocabulary: REPLAYED = applied as content onto the Claude branch with ident
 | dc70fb17 | RESEARCH_INDEXABLE production parity at the HTTP layer: buildRawHttpDocumentResponse indexable input; static.ts passes the flag; public documents noindex at header+meta until true; tests; static.ts tripwire re-pinned 75ab3f6a |
 | 679564fc | Indexing gate scoped to Research documents by original pathname (marketing site indexable as in production); tripwire re-pinned 0f2cf4ab |
 
-Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lists) is in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json`; every runtime observation is in `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (E-00 … E-60); every adjudication is in `CONTROL/CLAUDE_DECISION_LOG.md`.
+Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lists) is in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json`; every runtime observation is in `CONTROL/CLAUDE_EVIDENCE_LEDGER.json` (E-00 … E-63); every adjudication is in `CONTROL/CLAUDE_DECISION_LOG.md`.
 
 ## 3. Gates on the code-frozen SHA `679564fc` (LF clone, pinned container)
 
@@ -125,7 +125,7 @@ Full per-item identity (patch hashes, apply-checks, overlap lists, exclusion lis
 | Core-site protection | `node scripts/acceptance/verify-core-site-protection.mjs 3daa3f4a… 679564fc` | exit 1 — 21 protected hashes verified; changed files 583 (allowed research/care 247, infrastructure 112, test files touched 194, seam files 3 [server/care/index.ts, server/index.ts, server/research/index.ts]); changed files outside the allowed Research/Care write zones. — 27 reviewed global-shell files listed by design (classifier not widened; founder review item) |
 | Secret scan | `node scripts/acceptance/scan-release-diff.mjs 3daa3f4a… 679564fc` | exit 0 — secret findings: 0 over 70237 added lines / 541 files |
 | Approved-name PII scan (never SKIPPED) | `node scripts/acceptance/verify-release-diff-scan.mjs --production-base-sha 3daa3f4a… --candidate-sha 679564fc --pii-names-file <approved corpus, outside Git, SHA-256 C7DA9838…>` | exit 0 — pii findings: 0; non-SKIPPED (wrapper requires exactly one 'secret findings: 0' and one 'pii findings: 0') |
-| Disposable Postgres migration rehearsal | — | **NOT APPLICABLE / NOT CLAIMED**: no migration is part of this candidate's deployable surface; `supabase/candidates/*` remain unapplied and outside `MIGRATION_DAG.json`; the client-account migration harness was REJECTED (trust/TOCTOU/EOL/manifest gaps) and stays PRODUCTION DISABLED |
+| Disposable Postgres migration rehearsal | `bash scripts/rehearse-research-assisted-order-audit-store.sh` (host Docker, pinned `postgres@sha256:33f923b0…`, throwaway container destroyed) | **No migration ships with this deploy** (`supabase/candidates/*` unapplied, outside `MIGRATION_DAG.json`; MIGRATION REQUIRED FOR THIS DEPLOY: NO). Informational rehearsal of the assisted-order audit-store candidate on the frozen tree: **PASS** — precheck, apply, authority, grants, RLS, concurrency, replay, conflict, rollback, immutability, reapply (8.5 s; candidate SHA-256 a6814b1c…, pre 8ecd2366…, post db0354ee…). The client-account migration harness was REJECTED (trust/TOCTOU/EOL/manifest gaps) and stays PRODUCTION DISABLED. Nothing applied to any real or shared database |
 
 Gate logs: `scratchpad/gates-679564fc-lf/*.txt` (mirrored into `CONTROL/EVIDENCE/gates-679564fc-lf/`).
 

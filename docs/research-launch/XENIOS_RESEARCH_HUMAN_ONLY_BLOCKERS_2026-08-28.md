@@ -35,6 +35,8 @@ or pending state.
 | Approved out-of-repository PII names corpus for the release scan | Privacy-approved input | Samuel | Consumed by the frozen-SHA scan from its recorded path; never printed or committed | PROVIDED (hash-verified) |
 | Git-history purge of the partner principal's full name (present in earlier commits of already-pushed branches; scrubbed from the candidate tree at `bfc1eeae`) and the seven remaining first-name-only mentions (test descriptions, two internal reports, a session-registry line, one report file name) | Rewriting shared history and renaming a referenced report are irreversible, cross-branch actions | Samuel / partner | Candidate tree passes the approved-name scan with zero findings; history untouched | REQUIRED DECISION |
 
+`FOUNDER DECISION PENDING` / `REQUIRED` mark inputs only a human can supply; none of them marks unfinished engineering (engineering residuals are listed separately below as PRODUCTION DISABLED).
+
 Do not commit credentials, copied secret values, patient-specific URLs, PHI,
 PII, or production embed code to this file.
 
@@ -42,16 +44,16 @@ PII, or production embed code to this file.
 
 | Decision | Options presented by the implementation | Decision |
 | --- | --- | --- |
-| Tebra initial production mode | disabled / direct_link / iframe / popup_widget | PENDING |
-| Tebra Patient Portal handoff | enable only with the exact official URL / keep disabled | PENDING |
-| Client-account / invitation migration candidate | remain unapplied / separately authorize after a corrected harness and clean-checkout rehearsal | PENDING |
-| Deploy the exact frozen RC SHA | approve exact SHA / do not approve | PENDING |
-| Exact product + variant activation | approve only with durable current/live evidence / remain unavailable | PENDING per offering |
-| Research indexing (`RESEARCH_INDEXABLE`) and sitemap publication of Research editorial pages | enable after raw-HTTP evidence review / keep noindex | PENDING |
-| Public storefront mount (`RESEARCH_PUBLIC_STOREFRONT_ENABLED`) | keep off until publication authority and approved copy exist / enable later | PENDING (engineering gates also open) |
-| Global marketing-shell touch-target fixes (Navbar/Footer/TopRibbon, hard-tripwire protected) | accept a reviewed global-shell change / defer | PENDING |
-| Partner-name history purge and first-name mention cleanup | rewrite history + rename report / leave history, scrub only the candidate tree (done) | PENDING |
-| FILE_OWNERSHIP re-baseline for integration candidates (the release-manifest verifier reads exact-file, single-lane ownership rules from the 3daa production base; 483 of the candidate's 583 changed files have no base owner and 20 belong to other lanes, so the verifier's ownership check fails for any integration RC while every other manifest check passes) | accept the disclosed ownership exceptions for this RC and re-baseline the policy at the next production base / require per-lane manifests before acceptance | PENDING |
+| Tebra initial production mode | disabled / direct_link / iframe / popup_widget | FOUNDER DECISION PENDING |
+| Tebra Patient Portal handoff | enable only with the exact official URL / keep disabled | FOUNDER DECISION PENDING |
+| Client-account / invitation migration candidate | remain unapplied / separately authorize after a corrected harness and clean-checkout rehearsal | FOUNDER DECISION PENDING |
+| Deploy the exact frozen RC SHA | approve exact SHA / do not approve | FOUNDER DECISION PENDING |
+| Exact product + variant activation | approve only with durable current/live evidence / remain unavailable | FOUNDER DECISION PENDING per offering |
+| Research indexing (`RESEARCH_INDEXABLE`) and sitemap publication of Research editorial pages | enable after raw-HTTP evidence review / keep noindex | FOUNDER DECISION PENDING |
+| Public storefront mount (`RESEARCH_PUBLIC_STOREFRONT_ENABLED`) | keep off until publication authority and approved copy exist / enable later | FOUNDER DECISION PENDING (engineering gates also open) |
+| Global marketing-shell touch-target fixes (Navbar/Footer/TopRibbon, hard-tripwire protected) | accept a reviewed global-shell change / defer | FOUNDER DECISION PENDING |
+| Partner-name history purge and first-name mention cleanup | rewrite history + rename report / leave history, scrub only the candidate tree (done) | FOUNDER DECISION PENDING |
+| FILE_OWNERSHIP re-baseline for integration candidates — the release-manifest verifier reads exact-file, single-lane ownership rules from the 3daa production base; 483 of the candidate's 583 changed files have no base owner and 20 belong to historical lanes, so its ownership check fails for any integration RC while every other manifest check passes. Exact file/rule reconciliation and the proposed (unapplied) rule: `XENIOS_RESEARCH_OWNERSHIP_RECONCILIATION_2026-08-28.md`, `XENIOS_RESEARCH_OWNERSHIP_REBASELINE_PROPOSAL_2026-08-28.json` | accept the disclosed result for this RC and authorize the release-manager re-baseline at the next production base (smallest approval statement in the reconciliation document) / require per-lane manifests before acceptance | FOUNDER DECISION PENDING |
 
 This packet does not recommend or execute a production choice.
 

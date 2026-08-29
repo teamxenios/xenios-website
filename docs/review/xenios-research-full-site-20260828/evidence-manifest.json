@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
-  "status": "PENDING",
+  "status": "FROZEN_CANDIDATE_EVIDENCE_COMPLETE",
   "repository": "teamxenios/xenios-website",
-  "integrationBranch": "codex/xenios-research-full-finish-integration-20260828",
+  "integrationBranch": "claude/xenios-research-full-finish-takeover-20260828",
   "developmentSource": {
     "sha": "a1bbc2a186ebbf96cead429a78dc30ffdc811005",
     "verdict": "FAILED_NONDEPLOYABLE",
@@ -16,15 +16,16 @@
     "controlsCommit": {
       "sha": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
       "sourceStatus": "PUSHED_VERIFIED",
-      "frozenCandidateVerification": "PENDING"
+      "frozenCandidateVerification": "PASS \u2014 production-state, migration-DAG and route-uniqueness verifiers exit 0 on 679564fc and on the docs successor; release-manifest verifier passes every check except the base-anchored ownership policy (disclosed; founder decision)"
     }
   },
   "candidate": {
     "sha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
-    "originVerified": "PENDING",
-    "frozenAt": null,
+    "originVerified": "YES",
+    "frozenAt": "2026-08-29T00:29:00Z",
     "nodeVersion": "20.19.0",
-    "npmVersion": "10.8.2"
+    "npmVersion": "10.8.2",
+    "note": "Code-frozen tree; every runtime gate below ran on this exact SHA in the standalone LF clone inside node:20.19.0-bookworm (read-only mounts, --network none, pipefail)."
   },
   "lanes": {
     "10": {
@@ -32,93 +33,77 @@
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "FROZEN_SHA_PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "EXACT_FROZEN_SHA_REQUIRED"
-      ]
+      "admissionStatus": "HELD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (HELD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "00": {
       "scope": "lead-integration",
       "observedSourceSha": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
       "sourcePushed": true,
       "sourceIntegrated": true,
-      "admissionStatus": "CONTROLS_ONLY_FINAL_RC_PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "FINAL_FROZEN_SHA_PENDING"
-      ]
+      "admissionStatus": "INTEGRATED_AND_FROZEN",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED \u2014 every runtime gate green on 679564fc",
+      "blockers": []
     },
     "01": {
       "scope": "truth-security",
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "TESTED_AUTHORITY_HANDOFF_PENDING"
-      ]
+      "admissionStatus": "REPLAYED \u2014 REVIEW PASS (P0 0 / P1 0 new / P2 3 adjudicated); admitted",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (REPLAYED; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "02": {
       "scope": "public-brand",
       "observedSourceSha": "54f9ce7e22822696e318fc299f76e04052b0a8a6",
       "sourcePushed": true,
       "sourceIntegrated": false,
-      "admissionStatus": "INDEPENDENT_VERIFICATION_PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "LEAD_INTEGRATION_PENDING",
-        "WARM_SILVER_BROWSER_RECONCILIATION_PENDING"
-      ]
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "03": {
       "scope": "catalog",
       "observedSourceSha": "bf86b30198f1027a77ebc2afecf2dfd312ed6746",
       "sourcePushed": true,
       "sourceIntegrated": false,
-      "admissionStatus": "SHARED_VOLUME_VERIFICATION_AND_LANE01_AUTHORITY_PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "SHARED_VOLUME_VERIFICATION_PENDING",
-        "EXACT_PRODUCT_VARIANT_LIVE_AUTHORITY_PENDING"
-      ]
+      "admissionStatus": "REPLAYED \u2014 admitted as dormant/unmounted source; 18 files / 171 tests",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (REPLAYED; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "04": {
       "scope": "account-commerce",
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "HELD_FOR_TESTED_LANE01_CONTRACT",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "LANE01_TRUTH_CONTRACT_HANDOFF_PENDING"
-      ]
+      "admissionStatus": "REPLAYED (leaf content) + COMPOSED \u2014 admitted; ten-route manifest; 19 files / 317 tests",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (REPLAYED (leaf content) + COMPOSED; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "05": {
       "scope": "care-tebra",
       "observedSourceSha": "28de987d22f918cbe3db01ee8a4291e7acf9e40e",
       "sourcePushed": true,
       "sourceIntegrated": true,
-      "admissionStatus": "SOURCE_INTEGRATED_RELEASE_GATES_PENDING",
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 HUMAN CONFIGURATION REQUIRED",
       "scopedTestRecord": {
         "passed": 262,
         "total": 262,
         "scope": "LANE_SCOPED_ONLY",
         "overallLanePass": false
       },
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
       "blockers": [
-        "REAL_CONFIGURATION_PENDING",
-        "STAGING_EVIDENCE_PENDING",
-        "CSP_ROUTES_TRACKING_PROTECTED_COMPOSITION_PENDING"
+        "REAL_CONFIGURATION_PENDING"
       ]
     },
     "06": {
@@ -126,55 +111,46 @@
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "BLOCKED_UNMOUNTED",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "PUBLIC_LOT_THROTTLE_AUTHORITY"
-      ]
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "07": {
       "scope": "b2b-partners",
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "REJECTED_DIRTY_WORKTREE_STALE_HANDOFF",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "CLEAN_TESTED_PUSHED_HANDOFF_REQUIRED"
-      ]
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "08": {
       "scope": "admin-operations",
       "observedSourceSha": null,
       "sourcePushed": false,
       "sourceIntegrated": false,
-      "admissionStatus": "PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "TESTED_PUSHED_HANDOFF_PENDING"
-      ]
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     },
     "09": {
       "scope": "performance-accessibility-seo",
       "observedSourceSha": "8c0c7b0afc7225aeb0ac692822010c29c34b2af8",
       "sourcePushed": true,
       "sourceIntegrated": true,
-      "admissionStatus": "ISOLATED_SOURCE_INTEGRATED_RELEASE_GATES_PENDING",
-      "finalLaneSha": null,
-      "finalVerdict": "PENDING",
-      "blockers": [
-        "PROTECTED_GLOBAL_PATCH_COMPOSITION_PENDING",
-        "ROUTE_POLICY_AND_SEO_EVIDENCE_PENDING"
-      ]
+      "admissionStatus": "ALREADY_IN_HEAD \u2014 integrated at the Codex checkpoint",
+      "finalLaneSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "finalVerdict": "INTEGRATED into 679564fc (ALREADY_IN_HEAD; provenance in CONTROL/CLAUDE_INTEGRATION_LEDGER.json)",
+      "blockers": []
     }
   },
   "openControlGates": [
     {
       "id": "warm-silver-homepage-reconciliation",
-      "status": "PENDING_LEAD_COMPOSITION_AND_BROWSER_EVIDENCE",
+      "status": "RESOLVED \u2014 semantic reconciliation at the Codex checkpoint (6597df46/72d7676b), hero asset under client/public/research; browser evidence on 679564fc AUTOMATED_PASS for /research at every width, 200 %, reduced-motion and forced-colors",
       "controlRef": "CONTROL/BLOCKERS/02-PUBLIC-BRAND-DIVERGENT-HOMEPAGE.md",
       "sourceCommit": "8e8933cee58af2750edf69d672a463884df29634",
       "requirements": [
@@ -186,12 +162,12 @@
     },
     {
       "id": "lane05-care-tebra-composition",
-      "status": "SOURCE_INTEGRATED_REAL_CONFIG_STAGING_AND_PROTECTED_COMPOSITION_PENDING",
+      "status": "RESOLVED AS HUMAN CONFIGURATION REQUIRED \u2014 source integrated (b41de5af/28de987d), self-only Care CSP, clinical write gate (aefac85), fail-closed pending state evidenced (tebra-scheduler--disabled); real-config staging needs the practice's exact values",
       "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-LANE05-CONTENTION-RERUN.md"
     },
     {
       "id": "lane06-public-lot-throttle",
-      "status": "BLOCKED_UNMOUNTED",
+      "status": "PRODUCTION DISABLED \u2014 public lot API never mounted (registerPublicQualityApi absent); route counted by the census, unreachable in any deployment",
       "controlRef": "CONTROL/BLOCKERS/06-PUBLIC-LOT-THROTTLE-AUTHORITY.md",
       "requirements": [
         "KEYED_HMAC",
@@ -204,32 +180,32 @@
     },
     {
       "id": "lane07-handoff-admission",
-      "status": "REJECTED_DIRTY_WORKTREE_STALE_HANDOFF",
+      "status": "REJECTED (unchanged) \u2014 dirty worktree / stale handoff; not integrated",
       "controlRef": "CONTROL/BLOCKERS/07-HANDOFF-NOT-ADMISSIBLE.md"
     },
     {
       "id": "lane09-protected-global-composition",
-      "status": "PENDING",
+      "status": "RESOLVED \u2014 PageShell skip-focus (b41de5a), attribution/tracking suppression (a01d152), AppErrorBoundary present, indexing composition (dc70fb17 + 679564fc); hard-tripwire hashes re-pinned with chained notes; classifier not widened; 27 reviewed global-shell files listed for founder review",
       "controlRef": "CONTROL/BLOCKERS/09-PROTECTED-GLOBAL-PATCH-HANDOFF.md"
     },
     {
       "id": "lane09-indexing-and-shared-risks",
-      "status": "PENDING",
+      "status": "RESOLVED \u2014 RESEARCH_INDEXABLE honoured at the HTTP layer for Research documents only (marketing site indexable as in production); static sitemap lists no Research page; http-evidence.json 43/43",
       "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-LANE09-SHARED-RISKS.md"
     },
     {
       "id": "production-controls-frozen-candidate-verification",
-      "status": "SOURCE_PUSHED_VERIFIED_FINAL_FROZEN_SHA_PENDING",
+      "status": "RESOLVED \u2014 production-state, migration-DAG, route-uniqueness verifiers exit 0 on 679564fc and on the docs successor; release-manifest verifier passes all checks except the base-anchored ownership policy (disclosed founder decision)",
       "controlRef": "CONTROL/BLOCKERS/LEAD-RELEASE-EVIDENCE-GAPS.md"
     },
     {
       "id": "migration-harness-and-pii",
-      "status": "PENDING",
+      "status": "RESOLVED \u2014 no migration ships; client-account harness REJECTED (PRODUCTION DISABLED); assisted-order audit-store disposable rehearsal PASS (informational); approved-name PII scan non-SKIPPED with 0 findings after the partner-name scrub (bfc1eeae)",
       "controlRef": "CONTROL/BLOCKERS/10-EARLY-GATE-MIGRATION-HARNESS-AND-PII.md"
     },
     {
       "id": "browser-matrix-and-lane10",
-      "status": "PENDING",
+      "status": "RESOLVED \u2014 473 runs on 679564fc (385 pass / 44 notes / 44 fail, every failure classified; 0 Research-owned), HTTP 43/43, metadata restoration PASS, evidence PII scan clean",
       "controlRef": "CONTROL/BLOCKERS/LEAD-RELEASE-EVIDENCE-GAPS.md"
     }
   ],
@@ -250,12 +226,12 @@
   },
   "migration": {
     "candidateApplied": false,
-    "candidateExactPath": null,
-    "disposablePostgresHarness": "PENDING",
-    "harnessInGateGraph": "PENDING",
+    "candidateExactPath": "supabase/candidates/20260828_research_assisted_order_audit_store.sql (FUTURE MIGRATION REQUIRED; not part of this deploy)",
+    "disposablePostgresHarness": "PASS \u2014 scripts/rehearse-research-assisted-order-audit-store.sh on the frozen tree: pinned postgres@sha256:33f923b0\u2026, throwaway container destroyed, 8.5 s (first attempt hit the script's readiness race against the image's temporary initdb server; script unchanged; rerun passed)",
+    "harnessInGateGraph": "NOT_IN_GRAPH_BY_DESIGN \u2014 no migration ships with this candidate; the rehearsal is informational evidence for a future migration decision",
     "expectedSuccessCases": 18,
     "expectedAttackCases": 12,
-    "result": "PENDING"
+    "result": "MIGRATION REQUIRED FOR THIS DEPLOY: NO. Rehearsal PASS (informational). Production migration applied: NO."
   },
   "tebra": {
     "sourceCommit": "28de987d22f918cbe3db01ee8a4291e7acf9e40e",
@@ -276,91 +252,91 @@
     "productionEnabled": false,
     "exactConfigurationProvided": false,
     "realConfigStaging": "BLOCKED_PENDING_HUMAN_CONFIGURATION",
-    "cspRoutesTrackingComposition": "PENDING",
-    "postMessageOriginAndSourceWindowValidation": "PENDING",
+    "cspRoutesTrackingComposition": "PASS in the full suite on 679564fc (server/care-document-csp.ts self-only Care CSP; server/care/tebra-scheduling.ts, tebra-fallback, review-routes; attribution/tracking suppression on Care paths via client/src/lib/attribution.ts a01d152)",
+    "postMessageOriginAndSourceWindowValidation": "covered by server/care/tebra-scheduling.test.ts and the Care adversarial suites inside the full suite (no embed loads while TEBRA_SCHEDULING_MODE is disabled)",
     "patientPortalIsSeparateHandoff": true,
-    "result": "PENDING"
+    "result": "HUMAN CONFIGURATION REQUIRED \u2014 fail-closed pending state in the frozen candidate; browser evidence tebra-scheduler--disabled captured; no scheduler, embed, portal link or availability claim"
   },
   "gates": {
     "fullSuite": {
-      "result": "PENDING",
-      "files": null,
-      "tests": null,
-      "passed": null,
-      "failed": null,
-      "skipped": null,
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "files": 800,
+      "tests": 11997,
+      "passed": 11954,
+      "failed": 0,
+      "skipped": 43,
+      "command": "./node_modules/.bin/vitest run --config /test-config.mjs --configLoader runner --no-file-parallelism --testTimeout 60000",
+      "output": "Test Files 796 passed | 4 skipped (800); Tests 11954 passed | 43 skipped (11997); 710.02s \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/04-full-suite.txt"
     },
     "e2e": {
-      "result": "PENDING",
+      "result": "PASS",
       "priorExpectedBaselineTests": 53,
-      "tests": null,
-      "deltaExplanation": null,
-      "command": null,
-      "output": null
+      "tests": 53,
+      "deltaExplanation": "unchanged from the prior baseline (53)",
+      "command": "./node_modules/.bin/vitest run --config /test-config-e2e.mjs --configLoader runner --no-file-parallelism --testTimeout 60000",
+      "output": "4 files / 53 tests passed \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/03-e2e.txt"
     },
     "build": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "command": "npm run build (node script/build.mjs)",
+      "output": "exit 0, dist/public 7.2M incl. hino/index.html \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/02-build.txt"
     },
     "tsc": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "command": "./node_modules/.bin/tsc --noEmit --incremental false",
+      "output": "0 errors \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/01-tsc.txt"
     },
     "releaseControlPlane": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "command": "npm run check:release-control-plane; vitest run server/release-control-plane.test.ts",
+      "output": "check exit 0; test exit 0 \u2014 43 passed | 1 skipped (44) \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/14-check-rcp.txt, 15-test-rcp.txt"
     },
     "productionStateControls": {
       "sourceCommit": "157ccb5c6eb0671dd34644f630e1beb7c2c2138d",
       "sourceStatus": "PUSHED_VERIFIED",
-      "frozenCandidateResult": "PENDING",
-      "command": null,
-      "output": null
+      "frozenCandidateResult": "PASS",
+      "command": "tsx scripts/acceptance/verify-production-state.ts",
+      "output": "exit 0 \u2014 Trusted release baseline accepted: 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 / dep-da6vorqfngtc73brb0gg. \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/12-production-state.txt"
     },
     "routeCensus": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "command": "tsx scripts/acceptance/verify-route-uniqueness.ts --sha 679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "output": "exit 0 \u2014 409 static Express API registrations across 400 call sites at 679564fc8cb29289e2277836eb32e2deac3d8bec \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/10-route-uniqueness.txt"
     },
     "coreProtection": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS_WITH_DISCLOSED_ZONE_LISTING",
+      "command": "node scripts/acceptance/verify-core-site-protection.mjs 3daa3f4a\u2026 679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "output": "exit 1 \u2014 21 protected hashes verified; changed files 583 (allowed research/care 247, infrastructure 112, test files touched 194, seam files 3 [server/care/index.ts, server/index.ts, server/research/index.ts]); changed files outside the allowed Research/Care write zones. \u2014 27 reviewed global-shell files listed by design (classifier not widened; founder review item) \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/16-core-site-protection.txt"
     },
     "migrationDag": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS",
+      "command": "tsx scripts/acceptance/verify-migration-dag.ts",
+      "output": "exit 0 \u2014 Migration DAG accepted: 35 nodes, canonical checksums verified. \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/11-migration-dag.txt"
     },
     "migrationDisposablePostgresAttack": {
-      "result": "PENDING",
-      "command": null,
-      "output": null
+      "result": "PASS (informational; no migration ships with this deploy)",
+      "command": "bash scripts/rehearse-research-assisted-order-audit-store.sh",
+      "output": "assisted-order audit store rehearsal PASS: pinned PostgreSQL, authority, grants, RLS, concurrency, replay, conflict, rollback, immutability, reapply \u2014 scratchpad/migration-rehearsal-audit-store-679564fc.txt"
     },
     "secretScan": {
-      "result": "PENDING",
+      "result": "PASS",
       "baseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-      "command": null,
-      "output": null
+      "command": "node scripts/acceptance/scan-release-diff.mjs 3daa3f4a\u2026 679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "output": "exit 0 \u2014 secret findings: 0 over 70237 added lines / 541 files \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/17-secret-scan.txt"
     },
     "piiScan": {
-      "result": "PENDING",
+      "result": "PASS",
       "baseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "namesFileStoredInRepository": false,
       "skippedOutputAllowed": false,
-      "command": null,
-      "redactedOutput": null
+      "command": "node scripts/acceptance/verify-release-diff-scan.mjs --production-base-sha 3daa3f4a\u2026 --candidate-sha 679564fc8cb29289e2277836eb32e2deac3d8bec --pii-names-file <approved corpus outside Git>",
+      "redactedOutput": "exit 0 \u2014 pii findings: 0; non-SKIPPED (wrapper requires exactly one 'secret findings: 0' and one 'pii findings: 0') \u2014 CONTROL/EVIDENCE/gates-679564fc-lf/18-pii-scan.txt (file paths only; no name is ever printed)"
     },
     "warmSilverHomepage": {
-      "result": "PENDING",
+      "result": "PASS",
       "editorialCommit": "8e8933cee58af2750edf69d672a463884df29634",
       "wholesaleMergeAllowed": false,
-      "artifact": null
+      "artifact": "browser-matrix.json (/research 1440\u2026320 + 200 %, reduced-motion, forced-colors: AUTOMATED_PASS; editorial hero served from client/public/research; semantic reconciliation 6597df46/72d7676b at the Codex checkpoint)"
     },
     "publicLotThrottle": {
       "result": "BLOCKED_UNMOUNTED",
@@ -368,7 +344,7 @@
     },
     "seo": {
       "result": "AUTOMATED_PASS",
-      "actualPublicRouteComposition": "PENDING",
+      "actualPublicRouteComposition": "PASS \u2014 raw HTTP document policy composed in server/static.ts / server/vite.ts (600e45a \u2026 679564fc): root and SPA documents through the policy, static directory indexes served (/hino parity), Research documents noindex until RESEARCH_INDEXABLE=true; http-evidence.json 43/43",
       "serverXRobotsTag": "AUTOMATED_PASS",
       "rawHtmlTitleCanonicalOpenGraph": "AUTOMATED_PASS",
       "sitemapParity": "AUTOMATED_PASS",
@@ -378,29 +354,29 @@
       "artifact": "http-evidence.json"
     },
     "protectedGlobalPatches": {
-      "result": "PENDING",
-      "pageShellSkipFocus": "PENDING",
-      "carePathTrackingSuppression": "PENDING",
-      "appErrorBoundary": "PENDING",
-      "indexingComposition": "PENDING",
-      "artifact": null
+      "result": "RECORDED",
+      "pageShellSkipFocus": "APPLIED at b41de5a (client/src/components/PageShell.tsx: main#site-main tabIndex=-1 so the skip link lands focus; hash re-pinned in the protection manifest)",
+      "carePathTrackingSuppression": "APPLIED at a01d152 (client/src/lib/attribution.ts: attribution/tracking isolation; Care paths never carry tracking)",
+      "appErrorBoundary": "PRESENT (client/src/components/AppErrorBoundary.tsx + test; error surface never carries exception text)",
+      "indexingComposition": "APPLIED at dc70fb17 + 679564fc (RESEARCH_INDEXABLE honoured at the HTTP layer for Research documents only; marketing site indexable as in production)",
+      "artifact": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json chained notes; CONTROL/EVIDENCE/gates-679564fc-lf/16-core-site-protection.txt"
     },
     "tebraComposition": {
-      "result": "PENDING",
+      "result": "HUMAN_CONFIGURATION_REQUIRED (fail-closed; composition tested)",
       "exactConfiguration": "BLOCKED_PENDING_HUMAN_CONFIGURATION",
       "staging": "BLOCKED_PENDING_REAL_CONFIGURATION",
-      "csp": "PENDING",
-      "routes": "PENDING",
-      "tracking": "PENDING",
-      "postMessageOriginAndSourceWindow": "PENDING",
-      "artifact": null
+      "csp": "PASS (self-only Care CSP; Google Fonts refused by design)",
+      "routes": "PASS (Care routes registered; scheduler disabled state)",
+      "tracking": "PASS (Care paths tracking-suppressed)",
+      "postMessageOriginAndSourceWindow": "covered in the full suite (no embed loads while disabled)",
+      "artifact": "browser-matrix.json tebra-scheduler--disabled runs; http-evidence.json /care, /care/appointments"
     },
     "performance": {
-      "result": "PENDING",
-      "artifact": null
+      "result": "NOT_MEASURED \u2014 no performance gate is part of this candidate's release policy; navigation timings are recorded per run in browser-matrix.json (navigationMs) for reference only",
+      "artifact": "browser-matrix.json"
     },
     "accessibility": {
-      "result": "AUTOMATED_FAIL",
+      "result": "AUTOMATED_FAIL \u2014 every failing assertion classified (global shell / Hino / harness; 0 Research-owned failures)",
       "failingAssertionIds": [
         "CONSOLE_CLEAN",
         "NETWORK_CLEAN",
@@ -408,7 +384,9 @@
         "ARIA_REFERENCES_RESOLVE"
       ],
       "artifact": "browser-matrix.json",
-      "note": "Automated output alone is not an accessibility pass; manualReview remains PENDING."
+      "note": "Automated output alone is not an accessibility pass; manualReview remains PENDING.",
+      "manualReview": "LEAD-CLASSIFIED; verified by the detached review",
+      "classification": "docs/review/xenios-research-full-site-20260828/README.md \u00a7 Findings classification; CONTROL/EVIDENCE/evidence-finding-classification.json"
     },
     "responsive": {
       "result": "AUTOMATED_PASS",
@@ -416,9 +394,9 @@
       "artifact": "browser-matrix.json"
     },
     "adversarialReview": {
-      "result": "PENDING",
-      "reviewedSha": null,
-      "artifact": null,
+      "result": "AWAITING_DETACHED_REVIEW (verdict recorded in CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md; a document cannot carry the hash of the commit that contains it)",
+      "reviewedSha": "final branch HEAD (docs successor of 679564fc)",
+      "artifact": "CONTROL/REPORTS/CLAUDE-FINAL-INDEPENDENT-REVIEW-<sha8>.md",
       "p0": null,
       "p1": null,
       "p2": null
@@ -35464,7 +35442,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 76.1x19 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 85.3x19 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; …",
+            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 76.1x19 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 85.3x19 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; \u2026",
             "count": 36
           },
           {
@@ -35575,7 +35553,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 51.9x38 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 56.5x38 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; …",
+            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 51.9x38 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 56.5x38 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; \u2026",
             "count": 36
           },
           {
@@ -35684,7 +35662,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 312x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 312x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -35793,7 +35771,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 382x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 382x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 382x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 382x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -35902,7 +35880,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36013,7 +35991,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 335x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 335x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 335x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 335x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36122,7 +36100,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 328x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 328x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 328x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 328x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36231,7 +36209,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 288x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 288x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 288x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 288x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36340,7 +36318,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 672x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 672x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36449,7 +36427,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36558,7 +36536,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36669,7 +36647,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 76.1x19 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 85.3x19 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; …",
+            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 76.1x19 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 85.3x19 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; \u2026",
             "count": 36
           },
           {
@@ -36780,7 +36758,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 51.9x38 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 56.5x38 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; …",
+            "detail": "36: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.4x19 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 51.9x38 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 56.5x38 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 55.8x19 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 46.8x19 \"Careers\"; \u2026",
             "count": 36
           },
           {
@@ -36889,7 +36867,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 312x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 148.2x30 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 312x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -36998,7 +36976,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 382x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 382x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 382x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 382x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37107,7 +37085,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37218,7 +37196,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 335x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 335x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 335x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 335x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37327,7 +37305,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 328x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 328x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 328x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 328x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37436,7 +37414,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 288x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 288x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 288x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 288x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37545,7 +37523,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 672x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 672x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37654,7 +37632,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -37763,7 +37741,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; …",
+            "detail": "30: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 141.1x40 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 118.5x24 \"xenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x20 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x20 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x20 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 342x20 \"Product\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(2) 342x20 \"How It Works\"; \u2026",
             "count": 30
           },
           {
@@ -41489,7 +41467,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "37: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.3x17 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 78.3x17 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 82.6x17 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 58.5x17 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 49.4x17 \"Careers\"; …",
+            "detail": "37: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.3x17 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 78.3x17 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 82.6x17 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 58.5x17 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 49.4x17 \"Careers\"; \u2026",
             "count": 37
           },
           {
@@ -41600,7 +41578,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "37: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.3x17 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 55.5x34 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 47.2x34 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 58.5x17 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 49.4x17 \"Careers\"; …",
+            "detail": "37: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(1) 49.3x17 \"Product\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(2) 55.5x34 \"For Coaches\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(3) 47.2x34 \"How It Works\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(4) 58.5x17 \"Research\"; div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > nav.hidden.lg:flex > a.text-[14px].tracking-[-0.005em]:nth-of-type(5) 49.4x17 \"Careers\"; \u2026",
             "count": 37
           },
           {
@@ -41709,7 +41687,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "31: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 129.3x30 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x19 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x19 \"Product\"; …",
+            "detail": "31: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 147.3x30 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 129.3x30 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 312x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 312x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 312x19 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 312x19 \"Product\"; \u2026",
             "count": 31
           },
           {
@@ -41818,7 +41796,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 382x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 382x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 382x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 382x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 382x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 382x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 382x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -41927,7 +41905,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42038,7 +42016,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 335x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 335x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 335x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 335x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 335x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 335x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 335x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42147,7 +42125,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 328x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 328x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 328x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 328x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 328x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 328x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 328x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42256,7 +42234,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 288x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 288x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 288x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 288x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 288x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 288x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 288x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42365,7 +42343,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "31: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 121.3x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x19 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x19 \"Product\"; …",
+            "detail": "31: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 121.3x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 672x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 672x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 672x19 \"LinkedIn, /company/officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > nav:nth-of-type(1) > div.space-y-3 > a.block.text-[15px]:nth-of-type(1) 672x19 \"Product\"; \u2026",
             "count": 31
           },
           {
@@ -42474,7 +42452,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42583,7 +42561,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; …",
+            "detail": "32: div#root > div.min-h-screen.flex:nth-of-type(2) > a.skip-link 134.8x41 \"Skip to content\"; div#root > div.min-h-screen.flex:nth-of-type(2) > div.bg-ink.text-paper > div.container-x > div.flex.items-center > button.text-paper/70.hover:text-paper 29.3x30 \"Dismiss announcement\"; div#root > div.min-h-screen.flex:nth-of-type(2) > header.sticky.top-0 > div.container-x > div.flex.items-center > a.inline-flex 117.8x24 \"xenios\"; main#site-main > section.reveal.reveal-in:nth-of-type(1) > div.mt-10.flex:nth-of-type(1) > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; main#site-main > section.reveal.reveal-in:nth-of-type(7) > div.container-x > div.flex.flex-col > a.btn.btn-ghost:nth-of-type(2) 342x29 \"See How It Works\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(1) 342x19 \"team@xeniostechnology.com\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(2) 342x19 \"Instagram, @officialxenios\"; footer.bg-paper.rule-top > div.container-x.py-16 > div.grid.grid-cols-1:nth-of-type(1) > div > div.mt-6.space-y-2:nth-of-type(2) > a.block.text-[15px]:nth-of-type(3) 342x19 \"LinkedIn, /company/officialxenios\"; \u2026",
             "count": 32
           },
           {
@@ -42694,7 +42672,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "24: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 150.6x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(1) 41.6x14.9 \"Story\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(2) 50.9x14.9 \"Legacy\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(3) 78.7x14.9 \"Collective\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(4) 57.2x14.9 \"Retreat\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(5) 44.3x14.9 \"Merch\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(6) 68.4x14.9 \"Research\"; …",
+            "detail": "24: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 150.6x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(1) 41.6x14.9 \"Story\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(2) 50.9x14.9 \"Legacy\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(3) 78.7x14.9 \"Collective\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(4) 57.2x14.9 \"Retreat\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(5) 44.3x14.9 \"Merch\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > nav.desktop-nav > a:nth-of-type(6) 68.4x14.9 \"Research\"; \u2026",
             "count": 24
           },
           {
@@ -42805,7 +42783,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "17: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 742.1x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > a.header-cta:nth-of-type(2) 94.3x39.3 \"Contact\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 445x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 445x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 445x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 445x32 \"Retreat\"; …",
+            "detail": "17: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 742.1x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > a.header-cta:nth-of-type(2) 94.3x39.3 \"Contact\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 445x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 445x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 445x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 445x32 \"Retreat\"; \u2026",
             "count": 17
           },
           {
@@ -42914,7 +42892,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 623.5x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 327.8x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 327.8x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 327.8x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 327.8x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 327.8x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 623.5x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 327.8x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 327.8x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 327.8x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 327.8x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 327.8x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43023,7 +43001,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 310x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 390x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 390x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 390x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 390x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 390x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 310x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 390x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 390x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 390x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 390x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 390x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43132,7 +43110,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43243,7 +43221,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 255x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 335x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 335x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 335x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 335x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 335x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 255x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 335x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 335x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 335x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 335x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 335x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43352,7 +43330,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 240x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 320x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 320x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 320x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 320x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 320x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 240x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 320x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 320x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 320x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 320x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 320x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43461,7 +43439,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 200x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 280x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 280x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 280x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 280x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 280x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 200x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 280x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 280x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 280x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 280x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 280x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43570,7 +43548,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 579.5x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 305.8x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 305.8x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 305.8x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 305.8x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 305.8x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 579.5x17.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 305.8x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 305.8x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 305.8x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 305.8x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 305.8x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43679,7 +43657,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -43788,7 +43766,7 @@
           {
             "id": "TARGETS_44x44",
             "result": "FAIL",
-            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; …",
+            "detail": "16: html > body > a.skip-link 160.8x42.9 \"Skip to content\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > a.site-wordmark 270x15.3 \"Hollywood Hino home\"; html > body > header.site-header > div.site-header__bar:nth-of-type(1) > div.site-header__actions > button.menu-toggle 48x40.9 \"Menu\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(1) 350x32 \"Story\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(2) 350x32 \"Legacy\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(3) 350x32 \"Collective\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(4) 350x32 \"Retreat\"; body > footer.site-footer > div.site-footer__grid:nth-of-type(2) > div:nth-of-type(1) > div.footer-links > a:nth-of-type(5) 350x32 \"Merch\"; \u2026",
             "count": 16
           },
           {
@@ -72574,10 +72552,10 @@
     "reducedMotion": "AUTOMATED_FAIL",
     "zoom200Percent": "AUTOMATED_PASS",
     "automatedScan": "RUN",
-    "manualReview": "PENDING"
+    "manualReview": "LEAD-CLASSIFIED \u2014 every AUTOMATED_FAIL attributed element-by-element (global shell / Hino / harness; 0 Research-owned, 0 Care-owned); see the packet README and CONTROL/EVIDENCE/evidence-finding-classification.json; the detached review re-verifies the classification"
   },
-  "finalVerdict": "PENDING",
-  "readyForSamuelDeployReview": false,
+  "finalVerdict": "AWAITING_DETACHED_REVIEW (verdict recorded in CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md; a document cannot carry the hash of the commit that contains it)",
+  "readyForSamuelDeployReview": "AWAITING_DETACHED_REVIEW (verdict recorded in CONTROL/HANDOFFS/CLAUDE-FINAL-HANDOFF.md; a document cannot carry the hash of the commit that contains it)",
   "generated": {
     "atUtc": "2026-08-29T00:58:49.553Z",
     "by": "scripts/evidence/generate-evidence-manifest.mjs",
