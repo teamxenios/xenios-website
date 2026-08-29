@@ -8,6 +8,7 @@ import {
   assertStableFullPageScreenshotCoverage,
   CdpConnection,
   isEvidenceBoundaryUrl,
+  MAX_FULL_PAGE_HEIGHT_CSS_PX,
   PageSession,
   sleep,
 } from "./lib/cdp.mjs";
@@ -40,7 +41,7 @@ describe("evidence network boundary", () => {
       devicePixelRatio: 1,
       capturedWidthPx: 800,
       capturedHeightPx: 6000,
-      maxHeightCssPx: 12000,
+      maxHeightCssPx: MAX_FULL_PAGE_HEIGHT_CSS_PX,
     })).toThrow(/layout changed during capture/u);
   });
 });
@@ -198,24 +199,25 @@ describe("live CDP evidence boundary regressions", () => {
     }
   }, 30000);
 
-  it("captures all content beyond the old 6000px cutoff or refuses explicitly", async () => {
+  it("captures reviewed long pages beyond the old 12000px ceiling or refuses explicitly", async () => {
     const fixture = await serve((_request, response) => {
       response.setHeader("Content-Type", "text/html; charset=utf-8");
-      response.end('<!doctype html><html><body style="margin:0;min-height:6101px"><main>long page</main></body></html>');
+      response.end('<!doctype html><html><body style="margin:0;min-height:13822px"><main>long page</main></body></html>');
     });
     const page = await PageSession.create(connection);
     try {
       await page.enforceNetworkBoundary(fixture.origin);
       await page.setViewport({ width: 800, height: 600, deviceScaleFactor: 1 });
       await page.navigate(`${fixture.origin}/`, { quietMs: 50, maxSettleMs: 3000 });
-      await expect(page.screenshot({ fullPage: true, maxHeight: 6000 }))
+      await expect(page.screenshot({ fullPage: true, maxHeight: 12000 }))
         .rejects.toThrow(/capture refused instead of truncating/u);
-      const screenshot = await page.screenshot({ fullPage: true, maxHeight: 12000 });
+      const screenshot = await page.screenshot({ fullPage: true });
       expect(screenshot.coverage).toMatchObject({
         fullPage: true,
         truncated: false,
-        contentHeightCssPx: 6101,
-        capturedHeightPx: 6101,
+        contentHeightCssPx: 13822,
+        capturedHeightPx: 13822,
+        maxHeightCssPx: MAX_FULL_PAGE_HEIGHT_CSS_PX,
       });
     } finally {
       await page.close();

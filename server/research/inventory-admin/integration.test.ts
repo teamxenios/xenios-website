@@ -74,7 +74,10 @@ describe("inventory Product Control integration", () => {
       '"path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"',
     );
     expect(dag).toContain(
-      '"sourceSha": "2542f8da508792f39abe7dea5a5686ade5c9e5a3"',
+      '"sourceSha": "7007be2a8cfaad147d3846267040cef52dc82793"',
+    );
+    expect(dag).toContain(
+      '"upstreamReviewedSourceSha": "2542f8da508792f39abe7dea5a5686ade5c9e5a3"',
     );
     expect(dag).toContain(
       '"value": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"',

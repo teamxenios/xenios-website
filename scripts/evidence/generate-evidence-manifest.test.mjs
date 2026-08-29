@@ -13,6 +13,7 @@ import {
   EXACT_ROBOTS_TXT_DIRECTIVES,
   evaluateRobotsTxt,
 } from "./lib/html-metadata.mjs";
+import { MAX_FULL_PAGE_HEIGHT_CSS_PX } from "./lib/cdp.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const sourceTemplate = JSON.parse(
@@ -211,7 +212,7 @@ function matrixRun({ widthCssPx, zoomPercent = 100, mediaVariant = "default", ov
       contentHeightCssPx: widthCssPx <= 768 ? 844 : 900,
       postContentWidthCssPx: widthCssPx,
       postContentHeightCssPx: widthCssPx <= 768 ? 844 : 900,
-      maxHeightCssPx: 12000,
+      maxHeightCssPx: MAX_FULL_PAGE_HEIGHT_CSS_PX,
       devicePixelRatio: zoomPercent === 200 ? 2 : 1,
       capturedWidthPx: widthCssPx * (zoomPercent === 200 ? 2 : 1),
       capturedHeightPx: (widthCssPx <= 768 ? 844 : 900) * (zoomPercent === 200 ? 2 : 1),
@@ -334,7 +335,7 @@ function syntheticCapture(widthCssPx, overrides = {}) {
       contentHeightCssPx: widthCssPx <= 768 ? 844 : 900,
       postContentWidthCssPx: widthCssPx,
       postContentHeightCssPx: widthCssPx <= 768 ? 844 : 900,
-      maxHeightCssPx: 12000,
+      maxHeightCssPx: MAX_FULL_PAGE_HEIGHT_CSS_PX,
       devicePixelRatio: 1,
       capturedWidthPx: widthCssPx,
       capturedHeightPx: widthCssPx <= 768 ? 844 : 900,

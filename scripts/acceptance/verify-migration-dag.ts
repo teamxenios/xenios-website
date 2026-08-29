@@ -20,6 +20,7 @@ export type MigrationNode = {
   id: string;
   path: string;
   sourceSha?: string;
+  upstreamReviewedSourceSha?: string;
   sourcePath?: string;
   dependsOn: string[];
   checksum: MigrationChecksum;
@@ -46,6 +47,7 @@ export type MigrationDagValidationOptions = {
   expectedManagedMigrationPaths?: string[];
   canonicalBytes?: (sourceSha: string, path: string) => Buffer;
   managedBytes?: (path: string) => Buffer;
+  sourceIsReleaseAncestor?: (sourceSha: string) => boolean;
 };
 
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
@@ -65,6 +67,18 @@ function currentGitBytes(repoRoot: string, path: string): Buffer {
     encoding: "buffer",
     stdio: ["ignore", "pipe", "pipe"],
   });
+}
+
+function isReleaseAncestor(repoRoot: string, sourceSha: string): boolean {
+  try {
+    execFileSync("git", ["merge-base", "--is-ancestor", sourceSha, "HEAD"], {
+      cwd: repoRoot,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function isUnsafePath(path: string): boolean {
@@ -145,6 +159,15 @@ export function validateMigrationDag(
       issues.push({
         code: "MIGRATION_SOURCE_SHA",
         message: `${migration.id} sourceSha must be a lowercase Git SHA.`,
+      });
+    }
+    if (
+      migration.upstreamReviewedSourceSha !== undefined &&
+      !SHA_PATTERN.test(migration.upstreamReviewedSourceSha)
+    ) {
+      issues.push({
+        code: "MIGRATION_UPSTREAM_REVIEW_SHA",
+        message: `${migration.id} upstreamReviewedSourceSha must be a lowercase Git SHA.`,
       });
     }
     if (
@@ -258,9 +281,23 @@ export function validateMigrationDag(
     const root = options.repoRoot ?? process.cwd();
     const readCanonical = options.canonicalBytes ?? ((sha, path) => canonicalGitBytes(root, sha, path));
     const readManaged = options.managedBytes ?? ((path) => currentGitBytes(root, path));
+    const checkReleaseAncestor = options.sourceIsReleaseAncestor ??
+      ((sha) => isReleaseAncestor(root, sha));
+    const sourceAncestorCache = new Map<string, boolean>();
     for (const migration of dag.migrations) {
       const sourceSha = migration.sourceSha ?? dag.productionSha;
       const sourcePath = migration.sourcePath ?? migration.path;
+      let sourceIsAncestor = sourceAncestorCache.get(sourceSha);
+      if (sourceIsAncestor === undefined) {
+        sourceIsAncestor = checkReleaseAncestor(sourceSha);
+        sourceAncestorCache.set(sourceSha, sourceIsAncestor);
+      }
+      if (!sourceIsAncestor) {
+        issues.push({
+          code: "MIGRATION_SOURCE_NOT_RELEASE_ANCESTOR",
+          message: `${migration.id} sourceSha ${sourceSha} is not an ancestor of release HEAD; an ordinary single-branch clone cannot reproduce the canonical read.`,
+        });
+      }
       let sourceBytes: Buffer | undefined;
       try {
         sourceBytes = readCanonical(sourceSha, sourcePath);

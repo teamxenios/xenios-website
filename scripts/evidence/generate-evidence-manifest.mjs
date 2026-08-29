@@ -50,6 +50,7 @@ import {
   EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
   gitSha,
 } from "./capture-browser-matrix.mjs";
+import { MAX_FULL_PAGE_HEIGHT_CSS_PX } from "./lib/cdp.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../..");
@@ -957,7 +958,7 @@ function validScreenshotCoverage(record, artifactVerifier) {
     coverage.postContentWidthCssPx !== coverage.contentWidthCssPx ||
     coverage.postContentHeightCssPx !== coverage.contentHeightCssPx ||
     coverage.contentHeightCssPx < record.heightCssPx ||
-    coverage.maxHeightCssPx !== 12000 ||
+    coverage.maxHeightCssPx !== MAX_FULL_PAGE_HEIGHT_CSS_PX ||
     coverage.contentHeightCssPx > coverage.maxHeightCssPx ||
     !Number.isFinite(coverage.devicePixelRatio) || coverage.devicePixelRatio <= 0 ||
     coverage.devicePixelRatio !== record.deviceScaleFactor ||

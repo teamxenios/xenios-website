@@ -26,6 +26,7 @@ import {
 import { launchChromium } from "./lib/chrome.mjs";
 import {
   CdpConnection,
+  MAX_FULL_PAGE_HEIGHT_CSS_PX,
   PageSession,
   sleep,
   webSocketBoundarySource as sharedWebSocketBoundarySource,
@@ -939,7 +940,10 @@ async function captureCurrentPage({
   mkdirSync(captureDir, { recursive: true });
   const artifactPath = "synthetic/captures/" + fileName;
   const textArtifactPath = artifactPath.replace(/\.png$/u, ".text.txt");
-  const screenshot = await page.screenshot({ fullPage: true, maxHeight: 12000 });
+  const screenshot = await page.screenshot({
+    fullPage: true,
+    maxHeight: MAX_FULL_PAGE_HEIGHT_CSS_PX,
+  });
   const png = screenshot.bytes;
   writeFileSync(join(outDir, artifactPath), png);
   const bodyText = await page.evaluate("document.body ? document.body.innerText : ''");

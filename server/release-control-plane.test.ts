@@ -48,7 +48,12 @@ const RESERVATION_SOURCE_PATH =
   "supabase/research-inventory-reservation-commands.sql";
 const RESERVATION_SOURCE_BLOB =
   "97b304881eb65c9517beae1b91e8dc39982a8e34";
+const WAVE2_SOURCE_SHA = "7007be2a8cfaad147d3846267040cef52dc82793";
+const WAVE2_UPSTREAM_REVIEW_SHA =
+  "2542f8da508792f39abe7dea5a5686ade5c9e5a3";
 const STRENGTH_GATE_SOURCE_SHA =
+  "2b445aa425dfb9a5d656ecb1216ec15bc1bb65f6";
+const STRENGTH_GATE_UPSTREAM_REVIEW_SHA =
   "0b835c7d7fa6fb633b269cd64665a0338c7bf163";
 const STRENGTH_GATE_PATH =
   "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql";
@@ -842,9 +847,7 @@ describe("migration DAG validator", () => {
             path ===
             "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"
           ) {
-            expect(sourceSha).toBe(
-              "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
-            );
+            expect(sourceSha).toBe(WAVE2_SOURCE_SHA);
           } else if (
             path === RESERVATION_SOURCE_PATH
           ) {
@@ -1017,6 +1020,7 @@ describe("migration DAG validator", () => {
     expect(strengthGate).toMatchObject({
       path: STRENGTH_GATE_PATH,
       sourceSha: STRENGTH_GATE_SOURCE_SHA,
+      upstreamReviewedSourceSha: STRENGTH_GATE_UPSTREAM_REVIEW_SHA,
       dependsOn: [
         "research_product_control_center",
         "research_product_control_center_privilege_hardening",
@@ -1124,9 +1128,10 @@ describe("migration DAG validator", () => {
     const wave2 = dag.migrations.find(
       (migration) => migration.id === "research_inventory_lot_coa_admin",
     );
-    expect(wave2?.sourceSha).toBe(
-      "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
-    );
+    expect(wave2).toMatchObject({
+      sourceSha: WAVE2_SOURCE_SHA,
+      upstreamReviewedSourceSha: WAVE2_UPSTREAM_REVIEW_SHA,
+    });
     expect(wave2?.checksum.value).toBe(
       "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524",
     );
@@ -1155,6 +1160,23 @@ describe("migration DAG validator", () => {
     // breaches the 5s default under a full-repo parallel run. Same headroom
     // the other git-spawning control-plane tests carry: a timeout, not a
     // performance assertion.
+  }, 30_000);
+
+  it("rejects a canonical source pin that is not in release HEAD ancestry", () => {
+    const dag = JSON.parse(
+      readFileSync(resolve(ROOT, "docs/coordination/MIGRATION_DAG.json"), "utf8"),
+    ) as MigrationDag;
+    const wave2 = dag.migrations.find(
+      (migration) => migration.id === "research_inventory_lot_coa_admin",
+    );
+    expect(wave2).toBeDefined();
+    wave2!.sourceSha = WAVE2_UPSTREAM_REVIEW_SHA;
+    expect(
+      validateMigrationDag(dag, {
+        repoRoot: ROOT,
+        expectedBaselineSha: PRODUCTION_SHA,
+      }).map((issue) => issue.code),
+    ).toContain("MIGRATION_SOURCE_NOT_RELEASE_ANCESTOR");
   }, 30_000);
 
   it("fails closed when a pinned migration source is unavailable", () => {

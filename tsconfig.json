@@ -1,6 +1,7 @@
 {
   "include": [
     "client/src/**/*",
+    "e2e/**/*",
     "shared/**/*",
     "server/**/*",
     "scripts/preview-step1-hotfix.ts"

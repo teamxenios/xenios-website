@@ -61,6 +61,9 @@ export class CdpConnection {
   }
 }
 
+/** Reviewed ceiling that prevents an accidental unbounded bitmap capture. */
+export const MAX_FULL_PAGE_HEIGHT_CSS_PX = 24000;
+
 /** A page session: one target, one sessionId, console/network bookkeeping. */
 export class PageSession {
   constructor(conn, targetId, sessionId) {
@@ -614,7 +617,7 @@ export class PageSession {
     await this.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers });
   }
 
-  async screenshot({ fullPage = true, maxHeight = 12000 } = {}) {
+  async screenshot({ fullPage = true, maxHeight = MAX_FULL_PAGE_HEIGHT_CSS_PX } = {}) {
     if (!fullPage) {
       const { data } = await this.send("Page.captureScreenshot", { format: "png" });
       const bytes = Buffer.from(data, "base64");

@@ -121,6 +121,7 @@ export function buildDoor(items: readonly AssistedOrderCatalogItem[] = [catalogI
 
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
+    auditMode: "log_line_nondurable",
     legal: { requiredAgreements: async () => [LEGAL_PAIR] },
     // This standalone door fixture predates the durable Early Access
     // agreement-standing port. Its callers authenticate as a fixture member

@@ -4,7 +4,7 @@
  "generatedAt": "2026-08-02T02:02:07Z",
  "productionBaselineReconciledAt": "2026-08-28T04:01:00Z",
  "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
- "checksumScope": "canonical Git blob bytes at each migration sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; managed copies must byte-match the pinned source",
+ "checksumScope": "canonical Git blob bytes at each release-ancestor sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; upstreamReviewedSourceSha preserves archival review attribution without making the gate depend on an unreachable object; managed copies must byte-match the pinned source",
  "migrations": [
   {
    "id": "research_product_control_center",
@@ -45,7 +45,8 @@
   {
    "id": "research_inventory_lot_coa_admin",
    "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
-   "sourceSha": "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
+   "sourceSha": "7007be2a8cfaad147d3846267040cef52dc82793",
+   "upstreamReviewedSourceSha": "2542f8da508792f39abe7dea5a5686ade5c9e5a3",
    "dependsOn": [
     "research_product_control_center",
     "research_product_control_center_privilege_hardening"
@@ -87,7 +88,8 @@
   {
    "id": "research_variant_strength_write_gate",
    "path": "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql",
-   "sourceSha": "0b835c7d7fa6fb633b269cd64665a0338c7bf163",
+   "sourceSha": "2b445aa425dfb9a5d656ecb1216ec15bc1bb65f6",
+   "upstreamReviewedSourceSha": "0b835c7d7fa6fb633b269cd64665a0338c7bf163",
    "dependsOn": [
     "research_product_control_center",
     "research_product_control_center_privilege_hardening"
@@ -729,7 +731,7 @@
   "productionSha is the same TRUSTED_RELEASE_BASELINE recorded by CURRENT_PRODUCTION_STATE, ACTIVE_RELEASE_GRAPH, and FILE_OWNERSHIP.",
   "Every dependency must exist and be applied before its dependent migration.",
   "The dependency graph must be acyclic.",
-  "Checksums are computed from canonical Git blob bytes at the reviewed source SHA/path, not platform-normalized worktree line endings; a distinct managed path must byte-match that source.",
+  "Checksums are computed from canonical Git blob bytes at a source SHA/path that is an ancestor of release HEAD, not platform-normalized worktree line endings; a distinct managed path must byte-match that source. An optional upstreamReviewedSourceSha is archival attribution only and never a hidden object-store dependency.",
   "Every migration requires a non-empty rollback strategy, procedure, and verification evidence.",
   "Pending migrations in this DAG create no operational product, price, inventory, lot, COA, order, role, or Care records. The strength gate's only reviewed seed is the non-operational founder-locked dispute registry public.research_catalog_founder_locked_variant.",
   "Every checked-in managed migration file is represented exactly once. Pending nodes pin immutable Git bytes, remain appliedToProduction false with managedMigrationId PENDING, and do not imply production application.",
