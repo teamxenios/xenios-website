@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-20T22:50:00Z",
+  "updatedAt": "2026-08-29T00:30:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "500bc88",
@@ -61,5 +61,17 @@
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
     "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction."
-  ]
+  ],
+  "researchFullSiteCandidate": {
+    "codeSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+    "branch": "claude/xenios-research-full-finish-takeover-20260828",
+    "state": "FROZEN_INDEPENDENT_REVIEW_PENDING",
+    "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "rcDocument": "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md",
+    "runbook": "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
+    "reviewPacket": "docs/review/xenios-research-full-site-20260828/",
+    "deployed": false,
+    "migrationsApplied": false,
+    "note": "Frozen by the Claude Lead takeover on 2026-08-28; every gate, evidence run and the independent review reference this exact code tree. Nothing was deployed, merged, migrated, activated, invited, priced, paid, refunded, or messaged."
+  }
 }

@@ -124,7 +124,9 @@
       "surface": "public-lot-lookup-negative-state",
       "state": "unavailable",
       "indexable": false,
-      "public": true
+      "public": true,
+      "expectStatus": 404,
+      "$comment": "An unapproved lot code is an authoritative HTTP 404 (noindex) under the raw HTTP document policy: lot existence is never leaked for codes outside approvedPublicLotCodes. Corrected 2026-08-29 from the helper's 200 assumption."
     },
     {
       "path": "/research/documents",
@@ -293,9 +295,10 @@
       "path": "/hino",
       "surface": "hino",
       "state": "default",
-      "indexable": true,
+      "indexable": false,
       "public": true,
-      "$comment": "Static site served at /hino/ (301 from /hino); observed mounted at 77d3f69 with no X-Robots-Tag. Set indexable per the Lead's indexing policy."
+      "$comment": "Static Hino microsite served as files at /hino/ (301 from /hino), byte-identical to production 3daa3f4a and outside the raw HTTP document policy. Its own index.html carries meta robots noindex,nofollow,nocache and its own JSON-LD (production content, not a candidate decision): status and robots are asserted; sitemap parity and structured-data scope are not applicable.",
+      "externalMicrosite": true
     },
     {
       "path": "/research/policies/accessibility",

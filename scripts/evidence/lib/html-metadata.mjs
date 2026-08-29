@@ -120,7 +120,12 @@ export function evaluateHttpHead({ route, status, headers, meta, sitemapLocs, or
     push("OPEN_GRAPH", "NOT_APPLICABLE", "private/unindexable route");
   }
 
-  if (sitemapLocs === null || sitemapLocs === undefined) {
+  if (route.externalMicrosite === true) {
+    // A static microsite served as files outside the raw HTTP document policy
+    // (the production Hino site): it is neither expected in nor forbidden from
+    // /sitemap.xml (a global asset the candidate never touches).
+    push("SITEMAP_PARITY", "NOT_APPLICABLE", "external microsite outside the document/sitemap policy (externalMicrosite: true)");
+  } else if (sitemapLocs === null || sitemapLocs === undefined) {
     push("SITEMAP_PARITY", "NOT_RUN", "sitemap not fetched");
   } else {
     const paths = new Set(sitemapLocs.map((l) => safePath(l)).filter(Boolean));
@@ -142,6 +147,10 @@ export function evaluateHttpHead({ route, status, headers, meta, sitemapLocs, or
       if (stray.length) detail += ` stray=[${stray.join(", ")}]`;
     }
     push("STRUCTURED_DATA_SCOPE", ok ? "PASS" : "FAIL", detail);
+  } else if (route.externalMicrosite === true) {
+    // The microsite's own markup (JSON-LD included) is production content the
+    // candidate does not govern; only status and robots are asserted for it.
+    push("STRUCTURED_DATA_SCOPE", "NOT_APPLICABLE", `external microsite emits ${ld.length} JSON-LD block(s) of its own (not governed by the policy)`);
   } else {
     push("STRUCTURED_DATA_SCOPE", ld.length === 0 ? "PASS" : "FAIL", `private route emits ${ld.length} JSON-LD block(s)`);
   }

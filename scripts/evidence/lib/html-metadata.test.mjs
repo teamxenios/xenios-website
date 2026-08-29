@@ -42,6 +42,15 @@ describe("evaluateHttpHead", () => {
   const origin = "https://example.com";
   const meta = extractHtmlMetadata(html);
 
+  it("treats sitemap parity and structured-data scope as not applicable for an external microsite", () => {
+    const a = Object.fromEntries(
+      evaluateHttpHead({ route: { path: "/hino", indexable: false, externalMicrosite: true, surface: "hino" }, status: 200, headers: {}, meta: { ...meta, robotsMeta: "noindex, nofollow, nocache", jsonLd: [{ "@type": "Organization" }] }, sitemapLocs: ["https://example.com/research/about"], origin }).map((x) => [x.id, x]),
+    );
+    expect(a.SITEMAP_PARITY.result).toBe("NOT_APPLICABLE");
+    expect(a.STRUCTURED_DATA_SCOPE.result).toBe("NOT_APPLICABLE");
+    expect(a.STATUS_CODE.result).toBe("PASS");
+  });
+
   it("requires noindex for a private route and forbids sitemap listing and JSON-LD", () => {
     const a = Object.fromEntries(
       evaluateHttpHead({ route: { path: "/research/account", indexable: false, surface: "account-overview" }, status: 200, headers: { "x-robots-tag": "noindex" }, meta: { ...meta, jsonLd: [] }, sitemapLocs: ["https://example.com/research/about"], origin }).map((x) => [x.id, x]),

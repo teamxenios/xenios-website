@@ -1,33 +1,42 @@
 {
- "schemaVersion": 1,
- "updatedAt": "2026-08-21T16:45:00Z",
- "canonicalBranch": "release/early-access-code-session-checkout",
- "observedHead": "500bc88",
- "lastDocumentedProductionRelease": {
-  "tag": "RESEARCH_EARLY_ACCESS_PRE_TAKEOVER_BASELINE",
-  "sha": "c3712011c471ca605ee24a2a0fcd0eb9f354924e",
-  "rollback": "77e782e0c4c1c5be5275711e6996d7f6dfb81fe0",
-  "deployId": "dep-da3p9pn10e5c738vnr40",
-  "status": "live",
-  "note": "Corrected 2026-08-21 by the takeover: the previously recorded 77e782e0 (dep-da3o55gn74is73f9sdo0) is DEACTIVATED. c371201 verified live against Render read-only by claude-opus5-main in XENIOS_IMMEDIATE_MANUAL_ORDER_LAUNCH_TAKEOVER_2026-08-21.md (autodeploy off, tracked branch release/early-access-code-session-checkout, /api/health 200, commerceEnabled false). Production NOT mutated by this correction - this file records observation only."
- },
- "nextRelease": {
-  "name": "RESEARCH_EARLY_ACCESS_MANUAL_ORDER_LAUNCH",
-  "scope": [
-   "legacy storefront catalog N+1 eliminated (bulk listDetails + bulk declared-facts window + cached catalog snapshot)",
-   "composed manual-order e2e (exactly-once: 1 durable request, 1 customer intent, 1 admin intent, XRR reference)",
-   "master-offerings action seam gated (pathway authority + founder-record formulation hold)",
-   "client config single-fetch + preview boot",
-   "OPTIONAL migration 20260821170000 (bulk unit-fact RPCs; per-unit fallback ladder means deploy order is free)"
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-29T00:30:00Z",
+  "canonicalBranch": "release/early-access-code-session-checkout",
+  "observedHead": "500bc88",
+  "lastDocumentedProductionRelease": {
+    "tag": "RESEARCH_EARLY_ACCESS_PRE_TAKEOVER_BASELINE",
+    "sha": "c3712011c471ca605ee24a2a0fcd0eb9f354924e",
+    "rollback": "77e782e0c4c1c5be5275711e6996d7f6dfb81fe0",
+    "deployId": "dep-da3p9pn10e5c738vnr40",
+    "status": "live",
+    "note": "Corrected 2026-08-21 by the takeover: the previously recorded 77e782e0 (dep-da3o55gn74is73f9sdo0) is DEACTIVATED. c371201 verified live against Render read-only by claude-opus5-main in XENIOS_IMMEDIATE_MANUAL_ORDER_LAUNCH_TAKEOVER_2026-08-21.md (autodeploy off, tracked branch release/early-access-code-session-checkout, /api/health 200, commerceEnabled false). Production NOT mutated by this correction - this file records observation only."
+  },
+  "nextRelease": {
+    "name": "RESEARCH_EARLY_ACCESS_MANUAL_ORDER_LAUNCH",
+    "scope": [
+      "legacy storefront catalog N+1 eliminated (bulk listDetails + bulk declared-facts window + cached catalog snapshot)",
+      "composed manual-order e2e (exactly-once: 1 durable request, 1 customer intent, 1 admin intent, XRR reference)",
+      "master-offerings action seam gated (pathway authority + founder-record formulation hold)",
+      "client config single-fetch + preview boot",
+      "OPTIONAL migration 20260821170000 (bulk unit-fact RPCs; per-unit fallback ladder means deploy order is free)"
+    ],
+    "status": "rc_in_preparation_awaiting_founder_go"
+  },
+  "productionWriter": "claude-fable-main-integrator",
+  "invariants": [
+    "one production writer",
+    "immutable release tags",
+    "exact deploy SHA verification",
+    "no fabricated payments",
+    "no fabricated clinical authorization"
   ],
-  "status": "rc_in_preparation_awaiting_founder_go"
- },
- "productionWriter": "claude-fable-main-integrator",
- "invariants": [
-  "one production writer",
-  "immutable release tags",
-  "exact deploy SHA verification",
-  "no fabricated payments",
-  "no fabricated clinical authorization"
- ]
+  "researchFullSiteCandidate": {
+    "name": "XENIOS_RESEARCH_FULL_SITE_RC_2026-08-28",
+    "codeSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+    "branch": "claude/xenios-research-full-finish-takeover-20260828",
+    "state": "FROZEN_INDEPENDENT_REVIEW_PENDING",
+    "rollback": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "status": "not_deployed",
+    "note": "Release candidate only. Production remains 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (dep-da6vorqfngtc73brb0gg, auto-deploy off). Deploy requires Samuel's explicit GO on the exact SHA named in the RC document."
+  }
 }

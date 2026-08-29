@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-28T04:01:00Z",
+  "generatedAt": "2026-08-29T00:30:00Z",
   "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "historicalSnapshots": [
     {
@@ -121,11 +121,11 @@
     },
     {
       "id": "omega-full-finish-candidate",
-      "type": "future_candidate",
-      "owner": "Lead",
-      "state": "NOT_FROZEN",
-      "sha": null,
-      "label": "Full-finish RC; exact SHA exists only after tested lane handoffs and protected Lead composition"
+      "type": "candidate",
+      "owner": "Lead (claude-lead-takeover-20260828)",
+      "state": "FROZEN_INDEPENDENT_REVIEW_PENDING",
+      "sha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "label": "Full-finish Research RC frozen by the Claude Lead takeover: code tree 679564fc on branch claude/xenios-research-full-finish-takeover-20260828 (Codex checkpoint 1a065e0c + every admissible lane, root candidate and helper replayed by content; rejected ace92fd6 ancestry excluded). Docs/evidence commits on top change no runtime file. Not deployed; awaiting the independent review verdict and Samuel's decision."
     }
   ],
   "edges": [
@@ -173,6 +173,11 @@
       "from": "public-homepage-reconciliation",
       "to": "omega-full-finish-candidate",
       "relation": "required_before"
+    },
+    {
+      "from": "production-3daa3f4a",
+      "to": "omega-full-finish-candidate",
+      "relation": "development_ancestor_of"
     }
   ],
   "releaseOrder": [
@@ -183,6 +188,7 @@
     "Keep paid-order economics, commission, and payout activation blocked until immutable evidence and independent acceptance exist.",
     "Integrate only tested and pushed lane handoffs by exact SHA, then compose Lead-owned protected files.",
     "Freeze one candidate SHA only after source, migration, security, accessibility, route, and runtime evidence is reproducible.",
+    "Candidate 679564fc8cb29289e2277836eb32e2deac3d8bec (branch claude/xenios-research-full-finish-takeover-20260828) is the single frozen full-finish RC; deploy only that exact tree or its docs-only successor named in docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md, only after the independent review and Samuel's explicit GO.",
     "No deployment or production mutation is authorized by this graph."
   ]
 }

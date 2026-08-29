@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-28T04:01:00Z",
+  "generatedAt": "2026-08-29T00:30:00Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -24,7 +24,7 @@
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
     "renderDeploymentId": "dep-da6vorqfngtc73brb0gg",
     "status": "LIVE",
-    "verifiedAt": "2026-08-28T04:01:00Z",
+    "verifiedAt": "2026-08-29T00:30:00Z",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -86,6 +86,15 @@
       "graphNodeId": "pr144-pricing-model",
       "state": "FROZEN_RECONCILIATION_REQUIRED",
       "reason": "The 2026-07-30 snapshot froze this candidate pending reconciliation against founder-locked pricing authority. It remains frozen; no current acceptance or ancestry is claimed."
+    },
+    {
+      "lane": "Full-finish Research RC (Claude Lead takeover 2026-08-28)",
+      "headSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "graphNodeId": "omega-full-finish-candidate",
+      "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "branch": "claude/xenios-research-full-finish-takeover-20260828",
+      "state": "FROZEN_INDEPENDENT_REVIEW_PENDING",
+      "reason": "Frozen code tree; Node 20.19.0/npm 10.8.2 gates, route census, migration DAG, production-state, release manifest, core-site protection, secret and approved-name PII scans, raw-HTTP and browser evidence recorded in docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md and docs/review/xenios-research-full-site-20260828/. Independent review: CONTROL/REPORTS/CLAUDE-FINAL-INDEPENDENT-REVIEW-679564fc.md. No deploy, no migration, no activation, no invitation, no pricing/payment/refund effect."
     }
   ],
   "knownRisks": [
@@ -144,6 +153,12 @@
       "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "checkedAt": "2026-08-28T04:01:00Z",
       "detail": "The service's Render origin returned HTTP 200 and runtime configuration reported commerceEnabled false. The origin URL is intentionally not invented in this source control; the SHA binding comes from the separate Render deployment observation."
+    },
+    {
+      "kind": "production_identity_readonly_2026-08-28T21",
+      "checkedAt": "2026-08-28T21:15:00Z",
+      "source": "Render API read-only (get_service, list_deploys)",
+      "result": "srv-d8s9vej7uimc7384dfcg autoDeploy=no, branch release/early-access-code-session-checkout, healthCheckPath /api/health; newest deploy dep-da6vorqfngtc73brb0gg live at 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (finished 2026-08-25T20:35:52Z); production not mutated by the takeover program."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"

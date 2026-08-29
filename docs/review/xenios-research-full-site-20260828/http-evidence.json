@@ -1,0 +1,3674 @@
+{
+  "schemaVersion": 2,
+  "kind": "http-evidence",
+  "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+  "baseUrl": "http://127.0.0.1:5184",
+  "capturedAtUtc": "2026-08-29T00:58:49.053Z",
+  "tool": {
+    "name": "scripts/evidence/capture-http-evidence.mjs",
+    "node": "v20.19.0"
+  },
+  "sitemap": {
+    "status": 200,
+    "count": 53,
+    "error": null
+  },
+  "robots": {
+    "status": 200,
+    "body": "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: GPTBot\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: ClaudeBot\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: Claude-Web\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: PerplexityBot\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: Google-Extended\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nUser-agent: CCBot\nAllow: /\nDisallow: /api/\nDisallow: /admin\n\nSitemap: https://xeniostechnology.com/sitemap.xml\n"
+  },
+  "records": [
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.888Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/access-hub",
+      "surface": "access-hub",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.896Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/access-hub",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/access-hub",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/access-hub",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-access-hub.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/early-access",
+      "surface": "early-access",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.901Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/early-access",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-early-access.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/early-access/order-request",
+      "surface": "order-flow",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.907Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/early-access/order-request",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-early-access-order-request.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/apply",
+      "surface": "access-hub",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.913Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/apply",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-apply.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/sign-in",
+      "surface": "account-overview",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.919Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/sign-in",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-sign-in.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/support",
+      "surface": "support",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.925Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/support",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/support",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/support",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-support.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/about",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.932Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/about",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/about",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/about",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-about.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/how-it-works",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.937Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/how-it-works",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/how-it-works",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/how-it-works",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-how-it-works.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/faq",
+      "surface": "support",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.941Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/faq",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/faq",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/faq",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-faq.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/quality",
+      "surface": "quality-testing",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.946Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/quality",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/quality",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/quality",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-quality.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/testing",
+      "surface": "quality-testing",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.951Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/testing",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/testing",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/testing",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-testing.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
+      "surface": "public-lot-lookup-negative-state",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.954Z",
+      "status": 404,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-lots-xr-evidence-negative-lot.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 404 (expected 404)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/documents",
+      "surface": "documents",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.958Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/documents",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/documents",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/documents",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-documents.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/policies",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.963Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/policies",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/policies",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/policies",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-policies.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/contact",
+      "surface": "support",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.968Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/contact",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/contact",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/contact",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-contact.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/privacy",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.972Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/privacy",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/privacy",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/privacy",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-privacy.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/terms",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.975Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/terms",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/terms",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/terms",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-terms.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/partners",
+      "surface": "partners",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.981Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/partners",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/partners",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/partners",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-partners.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/organizations",
+      "surface": "partners",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.984Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/organizations",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/organizations",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/organizations",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-organizations.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/affiliates",
+      "surface": "partners",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.987Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/affiliates",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/affiliates",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/affiliates",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-affiliates.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account",
+      "surface": "account-overview",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.990Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/orders",
+      "surface": "orders",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.992Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/orders",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-orders.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/subscription",
+      "surface": "membership",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.995Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/subscription",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-subscription.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/care",
+      "surface": "care-account",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:48.998Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/care",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-care.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/documents",
+      "surface": "documents",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.001Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/documents",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-documents.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/support",
+      "surface": "support",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.004Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/support",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-support.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/member",
+      "surface": "account-overview",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.006Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/member",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-member.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/member/catalog",
+      "surface": "catalog",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.008Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/member/catalog",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-member-catalog.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/care",
+      "surface": "care",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.011Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/care",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "content-security-policy": "default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/care.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/care/appointments",
+      "surface": "tebra-scheduler",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.014Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/care/appointments",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "content-security-policy": "default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/care-appointments.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/admin/research",
+      "surface": "admin-critical",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.017Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/admin/research",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/admin-research.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/admin/research/fulfillment",
+      "surface": "research-fulfillment",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.019Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/admin/research/fulfillment",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/admin-research-fulfillment.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/this-route-does-not-exist-xr-evidence",
+      "surface": "not-found-error",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.021Z",
+      "status": 404,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/this-route-does-not-exist-xr-evidence",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-this-route-does-not-exist-xr-evidence.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 404 (expected 404)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "PASS",
+          "detail": "status 404, noindex=true"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/",
+      "surface": "warm-silver-homepage-reconciliation",
+      "indexable": true,
+      "timestampUtc": "2026-08-29T00:58:49.023Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com",
+        "lang": "en",
+        "robotsMeta": "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/root.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1 meta.robots=index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1 (indexable route must not be noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "PASS",
+          "detail": "canonical=https://xeniostechnology.com (matches route)"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "PASS",
+          "detail": "og:title=yes og:description=yes og:image=yes"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "types=[]"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/hino",
+      "surface": "hino",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.025Z",
+      "status": 200,
+      "redirects": [
+        {
+          "from": "http://127.0.0.1:5184/hino",
+          "status": 301,
+          "to": "http://127.0.0.1:5184/hino/"
+        }
+      ],
+      "finalUrl": "http://127.0.0.1:5184/hino/",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "public, max-age=0",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "Hollywood Hino | Discipline, Culture, Legacy",
+        "canonical": "https://xeniostechnology.com/hino",
+        "lang": "en",
+        "robotsMeta": "noindex, nofollow, nocache",
+        "description": "The approval-stage website for Ehinomen ‘Hollywood Hino’ Ehikhamenor — boxer, trainer, and entrepreneur.",
+        "viewport": "width=device-width, initial-scale=1",
+        "openGraph": {
+          "title": "Hollywood Hino | Built in the ring. Proven in the room.",
+          "description": "A source-backed editorial platform for Ehinomen ‘Hollywood Hino’ Ehikhamenor.",
+          "image": null,
+          "url": "https://xeniostechnology.com/hino",
+          "type": "website"
+        },
+        "twitterCard": "summary",
+        "jsonLd": [
+          {
+            "type": "Person",
+            "hasContext": true
+          }
+        ],
+        "hasRootElement": false
+      },
+      "rawHtmlPath": "raw-html/hino.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=(none) meta.robots=noindex, nofollow, nocache (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"Hollywood Hino | Discipline, Culture, Legacy\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "NOT_APPLICABLE",
+          "detail": "external microsite outside the document/sitemap policy (externalMicrosite: true)"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "NOT_APPLICABLE",
+          "detail": "external microsite emits 1 JSON-LD block(s) of its own (not governed by the policy)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/policies/accessibility",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.031Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/policies/accessibility",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/policies/accessibility",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/policies/accessibility",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-policies-accessibility.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/policies/research-use",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.034Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/policies/research-use",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/policies/research-use",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/policies/research-use",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-policies-research-use.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/policies/shipping",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.037Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/policies/shipping",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/policies/shipping",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/policies/shipping",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-policies-shipping.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/policies/returns",
+      "surface": "public-research-homepage",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.039Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/policies/returns",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": "https://xeniostechnology.com/research/policies/returns",
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": "https://xeniostechnology.com/research/policies/returns",
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-policies-returns.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/profile",
+      "surface": "orders",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.042Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/profile",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-profile.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/security",
+      "surface": "orders",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.046Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/security",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-security.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    },
+    {
+      "candidateSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+      "route": "/research/account/interests",
+      "surface": "orders",
+      "indexable": false,
+      "timestampUtc": "2026-08-29T00:58:49.049Z",
+      "status": 200,
+      "redirects": [],
+      "finalUrl": "http://127.0.0.1:5184/research/account/interests",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "no-referrer"
+      },
+      "metadata": {
+        "title": "xenios | The operating system for proactive health",
+        "canonical": null,
+        "lang": "en",
+        "robotsMeta": "noindex,nofollow,noarchive",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+        "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+        "openGraph": {
+          "title": "xenios | The operating system for proactive health",
+          "description": "The professional stays in front. Xen and Athena carry the work behind them.",
+          "image": "https://xeniostechnology.com/og/xenios-og-image-v2.png",
+          "url": null,
+          "type": "website"
+        },
+        "twitterCard": "summary_large_image",
+        "jsonLd": [],
+        "hasRootElement": true
+      },
+      "rawHtmlPath": "raw-html/research-account-interests.html",
+      "assertions": [
+        {
+          "id": "STATUS_CODE",
+          "result": "PASS",
+          "detail": "status 200 (expected 200)"
+        },
+        {
+          "id": "X_ROBOTS_TAG",
+          "result": "PASS",
+          "detail": "x-robots-tag=noindex,nofollow,noarchive meta.robots=noindex,nofollow,noarchive (private/unindexable route must signal noindex)"
+        },
+        {
+          "id": "RAW_HTML_TITLE",
+          "result": "PASS",
+          "detail": "title=\"xenios | The operating system for proactive health\""
+        },
+        {
+          "id": "CANONICAL",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "OPEN_GRAPH",
+          "result": "NOT_APPLICABLE",
+          "detail": "private/unindexable route"
+        },
+        {
+          "id": "SITEMAP_PARITY",
+          "result": "PASS",
+          "detail": "not listed in sitemap"
+        },
+        {
+          "id": "STRUCTURED_DATA_SCOPE",
+          "result": "PASS",
+          "detail": "private route emits 0 JSON-LD block(s)"
+        },
+        {
+          "id": "AUTHORITATIVE_404",
+          "result": "NOT_APPLICABLE",
+          "detail": "not the 404 probe"
+        },
+        {
+          "id": "PUBLIC_TO_PRIVATE_METADATA_RESTORATION",
+          "result": "NOT_APPLICABLE",
+          "detail": "client-side navigation assertion; see browser matrix metadataRestoration"
+        }
+      ],
+      "result": "AUTOMATED_PASS"
+    }
+  ],
+  "summary": {
+    "records": 43,
+    "automatedPass": 43,
+    "automatedFail": 0,
+    "failingAssertionIds": []
+  }
+}
