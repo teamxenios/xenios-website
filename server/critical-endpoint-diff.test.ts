@@ -416,9 +416,9 @@ describe("shapeFingerprint", () => {
 });
 
 describe("captureEndpoint", () => {
-  it("records only safe metadata and a fingerprint, never the raw response body or secret", async () => {
-    const secret = "XR-DO-NOT-PERSIST-7e1d7c875c";
-    const body = JSON.stringify({ privateToken: secret, nested: { customer: "Ada" } });
+  it("records only safe metadata and a fingerprint, never the raw sensitive response value", async () => {
+    const sensitiveSentinel = "XR-DO-NOT-PERSIST-7e1d7c875c";
+    const body = JSON.stringify({ privateToken: sensitiveSentinel, nested: { customer: "Ada" } });
     const server = createServer((_request, response) => {
       response.writeHead(200, {
         "content-type": "application/json; charset=utf-8",
@@ -439,18 +439,18 @@ describe("captureEndpoint", () => {
       const record = await captureEndpoint(
         `http://127.0.0.1:${address.port}`,
         "GET",
-        "/secret-fixture",
+        "/metadata-fixture",
       );
       const serialized = JSON.stringify(record);
 
       expect(record).toMatchObject({
         method: "GET",
-        path: "/secret-fixture",
+        path: "/metadata-fixture",
         status: 200,
         contentType: "application/json",
       });
       expect(Object.prototype.hasOwnProperty.call(record, "body")).toBe(false);
-      expect(serialized).not.toContain(secret);
+      expect(serialized).not.toContain(sensitiveSentinel);
       expect(serialized).not.toContain(body);
       expect(serialized).not.toContain("Ada");
       expect(record.shape.fingerprint).toMatch(/^[a-f0-9]{16}$/);
