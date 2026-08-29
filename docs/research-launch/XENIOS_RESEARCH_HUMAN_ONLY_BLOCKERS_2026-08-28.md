@@ -51,6 +51,7 @@ PII, or production embed code to this file.
 | Public storefront mount (`RESEARCH_PUBLIC_STOREFRONT_ENABLED`) | keep off until publication authority and approved copy exist / enable later | PENDING (engineering gates also open) |
 | Global marketing-shell touch-target fixes (Navbar/Footer/TopRibbon, hard-tripwire protected) | accept a reviewed global-shell change / defer | PENDING |
 | Partner-name history purge and first-name mention cleanup | rewrite history + rename report / leave history, scrub only the candidate tree (done) | PENDING |
+| FILE_OWNERSHIP re-baseline for integration candidates (the release-manifest verifier reads exact-file, single-lane ownership rules from the 3daa production base; 483 of the candidate's 583 changed files have no base owner and 20 belong to other lanes, so the verifier's ownership check fails for any integration RC while every other manifest check passes) | accept the disclosed ownership exceptions for this RC and re-baseline the policy at the next production base / require per-lane manifests before acceptance | PENDING |
 
 This packet does not recommend or execute a production choice.
 
@@ -81,6 +82,6 @@ surface for a finished one:
 | Field | Value |
 | --- | --- |
 | External inputs still required | 16 listed above (1 provided) |
-| Founder decisions still required | 9 listed above |
+| Founder decisions still required | 10 listed above |
 | All non-human engineering work complete | YES for everything not classified PRODUCTION DISABLED above; the disabled items carry exact residual work in `CONTROL/CLAUDE_INTEGRATION_LEDGER.json` |
 | Ready for Samuel deploy review | See the RC document's final verdict |

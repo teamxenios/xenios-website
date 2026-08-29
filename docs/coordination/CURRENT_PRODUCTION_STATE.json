@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-29T00:30:00Z",
+  "generatedAt": "2026-08-29T01:10:00Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -24,7 +24,7 @@
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
     "renderDeploymentId": "dep-da6vorqfngtc73brb0gg",
     "status": "LIVE",
-    "verifiedAt": "2026-08-29T00:30:00Z",
+    "verifiedAt": "2026-08-28T21:15:00Z",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -155,10 +155,11 @@
       "detail": "The service's Render origin returned HTTP 200 and runtime configuration reported commerceEnabled false. The origin URL is intentionally not invented in this source control; the SHA binding comes from the separate Render deployment observation."
     },
     {
-      "kind": "production_identity_readonly_2026-08-28T21",
+      "id": "render-service-identity-readonly-20260828T2115",
+      "kind": "render_service_and_deployment_read",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "checkedAt": "2026-08-28T21:15:00Z",
-      "source": "Render API read-only (get_service, list_deploys)",
-      "result": "srv-d8s9vej7uimc7384dfcg autoDeploy=no, branch release/early-access-code-session-checkout, healthCheckPath /api/health; newest deploy dep-da6vorqfngtc73brb0gg live at 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (finished 2026-08-25T20:35:52Z); production not mutated by the takeover program."
+      "detail": "Read-only Render API (get_service, list_deploys) during the Claude Lead takeover: srv-d8s9vej7uimc7384dfcg autoDeploy=no, branch release/early-access-code-session-checkout, healthCheckPath /api/health, buildCommand npm run render-build; newest deploy dep-da6vorqfngtc73brb0gg status live at commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (finished 2026-08-25T20:35:52Z). Production not mutated by the takeover program."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"
