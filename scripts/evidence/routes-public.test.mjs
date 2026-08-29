@@ -191,6 +191,13 @@ describe("public evidence topology", () => {
       ["GET", "/api/care/appointments", 503, 1],
       ["GET", "/api/care/appointments/admin/readiness", 503, 1],
     ]);
+    expect(route("/research/early-access").expectedHttpFailures.map(
+      (failure) => [failure.method, failure.path, failure.status, failure.count],
+    )).toEqual([
+      ["GET", "/api/research/early-access/cart/capability", 404, 1],
+      ["GET", "/api/research/early-access/agreements", 500, 1],
+      ["GET", "/api/research/early-access/catalog", 503, 1],
+    ]);
   });
 
   it("covers every required route surface and browser-required state", () => {

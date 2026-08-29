@@ -10,11 +10,12 @@
 // "Supabase admin not configured (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
 // missing)" before the server ever listened. Nobody could open the launch
 // journey locally, which is why a visual check of the customer flow kept being
-// deferred. The placeholders below only have to be present and well-formed for
-// the client to construct.
+// deferred. The placeholders below are accepted only by the loopback fixture
+// this process owns; they cannot authenticate to an external service.
 //
-// READ THIS BEFORE TRUSTING WHAT YOU SEE. The Supabase host below is not real,
-// so every data-backed surface is running against an unreachable upstream:
+// READ THIS BEFORE TRUSTING WHAT YOU SEE. The Supabase host below is a bounded,
+// process-local fixture, not a real database. It implements only the four
+// hash-only RPCs needed to exercise the production durable-session composition:
 //
 //   * The catalogue does NOT show the canonical product set. It falls back to
 //     a small declared set, and it does so with NO error banner, so the page
@@ -23,10 +24,10 @@
 //   * Outbox and email are unconfigured, so nothing is sent. That is
 //     deliberate: a preview must never email a real customer.
 //
-// It IS good for: page boots, layout and responsive widths, gate behaviour,
-// stepper navigation, form fields and validation, and client-side console or
-// network errors. It deliberately refuses every ambient external credential;
-// use a separately reviewed harness for any data-dependent verification.
+// It IS good for: page boots, layout and responsive widths, session and gate
+// behaviour, stepper navigation, form fields and validation, and client-side
+// console or network errors. It deliberately refuses every ambient external
+// credential; use a separately reviewed harness for data-dependent verification.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createServer, request as httpRequest } from "node:http";
@@ -43,6 +44,7 @@ import {
   assertPinnedExecutingRuntime,
   validatePreviewProvenance,
 } from "./evidence/lib/provenance.mjs";
+import { createPreviewSupabaseRequestHandler } from "./evidence/lib/preview-supabase-fixture.mjs";
 
 const requestedPort = process.env.PORT || "5199";
 const here = dirname(fileURLToPath(import.meta.url));
@@ -145,6 +147,11 @@ process.env.ADMIN_EMAIL = "preview-admin@example.invalid";
 // keeps the real access code out of this file and out of shell history.
 process.env.RESEARCH_EARLY_ACCESS_ENABLED = "true";
 process.env.RESEARCH_EARLY_ACCESS_OPEN_ACCESS = "true";
+// Match the reviewed production environment shape: the anonymous durable
+// session derives its own opaque customer reference. Without this switch the
+// preview asks the empty customer-binding fixture for an identity and the
+// assisted-order catalogue is refused before its layout can render.
+process.env.RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED = "true";
 // PRODUCTION PARITY FOR THE ASSISTED-ORDER BRIDGE (2026-08-29 incident). The
 // live service runs with the bridge ENABLED, an admin notification address and
 // a required-agreements list; without these three the composition refuses and
@@ -163,31 +170,16 @@ process.env.RESEARCH_EARLY_ACCESS_OWNER_ID =
   "00000000-0000-4000-8000-000000000001";
 
 // Own the placeholder upstream rather than assuming a conventional local port
-// is unused. GET/HEAD return empty, non-sensitive fixtures; every mutation is
-// refused. Binding an ephemeral loopback port first makes it impossible for a
-// real local Supabase instance to receive a preview request or write.
-const placeholderSupabase = createServer((req, res) => {
-  const method = (req.method || "GET").toUpperCase();
-  const requestPath = req.url || "/";
-  res.setHeader("Cache-Control", "no-store");
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-  if (method !== "GET" && method !== "HEAD") {
-    res.statusCode = 503;
-    res.end(JSON.stringify({
-      code: "preview_write_refused",
-      message: "The isolated preview never accepts persistence mutations.",
-    }));
-    return;
-  }
-  const payload = requestPath.startsWith("/auth/v1/admin/users")
-    ? { users: [] }
-    : requestPath.startsWith("/auth/v1/")
-      ? { user: null }
-      : [];
-  res.statusCode = 200;
-  res.setHeader("Content-Range", "*/0");
-  res.end(method === "HEAD" ? "" : JSON.stringify(payload));
-});
+// is unused. GET/HEAD return empty, non-sensitive fixtures. Exactly four POST
+// RPCs implement the bounded, process-local hash-only session lifecycle that
+// the production composition requires; every customer, catalog, commerce,
+// payment, email, and other mutation is refused. Binding an ephemeral loopback
+// port first makes it impossible for a real local Supabase instance to receive
+// a preview request or write.
+const placeholderSupabase = createServer(createPreviewSupabaseRequestHandler({
+  ownerId: process.env.RESEARCH_EARLY_ACCESS_OWNER_ID,
+  serviceRoleKey: "sb_secret_preview_placeholder",
+}));
 placeholderSupabase.on("clientError", (_error, socket) => socket.destroy());
 await new Promise((resolve, reject) => {
   placeholderSupabase.once("error", reject);
@@ -202,7 +194,8 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "sb_secret_preview_placeholder";
 process.env.SUPABASE_ANON_KEY = "sb_publishable_preview_placeholder";
 
 console.warn(
-  "[preview] Supabase is an isolated READ-EMPTY/WRITE-REFUSING fixture.\n" +
+  "[preview] Supabase is an isolated READ-EMPTY fixture with a bounded ephemeral session RPC lifecycle.\n" +
+    "[preview] Every customer, commerce, payment, email and other persistence mutation is refused.\n" +
     "[preview] The catalogue shown is NOT the canonical product set and carries no error\n" +
     "[preview] banner. Use this preview for layout, gating and form behaviour only.",
 );

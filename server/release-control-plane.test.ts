@@ -1,9 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  buildIntegrationOwnershipReview,
+  integrationOwnershipReviewArtifactSha256,
+  serializeIntegrationOwnershipReviewArtifact,
   trustedOwnershipPolicy,
   trustedReleaseIdentityFromEnvironment,
   validateReleaseManifest,
@@ -34,9 +37,12 @@ import {
 const ROOT = process.cwd();
 const NOW = new Date("2026-08-28T04:05:00.000Z");
 
-function gitBlobSha(bytes: Buffer): string {
-  const header = Buffer.from(`blob ${bytes.byteLength}\0`, "utf8");
-  return createHash("sha1").update(header).update(bytes).digest("hex");
+function gitFilteredBlobSha(path: string): string {
+  const repoPath = relative(ROOT, path).replaceAll("\\", "/");
+  return execFileSync("git", ["hash-object", "--path", repoPath, repoPath], {
+    cwd: ROOT,
+    encoding: "utf8",
+  }).trim();
 }
 const PRODUCTION_SHA = "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
@@ -352,6 +358,56 @@ describe("release manifest validator", () => {
     },
   ];
 
+  function compositeManifestFixture(input: {
+    reviewedAt?: string;
+    rules?: OwnershipRule[];
+  } = {}) {
+    const files = [
+      "server/research/catalog/unit.ts",
+      "server/research/composite-unowned.ts",
+    ];
+    const rules = input.rules ?? ownership;
+    const policySha256 = "1".repeat(64);
+    const reviewArtifactPath =
+      "docs/coordination/evidence/integration-ownership-review.json";
+    const manifest = validManifest();
+    manifest.schemaVersion = 2;
+    manifest.lane = "integration-release";
+    manifest.files = files;
+    const bundle = buildIntegrationOwnershipReview({
+      baseSha: PRODUCTION_SHA,
+      headSha: HEAD_SHA,
+      trustedBaseOwnershipPolicySha256: policySha256,
+      files,
+      rules,
+      manifestLane: manifest.lane as string,
+      reviewerIdentity: "release-reviewer@example.test",
+      reviewedAt: input.reviewedAt ?? NOW.toISOString(),
+      reviewArtifactPath,
+    });
+    manifest.integrationOwnershipReview = bundle.review;
+    const options = {
+      now: NOW,
+      expectedProductionSha: PRODUCTION_SHA,
+      expectedHeadSha: HEAD_SHA,
+      trustedOwnershipPolicy: {
+        rules,
+        sha256: policySha256,
+        source: "trusted_base_commit" as const,
+      },
+      readIntegrationOwnershipReviewArtifact: () => bundle.artifactBytes,
+      gitBinding: {
+        baseExists: true,
+        headExists: true,
+        headSha: HEAD_SHA,
+        resolvedBaseSha: PRODUCTION_SHA,
+        resolvedHeadSha: HEAD_SHA,
+        files,
+      },
+    };
+    return { bundle, manifest, options };
+  }
+
   it("accepts a complete current manifest", () => {
     expect(
       validateReleaseManifest(validManifest(), {
@@ -360,6 +416,221 @@ describe("release manifest validator", () => {
         ownershipRules: ownership,
       }),
     ).toEqual([]);
+  });
+
+  it("accepts an exact v2 composite ownership review and reconciles only its matching findings", () => {
+    const fixture = compositeManifestFixture();
+    expect(fixture.bundle.review.ownershipFindingCounts).toEqual({
+      UNOWNED_FILE: 1,
+      WRONG_LANE_OWNER: 1,
+      OWNERSHIP_CONFLICT: 0,
+    });
+    expect(validateReleaseManifest(fixture.manifest, fixture.options)).toEqual([]);
+  });
+
+  it("does not suppress schema, path, identity, diff, or evidence failures", () => {
+    const fixture = compositeManifestFixture();
+    fixture.manifest.unexpected = true;
+    fixture.manifest.currentProductionSha = "0".repeat(40);
+    fixture.manifest.files = [
+      ...(fixture.manifest.files as string[]),
+      "../outside-review-scope.ts",
+    ];
+    fixture.manifest.evidence = [{
+      kind: "ci",
+      checkedAt: "2026-07-01T00:00:00.000Z",
+      reference: "stale-composite-evidence",
+    }];
+    const codes = validateReleaseManifest(fixture.manifest, fixture.options)
+      .map((issue) => issue.code);
+    expect(codes).toEqual(expect.arrayContaining([
+      "SCHEMA_VALIDATION",
+      "UNSAFE_FILE_PATH",
+      "STALE_PRODUCTION_SHA",
+      "MANIFEST_FILE_EXTRA",
+      "STALE_EVIDENCE",
+    ]));
+
+    const unsafeDiffCodes = validateReleaseManifest(fixture.manifest, {
+      ...fixture.options,
+      gitBinding: {
+        ...fixture.options.gitBinding,
+        files: [...fixture.options.gitBinding.files, "unsafe\npath.ts"],
+      },
+    }).map((issue) => issue.code);
+    expect(unsafeDiffCodes).toContain("INTEGRATION_OWNERSHIP_UNSAFE_DIFF_PATH");
+  });
+
+  it("refuses stale review identity, policy, diff, finding, or count attestations", () => {
+    const fixture = compositeManifestFixture();
+    const cases: Array<{
+      field: string;
+      mutate: (review: Record<string, unknown>) => void;
+      code: string;
+    }> = [
+      {
+        field: "base",
+        mutate: (review) => { review.baseSha = "a".repeat(40); },
+        code: "INTEGRATION_OWNERSHIP_BASE_MISMATCH",
+      },
+      {
+        field: "head",
+        mutate: (review) => { review.headSha = "b".repeat(40); },
+        code: "INTEGRATION_OWNERSHIP_HEAD_MISMATCH",
+      },
+      {
+        field: "policy",
+        mutate: (review) => {
+          review.trustedBaseOwnershipPolicySha256 = "2".repeat(64);
+        },
+        code: "INTEGRATION_OWNERSHIP_POLICY_DIGEST_MISMATCH",
+      },
+      {
+        field: "diff",
+        mutate: (review) => { review.gitDiffPathInventorySha256 = "3".repeat(64); },
+        code: "INTEGRATION_OWNERSHIP_DIFF_INVENTORY_MISMATCH",
+      },
+      {
+        field: "findings",
+        mutate: (review) => {
+          review.ownershipFindingInventorySha256 = "4".repeat(64);
+        },
+        code: "INTEGRATION_OWNERSHIP_FINDING_INVENTORY_MISMATCH",
+      },
+      {
+        field: "counts",
+        mutate: (review) => {
+          review.ownershipFindingCounts = {
+            UNOWNED_FILE: 2,
+            WRONG_LANE_OWNER: 1,
+            OWNERSHIP_CONFLICT: 0,
+          };
+        },
+        code: "INTEGRATION_OWNERSHIP_COUNTS_MISMATCH",
+      },
+    ];
+    for (const testCase of cases) {
+      const manifest = structuredClone(fixture.manifest);
+      testCase.mutate(
+        manifest.integrationOwnershipReview as Record<string, unknown>,
+      );
+      const codes = validateReleaseManifest(manifest, fixture.options)
+        .map((issue) => issue.code);
+      expect(codes, testCase.field).toContain(testCase.code);
+      expect(codes, testCase.field).toEqual(
+        expect.arrayContaining(["UNOWNED_FILE", "WRONG_LANE_OWNER"]),
+      );
+    }
+  });
+
+  it("rejects stale and future integration ownership reviews", () => {
+    const stale = compositeManifestFixture({ reviewedAt: "2026-08-20T00:00:00.000Z" });
+    expect(validateReleaseManifest(stale.manifest, stale.options).map((issue) => issue.code))
+      .toContain("STALE_INTEGRATION_OWNERSHIP_REVIEW");
+
+    const future = compositeManifestFixture({ reviewedAt: "2026-08-28T04:15:01.000Z" });
+    expect(validateReleaseManifest(future.manifest, future.options).map((issue) => issue.code))
+      .toContain("FUTURE_INTEGRATION_OWNERSHIP_REVIEW");
+  });
+
+  it("binds both the review artifact bytes and its parsed attestation", () => {
+    const fixture = compositeManifestFixture();
+    const byteMismatchCodes = validateReleaseManifest(fixture.manifest, {
+      ...fixture.options,
+      readIntegrationOwnershipReviewArtifact: () => Buffer.concat([
+        fixture.bundle.artifactBytes,
+        Buffer.from(" "),
+      ]),
+    }).map((issue) => issue.code);
+    expect(byteMismatchCodes).toContain(
+      "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_HASH_MISMATCH",
+    );
+
+    const forgedAttestation = structuredClone(fixture.bundle.artifact.attestation);
+    forgedAttestation.reviewerIdentity = "different-reviewer@example.test";
+    const forgedBytes = serializeIntegrationOwnershipReviewArtifact(forgedAttestation);
+    const manifest = structuredClone(fixture.manifest);
+    const review = manifest.integrationOwnershipReview as Record<string, unknown>;
+    review.reviewArtifactSha256 = integrationOwnershipReviewArtifactSha256(forgedBytes);
+    const attestationMismatchCodes = validateReleaseManifest(manifest, {
+      ...fixture.options,
+      readIntegrationOwnershipReviewArtifact: () => forgedBytes,
+    }).map((issue) => issue.code);
+    expect(attestationMismatchCodes).toContain(
+      "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_ATTESTATION_MISMATCH",
+    );
+
+    const unsafeManifest = structuredClone(fixture.manifest);
+    (unsafeManifest.integrationOwnershipReview as Record<string, unknown>)
+      .reviewArtifactPath = "../outside-review.json";
+    const unsafeCodes = validateReleaseManifest(unsafeManifest, fixture.options)
+      .map((issue) => issue.code);
+    expect(unsafeCodes).toEqual(expect.arrayContaining([
+      "SCHEMA_VALIDATION",
+      "INTEGRATION_OWNERSHIP_REVIEW_INVALID",
+      "UNOWNED_FILE",
+      "WRONG_LANE_OWNER",
+    ]));
+  });
+
+  it("never reconciles an ownership conflict, even with a matching artifact", () => {
+    const collisionRules = [
+      ...ownership,
+      {
+        ...ownership[0],
+        id: "catalog-collision",
+        owner: "Website 2",
+        lane: "release-manager",
+      },
+    ];
+    const fixture = compositeManifestFixture({ rules: collisionRules });
+    const originalReview = fixture.bundle.review;
+    const maliciousAttestation = {
+      ...fixture.bundle.artifact.attestation,
+      ownershipFindingCounts: {
+        ...fixture.bundle.artifact.attestation.ownershipFindingCounts,
+        OWNERSHIP_CONFLICT: 0,
+      },
+    };
+    const maliciousBytes = serializeIntegrationOwnershipReviewArtifact(maliciousAttestation);
+    fixture.manifest.integrationOwnershipReview = {
+      ...maliciousAttestation,
+      reviewArtifactPath: originalReview.reviewArtifactPath,
+      reviewArtifactSha256: integrationOwnershipReviewArtifactSha256(maliciousBytes),
+    };
+    const codes = validateReleaseManifest(fixture.manifest, {
+      ...fixture.options,
+      readIntegrationOwnershipReviewArtifact: () => maliciousBytes,
+    }).map((issue) => issue.code);
+    expect(codes).toEqual(expect.arrayContaining([
+      "INTEGRATION_OWNERSHIP_COUNTS_MISMATCH",
+      "INTEGRATION_OWNERSHIP_CONFLICT_REFUSED",
+      "OWNERSHIP_CONFLICT",
+    ]));
+  });
+
+  it("refuses candidate-snapshot and wildcard policies for v2 reconciliation", () => {
+    const fixture = compositeManifestFixture();
+    const candidateCodes = validateReleaseManifest(fixture.manifest, {
+      ...fixture.options,
+      trustedOwnershipPolicy: {
+        ...fixture.options.trustedOwnershipPolicy,
+        source: "externally_pinned_snapshot",
+      },
+    }).map((issue) => issue.code);
+    expect(candidateCodes).toContain("INTEGRATION_OWNERSHIP_TRUSTED_POLICY_REQUIRED");
+
+    const wildcardCodes = validateReleaseManifest(fixture.manifest, {
+      ...fixture.options,
+      trustedOwnershipPolicy: {
+        ...fixture.options.trustedOwnershipPolicy,
+        rules: [{
+          ...ownership[0],
+          patterns: ["**"],
+        }],
+      },
+    }).map((issue) => issue.code);
+    expect(wildcardCodes).toContain("INTEGRATION_OWNERSHIP_TRUSTED_POLICY_REQUIRED");
   });
 
   it("enforces the canonical closed schema at top-level and nested objects", () => {
@@ -1783,6 +2054,18 @@ describe("production state validator", () => {
     };
   }
 
+  function checkedInEvidenceNow(state: ProductionState): Date {
+    const verifiedAt = new Date(state.production.verifiedAt ?? state.generatedAt);
+    if (!Number.isFinite(verifiedAt.getTime())) {
+      throw new Error("checked-in production evidence has an invalid timestamp");
+    }
+    // Validate an operational snapshot immediately after its own observation.
+    // The unit suite must not pin the repository forever to the date of the
+    // first attestation and then reject a truthful, newer live-deploy record as
+    // future evidence.
+    return new Date(verifiedAt.getTime() + 60_000);
+  }
+
   it("accepts the internally consistent checked-in production snapshot", () => {
     const { state, graph, ownership } = checkedInState();
     const repoFiles = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" })
@@ -1790,7 +2073,7 @@ describe("production state validator", () => {
       .filter(Boolean);
     expect(
       validateProductionState(state, graph, ownership, {
-        now: NOW,
+        now: checkedInEvidenceNow(state),
         trustedReleaseBaseSha: PRODUCTION_SHA,
         migrationBaselineSha: PRODUCTION_SHA,
         expectedProductionBranch: PRODUCTION_BRANCH,
@@ -1841,7 +2124,7 @@ describe("production state validator", () => {
     expect(currentOwnership.productionBaseSha).toBe(PRODUCTION_SHA);
     expect(
       validateProductionState(state, graph, currentOwnership, {
-        now: NOW,
+        now: checkedInEvidenceNow(state),
         trustedReleaseBaseSha: PRODUCTION_SHA,
         migrationBaselineSha: PRODUCTION_SHA,
       }),
@@ -1951,8 +2234,10 @@ describe("production state validator", () => {
     expect(productionAcceptanceMessage(state, observation)).toBe(
       `Observed deployment accepted: ${deployedSha} / dep-postdeploy123 (baseline ${PRODUCTION_SHA}).`,
     );
-    expect(productionAcceptanceMessage(state)).toBe(
-      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-da6vorqfngtc73brb0gg.`,
+    const baselineMessageState = structuredClone(state);
+    baselineMessageState.production.renderDeploymentId = "dep-unitbaseline123";
+    expect(productionAcceptanceMessage(baselineMessageState)).toBe(
+      `Trusted release baseline accepted: ${PRODUCTION_SHA} / dep-unitbaseline123.`,
     );
     expect(
       validateObservedDeployment(
@@ -1975,7 +2260,7 @@ describe("production state validator", () => {
       ownership: FileOwnership,
       migrationBaselineSha: string,
     ) => validateProductionState(state, graph, ownership, {
-      now: NOW,
+      now: checkedInEvidenceNow(state),
       trustedReleaseBaseSha: PRODUCTION_SHA,
       migrationBaselineSha,
     }).map((issue) => issue.code);
@@ -2194,10 +2479,14 @@ describe("production state validator", () => {
       ROOT,
       "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json",
     );
-    expect(gitBlobSha(readFileSync(archivedStatePath))).toBe(
+    // Pin the repository blob after Git's configured clean filter. Windows
+    // autocrlf may materialize CRLF in the working tree; hashing those raw
+    // checkout bytes would make an unchanged archival Git object fail only on
+    // Windows while the exact committed content remains identical.
+    expect(gitFilteredBlobSha(archivedStatePath)).toBe(
       "322df6d9feb008acc834df2ec0e87e008993e3dc",
     );
-    expect(gitBlobSha(readFileSync(archivedGraphPath))).toBe(
+    expect(gitFilteredBlobSha(archivedGraphPath)).toBe(
       "3915f85c82ed05fcdfc7d43232364c4c0ca7d990",
     );
     expect(checked.state.historicalSnapshots?.every(

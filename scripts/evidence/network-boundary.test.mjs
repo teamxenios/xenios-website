@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { createSocket } from "node:dgram";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -43,6 +44,87 @@ describe("evidence network boundary", () => {
       capturedHeightPx: 6000,
       maxHeightCssPx: MAX_FULL_PAGE_HEIGHT_CSS_PX,
     })).toThrow(/layout changed during capture/u);
+  });
+
+  it("removes an unanswered timed CDP command from the pending map", async () => {
+    const connection = new CdpConnection("ws://preview.test/devtools");
+    connection.ws = { send: () => {} };
+    await expect(connection.send(
+      "Network.getResponseBody",
+      { requestId: "never-replies" },
+      "session",
+      { timeoutMs: 10 },
+    )).rejects.toThrow(/timed out after 10ms/u);
+    expect(connection.pending.size).toBe(0);
+  });
+
+  it("keeps late body telemetry from a reset generation out of the next capture", async () => {
+    const pending = new Map();
+    const connection = {
+      send(_method, { requestId }) {
+        return new Promise((resolve) => pending.set(requestId, resolve));
+      },
+    };
+    const page = new PageSession(connection, "target", "session");
+    const stale = { url: "http://preview.test/stale", status: 503 };
+    page.network.push(stale);
+    const staleTelemetry = page.queueErrorResponseBodyTelemetry({
+      record: stale,
+      requestId: "stale",
+      sessionId: "session",
+    });
+
+    page.resetRecords();
+    const current = { url: "http://preview.test/current", status: 503 };
+    page.network.push(current);
+    const currentTelemetry = page.queueErrorResponseBodyTelemetry({
+      record: current,
+      requestId: "current",
+      sessionId: "session",
+    });
+    await Promise.resolve();
+
+    pending.get("stale")({ body: "stale body", base64Encoded: false });
+    await staleTelemetry;
+    expect(page.errorResponseBodyTelemetry.size).toBe(1);
+    expect(current).toMatchObject({ bodySha256: null, bodyBytes: null });
+
+    pending.get("current")({ body: "current body", base64Encoded: false });
+    await currentTelemetry;
+    expect(page.errorResponseBodyTelemetry.size).toBe(0);
+    expect(current).toMatchObject({
+      bodySha256: createHash("sha256").update("current body").digest("hex"),
+      bodyBytes: Buffer.byteLength("current body"),
+    });
+  });
+
+  it("bounds unavailable body telemetry and leaves an explicit fail-closed result", async () => {
+    const connection = { send: () => new Promise(() => {}) };
+    const page = new PageSession(connection, "target", "session");
+    page.errorResponseBodyTimeoutMs = 20;
+    const record = { url: "http://preview.test/failure", status: 503 };
+    page.network.push(record);
+    page.queueErrorResponseBodyTelemetry({ record, requestId: "failure", sessionId: "session" });
+
+    await page.waitForErrorResponseBodyTelemetry({ deadline: Date.now() + 200 });
+    expect(page.errorResponseBodyTelemetry.size).toBe(0);
+    expect(record).toMatchObject({ bodySha256: null, bodyBytes: null });
+  });
+
+  it("turns a malformed CDP body reply into resolved unavailable telemetry", async () => {
+    const connection = { send: async () => ({ body: {}, base64Encoded: false }) };
+    const page = new PageSession(connection, "target", "session");
+    const record = { url: "http://preview.test/malformed", status: 503 };
+    page.network.push(record);
+
+    await page.queueErrorResponseBodyTelemetry({
+      record,
+      requestId: "malformed",
+      sessionId: "session",
+    });
+
+    expect(page.errorResponseBodyTelemetry.size).toBe(0);
+    expect(record).toMatchObject({ bodySha256: null, bodyBytes: null });
   });
 });
 
@@ -148,6 +230,70 @@ describe("live CDP evidence boundary regressions", () => {
       await expect(page.settle({ quietMs: 800, maxSettleMs: 2500 }))
         .rejects.toThrow(/network did not remain idle through paint/u);
       expect(page.inflight.size).toBe(1);
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("settles exact 4xx/5xx body hashes for page and child-target requests", async () => {
+    const pageFailureBody = '{"error":"page_expected_failure"}\n';
+    const workerFailureBody = '{"error":"worker_expected_failure"}\n';
+    const fixture = await serve((request, response) => {
+      if (request.url === "/page-failure") {
+        response.writeHead(418, { "Content-Type": "application/json; charset=utf-8" });
+        response.end(pageFailureBody);
+        return;
+      }
+      if (request.url === "/worker-failure") {
+        response.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
+        response.end(workerFailureBody);
+        return;
+      }
+      if (request.url === "/worker.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end(`
+          fetch("/worker-failure")
+            .then((result) => result.text())
+            .then(() => postMessage("done"));
+        `);
+        return;
+      }
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(`<!doctype html><html><body><main>error telemetry</main><script>
+        const pageFailure = fetch("/page-failure").then((result) => result.text());
+        const workerFailure = new Promise((resolve) => {
+          const worker = new Worker("/worker.js");
+          worker.onmessage = resolve;
+        });
+        Promise.all([pageFailure, workerFailure]).then(() => {
+          document.documentElement.dataset.telemetryComplete = "true";
+        });
+      </script></body></html>`);
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin);
+      await page.navigate(`${fixture.origin}/`, { quietMs: 100, maxSettleMs: 5000 });
+      expect(await page.evaluate("document.documentElement.dataset.telemetryComplete"))
+        .toBe("true");
+      expect(page.inflight.size).toBe(0);
+      expect(page.errorResponseBodyTelemetry.size).toBe(0);
+      expect(page.network).toContainEqual(expect.objectContaining({
+        url: `${fixture.origin}/page-failure`,
+        method: "GET",
+        status: 418,
+        bodySha256: createHash("sha256").update(pageFailureBody).digest("hex"),
+        bodyBytes: Buffer.byteLength(pageFailureBody),
+      }));
+      expect(page.network).toContainEqual(expect.objectContaining({
+        url: `${fixture.origin}/worker-failure`,
+        method: "GET",
+        status: 503,
+        targetType: "worker-or-child",
+        bodySha256: createHash("sha256").update(workerFailureBody).digest("hex"),
+        bodyBytes: Buffer.byteLength(workerFailureBody),
+      }));
     } finally {
       await page.close();
       await fixture.close();

@@ -4,6 +4,47 @@
   "title": "Xenios bounded release manifest",
   "type": "object",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 1
+          }
+        },
+        "required": [
+          "schemaVersion"
+        ]
+      },
+      "then": {
+        "properties": {
+          "integrationOwnershipReview": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 2
+          }
+        },
+        "required": [
+          "schemaVersion"
+        ]
+      },
+      "then": {
+        "properties": {
+          "integrationOwnershipReview": {
+            "$ref": "#/$defs/integrationOwnershipReview"
+          }
+        },
+        "required": [
+          "integrationOwnershipReview"
+        ]
+      }
+    }
+  ],
   "required": [
     "schemaVersion",
     "releaseId",
@@ -30,7 +71,10 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": 1
+      "enum": [
+        1,
+        2
+      ]
     },
     "releaseId": {
       "type": "string",
@@ -235,6 +279,9 @@
           }
         }
       }
+    },
+    "integrationOwnershipReview": {
+      "$ref": "#/$defs/integrationOwnershipReview"
     }
   },
   "$defs": {
@@ -286,6 +333,79 @@
         "checkedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "integrationOwnershipReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseSha",
+        "headSha",
+        "trustedBaseOwnershipPolicySha256",
+        "gitDiffPathInventorySha256",
+        "ownershipFindingInventorySha256",
+        "ownershipFindingCounts",
+        "reviewerIdentity",
+        "reviewedAt",
+        "reviewArtifactPath",
+        "reviewArtifactSha256"
+      ],
+      "properties": {
+        "baseSha": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "headSha": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "trustedBaseOwnershipPolicySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "gitDiffPathInventorySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "ownershipFindingInventorySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "ownershipFindingCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "UNOWNED_FILE",
+            "WRONG_LANE_OWNER",
+            "OWNERSHIP_CONFLICT"
+          ],
+          "properties": {
+            "UNOWNED_FILE": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "WRONG_LANE_OWNER": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "OWNERSHIP_CONFLICT": {
+              "const": 0
+            }
+          }
+        },
+        "reviewerIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewArtifactPath": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^(?!/)(?!.*\\\\)(?!.*:)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*(?:^|/)\\.git(?:/|$))(?!.*//)(?!.*\/$).+$"
+        },
+        "reviewArtifactSha256": {
+          "$ref": "#/$defs/sha256"
         }
       }
     },

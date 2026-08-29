@@ -240,6 +240,12 @@ export default function EarlyAccessRoute() {
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify({}),
           });
+          // Drain the response before the authoritative session re-read. A
+          // fetch promise resolves when headers arrive; leaving its body
+          // unread keeps the HTTP request active in Chromium and can strand
+          // both browser automation and resource accounting even though the
+          // cookie was accepted. The payload is deliberately not trusted.
+          await readJson(opened);
           if (opened.ok) {
             continue;
           }
@@ -356,6 +362,10 @@ export default function EarlyAccessRoute() {
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify({ password }),
           });
+          // As in the open-access bootstrap, finish the HTTP exchange before
+          // the authoritative session read. The unlock payload is untrusted;
+          // draining it prevents a completed response from remaining active.
+          await readJson(response);
           if (response.ok) {
             // Re-read the session rather than trusting the unlock body, so the
             // rendered state always reflects what the server will honor.

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import Ajv2020Module from "ajv/dist/2020.js";
 import addFormatsModule from "ajv-formats";
 
@@ -42,9 +43,16 @@ export type OwnershipDocument = {
 export type ReleaseManifestValidationOptions = {
   now?: Date;
   maxEvidenceAgeMs?: number;
+  maxIntegrationOwnershipReviewAgeMs?: number;
   expectedProductionSha?: string;
   expectedHeadSha?: string;
   ownershipRules?: OwnershipRule[];
+  trustedOwnershipPolicy?: {
+    rules: OwnershipRule[];
+    sha256: string;
+    source: TrustedOwnershipPolicy["source"];
+  };
+  readIntegrationOwnershipReviewArtifact?: (path: string) => Buffer | string | null;
   gitBinding?: {
     baseExists: boolean;
     headExists: boolean;
@@ -78,11 +86,74 @@ export type TrustedOwnershipPolicyResult = {
   issues: ValidationIssue[];
 };
 
+export type IntegrationOwnershipFindingCode =
+  | "UNOWNED_FILE"
+  | "WRONG_LANE_OWNER"
+  | "OWNERSHIP_CONFLICT";
+
+export type IntegrationOwnershipFinding = {
+  code: IntegrationOwnershipFindingCode;
+  path: string;
+  owners: Array<{
+    id: string;
+    owner: string;
+    lane: string;
+  }>;
+};
+
+export type IntegrationOwnershipFindingCounts = Record<
+  IntegrationOwnershipFindingCode,
+  number
+>;
+
+export type IntegrationOwnershipReviewAttestation = {
+  baseSha: string;
+  headSha: string;
+  trustedBaseOwnershipPolicySha256: string;
+  gitDiffPathInventorySha256: string;
+  ownershipFindingInventorySha256: string;
+  ownershipFindingCounts: IntegrationOwnershipFindingCounts;
+  reviewerIdentity: string;
+  reviewedAt: string;
+  reviewArtifactPath: string;
+};
+
+export type IntegrationOwnershipReview = IntegrationOwnershipReviewAttestation & {
+  reviewArtifactSha256: string;
+};
+
+export type IntegrationOwnershipReviewArtifact = {
+  artifactSchemaVersion: 1;
+  kind: "xenios.integration-ownership-review";
+  attestation: IntegrationOwnershipReviewAttestation;
+};
+
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const ENV_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 const ROUTE_METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]);
 const DEFAULT_MAX_EVIDENCE_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
+const INTEGRATION_REVIEW_ARTIFACT_KEYS = new Set([
+  "artifactSchemaVersion",
+  "kind",
+  "attestation",
+]);
+const INTEGRATION_REVIEW_ATTESTATION_KEYS = new Set([
+  "baseSha",
+  "headSha",
+  "trustedBaseOwnershipPolicySha256",
+  "gitDiffPathInventorySha256",
+  "ownershipFindingInventorySha256",
+  "ownershipFindingCounts",
+  "reviewerIdentity",
+  "reviewedAt",
+  "reviewArtifactPath",
+]);
+const INTEGRATION_REVIEW_COUNT_KEYS = new Set([
+  "UNOWNED_FILE",
+  "WRONG_LANE_OWNER",
+  "OWNERSHIP_CONFLICT",
+]);
 type SchemaError = { instancePath: string; message?: string };
 type CompiledSchema = ((input: unknown) => boolean) & { errors?: SchemaError[] | null };
 const Ajv2020 = Ajv2020Module as unknown as new (options: object) => {
@@ -522,6 +593,446 @@ export function ownersForFile(file: string, rules: OwnershipRule[]): OwnershipRu
   );
 }
 
+function compareCanonicalText(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function sha256CanonicalInventory(kind: string, inventory: unknown): string {
+  return createHash("sha256")
+    .update(`${JSON.stringify({ format: kind, inventory })}\n`, "utf8")
+    .digest("hex");
+}
+
+export function exactGitDiffPathInventorySha256(files: readonly string[]): string {
+  return sha256CanonicalInventory(
+    "xenios.git-diff-path-inventory.v1",
+    [...files].sort(compareCanonicalText),
+  );
+}
+
+export function integrationOwnershipFindings(
+  files: readonly string[],
+  rules: readonly OwnershipRule[],
+  manifestLane: string,
+): IntegrationOwnershipFinding[] {
+  const findings: IntegrationOwnershipFinding[] = [];
+  for (const path of files) {
+    const owners = ownersForFile(path, [...rules])
+      .map((rule) => ({ id: rule.id, owner: rule.owner, lane: rule.lane }))
+      .sort((left, right) =>
+        compareCanonicalText(
+          `${left.id}\0${left.owner}\0${left.lane}`,
+          `${right.id}\0${right.owner}\0${right.lane}`,
+        ));
+    if (owners.length === 0) {
+      findings.push({ code: "UNOWNED_FILE", path, owners });
+    } else if (owners.length > 1) {
+      findings.push({ code: "OWNERSHIP_CONFLICT", path, owners });
+    } else if (owners[0].lane !== manifestLane) {
+      findings.push({ code: "WRONG_LANE_OWNER", path, owners });
+    }
+  }
+  return findings.sort((left, right) =>
+    compareCanonicalText(
+      `${left.path}\0${left.code}\0${JSON.stringify(left.owners)}`,
+      `${right.path}\0${right.code}\0${JSON.stringify(right.owners)}`,
+    ));
+}
+
+export function integrationOwnershipFindingCounts(
+  findings: readonly IntegrationOwnershipFinding[],
+): IntegrationOwnershipFindingCounts {
+  const counts: IntegrationOwnershipFindingCounts = {
+    UNOWNED_FILE: 0,
+    WRONG_LANE_OWNER: 0,
+    OWNERSHIP_CONFLICT: 0,
+  };
+  for (const finding of findings) counts[finding.code] += 1;
+  return counts;
+}
+
+export function ownershipFindingInventorySha256(
+  findings: readonly IntegrationOwnershipFinding[],
+): string {
+  const canonicalFindings = findings
+    .map((finding) => ({
+      code: finding.code,
+      path: finding.path,
+      owners: [...finding.owners].sort((left, right) =>
+        compareCanonicalText(
+          `${left.id}\0${left.owner}\0${left.lane}`,
+          `${right.id}\0${right.owner}\0${right.lane}`,
+        )),
+    }))
+    .sort((left, right) =>
+      compareCanonicalText(
+        `${left.path}\0${left.code}\0${JSON.stringify(left.owners)}`,
+        `${right.path}\0${right.code}\0${JSON.stringify(right.owners)}`,
+      ));
+  return sha256CanonicalInventory(
+    "xenios.integration-ownership-finding-inventory.v1",
+    canonicalFindings,
+  );
+}
+
+export function buildIntegrationOwnershipReviewAttestation(input: {
+  baseSha: string;
+  headSha: string;
+  trustedBaseOwnershipPolicySha256: string;
+  files: readonly string[];
+  rules: readonly OwnershipRule[];
+  manifestLane: string;
+  reviewerIdentity: string;
+  reviewedAt: string;
+  reviewArtifactPath: string;
+}): IntegrationOwnershipReviewAttestation {
+  const findings = integrationOwnershipFindings(input.files, input.rules, input.manifestLane);
+  return {
+    baseSha: input.baseSha,
+    headSha: input.headSha,
+    trustedBaseOwnershipPolicySha256: input.trustedBaseOwnershipPolicySha256,
+    gitDiffPathInventorySha256: exactGitDiffPathInventorySha256(input.files),
+    ownershipFindingInventorySha256: ownershipFindingInventorySha256(findings),
+    ownershipFindingCounts: integrationOwnershipFindingCounts(findings),
+    reviewerIdentity: input.reviewerIdentity,
+    reviewedAt: input.reviewedAt,
+    reviewArtifactPath: input.reviewArtifactPath,
+  };
+}
+
+export function integrationOwnershipReviewArtifact(
+  attestation: IntegrationOwnershipReviewAttestation,
+): IntegrationOwnershipReviewArtifact {
+  return {
+    artifactSchemaVersion: 1,
+    kind: "xenios.integration-ownership-review",
+    attestation: structuredClone(attestation),
+  };
+}
+
+export function serializeIntegrationOwnershipReviewArtifact(
+  attestation: IntegrationOwnershipReviewAttestation,
+): Buffer {
+  return Buffer.from(
+    `${JSON.stringify(integrationOwnershipReviewArtifact(attestation), null, 2)}\n`,
+    "utf8",
+  );
+}
+
+export function integrationOwnershipReviewArtifactSha256(bytes: Buffer | string): string {
+  return createHash("sha256").update(bytes).digest("hex");
+}
+
+export function buildIntegrationOwnershipReview(input: {
+  baseSha: string;
+  headSha: string;
+  trustedBaseOwnershipPolicySha256: string;
+  files: readonly string[];
+  rules: readonly OwnershipRule[];
+  manifestLane: string;
+  reviewerIdentity: string;
+  reviewedAt: string;
+  reviewArtifactPath: string;
+}): {
+  review: IntegrationOwnershipReview;
+  artifact: IntegrationOwnershipReviewArtifact;
+  artifactBytes: Buffer;
+} {
+  const attestation = buildIntegrationOwnershipReviewAttestation(input);
+  const artifact = integrationOwnershipReviewArtifact(attestation);
+  const artifactBytes = serializeIntegrationOwnershipReviewArtifact(attestation);
+  return {
+    review: {
+      ...attestation,
+      reviewArtifactSha256: integrationOwnershipReviewArtifactSha256(artifactBytes),
+    },
+    artifact,
+    artifactBytes,
+  };
+}
+
+export function isSafeRepositoryReviewArtifactPath(value: unknown): value is string {
+  if (
+    typeof value !== "string" ||
+    value.length === 0 ||
+    value.length > 512 ||
+    value.startsWith("/") ||
+    value.endsWith("/") ||
+    value.includes("\\") ||
+    value.includes("\0") ||
+    /[\u0000-\u001f\u007f]/.test(value) ||
+    /^[A-Za-z]:/.test(value)
+  ) return false;
+  const segments = value.split("/");
+  return segments.every(
+    (segment) =>
+      segment.length > 0 &&
+      segment !== "." &&
+      segment !== ".." &&
+      segment.toLowerCase() !== ".git" &&
+      !segment.includes(":"),
+  );
+}
+
+function reviewAttestationFromManifest(
+  review: Record<string, unknown>,
+): IntegrationOwnershipReviewAttestation {
+  const counts = objectValue(review.ownershipFindingCounts);
+  return {
+    baseSha: review.baseSha as string,
+    headSha: review.headSha as string,
+    trustedBaseOwnershipPolicySha256: review.trustedBaseOwnershipPolicySha256 as string,
+    gitDiffPathInventorySha256: review.gitDiffPathInventorySha256 as string,
+    ownershipFindingInventorySha256: review.ownershipFindingInventorySha256 as string,
+    ownershipFindingCounts: {
+      UNOWNED_FILE: counts?.UNOWNED_FILE as number,
+      WRONG_LANE_OWNER: counts?.WRONG_LANE_OWNER as number,
+      OWNERSHIP_CONFLICT: counts?.OWNERSHIP_CONFLICT as number,
+    },
+    reviewerIdentity: review.reviewerIdentity as string,
+    reviewedAt: review.reviewedAt as string,
+    reviewArtifactPath: review.reviewArtifactPath as string,
+  };
+}
+
+export function parseIntegrationOwnershipReviewArtifact(
+  raw: Buffer | string,
+): IntegrationOwnershipReviewArtifact | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(typeof raw === "string" ? raw : raw.toString("utf8")) as unknown;
+  } catch {
+    return null;
+  }
+  const artifact = objectValue(parsed);
+  const attestation = objectValue(artifact?.attestation);
+  const counts = objectValue(attestation?.ownershipFindingCounts);
+  if (
+    !artifact ||
+    !exactKeys(artifact, INTEGRATION_REVIEW_ARTIFACT_KEYS) ||
+    artifact.artifactSchemaVersion !== 1 ||
+    artifact.kind !== "xenios.integration-ownership-review" ||
+    !attestation ||
+    !exactKeys(attestation, INTEGRATION_REVIEW_ATTESTATION_KEYS) ||
+    !counts ||
+    !exactKeys(counts, INTEGRATION_REVIEW_COUNT_KEYS)
+  ) return null;
+  return artifact as unknown as IntegrationOwnershipReviewArtifact;
+}
+
+function validateIntegrationOwnershipReview(
+  manifest: Record<string, unknown>,
+  options: ReleaseManifestValidationOptions,
+  exactDiffFiles: readonly string[],
+): { issues: ValidationIssue[]; reconcilesOwnershipFindings: boolean } {
+  const issues: ValidationIssue[] = [];
+  const review = objectValue(manifest.integrationOwnershipReview);
+  if (!review) {
+    return {
+      issues: [{
+        code: "INTEGRATION_OWNERSHIP_REVIEW_REQUIRED",
+        message: "schemaVersion 2 requires an integrationOwnershipReview.",
+      }],
+      reconcilesOwnershipFindings: false,
+    };
+  }
+
+  const counts = objectValue(review.ownershipFindingCounts);
+  const reviewShapeValid =
+    exactKeys(review, new Set([
+      ...INTEGRATION_REVIEW_ATTESTATION_KEYS,
+      "reviewArtifactSha256",
+    ])) &&
+    typeof review.baseSha === "string" && SHA_PATTERN.test(review.baseSha) &&
+    typeof review.headSha === "string" && SHA_PATTERN.test(review.headSha) &&
+    typeof review.trustedBaseOwnershipPolicySha256 === "string" &&
+    SHA256_PATTERN.test(review.trustedBaseOwnershipPolicySha256) &&
+    typeof review.gitDiffPathInventorySha256 === "string" &&
+    SHA256_PATTERN.test(review.gitDiffPathInventorySha256) &&
+    typeof review.ownershipFindingInventorySha256 === "string" &&
+    SHA256_PATTERN.test(review.ownershipFindingInventorySha256) &&
+    counts !== null &&
+    exactKeys(counts, INTEGRATION_REVIEW_COUNT_KEYS) &&
+    [...INTEGRATION_REVIEW_COUNT_KEYS].every(
+      (code) => Number.isSafeInteger(counts[code]) && (counts[code] as number) >= 0,
+    ) &&
+    nonEmptyString(review.reviewerIdentity) &&
+    review.reviewerIdentity.length <= 200 &&
+    validDate(review.reviewedAt) !== null &&
+    isSafeRepositoryReviewArtifactPath(review.reviewArtifactPath) &&
+    typeof review.reviewArtifactSha256 === "string" &&
+    SHA256_PATTERN.test(review.reviewArtifactSha256);
+  if (!reviewShapeValid) {
+    issues.push({
+      code: "INTEGRATION_OWNERSHIP_REVIEW_INVALID",
+      message: "integrationOwnershipReview does not match the closed attestation structure.",
+    });
+  }
+
+  const binding = options.gitBinding;
+  const exactBindingValid = Boolean(
+    binding?.baseExists &&
+    binding.headExists &&
+    binding.resolvedBaseSha === manifest.baseSha &&
+    binding.resolvedHeadSha === manifest.headSha &&
+    binding.headSha === manifest.headSha,
+  );
+  if (!exactBindingValid) {
+    issues.push({
+      code: "INTEGRATION_OWNERSHIP_EXACT_DIFF_REQUIRED",
+      message: "Integration ownership review requires a fully resolved exact base..head Git binding.",
+    });
+  }
+  for (const path of exactDiffFiles) {
+    if (!isSafeRepositoryReviewArtifactPath(path)) {
+      issues.push({
+        code: "INTEGRATION_OWNERSHIP_UNSAFE_DIFF_PATH",
+        message: `Integration ownership review refuses unsafe Git diff path: ${path}`,
+      });
+    }
+  }
+
+  const trustedPolicy = options.trustedOwnershipPolicy;
+  const trustedPolicyValid = Boolean(
+    trustedPolicy &&
+    SHA256_PATTERN.test(trustedPolicy.sha256) &&
+    trustedPolicy.source === "trusted_base_commit" &&
+    trustedPolicy.rules.length > 0 &&
+    trustedPolicy.rules.every((rule) =>
+      rule.mode === "write" &&
+      rule.patterns.length > 0 &&
+      rule.patterns.every(safeOwnershipPattern)),
+  );
+  if (!trustedPolicyValid) {
+    issues.push({
+      code: "INTEGRATION_OWNERSHIP_TRUSTED_POLICY_REQUIRED",
+      message: "Integration ownership review requires the independently loaded policy blob from the trusted base commit.",
+    });
+  }
+
+  const manifestLane = stringValue(manifest.lane) ?? "";
+  const findings = integrationOwnershipFindings(
+    exactDiffFiles,
+    trustedPolicyValid ? trustedPolicy!.rules : [],
+    manifestLane,
+  );
+  const expected = buildIntegrationOwnershipReviewAttestation({
+    baseSha: typeof manifest.baseSha === "string" ? manifest.baseSha : "",
+    headSha: typeof manifest.headSha === "string" ? manifest.headSha : "",
+    trustedBaseOwnershipPolicySha256: trustedPolicyValid ? trustedPolicy!.sha256 : "",
+    files: exactDiffFiles,
+    rules: trustedPolicyValid ? trustedPolicy!.rules : [],
+    manifestLane,
+    reviewerIdentity: typeof review.reviewerIdentity === "string" ? review.reviewerIdentity : "",
+    reviewedAt: typeof review.reviewedAt === "string" ? review.reviewedAt : "",
+    reviewArtifactPath: typeof review.reviewArtifactPath === "string"
+      ? review.reviewArtifactPath
+      : "",
+  });
+
+  const compareField = (
+    field: keyof IntegrationOwnershipReviewAttestation,
+    code: string,
+  ): void => {
+    if (!isDeepStrictEqual(review[field], expected[field])) {
+      issues.push({
+        code,
+        message: `integrationOwnershipReview.${field} does not match the independently recomputed value.`,
+      });
+    }
+  };
+  compareField("baseSha", "INTEGRATION_OWNERSHIP_BASE_MISMATCH");
+  compareField("headSha", "INTEGRATION_OWNERSHIP_HEAD_MISMATCH");
+  compareField(
+    "trustedBaseOwnershipPolicySha256",
+    "INTEGRATION_OWNERSHIP_POLICY_DIGEST_MISMATCH",
+  );
+  compareField(
+    "gitDiffPathInventorySha256",
+    "INTEGRATION_OWNERSHIP_DIFF_INVENTORY_MISMATCH",
+  );
+  compareField(
+    "ownershipFindingInventorySha256",
+    "INTEGRATION_OWNERSHIP_FINDING_INVENTORY_MISMATCH",
+  );
+  compareField("ownershipFindingCounts", "INTEGRATION_OWNERSHIP_COUNTS_MISMATCH");
+
+  if (findings.some((finding) => finding.code === "OWNERSHIP_CONFLICT") ||
+      counts?.OWNERSHIP_CONFLICT !== 0) {
+    issues.push({
+      code: "INTEGRATION_OWNERSHIP_CONFLICT_REFUSED",
+      message: "Ownership conflicts cannot be reconciled by an integration ownership review.",
+    });
+  }
+
+  const reviewedAt = validDate(review.reviewedAt);
+  if (reviewedAt) {
+    const now = options.now ?? new Date();
+    const age = now.getTime() - reviewedAt.getTime();
+    const maxAge = options.maxIntegrationOwnershipReviewAgeMs ??
+      options.maxEvidenceAgeMs ?? DEFAULT_MAX_EVIDENCE_AGE_MS;
+    if (age > maxAge) {
+      issues.push({
+        code: "STALE_INTEGRATION_OWNERSHIP_REVIEW",
+        message: "Integration ownership review is older than the allowed review window.",
+      });
+    }
+    if (age < -5 * 60_000) {
+      issues.push({
+        code: "FUTURE_INTEGRATION_OWNERSHIP_REVIEW",
+        message: "Integration ownership review is materially in the future.",
+      });
+    }
+  }
+
+  if (isSafeRepositoryReviewArtifactPath(review.reviewArtifactPath) &&
+      typeof review.reviewArtifactSha256 === "string" &&
+      SHA256_PATTERN.test(review.reviewArtifactSha256)) {
+    let rawArtifact: Buffer | string | null = null;
+    try {
+      rawArtifact = options.readIntegrationOwnershipReviewArtifact?.(
+        review.reviewArtifactPath,
+      ) ?? null;
+    } catch {
+      rawArtifact = null;
+    }
+    if (rawArtifact === null) {
+      issues.push({
+        code: "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_UNAVAILABLE",
+        message: `Integration ownership review artifact could not be read at ${review.reviewArtifactPath}.`,
+      });
+    } else {
+      const actualArtifactSha256 = integrationOwnershipReviewArtifactSha256(rawArtifact);
+      if (actualArtifactSha256 !== review.reviewArtifactSha256) {
+        issues.push({
+          code: "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_HASH_MISMATCH",
+          message: "Integration ownership review artifact bytes do not match the manifest digest.",
+        });
+      }
+      const artifact = parseIntegrationOwnershipReviewArtifact(rawArtifact);
+      if (!artifact) {
+        issues.push({
+          code: "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_INVALID",
+          message: "Integration ownership review artifact is not a closed canonical attestation.",
+        });
+      } else if (!isDeepStrictEqual(
+        artifact.attestation,
+        reviewAttestationFromManifest(review),
+      )) {
+        issues.push({
+          code: "INTEGRATION_OWNERSHIP_REVIEW_ARTIFACT_ATTESTATION_MISMATCH",
+          message: "Integration ownership review artifact attestation does not exactly mirror the manifest review.",
+        });
+      }
+    }
+  }
+
+  return {
+    issues,
+    reconcilesOwnershipFindings: issues.length === 0,
+  };
+}
+
 export function validateReleaseManifest(
   input: unknown,
   options: ReleaseManifestValidationOptions = {},
@@ -538,8 +1049,8 @@ export function validateReleaseManifest(
     }
   }
 
-  if (manifest.schemaVersion !== 1) {
-    issues.push({ code: "SCHEMA_VERSION", message: "schemaVersion must equal 1." });
+  if (manifest.schemaVersion !== 1 && manifest.schemaVersion !== 2) {
+    issues.push({ code: "SCHEMA_VERSION", message: "schemaVersion must equal 1 or 2." });
   }
 
   for (const field of ["releaseId", "domain", "lane", "owner"] as const) {
@@ -658,24 +1169,37 @@ export function validateReleaseManifest(
     }
     ownershipFiles = exactDiffFiles;
   }
-  if (options.ownershipRules) {
+  const ownershipIssues: ValidationIssue[] = [];
+  const ownershipRules = manifest.schemaVersion === 2
+    ? options.trustedOwnershipPolicy?.rules
+    : options.ownershipRules;
+  if (ownershipRules) {
     const lane = stringValue(manifest.lane);
-    for (const file of ownershipFiles) {
-      const owners = ownersForFile(file, options.ownershipRules);
-      if (owners.length === 0) {
-        issues.push({ code: "UNOWNED_FILE", message: `${file} has no write owner.` });
-      } else if (owners.length > 1) {
-        issues.push({
-          code: "OWNERSHIP_CONFLICT",
-          message: `${file} is owned by ${owners.map((owner) => owner.id).join(", ")}.`,
-        });
-      } else if (lane && owners[0].lane !== lane) {
-        issues.push({
-          code: "WRONG_LANE_OWNER",
-          message: `${file} belongs to ${owners[0].lane}, not manifest lane ${lane}.`,
-        });
+    if (lane) {
+      for (const finding of integrationOwnershipFindings(ownershipFiles, ownershipRules, lane)) {
+        if (finding.code === "UNOWNED_FILE") {
+          ownershipIssues.push({ code: finding.code, message: `${finding.path} has no write owner.` });
+        } else if (finding.code === "OWNERSHIP_CONFLICT") {
+          ownershipIssues.push({
+            code: finding.code,
+            message: `${finding.path} is owned by ${finding.owners.map((owner) => owner.id).join(", ")}.`,
+          });
+        } else {
+          ownershipIssues.push({
+            code: finding.code,
+            message: `${finding.path} belongs to ${finding.owners[0].lane}, not manifest lane ${lane}.`,
+          });
+        }
       }
     }
+  }
+  if (manifest.schemaVersion === 2) {
+    const review = validateIntegrationOwnershipReview(manifest, options, ownershipFiles);
+    issues.push(...review.issues);
+    issues.push(...ownershipIssues.filter((issue) =>
+      !review.reconcilesOwnershipFindings || issue.code === "OWNERSHIP_CONFLICT"));
+  } else {
+    issues.push(...ownershipIssues);
   }
 
   const routes = Array.isArray(manifest.routes) ? manifest.routes : null;
@@ -866,6 +1390,27 @@ if (isCli()) {
       expectedProductionSha: reviewedBase,
       expectedHeadSha: reviewedHead,
       ownershipRules: trustedOwnership.policy?.rules ?? [],
+      ...(trustedOwnership.policy
+        ? {
+            trustedOwnershipPolicy: {
+              rules: trustedOwnership.policy.rules,
+              sha256: trustedOwnership.policy.sha256,
+              source: trustedOwnership.policy.source,
+            },
+          }
+        : {}),
+      readIntegrationOwnershipReviewArtifact: (path) => {
+        if (!isSafeRepositoryReviewArtifactPath(path)) return null;
+        try {
+          return execFileSync("git", ["show", `:${path}`], {
+            cwd: root,
+            encoding: "buffer",
+            stdio: ["ignore", "pipe", "ignore"],
+          });
+        } catch {
+          return null;
+        }
+      },
       gitBinding: {
         baseExists,
         headExists,

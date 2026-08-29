@@ -67,7 +67,40 @@
       "semanticContract": {
         "requiredSelectors": ["[data-testid=\"early-access-agreement-mount\"]"],
         "requiredText": ["Research Catalogue", "Research Use Policy"]
-      }
+      },
+      "expectedHttpFailures": [
+        {
+          "path": "/api/research/early-access/cart/capability",
+          "method": "GET",
+          "status": 404,
+          "count": 1,
+          "responseBodySha256": "6f116de8e6c353d622cee6ec43cc796ce65a0ea613919535f1a86ce3b17ef25c",
+          "consoleText": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "reason": "The production-shaped preview keeps the optional multi-product cart flag off; the literal capability door intentionally reports CART_DISABLED while the reviewed assisted-order journey remains visible.",
+          "productionEvidence": "server/research/early-access/register.ts defines the disabled capability response, and server/research/early-access/cart/store-composition.test.ts pins the flag-off composition."
+        },
+        {
+          "path": "/api/research/early-access/agreements",
+          "method": "GET",
+          "status": 500,
+          "count": 1,
+          "responseBodySha256": "844017da0cc89b1b9278a8787305e2828148d626981afe1ca47fa732454e0122",
+          "consoleText": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+          "reason": "The isolated preview refuses the durable agreement-status RPC and the route truthfully renders the unaccepted/unavailable agreement state; it never fabricates an acceptance.",
+          "productionEvidence": "server/research/early-access/routes/agreement-routes.ts and persistence/commerce-ports.ts require the durable agreement authority and fail closed when it is unavailable."
+        },
+        {
+          "path": "/api/research/early-access/catalog",
+          "method": "GET",
+          "status": 503,
+          "count": 1,
+          "responseBodySha256": "eecb68464ece463ee0d6deb1b2663e0d970f2ca5bbdc99680c3365996a0c0a0a",
+          "consoleText": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+          "reason": "The isolated preview has no Product Control or release-ledger rows and refuses to turn an unavailable authoritative read into a fabricated empty sellable catalogue; the separate assisted-order catalogue layout remains under semantic assertion.",
+          "productionEvidence": "server/research/early-access/catalog/product-control-source.ts explicitly forbids substituting an empty catalogue for an unavailable production read."
+        }
+      ],
+      "$comment": "The semantic contract proves the agreement and assisted-order surfaces render. The three exact fail-closed API responses disclose the intentionally empty/refusing preview data plane rather than hiding it."
     },
     {
       "path": "/research/early-access/order-request",

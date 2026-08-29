@@ -18,7 +18,10 @@ export class CdpConnection {
     });
     this.ws.on("message", (raw) => this.onMessage(JSON.parse(String(raw))));
     this.ws.on("close", () => {
-      for (const [, p] of this.pending) p.reject(new Error("CDP connection closed"));
+      for (const [, p] of this.pending) {
+        clearTimeout(p.timeout);
+        p.reject(new Error("CDP connection closed"));
+      }
       this.pending.clear();
     });
     return this;
@@ -29,6 +32,7 @@ export class CdpConnection {
       const p = this.pending.get(msg.id);
       if (!p) return;
       this.pending.delete(msg.id);
+      clearTimeout(p.timeout);
       if (msg.error) p.reject(new Error(`${p.method}: ${msg.error.message}`));
       else p.resolve(msg.result ?? {});
       return;
@@ -37,11 +41,32 @@ export class CdpConnection {
     for (const fn of this.listeners.get(key) ?? []) fn(msg.params ?? {});
   }
 
-  send(method, params = {}, sessionId) {
+  send(method, params = {}, sessionId, { timeoutMs } = {}) {
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject, method });
-      this.ws.send(JSON.stringify({ id, method, params, sessionId }));
+      const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0
+        ? setTimeout(() => {
+            const pending = this.pending.get(id);
+            if (!pending) return;
+            this.pending.delete(id);
+            pending.reject(new Error(`${method}: timed out after ${timeoutMs}ms`));
+          }, timeoutMs)
+        : null;
+      this.pending.set(id, { resolve, reject, method, timeout });
+      try {
+        this.ws.send(JSON.stringify({ id, method, params, sessionId }), (error) => {
+          if (!error) return;
+          const pending = this.pending.get(id);
+          if (!pending) return;
+          this.pending.delete(id);
+          clearTimeout(pending.timeout);
+          pending.reject(error);
+        });
+      } catch (error) {
+        this.pending.delete(id);
+        clearTimeout(timeout);
+        reject(error);
+      }
     });
   }
 
@@ -64,6 +89,13 @@ export class CdpConnection {
 /** Reviewed ceiling that prevents an accidental unbounded bitmap capture. */
 export const MAX_FULL_PAGE_HEIGHT_CSS_PX = 24000;
 
+/**
+ * Error-response bodies are audit telemetry, not active network requests. CDP
+ * occasionally fails to answer Network.getResponseBody, so every read must
+ * resolve to either an exact hash or an explicit unavailable value promptly.
+ */
+const ERROR_RESPONSE_BODY_TIMEOUT_MS = 2000;
+
 /** A page session: one target, one sessionId, console/network bookkeeping. */
 export class PageSession {
   constructor(conn, targetId, sessionId) {
@@ -76,6 +108,9 @@ export class PageSession {
     this.networkBoundaryViolations = [];
     this.networkBoundaryFulfillments = [];
     this.inflight = new Map();
+    this.recordsGeneration = 0;
+    this.errorResponseBodyTelemetry = new Set();
+    this.errorResponseBodyTimeoutMs = ERROR_RESPONSE_BODY_TIMEOUT_MS;
     this.boundarySessionIds = new Set();
     this.boundaryTelemetrySessionIds = new Set();
     this.boundaryTargetPromises = new Set();
@@ -152,21 +187,17 @@ export class PageSession {
         (p) => {
           const req = page.inflight.get(p.requestId);
           const record = req?.responseRecord;
-          if (!record || record.status < 400) {
-            page.inflight.delete(p.requestId);
-            return;
+          // loadingFinished is authoritative for network idleness. Reading an
+          // error body is a separate, bounded audit operation and must never
+          // manufacture a still-in-flight request after HTTP completion.
+          page.inflight.delete(p.requestId);
+          if (record?.status >= 400) {
+            page.queueErrorResponseBodyTelemetry({
+              record,
+              requestId: p.requestId,
+              sessionId,
+            });
           }
-          page.send("Network.getResponseBody", { requestId: p.requestId })
-            .then(({ body = "", base64Encoded = false }) => {
-              const bytes = base64Encoded ? Buffer.from(body, "base64") : Buffer.from(body, "utf8");
-              record.bodySha256 = createHash("sha256").update(bytes).digest("hex");
-              record.bodyBytes = bytes.length;
-            })
-            .catch(() => {
-              record.bodySha256 = null;
-              record.bodyBytes = null;
-            })
-            .finally(() => page.inflight.delete(p.requestId));
         },
         sessionId,
       ),
@@ -196,12 +227,108 @@ export class PageSession {
   }
 
   resetRecords() {
+    this.recordsGeneration += 1;
+    for (const telemetry of this.errorResponseBodyTelemetry) telemetry.cancel();
+    this.errorResponseBodyTelemetry = new Set();
     this.console = [];
     this.network = [];
     this.networkBoundaryViolations = [];
     this.networkBoundaryFulfillments = [];
     this.inflight.clear();
     this.loaded = false;
+  }
+
+  /**
+   * Queue an exact error-response body digest without extending network idle.
+   * A reset cancels the generation locally; the underlying CDP reply may still
+   * arrive, but it can no longer mutate or drain the next capture's records.
+   */
+  queueErrorResponseBodyTelemetry({ record, requestId, sessionId }) {
+    record.bodySha256 = null;
+    record.bodyBytes = null;
+
+    const generation = this.recordsGeneration;
+    const telemetrySet = this.errorResponseBodyTelemetry;
+    let resolveTelemetry;
+    const telemetry = {
+      generation,
+      record,
+      settled: false,
+      timeout: null,
+      promise: new Promise((resolve) => { resolveTelemetry = resolve; }),
+      cancel: null,
+    };
+    const finish = (result, writeResult = true) => {
+      if (telemetry.settled) return;
+      telemetry.settled = true;
+      clearTimeout(telemetry.timeout);
+      telemetrySet.delete(telemetry);
+      try {
+        if (
+          writeResult &&
+          generation === this.recordsGeneration &&
+          telemetrySet === this.errorResponseBodyTelemetry &&
+          this.network.includes(record) &&
+          result
+        ) {
+          const { body = "", base64Encoded = false } = result;
+          const bytes = base64Encoded ? Buffer.from(body, "base64") : Buffer.from(body, "utf8");
+          record.bodySha256 = createHash("sha256").update(bytes).digest("hex");
+          record.bodyBytes = bytes.length;
+        }
+      } catch {
+        // A malformed CDP reply is unavailable telemetry, never an unhandled
+        // rejection or a promise that can strand the capture.
+        record.bodySha256 = null;
+        record.bodyBytes = null;
+      } finally {
+        resolveTelemetry();
+      }
+    };
+    telemetry.cancel = () => finish(null, false);
+    telemetrySet.add(telemetry);
+    telemetry.timeout = setTimeout(() => finish(null), this.errorResponseBodyTimeoutMs);
+
+    // Promise.resolve().then(...) also converts a synchronous test-double or
+    // connection failure into the same fail-closed unavailable result.
+    void Promise.resolve()
+      .then(() => this.conn.send(
+        "Network.getResponseBody",
+        { requestId },
+        sessionId,
+        { timeoutMs: this.errorResponseBodyTimeoutMs },
+      ))
+      .then((result) => finish(result), () => finish(null));
+    return telemetry.promise;
+  }
+
+  /** Finish all body telemetry for this capture by the settle deadline. */
+  async waitForErrorResponseBodyTelemetry({ deadline }) {
+    while (this.errorResponseBodyTelemetry.size > 0) {
+      const generation = this.recordsGeneration;
+      const pending = [...this.errorResponseBodyTelemetry]
+        .filter((telemetry) => telemetry.generation === generation);
+      if (pending.length === 0) return;
+      const remainingMs = deadline - Date.now();
+      if (remainingMs <= 0) {
+        for (const telemetry of pending) telemetry.cancel();
+        return;
+      }
+      let deadlineTimer;
+      await Promise.race([
+        Promise.all(pending.map((telemetry) => telemetry.promise)),
+        new Promise((resolve) => {
+          deadlineTimer = setTimeout(resolve, remainingMs);
+        }),
+      ]);
+      clearTimeout(deadlineTimer);
+      if (Date.now() >= deadline) {
+        for (const telemetry of [...this.errorResponseBodyTelemetry]) {
+          if (telemetry.generation === generation) telemetry.cancel();
+        }
+        return;
+      }
+    }
   }
 
   /**
@@ -422,21 +549,14 @@ export class PageSession {
         const requestKey = key(params.requestId);
         const request = this.inflight.get(requestKey);
         const record = request?.responseRecord;
-        if (!record || record.status < 400) {
-          this.inflight.delete(requestKey);
-          return;
+        this.inflight.delete(requestKey);
+        if (record?.status >= 400) {
+          this.queueErrorResponseBodyTelemetry({
+            record,
+            requestId: params.requestId,
+            sessionId,
+          });
         }
-        this.conn.send("Network.getResponseBody", { requestId: params.requestId }, sessionId)
-          .then(({ body = "", base64Encoded = false }) => {
-            const bytes = base64Encoded ? Buffer.from(body, "base64") : Buffer.from(body, "utf8");
-            record.bodySha256 = createHash("sha256").update(bytes).digest("hex");
-            record.bodyBytes = bytes.length;
-          })
-          .catch(() => {
-            record.bodySha256 = null;
-            record.bodyBytes = null;
-          })
-          .finally(() => this.inflight.delete(requestKey));
       }, sessionId),
       this.conn.on("Network.loadingFailed", (params) => {
         const requestKey = key(params.requestId);
@@ -572,8 +692,9 @@ export class PageSession {
   async settle({ quietMs = 800, maxSettleMs = 8000 } = {}) {
     await this.waitForBoundaryTargets();
     const settleStart = Date.now();
+    const settleDeadline = settleStart + maxSettleMs;
     let quietSince = this.inflight.size === 0 ? Date.now() : null;
-    while (Date.now() - settleStart < maxSettleMs) {
+    while (Date.now() < settleDeadline) {
       await this.waitForBoundaryTargets();
       if (this.inflight.size === 0) {
         quietSince ??= Date.now();
@@ -584,7 +705,11 @@ export class PageSession {
           await this.evaluate("new Promise(r => requestAnimationFrame(() => setTimeout(r, 50)))");
           await this.waitForBoundaryTargets();
           if (this.inflight.size === 0) {
-            return Object.freeze({ reachedIdle: true, pendingRequests: 0 });
+            await this.waitForErrorResponseBodyTelemetry({ deadline: settleDeadline });
+            await this.waitForBoundaryTargets();
+            if (this.inflight.size === 0) {
+              return Object.freeze({ reachedIdle: true, pendingRequests: 0 });
+            }
           }
           quietSince = null;
         }
@@ -682,6 +807,8 @@ export class PageSession {
   }
 
   async close() {
+    for (const telemetry of this.errorResponseBodyTelemetry) telemetry.cancel();
+    this.errorResponseBodyTelemetry.clear();
     for (const off of this.unsubscribe) off();
     try {
       await this.conn.send("Target.closeTarget", { targetId: this.targetId });
