@@ -27,7 +27,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Xenios Research | Clear, evidence-aware research access\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Xenios Research \\| Clear, evidence-aware research access\"$"
       ]
     },
     {
@@ -43,7 +43,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Private document, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
       ]
     },
     {
@@ -59,7 +59,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Private document, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
       ]
     },
     {
@@ -75,7 +75,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Access Xenios Research\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Access Xenios Research\"$"
       ]
     },
     {
@@ -91,7 +91,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Accessibility Statement, xenios research\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Accessibility Statement, xenios research\"$"
       ]
     },
     {
@@ -107,7 +107,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Private document, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
       ]
     },
     {
@@ -123,7 +123,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Private document, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
       ]
     },
     {
@@ -149,13 +149,13 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Private document, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
       ]
     },
     {
       "method": "GET",
       "path": "/research/this-route-does-not-exist-xr-critical-diff",
-      "rationale": "The recut makes unknown Research documents authoritative HTTP 404 responses instead of returning the production SPA shell, under the exact private document policy.",
+      "rationale": "The recut makes unknown Research documents authoritative HTTP 404 responses instead of returning the production SPA shell, under the exact not-found document policy and its shared noindex/noarchive/no-store envelope.",
       "allowDisappearance": true,
       "allow": [
         "^status 200 -> 404$",
@@ -167,7 +167,7 @@
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker json-ld: 4 -> 0$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
-        "^html-marker title: \"xenios | The operating system for proactive health\" -> \"Not found, xenios\"$"
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Not found, xenios\"$"
       ]
     }
   ]

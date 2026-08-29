@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -140,6 +140,65 @@ describe("critical endpoint inventory", () => {
       "GET /hino/",
       "GET /hino/story/",
     ]);
+  });
+});
+
+describe("checked-in intentional-change expectations", () => {
+  it("keeps every allow regex fully anchored and free of unescaped alternation", () => {
+    const expectations = JSON.parse(
+      readFileSync(
+        path.join(
+          REPO_ROOT,
+          "scripts",
+          "release",
+          "critical-endpoint-expectations.json",
+        ),
+        "utf8",
+      ),
+    ) as {
+      intentionalChanges?: Array<{ allow?: string[] }>;
+    };
+
+    const patterns = (expectations.intentionalChanges ?? []).flatMap(
+      (rule) => rule.allow ?? [],
+    );
+    expect(patterns.length).toBeGreaterThan(0);
+
+    for (const pattern of patterns) {
+      expect(pattern.startsWith("^")).toBe(true);
+      expect(pattern.endsWith("$")).toBe(true);
+      expect(pattern).not.toMatch(/(^|[^\\])\|/u);
+      expect(() => new RegExp(pattern)).not.toThrow();
+    }
+  });
+
+  it("rejects unrelated title mutations from every title allowance", () => {
+    const expectations = JSON.parse(
+      readFileSync(
+        path.join(
+          REPO_ROOT,
+          "scripts",
+          "release",
+          "critical-endpoint-expectations.json",
+        ),
+        "utf8",
+      ),
+    ) as {
+      intentionalChanges?: Array<{ allow?: string[] }>;
+    };
+
+    const titlePatterns = (expectations.intentionalChanges ?? [])
+      .flatMap((rule) => rule.allow ?? [])
+      .filter((pattern) => pattern.startsWith("^html-marker title:"));
+    expect(titlePatterns).toHaveLength(9);
+
+    for (const pattern of titlePatterns) {
+      expect(
+        new RegExp(pattern).test(
+          'html-marker title: "xenios TOTALLY UNRELATED CHANGE',
+        ),
+      ).toBe(false);
+    }
   });
 });
 
