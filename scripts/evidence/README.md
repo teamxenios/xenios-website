@@ -43,10 +43,18 @@ is outside the repository and uses the current `20260829` release-evidence
 namespace; choose another persistent external location if needed.
 
 ```powershell
-$Toolchain = Join-Path $env:LOCALAPPDATA "Xenios\toolchains\node-v20.19.0-win-x64"
+$Toolchain = $env:XR_NODE20_TOOLCHAIN
+if ([string]::IsNullOrWhiteSpace($Toolchain)) {
+  throw "Set XR_NODE20_TOOLCHAIN to the unpacked Node 20.19.0 toolchain directory"
+}
 $Node = Join-Path $Toolchain "node.exe"
 $Npm = Join-Path $Toolchain "npm.cmd"
 $Npx = Join-Path $Toolchain "npx.cmd"
+foreach ($RequiredTool in @($Node, $Npm, $Npx)) {
+  if (-not (Test-Path -LiteralPath $RequiredTool -PathType Leaf)) {
+    throw "Pinned toolchain file is missing: $RequiredTool"
+  }
+}
 
 & $Node --version                              # exactly v20.19.0
 & $Npm --version                               # exactly 10.8.2
