@@ -601,6 +601,15 @@ export interface BuildRawHttpDocumentResponseInput {
   readonly templateHtml: string;
   readonly resolver?: RawHttpDocumentPolicyResolver;
   /**
+   * Environment indexing gate (RESEARCH_INDEXABLE === "true"). While false,
+   * every public_index document is answered noindex at the header AND the
+   * meta tag — the same gate production applied through the research
+   * middleware's X-Robots-Tag — while keeping its exact status and canonical.
+   * Defaults to true so the policy tables keep describing each document's
+   * intended indexability; the environment decides whether it is in force.
+   */
+  readonly indexable?: boolean;
+  /**
    * Route-owned JSON-LD only. JSON-LD already present in templateHtml is
    * always removed and is never treated as route authority.
    */
@@ -940,7 +949,11 @@ export function buildRawHttpDocumentResponse(
   input: BuildRawHttpDocumentResponseInput,
 ): RawHttpDocumentResponse {
   const resolver = input.resolver ?? DEFAULT_RAW_HTTP_DOCUMENT_POLICY_RESOLVER;
-  const policy = resolver.resolve(input.requestTarget);
+  const resolved = resolver.resolve(input.requestTarget);
+  const policy: RawHttpDocumentPolicy =
+    input.indexable === false && resolved.indexable
+      ? Object.freeze({ ...resolved, indexable: false, robots: RAW_HTTP_NOINDEX_ROBOTS })
+      : resolved;
   const sanitized = stripTemplateSeoAuthority(input.templateHtml);
   const closingHead = /<\/head\s*>/iu.exec(sanitized);
   if (!closingHead || closingHead.index === undefined) {

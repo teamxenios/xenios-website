@@ -7,6 +7,11 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { serveStatic } from "./static";
 
+// The document-policy cases below assert each document's INTENDED indexability
+// (index vs noindex per the policy tables). The environment gate is exercised
+// explicitly by the RESEARCH_INDEXABLE case, which toggles and restores it.
+process.env.RESEARCH_INDEXABLE = "true";
+
 // A production-shaped shell: global homepage metadata and JSON-LD exactly as
 // client/index.html carries them, because that is what the SPA fallback used
 // to send for EVERY document, including private routes and unknown paths.
@@ -144,6 +149,25 @@ describe("the production static server answers documents through the raw HTTP po
     expect(asset.headers["content-type"]).toContain("image/jpeg");
     // supertest buffers image bodies (res.body is a Buffer, res.text is undefined)
     expect(Buffer.from(asset.body).toString("utf8")).toBe("not-really-a-jpeg");
+  });
+
+  it("keeps public documents noindex at the HTTP layer until RESEARCH_INDEXABLE is true", async () => {
+    const previous = process.env.RESEARCH_INDEXABLE;
+    try {
+      delete process.env.RESEARCH_INDEXABLE;
+      const gated = await request(app).get("/research");
+      expect(gated.status).toBe(200);
+      expect(gated.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+      expect(gated.text).toContain('<meta name="robots" content="noindex,nofollow,noarchive" data-raw-http-policy="robots" />');
+      expect(gated.text).toContain('<link rel="canonical" href="https://xeniostechnology.com/research" data-raw-http-policy="canonical" />');
+      process.env.RESEARCH_INDEXABLE = "true";
+      const open = await request(app).get("/research");
+      expect(open.headers["x-robots-tag"]).toContain("index,follow");
+      expect(open.headers["x-robots-tag"]).not.toContain("noindex");
+    } finally {
+      if (previous === undefined) delete process.env.RESEARCH_INDEXABLE;
+      else process.env.RESEARCH_INDEXABLE = previous;
+    }
   });
 
   it("does not hand out the raw shell with its template schema at /index.html", async () => {

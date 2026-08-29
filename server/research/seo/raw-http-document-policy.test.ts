@@ -734,3 +734,28 @@ describe("raw HTTP HTML and schema policy", () => {
     })).toThrow("unrecognized JSON-LD");
   });
 });
+
+describe("environment indexing gate", () => {
+  const template = "<!doctype html><html><head><title>t</title></head><body><div id=\"root\"></div></body></html>";
+  it("answers a public_index document noindex while the environment gate is closed, keeping status and canonical", () => {
+    const gated = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: template, indexable: false });
+    expect(gated.status).toBe(200);
+    expect(gated.headers["X-Robots-Tag"]).toBe("noindex,nofollow,noarchive");
+    expect(gated.policy.indexable).toBe(false);
+    expect(gated.policy.canonicalUrl).toBe("https://xeniostechnology.com/research");
+    expect(gated.html).toContain('content="noindex,nofollow,noarchive" data-raw-http-policy="robots"');
+  });
+  it("leaves the policy untouched when the gate is open or unspecified", () => {
+    const open = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: template, indexable: true });
+    const unspecified = buildRawHttpDocumentResponse({ requestTarget: "/research", templateHtml: template });
+    expect(open.headers["X-Robots-Tag"]).toBe(unspecified.headers["X-Robots-Tag"]);
+    expect(open.headers["X-Robots-Tag"]).toContain("index,follow");
+  });
+  it("never changes a private or unknown document", () => {
+    const priv = buildRawHttpDocumentResponse({ requestTarget: "/research/account", templateHtml: template, indexable: false });
+    expect(priv.headers["X-Robots-Tag"]).toBe("noindex,nofollow,noarchive");
+    expect(priv.policy.canonicalUrl).toBeNull();
+    const missing = buildRawHttpDocumentResponse({ requestTarget: "/research/no-such-document", templateHtml: template, indexable: false });
+    expect(missing.status).toBe(404);
+  });
+});

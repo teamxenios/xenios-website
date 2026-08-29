@@ -26,6 +26,9 @@ export function sendRawHttpDocument(
     requestTarget: req.originalUrl || req.url,
     templateHtml,
     structuredData,
+    // Production parity: until RESEARCH_INDEXABLE is "true" every public
+    // document stays noindex at the HTTP layer as well as in the client.
+    indexable: process.env.RESEARCH_INDEXABLE === "true",
   });
   res.status(document.status).set(document.headers).send(document.html);
 }
