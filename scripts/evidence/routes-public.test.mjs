@@ -197,6 +197,7 @@ describe("public evidence topology", () => {
       ["GET", "/api/research/early-access/cart/capability", 404, 1],
       ["GET", "/api/research/early-access/agreements", 500, 1],
       ["GET", "/api/research/early-access/catalog", 503, 1],
+      ["GET", "/api/research/early-access/assisted-orders/catalog", 403, 1],
     ]);
   });
 

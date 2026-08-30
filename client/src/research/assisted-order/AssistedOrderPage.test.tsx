@@ -378,6 +378,21 @@ describe("AssistedOrderPage", () => {
     expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
   });
 
+  it("explains an authorization-gated catalog without claiming a connection failure", async () => {
+    api.loadAssistedOrderCatalog.mockRejectedValueOnce(
+      new AssistedOrderApiError(403, "not_authorized", "raw authorization detail"),
+    );
+    render({ embedded: true, continuationEnabled: false });
+    await settle();
+
+    const error = byTestId("order-catalog-error");
+    expect(error?.textContent).toContain(
+      "unavailable until the required agreement and account checks are complete",
+    );
+    expect(error?.textContent).not.toContain("connection");
+    expect(error?.textContent).not.toContain("raw authorization detail");
+  });
+
   it("announces a filter-specific empty state and provides an accessible clear action", async () => {
     api.loadAssistedOrderCatalog
       .mockResolvedValueOnce(catalogPage([directRuoItem]))
@@ -456,7 +471,6 @@ describe("AssistedOrderPage", () => {
   it("allows embedded browsing but withholds Contact until the outer gate is complete", async () => {
     render({ embedded: true, continuationEnabled: false });
     await settle();
-    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
 
     const continueButton = byTestId<HTMLButtonElement>("order-continue-contact")!;
     expect(continueButton.disabled).toBe(true);
@@ -464,6 +478,7 @@ describe("AssistedOrderPage", () => {
     expect(document.getElementById("order-continuation-gate")?.textContent).toContain(
       "Complete the required agreement and account checks",
     );
+    click(byTestId(`order-card-add-${directRuoItem.variantId}`));
     expect(byTestId("order-contact-name")).toBeNull();
   });
 

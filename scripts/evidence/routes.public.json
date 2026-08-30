@@ -98,9 +98,19 @@
           "consoleText": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
           "reason": "The isolated preview has no Product Control or release-ledger rows and refuses to turn an unavailable authoritative read into a fabricated empty sellable catalogue; the separate assisted-order catalogue layout remains under semantic assertion.",
           "productionEvidence": "server/research/early-access/catalog/product-control-source.ts explicitly forbids substituting an empty catalogue for an unavailable production read."
+        },
+        {
+          "path": "/api/research/early-access/assisted-orders/catalog",
+          "method": "GET",
+          "status": 403,
+          "count": 1,
+          "responseBodySha256": "09db90c31e9272307189d3b257e563c422350a2d977b8a9b0048c249b61f03f6",
+          "consoleText": "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+          "reason": "The isolated preview has a valid password session but no durable customer identity or agreement standing, so the assisted-order service refuses its submit-authorized catalogue instead of inventing an authorized customer.",
+          "productionEvidence": "server/research/assisted-order/express.ts derives a capability-free viewer when durable Early Access identity cannot resolve, and server/research/assisted-order/service.ts requires assisted_orders:submit before listing this catalogue."
         }
       ],
-      "$comment": "The semantic contract proves the agreement and assisted-order surfaces render. The three exact fail-closed API responses disclose the intentionally empty/refusing preview data plane rather than hiding it."
+      "$comment": "The semantic contract proves the agreement and assisted-order surfaces render. The four exact fail-closed API responses disclose the intentionally empty/refusing preview data plane rather than hiding it."
     },
     {
       "path": "/research/early-access/order-request",

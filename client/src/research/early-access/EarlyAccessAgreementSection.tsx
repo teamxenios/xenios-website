@@ -354,13 +354,14 @@ export function EarlyAccessAgreementSection({
             consent to either.
           */}
           <label
-            className="flex items-start gap-3 body-s text-ink-2"
+            className="flex items-center gap-3 body-s text-ink-2"
             htmlFor={checkboxId}
             data-testid={`${testId}-assent-label`}
           >
             <input
               id={checkboxId}
               type="checkbox"
+              className="h-11 w-11 shrink-0 accent-[var(--pulse)]"
               checked={checked}
               disabled={busy}
               onChange={(event) => setChecked(event.target.checked)}

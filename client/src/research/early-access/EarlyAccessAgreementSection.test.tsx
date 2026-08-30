@@ -176,7 +176,10 @@ describe("what the customer is shown", () => {
     expect(label?.textContent).toBe("I have read and agree to the Research Use Policy.");
     // One box, one meaning. A marketing opt-in sharing this tick would make the
     // tick evidence of neither.
-    expect(host.querySelectorAll('input[type="checkbox"]')).toHaveLength(1);
+    const checkboxes = host.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+    expect(checkboxes).toHaveLength(1);
+    expect(checkboxes[0]?.className).toContain("h-11");
+    expect(checkboxes[0]?.className).toContain("w-11");
     expect(host.textContent?.toLowerCase()).not.toContain("marketing");
     expect(host.textContent?.toLowerCase()).not.toContain("newsletter");
   });

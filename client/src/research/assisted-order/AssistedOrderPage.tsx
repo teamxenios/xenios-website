@@ -447,13 +447,16 @@ export function AssistedOrderPage({
             return next;
           });
         })
-        .catch(() => {
+        .catch((cause) => {
           if (disposed) return;
           setCatalog(null);
           setCatalogError(
             timedOut
               ? "The catalog took too long to respond. Please try again."
-              : "We couldn't load the catalog. Check your connection and try again.",
+              : cause instanceof AssistedOrderApiError &&
+                  (cause.status === 401 || cause.status === 403)
+                ? "The full catalog is unavailable until the required agreement and account checks are complete."
+                : "We couldn't load the catalog. Check your connection and try again.",
           );
         })
         .finally(() => {
@@ -898,7 +901,7 @@ export function AssistedOrderPage({
             )}
             <div className="xenios-order-total"><span>Estimated priced total</span><strong data-testid="order-estimate">{money(estimate)}</strong></div>
             <p className="xenios-order-small">Estimates only. Xenios confirms availability and payment details before fulfillment.</p>
-            {!continuationEnabled && selectionList.length > 0 ? (
+            {!continuationEnabled ? (
               <p className="xenios-order-notice" id="order-continuation-gate" role="status">
                 Complete the required agreement and account checks above before continuing.
               </p>
