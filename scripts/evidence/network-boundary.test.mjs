@@ -4,6 +4,11 @@ import { createSocket } from "node:dgram";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { assertEvidenceHttpUrl } from "./capture-http-evidence.mjs";
+import {
+  EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
+  EVIDENCE_PWA_DISMISSAL_SOURCE,
+  establishEvidencePwaControl,
+} from "./capture-browser-matrix.mjs";
 import { launchChromium } from "./lib/chrome.mjs";
 import {
   assertStableFullPageScreenshotCoverage,
@@ -193,6 +198,235 @@ describe("live CDP evidence boundary regressions", () => {
         entry.method === "GET" && entry.url.startsWith("https://example.com/private?REDACTED"),
       )).toBe(true);
       expect(JSON.stringify(page.networkBoundaryViolations)).not.toMatch(/worker-secret|service-worker-secret|user:secret/u);
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("records service-worker console errors on the child target", async () => {
+    const fixture = await serve((request, response) => {
+      if (request.url === "/sw.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end(`
+          console.error("WORKER_WARMUP_ERROR");
+          self.addEventListener("install", () => self.skipWaiting());
+        `);
+        return;
+      }
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(`<!doctype html><html><body><main>worker console telemetry</main><script>
+        navigator.serviceWorker.register("/sw.js").then(() => {
+          document.documentElement.dataset.workerRegistered = "true";
+        });
+      </script></body></html>`);
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin);
+      await page.navigate(`${fixture.origin}/`, { quietMs: 100, maxSettleMs: 5000 });
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        await page.waitForBoundaryTargets();
+        if (page.console.some((entry) =>
+          entry.targetType === "worker-or-child" &&
+          entry.level === "error" &&
+          entry.text.includes("WORKER_WARMUP_ERROR"),
+        )) break;
+        await sleep(25);
+      }
+      expect(page.console).toContainEqual(expect.objectContaining({
+        level: "error",
+        text: expect.stringContaining("WORKER_WARMUP_ERROR"),
+        targetType: "worker-or-child",
+      }));
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("records an uncaught service-worker exception on the child target", async () => {
+    const fixture = await serve((request, response) => {
+      if (request.url === "/sw.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end('throw new Error("WORKER_UNCAUGHT_EXCEPTION");');
+        return;
+      }
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(`<!doctype html><html><body><main>worker exception telemetry</main><script>
+        navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+      </script></body></html>`);
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin);
+      await page.navigate(`${fixture.origin}/`, { quietMs: 100, maxSettleMs: 5000 });
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        await page.waitForBoundaryTargets();
+        if (page.console.some((entry) =>
+          entry.targetType === "worker-or-child" &&
+          entry.level === "exception" &&
+          entry.text.includes("WORKER_UNCAUGHT_EXCEPTION"),
+        )) break;
+        await sleep(25);
+      }
+      expect(page.console).toContainEqual(expect.objectContaining({
+        level: "exception",
+        text: expect.stringContaining("WORKER_UNCAUGHT_EXCEPTION"),
+        targetType: "worker-or-child",
+      }));
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("preserves child errors received between a phase reset and navigation", async () => {
+    const fixture = await serve((request, response) => {
+      if (request.url === "/worker.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end(`
+          postMessage("ready");
+          self.onmessage = () => { throw new Error("BETWEEN_PHASES_EXCEPTION"); };
+        `);
+        return;
+      }
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(request.url === "/"
+        ? `<!doctype html><html><body><main>phase one</main><script>
+            globalThis.phaseWorker = new Worker("/worker.js");
+            phaseWorker.onmessage = () => {
+              document.documentElement.dataset.workerReady = "true";
+            };
+          </script></body></html>`
+        : "<!doctype html><html><body><main>phase two</main></body></html>");
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin);
+      await page.navigate(`${fixture.origin}/`, { quietMs: 100, maxSettleMs: 5000 });
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        if (await page.evaluate("document.documentElement.dataset.workerReady === 'true'")) break;
+        await sleep(25);
+      }
+      page.resetRecords();
+      await page.evaluate("(phaseWorker.postMessage('throw'), true)");
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        await page.waitForBoundaryTargets();
+        if (page.console.some((entry) => entry.text?.includes("BETWEEN_PHASES_EXCEPTION"))) break;
+        await sleep(25);
+      }
+      expect(page.console).toContainEqual(expect.objectContaining({
+        level: "exception",
+        text: expect.stringContaining("BETWEEN_PHASES_EXCEPTION"),
+        targetType: "worker-or-child",
+      }));
+      await page.setViewport({ width: 800, height: 600, deviceScaleFactor: 1 });
+      await page.setMedia({ colorScheme: "light" });
+      await page.navigate(`${fixture.origin}/next`, {
+        quietMs: 100,
+        maxSettleMs: 5000,
+        resetRecords: false,
+      });
+      expect(page.console).toContainEqual(expect.objectContaining({
+        level: "exception",
+        text: expect.stringContaining("BETWEEN_PHASES_EXCEPTION"),
+        targetType: "worker-or-child",
+      }));
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("passes the production-shaped exact three-record warm-up", async () => {
+    const fixture = await serve((request, response) => {
+      if (request.url === "/sw.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end(`
+          self.addEventListener("install", (event) => {
+            event.waitUntil(
+              caches.open("xenios-live-regression")
+                .then((cache) => cache.add("/offline.html"))
+                .then(() => self.skipWaiting())
+            );
+          });
+          self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+        `);
+        return;
+      }
+      if (request.url === "/offline.html") {
+        response.setHeader("Content-Type", "text/html; charset=utf-8");
+        response.end("<!doctype html><html><head><title>offline</title></head><body><main>offline</main></body></html>");
+        return;
+      }
+      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      response.end("not found");
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin, {
+        fulfillments: EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
+      });
+      await page.send("Page.addScriptToEvaluateOnNewDocument", {
+        source: EVIDENCE_PWA_DISMISSAL_SOURCE,
+      });
+      await expect(establishEvidencePwaControl(page, fixture.origin)).resolves.toMatchObject({
+        result: "PASS",
+        networkRecords: [
+          { type: "Document", targetType: null, status: 200 },
+          { type: "Script", targetType: "worker-or-child", status: 200 },
+          { type: "Fetch", targetType: "worker-or-child", status: 200 },
+        ],
+        telemetry: {
+          networkRecordCount: 3,
+          networkRecordMultisetResult: "PASS",
+          networkRecordMismatchCount: 0,
+          consoleErrorCount: 0,
+        },
+      });
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
+  it("rejects a worker that logs an error and omits the offline cache fetch", async () => {
+    const fixture = await serve((request, response) => {
+      if (request.url === "/sw.js") {
+        response.setHeader("Content-Type", "text/javascript; charset=utf-8");
+        response.end(`
+          console.error("WORKER_WARMUP_ERROR");
+          self.addEventListener("install", () => self.skipWaiting());
+          self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+        `);
+        return;
+      }
+      if (request.url === "/offline.html") {
+        response.setHeader("Content-Type", "text/html; charset=utf-8");
+        response.end("<!doctype html><html><head><title>offline</title></head><body><main>offline</main></body></html>");
+        return;
+      }
+      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      response.end("not found");
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin, {
+        fulfillments: EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
+      });
+      await page.send("Page.addScriptToEvaluateOnNewDocument", {
+        source: EVIDENCE_PWA_DISMISSAL_SOURCE,
+      });
+      await expect(establishEvidencePwaControl(page, fixture.origin)).rejects.toThrow(
+        /exact three required records.*console errors/u,
+      );
+      expect(page.network).toHaveLength(2);
+      expect(page.console).toContainEqual(expect.objectContaining({
+        level: "error",
+        text: expect.stringContaining("WORKER_WARMUP_ERROR"),
+        targetType: "worker-or-child",
+      }));
     } finally {
       await page.close();
       await fixture.close();

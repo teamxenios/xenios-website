@@ -44,11 +44,427 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+export const EVIDENCE_PWA_CONTROLLER_CHANGE_KEY = "xenios-evidence-pwa-controller-changes";
+export const EVIDENCE_PWA_WARMUP_PATH = "/offline.html";
+
 export const EVIDENCE_PWA_DISMISSAL_SOURCE = `
   try {
     window.sessionStorage.setItem("xenios-pwa-hint-dismissed", "1");
   } catch {}
+  try {
+    const key = ${JSON.stringify(EVIDENCE_PWA_CONTROLLER_CHANGE_KEY)};
+    if (window.sessionStorage.getItem(key) === null) {
+      window.sessionStorage.setItem(key, "0");
+    }
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        try {
+          const current = Number(window.sessionStorage.getItem(key));
+          window.sessionStorage.setItem(
+            key,
+            String(Number.isSafeInteger(current) && current >= 0 ? current + 1 : 1),
+          );
+        } catch {}
+      });
+    }
+    if (location.pathname === ${JSON.stringify(EVIDENCE_PWA_WARMUP_PATH)}) {
+      const installWarmupIcon = () => {
+        if (!document.head || document.querySelector('link[rel~="icon"]')) return false;
+        const icon = document.createElement("link");
+        icon.rel = "icon";
+        icon.href = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201%201%22%2F%3E";
+        document.head.appendChild(icon);
+        return true;
+      };
+      if (!installWarmupIcon()) {
+        const observer = new MutationObserver(() => {
+          if (installWarmupIcon()) observer.disconnect();
+        });
+        observer.observe(document, { childList: true, subtree: true });
+        document.addEventListener("DOMContentLoaded", () => {
+          installWarmupIcon();
+          observer.disconnect();
+        }, { once: true });
+      }
+    }
+  } catch {}
 `;
+
+export function pwaControllerSnapshotSource() {
+  return `(async () => {
+    const key = ${JSON.stringify(EVIDENCE_PWA_CONTROLLER_CHANGE_KEY)};
+    const registration = "serviceWorker" in navigator
+      ? await new Promise((resolve, reject) => {
+          const timeout = setTimeout(
+            () => reject(new Error("timed out reading the evidence service-worker registration")),
+            5000,
+          );
+          navigator.serviceWorker.getRegistration("/").then(
+            (value) => { clearTimeout(timeout); resolve(value); },
+            (error) => { clearTimeout(timeout); reject(error); },
+          );
+        })
+      : null;
+    // Capture the tuple and then read the persistent transition counter last.
+    // There is deliberately no await after this point: a controllerchange that
+    // occurs during getRegistration() must be visible in the returned counter.
+    const active = registration?.active ?? null;
+    const controller = navigator.serviceWorker?.controller ?? null;
+    let counterValue = null;
+    try { counterValue = window.sessionStorage.getItem(key); } catch {}
+    return {
+      supported: "serviceWorker" in navigator,
+      registrationScope: registration?.scope ?? null,
+      activeScriptUrl: active?.scriptURL ?? null,
+      activeState: active?.state ?? null,
+      controllerScriptUrl: controller?.scriptURL ?? null,
+      controllerState: controller?.state ?? null,
+      controllerMatchesActive: controller === active,
+      controllerChangeCounterValue: counterValue,
+      controllerChangeCount: /^\\d+$/u.test(counterValue ?? "") ? Number(counterValue) : null,
+    };
+  })()`;
+}
+
+export function pwaVerifiedControllerResetSource(baseUrl) {
+  const expectedScriptUrl = new URL("/sw.js", baseUrl).toString();
+  const expectedScope = new URL("/", baseUrl).toString();
+  return `(async () => {
+    const key = ${JSON.stringify(EVIDENCE_PWA_CONTROLLER_CHANGE_KEY)};
+    const registration = "serviceWorker" in navigator
+      ? await new Promise((resolve, reject) => {
+          const timeout = setTimeout(
+            () => reject(new Error("timed out verifying the pre-reset service-worker registration")),
+            5000,
+          );
+          navigator.serviceWorker.getRegistration("/").then(
+            (value) => { clearTimeout(timeout); resolve(value); },
+            (error) => { clearTimeout(timeout); reject(error); },
+          );
+        })
+      : null;
+    // From tuple capture through conditional reset this code is synchronous.
+    // A controllerchange during the await above increments the counter before
+    // it is checked and prevents the reset from erasing that transition.
+    const active = registration?.active ?? null;
+    const controller = navigator.serviceWorker?.controller ?? null;
+    const counterValue = window.sessionStorage.getItem(key);
+    const snapshot = {
+      supported: "serviceWorker" in navigator,
+      registrationScope: registration?.scope ?? null,
+      activeScriptUrl: active?.scriptURL ?? null,
+      activeState: active?.state ?? null,
+      controllerScriptUrl: controller?.scriptURL ?? null,
+      controllerState: controller?.state ?? null,
+      controllerMatchesActive: controller === active,
+      controllerChangeCounterValue: counterValue,
+      controllerChangeCount: /^\\d+$/u.test(counterValue ?? "") ? Number(counterValue) : null,
+    };
+    const resetApplied = snapshot.supported === true &&
+      snapshot.registrationScope === ${JSON.stringify(expectedScope)} &&
+      snapshot.activeScriptUrl === ${JSON.stringify(expectedScriptUrl)} &&
+      snapshot.activeState === "activated" &&
+      snapshot.controllerScriptUrl === ${JSON.stringify(expectedScriptUrl)} &&
+      snapshot.controllerState === "activated" &&
+      snapshot.controllerMatchesActive === true &&
+      snapshot.controllerChangeCounterValue === "1" &&
+      snapshot.controllerChangeCount === 1;
+    if (resetApplied) window.sessionStorage.setItem(key, "0");
+    return {
+      snapshot,
+      resetApplied,
+      postResetCounterValue: window.sessionStorage.getItem(key),
+    };
+  })()`;
+}
+
+export function evaluatePwaControllerSnapshot(
+  snapshot,
+  baseUrl,
+  { expectedControllerChangeCount = 0 } = {},
+) {
+  const expectedScriptUrl = new URL("/sw.js", baseUrl).toString();
+  const expectedScope = new URL("/", baseUrl).toString();
+  const expectedCounterValue = String(expectedControllerChangeCount);
+  const failures = [
+    snapshot?.supported !== true && "service workers are unavailable",
+    snapshot?.registrationScope !== expectedScope
+      && `registration scope was ${snapshot?.registrationScope ?? "missing"}, expected ${expectedScope}`,
+    snapshot?.activeScriptUrl !== expectedScriptUrl
+      && `active script was ${snapshot?.activeScriptUrl ?? "missing"}, expected ${expectedScriptUrl}`,
+    snapshot?.activeState !== "activated"
+      && `active worker state was ${snapshot?.activeState ?? "missing"}, expected activated`,
+    snapshot?.controllerScriptUrl !== expectedScriptUrl
+      && `controller script was ${snapshot?.controllerScriptUrl ?? "missing"}, expected ${expectedScriptUrl}`,
+    snapshot?.controllerState !== "activated"
+      && `controller state was ${snapshot?.controllerState ?? "missing"}, expected activated`,
+    snapshot?.controllerMatchesActive !== true && "active worker and controller were not the same worker",
+    snapshot?.controllerChangeCounterValue !== expectedCounterValue
+      && `controller-change counter was ${snapshot?.controllerChangeCounterValue ?? "missing"}, expected ${expectedCounterValue}`,
+    snapshot?.controllerChangeCount !== expectedControllerChangeCount
+      && `controller changed ${snapshot?.controllerChangeCount ?? "an unknown number of"} time(s), expected ${expectedControllerChangeCount}`,
+  ].filter(Boolean);
+  return {
+    id: "PWA_CONTROLLER_STABLE",
+    result: failures.length === 0 ? "PASS" : "FAIL",
+    detail: failures.length === 0
+      ? `exact activated ${expectedScriptUrl} controller remained stable during the recorded run`
+      : failures.join("; "),
+    count: failures.length,
+  };
+}
+
+export function evaluatePwaWarmupNetworkRecords(records, baseUrl) {
+  const origin = new URL(baseUrl).origin;
+  const warmupUrl = new URL(EVIDENCE_PWA_WARMUP_PATH, origin).toString();
+  const expectedScriptUrl = new URL("/sw.js", origin).toString();
+  const expectedRecords = [
+    {
+      url: warmupUrl,
+      method: "GET",
+      status: 200,
+      type: "Document",
+      targetType: null,
+    },
+    {
+      url: expectedScriptUrl,
+      method: "GET",
+      status: 200,
+      type: "Script",
+      targetType: "worker-or-child",
+    },
+    {
+      url: warmupUrl,
+      method: "GET",
+      status: 200,
+      type: "Fetch",
+      targetType: "worker-or-child",
+    },
+  ];
+  const normalizedRecords = Array.isArray(records)
+    ? records.map((record) => ({
+        url: typeof record?.url === "string" ? record.url : null,
+        method: typeof record?.method === "string" ? record.method : null,
+        status: Number.isFinite(record?.status) ? record.status : null,
+        type: typeof record?.type === "string" ? record.type : null,
+        targetType: record?.targetType ?? null,
+      }))
+    : [];
+  const recordKey = (record) => JSON.stringify(record);
+  const counts = (values) => {
+    const result = new Map();
+    for (const value of values) {
+      const key = recordKey(value);
+      result.set(key, (result.get(key) ?? 0) + 1);
+    }
+    return result;
+  };
+  const expectedCounts = counts(expectedRecords);
+  const actualCounts = counts(normalizedRecords);
+  const keys = new Set([...expectedCounts.keys(), ...actualCounts.keys()]);
+  const mismatchCount = [...keys].reduce(
+    (total, key) => total + Math.abs((expectedCounts.get(key) ?? 0) - (actualCounts.get(key) ?? 0)),
+    0,
+  );
+  const result = mismatchCount === 0 ? "PASS" : "FAIL";
+  return Object.freeze({
+    id: "PWA_WARMUP_NETWORK_EXACT",
+    result,
+    count: mismatchCount,
+    detail: result === "PASS"
+      ? "observed the exact three-record service-worker warm-up network multiset"
+      : `warm-up network multiset differed from the exact three required records ` +
+        `(${normalizedRecords.length} observed; ${mismatchCount} missing, extra, or drifted entries)`,
+    // Only emit the closed, expected record schema on PASS. A failure may
+    // contain arbitrary URLs or text and must never be serialized as evidence.
+    networkRecords: result === "PASS" ? expectedRecords.map((record) => Object.freeze(record)) : [],
+  });
+}
+
+export async function establishEvidencePwaControl(page, baseUrl) {
+  const origin = new URL(baseUrl).origin;
+  const warmupUrl = new URL(EVIDENCE_PWA_WARMUP_PATH, origin).toString();
+  const expectedScriptUrl = new URL("/sw.js", origin).toString();
+  const expectedScope = new URL("/", origin).toString();
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+  await page.setMedia({ colorScheme: "light" });
+  const { navigationMs } = await page.navigate(warmupUrl);
+  const lifecycle = await page.evaluate(`(async () => {
+    if (!("serviceWorker" in navigator)) {
+      return { supported: false, pathname: location.pathname };
+    }
+    const bounded = (promise, label) => new Promise((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(new Error("timed out waiting for evidence service-worker " + label)),
+        10000,
+      );
+      Promise.resolve(promise).then(
+        (value) => { clearTimeout(timeout); resolve(value); },
+        (error) => { clearTimeout(timeout); reject(error); },
+      );
+    });
+    const registration = await bounded(
+      navigator.serviceWorker.register("/sw.js", { scope: "/" }),
+      "registration",
+    );
+    const ready = await bounded(navigator.serviceWorker.ready, "ready state");
+    if (!navigator.serviceWorker.controller) {
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(
+          () => reject(new Error("timed out waiting for the evidence service-worker controller")),
+          10000,
+        );
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          clearTimeout(timeout);
+          resolve();
+        }, { once: true });
+      });
+    }
+    const key = ${JSON.stringify(EVIDENCE_PWA_CONTROLLER_CHANGE_KEY)};
+    const counterValue = window.sessionStorage.getItem(key);
+    return {
+      supported: true,
+      pathname: location.pathname,
+      registrationScope: ready.scope,
+      activeScriptUrl: ready.active?.scriptURL ?? registration.active?.scriptURL ?? null,
+      activeState: ready.active?.state ?? registration.active?.state ?? null,
+      controllerScriptUrl: navigator.serviceWorker.controller?.scriptURL ?? null,
+      controllerState: navigator.serviceWorker.controller?.state ?? null,
+      controllerMatchesActive: navigator.serviceWorker.controller === (ready.active ?? registration.active),
+      controllerChangeCounterValue: counterValue,
+      controllerChangeCount: /^\\d+$/u.test(counterValue ?? "") ? Number(counterValue) : null,
+    };
+  })()`);
+  await page.settle({ quietMs: 800, maxSettleMs: 8000 });
+  await page.waitForBoundaryTargets();
+  const postSettleSnapshot = await page.evaluate(pwaControllerSnapshotSource());
+  const postSettleAssertion = evaluatePwaControllerSnapshot(
+    postSettleSnapshot,
+    origin,
+    { expectedControllerChangeCount: 1 },
+  );
+
+  const lifecycleFailures = [
+    lifecycle?.supported !== true && "service workers are unavailable",
+    lifecycle?.pathname !== EVIDENCE_PWA_WARMUP_PATH
+      && `warm-up path was ${lifecycle?.pathname ?? "missing"}, expected ${EVIDENCE_PWA_WARMUP_PATH}`,
+    lifecycle?.registrationScope !== expectedScope
+      && `registration scope was ${lifecycle?.registrationScope ?? "missing"}, expected ${expectedScope}`,
+    lifecycle?.activeScriptUrl !== expectedScriptUrl
+      && `active script was ${lifecycle?.activeScriptUrl ?? "missing"}, expected ${expectedScriptUrl}`,
+    !["activating", "activated"].includes(lifecycle?.activeState)
+      && `active worker state was ${lifecycle?.activeState ?? "missing"}, expected activating or activated`,
+    lifecycle?.controllerScriptUrl !== expectedScriptUrl
+      && `controller script was ${lifecycle?.controllerScriptUrl ?? "missing"}, expected ${expectedScriptUrl}`,
+    !["activating", "activated"].includes(lifecycle?.controllerState)
+      && `controller state was ${lifecycle?.controllerState ?? "missing"}, expected activating or activated`,
+    lifecycle?.controllerState !== lifecycle?.activeState
+      && "active worker and controller lifecycle states did not match",
+    lifecycle?.controllerMatchesActive !== true && "active worker and controller were not the same worker",
+    lifecycle?.controllerChangeCounterValue !== "1"
+      && `warm-up controller-change counter was ${lifecycle?.controllerChangeCounterValue ?? "missing"}, expected 1`,
+    lifecycle?.controllerChangeCount !== 1
+      && `warm-up observed ${lifecycle?.controllerChangeCount ?? "an unknown number of"} controller changes, expected 1`,
+    postSettleAssertion.result !== "PASS"
+      && `post-settle controller state was invalid: ${postSettleAssertion.detail}`,
+  ].filter(Boolean);
+  if (lifecycleFailures.length > 0) {
+    throw new Error(`evidence PWA warm-up failed: ${lifecycleFailures.join("; ")}`);
+  }
+
+  const controllerReset = await page.evaluate(pwaVerifiedControllerResetSource(origin));
+  const preResetSnapshot = controllerReset?.snapshot ?? null;
+  const preResetAssertion = evaluatePwaControllerSnapshot(
+    preResetSnapshot,
+    origin,
+    { expectedControllerChangeCount: 1 },
+  );
+  if (
+    preResetAssertion.result !== "PASS" ||
+    controllerReset?.resetApplied !== true ||
+    controllerReset?.postResetCounterValue !== "0"
+  ) {
+    throw new Error(
+      `evidence PWA warm-up atomic reset failed: ${preResetAssertion.detail}; ` +
+      `resetApplied=${controllerReset?.resetApplied === true}; ` +
+      `postResetCounter=${controllerReset?.postResetCounterValue ?? "missing"}`,
+    );
+  }
+  await page.settle({ quietMs: 150, maxSettleMs: 2000 });
+  const recordedRunBaselineSnapshot = await page.evaluate(pwaControllerSnapshotSource());
+  const resetAssertion = evaluatePwaControllerSnapshot(recordedRunBaselineSnapshot, origin);
+  if (resetAssertion.result !== "PASS") {
+    throw new Error(`evidence PWA warm-up reset failed: ${resetAssertion.detail}`);
+  }
+
+  // Audit only after the atomic reset, settling, and final baseline read. No
+  // await follows this snapshot: later signals land in the freshly reset first
+  // route phase instead of being erased from both phases.
+  const networkFailures = page.network.filter((record) =>
+    record.failed || record.status >= 400);
+  const consoleErrors = page.console.filter((record) =>
+    record.level !== "warning" && record.level !== "log:warning");
+  const networkRecordAudit = evaluatePwaWarmupNetworkRecords(page.network, origin);
+  const allowedWarmupUrls = new Set([warmupUrl, expectedScriptUrl]);
+  const unexpectedNetworkRecords = page.network.filter((record) =>
+    record.method !== "GET" || !allowedWarmupUrls.has(record.url));
+  const telemetry = {
+    networkRecordCount: page.network.length,
+    networkRecordMultisetResult: networkRecordAudit.result,
+    networkRecordMismatchCount: networkRecordAudit.count,
+    networkFailureCount: networkFailures.length,
+    unexpectedNetworkRecordCount: unexpectedNetworkRecords.length,
+    consoleErrorCount: consoleErrors.length,
+    networkBoundaryViolationCount: page.networkBoundaryViolations.length,
+    networkBoundaryFulfillmentCount: page.networkBoundaryFulfillments.length,
+    pendingRequestCount: page.inflight.size,
+    pendingBodyTelemetryCount: page.errorResponseBodyTelemetry.size,
+    pendingBoundaryTargetCount: page.boundaryTargetPromises.size,
+    boundarySetupErrorCount: page.boundarySetupErrors.length,
+  };
+  const telemetryFailures = [
+    networkRecordAudit.result !== "PASS" && networkRecordAudit.detail,
+    telemetry.networkFailureCount !== 0 && `warm-up observed ${telemetry.networkFailureCount} HTTP/network failures`,
+    telemetry.unexpectedNetworkRecordCount !== 0
+      && `warm-up observed ${telemetry.unexpectedNetworkRecordCount} requests outside exact GET ${warmupUrl} or ${expectedScriptUrl}`,
+    telemetry.consoleErrorCount !== 0 && `warm-up observed ${telemetry.consoleErrorCount} console errors`,
+    telemetry.networkBoundaryViolationCount !== 0
+      && `warm-up observed ${telemetry.networkBoundaryViolationCount} network-boundary violations`,
+    telemetry.networkBoundaryFulfillmentCount !== 0
+      && `warm-up unexpectedly used ${telemetry.networkBoundaryFulfillmentCount} external-resource fulfillments`,
+    telemetry.pendingRequestCount !== 0 && `warm-up left ${telemetry.pendingRequestCount} requests pending`,
+    telemetry.pendingBodyTelemetryCount !== 0
+      && `warm-up left ${telemetry.pendingBodyTelemetryCount} response-body telemetry reads pending`,
+    telemetry.pendingBoundaryTargetCount !== 0
+      && `warm-up left ${telemetry.pendingBoundaryTargetCount} child-target setups pending`,
+    telemetry.boundarySetupErrorCount !== 0
+      && `warm-up observed ${telemetry.boundarySetupErrorCount} boundary setup errors`,
+  ].filter(Boolean);
+  if (telemetryFailures.length > 0) {
+    throw new Error(`evidence PWA warm-up failed: ${telemetryFailures.join("; ")}`);
+  }
+  const result = Object.freeze({
+    result: "PASS",
+    warmupUrl,
+    expectedScriptUrl,
+    expectedScope,
+    navigationMs,
+    lifecycle,
+    networkRecords: networkRecordAudit.networkRecords,
+    postSettleSnapshot,
+    preResetSnapshot,
+    controllerCounterResetApplied: true,
+    controllerCounterValueAfterReset: "0",
+    recordedRunBaselineSnapshot,
+    telemetry,
+    recordedRunControllerChangeBaseline: 0,
+  });
+  // The warm-up artifact owns everything observed through its final baseline
+  // read. Reset synchronously at that boundary; the first route must preserve
+  // every signal received after this point.
+  page.resetRecords();
+  return result;
+}
 
 // Production typography is bundled from pinned Fontsource packages. Any
 // network-generating external URL in the candidate document is therefore a
@@ -191,6 +607,110 @@ export function evaluateMetadataRestoration(pair, before, during, after) {
     failures,
     result: failures.length === 0 ? "PASS" : "FAIL",
   };
+}
+
+export function evaluateEvidencePhaseTelemetry(
+  page,
+  { expectedNetworkRecordCount = null } = {},
+) {
+  const telemetrySourceErrorCount = page &&
+    Array.isArray(page.network) &&
+    Array.isArray(page.console) &&
+    Array.isArray(page.networkBoundaryViolations) &&
+    Array.isArray(page.networkBoundaryFulfillments) &&
+    Number.isInteger(page.inflight?.size) &&
+    Number.isInteger(page.errorResponseBodyTelemetry?.size) &&
+    Number.isInteger(page.boundaryTargetPromises?.size) &&
+    Array.isArray(page.boundarySetupErrors)
+    ? 0
+    : 1;
+  const network = Array.isArray(page?.network) ? page.network : [];
+  const consoleRecords = Array.isArray(page?.console) ? page.console : [];
+  const networkFailureCount = network.filter((record) =>
+    record?.failed === true || Number(record?.status) >= 400).length;
+  const consoleErrors = consoleRecords.filter((record) =>
+    record?.level !== "warning" && record?.level !== "log:warning");
+  const telemetry = {
+    result: "PASS",
+    count: 0,
+    telemetrySourceErrorCount,
+    networkRecordCount: network.length,
+    expectedNetworkRecordCount,
+    networkRecordCountMismatchCount: expectedNetworkRecordCount === null
+      ? 0
+      : Math.abs(network.length - expectedNetworkRecordCount),
+    networkFailureCount,
+    consoleErrorCount: consoleErrors.length,
+    childConsoleErrorCount: consoleErrors.filter((record) =>
+      record?.targetType === "worker-or-child").length,
+    networkBoundaryViolationCount: Array.isArray(page?.networkBoundaryViolations)
+      ? page.networkBoundaryViolations.length
+      : 0,
+    networkBoundaryFulfillmentCount: Array.isArray(page?.networkBoundaryFulfillments)
+      ? page.networkBoundaryFulfillments.length
+      : 0,
+    pendingRequestCount: Number.isInteger(page?.inflight?.size) ? page.inflight.size : 0,
+    pendingBodyTelemetryCount: Number.isInteger(page?.errorResponseBodyTelemetry?.size)
+      ? page.errorResponseBodyTelemetry.size
+      : 0,
+    pendingBoundaryTargetCount: Number.isInteger(page?.boundaryTargetPromises?.size)
+      ? page.boundaryTargetPromises.size
+      : 0,
+    boundarySetupErrorCount: Array.isArray(page?.boundarySetupErrors)
+      ? page.boundarySetupErrors.length
+      : 0,
+  };
+  telemetry.count = [
+    telemetry.telemetrySourceErrorCount,
+    telemetry.networkRecordCountMismatchCount,
+    telemetry.networkFailureCount,
+    telemetry.consoleErrorCount,
+    telemetry.networkBoundaryViolationCount,
+    telemetry.networkBoundaryFulfillmentCount,
+    telemetry.pendingRequestCount,
+    telemetry.pendingBodyTelemetryCount,
+    telemetry.pendingBoundaryTargetCount,
+    telemetry.boundarySetupErrorCount,
+  ].reduce((total, value) => total + value, 0);
+  telemetry.result = telemetry.count === 0 ? "PASS" : "FAIL";
+  return Object.freeze(telemetry);
+}
+
+export function evaluateRunPhaseBoundaryTelemetry(page) {
+  const telemetrySourceErrorCount = page &&
+    Number.isInteger(page.inflight?.size) &&
+    Number.isInteger(page.errorResponseBodyTelemetry?.size) &&
+    Number.isInteger(page.boundaryTargetPromises?.size) &&
+    Array.isArray(page.boundarySetupErrors)
+    ? 0
+    : 1;
+  const telemetry = {
+    id: "EVIDENCE_PHASE_SETTLED",
+    result: "PASS",
+    detail: "no request, response-body read, child-target setup, or boundary setup remained pending at the run boundary",
+    count: 0,
+    telemetrySourceErrorCount,
+    pendingRequestCount: Number.isInteger(page?.inflight?.size) ? page.inflight.size : 0,
+    pendingBodyTelemetryCount: Number.isInteger(page?.errorResponseBodyTelemetry?.size)
+      ? page.errorResponseBodyTelemetry.size
+      : 0,
+    pendingBoundaryTargetCount: Number.isInteger(page?.boundaryTargetPromises?.size)
+      ? page.boundaryTargetPromises.size
+      : 0,
+    boundarySetupErrorCount: Array.isArray(page?.boundarySetupErrors)
+      ? page.boundarySetupErrors.length
+      : 0,
+  };
+  telemetry.count = telemetry.telemetrySourceErrorCount +
+    telemetry.pendingRequestCount +
+    telemetry.pendingBodyTelemetryCount +
+    telemetry.pendingBoundaryTargetCount +
+    telemetry.boundarySetupErrorCount;
+  if (telemetry.count !== 0) {
+    telemetry.result = "FAIL";
+    telemetry.detail = `${telemetry.count} pending or invalid phase-boundary signal(s) remained`;
+  }
+  return Object.freeze(telemetry);
 }
 
 export function routeInventoryDescriptor(routesPath, routesSource) {
@@ -449,7 +969,7 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
   let fontSnapshot = null;
   let navigationMs = null;
   try {
-    ({ navigationMs } = await page.navigate(url));
+    ({ navigationMs } = await page.navigate(url, { resetRecords: false }));
     fontSnapshot = await collectSelfHostedFontSnapshot(page, route);
     audit = await page.evaluate(PAGE_AUDIT_SOURCE);
     if (doFocusWalk) walk = await focusWalk(page, maxTabStops);
@@ -511,6 +1031,13 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
       },
     }))()`);
   }
+  // This read happens after the screenshot and final semantic/metadata reads.
+  // A controller lifecycle transition at any point in a recorded run remains
+  // in sessionStorage and poisons that run and every later run fail closed.
+  const pwaControllerSnapshot = audit
+    ? await page.evaluate(pwaControllerSnapshotSource())
+    : null;
+  const phaseTelemetry = evaluateRunPhaseBoundaryTelemetry(page);
   // Snapshot telemetry only after screenshot, rendered text, and semantic reads
   // have completed. Those final operations can trigger lazy resources or child
   // target activity and must be included in the blocking assertions.
@@ -529,6 +1056,8 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
           allowNetwork: route.allowNetwork?.map((s) => new RegExp(s)) ?? [],
           expectedHttpFailures,
          }),
+        evaluatePwaControllerSnapshot(pwaControllerSnapshot, baseUrl),
+        phaseTelemetry,
         evaluateSelfHostedFontSnapshot(route, fontSnapshot),
         ...evaluateRouteStateContract(route, semanticSnapshot),
       ]
@@ -538,7 +1067,7 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
     : rawAssertions;
   const consoleErrors = consoleRecords.filter((c) => c.level !== "warning" && c.level !== "log:warning");
   const failedNet = network.filter((n) => (n.failed && !n.canceled) || n.status >= 400);
-  return {
+  const result = {
     candidateSha: sha,
     artifactPath,
     artifactSha256,
@@ -560,6 +1089,8 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
     syntheticFixtureId: route.fixture ?? "none",
     coverageScope: route.coverageScope ?? "representative",
     pwaInstallHintState: "SESSION_DISMISSED_BEFORE_DOCUMENT",
+    pwaControllerSnapshot,
+    phaseTelemetry,
     timestampUtc: started.toISOString(),
     reviewer,
     navigationMs,
@@ -578,6 +1109,11 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
     focusWalk: walk,
     fontSnapshot,
   };
+  // The returned run owns the copied telemetry above. Reset synchronously at
+  // the phase boundary so setup and navigation for the next run cannot erase
+  // any late page or child-target signal.
+  page.resetRecords();
+  return result;
 }
 
 export async function main(argv = process.argv.slice(2)) {
@@ -601,37 +1137,40 @@ export async function main(argv = process.argv.slice(2)) {
   const routes = bindReviewedAssertionNotes(inventory.routes, { sha })
     .filter((r) => !args.only || args.only.includes(r.path));
   const browser = await launchChromium();
-  const conn = await new CdpConnection(browser.wsUrl).open();
-  const page = await PageSession.create(conn);
-  await page.enforceNetworkBoundary(new URL(args.baseUrl).origin, {
-    fulfillments: EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
-  });
-  await page.send("Page.addScriptToEvaluateOnNewDocument", {
-    source: EVIDENCE_PWA_DISMISSAL_SOURCE,
-  });
-  const runs = [];
-  const startedAt = new Date().toISOString();
-  let index = 0;
-  const record = async (opts) => {
-    const run = await runOne(page, { ...opts, outDir, sha, browser, reviewer: args.reviewer, sequence: 1 });
-    index++;
-    const file = `runs/${String(index).padStart(3, "0")}-${slug(`${run.surface}-${run.route}-${run.widthCssPx}-${run.zoomPercent}-${run.mediaVariant}`)}.json`;
-    const runBytes = Buffer.from(JSON.stringify(run, null, 2), "utf8");
-    writeFileSync(join(outDir, file), runBytes);
-    const summary = {
-      ...run,
-      reducedMotionApplied: Boolean(run.audit?.reducedMotionApplied),
-      forcedColorsActive: Boolean(run.audit?.forcedColorsActive),
-      audit: undefined,
-      consoleRecords: undefined,
-      networkFailures: undefined,
-      runFile: file,
-      runFileSha256: createHash("sha256").update(runBytes).digest("hex"),
-    };
-    runs.push(summary);
-    console.log(`${run.verdict.padEnd(26)} ${String(run.widthCssPx).padStart(4)}@${run.zoomPercent}% ${run.mediaVariant.padEnd(14)} ${run.route}  ${run.assertions.filter((a) => a.result === "FAIL").map((a) => a.id).join(",")}`);
-  };
+  let conn = null;
+  let page = null;
   try {
+    conn = await new CdpConnection(browser.wsUrl).open();
+    page = await PageSession.create(conn);
+    await page.enforceNetworkBoundary(new URL(args.baseUrl).origin, {
+      fulfillments: EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
+    });
+    await page.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: EVIDENCE_PWA_DISMISSAL_SOURCE,
+    });
+    const pwaServiceWorkerWarmup = await establishEvidencePwaControl(page, args.baseUrl);
+    const runs = [];
+    const startedAt = new Date().toISOString();
+    let index = 0;
+    const record = async (opts) => {
+      const run = await runOne(page, { ...opts, outDir, sha, browser, reviewer: args.reviewer, sequence: 1 });
+      index++;
+      const file = `runs/${String(index).padStart(3, "0")}-${slug(`${run.surface}-${run.route}-${run.widthCssPx}-${run.zoomPercent}-${run.mediaVariant}`)}.json`;
+      const runBytes = Buffer.from(JSON.stringify(run, null, 2), "utf8");
+      writeFileSync(join(outDir, file), runBytes);
+      const summary = {
+        ...run,
+        reducedMotionApplied: Boolean(run.audit?.reducedMotionApplied),
+        forcedColorsActive: Boolean(run.audit?.forcedColorsActive),
+        audit: undefined,
+        consoleRecords: undefined,
+        networkFailures: undefined,
+        runFile: file,
+        runFileSha256: createHash("sha256").update(runBytes).digest("hex"),
+      };
+      runs.push(summary);
+      console.log(`${run.verdict.padEnd(26)} ${String(run.widthCssPx).padStart(4)}@${run.zoomPercent}% ${run.mediaVariant.padEnd(14)} ${run.route}  ${run.assertions.filter((a) => a.result === "FAIL").map((a) => a.id).join(",")}`);
+    };
     for (const route of routes) {
       for (const width of widths) {
         await record({ baseUrl: args.baseUrl, route, width, height: width <= 768 ? 844 : 900, deviceScaleFactor: 1, zoomPercent: 100, variant: "", media: { colorScheme: "light" }, doFocusWalk: args.focusWalk && (width === widths[0] || width === 390), maxTabStops: args.maxTabStops });
@@ -648,6 +1187,8 @@ export async function main(argv = process.argv.slice(2)) {
       }
     }
     // Public -> private -> public client-side navigation: title/canonical must be restored.
+    // The final recorded run already reset synchronously at its audited phase
+    // boundary, so setup below must preserve every later signal.
     const restoration = [];
     for (const pair of inventory.metadataRestoration ?? []) {
       if (args.only && !args.only.includes(pair.public)) continue;
@@ -675,7 +1216,9 @@ export async function main(argv = process.argv.slice(2)) {
           requiredTextPresence: Object.fromEntries(requiredText.map((text) => [text, bodyText.includes(String(text).toLowerCase())])),
         };
       })()`);
-      await page.navigate(new URL(pair.public, args.baseUrl).toString());
+      await page.navigate(new URL(pair.public, args.baseUrl).toString(), {
+        resetRecords: false,
+      });
       const before = await readMeta();
       await page.evaluate(`(history.pushState({}, '', ${JSON.stringify(pair.private)}), dispatchEvent(new PopStateEvent('popstate')), true)`);
       await page.settle();
@@ -683,17 +1226,62 @@ export async function main(argv = process.argv.slice(2)) {
       await page.evaluate(`(history.pushState({}, '', ${JSON.stringify(pair.backTo)}), dispatchEvent(new PopStateEvent('popstate')), true)`);
       await page.settle();
       const after = await readMeta();
+      await page.waitForBoundaryTargets();
+      const pwaControllerSnapshot = await page.evaluate(pwaControllerSnapshotSource());
+      const pwaControllerAssertion = evaluatePwaControllerSnapshot(
+        pwaControllerSnapshot,
+        args.baseUrl,
+      );
+      const telemetry = evaluateEvidencePhaseTelemetry(page);
+      const evaluation = evaluateMetadataRestoration(pair, before, during, after);
+      const failures = [
+        ...evaluation.failures,
+        telemetry.result !== "PASS" &&
+          `restoration telemetry contained ${telemetry.count} blocking signal(s)`,
+        pwaControllerAssertion.result !== "PASS" &&
+          `restoration PWA controller state was invalid: ${pwaControllerAssertion.detail}`,
+      ].filter(Boolean);
       restoration.push({
         ...pair,
         before,
         during,
         after,
-        ...evaluateMetadataRestoration(pair, before, during, after),
+        ...evaluation,
+        pwaControllerSnapshot,
+        telemetry,
+        failures,
+        result: failures.length === 0 ? "PASS" : "FAIL",
       });
+      // Preserve the immutable scalar/object snapshots above, then begin the
+      // next phase immediately without a second reset inside navigation.
+      page.resetRecords();
     }
+    // Each restoration pair (or the final run when there are no pairs) reset at
+    // its audited boundary. Closing provenance therefore starts with a fresh
+    // phase and never clears signals after that boundary.
     const finalProvenance = await fetchPreviewProvenance(args.baseUrl, checkout);
     if (JSON.stringify(finalProvenance) !== JSON.stringify(provenance)) {
       throw new Error("preview provenance changed during browser evidence capture");
+    }
+    await page.settle({ quietMs: 250, maxSettleMs: 3000 });
+    await page.waitForBoundaryTargets();
+    // This is deliberately the final browser read. A controller transition
+    // while the closing provenance check runs must poison the capture too.
+    const finalPwaControllerSnapshot = await page.evaluate(pwaControllerSnapshotSource());
+    const finalPwaControllerAssertion = evaluatePwaControllerSnapshot(
+      finalPwaControllerSnapshot,
+      args.baseUrl,
+    );
+    if (finalPwaControllerAssertion.result !== "PASS") {
+      throw new Error(`final evidence PWA controller state failed: ${finalPwaControllerAssertion.detail}`);
+    }
+    const finalizationTelemetry = evaluateEvidencePhaseTelemetry(page, {
+      expectedNetworkRecordCount: 0,
+    });
+    if (finalizationTelemetry.result !== "PASS") {
+      throw new Error(
+        `final evidence telemetry contained ${finalizationTelemetry.count} blocking signal(s)`,
+      );
     }
     const matrix = {
       schemaVersion: 3,
@@ -701,15 +1289,18 @@ export async function main(argv = process.argv.slice(2)) {
       candidateSha: sha,
       baseUrl: args.baseUrl,
       provenance,
+      pwaServiceWorkerWarmup,
       externalResourceContract,
       startedAtUtc: startedAt,
       finishedAtUtc: new Date().toISOString(),
-      tool: { name: "scripts/evidence/capture-browser-matrix.mjs", node: captureRuntime.nodeVersion, npm: captureRuntime.npmVersion, browserName: browser.browserName, browserVersion: browser.browserVersion, chromiumRevision: browser.revision, protocolVersion: browser.protocolVersion, driver: "raw CDP over ws", controlledUiState: { pwaInstallHint: "session-dismissed before every document" } },
+      tool: { name: "scripts/evidence/capture-browser-matrix.mjs", node: captureRuntime.nodeVersion, npm: captureRuntime.npmVersion, browserName: browser.browserName, browserVersion: browser.browserVersion, chromiumRevision: browser.revision, protocolVersion: browser.protocolVersion, driver: "raw CDP over ws", controlledUiState: { pwaInstallHint: "session-dismissed before every document", serviceWorker: "exact same-origin /sw.js activated and controlling after static /offline.html warm-up", controllerChangePolicy: "zero controller changes permitted after warm-up" } },
       widthsCssPx: widths,
       zoomEquivalents: args.zoom ? inventory.zoomEquivalents : [],
       routesInventory: routeInventoryDescriptor(routesPath, routesSource),
       runs,
       metadataRestoration: restoration,
+      finalPwaControllerSnapshot,
+      finalizationTelemetry,
       summary: {
         runs: runs.length,
         automatedPass: runs.filter((r) => r.verdict === "AUTOMATED_PASS").length,
@@ -722,8 +1313,8 @@ export async function main(argv = process.argv.slice(2)) {
     console.log(`\n${matrix.summary.runs} runs: ${matrix.summary.automatedPass} pass, ${matrix.summary.automatedPassWithNotes} pass-with-notes, ${matrix.summary.automatedFail} fail -> ${join(outDir, "browser-matrix.json")}`);
     return matrix;
   } finally {
-    await page.close();
-    await conn.close();
+    if (page) await page.close();
+    if (conn) await conn.close();
     await browser.close();
   }
 }

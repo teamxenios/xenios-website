@@ -71,6 +71,8 @@ const BROWSER_ASSERTION_IDS = [
   "FOCUS_ORDER_REACHABLE",
   "FOCUS_VISIBLE_PRESENT",
   "EXPECTED_HTTP_FAILURES_OBSERVED",
+  "PWA_CONTROLLER_STABLE",
+  "EVIDENCE_PHASE_SETTLED",
   "CONSOLE_CLEAN",
   "NETWORK_CLEAN",
   "SAME_ORIGIN_NETWORK_BOUNDARY",
@@ -124,6 +126,118 @@ const externalResourceContract = () => ({
     reason: fixture.reason,
     responseBodySha256: createHash("sha256").update(fixture.body).digest("hex"),
   })),
+});
+
+const pwaControllerSnapshot = (overrides = {}) => ({
+  supported: true,
+  registrationScope: "http://127.0.0.1:5184/",
+  activeScriptUrl: "http://127.0.0.1:5184/sw.js",
+  activeState: "activated",
+  controllerScriptUrl: "http://127.0.0.1:5184/sw.js",
+  controllerState: "activated",
+  controllerMatchesActive: true,
+  controllerChangeCounterValue: "0",
+  controllerChangeCount: 0,
+  ...overrides,
+});
+
+const evidencePhaseTelemetry = (overrides = {}) => ({
+  result: "PASS",
+  count: 0,
+  telemetrySourceErrorCount: 0,
+  networkRecordCount: 0,
+  expectedNetworkRecordCount: null,
+  networkRecordCountMismatchCount: 0,
+  networkFailureCount: 0,
+  consoleErrorCount: 0,
+  childConsoleErrorCount: 0,
+  networkBoundaryViolationCount: 0,
+  networkBoundaryFulfillmentCount: 0,
+  pendingRequestCount: 0,
+  pendingBodyTelemetryCount: 0,
+  pendingBoundaryTargetCount: 0,
+  boundarySetupErrorCount: 0,
+  ...overrides,
+});
+
+const runPhaseTelemetry = (overrides = {}) => ({
+  id: "EVIDENCE_PHASE_SETTLED",
+  result: "PASS",
+  detail: "no pending phase-boundary signals",
+  count: 0,
+  telemetrySourceErrorCount: 0,
+  pendingRequestCount: 0,
+  pendingBodyTelemetryCount: 0,
+  pendingBoundaryTargetCount: 0,
+  boundarySetupErrorCount: 0,
+  ...overrides,
+});
+
+const pwaServiceWorkerWarmup = (overrides = {}) => ({
+  result: "PASS",
+  warmupUrl: "http://127.0.0.1:5184/offline.html",
+  expectedScriptUrl: "http://127.0.0.1:5184/sw.js",
+  expectedScope: "http://127.0.0.1:5184/",
+  navigationMs: 123,
+  lifecycle: {
+    ...pwaControllerSnapshot({
+      activeState: "activating",
+      controllerState: "activating",
+      controllerChangeCounterValue: "1",
+      controllerChangeCount: 1,
+    }),
+    pathname: "/offline.html",
+  },
+  networkRecords: [
+    {
+      url: "http://127.0.0.1:5184/offline.html",
+      method: "GET",
+      status: 200,
+      type: "Document",
+      targetType: null,
+    },
+    {
+      url: "http://127.0.0.1:5184/sw.js",
+      method: "GET",
+      status: 200,
+      type: "Script",
+      targetType: "worker-or-child",
+    },
+    {
+      url: "http://127.0.0.1:5184/offline.html",
+      method: "GET",
+      status: 200,
+      type: "Fetch",
+      targetType: "worker-or-child",
+    },
+  ],
+  telemetry: {
+    networkRecordCount: 3,
+    networkRecordMultisetResult: "PASS",
+    networkRecordMismatchCount: 0,
+    networkFailureCount: 0,
+    unexpectedNetworkRecordCount: 0,
+    consoleErrorCount: 0,
+    networkBoundaryViolationCount: 0,
+    networkBoundaryFulfillmentCount: 0,
+    pendingRequestCount: 0,
+    pendingBodyTelemetryCount: 0,
+    pendingBoundaryTargetCount: 0,
+    boundarySetupErrorCount: 0,
+  },
+  postSettleSnapshot: pwaControllerSnapshot({
+    controllerChangeCounterValue: "1",
+    controllerChangeCount: 1,
+  }),
+  preResetSnapshot: pwaControllerSnapshot({
+    controllerChangeCounterValue: "1",
+    controllerChangeCount: 1,
+  }),
+  controllerCounterResetApplied: true,
+  controllerCounterValueAfterReset: "0",
+  recordedRunBaselineSnapshot: pwaControllerSnapshot(),
+  recordedRunControllerChangeBaseline: 0,
+  ...overrides,
 });
 
 const networkBoundaryFulfillments = () =>
@@ -228,6 +342,8 @@ function matrixRun({ widthCssPx, zoomPercent = 100, mediaVariant = "default", ov
     networkBoundaryViolations: [],
     networkBoundaryFulfillments: networkBoundaryFulfillments(),
     piiPhiReview: "MANUAL_PENDING",
+    pwaControllerSnapshot: pwaControllerSnapshot(),
+    phaseTelemetry: runPhaseTelemetry(),
     assertions: assertionList(BROWSER_ASSERTION_IDS, explicitNonFocus ? {
       FOCUS_ORDER_REACHABLE: "NOT_RUN",
       FOCUS_VISIBLE_PRESENT: "NOT_RUN",
@@ -287,6 +403,7 @@ function makeMatrix(overrides = {}) {
     candidateSha: SHA,
     baseUrl: "http://127.0.0.1:5184",
     provenance: provenance(),
+    pwaServiceWorkerWarmup: pwaServiceWorkerWarmup(),
     externalResourceContract: externalResourceContract(),
     routesInventory: structuredClone(ROUTES_INVENTORY),
     startedAtUtc: "2026-08-29T17:55:00.000Z",
@@ -295,6 +412,8 @@ function makeMatrix(overrides = {}) {
     widthsCssPx: [1440, 390],
     zoomEquivalents: inventory().zoomEquivalents,
     metadataRestoration: [],
+    finalPwaControllerSnapshot: pwaControllerSnapshot(),
+    finalizationTelemetry: evidencePhaseTelemetry({ expectedNetworkRecordCount: 0 }),
     runs,
     summary: { runs: runs.length, automatedPass: runs.length, automatedPassWithNotes: 0, automatedFail: 0, failingAssertionIds: [] },
     ...overrides,
@@ -349,7 +468,12 @@ function syntheticCapture(widthCssPx, overrides = {}) {
     piiPhiReview: "MANUAL_PENDING",
     assertions: assertionList([
       ...BROWSER_ASSERTION_IDS.filter((id) =>
-        !["SAME_ORIGIN_NETWORK_BOUNDARY", "SELF_HOSTED_FONTS_LOADED"].includes(id),
+        ![
+          "SAME_ORIGIN_NETWORK_BOUNDARY",
+          "PWA_CONTROLLER_STABLE",
+          "EVIDENCE_PHASE_SETTLED",
+          "SELF_HOSTED_FONTS_LOADED",
+        ].includes(id),
       ),
       ...SYNTHETIC_ONLY_ASSERTION_IDS,
     ]),
@@ -833,6 +957,8 @@ describe("buildManifest strict evidence inspection", () => {
       ["ROUTE_STATE_CONTRACT", "NOT_APPLICABLE"],
       ["ROUTE_LOCATION", "FAIL"],
       ["EXPECTED_HTTP_FAILURES_OBSERVED", "NOT_RUN"],
+      ["PWA_CONTROLLER_STABLE", "NOT_RUN"],
+      ["EVIDENCE_PHASE_SETTLED", "NOT_RUN"],
       ["SAME_ORIGIN_NETWORK_BOUNDARY", "NOT_RUN"],
       ["FOCUS_ORDER_REACHABLE", "NOT_RUN"],
     ];
@@ -889,6 +1015,86 @@ describe("buildManifest strict evidence inspection", () => {
     unpinnedCapture.tool.node = "v24.14.1";
     expect(build({ matrix: unpinnedCapture }).browserMatrix.completeness)
       .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    const missingPwaWarmup = makeMatrix();
+    delete missingPwaWarmup.pwaServiceWorkerWarmup;
+    expect(build({ matrix: missingPwaWarmup }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    const forgedWarmup = makeMatrix();
+    forgedWarmup.pwaServiceWorkerWarmup.lifecycle.controllerChangeCount = 0;
+    expect(build({ matrix: forgedWarmup }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    for (const mutate of [
+      (warmup) => { warmup.preResetSnapshot.controllerChangeCount = 2; },
+      (warmup) => { warmup.controllerCounterResetApplied = false; },
+      (warmup) => { warmup.controllerCounterValueAfterReset = "1"; },
+    ]) {
+      const forgedAtomicReset = makeMatrix();
+      mutate(forgedAtomicReset.pwaServiceWorkerWarmup);
+      expect(build({ matrix: forgedAtomicReset }).browserMatrix.completeness)
+        .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+    }
+
+    for (const mutate of [
+      (warmup) => { delete warmup.networkRecords; },
+      (warmup) => { warmup.networkRecords.reverse(); },
+      (warmup) => { warmup.networkRecords.push({ ...warmup.networkRecords[2] }); },
+      (warmup) => { warmup.networkRecords.splice(2, 1); },
+      (warmup) => { warmup.telemetry.networkRecordCount = 2; },
+      (warmup) => { warmup.telemetry.networkRecordMultisetResult = "FAIL"; },
+      (warmup) => { warmup.telemetry.networkRecordMismatchCount = 1; },
+      (warmup) => { warmup.networkRecords[0].url = "http://127.0.0.1:5184/other"; },
+      (warmup) => { warmup.networkRecords[0].method = "POST"; },
+      (warmup) => { warmup.networkRecords[0].status = 204; },
+      (warmup) => { warmup.networkRecords[0].type = "Other"; },
+      (warmup) => { warmup.networkRecords[0].targetType = "worker-or-child"; },
+      (warmup) => { delete warmup.networkRecords[1].targetType; },
+      (warmup) => { warmup.networkRecords[0].unexpected = "must reject extra fields"; },
+    ]) {
+      const forgedNetworkWarmup = makeMatrix();
+      mutate(forgedNetworkWarmup.pwaServiceWorkerWarmup);
+      expect(build({ matrix: forgedNetworkWarmup }).browserMatrix.completeness)
+        .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+    }
+
+    const missingFinalPwaSnapshot = makeMatrix();
+    delete missingFinalPwaSnapshot.finalPwaControllerSnapshot;
+    expect(build({ matrix: missingFinalPwaSnapshot }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    const missingFinalizationTelemetry = makeMatrix();
+    delete missingFinalizationTelemetry.finalizationTelemetry;
+    expect(build({ matrix: missingFinalizationTelemetry }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    const forgedFinalizationTelemetry = makeMatrix();
+    forgedFinalizationTelemetry.finalizationTelemetry.consoleErrorCount = 1;
+    expect(build({ matrix: forgedFinalizationTelemetry }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", envelopeInvalid: true });
+
+    const persistedPwaEvidence = build({ matrix: makeMatrix() }).browserMatrix;
+    expect(persistedPwaEvidence).toMatchObject({
+      pwaServiceWorkerWarmup: pwaServiceWorkerWarmup(),
+      finalPwaControllerSnapshot: pwaControllerSnapshot(),
+      finalizationTelemetry: evidencePhaseTelemetry({ expectedNetworkRecordCount: 0 }),
+    });
+    expect(persistedPwaEvidence.runs.every((run) =>
+      JSON.stringify(run.pwaControllerSnapshot) === JSON.stringify(pwaControllerSnapshot()) &&
+      JSON.stringify(run.phaseTelemetry) === JSON.stringify(runPhaseTelemetry()),
+    )).toBe(true);
+
+    const unstableController = makeMatrix();
+    unstableController.runs[0].pwaControllerSnapshot.controllerChangeCounterValue = "1";
+    unstableController.runs[0].pwaControllerSnapshot.controllerChangeCount = 1;
+    expect(build({ matrix: unstableController }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", invalidRuns: [0] });
+
+    const pendingRunBoundary = makeMatrix();
+    pendingRunBoundary.runs[0].phaseTelemetry.pendingRequestCount = 1;
+    expect(build({ matrix: pendingRunBoundary }).browserMatrix.completeness)
+      .toMatchObject({ result: "INVALID_EVIDENCE", invalidRuns: [0] });
 
     const missingFontWeight = makeMatrix();
     missingFontWeight.runs[0].fontSnapshot.interTight["900"] = false;
@@ -1101,12 +1307,25 @@ describe("buildManifest strict evidence inspection", () => {
         metadataChangedDuring: true,
         restored: true,
         failures: [],
+        pwaControllerSnapshot: pwaControllerSnapshot(),
+        telemetry: evidencePhaseTelemetry({ networkRecordCount: 2 }),
       }],
     });
     expect(build({
       inventory: restorationInventory,
       matrix: restorationMatrix,
     }).browserMatrix.completeness.result).toBe("AUTOMATED_PASS");
+    const unsafeRestoration = structuredClone(restorationMatrix);
+    unsafeRestoration.metadataRestoration[0].telemetry.consoleErrorCount = 1;
+    expect(build({
+      inventory: restorationInventory,
+      matrix: unsafeRestoration,
+    }).browserMatrix.completeness).toMatchObject({
+      result: "COVERAGE_INCOMPLETE",
+      invalidRestoration: [
+        "/research/about->/research/account->/research/about",
+      ],
+    });
     restorationMatrix.metadataRestoration[0].during.path = "/research/about";
     expect(build({
       inventory: restorationInventory,

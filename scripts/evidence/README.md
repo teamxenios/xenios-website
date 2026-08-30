@@ -197,6 +197,23 @@ code runs (with Chromium's non-proxied UDP policy as defense in depth), so STUN
 or peer-connection UDP cannot bypass the HTTP boundary. Network settle is
 fail-closed: a capture fails unless a complete quiet interval remains idle
 through the final paint and telemetry flush before the deadline.
+Before any route is recorded, the tool loads the static `/offline.html`,
+registers the exact same-origin `/sw.js`, waits under bounded deadlines for that
+worker to be active and controlling at scope `/`, and audits the warm-up traffic
+before discarding it. The warm-up must contain exactly one static document GET,
+one child-target worker-script GET, and one child-target offline-page cache GET,
+all with exact 200 statuses and CDP resource types; worker console errors and
+exceptions are blocking too. Only that closed five-field network attestation is
+serialized. A session-persistent controller-change counter is reset exactly
+once only by a synchronous in-page conditional that first verifies the activated
+tuple and exact value `1`; a transition during verification prevents the reset.
+`PWA_CONTROLLER_STABLE` requires the same active/controller tuple and a
+zero counter after every screenshot and the final browser read, so a worker
+activation or update during recorded evidence is blocking rather than silently
+duplicating or changing route traffic. Metadata-restoration navigation and the
+closing provenance window are separate audited phases: non-warning page or
+child-worker console signals, HTTP/network failures, boundary activity,
+substitutions, pending telemetry, or boundary setup errors invalidate them.
 `SELF_HOSTED_FONTS_LOADED` checks the computed body family and every
 required loaded face. It is explicitly not-applicable only for the separately
 owned static Hino microsite.
@@ -240,6 +257,8 @@ Important assertion semantics:
 | `FOCUS_VISIBLE_PRESENT`                                                                    | Every reached stop exposes an outline or box shadow while focus-visible.                                                                                                                                           |
 | `ROUTE_LOCATION` / `ROUTE_STATE_CONTRACT`                                                  | The browser is on the inventory path and that route's required/forbidden selectors and text prove the expected state. Missing semantic contracts or not-applicable state evidence are invalid for required routes. |
 | `EXPECTED_HTTP_FAILURES_OBSERVED`                                                          | Every declared fail-closed response matches exact URL, method, status, body SHA-256, request count, and console text/count.                                                                                        |
+| `PWA_CONTROLLER_STABLE`                                                                    | The exact same-origin `/sw.js` remains active and controlling at scope `/`, with zero controller changes after the audited static warm-up.                                                                        |
+| `EVIDENCE_PHASE_SETTLED`                                                                   | No request, response-body read, child-target setup, or boundary setup remains pending when a recorded run is sealed and its telemetry is reset.                                                                    |
 | `CONSOLE_CLEAN` / `NETWORK_CLEAN`                                                          | No undeclared console errors, failed requests, or HTTP errors. Exact expected denials may be `PASS_WITH_NOTES`.                                                                                                    |
 | `SAME_ORIGIN_NETWORK_BOUNDARY` / `SELF_HOSTED_FONTS_LOADED`                                | No off-origin dispatch and all applicable pinned self-hosted font faces load.                                                                                                                                      |
 

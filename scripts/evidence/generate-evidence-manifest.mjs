@@ -48,6 +48,7 @@ import {
 } from "./lib/route-contract.mjs";
 import {
   EVIDENCE_EXTERNAL_RESOURCE_SUBSTITUTIONS,
+  evaluatePwaWarmupNetworkRecords,
   gitSha,
 } from "./capture-browser-matrix.mjs";
 import { MAX_FULL_PAGE_HEIGHT_CSS_PX } from "./lib/cdp.mjs";
@@ -92,6 +93,8 @@ const REQUIRED_BROWSER_ASSERTIONS = [
   "FOCUS_ORDER_REACHABLE",
   "FOCUS_VISIBLE_PRESENT",
   "EXPECTED_HTTP_FAILURES_OBSERVED",
+  "PWA_CONTROLLER_STABLE",
+  "EVIDENCE_PHASE_SETTLED",
   "CONSOLE_CLEAN",
   "NETWORK_CLEAN",
   "SAME_ORIGIN_NETWORK_BOUNDARY",
@@ -101,7 +104,12 @@ const REQUIRED_BROWSER_ASSERTIONS = [
 ];
 const REQUIRED_SYNTHETIC_ASSERTIONS = [
   ...REQUIRED_BROWSER_ASSERTIONS.filter((id) =>
-    !["SAME_ORIGIN_NETWORK_BOUNDARY", "SELF_HOSTED_FONTS_LOADED"].includes(id),
+    ![
+      "SAME_ORIGIN_NETWORK_BOUNDARY",
+      "PWA_CONTROLLER_STABLE",
+      "EVIDENCE_PHASE_SETTLED",
+      "SELF_HOSTED_FONTS_LOADED",
+    ].includes(id),
   ),
   "EXPECTED_SYNTHETIC_VIEW",
   "LOCAL_ORIGIN_NETWORK_BOUNDARY",
@@ -810,7 +818,39 @@ function validHttpLocation(record, route, expectedOrigin) {
   }
 }
 
-function validMetadataRestoration(expected, actual) {
+function validEvidencePhaseTelemetry(telemetry, expectedNetworkRecordCount = null) {
+  return telemetry?.result === "PASS" &&
+    telemetry.count === 0 &&
+    telemetry.telemetrySourceErrorCount === 0 &&
+    Number.isInteger(telemetry.networkRecordCount) && telemetry.networkRecordCount >= 0 &&
+    telemetry.expectedNetworkRecordCount === expectedNetworkRecordCount &&
+    telemetry.networkRecordCountMismatchCount === 0 &&
+    (expectedNetworkRecordCount === null ||
+      telemetry.networkRecordCount === expectedNetworkRecordCount) &&
+    telemetry.networkFailureCount === 0 &&
+    telemetry.consoleErrorCount === 0 &&
+    telemetry.childConsoleErrorCount === 0 &&
+    telemetry.networkBoundaryViolationCount === 0 &&
+    telemetry.networkBoundaryFulfillmentCount === 0 &&
+    telemetry.pendingRequestCount === 0 &&
+    telemetry.pendingBodyTelemetryCount === 0 &&
+    telemetry.pendingBoundaryTargetCount === 0 &&
+    telemetry.boundarySetupErrorCount === 0;
+}
+
+function validRunPhaseBoundaryTelemetry(telemetry) {
+  return telemetry?.id === "EVIDENCE_PHASE_SETTLED" &&
+    telemetry.result === "PASS" &&
+    nonEmpty(telemetry.detail) &&
+    telemetry.count === 0 &&
+    telemetry.telemetrySourceErrorCount === 0 &&
+    telemetry.pendingRequestCount === 0 &&
+    telemetry.pendingBodyTelemetryCount === 0 &&
+    telemetry.pendingBoundaryTargetCount === 0 &&
+    telemetry.boundarySetupErrorCount === 0;
+}
+
+function validMetadataRestoration(expected, actual, baseUrlOrigin) {
   if (!actual ||
     actual.public !== expected.public ||
     actual.private !== expected.private ||
@@ -823,7 +863,9 @@ function validMetadataRestoration(expected, actual) {
     actual.metadataChangedDuring !== true ||
     actual.restored !== true ||
     !Array.isArray(actual.failures) ||
-    actual.failures.length !== 0
+    actual.failures.length !== 0 ||
+    !validPwaControllerSnapshot(actual.pwaControllerSnapshot, baseUrlOrigin) ||
+    !validEvidencePhaseTelemetry(actual.telemetry)
   ) {
     return false;
   }
@@ -866,6 +908,70 @@ const artifactsVerified = (record, artifactVerifier, pairs) =>
     (!hashField || /^[a-f0-9]{64}$/u.test(record?.[hashField] ?? "")) &&
     artifactVerifier(record[pathField], hashField ? record[hashField] : null),
   );
+
+function validPwaControllerSnapshot(snapshot, baseUrlOrigin, expectedControllerChangeCount = 0) {
+  if (!snapshot || !baseUrlOrigin) return false;
+  const expectedScriptUrl = new URL("/sw.js", `${baseUrlOrigin}/`).toString();
+  const expectedScope = new URL("/", `${baseUrlOrigin}/`).toString();
+  return snapshot.supported === true &&
+    snapshot.registrationScope === expectedScope &&
+    snapshot.activeScriptUrl === expectedScriptUrl &&
+    snapshot.activeState === "activated" &&
+    snapshot.controllerScriptUrl === expectedScriptUrl &&
+    snapshot.controllerState === "activated" &&
+    snapshot.controllerMatchesActive === true &&
+    snapshot.controllerChangeCounterValue === String(expectedControllerChangeCount) &&
+    snapshot.controllerChangeCount === expectedControllerChangeCount;
+}
+
+function validPwaServiceWorkerWarmup(warmup, baseUrlOrigin) {
+  if (!warmup || !baseUrlOrigin) return false;
+  const warmupUrl = new URL("/offline.html", `${baseUrlOrigin}/`).toString();
+  const expectedScriptUrl = new URL("/sw.js", `${baseUrlOrigin}/`).toString();
+  const expectedScope = new URL("/", `${baseUrlOrigin}/`).toString();
+  const lifecycle = warmup.lifecycle;
+  const telemetry = warmup.telemetry;
+  const networkRecordAudit = evaluatePwaWarmupNetworkRecords(
+    warmup.networkRecords,
+    baseUrlOrigin,
+  );
+  return warmup.result === "PASS" &&
+    warmup.warmupUrl === warmupUrl &&
+    warmup.expectedScriptUrl === expectedScriptUrl &&
+    warmup.expectedScope === expectedScope &&
+    Number.isFinite(warmup.navigationMs) && warmup.navigationMs >= 0 &&
+    lifecycle?.supported === true &&
+    lifecycle.pathname === "/offline.html" &&
+    lifecycle.registrationScope === expectedScope &&
+    lifecycle.activeScriptUrl === expectedScriptUrl &&
+    ["activating", "activated"].includes(lifecycle.activeState) &&
+    lifecycle.controllerScriptUrl === expectedScriptUrl &&
+    ["activating", "activated"].includes(lifecycle.controllerState) &&
+    lifecycle.controllerState === lifecycle.activeState &&
+    lifecycle.controllerMatchesActive === true &&
+    lifecycle.controllerChangeCounterValue === "1" &&
+    lifecycle.controllerChangeCount === 1 &&
+    telemetry?.networkRecordCount === 3 &&
+    telemetry.networkRecordMultisetResult === "PASS" &&
+    telemetry.networkRecordMismatchCount === 0 &&
+    networkRecordAudit.result === "PASS" &&
+    JSON.stringify(warmup.networkRecords) === JSON.stringify(networkRecordAudit.networkRecords) &&
+    telemetry.networkFailureCount === 0 &&
+    telemetry.unexpectedNetworkRecordCount === 0 &&
+    telemetry.consoleErrorCount === 0 &&
+    telemetry.networkBoundaryViolationCount === 0 &&
+    telemetry.networkBoundaryFulfillmentCount === 0 &&
+    telemetry.pendingRequestCount === 0 &&
+    telemetry.pendingBodyTelemetryCount === 0 &&
+    telemetry.pendingBoundaryTargetCount === 0 &&
+    telemetry.boundarySetupErrorCount === 0 &&
+    validPwaControllerSnapshot(warmup.postSettleSnapshot, baseUrlOrigin, 1) &&
+    validPwaControllerSnapshot(warmup.preResetSnapshot, baseUrlOrigin, 1) &&
+    warmup.controllerCounterResetApplied === true &&
+    warmup.controllerCounterValueAfterReset === "0" &&
+    validPwaControllerSnapshot(warmup.recordedRunBaselineSnapshot, baseUrlOrigin) &&
+    warmup.recordedRunControllerChangeBaseline === 0;
+}
 
 function readJsonArtifact(artifactRead, path) {
   try {
@@ -979,6 +1085,7 @@ function isValidMatrixRecord(
   record,
   expectedSha,
   artifactExists,
+  baseUrlOrigin,
   routeContract = null,
   artifactRead = () => null,
 ) {
@@ -1014,6 +1121,8 @@ function isValidMatrixRecord(
       validMatrixAssertionResults(record, routeContract) &&
       validRouteMetadataContract(record, routeContract) &&
       validSignalSummary(record) &&
+      validPwaControllerSnapshot(record.pwaControllerSnapshot, baseUrlOrigin) &&
+      validRunPhaseBoundaryTelemetry(record.phaseTelemetry) &&
       validScreenshotCoverage(record, artifactExists) &&
       validFocusWalk(record) &&
       validFontSnapshot(record, routeContract) &&
@@ -1034,11 +1143,19 @@ function isPassingMatrixRecord(
   record,
   expectedSha,
   artifactExists,
+  baseUrlOrigin,
   routeContract = null,
   artifactRead = () => null,
 ) {
   return (
-    isValidMatrixRecord(record, expectedSha, artifactExists, routeContract, artifactRead) &&
+    isValidMatrixRecord(
+      record,
+      expectedSha,
+      artifactExists,
+      baseUrlOrigin,
+      routeContract,
+      artifactRead,
+    ) &&
     PASS_VERDICTS.has(record.verdict) &&
     blockingAssertionFailures(record).length === 0
   );
@@ -1162,6 +1279,7 @@ function inspectMatrix({ template, matrix, inventory, routesInventory, sha, sour
         run,
         sha,
         artifactExists,
+        baseUrlOrigin,
         routeByPath.get(run.route),
         artifactRead,
       ) || !timestampWithin(run.timestampUtc, matrix.startedAtUtc, matrix.finishedAtUtc),
@@ -1225,7 +1343,7 @@ function inspectMatrix({ template, matrix, inventory, routesInventory, sha, sour
   const expectedRestorationKeys = new Set(expectedRestoration.map(restorationKey));
   const missingRestoration = expectedRestoration
     .filter((expected) => !restoration.some((actual) =>
-      validMetadataRestoration(expected, actual),
+      validMetadataRestoration(expected, actual, baseUrlOrigin),
     ))
     .map((entry) => `${entry.public}->${entry.private}->${entry.backTo}`);
   const invalidRestoration = restoration
@@ -1233,7 +1351,7 @@ function inspectMatrix({ template, matrix, inventory, routesInventory, sha, sour
       const expected = expectedRestoration.find((candidate) =>
         restorationKey(candidate) === restorationKey(actual),
       );
-      return expected && !validMetadataRestoration(expected, actual);
+      return expected && !validMetadataRestoration(expected, actual, baseUrlOrigin);
     })
     .map(restorationKey);
   const duplicateRestoration = [...restorationCounts]
@@ -1253,6 +1371,9 @@ function inspectMatrix({ template, matrix, inventory, routesInventory, sha, sour
     !nonEmpty(matrix.tool?.browserName) ||
     !nonEmpty(matrix.tool?.browserVersion) ||
     !validCaptureRuntime(matrix.tool) ||
+    !validPwaServiceWorkerWarmup(matrix.pwaServiceWorkerWarmup, baseUrlOrigin) ||
+    !validPwaControllerSnapshot(matrix.finalPwaControllerSnapshot, baseUrlOrigin) ||
+    !validEvidencePhaseTelemetry(matrix.finalizationTelemetry, 0) ||
     !validExternalResourceContract(matrix.externalResourceContract);
   const incomplete =
     missingRunKeys.length || duplicateRunKeys.length || unexpectedRunKeys.length ||
@@ -1626,6 +1747,8 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
       screenshotCoverage: r.screenshotCoverage,
       focusWalk: r.focusWalk,
       fontSnapshot: r.fontSnapshot,
+      pwaControllerSnapshot: r.pwaControllerSnapshot,
+      phaseTelemetry: r.phaseTelemetry,
       piiPhiReview: r.piiPhiReview,
       verdict: r.verdict,
       runFile: r.runFile,
@@ -1639,6 +1762,9 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
       baseUrl: matrix.baseUrl,
       provenance: matrix.provenance,
       provenanceInspection: matrixInspection.provenance,
+      pwaServiceWorkerWarmup: matrix.pwaServiceWorkerWarmup,
+      finalPwaControllerSnapshot: matrix.finalPwaControllerSnapshot,
+      finalizationTelemetry: matrix.finalizationTelemetry,
       externalResourceContract: matrix.externalResourceContract,
       routesInventory: matrix.routesInventory,
       widthsCoveredCssPx: [...new Set((matrix.runs ?? []).map((r) => r.widthCssPx).filter((w) => (matrix.runs ?? []).some((r) => r.widthCssPx === w && r.zoomPercent === 100)))].sort((a, b) => b - a),
@@ -1679,6 +1805,7 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
         reviewer: reviewer ?? r.reviewer,
         consoleResult: r.consoleResult,
         networkResult: r.networkResult,
+        phaseTelemetry: r.phaseTelemetry,
         piiPhiReview: r.piiPhiReview,
       }));
     m.accessibilityEvidence = { ...(m.accessibilityEvidence ?? {}), ...aggregateAccessibility(matrix.runs ?? []) };
@@ -1801,6 +1928,7 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
   }
 
   const matrixRuns = matrix?.runs ?? [];
+  const matrixBaseUrlOrigin = loopbackOrigin(matrix?.baseUrl);
   const supplementalCaptures = supplemental?.captures ?? [];
   const inventoryRouteByPath = new Map(
     (inventory?.routes ?? []).map((route) => [route.path, route]),
@@ -1813,6 +1941,7 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
       run,
       sha,
       artifactExists,
+      matrixBaseUrlOrigin,
       inventoryRouteByPath.get(run.route),
       artifactRead,
     ));
@@ -1821,7 +1950,14 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
     );
     const representativeCovered = routeRuns.some(
       (run) => run.coverageScope !== "boundary-only" &&
-        isPassingMatrixRecord(run, sha, artifactExists, inventoryRouteByPath.get(run.route), artifactRead),
+        isPassingMatrixRecord(
+          run,
+          sha,
+          artifactExists,
+          matrixBaseUrlOrigin,
+          inventoryRouteByPath.get(run.route),
+          artifactRead,
+        ),
     ) || journeyCaptures.some((capture) =>
       capture.coverageScope !== "boundary-only" &&
         isValidSupplementalCapture(capture, sha, artifactExists, supplementalHarnessOrigins),
@@ -1849,6 +1985,7 @@ export function buildManifest({ template, matrix, supplemental, http, pii, inven
         run,
         sha,
         artifactExists,
+        matrixBaseUrlOrigin,
         inventoryRouteByPath.get(run.route),
         artifactRead,
       )) ||

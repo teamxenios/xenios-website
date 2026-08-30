@@ -500,6 +500,26 @@ export class PageSession {
     this.boundaryTelemetrySessionIds.add(sessionId);
     const key = (requestId) => `${sessionId}:${requestId}`;
     this.unsubscribe.push(
+      this.conn.on("Runtime.consoleAPICalled", (params) => {
+        if (!["error", "warning", "assert"].includes(params.type)) return;
+        const rawUrl = params.stackTrace?.callFrames?.[0]?.url;
+        this.console.push({
+          level: params.type,
+          text: params.args.map(argText).join(" ").slice(0, 500),
+          targetType: "worker-or-child",
+          ...(rawUrl ? { url: safeBoundaryUrl(rawUrl) } : {}),
+        });
+      }, sessionId),
+      this.conn.on("Runtime.exceptionThrown", (params) => {
+        const details = params.exceptionDetails;
+        const rawUrl = details?.url ?? details?.stackTrace?.callFrames?.[0]?.url;
+        this.console.push({
+          level: "exception",
+          text: String(details?.exception?.description ?? details?.text ?? "").slice(0, 500),
+          targetType: "worker-or-child",
+          ...(rawUrl ? { url: safeBoundaryUrl(rawUrl) } : {}),
+        });
+      }, sessionId),
       this.conn.on("Network.requestWillBeSent", (params) => {
         if (!isEvidenceBoundaryUrlForOrigins(
           params.request.url,
@@ -677,8 +697,14 @@ export class PageSession {
     });
   }
 
-  async navigate(url, { loadTimeoutMs = 30000, quietMs = 800, maxSettleMs = 8000 } = {}) {
-    this.resetRecords();
+  async navigate(url, {
+    loadTimeoutMs = 30000,
+    quietMs = 800,
+    maxSettleMs = 8000,
+    resetRecords = true,
+  } = {}) {
+    if (resetRecords) this.resetRecords();
+    else this.loaded = false;
     const started = Date.now();
     const nav = await this.send("Page.navigate", { url });
     if (nav.errorText) throw new Error(`navigate ${url}: ${nav.errorText}`);
