@@ -100,7 +100,7 @@
           "productionEvidence": "server/research/early-access/catalog/product-control-source.ts explicitly forbids substituting an empty catalogue for an unavailable production read."
         },
         {
-          "path": "/api/research/early-access/assisted-orders/catalog",
+          "path": "/api/research/early-access/assisted-orders/catalog?page=1&pageSize=24",
           "method": "GET",
           "status": 403,
           "count": 1,
