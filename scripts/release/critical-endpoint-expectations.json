@@ -9,7 +9,7 @@
         "^header x-robots-tag: - -> index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1$",
         "^header cache-control: public, max-age=0 -> -$",
         "^header link: - -> <https://xeniostechnology[.]com>; rel=\"canonical\"$",
-        "^shape-fingerprint a906b74ad1353da1 -> d93f7d204d0f09af$",
+        "^shape-fingerprint a906b74ad1353da1 -> e59130fdac42bf29$",
         "^html-marker json-ld: 4 -> 2$",
         "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\"Organization\",\"Place\",\"PostalAddress\",\"WebSite\"\\]$"
       ]
@@ -21,7 +21,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> -$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -37,7 +37,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> no-store$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -53,7 +53,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> no-store$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -69,7 +69,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> -$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -85,7 +85,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> -$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -101,7 +101,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> no-store$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -117,7 +117,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> no-store$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -143,7 +143,7 @@
       "allow": [
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header content-security-policy: - -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
@@ -161,7 +161,7 @@
         "^status 200 -> 404$",
         "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
         "^header cache-control: public, max-age=0 -> no-store$",
-        "^shape-fingerprint a906b74ad1353da1 -> 94f06033de1c3ec9$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
         "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
         "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
         "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
