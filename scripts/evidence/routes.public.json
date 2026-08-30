@@ -125,7 +125,19 @@
         "requiredText": ["No products selected yet."],
         "forbiddenText": ["Request received", "Status: submitted"]
       },
-      "$comment": "The production-shape preview opens the real wizard with no selected products. Successful review and confirmation are captured separately through the local-only in-memory Step 1 harness."
+      "expectedHttpFailures": [
+        {
+          "path": "/api/research/early-access/assisted-orders/catalog?page=1&pageSize=24",
+          "method": "GET",
+          "status": 403,
+          "count": 1,
+          "responseBodySha256": "09db90c31e9272307189d3b257e563c422350a2d977b8a9b0048c249b61f03f6",
+          "consoleText": "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+          "reason": "The isolated preview has a valid password session but no durable customer identity or agreement standing, so the order-request catalogue refuses access instead of inventing an authorized customer.",
+          "productionEvidence": "server/research/assisted-order/express.ts derives a capability-free viewer when durable Early Access identity cannot resolve, and server/research/assisted-order/service.ts requires assisted_orders:submit before listing this catalogue."
+        }
+      ],
+      "$comment": "The production-shape preview opens the real wizard with no selected products and truthfully records its exact fail-closed catalogue response. Successful review and confirmation are captured separately through the local-only in-memory Step 1 harness."
     },
     {
       "path": "/research/early-access/order-request/confirmation/XRR-20000101-0000000000",
