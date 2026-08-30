@@ -324,7 +324,7 @@
           "targetType": "worker-or-child",
           "responseBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "consoleCount": 0,
-          "reason": "The evidence recorder observes the authoritative not-found navigation as one exact auto-attached worker-or-child Fetch; CDP cannot read that child response body and records the pinned empty-body digest without a second console signal.",
+          "reason": "The evidence recorder observes the authoritative not-found navigation as one exact auto-attached worker-or-child Fetch; CDP response-body telemetry returns zero bytes for that child-target observation, producing the pinned empty-body digest without a second console signal.",
           "productionEvidence": "scripts/evidence/lib/cdp.mjs records worker-or-child response failures separately; this declaration pins the preserved negative-lot target discriminator and empty-body digest."
         },
         {
