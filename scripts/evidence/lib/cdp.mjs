@@ -96,6 +96,14 @@ export const MAX_FULL_PAGE_HEIGHT_CSS_PX = 24000;
  */
 const ERROR_RESPONSE_BODY_TIMEOUT_MS = 2000;
 
+// Chromium can restart a controlling service worker while a main-frame
+// navigation is loading. In that narrow transition, CDP can strand the old
+// loader's requestWillBeSent entries even after the current loader completes
+// exact replacements through the new worker. Never release an entry without
+// a completed, current-loader replacement and a tightly bounded transition.
+const SERVICE_WORKER_RESTART_SUPERSESSION_MS = 1000;
+const SERVICE_WORKER_RESTART_RESOURCE_TYPES = new Set(["Other", "Script", "Stylesheet"]);
+
 /** A page session: one target, one sessionId, console/network bookkeeping. */
 export class PageSession {
   constructor(conn, targetId, sessionId) {
@@ -116,6 +124,9 @@ export class PageSession {
     this.boundaryTargetPromises = new Set();
     this.boundarySetupErrors = [];
     this.boundaryConfiguration = null;
+    this.mainFrameId = null;
+    this.currentMainFrameLoaderId = null;
+    this.mainFrameLoaderTransition = null;
     this.loaded = false;
     this.unsubscribe = [];
   }
@@ -173,7 +184,17 @@ export class PageSession {
             p.type === "Script" &&
             (/^blob:/u.test(p.request.url) || !p.loaderId)
           ) return;
-          page.inflight.set(p.requestId, { url: p.request.url, method: p.request.method, type: p.type });
+          page.inflight.set(p.requestId, {
+            url: p.request.url,
+            method: p.request.method,
+            type: p.type,
+            frameId: p.frameId ?? null,
+            loaderId: p.loaderId ?? null,
+            initiatorType: p.initiator?.type ?? null,
+            observedAtMs: Date.now(),
+            generation: page.recordsGeneration,
+            sessionId,
+          });
         },
         sessionId,
       ),
@@ -183,7 +204,10 @@ export class PageSession {
           const req = page.inflight.get(p.requestId);
           const record = { url: p.response.url, status: p.response.status, type: p.type, method: req?.method ?? "GET" };
           page.network.push(record);
-          if (req) req.responseRecord = record;
+          if (req) {
+            req.responseRecord = record;
+            req.responseFromServiceWorker = p.response.fromServiceWorker === true;
+          }
         },
         sessionId,
       ),
@@ -196,6 +220,7 @@ export class PageSession {
           // error body is a separate, bounded audit operation and must never
           // manufacture a still-in-flight request after HTTP completion.
           page.inflight.delete(p.requestId);
+          page.reconcileSupersededServiceWorkerRestartRequest(req);
           if (record?.status >= 400) {
             page.queueErrorResponseBodyTelemetry({
               record,
@@ -222,6 +247,7 @@ export class PageSession {
         },
         sessionId,
       ),
+      conn.on("Page.frameNavigated", (p) => page.recordMainFrameNavigation(p.frame), sessionId),
       conn.on("Page.loadEventFired", () => (page.loaded = true), sessionId),
     );
     return page;
@@ -229,6 +255,71 @@ export class PageSession {
 
   send(method, params = {}) {
     return this.conn.send(method, params, this.sessionId);
+  }
+
+  recordMainFrameNavigation(frame) {
+    if (!frame?.id || frame.parentId || !frame.loaderId) return;
+    const observedAtMs = Date.now();
+    const previousLoaderId = this.currentMainFrameLoaderId;
+    if (
+      this.mainFrameId === frame.id &&
+      previousLoaderId &&
+      previousLoaderId !== frame.loaderId
+    ) {
+      this.mainFrameLoaderTransition = Object.freeze({
+        frameId: frame.id,
+        previousLoaderId,
+        currentLoaderId: frame.loaderId,
+        observedAtMs,
+        generation: this.recordsGeneration,
+      });
+    } else if (this.mainFrameId !== frame.id || previousLoaderId !== frame.loaderId) {
+      this.mainFrameLoaderTransition = null;
+    }
+    this.mainFrameId = frame.id;
+    this.currentMainFrameLoaderId = frame.loaderId;
+  }
+
+  reconcileSupersededServiceWorkerRestartRequest(completedRequest) {
+    const transition = this.mainFrameLoaderTransition;
+    const record = completedRequest?.responseRecord;
+    if (
+      !transition ||
+      !completedRequest ||
+      completedRequest.generation !== this.recordsGeneration ||
+      transition.generation !== this.recordsGeneration ||
+      completedRequest.sessionId !== this.sessionId ||
+      completedRequest.method !== "GET" ||
+      !SERVICE_WORKER_RESTART_RESOURCE_TYPES.has(completedRequest.type) ||
+      !completedRequest.frameId ||
+      completedRequest.frameId !== transition.frameId ||
+      completedRequest.loaderId !== transition.currentLoaderId ||
+      this.currentMainFrameLoaderId !== transition.currentLoaderId ||
+      !completedRequest.initiatorType ||
+      completedRequest.responseFromServiceWorker !== true ||
+      record?.status !== 200 ||
+      !Number.isFinite(completedRequest.observedAtMs) ||
+      completedRequest.observedAtMs < transition.observedAtMs
+    ) return 0;
+
+    const candidates = [...this.inflight.entries()].filter(([, candidate]) => (
+      candidate.generation === this.recordsGeneration &&
+      candidate.sessionId === this.sessionId &&
+      candidate.method === completedRequest.method &&
+      candidate.url === completedRequest.url &&
+      candidate.type === completedRequest.type &&
+      candidate.frameId === transition.frameId &&
+      candidate.loaderId === transition.previousLoaderId &&
+      candidate.initiatorType === completedRequest.initiatorType &&
+      !candidate.responseRecord &&
+      Number.isFinite(candidate.observedAtMs) &&
+      candidate.observedAtMs <= transition.observedAtMs &&
+      completedRequest.observedAtMs - candidate.observedAtMs <=
+        SERVICE_WORKER_RESTART_SUPERSESSION_MS
+    ));
+    if (candidates.length !== 1) return 0;
+    this.inflight.delete(candidates[0][0]);
+    return 1;
   }
 
   resetRecords() {
@@ -240,6 +331,7 @@ export class PageSession {
     this.networkBoundaryViolations = [];
     this.networkBoundaryFulfillments = [];
     this.inflight.clear();
+    this.mainFrameLoaderTransition = null;
     this.loaded = false;
   }
 
@@ -543,6 +635,7 @@ export class PageSession {
           method: params.request.method,
           type: params.type,
           targetType: "worker-or-child",
+          sessionId,
         });
       }, sessionId),
       this.conn.on("Network.responseReceived", (params) => {

@@ -21,6 +21,62 @@ import {
 
 const ORIGIN = "http://127.0.0.1:5184";
 
+function createMemoryCdpConnection() {
+  const listeners = new Map();
+  return {
+    async send(method) {
+      if (method === "Target.createTarget") return { targetId: "page-target" };
+      if (method === "Target.attachToTarget") return { sessionId: "page-session" };
+      return {};
+    },
+    on(method, listener, sessionId) {
+      const key = `${sessionId ?? ""}|${method}`;
+      if (!listeners.has(key)) listeners.set(key, new Set());
+      listeners.get(key).add(listener);
+      return () => listeners.get(key)?.delete(listener);
+    },
+    emit(method, params, sessionId = "page-session") {
+      const key = `${sessionId ?? ""}|${method}`;
+      for (const listener of listeners.get(key) ?? []) listener(params);
+    },
+  };
+}
+
+function emitMainFrame(connection, loaderId) {
+  connection.emit("Page.frameNavigated", {
+    frame: { id: "main-frame", loaderId, url: `${ORIGIN}/research/sign-in` },
+  });
+}
+
+function emitPageRequest(connection, requestId, loaderId, overrides = {}) {
+  connection.emit("Network.requestWillBeSent", {
+    requestId,
+    loaderId,
+    frameId: "main-frame",
+    type: "Script",
+    initiator: { type: "parser" },
+    request: { method: "GET", url: `${ORIGIN}/assets/section.js` },
+    ...overrides,
+  });
+}
+
+function completePageRequest(connection, requestId, {
+  fromServiceWorker = true,
+  status = 200,
+  type = "Script",
+} = {}) {
+  connection.emit("Network.responseReceived", {
+    requestId,
+    type,
+    response: {
+      fromServiceWorker,
+      status,
+      url: `${ORIGIN}/assets/section.js`,
+    },
+  });
+  connection.emit("Network.loadingFinished", { requestId });
+}
+
 describe("evidence network boundary", () => {
   it("allows only the exact HTTP preview origin for raw document capture", () => {
     expect(assertEvidenceHttpUrl(`${ORIGIN}/research`, ORIGIN)).toBe(`${ORIGIN}/research`);
@@ -130,6 +186,123 @@ describe("evidence network boundary", () => {
 
     expect(page.errorResponseBodyTelemetry.size).toBe(0);
     expect(record).toMatchObject({ bodySha256: null, bodyBytes: null });
+  });
+
+  it("reconciles one exact old-loader request only after its current-loader service-worker replacement finishes", async () => {
+    const connection = createMemoryCdpConnection();
+    const page = await PageSession.create(connection);
+    try {
+      emitMainFrame(connection, "old-loader");
+      emitPageRequest(connection, "old-request", "old-loader");
+      emitMainFrame(connection, "current-loader");
+      emitPageRequest(connection, "replacement-request", "current-loader");
+
+      connection.emit("Network.responseReceived", {
+        requestId: "replacement-request",
+        type: "Script",
+        response: {
+          fromServiceWorker: true,
+          status: 200,
+          url: `${ORIGIN}/assets/section.js`,
+        },
+      });
+      expect([...page.inflight.keys()]).toEqual(["old-request", "replacement-request"]);
+
+      connection.emit("Network.loadingFinished", { requestId: "replacement-request" });
+      expect(page.inflight.size).toBe(0);
+      expect(page.network).toEqual([
+        expect.objectContaining({
+          method: "GET",
+          status: 200,
+          type: "Script",
+          url: `${ORIGIN}/assets/section.js`,
+        }),
+      ]);
+    } finally {
+      await page.close();
+    }
+  });
+
+  it("keeps a genuinely unresolved same-loader duplicate pending", async () => {
+    const connection = createMemoryCdpConnection();
+    const page = await PageSession.create(connection);
+    try {
+      emitMainFrame(connection, "current-loader");
+      emitPageRequest(connection, "hung-request", "current-loader");
+      emitPageRequest(connection, "completed-request", "current-loader");
+      completePageRequest(connection, "completed-request");
+
+      expect([...page.inflight.keys()]).toEqual(["hung-request"]);
+      await expect(page.settle({ quietMs: 5, maxSettleMs: 30 }))
+        .rejects.toThrow(/1 request\(s\) pending \[Script\]/u);
+    } finally {
+      await page.close();
+    }
+  });
+
+  it("keeps ambiguous and non-service-worker old-loader requests pending", async () => {
+    const connection = createMemoryCdpConnection();
+    const page = await PageSession.create(connection);
+    try {
+      emitMainFrame(connection, "old-loader");
+      emitPageRequest(connection, "ambiguous-old-a", "old-loader");
+      emitPageRequest(connection, "ambiguous-old-b", "old-loader");
+      emitMainFrame(connection, "current-loader");
+      emitPageRequest(connection, "service-worker-replacement", "current-loader");
+      completePageRequest(connection, "service-worker-replacement");
+      expect([...page.inflight.keys()]).toEqual(["ambiguous-old-a", "ambiguous-old-b"]);
+
+      page.resetRecords();
+      emitPageRequest(connection, "direct-old", "current-loader");
+      emitMainFrame(connection, "next-loader");
+      emitPageRequest(connection, "direct-replacement", "next-loader");
+      completePageRequest(connection, "direct-replacement", { fromServiceWorker: false });
+      expect([...page.inflight.keys()]).toEqual(["direct-old"]);
+    } finally {
+      await page.close();
+    }
+  });
+
+  it("keeps missing-identity, non-200, and child-session candidates pending", async () => {
+    const connection = createMemoryCdpConnection();
+    const page = await PageSession.create(connection);
+    try {
+      emitMainFrame(connection, "missing-old-loader");
+      emitPageRequest(connection, "missing-frame", "missing-old-loader", { frameId: null });
+      emitMainFrame(connection, "missing-current-loader");
+      emitPageRequest(connection, "missing-replacement", "missing-current-loader");
+      completePageRequest(connection, "missing-replacement");
+      expect([...page.inflight.keys()]).toEqual(["missing-frame"]);
+
+      page.resetRecords();
+      emitMainFrame(connection, "non-200-old-loader");
+      emitPageRequest(connection, "non-200-old", "non-200-old-loader");
+      emitMainFrame(connection, "non-200-current-loader");
+      emitPageRequest(connection, "non-200-replacement", "non-200-current-loader");
+      completePageRequest(connection, "non-200-replacement", { status: 204 });
+      expect([...page.inflight.keys()]).toEqual(["non-200-old"]);
+
+      page.resetRecords();
+      emitMainFrame(connection, "child-old-loader");
+      page.inflight.set("child-session:child-old", {
+        frameId: "main-frame",
+        generation: page.recordsGeneration,
+        initiatorType: "parser",
+        loaderId: "child-old-loader",
+        method: "GET",
+        observedAtMs: Date.now(),
+        sessionId: "child-session",
+        targetType: "worker-or-child",
+        type: "Script",
+        url: `${ORIGIN}/assets/section.js`,
+      });
+      emitMainFrame(connection, "child-current-loader");
+      emitPageRequest(connection, "child-replacement", "child-current-loader");
+      completePageRequest(connection, "child-replacement");
+      expect([...page.inflight.keys()]).toEqual(["child-session:child-old"]);
+    } finally {
+      await page.close();
+    }
   });
 });
 
