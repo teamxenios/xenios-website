@@ -391,6 +391,43 @@ describe("live CDP evidence boundary regressions", () => {
     }
   }, 30000);
 
+  it("disables HTTP-cache stale-while-revalidate without weakening network idle", async () => {
+    let conceptsRequests = 0;
+    const fixture = await serve((request, response) => {
+      if (request.url === "/api/concepts") {
+        conceptsRequests += 1;
+        response.writeHead(200, {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+          "Content-Type": "application/json; charset=utf-8",
+        });
+        response.end('{"concepts":[]}');
+        return;
+      }
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(`<!doctype html><html><body><main>concepts</main><script>
+        fetch("/api/concepts")
+          .then((result) => result.json())
+          .then(() => { document.documentElement.dataset.conceptsLoaded = "true"; });
+      </script></body></html>`);
+    });
+    const page = await PageSession.create(connection);
+    try {
+      await page.enforceNetworkBoundary(fixture.origin);
+      for (let capture = 0; capture < 2; capture += 1) {
+        await page.navigate(`${fixture.origin}/`, { quietMs: 100, maxSettleMs: 5000 });
+        expect(await page.evaluate("document.documentElement.dataset.conceptsLoaded"))
+          .toBe("true");
+        expect(page.inflight.size).toBe(0);
+        expect(page.network.filter((entry) => entry.url === `${fixture.origin}/api/concepts`))
+          .toEqual([expect.objectContaining({ type: "Fetch", status: 200 })]);
+      }
+      expect(conceptsRequests).toBe(2);
+    } finally {
+      await page.close();
+      await fixture.close();
+    }
+  }, 30000);
+
   it("rejects a worker that logs an error and omits the offline cache fetch", async () => {
     const fixture = await serve((request, response) => {
       if (request.url === "/sw.js") {

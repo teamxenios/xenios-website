@@ -115,7 +115,10 @@ export function serveStatic(
     // asks for /favicon.ico. Alias that conventional request to the shipped PNG
     // without changing any protected microsite bytes.
     if (req.path === "/favicon.ico" && fs.existsSync(fallbackFaviconPath)) {
-      return res.type("image/png").sendFile(fallbackFaviconPath);
+      // Use an explicit root rather than an absolute path. The verified preview
+      // lives below .xenios-evidence-dist-*; Express otherwise treats that
+      // legitimate hidden ancestor as a forbidden dotfile path.
+      return res.type("image/png").sendFile("favicon.png", { root: distPath });
     }
     if (req.path === "/" || req.path === "/index.html") return policyDocument(req, res, next);
     // Production parity for static microsites: a directory that carries its own

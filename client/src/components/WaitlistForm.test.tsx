@@ -112,7 +112,22 @@ describe("WaitlistForm error wiring", () => {
     const consent = byTestId<HTMLInputElement>(view, "checkbox-consent");
     expect(consent.getAttribute("aria-invalid")).toBe("true");
     expect(consent.getAttribute("aria-describedby")).toBe("wl-consent-error");
+    const consentLabel = byTestId<HTMLLabelElement>(view, "label-consent");
+    expect(consentLabel.htmlFor).toBe("wl-consent");
+    expect(consentLabel.className).toContain("min-h-11");
+    expect(consentLabel.className).toContain("min-w-11");
     expect(document.activeElement).toBe(consent);
+  });
+
+  it("preserves the on-dark consent treatment with the shared native checkbox", () => {
+    const view = render(<WaitlistForm onDark />);
+    const label = byTestId<HTMLLabelElement>(view, "label-consent");
+    const checkbox = byTestId<HTMLInputElement>(view, "checkbox-consent");
+
+    expect(label.className).toContain("text-paper");
+    expect(label.className).not.toContain("text-ink-2");
+    expect(checkbox.id).toBe("wl-consent");
+    expect(checkbox.className).toBe("h-4 w-4 shrink-0 accent-[var(--pulse)]");
   });
 
   it("clears the validation summary once a valid submit succeeds", async () => {

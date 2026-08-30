@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
+import TouchCheckbox from "@/components/TouchCheckbox";
 import { getConfig } from "@/lib/config";
 import { getAttribution } from "@/lib/attribution";
 import { trackCompleteRegistration } from "@/lib/tracking";
@@ -264,10 +265,17 @@ export default function EarlyInterest() {
               <textarea id="ei-why" maxLength={1000} rows={4} value={form.why_interested} onChange={(e) => update("why_interested", e.target.value)} className="input-field textarea-field" data-testid="textarea-why-interested" />
             </div>
 
-            <label className="flex items-start gap-3 cursor-pointer text-ink-2">
-              <input type="checkbox" required checked={form.nonbinding_ack} onChange={(e) => update("nonbinding_ack", e.target.checked)} className="mt-1 w-4 h-4 accent-[var(--accent-pulse)]" data-testid="checkbox-nonbinding-ack" />
+            <TouchCheckbox
+              id="ei-nonbinding-ack"
+              required
+              checked={form.nonbinding_ack}
+              onChange={(e) => update("nonbinding_ack", e.target.checked)}
+              data-testid="checkbox-nonbinding-ack"
+              labelTestId="label-nonbinding-ack"
+              labelClassName="cursor-pointer text-ink-2"
+            >
               <span className="body-s">I understand this is a non-binding indication of interest.</span>
-            </label>
+            </TouchCheckbox>
 
             {siteKey && (
               <div ref={widgetRef} data-testid="widget-turnstile" />

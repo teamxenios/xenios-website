@@ -34,6 +34,9 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Care's document CSP intentionally allows fonts from 'self' only. Never
+    // turn a small Fontsource subset into a data: URL inside the built CSS.
+    assetsInlineLimit: 0,
   },
   server: {
     host: "0.0.0.0",

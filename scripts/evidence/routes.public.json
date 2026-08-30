@@ -309,7 +309,7 @@
           "status": 404,
           "count": 1,
           "resourceType": "Document",
-          "responseBodySha256": "0c420f0d7527e65b6e4c503998d20df12622fbdc80c6557cfda5727a887c709b",
+          "responseBodySha256": "d4d8829c4da942099e14888528329e93d2d9666d4cd06ad7ae48cf52b1da2f53",
           "consoleCount": 1,
           "consoleText": "Failed to load resource: the server responded with a status of 404 (Not Found)",
           "reason": "The exact negative-lot browser document is intentionally an authoritative noindex 404 while still rendering the neutral verification-unavailable state.",
@@ -667,6 +667,32 @@
       "indexable": false,
       "public": true,
       "expectStatus": 404,
+      "expectedHttpFailures": [
+        {
+          "path": "/this-route-does-not-exist-xr-evidence",
+          "method": "GET",
+          "status": 404,
+          "count": 1,
+          "resourceType": "Document",
+          "responseBodySha256": "d4d8829c4da942099e14888528329e93d2d9666d4cd06ad7ae48cf52b1da2f53",
+          "consoleCount": 1,
+          "consoleText": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "reason": "The exact unknown browser document is intentionally an authoritative noindex 404 while rendering the reviewed not-found state.",
+          "productionEvidence": "server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts pin the authoritative not-found document policy; this declaration separately pins the preserved response-body SHA-256."
+        },
+        {
+          "path": "/this-route-does-not-exist-xr-evidence",
+          "method": "GET",
+          "status": 404,
+          "count": 1,
+          "resourceType": "Fetch",
+          "targetType": "worker-or-child",
+          "responseBodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "consoleCount": 0,
+          "reason": "The controlling same-origin service worker observes the same intentional authoritative 404 without turning it into cached success.",
+          "productionEvidence": "client/public/sw.js keeps navigations network-first and never rewrites a reachable 404; the empty worker telemetry body is pinned here."
+        }
+      ],
       "semanticContract": {
         "requiredText": ["404", "That page is not here."]
       }
@@ -823,7 +849,19 @@
       "label": "book",
       "structuredDataTypes": [],
       "metadataContract": { "title": "Book a call with xenios", "description": "Book a call with the xenios team." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Book a call"] }
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1",
+          "[data-testid=\"calendar-consent-boundary\"]",
+          "[data-testid=\"button-load-calendly\"]",
+          "[data-testid=\"link-open-calendly\"][target=\"_blank\"][rel~=\"noopener\"][rel~=\"noreferrer\"]"
+        ],
+        "forbiddenSelectors": [
+          "[data-testid=\"embed-calendly\"]",
+          "script[src=\"https://assets.calendly.com/assets/external/widget.js\"]"
+        ],
+        "requiredText": ["Book a call"]
+      }
     },
     {
       "path": "/early-interest",

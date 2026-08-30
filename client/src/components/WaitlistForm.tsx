@@ -4,6 +4,7 @@ import { getAttribution } from "@/lib/attribution";
 import { trackLead } from "@/lib/tracking";
 import { setWaitlistCount } from "@/hooks/use-waitlist-count";
 import Turnstile from "@/components/Turnstile";
+import TouchCheckbox from "@/components/TouchCheckbox";
 
 const F = content.waitlistForm;
 const WL = content.waitlistPage;
@@ -231,10 +232,18 @@ export default function WaitlistForm({ onSuccess, onDark = false }: Props) {
       </div>
 
       <div>
-        <label className={`flex items-start gap-3 cursor-pointer ${onDark ? "text-paper" : "text-ink-2"}`} data-testid="label-consent">
-          <input id="wl-consent" type="checkbox" checked={form.consent} onChange={(e) => update("consent", e.target.checked)} className="mt-1 w-4 h-4 accent-[var(--pulse)]" aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "wl-consent-error" : undefined} data-testid="checkbox-consent" />
+        <TouchCheckbox
+          id="wl-consent"
+          checked={form.consent}
+          onChange={(e) => update("consent", e.target.checked)}
+          aria-invalid={!!errors.consent}
+          aria-describedby={errors.consent ? "wl-consent-error" : undefined}
+          data-testid="checkbox-consent"
+          labelTestId="label-consent"
+          labelClassName={`cursor-pointer ${onDark ? "text-paper" : "text-ink-2"}`}
+        >
           <span className="body-s">{F.fields.consent.label}</span>
-        </label>
+        </TouchCheckbox>
         {errors.consent && <p id="wl-consent-error" className="body-s mt-2" style={errStyle} data-testid="error-consent">{errors.consent}</p>}
       </div>
 

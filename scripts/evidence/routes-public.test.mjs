@@ -219,6 +219,52 @@ describe("public evidence topology", () => {
       ["GET", "/research/lots/XR-EVIDENCE-NEGATIVE-LOT", 404, 1, "Fetch", "worker-or-child", 0],
       ["GET", "/api/research/quality/lots/XR-EVIDENCE-NEGATIVE-LOT", 401, 1, "Fetch", null, 1],
     ]);
+    expect(route("/this-route-does-not-exist-xr-evidence").expectedHttpFailures.map(
+      (failure) => [
+        failure.method,
+        failure.path,
+        failure.status,
+        failure.count,
+        failure.resourceType,
+        failure.targetType ?? null,
+        failure.consoleCount,
+      ],
+    )).toEqual([
+      ["GET", "/this-route-does-not-exist-xr-evidence", 404, 1, "Document", null, 1],
+      ["GET", "/this-route-does-not-exist-xr-evidence", 404, 1, "Fetch", "worker-or-child", 0],
+    ]);
+    const documentFailures = routes.routes.flatMap((candidate) =>
+      (candidate.expectedHttpFailures ?? [])
+        .filter((failure) => failure.resourceType === "Document")
+        .map((failure) => ({ route: candidate.path, ...failure })),
+    );
+    expect(documentFailures).toHaveLength(2);
+    expect(documentFailures.map((failure) => [
+      failure.route,
+      failure.responseBodySha256,
+    ])).toEqual([
+      [
+        "/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
+        "d4d8829c4da942099e14888528329e93d2d9666d4cd06ad7ae48cf52b1da2f53",
+      ],
+      [
+        "/this-route-does-not-exist-xr-evidence",
+        "d4d8829c4da942099e14888528329e93d2d9666d4cd06ad7ae48cf52b1da2f53",
+      ],
+    ]);
+    for (const pathname of [
+      "/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
+      "/this-route-does-not-exist-xr-evidence",
+    ]) {
+      const workerFailure = route(pathname).expectedHttpFailures.find(
+        (failure) => failure.resourceType === "Fetch"
+          && failure.targetType === "worker-or-child"
+          && failure.path === pathname,
+      );
+      expect(workerFailure?.responseBodySha256, pathname).toBe(
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      );
+    }
   });
 
   it("covers every required route surface and browser-required state", () => {
@@ -242,6 +288,19 @@ describe("public evidence topology", () => {
     expect(route("/research/early-access/order-request/confirmation/XRR-20000101-0000000000")?.semanticContract).toMatchObject({
       requiredSelectors: ['[data-testid="order-confirmation-unavailable"]'],
       forbiddenText: ["Request received", "Status: submitted"],
+    });
+    expect(route("/book")?.semanticContract).toEqual({
+      requiredSelectors: [
+        "main h1",
+        '[data-testid="calendar-consent-boundary"]',
+        '[data-testid="button-load-calendly"]',
+        '[data-testid="link-open-calendly"][target="_blank"][rel~="noopener"][rel~="noreferrer"]',
+      ],
+      forbiddenSelectors: [
+        '[data-testid="embed-calendly"]',
+        'script[src="https://assets.calendly.com/assets/external/widget.js"]',
+      ],
+      requiredText: ["Book a call"],
     });
   });
 

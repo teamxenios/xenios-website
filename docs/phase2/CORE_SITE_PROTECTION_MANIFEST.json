@@ -596,7 +596,10 @@
       "server/static.ts: old sha256:92b5e6d421d42a3c69e375ee1cf2b40137ad7d85f1478ede4243f9a6a15f27d9, new sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924 (2026-08-29 Omega raw-SEO authority repair: the static handler supplies only route-owned structured data selected by the raw HTTP policy when no explicit caller override is present, preserving exact reviewed Organization/WebSite schema on / and buildJobPostingJsonLd output on open career routes while continuing to strip arbitrary template JSON-LD. Covered by server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts).",
       "2026-08-29, Omega same-origin typography hardening. The shell removes only the network-generating Google Fonts stylesheet; title, metadata, routes, structured data, application order, and rendered font-family names/weights are unchanged. client/src/main.tsx adds one import of client/src/fonts.ts before the existing index.css import, and package.json pins Fontsource 5.3.0 assets for the exact Inter Tight 500/600/700/800/900 and JetBrains Mono 500/600 families already declared by the site. This eliminates third-party dispatch and fallback-font evidence while preserving the reviewed typography. Covered by server/static.test.ts, scripts/evidence/capture-browser-matrix.test.mjs, the blocking SELF_HOSTED_FONTS_LOADED browser assertion, and the production build.",
       "client/index.html: old sha256:28f96f887a153c6c2a945a7bd2c6861cb18d7c1e4677ac04978cac2cceed8ca5, new sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659 (removed only the external Google Fonts stylesheet request).",
-      "client/src/main.tsx: old sha256:16d3f1bc4b1ead4d554da8d3862b94df768e7c37e08a0b54d42412b07b54ff15, new sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162 (added only the pinned same-origin font entry import before index.css)."
+      "client/src/main.tsx: old sha256:16d3f1bc4b1ead4d554da8d3862b94df768e7c37e08a0b54d42412b07b54ff15, new sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162 (added only the pinned same-origin font entry import before index.css).",
+      "2026-08-30, Omega R9 hash-pinned infrastructure repairs. The full R8 browser matrix exposed two defects in files covered by this curated hard tripwire: Care's self-only font CSP rejected small Fontsource subsets that Vite had converted to data: URLs, and Express rejected the conventional Hino favicon alias only inside the verified preview's dot-prefixed immutable distribution directory. Both repairs preserve route authority, Hino source bytes, CSP strength, font families and weights, and external-network boundaries. The separate core-site disposition inventories every other R9 protected-path change without widening an allowed write zone.",
+      "vite.config.ts: old sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e, new sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924 (sets build.assetsInlineLimit to zero so every Fontsource subset remains a same-origin asset accepted by Care's unchanged font-src 'self' CSP; covered by server/static.test.ts, the production build, and the blocking SELF_HOSTED_FONTS_LOADED browser assertion).",
+      "server/static.ts: old sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924, new sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1 (serves the existing favicon.png through an explicit static root instead of an absolute path whose verified .xenios-evidence-dist-* ancestor Express classifies as a dotfile; protected Hino HTML/CSS/JS remain byte-identical; covered by GET+HEAD tests using an evidence-shaped hidden snapshot and cold Hino browser evidence)."
     ],
     "files": {
       "client/index.html": "sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659",
@@ -618,11 +621,11 @@
       "client/public/sitemap.xml": "sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
-      "server/static.ts": "sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924",
+      "server/static.ts": "sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1",
       "package.json": "sha256:10033e478592a124a66283217f5767c61ceb352578b60ff868c10a5260336066",
       "package-lock.json": "sha256:93652919603004f95b2fbd3eb6cae68804f1965668d6cef0e8027a59d5d54e4d",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
-      "vite.config.ts": "sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e"
+      "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924"
     }
   },
   "seamBaselineHashes": {

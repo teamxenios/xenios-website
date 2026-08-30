@@ -127,6 +127,11 @@ export class PageSession {
     await page.send("Page.enable");
     await page.send("Runtime.enable");
     await page.send("Network.enable");
+    // Evidence must observe the candidate's network behavior, not Chromium's
+    // timing-dependent HTTP cache revalidation. In particular, a stale-while-
+    // revalidate response can create an `Other` request that CDP never closes.
+    // This does not disable Cache Storage or service-worker lifecycle coverage.
+    await page.send("Network.setCacheDisabled", { cacheDisabled: true });
     await page.send("Log.enable");
     await page.send("Emulation.setFocusEmulationEnabled", { enabled: true });
     page.unsubscribe.push(
@@ -630,6 +635,7 @@ export class PageSession {
     try {
       await this.conn.send("Runtime.enable", {}, sessionId);
       await this.conn.send("Network.enable", {}, sessionId);
+      await this.conn.send("Network.setCacheDisabled", { cacheDisabled: true }, sessionId);
       await this.conn.send("Runtime.addBinding", { name: BOUNDARY_WEBSOCKET_BINDING }, sessionId);
       await this.conn.send("Runtime.addBinding", { name: BOUNDARY_WEBRTC_BINDING }, sessionId);
       await this.conn.send("Runtime.evaluate", {

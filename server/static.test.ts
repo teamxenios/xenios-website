@@ -34,10 +34,13 @@ const SHELL = `<!doctype html>
 `;
 
 let distDir: string;
+let fixtureRoot: string;
 let app: express.Express;
 
 beforeAll(() => {
-  distDir = fs.mkdtempSync(path.join(os.tmpdir(), "xenios-static-"));
+  fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), ".xenios-evidence-dist-"));
+  distDir = path.join(fixtureRoot, "dist", "public");
+  fs.mkdirSync(distDir, { recursive: true });
   fs.writeFileSync(path.join(distDir, "index.html"), SHELL, "utf8");
   fs.mkdirSync(path.join(distDir, "assets"));
   fs.writeFileSync(path.join(distDir, "assets", "app.js"), "console.log('app');\n", "utf8");
@@ -57,7 +60,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  fs.rmSync(distDir, { recursive: true, force: true });
+  fs.rmSync(fixtureRoot, { recursive: true, force: true });
 });
 
 function robots(html: string): string | null {
@@ -80,11 +83,15 @@ describe("the production static server answers documents through the raw HTTP po
     expect(robotsTxt.text).toContain("User-agent");
   });
 
-  it("answers the conventional favicon.ico request from the shipped PNG", async () => {
+  it("answers GET and HEAD for favicon.ico from an evidence-shaped hidden snapshot", async () => {
     const favicon = await request(app).get("/favicon.ico");
     expect(favicon.status).toBe(200);
     expect(favicon.headers["content-type"]).toMatch(/^image\/png/u);
     expect(Buffer.from(favicon.body).toString("utf8")).toBe("test-favicon");
+
+    const faviconHead = await request(app).head("/favicon.ico");
+    expect(faviconHead.status).toBe(200);
+    expect(faviconHead.headers["content-type"]).toMatch(/^image\/png/u);
   });
 
   it("serves the homepage with route-owned metadata and Organization/WebSite schema", async () => {
@@ -152,6 +159,7 @@ describe("the production static server answers documents through the raw HTTP po
   it("pins production typography to same-origin Fontsource packages", () => {
     const clientIndex = fs.readFileSync(path.resolve("client/index.html"), "utf8");
     const fontEntry = fs.readFileSync(path.resolve("client/src/fonts.ts"), "utf8");
+    const viteConfig = fs.readFileSync(path.resolve("vite.config.ts"), "utf8");
     expect(clientIndex).not.toMatch(/fonts\.(?:googleapis|gstatic)\.com/u);
     for (const asset of [
       "@fontsource/inter-tight/500.css",
@@ -164,6 +172,7 @@ describe("the production static server answers documents through the raw HTTP po
     ]) {
       expect(fontEntry).toContain(`import \"${asset}\";`);
     }
+    expect(viteConfig).toMatch(/assetsInlineLimit:\s*0/u);
   });
 
   it("answers an unknown document with an authoritative 404 and noindex", async () => {
