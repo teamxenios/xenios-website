@@ -31,6 +31,7 @@
 .xenios-order-grid .is-wide { grid-column: 1 / -1; }
 .xenios-order-page label { display: grid; gap: 7px; color: var(--ink); font-size: .9rem; font-weight: 650; }
 .xenios-order-page input, .xenios-order-page select, .xenios-order-page textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: inherit; padding: 12px 14px; }
+.xenios-order-page input:not([type="checkbox"]):not([type="radio"]), .xenios-order-page select, .xenios-order-page textarea { min-height: 44px; }
 .xenios-order-page input:focus, .xenios-order-page select:focus, .xenios-order-page textarea:focus, .xenios-order-page button:focus-visible, .xenios-order-page a:focus-visible { outline: 3px solid rgba(24, 61, 45, .32); outline-offset: 2px; }
 .xenios-order-check { grid-template-columns: auto 1fr; align-items: start; min-height: 44px; margin-top: 18px; font-weight: 500 !important; line-height: 1.5; }
 .xenios-order-check input { width: 18px; height: 18px; margin-top: 2px; }

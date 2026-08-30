@@ -479,8 +479,8 @@
       },
       {
         "path": "client/index.html",
-        "seam": "hash-locked same-origin typography shell change only",
-        "allowed": "the reviewed removal of the Google Fonts preconnect and stylesheet elements recorded in fileHashes; the current complete file is hash-pinned",
+        "seam": "hash-locked same-origin typography and canonical-favicon shell changes only",
+        "allowed": "the reviewed removal of the Google Fonts preconnect and stylesheet elements plus the reviewed consolidation of competing sized browser icon declarations to the existing canonical /favicon.png, all recorded in fileHashes; the current complete file is hash-pinned",
         "forbidden": "any other metadata, structured-data, script, route-shell, icon, manifest, title, or document change; any byte change fails the fileHashes tripwire"
       },
       {
@@ -599,10 +599,12 @@
       "client/src/main.tsx: old sha256:16d3f1bc4b1ead4d554da8d3862b94df768e7c37e08a0b54d42412b07b54ff15, new sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162 (added only the pinned same-origin font entry import before index.css).",
       "2026-08-30, Omega R9 hash-pinned infrastructure repairs. The full R8 browser matrix exposed two defects in files covered by this curated hard tripwire: Care's self-only font CSP rejected small Fontsource subsets that Vite had converted to data: URLs, and Express rejected the conventional Hino favicon alias only inside the verified preview's dot-prefixed immutable distribution directory. Both repairs preserve route authority, Hino source bytes, CSP strength, font families and weights, and external-network boundaries. The separate core-site disposition inventories every other R9 protected-path change without widening an allowed write zone.",
       "vite.config.ts: old sha256:e5f8e5e64bc85bb5ed788c4412beb8b6c82b5807ce98c0e1e6dd505acb059f8e, new sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924 (sets build.assetsInlineLimit to zero so every Fontsource subset remains a same-origin asset accepted by Care's unchanged font-src 'self' CSP; covered by server/static.test.ts, the production build, and the blocking SELF_HOSTED_FONTS_LOADED browser assertion).",
-      "server/static.ts: old sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924, new sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1 (serves the existing favicon.png through an explicit static root instead of an absolute path whose verified .xenios-evidence-dist-* ancestor Express classifies as a dotfile; protected Hino HTML/CSS/JS remain byte-identical; covered by GET+HEAD tests using an evidence-shaped hidden snapshot and cold Hino browser evidence)."
+      "server/static.ts: old sha256:de054743029c08212360b640762f487687e5c5258639785d7c6e4ec5272ce924, new sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1 (serves the existing favicon.png through an explicit static root instead of an absolute path whose verified .xenios-evidence-dist-* ancestor Express classifies as a dotfile; protected Hino HTML/CSS/JS remain byte-identical; covered by GET+HEAD tests using an evidence-shaped hidden snapshot and cold Hino browser evidence).",
+      "2026-08-30, Codex exact-browser favicon convergence. Chromium repeatedly abandoned one of three competing rel=icon candidates during the audited service-worker document transition without emitting loadingFinished or loadingFailed, so the evidence harness correctly failed closed. The shell now retains only the already-shipped canonical /favicon.png browser declaration; Apple touch and web-app manifest declarations, assets, service-worker policy, metadata, routes, scripts, and structured data are unchanged.",
+      "client/index.html: old sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659, new sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba (removed only the competing 16x16 and 32x32 rel=icon declarations; retained /favicon.png, apple-touch-icon, and site.webmanifest; covered by client/src/pwa/pwa.test.ts, the production build, and exact-browser synthetic evidence)."
     ],
     "files": {
-      "client/index.html": "sha256:4322469505e2336eed1449829d27f9a49f968326dd8d40a55920a03570f70659",
+      "client/index.html": "sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba",
       "client/src/index.css": "sha256:c674bfe3cb6d1af28e49283eac037828d3b82bcfbd13e89ebfb04db70143b3fc",
       "client/src/main.tsx": "sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
       "client/src/fonts.ts": "sha256:643c7a1a30fcf0f6a1a300c0bf7a044cf2e426e579405493cc4251474f4a73a5",

@@ -209,6 +209,14 @@ describe("wiring", () => {
     expect(indexHtml).toContain('name="apple-mobile-web-app-title"');
   });
 
+  it("declares one canonical browser favicon without competing sized candidates", () => {
+    const browserIcons = indexHtml.match(/<link\s+[^>]*rel="icon"[^>]*>/gu) ?? [];
+    expect(browserIcons).toHaveLength(1);
+    expect(browserIcons[0]).toContain('href="/favicon.png"');
+    expect(indexHtml).toContain('rel="apple-touch-icon"');
+    expect(indexHtml).toContain('rel="manifest"');
+  });
+
   it("main.tsx registers the worker through the PROD-gated module", () => {
     expect(mainSource).toContain('from "./pwa/register"');
     expect(mainSource).toContain("registerXeniosPwa()");
