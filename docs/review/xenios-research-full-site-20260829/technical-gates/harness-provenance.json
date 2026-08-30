@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "createdAtUtc": "2026-08-30T16:39:46.5930627Z",
+  "candidateSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "candidateTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+  "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "expectedOriginUrl": "https://github.com/teamxenios/xenios-website.git",
+  "originCandidateSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "localOriginRef": "2d662a0d31bb1de9332fb5c591f01cab76b991b1 refs/remotes/origin/claude/xenios-research-full-finish-takeover-20260828",
+  "diffPathCount": 719,
+  "repoPath": "C:\\Users\\sboad\\projects\\xenios-exact-r11-gates-2d662a0-lf-20260830",
+  "hostCloneDetached": true,
+  "hostCloneClean": true,
+  "hostCloneShallow": false,
+  "hostCloneUsesAlternates": false,
+  "sourceTransport": "read-only host bind -> tar including .git -> fresh Linux named volume",
+  "sourceSeedExcludes": [
+    "dist",
+    "node_modules"
+  ],
+  "ignoredEmptyMountpointsPreparedAfterExactVerification": [
+    "dist",
+    "node_modules"
+  ],
+  "sourceMountpointPreparationMarker": "SOURCE_MOUNTPOINTS_PREPARED=dist,node_modules",
+  "postAuditEmptyMountpointMarker": "SOURCE_MOUNTPOINTS_STILL_EMPTY=dist,node_modules",
+  "sourceSeedHostBindReadOnly": true,
+  "sourceVolume": "xenios_2d662a0_r11_volume2_source",
+  "sourceVolumeReadOnlyDuringInstallAndGates": true,
+  "outputVolume": "xenios_2d662a0_r11_volume2_output",
+  "outputVolumeExportPath": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux",
+  "ignoredHostRootsHidden": [
+    "dist",
+    "node_modules"
+  ],
+  "dependencyVolume": "xenios_2d662a0_r11_volume2_node_modules",
+  "outputInitContainer": "xenios-output-init-2d662a0-r11-volume2-linux",
+  "sourceSeedContainer": "xenios-source-seed-2d662a0-r11-volume2-linux",
+  "installContainer": "xenios-deps-2d662a0-r11-volume2-linux",
+  "gateContainer": "xenios-gates-2d662a0-r11-volume2-linux",
+  "sourceAuditContainer": "xenios-source-audit-2d662a0-r11-volume2-linux",
+  "exportContainer": "xenios-output-export-2d662a0-r11-volume2-linux",
+  "sourceSeedNetwork": "none",
+  "dependencyInstallNetwork": "bridge",
+  "gateNetwork": "none",
+  "sourceAuditNetwork": "none",
+  "outputExportNetwork": "none",
+  "imageReference": "node@sha256:a5fb035ac1dff34a4ecaea85f90f7321185695d3fd22c12ba12f4535a4647cc5",
+  "imageManifestDigest": "a5fb035ac1dff34a4ecaea85f90f7321185695d3fd22c12ba12f4535a4647cc5",
+  "imageConfigDigest": "a5fb035ac1dff34a4ecaea85f90f7321185695d3fd22c12ba12f4535a4647cc5",
+  "imageId": "sha256:a5fb035ac1dff34a4ecaea85f90f7321185695d3fd22c12ba12f4535a4647cc5",
+  "expectedTargetedFileCount": 196,
+  "expectedEvidenceFileCount": 13,
+  "expectedEvidenceTestCount": 208,
+  "approvedPiiCorpus": {
+    "sha256": "C7DA9838A3A8236A1B94465F3BFE21121FCC0DE9DC586F8C08E167CF7D9AC34B",
+    "bytes": 6463
+  },
+  "harness": {
+    "runnerPowerShellSha256": "B00E298F60479316A7F4FF1BE9A34E49941B1635DAFEE83352FAE2B5E288CC26",
+    "gateBashSha256": "9A4E61C0D90524F474707CE28E3F96F85837878F9E7532C7893DA07B46CB5BC6",
+    "verifySourceBashSha256": "7726F79B37F13B6A0C16563C14B73CEF7ED29BDE02DB5AADE7EC7CDE708D8068",
+    "seedSourceBashSha256": "A7C04E7CF21CB2513D28315918FF9FB0E98CD69AE12EB4EB603B86C15F86DE93",
+    "testConfigSha256": "336E8E403BA3B623622A17E471228F665F948E4FF903C93D54A393E107975196",
+    "e2eConfigSha256": "C8A60EBFF885E95B1F1F5FFDB6DDF8F61238710F0858F1DA61188F518EA7D08C"
+  }
+}

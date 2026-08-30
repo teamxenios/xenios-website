@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-29T02:58:00Z",
+  "generatedAt": "2026-08-30T22:04:52.071Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -22,9 +22,9 @@
     "gitSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-da6vorqfngtc73brb0gg",
+    "renderDeploymentId": "dep-da94g05g1s2s7396lkv0",
     "status": "LIVE",
-    "verifiedAt": "2026-08-28T04:01:00Z",
+    "verifiedAt": "2026-08-29T02:48:00Z",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -54,14 +54,15 @@
       "graphNodeId": "failed-rc-a1bbc2a1",
       "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "state": "PROHIBITED",
+      "releaseBlocking": false,
       "reason": "Development source only. It is not deployed and must never be treated as a production or deployment candidate."
     },
     {
       "lane": "Warm-silver editorial homepage source",
       "headSha": "8e8933cee58af2750edf69d672a463884df29634",
       "graphNodeId": "editorial-homepage-8e8933ce",
-      "state": "SOURCE_ONLY_RECONCILIATION_REQUIRED",
-      "reason": "This separate editorial-homepage commit is not in the failed composite RC ancestry. Lane 02 and Lead must reconcile it deliberately and prove public visual, responsive, accessibility, and catalog-guard evidence before PASS."
+      "state": "SOURCE_INTEGRATED_IN_RUNTIME_FREEZE",
+      "reason": "This separate editorial-homepage commit was absent from the failed composite RC ancestry and was later reconciled deliberately into runtime freeze 2d662a0d. Retry2 and the e641 smoke are excluded; retry3 and retry3b are wrapper-only stopped attempts; exact-c015 retry3c full browser/HTTP evidence is sealed; and the packet is finalizing. This candidate evidence is not a production observation."
     },
     {
       "pullRequest": 117,
@@ -69,6 +70,7 @@
       "headSha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
       "graphNodeId": "pr117-persistent-cart",
       "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "reason": "The 2026-07-30 snapshot recorded this source as accepted with a protected migration pending. That dated acceptance is preserved historically but is not re-attested against current production 3daa; exact-SHA ancestry, contracts, migration state, and current review must be reconciled before any integration or apply."
     },
     {
@@ -77,6 +79,7 @@
       "headSha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
       "graphNodeId": "pr106-operations-affiliates",
       "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "reason": "The 2026-07-30 snapshot recorded this source as accepted with transfer and managed migrations pending. That dated acceptance is preserved historically but is not re-attested against current production 3daa; exact-SHA ancestry, contracts, migration state, and current review must be reconciled before integration."
     },
     {
@@ -85,45 +88,169 @@
       "headSha": "410e687898d6406a684023e8327dc5fb697b30d3",
       "graphNodeId": "pr144-pricing-model",
       "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "reason": "The 2026-07-30 snapshot froze this candidate pending reconciliation against founder-locked pricing authority. It remains frozen; no current acceptance or ancestry is claimed."
     },
     {
-      "lane": "Full-finish Research RC (Claude Lead takeover 2026-08-28)",
+      "lane": "Historical failed full-finish runtime beneath eb659d81",
       "headSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
-      "graphNodeId": "omega-full-finish-candidate",
+      "graphNodeId": "failed-runtime-679564fc",
       "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "branch": "claude/xenios-research-full-finish-takeover-20260828",
-      "state": "DEPLOYED_20260829T0237Z_ROLLED_BACK_20260829T0247Z_RECUT_REQUIRED",
-      "reason": "Frozen code tree; Node 20.19.0/npm 10.8.2 gates, route census, migration DAG, production-state, release manifest, core-site protection, secret and approved-name PII scans, raw-HTTP and browser evidence recorded in docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md and docs/review/xenios-research-full-site-20260828/. Independent review: CONTROL/REPORTS/CLAUDE-FINAL-INDEPENDENT-REVIEW-679564fc.md. No deploy, no migration, no activation, no invitation, no pricing/payment/refund effect. DEPLOYED 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg, final HEAD eb659d81) on the exact-SHA GO and ROLLED BACK 02:47:15Z: the Early Access assisted-order doors were unavailable (composition dependencies audit authority + submissionStanding missing). Recut required before any further deploy."
+      "state": "FAILED_RUNTIME_BENEATH_ROLLED_BACK_SUCCESSOR",
+      "reason": "Historical runtime beneath deployed records successor eb659d81. The assisted-order config route disappeared into the generic API 404 because the runtime demanded unresolved durable audit authority and registered routes only after successful composition. The first incident diagnosis incorrectly named submissionStanding; that value derives from the available agreement gate and was not the missing production dependency."
+    },
+    {
+      "lane": "Failed and rolled-back full-site deployment",
+      "headSha": "eb659d8100a3b9831d52688120931c48d10330d9",
+      "graphNodeId": "failed-deployment-eb659d81",
+      "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "branch": "claude/xenios-research-full-finish-takeover-20260828",
+      "state": "ROLLED_BACK_DISQUALIFIED",
+      "reason": "Deployed as dep-da94b91srm7s73b55dsg at 2026-08-29T02:37:19Z and rolled back at 02:47:15Z to 3daa3f4a through dep-da94g05g1s2s7396lkv0 after the known-live assisted-order config route changed from HTTP 200 to generic 404. Its authorization is consumed and cannot be reused. No migration or environment change accompanied the deploy."
+    },
+    {
+      "lane": "Historical Codex-only efb runtime predecessor",
+      "headSha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+      "graphNodeId": "runtime-freeze-efb30f57",
+      "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "branch": "claude/xenios-research-full-finish-takeover-20260828",
+      "state": "SUPERSEDED_PREDECESSOR",
+      "releaseBlocking": false,
+      "reason": "Historical runtime tree f90a24c0dc14c9eabd8845f386ac3244494dd5ab, superseded by runtime 2d662a0d and never deployed. r10g remains invalid/excluded at 1,077 PNG, 1,077 text and 1,076 run JSON with no browser-matrix; r10h is a superseded predecessor. Neither run contributes a current final PASS."
+    },
+    {
+      "lane": "Codex-only full-site recut runtime freeze",
+      "headSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+      "treeSha": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+      "graphNodeId": "runtime-freeze-2d662a0d",
+      "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "branch": "claude/xenios-research-full-finish-takeover-20260828",
+      "state": "TECHNICAL_GATES_SEALED",
+      "reason": "Current runtime freeze. R11 technical gates sealed 21/21 at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux: full sequential suite 803 passed files/4 skipped/0 failed and 12,049 passed tests/43 skipped/0 failed in 469.08s; canonical E2E 4 files/53 tests/0 failed in 2.73s; targeted domains 196 files/3,116 tests/0 failed in 152.53s; evidence self-tests 13 files/208 tests/0 failed; core protection 35/35. It is not deployed."
+    },
+    {
+      "lane": "Codex-only full-site evidence freeze",
+      "headSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "treeSha": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "graphNodeId": "evidence-freeze-c0156916",
+      "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+      "branch": "claude/xenios-research-full-finish-takeover-20260828",
+      "state": "PACKET_FINALIZING",
+      "originVerified": true,
+      "finalRcSha": null,
+      "detachedReview": "NOT_STARTED",
+      "deployed": false,
+      "migrationRequired": false,
+      "migrationAuthorized": false,
+      "migrationApplied": false,
+      "reason": "Current origin-verified evidence freeze; exactly seven evidence/test files separate it from runtime 2d662a0d and no customer-facing or server-runtime file changed. Retry3c full evidence is sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail on the first attempt; focused early-access 11/11, assisted-order 11/11, negative 11/11, unknown 11/11 and account 99/99, all zero fail and clean; synthetic 20 = 18 PASS + 2 expected denial notes + 0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; PII CLEAN with 0 findings across 2,332 text, 1,120 PNG manual-review inventory and 0 unscannable. Evidence manifest SHA256 is 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257. The wrapper-only 46-vs-13 stop and excluded fixture-scan attempt at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830 remain disclosed; replacement reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW with config HTTP 200. The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload inventory f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14; manual QA 18 PNG/9 areas/2 viewports, 0 blocking visual and 0 privacy, with five cosmetic backlog items. Canonical release-manifest verification passed under Node 20.19.0/npm 10.8.2; SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c binds packet + assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested and dispositioned nonblocking; release-control 51 pass + 1 intentional skip + 0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS. Current phase remains PACKET_FINALIZING. Records/evidence successor SHA, exact-final-SHA checks, successor origin verification, final RC assignment, detached review and deployment remain unassigned."
     }
   ],
   "knownRisks": [
     {
       "id": "FAILED_RC_PROHIBITED",
-      "state": "OPEN_GATE",
-      "summary": "a1bbc2a186ebbf96cead429a78dc30ffdc811005 is a prohibited development source and cannot be deployed."
+      "state": "CLOSED_NONBLOCKING_PROHIBITED_HISTORY",
+      "releaseBlocking": false,
+      "summary": "a1bbc2a186ebbf96cead429a78dc30ffdc811005 remains a prohibited historical development source and cannot be deployed; exclusion closes this lineage fact for the 2d662a0d recut."
     },
     {
-      "id": "PUBLIC_HOMEPAGE_LINEAGE_RECONCILIATION",
-      "state": "OPEN_GATE",
-      "summary": "The warm-silver editorial homepage source requires deliberate semantic reconciliation and visual/responsive proof."
+      "id": "FAILED_DEPLOYMENT_EB659D81",
+      "state": "CLOSED_BY_ROLLBACK_DISQUALIFIED",
+      "summary": "eb659d81 was rolled back to 3daa3f4a and is permanently disqualified; its authorization cannot be reused."
     },
     {
       "id": "DATABASE_EVIDENCE_UNAVAILABLE",
-      "state": "OPEN_EVIDENCE_GAP",
-      "summary": "No current database aggregates or migration-ledger observations were refreshed in this read-only reconciliation."
+      "state": "CLOSED_NONBLOCKING_FOR_NO_MIGRATION_RECUT",
+      "releaseBlocking": false,
+      "summary": "No current database aggregates or migration-ledger observations were refreshed in this read-only reconciliation. This is nonblocking because the 2d662a0d recut requires no migration and database-backed capabilities outside its proven scope remain safely disabled or fail-closed."
     },
     {
       "id": "HISTORICAL_PR_LINEAGE_UNRESOLVED",
-      "state": "OPEN_GATE",
-      "summary": "PR117, PR106, and PR144 facts remain preserved as dated historical evidence, but none is currently accepted against the 3daa production baseline."
+      "state": "CLOSED_NONBLOCKING_HISTORICAL_RECORD",
+      "releaseBlocking": false,
+      "summary": "PR117, PR106, and PR144 facts remain preserved as dated historical evidence, but none is accepted or used by the 2d662a0d recut; no reconciliation is required for this release."
+    },
+    {
+      "id": "R10G_INVALID_EXCLUDED",
+      "state": "CLOSED_EXCLUDED_FROM_FINAL_EVIDENCE",
+      "summary": "r10g partial artifacts (1,077 PNG, 1,077 text, 1,076 run JSON) are diagnostic only: no browser-matrix exists and the wrapper masked the child exit after external cleanup removed the empty attempt-log directory."
+    },
+    {
+      "id": "R10H_SUPERSEDED_PREDECESSOR",
+      "state": "CLOSED_NONBLOCKING_SUPERSEDED_HISTORY",
+      "releaseBlocking": false,
+      "summary": "r10h predates runtime 2d662a0d and supplies no current final result."
+    },
+    {
+      "id": "DB9_ATTEMPTS_RECONCILED",
+      "state": "CLOSED_WITH_CLEAN_SMOKE_ONLY",
+      "releaseBlocking": false,
+      "summary": "The first db9 smoke failed from the wrong working directory and is excluded; the db9 full run stopped before seal and is superseded. The clean db9 smoke remains a truthful historical bounded predecessor, not current c015 final validation."
+    },
+    {
+      "id": "R11_RETRY1_EXTERNAL_INTERRUPTION",
+      "state": "CLOSED_EXCLUDED_EXTERNAL_INTERRUPTION",
+      "releaseBlocking": false,
+      "summary": "Retry1 is excluded after Windows Modern Standby caused CDP loss: 224/1100 primary observations = 180 PASS + 44 PASS_WITH_NOTES + 0 FAIL; Event 506 at 2026-08-30T18:08:41.172Z and Event 507 resume at 18:14:32.725Z; targeted partners 11/11 PASS. No product or harness defect was found."
+    },
+    {
+      "id": "R11_RETRY2_EVIDENCE_LIFECYCLE_FLAKE",
+      "state": "CLOSED_EXCLUDED_EVIDENCE_LIFECYCLE_FLAKE",
+      "releaseBlocking": false,
+      "summary": "Retry2 is excluded after primary 1100/1100 = 1,023 PASS + 77 PASS_WITH_NOTES + 0 FAIL and focused-gate PASS because synthetic stopped 10/20 on the reproduced service-worker CDP restart race. Diagnostics: 3 valid = 1 PASS + 2 exact reproductions; no product or network failure."
+    },
+    {
+      "id": "E641_CANONICAL_SYNTHETIC_SMOKE_EXCLUDED",
+      "state": "CLOSED_EXCLUDED_SUPERSEDED_EVIDENCE",
+      "releaseBlocking": false,
+      "summary": "The e641 three-run canonical smoke is excluded at 2 PASS + 1 FAIL. It is superseded by c015, whose focused suite passed 53/53 and whose three canonical prerequisite synthetic runs each completed 20 captures as 18 PASS + 2 declared notes + 0 FAIL, boundary 0, PII CLEAN."
+    },
+    {
+      "id": "R11_RETRY3_WRAPPER_SCHEMA_STOP",
+      "state": "CLOSED_STOPPED_PRE_EVIDENCE_WRAPPER_SCHEMA",
+      "releaseBlocking": false,
+      "summary": "Retry3 passed exact clone byte identity (3,575 files, 88,285,956 bytes, inventory SHA256 7e6a96080f3dc65c7f91f9e87ddb80eaffad5e4a0478a2bdfac7bdf980f097b, 0 mismatches), build, and the focused JSON's actual 3 suites/23 tests. Its temporary wrapper incorrectly asserted numTotalTestSuites=1 and stopped before HTTP, browser, or evidence-root creation. No candidate defect was found; the execution-state guard is reset and the attempt will not be resumed or reused."
+    },
+    {
+      "id": "R11_RETRY3B_WRAPPER_SCHEMA_STOP",
+      "state": "CLOSED_STOPPED_PRE_PREVIEW_WRAPPER_SCHEMA",
+      "releaseBlocking": false,
+      "summary": "Retry3b passed network-boundary 23 and routes 17, but Vitest suite totals reflected describe blocks (3 then 2) while its temporary wrapper assumed fixed 3 for routes. It stopped before preview/HTTP/browser/evidence-root creation, the guard reset, no candidate defect was found, and it will not resume or be reused."
+    },
+    {
+      "id": "R11_RETRY3C_FULL_EVIDENCE_SEALED",
+      "state": "CLOSED_FULL_EVIDENCE_SEALED",
+      "releaseBlocking": false,
+      "summary": "Retry3c full evidence sealed at HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail first attempt; focused 11/11, 11/11, 11/11, 11/11 and 99/99 all zero fail and clean; synthetic 20=18+2 expected denial+0; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; PII CLEAN 0 findings across 2332 text/1120 PNG manual-review inventory/0 unscannable; evidence manifest 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257."
+    },
+    {
+      "id": "R11_RETRY3C_WRAPPER_46_VS_13",
+      "state": "CLOSED_NONBLOCKING_WRAPPER_ONLY",
+      "releaseBlocking": false,
+      "summary": "The evidence-test result passed 13 files/213 tests/46 describe suites; a wrapper-only check conflated 46 describe suites with 13 files. It is disclosed and does not undermine the sealed evidence."
+    },
+    {
+      "id": "R11_RETRY3C_FIXTURE_SCAN_ATTEMPT",
+      "state": "CLOSED_EXCLUDED_REPLACED",
+      "releaseBlocking": false,
+      "summary": "Excluded fixture-scan attempt archived at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830. The reserved-fixture replacement recapture passed endpoint 16/11/0/0 with assisted-order config HTTP 200."
+    },
+    {
+      "id": "FINAL_PACKET_AND_DETACHED_REVIEW_PENDING",
+      "state": "OPEN_RELEASE_GATE",
+      "releaseBlocking": true,
+      "summary": "State PACKET_FINALIZING: the bounded packet is generated and validated, but the final records/evidence successor SHA, exact-final-SHA checks, successor origin verification, final RC assignment and detached Codex review do not yet exist or have not run; Samuel's exact-SHA authorization is not yet requestable. After successor/review closure, Samuel's exact-final-RC-SHA GO becomes the sole remaining human-only authorization."
     }
   ],
   "evidenceLimitations": [
     "Render service and deployment identity were read only; no service setting or deployment was changed.",
     "HTTP GET evidence was limited to health and runtime configuration. No authenticated browser session or database query was used.",
     "All current database-derived counts and Care state are unavailable/null; historical counts from older snapshots are not current evidence.",
-    "MIGRATION_DAG applied-state entries retain their own dated evidence and were not re-attested by this verification."
+    "MIGRATION_DAG applied-state entries retain their own dated evidence and were not re-attested by this verification.",
+    "The 2d662a0d runtime, c015691 evidence freeze, historical db9 smoke and sealed retry3c evidence are candidate facts, not production observations, and do not change the trusted live baseline.",
+    "Historical efb/r10g/r10h, the failed first db9 smoke, the stopped db9 full run, externally interrupted retry1, lifecycle-flaky retry2, excluded e641 smoke, wrapper-stopped retry3/retry3b, wrapper-only 46-vs-13 stop, and excluded fixture-scan attempt provide no current final PASS.",
+    "Retry3c full evidence and the bounded review packet are sealed/validated, but no records/evidence successor SHA, exact-final-SHA result, final RC assignment or detached-review verdict existed at this reconciliation timestamp. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS."
   ],
   "evidence": [
     {
@@ -166,7 +293,7 @@
       "kind": "render_service_and_deployment_read",
       "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "checkedAt": "2026-08-29T02:48:00Z",
-      "detail": "Exact-SHA deploy of eb659d8100a3b9831d52688120931c48d10330d9 (dep-da94b91srm7s73b55dsg, live 02:37:19Z) was rolled back on a release-blocking regression (Early Access assisted-order doors unavailable) to the approved rollback commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 via a commit-pinned Render deploy: dep-da94g05g1s2s7396lkv0, status live at 02:47:15Z, verified read-only by list_deploys and by the post-rollback smoke (assisted-orders/config 200 enabled:true). The production SHA is unchanged; only the live deployment id changed. The production block keeps the attested deployment id dep-da6vorqfngtc73brb0gg (the 2026-08-28T04:01Z attestation pinned by the release-control-plane suite); the CURRENT live deployment of the same SHA is dep-da94g05g1s2s7396lkv0 as recorded here."
+      "detail": "Exact-SHA deploy of eb659d8100a3b9831d52688120931c48d10330d9 (dep-da94b91srm7s73b55dsg, live 02:37:19Z) was rolled back on a release-blocking regression (Early Access assisted-order doors unavailable) to the approved rollback commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 via a commit-pinned Render deploy: dep-da94g05g1s2s7396lkv0, status live at 02:47:15Z, verified read-only by list_deploys and by the post-rollback smoke (assisted-orders/config 200 enabled:true). The production SHA is unchanged; only the live deployment id changed. The production block records dep-da94g05g1s2s7396lkv0 as current; dep-da6vorqfngtc73brb0gg remains a separate historical attestation of the same SHA."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"

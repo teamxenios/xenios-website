@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-browser-summary",
+  "evidenceRun": "xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+  "runtimeFreeze": {
+    "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5"
+  },
+  "evidenceCheckout": {
+    "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019"
+  },
+  "toolchain": {
+    "node": "v20.19.0",
+    "npm": "10.8.2"
+  },
+  "sealedMatrix": {
+    "summary": {
+      "runs": 1100,
+      "automatedPass": 1023,
+      "automatedPassWithNotes": 77,
+      "automatedFail": 0,
+      "failingAssertionIds": []
+    },
+    "primaryScreenshots": 1100,
+    "primaryTextCaptures": 1100,
+    "syntheticScreenshots": 20,
+    "totalExternalScreenshots": 1120,
+    "syntheticPassWithExpectedDenialNotes": 2,
+    "automatedFailures": 0
+  },
+  "boundedTrackedSubset": {
+    "selectionRule": "Prior 68-file 1440/390 full-site precedent with three semantic filename reconciliations, plus root and Hino at 1440/390.",
+    "screenshotCount": 72,
+    "pairedTextCaptureCount": 72,
+    "desktop1440": 36,
+    "mobile390": 36,
+    "inventory": "screenshot-inventory.json"
+  },
+  "privacy": {
+    "automatedTextScan": "CLEAN",
+    "coverage": "COMPLETE",
+    "screenshotsEnumerated": 1120,
+    "manualPixelReview": "MANUAL_PENDING: validated PNG pixels cannot be text-scanned; each capture's *.text.txt page text was scanned instead."
+  }
+}

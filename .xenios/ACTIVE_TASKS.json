@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-26T22:20:00Z",
+  "updatedAt": "2026-08-30T22:10:06.040Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -528,7 +528,7 @@
       "title": "Lead and integrate the Xenios Research Omega full-site release candidate without production mutation",
       "priority": "P0",
       "state": "claimed",
-      "owner": "codex-ultra-20260828T030700624Z-693334e7",
+      "owner": "codex-recut-final-20260829",
       "paths": [
         "server/index.ts",
         "server/research/index.ts",
@@ -542,17 +542,33 @@
         "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
         "docs/research-launch/XENIOS_RESEARCH_ROLLBACK_PLAN_2026-08-28.md",
         "docs/research-launch/XENIOS_RESEARCH_HUMAN_ONLY_BLOCKERS_2026-08-28.md",
+        "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-29.md",
+        "docs/research-launch/DEPLOY_RECORD_2026-08-29_FULL_SITE_RC_EB659D81_ROLLBACK.md",
+        "docs/research-launch/XENIOS_RESEARCH_CORE_SITE_PROTECTION_DISPOSITION_2026-08-29.md",
+        "docs/coordination/evidence/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.integration-ownership-review.json",
+        "docs/coordination/release-manifests/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.md",
         "docs/review/xenios-research-full-site-20260828/**",
+        "docs/review/xenios-research-full-site-20260829/**",
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
         ".xenios/sessions/codex-ultra-20260828T030700624Z-693334e7.json",
+        ".xenios/sessions/codex-recut-final-20260829.json",
         ".xenios/handoffs/*OMEGA-FULL-FINISH-LEAD-20260828*",
-        ".xenios/messages/*codex-ultra-20260828T030700624Z-693334e7*"
+        ".xenios/handoffs/*XENIOS-RESEARCH-RECUT-RC*",
+        ".xenios/messages/*codex-ultra-20260828T030700624Z-693334e7*",
+        ".xenios/messages/*codex-recut-final-20260829*"
       ],
       "dependsOn": [],
-      "pathsNote": "New exact-scope Lead task authorized by the 2026-08-28 Omega full-site program. The failed SHA a1bbc2a is development input only. No deploy, production/release merge, production/shared-staging migration, real account/import/invitation, product/pricing/payment mutation, clinical/pharmacy action, or external communication is authorized.",
-      "claimedAt": "2026-08-28T03:15:35.420Z"
+      "pathsNote": "Exact-scope Lead task continued by Samuel's 2026-08-30 Codex-only final completion command. Scope is frozen to verification, release evidence, state reconciliation, a docs/evidence successor, and detached Codex review. No deploy before a later exact-SHA GO; no production/shared-staging migration, real account/import/invitation, product/pricing/payment mutation, clinical/pharmacy action, or external communication is authorized.",
+      "claimedAt": "2026-08-30T14:01:39.823Z",
+      "heartbeatAt": "2026-08-30T22:10:06.040Z"
     }
   ]
 }

@@ -1,131 +1,133 @@
 # Xenios Research Tebra Integration — 2026-08-28
 
-Classification for this release candidate: **HUMAN CONFIGURATION REQUIRED**.
+Release classification: **PRODUCTION DISABLED / UNCONFIGURED — NOT A RELEASE
+BLOCKER**.
 
-The fail-closed architecture is implemented, tested, and integrated. No real
-Tebra destination, mode, origin, portal URL, telehealth setting, or practice
-approval exists in this candidate, and none may be invented. Until the practice
-administrator supplies the exact values through the approved configuration
-channel and staging evidence is captured, every scheduling and portal surface
-renders a truthful "not yet available" state.
+The pushed frozen runtime is
+`2d662a0d31bb1de9332fb5c591f01cab76b991b1` (tree
+`c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5`). The pushed evidence freeze is
+`c01569169cad5e6619187221d84019ae8bfc7c69` (tree
+`c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019`); its only delta from the runtime
+is `scripts/evidence/routes.public.json`,
+`scripts/evidence/routes-public.test.mjs`, and
+`scripts/release/critical-endpoint-expectations.json`,
+`scripts/evidence/lib/cdp.mjs`,
+`scripts/evidence/network-boundary.test.mjs`,
+`scripts/evidence/capture-synthetic-journeys.mjs`, and
+`scripts/evidence/capture-synthetic-journeys.test.mjs`. This release does not
+configure, activate, or claim a live Tebra integration.
 
-## Supported boundary
+## Frozen release truth
 
-Tebra remains the authoritative system for scheduling and the patient portal.
-The candidate integrates it only through the four supported, configurable
-mechanisms:
+| Capability | Exact release state |
+| --- | --- |
+| Scheduling | Disabled and unconfigured; no actionable Tebra destination is published. |
+| Patient Portal | Unavailable; no portal URL or portal authority is configured. |
+| Telehealth | Disabled and not advertised; no entitlement or practice attestation is asserted. |
+| Credentials | No Tebra API key, OAuth client, access token, authenticated REST credential, or credential-bearing environment value is configured or authorized. Retired private REST/API-key variables must remain absent. |
+| External identifiers | No Tebra practice ID, provider ID, location ID, visit-reason ID, appointment ID, patient ID, or portal-account identifier is configured, stored, inferred, or published. Optional `TEBRA_PRACTICE_NAME`, `TEBRA_LOCATION_LABEL`, and `TEBRA_PROVIDER_LABEL` are public labels only and do not provide identifier authority. |
+| Practice mapping | No practice/provider/location/visit-reason/hours mapping is approved or activated. No label-to-ID mapping exists. |
+| Consent and claims approval | No approved scheduling/portal consent copy, redirect disclosure, clinical claim, or founder/legal activation approval is recorded. The disabled fallback does not imply consent. |
+| Sandbox or staging account | No Tebra sandbox account, connection, credential validation, mapped test practice, end-to-end scheduling result, or sandbox attestation exists. |
+| Production activation | None. `TEBRA_SCHEDULING_ENABLED` has no approved true value; no non-disabled `TEBRA_SCHEDULING_MODE`, URL, embed script, allowed origin, portal URL, production environment record, telehealth entitlement, environment change, or Tebra account-side action is authorized. |
+| Clinical effects | No appointment, intake, provider decision, prescription, pharmacy action, or clinical record is created or inferred. |
 
-| Mode | What it is | Candidate state |
-| --- | --- | --- |
-| `disabled` | No scheduler is loaded; the Care surfaces show the configured-pending state. | Default and rollback baseline. |
-| `direct_link` | An outbound link to the exact Tebra scheduling URL the practice copied from its widget settings. | Implemented; dark until configured and release-bound. |
-| `iframe` | The official Tebra scheduling page embedded, only after origin allowlisting and a separately attested CSP composition. | Implemented as a mode; unavailable until an attested CSP composition exists. |
-| `popup_widget` | The official Tebra embed script opened as a pop-up, only from an allowlisted script origin. | Implemented as a mode; unavailable pending script-integrity, cleanup, and CSP evidence. |
+No Tebra value is required to deploy this RC. Missing configuration fails
+closed to the truthful disabled/unconfigured presentation. The existence of
+dormant adapter modes in source does not make any external mode configured or
+approved.
 
-Nothing in the candidate calls a Tebra API, mints an appointment, or reads a
-clinical record. `TEBRA_ENVIRONMENT=review` can never produce an actionable
-handoff: `server/care/tebra-scheduling.ts` resolves every non-`production`
-environment to `unconfigured`, and `production` additionally requires a
-release-bound durable scheduling authority before a direct link becomes
-actionable (`evaluateTebraPublicAuthority`).
+## Runtime safety contract
 
-## Scheduling truth contract
+- Tebra is treated only as a possible future external scheduling and portal
+  authority; the candidate does not call a Tebra API or mint an appointment.
+- Scheduling can become actionable only through separately validated
+  production configuration and release-bound durable authority. Neither exists
+  in this release.
+- The Patient Portal has a separate authority boundary. General Care enablement
+  cannot manufacture portal readiness.
+- Care documents keep the self-only CSP baseline. No Tebra frame, popup script,
+  third-party pixel, marketing attribution, or analytics load is authorized on
+  Care paths.
+- Clinical writes pass the canonical capability gate before repositories or
+  RPCs. Refusal logging contains no actor, patient, request body, or clinical
+  content.
+- The account Care view reports only authorized current state and never infers
+  provider approval, prescription, pharmacy processing, or earlier stages.
 
-- A scheduling surface is `ready` only when mode, URL, allowlisted origins,
-  environment, and durable authority all validate. Any missing or invalid value
-  fails closed to `unconfigured` or `configuration_invalid`; dependency failure
-  is `unavailable`, never a fabricated "disabled" or "coming soon" claim.
-- The Patient Portal is a separate handoff with its own durable authority
-  (`authorities.portal`, scope `patient_portal_public_handoff`); a retained
-  portal URL cannot become actionable through general Care enablement.
-- Telehealth is presented only when `TEBRA_TELEHEALTH_ENABLED=true` is supplied
-  after practice attestation; the default is false.
-- Care documents receive a strict self-only baseline CSP
-  (`server/care-document-csp.ts`: no provider, no third-party font, no
-  frame-src) until a mode-specific policy is attested. Third-party pixels,
-  marketing attribution, and analytics are suppressed on Care paths.
-- Clinical writes (appointments, intake, prescriptions, pharmacy actions,
-  review) pass a canonical capability gate before any repository or RPC is
-  reached (`server/care/clinical-write-gate.ts`, 20 routes; scheduling requires
-  both `provider_actions` and `external_communications`); refusal logs carry no
-  actor, patient, record, request-body, or clinical content.
-- The account Care view shows only the authorized current stage; it never
-  infers earlier stages, provider approval, prescription, or pharmacy processing.
+## R11 evidence boundary
 
-## Runtime configuration contract
+The sealed exact-runtime R11 technical bundle is at
+`C:\Users\sboad\AppData\Local\Temp\xenios-gates-2d662a0-r11-volume2-linux\runner-completion.json`
+and passed 21/21 gates. It includes assisted production 6 files/115 tests;
+endpoint/static/SEO/Hino 4/79; targeted domains 196/3,116; canonical E2E 4/53;
+the full sequential suite at 807 files (803 passed/4 skipped) and 12,092 tests
+(12,049 passed/43 skipped), zero failures in 469.08s; and evidence tooling
+13 files/208 tests (196 passed/12 skipped), zero failures.
 
-Exact adapter variables (canonical source:
-`docs/care/TEBRA_ACTIVATION_PACKET_2026-08-28.md`, "Adapter environment
-contract"):
+The historical bounded db9 preflight smoke passed 9/9 HTTP records and 54 browser
+captures with zero failures. It is not final evidence. Exact-193 retry1 is
+`EXCLUDED_EXTERNAL_INTERRUPTION`: Windows Modern Standby Event 506 at
+`2026-08-30T18:08:41.172Z` and Event 507 resume at
+`2026-08-30T18:14:32.725Z` caused CDP loss after 224/1,100 observations
+(180 PASS + 44 PASS_WITH_NOTES + 0 FAIL); targeted partners were 11/11 PASS,
+and no product or harness defect was found.
 
-| Variable | Required | Value |
-| --- | --- | --- |
-| `TEBRA_SCHEDULING_ENABLED` | Yes | `true` or `false`; `false` is the safe baseline and rollback value. |
-| `TEBRA_SCHEDULING_MODE` | Yes | `disabled`, `direct_link`, `iframe`, or `popup_widget`. |
-| `TEBRA_SCHEDULING_URL` | Every non-disabled mode | Exact HTTPS practice scheduling URL copied from Tebra; no credentials, fragments, or patient parameters. |
-| `TEBRA_SCHEDULING_EMBED_SCRIPT_URL` | `popup_widget` only | Exact official embed script URL from the audited Tebra snippet. |
-| `TEBRA_PATIENT_PORTAL_URL` | No; independent of the scheduler | Exact approved HTTPS portal URL. |
-| `TEBRA_ALLOWED_ORIGINS` | Every configured external URL | Comma-separated exact HTTPS origins covering scheduling, script, and portal URLs. |
-| `TEBRA_TELEHEALTH_ENABLED` | No | `true` only after entitlement and display attestation. |
-| `TEBRA_PRACTICE_NAME`, `TEBRA_LOCATION_LABEL`, `TEBRA_PROVIDER_LABEL` | No | Approved public labels only. |
-| `TEBRA_ENVIRONMENT` | Every enabled scheduler or configured portal | `review` or `production`. |
+Retry2 completed primary 1,100/1,100 at 1,023 PASS + 77 PASS_WITH_NOTES +
+0 FAIL and its focused gates passed, but is
+`EXCLUDED_EVIDENCE_LIFECYCLE_FLAKE` because synthetic stopped 10/20 on a
+service-worker CDP restart. Three valid diagnostics yielded one PASS and two
+exact race reproductions, with no product or network failure.
 
-Do not commit real values. The retired private REST-base and API-key
-variables are not part of this integration and must not be configured.
+The e641 three-run smoke is excluded at 2 PASS + 1 FAIL. Exact c015 focused
+validation passed 53/53, and its three canonical prerequisite synthetic runs
+each passed 20 captures as 18 PASS + 2 declared notes + 0 FAIL with boundary 0
+and PII CLEAN. Retry3 stopped before evidence on a wrapper-only suite-count
+assertion after exact clone/build and actual 3-suite/23-test focused PASS.
+Retry3b passed network-boundary 23 and routes 17 but stopped before preview
+because its wrapper assumed a fixed suite total of 3 while Vitest reported
+describe-block totals 3 then 2. Both guards reset; no candidate defect was
+found; neither attempt may resume or be reused. Exact-c015 retry3c full evidence
+is sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0
+fail first attempt; focused early/assisted/negative/unknown 11/11 each and
+account 99/99, all clean; synthetic 20 = 18 PASS + 2 expected-denial notes + 0
+fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0
+non-skipped; PII CLEAN 0 findings across 2,332 text / 1,120 PNG manual-review
+inventory / 0 unscannable. Evidence manifest SHA-256 is
+`1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257`.
+The wrapper-only 46-vs-13 stop and excluded fixture scan remain disclosed;
+reserved-fixture endpoint recapture passed 16/11/0/0 with config 200. The
+bounded packet is generated and validated at 192 files = 191 payload +
+inventory self; packet inventory `6dab7745…`, payload inventory `f6ef58ea…`;
+canonical release-manifest verification passed under Node 20.19.0/npm 10.8.2
+at SHA-256 `16f08fd2…`, binding the packet and assisted-order environment
+inventory. Current phase remains **PACKET_FINALIZING**. The records/evidence
+successor SHA, exact-final-SHA checks, final RC assignment and detached-review
+verdict remain unassigned.
 
-## Human activation packet (exact inputs still required)
+No deploy, migration, environment change, external account configuration,
+credential entry, portal enablement, telehealth enablement, mapping, sandbox
+exercise, or Tebra activation occurred while producing that evidence.
 
-| Input | Owner | Status |
-| --- | --- | --- |
-| Approved production scheduling mode | Samuel / practice admin | REQUIRED |
-| Exact Direct Link from Tebra scheduling-widget settings | Practice admin | REQUIRED |
-| iframe eligibility confirmation and exact origin (if iframe) | Practice admin + security owner | CONDITIONAL |
-| Exact official Embed Link/script and its origins (if popup) | Practice admin + security owner | CONDITIONAL |
-| Exact official Patient Portal URL | Practice admin | REQUIRED FOR PORTAL |
-| Practice / provider / visit-reason / hours / location enablement | Practice admin | REQUIRED FOR LIVE SCHEDULING |
-| Telehealth enablement confirmation | Practice admin | CONDITIONAL |
-| Exact CSP / origin approval for the chosen mode | Security / release owner | REQUIRED FOR EMBED |
-| Configuration version and owner sign-off | Release owner | REQUIRED |
-| Staging evidence with the real configuration (routes, CSP, postMessage, browser) | Lead + security owner | REQUIRED BEFORE ACTIVATION |
+## Nonblocking post-release backlog
 
-No one executing this candidate may perform the account-side actions above.
+A durable bounded throttle for the public Tebra configuration GET remains a
+defense-in-depth backlog item. The candidate state is disabled/unconfigured and
+the endpoint exposes neither secrets nor clinical state, so this item does not
+undermine the current release claim or require a recut.
 
-## Implementation evidence in this candidate
+## Future enablement is a separate release
 
-- Fail-closed handoff architecture, truthful Care/Tebra pages, privacy and
-  tracking boundaries, and the activation packet: Lead lineage through
-  `b41de5af1cd769778be501020df10336b348720f`.
-- Canonical clinical write gate at every write route:
-  `aefac85` (replay of `codex/xr-root-care-clinical-gate-20260828` @
-  `84635084`), covered by `server/care/clinical-write-gate.test.ts`,
-  `clinical-write-gate.adversarial.test.ts`, and `clinical-route-coverage.test.ts`.
-- Request and error log redaction on Care routes: `40bae71`.
-- Care CSP baseline self-only (no third-party fonts): verified at the candidate
-  in `server/care-document-csp.ts`.
-- Scoped Care tests in the pinned runtime during integration: 56 files / 963
-  tests across the seven root corrections including `server/care`; the
-  complete sequential suite result is recorded in the RC document.
+Any future scheduling, portal, telehealth, iframe, popup, or direct-link
+enablement requires a new scoped change with exact authorized practice values,
+security review, staging evidence, and explicit activation approval. Those
+future inputs are not missing prerequisites for this safely disabled release.
+`docs/care/TEBRA_ACTIVATION_PACKET_2026-08-28.md` is advisory for that future
+workflow and grants no authority today.
 
-Not closed by this candidate (Lead-owned, recorded as open): a durable bounded
-guard for the public Tebra configuration endpoint (root-queue item 5 was
-applied and reverted because its no-guard default would return 503 in
-production); popup-mode script-integrity and cleanup evidence; iframe/popup
-CSP attestation with real origins.
-
-## Activation decision
-
-The candidate ships Tebra as **HUMAN CONFIGURATION REQUIRED**. Activation is a
-later, separately approved change: supply the exact values through the
-deployment configuration system, capture staging evidence for the chosen mode,
-obtain practice-admin and founder approval, and only then enable. Rollback is
-`TEBRA_SCHEDULING_ENABLED=false` (and `TEBRA_SCHEDULING_MODE=disabled`), which
-returns every scheduling and portal surface to the truthful pending state
-without a code change.
-
-## Official operator references
-
-- Tebra scheduling widget settings (Direct Link / Embed Link) — practice
-  account, copied by the practice administrator.
-- Tebra Patient Portal URL — practice account.
-- `docs/care/TEBRA_ACTIVATION_PACKET_2026-08-28.md` — canonical packet,
-  staging validation gate, and rollback.
+Deploying the final RC must not alter Tebra configuration. Samuel's exact-SHA
+production GO is not yet requestable while the validated exact-c015 packet and
+records await an origin-verified successor, exact-final-SHA checks, final RC
+assignment and detached review. Only after those engineering gates pass does
+Samuel's new GO naming the exact final RC SHA become the sole human-only
+release boundary.

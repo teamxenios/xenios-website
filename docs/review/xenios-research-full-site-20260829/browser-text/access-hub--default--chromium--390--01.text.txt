@@ -1,0 +1,122 @@
+xenios
+research
+Back to gateway
+Explore Research
+
+ACCESS XENIOS RESEARCH
+
+Choose the path that matches what you are here to do.
+
+Research, Care, organizations, partners, suppliers, Early Access, and support use different authorities. Start here so one pathway never silently becomes another.
+
+START WITH ONE QUESTION
+
+Is this nonclinical Research or provider-governed Care?
+
+Use Research for legitimate nonclinical research materials and their operational lifecycle. Use Care for scheduling, provider review, clinical records, prescribing, or pharmacy activity. If you are unsure, Support can route the question without making a clinical decision.
+
+INDIVIDUALS AND PROFESSIONALS
+
+Research customer
+
+Review the Research-use boundary, apply or sign in, then use the member-safe experience for exact offering information, authorized requests, orders, documents, and support.
+
+Application availability is shown on the application page.
+
+Review Research access
+Member login
+
+CLINICS, PRACTICES, GYMS, MARKETPLACES, AND BUSINESSES
+
+Organization buyer
+
+Begin an organization or professional-buyer conversation for research context, documentation needs, volume requests, account review, and human follow-up.
+
+Organization workspaces require review and may not yet be provisioned.
+
+Explore organization access
+Compare partnership paths
+
+AFFILIATES AND REFERRAL PARTNERS
+
+Partner program
+
+Review relationship types, compliance boundaries, application and onboarding expectations, and the resources available only after approval.
+
+No approval, commission, payout, or commercial term is implied publicly.
+
+Compare partnership paths
+Review affiliate access
+
+SUPPLIERS, LABS, AND FULFILLMENT PARTNERS
+
+Supplier access
+
+Supplier, laboratory, and fulfillment relationships begin with human review. Any future workspace must remain limited to assigned work and the minimum required operational information.
+
+No public supplier workspace is promised. Access requires a provisioned, authorized relationship.
+
+Review supplier access
+How access works
+
+PATIENTS AND AUTHORIZED CLINICAL TEAMS
+
+Xenios Care
+
+A separate provider-governed pathway for eligibility, supported scheduling, independent review, and authorized clinical or pharmacy handoffs where configured and legally available.
+
+Scheduling never guarantees treatment, a prescription, or fulfillment.
+
+Open Care
+Check eligibility
+
+OPEN EARLY-ACCESS ENTRY
+
+Private Early Access
+
+Open the separate passwordless Early Access request and ordering experience. Any later action still depends on its own current authorization and evidence.
+
+Entry does not prove approval, availability, payment, shipment, or a Care decision.
+
+Enter Private Early Access
+Get support
+
+IDENTITY AND PRIVACY
+
+Each workspace requires its own server authority.
+
+The browser never chooses its own role. Any signed-in surface and data scope must come from the canonical server-side authority applicable to that workspace. Membership or access to one workspace does not imply organization, partner, supplier, provider, or administrative authority. An absent or unprovisioned authority must fail closed.
+
+WHAT HAPPENS NEXT
+
+The selected page explains its own availability.
+
+A configured experience offers its supported next action. A disabled, unprovisioned, documentation-pending, or externally blocked experience explains the missing input and provides a safe fallback instead of a fake success.
+
+A FIRM BOUNDARY
+
+Research access is not clinical care.
+
+Research-designated materials are for legitimate nonclinical research only. Diagnosis, treatment, prescribing, individualized guidance, clinical records, and pharmacy activity belong to authorized providers and systems in the separate Care pathway.
+
+Compare access paths
+Understand Care
+xenios
+research
+
+Clear nonclinical Research access, visible documentation status, and a separate provider-governed Care pathway.
+
+Access Hub
+Partners
+How it works
+About
+FAQ
+Quality
+Policies
+Contact
+Support
+Care
+Sign in
+Privacy
+Terms
+Accessibility

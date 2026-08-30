@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-source-evidence-seal",
+  "runtimeFreeze": {
+    "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5"
+  },
+  "evidenceFix": {
+    "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+    "classification": "EVIDENCE_ONLY_NO_RUNTIME_CHANGE",
+    "exactChangedPaths": [
+      "scripts/evidence/capture-synthetic-journeys.mjs",
+      "scripts/evidence/capture-synthetic-journeys.test.mjs",
+      "scripts/evidence/lib/cdp.mjs",
+      "scripts/evidence/network-boundary.test.mjs",
+      "scripts/evidence/routes-public.test.mjs",
+      "scripts/evidence/routes.public.json",
+      "scripts/release/critical-endpoint-expectations.json"
+    ]
+  },
+  "sourceRoots": {
+    "r11Evidence": "C:/Users/sboad/AppData/Local/Temp/xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+    "technicalR11": "C:/Users/sboad/AppData/Local/Temp/xenios-gates-2d662a0-r11-volume2-linux"
+  },
+  "r11Evidence": {
+    "runId": "xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+    "topLevelEntries": [
+      "browser-matrix.json",
+      "captures",
+      "endpoint-diff",
+      "evidence-manifest.json",
+      "evidence-vitest.json",
+      "http-evidence.json",
+      "pii-scan.json",
+      "raw-html",
+      "release-diff-secret-pii-scan.json",
+      "runs",
+      "synthetic",
+      "synthetic-journey-evidence.json"
+    ],
+    "totalFiles": 3454,
+    "fullInventorySha256": "412ed0c922a1755fd03b658b01f5997c76c0a1bbb4d9b5e9401a1b761dd8e9ea",
+    "preSealPiiInventoryFiles": 3452,
+    "preSealPiiInventorySha256": "476ae410306eec65f3252532b19538ac83923ecb9c5d848c02cbff8e82c818b7",
+    "counts": {
+      "primaryPngs": 1100,
+      "primaryTextCaptures": 1100,
+      "browserRunRecords": 1100,
+      "httpRecords": 100,
+      "rawHtmlFiles": 102,
+      "syntheticPngs": 20,
+      "syntheticTextCaptures": 20,
+      "endpointFiles": 5,
+      "totalScreenshots": 1120
+    },
+    "topLevelFileHashes": {
+      "evidence-manifest.json": "1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257",
+      "browser-matrix.json": "3962bafe786cfa434244be4cb7be91052ec66a323760a8cfb6c5cfdc1ffd989e",
+      "http-evidence.json": "f2670c743d23f61de2e972db3bf586a10f437c569b043b73514010490781a309",
+      "synthetic-journey-evidence.json": "78c9e5fc85c91a405fd9301db84f4e0e7f8a2288b1c8587f1cad8d18f33c9316",
+      "pii-scan.json": "842a00fd76466eb60d0996c0431b8d685b5514d1f26b3f2b7116979073adfed5",
+      "release-diff-secret-pii-scan.json": "befe14a96d4db33cd41c75e7273986d398b84c321ab3da8a34721037656dc74e",
+      "evidence-vitest.json": "12d74273c9cc6d8a2ca0bc908b18568beb6ccf3806df2a927eecb28650b38552"
+    }
+  },
+  "technicalR11": {
+    "selectedFiles": 25,
+    "selectedInventorySha256": "7f4d5eea7643e2c51297a20a8da7257bf395a7177d2eae51a60edc1a66c449cc",
+    "runnerCompletionSha256": "99ba7ad5fb95b0c7fb7f7204eaf9bb6e157daeee92fcd1927d06e51d7c459762",
+    "harnessProvenanceSha256": "9004e4af7dd594582b0abb1fd0c98ebc20540c4b91166e0304bea97ceae4e330",
+    "sourcePostAuditSha256": "c65050ea7e36e22aee7def5ead275760652423a30110096953bbbc6451447855"
+  }
+}

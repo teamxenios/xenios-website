@@ -1,0 +1,645 @@
+{
+  "schemaVersion": 1,
+  "kind": "critical-endpoint-capture",
+  "baseUrl": "http://127.0.0.1:57150",
+  "capturedAt": "2026-08-30T21:24:48.697Z",
+  "records": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "fc32bb29c99e2202",
+        "keyPaths": 8,
+        "state": []
+      },
+      "ms": 25,
+      "routeClass": "health"
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
+        "link": "<https://xeniostechnology.com>; rel=\"canonical\"",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "e59130fdac42bf29",
+        "markers": {
+          "root": true,
+          "metaRobots": "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
+          "canonical": "https://xeniostechnology.com",
+          "ogUrl": "https://xeniostechnology.com",
+          "jsonLd": 2,
+          "jsonLdTypes": [
+            "Organization",
+            "Place",
+            "PostalAddress",
+            "WebSite"
+          ],
+          "title": "xenios | The operating system for proactive health"
+        }
+      },
+      "ms": 7,
+      "routeClass": "marketing-document"
+    },
+    {
+      "method": "GET",
+      "path": "/research",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Xenios Research | Clear, evidence-aware research access"
+        }
+      },
+      "ms": 5,
+      "routeClass": "research-document"
+    },
+    {
+      "method": "GET",
+      "path": "/research/early-access",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Private document, xenios"
+        }
+      },
+      "ms": 5,
+      "routeClass": "research-document"
+    },
+    {
+      "method": "GET",
+      "path": "/research/early-access/order-request",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Private document, xenios"
+        }
+      },
+      "ms": 3,
+      "routeClass": "research-document"
+    },
+    {
+      "method": "GET",
+      "path": "/research/access-hub",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Access Xenios Research"
+        }
+      },
+      "ms": 3,
+      "routeClass": "research-document"
+    },
+    {
+      "method": "GET",
+      "path": "/research/policies/accessibility",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Accessibility Statement, xenios research"
+        }
+      },
+      "ms": 4,
+      "routeClass": "research-document"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/config",
+      "status": 200,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "4e991125a21ebcb5",
+        "keyPaths": 12,
+        "state": [
+          "enabled=true"
+        ]
+      },
+      "ms": 9,
+      "routeClass": "assisted-order-config-door"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/catalog",
+      "status": 403,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "a4b96f65cd156403",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 5,
+      "routeClass": "assisted-order-read-door"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/assisted-orders/XRR-20000101-0000000000",
+      "status": 403,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "a4b96f65cd156403",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 5,
+      "routeClass": "assisted-order-status-door"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/assisted-orders",
+      "status": 401,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "a442d4629e5d973e",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 2,
+      "routeClass": "assisted-order-admin-list-door"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/assisted-orders/11111111-1111-4111-8111-111111111111",
+      "status": 401,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "a442d4629e5d973e",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 3,
+      "routeClass": "assisted-order-admin-detail-door"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/session",
+      "status": 200,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "bf596950594d4ad4",
+        "keyPaths": 2,
+        "state": [
+          "authenticated=false",
+          "openAccess=true"
+        ]
+      },
+      "ms": 2,
+      "routeClass": "early-access-session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/early-access/catalog",
+      "status": 401,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "no-store, no-cache, must-revalidate, private",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "6110935f78113414",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 4,
+      "routeClass": "catalog-read"
+    },
+    {
+      "method": "GET",
+      "path": "/research/sign-in",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Private document, xenios"
+        }
+      },
+      "ms": 4,
+      "routeClass": "sign-in-boundary"
+    },
+    {
+      "method": "GET",
+      "path": "/research/account",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Private document, xenios"
+        }
+      },
+      "ms": 3,
+      "routeClass": "account-unauthorized-boundary"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/customer-account/overview",
+      "status": 401,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "c4a6e879667fd8ff",
+        "keyPaths": 2,
+        "state": []
+      },
+      "ms": 3,
+      "routeClass": "account-api-unauthorized-boundary"
+    },
+    {
+      "method": "GET",
+      "path": "/api/care/status",
+      "status": 200,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "cbdbda34ded20a65",
+        "keyPaths": 6,
+        "state": [
+          "capability.enabled=false",
+          "capability.state=disabled"
+        ]
+      },
+      "ms": 7,
+      "routeClass": "care-public-status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/care/tebra/configuration",
+      "status": 200,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "b35f3f2ba025c42f",
+        "keyPaths": 8,
+        "state": [
+          "careAvailable=false",
+          "portal.status=care_unavailable",
+          "scheduling.mode=disabled",
+          "scheduling.status=care_unavailable"
+        ]
+      },
+      "ms": 5,
+      "routeClass": "care-tebra-public-config"
+    },
+    {
+      "method": "GET",
+      "path": "/care",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "content-security-policy": "default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Private document, xenios"
+        }
+      },
+      "ms": 4,
+      "routeClass": "care-document"
+    },
+    {
+      "method": "GET",
+      "path": "/hino",
+      "status": 301,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=UTF-8",
+        "location": "/hino/",
+        "content-security-policy": "default-src 'none'",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "63155d981b75c2cf",
+        "markers": {
+          "root": false,
+          "metaRobots": null,
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Redirecting"
+        }
+      },
+      "ms": 2,
+      "routeClass": "static-microsite-redirect"
+    },
+    {
+      "method": "GET",
+      "path": "/hino/",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "public, max-age=0",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "3559bd1423f61551",
+        "markers": {
+          "root": false,
+          "metaRobots": "noindex, nofollow, nocache",
+          "canonical": "https://xeniostechnology.com/hino",
+          "ogUrl": "https://xeniostechnology.com/hino",
+          "jsonLd": 1,
+          "jsonLdTypes": [
+            "Country",
+            "Person"
+          ],
+          "title": "Hollywood Hino | Discipline, Culture, Legacy"
+        }
+      },
+      "ms": 5,
+      "routeClass": "static-microsite"
+    },
+    {
+      "method": "GET",
+      "path": "/hino/story/",
+      "status": 200,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "public, max-age=0",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "640e6bde40cc57e9",
+        "markers": {
+          "root": false,
+          "metaRobots": "noindex, nofollow, nocache",
+          "canonical": "https://xeniostechnology.com/hino/story",
+          "ogUrl": "https://xeniostechnology.com/hino/story",
+          "jsonLd": 2,
+          "jsonLdTypes": [
+            "Article",
+            "BreadcrumbList",
+            "Country",
+            "ListItem",
+            "ListItem",
+            "Person",
+            "Person"
+          ],
+          "title": "The Hino Story | Hollywood Hino"
+        }
+      },
+      "ms": 3,
+      "routeClass": "static-microsite"
+    },
+    {
+      "method": "GET",
+      "path": "/robots.txt",
+      "status": 200,
+      "contentType": "text/plain",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "public, max-age=0",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "text/plain",
+        "fingerprint": "b79293d54b5df7f4"
+      },
+      "ms": 3,
+      "routeClass": "robots"
+    },
+    {
+      "method": "GET",
+      "path": "/sitemap.xml",
+      "status": 200,
+      "contentType": "application/xml",
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=0",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "application/xml",
+        "fingerprint": "e065ea855d43904b"
+      },
+      "ms": 2,
+      "routeClass": "sitemap"
+    },
+    {
+      "method": "GET",
+      "path": "/research/this-route-does-not-exist-xr-critical-diff",
+      "status": 404,
+      "contentType": "text/html",
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex,nofollow,noarchive",
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "html",
+        "fingerprint": "77f950f01f216596",
+        "markers": {
+          "root": true,
+          "metaRobots": "noindex,nofollow,noarchive",
+          "canonical": null,
+          "ogUrl": null,
+          "jsonLd": 0,
+          "jsonLdTypes": [],
+          "title": "Not found, xenios"
+        }
+      },
+      "ms": 3,
+      "routeClass": "authoritative-404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/this-route-does-not-exist-xr-critical-diff",
+      "status": 404,
+      "contentType": "application/json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "referrer-policy": "no-referrer"
+      },
+      "shape": {
+        "kind": "json",
+        "fingerprint": "1e660638b0a8d72d",
+        "keyPaths": 1,
+        "state": []
+      },
+      "ms": 2,
+      "routeClass": "api-404"
+    }
+  ]
+}

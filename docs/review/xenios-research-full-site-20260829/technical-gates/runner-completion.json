@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "completedAtUtc": "2026-08-30T16:55:41.4746697Z",
+  "result": "PASS",
+  "candidateSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "candidateTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+  "gateExit": 0,
+  "summaryRows": 21,
+  "evidenceFiles": 13,
+  "evidenceTests": 208,
+  "outputPath": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux",
+  "sourceVolumePreserved": "xenios_2d662a0_r11_volume2_source",
+  "outputVolumePreserved": "xenios_2d662a0_r11_volume2_output",
+  "dependencyVolumePreserved": "xenios_2d662a0_r11_volume2_node_modules"
+}

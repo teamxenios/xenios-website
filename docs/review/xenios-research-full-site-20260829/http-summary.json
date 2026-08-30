@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-http-summary",
+  "evidenceRun": "xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+  "evidenceSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "sealedSummary": {
+    "records": 100,
+    "automatedPass": 100,
+    "automatedFail": 0,
+    "failingAssertionIds": []
+  },
+  "assistedOrderIncidentGate": {
+    "endpoint": "/api/research/early-access/assisted-orders/config",
+    "liveProductionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "liveStatus": 200,
+    "candidateSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "candidateStatus": 200,
+    "candidateEnabled": true,
+    "generic404PossibleWhenEnabled": false
+  },
+  "criticalEndpointComparison": {
+    "endpoints": 27,
+    "classifications": {
+      "INTENTIONAL_CHANGE": 11,
+      "SAME": 16
+    },
+    "regressions": 0,
+    "unresolvedHumanReview": 0,
+    "productionMutated": false,
+    "detail": "endpoint-diff/critical-endpoint-summary.json"
+  }
+}

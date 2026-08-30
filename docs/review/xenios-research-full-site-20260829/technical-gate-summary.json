@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-technical-gate-summary",
+  "runtimeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+  "toolchain": {
+    "node": "v20.19.0",
+    "npm": "10.8.2"
+  },
+  "nodeImageSha256": "sha256:a5fb035ac1dff34a4ecaea85f90f7321185695d3fd22c12ba12f4535a4647cc5",
+  "runnerExitCode": 0,
+  "canonicalRows": [
+    {
+      "name": "provenance-start",
+      "fields": [
+        "provenance-start",
+        "0",
+        "0",
+        "2026-08-30T16:42:47Z",
+        "2026-08-30T16:42:48Z"
+      ]
+    },
+    {
+      "name": "runtime",
+      "fields": [
+        "runtime",
+        "0",
+        "0",
+        "2026-08-30T16:42:48Z",
+        "2026-08-30T16:42:49Z"
+      ]
+    },
+    {
+      "name": "assisted-production",
+      "fields": [
+        "assisted-production",
+        "0",
+        "0",
+        "2026-08-30T16:42:49Z",
+        "2026-08-30T16:43:11Z"
+      ]
+    },
+    {
+      "name": "endpoint-static-seo-hino",
+      "fields": [
+        "endpoint-static-seo-hino",
+        "0",
+        "0",
+        "2026-08-30T16:43:11Z",
+        "2026-08-30T16:43:14Z"
+      ]
+    },
+    {
+      "name": "targeted-domains",
+      "fields": [
+        "targeted-domains",
+        "0",
+        "0",
+        "2026-08-30T16:43:14Z",
+        "2026-08-30T16:45:48Z"
+      ]
+    },
+    {
+      "name": "tsc",
+      "fields": [
+        "tsc",
+        "0",
+        "0",
+        "2026-08-30T16:45:48Z",
+        "2026-08-30T16:46:33Z"
+      ]
+    },
+    {
+      "name": "build",
+      "fields": [
+        "build",
+        "0",
+        "0",
+        "2026-08-30T16:46:33Z",
+        "2026-08-30T16:46:45Z"
+      ]
+    },
+    {
+      "name": "e2e",
+      "fields": [
+        "e2e",
+        "0",
+        "0",
+        "2026-08-30T16:46:45Z",
+        "2026-08-30T16:46:48Z"
+      ]
+    },
+    {
+      "name": "full-suite",
+      "fields": [
+        "full-suite",
+        "0",
+        "0",
+        "2026-08-30T16:46:48Z",
+        "2026-08-30T16:54:38Z"
+      ]
+    },
+    {
+      "name": "evidence-tests",
+      "fields": [
+        "evidence-tests",
+        "0",
+        "0",
+        "2026-08-30T16:54:38Z",
+        "2026-08-30T16:54:44Z"
+      ]
+    },
+    {
+      "name": "route-census-parity",
+      "fields": [
+        "route-census-parity",
+        "0",
+        "0",
+        "2026-08-30T16:54:44Z",
+        "2026-08-30T16:54:46Z"
+      ]
+    },
+    {
+      "name": "release-diff-selftest",
+      "fields": [
+        "release-diff-selftest",
+        "0",
+        "0",
+        "2026-08-30T16:54:46Z",
+        "2026-08-30T16:54:46Z"
+      ]
+    },
+    {
+      "name": "route-uniqueness",
+      "fields": [
+        "route-uniqueness",
+        "0",
+        "0",
+        "2026-08-30T16:54:46Z",
+        "2026-08-30T16:54:53Z"
+      ]
+    },
+    {
+      "name": "migration-dag",
+      "fields": [
+        "migration-dag",
+        "0",
+        "0",
+        "2026-08-30T16:54:53Z",
+        "2026-08-30T16:54:54Z"
+      ]
+    },
+    {
+      "name": "production-state",
+      "fields": [
+        "production-state",
+        "0",
+        "0",
+        "2026-08-30T16:54:54Z",
+        "2026-08-30T16:55:10Z"
+      ]
+    },
+    {
+      "name": "check-release-control-plane",
+      "fields": [
+        "check-release-control-plane",
+        "0",
+        "0",
+        "2026-08-30T16:55:10Z",
+        "2026-08-30T16:55:13Z"
+      ]
+    },
+    {
+      "name": "test-release-control-plane",
+      "fields": [
+        "test-release-control-plane",
+        "0",
+        "0",
+        "2026-08-30T16:55:13Z",
+        "2026-08-30T16:55:34Z"
+      ]
+    },
+    {
+      "name": "core-site-protection",
+      "fields": [
+        "core-site-protection",
+        "0",
+        "0",
+        "2026-08-30T16:55:34Z",
+        "2026-08-30T16:55:35Z"
+      ]
+    },
+    {
+      "name": "secret-scan",
+      "fields": [
+        "secret-scan",
+        "0",
+        "0",
+        "2026-08-30T16:55:35Z",
+        "2026-08-30T16:55:36Z"
+      ]
+    },
+    {
+      "name": "pii-scan-wrapper",
+      "fields": [
+        "pii-scan-wrapper",
+        "0",
+        "0",
+        "2026-08-30T16:55:36Z",
+        "2026-08-30T16:55:37Z"
+      ]
+    },
+    {
+      "name": "provenance-end",
+      "fields": [
+        "provenance-end",
+        "0",
+        "0",
+        "2026-08-30T16:55:37Z",
+        "2026-08-30T16:55:38Z"
+      ]
+    }
+  ],
+  "parsedVitest": {
+    "assistedProduction": {
+      "runs": 1,
+      "files": {
+        "total": 6,
+        "passed": 6,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 115,
+        "passed": 115,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "20.33s (transform 979ms, setup 0ms, import 1.63s, tests 17.08s, environment 1ms)"
+      ]
+    },
+    "endpointStaticSeoHino": {
+      "runs": 1,
+      "files": {
+        "total": 4,
+        "passed": 4,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 79,
+        "passed": 79,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "2.41s (transform 429ms, setup 0ms, import 786ms, tests 741ms, environment 1ms)"
+      ]
+    },
+    "targetedDomains": {
+      "runs": 1,
+      "files": {
+        "total": 196,
+        "passed": 196,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 3116,
+        "passed": 3116,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "152.53s (transform 10.33s, setup 0ms, import 37.95s, tests 47.61s, environment 28.68s)"
+      ]
+    },
+    "e2e": {
+      "runs": 1,
+      "files": {
+        "total": 4,
+        "passed": 4,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 53,
+        "passed": 53,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "2.73s (transform 316ms, setup 0ms, import 1.11s, tests 617ms, environment 1ms)"
+      ]
+    },
+    "fullSuite": {
+      "runs": 1,
+      "files": {
+        "total": 807,
+        "passed": 803,
+        "skipped": 4,
+        "failed": 0
+      },
+      "tests": {
+        "total": 12092,
+        "passed": 12049,
+        "skipped": 43,
+        "failed": 0
+      },
+      "durations": [
+        "469.08s (transform 23.01s, setup 0ms, import 109.46s, tests 139.70s, environment 105.31s)"
+      ]
+    },
+    "evidenceTests": {
+      "runs": 2,
+      "files": {
+        "total": 13,
+        "passed": 13,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 208,
+        "passed": 196,
+        "skipped": 12,
+        "failed": 0
+      },
+      "durations": [
+        "4.54s (transform 483ms, setup 0ms, import 1.04s, tests 1.14s, environment 628ms)",
+        "406ms (transform 141ms, setup 0ms, import 218ms, tests 43ms, environment 0ms)"
+      ]
+    },
+    "routeCensusParity": {
+      "runs": 1,
+      "files": {
+        "total": 1,
+        "passed": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 17,
+        "passed": 17,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "568ms (transform 275ms, setup 0ms, import 385ms, tests 28ms, environment 0ms)"
+      ]
+    },
+    "releaseControlPlane": {
+      "runs": 1,
+      "files": {
+        "total": 1,
+        "passed": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 52,
+        "passed": 51,
+        "skipped": 1,
+        "failed": 0
+      },
+      "durations": [
+        "20.69s (transform 339ms, setup 0ms, import 1.14s, tests 19.37s, environment 0ms)"
+      ]
+    },
+    "coreSiteProtection": {
+      "runs": 1,
+      "files": {
+        "total": 1,
+        "passed": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 35,
+        "passed": 35,
+        "skipped": 0,
+        "failed": 0
+      },
+      "durations": [
+        "283ms (transform 100ms, setup 0ms, import 85ms, tests 68ms, environment 0ms)"
+      ]
+    }
+  },
+  "exactMachineFacts": {
+    "completion": {
+      "atUtc": "2026-08-30T16:55:41.4746697Z",
+      "result": "PASS",
+      "gateRows": 21,
+      "exitCode": 0
+    },
+    "assistedProduction": {
+      "files": 6,
+      "tests": 115,
+      "failures": 0,
+      "duration": "20.33s"
+    },
+    "endpointStaticSeoHino": {
+      "files": 4,
+      "tests": 79,
+      "failures": 0,
+      "duration": "2.41s"
+    },
+    "targetedDomains": {
+      "files": 196,
+      "tests": 3116,
+      "failures": 0,
+      "duration": "152.53s"
+    },
+    "canonicalE2e": {
+      "files": 4,
+      "tests": 53,
+      "failures": 0,
+      "duration": "2.73s"
+    },
+    "fullSequentialSuite": {
+      "filesTotal": 807,
+      "filesPassed": 803,
+      "filesSkipped": 4,
+      "testsTotal": 12092,
+      "testsPassed": 12049,
+      "testsSkipped": 43,
+      "failures": 0,
+      "duration": "469.08s"
+    },
+    "evidenceTooling": {
+      "scope": "runtime gate bundle",
+      "files": 13,
+      "tests": 208,
+      "passed": 196,
+      "skipped": 12,
+      "failures": 0,
+      "vitestRuns": 2
+    },
+    "finalEvidenceTooling": {
+      "files": 13,
+      "tests": 213,
+      "passed": 213,
+      "skipped": 0,
+      "failures": 0,
+      "source": "evidence-vitest.json"
+    },
+    "routeCensusParity": {
+      "files": 1,
+      "tests": 17,
+      "failures": 0
+    },
+    "releaseDiffSelftest": {
+      "tapTests": 8,
+      "passed": 8,
+      "failed": 0,
+      "durationMs": 621.884681
+    },
+    "routeUniqueness": {
+      "registrations": 409,
+      "callSites": 400
+    },
+    "migrationDag": {
+      "nodes": 35
+    },
+    "releaseControlPlane": {
+      "files": 1,
+      "tests": 52,
+      "passed": 51,
+      "skipped": 1,
+      "failures": 0,
+      "duration": "20.69s"
+    },
+    "coreSiteProtection": {
+      "files": 1,
+      "tests": 35,
+      "failures": 0
+    },
+    "releaseDiffScan": {
+      "addedLines": 223693,
+      "files": 608,
+      "secretFindings": 0,
+      "piiFindings": 0,
+      "piiSkipped": false,
+      "approvedCorpusSha256": "c7da9838a3a8236a1b94465f3bfe21121fcc0de9dc586f8c08e167cf7d9ac34b",
+      "approvedCorpusBytes": 6463,
+      "coverageSummary": "scanned 223693 added lines across 608 files (3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212..c01569169cad5e6619187221d84019ae8bfc7c69)",
+      "sha256": "befe14a96d4db33cd41c75e7273986d398b84c321ab3da8a34721037656dc74e"
+    },
+    "build": {
+      "client": "9.39s",
+      "server": "247ms",
+      "fontAssets": 94,
+      "dataFontCssReferences": 0
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "errors": 0
+    }
+  },
+  "harnessDigests": {
+    "runnerPowerShell": "B00E298F60479316A7F4FF1BE9A34E49941B1635DAFEE83352FAE2B5E288CC26",
+    "gateBash": "9A4E61C0D90524F474707CE28E3F96F85837878F9E7532C7893DA07B46CB5BC6",
+    "verifySourceBash": "7726F79B37F13B6A0C16563C14B73CEF7ED29BDE02DB5AADE7EC7CDE708D8068",
+    "seedSourceBash": "A7C04E7CF21CB2513D28315918FF9FB0E98CD69AE12EB4EB603B86C15F86DE93",
+    "testConfig": "336E8E403BA3B623622A17E471228F665F948E4FF903C93D54A393E107975196",
+    "e2eConfig": "C8A60EBFF885E95B1F1F5FFDB6DDF8F61238710F0858F1DA61188F518EA7D08C"
+  },
+  "logs": [
+    "technical-gates/provenance-start.log",
+    "technical-gates/runtime.log",
+    "technical-gates/assisted-production.log",
+    "technical-gates/endpoint-static-seo-hino.log",
+    "technical-gates/targeted-domains.log",
+    "technical-gates/tsc.log",
+    "technical-gates/build.log",
+    "technical-gates/e2e.log",
+    "technical-gates/full-suite.log",
+    "technical-gates/evidence-tests.log",
+    "technical-gates/route-census-parity.log",
+    "technical-gates/release-diff-selftest.log",
+    "technical-gates/route-uniqueness.log",
+    "technical-gates/migration-dag.log",
+    "technical-gates/production-state.log",
+    "technical-gates/check-release-control-plane.log",
+    "technical-gates/test-release-control-plane.log",
+    "technical-gates/core-site-protection.log",
+    "technical-gates/secret-scan.log",
+    "technical-gates/pii-scan-wrapper.log",
+    "technical-gates/provenance-end.log"
+  ],
+  "metadata": [
+    "technical-gates/runner-completion.json",
+    "technical-gates/summary.tsv",
+    "technical-gates/harness-provenance.json",
+    "technical-gates/source-post-audit.log"
+  ]
+}

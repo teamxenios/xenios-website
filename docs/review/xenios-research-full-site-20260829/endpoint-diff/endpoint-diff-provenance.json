@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-critical-endpoint-diff-provenance",
+  "candidateSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "candidateTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+  "trustedProductionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "productionOrigin": "https://xeniostechnology.com",
+  "candidateOrigin": "http://127.0.0.1:57150",
+  "endpointCount": 27,
+  "productionRuntimeBinding": "TRUSTED_RELEASE_CONTROL_PLANE_ATTESTATION",
+  "productionCaptureFresh": true,
+  "productionCaptureReadOnly": true,
+  "productionCaptureSha256": "c020387cd34b1aa7ac51ced519fafbd46c3cc1bcb40fceff93c62f16b922ba18",
+  "candidateCaptureSha256": "65c4065442575c02c085337b8f6144bf1db38b65ee8a3e03cac4c123140b2dbc",
+  "candidateDiffSha256": "5dbf27b1bf5d8efd5b5b545b723f725982c2c8cfcb6dad265bd286eeabf168ac",
+  "reviewedExpectationsSha256": "855c6276de8fac5d1b2072d16818e719e53523f8e440d4b1d9c5f1cb65815da5",
+  "candidateDiffCounts": {
+    "SAME": 16,
+    "INTENTIONAL_CHANGE": 11,
+    "REGRESSION": 0,
+    "HUMAN_REVIEW_REQUIRED": 0
+  },
+  "fixturePolicy": {
+    "result": "RESERVED_FORGED_REFERENCE_ONLY",
+    "reservedReference": "XRR-20000101-0000000000",
+    "substitutionCount": 1,
+    "sourceModuleSha256": "a26914cc669143563469d449b805410485368b922ad0b447f4883a2ec240db0f",
+    "endpointAdapterSha256": "0f7e9d53cae9c577b11b5ca6f6fac54717ff3bfdb5083f945a045b04ba9f6924",
+    "excludedAttemptArchive": "C:/Users/sboad/AppData/Local/Temp/xenios-retry3c-excluded-tail-pii-order-fixture-20260830"
+  },
+  "productionMutated": false
+}

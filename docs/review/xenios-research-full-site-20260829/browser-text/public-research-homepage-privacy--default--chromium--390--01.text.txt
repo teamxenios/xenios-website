@@ -1,0 +1,52 @@
+xenios
+research
+Back to gateway
+Explore Research
+
+DOCUMENTATION PENDING
+
+Privacy Policy
+
+WITH THE REVIEW TEAM
+
+IN REVIEW
+
+Documentation pending
+
+This is starter language for operational review. It has not been approved for acceptance, enrollment, payment, or account creation.
+
+Draft status
+
+This starter privacy language must be aligned with the actual analytics, CRM, payment, fulfillment, support, hosting, and clinical vendors before launch.
+
+Information collected
+
+The site may collect account, order, contact, organization, destination, support, device, referral, and interaction information. Do not use the public research site to collect unnecessary medical information.
+
+Sharing
+
+Information may be shared with approved processors, fulfillment partners, service providers, compliance reviewers, insurers, counsel, regulators, or others when necessary and permitted.
+
+Clinical separation
+
+Any future clinical data must remain inside a separate physician-led and appropriately configured clinical system. Research storefront data does not become a clinical record.
+
+xenios
+research
+
+Clear nonclinical Research access, visible documentation status, and a separate provider-governed Care pathway.
+
+Access Hub
+Partners
+How it works
+About
+FAQ
+Quality
+Policies
+Contact
+Support
+Care
+Sign in
+Privacy
+Terms
+Accessibility

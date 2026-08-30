@@ -1,0 +1,104 @@
+xenios
+research
+Back to gateway
+Explore Research
+
+THE XENIOS QUALITY SYSTEM
+
+Evidence travels with the lot.
+
+A certificate is one record in a larger control system. The material, exact lot, review decision, approved documents, storage, and fulfillment trail must remain connected.
+
+A certificate of analysis or purity result does not, by itself, establish identity, potency, sterility, safety, stability, or suitability. Testing and review requirements vary by material and intended research context.
+
+LOT CONTROL, END TO END
+
+From receiving to a traceable decision.
+
+Each step preserves a different fact. No step silently substitutes for another, and an unavailable record is never presented as a passing result.
+
+Receive
+
+Inbound material is matched to the expected shipment and receiving record before it enters usable inventory.
+
+Inspect
+
+Packaging, quantity, labeling, condition, and shipment exceptions are recorded against the received material.
+
+Identify the lot
+
+The exact SKU and supplier lot are bound to a controlled internal lot record so later evidence cannot drift to another batch.
+
+Quarantine
+
+Material remains outside released inventory while required documentation and applicable test evidence are reviewed.
+
+Review evidence
+
+Required documents and third-party testing, where applicable, are checked for lot identity, method, sample, dates, issuing party, specification, and exceptions—not a headline number alone.
+
+Decide
+
+An authorized review records release, hold, continued quarantine, or withdrawal. Missing evidence is never treated as a pass.
+
+Publish approved records
+
+Only explicitly approved public summaries, COAs, and supporting documents may appear in lot verification. Private source records remain private.
+
+Store and fulfill
+
+Released inventory remains lot-traceable through storage, reservation, fulfillment, and any documented deviation, exception, or withdrawal.
+
+DECISION INTEGRITY
+
+A missing record is a stop, not a shortcut.
+Release
+
+Required evidence is present and the recorded review supports movement into released inventory for its authorized use.
+
+Hold or quarantine
+
+Missing, inconsistent, damaged, or unresolved material stays out of released inventory while the exception is investigated.
+
+Trace through fulfillment
+
+The exact lot remains connected to storage, reservation, fulfillment, and any later withdrawal or exception record.
+
+When damage, a temperature excursion, a documentation gap, a complaint, or another deviation is recorded, the event stays attached to the exact lot’s exception trail. Investigation, disposition, and corrective or preventive action belong there when the event requires them.
+
+PUBLIC LOT RECORDS
+
+Start with the code on the label.
+
+Verification returns only an exact, approved public match. It does not search approximately, expose a private source file, or treat a source outage as “not found.”
+
+LOT CODE FROM THE PRODUCT LABEL
+Verify lot
+
+Need help reading a record? See how to read testing evidence.
+
+EXPLORE
+Testing explained
+What a test can—and cannot—support.
+EXPLORE
+Documents
+Public records and secure member documents.
+xenios
+research
+
+Clear nonclinical Research access, visible documentation status, and a separate provider-governed Care pathway.
+
+Access Hub
+Partners
+How it works
+About
+FAQ
+Quality
+Policies
+Contact
+Support
+Care
+Sign in
+Privacy
+Terms
+Accessibility

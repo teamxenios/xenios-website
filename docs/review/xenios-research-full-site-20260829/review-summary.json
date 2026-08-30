@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-full-site-review-packet-summary",
+  "packetDate": "2026-08-29",
+  "branch": "claude/xenios-research-full-finish-takeover-20260828",
+  "runtimeFreeze": {
+    "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5"
+  },
+  "evidenceCheckout": {
+    "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019"
+  },
+  "finalRcSha": null,
+  "finalRcShaAssignment": "AFTER_PACKET_COMMIT_PUSH_AND_ORIGIN_VERIFICATION; NOT_SELF_EMBEDDED",
+  "currentLiveProductionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "failedDisqualifiedDeploymentSha": "eb659d8100a3b9831d52688120931c48d10330d9",
+  "toolchain": {
+    "node": "v20.19.0",
+    "npm": "10.8.2"
+  },
+  "canonicalArtifacts": {
+    "releaseManifest": "docs/coordination/release-manifests/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.json",
+    "integrationOwnershipReview": "docs/coordination/evidence/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.integration-ownership-review.json",
+    "reviewPacket": "docs/review/xenios-research-full-site-20260829/"
+  },
+  "packetScope": "BOUNDED_REVIEW_INPUT",
+  "deploymentAuthorization": false,
+  "detachedCodexReview": "PENDING",
+  "automatedEvidence": {
+    "browser": "PASS",
+    "http": "PASS",
+    "syntheticJourneys": "PASS_WITH_EXPECTED_DENIAL_NOTES",
+    "criticalEndpointComparison": "PASS",
+    "evidencePiiTextScan": "CLEAN_COMPLETE",
+    "releaseDiffSecretPiiScan": "PASS_NON_SKIPPED",
+    "evidenceVitest": "PASS",
+    "technicalRunner": "PASS"
+  },
+  "boundedScreenshots": {
+    "pngs": 72,
+    "pairedTextCaptures": 72,
+    "desktop1440": 36,
+    "mobile390": 36,
+    "fullExternalEvidenceScreenshots": 1120
+  },
+  "representativeManualVisualReview": {
+    "scope": "RISK_BASED_SUBSET_OF_BOUNDED_PACKET",
+    "reviewedPngs": 18,
+    "routeAreas": 9,
+    "viewports": [
+      1440,
+      390
+    ],
+    "releaseBlockingVisualFindings": 0,
+    "releaseBlockingPrivacyFindings": 0,
+    "result": "PASS_WITH_NON_BLOCKING_BACKLOG",
+    "sampledFiles": [
+      "global-marketing-root-root-home--default--chromium--1440--01.png",
+      "global-marketing-root-root-home--default--chromium--390--01.png",
+      "warm-silver-homepage-reconciliation--default--chromium--1440--01.png",
+      "warm-silver-homepage-reconciliation--default--chromium--390--01.png",
+      "access-hub--default--chromium--1440--01.png",
+      "access-hub--default--chromium--390--01.png",
+      "early-access--default--chromium--1440--01.png",
+      "early-access--default--chromium--390--01.png",
+      "order-flow--empty--chromium--1440--01.png",
+      "order-flow--empty--chromium--390--01.png",
+      "account-overview--unauthorized--chromium--1440--01.png",
+      "account-overview--unauthorized--chromium--390--01.png",
+      "care--default--chromium--1440--01.png",
+      "care--default--chromium--390--01.png",
+      "hino--default--chromium--1440--01.png",
+      "hino--default--chromium--390--01.png",
+      "not-found-error--error--chromium--1440--01.png",
+      "not-found-error--error--chromium--390--01.png"
+    ]
+  },
+  "knownNonBlockingFindings": [
+    "Global homepage has excessive blank vertical space, especially at 390 px; content remains reachable.",
+    "The mobile announcement strip truncates trailing waitlist-count copy; Join and page controls remain usable.",
+    "Early Access is lengthy and visually repetitive around agreement/order entry; state remains truthful and operable.",
+    "Hino mobile secondary/status typography is small but legible with no overlap or clipping.",
+    "The desktop 404 capture includes a harmless focus outline around the Privacy link."
+  ],
+  "migrations": {
+    "requiredForDeploy": false,
+    "authorized": false,
+    "applied": false
+  },
+  "tebra": {
+    "productionEnabled": false,
+    "configured": false,
+    "state": "PRODUCTION_DISABLED_UNCONFIGURED"
+  },
+  "productActivationAuthorized": false,
+  "failedDeployDisclosure": {
+    "sha": "eb659d8100a3b9831d52688120931c48d10330d9",
+    "disposition": "DISQUALIFIED_AND_ROLLED_BACK",
+    "rollbackSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212"
+  }
+}

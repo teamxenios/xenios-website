@@ -1,0 +1,5 @@
+PII_CORPUS_SHA256=c7da9838a3a8236a1b94465f3bfe21121fcc0de9dc586f8c08e167cf7d9ac34b
+PII_CORPUS_BYTES=6463
+scanned 223375 added lines across 608 files (3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212..2d662a0d31bb1de9332fb5c591f01cab76b991b1)
+secret findings: 0
+pii findings: 0

@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "headSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "trustedBaseOwnershipPolicySha256": "4ecf0fc6f32bc2cb04a250be9cb724c77e5346e31f455074d17e295dcd3a1998",
+    "gitDiffPathInventorySha256": "86e2f94a29671d5bd700734e3ce388b09a1d2725bd57478d4869fee4c67bb5d6",
+    "ownershipFindingInventorySha256": "86944d9389bc5bb1891de5585899248327cf28cc95bc25f989edf87462437f22",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 613,
+      "WRONG_LANE_OWNER": 20,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "codex-recut-final-20260829",
+    "reviewedAt": "2026-08-30T21:36:10.270Z",
+    "reviewArtifactPath": "docs/coordination/evidence/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.integration-ownership-review.json"
+  }
+}

@@ -1,0 +1,13 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m server/research/seo/raw-http-document-policy.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m server/critical-endpoint-diff.test.ts [2m([22m[2m34 tests[22m[2m)[22m[33m 415[2mms[22m[39m
+ [32m✓[39m server/static.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 175[2mms[22m[39m
+ [32m✓[39m server/research/hino-static-site.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m79 passed[39m[22m[90m (79)[39m
+[2m   Start at [22m 16:43:12
+[2m   Duration [22m 2.41s[2m (transform 429ms, setup 0ms, import 786ms, tests 741ms, environment 1ms)[22m
+

@@ -1,0 +1,42 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m scripts/evidence/generate-evidence-manifest.test.mjs [2m([22m[2m14 tests[22m[2m)[22m[33m 457[2mms[22m[39m
+ [32m✓[39m scripts/evidence/capture-browser-matrix.test.mjs [2m([22m[2m54 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/report.test.mjs [2m([22m[2m25 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m scripts/evidence/routes-public.test.mjs [2m([22m[2m17 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/html-metadata.test.mjs [2m([22m[2m25 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m scripts/evidence/capture-synthetic-journeys.test.mjs [2m([22m[2m12 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/page-audit.test.mjs [2m([22m[2m12 tests[22m[2m)[22m[33m 323[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/preview-supabase-fixture.test.mjs [2m([22m[2m7 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/pii-scan.test.mjs [2m([22m[2m11 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstdout[2m | scripts/evidence/pii-scan.test.mjs[2m > [22m[2mevidence PII envelope privacy[2m > [22m[2mnever serializes the operator's absolute output directory
+[22m[39mpii-scan: CLEAN (0 findings across 1 text files; 0 screenshots need manual review; 0 unscannable artifacts) -> /tmp/xenios-evidence-privacy-GGkCUP/pii-scan.json
+
+[90mstdout[2m | scripts/evidence/pii-scan.test.mjs[2m > [22m[2mevidence PII envelope privacy[2m > [22m[2mmarks unknown artifact extensions incomplete instead of silently CLEAN
+[22m[39mpii-scan: INCOMPLETE (0 findings across 0 text files; 0 screenshots need manual review; 1 unscannable artifacts) -> /tmp/xenios-evidence-unknown-pIAGFG/pii-scan.json
+  UNSCANNABLE        opaque.bin  unsupported artifact extension: .bin
+
+ [32m✓[39m scripts/evidence/pii-scan.test.mjs [2m([22m[2m6 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/immutable-dist.test.mjs [2m([22m[2m3 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m scripts/evidence/lib/provenance.test.mjs [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+[2m      Tests [22m [1m[32m189 passed[39m[22m[90m (189)[39m
+[2m   Start at [22m 16:54:39
+[2m   Duration [22m 4.54s[2m (transform 483ms, setup 0ms, import 1.04s, tests 1.14s, environment 628ms)[22m
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m scripts/evidence/network-boundary.test.mjs [2m([22m[2m19 tests[22m[2m | [22m[33m12 skipped[39m[2m)[22m[32m 43[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m7 passed[39m[22m[2m | [22m[33m12 skipped[39m[90m (19)[39m
+[2m   Start at [22m 16:54:44
+[2m   Duration [22m 406ms[2m (transform 141ms, setup 0ms, import 218ms, tests 43ms, environment 0ms)[22m
+
+EVIDENCE_TEST_FILES=13
+EVIDENCE_TESTS_TOTAL=208
+EVIDENCE_TEST_SUITE_TOTAL=189
+EVIDENCE_TEST_NETWORK_TOTAL=19

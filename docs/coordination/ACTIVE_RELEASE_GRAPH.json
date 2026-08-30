@@ -1,8 +1,20 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-29T02:58:00Z",
+  "generatedAt": "2026-08-30T22:04:52.071Z",
   "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+  "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "evidenceTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+  "originVerified": true,
+  "state": "PACKET_FINALIZING",
+  "finalRcSha": null,
+  "detachedReview": "NOT_STARTED",
+  "deployed": false,
+  "migrationRequired": false,
+  "migrationAuthorized": false,
+  "migrationApplied": false,
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -26,7 +38,7 @@
       "owner": "Lead",
       "state": "AUDITED_BASELINE",
       "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-      "label": "Read-only attested production: dep-da6vorqfngtc73brb0gg on release/early-access-code-session-checkout"
+      "label": "Current live rollback deployment dep-da94g05g1s2s7396lkv0 on release/early-access-code-session-checkout; dep-da6vorqfngtc73brb0gg is a historical attestation of the same SHA"
     },
     {
       "id": "failed-rc-a1bbc2a1",
@@ -40,15 +52,16 @@
       "id": "editorial-homepage-8e8933ce",
       "type": "source",
       "owner": "Lane 02 / Lead",
-      "state": "SOURCE_ONLY_RECONCILIATION_REQUIRED",
+      "state": "SOURCE_INTEGRATED_IN_RUNTIME_FREEZE",
       "sha": "8e8933cee58af2750edf69d672a463884df29634",
-      "label": "Separate warm-silver editorial homepage source; absent from failed RC ancestry"
+      "label": "Separate warm-silver editorial homepage source; integrated deliberately into runtime freeze 2d662a0d; exact-c015 retry3c full evidence is sealed and the packet is finalizing"
     },
     {
       "id": "pr117-persistent-cart",
       "type": "candidate",
       "owner": "Lead",
       "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "sha": "821bf169e32fe19c0f0e37e6c5bc39eae448e062",
       "pullRequest": 117,
       "label": "Historical accepted/pending fact preserved; current 3daa ancestry, contracts, migration state, and exact-SHA review unresolved"
@@ -58,6 +71,7 @@
       "type": "candidate",
       "owner": "Lead",
       "state": "UNRESOLVED_HISTORICAL_LINEAGE_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "sha": "40d697c7bb4b903ae4d0ba62978239c369f35d6f",
       "pullRequest": 106,
       "label": "Historical accepted/transfer-pending fact preserved; current 3daa ancestry, contracts, migration state, and exact-SHA review unresolved"
@@ -67,6 +81,7 @@
       "type": "candidate",
       "owner": "Lead / independent reviewer",
       "state": "FROZEN_RECONCILIATION_REQUIRED",
+      "releaseBlocking": false,
       "sha": "410e687898d6406a684023e8327dc5fb697b30d3",
       "pullRequest": 144,
       "label": "Historical frozen disposition preserved; founder-locked pricing reconciliation and current exact-SHA acceptance remain required"
@@ -100,6 +115,7 @@
       "type": "future_gate",
       "owner": "Lead",
       "state": "BLOCKED",
+      "releaseBlocking": false,
       "sha": null,
       "label": "Immutable paid-order economics evidence"
     },
@@ -108,6 +124,7 @@
       "type": "future_gate",
       "owner": "Lead",
       "state": "BLOCKED",
+      "releaseBlocking": false,
       "sha": null,
       "label": "Commission and payout activation"
     },
@@ -115,17 +132,180 @@
       "id": "public-homepage-reconciliation",
       "type": "future_gate",
       "owner": "Lane 02 / Lead",
-      "state": "BLOCKED",
+      "state": "INTEGRATED_FINAL_MATRIX_SEALED",
       "sha": null,
-      "label": "Semantic homepage reconciliation plus public visual, responsive, accessibility, and catalog-guard evidence"
+      "label": "Semantic homepage reconciliation is integrated in runtime freeze 2d662a0d; retry1 and retry2 are excluded, retry3 and retry3b are stopped wrapper-only attempts, and exact-c015 retry3c full evidence is sealed"
     },
     {
-      "id": "omega-full-finish-candidate",
-      "type": "candidate",
-      "owner": "Lead (claude-lead-takeover-20260828)",
-      "state": "DEPLOYED_20260829T0237Z_ROLLED_BACK_20260829T0247Z_RECUT_REQUIRED",
+      "id": "failed-runtime-679564fc",
+      "type": "historical_failed_runtime",
+      "owner": "Historical Claude Lead release",
+      "state": "FAILED_RUNTIME_BENEATH_ROLLED_BACK_SUCCESSOR",
       "sha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
-      "label": "Full-finish Research RC frozen by the Claude Lead takeover: code tree 679564fc on branch claude/xenios-research-full-finish-takeover-20260828 (Codex checkpoint 1a065e0c + every admissible lane, root candidate and helper replayed by content; rejected ace92fd6 ancestry excluded). Docs/evidence commits on top change no runtime file. Not deployed; awaiting the independent review verdict and Samuel's decision."
+      "label": "Runtime beneath deployed records successor eb659d81; assisted-order config disappeared into generic 404; lineage is disqualified"
+    },
+    {
+      "id": "failed-deployment-eb659d81",
+      "type": "disqualified_deployment",
+      "owner": "Historical release record",
+      "state": "ROLLED_BACK_DISQUALIFIED",
+      "sha": "eb659d8100a3b9831d52688120931c48d10330d9",
+      "label": "Failed deployment dep-da94b91srm7s73b55dsg; live 2026-08-29T02:37:19Z, rolled back at 02:47:15Z to 3daa3f4a via dep-da94g05g1s2s7396lkv0; authorization consumed"
+    },
+    {
+      "id": "runtime-freeze-efb30f57",
+      "type": "historical_candidate",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "SUPERSEDED_PREDECESSOR",
+      "sha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+      "label": "Historical runtime tree f90a24c0dc14c9eabd8845f386ac3244494dd5ab; superseded by 2d662a0d, never deployed, and not a source of current final evidence"
+    },
+    {
+      "id": "evidence-r10g-excluded",
+      "type": "evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "INVALID_EXCLUDED",
+      "sha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+      "label": "Diagnostic only: 1,077 PNG, 1,077 text and 1,076 run JSON; no browser-matrix. External temp cleanup removed the empty attempt-log directory and the wrapper masked the child exit while persisting logs"
+    },
+    {
+      "id": "evidence-r10h-superseded",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "SUPERSEDED_PREDECESSOR",
+      "sha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+      "label": "Historical r10h predecessor; predates runtime 2d662a0d and contributes no current final result",
+      "evidence": {
+        "harnessFixtureStdout": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-browser-attempt-log-selftest-r10h-20260830\\attempt.stdout.log",
+        "harnessFixtureStderr": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-browser-attempt-log-selftest-r10h-20260830\\attempt.stderr.log",
+        "runnerSha256": "c82ebeec19cfb6627f9d013a19ad812fa3dcee292a95fb14dba5e00492a3934a",
+        "postFixSmokeSummary": "C:\\tmp\\xenios-smoke-efb30f57-r10h-postfix-summary.json",
+        "postFixSmokeObserved": "9 HTTP, 54 browser, assisted-order config 200, PII CLEAN"
+      }
+    },
+    {
+      "id": "runtime-freeze-2d662a0d",
+      "type": "candidate_runtime",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "TECHNICAL_GATES_SEALED",
+      "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+      "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+      "label": "Current runtime freeze; R11 technical bundle PASS 21/21 at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux; full suite 803 passed/4 skipped files and 12,049 passed/43 skipped tests; not deployed"
+    },
+    {
+      "id": "evidence-db9-first-smoke-excluded",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "INVALID_EXCLUDED",
+      "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+      "label": "Historical first db9 smoke launch failed from the wrong working directory; replaced by the clean db9 smoke and contributes no current result"
+    },
+    {
+      "id": "evidence-db9-smoke-reusable",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "HISTORICAL_BOUNDED_PASS_NOT_FINAL_E641",
+      "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+      "label": "Historical bounded clean smoke: 9/9 HTTP; 54 browser runs = 30 PASS + 24 PASS_WITH_NOTES + 0 FAIL; assisted-order config 200 enabled; PII CLEAN/COMPLETE; not current c015 final validation"
+    },
+    {
+      "id": "evidence-db9-full-stopped",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "STOPPED_SUPERSEDED_BEFORE_SEAL",
+      "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+      "label": "Historical incomplete db9 full run; stopped before seal and superseded by 193b3075, so it contributes no current final-matrix result"
+    },
+    {
+      "id": "evidence-freeze-193b3075",
+      "type": "historical_evidence_freeze",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "SUPERSEDED_EVIDENCE_PREDECESSOR",
+      "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+      "tree": "ef2eaeb78e1d941ace09e55de1ac3b41d4ba1355",
+      "label": "Origin-verified evidence predecessor. Runtime-to-193b3075 delta is exactly three evidence-only files; superseded by e64122d6 after retry2 exposed a synthetic service-worker CDP restart lifecycle race"
+    },
+    {
+      "id": "evidence-r11-final-193b307-retry1-excluded",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "EXCLUDED_EXTERNAL_INTERRUPTION",
+      "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+      "artifactRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-full-evidence-193b307-r11-final-lf-retry1-20260830",
+      "label": "Excluded after host Modern Standby interrupted CDP: primary 224/1100 = 180 PASS + 44 PASS_WITH_NOTES + 0 FAIL; Windows Event 506 at 2026-08-30T18:08:41.172Z and Event 507 resume at 18:14:32.725Z; targeted partners 11/11 PASS; no product or harness defect"
+    },
+    {
+      "id": "evidence-r11-final-193b307-retry2-excluded",
+      "type": "historical_evidence_result",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "EXCLUDED_EVIDENCE_LIFECYCLE_FLAKE",
+      "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+      "tree": "ef2eaeb78e1d941ace09e55de1ac3b41d4ba1355",
+      "artifactRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-full-evidence-193b307-r11-final-lf-retry2-20260830",
+      "label": "Excluded final evidence: primary 1100/1100 = 1,023 PASS + 77 PASS_WITH_NOTES + 0 FAIL and focused gates PASS, but synthetic stopped 10/20 on service-worker CDP restart. Diagnostics: 3 valid = 1 PASS + 2 exact race reproductions; no product or network failure"
+    },
+    {
+      "id": "evidence-freeze-e64122d6",
+      "type": "historical_evidence_freeze",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "SUPERSEDED_EVIDENCE_PREDECESSOR",
+      "sha": "e64122d67671113b02e1af2e1ba6b967a48767da",
+      "tree": "433a694d20cd1c05cb2bd39c31939d57d917d19c",
+      "label": "Origin-verified five-file evidence predecessor. Focused patch suite passed 23/23, but canonical smoke closed 2 PASS / 1 FAIL and is excluded; superseded by c0156916"
+    },
+    {
+      "id": "e641-canonical-synthetic-smoke-excluded",
+      "type": "historical_evidence_result",
+      "owner": "Separate Codex agent",
+      "state": "EXCLUDED_CANONICAL_SMOKE_NOT_STABLE",
+      "sha": "e64122d67671113b02e1af2e1ba6b967a48767da",
+      "tree": "433a694d20cd1c05cb2bd39c31939d57d917d19c",
+      "runsRequired": 3,
+      "label": "Historical exact-e641 canonical smoke: 2 PASS / 1 FAIL; excluded and superseded by c015; no current final evidence"
+    },
+    {
+      "id": "evidence-freeze-c0156916",
+      "type": "evidence_freeze",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "PACKET_FINALIZING",
+      "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "label": "Current evidence freeze. Runtime delta is exactly seven evidence/test files; no runtime change. Retry3c is sealed: HTTP 100/100, browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail, synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail, final evidence Vitest 13 files/213 tests, non-skipped scans clean; packet is finalizing"
+    },
+    {
+      "id": "c015-retry3-stopped-wrapper-schema",
+      "type": "historical_evidence_attempt",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "STOPPED_PRE_EVIDENCE_WRAPPER_SCHEMA",
+      "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "label": "Retry3 session 41570 stopped before HTTP/browser/evidence root: both exact clones 3575 files / 88285956 bytes / inventory 7e6a9608 / 0 mismatch, build PASS, focused JSON actual 3 suites/23 tests PASS; temporary wrapper incorrectly asserted one suite; guard reset; wrapper-only, no candidate defect, no resume/reuse"
+    },
+    {
+      "id": "c015-retry3b-stopped-wrapper-schema",
+      "type": "historical_evidence_attempt",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "STOPPED_PRE_PREVIEW_WRAPPER_SCHEMA",
+      "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "label": "Retry3b network-boundary 23 PASS and route 17 PASS, but Vitest suite totals reflected describe blocks (3 then 2) while the temporary wrapper assumed fixed 3; stopped before preview/HTTP/browser/evidence root; guard reset; no candidate defect; no resume/reuse"
+    },
+    {
+      "id": "c015-retry3c-sealed",
+      "type": "evidence_gate",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "FULL_EVIDENCE_SEALED",
+      "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "label": "Exact-c015 full evidence sealed: HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail first attempt; focused 11+11+11+11+99 all zero fail and clean; synthetic 20=18 PASS+2 expected denial notes+0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; PII CLEAN 0 findings across 2332 text/1120 PNG manual-review inventory/0 unscannable; evidence manifest 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257. Wrapper-only 46-vs-13 and excluded fixture-scan attempts disclosed; reserved-fixture endpoint recapture 16/11/0/0, config 200."
+    },
+    {
+      "id": "final-rc-packet",
+      "type": "future_gate",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "PACKET_FINALIZING",
+      "sha": null,
+      "label": "Bounded packet generated and validated at docs/review/xenios-research-full-site-20260829: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); inventory SHA256 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload SHA256 f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14. Manual review: 18 PNG/9 areas/2 viewports, 0 blocking visual, 0 privacy, five cosmetic backlog items. Canonical release manifest PASS under Node 20.19.0/npm 10.8.2, SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c, binding packet + assisted-order environment inventory. Records/evidence successor SHA, exact-final-SHA checks, final RC assignment and detached review remain unassigned; no deployment authority."
     }
   ],
   "edges": [
@@ -171,24 +351,147 @@
     },
     {
       "from": "public-homepage-reconciliation",
-      "to": "omega-full-finish-candidate",
-      "relation": "required_before"
+      "to": "runtime-freeze-2d662a0d",
+      "relation": "integrated_into"
     },
     {
       "from": "production-3daa3f4a",
-      "to": "omega-full-finish-candidate",
+      "to": "failed-runtime-679564fc",
       "relation": "development_ancestor_of"
+    },
+    {
+      "from": "failed-runtime-679564fc",
+      "to": "failed-deployment-eb659d81",
+      "relation": "records_successor_deployed_as"
+    },
+    {
+      "from": "production-3daa3f4a",
+      "to": "runtime-freeze-efb30f57",
+      "relation": "historical_development_ancestor_of"
+    },
+    {
+      "from": "production-3daa3f4a",
+      "to": "runtime-freeze-2d662a0d",
+      "relation": "development_ancestor_of"
+    },
+    {
+      "from": "runtime-freeze-efb30f57",
+      "to": "evidence-r10g-excluded",
+      "relation": "produced_excluded_diagnostic"
+    },
+    {
+      "from": "runtime-freeze-efb30f57",
+      "to": "evidence-r10h-superseded",
+      "relation": "produced_superseded_predecessor"
+    },
+    {
+      "from": "runtime-freeze-2d662a0d",
+      "to": "evidence-db9-first-smoke-excluded",
+      "relation": "evidence_only_successor_produced_excluded_attempt"
+    },
+    {
+      "from": "runtime-freeze-2d662a0d",
+      "to": "evidence-db9-smoke-reusable",
+      "relation": "evidence_only_successor_validated_by"
+    },
+    {
+      "from": "runtime-freeze-2d662a0d",
+      "to": "evidence-db9-full-stopped",
+      "relation": "evidence_only_successor_produced_stopped_attempt"
+    },
+    {
+      "from": "runtime-freeze-2d662a0d",
+      "to": "evidence-freeze-193b3075",
+      "relation": "three_file_evidence_only_successor"
+    },
+    {
+      "from": "evidence-db9-smoke-reusable",
+      "to": "evidence-freeze-193b3075",
+      "relation": "historically_validated_predecessor"
+    },
+    {
+      "from": "evidence-freeze-193b3075",
+      "to": "evidence-r11-final-193b307-retry1-excluded",
+      "relation": "produced_excluded_external_interruption"
+    },
+    {
+      "from": "evidence-freeze-193b3075",
+      "to": "evidence-r11-final-193b307-retry2-excluded",
+      "relation": "produced_excluded_lifecycle_flake"
+    },
+    {
+      "from": "evidence-r11-final-193b307-retry1-excluded",
+      "to": "evidence-r11-final-193b307-retry2-excluded",
+      "relation": "restarted_after_external_interruption"
+    },
+    {
+      "from": "evidence-freeze-193b3075",
+      "to": "evidence-freeze-e64122d6",
+      "relation": "two_file_evidence_lifecycle_fix"
+    },
+    {
+      "from": "evidence-r11-final-193b307-retry2-excluded",
+      "to": "evidence-freeze-e64122d6",
+      "relation": "lifecycle_flake_fixed_by"
+    },
+    {
+      "from": "evidence-freeze-e64122d6",
+      "to": "e641-canonical-synthetic-smoke-excluded",
+      "relation": "produced_excluded_two_pass_one_fail_smoke"
+    },
+    {
+      "from": "evidence-freeze-e64122d6",
+      "to": "evidence-freeze-c0156916",
+      "relation": "two_file_synthetic_lifecycle_successor"
+    },
+    {
+      "from": "e641-canonical-synthetic-smoke-excluded",
+      "to": "evidence-freeze-c0156916",
+      "relation": "superseded_by"
+    },
+    {
+      "from": "evidence-freeze-c0156916",
+      "to": "c015-retry3-stopped-wrapper-schema",
+      "relation": "produced_stopped_pre_evidence_attempt"
+    },
+    {
+      "from": "c015-retry3-stopped-wrapper-schema",
+      "to": "c015-retry3b-stopped-wrapper-schema",
+      "relation": "fresh_nonresuming_replacement"
+    },
+    {
+      "from": "c015-retry3b-stopped-wrapper-schema",
+      "to": "c015-retry3c-sealed",
+      "relation": "fresh_nonresuming_replacement"
+    },
+    {
+      "from": "c015-retry3c-sealed",
+      "to": "final-rc-packet",
+      "relation": "must_complete_before"
     }
   ],
   "releaseOrder": [
     "Use 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 as the sole attested production baseline.",
     "Treat a1bbc2a186ebbf96cead429a78dc30ffdc811005 only as prohibited development source; never deploy it.",
-    "Reconcile 8e8933cee58af2750edf69d672a463884df29634 deliberately with the preserved production/Hino runtime and prove the public homepage gate.",
-    "Preserve founder authority and the dated PR117, PR106, and PR144 facts without treating their historical acceptance states as current; reconcile each exact SHA explicitly against 3daa before any use.",
+    "Preserve the deliberate 8e8933ce homepage reconciliation already integrated into runtime freeze 2d662a0d; retry2 is excluded and no final visual, responsive, accessibility or catalog-guard seal is claimed from it.",
+    "Preserve founder authority and the dated PR117, PR106 and PR144 facts as historical/nonblocking; none is accepted or used by this no-migration recut.",
     "Keep paid-order economics, commission, and payout activation blocked until immutable evidence and independent acceptance exist.",
-    "Integrate only tested and pushed lane handoffs by exact SHA, then compose Lead-owned protected files.",
-    "Freeze one candidate SHA only after source, migration, security, accessibility, route, and runtime evidence is reproducible.",
-    "Candidate 679564fc8cb29289e2277836eb32e2deac3d8bec (branch claude/xenios-research-full-finish-takeover-20260828) is the single frozen full-finish RC; deploy only that exact tree or its docs-only successor named in docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md, only after the independent review and Samuel's explicit GO.",
+    "Treat eb659d8100a3b9831d52688120931c48d10330d9 and runtime 679564fc8cb29289e2277836eb32e2deac3d8bec beneath it as permanently disqualified; the consumed authorization cannot be reused.",
+    "Exclude r10g completely: its 1,077 PNG, 1,077 text and 1,076 run JSON files are diagnostic only because no browser-matrix exists and the wrapper masked the child exit after external temp cleanup removed the empty attempt-log directory.",
+    "Treat efb30f57/r10h, the failed first db9 smoke and the stopped db9 full run only as historical superseded or excluded records; none supplies a current PASS.",
+    "Runtime 2d662a0d (tree c1b1c5d6) is frozen with its 21/21 technical bundle sealed. Current origin-verified evidence freeze c0156916 (tree c4a48d5d) differs by exactly seven evidence/test files, adding only the two canonical synthetic journey lifecycle files beyond e641. No runtime changed.",
+    "Treat the clean db9 smoke as a truthful historical bounded predecessor result, not current c015 final validation. Current validation is the sealed exact-c015 retry3c run; no predecessor supplies its final PASS.",
+    "Exclude 193b3075 R11 retry1 from final evidence because host Modern Standby interrupted CDP: 224/1100 primary observations = 180 PASS + 44 PASS_WITH_NOTES + 0 FAIL; Event 506 at 2026-08-30T18:08:41.172Z, Event 507 resume at 18:14:32.725Z, targeted partners 11/11 PASS, and no product or harness defect.",
+    "Exclude exact-193 retry2 from final evidence: primary 1,100/1,100 = 1,023 PASS + 77 PASS_WITH_NOTES + 0 FAIL and focused gates passed, but synthetic stopped 10/20 on a service-worker CDP restart lifecycle race. Three valid diagnostics yielded one PASS and two exact race reproductions; no product or network failure.",
+    "Exclude the e641 canonical prerequisite result from current evidence: 2 PASS / 1 FAIL, superseded by c015.",
+    "At exact c015, focused validation passed 53/53 and canonical synthetic prerequisite passed 3/3; each run closed 20 captures = 18 PASS + 2 declared notes + 0 FAIL, boundary failures 0 and PII CLEAN.",
+    "Retry3 stopped before HTTP/browser/evidence-root creation because its temporary wrapper asserted one Vitest suite while the actual focused JSON passed 3 suites/23 tests. Exact clones and build passed, the guard reset, and no candidate defect occurred. Never resume or reuse retry3.",
+    "Retry3b stopped before preview/HTTP/browser/evidence-root creation after network-boundary 23 PASS and routes 17 PASS because Vitest suite totals reflected describe blocks (3 then 2) while its temporary wrapper assumed fixed 3. The guard reset, no candidate defect occurred, and retry3b must not be resumed or reused.",
+    "Exact-c015 retry3c full evidence is sealed: HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail on the first attempt; focused early/assisted/negative/unknown 11/11 each and account 99/99, all zero fail and clean; synthetic 20=18 PASS+2 expected denial notes+0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; final PII CLEAN with 0 findings across 2332 text, 1120 PNG manual-review inventory, and 0 unscannable; evidence manifest SHA256 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257.",
+    "Disclose the wrapper-only 46-vs-13 stop and excluded fixture-scan attempt archived at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830. The replacement reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW with assisted-order config HTTP 200.",
+    "The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload inventory f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14; representative manual review 18 PNG/9 areas/2 viewports with 0 blocking visual and 0 privacy findings and five cosmetic backlog items. Canonical manifest verification passed under Node 20.19.0/npm 10.8.2 at SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c, binding packet + assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested/dispositioned nonblocking; release-control 51 pass + 1 intentional skip + 0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS.",
+    "Current phase remains PACKET_FINALIZING. Reconcile the validated packet and records into one records/evidence successor, then run exact-final-SHA checks, push, origin-verify, clean the worktree and complete detached Codex review before requesting Samuel's exact-final-RC-SHA GO. Successor SHA, final RC assignment, review and deployment remain unassigned.",
+    "No migration is required, authorized, or applied for this release.",
     "No deployment or production mutation is authorized by this graph."
   ]
 }

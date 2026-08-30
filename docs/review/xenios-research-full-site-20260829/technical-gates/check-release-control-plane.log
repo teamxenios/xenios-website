@@ -1,0 +1,5 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 check:release-control-plane
+> tsc --noEmit --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --types node,vitest/globals scripts/acceptance/verify-release-manifest.ts scripts/acceptance/verify-migration-dag.ts scripts/acceptance/verify-route-uniqueness.ts scripts/acceptance/verify-production-state.ts server/release-control-plane.test.ts
+

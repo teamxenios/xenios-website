@@ -1,18 +1,21 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-29T02:58:00Z",
+  "updatedAt": "2026-08-30T22:04:52.071Z",
   "repository": "teamxenios/xenios-website",
-  "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "500bc88",
+  "canonicalBranch": "claude/xenios-research-full-finish-takeover-20260828",
+  "observedHead": "c01569169cad5e6619187221d84019ae8bfc7c69",
   "currentRelease": {
-    "tag": "RESEARCH_EARLY_ACCESS_OPEN_ACCESS_TYPED_AFFILIATE_CODE",
-    "sha": "77e782e0",
+    "classification": "CURRENT_LIVE_PRODUCTION",
+    "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "status": "live",
-    "rollback": "ce1590fa",
-    "deployId": "dep-da3o55gn74is73f9sdo0",
-    "note": "Live 2026-08-20: Early Access open access (no shared password, no Xenios Genesis gate) with admin/member/supplier/finance/Care unchanged, and M75 applied (checksum f9ab389...403fda) adding the typed declared affiliate code with sanitize-not-abort and service_role-only execute. Controlled order XRR-20260820-2E67BC3AA3 carried DANA10/captured_unmatched with null verified attribution; both submitted-order emails reached status sent on attempt 1."
+    "branch": "release/early-access-code-session-checkout",
+    "rollback": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "deployId": "dep-da94g05g1s2s7396lkv0",
+    "historicalAttestationDeployId": "dep-da6vorqfngtc73brb0gg",
+    "note": "Current live production is the commit-pinned rollback deployment created after the failed eb659d81 release. dep-da6vorqfngtc73brb0gg is a historical successful attestation of the same SHA, not the current live deployment."
   },
   "catalog": {
+    "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
     "workbookRows": 420,
     "publishedProducts": 217,
     "activeVariants": 417,
@@ -20,9 +23,11 @@
     "pricePending": 2,
     "shippingFees": 1,
     "unknown": 0,
-    "generalMemberRollout": true
+    "generalMemberRollout": null,
+    "note": "Counts are preserved from the dated 2026-08-19 build-status snapshot and are not current production observations. Null means the rollout state was not re-attested during this recut."
   },
-  "liveSurfaces": [
+  "liveSurfacesEvidenceState": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
+  "historicalLiveSurfaces": [
     "public_gateway",
     "access_hub",
     "member_portal",
@@ -40,7 +45,7 @@
       "reason": "production schema missing and research_organizations name collision"
     }
   ],
-  "criticalGaps": [
+  "historicalPlatformGaps": [
     "organization_account_schema",
     "membership_application_write",
     "supplier_workspace",
@@ -63,16 +68,403 @@
     "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction."
   ],
   "researchFullSiteCandidate": {
-    "codeSha": "679564fc8cb29289e2277836eb32e2deac3d8bec",
+    "codeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
+    "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "evidenceTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+    "originVerified": true,
+    "finalRcSha": null,
     "branch": "claude/xenios-research-full-finish-takeover-20260828",
-    "state": "DEPLOYED_20260829T0237Z_ROLLED_BACK_20260829T0247Z_RECUT_REQUIRED",
+    "state": "PACKET_FINALIZING",
     "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-    "rcDocument": "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-28.md",
+    "productionDeployId": "dep-da94g05g1s2s7396lkv0",
+    "failedSha": "eb659d8100a3b9831d52688120931c48d10330d9",
+    "failedDeployId": "dep-da94b91srm7s73b55dsg",
+    "rcDocument": "docs/research-launch/XENIOS_RESEARCH_FULL_WEBSITE_RC_2026-08-29.md",
     "runbook": "docs/research-launch/XENIOS_RESEARCH_RELEASE_RUNBOOK_2026-08-28.md",
-    "reviewPacket": "docs/review/xenios-research-full-site-20260828/",
+    "reviewPacket": "docs/review/xenios-research-full-site-20260829/",
+    "runtimeToEvidenceDelta": {
+      "fileCount": 7,
+      "runtimeChanged": false,
+      "changes": [
+        {
+          "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+          "files": [
+            "scripts/evidence/routes.public.json",
+            "scripts/evidence/routes-public.test.mjs"
+          ],
+          "purpose": "Re-pin two normalized document-body fingerprints and their exact test expectations."
+        },
+        {
+          "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+          "files": [
+            "scripts/release/critical-endpoint-expectations.json"
+          ],
+          "purpose": "Re-pin ten exact anchored critical-endpoint document fingerprints."
+        },
+        {
+          "sha": "e64122d67671113b02e1af2e1ba6b967a48767da",
+          "files": [
+            "scripts/evidence/lib/cdp.mjs",
+            "scripts/evidence/network-boundary.test.mjs"
+          ],
+          "purpose": "Fix the synthetic service-worker CDP restart lifecycle race and pin its focused network-boundary regression coverage."
+        },
+        {
+          "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+          "files": [
+            "scripts/evidence/capture-synthetic-journeys.mjs",
+            "scripts/evidence/capture-synthetic-journeys.test.mjs"
+          ],
+          "purpose": "Stabilize canonical synthetic service-worker lifecycle capture and pin its exact declared-note behavior."
+        }
+      ]
+    },
+    "technicalGateBundle": {
+      "result": "PASS",
+      "candidateSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+      "artifactRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux",
+      "completedAtUtc": "2026-08-30T16:55:41.4746697Z",
+      "gatesPassed": 21,
+      "gatesTotal": 21,
+      "gateFailures": 0,
+      "fullSequentialSuite": {
+        "passedFiles": 803,
+        "skippedFiles": 4,
+        "failedFiles": 0,
+        "passedTests": 12049,
+        "skippedTests": 43,
+        "failedTests": 0,
+        "durationSeconds": 469.08
+      },
+      "canonicalE2e": {
+        "passedFiles": 4,
+        "passedTests": 53,
+        "failedTests": 0,
+        "durationSeconds": 2.73
+      },
+      "targetedDomains": {
+        "passedFiles": 196,
+        "passedTests": 3116,
+        "failedTests": 0,
+        "durationSeconds": 152.53
+      },
+      "evidenceSelfTests": {
+        "passedFiles": 13,
+        "totalTests": 208,
+        "passedTests": 196,
+        "skippedTests": 12,
+        "skipReason": "Intentional network-disabled boundary skips.",
+        "failedTests": 0
+      },
+      "coreSiteProtection": {
+        "passedTests": 35,
+        "totalTests": 35
+      }
+    },
+    "reusableDb9Smoke": {
+      "result": "PASS",
+      "classification": "HISTORICAL_BOUNDED_PREFLIGHT_NOT_FINAL_E641",
+      "candidateSha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+      "summary": "C:\\tmp\\xenios-smoke-db9aeaa-r11-repin-summary.json",
+      "outputDirectory": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-smoke-evidence-db9aeaa-r11-repin-20260830",
+      "httpPassed": 9,
+      "httpTotal": 9,
+      "browserRuns": 54,
+      "browserAutomatedPass": 30,
+      "browserAutomatedPassWithNotes": 24,
+      "browserAutomatedFail": 0,
+      "assistedOrderConfigStatus": 200,
+      "assistedOrderConfigEnabled": true,
+      "piiResult": "CLEAN",
+      "piiCoverage": "COMPLETE",
+      "distFileCount": 321,
+      "distInventorySha256": "933d3165fc168de1b9fc967cf3a3b40bdb919fda49bb3cc623c90880558dbf37",
+      "routesInventorySha256": "c8e26e430e426d91e781bc19fd6f3ff8fc359d382fa9c0fa1d41f4c023f8d67a",
+      "validForEvidenceFreeze": false,
+      "historicalApplicability": "The smoke remains a truthful bounded predecessor result. Later evidence freezes changed CDP and canonical-synthetic lifecycle handling, so current validation is the exact-c015 retry3c run; the db9 smoke supplies no current final PASS."
+    },
+    "historicalEvidenceRuns": [
+      {
+        "id": "r10g",
+        "sha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+        "state": "INVALID_EXCLUDED",
+        "partialPngCount": 1077,
+        "partialTextCount": 1077,
+        "partialRunJsonCount": 1076,
+        "browserMatrix": null,
+        "reason": "External temporary-directory cleanup removed the empty attempt-log directory and the wrapper masked the child exit; diagnostic only."
+      },
+      {
+        "id": "r10h",
+        "sha": "efb30f5751969f0c05032aa4d6084fcc5c587a95",
+        "state": "SUPERSEDED_PREDECESSOR",
+        "reason": "Predates runtime freeze 2d662a0d; none of its results is current final evidence."
+      },
+      {
+        "id": "db9-first-smoke",
+        "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+        "state": "INVALID_EXCLUDED",
+        "reason": "The first launch used the wrong working directory and failed; it was replaced by the clean smoke recorded above."
+      },
+      {
+        "id": "db9-full-matrix",
+        "sha": "db9aeaafbc0638095caca5596e1bdcec1e076902",
+        "state": "STOPPED_SUPERSEDED_BEFORE_SEAL",
+        "reason": "Incomplete run stopped before seal and superseded by evidence freeze 193b3075; it contributes no current final-matrix result."
+      },
+      {
+        "id": "r11-final-193b307-lf-retry1",
+        "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+        "state": "EXCLUDED_EXTERNAL_INTERRUPTION",
+        "artifactRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-full-evidence-193b307-r11-final-lf-retry1-20260830",
+        "primaryObserved": 224,
+        "primaryExpected": 1100,
+        "browserAutomatedPass": 180,
+        "browserAutomatedPassWithNotes": 44,
+        "browserAutomatedFail": 0,
+        "targetedPartnersPassed": 11,
+        "targetedPartnersTotal": 11,
+        "modernStandbyEvent506At": "2026-08-30T18:08:41.172Z",
+        "modernStandbyEvent507ResumeAt": "2026-08-30T18:14:32.725Z",
+        "reason": "Windows Modern Standby interrupted the host and CDP connection after the fresh build, endpoint comparison and 100/100 HTTP stages. The partial browser observations and 11/11 targeted partners are diagnostic only. No product or harness defect was found."
+      },
+      {
+        "id": "r11-final-193b307-lf-retry2",
+        "sha": "193b30752597b4684f4897e68d020c92449f97bd",
+        "state": "EXCLUDED_EVIDENCE_LIFECYCLE_FLAKE",
+        "artifactRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-full-evidence-193b307-r11-final-lf-retry2-20260830",
+        "primaryObserved": 1100,
+        "primaryExpected": 1100,
+        "browserAutomatedPass": 1023,
+        "browserAutomatedPassWithNotes": 77,
+        "browserAutomatedFail": 0,
+        "focusedGates": "PASS",
+        "syntheticObserved": 10,
+        "syntheticExpected": 20,
+        "diagnosticRuns": {
+          "valid": 3,
+          "passed": 1,
+          "exactRaceReproductions": 2
+        },
+        "reason": "Primary and focused gates passed, but the synthetic stage stopped at 10/20 on a service-worker CDP restart lifecycle race. Diagnostic runs reproduced the race exactly without a product or network failure. Retry2 is excluded from final evidence."
+      },
+      {
+        "id": "e641-canonical-synthetic-smoke",
+        "sha": "e64122d67671113b02e1af2e1ba6b967a48767da",
+        "state": "EXCLUDED_CANONICAL_SMOKE_NOT_STABLE",
+        "runsPassed": 2,
+        "runsFailed": 1,
+        "runsTotal": 3,
+        "reason": "Two canonical runs passed and one failed. Superseded by the c015 evidence-only synthetic lifecycle fix; contributes no current final evidence."
+      },
+      {
+        "id": "c015-r11-final-lf-retry3",
+        "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+        "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+        "state": "STOPPED_PRE_EVIDENCE_WRAPPER_SCHEMA",
+        "runnerPath": "C:\\tmp\\xenios-run-full-evidence-c015691-r11-final-lf-retry3-20260830.ps1",
+        "runnerSha256": "10631b1c606ec6ab5d6e553c64678bd334ac58d197f3f18c8c004d1b3eb8c6d3",
+        "runnerSessionId": 41570,
+        "plannedEvidenceRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-full-evidence-c015691-r11-final-lf-retry3-20260830",
+        "exactCloneIdentity": {
+          "trackedFiles": 3575,
+          "bytes": 88285956,
+          "inventorySha256": "7e6a96080f3dc65c7f91f9e87ddb80eaffad5e4a0478a2bdfac7bdf980f097b",
+          "clones": 2,
+          "rawBlobMismatches": 0,
+          "autocrlfFalseBeforeFirstCheckout": true
+        },
+        "buildResult": "PASS",
+        "focusedJsonActual": "3 suites / 23 tests PASS",
+        "wrapperDefect": "Temporary runner incorrectly asserted numTotalTestSuites = 1.",
+        "httpStarted": false,
+        "browserStarted": false,
+        "evidenceRootCreated": false,
+        "candidateDefect": false,
+        "executionStateGuardReset": true,
+        "resumeOrReuseAllowed": false
+      },
+      {
+        "id": "c015-r11-final-lf-retry3b",
+        "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+        "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+        "state": "STOPPED_PRE_PREVIEW_WRAPPER_SCHEMA",
+        "networkBoundaryTests": "23 PASS",
+        "routeTests": "17 PASS",
+        "wrapperDefect": "Temporary runner assumed a fixed Vitest suite total of 3 for the route gate; actual suite totals reflected describe blocks (3 for network-boundary, then 2 for routes).",
+        "previewStarted": false,
+        "httpStarted": false,
+        "browserStarted": false,
+        "evidenceRootCreated": false,
+        "candidateDefect": false,
+        "executionStateGuardReset": true,
+        "resumeOrReuseAllowed": false
+      },
+      {
+        "id": "c015-retry3c-wrapper-46-vs-13",
+        "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+        "state": "CLOSED_WRAPPER_ONLY_46_VS_13",
+        "evidenceTestResult": "13 files / 213 tests / 46 describe suites PASS",
+        "wrapperDefect": "The wrapper compared the 46 Vitest describe-suite total with the 13-file total.",
+        "candidateDefect": false,
+        "evidenceDefect": false
+      },
+      {
+        "id": "c015-retry3c-tail-pii-order-fixture",
+        "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+        "state": "EXCLUDED_FIXTURE_SCAN_ATTEMPT",
+        "archiveRoot": "C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830",
+        "replacement": "Reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW; assisted-order config HTTP 200.",
+        "contributesToFinalEvidence": false
+      }
+    ],
+    "e641FocusedEvidencePatchSuite": {
+      "candidateSha": "e64122d67671113b02e1af2e1ba6b967a48767da",
+      "candidateTree": "433a694d20cd1c05cb2bd39c31939d57d917d19c",
+      "result": "PASS",
+      "passedTests": 23,
+      "totalTests": 23,
+      "toolchain": "PINNED"
+    },
+    "c015FocusedEvidencePatchSuite": {
+      "candidateSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "candidateTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "result": "PASS",
+      "passedTests": 53,
+      "totalTests": 53,
+      "toolchain": "PINNED"
+    },
+    "c015CanonicalSyntheticPrerequisite": {
+      "result": "PASS",
+      "runsPassed": 3,
+      "runsTotal": 3,
+      "capturesPerRun": 20,
+      "automatedPassPerRun": 18,
+      "declaredNotesPerRun": 2,
+      "automatedFailPerRun": 0,
+      "boundaryFailures": 0,
+      "piiResult": "CLEAN"
+    },
+    "activeFinalEvidence": {
+      "id": "c015-r11-final-lf-retry3c",
+      "state": "FULL_EVIDENCE_SEALED",
+      "candidateSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+      "candidateTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+      "runnerSession": "COMPLETE",
+      "currentStage": "packet_finalizing",
+      "vitestResultFields": "success, testResults, exact tests, assertions",
+      "preEvidence": {
+        "networkBoundary": "23/23 PASS",
+        "routes": "17/17 PASS",
+        "syntheticSelfTest": "13/13 PASS",
+        "endpointDiff": "16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW",
+        "http": "100/100 PASS"
+      },
+      "resumeOrReusePriorAttempt": false,
+      "finalCounts": {
+        "http": {
+          "passed": 100,
+          "total": 100,
+          "failed": 0
+        },
+        "browser": {
+          "attempt": 1,
+          "total": 1100,
+          "automatedPass": 1023,
+          "expectedNotes": 77,
+          "failed": 0
+        },
+        "focused": {
+          "earlyAccess": "11/11 PASS",
+          "assistedOrder": "11/11 PASS",
+          "negative": "11/11 PASS",
+          "unknown": "11/11 PASS",
+          "account": "99/99 PASS",
+          "failed": 0,
+          "result": "CLEAN"
+        },
+        "synthetic": {
+          "total": 20,
+          "automatedPass": 18,
+          "expectedDenialNotes": 2,
+          "failed": 0
+        },
+        "evidenceTests": {
+          "files": 13,
+          "tests": 213,
+          "describeSuites": 46,
+          "failed": 0
+        },
+        "releaseScan": "0/0; non-skipped",
+        "pii": {
+          "result": "CLEAN",
+          "findings": 0,
+          "textFiles": 2332,
+          "pngManualReviewInventory": 1120,
+          "unscannable": 0
+        },
+        "reservedFixtureEndpointRecapture": "16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW; config HTTP 200",
+        "evidenceManifestSha256": "1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257"
+      }
+    },
+    "boundedPacket": {
+      "state": "GENERATED_AND_VALIDATED",
+      "path": "docs/review/xenios-research-full-site-20260829",
+      "filesIncludingInventorySelf": 192,
+      "payloadFiles": 191,
+      "pngFiles": 72,
+      "textFiles": 72,
+      "capturePairs": {
+        "desktop1440": 36,
+        "mobile390": 36
+      },
+      "packetInventorySha256": "6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7",
+      "payloadInventorySha256": "f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14",
+      "manualVisualPrivacyReview": {
+        "pngReviewed": 18,
+        "routeAreas": 9,
+        "viewports": 2,
+        "blockingVisualFindings": 0,
+        "blockingPrivacyFindings": 0,
+        "cosmeticBacklogItems": 5,
+        "record": "docs/review/xenios-research-full-site-20260829/review-summary.json"
+      },
+      "canonicalReleaseManifest": {
+        "result": "PASS",
+        "node": "20.19.0",
+        "npm": "10.8.2",
+        "sha256": "16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c",
+        "hashBindings": "bounded packet and assisted-order environment inventory"
+      },
+      "ownership": {
+        "sha256": "84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c",
+        "unowned": 613,
+        "wrongLane": 20,
+        "conflicts": 0,
+        "disposition": "ATTESTED_AND_DISPOSITIONED_NONBLOCKING"
+      },
+      "releaseControl": "51 PASS + 1 intentional skip + 0 fail",
+      "productionState": "PASS",
+      "migrationDag": "35 PASS",
+      "routeUniqueness": "409 static registrations / 400 call sites; exact-c015 PASS",
+      "automatedEvidenceManifestState": "PENDING_READY_FALSE_BY_DESIGN",
+      "pending": [
+        "exact-final-SHA scans",
+        "origin verification of records/evidence successor",
+        "final RC assignment",
+        "detached Codex review",
+        "Samuel exact-SHA authorization",
+        "deployment"
+      ]
+    },
     "deployed": false,
+    "migrationRequired": false,
+    "migrationAuthorized": false,
     "migrationsApplied": false,
-    "note": "Frozen by the Claude Lead takeover on 2026-08-28; every gate, evidence run and the independent review reference this exact code tree. Nothing was deployed, merged, migrated, activated, invited, priced, paid, refunded, or messaged.",
-    "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); recut required"
+    "detachedReview": "NOT_STARTED",
+    "note": "Runtime 2d662a0d and exact-c015 sealed evidence are unchanged. The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files including packet-inventory self / 191 payload, 72 PNG + 72 text with 36 desktop-1440 and 36 mobile-390 pairs; inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14. Manual review sampled 18 PNG across 9 areas/2 viewports with 0 blocking visual and 0 privacy findings; five cosmetic items are backlog. Canonical release-manifest verification passed under Node 20.19.0/npm 10.8.2; final manifest SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c binds the packet and assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested nonblocking dispositions. Release-control 51+1 skip+0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS. State remains PACKET_FINALIZING; exact-final-SHA scans, successor origin verification, final RC SHA, detached review, authorization and deployment remain unassigned.",
+    "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   }
 }

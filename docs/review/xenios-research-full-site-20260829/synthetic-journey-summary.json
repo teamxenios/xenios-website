@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-synthetic-journey-summary",
+  "evidenceRun": "xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+  "evidenceSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "sealedSummary": {
+    "captures": 20,
+    "expectedCaptures": 20,
+    "expectedCaptureCountMatched": true,
+    "automatedPass": 18,
+    "automatedPassWithNotes": 2,
+    "automatedFail": 0,
+    "declaredDenialPassWithNotes": 2,
+    "strictClean": false,
+    "completeWithExpectedDenialNotes": true,
+    "zeroUndeclaredFailures": true,
+    "result": "AUTOMATED_PASS_WITH_NOTES",
+    "externalMutations": 0
+  },
+  "captures": 20,
+  "automatedPass": 18,
+  "automatedPassWithExpectedDenialNotes": 2,
+  "screenshotArtifacts": 20,
+  "pairedTextArtifacts": 20,
+  "automatedFailures": 0,
+  "completeWithExpectedDenialNotes": true,
+  "zeroUndeclaredFailures": true
+}

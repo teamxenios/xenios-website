@@ -1,0 +1,17 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m server/release-control-plane.test.ts [2m([22m[2m52 tests[22m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 19372[2mms[22m[39m
+     [33m[2m✓[22m[39m verifies the checked-in canonical migration checksums [33m 496[2mms[22m[39m
+     [33m[2m✓[22m[39m hashes canonical raw Git blobs and rejects newline-normalized bytes [33m 462[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects a canonical source pin that is not in release HEAD ancestry [33m 422[2mms[22m[39m
+     [33m[2m✓[22m[39m fails closed when a pinned migration source is unavailable [33m 424[2mms[22m[39m
+     [33m[2m✓[22m[39m binds a distinct managed migration path to the reviewed source blob [33m 449[2mms[22m[39m
+     [33m[2m✓[22m[39m covers every current Express API call site and finite registration [33m 1795[2mms[22m[39m
+     [33m[2m✓[22m[39m accepts the internally consistent checked-in production snapshot [33m 15088[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m51 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (52)[39m
+[2m   Start at [22m 16:55:13
+[2m   Duration [22m 20.69s[2m (transform 339ms, setup 0ms, import 1.14s, tests 19.37s, environment 0ms)[22m
+

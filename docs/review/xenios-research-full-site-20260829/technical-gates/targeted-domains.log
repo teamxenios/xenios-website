@@ -1,0 +1,711 @@
+TARGETED_FILES=196
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m server/research/membership-activation/routes.test.ts [2m([22m[2m50 tests[22m[2m)[22m[33m 2378[2mms[22m[39m
+     [33m[2m✓[22m[39m runs consent -> upload -> agreements -> obligation -> methods -> report -> verify -> active [33m 421[2mms[22m[39m
+ [32m✓[39m server/research/commerce/manual-order-payments.test.ts [2m([22m[2m45 tests[22m[2m)[22m[32m 133[2mms[22m[39m
+ [32m✓[39m server/care/clinical-write-gate.adversarial.test.ts [2m([22m[2m102 tests[22m[2m)[22m[33m 606[2mms[22m[39m
+ [32m✓[39m server/research/providers/payment.test.ts [2m([22m[2m138 tests[22m[2m)[22m[32m 173[2mms[22m[39m
+ [32m✓[39m server/care/clinical-route-coverage.test.ts [2m([22m[2m39 tests[22m[2m)[22m[32m 225[2mms[22m[39m
+ [32m✓[39m server/research/documents.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 231[2mms[22m[39m
+ [32m✓[39m server/research/commerce/refunds.test.ts [2m([22m[2m58 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m server/research/commerce/order-payment-fulfillment.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m server/care/clinical-write-gate.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 182[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/http-e2e.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 168[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-catalog.test.ts [2m([22m[2m32 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m server/research/commerce/orders.test.ts [2m([22m[2m43 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/activation.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m server/research/commerce/order-payment-fulfillment-persistence.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32m✓[39m server/research/customer-account/orders-projection.test.ts [2m([22m[2m46 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m server/care/tebra-scheduling.test.ts [2m([22m[2m68 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m server/research/launch/manual-order-submit-negatives.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/documents.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/obligations.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/legal-import.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/audit-store.test.ts [2m([22m[2m44 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-boot.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 10992[2mms[22m[39m
+     [33m[2m✓[22m[39m mounts the assisted-order bridge with the production-baseline audit mode and answers the config door 200 enabled:true [33m 3179[2mms[22m[39m
+     [33m[2m✓[22m[39m answers an EXPLICIT disabled state, not a generic 404, when the bridge flag is off [33m 2610[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses explicitly (never a generic 404) when durable audit is demanded but its authority is absent [33m 2600[2mms[22m[39m
+     [33m[2m✓[22m[39m fails safely on a malformed required-agreements list: explicit unavailable state, no submission possible, no generic 404 [33m 2585[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/service.test.ts [2m([22m[2m50 tests[22m[2m)[22m[32m 84[2mms[22m[39m
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ [32m✓[39m client/src/research/assisted-order/AssistedOrderPage.test.tsx [2m([22m[2m30 tests[22m[2m)[22m[33m 10325[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps Care products out of the research request path [33m 381[2mms[22m[39m
+     [33m[2m✓[22m[39m offers four structured Action groups and composes them with search and Family [33m 1231[2mms[22m[39m
+     [33m[2m✓[22m[39m hides stale cards while a new filter loads and aborts the obsolete request [33m 803[2mms[22m[39m
+     [33m[2m✓[22m[39m shows a customer-safe retry state without leaking a raw catalog error [33m 554[2mms[22m[39m
+     [33m[2m✓[22m[39m announces a filter-specific empty state and provides an accessible clear action [33m 571[2mms[22m[39m
+     [33m[2m✓[22m[39m labels pending products Request Order without changing their request-only mode [33m 312[2mms[22m[39m
+     [33m[2m✓[22m[39m marks the current wizard step and disables unavailable future steps [33m 307[2mms[22m[39m
+     [33m[2m✓[22m[39m removes a selected row if a fresh catalog response makes it held [33m 569[2mms[22m[39m
+     [33m[2m✓[22m[39m does not expose a raw acknowledgment configuration failure [33m 359[2mms[22m[39m
+     [33m[2m✓[22m[39m does not expose a raw submission failure [33m 416[2mms[22m[39m
+     [33m[2m✓[22m[39m maps missing durable agreement standing to fixed customer-safe copy [33m 417[2mms[22m[39m
+     [33m[2m✓[22m[39m submits the full request with server-published acknowledgments and a durable idempotency key [33m 405[2mms[22m[39m
+     [33m[2m✓[22m[39m does not report a server-accepted request as failed when receipt storage is unavailable [33m 388[2mms[22m[39m
+     [33m[2m✓[22m[39m omits the RUO confirmation when no RUO line is selected [33m 336[2mms[22m[39m
+     [33m[2m✓[22m[39m replays a retry after failure with the SAME idempotency key [33m 402[2mms[22m[39m
+     [33m[2m✓[22m[39m restores the basket and idempotency key from the draft after a session bounce [33m 598[2mms[22m[39m
+     [33m[2m✓[22m[39m re-resolves current server values when the submission hits price drift [33m 377[2mms[22m[39m
+     [33m[2m✓[22m[39m does not report a server-accepted request as failed when the sessionStorage getter is denied [33m 367[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/payment/service.test.ts [2m([22m[2m52 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/native.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32m✓[39m server/research/early-access/orders/member-order-history.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/signatures.test.ts [2m([22m[2m39 tests[22m[2m)[22m[32m 60[2mms[22m[39m
+ [32m✓[39m server/research/seo/raw-http-document-policy.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 86[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/order-service.test.ts [2m([22m[2m44 tests[22m[2m)[22m[33m 1605[2mms[22m[39m
+     [33m[2m✓[22m[39m does not drift across the whole supported price range [33m 1541[2mms[22m[39m
+ [32m✓[39m server/research/providers/fulfillment.test.ts [2m([22m[2m56 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/activation-page.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 1170[2mms[22m[39m
+ [32m✓[39m server/research/commerce/persistence/orders-store.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mplacing an Early Access order[2m > [22m[2mprices, discounts, invoices and returns the order, all server side
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mplacing an Early Access order[2m > [22m[2manswers with no-store private headers
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mplacing an Early Access order[2m > [22m[2mignores a price, a total and a referral code the client tries to send
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mplacing an Early Access order[2m > [22m[2mreplays one idempotency key instead of placing a second order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mplacing an Early Access order[2m > [22m[2mrefuses one key reused for a different order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mSESSION_REQUIRED without a live Early Access session
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mSESSION_REQUIRED for a forged cookie, even with an identity on file
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mIDENTITY_REQUIRED when the session is live but nobody is behind it
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mAGREEMENT_REQUIRED when the customer has not accepted what they must
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mPRODUCT_HELD for a unit Product Control holds on its contents
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mPRODUCT_HELD for a unit that is not in the catalog at all
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mRELEASE_REQUIRED when no founder has approved the unit
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mRELEASE_STALE when the product changed after the founder approved it
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mRELEASE_REVOKED after the founder pulls the unit
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mPRICE_CHANGED when the customer echoes a price the server no longer holds
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mQUANTITY_EXCEEDED above the portal ceiling
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mQUANTITY_EXCEEDED above the per-unit supply cap Product Control recorded
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mSUPPLIER_UNAVAILABLE when no supplier is assigned to the unit
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mSHIPPING_UNAVAILABLE when xenios does not serve the destination
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mthe refusal vocabulary, in the order the checks run[2m > [22m[2mREQUEST_INVALID for a malformed shipping destination
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mnothing persists unless everything persists[2m > [22m[2mleaves no order behind when the placement is refused
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mnothing persists unless everything persists[2m > [22m[2mcommits the order and its invoice together, never one without the other
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mnothing persists unless everything persists[2m > [22m[2mtwo concurrent placements under one key produce ONE order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mreading an order back[2m > [22m[2mreturns the owner's own order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mreading an order back[2m > [22m[2mreturns the owner's own invoice
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mreading an order back[2m > [22m[2mREFUSES a second signed-in customer reading the first customer's order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mreading an order back[2m > [22m[2mrefuses a lookup with no session at all
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2mreading an order back[2m > [22m[2mexposes no sequential internal id anywhere in the response
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts the metadata and leaves the order UNPAID
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mstores the digest and an opaque storage handle, never a URL
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mrefuses a request that tries to hand the handler bytes
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mrequires the declared type and the extension to agree
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts jpg, jpeg, png and pdf
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts jpg, jpeg, png and pdf
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts jpg, jpeg, png and pdf
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts jpg, jpeg, png and pdf
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2maccepts a webp screenshot end to end, the gap the route once had
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2menforces the size ceiling
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mrefuses a malformed digest
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mREFUSES a second customer attaching proof to somebody else's order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/order-routes.test.ts[2m > [22m[2msubmitting payment proof[2m > [22m[2mchains a replacement proof and keeps the order under review
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/order-routes.test.ts [2m([22m[2m38 tests[22m[2m)[22m[33m 2713[2mms[22m[39m
+ [32m✓[39m server/research/orders/canonical-order.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/payment-verification.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/provider.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/conversion/gate.test.ts [2m([22m[2m32 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/documents-store.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/renewals.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/persistence/esign-store.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m server/research/providers/stripe-billing.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-wiring.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/production-deps.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 76[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/signing.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m server/research/master-offerings/order-intake-matrix.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+ [32m✓[39m server/research/fulfillment/register.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 188[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/native-commit.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m server/care/review-routes.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 127[2mms[22m[39m
+ [32m✓[39m server/research/early-access/orders/cart-order-history.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m shared/research/product-activation/contract.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m server/research/early-access/release/canonical-payment-eligibility.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/identity-retention.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/activation-queue.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 738[2mms[22m[39m
+ [32m✓[39m server/care/intake-routes.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 111[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/identity-store.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/scheduler.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m client/src/care/clinician-review-ui.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 978[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/identity-documents.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m client/src/care/tebra-scheduling-security.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[32m 254[2mms[22m[39m
+ [32m✓[39m server/research/pricing/order-price-snapshot.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/cart/orderStage.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m server/research/pricing/quantum-activation-readiness.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/archive.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/obligations-store.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/quote/service.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m server/research/commerce/manual-order-payment-method-adapter.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2ma SECOND confirm with a FRESH idempotency key replays the first order instead of creating one
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2mthe replay carries ONE invoice and ONE payment reference, not a second of each
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2mSIX rapid confirms, every one with its own key, still leave exactly one order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2mthe SAME key still replays, so the original idempotency contract is intact
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2ma genuinely NEW cart still places a second order, so the fix did not seize the shop
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2ma DIFFERENT customer cannot reach another customer's quote, replay or otherwise
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/cart/duplicate-order.test.ts[2m > [22m[2mthe production incident: one quote can only be spent once[2m > [22m[2ma superseded checkout is not an active one, so it never blocks or answers a quote
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/cart/duplicate-order.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 724[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/payment-instructions-config.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m server/research/commerce/order-payment-fulfillment-compatibility.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m server/research/early-access/cart/payment-instructions-route.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m server/research/account-identity/buyer-activation.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/pdf.test.ts [2m([22m[2m23 tests[22m[2m)[22m[33m 329[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/payment-methods-store.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/bridge.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mshows the amount from the server, formatted
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mshows the amount from the server, formatted
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mshows an honest empty state when no payment exists
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mshows an honest empty state when no payment exists
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mnever renders $0.00 for any state
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mnever renders $0.00 for any state
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mnever calls an unverified claim a payment
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mnever calls an unverified claim a payment
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mrenders the server's next action rather than re-deriving one
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mrenders the server's next action rather than re-deriving one
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2moffers the claim button only when the customer can actually pay
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2moffers the claim button only when the customer can actually pay
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mhides instructions the server did not send
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mhides instructions the server did not send
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mrenders instructions the server did send
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe customer payment panel[2m > [22m[2mrenders instructions the server did send
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnever offers mark-paid without the verification grant
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnever offers mark-paid without the verification grant
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2moffers mark-paid to a grant holder in review
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2moffers mark-paid to a grant holder in review
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnever offers mark-paid from a state the server refuses
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnever offers mark-paid from a state the server refuses
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mdisables every action for a viewer without manage
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mdisables every action for a viewer without manage
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mrefuses to offer conversion until the money is real
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mrefuses to offer conversion until the money is real
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mexplains why an unpaid request cannot be converted
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mexplains why an unpaid request cannot be converted
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mstops offering conversion once an order exists
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mstops offering conversion once an order exists
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mmarks a filed claim as unverified, and shows no verified amount
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mmarks a filed claim as unverified, and shows no verified amount
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnames the verifier once money is real
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mnames the verifier once money is real
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mshows the exception reason to an operator
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/payments/payments-ui.test.tsx[2m > [22m[2mthe admin conversion panel[2m > [22m[2mshows the exception reason to an operator
+[22m[39mThe current testing environment is not configured to support act(...)
+
+ [32m✓[39m client/src/research/payments/payments-ui.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[32m 298[2mms[22m[39m
+ [32m✓[39m server/research/early-access/notifications/admin-fulfillment-lane.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/payment-methods.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m server/research/product-activation/overlay-source.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe overpayment resolution door[2m > [22m[2mrecords the excess for the customer who paid the undiscounted subtotal, and settles nothing
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe overpayment resolution door[2m > [22m[2mrefuses to record an overpayment for an amount that is not one
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe overpayment resolution door[2m > [22m[2mrecords one exception per arrival of money, and refuses the replay
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe overpayment resolution door[2m > [22m[2mis refused without an admin credential
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe refund record[2m > [22m[2mrefuses a refund on an order no human ever verified
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe refund record[2m > [22m[2mis refused without an admin credential
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe refund ceiling holds under a double-click (Bug Hunter F7)[2m > [22m[2mrefuses the second of two concurrent full refunds with DISTINCT ids
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-door.test.ts[2m > [22m[2mthe refund ceiling holds under a double-click (Bug Hunter F7)[2m > [22m[2mstill refuses a sequential second refund that would breach the ceiling
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/overpayment-door.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 749[2mms[22m[39m
+ [32m✓[39m server/research/fulfillment/service.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/member/documents.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 553[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/payment-proof.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+ [32m✓[39m client/src/research/account-portal/views/support-documents.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 451[2mms[22m[39m
+ [32m✓[39m client/src/care/frontend-failclosed.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 373[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/communications.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m shared/research/early-access-payment-options.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m server/research/partners/assisted-order-attribution.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m server/care/review-detail.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/refund-ceiling-attack.test.ts[2m > [22m[2mthe refund ceiling under a single operator[2m > [22m[2mrecords a refund up to the verified amount
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/refund-ceiling-attack.test.ts[2m > [22m[2mthe refund ceiling under a single operator[2m > [22m[2mrefuses a second refund that would exceed the verified amount
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/refund-ceiling-attack.test.ts[2m > [22m[2mthe refund ceiling under a single operator[2m > [22m[2mrefuses a refund on an order nobody has verified
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/refund-ceiling-attack.test.ts[2m > [22m[2mthe refund ceiling under a single operator[2m > [22m[2mrefuses an unauthenticated caller outright
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/refund-ceiling-attack.test.ts[2m > [22m[2mATTACK: two refunds arriving at once[2m > [22m[2mF7: concurrent refunds with distinct ids must not exceed the verified amount
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/refund-ceiling-attack.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 535[2mms[22m[39m
+ [32m✓[39m server/care/access.test.ts [2m([22m[2m97 tests[22m[2m)[22m[32m 199[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/EarlyAccessPaymentInstructions.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 244[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/member/document-center.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 210[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/early-access-order.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/identity-reviews.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/emails.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/wizard-state.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mrecords the rejection, moves the order to payment_rejected, and settles nothing
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mmails needs-attention exactly once, keyed by the reviewed proof
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mrefuses to approve over the rejection while the rejected proof is still current
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mRECOVERY: a fresh proof re-enters review, and a confirm then settles normally
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mrefuses to reject a settled order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mrefuses without a proof to review
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/payment-rejection.test.ts[2m > [22m[2mreject a payment that could not be verified[2m > [22m[2mrefuses an anonymous caller and an insufficient reason
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/payment-rejection.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 602[2mms[22m[39m
+ [32m✓[39m server/care/appointment-routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 106[2mms[22m[39m
+ [32m✓[39m server/research/fulfillment/in-memory.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/PaymentMethodSelector.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 178[2mms[22m[39m
+ [32m✓[39m shared/research/early-access-payment-instructions.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/Fulfillment.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 195[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/early-access-fulfillment.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 444[2mms[22m[39m
+ [32m✓[39m server/research/early-access/proof/internal-order-email.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/esign-documents.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 444[2mms[22m[39m
+ [32m✓[39m server/research/kris-launch-a/legacy-order-production.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m server/care/prescription-routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 110[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door opens for a real overpayment[2m > [22m[2mSUCCESS FIRST: records the exception when the customer paid the subtotal
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door opens for a real overpayment[2m > [22m[2mrecords the EXPECTED side from the order, not from the request
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door refuses everything else[2m > [22m[2mrefuses when the payment is NOT an overpayment
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door refuses everything else[2m > [22m[2mrefuses an UNDERPAYMENT through the overpayment door
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door refuses everything else[2m > [22m[2mrecords ONE exception per arrival of money
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door refuses everything else[2m > [22m[2mrefuses an unauthenticated caller
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mthe overpayment door refuses everything else[2m > [22m[2mrefuses an unknown order without saying whether it exists
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstderr[2m | server/research/early-access/routes/overpayment-attack.test.ts[2m > [22m[2mrecording an exception settles nothing[2m > [22m[2mcreates no settlement, no receipt and no supplier order
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/overpayment-attack.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 720[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/bridge-store.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m server/research/product-activation/authority-repository.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/persistence/periods-store.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m server/care/prescriptions.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/EarlyAccessOrderSummary.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 143[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/payment-reconciliation.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/early-access-payment-review.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 400[2mms[22m[39m
+ [32m✓[39m server/care/tebra-route.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m server/care/eligibility-routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 115[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/milestone-order-execution.test.ts[2m > [22m[2mMILESTONE: one real order executed end to end[2m > [22m[2mreaches invoice, payment reference and submitted proof with the order still unpaid
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+[90mstdout[2m | server/research/early-access/routes/milestone-order-execution.test.ts[2m > [22m[2mMILESTONE: one real order executed end to end[2m > [22m[2mreaches invoice, payment reference and submitted proof with the order still unpaid
+[22m[39m
+MILESTONE ORDER EXECUTED
+  order number      XEA-0000000000000001
+  unit price        5600 (founder-approved)
+  quantity          3
+  subtotal          16800
+  discount          3360
+  payable total     13440 USD
+  promotion         early-access-bundle-3 @ 11d6be483e32819a4dfff57aeed775da512e61a9f6d7a3ffbb5b7a303de8f590
+  invoice           HTTP 200
+  proof             HTTP 202
+  payment state     under_review
+  settlement        none (correct)
+
+
+ [32m✓[39m server/research/early-access/routes/milestone-order-execution.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 161[2mms[22m[39m
+ [32m✓[39m server/research/product-activation/catalog-projection.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m server/research/master-offerings/assisted-order-pricing-seam.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/order-money.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/activation-readiness.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 251[2mms[22m[39m
+ [32m✓[39m server/research/early-access/commerce/buyer-scoped-order-service.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m client/src/care/tebra-truth-a11y.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[32m 177[2mms[22m[39m
+ [32m✓[39m server/research/early-access/proof/payment-presentation.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m server/care/eligibility.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m server/research/account-identity/buyer-activation-supabase.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m server/research/early-access/notifications/legacy-order-notifier.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+[90mstderr[2m | server/research/early-access/routes/order-money-guard.test.ts[2m > [22m[2mPAYABLE_TOTAL_INVALID[2m > [22m[2mrefuses the order and persists nothing when the money does not add up
+[22m[39m[early-access] Private Early Access is using the in-memory session store. This is for tests and local development only and does not survive a restart.
+
+ [32m✓[39m server/research/early-access/routes/order-money-guard.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 134[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/cart/payment-single-amount.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m✓[39m client/src/research/account-portal/views/care-route-contract.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+ [32m✓[39m client/src/care/shell.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m client/src/care/eligibility-field-error.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 374[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/cart/EarlyAccessCartPayment.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 106[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/esign/zip.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m server/research/fulfillment/production.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m client/src/care/tebra-portal-security.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2mproof upload[2m > [22m[2msays on the upload screen that uploading does not pay the order
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2mproof upload[2m > [22m[2msays on the upload screen that uploading does not pay the order
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2mproof upload[2m > [22m[2mcannot submit until a valid file is chosen
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2mproof upload[2m > [22m[2mcannot submit until a valid file is chosen
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether awaiting_payment is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether awaiting_payment is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether proof_submitted is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether proof_submitted is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether under_review is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether under_review is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether payment_verified is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether payment_verified is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether supplier_released is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether supplier_released is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether shipped is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mstates plainly whether shipped is paid
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mnever reads a submitted proof as payment
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mnever reads a submitted proof as payment
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mshows every timeline step, including ones not reached
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mshows every timeline step, including ones not reached
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mpromises tracking rather than inventing it
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mpromises tracking rather than inventing it
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mcarries the fulfillment target as a target, never a guarantee
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | client/src/research/early-access/EarlyAccessOrderJourney.test.tsx[2m > [22m[2morder status[2m > [22m[2mcarries the fulfillment target as a target, never a guarantee
+[22m[39mThe current testing environment is not configured to support act(...)
+
+ [32m✓[39m client/src/research/early-access/EarlyAccessOrderJourney.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m server/research/customer-account/production-support.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m client/src/research/early-access/pendingOrderStore.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m server/care/eligibility-migration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m client/src/care/eligibility-ui.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m server/care/production-deps.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m client/src/research/adapters/earlyAccessAdminOrders.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32m✓[39m server/research/early-access/release/canonical-payment-eligibility.holds.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m server/care/integration-wiring.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/api.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/draft-store.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m server/care/appointments.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m shared/research/assisted-order/action-policy.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/adminx/early-access-payment-approval.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+ [32m✓[39m server/research/customer-account/production-documents.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m server/care/intake.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m server/care-document-csp.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m server/care/appointment-migration.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m server/care/clinical-projection-privacy.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m server/care/prescription-repository.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/audit-store-sql.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m client/src/research/adapters/earlyAccessPaymentInstructions.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m client/src/research/pages/member-billing-denial.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 163[2mms[22m[39m
+ [32m✓[39m client/src/research/adapters/earlyAccessOrder.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/selection-refresh.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m shared/research/fulfillment/customer-status.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m server/care/clinician-review.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m server/care/access-migration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+[90mstderr[2m | server/research/membership-activation/activation-commit.test.ts[2m > [22m[2mcreateSupabaseActivationCommit[2m > [22m[2mtreats an error envelope as uncertain because it may represent a lost response
+[22m[39m[founding-activation] atomic verification RPC failed: 23505
+
+[90mstderr[2m | server/research/membership-activation/activation-commit.test.ts[2m > [22m[2mcreateSupabaseActivationCommit[2m > [22m[2mtreats a transport loss as uncertain so the UI requires a reload
+[22m[39m[founding-activation] atomic verification RPC failed: transport_error
+
+ [32m✓[39m server/research/membership-activation/activation-commit.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m server/research/early-access/cart/admin-payment-review.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m server/research/kris-launch-a/activation-queue.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m server/care/tebra-csp.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m server/research/support-rate-limit.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m client/src/care/useTebraPublicConfiguration.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32m✓[39m server/research/kris-launch-a/care-boundary.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m client/src/care/prescription-ui.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m server/care/appointment-repository.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m client/src/research/orders/presentation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m server/care/consent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m client/src/care/appointment-ui.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m server/research/early-access/orders/member-order-history-wiring.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/declared-code-compatibility.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m server/research/kris-launch-a/legacy-order-selection.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m client/src/research/products-diagnostics/SupportStorageExperience.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m server/care/appointment-readiness.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/audit-observability.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m shared/care/contracts.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m client/src/care/prescription-landmarks.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 142[2mms[22m[39m
+ [32m✓[39m server/research/account-identity/roman-health-activation-input.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m client/src/care/api.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m server/research/membership-activation/activation-verify-migration.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/customer-safe-errors.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m shared/care/paths.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m server/research/early-access/cart/supabase-admin-payment-review.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m server/care/capability.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m server/care/tebra-fallback.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m client/src/care/appointment-landmarks.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32m✓[39m client/src/research/assisted-order/assisted-order-accessibility.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m196 passed[39m[22m[90m (196)[39m
+[2m      Tests [22m [1m[32m3116 passed[39m[22m[90m (3116)[39m
+[2m   Start at [22m 16:43:16
+[2m   Duration [22m 152.53s[2m (transform 10.33s, setup 0ms, import 37.95s, tests 47.61s, environment 28.68s)[22m
+

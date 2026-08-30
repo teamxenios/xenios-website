@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-critical-endpoint-summary",
+  "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+  "evidenceSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+  "failedDeploymentSha": "eb659d8100a3b9831d52688120931c48d10330d9",
+  "endpointCount": 27,
+  "classifications": {
+    "INTENTIONAL_CHANGE": 11,
+    "SAME": 16
+  },
+  "verdict": "PASS",
+  "productionMutated": false,
+  "assistedOrderConfig": {
+    "liveStatus": 200,
+    "candidateStatus": 200,
+    "candidateEnabled": true,
+    "generic404PossibleWhenEnabled": false
+  },
+  "sourceArtifacts": {
+    "candidate": "candidate-c015691-r11-final-lf-retry3c.json",
+    "live": "production-3daa3f4a-live-readonly-20260830.json",
+    "comparison": "candidate-vs-production-3daa3f4a.json",
+    "provenance": "endpoint-diff-provenance.json",
+    "candidateSha256": "65c4065442575c02c085337b8f6144bf1db38b65ee8a3e03cac4c123140b2dbc",
+    "liveSha256": "c020387cd34b1aa7ac51ced519fafbd46c3cc1bcb40fceff93c62f16b922ba18",
+    "comparisonSha256": "5dbf27b1bf5d8efd5b5b545b723f725982c2c8cfcb6dad265bd286eeabf168ac",
+    "provenanceSha256": "9e1f3f4e62c542f263ef28a5ec99bdb72486f4333f06ae403bdf286660c1b458"
+  }
+}

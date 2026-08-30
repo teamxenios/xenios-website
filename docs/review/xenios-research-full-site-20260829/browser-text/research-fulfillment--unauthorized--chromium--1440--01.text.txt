@@ -1,0 +1,31 @@
+xenios
+research ops
+Back to site
+Overview
+Members
+Commerce
+Products
+Product configuration
+Product requests
+Inventory
+Orders
+Fulfillment
+Commerce queues
+Activation
+Content & partners
+Governance
+
+OPERATIONS
+
+Fulfillment
+
+The canonical assignment pipeline from supplier acknowledgment through tracking, shipment, and delivery.
+
+SIGN IN REQUIRED
+
+Research operations requires an admin account. The same account signs in to the /admin dashboard.
+
+EMAIL
+PASSWORD
+Sign in
+Password reset lives on /admin

@@ -1,0 +1,294 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m server/core-site-protection.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m35 passed[39m[22m[90m (35)[39m
+[2m   Start at [22m 16:55:34
+[2m   Duration [22m 283ms[2m (transform 100ms, setup 0ms, import 85ms, tests 68ms, environment 0ms)[22m
+
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212..2d662a0d31bb1de9332fb5c591f01cab76b991b1
+  changed files     : 719
+  allowed (research/care) : 253
+  infrastructure          : 209
+  protected file hashes   : 24 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/care/clinician-review-ui.test.tsx
+  - client/src/care/shell.test.ts
+  - client/src/care/tebra-portal-security.test.tsx
+  - client/src/care/tebra-scheduling-security.test.tsx
+  - client/src/care/tebra-truth-a11y.test.tsx
+  - client/src/care/useTebraPublicConfiguration.test.tsx
+  - client/src/components/AppErrorBoundary.test.tsx
+  - client/src/components/PageShell.test.tsx
+  - client/src/components/TouchCheckbox.test.tsx
+  - client/src/components/WaitlistForm.test.tsx
+  - client/src/lib/attribution.test.ts
+  - client/src/lib/calendly-events.test.ts
+  - client/src/lib/careers-schema.test.ts
+  - client/src/lib/motion.test.ts
+  - client/src/lib/tracking.test.ts
+  - client/src/pages/Book.test.tsx
+  - client/src/pages/EarlyInterest.test.tsx
+  - client/src/pages/public-accessibility-regressions.test.ts
+  - client/src/pwa/pwa.test.ts
+  - client/src/research/account-portal/account-portal-policy.test.ts
+  - client/src/research/account-portal/api.test.ts
+  - client/src/research/account-portal/format.test.ts
+  - client/src/research/account-portal/resource.test.tsx
+  - client/src/research/account-portal/views/account-extension.test.tsx
+  - client/src/research/account-portal/views/account-portal.test.tsx
+  - client/src/research/account-portal/views/care-route-contract.test.tsx
+  - client/src/research/account-portal/views/support-documents.test.tsx
+  - client/src/research/account/account-portal-gate.test.tsx
+  - client/src/research/account/account-portal-routes.test.ts
+  - client/src/research/adapters/adminCrmSupplierOperations.test.ts
+  - client/src/research/assisted-order/AssistedOrderPage.test.tsx
+  - client/src/research/assisted-order/api.test.ts
+  - client/src/research/assisted-order/assisted-order-accessibility.test.ts
+  - client/src/research/assisted-order/customer-safe-errors.test.ts
+  - client/src/research/assisted-order/selection-refresh.test.ts
+  - client/src/research/assisted-order/wizard-state.test.ts
+  - client/src/research/b2b/PartnershipInquiryForm.test.tsx
+  - client/src/research/b2b/PartnershipPages.test.tsx
+  - client/src/research/b2b/pathways.test.ts
+  - client/src/research/b2b/protected-composition.behavior.test.tsx
+  - client/src/research/b2b/protected-composition.test.ts
+  - client/src/research/cart-session.test.ts
+  - client/src/research/catalog-priority/CurrentDemandCollection.test.tsx
+  - client/src/research/core-cart-session-privacy.test.tsx
+  - client/src/research/early-access/EarlyAccessAgreementSection.test.tsx
+  - client/src/research/early-access/EarlyAccessCatalogSection.test.tsx
+  - client/src/research/early-access/EarlyAccessProductCard.test.tsx
+  - client/src/research/early-access/EarlyAccessQuantitySelector.test.tsx
+  - client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx
+  - client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
+  - client/src/research/early-access/EarlyAccessRoute.openaccess.test.tsx
+  - client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx
+  - client/src/research/layout-touch-targets.test.tsx
+  - client/src/research/lib/member-routing.test.ts
+  - client/src/research/master-offerings/accessibility.test.tsx
+  - client/src/research/master-offerings/cart-handoff.test.ts
+  - client/src/research/master-offerings/catalog-access-path.test.ts
+  - client/src/research/master-offerings/catalog-discovery-presentation.test.tsx
+  - client/src/research/master-offerings/catalog-discovery-states.test.tsx
+  - client/src/research/master-offerings/catalog-discovery-url-state.test.tsx
+  - client/src/research/master-offerings/catalog-surface.test.tsx
+  - client/src/research/master-offerings/detail-surface.test.tsx
+  - client/src/research/master-offerings/exact-variant-identity.test.tsx
+  - client/src/research/master-offerings/full-catalog.test.tsx
+  - client/src/research/master-offerings/integration-packet.test.ts
+  - client/src/research/master-offerings/master-offering-detail.test.tsx
+  - client/src/research/master-offerings/mobile-catalog.test.tsx
+  - client/src/research/master-offerings/product-route-cart-wiring.test.tsx
+  - client/src/research/master-offerings/quantity-band.test.tsx
+  - client/src/research/master-offerings/status-cta-matrix.test.tsx
+  - client/src/research/master-offerings/url-state.test.tsx
+  - client/src/research/mobile-pointer-targets.test.ts
+  - client/src/research/operations/MitchPortal.test.tsx
+  - client/src/research/pages/Gateway.catalog-guard.test.tsx
+  - client/src/research/pages/adminx/AdminResearchHome.responsive.test.ts
+  - client/src/research/pages/adminx/Fulfillment.test.tsx
+  - client/src/research/pages/adminx/client-imports/ClientImportDryRunSummary.test.tsx
+  - client/src/research/pages/adminx/crm-supplier-operations.test.tsx
+  - client/src/research/pages/helper-a11y-targets.test.tsx
+  - client/src/research/pages/lot-lookup.test.tsx
+  - client/src/research/pages/public-access-flow.test.tsx
+  - client/src/research/pages/public-brand-pages.test.tsx
+  - client/src/research/pages/quality-surfaces.test.tsx
+  - client/src/research/pages/sign-in.test.tsx
+  - client/src/research/persona-states.test.tsx
+  - client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx
+  - client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx
+  - client/src/research/quality/public-lot-api.test.ts
+  - client/src/research/quality/routes.test.ts
+  - client/src/research/recovery-route-isolation.test.tsx
+  - client/src/research/routes-parity.test.ts
+  - client/src/research/seo/route-policy.test.ts
+  - client/src/research/storefront/mobile-reflow.test.tsx
+  - client/src/research/storefront/storefront-surface.test.tsx
+  - scripts/evidence/capture-browser-matrix.test.mjs
+  - scripts/evidence/capture-synthetic-journeys.test.mjs
+  - scripts/evidence/generate-evidence-manifest.test.mjs
+  - scripts/evidence/lib/html-metadata.test.mjs
+  - scripts/evidence/lib/immutable-dist.test.mjs
+  - scripts/evidence/lib/page-audit.test.mjs
+  - scripts/evidence/lib/pii-scan.test.mjs
+  - scripts/evidence/lib/preview-supabase-fixture.test.mjs
+  - scripts/evidence/lib/provenance.test.mjs
+  - scripts/evidence/lib/report.test.mjs
+  - scripts/evidence/network-boundary.test.mjs
+  - scripts/evidence/pii-scan.test.mjs
+  - scripts/evidence/routes-public.test.mjs
+  - server/api-not-found.test.ts
+  - server/care-document-csp.test.ts
+  - server/care/appointment-routes.test.ts
+  - server/care/clinical-route-coverage.test.ts
+  - server/care/clinical-write-gate.adversarial.test.ts
+  - server/care/clinical-write-gate.test.ts
+  - server/care/intake-routes.test.ts
+  - server/care/integration-wiring.test.ts
+  - server/care/prescription-routes.test.ts
+  - server/care/review-detail.test.ts
+  - server/care/tebra-csp.test.ts
+  - server/care/tebra-fallback.test.ts
+  - server/care/tebra-route.test.ts
+  - server/care/tebra-scheduling.test.ts
+  - server/core-site-protection.test.ts
+  - server/critical-endpoint-diff.test.ts
+  - server/health.test.ts
+  - server/marketing-attribution-boundary.test.ts
+  - server/release-control-plane.test.ts
+  - server/request-logging.test.ts
+  - server/research/admin-crm-supplier-operations/composite-repository.test.ts
+  - server/research/admin-crm-supplier-operations/routes.test.ts
+  - server/research/admin-crm-supplier-operations/service.test.ts
+  - server/research/assisted-order/audit-observability.test.ts
+  - server/research/assisted-order/audit-store-sql.test.ts
+  - server/research/assisted-order/audit-store.test.ts
+  - server/research/assisted-order/communications.test.ts
+  - server/research/assisted-order/http-e2e.test.ts
+  - server/research/assisted-order/production-boot.test.ts
+  - server/research/assisted-order/production-catalog.test.ts
+  - server/research/assisted-order/production-wiring.test.ts
+  - server/research/assisted-order/service.test.ts
+  - server/research/catalog-display-viewer.test.ts
+  - server/research/catalog/member-catalog-projection.test.ts
+  - server/research/client-import/admin-routes.test.ts
+  - server/research/client-import/importer.test.ts
+  - server/research/commerce/acceptance.test.ts
+  - server/research/commerce/cart-product-selection.test.ts
+  - server/research/commerce/checkout.test.ts
+  - server/research/commerce/orders.test.ts
+  - server/research/commerce/persistence/claims-store.test.ts
+  - server/research/commerce/persistence/orders-store.test.ts
+  - server/research/commerce/persistence/persistent-cart.test.ts
+  - server/research/commerce/production-wiring.test.ts
+  - server/research/commerce/refunds.test.ts
+  - server/research/commerce/routes.test.ts
+  - server/research/commerce/subscriptions.test.ts
+  - server/research/commerce/webhooks.test.ts
+  - server/research/customer-account/account-portal-preview.guard.test.ts
+  - server/research/customer-account/orders-projection.test.ts
+  - server/research/customer-account/production-documents.test.ts
+  - server/research/customer-account/production-support.test.ts
+  - server/research/customer-account/production.test.ts
+  - server/research/customer-account/routes.test.ts
+  - server/research/customer-account/service.test.ts
+  - server/research/early-access/catalog/declared-facts-bulk-window.test.ts
+  - server/research/early-access/legal/supabase-legal-binding-directory.customer-refs.test.ts
+  - server/research/early-access/orders/cart-order-history.test.ts
+  - server/research/early-access/orders/member-order-history.test.ts
+  - server/research/early-access/preview-harness.guard.test.ts
+  - server/research/early-access/step1-preview-harness.test.ts
+  - server/research/frontdoor.test.ts
+  - server/research/fulfillment/production.test.ts
+  - server/research/fulfillment/register.test.ts
+  - server/research/inventory-admin/integration.test.ts
+  - server/research/inventory-admin/production.test.ts
+  - server/research/inventory-admin/routes.test.ts
+  - server/research/launch/manual-order-submit-negatives.test.ts
+  - server/research/master-offerings/action.test.ts
+  - server/research/master-offerings/assisted-order-pricing-seam.test.ts
+  - server/research/master-offerings/catalog-boundaries.test.ts
+  - server/research/master-offerings/catalog-pricing.test.ts
+  - server/research/master-offerings/catalog-revision-diff.test.ts
+  - server/research/master-offerings/composition.test.ts
+  - server/research/master-offerings/direct-commerce-selections.test.ts
+  - server/research/master-offerings/early-access-catalog-coverage.test.ts
+  - server/research/master-offerings/early-access-pricing-reach.test.ts
+  - server/research/master-offerings/early-access-retail-pricing.test.ts
+  - server/research/master-offerings/manual-purchase-cta.test.ts
+  - server/research/master-offerings/order-intake-matrix.test.ts
+  - server/research/master-offerings/pathway-authority.test.ts
+  - server/research/master-offerings/product-control-adapter.test.ts
+  - server/research/master-offerings/production-bindings.test.ts
+  - server/research/master-offerings/reviewed-holds.test.ts
+  - server/research/member-session-wall.test.ts
+  - server/research/members.test.ts
+  - server/research/partners/assisted-order-attribution.test.ts
+  - server/research/product-activation/authority-repository.test.ts
+  - server/research/product-activation/catalog-projection.test.ts
+  - server/research/product-activation/overlay-source.test.ts
+  - server/research/products-diagnostics/product-admin-integration.test.ts
+  - server/research/providers/payment.test.ts
+  - server/research/quality/public-lot-api.test.ts
+  - server/research/quality/public-read-guard.test.ts
+  - server/research/rate-limit.test.ts
+  - server/research/seo/raw-http-document-policy.test.ts
+  - server/research/storefront/composition.test.ts
+  - server/research/storefront/projection.test.ts
+  - server/research/storefront/routes.test.ts
+  - server/research/support-rate-limit.test.ts
+  - server/static.test.ts
+  - shared/care/paths.test.ts
+  - shared/marketing-attribution.test.ts
+  - shared/research/assisted-order/action-policy.test.ts
+  - shared/research/customer-account/contract.test.ts
+  - shared/research/master-offerings/presentation-contract.test.ts
+  - shared/research/paths.test.ts
+  - shared/research/product-activation/contract.test.ts
+  - shared/research/quality/public-lot.test.ts
+
+SEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the
+minimum diff, a focused regression test, and QA confirmation of no
+unrelated change before this branch is approved):
+  - client/index.html
+  - client/src/fonts.ts
+  - client/src/main.tsx
+  - package-lock.json
+  - package.json
+  - server/care/index.ts
+  - server/index.ts
+  - server/research/index.ts
+
+FAIL: changed files outside the allowed Research/Care write zones.
+The main website outside /research and /care must not be modified.
+  - client/public/sw.js
+  - client/src/components/AppErrorBoundary.tsx
+  - client/src/components/Footer.tsx
+  - client/src/components/Navbar.tsx
+  - client/src/components/PageShell.tsx
+  - client/src/components/TopRibbon.tsx
+  - client/src/components/TouchCheckbox.tsx
+  - client/src/components/WaitlistForm.tsx
+  - client/src/components/Wordmark.tsx
+  - client/src/index.css
+  - client/src/lib/attribution.ts
+  - client/src/lib/calendly-events.ts
+  - client/src/lib/careers-schema.ts
+  - client/src/lib/motion.ts
+  - client/src/lib/tracking.ts
+  - client/src/pages/About.tsx
+  - client/src/pages/Book.tsx
+  - client/src/pages/Careers.tsx
+  - client/src/pages/Concepts.tsx
+  - client/src/pages/EarlyInterest.tsx
+  - client/src/pages/ForCoaches.tsx
+  - client/src/pages/Home.tsx
+  - client/src/pages/IcpPage.tsx
+  - client/src/pages/Product.tsx
+  - client/src/pwa/PwaLifecycle.tsx
+  - server/care-document-csp.ts
+  - server/request-logging.ts
+  - server/routes.ts
+  - server/static.ts
+  - server/vite.ts
+  - shared/marketing-attribution.ts
+  - tsconfig.json
+  - vite.config.ts
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.
+CORE_RAW_EXIT=1
+RESULT: PASS_WITH_DISCLOSED_ZONE_LISTING (raw exit 1; exact 33-path reviewed disposition; classifier unchanged)

@@ -1,0 +1,24 @@
+xenios
+research ops
+Back to site
+Overview
+Members
+Commerce
+Activation
+Content & partners
+Governance
+
+OPERATIONS
+
+Research operations
+
+The daily operating picture for Xenios Research: the application queue, activation candidates, email delivery, and referral integrity, with links into every surface.
+
+SIGN IN REQUIRED
+
+Research operations requires an admin account. The same account signs in to the /admin dashboard.
+
+EMAIL
+PASSWORD
+Sign in
+Password reset lives on /admin

@@ -1,0 +1,174 @@
+{
+  "$comment": "Intentional, reviewed differences between production 3daa3f4a and the Xenios Research full-site candidate for scripts/release/critical-endpoint-diff.mjs. Every allow entry is an anchored regex over one exact emitted diff. Unlisted changes are deployment-blocking regressions. allowDisappearance is used only for the authoritative Research document 404 probe.",
+  "intentionalChanges": [
+    {
+      "method": "GET",
+      "path": "/",
+      "rationale": "The recut preserves the global marketing document while applying the reviewed index/follow header and canonical Link policy; broad inherited FAQ/local-business schema is replaced by the exact route-owned Organization and WebSite graph.",
+      "allow": [
+        "^header x-robots-tag: - -> index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1$",
+        "^header cache-control: public, max-age=0 -> -$",
+        "^header link: - -> <https://xeniostechnology[.]com>; rel=\"canonical\"$",
+        "^shape-fingerprint a906b74ad1353da1 -> e59130fdac42bf29$",
+        "^html-marker json-ld: 4 -> 2$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\"Organization\",\"Place\",\"PostalAddress\",\"WebSite\"\\]$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research",
+      "rationale": "With RESEARCH_INDEXABLE closed, the reviewed Research policy emits exact noindex/noarchive, removes canonical and social authority, supplies the route-owned title, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> -$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Xenios Research \\| Clear, evidence-aware research access\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/early-access",
+      "rationale": "The reviewed private early-access document policy adds exact noindex/noarchive and no-store semantics, removes inherited root canonical and og:url metadata, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> no-store$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/early-access/order-request",
+      "rationale": "The reviewed private assisted-order document policy adds exact noindex/noarchive and no-store semantics, removes inherited root canonical and og:url metadata, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> no-store$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/access-hub",
+      "rationale": "With RESEARCH_INDEXABLE closed, the reviewed access-hub policy emits exact noindex/noarchive, removes canonical and social authority, supplies the route-owned title, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> -$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Access Xenios Research\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/policies/accessibility",
+      "rationale": "With RESEARCH_INDEXABLE closed, the reviewed Accessibility Statement emits exact noindex/noarchive, removes canonical and social authority, supplies the route-owned title, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> -$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Accessibility Statement, xenios research\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/sign-in",
+      "rationale": "The reviewed private sign-in document policy adds exact noindex/noarchive and no-store semantics, removes inherited root canonical and og:url metadata, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> no-store$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/account",
+      "rationale": "The reviewed private account document policy adds exact noindex/noarchive and no-store semantics, removes inherited root canonical and og:url metadata, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> no-store$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/care/tebra/configuration",
+      "rationale": "The reviewed public Care configuration read is new relative to production and returns an exact fail-closed unavailable/disabled state in the candidate.",
+      "allow": [
+        "^status 404 -> 200$",
+        "^feature-state - -> careAvailable=false,portal[.]status=care_unavailable,scheduling[.]mode=disabled,scheduling[.]status=care_unavailable$",
+        "^shape-fingerprint 1e660638b0a8d72d -> b35f3f2ba025c42f$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/care",
+      "rationale": "The reviewed Care document policy adds a self-only CSP and exact private noindex/noarchive semantics, removes inherited root canonical and og:url metadata plus incompatible third-party font requests, and strips inherited template JSON-LD.",
+      "allow": [
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header content-security-policy: - -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Private document, xenios\"$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/research/this-route-does-not-exist-xr-critical-diff",
+      "rationale": "The recut makes unknown Research documents authoritative HTTP 404 responses instead of returning the production SPA shell, under the exact not-found document policy and its shared noindex/noarchive/no-store envelope.",
+      "allowDisappearance": true,
+      "allow": [
+        "^status 200 -> 404$",
+        "^header x-robots-tag: noindex, nofollow -> noindex,nofollow,noarchive$",
+        "^header cache-control: public, max-age=0 -> no-store$",
+        "^shape-fingerprint a906b74ad1353da1 -> 77f950f01f216596$",
+        "^html-marker meta-robots: \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\" -> \"noindex,nofollow,noarchive\"$",
+        "^html-marker canonical: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker og-url: \"https://xeniostechnology[.]com\" -> -$",
+        "^html-marker json-ld: 4 -> 0$",
+        "^html-marker json-ld-types: \\[\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"Answer\",\"FAQPage\",\"GeoCoordinates\",\"LocalBusiness\",\"Organization\",\"Place\",\"PostalAddress\",\"PostalAddress\",\"Question\",\"Question\",\"Question\",\"Question\",\"Question\",\"WebSite\"\\] -> \\[\\]$",
+        "^html-marker title: \"xenios \\| The operating system for proactive health\" -> \"Not found, xenios\"$"
+      ]
+    }
+  ]
+}

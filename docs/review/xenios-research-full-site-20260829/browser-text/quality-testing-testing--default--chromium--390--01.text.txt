@@ -1,0 +1,95 @@
+xenios
+research
+Back to gateway
+Explore Research
+
+TESTING EXPLAINED
+
+One result answers one defined question.
+
+Testing is useful when the sample, method, scope, specification, dates, and issuing record are clear. A strong number without that context is not a complete quality conclusion.
+
+Third-party testing is used where applicable to the material and control plan. Xenios does not claim that every test category applies to every lot, or that any laboratory result establishes safety or human suitability.
+
+DIFFERENT QUESTIONS
+
+Do not let one test impersonate another.
+
+The applicable panel depends on the material, its risks, the specification, and the documented control plan.
+
+01
+Identity
+
+Addresses whether the tested sample matches the represented material. It does not establish amount, sterility, or suitability.
+
+02
+Purity
+
+Describes the proportion of detected material attributed to a target under a stated method. It does not prove identity by itself.
+
+03
+Assay or content
+
+Measures the amount present against a stated specification or label claim where that measurement is applicable.
+
+04
+Microbial, sterility, or endotoxin
+
+Distinct tests with distinct methods and limits. None should be inferred from a purity result or a generic certificate.
+
+05
+Contaminant panels
+
+Heavy metals, residual solvents, and other panels are product- and risk-specific. A panel only covers what it actually measures.
+
+06
+Stability and handling
+
+Storage, retest, and shelf-life claims require evidence designed for those questions; a release test is not automatically stability data.
+
+READING A RECORD
+
+The context belongs beside the result.
+Exact sample
+Does the report identify the same SKU, material, and lot as the label—not merely a similar name?
+Method and scope
+What method was used, what was measured, and which questions remain outside that method?
+Dates and custody
+When was the sample collected, received, tested, issued, and reviewed, and who controlled it along the way?
+Specification
+Is there a stated acceptance criterion, unit, and result, with qualifiers and exceptions preserved?
+Issuing record
+Is the original approved report available, and does it identify the issuing laboratory or qualified party?
+Currentness
+Has the record been replaced, withdrawn, or superseded by a newer approved document?
+What a COA is not.
+
+A COA is not a universal guarantee. It is a controlled record of identified tests, methods, specifications, and results for a stated sample or lot.
+
+It does not replace chain of custody, receiving inspection, release authority, storage controls, traceability, or exception handling. It also does not provide dosing or personal-use guidance.
+
+EXPLORE
+Quality system
+How material moves from receipt to a recorded decision.
+EXPLORE
+Documents
+Public records and secure member documents.
+xenios
+research
+
+Clear nonclinical Research access, visible documentation status, and a separate provider-governed Care pathway.
+
+Access Hub
+Partners
+How it works
+About
+FAQ
+Quality
+Policies
+Contact
+Support
+Care
+Sign in
+Privacy
+Terms
+Accessibility

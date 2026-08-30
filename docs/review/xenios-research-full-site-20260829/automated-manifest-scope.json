@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-review-automated-manifest-scope",
+  "runtimeFreeze": {
+    "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
+    "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5"
+  },
+  "evidenceCheckout": {
+    "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
+    "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019"
+  },
+  "evidenceRun": "xenios-full-evidence-c015691-r11-final-lf-retry3c-20260830",
+  "sealedManifestSha256": "1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257",
+  "sealedManifestState": {
+    "status": "PENDING",
+    "finalVerdict": "PENDING",
+    "readyForSamuelDeployReview": false
+  },
+  "dynamicEvidenceIdentities": {
+    "browserMatrixSha256": "3962bafe786cfa434244be4cb7be91052ec66a323760a8cfb6c5cfdc1ffd989e",
+    "httpEvidenceSha256": "f2670c743d23f61de2e972db3bf586a10f437c569b043b73514010490781a309",
+    "syntheticJourneyEvidenceSha256": "78c9e5fc85c91a405fd9301db84f4e0e7f8a2288b1c8587f1cad8d18f33c9316",
+    "piiScanSha256": "842a00fd76466eb60d0996c0431b8d685b5514d1f26b3f2b7116979073adfed5",
+    "releaseDiffSecretPiiScanSha256": "befe14a96d4db33cd41c75e7273986d398b84c321ab3da8a34721037656dc74e",
+    "evidenceVitestSha256": "12d74273c9cc6d8a2ca0bc908b18568beb6ccf3806df2a927eecb28650b38552"
+  },
+  "gateResults": {
+    "fullSuite": "PENDING",
+    "e2e": "PENDING",
+    "build": "PENDING",
+    "tsc": "PENDING",
+    "releaseControlPlane": "PENDING",
+    "productionStateControls": null,
+    "routeCensus": "PENDING",
+    "coreProtection": "PENDING",
+    "migrationDag": "PENDING",
+    "migrationDisposablePostgresAttack": "PENDING",
+    "secretScan": "PENDING",
+    "piiScan": "PENDING",
+    "warmSilverHomepage": "PENDING",
+    "publicLotThrottle": "BLOCKED_UNMOUNTED",
+    "seo": "AUTOMATED_PASS",
+    "protectedGlobalPatches": "PENDING",
+    "tebraComposition": "PENDING",
+    "performance": "PENDING",
+    "accessibility": "AUTOMATED_PASS_MANUAL_REVIEW_PENDING",
+    "responsive": "AUTOMATED_PASS",
+    "adversarialReview": "PENDING",
+    "browserMatrixCompleteness": "AUTOMATED_PASS",
+    "httpEvidenceCompleteness": "AUTOMATED_PASS",
+    "evidencePiiScan": "AUTOMATED_CLEAN_MANUAL_SCREENSHOT_REVIEW_PENDING",
+    "evidenceProvenance": "AUTOMATED_PASS",
+    "evidenceCoverage": "AUTOMATED_PASS"
+  },
+  "interpretation": [
+    "The sealed evidence manifest is an automated-input manifest and intentionally remains PENDING.",
+    "It does not self-authorize deployment; detached Codex review and the exact final packet successor remain outside its verdict.",
+    "The byte-for-byte manifest is preserved and this scope file records how reviewers must interpret it."
+  ]
+}

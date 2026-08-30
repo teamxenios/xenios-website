@@ -1,0 +1,19 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/workspace[39m
+
+ [32m✓[39m server/research/assisted-order/service.test.ts [2m([22m[2m50 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-catalog.test.ts [2m([22m[2m32 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/http-e2e.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 248[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-wiring.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/production-boot.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 16693[2mms[22m[39m
+     [33m[2m✓[22m[39m mounts the assisted-order bridge with the production-baseline audit mode and answers the config door 200 enabled:true [33m 3742[2mms[22m[39m
+     [33m[2m✓[22m[39m answers an EXPLICIT disabled state, not a generic 404, when the bridge flag is off [33m 5151[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses explicitly (never a generic 404) when durable audit is demanded but its authority is absent [33m 3148[2mms[22m[39m
+     [33m[2m✓[22m[39m fails safely on a malformed required-agreements list: explicit unavailable state, no submission possible, no generic 404 [33m 4630[2mms[22m[39m
+ [32m✓[39m server/research/assisted-order/audit-observability.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m115 passed[39m[22m[90m (115)[39m
+[2m   Start at [22m 16:42:50
+[2m   Duration [22m 20.33s[2m (transform 979ms, setup 0ms, import 1.63s, tests 17.08s, environment 1ms)[22m
+
