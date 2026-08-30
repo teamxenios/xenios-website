@@ -1,0 +1,11 @@
+{
+  "id": "codex-recut-final-20260829",
+  "tool": "Codex",
+  "lane": "xenios-research-recut-final",
+  "branch": "claude/xenios-research-full-finish-takeover-20260828",
+  "state": "active",
+  "startedAt": "2026-08-29T14:52:35.702Z",
+  "resumedAt": "2026-08-30T14:01:25.694Z",
+  "heartbeatAt": "2026-08-30T22:23:39.231Z",
+  "note": "CODEX_DETACHED_REVIEW_PACKET_SUCCESSOR_8bd8df8f556d8e84bc9c8daef1871d6a59b58590_ORIGIN_VERIFIED_SCAN_0_0"
+}

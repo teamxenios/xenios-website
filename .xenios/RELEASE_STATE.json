@@ -19,6 +19,9 @@
     "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
     "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
     "evidenceTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+    "recordsEvidenceSuccessorSha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
+    "recordsEvidenceSuccessorTree": "517db145ed6494c845c9453a8cec59c6be4b9892",
+    "recordsEvidenceSuccessorOriginVerified": true,
     "originVerified": true,
     "finalRcSha": null,
     "scope": [
@@ -28,7 +31,7 @@
       "One bounded records/evidence successor and detached Codex review",
       "Exact-SHA deployment authorization boundary; no production action before Samuel's later GO"
     ],
-    "status": "PACKET_FINALIZING",
+    "status": "CODEX_DETACHED_REVIEW",
     "migrationRequired": false,
     "migrationAuthorized": false,
     "migrationApplied": false
@@ -50,10 +53,21 @@
     "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
     "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
     "evidenceTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+    "recordsEvidenceSuccessorSha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
+    "recordsEvidenceSuccessorTree": "517db145ed6494c845c9453a8cec59c6be4b9892",
+    "recordsEvidenceSuccessorOriginVerified": true,
+    "recordsEvidenceSuccessorScan": {
+      "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "addedLines": 1338773,
+      "files": 732,
+      "secretFindings": 0,
+      "piiFindings": 0,
+      "piiSkipped": false
+    },
     "originVerified": true,
     "finalRcSha": null,
     "branch": "claude/xenios-research-full-finish-takeover-20260828",
-    "state": "PACKET_FINALIZING",
+    "state": "CODEX_DETACHED_REVIEW",
     "rollback": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "status": "not_deployed",
     "productionDeployId": "dep-da94g05g1s2s7396lkv0",
@@ -284,7 +298,7 @@
     "migrationAuthorized": false,
     "migrationApplied": false,
     "detachedReview": "NOT_STARTED",
-    "note": "Runtime/evidence freezes and sealed counts remain unchanged. The bounded review packet is generated and validated at docs/review/xenios-research-full-site-20260829: 192 files including self / 191 payload, 72 PNG + 72 text, 36 desktop-1440 + 36 mobile-390 pairs; packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14. Representative 18-PNG/9-area/2-viewport review found 0 blocking visual and 0 privacy issues; five cosmetic items are backlog. Canonical release manifest PASS Node 20.19.0/npm 10.8.2; final SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c binds the packet and assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested nonblocking; release-control 51+1 skip+0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 PASS. State remains PACKET_FINALIZING; exact-final-SHA scans, successor origin verification, final RC SHA, detached review, authorization and deployment remain unassigned.",
+    "note": "Records/evidence packet successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified. Its non-skipped exact production-to-successor scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Runtime/evidence seals and packet hashes remain unchanged. State is CODEX_DETACHED_REVIEW; the final RC SHA can only be assigned externally after this continuity successor is committed and pushed. Detached review, authorization, and deployment remain unassigned. No production mutation occurred.",
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   }
