@@ -195,10 +195,11 @@ export function evaluateMetadataRestoration(pair, before, during, after) {
 
 export function routeInventoryDescriptor(routesPath, routesSource) {
   const absolute = resolve(routesPath);
+  const portableBasename = basename(routesPath.replaceAll("\\", "/"));
   return {
     id: absolute === resolve(here, "routes.public.json")
       ? "scripts/evidence/routes.public.json"
-      : `custom/${basename(absolute)}`,
+      : `custom/${portableBasename}`,
     sha256: createHash("sha256").update(routesSource).digest("hex"),
   };
 }

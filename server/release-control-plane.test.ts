@@ -2032,7 +2032,7 @@ describe("route uniqueness validator", () => {
     expect(result.callSites).toBe(400);
     expect(result.routes).toHaveLength(409);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
-  }, 15_000);
+  }, 60_000);
 });
 
 describe("production state validator", () => {

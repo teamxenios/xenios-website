@@ -137,15 +137,17 @@ describe("controlled evidence UI state", () => {
 });
 
 describe("evidence envelope path privacy", () => {
-  it("uses a content-bound safe identifier instead of an operator-local absolute path", () => {
-    const descriptor = routeInventoryDescriptor(
-      "C:\\Users\\operator\\private-checkout\\custom-routes.json",
-      '{"routes":[]}',
-    );
+  it.each([
+    "C:\\Users\\operator\\private-checkout\\custom-routes.json",
+    "/home/operator/private-checkout/custom-routes.json",
+    "\\\\private-server\\operator\\private-checkout\\custom-routes.json",
+  ])("uses a content-bound safe identifier for %s", (routesPath) => {
+    const descriptor = routeInventoryDescriptor(routesPath, '{"routes":[]}');
     expect(descriptor).toMatchObject({
       id: "custom/custom-routes.json",
       sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
     });
+    expect(JSON.stringify(descriptor)).not.toContain("operator");
     expect(JSON.stringify(descriptor)).not.toMatch(/[A-Za-z]:[\\/]/u);
   });
 });
