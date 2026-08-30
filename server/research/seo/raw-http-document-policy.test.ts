@@ -534,6 +534,29 @@ describe("raw HTTP route authority", () => {
 });
 
 describe("raw HTTP HTML and schema policy", () => {
+  it("normalizes LF, CRLF, CR-only, and Vite CR-run templates to identical response bytes", () => {
+    const lfTemplate = inheritedTemplate.replace(/\r+\n|\r/gu, "\n");
+    const crlfTemplate = lfTemplate.replace(/\n/gu, "\r\n");
+    const variants = [
+      lfTemplate,
+      crlfTemplate,
+      lfTemplate.replace(/\n/gu, "\r"),
+      crlfTemplate.replace("\r\n", "\r\r\n"),
+    ];
+    const bodies = variants.map((templateHtml) => Buffer.from(
+      buildRawHttpDocumentResponse({
+        requestTarget: "/this-route-does-not-exist-xr-evidence",
+        templateHtml,
+      }).html,
+      "utf8",
+    ));
+
+    for (const body of bodies) {
+      expect(body).toEqual(bodies[0]);
+      expect(body.includes(13)).toBe(false);
+    }
+  });
+
   it("replaces inherited homepage SEO authority on an ordinary public route", () => {
     const response = buildRawHttpDocumentResponse({
       requestTarget: "/product",

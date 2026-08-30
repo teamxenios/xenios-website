@@ -886,7 +886,13 @@ function normalizedHtmlAttribute(tag: string, name: string): string | null {
 function stripTemplateSeoAuthority(
   templateHtml: string,
 ): string {
-  let html = templateHtml.replace(
+  // Canonicalize template line endings before policy transformation. Vite can
+  // preserve CRLF and can leave a CR run (for example `\r\r\n`) when it removes
+  // the source module-script line, which otherwise makes the response body hash
+  // depend on the checkout platform even though the document is semantically
+  // identical.
+  let html = templateHtml.replace(/\r+\n|\r/gu, "\n");
+  html = html.replace(
     /<script\b[^>]*>[\s\S]*?<\/script\s*>/giu,
     (element) => {
       const openTag = element.slice(0, element.indexOf(">") + 1);
