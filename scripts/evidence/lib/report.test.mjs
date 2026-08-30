@@ -83,6 +83,77 @@ describe("evaluateAudit", () => {
     expect(runVerdict(assertions)).toBe("AUTOMATED_PASS_WITH_NOTES");
   });
 
+  it("accounts separately for one document failure, its worker observation, and its API denial", () => {
+    const routeUrl = "http://x/research/lots/XR-EVIDENCE-NEGATIVE-LOT";
+    const apiUrl = "http://x/api/research/quality/lots/XR-EVIDENCE-NEGATIVE-LOT";
+    const notFoundText = "Failed to load resource: the server responded with a status of 404 (Not Found)";
+    const unauthorizedText = "Failed to load resource: the server responded with a status of 401 (Unauthorized)";
+    const expectedHttpFailures = [
+      {
+        url: routeUrl,
+        method: "GET",
+        status: 404,
+        count: 1,
+        resourceType: "Document",
+        responseBodySha256: "a".repeat(64),
+        consoleCount: 1,
+        consoleText: notFoundText,
+      },
+      {
+        url: routeUrl,
+        method: "GET",
+        status: 404,
+        count: 1,
+        resourceType: "Fetch",
+        targetType: "worker-or-child",
+        responseBodySha256: "b".repeat(64),
+        consoleCount: 0,
+      },
+      {
+        url: apiUrl,
+        method: "GET",
+        status: 401,
+        count: 1,
+        resourceType: "Fetch",
+        responseBodySha256: "c".repeat(64),
+        consoleCount: 1,
+        consoleText: unauthorizedText,
+      },
+    ];
+    const assertions = evaluateAudit(cleanAudit(), {
+      console: [
+        { level: "log:error", url: routeUrl, text: notFoundText },
+        { level: "log:error", url: apiUrl, text: unauthorizedText },
+      ],
+      network: [
+        { url: routeUrl, method: "GET", status: 404, type: "Document", bodySha256: "a".repeat(64) },
+        { url: routeUrl, method: "GET", status: 404, type: "Fetch", targetType: "worker-or-child", bodySha256: "b".repeat(64) },
+        { url: apiUrl, method: "GET", status: 401, type: "Fetch", bodySha256: "c".repeat(64) },
+      ],
+      expectedHttpFailures,
+    });
+    const byId = Object.fromEntries(assertions.map((assertion) => [assertion.id, assertion]));
+    expect(byId.EXPECTED_HTTP_FAILURES_OBSERVED).toMatchObject({ result: "PASS", count: 3 });
+    expect(byId.CONSOLE_CLEAN).toMatchObject({ result: "PASS_WITH_NOTES", count: 2 });
+    expect(byId.NETWORK_CLEAN).toMatchObject({ result: "PASS_WITH_NOTES", count: 3 });
+    expect(runVerdict(assertions)).toBe("AUTOMATED_PASS_WITH_NOTES");
+
+    const drifted = evaluateAudit(cleanAudit(), {
+      console: [
+        { level: "log:error", url: routeUrl, text: notFoundText },
+        { level: "log:error", url: apiUrl, text: unauthorizedText },
+      ],
+      network: [
+        { url: routeUrl, method: "GET", status: 404, type: "Document", bodySha256: "a".repeat(64) },
+        { url: routeUrl, method: "GET", status: 404, type: "Fetch", targetType: "worker-or-page", bodySha256: "b".repeat(64) },
+        { url: apiUrl, method: "GET", status: 401, type: "Fetch", bodySha256: "c".repeat(64) },
+      ],
+      expectedHttpFailures,
+    });
+    expect(drifted.find((assertion) => assertion.id === "EXPECTED_HTTP_FAILURES_OBSERVED").result).toBe("FAIL");
+    expect(runVerdict(drifted)).toBe("AUTOMATED_FAIL");
+  });
+
   it("keeps a status or count drift in a declared HTTP failure blocking", () => {
     const assertions = evaluateAudit(cleanAudit(), {
       network: [{ url: "http://x/api/care/appointments", method: "GET", status: 500, bodySha256: "b".repeat(64) }],

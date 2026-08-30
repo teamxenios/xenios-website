@@ -39,6 +39,37 @@ describe("compileExpectedHttpFailures", () => {
     }]);
   });
 
+  it("binds exact document and worker failures only to a route whose expected status matches", () => {
+    const routePath = "/research/lots/XR-EVIDENCE-NEGATIVE-LOT";
+    const documentFailure = {
+      ...exactFailure,
+      path: routePath,
+      status: 404,
+      resourceType: "Document",
+      consoleCount: 1,
+      consoleText: "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    };
+    const workerFailure = {
+      ...documentFailure,
+      resourceType: "Fetch",
+      targetType: "worker-or-child",
+      responseBodySha256: "b".repeat(64),
+      consoleCount: 0,
+    };
+    delete workerFailure.consoleText;
+    expect(compileExpectedHttpFailures(
+      { path: routePath, expectStatus: 404, expectedHttpFailures: [documentFailure, workerFailure] },
+      `http://127.0.0.1:5184${routePath}`,
+    )).toEqual([
+      expect.objectContaining({ ...documentFailure, url: `http://127.0.0.1:5184${routePath}` }),
+      expect.objectContaining({ ...workerFailure, url: `http://127.0.0.1:5184${routePath}` }),
+    ]);
+    expect(() => compileExpectedHttpFailures(
+      { path: routePath, expectStatus: 200, expectedHttpFailures: [documentFailure] },
+      "http://127.0.0.1:5184",
+    )).toThrow(/route's exact expected document path/u);
+  });
+
   it.each([
     [{ ...exactFailure, path: "https://example.com/api/care/appointments" }],
     [{ ...exactFailure, path: "/care/appointments" }],
@@ -47,6 +78,8 @@ describe("compileExpectedHttpFailures", () => {
     [{ ...exactFailure, count: 0 }],
     [{ ...exactFailure, responseBodySha256: "not-a-hash" }],
     [{ ...exactFailure, productionEvidence: "" }],
+    [{ ...exactFailure, consoleCount: 0 }],
+    [{ ...exactFailure, targetType: "worker-or-child" }],
   ])("rejects a broad or incomplete declaration %#", (failure) => {
     expect(() => compileExpectedHttpFailures(
       { expectedHttpFailures: [failure] },
@@ -58,7 +91,44 @@ describe("compileExpectedHttpFailures", () => {
     expect(() => compileExpectedHttpFailures(
       { expectedHttpFailures: [exactFailure, { ...exactFailure, status: 500 }] },
       "http://127.0.0.1:5184",
-    )).toThrow(/unique method \+ URL/u);
+    )).toThrow(/unique method \+ URL \+ resourceType \+ targetType/u);
+    const typedSibling = {
+      ...exactFailure,
+      resourceType: "Fetch",
+      responseBodySha256: "b".repeat(64),
+      consoleCount: 0,
+    };
+    delete typedSibling.consoleText;
+    expect(() => compileExpectedHttpFailures(
+      { expectedHttpFailures: [exactFailure, typedSibling] },
+      "http://127.0.0.1:5184",
+    )).toThrow(/non-overlapping exact resourceType/u);
+  });
+
+  it("rejects two network declarations that claim the same console signal", () => {
+    const routePath = "/research/lots/XR-EVIDENCE-NEGATIVE-LOT";
+    const consoleText = "Failed to load resource: the server responded with a status of 404 (Not Found)";
+    const baseFailure = {
+      ...exactFailure,
+      path: routePath,
+      status: 404,
+      resourceType: "Document",
+      consoleCount: 1,
+      consoleText,
+    };
+    expect(() => compileExpectedHttpFailures({
+      path: routePath,
+      expectStatus: 404,
+      expectedHttpFailures: [
+        baseFailure,
+        {
+          ...baseFailure,
+          resourceType: "Fetch",
+          targetType: "worker-or-child",
+          responseBodySha256: "b".repeat(64),
+        },
+      ],
+    }, "http://127.0.0.1:5184")).toThrow(/unique URL \+ consoleText/u);
   });
 });
 

@@ -270,18 +270,71 @@ async function focusWalk(page, maxStops) {
 export function compileExpectedHttpFailures(route, baseUrl) {
   const base = new URL(baseUrl);
   const compiled = (route.expectedHttpFailures ?? []).map((expected) => {
-    if (!/^\/api\//u.test(expected.path ?? "")) throw new Error(`expected HTTP failure path must be an exact /api/ path: ${expected.path}`);
+    const isApiPath = /^\/api\//u.test(expected.path ?? "");
+    const isExactExpectedDocumentPath = expected.path === route.path
+      && Number(route.expectStatus) === Number(expected.status)
+      && ["Document", "Fetch"].includes(expected.resourceType);
+    if (!isApiPath && !isExactExpectedDocumentPath) {
+      throw new Error(`expected HTTP failure path must be an exact /api/ path or the route's exact expected document path: ${expected.path}`);
+    }
     if (!Number.isInteger(expected.status) || expected.status < 400 || expected.status > 599) throw new Error(`expected HTTP failure needs an exact 4xx/5xx status: ${expected.path}`);
     if (!['GET', 'HEAD'].includes(String(expected.method ?? "").toUpperCase())) throw new Error(`expected HTTP failure needs GET or HEAD: ${expected.path}`);
-    if (Number(expected.count ?? 0) < 1) throw new Error(`expected HTTP failure needs a positive count: ${expected.path}`);
+    if (!Number.isInteger(expected.count) || expected.count < 1) throw new Error(`expected HTTP failure needs a positive integer count: ${expected.path}`);
     if (!/^[a-f0-9]{64}$/u.test(expected.responseBodySha256 ?? "")) throw new Error(`expected HTTP failure needs an exact response-body SHA-256: ${expected.path}`);
-    if (!expected.consoleText || !expected.reason || !expected.productionEvidence) throw new Error(`expected HTTP failure needs consoleText, reason, and productionEvidence: ${expected.path}`);
+    if (expected.resourceType !== undefined && !["Document", "Fetch"].includes(expected.resourceType)) {
+      throw new Error(`expected HTTP failure has an unsupported resourceType: ${expected.path}`);
+    }
+    if (expected.targetType !== undefined && (expected.resourceType !== "Fetch" || expected.targetType !== "worker-or-child")) {
+      throw new Error(`expected HTTP failure targetType is limited to an exact worker-or-child Fetch: ${expected.path}`);
+    }
+    const consoleCount = expected.consoleCount ?? expected.count;
+    if (!Number.isInteger(consoleCount) || consoleCount < 0) throw new Error(`expected HTTP failure needs a non-negative consoleCount: ${expected.path}`);
+    if ((consoleCount > 0 && !expected.consoleText) || (consoleCount === 0 && expected.consoleText !== undefined)) {
+      throw new Error(`expected HTTP failure consoleText must exactly match its consoleCount: ${expected.path}`);
+    }
+    if (!expected.reason || !expected.productionEvidence) throw new Error(`expected HTTP failure needs reason and productionEvidence: ${expected.path}`);
     const url = new URL(expected.path, base);
     if (url.origin !== base.origin) throw new Error(`expected HTTP failure must stay on the preview origin: ${expected.path}`);
     return { ...expected, method: expected.method.toUpperCase(), url: url.toString() };
   });
-  const keys = compiled.map((expected) => `${expected.method} ${expected.url}`);
-  if (new Set(keys).size !== keys.length) throw new Error("expected HTTP failure declarations must use unique method + URL pairs");
+  const keys = compiled.map((expected) => [
+    expected.method,
+    expected.url,
+    expected.resourceType ?? "*",
+    expected.targetType ?? "*",
+  ].join(" "));
+  if (new Set(keys).size !== keys.length) {
+    throw new Error("expected HTTP failure declarations must use unique method + URL + resourceType + targetType tuples");
+  }
+  const positiveConsoleKeys = compiled
+    .filter((expected) => Number(expected.consoleCount ?? expected.count) > 0)
+    .map((expected) => `${expected.url}\u0000${expected.consoleText}`);
+  if (new Set(positiveConsoleKeys).size !== positiveConsoleKeys.length) {
+    throw new Error("positive expected console declarations must use unique URL + consoleText pairs; aggregate the consoleCount on one declaration");
+  }
+  const methodUrlGroups = new Map();
+  for (const expected of compiled) {
+    const key = `${expected.method} ${expected.url}`;
+    methodUrlGroups.set(key, [...(methodUrlGroups.get(key) ?? []), expected]);
+  }
+  for (const declarations of methodUrlGroups.values()) {
+    if (declarations.length < 2) continue;
+    if (declarations.some((expected) => expected.resourceType === undefined)) {
+      throw new Error("same-URL expected HTTP failure declarations require non-overlapping exact resourceType values");
+    }
+    const resourceGroups = new Map();
+    for (const expected of declarations) {
+      resourceGroups.set(expected.resourceType, [
+        ...(resourceGroups.get(expected.resourceType) ?? []),
+        expected,
+      ]);
+    }
+    for (const resourceDeclarations of resourceGroups.values()) {
+      if (resourceDeclarations.length > 1 && resourceDeclarations.some((expected) => expected.targetType === undefined)) {
+        throw new Error("same-resource expected HTTP failure declarations require non-overlapping exact targetType values");
+      }
+    }
+  }
   return compiled;
 }
 

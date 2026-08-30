@@ -204,6 +204,21 @@ describe("public evidence topology", () => {
     )).toEqual([
       ["GET", "/api/research/early-access/assisted-orders/catalog?page=1&pageSize=24", 403, 1],
     ]);
+    expect(route("/research/lots/XR-EVIDENCE-NEGATIVE-LOT").expectedHttpFailures.map(
+      (failure) => [
+        failure.method,
+        failure.path,
+        failure.status,
+        failure.count,
+        failure.resourceType ?? null,
+        failure.targetType ?? null,
+        failure.consoleCount ?? failure.count,
+      ],
+    )).toEqual([
+      ["GET", "/research/lots/XR-EVIDENCE-NEGATIVE-LOT", 404, 1, "Document", null, 1],
+      ["GET", "/research/lots/XR-EVIDENCE-NEGATIVE-LOT", 404, 1, "Fetch", "worker-or-child", 0],
+      ["GET", "/api/research/quality/lots/XR-EVIDENCE-NEGATIVE-LOT", 401, 1, "Fetch", null, 1],
+    ]);
   });
 
   it("covers every required route surface and browser-required state", () => {

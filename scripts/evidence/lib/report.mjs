@@ -107,15 +107,20 @@ export function evaluateAudit(audit, {
     record.url === expected.url
     && Number(record.status) === Number(expected.status)
     && String(record.method ?? "GET").toUpperCase() === String(expected.method ?? "GET").toUpperCase()
-    && record.bodySha256 === expected.responseBodySha256;
+    && record.bodySha256 === expected.responseBodySha256
+    && (expected.resourceType === undefined || record.type === expected.resourceType)
+    && (expected.targetType === undefined || record.targetType === expected.targetType);
   const observations = expectedHttpFailures.map((expected) => ({
     expected,
     networkCount: failedNetwork.filter((record) => matchesExpectedNetwork(record, expected)).length,
-    consoleCount: consoleErrors.filter((record) =>
-      record.url === expected.url && record.text === expected.consoleText).length,
+    consoleCount: expected.consoleText
+      ? consoleErrors.filter((record) =>
+        record.url === expected.url && record.text === expected.consoleText).length
+      : 0,
   }));
   const mismatchedExpectations = observations.filter(({ expected, networkCount, consoleCount }) =>
-    networkCount !== Number(expected.count ?? 1) || consoleCount !== Number(expected.count ?? 1));
+    networkCount !== Number(expected.count ?? 1)
+    || consoleCount !== Number(expected.consoleCount ?? expected.count ?? 1));
   const expectedNetwork = failedNetwork.filter((record) => expectedHttpFailures.some((expected) => matchesExpectedNetwork(record, expected)));
   const unexpectedNetwork = failedNetwork
     .filter((record) => !expectedNetwork.includes(record))
@@ -123,7 +128,9 @@ export function evaluateAudit(audit, {
 
   const expectedConsoleErrors = consoleErrors.filter((record) =>
     expectedHttpFailures.some((expected) =>
-      record.url === expected.url && record.text === expected.consoleText));
+      expected.consoleText
+      && record.url === expected.url
+      && record.text === expected.consoleText));
   const unexpectedConsoleErrors = consoleErrors.filter((record) => !expectedConsoleErrors.includes(record));
 
   const exactDeclarationDrift = expectedHttpFailures.length > 0
@@ -135,9 +142,9 @@ export function evaluateAudit(audit, {
     expectedHttpFailures.length === 0
       ? "none declared"
       : exactDeclarationDrift === 0
-        ? `${expectedHttpFailures.length} declared failure(s) observed with exact URL, method, status, count, body hash, and console signal`
+        ? `${expectedHttpFailures.length} declared failure(s) observed with exact URL, method, status, network count, body hash, resource/target type, and console count`
         : [
-            summarise(mismatchedExpectations, ({ expected, networkCount, consoleCount }) => `${expected.method ?? "GET"} ${expected.status} ${expected.url} body=${expected.responseBodySha256}: expected ${expected.count ?? 1}, observed network=${networkCount}, console=${consoleCount}`),
+            summarise(mismatchedExpectations, ({ expected, networkCount, consoleCount }) => `${expected.method ?? "GET"} ${expected.status} ${expected.url} body=${expected.responseBodySha256}: expected network=${expected.count ?? 1} console=${expected.consoleCount ?? expected.count ?? 1}, observed network=${networkCount} console=${consoleCount}`),
             unexpectedNetwork.length ? `unexpected network: ${summarise(unexpectedNetwork, (record) => `${record.method ?? "GET"} ${record.status || record.error} ${record.url} body=${record.bodySha256 ?? "unavailable"}`)}` : null,
             unexpectedConsoleErrors.length ? `unexpected console: ${summarise(unexpectedConsoleErrors, (record) => `[${record.level}] ${record.text}`)}` : null,
           ].filter(Boolean).join("; "),
