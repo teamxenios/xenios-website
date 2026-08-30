@@ -73,6 +73,17 @@ const EXACTLY_ONCE_SYNTHETIC_ASSERTIONS = Object.freeze([
 ]);
 const PWA_DISMISSAL_SOURCE =
   "try { window.sessionStorage.setItem('xenios-pwa-hint-dismissed', '1'); } catch {}";
+export const SYNTHETIC_PERSONA_STORAGE_TYPES =
+  "cookies,indexeddb,local_storage";
+
+export async function clearSyntheticPersonaState(page, origin) {
+  await page.evaluate("(sessionStorage.clear(), true)");
+  await page.send("Storage.clearDataForOrigin", {
+    origin,
+    storageTypes: SYNTHETIC_PERSONA_STORAGE_TYPES,
+  });
+  await page.send("Network.clearBrowserCookies");
+}
 
 const CASES = Object.freeze({
   catalog: Object.freeze({
@@ -1235,13 +1246,10 @@ async function main(argv = process.argv.slice(2)) {
     await navigateAndWaitAccount(page, accountOrigin, "/research/account/subscription");
     captures.push(...await captureAtBothWidths(captureContext, CASES.membership));
 
-    // Clear only the loopback preview origin, then use its authoritative-empty
-    // persona through the same real sign-in journey.
-    await page.send("Storage.clearDataForOrigin", {
-      origin: accountOrigin,
-      storageTypes: "all",
-    });
-    await page.send("Network.clearBrowserCookies");
+    // Clear only auth/persona state for the loopback preview origin. Preserve
+    // its service worker and static cache while switching to the authoritative
+    // empty persona through the same real sign-in journey.
+    await clearSyntheticPersonaState(page, accountOrigin);
     resetPageTelemetry(page);
     await signInAccountPersona(
       page,

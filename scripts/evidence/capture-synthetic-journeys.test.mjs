@@ -3,10 +3,12 @@ import { readFileSync } from "node:fs";
 
 import {
   SYNTHETIC_CAPTURE_CASES,
+  SYNTHETIC_PERSONA_STORAGE_TYPES,
   STATUS_CREDENTIAL_TRANSPORT,
   assertSyntheticAssertionSchema,
   buildArtifactInventory,
   classifyBrowserBoundaryRequest,
+  clearSyntheticPersonaState,
   evaluateSyntheticRouteStateContract,
   forgedStatusFailureDeclaration,
   parseArgs,
@@ -89,6 +91,48 @@ describe("capture-synthetic-journeys", () => {
       PORT: "5201",
     });
     expect(JSON.stringify(child)).not.toContain("production");
+  });
+
+  it("clears only auth and persona state without restarting the service worker", async () => {
+    const calls = [];
+    const page = {
+      async evaluate(source) {
+        calls.push({ kind: "evaluate", source });
+        return true;
+      },
+      async send(method, params) {
+        calls.push({ kind: "send", method, params });
+        return {};
+      },
+    };
+    const origin = "http://127.0.0.1:5202";
+
+    await clearSyntheticPersonaState(page, origin);
+
+    expect(calls).toEqual([
+      {
+        kind: "evaluate",
+        source: "(sessionStorage.clear(), true)",
+      },
+      {
+        kind: "send",
+        method: "Storage.clearDataForOrigin",
+        params: {
+          origin,
+          storageTypes: "cookies,indexeddb,local_storage",
+        },
+      },
+      {
+        kind: "send",
+        method: "Network.clearBrowserCookies",
+        params: undefined,
+      },
+    ]);
+    const storageTypes = SYNTHETIC_PERSONA_STORAGE_TYPES.split(",");
+    expect(storageTypes).toEqual(["cookies", "indexeddb", "local_storage"]);
+    expect(storageTypes).not.toContain("service_workers");
+    expect(storageTypes).not.toContain("cache_storage");
+    expect(SYNTHETIC_PERSONA_STORAGE_TYPES).not.toBe("all");
   });
 
   it("redacts generated references and preview tokens from textual artifacts", () => {
