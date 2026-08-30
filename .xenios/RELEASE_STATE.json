@@ -22,6 +22,9 @@
     "recordsEvidenceSuccessorSha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
     "recordsEvidenceSuccessorTree": "517db145ed6494c845c9453a8cec59c6be4b9892",
     "recordsEvidenceSuccessorOriginVerified": true,
+    "continuitySuccessorSha": "0f3b3a334312273775ecf2efa4e3cda5bcf7a04d",
+    "continuitySuccessorTree": "257d53b984ca12a48282d25f187b84fc14478915",
+    "continuitySuccessorOriginVerified": true,
     "originVerified": true,
     "finalRcSha": null,
     "scope": [
@@ -60,6 +63,17 @@
       "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "addedLines": 1338773,
       "files": 732,
+      "secretFindings": 0,
+      "piiFindings": 0,
+      "piiSkipped": false
+    },
+    "continuitySuccessorSha": "0f3b3a334312273775ecf2efa4e3cda5bcf7a04d",
+    "continuitySuccessorTree": "257d53b984ca12a48282d25f187b84fc14478915",
+    "continuitySuccessorOriginVerified": true,
+    "continuitySuccessorScan": {
+      "productionBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "addedLines": 1339032,
+      "files": 734,
       "secretFindings": 0,
       "piiFindings": 0,
       "piiSkipped": false
@@ -253,7 +267,7 @@
       "candidateSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
       "candidateTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
       "runnerSession": "COMPLETE",
-      "currentStage": "packet_finalizing",
+      "currentStage": "codex_detached_review",
       "vitestResultFields": "success, testResults, exact tests, assertions",
       "preEvidence": {
         "networkBoundary": "23/23 PASS",
@@ -298,7 +312,7 @@
     "migrationAuthorized": false,
     "migrationApplied": false,
     "detachedReview": "NOT_STARTED",
-    "note": "Records/evidence packet successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified. Its non-skipped exact production-to-successor scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Runtime/evidence seals and packet hashes remain unchanged. State is CODEX_DETACHED_REVIEW; the final RC SHA can only be assigned externally after this continuity successor is committed and pushed. Detached review, authorization, and deployment remain unassigned. No production mutation occurred.",
+    "note": "Records/evidence packet successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) are pushed and origin-verified. Their non-skipped exact production-to-successor scans covered 1,338,773/732 and 1,339,032/734 respectively, with 0 secret and 0 PII findings. Runtime/evidence seals and packet hashes remain unchanged. State is CODEX_DETACHED_REVIEW; the final records-only consistency successor RC SHA can only be assigned externally after this commit is pushed. Detached review, authorization, and deployment remain unassigned. No production mutation occurred.",
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   }

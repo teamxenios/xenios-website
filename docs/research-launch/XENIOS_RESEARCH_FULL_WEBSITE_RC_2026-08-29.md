@@ -1,6 +1,6 @@
 # Xenios Research full-website release candidate — exact-SHA recut — 2026-08-29
 
-Status: **NOT READY — C015 FULL EVIDENCE SEALED; PACKET FINALIZING**
+Status: **NOT READY — PACKET SUCCESSOR PUSHED; DETACHED REVIEW PENDING**
 
 This is a release-readiness record, not a deployment authorization. No
 deployment, migration, environment change, account or invitation action,
@@ -20,11 +20,11 @@ communication occurred while preparing this recut.
 | Evidence-control tree | `c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019` |
 | Candidate branch | `claude/xenios-research-full-finish-takeover-20260828` |
 | Origin verification | Runtime and evidence-control freezes are pushed and origin-verified |
-| Final RC identity | `finalRcSha: UNASSIGNED_BY_SELF_REFERENCE` — assign only after the records/evidence successor is committed, pushed, and origin-verified |
+| Final RC identity | `finalRcSha: UNASSIGNED_BY_SELF_REFERENCE` — assign externally only after the final records-only consistency successor is committed, pushed, and origin-verified |
 | Canonical release manifest | `docs/coordination/release-manifests/XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29.json` |
 | Review packet | `docs/review/xenios-research-full-site-20260829/` |
 
-The three release identities are intentionally separate:
+The four release identities are intentionally separate:
 
 1. The runtime freeze contains the product and server behavior being released.
 2. The evidence-control freeze changes exactly these seven evidence/test
@@ -38,9 +38,16 @@ The three release identities are intentionally separate:
    - `scripts/evidence/capture-synthetic-journeys.mjs`
    - `scripts/evidence/capture-synthetic-journeys.test.mjs`
 
-3. The eventual records/evidence successor will bind the final machine results,
-   packet, and review records. It must not alter runtime code or the frozen
-   evidence controls. Only that pushed successor can be named as the final RC.
+3. Records/evidence successor
+   `8bd8df8f556d8e84bc9c8daef1871d6a59b58590` binds the final machine results
+   and packet without altering runtime code or the frozen evidence controls.
+
+4. Continuity successor
+   `0f3b3a334312273775ecf2efa4e3cda5bcf7a04d` binds the exact packet successor
+   into the repository continuity corpus without changing runtime, evidence,
+   manifest, test, or packet files. The final records-only consistency
+   successor must preserve that relationship; only its exact pushed SHA can be
+   named as the final RC.
 
 A Git commit cannot embed its own SHA. Samuel's later authorization must name
 the exact final RC SHA reported after the successor exists.
@@ -83,7 +90,9 @@ The immutable incident timeline is recorded in
 | Retry3b | `STOPPED_PRE_PREVIEW_WRAPPER_SCHEMA`; network 23 PASS and routes 17 PASS; wrapper assumed fixed suite total 3 while Vitest reported describe-block totals 3 then 2; guard reset; no reuse/candidate defect | No; wrapper-only historical attempt | No preview, HTTP, browser, or evidence root existed |
 | Retry3c full evidence | `FULL_EVIDENCE_SEALED`; HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail first attempt; focused 11/11, 11/11, 11/11, 11/11 and 99/99 clean; synthetic 20 = 18 + 2 expected denial + 0; evidence tests 13 files/213 tests/46 suites; scan 0/0 non-skipped; PII CLEAN 0 across 2,332 text / 1,120 PNG manual-review inventory / 0 unscannable | No | Evidence manifest SHA-256 `1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257` |
 | Release packet and ownership | Bounded packet generated/validated: 192 files = 191 payload + self; inventories `6dab7745…` / `f6ef58ea…`; manual QA 18 PNG/9 areas/2 viewports, 0 blocking visual/0 privacy; canonical manifest PASS `16f08fd2…`; ownership `84ae795d…` attested/dispositioned nonblocking | No; packet generation/validation closed | Canonical manifest and review-packet paths in section 1 |
-| Records/evidence successor | Does not yet exist; `finalRcSha` remains unassigned by self-reference | Yes | Must be committed, pushed, origin-verified, and leave the worktree clean |
+| Records/evidence successor | `8bd8df8f556d8e84bc9c8daef1871d6a59b58590` / tree `517db145ed6494c845c9453a8cec59c6be4b9892`; pushed, origin-verified; non-skipped scan 1,338,773 lines/732 files/0 secret/0 PII | No; packet successor closed | Handoff and current-state records bind the exact pushed SHA |
+| Continuity successor | `0f3b3a334312273775ecf2efa4e3cda5bcf7a04d` / tree `257d53b984ca12a48282d25f187b84fc14478915`; exactly seven `.xenios` files; pushed, origin-verified; non-skipped scan 1,339,032 lines/734 files/0 secret/0 PII | No; continuity record closed | Parent of the final records-only consistency successor |
+| Final records-only consistency successor | `finalRcSha: UNASSIGNED_BY_SELF_REFERENCE` | Yes until committed/pushed/origin-verified | Its exact external SHA becomes the final RC reviewed below |
 | Detached Codex review | Must review the pushed final RC read-only | Yes | Requires P0 0, deployment-blocking P1 0, critical P2 0, verdict PASS |
 | Human authorization | Not requestable at this boundary | Yes, only after all preceding blockers close | Samuel's exact-final-RC-SHA GO becomes the sole remaining human blocker only after closure |
 
@@ -236,8 +245,11 @@ reset, no candidate defect was found, and it may not resume or be reused.
 The machine-derived values above are sealed and the bounded packet is
 validated. Its copied automated `evidence-manifest.json` intentionally retains
 its pre-successor PENDING state and is distinct from the canonical release
-manifest verifier PASS. The records/evidence successor SHA, exact-final-SHA
-checks, final RC assignment and detached review remain unassigned.
+manifest verifier PASS. Records/evidence successor `8bd8df8f…` is pushed,
+origin-verified and non-skipped scanned at 0 secret/0 PII. Continuity successor
+`0f3b3a33…` is also pushed/origin-verified and scanned 0/0; the final
+records-only consistency successor/final RC SHA and detached review remain
+unassigned by self-reference.
 
 ## 7. Excluded and historical predecessor evidence
 
@@ -305,15 +317,14 @@ Production remains `3daa3f4a…` at `dep-da94g05g1s2s7396lkv0`; the rollback
 target is the same exact SHA. Auto-deploy remains off. The prior `eb659d81…`
 authorization was consumed.
 
-Samuel's exact-SHA GO is not requestable while the validated packet and records
-await a pushed records/evidence successor, exact-final-SHA, clean-worktree and
-origin checks, final RC assignment, and detached Codex review. Once every
-remaining machine and review gate passes, Samuel's command naming the exact
-final RC SHA becomes the sole remaining human blocker. This document grants no
-present production authority.
+Samuel's exact-SHA GO is not requestable while the final records-only
+consistency successor, exact-final-SHA clean/origin checks, final RC assignment,
+and detached Codex review remain open. Once those gates pass, Samuel's command
+naming the exact final RC SHA becomes the sole remaining human blocker. This
+document grants no present production authority.
 
 **CURRENT VERDICT: NOT READY FOR SAMUEL'S EXACT-SHA GO.**
 
-The remaining release work is bounded: commit and push the validated packet
-and records/evidence successor, then complete the read-only detached Codex
-review.
+The remaining release work is bounded: commit and push this final records-only
+consistency successor, verify its exact SHA and clean origin-bound worktree,
+then complete the read-only detached Codex review.

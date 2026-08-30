@@ -25,11 +25,13 @@ flowchart LR
   R11["R11 retry2 193b3075<br/>EXCLUDED LIFECYCLE FLAKE<br/>1100=1023+77+0; synthetic 10/20"]
   E641["Evidence predecessor e64122d6<br/>SUPERSEDED<br/>tree 433a694d<br/>5 evidence-only files"]
   SMOKE["e641 canonical smoke<br/>EXCLUDED<br/>2 PASS / 1 FAIL"]
-  C015["Evidence freeze c0156916<br/>ORIGIN VERIFIED<br/>tree c4a48d5d<br/>7 files; focused 53/53; prereq 3/3"]
+  C015["Evidence freeze c0156916<br/>FULL EVIDENCE SEALED<br/>tree c4a48d5d<br/>7 files; focused 53/53; prereq 3/3"]
   R3["c015 retry3<br/>STOPPED PRE-EVIDENCE<br/>wrapper schema only; build PASS"]
   R3B["c015 retry3b<br/>STOPPED PRE-PREVIEW<br/>wrapper schema only; 23 + 17 PASS"]
   R3C["c015 retry3c<br/>FULL EVIDENCE SEALED<br/>1100=1023+77+0; manifest 1f90d4fe"]
-  PACKET["Bounded packet validated<br/>PACKET FINALIZING<br/>successor SHA + detached review pending"]
+  PACKET["Packet successor 8bd8df8f<br/>PUSHED + ORIGIN VERIFIED<br/>scan 0 secret / 0 PII"]
+  CONT["Continuity successor 0f3b3a33<br/>PUSHED + ORIGIN VERIFIED<br/>7 .xenios files; scan 0 / 0"]
+  FINAL["Final RC boundary<br/>CODEX DETACHED REVIEW<br/>exact successor SHA pending"]
 
   PROD -->|development ancestor of| FAILED
   PROD -->|runtime baseline for| HOME
@@ -62,7 +64,9 @@ flowchart LR
   C015 -->|retry3 stopped pre-evidence| R3
   R3 -->|fresh nonresuming replacement| R3B
   R3B -->|fresh nonresuming replacement| R3C
-  R3C -->|must complete before| PACKET
+  R3C -->|sealed into pushed successor| PACKET
+  PACKET -->|continuity recorded by| CONT
+  CONT -->|must complete before| FINAL
 
   classDef baseline fill:#d9ead3,stroke:#274e13,color:#000;
   classDef prohibited fill:#f4cccc,stroke:#990000,color:#000;

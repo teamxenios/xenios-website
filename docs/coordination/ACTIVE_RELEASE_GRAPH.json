@@ -1,14 +1,18 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-30T22:04:52.071Z",
+  "generatedAt": "2026-08-30T22:53:05.351Z",
   "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
   "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
   "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
   "evidenceTree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
+  "recordsEvidenceSuccessorSha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
+  "recordsEvidenceSuccessorTree": "517db145ed6494c845c9453a8cec59c6be4b9892",
+  "continuitySuccessorSha": "0f3b3a334312273775ecf2efa4e3cda5bcf7a04d",
+  "continuitySuccessorTree": "257d53b984ca12a48282d25f187b84fc14478915",
   "originVerified": true,
-  "state": "PACKET_FINALIZING",
+  "state": "CODEX_DETACHED_REVIEW",
   "finalRcSha": null,
   "detachedReview": "NOT_STARTED",
   "deployed": false,
@@ -54,7 +58,7 @@
       "owner": "Lane 02 / Lead",
       "state": "SOURCE_INTEGRATED_IN_RUNTIME_FREEZE",
       "sha": "8e8933cee58af2750edf69d672a463884df29634",
-      "label": "Separate warm-silver editorial homepage source; integrated deliberately into runtime freeze 2d662a0d; exact-c015 retry3c full evidence is sealed and the packet is finalizing"
+      "label": "Separate warm-silver editorial homepage source; integrated deliberately into runtime freeze 2d662a0d; exact-c015 retry3c full evidence and the bounded packet are sealed"
     },
     {
       "id": "pr117-persistent-cart",
@@ -267,10 +271,10 @@
       "id": "evidence-freeze-c0156916",
       "type": "evidence_freeze",
       "owner": "Codex (codex-recut-final-20260829)",
-      "state": "PACKET_FINALIZING",
+      "state": "FULL_EVIDENCE_SEALED",
       "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
       "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
-      "label": "Current evidence freeze. Runtime delta is exactly seven evidence/test files; no runtime change. Retry3c is sealed: HTTP 100/100, browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail, synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail, final evidence Vitest 13 files/213 tests, non-skipped scans clean; packet is finalizing"
+      "label": "Current evidence freeze. Runtime delta is exactly seven evidence/test files; no runtime change. Retry3c is sealed: HTTP 100/100, browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail, synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail, final evidence Vitest 13 files/213 tests, non-skipped scans clean; bounded packet is sealed"
     },
     {
       "id": "c015-retry3-stopped-wrapper-schema",
@@ -300,12 +304,30 @@
       "label": "Exact-c015 full evidence sealed: HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail first attempt; focused 11+11+11+11+99 all zero fail and clean; synthetic 20=18 PASS+2 expected denial notes+0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; PII CLEAN 0 findings across 2332 text/1120 PNG manual-review inventory/0 unscannable; evidence manifest 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257. Wrapper-only 46-vs-13 and excluded fixture-scan attempts disclosed; reserved-fixture endpoint recapture 16/11/0/0, config 200."
     },
     {
+      "id": "records-evidence-packet-successor-8bd8df8f",
+      "type": "records_evidence_successor",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "PUSHED_ORIGIN_VERIFIED",
+      "sha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
+      "tree": "517db145ed6494c845c9453a8cec59c6be4b9892",
+      "label": "Bounded packet generated and validated at docs/review/xenios-research-full-site-20260829: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); inventory SHA256 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload SHA256 f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14. Manual review: 18 PNG/9 areas/2 viewports, 0 blocking visual, 0 privacy, five cosmetic backlog items. Canonical release manifest PASS under Node 20.19.0/npm 10.8.2, SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified; exact non-skipped scan 1,338,773 lines/732 files/0 secret/0 PII. No deployment authority."
+    },
+    {
+      "id": "continuity-successor-0f3b3a33",
+      "type": "continuity_successor",
+      "owner": "Codex (codex-recut-final-20260829)",
+      "state": "PUSHED_ORIGIN_VERIFIED",
+      "sha": "0f3b3a334312273775ecf2efa4e3cda5bcf7a04d",
+      "tree": "257d53b984ca12a48282d25f187b84fc14478915",
+      "label": "Continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d contains exactly seven .xenios state/session/handoff files, is pushed and origin-verified, and passed a non-skipped production-to-successor scan covering 1,339,032 added lines across 734 files with 0 secret and 0 PII findings. A required clean-room consistency correction remains self-referential until its successor commit is pushed."
+    },
+    {
       "id": "final-rc-packet",
       "type": "future_gate",
       "owner": "Codex (codex-recut-final-20260829)",
-      "state": "PACKET_FINALIZING",
+      "state": "CODEX_DETACHED_REVIEW",
       "sha": null,
-      "label": "Bounded packet generated and validated at docs/review/xenios-research-full-site-20260829: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); inventory SHA256 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload SHA256 f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14. Manual review: 18 PNG/9 areas/2 viewports, 0 blocking visual, 0 privacy, five cosmetic backlog items. Canonical release manifest PASS under Node 20.19.0/npm 10.8.2, SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c, binding packet + assisted-order environment inventory. Records/evidence successor SHA, exact-final-SHA checks, final RC assignment and detached review remain unassigned; no deployment authority."
+      "label": "Reserved final-RC boundary. The final records-only consistency successor exact SHA, clean/origin verification and detached Codex PASS remain required before this node can identify the final RC. No deployment authority."
     }
   ],
   "edges": [
@@ -466,6 +488,16 @@
     },
     {
       "from": "c015-retry3c-sealed",
+      "to": "records-evidence-packet-successor-8bd8df8f",
+      "relation": "sealed_into_pushed_successor"
+    },
+    {
+      "from": "records-evidence-packet-successor-8bd8df8f",
+      "to": "continuity-successor-0f3b3a33",
+      "relation": "continuity_recorded_by"
+    },
+    {
+      "from": "continuity-successor-0f3b3a33",
       "to": "final-rc-packet",
       "relation": "must_complete_before"
     }
@@ -490,7 +522,7 @@
     "Exact-c015 retry3c full evidence is sealed: HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail on the first attempt; focused early/assisted/negative/unknown 11/11 each and account 99/99, all zero fail and clean; synthetic 20=18 PASS+2 expected denial notes+0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; final PII CLEAN with 0 findings across 2332 text, 1120 PNG manual-review inventory, and 0 unscannable; evidence manifest SHA256 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257.",
     "Disclose the wrapper-only 46-vs-13 stop and excluded fixture-scan attempt archived at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830. The replacement reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW with assisted-order config HTTP 200.",
     "The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload inventory f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14; representative manual review 18 PNG/9 areas/2 viewports with 0 blocking visual and 0 privacy findings and five cosmetic backlog items. Canonical manifest verification passed under Node 20.19.0/npm 10.8.2 at SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c, binding packet + assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested/dispositioned nonblocking; release-control 51 pass + 1 intentional skip + 0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS.",
-    "Current phase remains PACKET_FINALIZING. Reconcile the validated packet and records into one records/evidence successor, then run exact-final-SHA checks, push, origin-verify, clean the worktree and complete detached Codex review before requesting Samuel's exact-final-RC-SHA GO. Successor SHA, final RC assignment, review and deployment remain unassigned.",
+    "Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified. Its non-skipped production-to-successor scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) is also pushed/origin-verified and scanned at 1,339,032 added lines across 734 files with 0 secret and 0 PII findings. Current phase is CODEX_DETACHED_REVIEW; the final records-only consistency successor/final RC SHA, review verdict and deployment remain unassigned by self-reference.",
     "No migration is required, authorized, or applied for this release.",
     "No deployment or production mutation is authorized by this graph."
   ]

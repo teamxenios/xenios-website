@@ -174,9 +174,18 @@ uniqueness passed at 409 registrations across 400 call sites against exact
 c015. The copied automated packet `evidence-manifest.json` intentionally
 remains PENDING and is distinct from the canonical verifier PASS.
 
-Current phase remains `PACKET_FINALIZING`. The records/evidence successor SHA,
-exact-final-SHA checks, successor origin verification, final RC assignment and
-detached review remain unassigned; no deployment is claimed.
+Records/evidence successor
+`8bd8df8f556d8e84bc9c8daef1871d6a59b58590` (tree
+`517db145ed6494c845c9453a8cec59c6be4b9892`) is pushed and origin-verified.
+Its non-skipped production-to-successor scan covered 1,338,773 added lines
+across 732 files with 0 secret and 0 PII findings. Continuity successor
+`0f3b3a334312273775ecf2efa4e3cda5bcf7a04d` (tree
+`257d53b984ca12a48282d25f187b84fc14478915`) is also pushed and
+origin-verified; its non-skipped scan covered 1,339,032 added lines across 734
+files with 0 secret and 0 PII findings. Current phase is
+`CODEX_DETACHED_REVIEW`; the final records-only consistency successor/final RC
+SHA and detached-review verdict remain unassigned by self-reference. No
+deployment is claimed.
 Runtime predecessor `efb30f57…`, r10g
 and r10h remain historical: r10g is invalid/excluded with 1,077 PNG, 1,077
 text and 1,076 run JSON diagnostic files but no browser-matrix, and r10h is
@@ -285,9 +294,11 @@ or database evidence was re-attested.
   The wrapper-only 46-vs-13 stop and excluded fixture-scan attempt remain
   disclosed; replacement endpoint recapture passed 16/11/0/0 with config 200.
   The bounded packet is generated and validated with the inventories and
-  manual review above. Current phase remains `PACKET_FINALIZING`; no
-  records/evidence successor SHA, exact-final-SHA result, final RC assignment,
-  detached-review PASS or deployment authorization is asserted.
+  manual review above. Records/evidence successor `8bd8df8f…` is pushed,
+  origin-verified and non-skipped scanned at 0 secret/0 PII; continuity
+  successor `0f3b3a33…` is likewise pushed/origin-verified and scanned 0/0.
+  Current phase is `CODEX_DETACHED_REVIEW`; no final consistency-successor RC
+  SHA, detached-review PASS or deployment authorization is asserted.
 
 - The separate warm-silver homepage source is integrated in the frozen runtime;
   its final visual, responsive, accessibility and catalog-guard evidence is

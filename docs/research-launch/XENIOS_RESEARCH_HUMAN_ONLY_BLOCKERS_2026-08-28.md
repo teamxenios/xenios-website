@@ -71,16 +71,20 @@ inventory self; packet inventory `6dab7745…`; payload inventory `f6ef58ea…`;
 manual QA 18 PNG/9 areas/2 viewports with 0 blocking visual and 0 privacy
 findings. Canonical release-manifest verification passed under Node
 20.19.0/npm 10.8.2 at SHA-256 `16f08fd2…`, binding the packet and
-assisted-order environment inventory. Current phase remains
-**PACKET_FINALIZING**. The records/evidence successor SHA, exact-final-SHA
-checks and origin verification, final RC assignment and detached Codex verdict
-do not yet exist. Samuel's production GO is therefore **not yet requestable**.
+assisted-order environment inventory. Records/evidence successor
+`8bd8df8f556d8e84bc9c8daef1871d6a59b58590` is pushed, origin-verified and
+non-skipped scanned at 0 secret/0 PII. Continuity successor
+`0f3b3a334312273775ecf2efa4e3cda5bcf7a04d` is also pushed,
+origin-verified and scanned at 0 secret/0 PII. Current phase is
+**CODEX_DETACHED_REVIEW**. The final records-only consistency successor/final
+RC SHA and detached Codex verdict do not yet exist by self-reference. Samuel's
+production GO is therefore **not yet requestable**.
 
 ## Future sole human-only boundary after all engineering closure
 
 | Required action | Authority | Release behaviour until supplied |
 | --- | --- | --- |
-| A new production GO naming the exact final RC SHA after the validated packet and records are committed as a records/evidence successor, that successor is origin-verified clean, exact-final-SHA checks pass, and detached Codex review passes | Samuel | No deployment. Production remains `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` at `dep-da94g05g1s2s7396lkv0`; failed SHA `eb659d8100a3b9831d52688120931c48d10330d9` / `dep-da94b91srm7s73b55dsg` remains disqualified. |
+| A new production GO naming the exact final RC SHA after the final records-only consistency successor is origin-verified clean, exact-final-SHA checks pass, and detached Codex review passes | Samuel | No deployment. Production remains `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` at `dep-da94g05g1s2s7396lkv0`; failed SHA `eb659d8100a3b9831d52688120931c48d10330d9` / `dep-da94b91srm7s73b55dsg` remains disqualified. |
 
 The exact final RC SHA cannot be pre-authorized or inferred from the branch
 name. It is established only after the final records/evidence successor commit
@@ -128,8 +132,8 @@ production embed code belong in this document or in the release packet.
 | Evidence freeze | `c01569169cad5e6619187221d84019ae8bfc7c69` / `c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019`; pushed |
 | Technical evidence generation | R11 exact-runtime bundle PASS 21/21; exact counts recorded above |
 | Historical bounded smoke | db9: HTTP 9/9; browser 54/54 non-failing; not current c015 final validation |
-| Current evidence | retry3c FULL_EVIDENCE_SEALED: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail; focused 11/11, 11/11, 11/11, 11/11 and 99/99 clean; synthetic 20 = 18 + 2 expected denial + 0; evidence tests 13 files/213 tests/46 suites; release scan 0/0 non-skipped; PII CLEAN 0 across 2,332 text / 1,120 PNG manual-review inventory / 0 unscannable; manifest `1f90d4fe…`; packet finalizing |
-| Human-only blocker now | NONE — engineering evidence/packet/review remains open, so GO is not requestable |
+| Current evidence | retry3c FULL_EVIDENCE_SEALED: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail; focused 11/11, 11/11, 11/11, 11/11 and 99/99 clean; synthetic 20 = 18 + 2 expected denial + 0; evidence tests 13 files/213 tests/46 suites; release scan 0/0 non-skipped; PII CLEAN 0 across 2,332 text / 1,120 PNG manual-review inventory / 0 unscannable; manifest `1f90d4fe…`; packet successor `8bd8df8f…` and continuity successor `0f3b3a33…` pushed/origin-verified/scanned 0 secret/0 PII; final consistency successor and detached review pending |
+| Human-only blocker now | NONE — detached review remains open, so GO is not requestable |
 | Sole human-only blocker after all closure gates pass | Samuel's new GO naming the exact final RC SHA |
 | Migration required / authorized / applied | NO / NO / NO |
 | Tebra state | PRODUCTION DISABLED / UNCONFIGURED; no credentials, practice/provider/location IDs, mapping, consent approval, sandbox evidence, or activation |

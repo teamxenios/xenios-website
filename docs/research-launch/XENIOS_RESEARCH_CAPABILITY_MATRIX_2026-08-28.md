@@ -62,9 +62,14 @@ inventory `f6ef58ea…`. Manual visual/privacy QA covered 18 PNG/9 areas/2
 viewports with 0 blocking visual and 0 privacy findings; five cosmetic items
 are backlog. Canonical release-manifest verification passed under Node
 20.19.0/npm 10.8.2 at SHA-256 `16f08fd2…`, binding the packet and
-assisted-order environment inventory. Current phase remains
-**PACKET_FINALIZING**; the records/evidence successor SHA, exact-final-SHA
-checks, final RC assignment, detached review and deployment remain unassigned.
+assisted-order environment inventory. Records/evidence successor
+`8bd8df8f556d8e84bc9c8daef1871d6a59b58590` is pushed, origin-verified and
+non-skipped scanned at 0 secret/0 PII. Continuity successor
+`0f3b3a334312273775ecf2efa4e3cda5bcf7a04d` is also pushed,
+origin-verified and scanned at 0 secret/0 PII. Current phase is
+**CODEX_DETACHED_REVIEW**; the final records-only consistency successor/final
+RC SHA, detached-review verdict and deployment remain unassigned by
+self-reference.
 
 ## Allowed classifications
 
@@ -126,7 +131,7 @@ checks, final RC assignment, detached review and deployment remain unassigned.
 | Global marketing shell touch targets (Navbar/Footer/TopRibbon) | ENABLED + AUTHORITATIVE (structural) | Reviewed candidate changes are fully classified by the core disposition; no separate acknowledgement is required beyond exact-SHA GO | `XENIOS_RESEARCH_CORE_SITE_PROTECTION_DISPOSITION_2026-08-29.md` |
 | Hino / public-site continuity | ENABLED + AUTHORITATIVE | `/hino` tree is production-compatible; core protection tripwire re-pinned only for reviewed global changes | `ea4e294`; sealed core-site gate and 2026-08-29 disposition |
 | 404 and error handling | ENABLED + AUTHORITATIVE | Authoritative HTTP 404 + noindex from the raw policy; public error message never carries exception text | `600e45a`, `40bae71` |
-| Recut production deployment | PRODUCTION DISABLED | Runtime `2d662a0` and evidence freeze `c0156916` are pushed, retry3c full evidence is sealed, and the bounded 192-file packet is generated/validated. State remains PACKET_FINALIZING because the records/evidence successor SHA, exact-final-SHA checks, final RC assignment and detached review are not closed. Samuel's exact-final-RC-SHA GO is therefore not yet requestable. Failed `eb659d8100a3b9831d52688120931c48d10330d9` / `dep-da94b91srm7s73b55dsg` remains disqualified; live production remains `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` / `dep-da94g05g1s2s7396lkv0`. | Packet inventory `6dab7745…`; canonical manifest `16f08fd2…`; 2026-08-29 deploy record; recut mutation ledger: NO |
+| Recut production deployment | PRODUCTION DISABLED | Runtime `2d662a0` and evidence freeze `c0156916` are pushed, retry3c full evidence is sealed, and the bounded 192-file packet is generated/validated. Records/evidence successor `8bd8df8f…` and continuity successor `0f3b3a33…` are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. State is CODEX_DETACHED_REVIEW because the final records-only consistency successor/final RC SHA and detached-review verdict are not closed. Samuel's exact-final-RC-SHA GO is therefore not yet requestable. Failed `eb659d8100a3b9831d52688120931c48d10330d9` / `dep-da94b91srm7s73b55dsg` remains disqualified; live production remains `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` / `dep-da94g05g1s2s7396lkv0`. | Packet inventory `6dab7745…`; canonical manifest `16f08fd2…`; 2026-08-29 deploy record; recut mutation ledger: NO |
 | Production or shared-staging migration from this recut | PRODUCTION DISABLED | No migration is required, authorized, or applied | mutation ledger: NO / NO / NO |
 | Real invitations, accounts, external messages | PRODUCTION DISABLED | No external send exists in this program | mutation ledger: 0 |
 

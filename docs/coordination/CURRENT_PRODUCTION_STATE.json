@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-08-30T22:04:52.071Z",
+  "generatedAt": "2026-08-30T22:53:05.351Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -62,7 +62,7 @@
       "headSha": "8e8933cee58af2750edf69d672a463884df29634",
       "graphNodeId": "editorial-homepage-8e8933ce",
       "state": "SOURCE_INTEGRATED_IN_RUNTIME_FREEZE",
-      "reason": "This separate editorial-homepage commit was absent from the failed composite RC ancestry and was later reconciled deliberately into runtime freeze 2d662a0d. Retry2 and the e641 smoke are excluded; retry3 and retry3b are wrapper-only stopped attempts; exact-c015 retry3c full browser/HTTP evidence is sealed; and the packet is finalizing. This candidate evidence is not a production observation."
+      "reason": "This separate editorial-homepage commit was absent from the failed composite RC ancestry and was later reconciled deliberately into runtime freeze 2d662a0d. Retry2 and the e641 smoke are excluded; retry3 and retry3b are wrapper-only stopped attempts; exact-c015 retry3c full browser/HTTP evidence and the bounded packet are sealed. This candidate evidence is not a production observation."
     },
     {
       "pullRequest": 117,
@@ -136,7 +136,25 @@
       "graphNodeId": "evidence-freeze-c0156916",
       "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
       "branch": "claude/xenios-research-full-finish-takeover-20260828",
-      "state": "PACKET_FINALIZING",
+      "recordsEvidenceSuccessorSha": "8bd8df8f556d8e84bc9c8daef1871d6a59b58590",
+      "recordsEvidenceSuccessorTree": "517db145ed6494c845c9453a8cec59c6be4b9892",
+      "recordsEvidenceSuccessorScan": {
+        "addedLines": 1338773,
+        "files": 732,
+        "secretFindings": 0,
+        "piiFindings": 0,
+        "piiSkipped": false
+      },
+      "continuitySuccessorSha": "0f3b3a334312273775ecf2efa4e3cda5bcf7a04d",
+      "continuitySuccessorTree": "257d53b984ca12a48282d25f187b84fc14478915",
+      "continuitySuccessorScan": {
+        "addedLines": 1339032,
+        "files": 734,
+        "secretFindings": 0,
+        "piiFindings": 0,
+        "piiSkipped": false
+      },
+      "state": "FULL_EVIDENCE_SEALED",
       "originVerified": true,
       "finalRcSha": null,
       "detachedReview": "NOT_STARTED",
@@ -144,7 +162,7 @@
       "migrationRequired": false,
       "migrationAuthorized": false,
       "migrationApplied": false,
-      "reason": "Current origin-verified evidence freeze; exactly seven evidence/test files separate it from runtime 2d662a0d and no customer-facing or server-runtime file changed. Retry3c full evidence is sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail on the first attempt; focused early-access 11/11, assisted-order 11/11, negative 11/11, unknown 11/11 and account 99/99, all zero fail and clean; synthetic 20 = 18 PASS + 2 expected denial notes + 0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; PII CLEAN with 0 findings across 2,332 text, 1,120 PNG manual-review inventory and 0 unscannable. Evidence manifest SHA256 is 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257. The wrapper-only 46-vs-13 stop and excluded fixture-scan attempt at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830 remain disclosed; replacement reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW with config HTTP 200. The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload inventory f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14; manual QA 18 PNG/9 areas/2 viewports, 0 blocking visual and 0 privacy, with five cosmetic backlog items. Canonical release-manifest verification passed under Node 20.19.0/npm 10.8.2; SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c binds packet + assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested and dispositioned nonblocking; release-control 51 pass + 1 intentional skip + 0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS. Current phase remains PACKET_FINALIZING. Records/evidence successor SHA, exact-final-SHA checks, successor origin verification, final RC assignment, detached review and deployment remain unassigned."
+      "reason": "Current origin-verified evidence freeze c01569169cad5e6619187221d84019ae8bfc7c69 differs from runtime 2d662a0d31bb1de9332fb5c591f01cab76b991b1 by exactly seven evidence/test files and no runtime file. Retry3c is sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail; focused 11/11, 11/11, 11/11, 11/11 and 99/99 clean; synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail; evidence tests 13 files/213 tests; endpoint 16 SAME + 11 INTENTIONAL_CHANGE + 0 regression + 0 human, config live/candidate 200; non-skipped scan 0 secret/0 PII. Bounded packet is validated at 192 files = 191 payload + self with 72 PNG + 72 text and packet/payload hashes 6dab7745/f6ef58ea. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified; its scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) is pushed and origin-verified; its scan covered 1,339,032 added lines across 734 files with 0 secret and 0 PII findings. Current phase is CODEX_DETACHED_REVIEW. The final records-only consistency successor/final RC SHA, detached-review verdict and deployment remain unassigned by self-reference; no production mutation occurred."
     }
   ],
   "knownRisks": [
@@ -237,10 +255,10 @@
       "summary": "Excluded fixture-scan attempt archived at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830. The reserved-fixture replacement recapture passed endpoint 16/11/0/0 with assisted-order config HTTP 200."
     },
     {
-      "id": "FINAL_PACKET_AND_DETACHED_REVIEW_PENDING",
+      "id": "FINAL_CONSISTENCY_SUCCESSOR_AND_DETACHED_REVIEW_PENDING",
       "state": "OPEN_RELEASE_GATE",
       "releaseBlocking": true,
-      "summary": "State PACKET_FINALIZING: the bounded packet is generated and validated, but the final records/evidence successor SHA, exact-final-SHA checks, successor origin verification, final RC assignment and detached Codex review do not yet exist or have not run; Samuel's exact-SHA authorization is not yet requestable. After successor/review closure, Samuel's exact-final-RC-SHA GO becomes the sole remaining human-only authorization."
+      "summary": "State CODEX_DETACHED_REVIEW: records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain open by self-reference, so Samuel's exact-SHA authorization is not yet requestable. After those close, Samuel's exact-final-RC-SHA GO becomes the sole remaining human-only authorization."
     }
   ],
   "evidenceLimitations": [
@@ -250,7 +268,7 @@
     "MIGRATION_DAG applied-state entries retain their own dated evidence and were not re-attested by this verification.",
     "The 2d662a0d runtime, c015691 evidence freeze, historical db9 smoke and sealed retry3c evidence are candidate facts, not production observations, and do not change the trusted live baseline.",
     "Historical efb/r10g/r10h, the failed first db9 smoke, the stopped db9 full run, externally interrupted retry1, lifecycle-flaky retry2, excluded e641 smoke, wrapper-stopped retry3/retry3b, wrapper-only 46-vs-13 stop, and excluded fixture-scan attempt provide no current final PASS.",
-    "Retry3c full evidence and the bounded review packet are sealed/validated, but no records/evidence successor SHA, exact-final-SHA result, final RC assignment or detached-review verdict existed at this reconciliation timestamp. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS."
+    "Retry3c full evidence and the bounded review packet are sealed/validated. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain unassigned by self-reference. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS."
   ],
   "evidence": [
     {
