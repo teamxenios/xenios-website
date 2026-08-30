@@ -700,6 +700,38 @@ describe("evaluateRouteStateContract", () => {
     });
   });
 
+  it("binds a declared redirect to its exact encoded returnTo query", () => {
+    const redirectRoute = {
+      ...confirmationRoute,
+      path: "/research/account/orders",
+      expectedBrowserPath: "/research/sign-in",
+      expectedBrowserReturnTo: "/research/account/orders",
+    };
+    const snapshot = {
+      path: "/research/sign-in",
+      search: "?returnTo=%2Fresearch%2Faccount%2Forders",
+      bodyText: "Confirmation unavailable",
+      selectorPresence: { "[data-testid='order-confirmation-unavailable']": true },
+    };
+    expect(
+      evaluateRouteStateContract(redirectRoute, snapshot)
+        .find((assertion) => assertion.id === "ROUTE_LOCATION"),
+    ).toMatchObject({ result: "PASS" });
+
+    for (const mismatch of [
+      { ...snapshot, path: "/research/account/orders" },
+      { ...snapshot, search: "" },
+      { ...snapshot, search: "?returnTo=%2Fresearch%2Faccount" },
+      { ...snapshot, search: `${snapshot.search}&returnTo=%2Fresearch%2Faccount%2Forders` },
+      { ...snapshot, search: `${snapshot.search}&next=%2Fresearch` },
+    ]) {
+      expect(
+        evaluateRouteStateContract(redirectRoute, mismatch)
+          .find((assertion) => assertion.id === "ROUTE_LOCATION"),
+      ).toMatchObject({ result: "FAIL" });
+    }
+  });
+
   it("treats a missing route identity contract as release-blocking", () => {
     const assertions = evaluateRouteStateContract(
       { path: "/research/about" },

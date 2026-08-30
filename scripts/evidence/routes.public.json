@@ -462,6 +462,8 @@
     },
     {
       "path": "/research/account",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account",
       "surface": "account-overview",
       "state": "unauthorized",
       "indexable": false,
@@ -474,6 +476,8 @@
     },
     {
       "path": "/research/account/orders",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/orders",
       "surface": "orders",
       "state": "unauthorized",
       "indexable": false,
@@ -486,6 +490,8 @@
     },
     {
       "path": "/research/account/subscription",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/subscription",
       "surface": "membership",
       "state": "unauthorized",
       "indexable": false,
@@ -498,6 +504,8 @@
     },
     {
       "path": "/research/account/care",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/care",
       "surface": "care-account",
       "state": "unauthorized",
       "indexable": false,
@@ -510,6 +518,8 @@
     },
     {
       "path": "/research/account/documents",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/documents",
       "surface": "documents",
       "state": "unauthorized",
       "indexable": false,
@@ -522,6 +532,8 @@
     },
     {
       "path": "/research/account/support",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/support",
       "surface": "support",
       "state": "unauthorized",
       "indexable": false,
@@ -1338,6 +1350,8 @@
     },
     {
       "path": "/research/account/profile",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/profile",
       "surface": "account-settings",
       "state": "unauthorized",
       "indexable": false,
@@ -1351,6 +1365,8 @@
     },
     {
       "path": "/research/account/security",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/security",
       "surface": "account-settings",
       "state": "unauthorized",
       "indexable": false,
@@ -1364,6 +1380,8 @@
     },
     {
       "path": "/research/account/interests",
+      "expectedBrowserPath": "/research/sign-in",
+      "expectedBrowserReturnTo": "/research/account/interests",
       "surface": "account-settings",
       "state": "unauthorized",
       "indexable": false,

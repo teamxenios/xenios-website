@@ -259,6 +259,31 @@ describe("public evidence topology", () => {
     }]);
   });
 
+  it("pins every signed-out account route to sign-in with its exact returnTo", () => {
+    const accountRedirects = [
+      "/research/account",
+      "/research/account/orders",
+      "/research/account/subscription",
+      "/research/account/care",
+      "/research/account/documents",
+      "/research/account/support",
+      "/research/account/profile",
+      "/research/account/security",
+      "/research/account/interests",
+    ];
+    expect(
+      routes.routes
+        .filter((candidate) => candidate.expectedBrowserReturnTo !== undefined)
+        .map((candidate) => candidate.path),
+    ).toEqual(accountRedirects);
+    for (const pathname of accountRedirects) {
+      expect(route(pathname)).toMatchObject({
+        expectedBrowserPath: "/research/sign-in",
+        expectedBrowserReturnTo: pathname,
+      });
+    }
+  });
+
   it("labels denied content routes as boundary-only and requires separate representative evidence", () => {
     expect(route("/research/member/catalog")).toMatchObject({
       surface: "catalog",

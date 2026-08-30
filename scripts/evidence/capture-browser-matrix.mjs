@@ -910,11 +910,18 @@ export function bindReviewedAssertionNotes(routes, { sha, cwd = process.cwd(), r
 
 export function evaluateRouteStateContract(route, snapshot) {
   const expectedPath = new URL(route.expectedBrowserPath ?? route.path, "https://evidence.invalid").pathname;
-  const locationPass = snapshot.path === expectedPath;
+  const expectedSearch = route.expectedBrowserReturnTo === undefined
+    ? null
+    : `?returnTo=${encodeURIComponent(route.expectedBrowserReturnTo)}`;
+  const actualSearch = String(snapshot.search ?? "");
+  const locationPass = snapshot.path === expectedPath
+    && (expectedSearch === null || actualSearch === expectedSearch);
   const locationAssertion = {
     id: "ROUTE_LOCATION",
     result: locationPass ? "PASS" : "FAIL",
-    detail: `path=${snapshot.path} expected=${expectedPath}`,
+    detail: expectedSearch === null
+      ? `path=${snapshot.path} expected=${expectedPath}`
+      : `path=${snapshot.path} expected=${expectedPath} search=${actualSearch} expectedSearch=${expectedSearch}`,
   };
   const contract = route.semanticContract;
   if (!contract) {
@@ -1009,11 +1016,12 @@ async function runOne(page, { baseUrl, route, width, height, deviceScaleFactor, 
         const selectors = ${JSON.stringify(semanticSelectors)};
         return {
           path: location.pathname,
+          search: location.search,
           bodyText: document.body ? document.body.innerText : "",
           selectorPresence: Object.fromEntries(selectors.map((selector) => [selector, Boolean(document.querySelector(selector))])),
         };
       })()`)
-    : { path: "", bodyText: "", selectorPresence: {} };
+    : { path: "", search: "", bodyText: "", selectorPresence: {} };
   let documentMetadata = null;
   if (audit) {
     await page.settle({ quietMs: 150, maxSettleMs: 2000 });
