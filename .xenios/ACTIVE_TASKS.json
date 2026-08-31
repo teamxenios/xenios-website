@@ -577,7 +577,7 @@
       "id": "CARE-RESEARCH-POSTLAUNCH-20260831",
       "title": "Implement and deploy founder-approved State A Care + Research post-launch content and catalog education",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-care-research-postlaunch-20260831",
       "paths": [
         "client/src/research/pages/Gateway.tsx",
@@ -626,9 +626,9 @@
       "claimedAt": "2026-08-31T16:40:37.069Z",
       "handoff": {
         "session": "codex-care-research-postlaunch-20260831",
-        "sha": "cea8c84926b82fad6d3edbca63012a476b6daef3",
-        "file": ".xenios/handoffs/2026-08-31T16-00-57-976Z-CARE-RESEARCH-POSTLAUNCH-20260831-codex-care-research-postlaunch-20260831.md",
-        "at": "2026-08-31T16:00:57.984Z"
+        "sha": "b004c2e57347b6f8a2996f61ecd3b15f075dbeee",
+        "file": ".xenios/handoffs/2026-08-31T16-42-45-867Z-CARE-RESEARCH-POSTLAUNCH-20260831-codex-care-research-postlaunch-20260831.md",
+        "at": "2026-08-31T16:42:45.879Z"
       }
     }
   ]

@@ -507,7 +507,7 @@
         ".xenios/sessions/codex-care-research-postlaunch-20260831.json",
         ".xenios/handoffs/*CARE-RESEARCH-POSTLAUNCH-20260831*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-31T16:40:37.084Z",
       "heartbeatAt": "2026-08-31T16:42:16.600Z"
     }
