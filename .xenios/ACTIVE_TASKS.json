@@ -575,9 +575,9 @@
     },
     {
       "id": "CARE-RESEARCH-POSTLAUNCH-20260831",
-      "title": "Implement founder-approved State A Care + Research post-launch content and catalog education without production mutation",
+      "title": "Implement and deploy founder-approved State A Care + Research post-launch content and catalog education",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-care-research-postlaunch-20260831",
       "paths": [
         "client/src/research/pages/Gateway.tsx",
@@ -611,6 +611,7 @@
         "client/src/research/content/care-research-postlaunch.test.ts",
         "shared/research/member-catalog.care-research-postlaunch.test.ts",
         "docs/research-launch/XENIOS_CARE_RESEARCH_POSTLAUNCH_IMPLEMENTATION_2026-08-31.md",
+        "docs/research-launch/DEPLOY_RECORD_2026-08-31_CARE_RESEARCH_POSTLAUNCH.md",
         "docs/review/xenios-care-research-postlaunch-20260831/**",
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/SESSION_REGISTRY.json",
@@ -621,8 +622,8 @@
       "dependsOn": [
         "OMEGA-FULL-FINISH-LEAD-20260828"
       ],
-      "pathsNote": "Founder-approved State A scope from the 2026-08-31 post-launch package. Existing routes and controls only; reconcile all 426 workbook source rows into customer-safe education and existing server-authoritative pricing gates. No deploy, production mutation, migration, new route, new form, new API, payment, clinical, pharmacy, supplier, or external communication action is authorized.",
-      "claimedAt": "2026-08-31T14:32:50.341Z",
+      "pathsNote": "Founder-approved State A scope from the 2026-08-31 post-launch package. Existing routes and controls only; reconcile all 426 workbook source rows into customer-safe education and existing server-authoritative pricing gates. The initial package prohibited production mutation. Samuel's later current explicit command authorized one exact-SHA deployment of abe03ca3a836dffb10699c0c39883119e2a8f816 only; it became live as dep-daaqncid0e5s739067tg with no environment, migration, database, payment, clinical, pharmacy, supplier, account, invitation, or external-communication mutation.",
+      "claimedAt": "2026-08-31T16:40:37.069Z",
       "handoff": {
         "session": "codex-care-research-postlaunch-20260831",
         "sha": "cea8c84926b82fad6d3edbca63012a476b6daef3",

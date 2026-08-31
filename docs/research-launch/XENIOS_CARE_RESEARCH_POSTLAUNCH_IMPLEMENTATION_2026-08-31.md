@@ -11,7 +11,7 @@ Branch: `codex/xenios-care-research-postlaunch-20260831`
 - Canonical member-catalog authority: the existing server-side Product Control catalog projection.
 - Canonical price authority: the existing current-price and authoritative-price resolvers. No browser price book was added.
 - The approved workbook was used only as a private reconciliation input. Its customer-safe generated output provides education and exact-row coverage, but it does not authorize transactions or replace the server-side catalog and price authorities.
-- No route, API, migration, database write, checkout behavior, payment behavior, deployment configuration, or production system was changed.
+- The implementation diff adds no route, API, migration, database write, checkout behavior, payment behavior, or deployment-configuration change. Production deployment is recorded separately below.
 
 ## Input and education coverage
 
@@ -93,3 +93,29 @@ Conservation result: 0 new routes, 0 removed routes, 0 net-new buttons, 0 net-ne
 - Client and built-output leakage scans report zero supplier identity, wholesale, margin, or internal pricing leakage.
 - The production build passes under the pinned runtime.
 - Focused local Chromium smoke passes 54/54 desktop, mobile, and 200% zoom-equivalent route/component runs, including the 11 changed public routes, an authorized member-catalog fixture, Research, clinical, blend, and topical detail fixtures, FAQ disclosure behavior, navigation reachability, single-main structure, and horizontal-overflow checks.
+
+## Production deployment
+
+Samuel's later explicit production command authorized deployment of the exact
+reviewed successor only. Commit
+`abe03ca3a836dffb10699c0c39883119e2a8f816` was deployed to the production
+Render service as `dep-daaqncid0e5s739067tg` and became live at
+2026-08-31T16:29:36.440651Z.
+
+Post-deploy verification passed:
+
+- 27/27 critical endpoint comparisons were `SAME`, with 0 regression and 0 human-review item;
+- 22/22 rendered public-route cases passed across the 11 changed routes at desktop and mobile viewports;
+- `/api/health` returned HTTP 200;
+- `/api/research/early-access/assisted-orders/config` returned HTTP 200 with `enabled:true`;
+- Render reported no application error log and no 5xx request from deployment start through 2026-08-31T16:39:59Z.
+
+No environment variable, migration, database, pricing-authority, payment,
+clinical, pharmacy, account, or invitation mutation accompanied the deploy.
+The existing Care runtime remains fail-closed: production reports the Care
+capability disabled and its Tebra portal/scheduling handoffs as
+`care_unavailable`. The approved State A presentation is live, but this deploy
+does not claim technical Care/Tebra activation.
+
+The complete immutable deployment record is
+`docs/research-launch/DEPLOY_RECORD_2026-08-31_CARE_RESEARCH_POSTLAUNCH.md`.

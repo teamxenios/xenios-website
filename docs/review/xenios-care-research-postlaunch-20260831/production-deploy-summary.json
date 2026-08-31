@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "classification": "COMPLETED_PRODUCTION_DEPLOYMENT",
+  "observedAt": "2026-08-31T16:39:59Z",
+  "production": {
+    "workspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "serviceName": "xenios-website",
+    "publicOrigin": "https://xeniostechnology.com",
+    "renderOrigin": "https://xenios-website.onrender.com",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": false,
+    "deployedSha": "abe03ca3a836dffb10699c0c39883119e2a8f816",
+    "deploymentId": "dep-daaqncid0e5s739067tg",
+    "status": "live",
+    "trigger": "api",
+    "startedAt": "2026-08-31T16:28:34.660449Z",
+    "finishedAt": "2026-08-31T16:29:36.440651Z"
+  },
+  "predecessor": {
+    "sha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
+    "deploymentId": "dep-daabqagn74is73aejn80"
+  },
+  "verification": {
+    "criticalEndpoints": {
+      "total": 27,
+      "same": 27,
+      "intentionalChange": 0,
+      "regression": 0,
+      "humanReviewRequired": 0,
+      "verdict": "PASS"
+    },
+    "renderedPublicRoutes": {
+      "routeCount": 11,
+      "viewportsPerRoute": 2,
+      "totalCases": 22,
+      "passedCases": 22,
+      "failedCases": 0,
+      "pageErrors": 0,
+      "observedServerErrors": 0,
+      "horizontalOverflowCases": 0,
+      "harnessNote": "The initial sweep passed 19 cases; three networkidle or full-page screenshot timeouts passed bounded DOM-ready reruns 3/3."
+    },
+    "health": {
+      "path": "/api/health",
+      "status": 200
+    },
+    "assistedOrderSentinel": {
+      "path": "/api/research/early-access/assisted-orders/config",
+      "status": 200,
+      "enabled": true
+    },
+    "renderLogs": {
+      "windowStart": "2026-08-31T16:28:34Z",
+      "windowEnd": "2026-08-31T16:39:59Z",
+      "applicationErrorCount": 0,
+      "request5xxCount": 0
+    },
+    "careRuntime": {
+      "capabilityEnabled": false,
+      "capabilityState": "disabled",
+      "portalStatus": "care_unavailable",
+      "schedulingMode": "disabled",
+      "schedulingStatus": "care_unavailable"
+    }
+  },
+  "mutations": {
+    "environmentVariables": false,
+    "migrations": false,
+    "database": false,
+    "pricingAuthority": false,
+    "payment": false,
+    "clinical": false,
+    "pharmacy": false,
+    "accountOrInvitation": false
+  },
+  "rollbackTargetSha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639"
+}
