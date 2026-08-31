@@ -635,7 +635,7 @@
       "id": "HEALTH-ENTRYPOINT-20260831",
       "title": "Make /health the canonical Care + Research gateway and update the main-site navigation",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-health-entrypoint-20260831",
       "paths": [
         "client/src/App.tsx",
@@ -674,7 +674,13 @@
       ],
       "pathsNote": "Founder-requested canonical umbrella entrypoint at /health. Preserve /care and /research for compatibility, preserve health-surface tracking and attribution isolation, and limit the protected main-site change to the requested Health navigation target plus exact sitemap/route seams. Implementation and verification only: no new production deployment is authorized until Samuel gives a later current exact-SHA GO.",
       "claimedAt": "2026-08-31T17:05:56.410Z",
-      "releasedAt": "2026-08-31T17:05:47.557Z"
+      "releasedAt": "2026-08-31T17:05:47.557Z",
+      "handoff": {
+        "session": "codex-health-entrypoint-20260831",
+        "sha": "1bfd9c3a6bf580809b40cbc8f74840aa4e20b9d6",
+        "file": ".xenios/handoffs/2026-08-31T17-30-58-003Z-HEALTH-ENTRYPOINT-20260831-codex-health-entrypoint-20260831.md",
+        "at": "2026-08-31T17:30:58.015Z"
+      }
     }
   ]
 }

@@ -699,7 +699,7 @@
         ".xenios/sessions/codex-health-entrypoint-20260831.json",
         ".xenios/handoffs/*HEALTH-ENTRYPOINT-20260831*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-08-31T17:05:56.413Z",
       "heartbeatAt": "2026-08-31T17:05:56.413Z"
     }
