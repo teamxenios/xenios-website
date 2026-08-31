@@ -1,0 +1,20 @@
+{
+  "$comment": "Intentional, reviewed differences between the live Xenios application at abe03ca3a836dffb10699c0c39883119e2a8f816 and the exact /health gateway implementation candidate faf6d95891aea217894413394b2cd6ce4c283f27. Every allow entry is an anchored regex over one exact emitted diff. Unlisted changes are deployment-blocking regressions.",
+  "intentionalChanges": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "rationale": "The new public Health entrypoint replaces the authoritative not-found document with the reviewed indexable Care + Research gateway, exact canonical and social URL authority, and route-owned title.",
+      "allow": [
+        "^status 404 -> 200$",
+        "^header x-robots-tag: noindex,nofollow,noarchive -> index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1$",
+        "^header link: - -> <https://xeniostechnology[.]com/health>; rel=\"canonical\"$",
+        "^shape-fingerprint 77f950f01f216596 -> 575c862d37344325$",
+        "^html-marker meta-robots: \"noindex,nofollow,noarchive\" -> \"index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1\"$",
+        "^html-marker canonical: - -> \"https://xeniostechnology[.]com/health\"$",
+        "^html-marker og-url: - -> \"https://xeniostechnology[.]com/health\"$",
+        "^html-marker title: \"Not found, xenios\" -> \"Xenios \\| Care \\+ Research\"$"
+      ]
+    }
+  ]
+}

@@ -223,6 +223,54 @@ describe("checked-in intentional-change expectations", () => {
       ).toBe(false);
     }
   });
+
+  it("pins the exact reviewed /health 404-to-gateway transition", () => {
+    const expectations = JSON.parse(
+      readFileSync(
+        path.join(
+          REPO_ROOT,
+          "scripts",
+          "release",
+          "critical-endpoint-expectations-health-20260831.json",
+        ),
+        "utf8",
+      ),
+    ) as {
+      intentionalChanges?: Array<{
+        method?: string;
+        path?: string;
+        allow?: string[];
+      }>;
+    };
+
+    expect(expectations.intentionalChanges).toHaveLength(1);
+    const [rule] = expectations.intentionalChanges ?? [];
+    expect({ method: rule?.method, path: rule?.path }).toEqual({
+      method: "GET",
+      path: "/health",
+    });
+    expect(rule?.allow).toHaveLength(8);
+    for (const pattern of rule?.allow ?? []) {
+      expect(pattern.startsWith("^")).toBe(true);
+      expect(pattern.endsWith("$")).toBe(true);
+      expect(hasUnescapedAlternation(pattern)).toBe(false);
+      expect(() => new RegExp(pattern)).not.toThrow();
+    }
+    expect(
+      (rule?.allow ?? []).some((pattern) =>
+        new RegExp(pattern).test(
+          'html-marker title: "Not found, xenios" -> "Xenios | Care + Research"',
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      (rule?.allow ?? []).some((pattern) =>
+        new RegExp(pattern).test(
+          'html-marker title: "Not found, xenios" -> "Xenios | Totally unrelated"',
+        ),
+      ),
+    ).toBe(false);
+  });
 });
 
 describe("classify", () => {
