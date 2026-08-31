@@ -64,7 +64,7 @@ function supplementCard(overrides: Partial<DisplayProductCard> = {}): DisplayPro
     displayName: "Longevity Essentials NAD+",
     canonicalName: "Longevity Essentials NAD+",
     category: "longevity",
-    brand: "NutriDyn",
+    brand: "Fixture Supplier 3",
     collections: ["mitochondrial-longevity"],
     availability: "APPROVAL_REQUIRED_PURCHASE",
     price: { amountCents: 8900, currency: "USD" },

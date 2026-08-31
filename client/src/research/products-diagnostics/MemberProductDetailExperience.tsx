@@ -5,6 +5,7 @@ import type {
   MemberCatalogVariant,
   MemberProductDetail,
 } from "@shared/research/member-catalog";
+import { getProductEducationProfile } from "../content/productEducation";
 import { ResearchMemberShell } from "../ui/shells";
 import {
   ResearchEmptyState,
@@ -15,41 +16,72 @@ import {
 } from "../ui/kit";
 import type { MemberCatalogSurfaceState } from "./MemberCatalogExperience";
 
-function formatPrice(variant: MemberCatalogVariant): string {
-  if (variant.price === null) return "Price not currently available";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: variant.price.currency,
-  }).format(variant.price.amountCents / 100);
+function pricePresentation(
+  variant: MemberCatalogVariant,
+  product: MemberProductDetail,
+): { label: string; value: string } {
+  if (variant.price === null || variant.price.amountCents <= 0) {
+    if (product.lane === "future_clinical") {
+      return { label: "Pricing", value: "Pricing shown after clinical review" };
+    }
+    if (product.displayState === "catalog_only") {
+      return { label: "Pricing", value: "Price on request" };
+    }
+    return { label: "Pricing", value: "Price not currently available" };
+  }
+  return {
+    label: product.lane === "future_clinical" ? "Medication price" : "Member price",
+    value: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: variant.price.currency,
+    }).format(variant.price.amountCents / 100),
+  };
+}
+
+function EducationList({ items }: { items: readonly string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <ul className="mt-3 grid gap-2 pl-5 body-s text-ink-2">
+      {items.map((item) => <li key={item}>{item}</li>)}
+    </ul>
+  );
+}
+
+function EducationSection({
+  title,
+  text,
+  items,
+}: {
+  title: string;
+  text?: string | null;
+  items?: readonly string[];
+}) {
+  if (!text && (!items || items.length === 0)) return null;
+  return (
+    <section className="py-6" style={{ borderTop: "1px solid var(--rule)" }}>
+      <h2 className="body-l font-700">{title}</h2>
+      {text && <p className="body-s text-ink-2 mt-3 max-w-[72ch]">{text}</p>}
+      {items && <EducationList items={items} />}
+    </section>
+  );
+}
+
+function formatSourceReviewDate(value: string | null, fallback: string): string {
+  if (!value) return fallback;
+  const date = new Date(value);
+  if (Number.isNaN(date.valueOf())) return fallback;
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(date);
 }
 
 function lotCoaLabel(state: MemberCatalogVariant["lotCoaState"]): string {
   if (state === "verified") return "Exact-lot documentation verified";
   if (state === "not_applicable") return "Lot documentation not applicable";
   return "Exact-lot documentation required";
-}
-
-function FactSection({
-  title,
-  value,
-  pending,
-}: {
-  title: string;
-  value: string | null;
-  pending: string;
-}) {
-  return (
-    <section className="py-6" style={{ borderTop: "1px solid var(--rule)" }}>
-      <h2 className="body-l font-700">{title}</h2>
-      {value ? (
-        <p className="body-s text-ink-2 mt-3 max-w-[68ch]">{value}</p>
-      ) : (
-        <div className="mt-3">
-          <ResearchPendingPanel kind="supplier_pending" body={pending} />
-        </div>
-      )}
-    </section>
-  );
 }
 
 export function MemberProductDetailExperience({
@@ -73,6 +105,20 @@ export function MemberProductDetailExperience({
       null,
     [product, selectedVariantId],
   );
+  const education = useMemo(
+    () =>
+      product
+        ? getProductEducationProfile({
+            canonicalName: product.canonicalName,
+            displayName: product.displayName,
+            aliases: product.aliases,
+            lane: product.lane,
+            variantLabel: selected?.label,
+          })
+        : null,
+    [product, selected?.label],
+  );
+  const selectedPrice = selected && product ? pricePresentation(selected, product) : null;
   const showProductIdentity = state === "ok" && product !== null;
 
   return (
@@ -169,17 +215,22 @@ export function MemberProductDetailExperience({
                     </select>
                   </label>
                 ) : (
-                  <ResearchPendingPanel
-                    kind="supplier_pending"
-                    body="An exact approved Product Control variant and SKU are required."
-                  />
+                  <div className="grid gap-3">
+                    <ResearchPendingPanel
+                      kind="supplier_pending"
+                      body="An exact approved Product Control variant and SKU are required."
+                    />
+                    {product.lane === "future_clinical" && (
+                      <p className="body-s text-ink-2">Pricing shown after clinical review</p>
+                    )}
+                  </div>
                 )}
 
-                {selected && (
+                {selected && selectedPrice && (
                   <dl className="grid gap-3 body-s sm:grid-cols-2">
                     <div>
-                      <dt className="mono-label text-ink-mute">Member price</dt>
-                      <dd className="mt-1 tabular">{formatPrice(selected)}</dd>
+                      <dt className="mono-label text-ink-mute">{selectedPrice.label}</dt>
+                      <dd className="mt-1 tabular">{selectedPrice.value}</dd>
                     </div>
                     <div>
                       <dt className="mono-label text-ink-mute">Availability</dt>
@@ -218,35 +269,40 @@ export function MemberProductDetailExperience({
               </div>
             )}
 
-            <div className="mt-6">
-              <FactSection
-                title="Overview"
-                value={product.overview}
-                pending="Approved overview content is required before it can be displayed."
+            {education && <div className="mt-6">
+              <EducationSection title="Overview" text={product.overview || product.summary} />
+              <EducationSection title="What it is" text={education.whatItIs} />
+              <EducationSection title="Why people are interested" text={education.whyPeopleAreInterested} />
+              <EducationSection title="Commonly discussed goals" items={education.commonlyDiscussedGoals} />
+              <EducationSection title="Research areas being investigated" items={education.researchAreas} />
+              <EducationSection title="How researchers think it may work" text={education.mechanismContext} />
+              <EducationSection title="What researchers have observed" text={education.observedResearch} />
+              <EducationSection
+                title="Where the evidence comes from"
+                text={[education.evidenceSourceSummary, product.researchInformation].filter(Boolean).join(" ")}
               />
-              <FactSection
-                title="Specifications"
-                value={product.specifications}
-                pending="Approved product specifications are required."
+              <EducationSection title="What human evidence exists" text={education.humanEvidence} />
+              <EducationSection title="Evidence strength" text={education.evidenceLabel} />
+              <EducationSection title="What remains unknown" items={education.unknowns} />
+              <EducationSection title="What this does not prove" items={education.doesNotProve} />
+              <EducationSection title="Potential clinical relevance under licensed care" text={education.potentialClinicalRelevance} />
+              <EducationSection
+                title="Current regulatory and clinical status"
+                text={[education.regulatoryAndClinicalStatus, product.disclaimers].filter(Boolean).join(" ")}
               />
-              <FactSection
-                title="Research information"
-                value={product.researchInformation}
-                pending="Reviewed Research information is required."
+              <EducationSection
+                title="Research and Care availability"
+                items={[education.researchAvailability, education.careAvailability]}
               />
-              <FactSection
-                title="Storage"
-                value={product.storageInformation}
-                pending="Approved storage information is required."
+              <EducationSection title="Specifications" text={product.specifications} />
+              <EducationSection
+                title="Certificate of Analysis"
+                items={selected ? [lotCoaLabel(selected.lotCoaState), "A Certificate of Analysis documents specified quality attributes for an exact lot. It does not establish clinical suitability."] : []}
               />
-              <FactSection
+              <EducationSection title="Storage and handling" text={product.storageInformation} />
+              <EducationSection
                 title="Shipping and returns"
-                value={
-                  [product.shippingInformation, product.returnInformation]
-                    .filter(Boolean)
-                    .join(" ") || null
-                }
-                pending="Approved shipping and return information is required."
+                text={[product.shippingInformation, product.returnInformation].filter(Boolean).join(" ") || null}
               />
               <section
                 className="py-6"
@@ -281,7 +337,14 @@ export function MemberProductDetailExperience({
                   </p>
                 )}
               </section>
-            </div>
+              <EducationSection
+                title="Sources and last reviewed"
+                items={[
+                  ...education.sourceNotes,
+                  `Last reviewed: ${formatSourceReviewDate(product.reviewDate, education.lastReviewed)}`,
+                ]}
+              />
+            </div>}
           </>
         )}
       </ResearchRouteBoundary>

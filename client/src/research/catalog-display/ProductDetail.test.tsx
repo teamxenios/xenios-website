@@ -98,7 +98,7 @@ function supplementDetail(overrides: Partial<DisplayProductDetail> = {}): Displa
     displayName: "Mito Recharge",
     canonicalName: "Mito Recharge",
     category: "mitochondrial",
-    brand: "NutriDyn",
+    brand: "Fixture Supplier 3",
     collections: ["mitochondrial-longevity"],
     availability: "APPROVAL_REQUIRED_PURCHASE",
     price: { amountCents: 6450, currency: "USD" },

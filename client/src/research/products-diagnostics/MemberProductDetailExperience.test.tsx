@@ -222,7 +222,12 @@ describe("member product detail experience", () => {
     const unavailable = renderToStaticMarkup(
       <MemberProductDetailExperience product={product} state="unavailable" />,
     );
-    expect(pending).toContain("Approved storage information is required.");
+    expect(pending).toContain("Why people are interested");
+    expect(pending).toContain("What remains unknown");
+    expect(pending).toContain("What this does not prove");
+    expect(pending).toContain("Certificate of Analysis");
+    expect(pending).toContain("Sources and last reviewed");
+    expect(pending).not.toContain("Approved storage information is required.");
     expect(empty).toContain("Product not found.");
     expect(error).toContain("Product request failed.");
     expect(unavailable).toContain("This product is not available.");
@@ -280,6 +285,7 @@ describe("member product detail experience", () => {
     );
     expect(html).toContain("Catalog information");
     expect(html).toContain("not prescribing");
+    expect(html).toContain("Pricing shown after clinical review");
     expect(html).not.toContain("$149.00");
     expect(html).not.toContain("SKU-A");
     expect(html).not.toContain("10 mg");

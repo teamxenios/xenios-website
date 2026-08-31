@@ -109,11 +109,13 @@ describe("member catalog experience", () => {
     // Landmark rule: the layout's section chrome owns the page's one <main>; the shell must not nest a second.
     expect(html).not.toContain("<main");
     expect(html.match(/<h1/g)).toHaveLength(1);
-    expect(html).toContain("Xenios Research catalog");
+    expect(html).toContain("Xenios catalog");
+    expect(html).toContain("Care + Research products");
     expect(html).toContain("Alpha Research");
     expect(html).toContain("$149.00");
     expect(html).toContain("Documentation pending");
     expect(html).toContain("Price not currently available");
+    expect(html).toContain("Clinical and Research listings may share an active ingredient name");
     expect(html).toContain('width="4"');
     expect(html).toContain('height="3"');
     expect(html).toContain('decoding="async"');

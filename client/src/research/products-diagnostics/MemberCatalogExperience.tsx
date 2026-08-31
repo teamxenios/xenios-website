@@ -53,23 +53,60 @@ const STATE_COPY: Record<
   },
 };
 
+const LANE_LABELS: Record<string, string> = {
+  research: "Research",
+  research_material: "Research",
+  future_clinical: "Clinical / provider review",
+  clinician_guided_care: "Clinical / provider review",
+  supplement: "Supplement",
+  non_product_program: "Program",
+  laboratory_supply: "Laboratory supply",
+  storage_accessory: "Storage and organization",
+  quantum: "Quantum",
+};
+
 function laneLabel(value: string): string {
-  return value
+  return LANE_LABELS[value] ?? value
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 }
 
-function priceLabel(product: MemberCatalogCard): string {
-  if (product.price === null) return "Price not currently available";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: product.price.currency,
-  }).format(product.price.amountCents / 100);
+function pricePresentation(product: MemberCatalogCard): { label: string; value: string } {
+  if (product.price !== null && product.price.amountCents > 0) {
+    return {
+      label: product.lane === "future_clinical" ? "Medication price" : "Member price",
+      value: new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: product.price.currency,
+      }).format(product.price.amountCents / 100),
+    };
+  }
+  if (product.lane === "future_clinical") {
+    return { label: "Pricing", value: "Pricing shown after clinical review" };
+  }
+  if (product.displayState === "catalog_only") {
+    return { label: "Pricing", value: "Price on request" };
+  }
+  return { label: "Pricing", value: "Price not currently available" };
+}
+
+function catalogSummary(product: MemberCatalogCard): string {
+  if (product.lane === "future_clinical") {
+    return "This clinical listing is available only through independent licensed review and current pharmacy fulfillment. A listing does not guarantee suitability or a prescription.";
+  }
+  if (product.displayState === "documentation_pending" || product.displayState === "pricing_pending") {
+    return "This listing remains under documentation, pricing, classification, or availability review. No transaction or pathway availability is implied.";
+  }
+  if (product.lane === "research_material") {
+    return `${product.summary} Research interest and evidence context are educational only and are not personal recommendations.`;
+  }
+  return product.summary;
 }
 
 function CatalogCard({ product }: { product: MemberCatalogCard }) {
   const presentation = STATE_COPY[product.displayState];
+  const price = pricePresentation(product);
   return (
     <li
       className="card grid gap-4"
@@ -106,15 +143,15 @@ function CatalogCard({ product }: { product: MemberCatalogCard }) {
           tone={presentation.tone}
         />
       </div>
-      <p className="body-s text-ink-2">{product.summary}</p>
+      <p className="body-s text-ink-2">{catalogSummary(product)}</p>
       <dl className="grid gap-3 body-s sm:grid-cols-2">
         <div>
           <dt className="mono-label text-ink-mute">Category</dt>
           <dd className="mt-1">{product.category}</dd>
         </div>
         <div>
-          <dt className="mono-label text-ink-mute">Member price</dt>
-          <dd className="mt-1 tabular">{priceLabel(product)}</dd>
+          <dt className="mono-label text-ink-mute">{price.label}</dt>
+          <dd className="mt-1 tabular">{price.value}</dd>
         </div>
       </dl>
       <p className="body-s text-ink-mute">{presentation.note}</p>
@@ -185,9 +222,9 @@ export function MemberCatalogExperience({
 
   return (
     <ResearchMemberShell
-      eyebrow="Xenios Research catalog"
-      title="Products"
-      lead="Browse approved product information, current member pricing, and truthful availability. A catalog listing is not a clinical recommendation."
+      eyebrow="Xenios catalog"
+      title="Care + Research products"
+      lead="Browse exact products and formulations with clear pathway, evidence, documentation, pricing, and availability status. Clinical listings require licensed review and pharmacy serviceability. Research listings remain nonclinical and are not personal recommendations."
       actions={
         <Link href={productRequestHref("products")} className="btn btn-primary">
           Request a product
@@ -328,9 +365,11 @@ export function MemberCatalogExperience({
         </section>
 
         <ResearchSecureNotice>
-          Prices, availability, media, documentation, and selection eligibility
-          come from approved server records. Private storage keys, inventory
-          quantities, locations, and provider details are not exposed here.
+          Clinical and Research listings may share an active ingredient name,
+          but they remain separate formulations, sources, authorities, prices,
+          and fulfillment pathways. A listing never guarantees clinical
+          suitability, a prescription, Research availability, or pharmacy
+          serviceability.
         </ResearchSecureNotice>
       </ResearchRouteBoundary>
     </ResearchMemberShell>
