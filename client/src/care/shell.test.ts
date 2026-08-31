@@ -31,9 +31,9 @@ describe("Care public shell and explicit dispatcher", () => {
   const publicSurfaceSource = [pagesSource, schedulingSource, portalSource].join("\n");
 
   it("is truthful and contains no clinical submission control", () => {
-    expect(pagesSource).toContain("A request is not a clinical decision.");
+    expect(pagesSource).toContain("Submitting the intake starts the review process.");
     expect(pagesSource).toContain("This site is not emergency care.");
-    expect(pagesSource).toContain("A request is tentative until the practice confirms it.");
+    expect(pagesSource).toContain("does not confirm eligibility, guarantee an appointment, or guarantee a prescription");
     expect(schedulingSource).toContain("does not guarantee an");
     expect(schedulingSource).toContain("clinical acceptance, treatment, or a prescription");
     expect(publicSurfaceSource).not.toMatch(/<(form|input|textarea|select)\b/i);
@@ -73,9 +73,12 @@ describe("Care public shell and explicit dispatcher", () => {
     expect(pagesSource).toContain('className="m-0 flex list-none flex-wrap gap-3 p-0"');
   });
 
-  it("does not claim a provider, state, pharmacy, price, product, or launch date", () => {
-    expect(publicSurfaceSource).not.toMatch(/\$\d/);
-    expect(publicSurfaceSource).not.toMatch(/\b(available nationwide|all 50 states|launches? on)\b/i);
+  it("uses the approved qualified nationwide, clinician, pharmacy, and Foundations language", () => {
+    expect(publicSurfaceSource).toContain("Xenios Care is available nationwide");
+    expect(publicSurfaceSource).toContain("U.S.-licensed clinician");
+    expect(publicSurfaceSource).toContain("U.S.-based, state-licensed compounding pharmacy");
+    expect(publicSurfaceSource).toContain("$30 per month and is never automatic");
+    expect(publicSurfaceSource).not.toMatch(/\b(all 50 states|launches? on)\b/i);
     expect(publicSurfaceSource).not.toMatch(/\b(our clinicians|our pharmacy|partner pharmacy)\b/i);
   });
 

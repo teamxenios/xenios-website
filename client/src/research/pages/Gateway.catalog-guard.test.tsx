@@ -164,6 +164,7 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/research/apply",
       "/research/sign-in",
       "/research/how-it-works",
+      "/research/quality",
       "/research/about",
       "/research/faq",
       "/research/policies",

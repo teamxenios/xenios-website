@@ -5,19 +5,28 @@ import { PublicBoundaryNote } from "./PublicEditorialNav";
 
 const ACCESS_OPTIONS = [
   {
+    id: "care",
+    eyebrow: "Individuals seeking personal care",
+    title: "Xenios Care",
+    body: "Create or access your secure account, confirm your current location, complete the health questionnaire, and continue to independent review by a U.S.-licensed clinician. When treatment is clinically appropriate and serviceable, a prescription may be fulfilled through a U.S.-based, state-licensed compounding pharmacy.",
+    availability: "Xenios Care is available nationwide. Exact services and formulations depend on location, clinician authority, clinical eligibility, pharmacy serviceability, and current availability. No prescription is guaranteed.",
+    primary: { label: "Begin clinical intake", href: "/care" },
+    secondary: { label: "How Care works", href: "/care/how-it-works" },
+  },
+  {
     id: "member",
-    eyebrow: "Individuals and professionals",
-    title: "Research customer",
-    body: "Review the Research-use boundary, apply or sign in, then use the member-safe experience for exact offering information, authorized requests, orders, documents, and support.",
-    availability: "Application availability is shown on the application page.",
-    primary: { label: "Review Research access", href: "/research/apply" },
-    secondary: { label: "Member login", href: "/research/sign-in" },
+    eyebrow: "Researchers, qualified customers, and professionals",
+    title: "Xenios Research",
+    body: "Explore legitimate nonclinical Research access with exact product and variant identity, plain-language evidence, current status, documentation, authorized requests, orders, and support.",
+    availability: "Research access never includes personal-use guidance, prescribing, dosing, reconstitution, injection, or treatment recommendations.",
+    primary: { label: "Explore Research access", href: "/research/apply" },
+    secondary: { label: "Research member sign in", href: "/research/sign-in" },
   },
   {
     id: "organization",
     eyebrow: "Clinics, practices, gyms, marketplaces, and businesses",
     title: "Organization buyer",
-    body: "Begin an organization or professional-buyer conversation for research context, documentation needs, volume requests, account review, and human follow-up.",
+    body: "Begin an organization or professional-buyer conversation for Care or Research context, documentation needs, account review, and human follow-up.",
     availability: "Organization workspaces require review and may not yet be provisioned.",
     primary: { label: "Explore organization access", href: "/research/organizations" },
     secondary: { label: "Compare partnership paths", href: "/research/partners" },
@@ -26,7 +35,7 @@ const ACCESS_OPTIONS = [
     id: "partner",
     eyebrow: "Affiliates and referral partners",
     title: "Partner program",
-    body: "Review relationship types, compliance boundaries, application and onboarding expectations, and the resources available only after approval.",
+    body: "Review Care + Research relationship types, compliance boundaries, application and onboarding expectations, and the resources available only after approval.",
     availability: "No approval, commission, payout, or commercial term is implied publicly.",
     primary: { label: "Compare partnership paths", href: "/research/partners" },
     secondary: { label: "Review affiliate access", href: "/research/affiliates" },
@@ -39,15 +48,6 @@ const ACCESS_OPTIONS = [
     availability: "No public supplier workspace is promised. Access requires a provisioned, authorized relationship.",
     primary: { label: "Review supplier access", href: "/research/supplier-access" },
     secondary: { label: "How access works", href: "/research/how-it-works" },
-  },
-  {
-    id: "care",
-    eyebrow: "Patients and authorized clinical teams",
-    title: "Xenios Care",
-    body: "A separate provider-governed pathway for eligibility, supported scheduling, independent review, and authorized clinical or pharmacy handoffs where configured and legally available.",
-    availability: "Scheduling never guarantees treatment, a prescription, or fulfillment.",
-    primary: { label: "Open Care", href: "/care" },
-    secondary: { label: "Check eligibility", href: "/care/eligibility" },
   },
   {
     id: "private",
@@ -73,21 +73,22 @@ export default function AccessHub() {
   return (
     <>
       <SeoHead
-        title="Access Xenios Research"
-        description="Choose the Xenios Research access path that matches your intended relationship or question."
+        title="Xenios Care + Research access"
+        description="Choose provider-guided Care for personal health or the separate Xenios Research pathway for legitimate nonclinical access, documentation, organizations, partners, and support."
         path="/research/access-hub"
       />
       <ResearchPublicShell
-        eyebrow="Access Xenios Research"
-        title="Choose the path that matches what you are here to do."
-        lead="Research, Care, organizations, partners, suppliers, Early Access, and support use different authorities. Start here so one pathway never silently becomes another."
+        eyebrow="Care + Research access"
+        title="Choose the path that matches what you need."
+        lead="Personal health starts with Xenios Care. Legitimate nonclinical work starts with Xenios Research. Organizations, partners, suppliers, Early Access, and support retain their own authorities and next steps."
       >
         <section className="card bg-paper-2 mt-6" aria-labelledby="access-first-question">
           <p className="mono-label text-ink-mute">Start with one question</p>
-          <h2 id="access-first-question" className="body-l font-700 mt-2">Is this nonclinical Research or provider-governed Care?</h2>
+          <h2 id="access-first-question" className="body-l font-700 mt-2">Are you looking for care for yourself or nonclinical Research access?</h2>
           <p className="body-s text-ink-2 mt-3 max-w-[68ch]">
-            Use Research for legitimate nonclinical research materials and their operational lifecycle. Use Care for scheduling,
-            provider review, clinical records, prescribing, or pharmacy activity. If you are unsure, Support can route the question without making a clinical decision.
+            Use Care to create or access a secure account, complete a health intake, receive licensed clinical review,
+            and continue to pharmacy fulfillment when prescribed. Use Research to review exact products, evidence,
+            documentation, and Research-only access. Support can route an operational question without making a clinical decision.
           </p>
         </section>
 

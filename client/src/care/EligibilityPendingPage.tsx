@@ -145,10 +145,11 @@ export default function EligibilityPendingPage() {
 
       <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
         <p className="mono-cap text-pulse mb-6">CARE · ELIGIBILITY</p>
-        <h1 className="display-m max-w-[18ch]">Care availability begins with your current location.</h1>
+        <h1 className="display-m max-w-[18ch]">Your Care journey begins with your current location.</h1>
         <p className="mt-8 body-l text-ink-2 max-w-[64ch]">
-          Care remains separate from Research. A location check does not approve
-          treatment, create a prescription, or promise clinician availability.
+          Xenios Care is available nationwide, but the exact clinical service, licensed clinician,
+          formulation, and pharmacy handoff depend on where you are physically located, your
+          clinical eligibility, and current serviceability.
         </p>
 
         <section
@@ -159,22 +160,22 @@ export default function EligibilityPendingPage() {
         >
           <p className="mono-label text-pulse mb-3">CURRENT STATUS</p>
           <h2 id="eligibility-status-title" className="h2">
-            {loadState.kind === "loading" && "Checking the Care foundation…"}
-            {loadState.kind === "disabled" && "Care is not yet available."}
-            {loadState.kind === "auth_required" && "Sign in is required."}
-            {loadState.kind === "error" && "Care status is temporarily unavailable."}
+            {loadState.kind === "loading" && "Checking your Care access…"}
+            {loadState.kind === "disabled" && "Care access is temporarily unavailable."}
+            {loadState.kind === "auth_required" && "Sign in to continue."}
+            {loadState.kind === "error" && "This exact Care pathway is not currently available."}
             {loadState.kind === "ready" &&
               loadState.decision.outcome === "waitlist_available" &&
-              "Care is not currently available in this state."}
+              "This exact Care pathway is not currently serviceable in your state."}
             {loadState.kind === "ready" &&
               loadState.decision.outcome === "consent_required" &&
-              "Required notices are not complete."}
+              "Review and accept the required Care notices."}
             {loadState.kind === "ready" &&
               loadState.decision.outcome === "intake_available" &&
-              "The intake foundation is ready for an approved definition."}
+              "You can continue to the clinical intake."}
             {loadState.kind === "ready" &&
               loadState.decision.outcome === "unavailable" &&
-              "Care remains unavailable."}
+              "This exact Care pathway is not currently available."}
           </h2>
 
           {loadState.kind === "loading" && (

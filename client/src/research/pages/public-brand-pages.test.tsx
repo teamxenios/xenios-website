@@ -85,7 +85,7 @@ describe("public editorial page system", () => {
     expect(view.querySelector('nav[aria-label="Research information"]')).not.toBeNull();
     expect(view.querySelector('nav[aria-label="Research information mobile"]')).not.toBeNull();
     expect(view.querySelector('nav[aria-label="Research public footer"]')).not.toBeNull();
-    expect(view.querySelector("details.public-editorial-menu summary")?.textContent).toContain("Explore Research");
+    expect(view.querySelector("details.public-editorial-menu summary")?.textContent).toContain("Explore Xenios");
     expect(view.querySelector('a[href="/research/about"]')?.getAttribute("aria-current")).toBe("page");
     const footerLinks = Array.from(view.querySelectorAll(".public-editorial-footer-link"));
     expect(footerLinks.length).toBeGreaterThanOrEqual(10);
@@ -168,8 +168,9 @@ describe("editorial homepage reconciliation", () => {
     expect(view.querySelectorAll("main")).toHaveLength(1);
     expect(view.querySelectorAll("h1")).toHaveLength(1);
     expect(view.querySelector("#research-main")?.getAttribute("tabindex")).toBe("-1");
-    expect(view.textContent).toContain("Research products.A clearer standard.");
-    expect(view.textContent).toContain("Understand the pathways");
+    expect(view.textContent).toContain("Provider-guided peptide care.Evidence-led Research access.");
+    expect(view.textContent).toContain("Begin clinical intake");
+    expect(view.textContent).toContain("Explore Research");
 
     const hero = view.querySelector<HTMLImageElement>('.rg-hero-image');
     expect(hero?.getAttribute("src")).toBe("/research/editorial-hero-warm-silver.jpg");
@@ -183,6 +184,7 @@ describe("editorial homepage reconciliation", () => {
       "/research/partners",
       "/research/affiliates",
       "/research/how-it-works",
+      "/research/quality",
       "/research/about",
       "/research/faq",
       "/research/policies",

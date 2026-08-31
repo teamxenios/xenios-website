@@ -40,7 +40,7 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
       <section className="account-surface" aria-labelledby="care-not-started-heading">
         <p className="account-section-label">Care status</p>
         <h2 id="care-not-started-heading" className="account-section-title">Care not started.</h2>
-        <p className="body-s text-ink-2 mt-3">Membership and Research access can exist without a Care relationship.</p>
+        <p className="body-s text-ink-2 mt-3">Care has not been started in this account. Research access can exist without a Care relationship.</p>
         <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
       </section>
     );
@@ -65,8 +65,8 @@ export function AccountCareView({ data }: { data: CareEnrollmentDto }) {
       <p className="body-m text-ink-2 mt-4 max-w-[60ch]">{data.status.neutralSummary ?? "Your current operational status is recorded in the Care workflow."}</p>
       <p className="mono-label text-ink-mute mt-4">Updated {formatAccountDate(data.status.updatedAt, true)}</p>
       <div className="account-surface account-surface-warm mt-6">
-        <p className="body-s font-700">This account view shows the current checkpoint only.</p>
-        <p className="body-s text-ink-2 mt-2">It does not claim that earlier checkpoints were completed. Later steps are not guaranteed, a provider decision is separate from pharmacy processing, and membership does not determine either outcome.</p>
+        <p className="body-s font-700">This view shows the current recorded checkpoint only.</p>
+        <p className="body-s text-ink-2 mt-2">Account creation, intake submission, provider review, a provider decision, pharmacy processing, shipment, and completion are separate states. A later state is never implied before its source records it.</p>
       </div>
       <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.support}>Ask account support</Link>
     </section>

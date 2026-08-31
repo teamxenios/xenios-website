@@ -12,94 +12,94 @@ type FaqItem = {
 
 const FAQ_ITEMS: FaqItem[] = [
   {
+    question: "What is Xenios?",
+    answer:
+      "Xenios is a U.S.-based health-access and product platform with two separate pathways. Xenios Care supports personal health through secure intake and independent review by U.S.-licensed clinicians. Xenios Research supports legitimate nonclinical work through exact product identity, evidence-aware education, quality documentation, controlled access, and Research operations.",
+  },
+  {
+    question: "How does Xenios Care work?",
+    answer:
+      "Create or access your secure account, confirm your current location, and complete the health questionnaire. A U.S.-licensed clinician independently reviews the information and may request follow-up questions, records, laboratory work, or a phone or video visit. When treatment is clinically appropriate and serviceable, a prescription may be sent to a U.S.-based, state-licensed compounding pharmacy for fulfillment.",
+  },
+  {
+    question: "Who reviews my health questionnaire?",
+    answer:
+      "An appropriately licensed clinician reviews the clinical information. Depending on the patient location, service, and clinical organization, that may be a physician, nurse practitioner, or physician assistant. Commercial staff, affiliates, trainers, and the software do not make the clinical decision.",
+  },
+  {
+    question: "Does completing the intake guarantee a prescription?",
+    answer:
+      "No. Completing the intake creates information for clinical review. A clinician may approve an appropriate treatment, request more information, request records or labs, require a live visit, recommend another approach, decline the request, or refer the person elsewhere. No product, formulation, custom blend, or prescription is guaranteed.",
+  },
+  {
+    question: "Is a video visit always required?",
+    answer:
+      "Not necessarily. Review may begin asynchronously. The clinician determines whether additional questions, records, laboratory work, a phone call, or a video visit is required based on clinical judgment, patient location, service rules, and applicable requirements.",
+  },
+  {
+    question: "Is Xenios Care available nationwide?",
+    answer:
+      "Xenios Care is available nationwide. Exact services, formulations, clinician availability, and pharmacy fulfillment depend on the patient's current location, clinical eligibility, clinician authority, pharmacy serviceability, and current availability.",
+  },
+  {
+    question: "How do compounding pharmacies fit into the process?",
+    answer:
+      "When a licensed clinician issues an appropriate prescription, a U.S.-based, state-licensed compounding pharmacy reviews the prescription and its ability to serve the patient and formulation. The pharmacy owns compounding or dispensing, prescription labeling, medication-specific quality controls, and shipment. Xenios supports the surrounding account, navigation, status, tracking, lifestyle, and customer-service experience.",
+  },
+  {
+    question: "Is Xenios a pharmacy, and are compounded medications FDA-approved?",
+    answer:
+      "Xenios is not the dispensing pharmacy. Compounded medications are prepared by state-licensed compounding pharmacies when permitted and prescribed. Compounded drugs are not FDA-approved, and an FDA-approved use for an active ingredient does not make every compounded formulation, source, concentration, or use FDA-approved.",
+  },
+  {
+    question: "Is every product available to every Care client?",
+    answer:
+      "No. Xenios Care supports a broad, clinician-governed formulary, but the exact option depends on the patient's location, history, goals, contraindications, clinical assessment, the pharmacy's formulary, ingredient eligibility, and current availability. A catalog listing or price never establishes clinical suitability.",
+  },
+  {
+    question: "Can a custom formulation or custom blend be requested?",
+    answer:
+      "A custom formulation may be requested for clinician and pharmacy consideration. It is not guaranteed. A licensed clinician and the dispensing pharmacy must independently determine that the exact formulation is clinically appropriate, legally available, supportable, and serviceable for the patient.",
+  },
+  {
+    question: "What is the First-Month Foundations Plan?",
+    answer:
+      "Eligible Xenios Care clients receive a personalized first-month nutrition, fitness, sleep, and recovery plan at no additional charge. A CSCS professional may provide training structure, exercise options, meal planning, grocery lists, recipes, location-aware restaurant guidance, travel adaptations, and one email check-in each week. The plan is nonclinical and does not replace medical care.",
+  },
+  {
+    question: "What happens after the first month of lifestyle support?",
+    answer:
+      "The included first month ends after its initial four-week period. Eligible clients may choose optional continuation for $30 per month. Continuation is not automatic and should not begin without the client's clear choice and the applicable terms.",
+  },
+  {
     question: "What is Xenios Research?",
     answer:
-      "Xenios Research is a product-access and operating platform for legitimate nonclinical research. It brings exact product identity, current access state, available documentation, requests, orders, fulfillment, documents, and support into one coherent customer experience.",
+      "Xenios Research is the separate nonclinical pathway for legitimate research materials and Research operations. It brings exact product and variant identity, evidence level, current status, available quality documentation, authorized requests or orders, fulfillment facts, account history, and Research support into one experience.",
   },
   {
-    question: "What does research use only mean?",
+    question: "What does Research use only mean?",
     answer:
-      "Research-designated materials are for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not for human or veterinary use, and Xenios Research does not provide dosing, reconstitution, administration, injection, protocol, cycling, stacking, or personal-use guidance.",
+      "Research-designated materials are for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not for human or veterinary use. Xenios Research does not provide dosing, reconstitution, administration, injection, protocol, cycling, stacking, or personal-use guidance.",
   },
   {
-    question: "How is Research different from Care?",
+    question: "Why do product pages say people commonly discuss a compound for certain goals?",
     answer:
-      "Research handles nonclinical research materials and their operational lifecycle. Where configured and legally available, Care is a separate provider-governed pathway for scheduling, independent clinical review, protected clinical records, prescribing where appropriate, and pharmacy coordination. A Research action never establishes a Care decision.",
+      "That section explains why the compound receives public, community, practitioner, or market interest. It may summarize commonly discussed goals such as healing, recovery, metabolism, skin, sleep, or focus. Those discussions and anecdotes are not proof of safety, effectiveness, or suitability. The page separately labels laboratory, animal, human, established, limited, and uncertain evidence.",
   },
   {
-    question: "Does membership guarantee access to a product?",
+    question: "What does a certificate of analysis prove?",
     answer:
-      "No. Membership or account access does not guarantee that an exact product or variant is available, orderable, or supported by a specific document. Research does not establish clinical appropriateness; that belongs exclusively to authorized provider review in the separate Care pathway. Every offering keeps its own current status and authorized next action.",
+      "A COA may report information about the tested sample, such as identity, purity, quantity, method, laboratory, date, or other applicable results. It does not by itself prove clinical safety, effectiveness, sterility, stability, suitability for a particular person, or that every unit and contaminant class were tested. The exact item, lot, source, and report must match.",
   },
   {
-    question: "What do product status labels mean?",
+    question: "How are pricing and availability shown?",
     answer:
-      "An offering may be live for an authorized action, request-only, provider-required, documentation-pending, held, unavailable, or unknown. Status controls the next action. A visible listing or price never creates purchase permission by itself.",
-  },
-  {
-    question: "Does a submitted request become an order immediately?",
-    answer:
-      "Not necessarily. A request records what you asked Xenios to review. It becomes an order only through the authorized conversion path. Confirmation pages and account history keep requests, orders, payment, and fulfillment separate.",
-  },
-  {
-    question: "How are payment and refunds shown?",
-    answer:
-      "Payment and refund status depends on durable amount-due, captured, and refunded evidence. Missing, incomplete, or contradictory evidence must remain unknown or unavailable rather than being presented as paid, zero-refund, or complete.",
-  },
-  {
-    question: "How are shipping and tracking shown?",
-    answer:
-      "Shipped and delivered require different evidence. Tracking may appear only when an available authoritative source provides it. If that source is unavailable, the safe state withholds a carrier, tracking link, delivery event, and definitive zero-history result.",
-  },
-  {
-    question: "What quality documents may be available?",
-    answer:
-      "An exact offering or lot may have approved specifications, COAs, or testing documentation. Availability varies by item and lot. Documents are shown only when the applicable source, access rules, and current approval support them.",
-  },
-  {
-    question: "Does every item receive every type of testing?",
-    answer:
-      "No. Identity, purity, assay, sterility, endotoxin, microbial, heavy-metal, residual-solvent, or other testing may apply in different circumstances. Xenios describes only the testing actually associated with the exact offering or lot.",
-  },
-  {
-    question: "How does Care scheduling work?",
-    answer:
-      "When a Care scheduling route is actually configured, the authorized provider system remains authoritative for schedules and appointments. An unavailable configuration stays unavailable, and scheduling does not guarantee treatment or a prescription.",
-  },
-  {
-    question: "Where are clinical messages and records managed?",
-    answer:
-      "Protected clinical messages, health information, lab results, clinical documents, and provider-side statements remain in the authorized provider or patient-portal workflow that is actually supplied. Xenios does not recreate an electronic health record inside the Research account.",
-  },
-  {
-    question: "What is Private Early Access?",
-    answer:
-      "Private Early Access is a separate passwordless request and ordering experience with an open entry route. Opening it does not establish approval for any later action or guarantee product availability, a completed order, payment, shipment, or a Care decision.",
-  },
-  {
-    question: "Where can I review membership and billing?",
-    answer:
-      "Signed-in customers review access, billing, and renewal information in the account experience. Unknown renewal evidence stays unknown or unavailable; Xenios shows “Not scheduled” only when a durable source explicitly proves that state.",
-  },
-  {
-    question: "How do organizations and professional buyers begin?",
-    answer:
-      "Organizations begin through the organization or business-support pathway with context, eligibility, and human review. An inquiry does not automatically create an account, approve commercial terms, or authorize any specific product.",
-  },
-  {
-    question: "How do affiliates and partners work with Xenios?",
-    answer:
-      "Potential affiliates, clinics, providers, suppliers, and strategic partners use the applicable partner pathway. Approval, attribution, allowed claims, commission status, and resources remain governed. No partner can influence prescribing or clinical decisions.",
-  },
-  {
-    question: "How is my information protected?",
-    answer:
-      "Access to private account and document data depends on server-authorized identity and scope. Review the public Privacy Policy for the currently served language and its publication status. Avoid placing passwords, tokens, clinical details, or unnecessary private information in public URLs or messages.",
+      "Research pricing and availability come from the current server-authoritative product and price records. Clinical pricing may depend on the prescribed quantity, formulation, pharmacy, consultation, labs, shipping, state, and program structure, so it is shown only when the applicable source can support an exact amount or a clear pricing rule. Missing price is never shown as zero.",
   },
   {
     question: "How do I get help?",
     answer:
-      "Use Research Support for account access, requests, orders, documents, organization inquiries, or operational questions. Support does not provide clinical advice; clinical questions stay with the authorized Care or provider workflow.",
+      "Use Xenios Care or the authorized provider workflow for clinical questions, symptoms, side effects, records, prescribing, or follow-up. Use Xenios Research Support for Research access, products, documents, orders, organizations, or operational questions. For a medical emergency, call 911 in the United States or contact local emergency services.",
   },
 ];
 
@@ -156,17 +156,17 @@ export default function Faq() {
   return (
     <>
       <SeoHead
-        title="Frequently asked questions | Xenios Research"
-        description="Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support."
+        title="Frequently asked questions | Xenios Care + Research"
+        description="Plain answers about the Xenios Care journey, pharmacy role, lifestyle support, Research boundaries, evidence, pricing, quality documents, and support."
         path="/research/faq"
       />
       <PageIntro
         eyebrow="Questions, answered plainly"
-        title="Understand the boundary before you continue."
-        lead="Research access, Care, product status, documentation, requests, orders, billing, fulfillment, and support each mean something different."
+        title="Questions about Xenios Care + Research"
+        lead="Understand the clinical journey, pharmacy role, lifestyle support, Research boundary, evidence labels, pricing, quality documents, and the next responsible step."
       />
       <NoticeBar>
-        Research-designated materials are for legitimate nonclinical research only, never for human or veterinary use. Clinical decisions belong to appropriately licensed providers.
+        Care and Research are separate. Clinical decisions belong to appropriately licensed clinicians. Research-designated materials remain nonclinical and are not for human or veterinary use.
       </NoticeBar>
 
       <section className="container-x section-y">
@@ -194,9 +194,9 @@ export default function Faq() {
               Use Research Support for account, product-access, document, order, or organization questions. Use Care for provider-governed clinical questions.
             </p>
             <div className="mt-8 public-editorial-actions">
-              <Link href="/research/support" className="btn btn-primary public-editorial-action">Open Research Support</Link>
-              <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Compare access paths</Link>
-              <Link href="/care" className="btn btn-ghost public-editorial-action">Understand Care</Link>
+              <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+              <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
+              <Link href="/research/support" className="btn btn-ghost public-editorial-action">Get support</Link>
             </div>
           </div>
         </div>

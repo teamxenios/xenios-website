@@ -5,28 +5,28 @@ import { PublicBoundaryNote } from "./PublicEditorialNav";
 
 const journey = [
   {
-    title: "Choose a pathway",
-    body: "Start with Research, private Early Access, Care, an organization, a partner relationship, supplier access, or support. Do not force a clinical need through a Research workflow.",
+    title: "Choose Care or Research",
+    body: "Use Care for personal health. Use Research for legitimate nonclinical work.",
   },
   {
-    title: "Verify access",
-    body: "Sign in or follow the applicable review process. Membership, organization roles, partner status, supplier assignments, and administrative authority are resolved by the server.",
+    title: "Create or verify your account",
+    body: "Care confirms identity and current location. Research verifies its own membership, agreements, and access requirements.",
   },
   {
-    title: "Review exact facts",
-    body: "Confirm exact product and variant identity, format, documentation status, access state, and any current action before submitting a request.",
+    title: "Complete the required information",
+    body: "Care collects the health history needed for clinical review. Research presents exact product identity, documentation, and Research-use requirements.",
   },
   {
-    title: "Request through the authorized path",
-    body: "A live action, assisted request, availability inquiry, provider handoff, documentation-pending state, hold, or unavailable state each behaves differently.",
+    title: "Receive the appropriate review",
+    body: "A U.S.-licensed clinician reviews Care. Research actions are governed by Product Control, documentation, availability, and account authority.",
   },
   {
-    title: "Complete required review",
-    body: "Provide only the contact, shipping, and acknowledgments required by the selected workflow. A submitted request is not called an order or a successful payment unless durable evidence supports it.",
+    title: "Continue only when authorized",
+    body: "A clinician may prescribe when clinically appropriate. A pharmacy may fulfill when serviceable. A Research request or order proceeds only when its own gates pass.",
   },
   {
-    title: "Follow source-aware status",
-    body: "Account views are designed to separate requests, orders, payment, refunds, fulfillment, tracking, Care availability, documents, and support. A missing source must remain unknown or unavailable.",
+    title: "Follow status and support",
+    body: "Use the appropriate account, provider, pharmacy, Research, and support sources for updates, documents, tracking, follow-up, and exceptions.",
   },
 ] as const;
 
@@ -42,22 +42,22 @@ const qualityFlow = [
 
 const pathwayCards = [
   {
-    title: "Research customer",
-    body: "Review the Research-use boundary, authenticate where required, inspect the exact offering, and use the action currently authorized.",
-    href: "/research/access-hub",
-    label: "Review Research access",
-  },
-  {
-    title: "Provider-governed Care",
-    body: "Use the Care experience for scheduling and provider review. Scheduling does not guarantee treatment, a prescription, or pharmacy fulfillment.",
+    title: "Xenios Care",
+    body: "Create an account, complete your health intake, and continue to independent clinical review. No questionnaire, product interest, or payment guarantees a prescription.",
     href: "/care",
-    label: "Understand Care",
+    label: "Begin clinical intake",
   },
   {
-    title: "Organization or partner",
-    body: "Begin with context, eligibility, and human review. A relationship inquiry does not automatically create an account or commercial approval.",
+    title: "Xenios Research",
+    body: "Review exact products, variants, evidence, documentation, and Research-only access without turning a Research listing into personal medical guidance.",
+    href: "/research/access-hub",
+    label: "Explore Research",
+  },
+  {
+    title: "Organizations and partners",
+    body: "Organizations, affiliates, suppliers, and strategic partners begin with context, eligibility, compliance, and human review.",
     href: "/research/support",
-    label: "Ask about partner access",
+    label: "Ask about partnership access",
   },
 ] as const;
 
@@ -65,14 +65,14 @@ export default function HowItWorks() {
   return (
     <>
       <SeoHead
-        title="How Xenios Research works"
-        description="Understand the Xenios Research journey from access selection and exact product review to truthful request, order, document, and support status."
+        title="How Xenios Care + Research works"
+        description="See the separate journeys for provider-guided Care and legitimate nonclinical Research access, from account and intake to review, fulfillment, documentation, and support."
         path="/research/how-it-works"
       />
       <ResearchPublicShell
-        eyebrow="How it works"
-        title="From first question to a defensible next action."
-        lead="Every step is designed to preserve the difference between interest, access, a request, an order, payment, fulfillment, Care, and completion."
+        eyebrow="How Xenios works"
+        title="Two pathways. Clear authority at every step."
+        lead="Care and Research may share account, status, and support infrastructure, but they do not share clinical authority, product-use claims, prescribing, or fulfillment rules."
       >
         <ol className="grid gap-4 mt-8" aria-label="Xenios Research journey">
           {journey.map((step, index) => (
@@ -86,7 +86,7 @@ export default function HowItWorks() {
 
         <section className="mt-10" aria-labelledby="pathway-choices">
           <p className="mono-label text-ink-mute">Common pathways</p>
-          <h2 id="pathway-choices" className="display-s mt-2">The same platform, different authorities.</h2>
+          <h2 id="pathway-choices" className="display-s mt-2">One platform, separate authorities.</h2>
           <div className="grid gap-4 mt-6 public-editorial-grid">
             {pathwayCards.map((pathway) => (
               <article className="card flex flex-col" key={pathway.title}>
@@ -122,13 +122,13 @@ export default function HowItWorks() {
 
         <section className="card mt-10" aria-labelledby="how-next">
           <p className="mono-label text-ink-mute">Ready to continue</p>
-          <h2 id="how-next" className="body-l font-700 mt-2">Begin at the Access Hub.</h2>
+          <h2 id="how-next" className="body-l font-700 mt-2">Choose Care or Research.</h2>
           <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            The hub explains who each route is for, what is available now, and what happens after you continue.
+            Begin with the pathway that matches your need. Each source remains responsible for its own decisions and status.
           </p>
           <div className="mt-5 public-editorial-actions">
-            <Link href="/research/access-hub" className="btn btn-primary public-editorial-action">Choose an access path</Link>
-            <Link href="/research/faq" className="btn btn-secondary public-editorial-action">Read the FAQ</Link>
+            <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+            <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
           </div>
         </section>
       </ResearchPublicShell>

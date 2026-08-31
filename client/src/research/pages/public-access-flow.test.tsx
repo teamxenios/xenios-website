@@ -73,7 +73,8 @@ describe("Research public application flow", () => {
 
     const hrefs = links(view);
     expect(hrefs).toContain("/research/access-hub");
-    expect(hrefs).toContain("/research/apply");
+    expect(hrefs).toContain("/care");
+    expect(hrefs).toContain("/research/quality");
     expect(hrefs).toContain("/research/sign-in");
     expect(hrefs).toContain("/research/how-it-works");
     expect(hrefs).toContain("/research/about");

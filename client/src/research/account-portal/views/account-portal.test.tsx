@@ -568,7 +568,7 @@ describe("customer account portal views", () => {
     expect(container.textContent).not.toContain("Recorded");
     expect(container.textContent).not.toContain("Account created");
     expect(container.textContent).not.toContain("Intake submitted");
-    expect(container.textContent).toContain("Later steps are not guaranteed");
+    expect(container.textContent).toContain("A later state is never implied before its source records it.");
   });
 
   it("does not turn a late ordinal Care stage into evidence for every earlier stage", async () => {
@@ -588,7 +588,7 @@ describe("customer account portal views", () => {
     expect(container.textContent).not.toContain("Account created");
     expect(container.textContent).not.toContain("Provider review");
     expect(container.textContent).not.toContain("Pharmacy processing");
-    expect(container.textContent).toContain("does not claim that earlier checkpoints were completed");
+    expect(container.textContent).toContain("Account creation, intake submission, provider review, a provider decision, pharmacy processing, shipment, and completion are separate states.");
   });
 
   it("renders an honest not-started Care state from a CONNECTED source", async () => {

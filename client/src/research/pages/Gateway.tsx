@@ -4,42 +4,42 @@ import Wordmark from "@/components/Wordmark";
 import "./gateway-editorial.css";
 
 const researchAreas = [
-  ["01", "Peptide research", "Exact identity, strength, format, and current access state stay visible together."],
-  ["02", "Blends and formulations", "Formulation differences remain explicit. Similar names are never treated as interchangeable."],
-  ["03", "Additional formats", "Non-vial formats are organized by the same identity, documentation, and access rules."],
-  ["04", "Cofactors and support materials", "Related research materials are presented without turning association into a clinical claim."],
-  ["05", "Request-only access", "Human review remains available when an item is not authorized for a direct action."],
-  ["06", "Provider-governed Care", "Where configured and legally available, clinical questions and provider decisions move to a separate licensed-care pathway."],
+  ["01", "Secure clinical intake", "Create or access your account, confirm your current location, and complete the health questionnaire used for licensed clinical review."],
+  ["02", "Licensed clinician review", "A U.S.-licensed clinician independently reviews the information and may request follow-up questions, records, labs, or a visit."],
+  ["03", "U.S.-based pharmacy fulfillment", "When a prescription is clinically appropriate and serviceable, it may be fulfilled through a U.S.-based, state-licensed compounding pharmacy."],
+  ["04", "Personalized lifestyle support", "Eligible Care clients receive a personalized First-Month Foundations Plan from a CSCS professional, with weekly email check-ins."],
+  ["05", "Research compounds and documentation", "Research customers can review exact product identity, variants, evidence level, current status, quality records, and authorized next actions."],
+  ["06", "Quality and traceability", "Product, formulation, lot, document, testing, storage, fulfillment, and exception records remain distinct and source-aware."],
 ] as const;
 
 const standards = [
-  ["Exact identity", "Product, variant, strength, and format are kept distinct so a near match never becomes an assumed match."],
-  ["Evidence-aware status", "Available, request-only, held, provider-required, and unknown states lead to different truthful actions."],
-  ["Lot-level context", "Lot and COA information is shown only where the applicable documentation is available and approved."],
-  ["Human support", "Questions and exceptions have a clear support path instead of a misleading success state or dead end."],
+  ["Clinical independence", "Commercial interest never determines diagnosis, treatment, or prescribing. The licensed clinician makes the clinical decision."],
+  ["U.S.-based care network", "Care is supported through U.S.-licensed clinicians and U.S.-based, state-licensed compounding pharmacies where serviceable."],
+  ["Evidence-aware education", "Public interest, anecdotes, mechanisms, preclinical findings, human evidence, and established uses are labeled separately."],
+  ["Exact product and lot context", "A product name never substitutes for exact formulation, strength, source, lot, documentation, status, or pathway."],
 ] as const;
 
 const accessSteps = [
-  ["Choose", "Start in the Access Hub and select Research, Care, organization, partner, supplier, or support."],
-  ["Verify", "Sign in or follow the appropriate review path. The browser never grants itself a role."],
-  ["Review", "Evaluate the exact identity, format, documentation status, and action currently available."],
-  ["Request", "Submit only through the authorized path. A request is not represented as a completed order."],
-  ["Follow", "Return to your account for source-aware order, billing, document, and support information."],
+  ["Choose", "Select Care for personal health or Research for legitimate nonclinical work."],
+  ["Create or verify", "Create your account, confirm your location, or complete the exact access requirements for your pathway."],
+  ["Complete the required review", "Care clients complete a health intake. Research customers review exact identity, documentation, agreements, and access status."],
+  ["Continue through the authorized path", "Care proceeds through independent clinician review and pharmacy fulfillment when appropriate. Research proceeds through its authorized request or ordering workflow."],
+  ["Follow", "Use the account and support experience for status, documents, tracking, follow-up, and exceptions."],
 ] as const;
 
 const accountBenefits = [
-  "A verified Research account",
-  "Member-safe product and request history",
-  "Payment and fulfillment designed as separate facts",
-  "Documents and COAs only when authorized",
-  "Care handoff without copying clinical records",
-  "A durable support path for exceptions",
+  "Secure account access",
+  "Clinical intake and review status",
+  "Pharmacy and shipment status where applicable",
+  "Research requests and order history",
+  "Documents and exact-lot records when authorized",
+  "A durable support path for questions and exceptions",
 ] as const;
 
 const faqPreview = [
-  ["Is Research the same as Care?", "No. Research-designated materials and provider-governed Care use separate pathways, authorities, and next actions."],
-  ["Does a visible item mean it can be ordered?", "No. Visibility, price, documentation, availability, and purchase permission are separate facts."],
-  ["Is every lot backed by the same testing?", "No. Testing and documents are lot- and offering-specific, and the experience must say when they are unavailable."],
+  ["How does Xenios Care work?", "Create an account, complete the health intake, and receive independent review by a U.S.-licensed clinician. Additional questions, labs, or a visit may be required. A prescription is never guaranteed."],
+  ["How is Research different from Care?", "Research is for legitimate nonclinical work. Care is the provider-governed pathway for personal medical evaluation, prescribing, pharmacy activity, and follow-up."],
+  ["Are all compounds available to every client?", "No. Exact options depend on the pathway, patient location, clinical eligibility, clinician judgment, pharmacy serviceability, product status, and current availability."],
 ] as const;
 
 function Arrow() {
@@ -51,30 +51,30 @@ function ResearchHeader() {
     <header className="rg-header" aria-label="Xenios Research header">
       <Link href="/research" className="rg-brand" aria-label="Xenios Research home">
         <Wordmark size="md" asLink={false} />
-        <span className="rg-brand-sub">Research</span>
+        <span className="rg-brand-sub">Care + Research</span>
       </Link>
       <nav className="rg-header-nav rg-header-nav-desktop" aria-label="Research information">
-        <Link href="/research/partners">Partners</Link>
+        <Link href="/care">Care</Link>
+        <Link href="/research/access-hub">Research</Link>
         <Link href="/research/how-it-works">How it works</Link>
+        <Link href="/research/quality">Quality</Link>
         <Link href="/research/about">About</Link>
         <Link href="/research/faq">FAQ</Link>
-        <Link href="/research/policies">Policies</Link>
-        <Link href="/research/contact">Contact</Link>
         <Link href="/research/sign-in">Member sign in</Link>
         <Link href="/research/access-hub" className="rg-header-apply">Access Hub</Link>
       </nav>
       <details className="rg-mobile-menu">
         <summary aria-label="Research navigation menu">Menu</summary>
         <nav aria-label="Research mobile navigation">
-          <Link href="/research/access-hub">Access Hub</Link>
-          <Link href="/research/organizations">Organizations</Link>
-          <Link href="/research/partners">Partners</Link>
-          <Link href="/research/affiliates">Affiliates</Link>
+          <Link href="/care">Care</Link>
+          <Link href="/research/access-hub">Research</Link>
           <Link href="/research/how-it-works">How it works</Link>
+          <Link href="/research/quality">Quality</Link>
           <Link href="/research/about">About</Link>
           <Link href="/research/faq">FAQ</Link>
+          <Link href="/research/organizations">Organizations</Link>
+          <Link href="/research/partners">Partners</Link>
           <Link href="/research/policies">Policies</Link>
-          <Link href="/research/contact">Contact</Link>
           <Link href="/research/sign-in">Member sign in</Link>
           <Link href="/research/support">Contact &amp; support</Link>
         </nav>
@@ -90,9 +90,9 @@ function ResearchFooter() {
         <div>
           <Link href="/research" className="rg-brand rg-footer-brand" aria-label="Xenios Research home">
             <Wordmark size="md" asLink={false} />
-            <span className="rg-brand-sub">Research</span>
+            <span className="rg-brand-sub">Care + Research</span>
           </Link>
-          <p>Clear research access, evidence-aware status, and a separate path to provider-governed Care.</p>
+          <p>U.S.-based Care through licensed clinical review, plus a separate evidence-led Research pathway with clear product, document, and access status.</p>
         </div>
         <nav aria-label="Research footer">
           <Link href="/research/access-hub">Access Hub</Link>
@@ -115,7 +115,7 @@ function ResearchFooter() {
       </div>
       <div className="rg-shell rg-footer-legal">
         <span>© {new Date().getFullYear()} Xenios Technology</span>
-        <span>Research use only · Not medical advice</span>
+        <span>Care and Research are separate by design · No prescription is guaranteed · Research use only where designated</span>
       </div>
     </footer>
   );
@@ -125,8 +125,8 @@ export default function Gateway() {
   return (
     <div className="research-editorial">
       <SeoHead
-        title="Xenios Research | Clear, evidence-aware research access"
-        description="Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway."
+        title="Xenios | Care + Research"
+        description="Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work."
         path="/research"
       />
 
@@ -147,24 +147,26 @@ export default function Gateway() {
           />
           <div className="rg-hero-shade" aria-hidden="true" />
           <div className="rg-hero-content">
-            <p className="rg-kicker">Research access · Documentation context · Human support</p>
-            <h1 id="rg-hero-title">Research products.<br />A clearer standard.</h1>
+            <p className="rg-kicker">U.S.-based clinical care · Evidence-led Research access · Human support</p>
+            <h1 id="rg-hero-title">Provider-guided peptide care.<br />Evidence-led Research access.</h1>
             <div className="rg-hero-rule" aria-hidden="true" />
             <p className="rg-hero-intro">
-              Xenios Research brings exact product identity, available documentation, current status,
-              and the correct next action into one considered experience.
+              Xenios brings two distinct pathways into one clear starting point. For personal care, create a secure account,
+              complete a health intake, and receive independent review by a U.S.-licensed clinician. For legitimate nonclinical
+              work, use Xenios Research to explore exact products, evidence, documentation, and current access status.
             </p>
             <div className="rg-hero-actions" aria-label="Research homepage actions">
-              <Link href="/research/access-hub" className="rg-btn rg-btn-light" data-testid="link-gateway-access-hub">
-                <span>Choose your access path</span><Arrow />
+              <Link href="/care" className="rg-btn rg-btn-light" data-testid="link-gateway-access-hub">
+                <span>Begin clinical intake</span><Arrow />
               </Link>
-              <Link href="/research/how-it-works" className="rg-text-link" data-testid="link-gateway-pathways">
-                Understand the pathways <Arrow />
+              <Link href="/research/access-hub" className="rg-text-link" data-testid="link-gateway-pathways">
+                Explore Research <Arrow />
               </Link>
             </div>
             <p className="rg-research-notice">
-              Research-designated materials are for legitimate nonclinical research only, not for human or veterinary use.
-              Access, availability, testing, and documentation vary by exact offering and lot.
+              Care is subject to patient location, licensed clinical review, medical appropriateness, pharmacy serviceability,
+              and current availability. No prescription is guaranteed. Research-designated materials remain for legitimate
+              nonclinical research only and are not for human or veterinary use.
             </p>
           </div>
           <a className="rg-scroll-cue" href="#offering" aria-label="Continue to what Xenios Research offers">
@@ -175,17 +177,18 @@ export default function Gateway() {
         <section className="rg-section rg-offering" id="offering" aria-labelledby="rg-offering-title">
           <div className="rg-shell rg-two-column">
             <div>
-              <p className="rg-section-label">01 · The experience</p>
-              <h2 id="rg-offering-title">Built to make the next step understandable.</h2>
+              <p className="rg-section-label">01 · Two pathways</p>
+              <h2 id="rg-offering-title">Start with the path that matches what you need.</h2>
             </div>
             <div className="rg-reading-column">
               <p className="rg-lede">
-                Xenios Research is a product-access and operating platform—not a wall of listings and not a clinical system.
+                Xenios Care supports personal health through secure intake and independent clinical review. Xenios Research
+                supports qualified nonclinical work through exact product identity, evidence-aware education, documentation,
+                and controlled access. One path never silently becomes the other.
               </p>
               <p>
-                Public pages explain the categories, quality model, and available pathways. Authenticated experiences are
-                designed to separate product, order, billing, document, and support facts; anything a connected source
-                cannot establish must remain unknown or unavailable.
+                Care decisions remain with licensed clinicians and dispensing pharmacies. Research actions remain governed
+                by exact product, documentation, availability, and account authority.
               </p>
               <Link href="/research/how-it-works" className="rg-inline-link">
                 See how access works <Arrow />
@@ -197,9 +200,9 @@ export default function Gateway() {
         <section className="rg-section rg-categories" aria-labelledby="rg-categories-title">
           <div className="rg-shell">
             <div className="rg-section-heading">
-              <p className="rg-section-label">02 · Research areas</p>
-              <h2 id="rg-categories-title">Explore the field without losing exactness.</h2>
-              <p>Categories orient discovery. They never replace exact formulation, documentation, status, or access review.</p>
+              <p className="rg-section-label">02 · Care + Research</p>
+              <h2 id="rg-categories-title">A complete experience around the next responsible step.</h2>
+              <p>Each card preserves the authority, evidence boundary, and source status of its pathway.</p>
             </div>
             <div className="rg-category-grid">
               {researchAreas.map(([number, title, description]) => (
@@ -221,8 +224,8 @@ export default function Gateway() {
           <div className="rg-shell">
             <div className="rg-section-heading rg-section-heading-light">
               <p className="rg-section-label">03 · Trust architecture</p>
-              <h2 id="rg-standards-title">Truth is a product feature.</h2>
-              <p>Unknown and unavailable are valid states. They are never quietly converted into zero, approved, paid, shipped, or complete.</p>
+              <h2 id="rg-standards-title">Care decisions, Research evidence, and operational facts stay separate.</h2>
+              <p>Unknown and unavailable remain valid states. They are never quietly converted into approval, a prescription, payment, shipment, or completion.</p>
             </div>
             <div className="rg-standard-grid">
               {standards.map(([title, copy], index) => (
@@ -239,13 +242,13 @@ export default function Gateway() {
         <section className="rg-section rg-current" aria-labelledby="rg-current-title">
           <div className="rg-shell rg-current-grid">
             <div className="rg-current-copy">
-              <p className="rg-section-label">04 · Current information</p>
-              <h2 id="rg-current-title">One protected source of truth.</h2>
+              <p className="rg-section-label">04 · Your account</p>
+              <h2 id="rg-current-title">One place to follow Care and Research without blending them.</h2>
               <p className="rg-lede">
-                The public homepage does not mirror member product records, pricing, inventory, or private availability.
-                Current member-safe information stays inside the authorized account experience.
+                Your account is designed to keep intake, clinical review, pharmacy processing, Research requests, orders,
+                billing, documents, tracking, and support as separate facts. A later stage is never implied before its source confirms it.
               </p>
-              <Link href="/research/sign-in" className="rg-btn rg-btn-dark">Member sign in <Arrow /></Link>
+              <Link href="/research/sign-in" className="rg-btn rg-btn-dark">Access your account <Arrow /></Link>
             </div>
             <div className="rg-ledger" aria-label="Information evaluated for an exact offering">
               <div><span>Identity</span><strong>Product + exact variant</strong></div>
@@ -265,18 +268,19 @@ export default function Gateway() {
           </div>
           <div className="rg-shell rg-quality-grid">
             <div>
-              <p className="rg-section-label">05 · Quality &amp; documentation</p>
-              <h2 id="rg-quality-title">Documentation before decoration.</h2>
+              <p className="rg-section-label">05 · Quality and documentation</p>
+              <h2 id="rg-quality-title">The label is the beginning of the record, not the end.</h2>
             </div>
             <div className="rg-reading-column">
               <p className="rg-lede">
-                The quality model treats receiving, inspection, lot capture, quarantine, document review, testing where applicable, and release or hold as separate checkpoints.
+                Xenios treats identity, formulation, receiving, lot capture, documentation, testing where applicable, storage,
+                release, dispensing or fulfillment, and later exceptions as separate checkpoints.
               </p>
               <ul className="rg-check-list">
-                <li>Exact item and lot traceability</li>
-                <li>Document status shown in context</li>
-                <li>Independent testing described only where applicable</li>
-                <li>Clear hold, unavailable, and replacement states</li>
+                <li>Exact product, formulation, and lot traceability</li>
+                <li>Documentation shown only when it matches the exact item or lot</li>
+                <li>Testing described only when the applicable record supports it</li>
+                <li>Clear release, hold, unavailable, replacement, and escalation states</li>
               </ul>
               <Link href="/research/support" className="rg-inline-link">
                 Ask about documentation <Arrow />
@@ -288,8 +292,8 @@ export default function Gateway() {
         <section className="rg-section rg-process" id="how-it-works" aria-labelledby="rg-process-title">
           <div className="rg-shell">
             <div className="rg-section-heading">
-              <p className="rg-section-label">06 · How access works</p>
-              <h2 id="rg-process-title">A deliberate path from interest to evidence.</h2>
+              <p className="rg-section-label">06 · How it works</p>
+              <h2 id="rg-process-title">From first interest to a responsible next action.</h2>
             </div>
             <ol className="rg-process-list">
               {accessSteps.map(([title, copy], index) => (
@@ -309,11 +313,11 @@ export default function Gateway() {
         <section className="rg-section rg-account" aria-labelledby="rg-account-title">
           <div className="rg-shell rg-current-grid">
             <div className="rg-current-copy">
-              <p className="rg-section-label">07 · Returning customers</p>
-              <h2 id="rg-account-title">An account that separates facts.</h2>
+              <p className="rg-section-label">07 · Ongoing support</p>
+              <h2 id="rg-account-title">A relationship that continues after the first form or order.</h2>
               <p className="rg-lede">
-                Membership, billing, Research requests, payment, fulfillment, Care, documents, and support are designed
-                to remain distinct—so one status cannot overstate another.
+                Care follow-up, lifestyle support, Research documentation, order status, tracking, account access, and
+                customer service remain available through their appropriate sources and teams.
               </p>
               <Link href="/research/sign-in" className="rg-btn rg-btn-dark">Access your account <Arrow /></Link>
             </div>
@@ -331,7 +335,8 @@ export default function Gateway() {
             </div>
             <div className="rg-reading-column">
               <p className="rg-lede">
-                Research organizations, clinics, professional buyers, affiliates, suppliers, and strategic partners begin with context and review—not automatic approval.
+                Care organizations, Research customers, clinics, professional buyers, affiliates, suppliers, and strategic
+                partners begin with context and review—not automatic approval.
               </p>
               <div className="rg-stacked-actions">
                 <Link href="/research/partners" className="rg-btn rg-btn-light">Choose a relationship path <Arrow /></Link>
@@ -355,9 +360,9 @@ export default function Gateway() {
                 <p>Research-use identity, available documentation, request and order pathways, fulfillment, and support.</p>
               </article>
               <article>
-                <p className="rg-pathway-tag">Provider-governed Care</p>
-                <h3>Provider-governed review where configured and legally available</h3>
-                <p>Scheduling, eligibility, provider decisions, clinical records, prescribing, and pharmacy activity remain under their authorized systems. Availability varies by configuration and jurisdiction.</p>
+                <p className="rg-pathway-tag">Xenios Care</p>
+                <h3>Secure intake and independent licensed clinical review</h3>
+                <p>Care is available nationwide, while exact services, formulations, clinician availability, and pharmacy fulfillment remain subject to location, eligibility, authority, serviceability, and current availability.</p>
                 <Link href="/care" className="rg-inline-link">Understand Care <Arrow /></Link>
               </article>
             </div>
@@ -383,18 +388,18 @@ export default function Gateway() {
         <section className="rg-final" aria-labelledby="rg-final-title">
           <div className="rg-shell">
             <p className="rg-section-label">Xenios Research</p>
-            <h2 id="rg-final-title">Start with the path that is true for you.</h2>
-            <p>Choose Research, Care, organization, partner, supplier, Early Access, account, or support without guessing which door applies.</p>
+            <h2 id="rg-final-title">Start with Care or explore Research.</h2>
+            <p>Choose the path that matches personal health or legitimate nonclinical work without guessing which authority applies.</p>
             <div className="rg-final-actions">
-              <Link href="/research/access-hub" className="rg-btn rg-btn-dark">Open the Access Hub <Arrow /></Link>
-              <Link href="/research/apply" className="rg-btn rg-btn-outline" data-testid="link-gateway-apply">Review membership access <Arrow /></Link>
+              <Link href="/care" className="rg-btn rg-btn-dark">Begin clinical intake <Arrow /></Link>
+              <Link href="/research/access-hub" className="rg-btn rg-btn-outline" data-testid="link-gateway-apply">Explore Research <Arrow /></Link>
             </div>
           </div>
         </section>
       </main>
 
       <ResearchFooter />
-      <Link href="/research/access-hub" className="rg-mobile-access">Choose your access path <Arrow /></Link>
+      <Link href="/care" className="rg-mobile-access">Begin clinical intake <Arrow /></Link>
     </div>
   );
 }

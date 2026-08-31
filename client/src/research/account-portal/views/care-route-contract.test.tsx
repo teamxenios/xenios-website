@@ -73,7 +73,7 @@ describe("Care route-to-view contract (real envelope, real view)", () => {
     expect(container.textContent).not.toContain("Recorded");
     expect(container.textContent).not.toContain("Account created");
     expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(0);
-    expect(container.textContent).toContain("current checkpoint only");
+    expect(container.textContent).toContain("current recorded checkpoint only");
     expect(container.textContent).not.toContain("Possible step");
     expect(container.textContent).not.toContain("authorized stage");
     expect(container.textContent).not.toContain("Not started");

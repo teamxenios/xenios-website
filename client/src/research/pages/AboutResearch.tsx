@@ -5,38 +5,38 @@ import { PublicBoundaryNote } from "./PublicEditorialNav";
 
 const operatingPrinciples = [
   {
-    title: "One exact identity",
-    body: "A product and its exact variant, strength, format, lot, and documents stay distinct. Similar language never authorizes a guessed match.",
+    title: "Clinical independence",
+    body: "A commercial goal never determines diagnosis, treatment, prescribing, or clinical follow-up.",
   },
   {
-    title: "One honest status",
-    body: "Available, request-only, held, documentation-pending, provider-required, unavailable, and unknown each produce a different next action.",
+    title: "Research exactness",
+    body: "A product, exact variant, strength, format, lot, evidence level, and document state remain distinct.",
   },
   {
-    title: "One accountable handoff",
-    body: "Requests, orders, payment, fulfillment, support, and Care remain connected without pretending that one stage proves another.",
+    title: "Accountable handoffs",
+    body: "Intake, provider review, prescription, pharmacy processing, Research requests, orders, payment, fulfillment, tracking, and support remain connected without pretending one proves another.",
   },
 ] as const;
 
 const platformLayers = [
-  ["Discover", "Understand the offering, the evidence boundary, and the available access paths."],
-  ["Review", "Evaluate exact identity, status, documentation, and the action currently authorized."],
-  ["Operate", "Give customers and operators source-aware order, fulfillment, document, and support information."],
-  ["Return", "Make account access, repeat requests, support, and partner attribution coherent over time."],
+  ["Discover", "Understand Care, Research, the product or formulation, the evidence boundary, and the next available step."],
+  ["Complete", "Create or access the right account, complete the Care intake or Research requirements, and provide only the information that pathway needs."],
+  ["Review", "Licensed clinicians make clinical decisions. Research actions remain governed by exact product, documentation, availability, and access controls."],
+  ["Follow", "Use source-aware status, pharmacy or fulfillment updates, documents, lifestyle support, and customer service over time."],
 ] as const;
 
 export default function AboutResearch() {
   return (
     <>
       <SeoHead
-        title="About Xenios Research"
-        description="Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations."
+        title="About Xenios | Care + Research"
+        description="Learn how Xenios combines provider-guided Care, evidence-led Research access, quality documentation, and accountable operations without blending clinical and nonclinical authority."
         path="/research/about"
       />
       <ResearchPublicShell
-        eyebrow="About Xenios Research"
-        title="A more accountable way to navigate research access."
-        lead="Xenios Research is the product-access and operating layer of the broader Xenios platform. It is designed to help legitimate customers understand what exists, what is known, what remains unavailable, and what they can truthfully do next."
+        eyebrow="About Xenios"
+        title="One platform. Two accountable pathways."
+        lead="Xenios supports personal health through provider-guided Care and legitimate nonclinical work through Xenios Research. The platform connects account access, education, product and formulation context, status, quality documentation, fulfillment, lifestyle support, and customer service while preserving the authority of clinicians, pharmacies, Research controls, and exact source records."
       >
         <section className="mt-8" aria-labelledby="about-purpose">
           <p className="mono-label text-ink-mute">Why it exists</p>
@@ -67,12 +67,12 @@ export default function AboutResearch() {
 
         <section className="card mt-10" aria-labelledby="about-stage">
           <p className="mono-label text-ink-mute">Current stage</p>
-          <h2 id="about-stage" className="body-l font-700 mt-2">Evolving from founder-run operations toward a broader platform.</h2>
+          <h2 id="about-stage" className="body-l font-700 mt-2">Active Care alongside evidence-led Research.</h2>
           <p className="body-s text-ink-2 mt-3 max-w-[68ch]">
-            Xenios is moving from founder-run Early Access operations toward a larger platform. Which workflows are
-            available depends on current configuration and durable authority; others may require human review or remain
-            disabled until documentation, credentials, legal approval, or external configuration is complete. The
-            experience should make those distinctions visible instead of hiding them.
+            Xenios is operating an active Care pathway alongside its Research platform. Availability still depends on
+            current clinician authority, patient location, pharmacy serviceability, exact product or formulation status,
+            quality records, and source-authoritative configuration. The website must show those differences clearly
+            rather than turning broad access into a guarantee.
           </p>
         </section>
 
@@ -82,13 +82,13 @@ export default function AboutResearch() {
 
         <section className="card mt-10" aria-labelledby="about-next">
           <p className="mono-label text-ink-mute">Your next step</p>
-          <h2 id="about-next" className="body-l font-700 mt-2">Choose the relationship that fits.</h2>
+          <h2 id="about-next" className="body-l font-700 mt-2">Choose the pathway that fits.</h2>
           <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            Individual Research access, private Early Access, Care, organizations, affiliates, suppliers, and support each begin differently.
+            Personal health begins with Care. Legitimate nonclinical work begins with Research.
           </p>
           <div className="mt-5 public-editorial-actions">
-            <Link href="/research/access-hub" className="btn btn-primary public-editorial-action">Open the Access Hub</Link>
-            <Link href="/research/how-it-works" className="btn btn-secondary public-editorial-action">See how it works</Link>
+            <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+            <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
           </div>
         </section>
       </ResearchPublicShell>

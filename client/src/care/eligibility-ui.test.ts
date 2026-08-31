@@ -79,13 +79,12 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
     expect(eligibility).toContain("Nothing was submitted. Try again.");
   });
 
-  it("makes no availability, treatment, prescription, provider, price, or launch claim", () => {
-    expect(eligibility).toMatch(/does not approve\s+treatment/);
+  it("uses approved qualified availability language without automated clearance", () => {
+    expect(eligibility).toContain("Xenios Care is available nationwide");
+    expect(eligibility).toContain("depend on where you are physically located");
     expect(eligibility).toContain("No automated clinical clearance.");
-    expect(eligibility).toContain("does not");
-    expect(`${eligibility}\n${consent}`).not.toMatch(
-      /\$\d|available nationwide|our clinicians|our pharmacy|launches? on/i,
-    );
+    expect(eligibility).toContain("This does not establish clinical eligibility.");
+    expect(`${eligibility}\n${consent}`).not.toMatch(/\$\d|our clinicians|our pharmacy|launches? on/i);
   });
 
   it("does not invent consent text or clinical questions", () => {
