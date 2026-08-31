@@ -34,6 +34,22 @@
   ],
   "routes": [
     {
+      "path": "/health",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "metadataContract": {
+        "title": "Xenios | Care + Research",
+        "description": "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work."
+      },
+      "structuredDataTypes": [],
+      "semanticContract": {
+        "requiredSelectors": ["#rg-hero-title"],
+        "requiredText": ["Provider-guided peptide care.", "Evidence-led Research access."]
+      }
+    },
+    {
       "path": "/research",
       "surface": "warm-silver-homepage-reconciliation",
       "state": "default",

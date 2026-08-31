@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isCarePath, normalizeCarePath } from "./paths";
+import { isCarePath, isHealthGatewayPath, normalizeCarePath } from "./paths";
 
 describe("Care path normalization", () => {
   it.each([
@@ -32,5 +32,23 @@ describe("Care path normalization", () => {
     "/care%252fschedule",
   ])("fails closed for non-Care or ambiguous input: %s", (value) => {
     expect(isCarePath(value)).toBe(false);
+  });
+
+  it.each([
+    "/health",
+    "/HEALTH/",
+    "/%68ealth?from=nav#ignored",
+  ])("recognizes the exact normalized Health gateway: %s", (value) => {
+    expect(isHealthGatewayPath(value)).toBe(true);
+  });
+
+  it.each([
+    "/health/care",
+    "/healthcare",
+    "/health%2Fcare",
+    "/health//care",
+    "https://example.com/health",
+  ])("does not broaden the Health gateway boundary: %s", (value) => {
+    expect(isHealthGatewayPath(value)).toBe(false);
   });
 });

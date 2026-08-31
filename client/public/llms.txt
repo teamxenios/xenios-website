@@ -14,6 +14,7 @@ Audience: coaches, trainers, and practitioners doing the work upstream of diseas
 - /                      Home
 - /product               Product overview, capabilities, the two surfaces
 - /how-it-works          Five-step onboarding, autonomy dial
+- /health                Care + Research starting point
 - /for-coaches           The xenios agent, coach surface
 - /for-clients           The xenios client agent, client surface
 - /storefront            Native commerce rail

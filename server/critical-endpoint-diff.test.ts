@@ -137,11 +137,11 @@ afterEach(() => {
 });
 
 describe("critical endpoint inventory", () => {
-  it("contains exactly 27 unique method/path endpoints", () => {
-    expect(DEFAULT_ENDPOINTS).toHaveLength(27);
+  it("contains exactly 28 unique method/path endpoints", () => {
+    expect(DEFAULT_ENDPOINTS).toHaveLength(28);
 
     const keys = DEFAULT_ENDPOINTS.map(([method, route]) => `${method} ${route}`);
-    expect(new Set(keys).size).toBe(27);
+    expect(new Set(keys).size).toBe(28);
     expect(DEFAULT_ENDPOINTS.every(([, route, routeClass]) => route.startsWith("/") && routeClass.length > 0)).toBe(true);
 
     expect(keys.filter((key) => key.includes("/assisted-orders"))).toEqual([
@@ -156,6 +156,7 @@ describe("critical endpoint inventory", () => {
       "GET /hino/",
       "GET /hino/story/",
     ]);
+    expect(keys).toContain("GET /health");
   });
 });
 

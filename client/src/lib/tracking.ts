@@ -1,5 +1,5 @@
 import { getConfig } from "./config";
-import { isCarePath } from "@shared/care/paths";
+import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
 import { isRecoveryHash } from "@shared/research/recovery";
 import { isResearchPath } from "@shared/research/paths";
 
@@ -24,7 +24,8 @@ type DocumentNavigator = {
 // and never while a Supabase recovery hash (#access_token...&type=recovery)
 // is present anywhere, because a tracking script that loads before the hash
 // is consumed can receive the full recovery URL. The durable rule: no
-// third-party tracking scripts anywhere under /research or /care, and none
+// third-party tracking scripts anywhere under /research or /care, on the
+// exact /health umbrella gateway, and none
 // while a recovery hash is in the location. Full URLs, hashes, query parameters,
 // member identifiers, email addresses, and tokens are never sent to
 // analytics. The recovery-hash detection reuses the canonical helper the
@@ -34,15 +35,19 @@ export function trackingBlockedHere(pathname: string, hash: string): boolean {
   // The canonical Research and Care helpers fail closed around case,
   // percent-encoding, separators, and malformed input; the recovery-hash arm
   // blocks a recovery landing on any path.
-  return isResearchPath(pathname) || isCarePath(pathname) || isRecoveryHash(hash);
+  return isResearchPath(pathname)
+    || isCarePath(pathname)
+    || isHealthGatewayPath(pathname)
+    || isRecoveryHash(hash);
 }
 
-type DocumentPrivacyZone = "public" | "research" | "care" | "recovery";
+type DocumentPrivacyZone = "public" | "health" | "research" | "care" | "recovery";
 
 function documentPrivacyZone(pathname: string, hash: string): DocumentPrivacyZone {
   if (isRecoveryHash(hash)) return "recovery";
   if (isResearchPath(pathname)) return "research";
   if (isCarePath(pathname)) return "care";
+  if (isHealthGatewayPath(pathname)) return "health";
   return "public";
 }
 
@@ -64,7 +69,7 @@ export function requiresFullDocumentNavigation(currentHref: string, targetHref: 
 // Once Meta's code has executed, deleting its script tag or suppressing fbq
 // does not unload its observers. The only durable isolation boundary is a new
 // document. Intercept History API transitions that cross the public, Research,
-// Care, or recovery boundaries and use a full navigation before pushState can
+// Health, Care, or recovery boundaries and use a full navigation before pushState can
 // expose a sensitive URL to an already-running third-party runtime. Research
 // and Care are distinct zones so a future approved Tebra embed cannot remain
 // resident when the user enters the Research account surface.

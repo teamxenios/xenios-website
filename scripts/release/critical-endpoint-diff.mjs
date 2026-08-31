@@ -30,6 +30,7 @@ export const DEFAULT_ENDPOINTS = Object.freeze([
   // method, path, class
   ["GET", "/api/health", "health"],
   ["GET", "/", "marketing-document"],
+  ["GET", "/health", "health-gateway-document"],
   ["GET", "/research", "research-document"],
   ["GET", "/research/early-access", "research-document"],
   ["GET", "/research/early-access/order-request", "research-document"],

@@ -131,6 +131,23 @@ describe("the production static server answers documents through the raw HTTP po
     expect(canonical(res.text)).toBe("https://xeniostechnology.com/research/quality");
   });
 
+  it("serves /health as the indexable canonical Care + Research gateway", async () => {
+    const res = await request(app).get("/health");
+    expect(res.status).toBe(200);
+    expect(res.headers["x-robots-tag"]).toMatch(/^index,follow/u);
+    expect(res.headers.link).toBe(
+      '<https://xeniostechnology.com/health>; rel="canonical"',
+    );
+    expect(canonical(res.text)).toBe("https://xeniostechnology.com/health");
+    expect(res.text).toContain("Xenios | Care + Research");
+    expect(res.text).toContain(
+      "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
+    );
+    expect(res.text).not.toContain("template-organization");
+    expect(res.text).not.toContain("template-faq");
+    expect(res.text).not.toContain("application/ld+json");
+  });
+
   it("keeps a private member document at 200 but noindex, with no canonical or Open Graph authority", async () => {
     const res = await request(app).get("/research/member/orders");
     expect(res.status).toBe(200);

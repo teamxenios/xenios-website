@@ -63,7 +63,7 @@ export function PublicEditorialFooter() {
     <footer className="public-editorial-footer rule-top">
       <div className="container-x public-editorial-footer-grid">
         <div>
-          <Link href="/research" className="wordmark public-editorial-footer-brand" data-testid="link-research-home-footer">
+          <Link href="/health" className="wordmark public-editorial-footer-brand" data-testid="link-health-home-footer">
             <span className="wordmark-mark" aria-hidden="true" />
             xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>care + research</span>
           </Link>

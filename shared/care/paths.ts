@@ -46,3 +46,8 @@ export function isCarePath(value: string): boolean {
   const normalized = normalizeCarePath(value);
   return normalized === "/care" || normalized?.startsWith("/care/") === true;
 }
+
+/** The exact public umbrella gateway for the Care and Research pathways. */
+export function isHealthGatewayPath(value: string): boolean {
+  return normalizeCarePath(value) === "/health";
+}

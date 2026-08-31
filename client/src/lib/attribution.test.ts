@@ -27,6 +27,9 @@ describe("marketing attribution privacy boundary", () => {
     "/care/schedule?patient=private",
     "/CARE/portal?token=secret",
     "/%63are/provider-review?visit=private",
+    "/health?interest=private",
+    "/HEALTH/?token=secret",
+    "/%68ealth?visit=private",
     "/#access_token=secret&type=recovery",
   ])("stores and returns no attribution on %s", (path) => {
     sessionStorage.setItem("xen_landing_page", "/about?legacy=secret");

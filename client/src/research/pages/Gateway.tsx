@@ -49,7 +49,7 @@ function Arrow() {
 function ResearchHeader() {
   return (
     <header className="rg-header" aria-label="Xenios Research header">
-      <Link href="/research" className="rg-brand" aria-label="Xenios Research home">
+      <Link href="/health" className="rg-brand" aria-label="Xenios Care and Research home">
         <Wordmark size="md" asLink={false} />
         <span className="rg-brand-sub">Care + Research</span>
       </Link>
@@ -88,7 +88,7 @@ function ResearchFooter() {
     <footer className="rg-footer">
       <div className="rg-shell rg-footer-grid">
         <div>
-          <Link href="/research" className="rg-brand rg-footer-brand" aria-label="Xenios Research home">
+          <Link href="/health" className="rg-brand rg-footer-brand" aria-label="Xenios Care and Research home">
             <Wordmark size="md" asLink={false} />
             <span className="rg-brand-sub">Care + Research</span>
           </Link>
@@ -127,7 +127,7 @@ export default function Gateway() {
       <SeoHead
         title="Xenios | Care + Research"
         description="Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work."
-        path="/research"
+        path="/health"
       />
 
       <a className="rg-skip-link" href="#research-main">Skip to main content</a>

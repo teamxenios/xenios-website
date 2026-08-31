@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 // Founder directive (Samuel): there must be no public "Research Catalog" button,
 // card, tile, hero CTA, navigation CTA, or equivalent public catalog-entry
-// control on the /research home page (client/src/research/pages/Gateway.tsx,
-// mounted at "/research" in client/src/research/section.tsx). This file is
+// control on the Care + Research gateway (client/src/research/pages/Gateway.tsx,
+// canonical at "/health" and retained at "/research" for compatibility). This file is
 // the automated lock: it must keep failing the build the moment a catalog
 // CTA reappears here, whether by direct regression, a responsive-only
 // variant, or a feature flag. See docs/research/RESEARCH_HOME_CATALOG_POLICY.md
@@ -160,6 +160,7 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
     // if its label happens not to match a denylisted phrase.
     const ALLOWED_HREFS = new Set([
       "/", // Wordmark's link back to the site root
+      "/health", // Canonical Care + Research gateway identity
       "/research",
       "/research/apply",
       "/research/sign-in",

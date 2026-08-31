@@ -113,7 +113,7 @@ describe("public evidence topology", () => {
       ...PUBLIC_RESEARCH_EXACT_PATHS,
       ...RAW_HTTP_PUBLIC_POLICY_PATHS,
     ]);
-    expect(rawPublicPaths.size).toBe(74);
+    expect(rawPublicPaths.size).toBe(75);
     for (const pathname of rawPublicPaths) {
       const contract = route(pathname)?.metadataContract;
       expect(contract, pathname).toEqual(rawHttpDocumentMetadataForPath(pathname));

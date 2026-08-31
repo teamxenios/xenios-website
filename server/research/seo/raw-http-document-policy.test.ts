@@ -20,6 +20,7 @@ import {
   RAW_HTTP_SITE_ORIGIN,
   buildRawHttpDocumentResponse,
   createRawHttpDocumentPolicyResolver,
+  rawHttpDocumentMetadataForPath,
   rawHttpStructuredDataForPath,
 } from "./raw-http-document-policy";
 
@@ -260,6 +261,20 @@ describe("raw HTTP route authority", () => {
         canonicalUrl: canonical,
       });
     }
+  });
+
+  it("admits /health as the canonical public Care + Research gateway", () => {
+    expect(defaultResolver.resolve("/health")).toMatchObject({
+      status: 200,
+      routeKind: "public",
+      indexable: true,
+      canonicalPath: "/health",
+      canonicalUrl: "https://xeniostechnology.com/health",
+    });
+    expect(rawHttpDocumentMetadataForPath("/health")).toEqual({
+      title: "Xenios | Care + Research",
+      description: "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
+    });
   });
 
   it("makes Quality, Testing, and Documents explicit public roots", () => {

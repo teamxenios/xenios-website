@@ -139,7 +139,7 @@ describe("the changed-file classifier", () => {
     ]);
   });
 
-  it("admits only the reviewed global typography files as reported, hash-locked seams", () => {
+  it("admits only the reviewed global exact-byte changes as reported, hash-locked seams", () => {
     const typographyFiles = [
       "client/index.html",
       "client/src/main.tsx",
@@ -147,17 +147,28 @@ describe("the changed-file classifier", () => {
       "package.json",
       "package-lock.json",
     ];
-    const result = classifyChangedFiles(typographyFiles, manifest);
+    const healthEntrypointFiles = [
+      "client/src/lib/nav.ts",
+      "client/public/sitemap.xml",
+      "client/public/llms.txt",
+      "client/src/lib/tracking.ts",
+      "client/src/lib/attribution.ts",
+    ];
+    const reviewedHashLockedSeams = [
+      ...typographyFiles,
+      ...healthEntrypointFiles,
+    ];
+    const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 
     expect(result.violations).toEqual([]);
     expect(result.allowed).toEqual([]);
-    expect(result.seam.sort()).toEqual([...typographyFiles].sort());
+    expect(result.seam.sort()).toEqual([...reviewedHashLockedSeams].sort());
     const hashLockedSeams = manifest.permittedSeamFiles.files
       .filter((entry: { seam: string }) => entry.seam.startsWith("hash-locked"))
       .map((entry: { path: string }) => entry.path)
       .sort();
-    expect(hashLockedSeams).toEqual([...typographyFiles].sort());
-    for (const path of typographyFiles) {
+    expect(hashLockedSeams).toEqual([...reviewedHashLockedSeams].sort());
+    for (const path of reviewedHashLockedSeams) {
       expect(manifest.fileHashes.files[path], `${path} must be hard hash-pinned`).toMatch(
         /^sha256:[0-9a-f]{64}$/,
       );
@@ -401,9 +412,10 @@ describe("the manifest cannot rot: every protected route is real", () => {
     );
     const declaredPaths = new Set(declared.map((route) => route.path).filter((p) => p !== "*"));
 
-    // Research and Care routes are deliberately not in the manifest.
+    // Health, Research, and Care routes are deliberately not in the manifest.
     const protectedRegistered = [...registered].filter(
       (path) =>
+        !inSection(path, "/health") &&
         !inSection(path, "/research") &&
         !inSection(path, "/care") &&
         !inSection(path, "/admin/research") &&
@@ -417,8 +429,9 @@ describe("the manifest cannot rot: every protected route is real", () => {
     for (const path of declaredPaths) expect(registered).toContain(path);
   });
 
-  it("excludes every /research, /care and /admin/research route from the protected set", () => {
+  it("excludes every /health, /research, /care and /admin/research route from the protected set", () => {
     for (const route of declared) {
+      expect(inSection(route.path, "/health"), route.path).toBe(false);
       expect(inSection(route.path, "/research"), route.path).toBe(false);
       expect(inSection(route.path, "/care"), route.path).toBe(false);
       expect(inSection(route.path, "/admin/research"), route.path).toBe(false);

@@ -41,6 +41,10 @@ const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 // xenios research: the entire section is one lazy chunk so the main bundle does
 // not grow. It carries no product data; the catalog comes from gated server APIs.
 const ResearchSection = lazy(() => import("@/research/section"));
+// Public Care + Research umbrella. This mounts the shared gateway directly so
+// /health has its own indexable document identity while /research keeps its
+// existing section-level indexing and access policy.
+const HealthGateway = lazy(() => import("@/research/pages/Gateway"));
 // Admin dashboard: a large, rarely visited surface (waitlist/LOI/bookings/
 // analytics/research tables). Its own lazy chunk keeps it out of the main
 // public bundle.
@@ -59,6 +63,14 @@ function ResearchRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <ResearchSection />
+    </Suspense>
+  );
+}
+
+function HealthRoutes() {
+  return (
+    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
+      <HealthGateway />
     </Suspense>
   );
 }
@@ -169,6 +181,8 @@ function Router() {
       {/* Research operations family (Samuel admin presentation, own chunk). */}
       <Route path="/admin/research" component={AdminResearchRoutes} />
       <Route path="/admin/research/*" component={AdminResearchRoutes} />
+      {/* Canonical public entrypoint for the separate Care and Research paths. */}
+      <Route path="/health" component={HealthRoutes} />
       {/* xenios research (password-gated section, own chunk). The bare path and
           the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />

@@ -2,8 +2,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Tracking isolation (PR #25 correction pass, blocker 1): third-party
-// tracking must never initialize under /research, under /care, or while a Supabase
-// recovery hash is present, and no event may carry a URL, hash, or token.
+// tracking must never initialize under /research, under /care, on /health, or
+// while a Supabase recovery hash is present, and no event may carry a URL,
+// hash, or token.
 
 const cfg = vi.hoisted(() => ({
   value: { metaPixelId: "PIXEL123", turnstileSiteKey: "", calendlyUrl: "", supabaseUrl: "", supabaseAnonKey: "" } as any,
@@ -72,6 +73,16 @@ describe("initTracking is a no-op on the private Research surface", () => {
     }
   });
 
+  it("no-op on the exact Health gateway, including normalized variants", async () => {
+    for (const path of ["/health", "/HEALTH/", "/%68ealth?from=nav"]) {
+      setLocation(path);
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+    }
+  });
+
   it("no-op when a recovery hash is present, even on a marketing path", async () => {
     setLocation("/", "#access_token=abc&refresh_token=def&type=recovery");
     const t = await freshTracking();
@@ -132,7 +143,7 @@ describe("positive control and event hygiene", () => {
     expect(JSON.stringify(queued)).not.toMatch(/http|#|access_token|recovery|@/);
   });
 
-  it("track() is suppressed under Research and Care even when the pixel is already loaded", async () => {
+  it("track() is suppressed under Research, Care, and Health even when the pixel is already loaded", async () => {
     setLocation("/");
     const t = await freshTracking();
     const fbq = vi.fn();
@@ -143,6 +154,9 @@ describe("positive control and event hygiene", () => {
     expect(fbq).not.toHaveBeenCalled();
     setLocation("/care/schedule");
     t.track("Schedule", { pathway: "care" });
+    expect(fbq).not.toHaveBeenCalled();
+    setLocation("/health");
+    t.track("ViewContent", { pathway: "health" });
     expect(fbq).not.toHaveBeenCalled();
     setLocation("/concepts");
     t.track("Lead");
@@ -169,6 +183,10 @@ describe("positive control and event hygiene", () => {
     expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/care/schedule");
     expect(originalPush).not.toHaveBeenCalled();
 
+    fakeWindow.history.pushState({}, "", "/health");
+    expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/health");
+    expect(originalPush).not.toHaveBeenCalled();
+
     // Recovery hashes on any path get the same new-document isolation.
     fakeWindow.history.replaceState({}, "", "/#access_token=abc&refresh_token=def&type=recovery");
     expect(replace).toHaveBeenCalledWith("https://xeniostechnology.com/#access_token=abc&refresh_token=def&type=recovery");
@@ -184,6 +202,18 @@ describe("positive control and event hygiene", () => {
       t.requiresFullDocumentNavigation(
         "https://xeniostechnology.com/care/schedule",
         "https://xeniostechnology.com/care/portal",
+      ),
+    ).toBe(false);
+    expect(
+      t.requiresFullDocumentNavigation(
+        "https://xeniostechnology.com/health",
+        "https://xeniostechnology.com/care/schedule",
+      ),
+    ).toBe(true);
+    expect(
+      t.requiresFullDocumentNavigation(
+        "https://xeniostechnology.com/health",
+        "https://xeniostechnology.com/health?from=footer",
       ),
     ).toBe(false);
   });
