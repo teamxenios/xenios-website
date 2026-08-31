@@ -527,7 +527,7 @@
       "id": "OMEGA-FULL-FINISH-LEAD-20260828",
       "title": "Lead and integrate the Xenios Research Omega full-site release candidate without production mutation",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-recut-final-20260829",
       "paths": [
         "server/index.ts",
@@ -568,7 +568,67 @@
       "dependsOn": [],
       "pathsNote": "Exact-scope Lead task continued by Samuel's 2026-08-30 Codex-only final completion command. Scope is frozen to verification, release evidence, state reconciliation, a docs/evidence successor, and detached Codex review. No deploy before a later exact-SHA GO; no production/shared-staging migration, real account/import/invitation, product/pricing/payment mutation, clinical/pharmacy action, or external communication is authorized.",
       "claimedAt": "2026-08-30T14:01:39.823Z",
-      "heartbeatAt": "2026-08-30T22:23:39.231Z"
+      "heartbeatAt": "2026-08-30T22:23:39.231Z",
+      "acceptedSha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
+      "acceptedBy": "founder-approval-state-a-20260831",
+      "acceptedAt": "2026-08-31T14:30:57.632Z"
+    },
+    {
+      "id": "CARE-RESEARCH-POSTLAUNCH-20260831",
+      "title": "Implement founder-approved State A Care + Research post-launch content and catalog education without production mutation",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-care-research-postlaunch-20260831",
+      "paths": [
+        "client/src/research/pages/Gateway.tsx",
+        "client/src/research/pages/PublicEditorialNav.tsx",
+        "client/src/research/pages/AccessHub.tsx",
+        "client/src/research/pages/HowItWorks.tsx",
+        "client/src/research/pages/AboutResearch.tsx",
+        "client/src/research/pages/Faq.tsx",
+        "client/src/care/CarePublicPages.tsx",
+        "client/src/care/EligibilityPendingPage.tsx",
+        "client/src/research/account-portal/views/CareView.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/care/eligibility-ui.test.ts",
+        "client/src/care/shell.test.ts",
+        "client/src/care/tebra-truth-a11y.test.tsx",
+        "client/src/research/account-portal/views/account-portal.test.tsx",
+        "client/src/research/account-portal/views/care-route-contract.test.tsx",
+        "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "client/src/research/catalog-display/CatalogGrid.test.tsx",
+        "client/src/research/catalog-display/ProductDetail.test.tsx",
+        "client/src/research/content/**",
+        "shared/research/member-catalog.ts",
+        "scripts/content/**",
+        "scripts/research-launch/*care-research-postlaunch*",
+        "client/src/research/content/care-research-postlaunch.test.ts",
+        "shared/research/member-catalog.care-research-postlaunch.test.ts",
+        "docs/research-launch/XENIOS_CARE_RESEARCH_POSTLAUNCH_IMPLEMENTATION_2026-08-31.md",
+        "docs/review/xenios-care-research-postlaunch-20260831/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-care-research-postlaunch-20260831.json",
+        ".xenios/handoffs/*CARE-RESEARCH-POSTLAUNCH-20260831*"
+      ],
+      "dependsOn": [
+        "OMEGA-FULL-FINISH-LEAD-20260828"
+      ],
+      "pathsNote": "Founder-approved State A scope from the 2026-08-31 post-launch package. Existing routes and controls only; reconcile all 426 workbook source rows into customer-safe education and existing server-authoritative pricing gates. No deploy, production mutation, migration, new route, new form, new API, payment, clinical, pharmacy, supplier, or external communication action is authorized.",
+      "claimedAt": "2026-08-31T14:32:50.341Z",
+      "handoff": {
+        "session": "codex-care-research-postlaunch-20260831",
+        "sha": "cea8c84926b82fad6d3edbca63012a476b6daef3",
+        "file": ".xenios/handoffs/2026-08-31T16-00-57-976Z-CARE-RESEARCH-POSTLAUNCH-20260831-codex-care-research-postlaunch-20260831.md",
+        "at": "2026-08-31T16:00:57.984Z"
+      }
     }
   ]
 }
