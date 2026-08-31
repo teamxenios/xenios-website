@@ -37,7 +37,7 @@ const expectedBaseline = {
   "object-src": ["'none'"],
   "frame-ancestors": ["'none'"],
   "form-action": ["'self'"],
-  "script-src": ["'self'"],
+  "script-src": ["'self'", "https://challenges.cloudflare.com"],
   "script-src-attr": ["'none'"],
   "style-src": ["'self'", "'unsafe-inline'"],
   "style-src-elem": ["'self'"],
@@ -45,7 +45,7 @@ const expectedBaseline = {
   "font-src": ["'self'"],
   "img-src": ["'self'", "data:"],
   "connect-src": ["'self'"],
-  "frame-src": ["'none'"],
+  "frame-src": ["https://challenges.cloudflare.com"],
   "worker-src": ["'self'"],
   "manifest-src": ["'self'"],
   "media-src": ["'self'"],
@@ -92,7 +92,7 @@ describe("Care document baseline CSP", () => {
     },
   );
 
-  it("contains no scheduling, portal, Meta, font-CDN, wildcard, or broad script source", async () => {
+  it("permits only self plus the exact Turnstile origins and no scheduling, portal, Meta, font-CDN, wildcard, or broad source", async () => {
     const response = await request(buildShellApp()).get("/care");
     const directives = parseCsp(response.headers["content-security-policy"]);
     const sources = Object.values(directives).flat();
@@ -102,7 +102,13 @@ describe("Care document baseline CSP", () => {
     expect(sources).not.toContain("https:");
     expect(sources).not.toContain("'unsafe-eval'");
     expect(directives["script-src"]).not.toContain("'unsafe-inline'");
-    expect(directives["frame-src"]).toEqual(["'none'"]);
+    expect(directives["script-src"]).toEqual([
+      "'self'",
+      "https://challenges.cloudflare.com",
+    ]);
+    expect(directives["frame-src"]).toEqual([
+      "https://challenges.cloudflare.com",
+    ]);
     expect(response.headers["content-security-policy"]).not.toMatch(
       /tebra|portal|facebook|connect\.facebook|fbcdn|fonts\.google/iu,
     );

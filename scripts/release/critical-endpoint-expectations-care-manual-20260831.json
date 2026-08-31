@@ -1,0 +1,40 @@
+{
+  "$comment": "Intentional, reviewed differences between the live Xenios application at 72b6f1380e13f09dec67684035ed44a1d2740408 and its bounded Xenios Care manual-access successor. Every allow entry is an anchored regex over one exact emitted diff. Unlisted changes are deployment-blocking regressions.",
+  "intentionalChanges": [
+    {
+      "method": "GET",
+      "path": "/api/care/status",
+      "rationale": "The existing disabled clinical capability remains disabled while a separately named, non-clinical manual access-request workflow becomes available.",
+      "allow": [
+        "^feature-state capability[.]enabled=false,capability[.]state=disabled -> accessRequests[.]acceptingRequests=true,capability[.]enabled=false,capability[.]state=disabled$",
+        "^shape-fingerprint cbdbda34ded20a65 -> d71a595d450b8347$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/care/access-request/status",
+      "rationale": "The new public readiness endpoint exposes only whether the Xenios-owned manual request path has durable storage and outbound notifications available.",
+      "allow": [
+        "^status 404 -> 200$",
+        "^feature-state - -> acceptingRequests=true$",
+        "^shape-fingerprint 1e660638b0a8d72d -> a628103695f4cd07$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/care",
+      "rationale": "The Care document policy adds only Cloudflare's exact Turnstile script and frame origins so optional abuse verification can render without restoring any Tebra origin.",
+      "allow": [
+        "^header content-security-policy: default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self' https://challenges[.]cloudflare[.]com;script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src https://challenges[.]cloudflare[.]com;worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests$"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/care/schedule",
+      "rationale": "The Care request document uses the same narrowly scoped optional Turnstile policy as the Care overview.",
+      "allow": [
+        "^header content-security-policy: default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self' https://challenges[.]cloudflare[.]com;script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src https://challenges[.]cloudflare[.]com;worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests$"
+      ]
+    }
+  ]
+}

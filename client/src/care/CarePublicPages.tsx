@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { Link } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
-import TebraPortalHandoff from "./TebraPortalHandoff";
-import TebraSchedulingExperience from "./TebraSchedulingExperience";
-import { useTebraPublicConfiguration } from "./useTebraPublicConfiguration";
+import CareAccessRequestForm, {
+  CareAccessAvailabilitySummary,
+} from "./CareAccessRequestForm";
 
 export const CARE_PUBLIC_PATHS = {
   home: "/care",
@@ -17,7 +17,7 @@ export const CARE_PUBLIC_PATHS = {
 
 const careNavigation = [
   ["Care overview", CARE_PUBLIC_PATHS.home],
-  ["Begin intake", CARE_PUBLIC_PATHS.schedule],
+  ["Start Care request", CARE_PUBLIC_PATHS.schedule],
   ["Care account", CARE_PUBLIC_PATHS.portal],
   ["How Care works", CARE_PUBLIC_PATHS.howItWorks],
   ["Clinical review", CARE_PUBLIC_PATHS.providerReview],
@@ -89,37 +89,9 @@ function EmergencyBoundary() {
       <h2 id="care-emergency-title" className="display-s max-w-[18ch]">This site is not emergency care.</h2>
       <p className="mt-6 body-l text-ink-2 max-w-[62ch]">
         If you may be experiencing a medical emergency, call 911 in the United States or contact
-        your local emergency services now. Do not wait for a response from Xenios or a Tebra appointment request.
+        your local emergency services now. Do not wait for a response from Xenios.
       </p>
     </section>
-  );
-}
-
-function CareAvailabilitySummary() {
-  const { state, retry } = useTebraPublicConfiguration();
-  if (state.kind === "loading") {
-    return <p className="body-m text-ink-2" aria-live="polite">Checking the current Care configuration…</p>;
-  }
-  if (state.kind === "error") {
-    return (
-      <div role="alert">
-        <p className="body-m text-ink-2">Care configuration could not be verified, so every handoff remains unavailable.</p>
-        <button type="button" className="btn btn-secondary min-h-11 mt-5" onClick={retry}>Try again</button>
-      </div>
-    );
-  }
-  return (
-    <div aria-live="polite">
-      <p className="body-l">
-        {state.configuration.careAvailable === true
-          ? "The Xenios Care pathway is available. Intake, scheduling, provider review, portal, and pharmacy handoffs remain subject to their separately verified configuration and current source status."
-          : "Xenios Care remains unavailable. No scheduling or portal access is enabled through this site."}
-      </p>
-      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-6">
-        <div><dt className="mono-label text-ink-mute">SCHEDULING</dt><dd className="body-m mt-1">{state.configuration.scheduling.status.replaceAll("_", " ")}</dd></div>
-        <div><dt className="mono-label text-ink-mute">PATIENT PORTAL</dt><dd className="body-m mt-1">{state.configuration.portal.status.replaceAll("_", " ")}</dd></div>
-      </dl>
-    </div>
   );
 }
 
@@ -127,18 +99,18 @@ export function CareHomePage() {
   return (
     <CarePage
       path={CARE_PUBLIC_PATHS.home}
-      eyebrow="XENIOS CARE · U.S.-BASED CLINICAL PATHWAY"
-      title="Start with a secure intake. Continue with licensed clinical review."
-      description="Create an account, complete a health questionnaire, receive independent review by a U.S.-licensed clinician, and continue to pharmacy fulfillment when treatment is clinically appropriate."
-      intro="Xenios Care is available nationwide. Create or access your secure account, confirm your current location, complete the health questionnaire, and receive independent review by a U.S.-licensed clinician. When treatment is clinically appropriate and serviceable, a prescription may be fulfilled through a U.S.-based, state-licensed compounding pharmacy."
+      eyebrow="XENIOS CARE · HUMAN-GUIDED ACCESS"
+      title="Start your Care request today."
+      description="Submit contact and routing details for Xenios Care, then receive a human follow-up and a separate secure clinical handoff when appropriate."
+      intro="Xenios Care is accepting access requests without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available."
     >
       <section className="container-x pb-16" aria-labelledby="care-current-status">
         <aside className="card max-w-[820px]" style={{ borderLeftColor: "var(--pulse)", borderLeftWidth: 3 }}>
           <p className="mono-label text-pulse mb-3">CURRENT STATUS</p>
-          <h2 id="care-current-status" className="h2 mb-4">Verified before any handoff is shown.</h2>
-          <CareAvailabilitySummary />
+          <h2 id="care-current-status" className="h2 mb-4">The Care request line is verified live.</h2>
+          <CareAccessAvailabilitySummary />
           <p className="body-m text-ink-2 mt-6">
-            Care status remains source-authoritative and is never inferred from this page.
+            A public request is not a medical intake. Clinical information moves only through a later authorized secure handoff.
           </p>
         </aside>
       </section>
@@ -147,13 +119,13 @@ export function CareHomePage() {
         <h2 id="care-boundaries-title" className="display-s max-w-[20ch]">Separate checkpoints, one clear experience.</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10">
           <article className="card">
-            <h3 className="h3">Secure intake</h3>
-            <p className="body-m text-ink-2 mt-3">Create or access your account, confirm your current location, and provide health history, medications, allergies, goals, prior treatment, and other information required for clinical review.</p>
-            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Begin intake</Link>
+            <h3 className="h3">Care access request</h3>
+            <p className="body-m text-ink-2 mt-3">Share only the contact and routing details needed for a human follow-up. Do not submit symptoms, diagnoses, medications, health history, or other medical information here.</p>
+            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care request</Link>
           </article>
           <article className="card">
-            <h3 className="h3">Licensed clinical review</h3>
-            <p className="body-m text-ink-2 mt-3">An appropriately licensed clinician independently reviews the information and may ask questions, request records or labs, require a visit, recommend another approach, approve appropriate treatment, or decline.</p>
+            <h3 className="h3">Secure clinical handoff</h3>
+            <p className="body-m text-ink-2 mt-3">When an appropriate option is available, the team directs you to an authorized secure system. A U.S.-licensed clinician independently decides whether questions, records, labs, a visit, treatment, another approach, or no treatment is appropriate.</p>
             <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.providerReview}>Understand clinical review</Link>
           </article>
           <article className="card">
@@ -182,34 +154,36 @@ export function CareHomePage() {
 }
 
 export function CareSchedulePage() {
-  const { state, retry } = useTebraPublicConfiguration();
   return (
     <CarePage
       path={CARE_PUBLIC_PATHS.schedule}
-      eyebrow="XENIOS CARE · SECURE INTAKE"
-      title="Begin your clinical intake."
-      description="Create or access your Care account, confirm your location, and submit the health information required for independent licensed clinical review."
-      intro="Submitting the intake starts the review process. It does not confirm eligibility, guarantee an appointment, or guarantee a prescription. Review may begin asynchronously, and the clinician may request additional questions, records, laboratory work, or a phone or video visit."
+      eyebrow="XENIOS CARE · ACCESS REQUEST"
+      title="Start your Care request."
+      description="Send contact and routing details to the Xenios Care team without submitting medical information through the public site."
+      intro="This short survey opens the human follow-up workflow. It is not a clinical intake, appointment request, provider relationship, treatment decision, or prescription. If an appropriate clinical next step is available, the team will provide a separate authorized secure handoff."
     >
-      <section className="container-x pb-16" aria-label="Tebra scheduling handoff">
-        <TebraSchedulingExperience state={state} onRetry={retry} />
+      <section className="container-x pb-16" aria-label="Xenios Care access request">
+        <CareAccessRequestForm />
       </section>
     </CarePage>
   );
 }
 
 export function CarePortalPage() {
-  const { state, retry } = useTebraPublicConfiguration();
   return (
     <CarePage
       path={CARE_PUBLIC_PATHS.portal}
       eyebrow="XENIOS CARE · ACCOUNT AND PORTAL"
-      title="Follow the clinical journey through the authorized Care system."
-      description="Use the authorized Care portal for clinical messages, records, appointments, review requests, pharmacy status, and follow-up when those capabilities are available."
-      intro="Clinical records and provider communications remain in the authorized clinical system. Xenios may show operational status and handoffs, but it does not reproduce or bypass the provider's secure record system."
+      title="Your secure Care access comes after human review."
+      description="Start a Care request or use the secure instructions sent directly to you after an authorized clinical handoff."
+      intro="Xenios does not publish or guess a patient-portal link. If you already received secure access instructions, use that direct message. Otherwise, begin with the Care request and the team will route the appropriate next step."
     >
-      <section className="container-x pb-16" aria-label="Tebra Patient Portal handoff">
-        <TebraPortalHandoff state={state} onRetry={retry} />
+      <section className="container-x pb-16" aria-labelledby="care-account-next-step">
+        <div className="card max-w-[820px]">
+          <h2 id="care-account-next-step" className="h2">Need a Care handoff?</h2>
+          <p className="body-m text-ink-2 mt-4">Submit the non-clinical access request. A human will follow up without asking you to place medical details in a general website form.</p>
+          <Link className="btn btn-primary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care request</Link>
+        </div>
       </section>
     </CarePage>
   );
@@ -217,18 +191,18 @@ export function CarePortalPage() {
 
 export function CareHowItWorksPage() {
   const steps = [
-    ["Create your account and confirm location", "Provide identity, contact information, date of birth, current physical location, and the required notices and consent."],
-    ["Complete the health questionnaire", "Share health history, current medications and supplements, allergies, goals, symptoms, prior treatment, relevant laboratory information, and safety questions required for review."],
-    ["Receive licensed clinical review", "A U.S.-licensed clinician independently reviews the information. Additional questions, records, labs, or a phone or video visit may be required before a decision."],
-    ["Continue when clinically appropriate", "When a prescription is appropriate and serviceable, a U.S.-based, state-licensed compounding pharmacy may fulfill it. Xenios supports account status, tracking, lifestyle programming, support, and follow-up around the separate clinical and pharmacy sources."],
+    ["Submit a Care access request", "Provide contact information, current U.S. state, a broad routing category, and contact preference. The public form collects no clinical free text."],
+    ["Receive human follow-up", "A Xenios team member reviews the operational request and contacts you, typically within one business day."],
+    ["Move to a secure clinical system when appropriate", "If a serviceable option is available, complete any identity, consent, health questionnaire, records, or scheduling steps only in the authorized secure system provided to you."],
+    ["Receive independent clinical review", "A licensed clinician determines whether more information, records, labs, a visit, a different approach, treatment, or no treatment is appropriate. No outcome or prescription is guaranteed."],
   ] as const;
   return (
     <CarePage
       path={CARE_PUBLIC_PATHS.howItWorks}
       eyebrow="XENIOS CARE · PROCESS"
-      title="From intake to clinician review, pharmacy, and follow-up."
-      description="See the separate checkpoints in the active Xenios Care pathway."
-      intro="The process is designed to feel simple without turning intake, product interest, payment, or pharmacy availability into automatic clinical approval."
+      title="From a Care request to the right secure next step."
+      description="See how Xenios routes a public Care request into human follow-up and a separate authorized clinical system when appropriate."
+      intro="The process starts with a non-clinical public request and preserves the boundary between human routing, secure clinical intake, licensed review, and any later pharmacy step."
     >
       <section className="container-x pb-16" aria-labelledby="care-process-title">
         <h2 id="care-process-title" className="display-s max-w-[20ch]">Four separate checkpoints.</h2>

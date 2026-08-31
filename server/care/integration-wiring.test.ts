@@ -105,6 +105,20 @@ describe("Care shared integration wiring", () => {
     expect(careSource).toContain('res.set("X-Robots-Tag", "noindex, nofollow")');
   });
 
+  it("composes the Xenios-owned manual access workflow inside the existing Care registrar", () => {
+    const careSource = readFileSync(resolve(__dirname, "index.ts"), "utf8");
+    const manualSource = readFileSync(resolve(__dirname, "manual-access.ts"), "utf8");
+
+    expect(careSource).toContain("registerCareManualAccessApi(");
+    expect(careSource).toContain(
+      "options.manualAccessDependencies ?? buildCareManualAccessProductionDependencies()",
+    );
+    expect(manualSource).toContain("CARE_MANUAL_ACCESS_STATUS_PATH");
+    expect(manualSource).toContain("CARE_MANUAL_ACCESS_REQUEST_PATH");
+    expect(manualSource).toContain("medicalFreeTextCollected: false");
+    expect(serverSource).not.toContain("registerCareManualAccessApi(app");
+  });
+
   it("keeps the desktop call to action hidden at mobile breakpoints", () => {
     expect(navbarSource).toContain(
       'className="btn btn-primary !hidden sm:!inline-flex"',

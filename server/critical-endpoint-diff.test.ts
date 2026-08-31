@@ -137,11 +137,11 @@ afterEach(() => {
 });
 
 describe("critical endpoint inventory", () => {
-  it("contains exactly 28 unique method/path endpoints", () => {
-    expect(DEFAULT_ENDPOINTS).toHaveLength(28);
+  it("contains exactly 30 unique method/path endpoints", () => {
+    expect(DEFAULT_ENDPOINTS).toHaveLength(30);
 
     const keys = DEFAULT_ENDPOINTS.map(([method, route]) => `${method} ${route}`);
-    expect(new Set(keys).size).toBe(28);
+    expect(new Set(keys).size).toBe(30);
     expect(DEFAULT_ENDPOINTS.every(([, route, routeClass]) => route.startsWith("/") && routeClass.length > 0)).toBe(true);
 
     expect(keys.filter((key) => key.includes("/assisted-orders"))).toEqual([
@@ -155,6 +155,13 @@ describe("critical endpoint inventory", () => {
       "GET /hino",
       "GET /hino/",
       "GET /hino/story/",
+    ]);
+    expect(keys.filter((key) => key.includes("/care"))).toEqual([
+      "GET /api/care/status",
+      "GET /api/care/access-request/status",
+      "GET /api/care/tebra/configuration",
+      "GET /care",
+      "GET /care/schedule",
     ]);
     expect(keys).toContain("GET /health");
   });
@@ -270,6 +277,75 @@ describe("checked-in intentional-change expectations", () => {
         ),
       ),
     ).toBe(false);
+  });
+
+  it("pins only the reviewed manual Care access transitions", () => {
+    const expectations = JSON.parse(
+      readFileSync(
+        path.join(
+          REPO_ROOT,
+          "scripts",
+          "release",
+          "critical-endpoint-expectations-care-manual-20260831.json",
+        ),
+        "utf8",
+      ),
+    ) as {
+      intentionalChanges?: Array<{
+        method?: string;
+        path?: string;
+        allow?: string[];
+      }>;
+    };
+
+    expect(
+      (expectations.intentionalChanges ?? []).map(({ method, path: route }) =>
+        `${method} ${route}`,
+      ),
+    ).toEqual([
+      "GET /api/care/status",
+      "GET /api/care/access-request/status",
+      "GET /care",
+      "GET /care/schedule",
+    ]);
+
+    const patterns = (expectations.intentionalChanges ?? []).flatMap(
+      (rule) => rule.allow ?? [],
+    );
+    expect(patterns).toHaveLength(7);
+    for (const pattern of patterns) {
+      expect(pattern.startsWith("^")).toBe(true);
+      expect(pattern.endsWith("$")).toBe(true);
+      expect(hasUnescapedAlternation(pattern)).toBe(false);
+      expect(() => new RegExp(pattern)).not.toThrow();
+    }
+
+    const careStatus = expectations.intentionalChanges?.[0]?.allow ?? [];
+    expect(
+      careStatus.some((pattern) =>
+        new RegExp(pattern).test(
+          "feature-state capability.enabled=false,capability.state=disabled -> accessRequests.acceptingRequests=true,capability.enabled=false,capability.state=disabled",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      careStatus.some((pattern) =>
+        new RegExp(pattern).test(
+          "feature-state capability.enabled=false,capability.state=disabled -> accessRequests.acceptingRequests=true,capability.enabled=true,capability.state=enabled",
+        ),
+      ),
+    ).toBe(false);
+
+    const documentPatterns = expectations.intentionalChanges
+      ?.slice(2)
+      .flatMap((rule) => rule.allow ?? []) ?? [];
+    expect(
+      documentPatterns.some((pattern) =>
+        new RegExp(pattern).test(
+          "header content-security-policy: default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self';script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src 'none';worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests -> default-src 'self';base-uri 'none';object-src 'none';frame-ancestors 'none';form-action 'self';script-src 'self' https://challenges.cloudflare.com;script-src-attr 'none';style-src 'self' 'unsafe-inline';style-src-elem 'self';style-src-attr 'unsafe-inline';font-src 'self';img-src 'self' data:;connect-src 'self';frame-src https://challenges.cloudflare.com;worker-src 'self';manifest-src 'self';media-src 'self';upgrade-insecure-requests",
+        ),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -520,12 +596,14 @@ describe("shapeFingerprint", () => {
   it("records nested and string feature states without retaining unrelated values", () => {
     const body = JSON.stringify({
       capability: { state: "disabled", enabled: false },
+      accessRequests: { acceptingRequests: true },
       careAvailable: false,
       customerName: "Ada Private",
     });
     const shape = shapeFingerprint("application/json", body);
 
     expect(shape.state).toEqual([
+      "accessRequests.acceptingRequests=true",
       "capability.enabled=false",
       "capability.state=disabled",
       "careAvailable=false",

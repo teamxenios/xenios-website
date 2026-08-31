@@ -17,6 +17,7 @@ import {
 import type { CareEligibilityRepository } from "./eligibility-repository";
 import { registerCareEligibilityApi } from "./eligibility-routes";
 import { registerCareApi } from "./index";
+import type { CareManualAccessDependencies } from "./manual-access";
 import type { CareIntakeRepository } from "./intake-repository";
 import { registerCareIntakeApi } from "./intake-routes";
 import type { CarePrescriptionRepository } from "./prescription-repository";
@@ -56,6 +57,9 @@ const ROUTE_MODULE_FILES = [
   // from the walk below, which meant a clinical route added to it would have
   // been live on the production app while the whole care suite stayed green.
   "index.ts",
+  // Registered transitively by registerCareApi; owns the public manual access
+  // status and bounded contact-routing write.
+  "manual-access.ts",
 ] as const;
 
 /**
@@ -123,7 +127,11 @@ const NONCLINICAL_ROUTES: Readonly<Record<string, string>> = {
   "GET /api/care/appointments/admin/readiness":
     "a deployment readiness projection built from verification booleans",
   "GET /api/care/status":
-    "the Care rail capability state and its public message, no person and no record",
+    "the Care rail capability and manual-access availability states, no person and no record",
+  "GET /api/care/access-request/status":
+    "manual workflow readiness booleans and fixed public labels, no person and no record",
+  "POST /api/care/access-request":
+    "a nonclinical contact-routing record with no symptoms, diagnoses, medications, health history, clinical free text, appointment, provider relationship, treatment decision, or prescription",
   "GET /api/care/tebra/configuration":
     "a fail-closed public provider configuration projection with no principal, patient, appointment, intake, or clinical field",
   "GET /api/care/audit/access":
@@ -186,7 +194,7 @@ function walkRegisteredCareRoutes(): RegisteredRoute[] {
   const deps = access();
   // Mirrors `server/index.ts` exactly, in the same order. `registerCareApi` is
   // easy to miss because it is the module's own entry point rather than a
-  // "-routes" file, and missing it made this walk blind to three live routes.
+  // "-routes" file, and missing it made this walk blind to its live routes.
   registerCareApi(app, deps);
   registerCareEligibilityApi(
     app,
@@ -253,7 +261,7 @@ function walkRegisteredCareRoutes(): RegisteredRoute[] {
 describe("Care route coverage: every clinical route uses the one centralized gate", () => {
   const registered = walkRegisteredCareRoutes();
 
-  it("registers routes from all five directly walked modules plus the transitive review module", () => {
+  it("registers routes from every directly invoked registrar plus its transitive modules", () => {
     // A sanity floor. If the walk returns nothing, or a module silently stops
     // registering, every other assertion in this file becomes vacuous.
     expect(registered.length).toBeGreaterThanOrEqual(
@@ -658,16 +666,20 @@ describe("Care route coverage: the walk covers every registrar the real server c
     expect(unaccounted).toEqual([]);
   });
 
-  it("registers the three routes registerCareApi owns, and classifies all three", () => {
+  it("registers the five routes registerCareApi owns, and classifies all five", () => {
     const keys = walkRegisteredCareRoutes().map((route) => route.key);
     expect(keys).toEqual(
       expect.arrayContaining([
         "GET /api/care/status",
+        "GET /api/care/access-request/status",
+        "POST /api/care/access-request",
         "GET /api/care/tebra/configuration",
         "GET /api/care/audit/access",
       ]),
     );
     expect("GET /api/care/status" in NONCLINICAL_ROUTES).toBe(true);
+    expect("GET /api/care/access-request/status" in NONCLINICAL_ROUTES).toBe(true);
+    expect("POST /api/care/access-request" in NONCLINICAL_ROUTES).toBe(true);
     expect("GET /api/care/tebra/configuration" in NONCLINICAL_ROUTES).toBe(true);
     expect("GET /api/care/audit/access" in NONCLINICAL_ROUTES).toBe(true);
   });
@@ -911,6 +923,23 @@ function proofAccess(): CareAccessDependencies {
   };
 }
 
+function proofManualAccess(): CareManualAccessDependencies {
+  return {
+    loadReadiness: vi.fn(async () => ({
+      persistenceReady: true,
+      notificationsReady: true,
+    })),
+    allowRequest: vi.fn(async () => true),
+    verifyHuman: vi.fn(async () => true),
+    createRequest: vi.fn(async () => ({
+      id: "123e4567-e89b-12d3-a456-426614174000",
+    })),
+    sendInternalAlert: vi.fn(async () => true),
+    sendConfirmation: vi.fn(async () => true),
+    setEmailStatus: vi.fn(async () => undefined),
+  };
+}
+
 function proofApp(serviceCoverageActive = true) {
   const app = express();
   app.use(express.json());
@@ -958,6 +987,7 @@ function proofApp(serviceCoverageActive = true) {
   // Drive the public configuration resolver with identifier-bearing unsafe
   // URLs. The resolver must fail closed without reflecting any value or field.
   registerCareApi(app, deps, {
+    manualAccessDependencies: proofManualAccess(),
     env: {
       TEBRA_SCHEDULING_ENABLED: "true",
       TEBRA_SCHEDULING_MODE: "redirect",
@@ -1026,6 +1056,26 @@ const RESPONSE_PROOFS: Readonly<Record<string, ResponseProof>> = {
   "GET /api/care/status": {
     method: "get",
     path: "/api/care/status",
+    forbid: ALL_SENTINELS,
+  },
+  "GET /api/care/access-request/status": {
+    method: "get",
+    path: "/api/care/access-request/status",
+    forbid: ALL_SENTINELS,
+  },
+  "POST /api/care/access-request": {
+    method: "post",
+    path: "/api/care/access-request",
+    body: {
+      fullName: "Coverage Test",
+      email: "coverage@example.com",
+      locationState: "TX",
+      careGoal: "new_care_request",
+      contactMethod: "email",
+      contactWindow: "anytime",
+      adultConfirmation: true,
+      boundaryAcknowledgement: true,
+    },
     forbid: ALL_SENTINELS,
   },
   "GET /api/care/audit/access": {

@@ -635,7 +635,7 @@
       "id": "HEALTH-ENTRYPOINT-20260831",
       "title": "Make /health the canonical Care + Research gateway and update the main-site navigation",
       "priority": "P0",
-      "state": "qa",
+      "state": "done",
       "owner": "codex-health-entrypoint-20260831",
       "paths": [
         "client/src/App.tsx",
@@ -680,7 +680,60 @@
         "sha": "1bfd9c3a6bf580809b40cbc8f74840aa4e20b9d6",
         "file": ".xenios/handoffs/2026-08-31T17-30-58-003Z-HEALTH-ENTRYPOINT-20260831-codex-health-entrypoint-20260831.md",
         "at": "2026-08-31T17:30:58.015Z"
-      }
+      },
+      "acceptedSha": "1bfd9c3a6bf580809b40cbc8f74840aa4e20b9d6",
+      "acceptedBy": "codex-care-research-postlaunch-20260831",
+      "acceptedAt": "2026-08-31T17:59:45.289Z"
+    },
+    {
+      "id": "CARE-MANUAL-ACCESS-20260831",
+      "title": "Open Xenios Care with a Xenios-owned manual access survey and human follow-up",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-care-manual-access-20260831",
+      "paths": [
+        "shared/care/manual-access.ts",
+        "server/care/manual-access.ts",
+        "server/care/manual-access.test.ts",
+        "server/care/index.ts",
+        "server/care/integration-wiring.test.ts",
+        "server/care/access.test.ts",
+        "server/care/clinical-route-coverage.test.ts",
+        "server/care-document-csp.ts",
+        "server/care-document-csp.test.ts",
+        "server/index.ts",
+        "server/core-site-protection.test.ts",
+        "server/critical-endpoint-diff.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "client/src/care/CareAccessRequestForm.tsx",
+        "client/src/care/CareAccessRequestForm.test.tsx",
+        "client/src/care/CarePublicPages.tsx",
+        "client/src/care/tebra-truth-a11y.test.tsx",
+        "client/src/care/shell.test.ts",
+        "client/src/research/pages/Gateway.tsx",
+        "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "scripts/evidence/routes.public.json",
+        "scripts/evidence/routes-public.test.mjs",
+        "scripts/evidence/evidence-manifest.template.json",
+        "scripts/release/critical-endpoint-diff.mjs",
+        "scripts/release/critical-endpoint-expectations-care-manual-20260831.json",
+        "docs/research-launch/XENIOS_HEALTH_ENTRYPOINT_2026-08-31.md",
+        "docs/research-launch/XENIOS_CARE_MANUAL_ACCESS_2026-08-31.md",
+        "docs/review/xenios-care-manual-access-20260831/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-care-manual-access-20260831.json",
+        ".xenios/handoffs/*CARE-MANUAL-ACCESS-20260831*"
+      ],
+      "dependsOn": [
+        "HEALTH-ENTRYPOINT-20260831"
+      ],
+      "pathsNote": "Founder requested Care be open today without Tebra. Build a durable, spam-resistant Xenios-owned access request that collects operational routing data only; prohibit symptoms, diagnoses, medications, health history, or free-text clinical data; persist to an existing service-role-only operations table; notify the human team; and retain truthful boundaries that no clinical relationship, appointment, treatment, or prescription is created. A successor production deployment still requires a new exact-SHA GO.",
+      "claimedAt": "2026-08-31T19:42:12.504Z",
+      "releasedAt": "2026-08-31T19:42:00.318Z"
     }
   ]
 }

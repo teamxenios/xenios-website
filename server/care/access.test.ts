@@ -14,6 +14,7 @@ import {
   type CareRole,
 } from "@shared/care/contracts";
 import { registerCareApi } from "./index";
+import type { CareManualAccessDependencies } from "./manual-access";
 
 function dependencies(
   overrides: Partial<CareAccessDependencies> = {},
@@ -37,7 +38,21 @@ function dependencies(
 
 function appFor(deps: CareAccessDependencies) {
   const app = express();
-  registerCareApi(app, deps);
+  const manualAccess: CareManualAccessDependencies = {
+    loadReadiness: vi.fn(async () => ({
+      persistenceReady: true,
+      notificationsReady: true,
+    })),
+    allowRequest: vi.fn(async () => true),
+    verifyHuman: vi.fn(async () => true),
+    createRequest: vi.fn(async () => ({
+      id: "123e4567-e89b-12d3-a456-426614174000",
+    })),
+    sendInternalAlert: vi.fn(async () => true),
+    sendConfirmation: vi.fn(async () => true),
+    setEmailStatus: vi.fn(async () => undefined),
+  };
+  registerCareApi(app, deps, { manualAccessDependencies: manualAccess });
   return app;
 }
 
@@ -66,6 +81,10 @@ describe("Care access boundary", () => {
     expect(response.body.capability).toMatchObject({
       rail: "care",
       state: "enabled",
+    });
+    expect(response.body.accessRequests).toMatchObject({
+      acceptingRequests: true,
+      workflow: "manual_human_follow_up",
     });
   });
 

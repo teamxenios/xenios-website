@@ -1,0 +1,10 @@
+{
+  "id": "codex-care-manual-access-20260831",
+  "tool": "Codex",
+  "lane": "care-manual-access",
+  "branch": "codex/xenios-care-research-postlaunch-20260831",
+  "state": "active",
+  "startedAt": "2026-08-31T17:59:52.434Z",
+  "heartbeatAt": "2026-08-31T19:41:30.935Z",
+  "note": "Manual Care workflow implemented; full-suite inventory reconciliation and final release gates in progress."
+}

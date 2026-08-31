@@ -426,7 +426,7 @@
     "order-flow",
     "order-status",
     "care",
-    "tebra-scheduler",
+    "care-manual-access",
     "care-appointments",
     "account-overview",
     "account-settings",

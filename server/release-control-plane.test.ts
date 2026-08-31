@@ -2028,9 +2028,11 @@ describe("route uniqueness validator", () => {
     // deployment); −GET /api/r/:code and −GET /api/referral/capture
     // (server/index.ts — the referral-capture endpoints removed by the
     // attribution-privacy correction). 408 − 2 + 3 = 409 registrations across
-    // 400 call sites.
-    expect(result.callSites).toBe(400);
-    expect(result.routes).toHaveLength(409);
+    // 400 call sites. +2 mounted Xenios-owned Care manual-access call sites
+    // (GET readiness and POST bounded request) = 411 registrations across 402
+    // call sites.
+    expect(result.callSites).toBe(402);
+    expect(result.routes).toHaveLength(411);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

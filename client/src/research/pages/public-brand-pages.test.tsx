@@ -169,7 +169,7 @@ describe("editorial homepage reconciliation", () => {
     expect(view.querySelectorAll("h1")).toHaveLength(1);
     expect(view.querySelector("#research-main")?.getAttribute("tabindex")).toBe("-1");
     expect(view.textContent).toContain("Provider-guided peptide care.Evidence-led Research access.");
-    expect(view.textContent).toContain("Begin clinical intake");
+    expect(view.textContent).toContain("Start Care request");
     expect(view.textContent).toContain("Explore Research");
 
     const hero = view.querySelector<HTMLImageElement>('.rg-hero-image');
@@ -193,6 +193,7 @@ describe("editorial homepage reconciliation", () => {
       "/research/privacy",
       "/research/terms",
       "/care",
+      "/care/schedule",
     ]) {
       expect(links).toContain(required);
     }

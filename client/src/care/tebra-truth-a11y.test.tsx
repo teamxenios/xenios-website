@@ -150,10 +150,10 @@ describe("Tebra scheduling accessibility and responsive structure", () => {
 
 describe("Care public route dispatcher", () => {
   it.each([
-    [CARE_PUBLIC_PATHS.home, "Start with a secure intake. Continue with licensed clinical review."],
-    [CARE_PUBLIC_PATHS.schedule, "Begin your clinical intake."],
-    [CARE_PUBLIC_PATHS.portal, "Follow the clinical journey through the authorized Care system."],
-    [CARE_PUBLIC_PATHS.howItWorks, "From intake to clinician review, pharmacy, and follow-up."],
+    [CARE_PUBLIC_PATHS.home, "Start your Care request today."],
+    [CARE_PUBLIC_PATHS.schedule, "Start your Care request."],
+    [CARE_PUBLIC_PATHS.portal, "Your secure Care access comes after human review."],
+    [CARE_PUBLIC_PATHS.howItWorks, "From a Care request to the right secure next step."],
     [CARE_PUBLIC_PATHS.providerReview, "Your clinician makes the medical decision."],
     [CARE_PUBLIC_PATHS.support, "Use the support channel that owns the answer."],
   ] as const)("dispatches only the exact public route %s", (path, heading) => {
@@ -165,7 +165,7 @@ describe("Care public route dispatcher", () => {
 
   it("normalizes an encoded Care route but fails closed for unknown descendants", () => {
     expect(renderCareRoute("/c%61re/schedule")).toContain(
-      "Begin your clinical intake.",
+      "Start your Care request.",
     );
 
     const unknown = renderCareRoute("/care/schedule/extra");

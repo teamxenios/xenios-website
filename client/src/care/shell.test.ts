@@ -28,18 +28,29 @@ describe("Care public shell and explicit dispatcher", () => {
     resolve(__dirname, "./useTebraPublicConfiguration.ts"),
     "utf8",
   );
-  const publicSurfaceSource = [pagesSource, schedulingSource, portalSource].join("\n");
+  const accessRequestSource = readFileSync(
+    resolve(__dirname, "./CareAccessRequestForm.tsx"),
+    "utf8",
+  );
+  const publicSurfaceSource = [pagesSource, accessRequestSource, schedulingSource, portalSource].join("\n");
 
-  it("is truthful and contains no clinical submission control", () => {
-    expect(pagesSource).toContain("Submitting the intake starts the review process.");
+  it("is truthful and limits the public submission to non-clinical routing fields", () => {
+    expect(pagesSource).toContain("This short survey opens the human follow-up workflow.");
     expect(pagesSource).toContain("This site is not emergency care.");
-    expect(pagesSource).toContain("does not confirm eligibility, guarantee an appointment, or guarantee a prescription");
+    expect(pagesSource).toContain("It is not a clinical intake, appointment request, provider relationship, treatment decision, or prescription.");
+    expect(accessRequestSource).toContain("This public form intentionally has no clinical free-text field.");
+    expect(accessRequestSource).toContain('data-testid="care-access-form"');
+    expect(accessRequestSource).toContain("<input");
+    expect(accessRequestSource).toContain("<select");
+    expect(accessRequestSource).not.toMatch(/<textarea\b/i);
     expect(schedulingSource).toContain("does not guarantee an");
     expect(schedulingSource).toContain("clinical acceptance, treatment, or a prescription");
-    expect(publicSurfaceSource).not.toMatch(/<(form|input|textarea|select)\b/i);
   });
 
   it("shows explicit fail-closed loading and retryable error states", () => {
+    expect(accessRequestSource).toContain('{ kind: "loading" }');
+    expect(accessRequestSource).toContain('kind: "closed"');
+    expect(accessRequestSource).toContain("Retry availability");
     expect(schedulingSource).toContain('state.kind === "loading"');
     expect(schedulingSource).toContain('state.kind === "error"');
     expect(portalSource).toContain('state.kind === "loading"');
@@ -73,11 +84,13 @@ describe("Care public shell and explicit dispatcher", () => {
     expect(pagesSource).toContain('className="m-0 flex list-none flex-wrap gap-3 p-0"');
   });
 
-  it("uses the approved qualified nationwide, clinician, pharmacy, and Foundations language", () => {
-    expect(publicSurfaceSource).toContain("Xenios Care is available nationwide");
+  it("uses qualified human-routing, clinician, pharmacy, and Foundations language", () => {
+    expect(publicSurfaceSource).toContain("Care access requests are open today");
+    expect(publicSurfaceSource).toContain("separate authorized secure handoff");
     expect(publicSurfaceSource).toContain("U.S.-licensed clinician");
     expect(publicSurfaceSource).toContain("U.S.-based, state-licensed compounding pharmacy");
     expect(publicSurfaceSource).toContain("$30 per month and is never automatic");
+    expect(publicSurfaceSource).not.toContain("Xenios Care is available nationwide");
     expect(publicSurfaceSource).not.toMatch(/\b(all 50 states|launches? on)\b/i);
     expect(publicSurfaceSource).not.toMatch(/\b(our clinicians|our pharmacy|partner pharmacy)\b/i);
   });

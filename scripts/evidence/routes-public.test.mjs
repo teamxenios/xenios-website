@@ -173,12 +173,12 @@ describe("public evidence topology", () => {
     });
   });
 
-  it("captures the actual public scheduler separately from private Care appointments", () => {
-    expect(template.requiredSurfaces).toContain("tebra-scheduler");
+  it("captures the public manual access request separately from private Care appointments", () => {
+    expect(template.requiredSurfaces).toContain("care-manual-access");
     expect(template.requiredSurfaces).toContain("care-appointments");
     expect(route("/care/schedule")).toMatchObject({
-      surface: "tebra-scheduler",
-      state: "disabled",
+      surface: "care-manual-access",
+      state: "availability-checked",
       public: true,
     });
     expect(route("/care/appointments")).toMatchObject({

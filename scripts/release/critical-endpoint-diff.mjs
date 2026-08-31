@@ -47,8 +47,10 @@ export const DEFAULT_ENDPOINTS = Object.freeze([
   ["GET", "/research/account", "account-unauthorized-boundary"],
   ["GET", "/api/research/customer-account/overview", "account-api-unauthorized-boundary"],
   ["GET", "/api/care/status", "care-public-status"],
+  ["GET", "/api/care/access-request/status", "care-manual-access-status"],
   ["GET", "/api/care/tebra/configuration", "care-tebra-public-config"],
   ["GET", "/care", "care-document"],
+  ["GET", "/care/schedule", "care-manual-access-document"],
   ["GET", "/hino", "static-microsite-redirect"],
   ["GET", "/hino/", "static-microsite"],
   ["GET", "/hino/story/", "static-microsite"],
@@ -70,6 +72,7 @@ const HTML_MARKERS = Object.freeze([
 ]);
 
 const FEATURE_STATE_KEYS = new Set([
+  "acceptingRequests",
   "authenticated",
   "available",
   "careAvailable",

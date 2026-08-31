@@ -606,19 +606,20 @@
       "public": true,
       "semanticContract": {
         "requiredSelectors": ["#care-page-title"],
-        "requiredText": ["Care starts with clear clinical boundaries."]
+        "requiredText": ["Start your Care request today."]
       }
     },
     {
       "path": "/care/schedule",
-      "surface": "tebra-scheduler",
-      "state": "disabled",
+      "surface": "care-manual-access",
+      "state": "availability-checked",
       "indexable": false,
       "public": true,
       "semanticContract": {
-        "requiredText": ["SCHEDULING UNAVAILABLE", "Xenios Care is not available."]
+        "requiredSelectors": ["[data-testid=\"care-access-form\"]", "[data-testid=\"care-access-submit\"]"],
+        "requiredText": ["Start your Care request.", "This public form intentionally has no clinical free-text field."]
       },
-      "$comment": "The actual public Tebra scheduling surface. Provider activation remains disabled and fail-closed at this candidate."
+      "$comment": "The Xenios-owned public access survey replaces the Tebra scheduling dependency. The form collects bounded contact and routing fields only; the live status API separately proves whether durable storage and human notifications are ready."
     },
     {
       "path": "/care/appointments",

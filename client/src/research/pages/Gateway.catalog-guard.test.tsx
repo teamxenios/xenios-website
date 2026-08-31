@@ -180,6 +180,7 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       "/research/affiliates",
       "/research/support",
       "/care",
+      "/care/schedule", // Reviewed Xenios-owned non-clinical Care access request.
       "#research-main",
       "#offering",
       // Private Early Access door. REVIEWED: this is an open passwordless

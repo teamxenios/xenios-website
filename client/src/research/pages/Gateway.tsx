@@ -4,8 +4,8 @@ import Wordmark from "@/components/Wordmark";
 import "./gateway-editorial.css";
 
 const researchAreas = [
-  ["01", "Secure clinical intake", "Create or access your account, confirm your current location, and complete the health questionnaire used for licensed clinical review."],
-  ["02", "Licensed clinician review", "A U.S.-licensed clinician independently reviews the information and may request follow-up questions, records, labs, or a visit."],
+  ["01", "Care access request", "Share contact, current-state, and routing preferences only. A Xenios team member follows up without collecting medical details in the public form."],
+  ["02", "Secure intake and licensed review", "When an appropriate handoff is available, clinical information moves to an authorized secure system and a licensed clinician independently reviews it."],
   ["03", "U.S.-based pharmacy fulfillment", "When a prescription is clinically appropriate and serviceable, it may be fulfilled through a U.S.-based, state-licensed compounding pharmacy."],
   ["04", "Personalized lifestyle support", "Eligible Care clients receive a personalized First-Month Foundations Plan from a CSCS professional, with weekly email check-ins."],
   ["05", "Research compounds and documentation", "Research customers can review exact product identity, variants, evidence level, current status, quality records, and authorized next actions."],
@@ -21,15 +21,15 @@ const standards = [
 
 const accessSteps = [
   ["Choose", "Select Care for personal health or Research for legitimate nonclinical work."],
-  ["Create or verify", "Create your account, confirm your location, or complete the exact access requirements for your pathway."],
-  ["Complete the required review", "Care clients complete a health intake. Research customers review exact identity, documentation, agreements, and access status."],
-  ["Continue through the authorized path", "Care proceeds through independent clinician review and pharmacy fulfillment when appropriate. Research proceeds through its authorized request or ordering workflow."],
+  ["Open the request", "Care starts with contact and routing details only. Research starts with the exact access requirements for that pathway."],
+  ["Move to the secure source", "A human provides an authorized clinical handoff when appropriate. Research customers review exact identity, documentation, agreements, and access status."],
+  ["Complete the required review", "Care proceeds through independent licensed review when available. Research proceeds through its authorized request or ordering workflow."],
   ["Follow", "Use the account and support experience for status, documents, tracking, follow-up, and exceptions."],
 ] as const;
 
 const accountBenefits = [
-  "Secure account access",
-  "Clinical intake and review status",
+  "Care request reference and human follow-up",
+  "Secure clinical access only after an authorized handoff",
   "Pharmacy and shipment status where applicable",
   "Research requests and order history",
   "Documents and exact-lot records when authorized",
@@ -37,7 +37,7 @@ const accountBenefits = [
 ] as const;
 
 const faqPreview = [
-  ["How does Xenios Care work?", "Create an account, complete the health intake, and receive independent review by a U.S.-licensed clinician. Additional questions, labs, or a visit may be required. A prescription is never guaranteed."],
+  ["How does Xenios Care work?", "Submit a non-clinical access request, receive human follow-up, and move to an authorized secure clinical system when an appropriate option is available. A prescription is never guaranteed."],
   ["How is Research different from Care?", "Research is for legitimate nonclinical work. Care is the provider-governed pathway for personal medical evaluation, prescribing, pharmacy activity, and follow-up."],
   ["Are all compounds available to every client?", "No. Exact options depend on the pathway, patient location, clinical eligibility, clinician judgment, pharmacy serviceability, product status, and current availability."],
 ] as const;
@@ -92,7 +92,7 @@ function ResearchFooter() {
             <Wordmark size="md" asLink={false} />
             <span className="rg-brand-sub">Care + Research</span>
           </Link>
-          <p>U.S.-based Care through licensed clinical review, plus a separate evidence-led Research pathway with clear product, document, and access status.</p>
+          <p>Human-guided Care access with a separate secure clinical handoff when appropriate, plus an evidence-led Research pathway with clear product, document, and access status.</p>
         </div>
         <nav aria-label="Research footer">
           <Link href="/research/access-hub">Access Hub</Link>
@@ -126,7 +126,7 @@ export default function Gateway() {
     <div className="research-editorial">
       <SeoHead
         title="Xenios | Care + Research"
-        description="Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work."
+        description="Start a human-guided Xenios Care access request or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work."
         path="/health"
       />
 
@@ -147,26 +147,28 @@ export default function Gateway() {
           />
           <div className="rg-hero-shade" aria-hidden="true" />
           <div className="rg-hero-content">
-            <p className="rg-kicker">U.S.-based clinical care · Evidence-led Research access · Human support</p>
+            <p className="rg-kicker">Care requests open · Evidence-led Research access · Human support</p>
             <h1 id="rg-hero-title">Provider-guided peptide care.<br />Evidence-led Research access.</h1>
             <div className="rg-hero-rule" aria-hidden="true" />
             <p className="rg-hero-intro">
-              Xenios brings two distinct pathways into one clear starting point. For personal care, create a secure account,
-              complete a health intake, and receive independent review by a U.S.-licensed clinician. For legitimate nonclinical
-              work, use Xenios Research to explore exact products, evidence, documentation, and current access status.
+              Xenios brings two distinct pathways into one clear starting point. For personal care, submit contact and routing
+              details for human follow-up—never medical information in the public form. If an appropriate option is available,
+              the team provides a separate secure clinical handoff. For legitimate nonclinical work, use Xenios Research to
+              explore exact products, evidence, documentation, and current access status.
             </p>
             <div className="rg-hero-actions" aria-label="Research homepage actions">
-              <Link href="/care" className="rg-btn rg-btn-light" data-testid="link-gateway-access-hub">
-                <span>Begin clinical intake</span><Arrow />
+              <Link href="/care/schedule" className="rg-btn rg-btn-light" data-testid="link-gateway-access-hub">
+                <span>Start Care request</span><Arrow />
               </Link>
               <Link href="/research/access-hub" className="rg-text-link" data-testid="link-gateway-pathways">
                 Explore Research <Arrow />
               </Link>
             </div>
             <p className="rg-research-notice">
-              Care is subject to patient location, licensed clinical review, medical appropriateness, pharmacy serviceability,
-              and current availability. No prescription is guaranteed. Research-designated materials remain for legitimate
-              nonclinical research only and are not for human or veterinary use.
+              A Care request is not a clinical intake, appointment, provider relationship, treatment decision, or prescription.
+              Any later clinical service remains subject to location, licensed review, medical appropriateness, serviceability,
+              and current availability. Research-designated materials remain for legitimate nonclinical research only and are
+              not for human or veterinary use.
             </p>
           </div>
           <a className="rg-scroll-cue" href="#offering" aria-label="Continue to what Xenios Research offers">
@@ -182,9 +184,10 @@ export default function Gateway() {
             </div>
             <div className="rg-reading-column">
               <p className="rg-lede">
-                Xenios Care supports personal health through secure intake and independent clinical review. Xenios Research
-                supports qualified nonclinical work through exact product identity, evidence-aware education, documentation,
-                and controlled access. One path never silently becomes the other.
+                Xenios Care accepts a non-clinical access request, adds human follow-up, and uses a separate authorized secure
+                system for clinical information when appropriate. Xenios Research supports qualified nonclinical work through
+                exact product identity, evidence-aware education, documentation, and controlled access. One path never silently
+                becomes the other.
               </p>
               <p>
                 Care decisions remain with licensed clinicians and dispensing pharmacies. Research actions remain governed
@@ -245,8 +248,8 @@ export default function Gateway() {
               <p className="rg-section-label">04 · Your account</p>
               <h2 id="rg-current-title">One place to follow Care and Research without blending them.</h2>
               <p className="rg-lede">
-                Your account is designed to keep intake, clinical review, pharmacy processing, Research requests, orders,
-                billing, documents, tracking, and support as separate facts. A later stage is never implied before its source confirms it.
+                Your Care request reference and any later secure clinical account remain separate from Research requests, orders,
+                billing, documents, tracking, and support. A later stage is never implied before its source confirms it.
               </p>
               <Link href="/research/sign-in" className="rg-btn rg-btn-dark">Access your account <Arrow /></Link>
             </div>
@@ -361,9 +364,9 @@ export default function Gateway() {
               </article>
               <article>
                 <p className="rg-pathway-tag">Xenios Care</p>
-                <h3>Secure intake and independent licensed clinical review</h3>
-                <p>Care is available nationwide, while exact services, formulations, clinician availability, and pharmacy fulfillment remain subject to location, eligibility, authority, serviceability, and current availability.</p>
-                <Link href="/care" className="rg-inline-link">Understand Care <Arrow /></Link>
+                <h3>Human-guided access and a separate secure clinical handoff</h3>
+                <p>Care access requests are open. Any later clinical service, formulation, clinician availability, or pharmacy fulfillment remains subject to location, eligibility, authority, serviceability, and current availability.</p>
+                <Link href="/care/schedule" className="rg-inline-link">Start Care request <Arrow /></Link>
               </article>
             </div>
           </div>
@@ -391,7 +394,7 @@ export default function Gateway() {
             <h2 id="rg-final-title">Start with Care or explore Research.</h2>
             <p>Choose the path that matches personal health or legitimate nonclinical work without guessing which authority applies.</p>
             <div className="rg-final-actions">
-              <Link href="/care" className="rg-btn rg-btn-dark">Begin clinical intake <Arrow /></Link>
+              <Link href="/care/schedule" className="rg-btn rg-btn-dark">Start Care request <Arrow /></Link>
               <Link href="/research/access-hub" className="rg-btn rg-btn-outline" data-testid="link-gateway-apply">Explore Research <Arrow /></Link>
             </div>
           </div>
@@ -399,7 +402,7 @@ export default function Gateway() {
       </main>
 
       <ResearchFooter />
-      <Link href="/care" className="rg-mobile-access">Begin clinical intake <Arrow /></Link>
+      <Link href="/care/schedule" className="rg-mobile-access">Start Care request <Arrow /></Link>
     </div>
   );
 }

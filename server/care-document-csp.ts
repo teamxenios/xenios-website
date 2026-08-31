@@ -3,9 +3,12 @@ import helmet from "helmet";
 
 import { isCarePath } from "@shared/care/paths";
 
+const TURNSTILE_ORIGIN = "https://challenges.cloudflare.com";
+
 /**
- * Disabled-state policy for Care documents. Scheduling-provider sources stay
- * absent until a separately attested activation is composed and verified.
+ * Care document policy. The only external browser origin is Cloudflare
+ * Turnstile, which protects the Xenios-owned manual access request. Scheduling
+ * and portal providers remain absent until separately attested.
  */
 export const CARE_BASELINE_CSP_DIRECTIVES = {
   defaultSrc: ["'self'"],
@@ -13,7 +16,7 @@ export const CARE_BASELINE_CSP_DIRECTIVES = {
   objectSrc: ["'none'"],
   frameAncestors: ["'none'"],
   formAction: ["'self'"],
-  scriptSrc: ["'self'"],
+  scriptSrc: ["'self'", TURNSTILE_ORIGIN],
   scriptSrcAttr: ["'none'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
   styleSrcElem: ["'self'"],
@@ -21,7 +24,7 @@ export const CARE_BASELINE_CSP_DIRECTIVES = {
   fontSrc: ["'self'"],
   imgSrc: ["'self'", "data:"],
   connectSrc: ["'self'"],
-  frameSrc: ["'none'"],
+  frameSrc: [TURNSTILE_ORIGIN],
   workerSrc: ["'self'"],
   manifestSrc: ["'self'"],
   mediaSrc: ["'self'"],

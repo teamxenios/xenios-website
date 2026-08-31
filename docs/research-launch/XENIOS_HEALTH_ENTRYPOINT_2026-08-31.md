@@ -1,107 +1,78 @@
-# Xenios Health entrypoint release candidate
+# Xenios Health entrypoint production record
 
 Date: 2026-08-31
 
-Status: **IMPLEMENTED, VERIFIED, NOT YET DEPLOYED**
+Status: **LIVE AND VERIFIED**
 
 ## Outcome
 
 `https://xeniostechnology.com/health` is the canonical public Care + Research
-gateway in the release candidate. The main-site shared navigation now labels
-that destination `Health` and targets `/health`; the shared configuration feeds
-the desktop header, product menu, and footer. Existing `/care`, `/research`, and
-all deep links remain intact and keep their current authorities.
+gateway. The main-site desktop header, product menu, and footer label the
+destination `Health` and target `/health`. Existing `/care`, `/research`, and
+their deep links remain intact.
 
-The `/health` document is public and indexable. It owns this exact metadata:
+The live `/health` document is public and indexable with these exact signals:
 
 - title: `Xenios | Care + Research`;
 - description: `Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.`;
 - canonical and `og:url`: `https://xeniostechnology.com/health`;
 - robots: `index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1`.
 
-The exact `/health` route is inside the existing no-third-party-tracking and
-no-attribution privacy boundary. It does not create a `/health/*` route family:
-an unknown child such as `/health/not-real` remains an authoritative HTTP 404.
+The exact `/health` route remains inside the no-third-party-tracking and
+no-attribution privacy boundary. It does not create a `/health/*` family; an
+unknown child remains an authoritative HTTP 404.
 
-## Exact identities
+## Production identity
 
 | Item | Value |
 | --- | --- |
-| Current live application SHA | `abe03ca3a836dffb10699c0c39883119e2a8f816` |
-| Current live Render deployment | `dep-daaqncid0e5s739067tg` |
-| Health implementation SHA | `faf6d95891aea217894413394b2cd6ce4c283f27` |
-| Preview source-tree identity | `86a19c18bfa470cad49ebc812da91dbd60c2e327` |
-| Preview dist inventory SHA-256 | `2842f7c64e3d6da03c5cf18e5c2ead21650922eb7033a45a23ec225699cfd719` |
-| Preview dist file count | 323 |
-| Runtime | Node `v20.19.0`, npm `10.8.2` |
-| Install | exact lockfile via `npm ci --no-audit --no-fund` |
+| Exact live application SHA | `72b6f1380e13f09dec67684035ed44a1d2740408` |
+| Render service | `srv-d8s9vej7uimc7384dfcg` (`xenios-website`) |
+| Render deployment | `dep-daarr3ajnfac73a93co0` |
+| Deployment trigger | API, exact approved SHA |
+| Deployment started | `2026-08-31T17:44:45.73208Z` |
+| Deployment finished live | `2026-08-31T17:45:49.457621Z` |
+| Predecessor SHA | `abe03ca3a836dffb10699c0c39883119e2a8f816` |
+| Predecessor deployment | `dep-daaqncid0e5s739067tg` |
 | Branch | `codex/xenios-care-research-postlaunch-20260831` |
 
-The eventual deploy SHA may be a documentation/coordination-only successor of
-the implementation SHA. Production must be pinned to the exact successor named
-in the fresh deploy approval; branch head is not standing authority.
+The founder's exact `GO 72b6f1380e13f09dec67684035ed44a1d2740408`
+was consumed by this deployment. It is not standing authority for a successor.
 
 ## Verification
 
-### Source and contract gates
+The post-deployment critical-endpoint comparison passed with 26 unchanged
+endpoints, the two exact intended `/health` and `/sitemap.xml` changes, zero
+regressions, and zero human-review items.
 
-- Focused implementation suite: 216 tests passed after the route, raw-document,
-  privacy, public-evidence, sitemap, conservation, and core-seam changes.
-- Final critical-endpoint and app-route replay: 2 files and 41 tests passed.
-- Public evidence topology: 75 raw public routes, including exact `/health`,
-  passed its standalone Node test suite.
-- TypeScript no-emit check passed.
-- Production build passed under the pinned runtime. The only build messages were
-  the pre-existing mixed-import and large-chunk warnings.
-- Core protection verifies all 27 exact protected hashes. Its branch-wide
-  `origin/main..HEAD` classifier still reports the inherited, already-reviewed
-  long-lived release-branch changes; this is not widened or silently waived by
-  the Health change. The new `/health` census and exact shared-file seam hashes
-  are pinned in the manifest and pass their focused contracts.
+Render independently reported the exact commit live. Post-deployment logs
+contained zero application errors and metrics contained zero HTTP 5xx
+responses; the service held one healthy instance with normal CPU and memory.
 
-### Sealed local production preview
+Real Chromium 149 then verified the actual public origin:
 
-The exact implementation SHA was rebuilt from a clean lockfile and served by
-the repository's mutation-refusing evidence preview. Raw HTTP checks passed:
+- the homepage exposes two `Health` anchors, both targeting `/health`;
+- `/health` has the exact title, canonical, and index/follow policy above;
+- desktop at 1440 px and mobile at 320 px have no horizontal overflow;
+- each page has one main landmark, no broken images, no undersized targets,
+  and no failed network requests.
 
-| Route | Result |
-| --- | --- |
-| `/health` | HTTP 200; exact public robots, canonical Link, title, description, and canonical meta |
-| `/` | HTTP 200; existing public root authority preserved |
-| `/research` | HTTP 200; existing Research noindex policy preserved in the closed preview |
-| `/care` | HTTP 200; existing private Care policy preserved |
-| `/health/not-real` | HTTP 404 |
-| `/sitemap.xml` | HTTP 200 and contains `https://xeniostechnology.com/health` |
+The screenshots inspected during live verification are:
 
-Real Chromium captured `/health` at 1440 px and 390 px. Both runs were
-`AUTOMATED_PASS`: zero pass-with-notes, zero failures, zero console errors,
-zero network failures, no horizontal overflow, one main landmark, one H1, and
-43/43 keyboard targets reached with visible focus. The desktop and mobile
-screenshots were also visually inspected.
+- `C:\Users\sboad\AppData\Local\Temp\xenios-live-health-72b6\home-1440.png`;
+- `C:\Users\sboad\AppData\Local\Temp\xenios-live-health-72b6\health-1440.png`;
+- `C:\Users\sboad\AppData\Local\Temp\xenios-live-health-72b6\health-320.png`.
 
-Browser matrix SHA-256:
-`e866d183e15bb2acb726e48dfb0b7a9fd7d144c987db9d21ceed41bbd5948f34`.
+The only browser message was a pre-existing deprecated Apple mobile meta-tag
+warning; it did not affect functionality or release classification.
 
-### Current-live versus candidate `/health` diff
+## Mutation and rollback boundary
 
-At 2026-08-31T17:24:24Z, live `/health` was the expected authoritative 404 and
-the sealed candidate was the reviewed public 200. The exact eight emitted
-differences are pinned by
-`scripts/release/critical-endpoint-expectations-health-20260831.json`.
-Classification: 1 `INTENTIONAL_CHANGE`, 0 regression, 0 human-review item;
-verdict `PASS`.
+The deployment changed application code only. It made no environment,
+migration, database, pricing, payment, clinical, pharmacy, account, invitation,
+or external-communication mutation. Render auto-deploy remains disabled.
 
-## Production boundary and rollback
-
-No production mutation has been made for this Health entrypoint. Render
-auto-deploy remains disabled. This change includes no environment, migration,
-database, pricing, payment, clinical, pharmacy, account, invitation, or
-external-communication mutation.
-
-The previous deployment authorization was consumed by deployment
-`dep-daaqncid0e5s739067tg`; it is not authority for this successor. A fresh
-approval naming the final exact commit is required before deployment.
-
-If the Health release later needs rollback, the application rollback target is
-the current live SHA `abe03ca3a836dffb10699c0c39883119e2a8f816`. Rollback is
-also a production mutation and requires current authorization.
+If rollback is authorized, the exact application target is predecessor SHA
+`abe03ca3a836dffb10699c0c39883119e2a8f816` / deployment
+`dep-daaqncid0e5s739067tg`. Rollback is itself a production mutation and
+requires current authorization.

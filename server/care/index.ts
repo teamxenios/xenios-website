@@ -9,6 +9,12 @@ import {
   type CareAccessDependencies,
 } from "./access";
 import { careCapabilityStatusForState } from "./capability";
+import {
+  buildCareManualAccessProductionDependencies,
+  careManualAccessAvailability,
+  registerCareManualAccessApi,
+  type CareManualAccessDependencies,
+} from "./manual-access";
 import { resolveTebraPublicConfiguration } from "./tebra-scheduling";
 import type {
   TebraPublicActivationContext,
@@ -27,6 +33,7 @@ export function carePageGate(req: Request, res: Response, next: NextFunction) {
 export interface RegisterCareApiOptions {
   env?: NodeJS.ProcessEnv;
   tebraAuthoritySource?: TebraPublicAuthoritySource;
+  manualAccessDependencies?: CareManualAccessDependencies;
   /** Independently resolved deployment identity; never supplied by the authority reader. */
   currentReleaseSha?: string;
   clock?: () => Date;
@@ -45,9 +52,25 @@ export function registerCareApi(
     next();
   });
 
+  const manualAccess =
+    options.manualAccessDependencies ?? buildCareManualAccessProductionDependencies();
+  registerCareManualAccessApi(app, manualAccess);
+
   app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {
     try {
-      res.json({ ok: true, capability: await deps.loadCapabilityStatus() });
+      const capability = await deps.loadCapabilityStatus();
+      let accessRequests;
+      try {
+        accessRequests = careManualAccessAvailability(
+          await manualAccess.loadReadiness(),
+        );
+      } catch {
+        accessRequests = careManualAccessAvailability({
+          persistenceReady: false,
+          notificationsReady: false,
+        });
+      }
+      res.json({ ok: true, capability, accessRequests });
     } catch {
       sendCareTemporarilyUnavailable(res);
     }
@@ -107,6 +130,7 @@ export * from "./eligibility-routes";
 export * from "./intake";
 export * from "./intake-repository";
 export * from "./intake-routes";
+export * from "./manual-access";
 export * from "./production-deps";
 export * from "./prescriptions";
 export * from "./prescription-repository";
