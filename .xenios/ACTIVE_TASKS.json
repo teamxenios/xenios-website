@@ -739,7 +739,7 @@
       "id": "CARE-ADMIN-RELIABILITY-20260903",
       "title": "P0: make every durably saved public Care access request discoverable through a protected admin projection, queue and operational status workflow (incident CARE-2A99C6F7)",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-care-admin-reliability-20260903",
       "paths": [
         "shared/care/manual-access-admin.ts",
@@ -768,7 +768,13 @@
         "route census, seam re-pin, tsc, build, full suite green",
         "exact-SHA release packet; no deploy"
       ],
-      "claimedAt": "2026-09-03T22:46:05.857Z"
+      "claimedAt": "2026-09-03T22:46:05.857Z",
+      "handoff": {
+        "session": "claude-care-admin-reliability-20260903",
+        "sha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
+        "file": ".xenios/handoffs/2026-09-03T23-08-42-648Z-CARE-ADMIN-RELIABILITY-20260903-claude-care-admin-reliability-20260903.md",
+        "at": "2026-09-03T23:08:42.653Z"
+      }
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "id": "5075b48b-a13d-460b-a36e-003a01019773",
+  "from": "claude-care-admin-reliability-20260903",
+  "to": "release-owner",
+  "text": "P0 Care admin reliability (incident CARE-2A99C6F7) built and gated on claude/care-admin-reliability-20260903, code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b over base 8cca3373 (live 50c2d35c). Not deployed. Packet: docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md. Awaiting Samuel's exact-SHA GO.",
+  "createdAt": "2026-09-03T23:08:43.097Z"
+}

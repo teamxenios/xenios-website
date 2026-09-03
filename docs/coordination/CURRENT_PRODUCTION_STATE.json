@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T21:05:46Z",
+  "generatedAt": "2026-09-03T23:06:20Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -189,6 +189,15 @@
       "branch": "claude/xenios-research-full-finish-takeover-20260828",
       "state": "DEPLOYED_20260830T2331Z_SUPERSEDED_BY_POSTLAUNCH_LIVE",
       "reason": "Final RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 (served runtime identical to freeze 2d662a0d) deployed as dep-daabqagn74is73aejn80 on Samuel's exact-SHA GO, live 2026-08-30T23:31:55Z; commit-verified exact before trigger; post-deploy critical-endpoint diff PASS (16/11/0/0), assisted-orders/config 200 enabled:true, boot log 'assisted order bridge mounted (audit mode: log_line_nondurable)', ~18-minute observation window clean, no rollback. Superseded on 2026-08-31 by the Care/Research post-launch deploys; the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 descends from it. Not the rollback target (the rollback target is the live baseline)."
+    },
+    {
+      "lane": "P0 Care admin reliability (incident CARE-2A99C6F7)",
+      "headSha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
+      "graphNodeId": "care-admin-reliability-ace27886",
+      "sourceBaseSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "branch": "claude/care-admin-reliability-20260903",
+      "state": "BUILT_AND_GATED_AWAITING_FOUNDER_EXACT_SHA_GO",
+      "reason": "Adds the protected Care access-request admin projection (GET /api/admin/care/access-requests, GET .../:requestId, PATCH .../:requestId/status behind requireSupabaseAdmin), the /admin/research/care-requests queue with operational statuses, notification-failure and malformed-row visibility, and regression gates, over the same loi_submissions rows the public Care writer stores; no migration, no environment change, no clinical field. Base 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch; contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21). tsc 0; build PASS; focused, page, wiring, clinical-route-coverage, admin-nav, control-plane and core-site gates PASS; route census 411/402 -> 414/405; seam server/care/index.ts re-pinned. Not deployed; awaiting the founder's explicit exact-SHA GO for the tested code SHA."
     }
   ],
   "knownRisks": [

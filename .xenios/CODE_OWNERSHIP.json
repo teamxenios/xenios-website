@@ -927,7 +927,7 @@
         "docs/research-launch/CODEX_XENIOS_CARE_ADMIN_RELIABILITY_MEGA_PROMPT_2026-09-03.md",
         "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-03T22:46:05.859Z",
       "heartbeatAt": "2026-09-03T22:46:05.859Z"
     }

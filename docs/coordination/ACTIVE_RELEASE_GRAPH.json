@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T21:05:46Z",
+  "generatedAt": "2026-09-03T23:06:20Z",
   "productionSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
   "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
   "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
@@ -344,6 +344,14 @@
       "state": "CLOSED_FINAL_RC_1FD84AD2_DEPLOYED_20260830",
       "sha": null,
       "label": "Final-RC boundary resolved: the final records-only consistency successor was 1fd84ad2b3320dada4da7f58012d4311e5cd1639; detached Codex review PASS (P0 0 / blocking P1 0 / critical P2 0); Samuel's exact-SHA GO; deployed as dep-daabqagn74is73aejn80. No deployment authority is carried by this node."
+    },
+    {
+      "id": "care-admin-reliability-ace27886",
+      "type": "candidate",
+      "owner": "Claude (claude-care-admin-reliability-20260903)",
+      "state": "BUILT_AND_GATED_AWAITING_FOUNDER_EXACT_SHA_GO",
+      "sha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
+      "label": "P0 Care admin reliability: every durably saved public Care access request becomes operationally discoverable through a requireSupabaseAdmin-guarded projection, queue page and operational status workflow (incident CARE-2A99C6F7: saved and emailed but invisible to the admin surface). Read-side additions over loi_submissions; no migration; no environment change. Built and gated on 8cca3373047a2161f5360541a9b2fc5c71f8063f above live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; not deployed."
     }
   ],
   "edges": [
@@ -541,6 +549,11 @@
       "from": "production-3daa3f4a",
       "to": "production-50c2d35c",
       "relation": "superseded_by_live_baseline"
+    },
+    {
+      "from": "production-50c2d35c",
+      "to": "care-admin-reliability-ace27886",
+      "relation": "development_ancestor_of"
     }
   ],
   "releaseOrder": [

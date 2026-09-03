@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-03T21:05:46Z",
+  "updatedAt": "2026-09-03T23:06:20Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
   "lastDocumentedProductionRelease": {
@@ -355,5 +355,17 @@
     "deployed": false,
     "migrationsApplied": false,
     "serviceSettingsChanged": false
+  },
+  "careAdminReliabilityCandidate": {
+    "codeSha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
+    "baseSha": "8cca3373047a2161f5360541a9b2fc5c71f8063f",
+    "productionSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "branch": "claude/care-admin-reliability-20260903",
+    "state": "BUILT_AND_GATED_AWAITING_FOUNDER_EXACT_SHA_GO",
+    "incident": "CARE-2A99C6F7",
+    "migrationRequired": false,
+    "environmentChangeRequired": false,
+    "deployed": false,
+    "packet": "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md"
   }
 }
