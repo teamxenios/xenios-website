@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-03T23:06:20Z",
+  "updatedAt": "2026-09-03T23:48:00Z",
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+  "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/xenios-care-research-postlaunch-20260831",
-    "rollback": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-    "deployId": "dep-daatp715efls738v00dg",
-    "liveSince": "2026-08-31T19:58:17Z",
-    "note": "Current live production is the post-launch deployment dep-daatp715efls738v00dg (Open Xenios Care with manual access requests), a descendant of the deployed final recut RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 (dep-daabqagn74is73aejn80, 2026-08-30). 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 is superseded history."
+    "deployedFromBranch": "claude/care-admin-reliability-20260903",
+    "rollback": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dad08h740ujc73aprfcg",
+    "liveSince": "2026-09-03T23:36:32Z",
+    "note": "Current live production is the Care admin reliability deployment dep-dad08h740ujc73aprfcg (db5a2d447114c1e8a14185a9865ded50ee3f1ac6, records successor of tested code ace27886dd3b76a8e5dcc982111bb7062e9e451b), deployed 2026-09-03 on the founder exact-SHA GO (2026-09-03) above the post-launch baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg), which is now superseded history."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -68,7 +68,8 @@
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
     "2026-08-19 HARD PAUSE: full build reconciliation complete — authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
     "2026-09-03 PRODUCTION-TRUTH RECONCILIATION: Render live is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records had drifted to 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and release/early-access-code-session-checkout still pointed there. Coupled flip of production state, release graph, ownership origin, migration DAG and control-plane test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; release branch fast-forwarded to the reconciliation successor; auto-deploy off; nothing deployed; no migration; no service or env change. Follow-ups: re-derive endpoint/evidence expectations against 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; port Step 1 hotfix b8359eba file-by-file.",
-    "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary."
+    "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary.",
+    "2026-09-03 CARE ADMIN RELIABILITY DEPLOYED: db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (dep-dad08h740ujc73aprfcg, live 2026-09-03T23:36:32Z) by commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03); critical-endpoint diff PASS 30/0/0/0; Care admin doors 401; boot clean; no rollback; no migration; no env change; no Care status change. Production truth records flipped to db5a2d447114c1e8a14185a9865ded50ee3f1ac6 in the same session. PENDING: founder read-only smoke with an admin session proving CARE-2A99C6F7 appears exactly once in /admin/research/care-requests. Follow-ups: hide Care rows from the generic /admin LOI list; add the Care admin doors to the critical-endpoint default list."
   ],
   "researchFullSiteCandidate": {
     "codeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",

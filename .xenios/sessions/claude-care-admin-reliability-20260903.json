@@ -5,6 +5,6 @@
   "branch": "claude/care-admin-reliability-20260903",
   "state": "active",
   "startedAt": "2026-09-03T22:46:05.571Z",
-  "heartbeatAt": "2026-09-03T22:46:05.572Z",
-  "note": "P0 Care admin reliability: protected Care access-request admin projection, queue page, status workflow, negative controls; base 8cca3373 (contains live 50c2d35c)"
+  "heartbeatAt": "2026-09-03T23:52:28.003Z",
+  "note": ""
 }

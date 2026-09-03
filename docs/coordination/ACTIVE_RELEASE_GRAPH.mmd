@@ -1,7 +1,9 @@
 flowchart LR
   %% Current control-plane graph. Exact 2026-07-30 facts are preserved in
   %% docs/coordination/history and are historical, not current attestations.
-  PROD["Production 50c2d35c<br/>AUDITED_BASELINE<br/>current dep-daatp715efls738v00dg (live 2026-08-31)"]
+  PROD["Production db5a2d44<br/>AUDITED_BASELINE<br/>current dep-dad08h740ujc73aprfcg (live 2026-09-03 23:36Z)<br/>Care admin reliability"]
+  PREV50["Superseded baseline 50c2d35c<br/>HISTORICAL<br/>dep-daatp715efls738v00dg (2026-08-31 to 2026-09-03)"]
+  CAREADMIN["Care admin tested code ace27886<br/>DEPLOYED WITHIN db5a2d44<br/>suite 810/4 files; diff 30/0/0/0"]
   PREVPROD["Superseded baseline 3daa3f4a<br/>HISTORICAL<br/>dep-da94g05g1s2s7396lkv0"]
   FINALRC["Final RC 1fd84ad2<br/>DEPLOYED 2026-08-30 dep-daabqagn74is73aejn80<br/>SUPERSEDED BY POST-LAUNCH LIVE"]
   FAILED["Failed RC a1bbc2a1<br/>PROHIBITED<br/>DEVELOPMENT SOURCE ONLY"]
@@ -35,9 +37,12 @@ flowchart LR
   CONT["Continuity successor 0f3b3a33<br/>PUSHED + ORIGIN VERIFIED<br/>7 .xenios files; scan 0 / 0"]
   FINAL["Final RC boundary<br/>CODEX DETACHED REVIEW<br/>exact successor SHA pending"]
 
-  PREVPROD -->|superseded by live baseline| PROD
+  PREVPROD -->|superseded by live baseline| PREV50
+  PREV50 -->|superseded by live baseline| PROD
+  PREV50 -->|development ancestor of| CAREADMIN
+  CAREADMIN -->|served runtime of| PROD
   PREVPROD -->|development ancestor of| FINALRC
-  FINALRC -->|post-launch deploys lead to| PROD
+  FINALRC -->|post-launch deploys lead to| PREV50
   PREVPROD -->|development ancestor of| FAILED
   PREVPROD -->|runtime baseline for| HOME
   EDITORIAL -->|semantic input to reconcile| HOME
@@ -79,7 +84,8 @@ flowchart LR
   classDef authority fill:#eadcf8,stroke:#5b2c6f,color:#000;
   classDef candidate fill:#d9eaf7,stroke:#134f5c,color:#000;
   class PROD baseline;
-  class PREVPROD gate;
+  class PREVPROD,PREV50 gate;
+  class CAREADMIN candidate;
   class FINALRC candidate;
   class FAILED,FAILED_RUNTIME,FAILED_DEPLOY,R10G,DB9FAIL,DB9FULL,R11R1,R11,SMOKE,R3,R3B prohibited;
   class EDITORIAL,PR117,PR106,PR144,ORDER_EVIDENCE,PAYOUT,HOME gate;

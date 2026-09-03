@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T23:48:00Z",
+  "generatedAt": "2026-09-03T23:06:20Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -30,32 +30,18 @@
       "observedAt": "2026-08-30T22:53:05.351Z",
       "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-08-30.json",
       "gitBlobSha": "95cbfb83495c2bbd09366aa07b083c0f40c8f19e"
-    },
-    {
-      "id": "production-state-20260903-pre-care-admin-deploy",
-      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
-      "observedAt": "2026-09-03T23:06:20Z",
-      "source": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-09-03.json",
-      "gitBlobSha": "77effb2d4469219a2d072de45a5fa8604e25c0e4"
-    },
-    {
-      "id": "release-graph-20260903-pre-care-admin-deploy",
-      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
-      "observedAt": "2026-09-03T23:06:20Z",
-      "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-09-03.json",
-      "gitBlobSha": "6284254a8f5b9c26151eaeee895d1d67e4416700"
     }
   ],
   "production": {
-    "gitSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "gitSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-dad08h740ujc73aprfcg",
+    "renderDeploymentId": "dep-daatp715efls738v00dg",
     "status": "LIVE",
-    "verifiedAt": "2026-09-03T23:37:18Z",
-    "liveSince": "2026-09-03T23:36:32Z",
-    "deployedFromBranch": "claude/care-admin-reliability-20260903",
-    "deployTrigger": "commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03)",
+    "verifiedAt": "2026-09-03T21:05:46Z",
+    "liveSince": "2026-08-31T19:58:17Z",
+    "deployedFromBranch": "codex/xenios-care-research-postlaunch-20260831",
+    "deployTrigger": "commit-pinned Render API deploy",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -65,7 +51,7 @@
     "commerceEnabled": false,
     "publicHealthStatus": 200,
     "renderOriginHealthStatus": 200,
-    "checkedAt": "2026-09-03T23:37:18Z",
+    "checkedAt": "2026-09-03T21:05:46Z",
     "limitation": "The health and runtime-config requests establish reachability and the disabled commerce flag for the separately attested Render deployment. They do not establish database row counts, Care state, migration-ledger state, or any other unobserved production fact."
   },
   "dataPosture": {
@@ -210,12 +196,8 @@
       "graphNodeId": "care-admin-reliability-ace27886",
       "sourceBaseSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
       "branch": "claude/care-admin-reliability-20260903",
-      "state": "DEPLOYED_WITHIN_DB5A2D44_20260903T2336Z",
-      "reason": "Tested code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b (runtime tree identical to the deployed records successor db5a2d447114c1e8a14185a9865ded50ee3f1ac6) deployed as dep-dad08h740ujc73aprfcg on the founder exact-SHA GO (2026-09-03), commit-verified before polling, live 2026-09-03T23:36:32Z. Post-deploy critical-endpoint diff PASS 30 SAME / 0 / 0 / 0; Care admin doors 401/401/401, control 404, page 200; boot markers present; observation window clean; no rollback. Pending: authenticated proof that CARE-2A99C6F7 is returned exactly once (founder session). No migration; no environment change; no Care status changed.",
-      "deployed": true,
-      "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "deployId": "dep-dad08h740ujc73aprfcg",
-      "liveSince": "2026-09-03T23:36:32Z"
+      "state": "BUILT_AND_GATED_AWAITING_FOUNDER_EXACT_SHA_GO",
+      "reason": "Adds the protected Care access-request admin projection (GET /api/admin/care/access-requests, GET .../:requestId, PATCH .../:requestId/status behind requireSupabaseAdmin), the /admin/research/care-requests queue with operational statuses, notification-failure and malformed-row visibility, and regression gates, over the same loi_submissions rows the public Care writer stores; no migration, no environment change, no clinical field. Base 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch; contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21). tsc 0; build PASS; focused, page, wiring, clinical-route-coverage, admin-nav, control-plane and core-site gates PASS; route census 411/402 -> 414/405; seam server/care/index.ts re-pinned. Not deployed; awaiting the founder's explicit exact-SHA GO for the tested code SHA."
     }
   ],
   "knownRisks": [
@@ -323,25 +305,13 @@
       "id": "EVIDENCE_EXPECTATIONS_BASE_REDERIVATION",
       "state": "OPEN_NONBLOCKING_NEXT_RELEASE",
       "releaseBlocking": false,
-      "summary": "scripts/release/critical-endpoint-expectations.json, scripts/evidence/evidence-manifest.template.json and scripts/evidence/routes.public.json still express reviewed deltas relative to the superseded baseline 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212. The 2026-09-03 Care admin deployment needed no expectation (all 30 default endpoints SAME), but the new /api/admin/care/* doors and /admin/research/care-requests are not in the default endpoint list; add them and re-derive the expectations against the live baseline db5a2d447114c1e8a14185a9865ded50ee3f1ac6 before the next release. Not a runtime change."
+      "summary": "scripts/release/critical-endpoint-expectations.json, scripts/evidence/evidence-manifest.template.json and scripts/evidence/routes.public.json still express reviewed deltas relative to the superseded baseline 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212. Before the next release's endpoint diff and evidence run they must be re-derived against the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (most former INTENTIONAL_CHANGE rows are now SAME). Not a runtime change; not required for this reconciliation."
     },
     {
       "id": "STEP1_HOTFIX_UNINTEGRATED",
       "state": "OPEN_NONBLOCKING_FOLLOW_UP",
       "releaseBlocking": false,
       "summary": "The Step 1 live-UX hotfix b8359eba179fb7a901df58be6b949b3956a43c39 sits on an old base and is not in the live lineage. It must be ported file-by-file against the live baseline and re-gated; it must never be deployed as-is."
-    },
-    {
-      "id": "CARE_ADMIN_AUTHENTICATED_PROOF_PENDING",
-      "state": "OPEN_NONBLOCKING_FOUNDER_READ_ONLY_SMOKE",
-      "releaseBlocking": false,
-      "summary": "The P0 outcome (CARE-2A99C6F7 returned exactly once by the protected Care admin projection and rendered in /admin/research/care-requests) has not been observed against production: it requires an admin session, which the deploying session did not have and must not create. The founder performs the read-only check with his own session; nothing else is needed and no Care status may be changed during it."
-    },
-    {
-      "id": "CARE_ROWS_VISIBLE_IN_GENERIC_LOI_LIST",
-      "state": "OPEN_NONBLOCKING_FOLLOW_UP",
-      "releaseBlocking": false,
-      "summary": "The generic /admin LOI surface still lists Care rows with the legacy LOI status vocabulary; a status set there renders as a custom option in the Care queue until changed. Row sets are disjoint; no data loss. Follow-up: hide Care rows from the generic LOI list."
     }
   ],
   "evidenceLimitations": [
@@ -352,44 +322,43 @@
     "The 2d662a0d runtime, c015691 evidence freeze, historical db9 smoke and sealed retry3c evidence are candidate facts, not production observations, and do not change the trusted live baseline.",
     "Historical efb/r10g/r10h, the failed first db9 smoke, the stopped db9 full run, externally interrupted retry1, lifecycle-flaky retry2, excluded e641 smoke, wrapper-stopped retry3/retry3b, wrapper-only 46-vs-13 stop, and excluded fixture-scan attempt provide no current final PASS.",
     "Retry3c full evidence and the bounded review packet are sealed/validated. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain unassigned by self-reference. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS.",
-    "The 2026-09-03 reconciliation was read-only against Render (service, deploy list, deploy detail), GitHub branch heads and public/origin HTTP health; it changed no service setting, environment variable, deployment, migration or application behaviour.",
-    "The 2026-09-03 Care admin deployment and smoke were read-only apart from the single authorized commit-pinned deploy: Render API reads, unauthenticated public HTTP reads and one unauthenticated PATCH against a nonexistent id (refused 401 by the guard). No authenticated request, database read, migration, environment change, customer message or Care status change was made."
+    "The 2026-09-03 reconciliation was read-only against Render (service, deploy list, deploy detail), GitHub branch heads and public/origin HTTP health; it changed no service setting, environment variable, deployment, migration or application behaviour."
   ],
   "evidence": [
     {
-      "id": "render-deploy-identity-20260903-care-admin",
+      "id": "render-service-identity-20260903",
       "kind": "render_service_and_deployment_read",
-      "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "Read-only Render API reads before and after the deploy: service srv-d8s9vej7uimc7384dfcg branch release/early-access-code-session-checkout, autoDeploy no, autoDeployTrigger off, not suspended; pre-trigger top deploy dep-daatp715efls738v00dg live on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 with no deploy in progress. Commit-pinned POST /deploys {commitId: db5a2d447114c1e8a14185a9865ded50ee3f1ac6} returned 201 with deploy dep-dad08h740ujc73aprfcg and commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (exact match verified before polling); status build_in_progress -> update_in_progress -> live, finishedAt 2026-09-03T23:36:32Z. Post-deploy deploy list top = dep-dad08h740ujc73aprfcg status live commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6. No service setting, environment variable or migration was changed."
+      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "checkedAt": "2026-09-03T21:05:46Z",
+      "detail": "Read-only Render API reads on 2026-09-03: service srv-d8s9vej7uimc7384dfcg (xenios-website) branch release/early-access-code-session-checkout, autoDeploy no, autoDeployTrigger off; deploy list top = dep-daatp715efls738v00dg status live commit 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (Open Xenios Care with manual access requests), created 2026-08-31T19:57:16Z, finished 2026-08-31T19:58:17Z, trigger api (commit-pinned). No service setting was changed."
     },
     {
-      "id": "critical-endpoint-diff-20260903-care-admin",
-      "kind": "critical_endpoint_diff",
-      "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "checkedAt": "2026-09-03T23:46:52Z",
-      "detail": "scripts/release/critical-endpoint-diff.mjs: live pre-deploy baseline of 30 endpoints captured on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 at 2026-09-03T23:23:10Z; post-deploy capture at 2026-09-03T23:37:18Z compared with scripts/release/critical-endpoint-expectations.json -> SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, verdict PASS, exit 0. Observation window: Eight one-minute ticks 2026-09-03T23:39:35Z to 23:46:46Z: /api/health 200, /api/admin/care/access-requests 401, /admin/research/care-requests 200, /care/schedule 200, /research 200 on every tick; second full capture at 23:46:5xZ vs the pre-deploy baseline: SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, PASS; live deploy still dep-dad08h740ujc73aprfcg on db5a2d44. Local production-shaped 50c2d35c-vs-db5a2d44 diff (pinned Node 20.19.0 LF clone): both SHAs built and booted with the production env shape (placeholder secrets) after a fresh npm ci; SAME 30 / 0 / 0 / 0 PASS (local-diff-50c2d35c-vs-db5a2d44.json). Evidence: CONTROL/EVIDENCE/deploy-db5a2d44-20260903/."
+      "id": "deploy-chain-20260830-20260831",
+      "kind": "render_deploy_history_read",
+      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "checkedAt": "2026-09-03T21:05:46Z",
+      "detail": "Deploy chain since the superseded baseline 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (dep-da94g05g1s2s7396lkv0, rollback deployment live 2026-08-29T02:47:15Z): 1fd84ad2b3320dada4da7f58012d4311e5cd1639 deployed as dep-daabqagn74is73aejn80 on Samuel's exact-SHA GO, live 2026-08-30T23:31:55Z, post-deploy critical-endpoint diff PASS 16 SAME / 11 INTENTIONAL_CHANGE / 0 REGRESSION / 0 HUMAN_REVIEW, assisted-orders/config 200, observation window clean; then abe03ca3a836dffb10699c0c39883119e2a8f816 as dep-daaqncid0e5s739067tg (2026-08-31T16:29:36Z, deactivated), 72b6f1380e13f09dec67684035ed44a1d2740408 as dep-daarr3ajnfac73a93co0 (2026-08-31T17:45:49Z, deactivated), and 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 as dep-daatp715efls738v00dg (live). 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 descends from 1fd84ad2b3320dada4da7f58012d4311e5cd1639; no migration changed in any of these deploys."
     },
     {
-      "id": "care-admin-doors-and-boot-20260903",
-      "kind": "public_http_negative_controls_and_boot_log_read",
-      "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "Unauthenticated, read-only: GET /api/admin/care/access-requests -> 401 {success:false,message:Unauthorized}; GET /api/admin/care/access-requests/CARE-2A99C6F7 -> 401; PATCH /api/admin/care/access-requests/00000000-0000-4000-8000-000000000000/status (no token, no body, nonexistent id) -> 401 before any handler; GET /api/admin/care/definitely-missing-xr-smoke -> 404 JSON; GET /admin/research/care-requests -> 200 private shell (was 404 on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21); GET /care/schedule -> 200; GET /api/care/access-request/status -> 200 acceptingRequests true (unchanged). Render boot log for dep-dad08h740ujc73aprfcg: build successful, npm run start, affiliates partner portal mounted, research config password=set sessionSecret=set publicMode=false nodeEnv=production, outbox worker started, email provider=resend-env, assisted order bridge mounted (audit mode: log_line_nondurable), serving on port 10000, supabase service key check ok, service live. /api/health 200 x3 (config supabaseConfigured true, adminConfigured true, turnstileConfigured false, commerceEnabled false); Render origin health 200."
-    },
-    {
-      "id": "git-release-identity-20260903-care-admin",
+      "id": "git-release-identity-20260903",
       "kind": "git_branch_identity_read",
-      "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "origin claude/care-admin-reliability-20260903 = db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (deployed SHA); release/early-access-code-session-checkout = 8cca3373047a2161f5360541a9b2fc5c71f8063f (ancestor of the live commit, three commits behind: 3b206fa5 feat, ace27886dd3b76a8e5dcc982111bb7062e9e451b tests = tested code SHA, db5a2d447114c1e8a14185a9865ded50ee3f1ac6 records). Tree hashes for client/, server/, shared/, script/, scripts/, supabase/ are identical between ace27886dd3b76a8e5dcc982111bb7062e9e451b and db5a2d447114c1e8a14185a9865ded50ee3f1ac6; package.json, package-lock.json, tsconfig.json, vite.config.ts, script/build.mjs and .npmrc are byte-identical between 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 and db5a2d447114c1e8a14185a9865ded50ee3f1ac6. PR #306 (claude/care-admin-reliability-20260903 -> release/early-access-code-session-checkout) is open; the release branch was not moved by this deployment."
+      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "checkedAt": "2026-09-03T21:05:46Z",
+      "detail": "origin heads at reconciliation start: codex/xenios-care-research-postlaunch-20260831 = 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (equals live); claude/xenios-research-full-finish-takeover-20260828 = 1fd84ad2b3320dada4da7f58012d4311e5cd1639; release/early-access-code-session-checkout = 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (stale, three deploys behind live; fast-forwarded by this reconciliation to the records successor of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 so a branch-head deploy can no longer rebuild the superseded baseline); main = 6077a6bbb276acf9669c1419c735a9327f8740b1. 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and 1fd84ad2b3320dada4da7f58012d4311e5cd1639 are ancestors of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; ace92fd65ab46213aa5899a1591d4c565099fd0f is not."
     },
     {
-      "id": "authenticated-care-queue-proof-20260903-pending",
-      "kind": "pending_founder_read_only_smoke",
-      "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-      "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "NOT YET OBSERVED: the authenticated read that GET /api/admin/care/access-requests returns CARE-2A99C6F7 exactly once and that /admin/research/care-requests renders it requires the founder admin session; the deploying session had no admin session or authorized database path and did not sign in. Recorded as pending, not as proven. Seth must not be asked to resubmit; no Care status may be changed during that smoke."
+      "id": "public-health-runtime-config-20260903",
+      "kind": "public_http_health_read",
+      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "checkedAt": "2026-09-03T21:05:46Z",
+      "detail": "GET https://xeniostechnology.com/api/health -> 200 {status: Xenios API is running, config: supabaseConfigured true, adminConfigured true, turnstileConfigured false, commerceEnabled false}; GET /api/research/early-access/assisted-orders/config -> 200."
+    },
+    {
+      "id": "render-origin-health-20260903",
+      "kind": "render_origin_http_health_read",
+      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "checkedAt": "2026-09-03T21:05:46Z",
+      "detail": "GET https://xenios-website.onrender.com/api/health -> 200 on the attested deployment."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"

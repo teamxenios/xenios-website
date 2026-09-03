@@ -1,18 +1,24 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-03T23:06:20Z",
+  "updatedAt": "2026-09-03T23:48:00Z",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+  "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
   "lastDocumentedProductionRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-    "rollback": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-    "deployId": "dep-daatp715efls738v00dg",
-    "liveSince": "2026-08-31T19:58:17Z",
-    "deployedFromBranch": "codex/xenios-care-research-postlaunch-20260831",
+    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "rollback": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dad08h740ujc73aprfcg",
+    "liveSince": "2026-09-03T23:36:32Z",
+    "deployedFromBranch": "claude/care-admin-reliability-20260903",
     "branch": "release/early-access-code-session-checkout",
     "status": "live",
     "previousLiveDeploys": [
+      {
+        "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+        "deployId": "dep-daatp715efls738v00dg",
+        "liveAt": "2026-08-31T19:58:17Z",
+        "note": "Open Xenios Care with manual access requests; pre-deploy rollback target of the Care admin deployment"
+      },
       {
         "sha": "72b6f1380e13f09dec67684035ed44a1d2740408",
         "deployId": "dep-daarr3ajnfac73a93co0",
@@ -36,7 +42,7 @@
         "note": "rollback deployment after eb659d81"
       }
     ],
-    "note": "Current live production is the commit-pinned post-launch deployment dep-daatp715efls738v00dg of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21. The release branch was fast-forwarded on 2026-09-03 to the reconciliation records successor of this SHA so that branch-head deploys cannot rebuild the superseded 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212."
+    "note": "Current live production is the commit-pinned Care admin reliability deployment dep-dad08h740ujc73aprfcg of db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (records successor of tested code ace27886dd3b76a8e5dcc982111bb7062e9e451b), deployed on the founder exact-SHA GO (2026-09-03). The release branch remains at 8cca3373047a2161f5360541a9b2fc5c71f8063f (an ancestor) until PR #306 is merged; auto-deploy is off."
   },
   "nextRelease": {
     "name": "XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29",
@@ -68,7 +74,7 @@
     "detachedReview": "CODEX_PASS_P0_0_P1_0_CRITICAL_P2_0",
     "supersededByLiveSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21"
   },
-  "productionWriter": "unassigned (production truth reconciled 2026-09-03 by claude-phase-a-production-truth-20260903; the next writer must claim explicitly)",
+  "productionWriter": "unassigned (production truth reconciled 2026-09-03 by claude-care-admin-reliability-20260903 after the db5a2d44 deployment; the next writer must claim explicitly)",
   "invariants": [
     "one production writer",
     "immutable release tags",
@@ -345,27 +351,34 @@
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   },
-  "nextReleaseScanBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+  "nextReleaseScanBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
   "reconciliation": {
-    "at": "2026-09-03T21:05:46Z",
-    "liveBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-    "liveDeployId": "dep-daatp715efls738v00dg",
-    "supersededBase": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-    "releaseBranchFastForwarded": true,
-    "deployed": false,
+    "at": "2026-09-03T23:48:00Z",
+    "liveBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "liveDeployId": "dep-dad08h740ujc73aprfcg",
+    "supersededBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "releaseBranchFastForwarded": false,
+    "deployed": true,
+    "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
     "migrationsApplied": false,
-    "serviceSettingsChanged": false
+    "serviceSettingsChanged": false,
+    "environmentChanged": false
   },
   "careAdminReliabilityCandidate": {
     "codeSha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
     "baseSha": "8cca3373047a2161f5360541a9b2fc5c71f8063f",
     "productionSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
     "branch": "claude/care-admin-reliability-20260903",
-    "state": "BUILT_AND_GATED_AWAITING_FOUNDER_EXACT_SHA_GO",
+    "state": "DEPLOYED_WITHIN_DB5A2D44_20260903T2336Z",
     "incident": "CARE-2A99C6F7",
     "migrationRequired": false,
     "environmentChangeRequired": false,
-    "deployed": false,
-    "packet": "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md"
+    "deployed": true,
+    "packet": "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md",
+    "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dad08h740ujc73aprfcg",
+    "liveSince": "2026-09-03T23:36:32Z",
+    "authenticatedProof": "PENDING_FOUNDER_READ_ONLY_SMOKE",
+    "rollbackSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21"
   }
 }
