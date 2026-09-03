@@ -902,9 +902,34 @@
         ".xenios/sessions/codex-care-manual-access-20260831.json",
         ".xenios/handoffs/*CARE-MANUAL-ACCESS-20260831*"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-31T19:42:12.507Z",
       "heartbeatAt": "2026-08-31T19:42:12.507Z"
+    },
+    {
+      "id": "e6d68d60-f3cf-4ca3-92d5-d5ad66aa95a5",
+      "task": "CARE-ADMIN-RELIABILITY-20260903",
+      "session": "claude-care-admin-reliability-20260903",
+      "paths": [
+        "shared/care/manual-access-admin.ts",
+        "server/care/manual-access-admin.ts",
+        "server/care/manual-access-admin.test.ts",
+        "server/care/manual-access-admin-wiring.test.ts",
+        "server/care/index.ts",
+        "client/src/research/adapters/careAdmin.ts",
+        "client/src/research/pages/adminx/CareAccessRequests.tsx",
+        "client/src/research/pages/adminx/CareAccessRequests.test.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "server/release-control-plane.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/CODEX_XENIOS_CARE_ADMIN_RELIABILITY_MEGA_PROMPT_2026-09-03.md",
+        "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-03T22:46:05.859Z",
+      "heartbeatAt": "2026-09-03T22:46:05.859Z"
     }
   ],
   "rules": [

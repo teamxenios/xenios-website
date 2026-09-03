@@ -10,6 +10,7 @@ import { ResearchLoadingState } from "./ui/kit";
 // state. Code-split per page.
 
 const AdminResearchHome = lazy(() => import("./pages/adminx/AdminResearchHome"));
+const CareAccessRequests = lazy(() => import("./pages/adminx/CareAccessRequests"));
 const AssistedOrderQueue = lazy(() =>
   import("./assisted-order/AdminAssistedOrderQueue").then((m) => ({
     default: m.AdminAssistedOrderQueue,
@@ -136,6 +137,7 @@ export default function AdminResearchSection() {
   return (
     <Switch>
       <Route path="/admin/research">{() => <S><AdminResearchHome /></S>}</Route>
+      <Route path="/admin/research/care-requests">{() => <S><CareAccessRequests /></S>}</Route>
       <Route path="/admin/research/applications">{() => <S><Applications /></S>}</Route>
       <Route path="/admin/research/applications/:id">{() => <S><ApplicationDetail /></S>}</Route>
       <Route path="/admin/research/members">{() => <S><Members /></S>}</Route>

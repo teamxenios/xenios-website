@@ -301,6 +301,16 @@
       "startedAt": "2026-09-03T21:05:00.000Z",
       "heartbeatAt": "2026-09-03T21:05:46Z",
       "note": "Phase A: coupled production-baseline reconciliation to live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records only; release branch fast-forward; no deploy."
+    },
+    {
+      "id": "claude-care-admin-reliability-20260903",
+      "tool": "Claude Fable 5.1",
+      "lane": "care-admin-reliability",
+      "branch": "claude/care-admin-reliability-20260903",
+      "state": "active",
+      "startedAt": "2026-09-03T22:46:05.571Z",
+      "heartbeatAt": "2026-09-03T22:46:05.572Z",
+      "note": "P0 Care admin reliability: protected Care access-request admin projection, queue page, status workflow, negative controls; base 8cca3373 (contains live 50c2d35c)"
     }
   ]
 }

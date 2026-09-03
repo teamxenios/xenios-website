@@ -2031,8 +2031,17 @@ describe("route uniqueness validator", () => {
     // 400 call sites. +2 mounted Xenios-owned Care manual-access call sites
     // (GET readiness and POST bounded request) = 411 registrations across 402
     // call sites.
-    expect(result.callSites).toBe(402);
-    expect(result.routes).toHaveLength(411);
+    // +3 (Care admin reliability, 2026-09-03): the protected Care access-request
+    // admin projection in server/care/manual-access-admin.ts — GET
+    // /api/admin/care/access-requests, GET .../:requestId and PATCH
+    // .../:requestId/status, registered as literal paths so this census sees
+    // every door — mounted from the Care registrar behind the canonical
+    // requireSupabaseAdmin guard, so a durably saved public Care request is
+    // always operationally discoverable (incident CARE-2A99C6F7: saved and
+    // emailed but invisible to the admin surface). 411 + 3 = 414 registrations
+    // across 405 call sites.
+    expect(result.callSites).toBe(405);
+    expect(result.routes).toHaveLength(414);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
