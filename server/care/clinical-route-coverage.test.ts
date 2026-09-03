@@ -18,6 +18,9 @@ import type { CareEligibilityRepository } from "./eligibility-repository";
 import { registerCareEligibilityApi } from "./eligibility-routes";
 import { registerCareApi } from "./index";
 import type { CareManualAccessDependencies } from "./manual-access";
+import { careManualAccessOperationsRecord } from "./manual-access";
+import type { CareManualAccessAdminDependencies } from "./manual-access-admin";
+import type { LoiRow } from "../supabase-store";
 import type { CareIntakeRepository } from "./intake-repository";
 import { registerCareIntakeApi } from "./intake-routes";
 import type { CarePrescriptionRepository } from "./prescription-repository";
@@ -144,6 +147,12 @@ const NONCLINICAL_ROUTES: Readonly<Record<string, string>> = {
     "the review detail projection, workflow state plus a truthful report of the capability state",
   "GET /api/care/pharmacy/admin/readiness":
     "a deployment readiness projection built from verification booleans",
+  "GET /api/admin/care/access-requests":
+    "the requireSupabaseAdmin-guarded operations queue of saved public Care access requests, projected to bounded routing fields (name, email, phone, state, routing category, contact preference, operational status, notification state, data quality) with no symptoms, diagnoses, medications, history, clinical free text, appointment, provider relationship, treatment decision, or prescription",
+  "GET /api/admin/care/access-requests/:requestId":
+    "one saved public Care access request in the same bounded routing projection, looked up by id or CARE reference behind requireSupabaseAdmin; no clinical field exists in the record",
+  "PATCH /api/admin/care/access-requests/:requestId/status":
+    "an operational routing status (New, Contacted, Secure intake sent, Provider handoff, Closed, Not moving forward) on a verified Care access row behind requireSupabaseAdmin; the vocabulary is strict and carries no clinical fact",
 };
 
 interface RegisteredRoute {
@@ -923,6 +932,37 @@ function proofAccess(): CareAccessDependencies {
   };
 }
 
+/**
+ * One saved Care access row exactly as the public writer stores it, so the
+ * admin projection proofs run over the real durable shape.
+ */
+function proofManualAccessAdmin(): CareManualAccessAdminDependencies {
+  const row = {
+    ...careManualAccessOperationsRecord(
+      {
+        fullName: "Coverage Test",
+        email: "coverage@example.com",
+        phone: null,
+        locationState: "TX",
+        careGoal: "new_care_request",
+        contactMethod: "email",
+        contactWindow: "anytime",
+        adultConfirmation: true,
+        boundaryAcknowledgement: true,
+      },
+      "203.0.113.10",
+    ),
+    id: "2a99c6f7-1111-4222-8333-abcdefabcdef",
+    status: "New",
+    email_status: "sent",
+    created_at: "2026-09-03T04:28:51.480Z",
+  } as LoiRow;
+  return {
+    listRequests: vi.fn(async () => [row]),
+    updateStatus: vi.fn(async () => undefined),
+  };
+}
+
 function proofManualAccess(): CareManualAccessDependencies {
   return {
     loadReadiness: vi.fn(async () => ({
@@ -988,6 +1028,10 @@ function proofApp(serviceCoverageActive = true) {
   // URLs. The resolver must fail closed without reflecting any value or field.
   registerCareApi(app, deps, {
     manualAccessDependencies: proofManualAccess(),
+    // The admin queue is driven past its guard on purpose: the proof checks
+    // the SUCCESS payload of the projection for the fields its reason drops.
+    manualAccessAdminGuard: (_req, _res, next) => next(),
+    manualAccessAdminDependencies: proofManualAccessAdmin(),
     env: {
       TEBRA_SCHEDULING_ENABLED: "true",
       TEBRA_SCHEDULING_MODE: "redirect",
@@ -1024,7 +1068,7 @@ function proofApp(serviceCoverageActive = true) {
 }
 
 interface ResponseProof {
-  method: "get" | "post";
+  method: "get" | "post" | "patch";
   path: string;
   body?: Record<string, unknown>;
   forbid: readonly SentinelKey[];
@@ -1053,6 +1097,22 @@ const KEY = "idempotency-key-0001";
  * claims is absent, so the claim itself is what gets checked.
  */
 const RESPONSE_PROOFS: Readonly<Record<string, ResponseProof>> = {
+  "GET /api/admin/care/access-requests": {
+    method: "get",
+    path: "/api/admin/care/access-requests",
+    forbid: ALL_SENTINELS,
+  },
+  "GET /api/admin/care/access-requests/:requestId": {
+    method: "get",
+    path: "/api/admin/care/access-requests/CARE-2A99C6F7",
+    forbid: ALL_SENTINELS,
+  },
+  "PATCH /api/admin/care/access-requests/:requestId/status": {
+    method: "patch",
+    path: "/api/admin/care/access-requests/CARE-2A99C6F7/status",
+    body: { status: "Contacted" },
+    forbid: ALL_SENTINELS,
+  },
   "GET /api/care/status": {
     method: "get",
     path: "/api/care/status",
@@ -1166,7 +1226,9 @@ describe("Care route coverage: a nonclinical reason is checked against the real 
       const response =
         proof.method === "get"
           ? await agent.get(proof.path)
-          : await agent.post(proof.path).send(proof.body ?? {});
+          : proof.method === "patch"
+            ? await agent.patch(proof.path).send(proof.body ?? {})
+            : await agent.post(proof.path).send(proof.body ?? {});
 
       // A 4xx or 5xx proves nothing about the success payload, so a proof that
       // cannot reach a real response is a failed proof, not a passed one.
