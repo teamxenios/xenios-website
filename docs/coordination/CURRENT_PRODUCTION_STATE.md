@@ -8,28 +8,56 @@ product activation, payment, provider change, or external message.
 
 | Fact | Read-only observation |
 | --- | --- |
-| Verified window | Reconciled read-only at `2026-09-03T21:05:46Z` |
+| Verified window | Deployed and smoke-verified read-only at `2026-09-03T23:37:18Z`; records reconciled at `2026-09-03T23:48:00Z` |
 | Render workspace | `tea-d8nhh6a8qa3s73f4ocj0` |
 | Render service | `srv-d8s9vej7uimc7384dfcg` (`xenios-website`) |
-| Current Render deployment | `dep-daatp715efls738v00dg` (commit-pinned API deploy, live since `2026-08-31T19:58:17Z`) |
+| Current Render deployment | `dep-dad08h740ujc73aprfcg` (commit-pinned API deploy on the founder's exact-SHA GO, live since `2026-09-03T23:36:32Z`) |
 | Deployment status | `live` |
-| Exact deployed commit | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` ("Open Xenios Care with manual access requests") |
-| Deployed from branch | `codex/xenios-care-research-postlaunch-20260831` (head equals the live commit) |
-| Configured Render branch | `release/early-access-code-session-checkout` (fast-forwarded on 2026-09-03 to the reconciliation records successor of the live commit) |
+| Exact deployed commit | `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` (records successor of the tested Care admin reliability code SHA `ace27886dd3b76a8e5dcc982111bb7062e9e451b`; runtime trees identical) |
+| Deployed from branch | `claude/care-admin-reliability-20260903` (head equals the live commit; PR #306 open against the release branch) |
+| Configured Render branch | `release/early-access-code-session-checkout` (head `8cca3373047a2161f5360541a9b2fc5c71f8063f`, an ancestor of the live commit three records/code commits behind; auto-deploy off, so the branch head cannot deploy itself) |
 | Auto-deploy | `false` (`autoDeployTrigger: off`) |
-| Public origin | `https://xeniostechnology.com` (health 200; assisted-orders/config 200) |
+| Public origin | `https://xeniostechnology.com` (health 200; 30/30 critical endpoints SAME against the pre-deploy baseline) |
 | Render origin | `https://xenios-website.onrender.com` (health 200) |
-| Superseded baseline | `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` (`dep-da94g05g1s2s7396lkv0`); historical, not the rollback target |
-| Rollback target for the next release | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` |
+| Superseded baselines | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` (`dep-daatp715efls738v00dg`, served 2026-08-31 to 2026-09-03) and `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` (`dep-da94g05g1s2s7396lkv0`); historical, not rollback targets |
+| Rollback target for the next release | `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` |
 
 The live deployment and the repository lineage agree on the exact commit above.
-The source controls therefore use `50c2d35c…` as the one trusted production
+The source controls therefore use `db5a2d44…` as the one trusted production
 baseline: `CURRENT_PRODUCTION_STATE.json`, `ACTIVE_RELEASE_GRAPH.json`,
 `FILE_OWNERSHIP.json` and `MIGRATION_DAG.json` were moved to it together with
-the control-plane test constants on 2026-09-03. The controls do not assume that
-production tracks `main`; the validator accepts a syntactically safe branch name
+the control-plane test constants on 2026-09-03 after the deployment. The
+controls do not assume that production tracks `main`; the validator accepts a
+syntactically safe branch name
 and can require an exact externally supplied branch with
 `XENIOS_EXPECTED_PRODUCTION_BRANCH`.
+
+## 2026-09-03 Care admin reliability deployment
+
+Incident `CARE-2A99C6F7`: a public Care access request returned 201, was durably
+saved and emailed, but no admin surface could show it. The fix (protected Care
+access-request projection under `/api/admin/care/access-requests`, the
+`/admin/research/care-requests` queue, operational statuses, notification and
+data-quality visibility, regression gates) was built on `8cca3373…`, gated on
+the tested code SHA `ace27886…` (tsc 0; build PASS; full suite 810 passed / 4
+skipped files, 12,126 passed / 43 skipped tests, 0 failed) and deployed as its
+records-only successor `db5a2d44…` by a commit-pinned Render API deploy on the
+founder's exact-SHA GO.
+
+| Check | Result |
+| --- | --- |
+| Deploy | `POST /deploys {commitId}` 201 → `dep-dad08h740ujc73aprfcg`, commit verified exact before polling; `build_in_progress → update_in_progress → live` at `2026-09-03T23:36:32Z` |
+| Boot log | build successful; affiliates portal, research config, outbox worker, email provider, assisted-order bridge (`log_line_nondurable`), serving on port 10000, Supabase service-key check ok, service live |
+| Critical-endpoint diff | pre-deploy live baseline (30 endpoints on `50c2d35c…`) vs post-deploy: SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, PASS; repeated after the observation window |
+| Local production-shaped diff | `50c2d35c…` vs `db5a2d44…` booted locally in the pinned Node 20.19.0 LF clone: SAME 30 / 0 / 0 / 0 |
+| Care admin doors (unauthenticated) | list 401, detail 401, PATCH on a nonexistent id 401 (guard precedes every handler), unknown `/api/admin/care/*` 404 JSON, page 200 private shell (was 404) |
+| Public Care write door | `/api/care/access-request/status` unchanged (`acceptingRequests: true`); `/care/schedule` 200 |
+| Rollback | not triggered; the pre-deploy rollback target was `50c2d35c…` |
+| Not done | authenticated proof that `CARE-2A99C6F7` is returned exactly once by the protected projection and rendered in the queue: requires the founder's admin session (read-only; no Care status may change; Seth is not asked to resubmit) |
+| Not changed | migrations, environment variables, Render settings, customer messages, any Care status |
+
+Evidence: `CONTROL/EVIDENCE/deploy-db5a2d44-20260903/` (outside Git) and
+`docs/research-launch/CARE_ADMIN_RELIABILITY_DEPLOYMENT_REPORT_2026-09-03.md`.
 
 ## 2026-09-03 production-truth reconciliation
 

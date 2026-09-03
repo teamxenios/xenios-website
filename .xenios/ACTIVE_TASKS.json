@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-30T22:23:39.231Z",
+  "updatedAt": "2026-09-03T22:46:05.705Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -689,8 +689,8 @@
       "id": "CARE-MANUAL-ACCESS-20260831",
       "title": "Open Xenios Care with a Xenios-owned manual access survey and human follow-up",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "codex-care-manual-access-20260831",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "shared/care/manual-access.ts",
         "server/care/manual-access.ts",
@@ -733,7 +733,48 @@
       ],
       "pathsNote": "Founder requested Care be open today without Tebra. Build a durable, spam-resistant Xenios-owned access request that collects operational routing data only; prohibit symptoms, diagnoses, medications, health history, or free-text clinical data; persist to an existing service-role-only operations table; notify the human team; and retain truthful boundaries that no clinical relationship, appointment, treatment, or prescription is created. A successor production deployment still requires a new exact-SHA GO.",
       "claimedAt": "2026-08-31T19:42:12.504Z",
-      "releasedAt": "2026-08-31T19:42:00.318Z"
+      "releasedAt": "2026-09-03T22:46:05.438Z"
+    },
+    {
+      "id": "CARE-ADMIN-RELIABILITY-20260903",
+      "title": "P0: make every durably saved public Care access request discoverable through a protected admin projection, queue and operational status workflow (incident CARE-2A99C6F7)",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "claude-care-admin-reliability-20260903",
+      "paths": [
+        "shared/care/manual-access-admin.ts",
+        "server/care/manual-access-admin.ts",
+        "server/care/manual-access-admin.test.ts",
+        "server/care/manual-access-admin-wiring.test.ts",
+        "server/care/index.ts",
+        "client/src/research/adapters/careAdmin.ts",
+        "client/src/research/pages/adminx/CareAccessRequests.tsx",
+        "client/src/research/pages/adminx/CareAccessRequests.test.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "server/release-control-plane.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/CODEX_XENIOS_CARE_ADMIN_RELIABILITY_MEGA_PROMPT_2026-09-03.md",
+        "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md"
+      ],
+      "createdAt": "2026-09-03T22:46:05.705Z",
+      "acceptance": [
+        "public writer output maps into the admin projection",
+        "email failure and malformed payload stay visible",
+        "generic LOI never enters or mutates through the Care API",
+        "canonical requireSupabaseAdmin guard only",
+        "no PHI/raw/attribution fields in the response",
+        "route census, seam re-pin, tsc, build, full suite green",
+        "exact-SHA release packet; no deploy"
+      ],
+      "claimedAt": "2026-09-03T22:46:05.857Z",
+      "handoff": {
+        "session": "claude-care-admin-reliability-20260903",
+        "sha": "47210a24870de0dc70cd27cda9d66d2d973c32ff",
+        "file": ".xenios/handoffs/2026-09-03T23-53-31-109Z-CARE-ADMIN-RELIABILITY-20260903-claude-care-admin-reliability-20260903.md",
+        "at": "2026-09-03T23:53:31.115Z"
+      }
     }
   ]
 }

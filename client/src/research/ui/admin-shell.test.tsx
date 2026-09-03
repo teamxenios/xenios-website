@@ -35,13 +35,15 @@ describe("ResearchAdminShell grouped navigation", () => {
     expect(nav).not.toBeNull();
     expect(nav?.classList.contains("ra-admin-nav")).toBe(true);
     expect(nav?.classList.contains("ra-subnav")).toBe(false);
-    expect(nav?.querySelectorAll("details")).toHaveLength(5);
-    expect(nav?.querySelectorAll("a")).toHaveLength(26);
+    // 2026-09-03: +1 "Care" group carrying the Care requests queue (incident CARE-2A99C6F7).
+    expect(nav?.querySelectorAll("details")).toHaveLength(6);
+    expect(nav?.querySelectorAll("a")).toHaveLength(27);
     expect(
       Array.from(nav?.querySelectorAll("summary") ?? []).map((summary) =>
         summary.textContent?.trim(),
       ),
     ).toEqual([
+      "Care",
       "Members",
       "Commerce",
       "Activation",

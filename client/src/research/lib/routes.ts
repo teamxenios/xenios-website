@@ -135,6 +135,7 @@ export const PARTNER_ROUTES = {
 
 export const ADMIN_ROUTES = {
   home: "/admin/research",
+  careRequests: "/admin/research/care-requests",
   applications: "/admin/research/applications",
   application: "/admin/research/applications/:id",
   members: "/admin/research/members",

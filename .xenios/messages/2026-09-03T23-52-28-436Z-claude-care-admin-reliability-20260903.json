@@ -1,0 +1,7 @@
+{
+  "id": "dc5abf6f-85a8-4848-aad0-0892f9fde005",
+  "from": "claude-care-admin-reliability-20260903",
+  "to": "release-owner",
+  "text": "db5a2d44 deployed as dep-dad08h740ujc73aprfcg (Care admin reliability); smoke PASS; production truth reconciled; authenticated CARE-2A99C6F7 proof pending the founder session; PR #306 open",
+  "createdAt": "2026-09-03T23:52:28.438Z"
+}

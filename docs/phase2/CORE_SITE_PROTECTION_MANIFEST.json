@@ -1188,13 +1188,15 @@
       "",
       "2026-08-31, founder-requested Health gateway seam: client/src/App.tsx adds one lazy import, one Suspense wrapper, and one exact /health route for the existing Care + Research Gateway. Every /research and /care registration, every protected route, provider order, and ScrollToTop behavior remains intact. old sha256:e3be04bd29195288f74db8de35191c49039981e04842ec7441429f3dc2b9e43c, new sha256:f6e1e0eb065a9295dde9044ce76eee74faa9d91f6745206fad09cb14da95eb32.",
       "",
-      "2026-08-31, founder-requested Care manual-access seam: server/care/index.ts composes the Xenios-owned, nonclinical contact-and-routing request endpoints and reports their readiness separately from the existing clinical capability. Existing clinical gates, Tebra fail-closed configuration, audit route, and protected main-site registrations remain in place. old sha256:9c5083d9452fbc402c2c2a61f4b3dd8c36383c7e6fcbaba01b390a77be79a3d9, new sha256:479e5158963ccb4d8fc050ac1f258e2deb440669cc262be9b27c880f302d5e13."
+      "2026-08-31, founder-requested Care manual-access seam: server/care/index.ts composes the Xenios-owned, nonclinical contact-and-routing request endpoints and reports their readiness separately from the existing clinical capability. Existing clinical gates, Tebra fail-closed configuration, audit route, and protected main-site registrations remain in place. old sha256:9c5083d9452fbc402c2c2a61f4b3dd8c36383c7e6fcbaba01b390a77be79a3d9, new sha256:479e5158963ccb4d8fc050ac1f258e2deb440669cc262be9b27c880f302d5e13.",
+      "",
+      "2026-09-03, Care admin reliability seam (incident CARE-2A99C6F7): server/care/index.ts mounts the protected Care access-request admin projection (registerCareManualAccessAdminApi: GET /api/admin/care/access-requests, GET .../:requestId, PATCH .../:requestId/status) from the same Care registrar as the public write path, behind the canonical requireSupabaseAdmin guard injected as options.manualAccessAdminGuard with the routes.ts guard as the production default, and re-exports the admin module. Additive registration only: no public Care route, clinical gate, Tebra fail-closed configuration, audit route or protected main-site registration changed. Route census 411/402 -> 414/405. old sha256:479e5158963ccb4d8fc050ac1f258e2deb440669cc262be9b27c880f302d5e13, new sha256:7f48fd740639d818d45a4408d9760bb549a86936222ea446b7847aa367002a00."
     ],
     "files": {
       "client/src/App.tsx": "sha256:f6e1e0eb065a9295dde9044ce76eee74faa9d91f6745206fad09cb14da95eb32",
       "server/index.ts": "sha256:bf6b8b035c3b10d8e22e257d16ff012fd249ee8f8440545d78938cf3640f4e45",
       "server/research/index.ts": "sha256:9ad57c66aa414c883eeca362a6951b4eb75e796100743d1c721e914550579d32",
-      "server/care/index.ts": "sha256:479e5158963ccb4d8fc050ac1f258e2deb440669cc262be9b27c880f302d5e13",
+      "server/care/index.ts": "sha256:7f48fd740639d818d45a4408d9760bb549a86936222ea446b7847aa367002a00",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
     }
   },

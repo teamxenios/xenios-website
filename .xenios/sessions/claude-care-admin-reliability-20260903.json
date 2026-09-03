@@ -1,0 +1,10 @@
+{
+  "id": "claude-care-admin-reliability-20260903",
+  "tool": "Claude Fable 5.1",
+  "lane": "care-admin-reliability",
+  "branch": "claude/care-admin-reliability-20260903",
+  "state": "active",
+  "startedAt": "2026-09-03T22:46:05.571Z",
+  "heartbeatAt": "2026-09-03T23:52:28.003Z",
+  "note": ""
+}

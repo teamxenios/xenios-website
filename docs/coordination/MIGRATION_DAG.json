@@ -2,8 +2,8 @@
  "schemaVersion": 1,
  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
  "generatedAt": "2026-08-02T02:02:07Z",
- "productionBaselineReconciledAt": "2026-09-03T21:05:46Z",
- "productionSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+ "productionBaselineReconciledAt": "2026-09-03T23:48:00Z",
+ "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
  "checksumScope": "canonical Git blob bytes at each release-ancestor sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; upstreamReviewedSourceSha preserves archival review attribution without making the gate depend on an unreachable object; managed copies must byte-match the pinned source",
  "migrations": [
   {

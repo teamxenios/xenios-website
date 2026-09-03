@@ -1,4 +1,5 @@
-import type { Express, NextFunction, Request, Response } from "express";
+import type { Express, NextFunction, Request, RequestHandler, Response } from "express";
+import { requireSupabaseAdmin } from "../routes";
 import { CARE_ROUTE_CONTRACTS } from "@shared/care/contracts";
 import { isCarePath } from "@shared/care/paths";
 import { TEBRA_PUBLIC_CONFIGURATION_PATH } from "@shared/care/tebra-experience";
@@ -15,6 +16,11 @@ import {
   registerCareManualAccessApi,
   type CareManualAccessDependencies,
 } from "./manual-access";
+import {
+  buildCareManualAccessAdminProductionDependencies,
+  registerCareManualAccessAdminApi,
+  type CareManualAccessAdminDependencies,
+} from "./manual-access-admin";
 import { resolveTebraPublicConfiguration } from "./tebra-scheduling";
 import type {
   TebraPublicActivationContext,
@@ -34,6 +40,8 @@ export interface RegisterCareApiOptions {
   env?: NodeJS.ProcessEnv;
   tebraAuthoritySource?: TebraPublicAuthoritySource;
   manualAccessDependencies?: CareManualAccessDependencies;
+  manualAccessAdminDependencies?: CareManualAccessAdminDependencies;
+  manualAccessAdminGuard?: RequestHandler;
   /** Independently resolved deployment identity; never supplied by the authority reader. */
   currentReleaseSha?: string;
   clock?: () => Date;
@@ -55,6 +63,15 @@ export function registerCareApi(
   const manualAccess =
     options.manualAccessDependencies ?? buildCareManualAccessProductionDependencies();
   registerCareManualAccessApi(app, manualAccess);
+
+  const manualAccessAdmin =
+    options.manualAccessAdminDependencies ??
+    buildCareManualAccessAdminProductionDependencies();
+  registerCareManualAccessAdminApi(
+    app,
+    options.manualAccessAdminGuard ?? requireSupabaseAdmin,
+    manualAccessAdmin,
+  );
 
   app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {
     try {
@@ -131,6 +148,7 @@ export * from "./intake";
 export * from "./intake-repository";
 export * from "./intake-routes";
 export * from "./manual-access";
+export * from "./manual-access-admin";
 export * from "./production-deps";
 export * from "./prescriptions";
 export * from "./prescription-repository";
