@@ -35,7 +35,7 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-08-28T04:05:00.000Z");
+const NOW = new Date("2026-09-03T21:10:00.000Z");
 
 function gitFilteredBlobSha(path: string): string {
   const repoPath = relative(ROOT, path).replaceAll("\\", "/");
@@ -44,7 +44,7 @@ function gitFilteredBlobSha(path: string): string {
     encoding: "utf8",
   }).trim();
 }
-const PRODUCTION_SHA = "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212";
+const PRODUCTION_SHA = "50c2d35cf543724fad17a61d9d5c36cf81fe5f21";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
@@ -524,11 +524,11 @@ describe("release manifest validator", () => {
   });
 
   it("rejects stale and future integration ownership reviews", () => {
-    const stale = compositeManifestFixture({ reviewedAt: "2026-08-20T00:00:00.000Z" });
+    const stale = compositeManifestFixture({ reviewedAt: "2026-08-26T00:00:00.000Z" });
     expect(validateReleaseManifest(stale.manifest, stale.options).map((issue) => issue.code))
       .toContain("STALE_INTEGRATION_OWNERSHIP_REVIEW");
 
-    const future = compositeManifestFixture({ reviewedAt: "2026-08-28T04:15:01.000Z" });
+    const future = compositeManifestFixture({ reviewedAt: "2026-09-03T21:20:01.000Z" });
     expect(validateReleaseManifest(future.manifest, future.options).map((issue) => issue.code))
       .toContain("FUTURE_INTEGRATION_OWNERSHIP_REVIEW");
   });
@@ -2495,7 +2495,7 @@ describe("production state validator", () => {
       (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
     )).toBe(true);
     expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
-      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-3daa3f4a" }),
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-50c2d35c" }),
     ]);
     for (const id of [
       "founder-decision-lock-20260730",
@@ -2515,9 +2515,9 @@ describe("production state validator", () => {
       "utf8",
     )) as MigrationDag;
     expect(checked.ownership.generatedAt).toBe("2026-08-03T16:00:00Z");
-    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-08-28T04:01:00Z");
+    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-03T21:05:46Z");
     expect(dag.generatedAt).toBe("2026-08-02T02:02:07Z");
-    expect(dag.productionBaselineReconciledAt).toBe("2026-08-28T04:01:00Z");
+    expect(dag.productionBaselineReconciledAt).toBe("2026-09-03T21:05:46Z");
   }, 30_000);
 
   it("accepts unavailable/null data posture without treating it as zero", () => {

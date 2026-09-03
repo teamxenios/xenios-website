@@ -1,7 +1,9 @@
 flowchart LR
   %% Current control-plane graph. Exact 2026-07-30 facts are preserved in
   %% docs/coordination/history and are historical, not current attestations.
-  PROD["Production 3daa3f4a<br/>AUDITED_BASELINE<br/>current dep-da94g05g1s2s7396lkv0"]
+  PROD["Production 50c2d35c<br/>AUDITED_BASELINE<br/>current dep-daatp715efls738v00dg (live 2026-08-31)"]
+  PREVPROD["Superseded baseline 3daa3f4a<br/>HISTORICAL<br/>dep-da94g05g1s2s7396lkv0"]
+  FINALRC["Final RC 1fd84ad2<br/>DEPLOYED 2026-08-30 dep-daabqagn74is73aejn80<br/>SUPERSEDED BY POST-LAUNCH LIVE"]
   FAILED["Failed RC a1bbc2a1<br/>PROHIBITED<br/>DEVELOPMENT SOURCE ONLY"]
   EDITORIAL["Editorial homepage 8e8933ce<br/>SOURCE INTEGRATED<br/>in runtime 2d662a0d"]
   PR117["PR117 821bf169<br/>HISTORICAL + NONBLOCKING<br/>NOT USED BY RECUT"]
@@ -33,21 +35,24 @@ flowchart LR
   CONT["Continuity successor 0f3b3a33<br/>PUSHED + ORIGIN VERIFIED<br/>7 .xenios files; scan 0 / 0"]
   FINAL["Final RC boundary<br/>CODEX DETACHED REVIEW<br/>exact successor SHA pending"]
 
-  PROD -->|development ancestor of| FAILED
-  PROD -->|runtime baseline for| HOME
+  PREVPROD -->|superseded by live baseline| PROD
+  PREVPROD -->|development ancestor of| FINALRC
+  FINALRC -->|post-launch deploys lead to| PROD
+  PREVPROD -->|development ancestor of| FAILED
+  PREVPROD -->|runtime baseline for| HOME
   EDITORIAL -->|semantic input to reconcile| HOME
-  PROD -->|current reconciliation baseline| PR117
+  PREVPROD -->|current reconciliation baseline| PR117
   PR117 -->|historically required to precede| PR106
   FOUNDER -->|reconcile before acceptance| PR144
   ORDER_EVIDENCE -->|required before| PAYOUT
   PR106 -->|remains disabled until| PAYOUT
   HOME -->|integrated into| RUNTIME
-  PROD -->|development ancestor of| FAILED_RUNTIME
+  PREVPROD -->|development ancestor of| FAILED_RUNTIME
   FAILED_RUNTIME -->|records successor deployed as| FAILED_DEPLOY
-  PROD -->|development ancestor of| EFB
+  PREVPROD -->|development ancestor of| EFB
   EFB -->|produced excluded diagnostic| R10G
   EFB -->|produced superseded predecessor| R10H
-  PROD -->|development ancestor of| RUNTIME
+  PREVPROD -->|development ancestor of| RUNTIME
   RUNTIME -->|evidence-only successor produced| DB9FAIL
   RUNTIME -->|historical bounded smoke| DB9SMOKE
   RUNTIME -->|evidence-only successor produced| DB9FULL
@@ -74,6 +79,8 @@ flowchart LR
   classDef authority fill:#eadcf8,stroke:#5b2c6f,color:#000;
   classDef candidate fill:#d9eaf7,stroke:#134f5c,color:#000;
   class PROD baseline;
+  class PREVPROD gate;
+  class FINALRC candidate;
   class FAILED,FAILED_RUNTIME,FAILED_DEPLOY,R10G,DB9FAIL,DB9FULL,R11R1,R11,SMOKE,R3,R3B prohibited;
   class EDITORIAL,PR117,PR106,PR144,ORDER_EVIDENCE,PAYOUT,HOME gate;
   class FOUNDER authority;

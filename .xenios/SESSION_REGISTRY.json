@@ -291,6 +291,16 @@
       "startedAt": "2026-08-31T17:59:52.434Z",
       "heartbeatAt": "2026-08-31T19:41:30.935Z",
       "note": "Manual Care workflow implemented; full-suite inventory reconciliation and final release gates in progress."
+    },
+    {
+      "id": "claude-phase-a-production-truth-20260903",
+      "tool": "Claude Fable 5.1",
+      "lane": "production-truth-reconciliation",
+      "branch": "claude/phase-a-production-truth-20260903",
+      "state": "active",
+      "startedAt": "2026-09-03T21:05:00.000Z",
+      "heartbeatAt": "2026-09-03T21:05:46Z",
+      "note": "Phase A: coupled production-baseline reconciliation to live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records only; release branch fast-forward; no deploy."
     }
   ]
 }

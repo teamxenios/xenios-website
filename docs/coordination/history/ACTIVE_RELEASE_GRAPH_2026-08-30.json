@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T21:05:46Z",
-  "productionSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+  "generatedAt": "2026-08-30T22:53:05.351Z",
+  "productionSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
   "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
   "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
   "evidenceFreezeSha": "c01569169cad5e6619187221d84019ae8bfc7c69",
@@ -38,27 +38,11 @@
   "nodes": [
     {
       "id": "production-3daa3f4a",
-      "type": "historical_production_baseline",
-      "owner": "Lead",
-      "state": "SUPERSEDED_PRODUCTION_BASELINE_20260830",
-      "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-      "label": "Superseded production baseline: served 2026-08-25 to 2026-08-30T23:31Z (attestation dep-da6vorqfngtc73brb0gg; rollback deployment dep-da94g05g1s2s7396lkv0 after the eb659d81 incident). Replaced by the final RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 and then the post-launch baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21. Historical; not the rollback target."
-    },
-    {
-      "id": "production-50c2d35c",
       "type": "production_baseline",
-      "owner": "human release owner",
+      "owner": "Lead",
       "state": "AUDITED_BASELINE",
-      "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "label": "Current live deployment dep-daatp715efls738v00dg (commit-pinned API deploy, live since 2026-08-31T19:58:17Z; Open Xenios Care with manual access requests); Render service branch release/early-access-code-session-checkout with auto-deploy off; descends from the deployed final RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 via abe03ca3 (dep-daaqncid0e5s739067tg) and 72b6f138 (dep-daarr3ajnfac73a93co0); rollback target for the next release."
-    },
-    {
-      "id": "deployed-final-rc-1fd84ad2",
-      "type": "deployed_release",
-      "owner": "Claude takeover deployment operator 2026-08-30",
-      "state": "DEPLOYED_20260830T2331Z_SUPERSEDED_BY_POSTLAUNCH_LIVE",
-      "sha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
-      "label": "Final recut RC (served runtime = freeze 2d662a0d) deployed as dep-daabqagn74is73aejn80 on Samuel's exact-SHA GO, live 2026-08-30T23:31:55Z; endpoint diff PASS 16/11/0/0, assisted-orders/config 200, observation clean, no rollback; superseded 2026-08-31 by the post-launch baseline."
+      "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "label": "Current live rollback deployment dep-da94g05g1s2s7396lkv0 on release/early-access-code-session-checkout; dep-da6vorqfngtc73brb0gg is a historical attestation of the same SHA"
     },
     {
       "id": "failed-rc-a1bbc2a1",
@@ -207,10 +191,10 @@
       "id": "runtime-freeze-2d662a0d",
       "type": "candidate_runtime",
       "owner": "Codex (codex-recut-final-20260829)",
-      "state": "TECHNICAL_GATES_SEALED_DEPLOYED_WITHIN_1FD84AD2_20260830",
+      "state": "TECHNICAL_GATES_SEALED",
       "sha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
       "tree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
-      "label": "Runtime freeze of the recut; R11 technical bundle PASS 21/21; full suite 803 passed/4 skipped files and 12,049 passed/43 skipped tests; deployed unchanged inside the final RC 1fd84ad2 on 2026-08-30 and now an ancestor of the live baseline"
+      "label": "Current runtime freeze; R11 technical bundle PASS 21/21 at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux; full suite 803 passed/4 skipped files and 12,049 passed/43 skipped tests; not deployed"
     },
     {
       "id": "evidence-db9-first-smoke-excluded",
@@ -287,10 +271,10 @@
       "id": "evidence-freeze-c0156916",
       "type": "evidence_freeze",
       "owner": "Codex (codex-recut-final-20260829)",
-      "state": "FULL_EVIDENCE_SEALED_DEPLOYED_WITHIN_1FD84AD2_20260830",
+      "state": "FULL_EVIDENCE_SEALED",
       "sha": "c01569169cad5e6619187221d84019ae8bfc7c69",
       "tree": "c4a48d5d8d5fa159d0234cb0f94c61ca8e87e019",
-      "label": "Evidence freeze of the recut (seven evidence/test files above 2d662a0d, no runtime change). Retry3c sealed: HTTP 100/100, browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail, synthetic 20 = 18 + 2 + 0, evidence tests 13 files/213 tests, non-skipped scans clean; packet sealed; deployed inside the final RC 1fd84ad2 on 2026-08-30"
+      "label": "Current evidence freeze. Runtime delta is exactly seven evidence/test files; no runtime change. Retry3c is sealed: HTTP 100/100, browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail, synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail, final evidence Vitest 13 files/213 tests, non-skipped scans clean; bounded packet is sealed"
     },
     {
       "id": "c015-retry3-stopped-wrapper-schema",
@@ -339,11 +323,11 @@
     },
     {
       "id": "final-rc-packet",
-      "type": "resolved_gate",
+      "type": "future_gate",
       "owner": "Codex (codex-recut-final-20260829)",
-      "state": "CLOSED_FINAL_RC_1FD84AD2_DEPLOYED_20260830",
+      "state": "CODEX_DETACHED_REVIEW",
       "sha": null,
-      "label": "Final-RC boundary resolved: the final records-only consistency successor was 1fd84ad2b3320dada4da7f58012d4311e5cd1639; detached Codex review PASS (P0 0 / blocking P1 0 / critical P2 0); Samuel's exact-SHA GO; deployed as dep-daabqagn74is73aejn80. No deployment authority is carried by this node."
+      "label": "Reserved final-RC boundary. The final records-only consistency successor exact SHA, clean/origin verification and detached Codex PASS remain required before this node can identify the final RC. No deployment authority."
     }
   ],
   "edges": [
@@ -516,35 +500,10 @@
       "from": "continuity-successor-0f3b3a33",
       "to": "final-rc-packet",
       "relation": "must_complete_before"
-    },
-    {
-      "from": "production-3daa3f4a",
-      "to": "deployed-final-rc-1fd84ad2",
-      "relation": "development_ancestor_of"
-    },
-    {
-      "from": "final-rc-packet",
-      "to": "deployed-final-rc-1fd84ad2",
-      "relation": "resolved_by_deployment_of"
-    },
-    {
-      "from": "runtime-freeze-2d662a0d",
-      "to": "deployed-final-rc-1fd84ad2",
-      "relation": "served_runtime_of"
-    },
-    {
-      "from": "deployed-final-rc-1fd84ad2",
-      "to": "production-50c2d35c",
-      "relation": "development_ancestor_of_via_postlaunch_deploys"
-    },
-    {
-      "from": "production-3daa3f4a",
-      "to": "production-50c2d35c",
-      "relation": "superseded_by_live_baseline"
     }
   ],
   "releaseOrder": [
-    "Use 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (Render deployment dep-daatp715efls738v00dg, live since 2026-08-31T19:58:17Z) as the sole attested production baseline and rollback target; 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 is the superseded historical baseline and must not be rebuilt.",
+    "Use 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 as the sole attested production baseline.",
     "Treat a1bbc2a186ebbf96cead429a78dc30ffdc811005 only as prohibited development source; never deploy it.",
     "Preserve the deliberate 8e8933ce homepage reconciliation already integrated into runtime freeze 2d662a0d; retry2 is excluded and no final visual, responsive, accessibility or catalog-guard seal is claimed from it.",
     "Preserve founder authority and the dated PR117, PR106 and PR144 facts as historical/nonblocking; none is accepted or used by this no-migration recut.",
@@ -563,10 +522,8 @@
     "Exact-c015 retry3c full evidence is sealed: HTTP 100/100; browser 1100=1023 PASS+77 expected notes+0 fail on the first attempt; focused early/assisted/negative/unknown 11/11 each and account 99/99, all zero fail and clean; synthetic 20=18 PASS+2 expected denial notes+0 fail; evidence tests 13 files/213 tests/46 describe suites; release scan 0/0 non-skipped; final PII CLEAN with 0 findings across 2332 text, 1120 PNG manual-review inventory, and 0 unscannable; evidence manifest SHA256 1f90d4fe76f616ed59734256c9188a368227281ae3049c21ce182735b6e2f257.",
     "Disclose the wrapper-only 46-vs-13 stop and excluded fixture-scan attempt archived at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-retry3c-excluded-tail-pii-order-fixture-20260830. The replacement reserved-fixture endpoint recapture passed 16 SAME + 11 INTENTIONAL_CHANGE + 0 REGRESSION + 0 HUMAN_REVIEW with assisted-order config HTTP 200.",
     "The bounded packet at docs/review/xenios-research-full-site-20260829 is generated and validated: 192 files = 191 payload + inventory self; 72 PNG + 72 text (36 desktop-1440 + 36 mobile-390 pairs); packet inventory 6dab7745cab5246993befd3e7d1ddc12ea6fc7caf08e17a00d2de0d13b3668e7; payload inventory f6ef58eae2959f820f27ed0495113dcc2654c25155076bbd6f86a36a06dd4a14; representative manual review 18 PNG/9 areas/2 viewports with 0 blocking visual and 0 privacy findings and five cosmetic backlog items. Canonical manifest verification passed under Node 20.19.0/npm 10.8.2 at SHA256 16f08fd27b145068388a4c5e59f8163d86f8d70b0d3d48483960bd19e78b109c, binding packet + assisted-order environment inventory. Ownership 84ae795dbe4c945d6d9c3d1a082e8519400451045e1296d7557949952262769c records 613 unowned/20 wrong-lane/0 conflicts as attested/dispositioned nonblocking; release-control 51 pass + 1 intentional skip + 0 fail, production-state PASS, migration 35 PASS and route uniqueness 409/400 exact-c015 PASS.",
-    "Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d were pushed and origin-verified with 0 secret/0 PII findings; the final records-only consistency successor 1fd84ad2b3320dada4da7f58012d4311e5cd1639 became the final RC, passed the detached Codex review (P0 0 / blocking P1 0 / critical P2 0), received Samuel's exact-SHA GO and was deployed as dep-daabqagn74is73aejn80 on 2026-08-30T23:31:55Z with a clean post-deploy critical-endpoint diff (16/11/0/0) and assisted-orders/config 200.",
+    "Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified. Its non-skipped production-to-successor scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) is also pushed/origin-verified and scanned at 1,339,032 added lines across 734 files with 0 secret and 0 PII findings. Current phase is CODEX_DETACHED_REVIEW; the final records-only consistency successor/final RC SHA, review verdict and deployment remain unassigned by self-reference.",
     "No migration is required, authorized, or applied for this release.",
-    "The 2026-08-31 Care/Research post-launch deploys abe03ca3a836dffb10699c0c39883119e2a8f816 (dep-daaqncid0e5s739067tg), 72b6f1380e13f09dec67684035ed44a1d2740408 (dep-daarr3ajnfac73a93co0) and 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg) descend from the final RC; no migration shipped in any of them.",
-    "Reconciliation 2026-09-03: production state, release graph, ownership origin, migration-DAG baseline and the control-plane test constants were moved to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 together; release/early-access-code-session-checkout is fast-forwarded to the reconciliation records successor of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 so a branch-head deploy can no longer rebuild the superseded baseline. Auto-deploy stays off. The next release's scan base and rollback target is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21.",
     "No deployment or production mutation is authorized by this graph."
   ]
 }

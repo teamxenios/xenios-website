@@ -8,26 +8,60 @@ product activation, payment, provider change, or external message.
 
 | Fact | Read-only observation |
 | --- | --- |
-| Verified window | Rollback live and read-only verified around `2026-08-29T02:48:00Z` |
+| Verified window | Reconciled read-only at `2026-09-03T21:05:46Z` |
 | Render workspace | `tea-d8nhh6a8qa3s73f4ocj0` |
 | Render service | `srv-d8s9vej7uimc7384dfcg` (`xenios-website`) |
-| Current Render deployment | `dep-da94g05g1s2s7396lkv0` |
-| Historical successful attestation | `dep-da6vorqfngtc73brb0gg` (same SHA; not current) |
+| Current Render deployment | `dep-daatp715efls738v00dg` (commit-pinned API deploy, live since `2026-08-31T19:58:17Z`) |
 | Deployment status | `live` |
-| Exact deployed commit | `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` |
-| Configured branch | `release/early-access-code-session-checkout` |
-| Auto-deploy | `false` |
-| Public origin | `https://xeniostechnology.com` |
+| Exact deployed commit | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` ("Open Xenios Care with manual access requests") |
+| Deployed from branch | `codex/xenios-care-research-postlaunch-20260831` (head equals the live commit) |
+| Configured Render branch | `release/early-access-code-session-checkout` (fast-forwarded on 2026-09-03 to the reconciliation records successor of the live commit) |
+| Auto-deploy | `false` (`autoDeployTrigger: off`) |
+| Public origin | `https://xeniostechnology.com` (health 200; assisted-orders/config 200) |
+| Render origin | `https://xenios-website.onrender.com` (health 200) |
+| Superseded baseline | `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` (`dep-da94g05g1s2s7396lkv0`); historical, not the rollback target |
+| Rollback target for the next release | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` |
 
-The commit-pinned rollback deployment and repository identity agree on the
-exact commit above. The source controls therefore use `3daa…` as the one
-trusted production baseline. `dep-da6vor…` remains a historical attestation of
-the same SHA and must not be represented as the current live deployment. The
-controls do not assume that production tracks `main`; the validator accepts a
-syntactically safe branch name and can require an exact externally supplied
-branch with `XENIOS_EXPECTED_PRODUCTION_BRANCH`.
+The live deployment and the repository lineage agree on the exact commit above.
+The source controls therefore use `50c2d35c…` as the one trusted production
+baseline: `CURRENT_PRODUCTION_STATE.json`, `ACTIVE_RELEASE_GRAPH.json`,
+`FILE_OWNERSHIP.json` and `MIGRATION_DAG.json` were moved to it together with
+the control-plane test constants on 2026-09-03. The controls do not assume that
+production tracks `main`; the validator accepts a syntactically safe branch name
+and can require an exact externally supplied branch with
+`XENIOS_EXPECTED_PRODUCTION_BRANCH`.
 
-## Failed deployment and active recut
+## 2026-09-03 production-truth reconciliation
+
+Between 2026-08-30 and 2026-09-03 the records still pinned `3daa3f4a…` while
+Render served `50c2d35c…`, three deploys after the final recut RC, and the
+release branch still pointed at `3daa3f4a…`; a branch-head deploy would have
+rebuilt the superseded baseline. The deploy chain is:
+
+| Commit | Deployment | Live at | State |
+| --- | --- | --- | --- |
+| `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` | `dep-da94g05g1s2s7396lkv0` | 2026-08-29T02:47:15Z | rollback deployment after `eb659d81`; superseded |
+| `1fd84ad2b3320dada4da7f58012d4311e5cd1639` | `dep-daabqagn74is73aejn80` | 2026-08-30T23:31:55Z | final recut RC on Samuel's exact-SHA GO; endpoint diff PASS 16/11/0/0; assisted-orders/config 200; superseded |
+| `abe03ca3a836dffb10699c0c39883119e2a8f816` | `dep-daaqncid0e5s739067tg` | 2026-08-31T16:29:36Z | Care/Research post-launch; superseded |
+| `72b6f1380e13f09dec67684035ed44a1d2740408` | `dep-daarr3ajnfac73a93co0` | 2026-08-31T17:45:49Z | health entrypoint; superseded |
+| `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` | `dep-daatp715efls738v00dg` | 2026-08-31T19:58:17Z | **live** |
+
+No migration shipped in any of these deployments; `supabase/` and
+`MIGRATION_DAG.json` node content are unchanged since the final RC. The
+reconciliation deployed nothing, applied no migration, changed no Render
+setting or environment variable, and changed no application behaviour. The
+pre-reconciliation records are preserved byte-for-byte under
+`docs/coordination/history/` (`CURRENT_PRODUCTION_STATE_2026-08-30.json`,
+`ACTIVE_RELEASE_GRAPH_2026-08-30.json`) and referenced from
+`historicalSnapshots`.
+
+Open, non-blocking follow-ups recorded in `knownRisks`: the critical-endpoint
+expectations and evidence templates still express deltas relative to the
+superseded baseline and must be re-derived against `50c2d35c…` before the next
+release's endpoint diff; the Step 1 UX hotfix `b8359eba…` sits on an old base
+and must be ported file-by-file, never deployed as-is.
+
+## Failed deployment and recut (historical as of 2026-09-03)
 
 The exact records successor
 `eb659d8100a3b9831d52688120931c48d10330d9` was deployed as
@@ -322,3 +356,4 @@ current database row counts, migration application state, member/account
 continuity, Care readiness, payment readiness, product or variant activation,
 fulfillment state, final R11 matrix counts, a final RC SHA or detached-review
 verdict.
+

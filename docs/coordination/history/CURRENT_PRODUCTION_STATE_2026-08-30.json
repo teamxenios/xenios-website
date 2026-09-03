@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T21:05:46Z",
+  "generatedAt": "2026-08-30T22:53:05.351Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -16,32 +16,15 @@
       "observedAt": "2026-07-30T21:25:26Z",
       "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-07-30.json",
       "gitBlobSha": "3915f85c82ed05fcdfc7d43232364c4c0ca7d990"
-    },
-    {
-      "id": "production-state-20260830",
-      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
-      "observedAt": "2026-08-30T22:53:05.351Z",
-      "source": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-08-30.json",
-      "gitBlobSha": "270fe01d5c5b4912d0fd74bf36f6483f664d3c77"
-    },
-    {
-      "id": "release-graph-20260830",
-      "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
-      "observedAt": "2026-08-30T22:53:05.351Z",
-      "source": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-08-30.json",
-      "gitBlobSha": "95cbfb83495c2bbd09366aa07b083c0f40c8f19e"
     }
   ],
   "production": {
-    "gitSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "gitSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-daatp715efls738v00dg",
+    "renderDeploymentId": "dep-da94g05g1s2s7396lkv0",
     "status": "LIVE",
-    "verifiedAt": "2026-09-03T21:05:46Z",
-    "liveSince": "2026-08-31T19:58:17Z",
-    "deployedFromBranch": "codex/xenios-care-research-postlaunch-20260831",
-    "deployTrigger": "commit-pinned Render API deploy",
+    "verifiedAt": "2026-08-29T02:48:00Z",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -51,7 +34,7 @@
     "commerceEnabled": false,
     "publicHealthStatus": 200,
     "renderOriginHealthStatus": 200,
-    "checkedAt": "2026-09-03T21:05:46Z",
+    "checkedAt": "2026-08-28T04:01:00Z",
     "limitation": "The health and runtime-config requests establish reachability and the disabled commerce flag for the separately attested Render deployment. They do not establish database row counts, Care state, migration-ledger state, or any other unobserved production fact."
   },
   "dataPosture": {
@@ -143,8 +126,8 @@
       "graphNodeId": "runtime-freeze-2d662a0d",
       "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
       "branch": "claude/xenios-research-full-finish-takeover-20260828",
-      "state": "TECHNICAL_GATES_SEALED_DEPLOYED_WITHIN_1FD84AD2_20260830",
-      "reason": "Runtime freeze of the assisted-order recut. R11 technical gates sealed 21/21 (full sequential suite 803 passed files/4 skipped/0 failed and 12,049 passed tests/43 skipped/0 failed; canonical E2E 4 files/53 tests; targeted domains 196 files/3,116 tests; evidence self-tests 13 files/208 tests; core protection 35/35). Its served runtime tree was deployed unchanged inside the final RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 (dep-daabqagn74is73aejn80, live 2026-08-30T23:31:55Z) and is now an ancestor of the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21."
+      "state": "TECHNICAL_GATES_SEALED",
+      "reason": "Current runtime freeze. R11 technical gates sealed 21/21 at C:\\Users\\sboad\\AppData\\Local\\Temp\\xenios-gates-2d662a0-r11-volume2-linux: full sequential suite 803 passed files/4 skipped/0 failed and 12,049 passed tests/43 skipped/0 failed in 469.08s; canonical E2E 4 files/53 tests/0 failed in 2.73s; targeted domains 196 files/3,116 tests/0 failed in 152.53s; evidence self-tests 13 files/208 tests/0 failed; core protection 35/35. It is not deployed."
     },
     {
       "lane": "Codex-only full-site evidence freeze",
@@ -171,24 +154,15 @@
         "piiFindings": 0,
         "piiSkipped": false
       },
-      "state": "FULL_EVIDENCE_SEALED_DEPLOYED_WITHIN_1FD84AD2_20260830",
+      "state": "FULL_EVIDENCE_SEALED",
       "originVerified": true,
-      "finalRcSha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
-      "detachedReview": "CODEX_PASS_P0_0_P1_0_CRITICAL_P2_0_SEALED_IN_PACKET_SUCCESSOR",
-      "deployed": true,
+      "finalRcSha": null,
+      "detachedReview": "NOT_STARTED",
+      "deployed": false,
       "migrationRequired": false,
       "migrationAuthorized": false,
       "migrationApplied": false,
-      "reason": "Evidence freeze of the assisted-order recut (seven evidence/test files above runtime 2d662a0d, no runtime change). Retry3c sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail; synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail; evidence tests 13 files/213 tests; endpoint 16 SAME + 11 INTENTIONAL_CHANGE + 0 regression + 0 human; non-skipped scan 0 secret/0 PII. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d were pushed and origin-verified; the final records-only consistency successor 1fd84ad2b3320dada4da7f58012d4311e5cd1639 became the final RC, received Samuel's exact-SHA GO, and was deployed as dep-daabqagn74is73aejn80 on 2026-08-30T23:31:55Z. It was superseded on 2026-08-31 by the Care/Research post-launch deploys ending at the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21."
-    },
-    {
-      "lane": "Deployed final recut RC (records successor of runtime 2d662a0d / evidence c0156916)",
-      "headSha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
-      "graphNodeId": "deployed-final-rc-1fd84ad2",
-      "sourceBaseSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-      "branch": "claude/xenios-research-full-finish-takeover-20260828",
-      "state": "DEPLOYED_20260830T2331Z_SUPERSEDED_BY_POSTLAUNCH_LIVE",
-      "reason": "Final RC 1fd84ad2b3320dada4da7f58012d4311e5cd1639 (served runtime identical to freeze 2d662a0d) deployed as dep-daabqagn74is73aejn80 on Samuel's exact-SHA GO, live 2026-08-30T23:31:55Z; commit-verified exact before trigger; post-deploy critical-endpoint diff PASS (16/11/0/0), assisted-orders/config 200 enabled:true, boot log 'assisted order bridge mounted (audit mode: log_line_nondurable)', ~18-minute observation window clean, no rollback. Superseded on 2026-08-31 by the Care/Research post-launch deploys; the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 descends from it. Not the rollback target (the rollback target is the live baseline)."
+      "reason": "Current origin-verified evidence freeze c01569169cad5e6619187221d84019ae8bfc7c69 differs from runtime 2d662a0d31bb1de9332fb5c591f01cab76b991b1 by exactly seven evidence/test files and no runtime file. Retry3c is sealed: HTTP 100/100; browser 1,100 = 1,023 PASS + 77 expected notes + 0 fail; focused 11/11, 11/11, 11/11, 11/11 and 99/99 clean; synthetic 20 = 18 PASS + 2 expected-denial notes + 0 fail; evidence tests 13 files/213 tests; endpoint 16 SAME + 11 INTENTIONAL_CHANGE + 0 regression + 0 human, config live/candidate 200; non-skipped scan 0 secret/0 PII. Bounded packet is validated at 192 files = 191 payload + self with 72 PNG + 72 text and packet/payload hashes 6dab7745/f6ef58ea. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) is pushed and origin-verified; its scan covered 1,338,773 added lines across 732 files with 0 secret and 0 PII findings. Continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) is pushed and origin-verified; its scan covered 1,339,032 added lines across 734 files with 0 secret and 0 PII findings. Current phase is CODEX_DETACHED_REVIEW. The final records-only consistency successor/final RC SHA, detached-review verdict and deployment remain unassigned by self-reference; no production mutation occurred."
     }
   ],
   "knownRisks": [
@@ -282,27 +256,9 @@
     },
     {
       "id": "FINAL_CONSISTENCY_SUCCESSOR_AND_DETACHED_REVIEW_PENDING",
-      "state": "CLOSED_FINAL_RC_DEPLOYED_AND_SUPERSEDED",
-      "releaseBlocking": false,
-      "summary": "Closed 2026-08-30/31: the final records-only consistency successor was 1fd84ad2b3320dada4da7f58012d4311e5cd1639; the sealed packet's detached Codex review recorded P0 0 / deployment-blocking P1 0 / critical P2 0; Samuel issued the exact-SHA GO; the RC was deployed as dep-daabqagn74is73aejn80 (live 2026-08-30T23:31:55Z) and verified; it has since been superseded by the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21."
-    },
-    {
-      "id": "PRODUCTION_BASELINE_DRIFT_RECONCILED_20260903",
-      "state": "CLOSED_RECONCILED",
-      "releaseBlocking": false,
-      "summary": "Between 2026-08-30 and 2026-09-03 the control-plane records still pinned 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 while Render served 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (three post-launch deploys after the final RC), and release/early-access-code-session-checkout still pointed at 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212; a branch-head deploy would have rebuilt the superseded baseline. Reconciled 2026-09-03 by moving the production baseline, graph, ownership origin, migration-DAG baseline and test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 together and fast-forwarding the release branch to the reconciliation records successor. Auto-deploy remained off; nothing was deployed."
-    },
-    {
-      "id": "EVIDENCE_EXPECTATIONS_BASE_REDERIVATION",
-      "state": "OPEN_NONBLOCKING_NEXT_RELEASE",
-      "releaseBlocking": false,
-      "summary": "scripts/release/critical-endpoint-expectations.json, scripts/evidence/evidence-manifest.template.json and scripts/evidence/routes.public.json still express reviewed deltas relative to the superseded baseline 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212. Before the next release's endpoint diff and evidence run they must be re-derived against the live baseline 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (most former INTENTIONAL_CHANGE rows are now SAME). Not a runtime change; not required for this reconciliation."
-    },
-    {
-      "id": "STEP1_HOTFIX_UNINTEGRATED",
-      "state": "OPEN_NONBLOCKING_FOLLOW_UP",
-      "releaseBlocking": false,
-      "summary": "The Step 1 live-UX hotfix b8359eba179fb7a901df58be6b949b3956a43c39 sits on an old base and is not in the live lineage. It must be ported file-by-file against the live baseline and re-gated; it must never be deployed as-is."
+      "state": "OPEN_RELEASE_GATE",
+      "releaseBlocking": true,
+      "summary": "State CODEX_DETACHED_REVIEW: records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain open by self-reference, so Samuel's exact-SHA authorization is not yet requestable. After those close, Samuel's exact-final-RC-SHA GO becomes the sole remaining human-only authorization."
     }
   ],
   "evidenceLimitations": [
@@ -312,44 +268,50 @@
     "MIGRATION_DAG applied-state entries retain their own dated evidence and were not re-attested by this verification.",
     "The 2d662a0d runtime, c015691 evidence freeze, historical db9 smoke and sealed retry3c evidence are candidate facts, not production observations, and do not change the trusted live baseline.",
     "Historical efb/r10g/r10h, the failed first db9 smoke, the stopped db9 full run, externally interrupted retry1, lifecycle-flaky retry2, excluded e641 smoke, wrapper-stopped retry3/retry3b, wrapper-only 46-vs-13 stop, and excluded fixture-scan attempt provide no current final PASS.",
-    "Retry3c full evidence and the bounded review packet are sealed/validated. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain unassigned by self-reference. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS.",
-    "The 2026-09-03 reconciliation was read-only against Render (service, deploy list, deploy detail), GitHub branch heads and public/origin HTTP health; it changed no service setting, environment variable, deployment, migration or application behaviour."
+    "Retry3c full evidence and the bounded review packet are sealed/validated. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain unassigned by self-reference. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS."
   ],
   "evidence": [
     {
-      "id": "render-service-identity-20260903",
+      "id": "render-service-identity-20260828",
       "kind": "render_service_and_deployment_read",
-      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "checkedAt": "2026-09-03T21:05:46Z",
-      "detail": "Read-only Render API reads on 2026-09-03: service srv-d8s9vej7uimc7384dfcg (xenios-website) branch release/early-access-code-session-checkout, autoDeploy no, autoDeployTrigger off; deploy list top = dep-daatp715efls738v00dg status live commit 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (Open Xenios Care with manual access requests), created 2026-08-31T19:57:16Z, finished 2026-08-31T19:58:17Z, trigger api (commit-pinned). No service setting was changed."
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-28T04:01:00Z",
+      "detail": "Workspace tea-d8nhh6a8qa3s73f4ocj0; service srv-d8s9vej7uimc7384dfcg; branch release/early-access-code-session-checkout; autoDeploy false; latest deployment dep-da6vorqfngtc73brb0gg status live at exact commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212."
     },
     {
-      "id": "deploy-chain-20260830-20260831",
-      "kind": "render_deploy_history_read",
-      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "checkedAt": "2026-09-03T21:05:46Z",
-      "detail": "Deploy chain since the superseded baseline 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (dep-da94g05g1s2s7396lkv0, rollback deployment live 2026-08-29T02:47:15Z): 1fd84ad2b3320dada4da7f58012d4311e5cd1639 deployed as dep-daabqagn74is73aejn80 on Samuel's exact-SHA GO, live 2026-08-30T23:31:55Z, post-deploy critical-endpoint diff PASS 16 SAME / 11 INTENTIONAL_CHANGE / 0 REGRESSION / 0 HUMAN_REVIEW, assisted-orders/config 200, observation window clean; then abe03ca3a836dffb10699c0c39883119e2a8f816 as dep-daaqncid0e5s739067tg (2026-08-31T16:29:36Z, deactivated), 72b6f1380e13f09dec67684035ed44a1d2740408 as dep-daarr3ajnfac73a93co0 (2026-08-31T17:45:49Z, deactivated), and 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 as dep-daatp715efls738v00dg (live). 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 descends from 1fd84ad2b3320dada4da7f58012d4311e5cd1639; no migration changed in any of these deploys."
+      "id": "git-release-identity-20260828",
+      "kind": "git_commit_read",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-28T04:01:00Z",
+      "detail": "The exact Render-attested release commit resolves in the repository and is the trusted baseline for the coupled release controls."
     },
     {
-      "id": "git-release-identity-20260903",
-      "kind": "git_branch_identity_read",
-      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "checkedAt": "2026-09-03T21:05:46Z",
-      "detail": "origin heads at reconciliation start: codex/xenios-care-research-postlaunch-20260831 = 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (equals live); claude/xenios-research-full-finish-takeover-20260828 = 1fd84ad2b3320dada4da7f58012d4311e5cd1639; release/early-access-code-session-checkout = 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (stale, three deploys behind live; fast-forwarded by this reconciliation to the records successor of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 so a branch-head deploy can no longer rebuild the superseded baseline); main = 6077a6bbb276acf9669c1419c735a9327f8740b1. 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and 1fd84ad2b3320dada4da7f58012d4311e5cd1639 are ancestors of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; ace92fd65ab46213aa5899a1591d4c565099fd0f is not."
+      "id": "public-health-runtime-config-20260828",
+      "kind": "public_http_get",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-28T04:01:00Z",
+      "detail": "GET https://xeniostechnology.com/api/health returned HTTP 200 and runtime configuration reported commerceEnabled false. The SHA binding comes from the separate Render deployment observation, not from an HTTP response header."
     },
     {
-      "id": "public-health-runtime-config-20260903",
-      "kind": "public_http_health_read",
-      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "checkedAt": "2026-09-03T21:05:46Z",
-      "detail": "GET https://xeniostechnology.com/api/health -> 200 {status: Xenios API is running, config: supabaseConfigured true, adminConfigured true, turnstileConfigured false, commerceEnabled false}; GET /api/research/early-access/assisted-orders/config -> 200."
+      "id": "render-origin-health-runtime-config-20260828",
+      "kind": "render_origin_http_get",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-28T04:01:00Z",
+      "detail": "The service's Render origin returned HTTP 200 and runtime configuration reported commerceEnabled false. The origin URL is intentionally not invented in this source control; the SHA binding comes from the separate Render deployment observation."
     },
     {
-      "id": "render-origin-health-20260903",
-      "kind": "render_origin_http_health_read",
-      "observedSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-      "checkedAt": "2026-09-03T21:05:46Z",
-      "detail": "GET https://xenios-website.onrender.com/api/health -> 200 on the attested deployment."
+      "id": "render-service-identity-readonly-20260828T2115",
+      "kind": "render_service_and_deployment_read",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-28T21:15:00Z",
+      "detail": "Read-only Render API (get_service, list_deploys) during the Claude Lead takeover: srv-d8s9vej7uimc7384dfcg autoDeploy=no, branch release/early-access-code-session-checkout, healthCheckPath /api/health, buildCommand npm run render-build; newest deploy dep-da6vorqfngtc73brb0gg status live at commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 (finished 2026-08-25T20:35:52Z). Production not mutated by the takeover program."
+    },
+    {
+      "id": "render-rollback-deploy-20260829T0247",
+      "kind": "render_service_and_deployment_read",
+      "observedSha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+      "checkedAt": "2026-08-29T02:48:00Z",
+      "detail": "Exact-SHA deploy of eb659d8100a3b9831d52688120931c48d10330d9 (dep-da94b91srm7s73b55dsg, live 02:37:19Z) was rolled back on a release-blocking regression (Early Access assisted-order doors unavailable) to the approved rollback commit 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 via a commit-pinned Render deploy: dep-da94g05g1s2s7396lkv0, status live at 02:47:15Z, verified read-only by list_deploys and by the post-rollback smoke (assisted-orders/config 200 enabled:true). The production SHA is unchanged; only the live deployment id changed. The production block records dep-da94g05g1s2s7396lkv0 as current; dep-da6vorqfngtc73brb0gg remains a separate historical attestation of the same SHA."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"

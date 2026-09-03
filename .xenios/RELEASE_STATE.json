@@ -1,17 +1,42 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-30T22:04:52.071Z",
-  "canonicalBranch": "claude/xenios-research-full-finish-takeover-20260828",
-  "observedHead": "c01569169cad5e6619187221d84019ae8bfc7c69",
+  "updatedAt": "2026-09-03T21:05:46Z",
+  "canonicalBranch": "release/early-access-code-session-checkout",
+  "observedHead": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
   "lastDocumentedProductionRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-    "rollback": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-    "deployId": "dep-da94g05g1s2s7396lkv0",
-    "historicalAttestationDeployId": "dep-da6vorqfngtc73brb0gg",
+    "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "rollback": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "deployId": "dep-daatp715efls738v00dg",
+    "liveSince": "2026-08-31T19:58:17Z",
+    "deployedFromBranch": "codex/xenios-care-research-postlaunch-20260831",
     "branch": "release/early-access-code-session-checkout",
     "status": "live",
-    "note": "Current live production is the commit-pinned rollback deployment created after eb659d81 failed. The older dep-da6vorqfngtc73brb0gg deployment remains a historical attestation of the same production SHA."
+    "previousLiveDeploys": [
+      {
+        "sha": "72b6f1380e13f09dec67684035ed44a1d2740408",
+        "deployId": "dep-daarr3ajnfac73a93co0",
+        "liveAt": "2026-08-31T17:45:49Z"
+      },
+      {
+        "sha": "abe03ca3a836dffb10699c0c39883119e2a8f816",
+        "deployId": "dep-daaqncid0e5s739067tg",
+        "liveAt": "2026-08-31T16:29:36Z"
+      },
+      {
+        "sha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
+        "deployId": "dep-daabqagn74is73aejn80",
+        "liveAt": "2026-08-30T23:31:55Z",
+        "note": "final recut RC on Samuel's exact-SHA GO"
+      },
+      {
+        "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+        "deployId": "dep-da94g05g1s2s7396lkv0",
+        "liveAt": "2026-08-29T02:47:15Z",
+        "note": "rollback deployment after eb659d81"
+      }
+    ],
+    "note": "Current live production is the commit-pinned post-launch deployment dep-daatp715efls738v00dg of 50c2d35cf543724fad17a61d9d5c36cf81fe5f21. The release branch was fast-forwarded on 2026-09-03 to the reconciliation records successor of this SHA so that branch-head deploys cannot rebuild the superseded 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212."
   },
   "nextRelease": {
     "name": "XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29",
@@ -26,7 +51,7 @@
     "continuitySuccessorTree": "257d53b984ca12a48282d25f187b84fc14478915",
     "continuitySuccessorOriginVerified": true,
     "originVerified": true,
-    "finalRcSha": null,
+    "finalRcSha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
     "scope": [
       "Frozen 2d662a0d runtime recut for the assisted-order route-disappearance incident class",
       "Origin-verified c0156916 evidence freeze, separated from runtime by seven evidence/test files only",
@@ -34,12 +59,16 @@
       "One bounded records/evidence successor and detached Codex review",
       "Exact-SHA deployment authorization boundary; no production action before Samuel's later GO"
     ],
-    "status": "CODEX_DETACHED_REVIEW",
+    "status": "CLOSED_DEPLOYED_20260830_SUPERSEDED_20260831",
     "migrationRequired": false,
     "migrationAuthorized": false,
-    "migrationApplied": false
+    "migrationApplied": false,
+    "finalRcDeployId": "dep-daabqagn74is73aejn80",
+    "deployedAt": "2026-08-30T23:31:55Z",
+    "detachedReview": "CODEX_PASS_P0_0_P1_0_CRITICAL_P2_0",
+    "supersededByLiveSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21"
   },
-  "productionWriter": "codex-recut-final-20260829",
+  "productionWriter": "unassigned (production truth reconciled 2026-09-03 by claude-phase-a-production-truth-20260903; the next writer must claim explicitly)",
   "invariants": [
     "one production writer",
     "immutable release tags",
@@ -315,5 +344,16 @@
     "note": "Records/evidence packet successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 (tree 517db145ed6494c845c9453a8cec59c6be4b9892) and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d (tree 257d53b984ca12a48282d25f187b84fc14478915) are pushed and origin-verified. Their non-skipped exact production-to-successor scans covered 1,338,773/732 and 1,339,032/734 respectively, with 0 secret and 0 PII findings. Runtime/evidence seals and packet hashes remain unchanged. State is CODEX_DETACHED_REVIEW; the final records-only consistency successor RC SHA can only be assigned externally after this commit is pushed. Detached review, authorization, and deployment remain unassigned. No production mutation occurred.",
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
+  },
+  "nextReleaseScanBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+  "reconciliation": {
+    "at": "2026-09-03T21:05:46Z",
+    "liveBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "liveDeployId": "dep-daatp715efls738v00dg",
+    "supersededBase": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+    "releaseBranchFastForwarded": true,
+    "deployed": false,
+    "migrationsApplied": false,
+    "serviceSettingsChanged": false
   }
 }
