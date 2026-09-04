@@ -3,6 +3,42 @@
   "updatedAt": "2026-09-04T14:54:58.150Z",
   "tasks": [
     {
+      "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
+      "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
+      "priority": "P0",
+      "state": "done",
+      "owner": "codex-ux-referral-20260904",
+      "paths": [
+        "client/src/care/CarePublicPages.tsx",
+        "client/src/care/CareContactForm.tsx",
+        "client/src/care/CareContactForm.test.tsx",
+        "server/care/index.ts",
+        "server/care/contact.ts",
+        "server/care/contact.test.ts",
+        "server/care/clinical-route-coverage.test.ts",
+        "server/care/email-identity.ts",
+        "server/care/contact-email.test.ts",
+        "server/care/manual-access.ts",
+        "server/care/manual-access-email.test.ts",
+        "docs/research-launch/XENIOS_HEALTH_CONTACT_EMAIL_SENDER_2026-09-04.md"
+      ],
+      "dependsOn": [
+        "XENIOS-HEALTH-CANONICAL-EMAIL-SENDER-20260904"
+      ],
+      "baseSha": "c54b603280a976404bcd27289d30c08d5f009802",
+      "scopeNote": "The founder requested all Xenios Health email originate from team@xeniostechnology.com. Close the audited adjacent gap by keeping the support form, endpoint, sender identity and provider-boundary tests inside the existing Care modules; keep generic contact and Research mail unchanged. Local code, tests, build and handoff only: no real email, provider, environment, DNS, Supabase, merge, migration or production mutation.",
+      "claimedAt": "2026-09-04T18:58:32.848Z",
+      "handoff": {
+        "session": "codex-ux-referral-20260904",
+        "sha": "200d884ee7ffd66cebdfa480107a9d0eab82f741",
+        "file": ".xenios/handoffs/2026-09-04T19-13-01-117Z-XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904-codex-ux-referral-20260904.md",
+        "at": "2026-09-04T19:13:01.119Z"
+      },
+      "acceptedSha": "200d884ee7ffd66cebdfa480107a9d0eab82f741",
+      "acceptedBy": "codex-ux-referral-20260904",
+      "acceptedAt": "2026-09-04T19:13:01.188Z"
+    },
+    {
       "id": "XENIOS-HEALTH-CANONICAL-EMAIL-SENDER-20260904",
       "title": "Lock every current Xenios Health outbound email to the team address without changing Research mail",
       "priority": "P0",

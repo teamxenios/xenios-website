@@ -1078,6 +1078,28 @@
       "state": "released",
       "claimedAt": "2026-09-04T18:50:51.355Z",
       "heartbeatAt": "2026-09-04T18:50:51.355Z"
+    },
+    {
+      "id": "7b2df8dd-d016-4a8d-a228-f0a327be00ef",
+      "task": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
+      "session": "codex-ux-referral-20260904",
+      "paths": [
+        "client/src/care/CarePublicPages.tsx",
+        "client/src/care/CareContactForm.tsx",
+        "client/src/care/CareContactForm.test.tsx",
+        "server/care/index.ts",
+        "server/care/contact.ts",
+        "server/care/contact.test.ts",
+        "server/care/clinical-route-coverage.test.ts",
+        "server/care/email-identity.ts",
+        "server/care/contact-email.test.ts",
+        "server/care/manual-access.ts",
+        "server/care/manual-access-email.test.ts",
+        "docs/research-launch/XENIOS_HEALTH_CONTACT_EMAIL_SENDER_2026-09-04.md"
+      ],
+      "state": "released",
+      "claimedAt": "2026-09-04T18:58:32.849Z",
+      "heartbeatAt": "2026-09-04T18:58:32.849Z"
     }
   ],
   "rules": [
