@@ -1,7 +1,42 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-04T14:49:12Z",
+  "updatedAt": "2026-09-04T14:54:58.150Z",
   "tasks": [
+    {
+      "id": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
+      "title": "Continue the paused UX foundation: safe password-recovery round trip, account next action, and persona journey matrix",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ux-continuation-20260904",
+      "dependsOn": [],
+      "paths": [
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/lib/member-routing.test.ts",
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/reset-password-continuity.test.tsx",
+        "client/src/research/pages/ApplyStatus.tsx",
+        "client/src/research/pages/apply-status.test.tsx",
+        "client/src/research/account-portal/**",
+        "server/research/members.ts",
+        "server/research/members.test.ts",
+        "server/research/customer-account/**",
+        "shared/research/customer-account/**",
+        "docs/ux/**",
+        "docs/research-launch/FULL_UX_FOUNDATION_*.md",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-ux-continuation-20260904.json",
+        ".xenios/sessions/claude-full-ux-foundation-20260904.json",
+        ".xenios/handoffs/*UX-AUTH-ACCOUNT-CONTINUITY*"
+      ],
+      "pathsNote": "Founder requested continuation of paused Claude session d067e872. Isolated Codex worktree from exact f318a85; original dirty metadata preserved and untouched. This narrow subtask avoids legacy affiliate and Early Access leases. No merge, deploy, migration, production configuration or external communications. Full UX/referral parent remains incomplete.",
+      "claimedAt": "2026-09-04T15:42:01.898Z"
+    },
     {
       "id": "F7-PACK02-RENAME",
       "title": "Rename account organization table and certify migration",
@@ -837,6 +872,42 @@
         "no commission %, payment, fulfillment, supplier cost, margin or clinical data in partner projections; honest pending states",
         "requireSupabaseAdmin remains the admin boundary; no browser-supplied authoritative price/commission/payment/identity",
         "focused, security/cross-identity, tsc, build, responsive 1440-320; exact-SHA handoff; no deploy"
+      ]
+    },
+    {
+      "id": "FULL-UX-FOUNDATION-AND-REFERRAL-V1-20260904",
+      "priority": "P0",
+      "state": "ready",
+      "owner": null,
+      "title": "Full website UX foundation: persona journey matrix + route inventory; canonical sign-in with exact returnTo across reset/claim/invite/Early Access; account-home next-action projection; dead-end fixes; then referral V1 (server-authorized link creation, copy/share/QR, recipient landing, durable first-valid attribution, admin visibility, negative controls) on the canonical partner authority",
+      "paths": [
+        "docs/ux/**",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/lib/member-routing.test.ts",
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/ApplyStatus.tsx",
+        "client/src/research/account-portal/**",
+        "client/src/research/assisted-order/**",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
+        "client/src/research/pages/adminx/**",
+        "shared/research/recovery.ts",
+        "shared/research/customer-account/**",
+        "server/research/customer-account/**",
+        "server/research/partners/**",
+        "client/src/research/referral-capture.ts",
+        "client/src/care/CareAccessRequestForm.tsx",
+        "client/src/care/CarePublicPages.tsx",
+        "docs/research-launch/FULL_UX_FOUNDATION_*.md"
+      ],
+      "createdAt": "2026-09-04T14:54:58.150Z",
+      "acceptance": [
+        "journey matrix (md + json) without customer/patient data or production identifiers",
+        "one sign-in helper decides the post-auth destination; returnTo survives reset, claim, invite and Early Access / assisted-order / Care paths; nothing outside the allowlist is honoured",
+        "account home projects one truthful next action incl. assisted-order statuses",
+        "no dead route or 404 link on the audited P0 paths",
+        "referral V1 on the Gen 2 partner spine: opaque server-issued links, revocation/expiry enforced, recipient landing preserves destination, admin visibility, cross-partner isolation; no second identity/attribution system",
+        "focused tests, tsc, build, responsive 1440-320, security negative controls; exact-SHA handoff; no deploy/merge/migration apply/env change"
       ]
     }
   ]

@@ -1,3 +1,5 @@
+import { isCustomerAccountOrderReference } from "@shared/research/customer-account/contract";
+
 /**
  * Account-portal routes that are implemented by Lane 04 but composed into the
  * protected application manifest by the Lead. Keeping them in one leaf module
@@ -11,11 +13,10 @@ export const ACCOUNT_PORTAL_EXTENSION_ROUTES = {
 } as const;
 
 const ACCOUNT_ORDERS_PATH = "/research/account/orders";
-const SAFE_ACCOUNT_ORDER_REFERENCE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,191}$/;
 
 /** Build one bounded path segment without treating a reference prefix as a type. */
 export function accountOrderDetailPath(reference: string): string {
-  if (!SAFE_ACCOUNT_ORDER_REFERENCE.test(reference)) {
+  if (!isCustomerAccountOrderReference(reference)) {
     return ACCOUNT_ORDERS_PATH;
   }
   return `${ACCOUNT_ORDERS_PATH}/${reference}`;
@@ -26,7 +27,7 @@ export function decodeAccountOrderReference(segment: string): string {
   if (segment.length === 0) return "";
   try {
     const decoded = decodeURIComponent(segment);
-    return SAFE_ACCOUNT_ORDER_REFERENCE.test(decoded) ? decoded : "";
+    return isCustomerAccountOrderReference(decoded) ? decoded : "";
   } catch {
     return "";
   }
@@ -42,5 +43,5 @@ export function isAccountOrderDetailPath(path: string): boolean {
   const prefix = `${ACCOUNT_ORDERS_PATH}/`;
   if (!rawPath.startsWith(prefix)) return false;
   const segment = rawPath.slice(prefix.length);
-  return SAFE_ACCOUNT_ORDER_REFERENCE.test(segment);
+  return isCustomerAccountOrderReference(segment);
 }

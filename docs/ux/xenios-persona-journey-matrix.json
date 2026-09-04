@@ -1,0 +1,1378 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-09-04",
+  "scope": "Source-grounded baseline for the paused UX foundation; auth/account continuation is a bounded local slice.",
+  "authority": "Current code and fresh production evidence outrank this matrix. Deployment identifiers, customer examples and clinical data are intentionally omitted.",
+  "baseline": "Paused UX foundation before this continuation's auth/account implementation; update delta notes after its tests, not by assuming concurrent edits passed.",
+  "evidencePolicy": {
+    "evidenceState": "SOURCE_INSPECTED_NOT_JOURNEY_PROVEN",
+    "liveVerification": "Not re-attested by this matrix. Route presence is not a successful live journey.",
+    "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+  },
+  "evidence": {
+    "routes": [
+      "client/src/App.tsx",
+      "client/src/research/section.tsx",
+      "client/src/research/lib/routes.ts"
+    ],
+    "public": [
+      "client/src/lib/nav.ts",
+      "client/src/research/pages/Gateway.tsx",
+      "client/src/research/pages/AccessHub.tsx"
+    ],
+    "auth": [
+      "client/src/research/pages/SignIn.tsx",
+      "client/src/research/pages/ResetPassword.tsx",
+      "client/src/research/pages/ApplyStatus.tsx",
+      "client/src/research/pages/MemberArea.tsx",
+      "server/research/members.ts"
+    ],
+    "apply": [
+      "client/src/research/pages/Apply.tsx",
+      "server/research/membership.ts"
+    ],
+    "request": [
+      "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+      "client/src/research/assisted-order/storage.ts",
+      "server/research/assisted-order/service.ts",
+      "server/index.ts"
+    ],
+    "account": [
+      "server/research/customer-account/routes.ts",
+      "server/research/customer-account/service.ts",
+      "server/research/customer-account/production.ts",
+      "client/src/research/account-portal/views/OverviewView.tsx"
+    ],
+    "referral": [
+      "server/index.ts",
+      "server/research/partners/referral-capture-routes.ts",
+      "server/research/partners/attribution.ts",
+      "server/research/partners/customer-attribution-binding.ts",
+      "client/src/research/referral-capture.ts"
+    ],
+    "partner": [
+      "server/research/partners/portal-routes.ts",
+      "client/src/research/layout.tsx",
+      "client/src/research/pages/partners/Links.tsx"
+    ],
+    "individual": [
+      "client/src/research/pages/member/ReferralsUpgrade.tsx",
+      "server/research/referrals.ts"
+    ],
+    "organization": [
+      "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "client/src/research/b2b/PartnershipInquiryForm.tsx",
+      "server/research/account-identity/production-mount.ts",
+      "server/research/account-identity/routes.ts",
+      "client/src/research/account/AccountSignIn.tsx"
+    ],
+    "supplier": [
+      "client/src/research/b2b/SupplierPartnershipPage.tsx",
+      "client/src/research/b2b/PartnershipInquiryForm.tsx",
+      "server/research/operations/suppliers.ts"
+    ],
+    "carePublic": [
+      "client/src/care/CarePublicPages.tsx",
+      "client/src/care/CareAccessRequestForm.tsx",
+      "shared/care/manual-access.ts",
+      "server/care/manual-access.ts"
+    ],
+    "careClinical": [
+      "server/care/access.ts",
+      "server/care/index.ts",
+      "server/care/appointment-routes.ts",
+      "server/care/review-routes.ts",
+      "server/care/prescription-routes.ts"
+    ],
+    "admin": [
+      "client/src/research/adminx-section.tsx",
+      "server/routes.ts",
+      "server/care/manual-access-admin.ts",
+      "server/care/loi-boundary.ts",
+      "client/src/research/pages/adminx/CareAccessRequests.tsx"
+    ]
+  },
+  "sourceCorrectionNotes": [
+    "The saved digest claimed no main-site Health link. Current client/src/lib/nav.ts already defines Health /health in both navigation collections; do not add a duplicate.",
+    "Saved digest line numbers came from another worktree and are not citations for this baseline. Paths and current code were rechecked.",
+    "Do not copy the digest's suggested localStorage status-token recovery. A status token is a credential; require a designed ownership/recovery flow.",
+    "The existing overview already refuses a green all-clear when history/Care sources are incomplete. Its gap is missing request-specific next actions, not a blanket false up-to-date message.",
+    "The account-identity server mount exists even though organization client routes are parked. Do not describe the entire account system as absent."
+  ],
+  "topFiveFriction": [
+    {
+      "id": "F1",
+      "priority": "P0",
+      "title": "Authentication loses the intended destination",
+      "scope": "Baseline reset/claim and narrow return allowlist",
+      "disposition": "Auth/account continuation in progress; require exact tests before claiming fixed",
+      "personas": [
+        "research_prospect",
+        "early_access_customer",
+        "returning_member",
+        "organization_user"
+      ]
+    },
+    {
+      "id": "F2",
+      "priority": "P1",
+      "title": "Account overview lacks actionable request states",
+      "scope": "Baseline nextAdministrativeAction and generic support action",
+      "disposition": "Account continuation in progress; a destination must be usable under the real identity boundary",
+      "personas": [
+        "returning_member",
+        "early_access_customer"
+      ]
+    },
+    {
+      "id": "F3",
+      "priority": "P0",
+      "title": "Referral recommendations do not form a safe complete journey",
+      "scope": "Public capture unmounted; helper/descriptor mismatch; remaining revocation/binding/expiry controls",
+      "disposition": "Preserve deliberate denial; finish canonical Gen 2 V1 in its own owned slice",
+      "personas": [
+        "referral_recipient",
+        "individual_referrer",
+        "affiliate_partner"
+      ]
+    },
+    {
+      "id": "F4",
+      "priority": "P1",
+      "title": "Post-submission recovery and Care continuation are weak",
+      "scope": "Tab-scoped Research status credential; sparse error recovery; Care request receipt is not account history",
+      "disposition": "Add honest recovery/help paths after proving ownership; never fabricate a Care account timeline",
+      "personas": [
+        "early_access_customer",
+        "care_prospect",
+        "care_patient"
+      ]
+    },
+    {
+      "id": "F5",
+      "priority": "P0",
+      "title": "Organization-only identities cannot complete their intended workspace entry",
+      "scope": "Parked org client routes and member-only Research account gate; password evidence unavailable",
+      "disposition": "Separate canonical account-context/invitation slice; not solved by making every invite a recovery session",
+      "personas": [
+        "organization_owner",
+        "organization_user"
+      ]
+    }
+  ],
+  "personas": [
+    {
+      "id": "anonymous_visitor",
+      "persona": "Anonymous first-time visitor",
+      "entryRoutes": [
+        "/",
+        "/health",
+        "/research"
+      ],
+      "jobs": [
+        "Choose Research or Care",
+        "Understand eligibility and how to get help"
+      ],
+      "primaryQuestions": [
+        "Which path is for me?",
+        "Do I need an account?"
+      ],
+      "trustConcerns": [
+        "Research is not treatment",
+        "A visible product is not permission to purchase"
+      ],
+      "requiredInformation": [
+        "No personal information to browse public orientation"
+      ],
+      "neverVisible": [
+        "Private account records",
+        "Patient data",
+        "Supplier cost and margin"
+      ],
+      "authenticationState": "Anonymous for public orientation",
+      "authorizationSource": "Public route allowlist; protected APIs enforce their own guards",
+      "mainNavigation": [
+        "Health",
+        "Care",
+        "Research access",
+        "How it works",
+        "Support"
+      ],
+      "primaryCta": "Choose the appropriate Research or Care path",
+      "secondaryCta": "Read how it works",
+      "expectedCompletionState": "Visitor reaches the appropriate access route with its boundary explained",
+      "statusHistoryNeeds": "No account or application should be implied by browsing",
+      "supportPath": "/research/support or /care/support according to the chosen path",
+      "referralCapability": "May arrive with a referral parameter; verified attribution is not currently promised",
+      "current": {
+        "routes": [
+          "/health",
+          "/research",
+          "/care"
+        ],
+        "apis": [],
+        "components": [
+          "Gateway",
+          "CareHomePage"
+        ],
+        "evidence": [
+          "routes",
+          "public",
+          "carePublic"
+        ]
+      },
+      "currentDefects": [
+        "The same gateway component serves /health and /research with Care-first hero copy; journey-specific emphasis still needs review"
+      ],
+      "recommendedChange": "Keep the existing Health navigation; distinguish umbrella orientation from the Research-specific entry.",
+      "testProof": {
+        "existingTestFiles": [
+          "client/src/App.routes.test.ts",
+          "client/src/research/routes-parity.test.ts"
+        ],
+        "acceptanceNeeded": "Navigate from the actual header and footer to both paths; verify role-safe content and responsive orientation.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned public-navigation slice",
+      "status": "LOCAL_PUBLIC_ROUTES_PRESENT; journey QA pending",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "referral_recipient",
+      "persona": "Referral recipient",
+      "entryRoutes": [
+        "/research?ref=:code",
+        "/r/:code (unmounted capture descriptor; not a usable route)"
+      ],
+      "jobs": [
+        "Understand the recommended destination",
+        "Continue without losing intent",
+        "Know whether a referral is valid"
+      ],
+      "primaryQuestions": [
+        "What was shared?",
+        "Does it affect eligibility, price or care?"
+      ],
+      "trustConcerns": [
+        "No forged endorsement",
+        "No recipient data shared with a referrer"
+      ],
+      "requiredInformation": [
+        "Only the proposed code and an allowlisted destination before authentication"
+      ],
+      "neverVisible": [
+        "Referrer internal identifier",
+        "Other recipients",
+        "Clinical information",
+        "Private economics"
+      ],
+      "authenticationState": "Anonymous landing; own canonical sign-in if the destination requires it",
+      "authorizationSource": "Planned extension of Gen 2 partner authority; current public capture intentionally unmounted",
+      "mainNavigation": [
+        "Destination overview",
+        "Relevant Research or Care path",
+        "Support"
+      ],
+      "primaryCta": "Continue to the legitimate destination without implying attribution",
+      "secondaryCta": "Dismiss optional referral context",
+      "expectedCompletionState": "Valid link is server-verified or explicitly rejected; ordinary browsing still works",
+      "statusHistoryNeeds": "Persist only verified first-valid attribution; no false credit or conversion",
+      "supportPath": "/research/support",
+      "referralCapability": "NOT OPEN as a verified capture journey; descriptor exists but is not mounted",
+      "current": {
+        "routes": [
+          "/research"
+        ],
+        "apis": [
+          "/api/research/referral/capture (descriptor only; unmounted)"
+        ],
+        "components": [
+          "captureReferralFromLocation"
+        ],
+        "evidence": [
+          "routes",
+          "referral"
+        ]
+      },
+      "currentDefects": [
+        "Public capture is deliberately unmounted for unresolved security contracts",
+        "Client helper names /api/referral/capture, different from the descriptor"
+      ],
+      "recommendedChange": "Finish store-backed revocation/expiry, canonical destination, replay/throttle and binding controls on Gen 2 before mounting or advertising capture.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/partners/referral-capture-routes.test.ts"
+        ],
+        "acceptanceNeeded": "Composed recipient landing, login return, revoked/expired/tampered link, cross-partner denial and no clinical leakage.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned referral V1 slice; release owner owns mount",
+      "status": "DARK_UNMOUNTED; not fixed in the auth/account slice",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "research_prospect",
+      "persona": "Research prospect",
+      "entryRoutes": [
+        "/research/access-hub",
+        "/research/apply",
+        "/research/early-access"
+      ],
+      "jobs": [
+        "Understand Research eligibility",
+        "Request legitimate access",
+        "Choose a supported alternative when applications are closed"
+      ],
+      "primaryQuestions": [
+        "Are applications open?",
+        "What was saved?",
+        "How do I get assistance?"
+      ],
+      "trustConcerns": [
+        "No fake application submission",
+        "Current legal documents govern acceptance"
+      ],
+      "requiredInformation": [
+        "None on the pending application page; access credentials only in the dedicated Early Access gate"
+      ],
+      "neverVisible": [
+        "Other applications",
+        "Review notes",
+        "Patient information",
+        "Access secrets in public content"
+      ],
+      "authenticationState": "Public explanation; separate Early Access or member authorization",
+      "authorizationSource": "Apply page is intentionally read-only; server legal/application boundary remains authoritative",
+      "mainNavigation": [
+        "Access hub",
+        "Applications",
+        "Early Access",
+        "Support",
+        "Terms status"
+      ],
+      "primaryCta": "Use the available access path or contact support",
+      "secondaryCta": "Review application-document status",
+      "expectedCompletionState": "Clear pending state, or the separately authorized Early Access journey; no invented application receipt",
+      "statusHistoryNeeds": "Future application status must be linked to a durable submission and verified identity",
+      "supportPath": "/research/support",
+      "referralCapability": "Do not treat a supplied code as approval or entitlement",
+      "current": {
+        "routes": [
+          "/research/apply",
+          "/research/application-status",
+          "/research/access-hub"
+        ],
+        "apis": [],
+        "components": [
+          "Apply",
+          "ApplyStatus",
+          "AccessHub"
+        ],
+        "evidence": [
+          "routes",
+          "apply",
+          "auth"
+        ]
+      },
+      "currentDefects": [
+        "Public membership applications are deliberately closed pending approved recordable legal versions",
+        "Claim path historically dropped the requested destination"
+      ],
+      "recommendedChange": "Preserve the truthful application hold; repair claim-to-sign-in continuity without opening application writes.",
+      "testProof": {
+        "existingTestFiles": [
+          "client/src/research/pages/apply-status.test.tsx",
+          "server/research/membership.test.ts"
+        ],
+        "acceptanceNeeded": "Closed page performs no write; approved claim preserves a safe destination; invalid claims reveal no account existence.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Auth continuation for claim; legal authority required for opening applications",
+      "status": "APPLICATIONS_PENDING_LEGAL; claim continuity local work",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "early_access_customer",
+      "persona": "Early Access Research customer",
+      "entryRoutes": [
+        "/research/early-access",
+        "/research/early-access/order-request"
+      ],
+      "jobs": [
+        "Choose exact variants and quantities",
+        "Submit a request",
+        "Recover its receipt and next action"
+      ],
+      "primaryQuestions": [
+        "Is this available?",
+        "Is this a request or an order?",
+        "How do I return later?"
+      ],
+      "trustConcerns": [
+        "Canonical price and supply checks",
+        "No payment or fulfillment claim from a request receipt"
+      ],
+      "requiredInformation": [
+        "Exact permitted variants and quantities",
+        "Required contact/shipping details",
+        "Current agreements and acknowledgments"
+      ],
+      "neverVisible": [
+        "Other requests",
+        "Status credentials in URLs or logs",
+        "Supplier cost/margin",
+        "Clinical guidance"
+      ],
+      "authenticationState": "Dedicated Early Access access plus request status credential or server-verified ownership as applicable",
+      "authorizationSource": "Early Access and assisted-order composition; server price/pathway/legal/ownership checks",
+      "mainNavigation": [
+        "Catalog",
+        "Request review",
+        "Confirmation",
+        "Request status",
+        "Support"
+      ],
+      "primaryCta": "Submit a permitted request",
+      "secondaryCta": "Return to catalog or get help",
+      "expectedCompletionState": "One durable request and non-secret reference; notification result distinguished from persistence",
+      "statusHistoryNeeds": "Current status, timeline, customer action and secure document requirements; refresh and tab-close recovery",
+      "supportPath": "/research/support; /support is not a registered main-app route",
+      "referralCapability": "Existing server attribution only; browser code cannot grant credit",
+      "current": {
+        "routes": [
+          "/research/early-access/order-request/confirmation/:publicReference",
+          "/research/early-access/order-request/:publicReference"
+        ],
+        "apis": [
+          "/api/research/early-access/assisted-orders/config",
+          "/api/research/early-access/assisted-orders/catalog"
+        ],
+        "components": [
+          "AssistedOrderPage",
+          "AssistedOrderStatusPage",
+          "EarlyAccessCheckoutJourney"
+        ],
+        "evidence": [
+          "routes",
+          "request"
+        ]
+      },
+      "currentDefects": [
+        "Status credential is tab-scoped; error view has no actionable support/sign-in recovery",
+        "Checkout recovery CTA points to unregistered /support",
+        "Live supplier readiness must be re-attested; recorded expiry is not permission to bypass holds"
+      ],
+      "recommendedChange": "Add safe recovery guidance and prove authenticated ownership before deep-linking to private status; keep credentials out of localStorage and URLs; correct the support target in its own lease.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/assisted-order/http-e2e.test.ts",
+          "client/src/research/early-access-open-route.test.tsx"
+        ],
+        "acceptanceNeeded": "Synthetic submit/duplicate/receipt; tab closed or credential absent; cross-customer denial; held/Care item rejection; never mark a request paid.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Assisted-order/EA owner; auth slice only repairs safe return primitives",
+      "status": "LOCAL_MOUNT_PRESENT; supported live intake and readiness not re-attested here",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "returning_member",
+      "persona": "Returning Research customer or member",
+      "entryRoutes": [
+        "/research/sign-in",
+        "/research/account",
+        "/research/member/catalog"
+      ],
+      "jobs": [
+        "Sign in or recover access",
+        "See one meaningful next action",
+        "Find own requests, orders and documents"
+      ],
+      "primaryQuestions": [
+        "What needs my attention?",
+        "Did recovery preserve my place?",
+        "Is missing history empty or unavailable?"
+      ],
+      "trustConcerns": [
+        "No cross-customer records",
+        "No false all-clear from incomplete sources"
+      ],
+      "requiredInformation": [
+        "Own credentials or recovery email",
+        "Only necessary account/support details"
+      ],
+      "neverVisible": [
+        "Other customers",
+        "Staff attribution detail",
+        "Private supplier economics",
+        "Clinical record content on Research account pages"
+      ],
+      "authenticationState": "Canonical Supabase member; client active-member gate and server per-member/active-member checks differ by surface",
+      "authorizationSource": "requireMember / requireActiveMember; account reads use only the guard-attached member key",
+      "mainNavigation": [
+        "Overview",
+        "Orders",
+        "Membership",
+        "Care status",
+        "Documents",
+        "Support",
+        "Security"
+      ],
+      "primaryCta": "Complete the server-derived account action",
+      "secondaryCta": "View own history",
+      "expectedCompletionState": "Safe post-auth destination and honest actionable overview; unknown sources remain unavailable",
+      "statusHistoryNeeds": "Request versus order distinction; payment/fulfillment states; complete versus partial history",
+      "supportPath": "/research/account/support",
+      "referralCapability": "Member referral capability is distinct from the Gen 2 partner program",
+      "current": {
+        "routes": [
+          "/research/account",
+          "/research/account/orders/:reference",
+          "/research/account/security"
+        ],
+        "apis": [
+          "/api/research/customer-account/overview",
+          "/api/research/customer-account/orders"
+        ],
+        "components": [
+          "SignIn",
+          "ResetPassword",
+          "OverviewView"
+        ],
+        "evidence": [
+          "routes",
+          "auth",
+          "account"
+        ]
+      },
+      "currentDefects": [
+        "Baseline reset/claim flows lose destination",
+        "Baseline overview omits assisted-request action states and uses a generic support CTA",
+        "Client active-member gate can block account screens whose server supports own-state reads for billing problems"
+      ],
+      "recommendedChange": "Complete auth/account continuity slice; preserve unavailable-source semantics; separately reconcile client versus server billing-state access.",
+      "testProof": {
+        "existingTestFiles": [
+          "client/src/research/lib/member-routing.test.ts",
+          "server/research/customer-account/routes.test.ts",
+          "client/src/research/account-portal/views/account-portal.test.tsx"
+        ],
+        "acceptanceNeeded": "Recovery and claim round trip, allowlist attacks, next-action precedence, incomplete-source state, cross-customer isolation and billing-blocked entry.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "codex-ux-continuation-20260904 (auth/account only)",
+      "status": "LOCAL_SLICE_IN_PROGRESS; not a live completion claim",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "care_prospect",
+      "persona": "Care prospect",
+      "entryRoutes": [
+        "/health",
+        "/care",
+        "/care/schedule"
+      ],
+      "jobs": [
+        "Understand the nonclinical access workflow",
+        "Send contact/routing request",
+        "Know who follows up"
+      ],
+      "primaryQuestions": [
+        "What am I submitting?",
+        "When will I hear back?",
+        "What happens if the email fails?"
+      ],
+      "trustConcerns": [
+        "No public medical intake",
+        "Request is not a provider relationship or prescription"
+      ],
+      "requiredInformation": [
+        "Contact information",
+        "Current U.S. state",
+        "Broad routing/contact preference",
+        "Adult/U.S. and communication acknowledgments"
+      ],
+      "neverVisible": [
+        "Symptoms or diagnoses in public forms",
+        "Medical history",
+        "Patient records",
+        "Referrer/marketing attribution in Care operations"
+      ],
+      "authenticationState": "Public nonclinical request; secure clinical handoff is separate",
+      "authorizationSource": "Manual-access closed schema, availability and abuse controls; no clinical authority gained",
+      "mainNavigation": [
+        "Care overview",
+        "Start Care request",
+        "How Care works",
+        "Clinical review",
+        "Support"
+      ],
+      "primaryCta": "Start Care request",
+      "secondaryCta": "Read how Care works",
+      "expectedCompletionState": "Durable nonclinical reference with truthful notification status and human follow-up expectation",
+      "statusHistoryNeeds": "Requester recovery/help path; do not confuse availability status endpoint with a per-request tracker",
+      "supportPath": "/care/support",
+      "referralCapability": "No Care referral commissions or disclosure of clinical outcome",
+      "current": {
+        "routes": [
+          "/care/schedule",
+          "/care/portal"
+        ],
+        "apis": [
+          "/api/care/access-request",
+          "/api/care/access-request/status (availability only)"
+        ],
+        "components": [
+          "CareAccessRequestForm",
+          "CarePortalPage"
+        ],
+        "evidence": [
+          "routes",
+          "carePublic"
+        ]
+      },
+      "currentDefects": [
+        "Success view lacks a direct status/support continuation",
+        "Care portal explains secure instructions but primarily routes back to a new request"
+      ],
+      "recommendedChange": "Add explicit support/next-step guidance without claiming the public reference is an authenticated patient portal.",
+      "testProof": {
+        "existingTestFiles": [
+          "client/src/care/CareAccessRequestForm.test.tsx",
+          "server/care/manual-access.test.ts"
+        ],
+        "acceptanceNeeded": "Synthetic save, duplicate, notification failure, unsafe fields, nonclinical receipt and usable support path.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned Care continuity slice",
+      "status": "MANUAL_REQUEST_REPORTED_LIVE_IN_RELEASE_RECORDS; fresh journey proof pending",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "care_patient",
+      "persona": "Care patient",
+      "entryRoutes": [
+        "/care/portal",
+        "/research/account/care",
+        "/care/eligibility",
+        "/care/appointments"
+      ],
+      "jobs": [
+        "Follow an authorized secure handoff",
+        "Understand own operational status",
+        "Find secure support"
+      ],
+      "primaryQuestions": [
+        "Which system has my current status?",
+        "Is an appointment actually scheduled?"
+      ],
+      "trustConcerns": [
+        "Clinical privacy",
+        "No fabricated enrollment, appointment, prescription or pharmacy fact"
+      ],
+      "requiredInformation": [
+        "Verified identity and clinical consent only in an authorized secure workflow"
+      ],
+      "neverVisible": [
+        "Other patients",
+        "Clinical facts in Research/partner analytics",
+        "Guessed portal/recovery links"
+      ],
+      "authenticationState": "Canonical identity plus Care-specific permission/capability; Research membership is not clinical permission",
+      "authorizationSource": "requireCarePermission and clinical capability gates; customer-account Care adapter currently returns unavailable",
+      "mainNavigation": [
+        "Care access information",
+        "Authorized secure instructions",
+        "Support"
+      ],
+      "primaryCta": "Use the authorized secure instructions already provided",
+      "secondaryCta": "Contact Care support",
+      "expectedCompletionState": "True next secure step; unconnected states explicitly unavailable",
+      "statusHistoryNeeds": "Care enrollment and request, intake, visit, pharmacy and delivery remain separate facts",
+      "supportPath": "/care/support; nonclinical account assistance at /research/account/support",
+      "referralCapability": "No clinical disclosure to a referrer; no reward implied",
+      "current": {
+        "routes": [
+          "/care/consent",
+          "/care/appointments",
+          "/care/prescriptions",
+          "/care/pharmacy",
+          "/research/account/care"
+        ],
+        "apis": [
+          "/api/research/customer-account/care"
+        ],
+        "components": [
+          "CarePortalPage",
+          "CareView"
+        ],
+        "evidence": [
+          "routes",
+          "careClinical",
+          "account",
+          "carePublic"
+        ]
+      },
+      "currentDefects": [
+        "Account production Care source is explicitly unavailable, not a public-request timeline",
+        "Clinical pages are registered but not proven as an open complete journey"
+      ],
+      "recommendedChange": "Connect only authorized member-safe operational facts; distinguish manual request, patient enrollment and clinical system. Do not expose disabled clinical actions for visual completeness.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/care/clinical-route-coverage.test.ts",
+          "client/src/research/account-portal/views/care-route-contract.test.tsx"
+        ],
+        "acceptanceNeeded": "Unauthorized/other-patient denial, unavailable adapter, no fabricated timeline and secure handoff only.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned Care continuity; clinical authority separately gated",
+      "status": "MANUAL_HANDOFF; CLINICAL_CAPABILITY_GATED; account source unavailable",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "individual_referrer",
+      "persona": "Individual referrer",
+      "entryRoutes": [
+        "/research/member/referrals"
+      ],
+      "jobs": [
+        "Share an allowed invitation",
+        "Understand program availability",
+        "See only allowed aggregate results"
+      ],
+      "primaryQuestions": [
+        "Can I share now?",
+        "Is this credit or a partner commission?"
+      ],
+      "trustConcerns": [
+        "No applicant identity leakage",
+        "No unearned rewards"
+      ],
+      "requiredInformation": [
+        "Own canonical member session; no recipient medical information"
+      ],
+      "neverVisible": [
+        "Applicant identity",
+        "Recipient purchase/clinical details",
+        "Other referrers"
+      ],
+      "authenticationState": "Member plus referrals capability",
+      "authorizationSource": "Member referral summary and capability boundary; not the Gen 2 partner registry",
+      "mainNavigation": [
+        "Member navigation",
+        "Referrals",
+        "Support"
+      ],
+      "primaryCta": "Use an invitation only when the authoritative capability enables it",
+      "secondaryCta": "Get program support",
+      "expectedCompletionState": "Unavailable state or own server-issued invitation with aggregate status",
+      "statusHistoryNeeds": "Pending/approved/reversed credits distinguished; never infer qualified status from a click",
+      "supportPath": "/research/member/support",
+      "referralCapability": "Separate existing member-invitation program; not a general recommendation V1",
+      "current": {
+        "routes": [
+          "/research/member/referrals"
+        ],
+        "apis": [
+          "/api/research/member/referrals"
+        ],
+        "components": [
+          "ReferralsUpgrade"
+        ],
+        "evidence": [
+          "routes",
+          "individual"
+        ]
+      },
+      "currentDefects": [
+        "Member and partner referral programs use different authorities; full recommendation V1 is not composed",
+        "Capability-dependent page does not prove program activation"
+      ],
+      "recommendedChange": "Make program boundaries explicit and reuse canonical partner spine for new partner recommendations, without silently changing member reward economics.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/referrals.test.ts"
+        ],
+        "acceptanceNeeded": "Disabled/eligible/ineligible states; aggregate-only response; no browser-set reward or collision with partner codes.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned referral V1 and member-program owners",
+      "status": "LOCAL_CAPABILITY_GATED; live activation not re-attested",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "affiliate_partner",
+      "persona": "Affiliate or strategic partner",
+      "entryRoutes": [
+        "/research/partners",
+        "/research/partners/dashboard",
+        "/research/partners/links"
+      ],
+      "jobs": [
+        "Understand approval/onboarding",
+        "Use approved links",
+        "See own permitted results"
+      ],
+      "primaryQuestions": [
+        "Am I active?",
+        "Does this code work?",
+        "What remains pending?"
+      ],
+      "trustConcerns": [
+        "No fabricated conversion/commission",
+        "No access to unrelated customers"
+      ],
+      "requiredInformation": [
+        "Reviewed business relationship",
+        "Canonical member-bound partner identity",
+        "Approved agreements/compliance"
+      ],
+      "neverVisible": [
+        "Other partner records",
+        "Patient information",
+        "Supplier cost and margin",
+        "Unrelated customer history"
+      ],
+      "authenticationState": "Public root; descendants also face shared review gate; APIs require canonical member/partner mapping",
+      "authorizationSource": "Gen 2 research_partners and server member-to-partner resolution; feature flags remain separate",
+      "mainNavigation": [
+        "Onboarding",
+        "Dashboard",
+        "Links",
+        "Compliance",
+        "Support"
+      ],
+      "primaryCta": "Complete the real pending onboarding step",
+      "secondaryCta": "Contact partner support",
+      "expectedCompletionState": "Authorized own workspace; no promise of link issuance/capture until V1 controls pass",
+      "statusHistoryNeeds": "Application/approval/agreement/active state, valid link state, verified attribution and actual payout state",
+      "supportPath": "/research/partners/support (gated); /research/support as public fallback",
+      "referralCapability": "Canonical Gen 2 foundation present; public capture and full issue/revoke lifecycle incomplete",
+      "current": {
+        "routes": [
+          "/research/partners/dashboard",
+          "/research/partners/links"
+        ],
+        "apis": [
+          "/api/research/partner/onboarding",
+          "/api/research/partner/leads",
+          "/api/research/partner/commissions"
+        ],
+        "components": [
+          "PartnerDashboard",
+          "PartnerLinks"
+        ],
+        "evidence": [
+          "routes",
+          "partner",
+          "referral"
+        ]
+      },
+      "currentDefects": [
+        "Partner descendants still use shared review gate",
+        "Full link issue/revoke/expiry and login binding are not complete",
+        "Some portal request endpoints deliberately return capability_disabled"
+      ],
+      "recommendedChange": "Finish a narrow member-bound partner workflow on Gen 2; replace review-gate UX only with proven canonical authorization.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/partners/portal-routes.test.ts",
+          "server/research/partners/portal-production.test.ts"
+        ],
+        "acceptanceNeeded": "Own versus other partner, disabled capability, revoked links, accurate pending states and no fake money.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned strategic-partner/referral slice",
+      "status": "PARTIAL_GATED; referral V1 not shipped",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "organization_owner",
+      "persona": "Organization or clinic owner",
+      "entryRoutes": [
+        "/research/organizations"
+      ],
+      "jobs": [
+        "Prepare a business inquiry",
+        "Understand review",
+        "Eventually manage authorized users and procurement"
+      ],
+      "primaryQuestions": [
+        "Was the inquiry sent?",
+        "Who may buy?",
+        "Does clinic status permit Research use?"
+      ],
+      "trustConcerns": [
+        "No patient list in business inquiry",
+        "Research access is not clinical authorization"
+      ],
+      "requiredInformation": [
+        "Business contact/entity/role/region and nonclinical commercial context"
+      ],
+      "neverVisible": [
+        "Patient lists",
+        "Other organizations",
+        "Unapproved wholesale economics",
+        "Supplier internal information"
+      ],
+      "authenticationState": "Public inquiry preparation; future workspace requires canonical account organization membership",
+      "authorizationSource": "Account-identity server service and organization role checks; named organization UI routes currently parked",
+      "mainNavigation": [
+        "Organization overview",
+        "Review steps",
+        "Inquiry preparation",
+        "Support"
+      ],
+      "primaryCta": "Prepare an organization inquiry",
+      "secondaryCta": "Compare partnership paths",
+      "expectedCompletionState": "Prepared summary ready for user-controlled email, not a saved application or approved account",
+      "statusHistoryNeeds": "Future durable inquiry/reference/reviewer/decision and invitation status",
+      "supportPath": "/research/support; existing inquiry email handoff",
+      "referralCapability": "No organization inquiry grants a referral relationship",
+      "current": {
+        "routes": [
+          "/research/organizations"
+        ],
+        "apis": [
+          "/api/research/account/context",
+          "/api/research/account/organizations/:organizationId/dashboard"
+        ],
+        "components": [
+          "OrganizationAccessPage",
+          "PartnershipInquiryForm",
+          "OrganizationDashboard (parked)"
+        ],
+        "evidence": [
+          "routes",
+          "organization"
+        ]
+      },
+      "currentDefects": [
+        "Inquiry is prepare/copy/email, not a durable submitted record",
+        "Organization workspace components exist but are not mounted"
+      ],
+      "recommendedChange": "Keep the manual preparation label truthful; implement a complete authorized organization entry only after its identity and schema prerequisites are verified.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/account-identity/routes.test.ts",
+          "client/src/research/account/OrganizationDashboard.test.tsx"
+        ],
+        "acceptanceNeeded": "No false sent receipt, user role resolution, organization isolation and denied patient-list input.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned organization slice; schema/release authority separate",
+      "status": "PUBLIC_MANUAL_PREPARATION; organization workspace parked",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "organization_user",
+      "persona": "Organization admin, buyer, or billing viewer",
+      "entryRoutes": [
+        "/research/sign-in",
+        "/research/account/organization-invitations/accept (parked)"
+      ],
+      "jobs": [
+        "Accept authorized invitation",
+        "Reach correct organization",
+        "Perform only role-allowed actions"
+      ],
+      "primaryQuestions": [
+        "Which organization am I using?",
+        "Can I order or only view billing?"
+      ],
+      "trustConcerns": [
+        "No role escalation",
+        "No cross-organization records"
+      ],
+      "requiredInformation": [
+        "Verified invitation identity",
+        "Explicit organization/role binding",
+        "Canonical password-change evidence if required"
+      ],
+      "neverVisible": [
+        "Other organizations",
+        "Clinical data",
+        "Buyer actions for billing-only viewers",
+        "Unrelated commercial terms"
+      ],
+      "authenticationState": "Supabase identity may exist without a Research member row",
+      "authorizationSource": "Account-identity auth verifier and server organization membership; browser role is never authority",
+      "mainNavigation": [
+        "Future organization workspace",
+        "Role-appropriate orders/billing",
+        "Support"
+      ],
+      "primaryCta": "Reach the authorized workspace after invitation checks",
+      "secondaryCta": "Get account access help",
+      "expectedCompletionState": "Verified organization and role with no forced duplicate identity",
+      "statusHistoryNeeds": "Invitation accepted/expired/revoked; password-change requirement; own organization orders/billing",
+      "supportPath": "/research/support until authorized organization entry is composed",
+      "referralCapability": "Only separately assigned permissions; invitation is not a referral link",
+      "current": {
+        "routes": [
+          "/research/sign-in"
+        ],
+        "apis": [
+          "/api/research/account/organization-invitations/accept",
+          "/api/research/account/context"
+        ],
+        "components": [
+          "AccountSignIn (parked)",
+          "OrganizationInvitation (parked)"
+        ],
+        "evidence": [
+          "routes",
+          "organization",
+          "auth"
+        ]
+      },
+      "currentDefects": [
+        "Organization-only identity can be stranded by member-only client gate",
+        "Organization sign-in/invitation routes are parked",
+        "Production password-change evidence adapter deliberately refuses unverifiable completion"
+      ],
+      "recommendedChange": "Compose canonical account context with role-safe routing; implement genuine password-change evidence before clearing initial-password requirements. Do not treat invite as generic recovery without proof.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/account-identity/routes.test.ts",
+          "server/research/account-identity/production-mount.test.ts"
+        ],
+        "acceptanceNeeded": "Invite accept/replay/expiry, identity mismatch, buyer versus billing-only permissions, organization isolation and no synthetic password evidence.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned organization identity slice",
+      "status": "PARKED_CLIENT_JOURNEY; server foundation not end-to-end proof",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "supplier_user",
+      "persona": "Supplier, laboratory, or fulfillment user",
+      "entryRoutes": [
+        "/research/supplier-access"
+      ],
+      "jobs": [
+        "Prepare a supplier inquiry",
+        "Understand documentation requirements",
+        "Eventually fulfill only assigned work"
+      ],
+      "primaryQuestions": [
+        "What evidence is required?",
+        "What customer data is necessary?",
+        "Where is the assigned packet?"
+      ],
+      "trustConcerns": [
+        "Minimum-data handoff",
+        "No false stock, COA, lot or shipment"
+      ],
+      "requiredInformation": [
+        "Business identity/contact/region",
+        "Supply/documentation capability",
+        "For fulfillment only: assigned lines and minimum destination"
+      ],
+      "neverVisible": [
+        "Affiliate attribution",
+        "Customer retail economics or margin",
+        "Unrelated customer history",
+        "Other supplier records",
+        "Patient data"
+      ],
+      "authenticationState": "Anonymous public preparation; operational access must use reviewed server assignment/role",
+      "authorizationSource": "Existing supplier/fulfillment authority; no independent supplier password or public capability",
+      "mainNavigation": [
+        "Supplier information",
+        "Review requirements",
+        "Inquiry preparation",
+        "Support"
+      ],
+      "primaryCta": "Prepare a supplier inquiry",
+      "secondaryCta": "Review quality requirements",
+      "expectedCompletionState": "Truthful manual inquiry preparation; assigned operations only after real onboarding",
+      "statusHistoryNeeds": "Verification, agreements, evidence expiry, assignments and actual tracking/exception events",
+      "supportPath": "/research/support and approved Xenios relay for assigned operations",
+      "referralCapability": "None implied by supplier status",
+      "current": {
+        "routes": [
+          "/research/supplier-access"
+        ],
+        "apis": [],
+        "components": [
+          "SupplierPartnershipPage",
+          "PartnershipInquiryForm"
+        ],
+        "evidence": [
+          "routes",
+          "supplier"
+        ]
+      },
+      "currentDefects": [
+        "No dedicated supplier workspace mounted in the main/research route manifest",
+        "Public inquiry is not durable onboarding or inventory proof"
+      ],
+      "recommendedChange": "Extend the canonical assigned-work projection when ready; preserve manual intake and strict field minimization.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/research/operations/suppliers.test.ts",
+          "client/src/research/routes-parity.test.ts"
+        ],
+        "acceptanceNeeded": "Own assignment only, unpaid release denied, no economics/clinical fields, expired evidence held and no false inquiry receipt.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned supplier workspace slice",
+      "status": "PUBLIC_MANUAL_PREPARATION; dedicated workspace not mounted",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "provider",
+      "persona": "Provider",
+      "entryRoutes": [
+        "No dedicated provider workspace in the current App/Research route manifests",
+        "/care/provider-review (public explanation only)"
+      ],
+      "jobs": [
+        "Review assigned clinical work",
+        "Record independent authorized decisions",
+        "Communicate through the clinical rail"
+      ],
+      "primaryQuestions": [
+        "Which reviews are assigned to me?",
+        "What clinical capability is actually enabled?"
+      ],
+      "trustConcerns": [
+        "Assignment isolation",
+        "Independent medical judgment",
+        "No clinical facts invented by business staff"
+      ],
+      "requiredInformation": [
+        "Verified clinician identity, authority and assigned case facts in a secure system"
+      ],
+      "neverVisible": [
+        "Unassigned patients",
+        "Partner economics",
+        "General CRM marketing fields"
+      ],
+      "authenticationState": "Care principal with care:review_assigned and enabled clinical capability",
+      "authorizationSource": "requireCarePermission plus assignment repositories and clinical write gates",
+      "mainNavigation": [
+        "Future assigned-review workspace",
+        "Secure clinical support"
+      ],
+      "primaryCta": "Review an assigned case in the authorized secure workflow",
+      "secondaryCta": "Resolve access with clinical operations",
+      "expectedCompletionState": "Audited independent decision on an assigned case only; unavailable if prerequisites fail",
+      "statusHistoryNeeds": "Assigned/reviewed/follow-up and decision lineage; no prescription inferred from request",
+      "supportPath": "Authorized clinical operations; /care/support for nonclinical access assistance",
+      "referralCapability": "No paid clinical referral or patient-outcome disclosure",
+      "current": {
+        "routes": [
+          "/care/provider-review"
+        ],
+        "apis": [],
+        "components": [
+          "CareProviderReviewPage (public explanation)"
+        ],
+        "evidence": [
+          "routes",
+          "careClinical"
+        ]
+      },
+      "currentDefects": [
+        "Clinical API code is not a provider dashboard",
+        "Review queue module existence is not proof of production mount or activation"
+      ],
+      "recommendedChange": "Inventory and compose the authorized clinical workspace separately; never relabel the public review explanation as a provider portal.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/care/review-routes.test.ts",
+          "server/care/clinical-route-coverage.test.ts"
+        ],
+        "acceptanceNeeded": "Assigned versus unassigned access, capability-off denial, audited writes and no general-CRM leakage.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Unassigned clinical workspace; provider authority required",
+      "status": "CLINICAL_GATED_FOUNDATION; provider journey unproven",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "operations_staff",
+      "persona": "Clinical operations, support, quality, finance, or reviewer",
+      "entryRoutes": [
+        "/admin/research",
+        "/admin/research/care-requests",
+        "/admin/research/assisted-orders"
+      ],
+      "jobs": [
+        "Find the correct queue",
+        "Take role-appropriate action",
+        "See durable status and failed notifications"
+      ],
+      "primaryQuestions": [
+        "Was this saved?",
+        "Who owns the next action?",
+        "Which boundary applies?"
+      ],
+      "trustConcerns": [
+        "Least privilege",
+        "No accidental clinical/financial assertion",
+        "Email failure must not hide a saved request"
+      ],
+      "requiredInformation": [
+        "Authenticated approved operator role",
+        "Minimum operational projection and audited reason when needed"
+      ],
+      "neverVisible": [
+        "Clinical records in general support or finance",
+        "Raw public payloads/attribution in Care queue",
+        "Unrelated role data"
+      ],
+      "authenticationState": "Current named admin boundary for Research operations; clinical roles additionally require Care permission",
+      "authorizationSource": "requireSupabaseAdmin for manual Care admin; requireCarePermission for clinical operations; domain services enforce mutations",
+      "mainNavigation": [
+        "Applications",
+        "Care requests",
+        "Assisted orders",
+        "Quality",
+        "Payment/fulfillment queues"
+      ],
+      "primaryCta": "Open the domain-specific actionable queue",
+      "secondaryCta": "Inspect truthful detail/history",
+      "expectedCompletionState": "Authorized operational transition and audit, with no hidden saved record or email-only source of truth",
+      "statusHistoryNeeds": "Current state, timestamp, owner/action needed, notification failures and malformed-row visibility",
+      "supportPath": "Protected operational escalation; public /care/support is not a staff console",
+      "referralCapability": "Only authorized declared-versus-verified attribution views; no customer/clinical data to partners",
+      "current": {
+        "routes": [
+          "/admin/research/care-requests",
+          "/admin/research/assisted-orders"
+        ],
+        "apis": [
+          "/api/admin/care/access-requests",
+          "/api/admin/care/access-requests/:requestId/status"
+        ],
+        "components": [
+          "CareAccessRequests"
+        ],
+        "evidence": [
+          "routes",
+          "admin",
+          "careClinical"
+        ]
+      },
+      "currentDefects": [
+        "Role-specific workspaces are not proven merely by a broad admin navigation",
+        "Care generic-LOI exclusion is a local successor change, not assumed deployed"
+      ],
+      "recommendedChange": "Keep dedicated Care projection as its sole operational writer; separately prove least-privilege staff roles and domain-safe queue navigation.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/care/manual-access-admin.test.ts",
+          "server/care/loi-boundary-parity.test.ts",
+          "client/src/research/pages/adminx/CareAccessRequests.test.tsx"
+        ],
+        "acceptanceNeeded": "401/403 boundaries, other-domain isolation, failed-email discoverability, only dedicated Care writer and no raw/clinical leakage.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Care integrity predecessor plus future operations UX owner",
+      "status": "DEDICATED_CARE_QUEUE_REPORTED_LIVE; generic-LOI boundary local successor",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    },
+    {
+      "id": "super_admin",
+      "persona": "Samuel super-admin",
+      "entryRoutes": [
+        "/admin",
+        "/admin/research"
+      ],
+      "jobs": [
+        "See truthful operational bottlenecks",
+        "Review exceptions",
+        "Approve exact changes without bypassing domain controls"
+      ],
+      "primaryQuestions": [
+        "What is live versus local or blocked?",
+        "What requires my decision?",
+        "Can this change be reversed?"
+      ],
+      "trustConcerns": [
+        "Exact release authority",
+        "No stale completion claims",
+        "No privileged shortcut to payment, supply or clinical facts"
+      ],
+      "requiredInformation": [
+        "Own authenticated admin session",
+        "Bounded queue evidence and exact change/rollback context"
+      ],
+      "neverVisible": [
+        "Secrets in UI/logs",
+        "Unnecessary patient details",
+        "Raw recovery/payment credentials"
+      ],
+      "authenticationState": "Named Supabase admin; no public shared code grants administrative access",
+      "authorizationSource": "requireSupabaseAdmin plus each domain's immutable financial/clinical/release controls",
+      "mainNavigation": [
+        "Operations queues",
+        "Care requests",
+        "Applications",
+        "Orders",
+        "Product control",
+        "Audit"
+      ],
+      "primaryCta": "Resolve the highest-priority real queue item",
+      "secondaryCta": "Inspect release/readiness evidence",
+      "expectedCompletionState": "Audited authorized action; deployment remains a separate exact-SHA decision",
+      "statusHistoryNeeds": "Live/local/dark/blocked distinctions, data readiness, operational history and rollback evidence",
+      "supportPath": "Protected internal operational escalation",
+      "referralCapability": "Review verified versus declared partner context only; cannot fabricate earned commission",
+      "current": {
+        "routes": [
+          "/admin",
+          "/admin/research",
+          "/admin/research/care-requests"
+        ],
+        "apis": [
+          "/api/admin/care/access-requests"
+        ],
+        "components": [
+          "AdminResearchRoutes",
+          "CareAccessRequests"
+        ],
+        "evidence": [
+          "routes",
+          "admin"
+        ]
+      },
+      "currentDefects": [
+        "Inherited broad platform records contain historical states; a route inventory is not a completed operational cockpit",
+        "Current UX/auth/account edits are not deployed"
+      ],
+      "recommendedChange": "Show actionable queues and explicit readiness; require current exact-SHA approval for every production mutation and never reuse historical GO.",
+      "testProof": {
+        "existingTestFiles": [
+          "server/release-control-plane.test.ts",
+          "server/care/manual-access-admin-wiring.test.ts"
+        ],
+        "acceptanceNeeded": "Admin denial, domain invariants, exact runtime/source distinction and no secret/private data in evidence.",
+        "sourceInspection": "Verified at audit baseline",
+        "execution": "NOT_RUN_BY_MATRIX_WORKER; listed tests are proof targets, not claimed passes"
+      },
+      "owner": "Release/integration authority; founder approval for production",
+      "status": "ADMIN_ROUTES_PRESENT; full multi-persona product incomplete",
+      "mobileRisks": "Recheck keyboard focus, 44px actions, 16px form text, long labels and no overflow at 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320px."
+    }
+  ]
+}

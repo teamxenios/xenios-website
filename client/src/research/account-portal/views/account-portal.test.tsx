@@ -79,6 +79,47 @@ afterEach(async () => {
 });
 
 describe("customer account portal views", () => {
+  it.each([
+    [{ kind: "care" }, "Review Care status", "/research/account/care"],
+    [{ kind: "membership" }, "Review billing details", "/research/account/subscription"],
+    [{ kind: "order", reference: "ORDER-SYNTHETIC-1" }, "Review order details", "/research/account/orders/ORDER-SYNTHETIC-1"],
+  ] as const)("gives an attention item one direct action (%j)", async (target, label, href) => {
+    const container = await render(<AccountOverviewView data={{
+      ...FIXTURE_ACCOUNT_OVERVIEW,
+      accountStanding: "attention",
+      nextAdministrativeAction: "A recorded account item needs attention.",
+      nextAdministrativeActionTarget: target,
+    }} />);
+    const panel = container.querySelector('[aria-labelledby="next-account-action"]')!;
+    const links = panel.querySelectorAll("a");
+    expect(links).toHaveLength(1);
+    expect(links[0].textContent).toBe(label);
+    expect(links[0].getAttribute("href")).toBe(href);
+    expect(panel.textContent).not.toContain("up to date");
+  });
+
+  it("keeps legacy next-action producers useful without interpreting their text as navigation", async () => {
+    const container = await render(<AccountOverviewView data={{
+      ...FIXTURE_ACCOUNT_OVERVIEW,
+      accountStanding: "attention",
+      nextAdministrativeAction: "Review the recorded account item.",
+      nextAdministrativeActionTarget: undefined,
+    }} />);
+    const panel = container.querySelector('[aria-labelledby="next-account-action"]')!;
+    expect(panel.querySelector("a")?.getAttribute("href")).toBe("/research/account/support");
+    expect(panel.querySelector("a")?.textContent).toBe("Review with support");
+  });
+
+  it("does not render a stale target as an outstanding action on an indeterminate account", async () => {
+    const container = await render(<AccountOverviewView data={{
+      ...FIXTURE_ACCOUNT_OVERVIEW, accountStanding: "indeterminate", nextAdministrativeAction: null,
+      nextAdministrativeActionTarget: { kind: "membership" },
+    }} />);
+    const panel = container.querySelector('[aria-labelledby="next-account-action"]')!;
+    expect(panel.querySelector("a")).toBeNull();
+    expect(panel.textContent).toContain("Status unavailable");
+  });
+
   it("renders the account overview while withholding staff attribution", async () => {
     const data = {
       ...FIXTURE_ACCOUNT_OVERVIEW,

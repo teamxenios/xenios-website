@@ -3,6 +3,7 @@ import type { CustomerAccountOverviewDto } from "@shared/research/customer-accou
 import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCESS_ROUTES, ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { sentenceCase, statusTone } from "../format";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 
 export function AccountSecurityView({ data }: { data: CustomerAccountOverviewDto }) {
   const { identity } = data;
@@ -20,7 +21,7 @@ export function AccountSecurityView({ data }: { data: CustomerAccountOverviewDto
             tone={statusTone(identity.accountStatus)}
           />
         </div>
-        <Link className="btn btn-primary mt-5" href={ACCESS_ROUTES.resetPassword}>Open password reset</Link>
+        <Link className="btn btn-primary mt-5" href={researchAuthPath(ACCESS_ROUTES.resetPassword, ACCOUNT_PORTAL_ROUTES.security)}>Open password reset</Link>
       </section>
 
       <section className="account-surface account-surface-warm" aria-labelledby="security-controls-heading">

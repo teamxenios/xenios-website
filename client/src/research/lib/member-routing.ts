@@ -1,71 +1,9 @@
 import type { MemberInfo } from "../core";
-import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES } from "./routes";
-import { isAccountOrderDetailPath } from "../account-portal/routes";
+import { safeResearchReturnTo } from "@shared/research/auth-return-to";
+export { safeResearchReturnTo } from "@shared/research/auth-return-to";
 
 const MEMBER_ROOT = "/research/member";
-const ACCOUNT_ROOT = "/research/account";
 const ACTIVATION_ROOT = "/research/activate";
-// The closed allowlist: registered member routes plus the nine static
-// account-portal routes (the one-segment order-detail family is recognized
-// separately below). The portal set stays enumerated (never a
-// startsWith("/research/account") check) so the parked identity/organization
-// family under the same prefix remains unreturnable until it is mounted.
-const STATIC_MEMBER_PATHS = new Set<string>(
-  [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter(
-    (path) => !path.includes(":"),
-  ),
-);
-const DYNAMIC_MEMBER_PATHS = [
-  /^\/research\/member\/goals\/[a-z0-9][a-z0-9._-]*$/,
-  /^\/research\/member\/products\/[a-z0-9][a-z0-9._-]*$/,
-  /^\/research\/member\/guides\/[a-z0-9][a-z0-9._-]*$/,
-  /^\/research\/member\/orders\/[a-z0-9][a-z0-9._-]*$/,
-  // One v2 catalog product: /research/member/catalog/:family/:slug. Both
-  // segments are the address (the detail API is keyed by family AND slug), so
-  // Buy Now -> sign-in -> return must carry both. Anchored, exactly two
-  // segments, and character classes matching the closed family vocabulary
-  // (lowercase words joined by underscores) and the server's own slug shape
-  // (lowercase, digits, hyphens). No dot, no slash beyond the two, no escape
-  // for a crafted returnTo to widen.
-  /^\/research\/member\/catalog\/[a-z0-9]+(?:_[a-z0-9]+)*\/[a-z0-9][a-z0-9-]{0,191}$/,
-];
-
-function isRegisteredMemberPath(pathname: string): boolean {
-  return STATIC_MEMBER_PATHS.has(pathname) ||
-    DYNAMIC_MEMBER_PATHS.some((pattern) => pattern.test(pathname));
-}
-
-export function safeResearchReturnTo(value: string | null | undefined): string | null {
-  if (!value || value !== value.trim()) return null;
-  if (value.includes("\\") || value.includes("#") || /[\u0000-\u001f\u007f]/.test(value)) return null;
-  const rawPath = value.split("?", 1)[0];
-  // Member routes do not require encoded path octets. Rejecting every encoded
-  // path byte closes encoded and double-encoded traversal/separator variants.
-  if (/%[0-9a-f]{2}/i.test(rawPath)) return null;
-  if (!(value === "/research" || value.startsWith("/research/"))) return null;
-
-  try {
-    const base = new URL("https://xenios.invalid");
-    const parsed = new URL(value, base);
-    if (parsed.origin !== base.origin) return null;
-    const normalizedPathname = parsed.pathname.toLowerCase();
-    // A one-segment opaque order reference is case-preserving; every other
-    // member path must already be lowercase so a route-prefix case variant
-    // cannot slip past the closed manifest.
-    const accountOrderDetail = isAccountOrderDetailPath(parsed.pathname);
-    if (!accountOrderDetail && parsed.pathname !== normalizedPathname) return null;
-    if (
-      normalizedPathname !== "/research" &&
-      normalizedPathname !== ACTIVATION_ROOT &&
-      !isRegisteredMemberPath(normalizedPathname) &&
-      !accountOrderDetail
-    ) return null;
-    return `${parsed.pathname}${parsed.search}`;
-  } catch {
-    return null;
-  }
-}
-
 const ACCESS_STATE_ROOT = "/research/access-state";
 
 /**
@@ -96,15 +34,12 @@ export function denialDestination(code: string): string {
 export function memberDestination(member: MemberInfo, requestedReturnTo?: string | null): string {
   const safeReturnTo = safeResearchReturnTo(requestedReturnTo);
   if (member.status === "active") {
-    // The prefix check here is safe ONLY because safeResearchReturnTo has
-    // already validated against the closed allowlist above — this branch
-    // merely decides which validated destinations an active member may keep.
-    return safeReturnTo === MEMBER_ROOT ||
-      safeReturnTo?.startsWith(`${MEMBER_ROOT}/`) ||
-      safeReturnTo === ACCOUNT_ROOT ||
-      safeReturnTo?.startsWith(`${ACCOUNT_ROOT}/`)
-      ? safeReturnTo
-      : MEMBER_ROOT;
+    // Public Care/Early Access destinations retain their own gates. Returning
+    // there never grants Care or commerce authority. Activation is not a task
+    // for an already-active member, and no requested path retains the default.
+    const pathname = safeReturnTo?.split("?", 1)[0];
+    return safeReturnTo && pathname !== ACTIVATION_ROOT && pathname !== "/research"
+      ? safeReturnTo : MEMBER_ROOT;
   }
   if (member.status === "pending_activation") return ACTIVATION_ROOT;
   if (member.status === "past_due") return denialDestination("billing_past_due");

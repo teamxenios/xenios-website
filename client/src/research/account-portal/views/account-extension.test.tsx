@@ -212,7 +212,7 @@ describe("account portal extension views", () => {
 
   it("links to the real recovery route and makes unavailable security controls explicit", async () => {
     const container = await render(<AccountSecurityView data={FIXTURE_ACCOUNT_OVERVIEW} />);
-    expect(container.querySelector('a[href="/research/reset-password"]')).not.toBeNull();
+    expect(container.querySelector('a[href="/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity"]')).not.toBeNull();
     expect(container.textContent).toContain("Session and multi-factor controls are not available here");
     expect(container.textContent).not.toContain("MFA enabled");
   });

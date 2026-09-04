@@ -8,6 +8,7 @@ import {
 } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
+import { researchAuthPath, safeResearchReturnTo } from "@shared/research/auth-return-to";
 
 // Member password reset (founder decision, 2026-07-19): this page works from
 // a FRESH browser without the shared review password. It is a minimal
@@ -22,6 +23,10 @@ import { useResearch } from "../core";
 export default function ResetPassword() {
   const { recovery, clearRecovery, signOutRecoverySession } = useResearch();
   const [, navigate] = useLocation();
+  // Capture before the provider consumes the recovery hash. Only the shared
+  // credential-free navigation projection travels through the email flow.
+  const [returnTo] = useState(() => safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo")));
+  const signInPath = researchAuthPath("/research/sign-in", returnTo);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -103,7 +108,7 @@ export default function ResetPassword() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), ...(returnTo ? { returnTo } : {}) }),
       });
       const body = await res.json().catch(() => null);
       if (res.ok && body?.ok) {
@@ -173,7 +178,7 @@ export default function ResetPassword() {
       completedRef.current = true;
       clearRecovery();
       await signOutRecoverySession(recoveryAccessToken);
-      navigate("/research/sign-in");
+      navigate(signInPath);
     } catch {
       setError("The password could not be updated. Please try again.");
     } finally {
@@ -204,6 +209,7 @@ export default function ResetPassword() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   className="input-field"
+                  style={{ fontSize: 16, paddingRight: 72 }}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   minLength={10}
@@ -212,9 +218,11 @@ export default function ResetPassword() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="body-s text-ink-mute"
+                  className="body-s text-ink-mute min-h-11 min-w-11"
                   style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-controls="rp-password rp-confirm"
+                  aria-pressed={showPassword}
                   data-testid="button-toggle-password"
                 >
                   {showPassword ? "Hide" : "Show"}
@@ -229,6 +237,7 @@ export default function ResetPassword() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 className="input-field"
+                style={{ fontSize: 16 }}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 minLength={10}
@@ -249,6 +258,7 @@ export default function ResetPassword() {
                 type="email"
                 autoComplete="email"
                 className="input-field"
+                style={{ fontSize: 16 }}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -263,7 +273,7 @@ export default function ResetPassword() {
         )}
         <div className="max-w-[420px] mt-6 space-y-3">
           <p className="body-s text-ink-mute">
-            <Link href="/research/sign-in" className="underline" data-testid="link-member-login">Member Login</Link>
+            <Link href={signInPath} className="underline inline-flex min-h-11 items-center" data-testid="link-member-login">Back to sign in</Link>
           </p>
           <p className="body-s text-ink-mute">
             Need help? <a href="mailto:research@xeniostechnology.com" className="underline" data-testid="link-reset-support">Support</a>

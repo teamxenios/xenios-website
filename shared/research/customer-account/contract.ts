@@ -426,6 +426,16 @@ export type PartnerAttributionDto = Readonly<{
 // The account overview: one screen, everything above, nothing clinical.
 // ---------------------------------------------------------------------------
 
+/** Closed destinations, never a server-supplied URL or an authorization grant. */
+export type CustomerAccountActionTarget =
+  | Readonly<{ kind: "care" | "membership" | "orders" | "support" }>
+  | Readonly<{ kind: "order"; reference: string }>;
+
+/** One bounded URL segment; the reference remains an opaque identifier. */
+export function isCustomerAccountOrderReference(value: unknown): value is string {
+  return typeof value === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{0,191}$/.test(value);
+}
+
 export type CustomerAccountOverviewDto = Readonly<{
   identity: Readonly<{
     displayName: string;
@@ -458,4 +468,6 @@ export type CustomerAccountOverviewDto = Readonly<{
    * advice, never a product recommendation.
    */
   nextAdministrativeAction: string | null;
+  /** Absent on older producers; clients then keep the safe support fallback. */
+  nextAdministrativeActionTarget?: CustomerAccountActionTarget | null;
 }>;

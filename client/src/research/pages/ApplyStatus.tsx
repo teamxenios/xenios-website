@@ -4,6 +4,7 @@ import SeoHead from "@/components/SeoHead";
 import type { ApplicationStatusView } from "@shared/research/membership-types";
 import { PageIntro } from "../components";
 import { ResearchErrorState, ResearchLoadingState } from "../ui/kit";
+import { researchAuthPath, safeResearchReturnTo } from "@shared/research/auth-return-to";
 
 // Applicant-facing status page, reached from the signed link in every email.
 
@@ -25,7 +26,7 @@ const STATUS_COPY: Record<string, { title: string; body: string }> = {
 // Approved applicants create their member account here. The signed status link
 // (already proven to reach their inbox) is the claim credential; the password
 // becomes their sign-in. The server enforces status and one-account-per-email.
-function ClaimAccount() {
+function ClaimAccount({ returnTo }: { returnTo: string | null }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -81,7 +82,7 @@ function ClaimAccount() {
       >
         <p className="mono-cap text-pulse mb-2">Account created</p>
         <p className="body-s text-ink-2 mb-4">Your member account is ready. Sign in to continue.</p>
-        <Link href="/research/sign-in" className="btn btn-primary">Sign in</Link>
+        <Link href={researchAuthPath("/research/sign-in", returnTo)} className="btn btn-primary">Sign in</Link>
       </div>
     );
   }
@@ -109,6 +110,7 @@ function ClaimAccount() {
 }
 
 export default function ApplyStatus() {
+  const [returnTo] = useState(() => safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo")));
   const [view, setView] = useState<ApplicationStatusView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [resendEmail, setResendEmail] = useState("");
@@ -124,7 +126,7 @@ export default function ApplyStatus() {
     const fromUrl = params.get("token");
     if (fromUrl) {
       try { window.sessionStorage.setItem("xr-application-token", fromUrl); } catch { /* fine */ }
-      window.history.replaceState({}, "", "/research/apply/status");
+      window.history.replaceState({}, "", `/research/apply/status${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
     }
     let token = "";
     try { token = fromUrl || window.sessionStorage.getItem("xr-application-token") || ""; } catch { token = fromUrl || ""; }
@@ -230,7 +232,7 @@ export default function ApplyStatus() {
               )}
               {(view.status === "approved_pending_payment" || view.status === "approved_sponsored_b2b") && (
                 <div className="mt-8">
-                  <ClaimAccount />
+                  <ClaimAccount returnTo={returnTo} />
                   {view.approvalExpiresAt && (
                     <p className="body-s text-ink-mute mt-4">
                       Your approval expires on {new Date(view.approvalExpiresAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}.

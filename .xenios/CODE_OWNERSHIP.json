@@ -953,6 +953,39 @@
       "state": "handoff",
       "claimedAt": "2026-09-04T14:19:49.220Z",
       "heartbeatAt": "2026-09-04T14:49:12Z"
+    },
+    {
+      "id": "d582ed2b-6bdb-4c36-8efe-0b0146f0b625",
+      "task": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
+      "session": "codex-ux-continuation-20260904",
+      "paths": [
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/lib/member-routing.test.ts",
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/reset-password-continuity.test.tsx",
+        "client/src/research/pages/ApplyStatus.tsx",
+        "client/src/research/pages/apply-status.test.tsx",
+        "client/src/research/account-portal/**",
+        "server/research/members.ts",
+        "server/research/members.test.ts",
+        "server/research/customer-account/**",
+        "shared/research/customer-account/**",
+        "docs/ux/**",
+        "docs/research-launch/FULL_UX_FOUNDATION_*.md",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-ux-continuation-20260904.json",
+        ".xenios/sessions/claude-full-ux-foundation-20260904.json",
+        ".xenios/handoffs/*UX-AUTH-ACCOUNT-CONTINUITY*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T15:42:01.901Z",
+      "heartbeatAt": "2026-09-04T15:42:01.901Z"
     }
   ],
   "rules": [

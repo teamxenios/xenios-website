@@ -321,6 +321,26 @@
       "startedAt": "2026-09-04T14:19:48.785Z",
       "heartbeatAt": "2026-09-04T14:19:48.785Z",
       "note": "Founder directive 2026-09-04: continue coding locally; Phase 1 Care admin domain integrity, then Phase 2 strategic partner launch V1; base 2d0d7477 (live db5a2d44 + records); no deploy/merge/migration/env"
+    },
+    {
+      "id": "claude-full-ux-foundation-20260904",
+      "tool": "Claude Fable 5.1",
+      "lane": "full-ux-foundation",
+      "branch": "claude/full-ux-foundation-20260904",
+      "state": "paused_usage_limit",
+      "startedAt": "2026-09-04T14:54:58.638Z",
+      "heartbeatAt": "2026-09-04T14:54:58.638Z",
+      "note": "Usage-limit pause confirmed at 2026-09-04T14:56:09Z. Founder-requested isolated Codex continuation; original worktree and backed-up metadata preserved. See codex-ux-continuation-20260904. No production mutation."
+    },
+    {
+      "id": "codex-ux-continuation-20260904",
+      "tool": "Codex",
+      "lane": "ux-auth-account-continuity",
+      "branch": "codex/ux-continuation-20260904",
+      "state": "active",
+      "startedAt": "2026-09-04T15:42:01.816Z",
+      "heartbeatAt": "2026-09-04T15:42:01.824Z",
+      "note": "Founder-requested takeover of paused Claude UX work at f318a85; original worktree and metadata backup preserved; no production mutation"
     }
   ]
 }

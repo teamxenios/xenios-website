@@ -1,0 +1,10 @@
+{
+  "id": "claude-full-ux-foundation-20260904",
+  "tool": "Claude Fable 5.1",
+  "lane": "full-ux-foundation",
+  "branch": "claude/full-ux-foundation-20260904",
+  "state": "paused_usage_limit",
+  "startedAt": "2026-09-04T14:54:58.638Z",
+  "heartbeatAt": "2026-09-04T14:54:58.638Z",
+  "note": "Usage-limit pause confirmed from session d067e872 at 2026-09-04T14:56:09Z. Founder requested Codex continuation. Original worktree unchanged; metadata backed up in projects/xenios-ux-claude-recovery-20260904. Continued in isolated codex/ux-continuation-20260904; no acquired UX lease existed in the paused session. No production mutation."
+}

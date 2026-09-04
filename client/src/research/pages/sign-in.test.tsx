@@ -282,4 +282,24 @@ describe("SEN-0025: sign in is not a dead end", () => {
     const link = container!.querySelector('[data-testid="link-forgot-password"]') as HTMLAnchorElement;
     expect(link?.getAttribute("href")).toBe("/research/reset-password");
   });
+
+  it("keeps the destination through forgot-password while stripping secrets", async () => {
+    await renderSignIn(async () => null, `?returnTo=${encodeURIComponent("/research/account/orders/XRR-Fixture_01?tab=payment&token=SECRET")}`);
+    const link = container!.querySelector('[data-testid="link-forgot-password"]') as HTMLAnchorElement;
+    expect(new URL(link.href).searchParams.get("returnTo")).toBe("/research/account/orders/XRR-Fixture_01?tab=payment");
+    expect(link.href).not.toContain("SECRET");
+  });
+
+  it("offers an accessible password-visibility control without changing the password", async () => {
+    await renderSignIn(async () => null);
+    const toggle = container!.querySelector('button[aria-controls="ms-password"]') as HTMLButtonElement;
+    expect(toggle.getAttribute("aria-label")).toBe("Show password");
+    await act(async () => toggle.click());
+    const input = container!.querySelector("#ms-password") as HTMLInputElement;
+    expect(input.type).toBe("text");
+    expect(input.value).toBe("correct-password");
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    await act(async () => toggle.click());
+    expect(input.type).toBe("password");
+  });
 });

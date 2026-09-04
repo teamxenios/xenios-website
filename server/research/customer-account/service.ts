@@ -2,10 +2,13 @@
 
 import {
   membershipRenewalMirrorMatches,
+  isCustomerAccountOrderReference,
   type CareEnrollmentDto,
   type CustomerAccountOverviewDto,
+  type CustomerAccountActionTarget,
   type CustomerOrdersDto,
   type MembershipDto,
+  type SupportCaseSummaryDto,
 } from "@shared/research/customer-account/contract";
 import type { CustomerAccountPorts } from "./ports";
 
@@ -20,30 +23,59 @@ export type OverviewResolution =
  * Care rules apply only when the Care SOURCE is available (P1-D): an unwired
  * adapter can neither demand an intake nor prove none is needed.
  */
+export function resolveNextAdministrativeAction(
+  membership: MembershipDto,
+  care: CareEnrollmentDto,
+  orders: CustomerOrdersDto,
+  supportCases: readonly SupportCaseSummaryDto[] = [],
+): Readonly<{ message: string; target: CustomerAccountActionTarget }> | null {
+  if (care.sourceState === "available" && care.enrolled) {
+    if (care.status.stage === "intake_needed") {
+      return { message: "Your Care intake needs attention.", target: { kind: "care" } };
+    }
+    if (care.status.stage === "follow_up_required") {
+      return { message: "The provider team requested a follow-up.", target: { kind: "care" } };
+    }
+    if (care.status.stage === "appointment_needed") {
+      return { message: "An appointment is needed in your Care workflow.", target: { kind: "care" } };
+    }
+  }
+  // A request is not an order, and an identifier prefix proves neither kind
+  // nor payment obligation. Do not demand payment on cancelled/exceptional or
+  // unknown fulfillment records; their outstanding action is not knowable.
+  const unpaidOrder = orders.research.find((order) =>
+    order.recordKind === "order" && order.paymentState === "unpaid" &&
+    (order.fulfillmentState === "unfulfilled" || order.fulfillmentState === "processing"),
+  );
+  if (unpaidOrder) {
+    return {
+      message: "An order is recorded as unpaid. Review its details before taking the next step.",
+      target: isCustomerAccountOrderReference(unpaidOrder.reference)
+        ? { kind: "order", reference: unpaidOrder.reference }
+        : { kind: "orders" },
+    };
+  }
+  // Billing truth and access state prompt independently (P1-5), and every
+  // attention-worthy billing fact prompts — disputed included (P1-C).
+  if (membership.state === "past_due" || membership.billing === "past_due") {
+    return { message: "Your membership payment is past due.", target: { kind: "membership" } };
+  }
+  if (membership.billing === "disputed") {
+    return { message: "Your membership billing needs attention — a payment is disputed.", target: { kind: "membership" } };
+  }
+  if (supportCases.some((item) => item.state === "waiting_on_customer")) {
+    return { message: "A support case is waiting for your response.", target: { kind: "support" } };
+  }
+  return null;
+}
+
+/** Compatibility text projection; both fields always derive from one resolver. */
 export function nextAdministrativeAction(
   membership: MembershipDto,
   care: CareEnrollmentDto,
   orders: CustomerOrdersDto,
 ): string | null {
-  if (care.sourceState === "available" && care.enrolled) {
-    if (care.status.stage === "intake_needed") return "Complete your Care intake.";
-    if (care.status.stage === "follow_up_required") {
-      return "The provider team requested a follow-up — check your messages.";
-    }
-    if (care.status.stage === "appointment_needed") return "Schedule your appointment.";
-  }
-  if (orders.research.some((o) => o.paymentState === "unpaid")) {
-    return "An order is awaiting payment — payment instructions arrive by email.";
-  }
-  // Billing truth and access state prompt independently (P1-5), and every
-  // attention-worthy billing fact prompts — disputed included (P1-C).
-  if (membership.state === "past_due" || membership.billing === "past_due") {
-    return "Your membership payment is past due.";
-  }
-  if (membership.billing === "disputed") {
-    return "Your membership billing needs attention — a payment is disputed.";
-  }
-  return null;
+  return resolveNextAdministrativeAction(membership, care, orders)?.message ?? null;
 }
 
 /**
@@ -92,6 +124,7 @@ export function createCustomerAccountService(ports: CustomerAccountPorts) {
       const partnerAttribution = view.staff
         ? await ports.attribution.attributionFor(memberKey)
         : null;
+      const nextAction = resolveNextAdministrativeAction(membership, careEnrollment, orders, supportCases);
       return {
         kind: "ok",
         overview: {
@@ -109,12 +142,13 @@ export function createCustomerAccountService(ports: CustomerAccountPorts) {
           productInterests: interests,
           documents,
           supportCases,
-          nextAdministrativeAction: nextAdministrativeAction(membership, careEnrollment, orders),
+          nextAdministrativeAction: nextAction?.message ?? null,
+          nextAdministrativeActionTarget: nextAction?.target ?? null,
           accountStanding: accountStanding(
             membership,
             careEnrollment,
             orders,
-            nextAdministrativeAction(membership, careEnrollment, orders),
+            nextAction?.message ?? null,
           ),
         },
       };

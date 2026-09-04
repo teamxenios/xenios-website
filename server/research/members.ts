@@ -6,6 +6,7 @@ import { readResearchToken } from "./membership";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { createReferralIdentity, getLedgerBalance, referralsEnabled } from "./referrals";
 import { rateLimitHit, requestIp } from "./rate-limit";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
 
 // ---------------------------------------------------------------------------
@@ -257,7 +258,13 @@ export function registerMemberApi(app: Express) {
     res.set("Referrer-Policy", "no-referrer");
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
-      const parsed = z.object({ email: z.string().email().max(254).toLowerCase().trim() }).safeParse(req.body);
+      const parsed = z.object({
+        email: z.string().email().max(254).toLowerCase().trim(),
+        // Navigation context is never an identity or origin authority. Invalid
+        // context falls back to the bare reset route without changing the
+        // outward account-enumeration behavior of this endpoint.
+        returnTo: z.unknown().optional(),
+      }).safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ ok: false, message: "Enter a valid email address." });
       if (!(await rateLimitHit(`research-forgot-ip:${requestIp(req as any)}`, 600, 3))) {
         return res.status(429).json({ ok: false, message: "Too many requests. Please try again in a few minutes." });
@@ -270,7 +277,9 @@ export function registerMemberApi(app: Express) {
         // Fire-and-forget: the response returns on the same path for existing
         // and unknown addresses, so completion timing cannot enumerate.
         void getSupabaseAnon()
-          .auth.resetPasswordForEmail(parsed.data.email, { redirectTo: `${SITE}/research/reset-password` })
+          .auth.resetPasswordForEmail(parsed.data.email, {
+            redirectTo: `${SITE}${researchAuthPath("/research/reset-password", parsed.data.returnTo)}`,
+          })
           .then(({ error }: { error: { message: string } | null }) => {
             if (error) console.warn("[research members] reset email failed:", error.message);
           })

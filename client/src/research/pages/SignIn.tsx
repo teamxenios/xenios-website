@@ -5,6 +5,7 @@ import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 
 // Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
 // the rest of the site); membership itself is verified SERVER-side on every
@@ -18,6 +19,8 @@ export default function SignIn() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +57,6 @@ export default function SignIn() {
         }
       }
       if (verifiedMember) {
-        const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
         navigate(memberDestination(verifiedMember, returnTo));
       } else {
         // The server guard may have refused with a machine-readable code
@@ -92,18 +94,21 @@ export default function SignIn() {
         <form onSubmit={onSubmit} className="max-w-[420px] space-y-5" data-testid="form-member-signin">
           <div>
             <label htmlFor="ms-email" className="form-label">Email</label>
-            <input id="ms-email" type="email" autoComplete="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input id="ms-email" type="email" autoComplete="email" className="input-field" style={{ fontSize: 16 }} value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div>
             <label htmlFor="ms-password" className="form-label">Password</label>
-            <input id="ms-password" type="password" autoComplete="current-password" className="input-field" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <div className="relative">
+              <input id="ms-password" type={showPassword ? "text" : "password"} autoComplete="current-password" className="input-field" style={{ fontSize: 16, paddingRight: 72 }} value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <button type="button" className="absolute right-2 top-0 min-h-11 min-w-11 underline text-sm" aria-controls="ms-password" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword((value) => !value)}>{showPassword ? "Hide" : "Show"}</button>
+            </div>
           </div>
           {error && <p className="body-s" role="alert" style={{ color: "var(--error)" }} data-testid="text-signin-error">{error}</p>}
           <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-member-signin">
             {busy ? "Signing in" : "Sign in"}
           </button>
           <p className="body-s text-ink-mute">
-            <Link href="/research/reset-password" className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
+            <Link href={researchAuthPath("/research/reset-password", returnTo)} className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
           <p className="body-s text-ink-mute">
             Returning members do not need another approval email. If you have not created your account yet, use the one-time claim link in your approval email.

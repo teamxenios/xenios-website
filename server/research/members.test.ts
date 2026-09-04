@@ -436,17 +436,108 @@ describe("forgot password", () => {
     expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
   });
 
+  it("preserves a safe account destination using only the configured site origin", async () => {
+    const email = "forgot-return-path@example.com";
+    const returnTo = "/research/account/orders/XRR-Fixture_01?tab=payment";
+    seedMemberRow(email);
+    const appHttp = makeApp();
+    const known = await request(appHttp)
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .set("Host", "outside.invalid")
+      .set("Origin", "https://outside.invalid")
+      .set("X-Forwarded-Host", "outside.invalid")
+      .send({ email, returnTo });
+    const unknown = await request(appHttp)
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ email: "forgot-return-unknown@example.com", returnTo });
+
+    expect(known.status).toBe(200);
+    expect(unknown.status).toBe(200);
+    expect(unknown.body).toEqual(known.body);
+    expect(state.auth.resetPasswordForEmail).toHaveBeenCalledExactlyOnceWith(email, {
+      redirectTo: `${process.env.SITE_URL || "https://xeniostechnology.com"}/research/reset-password?returnTo=${encodeURIComponent(returnTo)}`,
+    });
+    for (const response of [known, unknown]) {
+      expect(response.headers["cache-control"]).toContain("no-store");
+      expect(response.headers["referrer-policy"]).toBe("no-referrer");
+      expect(response.headers["set-cookie"]).toBeUndefined();
+      expect(JSON.stringify(response.body)).not.toMatch(/returnTo|outside\.invalid|XRR-Fixture/);
+    }
+  });
+
+  it.each([
+    "https://outside.invalid/research/account/orders",
+    "//outside.invalid/research/account/orders",
+    "/research/member/%2e%2e/admin",
+    "/research/account/orders#synthetic-private-token",
+    "/admin/research",
+    "/research/account/organizations/unmounted",
+    { path: "/research/account/orders", access_token: "synthetic-private-token" },
+    [["/research/account/orders"]],
+    42,
+    null,
+  ])("ignores unsafe or non-string reset return context without changing account eligibility: %j", async (returnTo) => {
+    const email = `forgot-invalid-${crypto.randomUUID()}@example.com`;
+    seedMemberRow(email);
+    const response = await request(makeApp())
+      .post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp())
+      .send({ email, returnTo });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      ok: true,
+      message: "If a member account exists for that address, a password reset email is on its way.",
+    });
+    expect(state.auth.resetPasswordForEmail).toHaveBeenCalledExactlyOnceWith(email, {
+      redirectTo: `${process.env.SITE_URL || "https://xeniostechnology.com"}/research/reset-password`,
+    });
+    expect(response.headers["set-cookie"]).toBeUndefined();
+  });
+
+  it.each([
+    "/research/account/orders?access_token=synthetic-private-token",
+    "/research/account/orders?token=synthetic-private-token",
+    "/research/account/orders?code=synthetic-private-token",
+    "/research/account/orders?returnTo=https%3A%2F%2Foutside.invalid%2Fsynthetic-private-token",
+  ])("never forwards secret or nested redirect parameters to recovery email, response, or logs: %s", async (returnTo) => {
+    const email = `forgot-secret-${crypto.randomUUID()}@example.com`;
+    seedMemberRow(email);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const response = await request(makeApp())
+        .post("/api/research/member/forgot-password")
+        .set("X-Forwarded-For", uniqueIp())
+        .send({ email, returnTo });
+
+      expect(response.status).toBe(200);
+      expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+      const calls = state.auth.resetPasswordForEmail.mock.calls as unknown[][];
+      const options = calls[0][1] as { redirectTo: string };
+      expect(options.redirectTo.startsWith(`${process.env.SITE_URL || "https://xeniostechnology.com"}/research/reset-password`)).toBe(true);
+      expect(decodeURIComponent(options.redirectTo)).not.toMatch(/synthetic-private-token|outside\.invalid|access_token|[?&](?:code|token)=/);
+      expect(JSON.stringify([response.body, response.headers, warn.mock.calls, error.mock.calls]))
+        .not.toContain("synthetic-private-token");
+    } finally {
+      warn.mockRestore();
+      error.mockRestore();
+    }
+  });
+
   it("per-email cooldown silently suppresses a repeat request", async () => {
     seedMemberRow("forgot-c@example.com");
     const appHttp = makeApp();
     const first = await request(appHttp)
       .post("/api/research/member/forgot-password")
       .set("X-Forwarded-For", uniqueIp())
-      .send({ email: "forgot-c@example.com" });
+      .send({ email: "forgot-c@example.com", returnTo: "/research/account/orders" });
     const second = await request(appHttp)
       .post("/api/research/member/forgot-password")
       .set("X-Forwarded-For", uniqueIp())
-      .send({ email: "forgot-c@example.com" });
+      .send({ email: "forgot-c@example.com", returnTo: "/research/account/security" });
     expect(second.status).toBe(200);
     expect(second.body).toEqual(first.body);
     expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);

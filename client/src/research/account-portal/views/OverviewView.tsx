@@ -16,6 +16,7 @@ import {
 } from "../../catalog-priority/priority-config";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { accountOrderDetailPath } from "../routes";
+import { accountNextActionLink } from "../next-action";
 import {
   authoritativeOrderCount,
   cleanAccountText,
@@ -51,6 +52,7 @@ export function AccountOverviewView({
     supportCases,
     nextAdministrativeAction,
   } = data;
+  const nextActionLink = accountNextActionLink(data.nextAdministrativeActionTarget);
   const noBillingRelationship = membership.billing === "none";
   const manageUrl = membership.billing !== "none"
     ? safeBillingManagementUrl(membership.manageUrl)
@@ -93,7 +95,7 @@ export function AccountOverviewView({
             </p>
           </div>
           {accountStanding === "attention" ? (
-            <Link className="btn btn-primary" href={ACCOUNT_PORTAL_ROUTES.support}>Review with support</Link>
+            <Link className="btn btn-primary" href={nextActionLink.href}>{nextActionLink.label}</Link>
           ) : standingProvedCurrent ? (
             <ResearchStatusBadge label="Current" tone="success" />
           ) : (

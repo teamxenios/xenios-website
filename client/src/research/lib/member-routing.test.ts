@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "./member-routing";
+import { AUTH_RETURN_STATIC_PATHS } from "@shared/research/auth-return-to";
+import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES } from "./routes";
+import { memberReturnToForIntent } from "../storefront/entry-intent";
 
 const active = { firstName: "Avery", status: "active", applicationStatus: "active" };
 const pending = { firstName: "Avery", status: "pending_activation", applicationStatus: "approved" };
@@ -7,6 +10,16 @@ const pastDue = { firstName: "Avery", status: "past_due", applicationStatus: nul
 const paused = { firstName: "Avery", status: "paused", applicationStatus: null };
 
 describe("safeResearchReturnTo", () => {
+  it("preserves the real storefront commercial-intent URL unchanged", () => {
+    const path = memberReturnToForIntent({ family: "research_vials", slug: "fixture-product", variantId: "variant.fixture-1", quantity: 100, action: "BUY_NOW" });
+    expect(safeResearchReturnTo(path)).toBe(path);
+    expect(memberDestination(active, path)).toBe(path);
+  });
+  it("keeps the shared security allowlist in parity with mounted member/account manifests", () => {
+    const manifest = [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter((path) => !path.includes(":"));
+    const allowed = AUTH_RETURN_STATIC_PATHS.filter((path) => path.startsWith("/research/member") || path.startsWith("/research/account"));
+    expect([...allowed].sort()).toEqual([...manifest].sort());
+  });
   it.each([
     "https://evil.example",
     "//evil.example",
@@ -122,6 +135,11 @@ describe("safeResearchReturnTo for the account portal", () => {
 });
 
 describe("memberDestination", () => {
+  it.each(["/health", "/care/schedule", "/research/early-access", "/research/early-access/order-request/XRR-Fixture_01"])("preserves %s for active members without overriding pending/billing gates", (path) => {
+    expect(memberDestination(active, path)).toBe(path);
+    expect(memberDestination(pending, path)).toBe("/research/activate");
+    expect(memberDestination(pastDue, path)).toBe("/research/access-state?code=billing_past_due");
+  });
   it("allows active members to resume inside the member site", () => {
     expect(memberDestination(active, "/research/member/security")).toBe("/research/member/security");
   });

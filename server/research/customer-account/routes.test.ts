@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { CustomerAccountPorts } from "./ports";
 import { CUSTOMER_ACCOUNT_PATHS, registerCustomerAccountApi } from "./routes";
 import { createMemoryCustomerAccountPorts, defaultMemorySeeds } from "./memory-adapters";
-import { FIXTURE_MEMBERSHIP_MANUAL } from "@shared/research/customer-account/fixtures";
+import { FIXTURE_CUSTOMER_ORDERS, FIXTURE_MEMBERSHIP_MANUAL } from "@shared/research/customer-account/fixtures";
 
 // Test guards with the production shape: requireMember attaches researchMember
 // from a test header or answers 401; requireActiveMember additionally applies
@@ -71,6 +71,30 @@ describe("customer-account routes", () => {
     expect(res.body.data.identity.email).toBe("test.customer@example.invalid");
     expect(res.body.data.researchOrders).toHaveLength(2);
     expectPrivateNoStore(res);
+  });
+
+  it("serves an actionable target only from the authenticated member's own records", async () => {
+    const scopedPorts = createMemoryCustomerAccountPorts(defaultMemorySeeds().map((seed, index) => index === 0 ? {
+      ...seed,
+      orders: {
+        ...FIXTURE_CUSTOMER_ORDERS,
+        research: [{ ...FIXTURE_CUSTOMER_ORDERS.research[0], recordKind: "order" as const, reference: "ORDER-SYNTHETIC-PRIVATE" }],
+      },
+    } : seed));
+    const app = buildApp(scopedPorts);
+    const owner = await request(app).get(CUSTOMER_ACCOUNT_PATHS.overview).set("x-test-member", "member-fixture-1");
+    expect(owner.status).toBe(200);
+    expect(owner.body.data.nextAdministrativeActionTarget).toEqual({ kind: "order", reference: "ORDER-SYNTHETIC-PRIVATE" });
+    expect(owner.body.data.accountStanding).toBe("attention");
+    expectPrivateNoStore(owner);
+
+    const other = await request(app)
+      .get(`${CUSTOMER_ACCOUNT_PATHS.overview}?memberId=member-fixture-1&reference=ORDER-SYNTHETIC-PRIVATE`)
+      .set("x-test-member", "member-fixture-2");
+    expect(other.status).toBe(200);
+    expect(other.body.data.nextAdministrativeActionTarget).toBeNull();
+    expect(JSON.stringify(other.body)).not.toContain("ORDER-SYNTHETIC-PRIVATE");
+    expectPrivateNoStore(other);
   });
 
   it("NEVER exposes partner attribution on the member surface", async () => {
