@@ -26,8 +26,8 @@ import { rateLimitHit, requestIp } from "../research/rate-limit";
 import {
   getResendClient,
   TEAM_EMAIL,
-  XENIOS_HEALTH_EMAIL_FROM,
 } from "../services/email";
+import { XENIOS_HEALTH_EMAIL_FROM } from "./email-identity";
 import {
   adminRecipients,
   resolveEmailConfiguration,

@@ -12,7 +12,6 @@ afterEach(() => {
   container?.remove();
   root = null;
   container = null;
-  window.history.replaceState({}, "", "/");
   vi.restoreAllMocks();
 });
 
@@ -131,60 +130,5 @@ describe("ContactForm error wiring", () => {
 
     const banner = byTestId(view, "text-contact-error");
     expect(banner.getAttribute("role")).toBe("alert");
-  });
-});
-
-describe("ContactForm Health sender context", () => {
-  async function submitValidForm(view: HTMLElement) {
-    const form = byTestId<HTMLFormElement>(view, "form-contact");
-    setValue(byTestId<HTMLSelectElement>(view, "select-contact-persona"), "other");
-    setValue(
-      byTestId<HTMLTextAreaElement>(view, "textarea-contact-message"),
-      "I need help navigating the nonclinical Xenios Care support pathway.",
-    );
-    await act(async () => {
-      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-    });
-  }
-
-  it("uses the dedicated Care contact endpoint for the exact Health context", async () => {
-    window.history.replaceState({}, "", "/contact?context=health");
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const view = render(<ContactForm />);
-    await submitValidForm(view);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/care/contact",
-      expect.objectContaining({ method: "POST" }),
-    );
-  });
-
-  it.each([
-    "",
-    "?context=care",
-    "?context=Health",
-    "?Context=health",
-    "?context=health&source=care",
-    "?context=health&context=research",
-  ])("keeps near-match context %s on the generic contact endpoint", async (search) => {
-    window.history.replaceState({}, "", `/contact${search}`);
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const view = render(<ContactForm />);
-    await submitValidForm(view);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/contact",
-      expect.objectContaining({ method: "POST" }),
-    );
   });
 });

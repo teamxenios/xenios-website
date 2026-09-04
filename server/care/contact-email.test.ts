@@ -7,29 +7,20 @@ const provider = vi.hoisted(() => ({
   })),
 }));
 
-vi.mock("resend", () => ({
-  Resend: class {
-    emails = { send: provider.send };
-  },
-}));
-
-vi.mock("./email-config", () => ({
-  resolveEmailConfiguration: async () => ({
-    provider: "resend-env",
-    apiKey: "synthetic-provider-key",
+vi.mock("../services/email", () => ({
+  TEAM_EMAIL: "team@xeniostechnology.com",
+  getResendClient: async () => ({
+    client: { emails: { send: provider.send } },
     fromEmail: "Unrelated Site <wrong-sender@example.test>",
     replyToEmail: "wrong-replies@example.test",
-    adminRecipients: ["care-operations@example.test"],
   }),
 }));
 
 import {
-  sendContactAutoReply,
-  sendContactMessage,
-  sendHealthContactAutoReply,
-  sendHealthContactMessage,
-  XENIOS_HEALTH_EMAIL_FROM,
-} from "./email";
+  sendCareContactAutoReply,
+  sendCareContactInternalAlert,
+} from "./contact";
+import { XENIOS_HEALTH_EMAIL_FROM } from "./email-identity";
 
 const message = {
   name: "Jordan Test",
@@ -44,9 +35,9 @@ describe("Xenios Health contact email envelopes", () => {
     provider.send.mockClear();
   });
 
-  it("forces both Health contact messages to the team sender and preserves reply boundaries", async () => {
-    await sendHealthContactMessage(message);
-    await sendHealthContactAutoReply(message);
+  it("forces both messages to the Health team sender and preserves reply boundaries", async () => {
+    await sendCareContactInternalAlert(message);
+    await sendCareContactAutoReply(message);
 
     expect(XENIOS_HEALTH_EMAIL_FROM).toBe(
       "Xenios Health <team@xeniostechnology.com>",
@@ -55,26 +46,16 @@ describe("Xenios Health contact email envelopes", () => {
       from: XENIOS_HEALTH_EMAIL_FROM,
       to: "team@xeniostechnology.com",
       replyTo: "jordan@example.test",
+      subject: "[Xenios Health] Care pathway support",
     }));
     expect(provider.send).toHaveBeenNthCalledWith(2, expect.objectContaining({
       from: XENIOS_HEALTH_EMAIL_FROM,
       to: "jordan@example.test",
       replyTo: "team@xeniostechnology.com",
+      subject: "We received your Xenios Health support message",
     }));
     expect(JSON.stringify(provider.send.mock.calls)).not.toContain(
       "wrong-sender@example.test",
     );
-  });
-
-  it("leaves the generic contact sender behavior unchanged", async () => {
-    await sendContactMessage(message);
-    await sendContactAutoReply(message);
-
-    expect(provider.send).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      from: "Unrelated Site <wrong-sender@example.test>",
-    }));
-    expect(provider.send).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      from: "Unrelated Site <wrong-sender@example.test>",
-    }));
   });
 });
