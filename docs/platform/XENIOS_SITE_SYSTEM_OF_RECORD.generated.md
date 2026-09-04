@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `c835ad771878c6ec7db4769c5c74ce825b95f26e` (2026-09-04T15:41:13-05:00)
+Generated from source commit: `a0b3f4f8faff904999997ad4770a9eb4ee40bfe2` (2026-09-04T16:58:35-05:00)
 
-Source tree: `87e696740dd197be0d3bce12f5ed21148accd386` on `codex/xenios-major-ordering-admin-sor-20260904`
+Source tree: `e95faeaa85483e6e5559c4714d01f0077b95c534` on `codex/xenios-major-ordering-admin-sor-20260904`
 
 Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740ujc73aprfcg` (live_verified)
 
@@ -26,7 +26,7 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | Fulfillment and tracking operations | founder_fulfillment_operations | /admin/research/early-access/fulfillment | mounted | unknown | unknown | deployed_not_authenticated_smoked | FULFILLMENT-MOUNT | Expose read-only paid-awaiting-release, missing-tracking, and exception attention in the Founder Command Center. |
 | Clinic, organization, and professional-buyer orientation | organization_buyer | /research/organizations | mounted | unknown | unknown | blocked_external | F7-ACCOUNT-MOUNT | Route organization interest here without implying that a workspace already exists. |
 | Order Entry Hub | all_legitimate_ordering_personas | /research/order | mounted | focused_tests_pass | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority. |
-| Founder Command Center | founder_admin_operations | /admin/research/command-center | unknown | unknown | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Implement a read-only aggregate that reports count or unavailable, oldest wait, attention reason, source state, and owning workflow for all required operating areas. |
+| Founder Command Center | founder_admin_operations | /admin/research/command-center | mounted | focused_tests_pass | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority. |
 
 ## Site route inventory
 
@@ -35,51 +35,52 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | / | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:154 |
 | /about | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:165 |
 | /admin | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:181 |
-| /admin/research | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:183; client/src/research/adminx-section.tsx:140 |
+| /admin/research | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:183; client/src/research/adminx-section.tsx:141 |
 | /admin/research/* | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:184 |
-| /admin/research/activation-bridge | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:177 |
-| /admin/research/activation-checklist | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:178 |
-| /admin/research/activation-queue | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:176 |
-| /admin/research/activation-readiness | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:180 |
-| /admin/research/activation-reconciliation | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:179 |
-| /admin/research/applications | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:143 |
-| /admin/research/applications/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:144 |
-| /admin/research/assisted-orders | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:160 |
-| /admin/research/assisted-orders/:requestId | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:161 |
-| /admin/research/audit | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:185 |
-| /admin/research/blueprint-review | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:149 |
-| /admin/research/capabilities | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:174 |
-| /admin/research/care-requests | founder_care_operations | operations | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:141 |
-| /admin/research/commerce-queues | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:165 |
-| /admin/research/early-access/fulfillment | founder_fulfillment_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:184 |
-| /admin/research/early-access/payments | founder_finance_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:183 |
-| /admin/research/early-access/releases | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:182 |
-| /admin/research/esign | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:181 |
-| /admin/research/fulfillment | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:164 |
-| /admin/research/guides | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:168 |
-| /admin/research/guides/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:169 |
-| /admin/research/inventory | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:157 |
-| /admin/research/inventory/coas | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:156 |
-| /admin/research/inventory/lots | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:155 |
-| /admin/research/members | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:145 |
-| /admin/research/members/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:146 |
-| /admin/research/orders | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:162 |
-| /admin/research/orders/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:163 |
-| /admin/research/partners | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:170 |
-| /admin/research/partners/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:171 |
-| /admin/research/plans | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:147 |
-| /admin/research/plans/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:148 |
-| /admin/research/privacy | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:173 |
-| /admin/research/product-configuration | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:152 |
-| /admin/research/product-requests | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:153 |
-| /admin/research/product-requests/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:154 |
-| /admin/research/products | founder_product_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:150 |
-| /admin/research/products/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:151 |
-| /admin/research/questions | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:166 |
-| /admin/research/questions/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:167 |
-| /admin/research/referral-lifecycle | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:142 |
-| /admin/research/required-inputs | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:175 |
-| /admin/research/security | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:172 |
+| /admin/research/activation-bridge | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:179 |
+| /admin/research/activation-checklist | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:180 |
+| /admin/research/activation-queue | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:178 |
+| /admin/research/activation-readiness | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:182 |
+| /admin/research/activation-reconciliation | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:181 |
+| /admin/research/applications | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:145 |
+| /admin/research/applications/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:146 |
+| /admin/research/assisted-orders | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:162 |
+| /admin/research/assisted-orders/:requestId | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:163 |
+| /admin/research/audit | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:187 |
+| /admin/research/blueprint-review | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:151 |
+| /admin/research/capabilities | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:176 |
+| /admin/research/care-requests | founder_care_operations | operations | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:143 |
+| /admin/research/command-center | founder_admin_operations | operations | mounted | focused_tests_pass | unknown | built_not_deployed | client/src/research/adminx-section.tsx:142 |
+| /admin/research/commerce-queues | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:167 |
+| /admin/research/early-access/fulfillment | founder_fulfillment_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:186 |
+| /admin/research/early-access/payments | founder_finance_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:185 |
+| /admin/research/early-access/releases | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:184 |
+| /admin/research/esign | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:183 |
+| /admin/research/fulfillment | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:166 |
+| /admin/research/guides | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:170 |
+| /admin/research/guides/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:171 |
+| /admin/research/inventory | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:159 |
+| /admin/research/inventory/coas | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:158 |
+| /admin/research/inventory/lots | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:157 |
+| /admin/research/members | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:147 |
+| /admin/research/members/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:148 |
+| /admin/research/orders | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:164 |
+| /admin/research/orders/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:165 |
+| /admin/research/partners | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:172 |
+| /admin/research/partners/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:173 |
+| /admin/research/plans | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:149 |
+| /admin/research/plans/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:150 |
+| /admin/research/privacy | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:175 |
+| /admin/research/product-configuration | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:154 |
+| /admin/research/product-requests | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:155 |
+| /admin/research/product-requests/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:156 |
+| /admin/research/products | founder_product_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:152 |
+| /admin/research/products/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:153 |
+| /admin/research/questions | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:168 |
+| /admin/research/questions/:id | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:169 |
+| /admin/research/referral-lifecycle | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:144 |
+| /admin/research/required-inputs | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:177 |
+| /admin/research/security | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:174 |
 | /agents | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:205 |
 | /argos | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:202 |
 | /book | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:179 |

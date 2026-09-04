@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T15:41:13-05:00",
+  "generatedAt": "2026-09-04T16:58:35-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-major-ordering-admin-sor-20260904",
-    "sha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
-    "tree": "87e696740dd197be0d3bce12f5ed21148accd386",
+    "sha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+    "tree": "e95faeaa85483e6e5559c4714d01f0077b95c534",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
@@ -31,13 +31,13 @@
     "unknown"
   ],
   "routeSummary": {
-    "uniqueRoutes": 218,
-    "registrations": 220,
+    "uniqueRoutes": 219,
+    "registrations": 221,
     "byPersona": {
       "all_legitimate_ordering_personas": 1,
       "applicant_and_membership_operations": 1,
       "care_requester": 10,
-      "founder_admin_operations": 42,
+      "founder_admin_operations": 43,
       "founder_care_operations": 1,
       "founder_finance_operations": 1,
       "founder_fulfillment_operations": 1,
@@ -58,7 +58,7 @@
       "commerce": 13,
       "corporate_site": 33,
       "identity_accounts": 46,
-      "operations": 46,
+      "operations": 47,
       "organizations": 2,
       "referrals_partners": 20,
       "research_experience": 46,
@@ -66,7 +66,7 @@
     },
     "productionStatus": {
       "blocked_external": 2,
-      "built_not_deployed": 2,
+      "built_not_deployed": 3,
       "deployed_not_authenticated_smoked": 6,
       "live_verified": 2,
       "unknown": 206
@@ -136,7 +136,7 @@
         },
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 140
+          "line": 141
         }
       ],
       "capabilities": []
@@ -168,7 +168,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 177
+          "line": 179
         }
       ],
       "capabilities": []
@@ -184,7 +184,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 178
+          "line": 180
         }
       ],
       "capabilities": []
@@ -200,7 +200,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 176
+          "line": 178
         }
       ],
       "capabilities": []
@@ -216,7 +216,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 180
+          "line": 182
         }
       ],
       "capabilities": []
@@ -232,7 +232,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 179
+          "line": 181
         }
       ],
       "capabilities": []
@@ -248,7 +248,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 143
+          "line": 145
         }
       ],
       "capabilities": []
@@ -264,7 +264,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 144
+          "line": 146
         }
       ],
       "capabilities": []
@@ -280,7 +280,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 160
+          "line": 162
         }
       ],
       "capabilities": []
@@ -296,7 +296,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 161
+          "line": 163
         }
       ],
       "capabilities": []
@@ -312,7 +312,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 185
+          "line": 187
         }
       ],
       "capabilities": []
@@ -328,7 +328,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 149
+          "line": 151
         }
       ],
       "capabilities": []
@@ -344,7 +344,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 174
+          "line": 176
         }
       ],
       "capabilities": []
@@ -360,11 +360,29 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 141
+          "line": 143
         }
       ],
       "capabilities": [
         "care_admin_queue"
+      ]
+    },
+    {
+      "path": "/admin/research/command-center",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 142
+        }
+      ],
+      "capabilities": [
+        "founder_command_center"
       ]
     },
     {
@@ -378,7 +396,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 165
+          "line": 167
         }
       ],
       "capabilities": []
@@ -394,7 +412,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 184
+          "line": 186
         }
       ],
       "capabilities": [
@@ -412,7 +430,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 183
+          "line": 185
         }
       ],
       "capabilities": [
@@ -430,7 +448,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 182
+          "line": 184
         }
       ],
       "capabilities": []
@@ -446,7 +464,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 181
+          "line": 183
         }
       ],
       "capabilities": []
@@ -462,7 +480,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 164
+          "line": 166
         }
       ],
       "capabilities": []
@@ -478,7 +496,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 168
+          "line": 170
         }
       ],
       "capabilities": []
@@ -494,7 +512,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 169
+          "line": 171
         }
       ],
       "capabilities": []
@@ -510,7 +528,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 157
+          "line": 159
         }
       ],
       "capabilities": []
@@ -526,7 +544,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 156
+          "line": 158
         }
       ],
       "capabilities": []
@@ -542,7 +560,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 155
+          "line": 157
         }
       ],
       "capabilities": []
@@ -558,7 +576,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 145
+          "line": 147
         }
       ],
       "capabilities": []
@@ -574,7 +592,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 146
+          "line": 148
         }
       ],
       "capabilities": []
@@ -590,7 +608,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 162
+          "line": 164
         }
       ],
       "capabilities": []
@@ -606,7 +624,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 163
+          "line": 165
         }
       ],
       "capabilities": []
@@ -622,7 +640,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 170
+          "line": 172
         }
       ],
       "capabilities": []
@@ -638,7 +656,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 171
+          "line": 173
         }
       ],
       "capabilities": []
@@ -654,7 +672,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 147
+          "line": 149
         }
       ],
       "capabilities": []
@@ -670,7 +688,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 148
+          "line": 150
         }
       ],
       "capabilities": []
@@ -686,7 +704,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 173
+          "line": 175
         }
       ],
       "capabilities": []
@@ -702,7 +720,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 152
+          "line": 154
         }
       ],
       "capabilities": []
@@ -718,7 +736,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 153
+          "line": 155
         }
       ],
       "capabilities": []
@@ -734,7 +752,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 154
+          "line": 156
         }
       ],
       "capabilities": []
@@ -750,7 +768,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 150
+          "line": 152
         }
       ],
       "capabilities": [
@@ -768,7 +786,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 151
+          "line": 153
         }
       ],
       "capabilities": []
@@ -784,7 +802,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 166
+          "line": 168
         }
       ],
       "capabilities": []
@@ -800,7 +818,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 167
+          "line": 169
         }
       ],
       "capabilities": []
@@ -816,7 +834,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 142
+          "line": 144
         }
       ],
       "capabilities": []
@@ -832,7 +850,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 175
+          "line": 177
         }
       ],
       "capabilities": []
@@ -848,7 +866,7 @@
       "registrations": [
         {
           "source": "client/src/research/adminx-section.tsx",
-          "line": 172
+          "line": 174
         }
       ],
       "capabilities": []
@@ -3599,14 +3617,13 @@
   "capabilitySummary": {
     "count": 15,
     "sourceStatus": {
-      "mounted": 13,
-      "source_present": 1,
-      "unknown": 1
+      "mounted": 14,
+      "source_present": 1
     },
     "testStatus": {
-      "focused_tests_pass": 7,
+      "focused_tests_pass": 8,
       "full_suite_pass": 2,
-      "unknown": 6
+      "unknown": 5
     },
     "browserStatus": {
       "browser_verified": 2,
@@ -3634,7 +3651,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -3670,7 +3687,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
@@ -3708,12 +3725,12 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
         "owner": "codex-step1-live-hotfix-20260825",
-        "leaseState": "active"
+        "leaseState": "released"
       },
       "blocker": "Current authenticated production journey has not been re-smoked for this checkpoint.",
       "founderAction": "Use separately authorized production smoke credentials only during a later release gate.",
@@ -3745,7 +3762,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
@@ -3783,7 +3800,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
@@ -3820,7 +3837,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -3858,7 +3875,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
@@ -3895,7 +3912,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
@@ -3932,7 +3949,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
@@ -3967,7 +3984,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4002,7 +4019,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4037,7 +4054,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
@@ -4072,7 +4089,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
@@ -4106,7 +4123,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4138,14 +4155,14 @@
       "persona": "founder_admin_operations",
       "route": "/admin/research/command-center",
       "owningClientComponent": "client/src/research/pages/adminx/FounderCommandCenter.tsx",
-      "owningServerRoute": null,
-      "authorizationBoundary": "Canonical admin shell and guarded read adapters; summary cards perform no consequential mutation.",
-      "dataSource": "Bounded read projections from existing applications, Care, assisted-order, payment, fulfillment, product, referral, support, health, and release authorities.",
-      "sourceStatus": "unknown",
-      "testStatus": "unknown",
+      "owningServerRoute": "/api/admin/research/command-center",
+      "authorizationBoundary": "Canonical requireSupabaseAdmin server guard; one privacy-minimal GET; summary cards and client controls perform no consequential mutation.",
+      "dataSource": "Isolated read projections over canonical applications, bounded Care classification, assisted orders, payment review, exceptions, products, required inputs, referral flags, support, notification outbox, and last-verified release evidence; unavailable authorities remain explicit.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4154,10 +4171,25 @@
       },
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Implement a read-only aggregate that reports count or unavailable, oldest wait, attention reason, source state, and owning workflow for all required operating areas.",
+      "nextExactAction": "Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority.",
       "evidence": {
-        "source": [],
-        "tests": [],
+        "source": [
+          "shared/research/founder-command-center.ts",
+          "server/research/founder-command-center.ts",
+          "server/research/founder-command-center-production.ts",
+          "server/index.ts",
+          "client/src/research/adapters/founderCommandCenter.ts",
+          "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+          "client/src/research/adminx-section.tsx"
+        ],
+        "tests": [
+          "server/research/founder-command-center.test.ts",
+          "server/research/founder-command-center-production.test.ts",
+          "client/src/research/pages/adminx/FounderCommandCenter.test.tsx",
+          "client/src/research/routes-parity.test.ts",
+          "client/src/research/ui/admin-shell.test.tsx",
+          "server/release-control-plane.test.ts"
+        ],
         "browser": [],
         "production": []
       }
