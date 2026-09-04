@@ -67,19 +67,23 @@ function normalizePath(value) {
   return String(value).replaceAll("\\", "/").replace(/^\.\//, "");
 }
 
-function git(root, args) {
+function gitRaw(root, args) {
   try {
     return execFileSync("git", args, {
       cwd: root,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
-    }).trim();
+    });
   } catch (error) {
     const stderr = error && typeof error === "object" && "stderr" in error
       ? String(error.stderr).trim()
       : "";
     throw new Error(`git ${args.join(" ")} failed${stderr ? `: ${stderr}` : ""}`);
   }
+}
+
+function git(root, args) {
+  return gitRaw(root, args).trim();
 }
 
 function sourcePathspecExclusions() {
@@ -126,7 +130,7 @@ function currentSourceSha(root) {
 }
 
 function readGitText(root, sha, path) {
-  return git(root, ["show", `${sha}:${normalizePath(path)}`]);
+  return gitRaw(root, ["show", `${sha}:${normalizePath(path)}`]);
 }
 
 function readGitJson(root, sha, path) {
@@ -462,7 +466,7 @@ export async function buildSnapshot(root = DEFAULT_ROOT) {
   if (top.toLowerCase() !== normalizePath(absoluteRoot).toLowerCase()) {
     throw new Error(`Expected repository root ${normalizePath(absoluteRoot)}, got ${top}`);
   }
-  const dirty = nonRecordDirtyPaths(git(absoluteRoot, ["status", "--porcelain=v1", "--untracked-files=all"]));
+  const dirty = nonRecordDirtyPaths(gitRaw(absoluteRoot, ["status", "--porcelain=v1", "--untracked-files=all"]));
   if (dirty.length) {
     throw new Error(`Commit non-record source changes before generating the exact-SHA record:\n${dirty.join("\n")}`);
   }
