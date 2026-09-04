@@ -1,0 +1,4157 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-04T15:23:55-05:00",
+  "repository": "teamxenios/xenios-website",
+  "source": {
+    "branch": "codex/xenios-major-ordering-admin-sor-20260904",
+    "sha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+    "tree": "0d0955bc4f3c88bdd7ca457f2f153f18aeeeed21",
+    "clean": true,
+    "provenance": "Latest commit changing non-generated, non-.xenios source paths"
+  },
+  "production": {
+    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dad08h740ujc73aprfcg",
+    "verificationStatus": "live_verified",
+    "observedAt": "2026-09-04T20:00:00Z",
+    "evidenceSource": "Read-only Render service/deploy inspection reconciled with .xenios production records; auto-deploy is off."
+  },
+  "statusVocabulary": [
+    "source_present",
+    "mounted",
+    "focused_tests_pass",
+    "full_suite_pass",
+    "browser_verified",
+    "built_not_deployed",
+    "deployed_not_authenticated_smoked",
+    "live_verified",
+    "feature_gated",
+    "blocked_external",
+    "superseded",
+    "unknown"
+  ],
+  "routeSummary": {
+    "uniqueRoutes": 217,
+    "registrations": 219,
+    "byPersona": {
+      "applicant_and_membership_operations": 1,
+      "care_requester": 10,
+      "founder_admin_operations": 42,
+      "founder_care_operations": 1,
+      "founder_finance_operations": 1,
+      "founder_fulfillment_operations": 1,
+      "founder_product_operations": 1,
+      "organization_buyer": 2,
+      "partner_affiliate": 19,
+      "partner_affiliate_and_referral_recipient": 1,
+      "public_health_visitor": 1,
+      "public_research_visitor": 50,
+      "public_visitor": 33,
+      "quick_early_access_customer": 3,
+      "research_customer": 11,
+      "research_member": 39,
+      "supplier_fulfillment": 1
+    },
+    "byDomain": {
+      "care": 11,
+      "commerce": 12,
+      "corporate_site": 33,
+      "identity_accounts": 46,
+      "operations": 46,
+      "organizations": 2,
+      "referrals_partners": 20,
+      "research_experience": 46,
+      "supplier_fulfillment": 1
+    },
+    "productionStatus": {
+      "blocked_external": 2,
+      "built_not_deployed": 1,
+      "deployed_not_authenticated_smoked": 6,
+      "live_verified": 2,
+      "unknown": 206
+    }
+  },
+  "routes": [
+    {
+      "path": "/",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 154
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/about",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 165
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 181
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 183
+        },
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 140
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/*",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 184
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/activation-bridge",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 177
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/activation-checklist",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 178
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/activation-queue",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 176
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/activation-readiness",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 180
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/activation-reconciliation",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 179
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/applications",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 143
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/applications/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 144
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/assisted-orders",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 160
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/assisted-orders/:requestId",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 161
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/audit",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 185
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/blueprint-review",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 149
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/capabilities",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 174
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/care-requests",
+      "persona": "founder_care_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 141
+        }
+      ],
+      "capabilities": [
+        "care_admin_queue"
+      ]
+    },
+    {
+      "path": "/admin/research/commerce-queues",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 165
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/early-access/fulfillment",
+      "persona": "founder_fulfillment_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 184
+        }
+      ],
+      "capabilities": [
+        "fulfillment_tracking"
+      ]
+    },
+    {
+      "path": "/admin/research/early-access/payments",
+      "persona": "founder_finance_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 183
+        }
+      ],
+      "capabilities": [
+        "payment_review"
+      ]
+    },
+    {
+      "path": "/admin/research/early-access/releases",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 182
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/esign",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 181
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/fulfillment",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 164
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/guides",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 168
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/guides/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 169
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/inventory",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 157
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/inventory/coas",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 156
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/inventory/lots",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 155
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/members",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 145
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/members/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 146
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/orders",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 162
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/orders/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 163
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/partners",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 170
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/partners/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 171
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/plans",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 147
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/plans/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 148
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/privacy",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 173
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/product-configuration",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 152
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/product-requests",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 153
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/product-requests/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 154
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/products",
+      "persona": "founder_product_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 150
+        }
+      ],
+      "capabilities": [
+        "product_control"
+      ]
+    },
+    {
+      "path": "/admin/research/products/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 151
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/questions",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 166
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/questions/:id",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 167
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/referral-lifecycle",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 142
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/required-inputs",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 175
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/admin/research/security",
+      "persona": "founder_admin_operations",
+      "domain": "operations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/adminx-section.tsx",
+          "line": 172
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/agents",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 205
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/argos",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 202
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/book",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 179
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 197
+        }
+      ],
+      "capabilities": [
+        "care_manual_access"
+      ]
+    },
+    {
+      "path": "/care/*",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 198
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care/appointments",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 194
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care/consent",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 193
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care/eligibility",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 192
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care/pharmacy",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 196
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/care/prescriptions",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 195
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/careers",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 168
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/careers/:slug",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 167
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/careers/innovative-product-builder",
+      "persona": "care_requester",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 166
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/compliance",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 172
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/concepts",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 180
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/contact",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 170
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/developers",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 206
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/disclosures",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 177
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/early-interest",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 178
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/ecosystem",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 161
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/enterprise",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 207
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/faq",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 210
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/for-clients",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 158
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/for-coaches",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 157
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/for-practitioners",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 162
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/for/:slug",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 163
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/health",
+      "persona": "public_health_visitor",
+      "domain": "care",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 186
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/how-it-works",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 156
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/investors",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 173
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/kairos",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 201
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/manifesto",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 164
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/mvps",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 200
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/network",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 160
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/ontology",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 208
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/partners",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 209
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/press",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 174
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/privacy",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 175
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/product",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 155
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/r/:code",
+      "persona": "partner_affiliate_and_referral_recipient",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "built_not_deployed",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 187
+        }
+      ],
+      "capabilities": [
+        "referral_v1"
+      ]
+    },
+    {
+      "path": "/research",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 190
+        },
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 301
+        }
+      ],
+      "capabilities": [
+        "research_public_gateway"
+      ]
+    },
+    {
+      "path": "/research/__gallery/:page",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 348
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/*",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 191
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/about",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 327
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/access",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 450
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/access-gate",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 452
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/access-hub",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 304
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/access-state",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 322
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 361
+        }
+      ],
+      "capabilities": [
+        "customer_account_portal"
+      ]
+    },
+    {
+      "path": "/research/account/care",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 355
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/documents",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 356
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/interests",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 359
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/orders",
+      "persona": "research_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 353
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/orders/:reference",
+      "persona": "research_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 352
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/profile",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 357
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/security",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 358
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/subscription",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 354
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/account/support",
+      "persona": "research_customer",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 360
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/activate",
+      "persona": "public_research_visitor",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 321
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/affiliates",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 340
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/application-status",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 318
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/application/status",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 317
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/apply",
+      "persona": "applicant_and_membership_operations",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 313
+        }
+      ],
+      "capabilities": [
+        "membership_applications"
+      ]
+    },
+    {
+      "path": "/research/apply/review",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 314
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/apply/status",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 316
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/apply/success",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 315
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/build-a-system",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 443
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/cart",
+      "persona": "public_research_visitor",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 445
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/contact",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 335
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/documents",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 332
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/early-access",
+      "persona": "quick_early_access_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 306
+        }
+      ],
+      "capabilities": [
+        "quick_early_access"
+      ]
+    },
+    {
+      "path": "/research/early-access/order-request",
+      "persona": "research_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 310
+        }
+      ],
+      "capabilities": [
+        "assisted_research_orders"
+      ]
+    },
+    {
+      "path": "/research/early-access/order-request/:publicReference",
+      "persona": "quick_early_access_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 312
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/early-access/order-request/confirmation/:publicReference",
+      "persona": "quick_early_access_customer",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 311
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/faq",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 329
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/framework",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 447
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/guides",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 433
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/how-it-works",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 328
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/learn",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 444
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/lots/:lotCode",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 333
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 365
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/assessment",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 370
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/blueprint",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 371
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/cart",
+      "persona": "research_member",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 395
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/catalog",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 382
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/catalog/:family/:slug",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 381
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/checkout",
+      "persona": "research_member",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 396
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/diagnostics",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 387
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/documents",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 374
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/documents-center",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 375
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/education",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 389
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/goals",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 377
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/goals/:slug",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 378
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/guides",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 393
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/guides/:slug",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 394
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/kris-catalog",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 384
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/kris-catalog/:family/:slug",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 383
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/membership",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 366
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/metabolic-care",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 386
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/orders",
+      "persona": "research_member",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 397
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/orders/:id",
+      "persona": "research_member",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 398
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/privacy",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 368
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/product-requests",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 392
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/product-requests/new",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 391
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/products",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 379
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/products/:slug",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 380
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/profile",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 369
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/questions",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 400
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/referrals",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 401
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/security",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 367
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/storage",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 388
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/subscriptions",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 399
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/supplements",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 385
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/support",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 390
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/tracker",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 376
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/welcome",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 323
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/xenios-30",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 372
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/member/xenios-90",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 373
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/membership",
+      "persona": "research_member",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 446
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/orders",
+      "persona": "public_research_visitor",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 434
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/organizations",
+      "persona": "organization_buyer",
+      "domain": "organizations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 338
+        }
+      ],
+      "capabilities": [
+        "organization_access_orientation"
+      ]
+    },
+    {
+      "path": "/research/partners",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 339
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/apply",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 405
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/campaigns",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 410
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/commissions",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 414
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/compliance",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 417
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/conversions",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 413
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/dashboard",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 408
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/events",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 411
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/leads",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 412
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/links",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 409
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/onboarding",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 406
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/organizations",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 416
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/payouts",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 415
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/resources",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 418
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/security",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 420
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/support",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 419
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/partners/training",
+      "persona": "partner_affiliate",
+      "domain": "referrals_partners",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 407
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/peptides",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 439
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/policies",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 334
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/policies/:policy",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 341
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/privacy",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 325
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/product/:slug",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 430
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/products",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 423
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/products/:slug",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 427
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/products/peptides",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 424
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/products/quantum",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 426
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/products/supplements",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 425
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/professionals",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 449
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/profile",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 437
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/programs",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 448
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/quality",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 330
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/quantum",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 441
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/referrals",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 436
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/reset-password",
+      "persona": "public_research_visitor",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 320
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/shop",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 442
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/sign-in",
+      "persona": "public_research_visitor",
+      "domain": "identity_accounts",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 319
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/subscriptions",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 435
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/supplements",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 440
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/supplier-access",
+      "persona": "supplier_fulfillment",
+      "domain": "supplier_fulfillment",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 305
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/support",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 324
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/systems",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 438
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/terms",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 326
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/testing",
+      "persona": "public_research_visitor",
+      "domain": "research_experience",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 331
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/research/wholesale",
+      "persona": "organization_buyer",
+      "domain": "organizations",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 451
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/security",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 171
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/storefront",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 159
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/telemedicine",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 204
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/terms",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 176
+        }
+      ],
+      "capabilities": []
+    },
+    {
+      "path": "/waitlist",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "unknown",
+      "registrations": [
+        {
+          "source": "client/src/App.tsx",
+          "line": 169
+        }
+      ],
+      "capabilities": []
+    }
+  ],
+  "capabilitySummary": {
+    "count": 15,
+    "sourceStatus": {
+      "mounted": 12,
+      "source_present": 1,
+      "unknown": 2
+    },
+    "testStatus": {
+      "focused_tests_pass": 6,
+      "full_suite_pass": 2,
+      "unknown": 7
+    },
+    "browserStatus": {
+      "browser_verified": 2,
+      "unknown": 13
+    },
+    "productionStatus": {
+      "blocked_external": 2,
+      "built_not_deployed": 4,
+      "deployed_not_authenticated_smoked": 6,
+      "live_verified": 2,
+      "unknown": 1
+    }
+  },
+  "capabilities": [
+    {
+      "id": "living_site_system_of_record",
+      "capability": "Living Site System of Record",
+      "persona": "founder_engineering_operations",
+      "route": null,
+      "owningClientComponent": null,
+      "owningServerRoute": null,
+      "authorizationBoundary": "Repository read access; generated artifacts contain only bounded technical coordination facts.",
+      "dataSource": "Current committed Git tree plus curated exact-SHA platform registry and bounded continuity records.",
+      "sourceStatus": "source_present",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+        "owner": "codex-major-ordering-admin-sor-20260904",
+        "leaseState": "active"
+      },
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Regenerate and byte-check the three artifacts after every committed coherent source checkpoint.",
+      "evidence": {
+        "source": [
+          "scripts/agentic/generate-site-system-of-record.mjs",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.schema.json",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
+        ],
+        "tests": [
+          "scripts/agentic/generate-site-system-of-record.test.mjs"
+        ],
+        "browser": [],
+        "production": []
+      }
+    },
+    {
+      "id": "research_public_gateway",
+      "capability": "Research public gateway",
+      "persona": "public_research_visitor",
+      "route": "/research",
+      "owningClientComponent": "client/src/research/pages/Gateway.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Public presentation; protected member and operator data remain behind their canonical server guards.",
+      "dataSource": "Curated Research content plus server-authorized catalog and pathway projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
+        "owner": "codex-care-research-postlaunch-20260831",
+        "leaseState": "handoff"
+      },
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Keep pathway copy aligned with current server-authorized Research, Care, account, and assisted-order doors.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/Gateway.tsx",
+          "client/src/research/section.tsx"
+        ],
+        "tests": [
+          "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+          "client/src/research/pages/public-brand-pages.test.tsx"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      }
+    },
+    {
+      "id": "quick_early_access",
+      "capability": "Quick Early Access ordering",
+      "persona": "quick_early_access_customer",
+      "route": "/research/early-access",
+      "owningClientComponent": "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "owningServerRoute": "/api/research/early-access/session",
+      "authorizationBoundary": "Dedicated Early Access session gate; no admin, member, supplier, affiliate, or Care authority is granted.",
+      "dataSource": "Canonical Product Control/catalog, server-side eligibility and pricing, Early Access session and order authorities.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+        "owner": "codex-step1-live-hotfix-20260825",
+        "leaseState": "active"
+      },
+      "blocker": "Current authenticated production journey has not been re-smoked for this checkpoint.",
+      "founderAction": "Use separately authorized production smoke credentials only during a later release gate.",
+      "nextExactAction": "Simplify the existing state machine into the four-step Quick Early Access customer presentation without replacing server authority.",
+      "evidence": {
+        "source": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "server/research/early-access/register.ts"
+        ],
+        "tests": [
+          "server/research/early-access/open-access.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      }
+    },
+    {
+      "id": "assisted_research_orders",
+      "capability": "Assisted and volume Research order requests",
+      "persona": "research_customer",
+      "route": "/research/early-access/order-request",
+      "owningClientComponent": "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "owningServerRoute": "/api/research/early-access/assisted-orders",
+      "authorizationBoundary": "Early Access or member context plus server-side agreements, pricing, idempotency, attribution, and request ownership checks.",
+      "dataSource": "Canonical assisted-order request repository and canonical catalog/pricing projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "ASSISTED-ORDER-MOUNT",
+        "owner": "claude-fable-main",
+        "leaseState": "handoff"
+      },
+      "blocker": "A current authenticated end-to-end production smoke remains a separate release gate.",
+      "founderAction": "Perform only a separately authorized real-request smoke when release verification is scheduled.",
+      "nextExactAction": "Reuse this request authority from the Order Entry Hub and later Quick Early Access simplification.",
+      "evidence": {
+        "source": [
+          "client/src/research/assisted-order/AssistedOrderPage.tsx",
+          "server/research/assisted-order/http.ts"
+        ],
+        "tests": [
+          "server/research/assisted-order/http-e2e.test.ts",
+          "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md"
+        ],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      }
+    },
+    {
+      "id": "customer_account_portal",
+      "capability": "Customer account and order history portal",
+      "persona": "research_customer",
+      "route": "/research/account",
+      "owningClientComponent": "client/src/research/account/AccountOverview.tsx",
+      "owningServerRoute": "/api/research/customer-account/*",
+      "authorizationBoundary": "Canonical member guard determines identity; request input cannot select another customer.",
+      "dataSource": "Canonical customer-account ports over order, Care, document, support, and membership authorities.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "unknown",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
+        "owner": "codex-ux-continuation-20260904",
+        "leaseState": "handoff"
+      },
+      "blocker": "The local account checkpoint is not a current authenticated production attestation.",
+      "founderAction": null,
+      "nextExactAction": "Build the normalized customer timeline on these canonical account and order projections.",
+      "evidence": {
+        "source": [
+          "client/src/research/account/AccountOverview.tsx",
+          "server/research/customer-account/routes.ts"
+        ],
+        "tests": [
+          "docs/research-launch/FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md"
+        ],
+        "browser": [
+          "docs/ux/auth-account-20260904/browser-results.json"
+        ],
+        "production": []
+      }
+    },
+    {
+      "id": "referral_v1",
+      "capability": "Referral recommendation and durable attribution continuity",
+      "persona": "partner_affiliate_and_referral_recipient",
+      "route": "/r/:code",
+      "owningClientComponent": "client/src/research/recommendation/Recipient.tsx",
+      "owningServerRoute": "/api/research/partner/links",
+      "authorizationBoundary": "Server-issued opaque links, current owner eligibility, guarded binding, and role-scoped partner/admin projections.",
+      "dataSource": "Canonical Gen2 referral links, touches, bindings, events, and downstream authorized lineage.",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "built_not_deployed",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
+        "owner": "codex-ux-referral-20260904",
+        "leaseState": "released"
+      },
+      "blocker": "Production migration registration, feature activation, and production smoke remain separately gated.",
+      "founderAction": "Approve an exact-SHA migration and activation packet only when release review is complete.",
+      "nextExactAction": "Preserve referral and intended-destination context through the Order Entry Hub without changing referral authority.",
+      "evidence": {
+        "source": [
+          "shared/research/referral-v1.ts",
+          "server/research/partners/referral-v1-routes.ts",
+          "client/src/research/recommendation/Recipient.tsx"
+        ],
+        "tests": [
+          "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md"
+        ],
+        "browser": [
+          "docs/ux/referral-v1-20260904/browser-final-342a2c4-ninewidth/browser-results.json"
+        ],
+        "production": []
+      }
+    },
+    {
+      "id": "care_manual_access",
+      "capability": "Xenios Care manual access request",
+      "persona": "care_requester",
+      "route": "/care",
+      "owningClientComponent": "client/src/care/CareAccessRequestForm.tsx",
+      "owningServerRoute": "/api/care/access-request",
+      "authorizationBoundary": "Public closed schema, honeypot and rate limit; operational routing data only and no clinical free text.",
+      "dataSource": "Care-owned operations record and notification outbox boundary.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "CARE-MANUAL-ACCESS-20260831",
+        "owner": "codex-care-manual-access-20260831",
+        "leaseState": "released"
+      },
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Keep Care access separate from Research ordering and route clinical needs only to this Care-owned workflow.",
+      "evidence": {
+        "source": [
+          "client/src/care/CareAccessRequestForm.tsx",
+          "server/care/manual-access.ts"
+        ],
+        "tests": [
+          "server/care/manual-access.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      }
+    },
+    {
+      "id": "care_admin_queue",
+      "capability": "Care access request operations queue",
+      "persona": "founder_care_operations",
+      "route": "/admin/research/care-requests",
+      "owningClientComponent": "client/src/research/pages/adminx/CareAccessRequests.tsx",
+      "owningServerRoute": "/api/admin/care/access-requests",
+      "authorizationBoundary": "Canonical Supabase admin guard; bounded operations projection excludes clinical, attribution, and raw request metadata.",
+      "dataSource": "Dedicated Care admin projection over Care-owned access request records.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "CARE-ADMIN-RELIABILITY-20260903",
+        "owner": "claude-care-admin-reliability-20260903",
+        "leaseState": "handoff"
+      },
+      "blocker": "Authenticated production proof that the known incident record appears exactly once remains pending.",
+      "founderAction": "Run a read-only admin smoke in a separately authorized authenticated session.",
+      "nextExactAction": "Expose only bounded aggregate attention in the Founder Command Center and link here for operations.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/CareAccessRequests.tsx",
+          "server/care/manual-access-admin.ts"
+        ],
+        "tests": [
+          "server/care/manual-access-admin.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      }
+    },
+    {
+      "id": "membership_applications",
+      "capability": "Membership application and review",
+      "persona": "applicant_and_membership_operations",
+      "route": "/research/apply",
+      "owningClientComponent": "client/src/research/pages/Apply.tsx",
+      "owningServerRoute": "/api/admin/research/applications",
+      "authorizationBoundary": "Public write remains legal-version gated; review is protected by the canonical admin guard.",
+      "dataSource": "Canonical research applications and immutable legal-version authority.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "APP-MEMBERSHIP",
+        "owner": null,
+        "leaseState": "unavailable"
+      },
+      "blocker": "Authoritative published Membership Application Terms and Privacy Policy versions are not yet approved for recording.",
+      "founderAction": "Approve exact published legal versions after counsel/version authority is ready.",
+      "nextExactAction": "Continue operator UX improvements without opening the public write until legal versions are authoritative.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/Apply.tsx",
+          "server/research/membership.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          ".xenios/BLOCKED_EXTERNAL.md"
+        ]
+      }
+    },
+    {
+      "id": "product_control",
+      "capability": "Product Control and pricing operations",
+      "persona": "founder_product_operations",
+      "route": "/admin/research/products",
+      "owningClientComponent": "client/src/research/pages/adminx/ProductsAdmin.tsx",
+      "owningServerRoute": "/api/admin/research/products",
+      "authorizationBoundary": "Canonical admin guard and server-side validation; customer browsers never set authoritative price or release state.",
+      "dataSource": "Canonical products, variants, price versions, content, media, approvals, and audit history.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": null,
+        "owner": null,
+        "leaseState": "unavailable"
+      },
+      "blocker": "Current authenticated production behavior is not attested by this local checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Add reviewed price-approval, comparison, bulk-draft, import-preview, and release-readiness UX on this authority.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/ProductsAdmin.tsx",
+          "server/research/products-diagnostics/product-admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      }
+    },
+    {
+      "id": "payment_review",
+      "capability": "Manual payment review",
+      "persona": "founder_finance_operations",
+      "route": "/admin/research/early-access/payments",
+      "owningClientComponent": "client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx",
+      "owningServerRoute": "/api/admin/research/payments",
+      "authorizationBoundary": "Named admin guard; submitted proof is never treated as verified payment without authorized review.",
+      "dataSource": "Canonical Early Access payment review and order evidence projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": null,
+        "owner": null,
+        "leaseState": "unavailable"
+      },
+      "blocker": "No authenticated production finance smoke is included in this checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Expose a read-only attention count in the Founder Command Center and keep all review actions in this workflow.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      }
+    },
+    {
+      "id": "fulfillment_tracking",
+      "capability": "Fulfillment and tracking operations",
+      "persona": "founder_fulfillment_operations",
+      "route": "/admin/research/early-access/fulfillment",
+      "owningClientComponent": "client/src/research/pages/adminx/EarlyAccessFulfillment.tsx",
+      "owningServerRoute": "/api/admin/research/early-access/fulfillment",
+      "authorizationBoundary": "Named admin guard; no shipment, tracking, or delivery state is inferred or mutated by summary views.",
+      "dataSource": "Canonical Early Access supplier dispatch, fulfillment, tracking, and exception projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "FULFILLMENT-MOUNT",
+        "owner": "claude-fable-s8-fulfillment",
+        "leaseState": "handoff"
+      },
+      "blocker": "Current authenticated production fulfillment smoke is not included in this checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Expose read-only paid-awaiting-release, missing-tracking, and exception attention in the Founder Command Center.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/EarlyAccessFulfillment.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      }
+    },
+    {
+      "id": "organization_access_orientation",
+      "capability": "Clinic, organization, and professional-buyer orientation",
+      "persona": "organization_buyer",
+      "route": "/research/organizations",
+      "owningClientComponent": "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Public orientation only; it does not claim an organization workspace or browser-granted role.",
+      "dataSource": "Static pathway guidance; future workspace uses canonical account-organization identity after governed schema activation.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "F7-ACCOUNT-MOUNT",
+        "owner": null,
+        "leaseState": "unavailable"
+      },
+      "blocker": "The renamed Pack 02 organization-account schema is not approved/applied for a real workspace.",
+      "founderAction": "Approve production application of the certified renamed Pack 02 schema when its release packet is current.",
+      "nextExactAction": "Route organization interest here without implying that a workspace already exists.",
+      "evidence": {
+        "source": [
+          "client/src/research/b2b/OrganizationAccessPage.tsx"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          ".xenios/FOUNDER_ACTIONS.md"
+        ]
+      }
+    },
+    {
+      "id": "order_entry_hub",
+      "capability": "Order Entry Hub",
+      "persona": "all_legitimate_ordering_personas",
+      "route": "/research/order",
+      "owningClientComponent": "client/src/research/pages/OrderEntryHub.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Navigation and intent preservation only; every destination retains its existing server authority.",
+      "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
+      "sourceStatus": "unknown",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+        "owner": "codex-major-ordering-admin-sor-20260904",
+        "leaseState": "active"
+      },
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Implement and verify all seven required pathways with safe returnTo and referral/product intent continuity.",
+      "evidence": {
+        "source": [],
+        "tests": [],
+        "browser": [],
+        "production": []
+      }
+    },
+    {
+      "id": "founder_command_center",
+      "capability": "Founder Command Center",
+      "persona": "founder_admin_operations",
+      "route": "/admin/research/command-center",
+      "owningClientComponent": "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Canonical admin shell and guarded read adapters; summary cards perform no consequential mutation.",
+      "dataSource": "Bounded read projections from existing applications, Care, assisted-order, payment, fulfillment, product, referral, support, health, and release authorities.",
+      "sourceStatus": "unknown",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "currentSourceSha": "9cd28b72d04b6bab4d067fd53f6e002656d71c58",
+      "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "ownerAndLease": {
+        "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+        "owner": "codex-major-ordering-admin-sor-20260904",
+        "leaseState": "active"
+      },
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Implement a read-only aggregate that reports count or unavailable, oldest wait, attention reason, source state, and owning workflow for all required operating areas.",
+      "evidence": {
+        "source": [],
+        "tests": [],
+        "browser": [],
+        "production": []
+      }
+    }
+  ],
+  "sources": {
+    "registry": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+    "projectState": ".xenios/PROJECT_STATE.json",
+    "releaseState": ".xenios/RELEASE_STATE.json",
+    "activeTasks": ".xenios/ACTIVE_TASKS.json",
+    "codeOwnership": ".xenios/CODE_OWNERSHIP.json",
+    "clientRouteFiles": [
+      "client/src/App.tsx",
+      "client/src/research/adminx-section.tsx",
+      "client/src/research/section.tsx"
+    ]
+  },
+  "invariants": [
+    "Production status is explicit evidence tied to an exact production SHA; it is never inferred from source presence.",
+    "A mounted route is not proof of deployment, authentication, data readiness, payment, fulfillment, or clinical action.",
+    "One canonical identity, catalog, pricing, order, referral, Care, notification, and audit authority is extended rather than duplicated.",
+    "Requests are not paid orders; payment is not fulfillment; Care access requests are not appointments, treatment, prescriptions, or clinical decisions.",
+    "Generated records contain technical coordination facts only: no credentials, customer exports, patient data, clinical narratives, or raw payment evidence."
+  ]
+}
