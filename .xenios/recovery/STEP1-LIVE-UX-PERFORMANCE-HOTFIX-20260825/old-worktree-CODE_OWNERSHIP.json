@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "leases": [
+    {
+      "id": "84d610f3-9fc3-4472-bfe3-87bb038d2123",
+      "task": "F7-PACK02-RENAME",
+      "session": "claude-fable-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "released",
+      "claimedAt": "2026-08-15T16:29:32.801Z",
+      "heartbeatAt": "2026-08-15T20:28:38.588Z"
+    },
+    {
+      "id": "9f3a4d21-2bcc-478f-8db7-00183df53203",
+      "task": "F7-PACK02-RENAME",
+      "session": "claude-opus5-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-15T21:55:26.572Z",
+      "heartbeatAt": "2026-08-17T13:04:50.389Z"
+    },
+    {
+      "id": "f6efe5f6-d199-4dbf-b2aa-a4b6e5683ce4",
+      "task": "CONTINUITY-PROMPTS",
+      "session": "claude-fable-main",
+      "paths": [
+        ".xenios/prompts/**",
+        "scripts/agentic/Find-XeniosWebsiteRepo.ps1",
+        "scripts/agentic/Show-XeniosContinuationState.ps1",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-16T02:49:09.109Z",
+      "heartbeatAt": "2026-08-16T02:49:09.109Z"
+    },
+    {
+      "id": "5760f18a-7817-4552-83b7-b85ba5760c30",
+      "task": "ASSISTED-ORDER-MOUNT",
+      "session": "claude-fable-main",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/adminx-section.tsx",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-16T17:51:37.796Z",
+      "heartbeatAt": "2026-08-16T18:40:26.415Z"
+    },
+    {
+      "id": "ccbb6bd4-ea3e-438d-a5bc-880e4e5969b5",
+      "task": "M71-RELEASE-REGISTRATION",
+      "session": "claude-fable-main",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "supabase/verification/**",
+        "scripts/verify-assisted-order-bridge.sh"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-16T19:57:44.377Z",
+      "heartbeatAt": "2026-08-16T19:57:44.377Z"
+    },
+    {
+      "id": "8ecc5959-9402-41fb-86d2-b92fa756ceae",
+      "task": "AFFILIATE-PRODUCTION",
+      "session": "claude-fable-desktop",
+      "paths": [
+        "client/src/research/pages/partners/**",
+        "server/research/partners/**",
+        "shared/research/affiliate-system.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-19T15:43:29.453Z",
+      "heartbeatAt": "2026-08-20T17:22:56.823Z"
+    },
+    {
+      "id": "b225ee6d-397f-4566-ae85-2aa00db7da7c",
+      "task": "ASSISTED-ORDER-CUSTOMER-FLOW",
+      "session": "claude-fable-s3",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-19T16:37:33.076Z",
+      "heartbeatAt": "2026-08-19T16:41:37.833Z"
+    },
+    {
+      "id": "619c8d71-e790-4e1e-842e-202075f7b0f1",
+      "task": "FULFILLMENT-MOUNT",
+      "session": "claude-fable-s8-fulfillment",
+      "paths": [
+        "server/research/fulfillment/**",
+        "server/research/operations/suppliers.ts",
+        "shared/research/fulfillment/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-19T16:43:30.555Z",
+      "heartbeatAt": "2026-08-19T16:48:02.158Z"
+    },
+    {
+      "id": "fa696b29-98ef-4e62-ada4-9c902bcbccd8",
+      "task": "CANONICAL-ORDER-HISTORY",
+      "session": "claude-fable-s7",
+      "paths": [
+        "shared/research/orders/**",
+        "server/research/orders/**",
+        "client/src/research/orders/**",
+        "docs/research-launch/INTEGRATION-LANE-CANONICAL-ORDER.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-19T21:48:00.441Z",
+      "heartbeatAt": "2026-08-19T21:48:00.441Z"
+    },
+    {
+      "id": "8e9a2630-40c2-4431-b98d-700a1e67f0d6",
+      "task": "FULL-VISION-DEMO",
+      "session": "claude-fable-s9-conversion-qa",
+      "paths": [
+        "client/src/research/demo/**",
+        "server/research/demo/**",
+        "e2e/**",
+        "scripts/demo-seed.*"
+      ],
+      "state": "released",
+      "claimedAt": "2026-08-20T14:54:38.302Z",
+      "heartbeatAt": "2026-08-20T14:54:38.302Z"
+    },
+    {
+      "id": "77a0406e-4874-4719-9cc0-6dd3126e3679",
+      "task": "CATALOG-ACTION-UNIFICATION",
+      "session": "claude-fable-s7",
+      "paths": [
+        "shared/research/master-offerings/**",
+        "server/research/master-offerings/**",
+        "server/research/catalog/**",
+        "server/research/catalog-display/**",
+        "server/research/pricing/catalog-price-projection.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-20T17:51:40.949Z",
+      "heartbeatAt": "2026-08-21T16:11:42.803Z"
+    },
+    {
+      "id": "a83c0202-4bba-42c8-b1a5-5f5429788881",
+      "task": "ASSISTED-ORDER-CUSTOMER-FLOW",
+      "session": "claude-fable-s3",
+      "paths": [
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-20T17:51:58.217Z",
+      "heartbeatAt": "2026-08-20T17:51:58.217Z"
+    },
+    {
+      "id": "1d36937b-23f4-460b-93e9-c6fc394e809d",
+      "task": "SUPPLIER-WORKSPACE",
+      "session": "claude-fable-s11-supplier",
+      "paths": [
+        "client/src/research/supplier/**",
+        "server/research/supplier/**",
+        "shared/research/supplier/**"
+      ],
+      "state": "released",
+      "claimedAt": "2026-08-20T17:53:40.211Z",
+      "heartbeatAt": "2026-08-20T17:53:40.211Z"
+    },
+    {
+      "id": "49870b6d-0b26-44e7-ac62-580f5494d48f",
+      "task": "FULL-VISION-DEMO",
+      "session": "claude-fable-s9-conversion-qa",
+      "paths": [
+        "client/src/research/demo/**",
+        "server/research/demo/**",
+        "e2e/**",
+        "scripts/demo-seed.*"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-20T17:56:19.565Z",
+      "heartbeatAt": "2026-08-20T17:56:19.565Z"
+    },
+    {
+      "id": "43b21e28-cf23-4626-9f36-cc3116faa896",
+      "task": "CARE-DISCOVERY-BRIDGE",
+      "session": "codex-care-discovery-20260820",
+      "paths": [
+        "server/care/**",
+        "client/src/care/**",
+        "shared/care/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-20T18:07:19.885Z",
+      "heartbeatAt": "2026-08-20T18:22:05.361Z"
+    },
+    {
+      "id": "02cf8ffa-f786-421b-a4f3-905cadd4c4db",
+      "task": "PEPTIDE-LAUNCH-ACCEPTANCE",
+      "session": "claude-fable-s3",
+      "paths": [
+        "shared/research/launch/**",
+        "docs/research-launch/PEPTIDE_LAUNCH_ACCEPTANCE_2026-08-21.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T14:39:01.895Z",
+      "heartbeatAt": "2026-08-21T14:39:01.895Z"
+    },
+    {
+      "id": "286778ce-d57b-4bf4-88bc-f09dca71d459",
+      "task": "PEPTIDE-DIRECT-ORDER-HOLD",
+      "session": "claude-fable-s3",
+      "paths": [
+        "shared/research/early-access/customer-pathway.ts",
+        "shared/research/early-access/customer-pathway.test.ts",
+        "shared/research/launch/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T14:45:28.144Z",
+      "heartbeatAt": "2026-08-21T14:45:28.144Z"
+    },
+    {
+      "id": "56e6ec05-2824-4e4b-acaf-902025f5f224",
+      "task": "FULL-VISION-DEMO",
+      "session": "claude-fable-s9-conversion-qa",
+      "paths": [
+        "client/src/research/demo/**",
+        "server/research/demo/**",
+        "e2e/**",
+        "scripts/demo-seed.*"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-08-21T15:05:20.240Z",
+      "heartbeatAt": "2026-08-21T15:05:20.240Z"
+    },
+    {
+      "id": "32c03dd5-158b-4127-a1e7-0d4ea70503b8",
+      "task": "ADMIN-ORDER-EMAIL-COMPLETENESS",
+      "session": "claude-fable-s3",
+      "paths": [
+        "server/research/assisted-order/communications.ts",
+        "server/research/assisted-order/communications.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T15:35:03.376Z",
+      "heartbeatAt": "2026-08-21T16:05:26.697Z"
+    },
+    {
+      "id": "ede177bf-6ec2-4660-886b-4af0631e47fe",
+      "task": "REQUEST-CENTER",
+      "session": "claude-fable-lane4-affiliate",
+      "paths": [
+        "client/src/research/adapters/productRequests.ts",
+        "client/src/research/pages/adminx/ProductRequestAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductRequestsAdmin.tsx",
+        "client/src/research/pages/member/NewProductRequest.tsx",
+        "client/src/research/pages/member/ProductRequests.tsx",
+        "client/src/research/products-diagnostics/ProductRequestExperience.tsx",
+        "server/research/product-requests.ts",
+        "server/research/products-diagnostics/product-request-integration.ts",
+        "shared/research/product-request-sources.ts"
+      ],
+      "state": "released",
+      "claimedAt": "2026-08-21T15:46:37.884Z",
+      "heartbeatAt": "2026-08-21T15:47:25.050Z"
+    },
+    {
+      "id": "cea2fe7a-235b-445e-8162-ecc08043cfaf",
+      "task": "BROWSER-PERF-PROOF",
+      "session": "claude-fable-browser-perf",
+      "paths": [
+        "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
+        "e2e/browser-perf/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T16:38:03.056Z",
+      "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "b036f0d5-d0b4-43b4-a4a3-fa4b05e68526",
+      "task": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+      "session": "codex-step1-live-hotfix-20260825",
+      "paths": [
+        "client/src/research/early-access/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/http-e2e.test.ts",
+        "server/research/assisted-order/production-deps.ts",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/assisted-order/production-wiring.test.ts",
+        "server/research/early-access/catalog/**",
+        "scripts/research-launch/generate-launch-matrix.ts",
+        "docs/research-launch/XENIOS_STEP_1_LIVE_HOTFIX_RC_2026-08-25.md",
+        "artifacts/research-step1-hotfix/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-25T16:30:48.142Z",
+      "heartbeatAt": "2026-08-25T21:06:31.348Z"
+    }
+  ],
+  "rules": [
+    "one active owner per path prefix",
+    "leases expire without heartbeat",
+    "release owner does not silently edit a specialist lease"
+  ]
+}

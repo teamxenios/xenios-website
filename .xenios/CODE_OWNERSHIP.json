@@ -310,7 +310,7 @@
         "docs/research-launch/XENIOS_STEP_1_LIVE_HOTFIX_RC_2026-08-25.md",
         "artifacts/research-step1-hotfix/**"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-25T16:30:48.142Z",
       "heartbeatAt": "2026-08-25T16:50:17.633Z"
     },
@@ -1144,11 +1144,14 @@
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/CODE_OWNERSHIP.json",
         ".xenios/sessions/codex-major-ordering-admin-sor-20260904.json",
+        ".xenios/sessions/codex-step1-live-hotfix-20260825.json",
+        ".xenios/messages/*codex-step1-live-hotfix-20260825*",
+        ".xenios/recovery/STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825/**",
         ".xenios/handoffs/*XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904*"
       ],
       "state": "active",
       "claimedAt": "2026-09-04T20:11:49.854Z",
-      "heartbeatAt": "2026-09-04T20:11:49.854Z"
+      "heartbeatAt": "2026-09-04T20:51:16.796Z"
     }
   ],
   "rules": [

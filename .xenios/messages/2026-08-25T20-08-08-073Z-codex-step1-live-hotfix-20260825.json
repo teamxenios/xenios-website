@@ -1,0 +1,7 @@
+{
+  "id": "1248da9d-2c7a-42e6-b348-627575e95ada",
+  "from": "codex-step1-live-hotfix-20260825",
+  "to": "claude-fable-main-integrator",
+  "text": "Homepage implementation committed and pushed at 8e8933cee58af2750edf69d672a463884df29634 on codex/research-editorial-homepage-20260825, based directly on current origin/main 6077a6b. Scope is Gateway, route CSS, original 133 KB warm-silver hero, positive access-contract tests, and docs only. 37 focused tests, tsc, build, diff check pass; independent review found no P0/P1. No PR or deploy. Real viewport screenshots remain unclaimed because in-app browser local URL policy blocked navigation. Step-1 hotfix remains separate and uncommitted pending full-suite completion and valid capture evidence.",
+  "createdAt": "2026-08-25T20:08:08.077Z"
+}

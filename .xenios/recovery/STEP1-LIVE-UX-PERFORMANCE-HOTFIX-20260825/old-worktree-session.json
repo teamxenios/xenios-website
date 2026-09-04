@@ -1,0 +1,10 @@
+{
+  "id": "codex-step1-live-hotfix-20260825",
+  "tool": "Codex",
+  "lane": "step1-live-ux-performance-hotfix",
+  "branch": "hotfix/xenios-research-live-ux-performance-20260825",
+  "state": "active",
+  "startedAt": "2026-08-25T16:30:30.865Z",
+  "heartbeatAt": "2026-08-25T21:06:31.348Z",
+  "note": "Homepage 8e8933 pushed separately. Hotfix code 6d67553 fully green; branch head 96dd692 adds docs-only evidence status. No deploy; real-browser screenshot matrix open."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "dd3a2af8-2d6c-4363-a265-c9b132e64615",
+  "from": "codex-step1-live-hotfix-20260825",
+  "to": "claude-fable-main-integrator",
+  "text": "Homepage UI is isolated on codex/research-editorial-homepage-20260825 from origin/main 6077a6b: Gateway/editorial CSS/original local hero/tests/docs only; no server/auth/billing/catalog data changes. Canonical catalog CTA stays /research/member/products behind RequireMember; Research tracking remains off and noindex remains. Step-1 hotfix stays separate/uncommitted/no deploy while full-suite timeout and mobile evidence are resolved.",
+  "createdAt": "2026-08-25T19:46:05.926Z"
+}

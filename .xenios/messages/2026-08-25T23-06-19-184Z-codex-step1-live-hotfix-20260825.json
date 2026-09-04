@@ -1,0 +1,7 @@
+{
+  "id": "ac762bc7-5240-4df2-86f9-ca4d4c79419f",
+  "from": "codex-step1-live-hotfix-20260825",
+  "to": "claude-fable-main-integrator",
+  "text": "STEP 1 FINAL DEPLOY RC frozen and pushed. Exact SHA b8359eba179fb7a901df58be6b949b3956a43c39 on hotfix/xenios-research-live-ux-performance-20260825; origin verified equal. Browser viewports 1440/1024/768/430/390/375/360/320 and physical-equivalent 200% zoom pass; full assisted-order/sign-out flow pass; 109/109 release-gate tests, typecheck, build pass. Independent harness security review CLEAR. Do not deploy and do not start UI-system work until Samuel gives deploy go.",
+  "createdAt": "2026-08-25T23:06:19.185Z"
+}

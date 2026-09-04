@@ -659,7 +659,7 @@
       "id": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
       "title": "Founder-authorized Step 1 Early Access UX, security, and performance hotfix RC from live df16b363",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-step1-live-hotfix-20260825",
       "paths": [
         "client/src/research/early-access/**",
@@ -678,7 +678,16 @@
       ],
       "dependsOn": [],
       "pathsNote": "Founder approved df16b3639fbe49f39aee744d0823d01474580026 as the exact base. Preserve recruiting-mail functionality. No deployment, production mutation, catalog-data release, pricing, payment, affiliate economics, migration, Care buildout, or unrelated cleanup. Active master-offerings/catalog-display and e2e/browser-perf leases remain excluded.",
-      "claimedAt": "2026-08-25T16:30:48.141Z"
+      "claimedAt": "2026-08-25T16:30:48.141Z",
+      "handoff": {
+        "session": "codex-step1-live-hotfix-20260825",
+        "sha": "b8359eba179fb7a901df58be6b949b3956a43c39",
+        "file": ".xenios/handoffs/2026-09-04T20-48-50-776Z-STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825-codex-step1-live-hotfix-20260825.md",
+        "at": "2026-09-04T20:48:50.780Z"
+      },
+      "acceptedSha": "b8359eba179fb7a901df58be6b949b3956a43c39",
+      "acceptedBy": "codex-major-ordering-admin-sor-20260904",
+      "acceptedAt": "2026-09-04T20:48:55.160Z"
     },
     {
       "id": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
@@ -1138,6 +1147,9 @@
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/CODE_OWNERSHIP.json",
         ".xenios/sessions/codex-major-ordering-admin-sor-20260904.json",
+        ".xenios/sessions/codex-step1-live-hotfix-20260825.json",
+        ".xenios/messages/*codex-step1-live-hotfix-20260825*",
+        ".xenios/recovery/STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825/**",
         ".xenios/handoffs/*XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904*"
       ],
       "dependsOn": [],

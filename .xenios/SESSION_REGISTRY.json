@@ -176,7 +176,7 @@
       "tool": "Codex",
       "lane": "step1-live-ux-performance-hotfix",
       "branch": "hotfix/xenios-research-live-ux-performance-20260825",
-      "state": "active",
+      "state": "stale",
       "startedAt": "2026-08-25T16:30:30.865Z",
       "heartbeatAt": "2026-08-25T16:50:17.633Z",
       "note": "Focused server/UI hardening green: canonical reviewed hold wired, filter tampering rejected, truthful loading/error/empty states, obsolete requests aborted, canonical catalog moved ahead of heavier Featured projection. Browser QA and full suite pending."
@@ -359,8 +359,8 @@
       "branch": "codex/xenios-major-ordering-admin-sor-20260904",
       "state": "active",
       "startedAt": "2026-09-04T20:11:27.933Z",
-      "heartbeatAt": "2026-09-04T20:11:27.940Z",
-      "note": "Founder-directed local major sequence from accepted e3c9919b: living SOR, Order Entry Hub, read-only Founder Command Center; no production mutation."
+      "heartbeatAt": "2026-09-04T20:51:16.796Z",
+      "note": "Wave 1 Site SOR and Wave 2 order hub committed; Wave 3 command-center client complete and server integration in progress; stale Step-1 lease safely reconciled without production mutation."
     }
   ]
 }
