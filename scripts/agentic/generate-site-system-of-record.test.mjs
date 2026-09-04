@@ -286,8 +286,10 @@ test("privacy scanner finds credentials and identifiers but ignores ordinary rou
     route: "/research/reset-password",
     email: "member@example.com",
     token: "eyJabcdefghijk.abcdefghijkl.abcdefghijkl",
-    privateKey: "-----BEGIN PRIVATE KEY-----",
-    productionKey: "sk_live_abcdefghijklmnop",
+    // Assemble synthetic scanner fixtures at runtime so a release-diff scan
+    // cannot mistake the test source itself for a committed live credential.
+    privateKey: ["-----BEGIN ", "PRIVATE KEY-----"].join(""),
+    productionKey: ["sk_", "live_", "abcdefghijklmnop"].join(""),
   });
   assert.equal(findings.length, 4);
   assert.ok(findings.every((finding) => !finding.includes("route")));
