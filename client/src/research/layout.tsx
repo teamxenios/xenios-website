@@ -12,6 +12,7 @@ import {
 import { useResearch } from "./core";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
 import { isPublicLotRoutePath } from "./quality/routes";
+import { safeReferralDestination } from "@shared/research/referral-v1";
 import {
   PublicEditorialFooter,
   PublicEditorialNav,
@@ -374,6 +375,14 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // pattern as the gateway, so the portal does not render doubled headers.
   if (isAccountPortalPath(location)) {
     return <>{children}</>;
+  }
+  // Link management owns a canonical member/partner API guard. The review
+  // password is not partner authority; the page itself handles sign-in/denial.
+  if (normalizedLocation === "/research/partners/links") return <>{children}</>;
+  // These exact shared destinations already mount RequireMember in section.tsx.
+  // Let that guard preserve sign-in/returnTo instead of showing the review gate.
+  if (normalizedLocation.startsWith("/research/member/") && safeReferralDestination(normalizedLocation)) {
+    return <MemberChrome>{children}</MemberChrome>;
   }
   // The public Research journey must not depend on the legacy shared review
   // password. The gateway exposes only Apply and Member Login; application,

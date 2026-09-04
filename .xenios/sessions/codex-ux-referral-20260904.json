@@ -1,0 +1,10 @@
+{
+  "id": "codex-ux-referral-20260904",
+  "tool": "Codex",
+  "lane": "local-ux-integration",
+  "branch": "codex/ux-continuation-20260904",
+  "state": "active",
+  "startedAt": "2026-09-04T16:52:48.737Z",
+  "heartbeatAt": "2026-09-04T17:15:46.780Z",
+  "note": "Gen2 referral implementation and 15 real PostgreSQL checks passed. Actual browser preview with synthetic Auth is in progress; production remains untouched."
+}

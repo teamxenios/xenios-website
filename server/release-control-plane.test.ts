@@ -2040,8 +2040,11 @@ describe("route uniqueness validator", () => {
     // always operationally discoverable (incident CARE-2A99C6F7: saved and
     // emailed but invisible to the admin surface). 411 + 3 = 414 registrations
     // across 405 call sites.
-    expect(result.callSites).toBe(405);
-    expect(result.routes).toHaveLength(414);
+    // Gen2 referral V1 moves the existing GET links door (no duplicate) and
+    // adds seven canonical doors: issue/revoke/resolve/bootstrap/capture/bind
+    // and the guarded admin projection. Exact census remains a regression gate.
+    expect(result.callSites).toBe(412);
+    expect(result.routes).toHaveLength(421);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

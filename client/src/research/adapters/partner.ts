@@ -11,7 +11,8 @@
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import { denialPresentation } from "../lib/denials";
-import type { PartnerDashboardDto, PartnerLinkDto } from "@shared/research/commerce-api";
+import type { PartnerDashboardDto } from "@shared/research/commerce-api";
+import type { RecommendationLinks } from "@shared/research/referral-v1";
 
 export type PartnerToken = string | null;
 
@@ -46,14 +47,14 @@ export const PARTNER_API = {
 // the endpoint. Every function is a stable module reference, safe to hand to
 // usePartnerResource directly.
 
-// Frozen surface (docs/research-commerce/API_CONTRACTS_COMMERCE.md): the
-// dashboard and links payloads are typed by the authoritative contract.
+// The dashboard retains the commerce contract; links now use canonical Gen2
+// recommendation V1. Mutation/share UX lives in recommendation/api.ts.
 // Aggregates only; the server never puts member identity in these shapes.
 export function getPartnerDashboard(token: PartnerToken): Promise<ApiResult<{ partner: PartnerDashboardDto }>> {
   return apiGet(PARTNER_API.dashboard, token);
 }
 
-export function getPartnerLinks(token: PartnerToken): Promise<ApiResult<{ links: PartnerLinkDto[] }>> {
+export function getPartnerLinks(token: PartnerToken): Promise<ApiResult<RecommendationLinks>> {
   return apiGet(PARTNER_API.links, token);
 }
 

@@ -6,6 +6,7 @@ import {
 } from "@shared/marketing-attribution";
 import { isRecoveryHash } from "@shared/research/recovery";
 import { isResearchAdminPath, isResearchPath } from "@shared/research/paths";
+import { isRecommendationPath } from "@shared/research/referral-v1";
 
 // Captures deliberately narrow marketing attribution for waitlist and
 // early-interest submissions. Sensitive surfaces are an isolation boundary:
@@ -39,6 +40,7 @@ function isSensitiveAttributionLocation(pathname: string, hash: string): boolean
   }
   return (
     isResearchPath(pathname) ||
+    isRecommendationPath(pathname) ||
     isResearchAdminPath(pathname) ||
     normalized === "/admin" ||
     normalized.startsWith("/admin/") ||

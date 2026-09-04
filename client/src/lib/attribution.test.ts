@@ -21,6 +21,9 @@ beforeEach(() => {
 
 describe("marketing attribution privacy boundary", () => {
   it.each([
+    "/r/r1_synthetic?utm_source=private",
+    "/R/r1_synthetic?ref=private",
+    "/%72/r1_synthetic",
     "/research/member?email=private%40example.test",
     "/Research/apply?interest=private",
     "/%72esearch/reset-password#access_token=secret&type=recovery",

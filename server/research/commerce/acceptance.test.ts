@@ -1566,8 +1566,10 @@ describe("the partner surface over HTTP", () => {
     const applied = await asMember(ctx, MEMBER_A).post("/api/research/partner/apply").send(APPLY);
     const aPartnerId = applied.body.partner.partnerId as string;
 
-    // B has no partner: every partner read answers partner_not_found.
-    for (const path of ["/api/research/partner/me", "/api/research/partner/dashboard", "/api/research/partner/links"]) {
+    // B has no partner: the commerce-owned self/dashboard reads refuse access.
+    // Links moved to the independently gated Gen2 V1 controller; its canonical
+    // Auth/partner isolation is exercised in partners/referral-v1-* tests.
+    for (const path of ["/api/research/partner/me", "/api/research/partner/dashboard"]) {
       const res = await asMember(ctx, MEMBER_B).get(path);
       expect(res.status).toBe(404);
       expect(res.body.code).toBe("partner_not_found");
@@ -1584,7 +1586,7 @@ describe("the partner surface over HTTP", () => {
     expect(aLink?.partnerId).toBe(aPartnerId);
   });
 
-  it("lists the partner's own referral links from the wiring link store", async () => {
+  it("does not expose legacy wiring-store links after ownership moves to the Gen2 V1 controller", async () => {
     const ctx = await buildAcceptanceContext();
     const applied = await asMember(ctx, MEMBER_A).post("/api/research/partner/apply").send(APPLY);
     const partnerId = applied.body.partner.partnerId as string;
@@ -1600,21 +1602,15 @@ describe("the partner surface over HTTP", () => {
     await ctx.partnerLinkStore.saveLink(link);
 
     const links = await asMember(ctx, MEMBER_A).get("/api/research/partner/links");
-    expect(links.status).toBe(200);
-    expect(links.body.links).toEqual([
-      {
-        code: "acc-code-1",
-        url: "https://xeniostechnology.com/r/acc-code-1",
-        channel: "signed_link",
-        campaign: null,
-        qrSvgPath: null,
-      },
-    ]);
+    expect(links.status).toBe(404);
+    expect(links.body.links).toBeUndefined();
+    expect(JSON.stringify(links.body)).not.toContain("acc-code-1");
 
-    // B's partner sees no links: reads are scoped by the RESOLVED partner.
+    // Neither principal receives an unregistered or non-revocation-aware URL
+    // from the legacy registrar. V1 owns the single GET registration.
     const bLinks = await asMember(ctx, MEMBER_B).get("/api/research/partner/links");
-    expect(bLinks.status).toBe(200);
-    expect(bLinks.body.links).toEqual([]);
+    expect(bLinks.status).toBe(404);
+    expect(bLinks.body.links).toBeUndefined();
   });
 
   it("attributes a referral, accrues commission, and shows the payout hold in the HTTP balance", async () => {

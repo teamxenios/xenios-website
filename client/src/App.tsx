@@ -45,6 +45,7 @@ const ResearchSection = lazy(() => import("@/research/section"));
 // /health has its own indexable document identity while /research keeps its
 // existing section-level indexing and access policy.
 const HealthGateway = lazy(() => import("@/research/pages/Gateway"));
+const RecommendationRecipient = lazy(() => import("@/research/recommendation/Recipient"));
 // Admin dashboard: a large, rarely visited surface (waitlist/LOI/bookings/
 // analytics/research tables). Its own lazy chunk keeps it out of the main
 // public bundle.
@@ -183,6 +184,7 @@ function Router() {
       <Route path="/admin/research/*" component={AdminResearchRoutes} />
       {/* Canonical public entrypoint for the separate Care and Research paths. */}
       <Route path="/health" component={HealthRoutes} />
+      <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
       {/* xenios research (password-gated section, own chunk). The bare path and
           the multi-segment wildcard both mount the section's own router. */}
       <Route path="/research" component={ResearchRoutes} />

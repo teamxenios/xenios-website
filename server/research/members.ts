@@ -8,6 +8,7 @@ import { createReferralIdentity, getLedgerBalance, referralsEnabled } from "./re
 import { rateLimitHit, requestIp } from "./rate-limit";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
+import { bindConfiguredMemberReferral } from "./partners/referral-v1-production";
 
 // ---------------------------------------------------------------------------
 // xenios research member accounts (V3 sections 13, 83 Then item 3), plus the
@@ -300,6 +301,9 @@ export function registerMemberApi(app: Express) {
     if (cartScope === null) {
       return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
     }
+    // Canonical authentication has already succeeded. Referral provenance is
+    // optional, durable and first-valid; it never changes member entitlement.
+    if (member.status !== "closed") await bindConfiguredMemberReferral(req);
     const { data: application } = await getSupabaseAdmin()
       .from(APPLICATIONS)
       .select("status")

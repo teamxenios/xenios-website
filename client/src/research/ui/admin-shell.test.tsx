@@ -37,7 +37,13 @@ describe("ResearchAdminShell grouped navigation", () => {
     expect(nav?.classList.contains("ra-subnav")).toBe(false);
     // 2026-09-03: +1 "Care" group carrying the Care requests queue (incident CARE-2A99C6F7).
     expect(nav?.querySelectorAll("details")).toHaveLength(6);
-    expect(nav?.querySelectorAll("a")).toHaveLength(27);
+    // Referral V1 adds one mounted destination in Content & partners.
+    expect(nav?.querySelectorAll("a")).toHaveLength(28);
+    expect(
+      Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
+        link.getAttribute("href") === "/admin/research/referral-lifecycle",
+      ).map((link) => link.textContent?.trim()),
+    ).toEqual(["Referral lifecycle"]);
     expect(
       Array.from(nav?.querySelectorAll("summary") ?? []).map((summary) =>
         summary.textContent?.trim(),

@@ -15,6 +15,7 @@ import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
 import { EARLY_ACCESS_ORDER_NUMBER } from "./early-access/routes/order-number";
+import { isRecommendationPath } from "@shared/research/referral-v1";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -182,7 +183,7 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // /%72esearch/... too, so a raw case-sensitive comparison here would drop
   // noindex + the recovery-page security headers on those variants. The root
   // homepage stays unaffected (it never normalizes to /research).
-  if (isResearchAdminPath(req.path)) {
+  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path)) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Referrer-Policy", "no-referrer");
@@ -276,6 +277,11 @@ export function registerResearchApi(app: Express) {
     "/policies",
   ]);
   const OPEN_PUBLIC_WRITE_PATHS = new Set([
+    // Anonymous recommendation context/capture have their own strict-origin,
+    // signed-visitor, registered-link, capability and durable abuse controls.
+    "/referral/resolve",
+    "/referral/bootstrap",
+    "/referral/capture",
     // Existing applicants may request a replacement signed status link.
     // The endpoint remains enumeration-resistant and creates no application.
     "/applications/resend-link",
@@ -513,6 +519,7 @@ export function registerResearchApi(app: Express) {
   // content/research-guides/{individual,blends}, which are lowercase
   // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
+    "/partner/links", // Independent Gen2 controller owns canonical member/partner guard.
     // agreements.ts:337, requireResearchSubject. That guard is
     // resolveResearchMember(..., allowClosed: true): it demands the same
     // non-recovery Supabase JWT and the same member row as requireMember and
@@ -547,6 +554,8 @@ export function registerResearchApi(app: Express) {
     "/tracker", // tracker.ts: requireActiveMember
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
+    "/partner/links",
+    "/referral/bind",
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     "/customer-account/support", // customer-account/routes.ts: injected requireMember
     // agreements.ts:349, requireResearchSubject. A fully literal path: the
@@ -713,7 +722,7 @@ export function registerResearchApi(app: Express) {
       return next();
     }
     const bearer = (req.headers.authorization ?? "").startsWith("Bearer ");
-    if (bearer && memberSessionRoute(req.method, req.path)) {
+    if (bearer && (memberSessionRoute(req.method, req.path) || req.method === "POST" && /^\/partner\/links\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/revoke$/.test(req.path))) {
       return next();
     }
     if (bearer && MEMBER_AUTHED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p + "/"))) {

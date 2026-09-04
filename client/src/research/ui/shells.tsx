@@ -73,6 +73,7 @@ const MEMBER_SUBNAV = [
   { href: MEMBER_ROUTES.subscriptions, label: "Subscriptions" },
   { href: MEMBER_ROUTES.questions, label: "Questions" },
   { href: MEMBER_ROUTES.referrals, label: "Referrals" },
+  { href: "/research/partners/links", label: "Recommend Xenios" },
   { href: MEMBER_ROUTES.membership, label: "Membership" },
   { href: MEMBER_ROUTES.profile, label: "Profile" },
   { href: MEMBER_ROUTES.security, label: "Security" },
@@ -200,6 +201,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { href: ADMIN_ROUTES.guides, label: "Guides" },
       { href: ADMIN_ROUTES.partners, label: "Partners" },
+      { href: ADMIN_ROUTES.referralLifecycle, label: "Referral lifecycle" },
     ],
   },
   {

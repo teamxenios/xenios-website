@@ -613,18 +613,8 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
     }),
   );
 
-  app.get(
-    "/api/research/partner/links",
-    member,
-    withSubject(async (memberId, _req, res) => {
-      const partner = await deps.partners.findByMemberId(memberId);
-      if (!partner) {
-        deny(res, 404, "partner_not_found");
-        return;
-      }
-      ok(res, { links: await deps.partners.listLinks(partner.partnerId) });
-    }),
-  );
+  // Own links are registered once by the independent Gen2 Referral V1
+  // controller. General-commerce activation is not referral authority.
 
   // ---- G7 shipping quote ----------------------------------------------------
   app.post(

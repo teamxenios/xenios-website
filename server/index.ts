@@ -99,6 +99,8 @@ import {
 import { EARLY_ACCESS_PROOF_CONTENT_TYPES } from "./research/early-access/commerce/payment-proof";
 import { TRANSIENT_PROOF_MAX_BYTES } from "./research/early-access/proof/transient-proof";
 import { requireActiveMember, requireMember, type MemberRow } from "./research/member-auth";
+import { registerReferralV1Api } from "./research/partners/referral-v1-routes";
+import { buildReferralV1Dependencies } from "./research/partners/referral-v1-production";
 import {
   KRIS_CATALOG_ERROR_BASE_PATH,
   buildKrisCatalogProductionDependencies,
@@ -528,13 +530,17 @@ registerCommerceApi(app, commerceDependencies, {
   requireAdmin: adaptGuard(requireSupabaseAdmin),
 });
 
-// The affiliate attribution capture doors (Lane B integration, 2026-08-19).
-// Retained only for validating already-issued attribution cookies inside
-// separately guarded commerce flows. Public referral capture is intentionally
-// unmounted: its inherited signature-or-row authorization, revocation,
-// canonical-path, replay, and durable throttle contracts have not passed
-// release review.
+// Legacy attribution remains validation-only inside separately guarded
+// commerce flows. The inherited GET capture door remains unmounted; the new
+// gated Gen2 POST flow below requires durable registered links and an atomic
+// first-valid touch. Its V1 cookies do not authorize legacy money-bearing flows.
 const partnerLinkSecret = process.env.RESEARCH_PARTNER_LINK_SECRET ?? null;
+// Explicitly unavailable until candidate schema, durable limiter, canonical
+// partner/codes capabilities and the new V1 capability are all ready.
+registerReferralV1Api(app, buildReferralV1Dependencies(), {
+  requireMember,
+  requireAdmin: requireSupabaseAdmin,
+});
 
 // The Gen 2 partner portal read surface: 16 authenticated, member-guarded
 // read paths. Mount-gated twice (system AND portal flags); the guard is the

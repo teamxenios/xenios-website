@@ -28,6 +28,7 @@
       "Every client route registered in client/src/App.tsx that is NOT /health or under /research",
       "or /care. /admin/research and /admin/research/* are deliberately EXCLUDED: they mount",
       "client/src/research/adminx-section.tsx and belong to the Research surface.",
+      "The founder-requested /r/:code recipient entry is explicitly inventoried here because it is a root-level route, with only the leased Gen2 recommendation implementation and privacy behavior authorized.",
       "'kind' distinguishes a rendered page from a pure redirect, because a redirect's",
       "protected behavior is its target, not its markup."
     ],
@@ -35,6 +36,11 @@
       {
         "path": "/",
         "component": "pages/Home",
+        "kind": "page"
+      },
+      {
+        "path": "/r/:code",
+        "component": "research/recommendation/Recipient",
         "kind": "page"
       },
       {
@@ -474,7 +480,7 @@
       {
         "path": "client/src/App.tsx",
         "seam": "route registration only",
-        "allowed": "add or remove a <Route> for a /health, /research or /care path, and its lazy import plus Suspense wrapper, following the existing HealthRoutes/ResearchRoutes/CareRoutes pattern",
+        "allowed": "add or remove a <Route> for a /health, /research or /care path, and its lazy import plus Suspense wrapper; the 2026-09-04 founder-requested /r/:code recommendation entry is additionally allowed with its isolated lazy recipient only",
         "forbidden": "changing any protected route, its component, its order relative to protected routes, the ScrollToTop behavior, or the provider tree in App()"
       },
       {
@@ -498,13 +504,13 @@
       {
         "path": "client/src/lib/tracking.ts",
         "seam": "hash-locked Health privacy boundary",
-        "allowed": "extend the existing fail-closed Research/Care tracking block and full-document privacy zoning to the exact normalized /health gateway, recorded in fileHashes",
+        "allowed": "extend the existing fail-closed Research/Care tracking block and full-document privacy zoning to the exact normalized /health gateway and the founder-requested /r recommendation namespace, recorded in fileHashes",
         "forbidden": "loading a tracker on Health, weakening Research/Care/recovery blocking, changing tracker configuration or payloads, or changing cross-origin navigation behavior"
       },
       {
         "path": "client/src/lib/attribution.ts",
         "seam": "hash-locked Health attribution boundary",
-        "allowed": "extend the existing sensitive-attribution location predicate to the exact normalized /health gateway, recorded in fileHashes",
+        "allowed": "extend the existing sensitive-attribution location predicate to the exact normalized /health gateway and the founder-requested /r recommendation namespace, recorded in fileHashes",
         "forbidden": "persisting Health URLs or query data, weakening Research/Care/admin/recovery clearing, or widening the approved attribution vocabulary"
       },
       {
@@ -565,6 +571,7 @@
   },
   "fileHashes": {
     "$comment": [
+      "2026-09-04 local Referral V1 continuation: only trackingBlockedHere/documentPrivacyZone and sensitive marketing-attribution predicates add the canonical /r recommendation namespace. No tracking configuration, payload, unrelated route or global CSS changed. Exact hashes updated with client privacy regressions. Not deployed.",
       "HARD TRIPWIRE. Curated highest-risk protected files: the global shell, global CSS,",
       "shared layout and navigation, the two slug sources the sitemap is pinned to, the",
       "public SEO files, the main server route table, and the build config. A mismatch is",
@@ -654,8 +661,8 @@
       "client/src/pages/Home.tsx": "sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9",
       "client/src/pages/not-found.tsx": "sha256:701071f957e11ada559fbe641024f992614e59bb1746ca101a852173c8952758",
       "client/src/lib/nav.ts": "sha256:496dd7567ed1580f39c694775f73fc8e3dcac4a67fe762efa64f098cdfb27f73",
-      "client/src/lib/tracking.ts": "sha256:3faaf74047b57328dc25ddb12fcc853901ee3acf6f0cba1e27b946e740a79288",
-      "client/src/lib/attribution.ts": "sha256:09f052ab8255202e20e985c03f216424a6062a596634ef819a9c95fd319e439d",
+      "client/src/lib/tracking.ts": "sha256:258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "client/src/lib/attribution.ts": "sha256:2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
       "client/src/lib/content.ts": "sha256:077f0e154aa05ee91f4a9088f763c391d3ca61f78cf9bd89f9ce7031bf8cc13a",
       "client/src/lib/careers.ts": "sha256:b3da84886eb24be6f8d77e551fc460e9279d8813063fae9f860128e9fda75ebc",
       "client/public/sitemap.xml": "sha256:4e86dd4dbe020a3bc621cf48249dff4d3dea3883ff6b710499f4dbca96f3f84f",
@@ -674,6 +681,7 @@
       "Baselines for the permitted seam files. A mismatch here is NOT a hard fail, because",
       "a leased seam edit is legitimate. The gate REPORTS it so review always sees which",
       "seam moved and can demand the lease, the minimum diff, and the focused test.",
+      "2026-09-04, founder-requested Gen2 referral V1 local candidate: App.tsx adds the lazy /r/:code recipient entry without moving providers or marketing routes. server/index.ts mounts the gated V1 controller with existing member/admin guards; the old commerce GET links registration moves into that controller. server/research/index.ts adds no-store/no-referrer/noindex referral documents and exact public/member API wall exceptions whose downstream authorities remain mandatory. New capability defaults off; no production activation. Tracking and marketing attribution separately isolate /r. Route uniqueness: 421 registrations across 412 call sites.",
       "",
       "2026-08-04, reviewed head 61c2f0a: server/index.ts and server/research/index.ts",
       "moved for the Private Early Access mount. Both diffs are PURELY ADDITIVE, verified",
@@ -1194,9 +1202,9 @@
       "2026-09-04, Care <-> generic LOI domain-integrity seam (task CARE-ADMIN-DOMAIN-INTEGRITY-20260904): server/care/index.ts additionally mounts registerCareLoiBoundary from the same Care registrar, behind the same canonical requireSupabaseAdmin guard (options.manualAccessAdminGuard ?? requireSupabaseAdmin) and with injectable dependencies (options.loiBoundaryDependencies ?? buildCareLoiBoundaryProductionDependencies()). The boundary is prefix middleware (app.use on /api/admin/loi, /api/admin/export, /api/admin/analytics), never a second route registration, and it runs before registerRoutes because server/index.ts mounts the Care registrar first: the generic LOI list, CSV export and analytics answer without Care access rows, and the generic status writer is refused (404, before any write) for a Care row. The protected server/routes.ts and server/supabase-store.ts are untouched; the single Care classifier now lives in server/care/manual-access-classifier.ts and is consumed by the projection, the public writer and the boundary. Minimal diff: one import block, one option, one registration call. Covered by server/care/loi-boundary.test.ts, loi-boundary-wiring.test.ts and loi-boundary-parity.test.ts. old sha256:7f48fd740639d818d45a4408d9760bb549a86936222ea446b7847aa367002a00, new sha256:6aaa65860018dfd3828bfa659c8982de161f7c866b56edc050a44ba8fc452e9a."
     ],
     "files": {
-      "client/src/App.tsx": "sha256:f6e1e0eb065a9295dde9044ce76eee74faa9d91f6745206fad09cb14da95eb32",
-      "server/index.ts": "sha256:bf6b8b035c3b10d8e22e257d16ff012fd249ee8f8440545d78938cf3640f4e45",
-      "server/research/index.ts": "sha256:9ad57c66aa414c883eeca362a6951b4eb75e796100743d1c721e914550579d32",
+      "client/src/App.tsx": "sha256:0a9e1c970b721f0aacbc3f375988d67ea5c4cc8a81186e97b70d56283bc9b912",
+      "server/index.ts": "sha256:c46dcae94f42295ba7b76dc2e103a191e126411060fe05bd1e6da6382c325c89",
+      "server/research/index.ts": "sha256:5c2ee6e221606e2655aaab083fb9d6f34684a2a62e244ee797f0a7bd61a4879e",
       "server/care/index.ts": "sha256:6aaa65860018dfd3828bfa659c8982de161f7c866b56edc050a44ba8fc452e9a",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
     }

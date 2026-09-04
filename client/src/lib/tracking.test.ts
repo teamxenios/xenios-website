@@ -35,6 +35,17 @@ beforeEach(() => {
 });
 
 describe("initTracking is a no-op on the private Research surface", () => {
+  it("isolates opaque recommendation documents before third-party scripts can observe them", async () => {
+    for (const path of ["/r/r1_synthetic", "/R/r1_synthetic", "/%72/r1_synthetic", "/r/bad%zz"]) {
+      setLocation(path);
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+      expect(t.requiresFullDocumentNavigation("https://xenios.invalid/about", `https://xenios.invalid${path}`)).toBe(true);
+      expect(t.requiresFullDocumentNavigation(`https://xenios.invalid${path}`, "https://xenios.invalid/care")).toBe(true);
+    }
+  });
   it(
     "no-op on /research/reset-password: no Meta script node, no fbq, no PageView",
     async () => {

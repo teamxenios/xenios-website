@@ -2,6 +2,7 @@ import { getConfig } from "./config";
 import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
 import { isRecoveryHash } from "@shared/research/recovery";
 import { isResearchPath } from "@shared/research/paths";
+import { isRecommendationPath } from "@shared/research/referral-v1";
 
 declare global {
   interface Window {
@@ -36,15 +37,17 @@ export function trackingBlockedHere(pathname: string, hash: string): boolean {
   // percent-encoding, separators, and malformed input; the recovery-hash arm
   // blocks a recovery landing on any path.
   return isResearchPath(pathname)
+    || isRecommendationPath(pathname)
     || isCarePath(pathname)
     || isHealthGatewayPath(pathname)
     || isRecoveryHash(hash);
 }
 
-type DocumentPrivacyZone = "public" | "health" | "research" | "care" | "recovery";
+type DocumentPrivacyZone = "public" | "health" | "research" | "care" | "recovery" | "recommendation";
 
 function documentPrivacyZone(pathname: string, hash: string): DocumentPrivacyZone {
   if (isRecoveryHash(hash)) return "recovery";
+  if (isRecommendationPath(pathname)) return "recommendation";
   if (isResearchPath(pathname)) return "research";
   if (isCarePath(pathname)) return "care";
   if (isHealthGatewayPath(pathname)) return "health";

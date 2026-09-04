@@ -341,6 +341,16 @@
       "startedAt": "2026-09-04T15:42:01.816Z",
       "heartbeatAt": "2026-09-04T16:17:39Z",
       "note": "Handoff-ready local auth/account checkpoint c93c487: 293 focused tests and 98 independent recheck tests pass; tsc, build, route census, secret scan and nine-width browser pass. Full suite 12335 pass, 17 inherited supplier/catalogue failures, 43 skip. Full UX/referral remains incomplete. No production mutation. Resume from the exact-source handoff, not the paused original worktree."
+    },
+    {
+      "id": "codex-ux-referral-20260904",
+      "tool": "Codex",
+      "lane": "local-ux-integration",
+      "branch": "codex/ux-continuation-20260904",
+      "state": "active",
+      "startedAt": "2026-09-04T16:52:48.737Z",
+      "heartbeatAt": "2026-09-04T17:15:46.780Z",
+      "note": "Gen2 referral implementation and 15 real PostgreSQL checks passed. Actual browser preview with synthetic Auth is in progress; production remains untouched."
     }
   ]
 }
