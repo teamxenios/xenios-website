@@ -281,6 +281,8 @@ test("rendering is deterministic and quotes CSV values safely", () => {
   assert.deepEqual(first, second);
   assert.equal(JSON.parse(first[OUTPUT_PATHS.json]).source.sha, SHA_A);
   assert.match(first[OUTPUT_PATHS.markdown], /# Xenios Site System of Record/);
+  assert.ok(first[OUTPUT_PATHS.markdown].endsWith("\n"));
+  assert.ok(!first[OUTPUT_PATHS.markdown].endsWith("\n\n"));
   assert.match(first[OUTPUT_PATHS.csv], /"client\/src\/App\.tsx:10 \| client\/src\/File,One\.tsx:8"/);
 });
 

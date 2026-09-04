@@ -653,7 +653,7 @@ export function toCsv(snapshot) {
 export function renderArtifacts(snapshot) {
   return {
     [OUTPUT_PATHS.json]: `${JSON.stringify(snapshot, null, 2)}\n`,
-    [OUTPUT_PATHS.markdown]: `${toMarkdown(snapshot)}\n`,
+    [OUTPUT_PATHS.markdown]: `${toMarkdown(snapshot).trimEnd()}\n`,
     [OUTPUT_PATHS.csv]: toCsv(snapshot),
   };
 }
