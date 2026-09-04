@@ -59,7 +59,7 @@
       "id": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
       "title": "Local canonical Gen2 referral vertical slice: authorized share, contextual recipient, durable first-valid attribution, auth binding, safe lifecycle projections",
       "priority": "P0",
-      "state": "qa",
+      "state": "done",
       "owner": "codex-ux-referral-20260904",
       "paths": [
         "server/research/partners/**",
@@ -106,10 +106,13 @@
       "claimedAt": "2026-09-04T16:52:48.809Z",
       "handoff": {
         "session": "codex-ux-referral-20260904",
-        "sha": "c5ac43907ffe024ffcba847fb761836211ae4118",
-        "file": ".xenios/handoffs/2026-09-04T17-53-28-296Z-UX-REFERRAL-RECOMMENDATION-V1-20260904-codex-ux-referral-20260904.md",
-        "at": "2026-09-04T17:53:28.334Z"
-      }
+        "sha": "3ea6b80d2a7eb483d8aea92ba44bd8d1b62a7379",
+        "file": ".xenios/handoffs/2026-09-04T18-50-25-659Z-UX-REFERRAL-RECOMMENDATION-V1-20260904-codex-ux-referral-20260904.md",
+        "at": "2026-09-04T18:50:25.661Z"
+      },
+      "acceptedSha": "3ea6b80d2a7eb483d8aea92ba44bd8d1b62a7379",
+      "acceptedBy": "codex-ux-referral-20260904",
+      "acceptedAt": "2026-09-04T18:50:25.727Z"
     },
     {
       "id": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
