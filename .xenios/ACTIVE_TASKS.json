@@ -1197,6 +1197,8 @@
         "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.test.tsx",
         "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
         "client/src/research/early-access/cart/EarlyAccessCartCatalogue.quantity-routing.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartPanel.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartPanel.quantity.test.tsx",
         "client/src/research/early-access/cart/journey-responsive-a11y.test.tsx",
         "client/src/research/early-access/cart/journey-agreements-submit.test.tsx",
         "server/research/early-access/catalog/early-access-catalog.ts",
