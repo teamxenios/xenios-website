@@ -94,6 +94,8 @@ Seth must not be asked to resubmit.
   status vocabulary (`Reviewing`, `Followed up`, `Signed`); a status set there
   renders in the Care queue as a custom option until changed. Row sets are
   disjoint; no data loss. Follow-up: hide Care rows from the generic LOI list.
+  (Implemented 2026-09-04 on branch `claude/care-admin-domain-integrity-20260904`
+  as a Care-domain boundary, task CARE-ADMIN-DOMAIN-INTEGRITY-20260904; not deployed.)
 - `server/care/index.ts` now imports `requireSupabaseAdmin` from
   `server/routes.ts` as the production default; the import graph is acyclic
   (`routes.ts` imports nothing under `server/care`).

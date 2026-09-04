@@ -21,6 +21,11 @@ import {
   registerCareManualAccessAdminApi,
   type CareManualAccessAdminDependencies,
 } from "./manual-access-admin";
+import {
+  buildCareLoiBoundaryProductionDependencies,
+  registerCareLoiBoundary,
+  type CareLoiBoundaryDependencies,
+} from "./loi-boundary";
 import { resolveTebraPublicConfiguration } from "./tebra-scheduling";
 import type {
   TebraPublicActivationContext,
@@ -42,6 +47,7 @@ export interface RegisterCareApiOptions {
   manualAccessDependencies?: CareManualAccessDependencies;
   manualAccessAdminDependencies?: CareManualAccessAdminDependencies;
   manualAccessAdminGuard?: RequestHandler;
+  loiBoundaryDependencies?: CareLoiBoundaryDependencies;
   /** Independently resolved deployment identity; never supplied by the authority reader. */
   currentReleaseSha?: string;
   clock?: () => Date;
@@ -71,6 +77,11 @@ export function registerCareApi(
     app,
     options.manualAccessAdminGuard ?? requireSupabaseAdmin,
     manualAccessAdmin,
+  );
+  registerCareLoiBoundary(
+    app,
+    options.manualAccessAdminGuard ?? requireSupabaseAdmin,
+    options.loiBoundaryDependencies ?? buildCareLoiBoundaryProductionDependencies(),
   );
 
   app.get(CARE_ROUTE_CONTRACTS.status, async (_req, res) => {

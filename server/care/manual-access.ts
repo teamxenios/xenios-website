@@ -1,5 +1,10 @@
 import type { Express, Request, Response } from "express";
 import {
+  CARE_ACCESS_BUSINESS_NAME,
+  CARE_ACCESS_ROLE_PREFIX,
+  CARE_ACCESS_SCHEMA,
+} from "./manual-access-classifier";
+import {
   CARE_CONTACT_METHOD_LABELS,
   CARE_CONTACT_WINDOW_LABELS,
   CARE_GOAL_LABELS,
@@ -106,12 +111,12 @@ export function careManualAccessOperationsRecord(
     name: request.fullName,
     email: request.email,
     phone: request.phone ?? null,
-    business_name: "Xenios Care access request",
-    role: `care_access:${request.careGoal}`,
+    business_name: CARE_ACCESS_BUSINESS_NAME,
+    role: `${CARE_ACCESS_ROLE_PREFIX}${request.careGoal}`,
     url_or_handle: `preferred_contact:${request.contactMethod}`,
     client_count: `contact_window:${request.contactWindow}`,
     why_interested: JSON.stringify({
-      schema: "xenios_care_manual_access_v1",
+      schema: CARE_ACCESS_SCHEMA,
       locationState: request.locationState,
       careGoal: request.careGoal,
       contactMethod: request.contactMethod,

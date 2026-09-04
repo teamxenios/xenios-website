@@ -311,6 +311,16 @@
       "startedAt": "2026-09-03T22:46:05.571Z",
       "heartbeatAt": "2026-09-03T23:52:28.003Z",
       "note": ""
+    },
+    {
+      "id": "claude-care-admin-domain-integrity-20260904",
+      "tool": "Claude Fable 5.1",
+      "lane": "care-admin-domain-integrity",
+      "branch": "claude/care-admin-domain-integrity-20260904",
+      "state": "active",
+      "startedAt": "2026-09-04T14:19:48.785Z",
+      "heartbeatAt": "2026-09-04T14:19:48.785Z",
+      "note": "Founder directive 2026-09-04: continue coding locally; Phase 1 Care admin domain integrity, then Phase 2 strategic partner launch V1; base 2d0d7477 (live db5a2d44 + records); no deploy/merge/migration/env"
     }
   ]
 }

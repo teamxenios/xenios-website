@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-03T22:46:05.705Z",
+  "updatedAt": "2026-09-04T14:49:12Z",
   "tasks": [
     {
       "id": "F7-PACK02-RENAME",
@@ -775,6 +775,63 @@
         "file": ".xenios/handoffs/2026-09-03T23-53-31-109Z-CARE-ADMIN-RELIABILITY-20260903-claude-care-admin-reliability-20260903.md",
         "at": "2026-09-03T23:53:31.115Z"
       }
+    },
+    {
+      "id": "CARE-ADMIN-DOMAIN-INTEGRITY-20260904",
+      "title": "P0: make the dedicated Care admin queue the sole operational projection and sole status writer for Care access requests; exclude Care rows from the generic LOI list, CSV, analytics and PATCH (refuse before mutation) via one canonical pure classifier",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-care-admin-domain-integrity-20260904",
+      "paths": [
+        "server/care/manual-access-classifier.ts",
+        "server/care/manual-access-classifier.test.ts",
+        "server/care/loi-boundary.ts",
+        "server/care/loi-boundary.test.ts",
+        "server/care/loi-boundary-wiring.test.ts",
+        "server/care/loi-boundary-parity.test.ts",
+        "server/care/manual-access-admin.ts",
+        "server/care/manual-access.ts",
+        "server/care/index.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/CARE_ADMIN_DOMAIN_INTEGRITY_CHECKPOINT_2026-09-04.md",
+        "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json"
+      ],
+      "createdAt": "2026-09-04T14:19:48.378Z",
+      "acceptance": [
+        "one canonical server-safe Care classifier, no second copy, no import cycle",
+        "generic LOI list, CSV export and analytics exclude every Care row (strong markers, incl. malformed)",
+        "generic PATCH refuses Care rows before mutation with an existing non-revealing boundary response",
+        "dedicated Care API still returns and transitions Care rows; malformed and failed-email rows stay visible",
+        "generic LOI rows unaffected; notes preserved; public Care contract unchanged",
+        "no IP/raw why_interested/referrer/UTM/clinical fields in any Care admin response or log",
+        "focused, wiring, census, clinical coverage, core-site, tsc, build and full suite green; exact-SHA handoff; no deploy"
+      ],
+      "claimedAt": "2026-09-04T14:19:49.213Z",
+      "updatedAt": "2026-09-04T14:49:12Z"
+    },
+    {
+      "id": "STRATEGIC-PARTNER-LAUNCH-V1-20260904",
+      "title": "P0 REVENUE: smallest complete reusable strategic partner operating workflow (canonical identity binding, partner code validation, durable attribution, admin and partner-safe visibility, first-order readiness) without any Seth-specific code",
+      "priority": "P0",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/affiliates/**",
+        "server/research/**",
+        "shared/affiliates/**",
+        "client/src/research/**",
+        "docs/research-launch/STRATEGIC_PARTNER_LAUNCH_V1_*.md"
+      ],
+      "createdAt": "2026-09-04T14:19:48.378Z",
+      "acceptance": [
+        "uses existing canonical partner/affiliate/identity/attribution/order systems; no Seth-only table, no second affiliate or identity system",
+        "server-side partner code validation; attribution survives the active customer path; idempotent events; revoked codes gain no verified attribution",
+        "admin sees partner, code, reference, declared vs verified attribution, status, first-order QA; partners see only their own; cross-partner isolation",
+        "no commission %, payment, fulfillment, supplier cost, margin or clinical data in partner projections; honest pending states",
+        "requireSupabaseAdmin remains the admin boundary; no browser-supplied authoritative price/commission/payment/identity",
+        "focused, security/cross-identity, tsc, build, responsive 1440-320; exact-SHA handoff; no deploy"
+      ]
     }
   ]
 }

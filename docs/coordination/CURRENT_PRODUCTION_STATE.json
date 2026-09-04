@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-03T23:48:00Z",
+  "generatedAt": "2026-09-04T14:49:12Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -341,7 +341,14 @@
       "id": "CARE_ROWS_VISIBLE_IN_GENERIC_LOI_LIST",
       "state": "OPEN_NONBLOCKING_FOLLOW_UP",
       "releaseBlocking": false,
-      "summary": "The generic /admin LOI surface still lists Care rows with the legacy LOI status vocabulary; a status set there renders as a custom option in the Care queue until changed. Row sets are disjoint; no data loss. Follow-up: hide Care rows from the generic LOI list."
+      "summary": "The generic /admin LOI surface still lists Care rows with the legacy LOI status vocabulary; a status set there renders as a custom option in the Care queue until changed. Row sets are disjoint; no data loss. Follow-up: hide Care rows from the generic LOI list.",
+      "candidateFix": "Built on branch claude/care-admin-domain-integrity-20260904 (task CARE-ADMIN-DOMAIN-INTEGRITY-20260904): server/care/loi-boundary.ts composes a Care-domain boundary ahead of the protected generic routes so the generic LOI list, CSV export and analytics exclude Care rows and the generic status writer refuses them before any write; one canonical classifier in server/care/manual-access-classifier.ts. Not deployed; production still shows Care rows in the generic list until an exact-SHA GO."
+    },
+    {
+      "id": "EARLY_ACCESS_SUPPLIER_CONFIRMATIONS_EXPIRED_20260903",
+      "state": "OPEN_P0_FOUNDER_SUPPLY_DECISION_REQUIRED",
+      "releaseBlocking": false,
+      "summary": "The 22 opening-set supplier confirmations seeded into production by scripts/initialize-supplier-confirmations.ts carry RAW_PEPTIDES_EXPIRES_AT = 2026-09-03T23:30:00Z (server/research/early-access/release/founder-supply-seed.ts, 30 days from the 2026-08-04 confirmation). server/research/early-access/ops/supplier-availability.ts documents that lapsed confirmations make every unit fail closed to held. Inference (not directly observed; the catalog needs an authenticated read): since 2026-09-03T23:30Z the Research Early Access storefront shows 0 purchasable units. The local cart-shelf tests (cart-shelf-agreement, supplier-authority) refuse to prove anything on lapsed supply and are red on every worktree since that instant. Remediation needs a new supplier confirmation from the founder written to production data; neither is authorized by any current directive; nothing was changed."
     }
   ],
   "evidenceLimitations": [

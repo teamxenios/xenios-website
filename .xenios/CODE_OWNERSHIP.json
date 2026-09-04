@@ -930,6 +930,29 @@
       "state": "handoff",
       "claimedAt": "2026-09-03T22:46:05.859Z",
       "heartbeatAt": "2026-09-03T22:46:05.859Z"
+    },
+    {
+      "id": "707f43b5-64c3-45be-b524-f61438b4a4ee",
+      "task": "CARE-ADMIN-DOMAIN-INTEGRITY-20260904",
+      "session": "claude-care-admin-domain-integrity-20260904",
+      "paths": [
+        "server/care/manual-access-classifier.ts",
+        "server/care/manual-access-classifier.test.ts",
+        "server/care/loi-boundary.ts",
+        "server/care/loi-boundary.test.ts",
+        "server/care/loi-boundary-wiring.test.ts",
+        "server/care/loi-boundary-parity.test.ts",
+        "server/care/manual-access-admin.ts",
+        "server/care/manual-access.ts",
+        "server/care/index.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/CARE_ADMIN_DOMAIN_INTEGRITY_CHECKPOINT_2026-09-04.md",
+        "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T14:19:49.220Z",
+      "heartbeatAt": "2026-09-04T14:49:12Z"
     }
   ],
   "rules": [

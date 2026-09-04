@@ -29,9 +29,16 @@ import {
   type LoiRow,
 } from "../supabase-store";
 import { careManualAccessReference } from "./manual-access";
+import {
+  CARE_ACCESS_BUSINESS_NAME,
+  CARE_ACCESS_ROLE_PREFIX,
+  CARE_ACCESS_SCHEMA,
+  isCareManualAccessOperationsRow,
+  parseCareRawPayload,
+} from "./manual-access-classifier";
 
-const CARE_ACCESS_BUSINESS_NAME = "Xenios Care access request";
-const CARE_ACCESS_SCHEMA = "xenios_care_manual_access_v1";
+export { isCareManualAccessOperationsRow } from "./manual-access-classifier";
+
 
 const careOperationsPayloadSchema = z
   .object({
@@ -75,47 +82,13 @@ function adminUnavailable(res: Response) {
   });
 }
 
-function parseRawPayload(value: string | null | undefined): unknown {
-  if (!value) return null;
-  try {
-    return JSON.parse(value) as unknown;
-  } catch {
-    return null;
-  }
-}
-
 function parsePayload(row: LoiRow): {
   parsed: CareOperationsPayload | null;
   raw: unknown;
 } {
-  const raw = parseRawPayload(row.why_interested);
+  const raw = parseCareRawPayload(row.why_interested);
   const parsed = careOperationsPayloadSchema.safeParse(raw);
   return { raw, parsed: parsed.success ? parsed.data : null };
-}
-
-function rawPayloadHasCareSchema(raw: unknown): boolean {
-  return (
-    typeof raw === "object" &&
-    raw !== null &&
-    !Array.isArray(raw) &&
-    (raw as Record<string, unknown>).schema === CARE_ACCESS_SCHEMA
-  );
-}
-
-/**
- * Current production writes all four markers. The admin projection accepts any
- * strong Care marker so a partial future schema drift becomes a visible data
- * quality warning instead of making a successfully saved request disappear.
- */
-export function isCareManualAccessOperationsRow(row: LoiRow): boolean {
-  const raw = parseRawPayload(row.why_interested);
-  return (
-    row.business_name === CARE_ACCESS_BUSINESS_NAME ||
-    row.role?.startsWith("care_access:") === true ||
-    rawPayloadHasCareSchema(raw) ||
-    (row.source_page === CARE_MANUAL_ACCESS_SOURCE_PAGE &&
-      row.landing_page === CARE_MANUAL_ACCESS_SOURCE_PAGE)
-  );
 }
 
 function valueAfterPrefix(
@@ -170,7 +143,7 @@ export function projectCareManualAccessAdminRecord(
   const locationState = asState(parsed?.locationState);
   const careGoal =
     asCareGoal(parsed?.careGoal) ??
-    asCareGoal(valueAfterPrefix(row.role, "care_access:"));
+    asCareGoal(valueAfterPrefix(row.role, CARE_ACCESS_ROLE_PREFIX));
   const contactMethod =
     asContactMethod(parsed?.contactMethod) ??
     asContactMethod(valueAfterPrefix(row.url_or_handle, "preferred_contact:"));
@@ -182,7 +155,7 @@ export function projectCareManualAccessAdminRecord(
     row.business_name === CARE_ACCESS_BUSINESS_NAME &&
     row.source_page === CARE_MANUAL_ACCESS_SOURCE_PAGE &&
     row.landing_page === CARE_MANUAL_ACCESS_SOURCE_PAGE &&
-    row.role?.startsWith("care_access:") === true;
+    row.role?.startsWith(CARE_ACCESS_ROLE_PREFIX) === true;
   const dataQuality = parsed && markersAreComplete ? "valid" : "malformed";
   const status = row.status?.trim() || "New";
   const emailStatus = row.email_status?.trim() || null;
