@@ -33,6 +33,8 @@
         "client/src/research/layout.tsx",
         "client/src/research/adminx-section.tsx",
         "client/src/research/lib/routes.ts",
+        "client/src/research/lib/api.ts",
+        "client/src/research/lib/api.test.ts",
         "client/src/research/pages/partners/Links.tsx",
         "client/src/research/pages/partners/Links.test.tsx",
         "client/src/research/adapters/partner.ts",

@@ -1,13 +1,14 @@
 /** LOCAL-ONLY browser rehearsal. Real Gen2 SQL/controller/guards; synthetic Auth,
  * application and request/order fixtures. Never a deployable server or email test.
  */
-import express, { type Request } from "express";
+import express, { type Express, type Request, type RequestHandler } from "express";
 import { randomUUID, randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import net from "node:net";
 import type { Server } from "node:http";
+import type { FoundingActivationGuards } from "../../server/research/membership-activation/routes";
 import { startReferralRehearsalDatabase } from "../../server/research/partners/referral-v1-rehearsal";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -16,6 +17,51 @@ const password = "Synthetic-preview-password-2026";
 const anonKey = "synthetic-preview-anon-key";
 const serviceKey = "synthetic-preview-service-key-never-production";
 type Persona = { email: string; password: string; authId: string; memberId?: string; partnerId?: string; token: string; refresh: string };
+
+const previewGetDoors = new Set([
+  "/api/research/me", "/api/research/member/me", "/api/research/catalog", "/api/research/applications/status",
+  "/api/research/partner/links", "/api/admin/me", "/api/admin/research/referral-lifecycle",
+  "/api/waitlist/count", "/api/care/access-request/status", "/api/research/catalog-display/v2/catalog", "/api/research/activation/status",
+]);
+const previewPostDoors = new Set([
+  "/api/research/member/claim", "/api/research/member/forgot-password", "/api/research/partner/links",
+  "/api/research/referral/resolve", "/api/research/referral/bootstrap", "/api/research/referral/capture", "/api/research/referral/bind",
+]);
+
+/** Mount at /api before real registrars. Every non-referral write remains shut. */
+export const referralPreviewApiBoundary: RequestHandler = (req, res, next) => {
+  const route = `/api${req.path}`;
+  if (req.method === "GET" && previewGetDoors.has(route) || req.method === "POST" && (previewPostDoors.has(route) || /^\/api\/research\/partner\/links\/[a-f0-9-]{36}\/revoke$/.test(route))) return next();
+  res.status(404).json({ code: "outside_local_referral_preview" });
+};
+
+/** The surrounding public pages need truthful read dependencies, not live
+ * intake, catalog, identity, payment, or provider readiness. Imported lazily so
+ * the preview's environment/network fence is established before composition.
+ */
+export async function registerReferralPreviewReadOnlyDependencies(
+  app: Express,
+  guards: { requireMember: FoundingActivationGuards["requireMember"]; requireAdmin: FoundingActivationGuards["requireSupabaseAdmin"] },
+): Promise<void> {
+  const [care, activation, master] = await Promise.all([
+    import("../../server/care/manual-access"),
+    import("../../server/research/membership-activation/routes"),
+    import("../../server/research/master-offerings/routes"),
+  ]);
+  // Synthetic display-only fixture; zero is not a production waitlist census.
+  // The client retains its shipped placeholder when the value is zero.
+  app.get("/api/waitlist/count", (_req, res) => res.set({ "Cache-Control": "no-store", "X-Xenios-Preview-Fixture": "synthetic-waitlist-count" }).json({ count: 0 }));
+  care.registerCareManualAccessApi(app, care.unconfiguredCareManualAccessDependencies());
+  activation.registerFoundingActivationApi(app, { state: "disabled" }, {
+    requireMember: guards.requireMember, requireSupabaseAdmin: guards.requireAdmin,
+  });
+  const catalog = master.createMasterOfferingCatalogApiHandlers({
+    env: { RESEARCH_MASTER_OFFERINGS_ENABLED: "false" },
+    authorizeViewer() { throw new Error("Disabled preview catalog must not authorize a viewer"); },
+    serviceForViewer() { throw new Error("Disabled preview catalog must not instantiate a service"); },
+  });
+  app.get(master.MASTER_OFFERING_CATALOG_LIST_ROUTE, catalog.privateHeaders, catalog.list);
+}
 
 export async function startReferralPreview() {
   if (process.env.NODE_ENV === "production" || process.env.DATABASE_URL || process.env.SUPABASE_URL || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) {
@@ -206,13 +252,8 @@ export async function startReferralPreview() {
 
     // Preview scope boundary precedes the real registration. Unrelated intake,
     // payment, messaging and clinical writes cannot reach their real handlers.
-    const getDoors = new Set(["/api/research/me", "/api/research/member/me", "/api/research/catalog", "/api/research/applications/status", "/api/research/partner/links", "/api/admin/me", "/api/admin/research/referral-lifecycle"]);
-    const postDoors = new Set(["/api/research/member/claim", "/api/research/member/forgot-password", "/api/research/partner/links", "/api/research/referral/resolve", "/api/research/referral/bootstrap", "/api/research/referral/capture", "/api/research/referral/bind"]);
-    app.use("/api", (req, res, next) => {
-      const route = `/api${req.path}`;
-      if (req.method === "GET" && getDoors.has(route) || req.method === "POST" && (postDoors.has(route) || /^\/api\/research\/partner\/links\/[a-f0-9-]{36}\/revoke$/.test(route))) return next();
-      res.status(404).json({ code: "outside_local_referral_preview" });
-    });
+    app.use("/api", referralPreviewApiBoundary);
+    await registerReferralPreviewReadOnlyDependencies(app, { requireMember, requireAdmin: requireSupabaseAdmin });
     // Catalog is intentionally empty/commerce-off; no fabricated product authority.
     app.get("/api/research/catalog", requireActiveMember, (_req, res) => res.json({ products: [], commerce: { research: false, consumer: false }, email: "research@preview.invalid" }));
     app.get("/api/admin/me", requireSupabaseAdmin, (_req, res) => res.json({ success: true, email: admin.email }));

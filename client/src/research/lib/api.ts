@@ -39,6 +39,13 @@ export async function apiDelete<T>(path: string, token?: string | null, body?: u
   return request<T>("DELETE", path, body, token);
 }
 
+async function releaseUnusedBody(response: Response): Promise<void> {
+  // These responses intentionally do not enter a DTO. Release the unread
+  // stream so an unavailable page does not leave its fetch alive indefinitely.
+  // Cancellation neither changes the denial nor interprets its body as truth.
+  try { await response.body?.cancel(); } catch { /* Preserve the original status. */ }
+}
+
 async function request<T>(method: string, path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {
   try {
     const res = await fetch(path, {
@@ -61,13 +68,19 @@ async function request<T>(method: string, path: string, body: unknown, token?: s
       if (typeof b?.code === "string") return { kind: "denied", code: b.code, message: b?.message };
       return { kind: "forbidden", message: b?.message };
     }
-    if (res.status === 404 || res.status === 501 || res.status === 503) return { kind: "unavailable" };
+    if (res.status === 404 || res.status === 501 || res.status === 503) {
+      await releaseUnusedBody(res);
+      return { kind: "unavailable" };
+    }
     // An unpublished API path falls through to the SPA catch-all and returns
     // the app shell as HTML with 200 (dev AND production). That is an
     // unpublished endpoint, not an error: report unavailable so pages render
     // their designed pending states.
     const contentType = res.headers.get("content-type") ?? "";
-    if (res.ok && !contentType.includes("application/json")) return { kind: "unavailable" };
+    if (res.ok && !contentType.includes("application/json")) {
+      await releaseUnusedBody(res);
+      return { kind: "unavailable" };
+    }
     const parsed = await res.json().catch(() => null);
     // Coordinator envelope: a body with ok:false and a machine code is a
     // routable denial regardless of HTTP status (e.g. commerce_disabled,

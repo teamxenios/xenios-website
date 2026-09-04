@@ -80,6 +80,35 @@ describe("apiDelete", () => {
 });
 
 describe("shared request guards (unchanged behavior)", () => {
+  it.each([404, 501, 503, 200])("releases an unused %i response stream without changing unavailable semantics", async (status) => {
+    const cancel = vi.fn();
+    const stream = new ReadableStream({
+      start(controller) { controller.enqueue(new TextEncoder().encode("untrusted unavailable response")); },
+      cancel,
+    });
+    const response = new Response(stream, { status, headers: { "content-type": status === 200 ? "text/html" : "application/json" } });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished", "synthetic-token")).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(response.bodyUsed).toBe(true);
+  });
+
+  it("retains the original unavailable result if stream cleanup fails", async () => {
+    const cancel = vi.fn(async () => { throw new Error("synthetic cleanup failure"); });
+    vi.stubGlobal("fetch", vi.fn(async () => ({ status: 503, body: { cancel } })));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+
+  it("still consumes a successful DTO instead of discarding it", async () => {
+    const response = new Response(JSON.stringify({ ok: true }), { headers: { "content-type": "application/json" } });
+    const cancel = vi.spyOn(response.body!, "cancel");
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/available")).toEqual({ kind: "ok", data: { ok: true } });
+    expect(cancel).not.toHaveBeenCalled();
+    expect(response.bodyUsed).toBe(true);
+  });
+
   it("keeps the SPA-HTML-200 guard: a 200 without JSON content type is unavailable", async () => {
     stubFetch(200, {}, "text/html");
     expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
