@@ -349,8 +349,8 @@
       "branch": "codex/ux-continuation-20260904",
       "state": "active",
       "startedAt": "2026-09-04T16:52:48.737Z",
-      "heartbeatAt": "2026-09-04T17:40:54.162Z",
-      "note": "Frozen 05e285c actual-bundle browser journey with strict settles; local-only expired attribution controls proved. Production unchanged."
+      "heartbeatAt": "2026-09-04T17:47:47.553Z",
+      "note": "Frozen ef6c616 pushed. Browser has passed Care/Research selection, normal sign-in binding and ordinary-member isolation; reset/claim/admin checks running. No production mutation."
     }
   ]
 }

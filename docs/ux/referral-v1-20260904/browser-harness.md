@@ -39,3 +39,7 @@ Early smoke artifacts are retained: the first preview incorrectly redirected the
 6. Full-page screenshots require quiet-through-paint network, settled fonts, stable geometry and exact image coverage. New flow controls are checked for 44-pixel targets and horizontal overflow.
 
 Missing claim or recovery fixtures are recorded as `not_run`; they never produce a full pass. No screenshot or result proves live deployment, real customer behavior, payment, clinical eligibility, earned commission, email delivery or a complete accessibility audit.
+
+## Bounded checkpoint
+
+The local 320-pixel functional smoke passed at `c5ac43907ffe024ffcba847fb761836211ae4118`; see `browser-smoke-c5ac439-320/browser-results.json` and `browser-diagnostics.md` for exact before/after fingerprints, 20 screenshots, per-persona real database proof and limitations. The known PWA install promotion still occludes narrow-screen content. Therefore this is not final mobile visual acceptance, and the nine-width matrix is held until the separate PWA policy change and final rebuild. Keep all required widths in the runner; do not treat this smoke as coverage for them.

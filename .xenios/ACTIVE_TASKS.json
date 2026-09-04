@@ -6,7 +6,7 @@
       "id": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
       "title": "Local canonical Gen2 referral vertical slice: authorized share, contextual recipient, durable first-valid attribution, auth binding, safe lifecycle projections",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-ux-referral-20260904",
       "paths": [
         "server/research/partners/**",
@@ -50,7 +50,13 @@
       "dependsOn": [],
       "baseSha": "306b2996feb27578fa5434f6a20810cc8f6d83db",
       "scopeNote": "Root is local integration lead only; no production writer claimed. Existing Gen2 registry extended; no commission/clinical/payment activation. Agent assignments in referral handoff. All unrelated legacy leases preserved.",
-      "claimedAt": "2026-09-04T16:52:48.809Z"
+      "claimedAt": "2026-09-04T16:52:48.809Z",
+      "handoff": {
+        "session": "codex-ux-referral-20260904",
+        "sha": "c5ac43907ffe024ffcba847fb761836211ae4118",
+        "file": ".xenios/handoffs/2026-09-04T17-53-28-296Z-UX-REFERRAL-RECOMMENDATION-V1-20260904-codex-ux-referral-20260904.md",
+        "at": "2026-09-04T17:53:28.334Z"
+      }
     },
     {
       "id": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",

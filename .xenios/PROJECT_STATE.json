@@ -4,6 +4,23 @@
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+  "uxReferralCheckpoint": {
+    "state": "LOCAL_FUNCTIONAL_DEMONSTRATION_MOBILE_ACCEPTANCE_PENDING",
+    "fullUxProgramComplete": false,
+    "codeSha": "c5ac43907ffe024ffcba847fb761836211ae4118",
+    "baseSha": "306b2996feb27578fa5434f6a20810cc8f6d83db",
+    "branch": "codex/ux-continuation-20260904",
+    "session": "codex-ux-referral-20260904",
+    "task": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
+    "originVerified": true,
+    "handoffDocument": "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md",
+    "browserEvidence": "docs/ux/referral-v1-20260904/browser-smoke-c5ac439-320/browser-results.json",
+    "browserWidthsFunctionallyPassed": [320],
+    "mobileVisualAcceptance": "PENDING_PWA_OVERLAY_POLICY_AND_NINE_WIDTH_MATRIX",
+    "productionMutated": false,
+    "migration": "TWO_LOCAL_CANDIDATES_NOT_APPLIED",
+    "nextTasks": ["DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904", "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904"]
+  },
   "uxAuthAccountCheckpoint": {
     "state": "LOCAL_IMPLEMENTATION_CHECKPOINT_NOT_DEPLOYED",
     "fullUxProgramComplete": false,

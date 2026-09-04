@@ -1,0 +1,2889 @@
+{
+  "generatedAt": "2026-09-04T17:50:23.074Z",
+  "classification": "LOCAL SYNTHETIC ACTUAL-BUNDLE QA — NOT PRODUCTION OR OS-SHARE EVIDENCE",
+  "source": {
+    "sourceSha": "c5ac43907ffe024ffcba847fb761836211ae4118",
+    "sourceTreeSha256": "6ade325985c1df208b8448e75be7bab0e4f83e409f6d5ca83e33e1b731659b7b",
+    "sourceFileCount": 2093,
+    "bundleSha256": "5069e6fb51045747878ca29acea5496566a0dce5a70e62acd04b169d246cc464",
+    "bundleFileCount": 327
+  },
+  "environment": "Fresh headless Chromium and fresh disposable PostgreSQL preview per width; localhost-only browser boundary; sanitized server environment; no core API browser mocks",
+  "widths": [
+    {
+      "width": 320,
+      "checks": {
+        "initialDatabase": {
+          "links": 4,
+          "touches": 0,
+          "bindings": 0,
+          "events": 4
+        },
+        "ownerDestination": "/research/partners/links",
+        "createdDestinations": [
+          "/health",
+          "/care",
+          "/research/member/catalog",
+          "/health"
+        ],
+        "browserCapabilities": {
+          "simulatedNativeShare": true,
+          "simulatedClipboardSuccess": true,
+          "nativeShareAbsentFallback": true,
+          "simulatedClipboardFailureVisible": true,
+          "realOsShareOrClipboardNotExercised": true
+        },
+        "revokeConfirmed": true,
+        "invalidRecipientPrivacy": {
+          "robots": "noindex, nofollow",
+          "canonical": null,
+          "referralInHead": false,
+          "researchSupport": true,
+          "careSupport": true
+        },
+        "revokedRecipientPrivacy": {
+          "robots": "noindex, nofollow",
+          "canonical": null,
+          "referralInHead": false,
+          "researchSupport": true,
+          "careSupport": true
+        },
+        "expiredRecipientPrivacy": {
+          "robots": "noindex, nofollow",
+          "canonical": null,
+          "referralInHead": false,
+          "researchSupport": true,
+          "careSupport": true
+        },
+        "healthChoice": {
+          "choiceRequired": true,
+          "explicitResearchPath": true,
+          "browseWithoutCapture": true
+        },
+        "careRecipientPrivacy": {
+          "robots": "noindex, nofollow",
+          "canonical": null,
+          "referralInHead": false,
+          "researchSupport": true,
+          "careSupport": true
+        },
+        "contextDidNotCapture": true,
+        "careExplicitContinue": true,
+        "researchDestination": "/research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog",
+        "bindingProof": [
+          {
+            "stage": "before-normal-sign-in",
+            "persona": "recipient",
+            "count": 0,
+            "linkId": null
+          },
+          {
+            "stage": "after-normal-sign-in",
+            "persona": "recipient",
+            "count": 1,
+            "linkId": "c6fc307f-ef17-454d-a5f1-6ea9e53f4abf"
+          },
+          {
+            "stage": "during-recovery-session",
+            "persona": "recovery",
+            "count": 0,
+            "linkId": null
+          },
+          {
+            "stage": "after-reset-before-fresh-sign-in",
+            "persona": "recovery",
+            "count": 0,
+            "linkId": null
+          },
+          {
+            "stage": "after-recovery-fresh-sign-in",
+            "persona": "recovery",
+            "count": 1,
+            "linkId": "c6fc307f-ef17-454d-a5f1-6ea9e53f4abf"
+          },
+          {
+            "stage": "after-claim-before-fresh-sign-in",
+            "persona": "claim",
+            "count": 0,
+            "linkId": null
+          },
+          {
+            "stage": "after-claim-fresh-sign-in",
+            "persona": "claim",
+            "count": 1,
+            "linkId": "c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99"
+          }
+        ],
+        "authSafeReturn": {
+          "destination": "/research/member/catalog",
+          "resetPath": "/research/reset-password?returnTo=%2Fresearch%2Fmember%2Fcatalog"
+        },
+        "memberDestination": "/research/member/catalog",
+        "principalIsolation": {
+          "ordinaryMemberHasNoLinkIssuance": true,
+          "ownerUrlsNotShown": true,
+          "adminLifecycleDenied": true
+        },
+        "passwordReset": {
+          "state": "exercised",
+          "recoveryCredentialScrubbed": true,
+          "mandatoryFreshSignIn": true,
+          "safeReturnPreserved": true
+        },
+        "passwordResetDestination": "/research/member/catalog",
+        "accountClaimDestination": "/research/activate",
+        "accountClaim": {
+          "state": "exercised",
+          "claimCredentialScrubbed": true,
+          "safeReturnPreservedInSignInLink": true,
+          "activationGateOutranksReturnHint": true,
+          "freshSignInRequired": true
+        },
+        "downstreamLineageFixtures": {
+          "synthetic": true,
+          "seededAccounts": 3,
+          "requestSubmissionJourneyExercised": false,
+          "actualReferralsUnmodified": true
+        },
+        "adminVisibility": {
+          "touchVisible": true,
+          "accountBindingVisible": true,
+          "auditEventVisible": true,
+          "currentAvailabilityVisible": true,
+          "correctionsUnsupported": true,
+          "syntheticDownstreamLineageVisible": true,
+          "independentlyVerifiedOrderAttributionNotClaimed": true
+        },
+        "database": {
+          "links": 8,
+          "touches": 3,
+          "bindings": 3,
+          "events": 15
+        },
+        "serverOutboundAttempts": 0
+      },
+      "screenshots": [
+        {
+          "name": "owner-signin-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\owner-signin-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1122,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1122,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1122
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "INPUT",
+                "id": "ms-email",
+                "label": "email",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "INPUT",
+                "id": "ms-password",
+                "label": "password",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Show password",
+                "left": 244.96875,
+                "right": 296,
+                "width": 51.03125,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Sign in",
+                "left": 16,
+                "right": 103.734375,
+                "width": 87.734375,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "owner-links-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\owner-links-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 4659,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 4659,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 4659
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "SELECT",
+                "id": "recommendation-destination",
+                "label": "Xenios Health — choose Care or ResearchCare — explore the appropriate care pathwayHow Care worksRese",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Create recommendation link",
+                "left": 41,
+                "right": 276.015625,
+                "width": 235.015625,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh",
+                "left": 248.984375,
+                "right": 304,
+                "width": 55.015625,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-98392f18-e3b0-41f4-877d-de90bfdc76cf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c6fc307f-ef17-454d-a5f1-6ea9e53f4abf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-678cca35-ac1b-4e13-a5e7-58de9f48fa0f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-d5c1e6f5-1b8b-48c9-b927-17638d2a06d0",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-3229b9b7-6df4-4fb2-890e-fb04235f106f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Sharing rules",
+                "left": 41,
+                "right": 133.078125,
+                "width": 92.078125,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Get support",
+                "left": 145.078125,
+                "right": 228.734375,
+                "width": 83.65625,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Install",
+                "left": 222.78125,
+                "right": 287,
+                "width": 64.21875,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Dismiss",
+                "left": 138,
+                "right": 182,
+                "width": 44,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "owner-native-share-simulated-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\owner-native-share-simulated-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 4750,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 4750,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 4750
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "SELECT",
+                "id": "recommendation-destination",
+                "label": "Xenios Health — choose Care or ResearchCare — explore the appropriate care pathwayHow Care worksRese",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Create recommendation link",
+                "left": 41,
+                "right": 276.015625,
+                "width": 235.015625,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh",
+                "left": 248.984375,
+                "right": 304,
+                "width": 55.015625,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-98392f18-e3b0-41f4-877d-de90bfdc76cf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c6fc307f-ef17-454d-a5f1-6ea9e53f4abf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-678cca35-ac1b-4e13-a5e7-58de9f48fa0f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-d5c1e6f5-1b8b-48c9-b927-17638d2a06d0",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-3229b9b7-6df4-4fb2-890e-fb04235f106f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Sharing rules",
+                "left": 41,
+                "right": 133.078125,
+                "width": 92.078125,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Get support",
+                "left": 145.078125,
+                "right": 228.734375,
+                "width": 83.65625,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Install",
+                "left": 222.78125,
+                "right": 287,
+                "width": 64.21875,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Dismiss",
+                "left": 138,
+                "right": 182,
+                "width": 44,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "owner-copy-failure-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\owner-copy-failure-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 4750,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 4750,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 4750
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "SELECT",
+                "id": "recommendation-destination",
+                "label": "Xenios Health — choose Care or ResearchCare — explore the appropriate care pathwayHow Care worksRese",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Create recommendation link",
+                "left": 41,
+                "right": 276.015625,
+                "width": 235.015625,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh",
+                "left": 248.984375,
+                "right": 304,
+                "width": 55.015625,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-98392f18-e3b0-41f4-877d-de90bfdc76cf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c6fc307f-ef17-454d-a5f1-6ea9e53f4abf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-678cca35-ac1b-4e13-a5e7-58de9f48fa0f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-d5c1e6f5-1b8b-48c9-b927-17638d2a06d0",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-3229b9b7-6df4-4fb2-890e-fb04235f106f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Sharing rules",
+                "left": 41,
+                "right": 133.078125,
+                "width": 92.078125,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Get support",
+                "left": 145.078125,
+                "right": 228.734375,
+                "width": 83.65625,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Install",
+                "left": 222.78125,
+                "right": 287,
+                "width": 64.21875,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Dismiss",
+                "left": 138,
+                "right": 182,
+                "width": 44,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "owner-revoke-confirmation-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\owner-revoke-confirmation-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 4827,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 4827,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 4827
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "SELECT",
+                "id": "recommendation-destination",
+                "label": "Xenios Health — choose Care or ResearchCare — explore the appropriate care pathwayHow Care worksRese",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Create recommendation link",
+                "left": 41,
+                "right": 276.015625,
+                "width": 235.015625,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh",
+                "left": 248.984375,
+                "right": 304,
+                "width": 55.015625,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-98392f18-e3b0-41f4-877d-de90bfdc76cf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-c6fc307f-ef17-454d-a5f1-6ea9e53f4abf",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-678cca35-ac1b-4e13-a5e7-58de9f48fa0f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Confirm revoke",
+                "left": 41,
+                "right": 187.625,
+                "width": 146.625,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Keep link",
+                "left": 199.625,
+                "right": 263.359375,
+                "width": 63.734375,
+                "height": 52
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-d5c1e6f5-1b8b-48c9-b927-17638d2a06d0",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "recommendation-url-3229b9b7-6df4-4fb2-890e-fb04235f106f",
+                "label": "",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Copy link",
+                "left": 41,
+                "right": 146.125,
+                "width": 105.125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Share",
+                "left": 158.125,
+                "right": 239.953125,
+                "width": 81.828125,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Revoke link",
+                "left": 41,
+                "right": 119.96875,
+                "width": 78.96875,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Sharing rules",
+                "left": 41,
+                "right": 133.078125,
+                "width": 92.078125,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Get support",
+                "left": 145.078125,
+                "right": 228.734375,
+                "width": 83.65625,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Install",
+                "left": 222.78125,
+                "right": 287,
+                "width": 64.21875,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Dismiss",
+                "left": 138,
+                "right": 182,
+                "width": 44,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-invalid-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-invalid-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Try again",
+                "left": 45,
+                "right": 150.171875,
+                "width": 105.171875,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Explore Xenios Health",
+                "left": 45,
+                "right": 235.953125,
+                "width": 190.953125,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-revoked-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-revoked-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Try again",
+                "left": 45,
+                "right": 150.171875,
+                "width": 105.171875,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Explore Xenios Health",
+                "left": 45,
+                "right": 235.953125,
+                "width": 190.953125,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-expired-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-expired-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Try again",
+                "left": 45,
+                "right": 150.171875,
+                "width": 105.171875,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Explore Xenios Health",
+                "left": 45,
+                "right": 235.953125,
+                "width": 190.953125,
+                "height": 52
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-health-choice-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-health-choice-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1647,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1647,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1647
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "LABEL",
+                "id": "",
+                "label": "CareLearn about the care pathway and its intake process.",
+                "left": 61,
+                "right": 259,
+                "width": 198,
+                "height": 139.0625
+              },
+              {
+                "tag": "LABEL",
+                "id": "",
+                "label": "ResearchExplore nonclinical access, education, and membership.",
+                "left": 61,
+                "right": 259,
+                "width": 198,
+                "height": 160.75
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue with recommendation",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue without confirming referral",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-care-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-care-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1168,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1168,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1168
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue with recommendation",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue without confirming referral",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-research-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-research-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1168,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1168,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1168
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue with recommendation",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Continue without confirming referral",
+                "left": 45,
+                "right": 275,
+                "width": 230,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Research support",
+                "left": 20,
+                "right": 143.390625,
+                "width": 123.390625,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Care support",
+                "left": 155.390625,
+                "right": 247.03125,
+                "width": 91.640625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-reset-request-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-reset-request-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "INPUT",
+                "id": "rp-email",
+                "label": "email",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Send reset link",
+                "left": 16,
+                "right": 158.171875,
+                "width": 142.171875,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-signin-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-signin-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1122,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1122,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1122
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "INPUT",
+                "id": "ms-email",
+                "label": "email",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "INPUT",
+                "id": "ms-password",
+                "label": "password",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Show password",
+                "left": 244.96875,
+                "right": 296,
+                "width": 51.03125,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Sign in",
+                "left": 16,
+                "right": 103.734375,
+                "width": 87.734375,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-signed-in-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-signed-in-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1063,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1063,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1063
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Try again",
+                "left": 0,
+                "right": 105.171875,
+                "width": 105.171875,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-link-management-denied-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-link-management-denied-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1013,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1013,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1013
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Sharing rules",
+                "left": 41,
+                "right": 133.078125,
+                "width": 92.078125,
+                "height": 44
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Get support",
+                "left": 145.078125,
+                "right": 228.734375,
+                "width": 83.65625,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Install",
+                "left": 222.78125,
+                "right": 287,
+                "width": 64.21875,
+                "height": 44
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Dismiss",
+                "left": 138,
+                "right": 182,
+                "width": 44,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-admin-denied-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-admin-denied-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1354,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1354,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1354
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh lifecycle",
+                "left": 41,
+                "right": 195.390625,
+                "width": 154.390625,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-password-recovery-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-password-recovery-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "INPUT",
+                "id": "rp-password",
+                "label": "password",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Show password",
+                "left": 240.96875,
+                "right": 292,
+                "width": 51.03125,
+                "height": 44
+              },
+              {
+                "tag": "INPUT",
+                "id": "rp-confirm",
+                "label": "password",
+                "left": 16,
+                "right": 304,
+                "width": 288,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Update password",
+                "left": 16,
+                "right": 178.296875,
+                "width": 162.296875,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-account-claim-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-account-claim-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 927,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 927,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 927
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "INPUT",
+                "id": "ca-password",
+                "label": "password",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 52
+              },
+              {
+                "tag": "INPUT",
+                "id": "ca-confirm",
+                "label": "password",
+                "left": 41,
+                "right": 279,
+                "width": 238,
+                "height": 52
+              },
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Create account",
+                "left": 41,
+                "right": 188.0625,
+                "width": 147.0625,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "recipient-claim-activation-gated-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\recipient-claim-activation-gated-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1248,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1248,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1248
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "A",
+                "id": "",
+                "label": "Back to xenios research",
+                "left": 16,
+                "right": 179.65625,
+                "width": 163.65625,
+                "height": 44
+              }
+            ],
+            "smallTargets": []
+          }
+        },
+        {
+          "name": "admin-lifecycle-320",
+          "path": "C:\\Users\\sboad\\projects\\xenios-ux-codex-20260904\\docs\\ux\\referral-v1-20260904\\browser-smoke-c5ac439-320\\admin-lifecycle-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 17432,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 17432,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 17432
+          },
+          "layout": {
+            "width": 320,
+            "documentWidth": 320,
+            "bodyWidth": 320,
+            "overflows": [],
+            "touchTargets": [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "label": "Refresh lifecycle",
+                "left": 41,
+                "right": 195.390625,
+                "width": 154.390625,
+                "height": 52
+              }
+            ],
+            "smallTargets": []
+          }
+        }
+      ],
+      "pass": true,
+      "fixture": {
+        "origin": "http://127.0.0.1:5238",
+        "personaRoles": [
+          "owner",
+          "recipient",
+          "admin"
+        ],
+        "claimFixture": true,
+        "recoveryFixture": true,
+        "fixtureLinks": [
+          "care",
+          "research",
+          "revoked",
+          "expired"
+        ]
+      },
+      "createdLinkIds": {
+        "health": "678cca35-ac1b-4e13-a5e7-58de9f48fa0f",
+        "care": "c6fc307f-ef17-454d-a5f1-6ea9e53f4abf",
+        "research": "c0dd8af7-7551-4ddc-a4d3-d25a9cc6ea99",
+        "healthChoice": "98392f18-e3b0-41f4-877d-de90bfdc76cf"
+      },
+      "coreAssertionsPassed": true,
+      "browserCleanupConfirmed": true,
+      "previewCleanupConfirmed": true
+    }
+  ],
+  "boundaryViolations": [],
+  "runtimeExceptions": [],
+  "errors": [],
+  "network": {
+    "requestCount": 495,
+    "origins": {
+      "http://127.0.0.1:5238": 495
+    },
+    "externalHttpRequestCount": 0,
+    "referralMethods": [
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/bootstrap"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/capture"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/bootstrap"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/capture"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/bootstrap"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/capture"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/bootstrap"
+      },
+      {
+        "method": "POST",
+        "path": "/api/research/referral/capture"
+      }
+    ],
+    "manifestEvents": [
+      {
+        "event": "request",
+        "requestId": "21768.6",
+        "loaderId": "9122361454124424CF1BA5895B6E22EF",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.6",
+        "loaderId": "9122361454124424CF1BA5895B6E22EF",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.6"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.122",
+        "loaderId": "041CC3D87F708B9447297ACC9077F472",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.122",
+        "loaderId": "041CC3D87F708B9447297ACC9077F472",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.122"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.271",
+        "loaderId": "03A24CCBD990B318079FED58A5D799AD",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.271",
+        "loaderId": "03A24CCBD990B318079FED58A5D799AD",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.271"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.380",
+        "loaderId": "9337BD5963F530885A3ADD2F213236EA",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.380",
+        "loaderId": "9337BD5963F530885A3ADD2F213236EA",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.380"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.487",
+        "loaderId": "6FAED9050F6865CDFF11B4848EA2882C",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.487",
+        "loaderId": "6FAED9050F6865CDFF11B4848EA2882C",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.487"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.593",
+        "loaderId": "C1F4D73B0CBE6B72585A61E4EF0A7552",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.593",
+        "loaderId": "C1F4D73B0CBE6B72585A61E4EF0A7552",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.593"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.699",
+        "loaderId": "F73AACA1D7D5E28AA69A4D268F3CA7B7",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.699",
+        "loaderId": "F73AACA1D7D5E28AA69A4D268F3CA7B7",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.699"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.805",
+        "loaderId": "5F0494DE0BF18457420E6490DCF0FF1B",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.805",
+        "loaderId": "5F0494DE0BF18457420E6490DCF0FF1B",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.805"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.920",
+        "loaderId": "994DD281A4661AE9DB5EF90281CA1697",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.920",
+        "loaderId": "994DD281A4661AE9DB5EF90281CA1697",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.920"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1028",
+        "loaderId": "16EE373CFE407AF369DF0A712EBB795C",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1028",
+        "loaderId": "16EE373CFE407AF369DF0A712EBB795C",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1028"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1139",
+        "loaderId": "13D3A9B98EB3B4670D4B878320D8F69B",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1139",
+        "loaderId": "13D3A9B98EB3B4670D4B878320D8F69B",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1139"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1248",
+        "loaderId": "B86F659D3D58068A57D62B2FD7CED211",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1248",
+        "loaderId": "B86F659D3D58068A57D62B2FD7CED211",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1248"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1375",
+        "loaderId": "A9C412337F0C0E165E617DCFED7DF5F7",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1375",
+        "loaderId": "A9C412337F0C0E165E617DCFED7DF5F7",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1375"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1492",
+        "loaderId": "2BBF3F305140CCCEE40FDA275A7BAFFA",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1492",
+        "loaderId": "2BBF3F305140CCCEE40FDA275A7BAFFA",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1492"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1607",
+        "loaderId": "5D15A324F8691D7F631DBE836100DD73",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1607",
+        "loaderId": "5D15A324F8691D7F631DBE836100DD73",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1607"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1715",
+        "loaderId": "2C0FE5D11A51AE0104DC70191E544779",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1715",
+        "loaderId": "2C0FE5D11A51AE0104DC70191E544779",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1715"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1823",
+        "loaderId": "F063BCE737C2124A70F69FCD69AFDA97",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1823",
+        "loaderId": "F063BCE737C2124A70F69FCD69AFDA97",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1823"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.1932",
+        "loaderId": "6928471B4A39372E97FA97C37C122EA9",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.1932",
+        "loaderId": "6928471B4A39372E97FA97C37C122EA9",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.1932"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2046",
+        "loaderId": "70FAB832E2EC332FF9106D2294CC0BD8",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2046",
+        "loaderId": "70FAB832E2EC332FF9106D2294CC0BD8",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2046"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2154",
+        "loaderId": "04A676D33043884333A547414126A553",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2154",
+        "loaderId": "04A676D33043884333A547414126A553",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2154"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2280",
+        "loaderId": "39E9E03A25604E8C7A95D39F8EDEE5CF",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2280",
+        "loaderId": "39E9E03A25604E8C7A95D39F8EDEE5CF",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2280"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2482",
+        "loaderId": "6D059A27932CA58387ED55A91DDB6283",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2482",
+        "loaderId": "6D059A27932CA58387ED55A91DDB6283",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2482"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2497",
+        "loaderId": "CC9E9F7D970D720833B74808F2B5FF0E",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2497",
+        "loaderId": "CC9E9F7D970D720833B74808F2B5FF0E",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2497"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2610",
+        "loaderId": "BCCF9447D86E3DBA2F452EA6BA7B6065",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2610",
+        "loaderId": "BCCF9447D86E3DBA2F452EA6BA7B6065",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2610"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2735",
+        "loaderId": "D4EF401325A6BC7AD8C0CBE864A3FF1E",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2735",
+        "loaderId": "D4EF401325A6BC7AD8C0CBE864A3FF1E",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2735"
+      },
+      {
+        "event": "request",
+        "requestId": "21768.2843",
+        "loaderId": "454AD2DC4FB5A03997433D684C51A184",
+        "frameId": "C45573D6710BFFC31B3E2F7CA28152CC",
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "response",
+        "requestId": "21768.2843",
+        "loaderId": "454AD2DC4FB5A03997433D684C51A184",
+        "status": 200,
+        "fromServiceWorker": false,
+        "url": "http://127.0.0.1:5238/site.webmanifest"
+      },
+      {
+        "event": "finished",
+        "requestId": "21768.2843"
+      }
+    ]
+  },
+  "limitations": [
+    "All identities, links and records are synthetic local fixtures.",
+    "Native share and clipboard branches use explicitly declared in-browser capability shims. They do not exercise or alter an OS share sheet or the user's clipboard.",
+    "No real email is sent. Recovery and claim are recorded as not run unless the preview supplies its local provider-backed fixtures.",
+    "Downstream request/order records are explicit synthetic fixtures inserted by a separate local IPC command after actual referral binding; request submission and order conversion are not exercised or inferred.",
+    "No accessibility audit, performance claim, production readiness, deployment or migration approval is implied."
+  ],
+  "pass": true,
+  "browserVersion": "152.0.7977.76",
+  "completedAt": "2026-09-04T17:51:52.835Z",
+  "finalSource": {
+    "sourceSha": "c5ac43907ffe024ffcba847fb761836211ae4118",
+    "sourceTreeSha256": "6ade325985c1df208b8448e75be7bab0e4f83e409f6d5ca83e33e1b731659b7b",
+    "sourceFileCount": 2093,
+    "bundleSha256": "5069e6fb51045747878ca29acea5496566a0dce5a70e62acd04b169d246cc464",
+    "bundleFileCount": 327
+  },
+  "coreAssertionsPassed": true
+}

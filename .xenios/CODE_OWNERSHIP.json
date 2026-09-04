@@ -1033,9 +1033,9 @@
         "docs/ux/referral-v1-20260904/**",
         "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-04T16:52:48.812Z",
-      "heartbeatAt": "2026-09-04T17:40:54.162Z"
+      "heartbeatAt": "2026-09-04T17:47:47.553Z"
     }
   ],
   "rules": [
