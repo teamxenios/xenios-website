@@ -8,7 +8,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import net from "node:net";
 import type { Server } from "node:http";
-import type { FoundingActivationGuards } from "../../server/research/membership-activation/routes";
 import { startReferralRehearsalDatabase } from "../../server/research/partners/referral-v1-rehearsal";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -41,7 +40,7 @@ export const referralPreviewApiBoundary: RequestHandler = (req, res, next) => {
  */
 export async function registerReferralPreviewReadOnlyDependencies(
   app: Express,
-  guards: { requireMember: FoundingActivationGuards["requireMember"]; requireAdmin: FoundingActivationGuards["requireSupabaseAdmin"] },
+  guards: { requireMember: RequestHandler; requireAdmin: RequestHandler },
 ): Promise<void> {
   const [care, activation, master] = await Promise.all([
     import("../../server/care/manual-access"),
@@ -53,7 +52,8 @@ export async function registerReferralPreviewReadOnlyDependencies(
   app.get("/api/waitlist/count", (_req, res) => res.set({ "Cache-Control": "no-store", "X-Xenios-Preview-Fixture": "synthetic-waitlist-count" }).json({ count: 0 }));
   care.registerCareManualAccessApi(app, care.unconfiguredCareManualAccessDependencies());
   activation.registerFoundingActivationApi(app, { state: "disabled" }, {
-    requireMember: guards.requireMember, requireSupabaseAdmin: guards.requireAdmin,
+    async requireMember(req, res, next) { await guards.requireMember(req, res, next); },
+    async requireSupabaseAdmin(req, res, next) { await guards.requireAdmin(req, res, next); },
   });
   const catalog = master.createMasterOfferingCatalogApiHandlers({
     env: { RESEARCH_MASTER_OFFERINGS_ENABLED: "false" },

@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { localOrigin, safeEvidenceUrl, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser } from "./browser-qa.mjs";
+import { localOrigin, safeEvidenceUrl, safeEvidenceError, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser } from "./browser-qa.mjs";
 
 describe("referral browser evidence boundaries", () => {
   it("permits only an explicit loopback origin", () => {
@@ -14,6 +14,19 @@ describe("referral browser evidence boundaries", () => {
   });
   it("redacts navigation credentials and opaque invitation paths from telemetry", () => {
     assert.equal(safeEvidenceUrl("http://127.0.0.1:5238/r/r1_secret?token=private#access_token=secret"), "http://127.0.0.1:5238/r/OPAQUE-REDACTED?REDACTED#REDACTED");
+  });
+  it("redacts credential URLs in errors while preserving the failure and stack meaning", () => {
+    const error = "Error: navigate http://user:secret@127.0.0.1:5238/research/reset-password?returnTo=private#access_token=synthetic-private&refresh_token=synthetic-refresh: load event not fired within 30000 ms\n    at PageSession.navigate (file:///workspace/cdp.mjs:12:3)";
+    const safe = safeEvidenceError(error);
+    assert.match(safe, /reset-password\?REDACTED#REDACTED load event not fired within 30000 ms/);
+    assert.match(safe, /PageSession\.navigate \(file:\/\/\/workspace\/cdp\.mjs:12:3\)/);
+    assert.doesNotMatch(safe, /user:|secret|synthetic-private|synthetic-refresh|returnTo/);
+    assert.equal(safeEvidenceError("token=opaque access_token=private refresh_token=hidden"), "token=[REDACTED] access_token=[REDACTED] refresh_token=[REDACTED]");
+    assert.equal(safeEvidenceError(`invite r1_${"Z".repeat(43)} JWT eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWJqZWN0In0.signature`), "invite r1_[REDACTED] JWT [JWT-REDACTED]");
+    const harness = readFileSync(new URL("./browser-qa.mjs", import.meta.url), "utf8");
+    assert.match(harness, /row\.error = safeEvidenceError/);
+    assert.match(harness, /report\.errors\.push\(safeEvidenceError/);
+    assert.match(harness, /console\.error\("REFERRAL_BROWSER_QA_FAIL", safeEvidenceError/);
   });
   it("has all nine required widths and no silent option widening", () => {
     assert.deepEqual(parseOptions([]).widths, WIDTHS);

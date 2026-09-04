@@ -29,6 +29,13 @@ export function safeEvidenceUrl(value) {
     return url.href;
   } catch { return "INVALID"; }
 }
+export function safeEvidenceError(value) {
+  return String(value)
+    .replace(/\bhttps?:\/\/[^\s"'<>]+/gi, url => safeEvidenceUrl(url))
+    .replace(/\b(access_token|refresh_token|claim_token|token|code)=([^\s&#"'<>]+)/gi, "$1=[REDACTED]")
+    .replace(/\br1_[A-Za-z0-9_-]{43}\b/g, "r1_[REDACTED]")
+    .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[JWT-REDACTED]");
+}
 export function evidenceDirectory(suffix) {
   assert(/^[a-z0-9][a-z0-9-]{0,60}$/.test(suffix), "Evidence suffix must be a short lowercase identifier");
   const target = resolve(EVIDENCE_ROOT, `browser-${suffix}`);
@@ -115,7 +122,7 @@ export class ReferralBrowser {
     this.conn.on("Network.loadingFailed", event => {
       if (manifestRequestIds.has(event.requestId)) this.report.network.manifestEvents.push({ event: "failed", requestId: event.requestId, canceled: event.canceled, error: event.errorText });
     }, this.page.sessionId);
-    this.conn.on("Runtime.exceptionThrown", event => this.report.runtimeExceptions.push(String(event.exceptionDetails?.text ?? "runtime exception")), this.page.sessionId);
+    this.conn.on("Runtime.exceptionThrown", event => this.report.runtimeExceptions.push(safeEvidenceError(event.exceptionDetails?.text ?? "runtime exception")), this.page.sessionId);
     // Do not bypass, unregister, replace, or warm up the candidate service worker.
     await this.page.setViewport({ width, height: 900, mobile: width <= 430 });
   }
@@ -377,6 +384,12 @@ export async function recoveryJourney(browser, fixture, row, link, verifyBinding
   await browser.enter("#rp-email", fixture.recovery.email);
   await browser.click('[data-testid="button-request-reset"]');
   await browser.wait("!!document.querySelector('[data-testid=\"text-reset-notice\"]')");
+  // Model opening the supplied synthetic email link from another document.
+  // Adding only a hash to the current reset URL would be same-document and
+  // would not initialize the provider as a fresh email-link navigation does.
+  // This local transition preserves the captured visitor cookie and does not
+  // bypass or force any recovery/auth destination.
+  await browser.navigate("/health");
   await browser.navigate(fixture.recovery.path);
   await browser.wait("!!document.querySelector('[data-testid=\"form-reset-password\"]')");
   await verifyBinding("recovery", null, "during-recovery-session");
@@ -565,7 +578,7 @@ export async function runBrowserQa(options) {
         row.pass = row.checks.passwordReset.state === "exercised" && row.checks.accountClaim.state === "exercised";
         console.log(`REFERRAL_BROWSER_QA_${row.pass ? "PASS" : "PARTIAL"} width=${width}`);
       } catch (error) {
-        row.error = String(error?.message ?? error).replace(/[A-Za-z0-9_-]{43}/g, "[REDACTED]");
+        row.error = safeEvidenceError(error?.message ?? error);
         if (browser?.page) {
           row.failurePage = await browser.page.evaluate("({path:location.pathname,text:document.body.innerText.slice(0,1800)})").catch(() => null);
           if (row.failurePage?.path?.startsWith("/r/")) row.failurePage.path = "/r/OPAQUE-REDACTED";
@@ -586,13 +599,13 @@ export async function runBrowserQa(options) {
           await browser?.close();
           row.browserCleanupConfirmed = true;
         } catch (error) {
-          row.pass = false; row.cleanupError = String(error?.message ?? error); throw error;
+          row.pass = false; row.cleanupError = safeEvidenceError(error?.message ?? error); throw error;
         } finally {
           try {
             await stopPreview(preview?.child);
             row.previewCleanupConfirmed = true;
           } catch (error) {
-            row.pass = false; row.cleanupError = String(error?.message ?? error); throw error;
+            row.pass = false; row.cleanupError = safeEvidenceError(error?.message ?? error); throw error;
           } finally {
             writeFileSync(resolve(options.out, "browser-results.json"), JSON.stringify(report, null, 2));
           }
@@ -606,7 +619,7 @@ export async function runBrowserQa(options) {
     report.completedAt = new Date().toISOString(); report.finalSource = final;
     report.coreAssertionsPassed = true; report.pass = report.widths.every(row => row.pass);
   } catch (error) {
-    report.completedAt = new Date().toISOString(); report.errors.push(String(error?.stack ?? error).replace(/[A-Za-z0-9_-]{43}/g, "[REDACTED]"));
+    report.completedAt = new Date().toISOString(); report.errors.push(safeEvidenceError(error?.stack ?? error));
     throw error;
   } finally {
     writeFileSync(resolve(options.out, "browser-results.json"), JSON.stringify(report, null, 2));
@@ -617,5 +630,5 @@ export async function runBrowserQa(options) {
 // Importing the safety helpers is inert. The integration lead authorizes the
 // browser run only after the full suite and production bundle build complete.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  runBrowserQa(parseOptions(process.argv.slice(2))).then(report => { if (!report.pass) process.exitCode = 2; }).catch(error => { console.error("REFERRAL_BROWSER_QA_FAIL", String(error?.message ?? error)); process.exitCode = 1; });
+  runBrowserQa(parseOptions(process.argv.slice(2))).then(report => { if (!report.pass) process.exitCode = 2; }).catch(error => { console.error("REFERRAL_BROWSER_QA_FAIL", safeEvidenceError(error?.message ?? error)); process.exitCode = 1; });
 }
