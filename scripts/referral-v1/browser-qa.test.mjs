@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { localOrigin, safeEvidenceUrl, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding } from "./browser-qa.mjs";
+import { localOrigin, safeEvidenceUrl, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser } from "./browser-qa.mjs";
 
 describe("referral browser evidence boundaries", () => {
   it("permits only an explicit loopback origin", () => {
@@ -34,5 +34,22 @@ describe("referral browser evidence boundaries", () => {
     assert.throws(() => assertPersonaBinding({ bindingByPersona: { recovery: { count: 1, linkId: "link-two" } } }, "recovery", "link-one"));
     assert.deepEqual(assertPersonaBinding({ bindingByPersona: { recovery: { count: 0, linkId: null } } }, "recovery", null), { persona: "recovery", count: 0, linkId: null });
     assert.deepEqual(assertPersonaBinding({ bindingByPersona: { recovery: { count: 1, linkId: "link-one" } } }, "recovery", "link-one"), { persona: "recovery", count: 1, linkId: "link-one" });
+  });
+  it("fully settles user-driven navigation and fails closed before the next navigation", async () => {
+    const steps = [];
+    const browser = {
+      wait: async expression => steps.push(["wait", expression]),
+      page: {
+        settle: async options => steps.push(["settle", options]),
+        evaluate: async expression => { steps.push(["verify", expression]); return true; },
+      },
+    };
+    await ReferralBrowser.prototype.arrive.call(browser, "exactDestination");
+    assert.deepEqual(steps, [["wait", "exactDestination"], ["wait", "document.readyState === 'complete'"], ["settle", { quietMs: 800, maxSettleMs: 30000 }], ["verify", "exactDestination"]]);
+    browser.page.settle = async () => { throw new Error("pending Manifest"); };
+    await assert.rejects(ReferralBrowser.prototype.arrive.call(browser, "exactDestination"), /pending Manifest/);
+    browser.page.settle = async () => {};
+    browser.page.evaluate = async () => false;
+    await assert.rejects(ReferralBrowser.prototype.arrive.call(browser, "exactDestination"), /Destination changed/);
   });
 });

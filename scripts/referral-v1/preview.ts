@@ -223,7 +223,9 @@ export async function startReferralPreview() {
     const deps = buildReferralV1Dependencies();
     registerReferralV1Api(app, deps, { requireMember, requireAdmin: requireSupabaseAdmin });
     const dist = path.join(root, "dist/public");
-    app.use(express.static(dist));
+    // Match production server/static.ts: the static Research asset directory
+    // is not authority to redirect the /research application document.
+    app.use(express.static(dist, { redirect: false }));
     app.get(/.*/, (_req, res) => res.sendFile(path.join(dist, "index.html")));
     server = await new Promise<Server>((resolve, reject) => { const listener = app.listen(5238, "127.0.0.1", () => resolve(listener)); listener.on("error", reject); });
 

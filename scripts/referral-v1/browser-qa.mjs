@@ -94,12 +94,26 @@ export class ReferralBrowser {
     this.page = await PageSession.create(this.conn);
     await this.page.enforceNetworkBoundary(this.origin, { onViolation: value => this.report.boundaryViolations.push({ ...value, url: safeEvidenceUrl(value.url) }) });
     await this.page.send("Page.addScriptToEvaluateOnNewDocument", { source: browserCapabilitiesSource() });
+    const manifestRequestIds = new Set();
     this.conn.on("Network.requestWillBeSent", event => {
       let url; try { url = new URL(event.request.url); } catch { return; }
       this.report.network.requestCount++;
       this.report.network.origins[url.origin] = (this.report.network.origins[url.origin] ?? 0) + 1;
       if (["http:", "https:"].includes(url.protocol) && url.origin !== this.origin) this.report.network.externalHttpRequestCount++;
       if (url.pathname.startsWith("/api/research/referral/")) this.report.network.referralMethods.push({ method: event.request.method, path: url.pathname });
+      if (event.type === "Manifest") {
+        manifestRequestIds.add(event.requestId);
+        this.report.network.manifestEvents.push({ event: "request", requestId: event.requestId, loaderId: event.loaderId, frameId: event.frameId, url: safeEvidenceUrl(event.request.url) });
+      }
+    }, this.page.sessionId);
+    this.conn.on("Network.responseReceived", event => {
+      if (manifestRequestIds.has(event.requestId)) this.report.network.manifestEvents.push({ event: "response", requestId: event.requestId, loaderId: event.loaderId, status: event.response.status, fromServiceWorker: event.response.fromServiceWorker, url: safeEvidenceUrl(event.response.url) });
+    }, this.page.sessionId);
+    this.conn.on("Network.loadingFinished", event => {
+      if (manifestRequestIds.has(event.requestId)) this.report.network.manifestEvents.push({ event: "finished", requestId: event.requestId });
+    }, this.page.sessionId);
+    this.conn.on("Network.loadingFailed", event => {
+      if (manifestRequestIds.has(event.requestId)) this.report.network.manifestEvents.push({ event: "failed", requestId: event.requestId, canceled: event.canceled, error: event.errorText });
     }, this.page.sessionId);
     this.conn.on("Runtime.exceptionThrown", event => this.report.runtimeExceptions.push(String(event.exceptionDetails?.text ?? "runtime exception")), this.page.sessionId);
     // Do not bypass, unregister, replace, or warm up the candidate service worker.
@@ -133,6 +147,14 @@ export class ReferralBrowser {
     const url = new URL(path, this.origin);
     assert(url.origin === this.origin, "Off-origin navigation refused");
     return this.page.navigate(url.href, { maxSettleMs: 30000 });
+  }
+  async arrive(expression) {
+    await this.wait(expression);
+    // A pathname change can precede the destination document's remaining loads.
+    // Finish that real navigation before a later Page.navigate resets records.
+    await this.wait("document.readyState === 'complete'");
+    await this.page.settle({ quietMs: 800, maxSettleMs: 30000 });
+    assert(await this.page.evaluate(expression), "Destination changed while its document was settling");
   }
   async clickExpression(expression) {
     const point = await this.page.evaluate(`(() => { const e = ${expression}; if (!e || e.disabled) throw new Error('Missing or disabled target'); e.scrollIntoView({block:'center'}); const r=e.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2}; })()`);
@@ -207,7 +229,7 @@ export async function memberSignIn(browser, persona, destination, screenshotPref
   await browser.enter("#ms-email", persona.email);
   await browser.enter("#ms-password", persona.password);
   await browser.click('[data-testid="button-member-signin"]');
-  await browser.wait(`location.pathname + location.search === ${JSON.stringify(expectedDestination)} && !document.querySelector('[data-testid="form-member-signin"]')`);
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(expectedDestination)} && !document.querySelector('[data-testid="form-member-signin"]')`);
   return browser.page.evaluate("location.pathname + location.search");
 }
 async function createLink(browser, destination) {
@@ -283,8 +305,8 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   row.screenshots.push(await browser.snapshot(`recipient-health-choice-${row.width}`));
   await browser.click('input[value="/research"]');
   await browser.clickText("Continue without confirming referral");
-  // Express may add the public static-directory slash; private auth returns stay exact.
-  await browser.wait("['/research', '/research/'].includes(location.pathname + location.search)");
+  // Preview follows the canonical server's asset-only redirect:false policy.
+  await browser.arrive("location.pathname + location.search === '/research'");
   assert(browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length === capturesBeforeChoice, "Continue without referral captured attribution");
   row.checks.healthChoice = { choiceRequired: true, explicitResearchPath: true, browseWithoutCapture: true };
   const capturesBeforeContext = browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length;
@@ -295,7 +317,7 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   assert(browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length === capturesBeforeContext, "Context page captured a referral without Continue");
   row.checks.contextDidNotCapture = true;
   await browser.clickText("Continue with recommendation");
-  await browser.wait("location.pathname === '/care'");
+  await browser.arrive("location.pathname === '/care'");
   row.checks.careExplicitContinue = true;
   const capturesBeforeResearch = browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length;
   await browser.navigate(links.research);
@@ -305,7 +327,7 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   await browser.clickText("Continue with recommendation");
   // The member guard may send an anonymous recipient to sign-in, but may not
   // use the legacy review password wall or replace the safe destination.
-  await browser.wait(`location.pathname + location.search === ${JSON.stringify(signInPath("/research/member/catalog"))}`);
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(signInPath("/research/member/catalog"))}`);
   assert(await browser.page.evaluate("!document.querySelector('[data-testid=\"form-research-access\"]')"), "Recipient hit the unrelated legacy review wall");
   row.checks.researchDestination = await browser.page.evaluate("location.pathname + location.search");
   return links.care;
@@ -323,6 +345,7 @@ export async function authContinuityJourney(browser, fixture, row, verifyBinding
   assert(await browser.page.evaluate(`document.querySelector('[data-testid="link-member-login"]').getAttribute('href') === ${JSON.stringify(signInPath(destination))}`), "Reset back link lost the safe destination");
   row.checks.authSafeReturn = { destination, resetPath };
   await browser.click('[data-testid="link-member-login"]');
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(signInPath(destination))}`);
   await verifyBinding("recipient", null, "before-normal-sign-in");
   row.checks.memberDestination = await memberSignIn(browser, fixture.personas.recipient, destination, "recipient", row, destination, false);
   await verifyBinding("recipient", row.createdLinkIds.care, "after-normal-sign-in");
@@ -348,7 +371,7 @@ export async function recoveryJourney(browser, fixture, row, link, verifyBinding
   await browser.navigate(link);
   await browser.wait("document.body.textContent.includes('Explore the Care pathway')");
   await browser.clickText("Continue with recommendation");
-  await browser.wait("location.pathname === '/care'");
+  await browser.arrive("location.pathname === '/care'");
   await browser.navigate(`/research/reset-password?returnTo=${encodeURIComponent(destination)}`);
   await browser.wait("!!document.querySelector('[data-testid=\"form-request-reset\"]')");
   await browser.enter("#rp-email", fixture.recovery.email);
@@ -363,7 +386,7 @@ export async function recoveryJourney(browser, fixture, row, link, verifyBinding
   await browser.enter("#rp-confirm", fixture.recovery.newPassword);
   row.screenshots.push(await browser.snapshot(`recipient-password-recovery-${row.width}`));
   await browser.click('[data-testid="button-set-password"]');
-  await browser.wait(`location.pathname + location.search === ${JSON.stringify(signInPath(destination))}`);
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(signInPath(destination))}`);
   await verifyBinding("recovery", null, "after-reset-before-fresh-sign-in");
   row.checks.passwordReset = { state: "exercised", recoveryCredentialScrubbed: true, mandatoryFreshSignIn: true, safeReturnPreserved: true };
   row.checks.passwordResetDestination = await memberSignIn(browser, { email: fixture.recovery.email, password: fixture.recovery.newPassword }, destination, null, row, destination, false);
@@ -379,7 +402,7 @@ export async function claimJourney(browser, fixture, link, row, verifyBinding) {
   await browser.navigate(link);
   await browser.wait("document.body.textContent.includes('Explore nonclinical Research')");
   await browser.clickText("Continue with recommendation");
-  await browser.wait("location.pathname === '/research/sign-in' || location.pathname === '/research/member/catalog'");
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(signInPath("/research/member/catalog"))}`);
   await browser.navigate(fixture.claim.path);
   await browser.wait("!!document.querySelector('[data-testid=\"form-claim-account\"]')");
   assert(await browser.page.evaluate(`location.pathname + location.search === ${JSON.stringify(`/research/apply/status?returnTo=${encodeURIComponent("/research/member/catalog")}`)}`), "Claim credential was not scrubbed or lost safe return");
@@ -391,6 +414,7 @@ export async function claimJourney(browser, fixture, link, row, verifyBinding) {
   await verifyBinding("claim", null, "after-claim-before-fresh-sign-in");
   assert(await browser.page.evaluate(`document.querySelector('[data-testid="card-claim-success"] a').getAttribute('href') === ${JSON.stringify(signInPath("/research/member/catalog"))}`), "Claim success lost safe destination");
   await browser.click('[data-testid="card-claim-success"] a');
+  await browser.arrive(`location.pathname + location.search === ${JSON.stringify(signInPath("/research/member/catalog"))}`);
   row.checks.accountClaimDestination = await memberSignIn(browser, { email: fixture.claim.email, password: fixture.claim.password }, "/research/member/catalog", null, row, "/research/activate", false);
   await verifyBinding("claim", row.createdLinkIds.research, "after-claim-fresh-sign-in");
   row.checks.accountClaim = { state: "exercised", claimCredentialScrubbed: true, safeReturnPreservedInSignInLink: true, activationGateOutranksReturnHint: true, freshSignInRequired: true };
@@ -503,7 +527,7 @@ export async function runBrowserQa(options) {
   assert(!existsSync(options.out), "Evidence suffix already exists; preserve the earlier run and use a fresh suffix");
   mkdirSync(options.out, { recursive: true });
   const frozen = candidateFingerprint();
-  const report = { generatedAt: new Date().toISOString(), classification: "LOCAL SYNTHETIC ACTUAL-BUNDLE QA — NOT PRODUCTION OR OS-SHARE EVIDENCE", source: frozen, environment: "Fresh headless Chromium and fresh disposable PostgreSQL preview per width; localhost-only browser boundary; sanitized server environment; no core API browser mocks", widths: [], boundaryViolations: [], runtimeExceptions: [], errors: [], network: { requestCount: 0, origins: {}, externalHttpRequestCount: 0, referralMethods: [] }, limitations: ["All identities, links and records are synthetic local fixtures.", "Native share and clipboard branches use explicitly declared in-browser capability shims. They do not exercise or alter an OS share sheet or the user's clipboard.", "No real email is sent. Recovery and claim are recorded as not run unless the preview supplies its local provider-backed fixtures.", "Downstream request/order records are explicit synthetic fixtures inserted by a separate local IPC command after actual referral binding; request submission and order conversion are not exercised or inferred.", "No accessibility audit, performance claim, production readiness, deployment or migration approval is implied."], pass: false };
+  const report = { generatedAt: new Date().toISOString(), classification: "LOCAL SYNTHETIC ACTUAL-BUNDLE QA — NOT PRODUCTION OR OS-SHARE EVIDENCE", source: frozen, environment: "Fresh headless Chromium and fresh disposable PostgreSQL preview per width; localhost-only browser boundary; sanitized server environment; no core API browser mocks", widths: [], boundaryViolations: [], runtimeExceptions: [], errors: [], network: { requestCount: 0, origins: {}, externalHttpRequestCount: 0, referralMethods: [], manifestEvents: [] }, limitations: ["All identities, links and records are synthetic local fixtures.", "Native share and clipboard branches use explicitly declared in-browser capability shims. They do not exercise or alter an OS share sheet or the user's clipboard.", "No real email is sent. Recovery and claim are recorded as not run unless the preview supplies its local provider-backed fixtures.", "Downstream request/order records are explicit synthetic fixtures inserted by a separate local IPC command after actual referral binding; request submission and order conversion are not exercised or inferred.", "No accessibility audit, performance claim, production readiness, deployment or migration approval is implied."], pass: false };
   try {
     for (const width of options.widths) {
       let preview, browser;
@@ -544,6 +568,12 @@ export async function runBrowserQa(options) {
         row.error = String(error?.message ?? error).replace(/[A-Za-z0-9_-]{43}/g, "[REDACTED]");
         if (browser?.page) {
           row.failurePage = await browser.page.evaluate("({path:location.pathname,text:document.body.innerText.slice(0,1800)})").catch(() => null);
+          if (row.failurePage?.path?.startsWith("/r/")) row.failurePage.path = "/r/OPAQUE-REDACTED";
+          const pendingUrls = new Set([...browser.page.inflight.values()].map(request => request.url));
+          row.pendingRequestsAtFailure = [...browser.page.inflight.values()].map(request => ({ url: safeEvidenceUrl(request.url), type: request.type, loaderId: request.loaderId, frameId: request.frameId, responseStatus: request.responseRecord?.status, responseFromServiceWorker: request.responseFromServiceWorker }));
+          row.completedMatchingRequestsAtFailure = browser.page.network.filter(request => pendingUrls.has(request.url)).map(request => ({ url: safeEvidenceUrl(request.url), type: request.type, status: request.status, failed: request.failed, targetType: request.targetType }));
+          row.loaderTransitionAtFailure = browser.page.mainFrameLoaderTransition;
+          row.currentLoaderAtFailure = browser.page.currentMainFrameLoaderId;
           const shot = await browser.page.screenshot({ fullPage: true }).catch(() => null);
           if (shot) {
             const path = resolve(options.out, `failure-${width}.png`); writeFileSync(path, shot.bytes);

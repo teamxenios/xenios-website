@@ -71,7 +71,13 @@ describe("composed Referral V1 HTTP authority (synthetic guards, no external ser
     expect(result.headers.get("cache-control")).toBe("no-store");
     expect(result.headers.get("referrer-policy")).toBe("no-referrer");
   });
-  it.each([{ destinationPath: "//outside.invalid" }, { destinationPath: "/care", partnerId }, { destinationPath: "/care", commission: 99 }, { destinationPath: "/care", symptoms: "blocked" }])("rejects browser authority/redirect/clinical input %j", async (body) => {
+  it.each([
+    { destinationPath: "//outside.invalid" }, { destinationPath: "/care", partnerId },
+    { destinationPath: "/care", commission: 99 }, { destinationPath: "/care", symptoms: "blocked" },
+    { destinationPath: "/care", paid: true }, { destinationPath: "/care", fulfilled: true },
+    { destinationPath: "/care", payout: 100 }, { destinationPath: "/care", accountKey: `auth:${actor}` },
+    { destinationPath: "/care", verifiedReferrer: partnerId },
+  ])("rejects browser authority/redirect/clinical/financial input %j", async (body) => {
     const f = await fixture();
     expect((await f.request(REFERRAL_API.links, { method: "POST", auth: true, body, headers: { "Idempotency-Key": key } })).status).toBe(400);
     expect(f.store.issue).not.toHaveBeenCalled();

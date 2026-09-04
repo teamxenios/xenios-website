@@ -122,16 +122,45 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     expect(value(await store.getBinding({ actorAuthUserId: partner.actorAuthUserId })).binding).toBeNull();
   });
 
-  it("rejects forged provenance, expired/unregistered legacy links and wrong ownership", async () => {
+  it("rejects forged provenance, unregistered links and wrong ownership", async () => {
     const partner = await seedPartner(), issued = await issue(partner);
     expect(await store.resolve({ tokenHashHex: hash() })).toEqual({ ok: false, reason: "invalid_link" });
     const other = await seedPartner();
     expect(await store.revoke({ actorAuthUserId: other.actorAuthUserId, idempotencyKey: randomUUID(), linkId: issued.link.id })).toEqual({ ok: false, reason: "not_found" });
     expect(await store.bind({ actorAuthUserId: other.actorAuthUserId, touchId: randomUUID(), subjectKeyHash: hash() })).toEqual({ ok: false, reason: "capture_missing" });
-    const expiredId = randomUUID(), expiredHash = hash();
+  });
+
+  it("refuses expired capture and historical expired-touch binding without new evidence", async () => {
+    const partner = await seedPartner(), recipient = await seedPartner();
+    const alternate = await issue(partner);
+    const expiredId = randomUUID(), expiredHash = hash(), expiredTouchId = randomUUID();
+    const historicalSubject = hash(), freshSubject = hash();
+    // Honest synthetic history in this fresh disposable database only: a link
+    // issued 60 days ago, captured while valid, then expired 30 days ago. These
+    // are fixture INSERTs by the database owner, not claims of time-elapsed E2E.
+    // All candidate constraints/immutable guards stay enabled; no clock changes.
     await sql("insert into public.research_partner_links(id,partner_id,code,channel,created_at,referral_version,token_hash_hex,token_key_version,destination_path,expires_at) values($1::uuid,$2,$1::uuid::text,'signed_link',now()-interval '60 days',1,$3,1,'/health',now()-interval '30 days')", [expiredId, partner.partnerId, expiredHash]);
+    await sql("insert into public.research_attribution_touches(id,subject_key,partner_id,channel,occurred_at,referral_version,referral_link_id,referral_expires_at) select $1,$2,partner_id,'signed_link',created_at+interval '1 day',1,id,expires_at from public.research_partner_links where id=$3", [expiredTouchId, historicalSubject, expiredId]);
+    await sql("insert into public.research_partner_referral_events(event_type,partner_id,link_id,touch_id,occurred_at) select 'capture_recorded',partner_id,referral_link_id,id,occurred_at from public.research_attribution_touches where id=$1", [expiredTouchId]);
+    const evidenceCounts = async () => (await sql("select (select count(*)::int from public.research_attribution_touches) touches,(select count(*)::int from public.research_affiliate_customer_bindings) bindings,(select count(*)::int from public.research_partner_referral_events) events")).rows[0];
+    const before = await evidenceCounts();
+
     expect(await store.resolve({ tokenHashHex: expiredHash })).toEqual({ ok: false, reason: "invalid_link" });
     expect(value(await store.listOwn({ actorAuthUserId: partner.actorAuthUserId })).links.find((l) => l.id === expiredId)?.availability).toBe("expired");
+    expect(await store.capture({ tokenHashHex: expiredHash, subjectKeyHash: freshSubject })).toEqual({ ok: false, reason: "invalid_link" });
+    expect(await store.capture({ tokenHashHex: expiredHash, subjectKeyHash: historicalSubject })).toEqual({ ok: false, reason: "invalid_link" });
+    // A later valid incoming link retains the historical first winner as
+    // ineligible; it must neither replace the touch nor make it bindable.
+    expect(value(await store.capture({ tokenHashHex: alternate.input.tokenHashHex, subjectKeyHash: historicalSubject })))
+      .toMatchObject({ created: false, availability: "expired", touch: { touchId: expiredTouchId, linkId: expiredId } });
+    for (let attempt = 0; attempt < 2; attempt++) {
+      expect(await store.bind({ actorAuthUserId: recipient.actorAuthUserId, touchId: expiredTouchId, subjectKeyHash: historicalSubject }))
+        .toEqual({ ok: false, reason: "invalid_link" });
+    }
+    expect(value(await store.getBinding({ actorAuthUserId: recipient.actorAuthUserId })))
+      .toEqual({ binding: null, created: false, availability: "none" });
+    expect((await sql("select count(*)::int n from public.research_attribution_touches where subject_key=$1", [freshSubject])).rows[0].n).toBe(0);
+    expect(await evidenceCounts()).toEqual(before);
   });
 
   it("waits for an external suspension row lock and refuses a stale eligibility decision", async () => {

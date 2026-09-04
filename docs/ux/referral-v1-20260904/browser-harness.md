@@ -27,6 +27,8 @@ From the repository root, using the pinned Node 20.19.0 binary:
 
 Never reuse a completed output suffix: retain failed attempts as diagnostic evidence. A smoke-only result does not cover the nine-width matrix.
 
+Early smoke artifacts are retained: the first preview incorrectly redirected the asset-only `/research` directory to `/research/`; the preview now matches the canonical server's `redirect: false` policy and the destination assertion is exact again. The next attempt stopped on an unresolved Manifest request. Current harness diagnostics preserve Manifest lifecycle/loader evidence, and user-driven destinations must finish their document load and the unchanged strict network quiet check before another navigation starts. No pending request is ignored and no service-worker behavior is bypassed.
+
 ## Asserted journeys
 
 1. Owner signs in through the canonical form; creates Health, Care and private Research links through the real API; copies/shares via the declared browser-capability shims; sees copy failure; confirms revocation. A second Health link remains active for the explicit pathway-choice check.
