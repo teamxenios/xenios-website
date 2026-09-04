@@ -16,7 +16,7 @@ const provider = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/supabaseBrowser", () => ({
   getSupabaseBrowser: async () => ({ auth: provider.auth }),
-  isRecoveryAccessToken: (token: string) => token === "fixture-recovery-token",
+  isRecoveryAccessToken: (token: string) => token === "demo-recovery",
   recoveryAccessTokenFromHash: () => null,
 }));
 
@@ -57,7 +57,7 @@ beforeEach(() => {
   provider.auth.getSession.mockImplementation(async () => ({ data: { session: provider.token ? { access_token: provider.token } : null } }));
   provider.auth.updateUser.mockResolvedValue({ error: null });
   provider.auth.signInWithPassword.mockImplementation(async () => {
-    provider.token = "fixture-password-token";
+    provider.token = "demo-auth";
     return { data: { session: { access_token: provider.token } }, error: null };
   });
   vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ ok: true, message: "If a member account exists, a reset link is on its way." }) })));
@@ -71,6 +71,7 @@ afterEach(async () => {
 describe("password recovery intent continuity (synthetic provider)", () => {
   it.each([
     "/research/account/orders/XRR-Fixture_01?tab=payment",
+    "/research/member/assessment?mode=checkin",
     "/research/member/catalog/research_vials/fixture-product?variant=fixture.1&qty=2&intent=buy_now",
     "/research/early-access/order-request/XRR-Fixture_01",
     "/care/schedule",
@@ -89,20 +90,20 @@ describe("password recovery intent continuity (synthetic provider)", () => {
     // Model a fresh-tab email arrival. The backend handler's identical helper
     // invocation and trusted SITE origin are independently tested in members.
     window.history.replaceState(null, "", researchAuthPath("/research/reset-password", sent.returnTo));
-    provider.token = "fixture-recovery-token";
+    provider.token = "demo-recovery";
     await mount("reset", "pending");
-    await fill({ "#rp-password": "fixture-new-password", "#rp-confirm": "fixture-new-password" });
+    await fill({ "#rp-password": "demo-password", "#rp-confirm": "demo-password" });
     await submit();
-    expect(provider.auth.updateUser).toHaveBeenCalledWith({ password: "fixture-new-password" });
-    expect(signOutRecoverySession).toHaveBeenCalledWith("fixture-recovery-token");
+    expect(provider.auth.updateUser).toHaveBeenCalledWith({ password: "demo-password" });
+    expect(signOutRecoverySession).toHaveBeenCalledWith("demo-recovery");
     expect(provider.token).toBeNull();
     expect(establishMemberSession).not.toHaveBeenCalled();
     expect(window.location.pathname + window.location.search).toBe(researchAuthPath("/research/sign-in", destination));
 
     await mount("signin");
-    await fill({ "#ms-email": "fixture@example.invalid", "#ms-password": "fixture-new-password" });
+    await fill({ "#ms-email": "fixture@example.invalid", "#ms-password": "demo-password" });
     await submit();
-    expect(establishMemberSession).toHaveBeenCalledWith("fixture-password-token");
+    expect(establishMemberSession).toHaveBeenCalledWith("demo-auth");
     expect(window.location.pathname + window.location.search).toBe(destination);
     expect(signOutRecoverySession).toHaveBeenCalledTimes(1);
   });

@@ -34,6 +34,17 @@ describe("shared credential-free auth navigation", () => {
     }
   });
 
+  it("preserves only the assessment's exact monthly check-in mode", () => {
+    const destination = "/research/member/assessment?mode=checkin";
+    expect(safeResearchReturnTo(destination)).toBe(destination);
+    const reset = researchAuthPath("/research/reset-password", destination);
+    expect(new URL(reset, "https://xenios.invalid").searchParams.get("returnTo")).toBe(destination);
+    for (const query of ["mode=initial", "mode=CHECKIN", "mode=checkin&mode=initial", "mode=checkin%26token%3DSECRET"]) {
+      expect(safeResearchReturnTo(`/research/member/assessment?${query}`)).toBe("/research/member/assessment");
+    }
+    expect(safeResearchReturnTo("/research/account?mode=checkin")).toBe("/research/account");
+  });
+
   it.each([
     "/research/early-access/order-request/XRR-Fixture_01",
     "/research/early-access/order-request/confirmation/XRR-Fixture_01",

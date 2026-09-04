@@ -31,7 +31,7 @@ const DYNAMIC_PATHS = [
   /^\/research\/early-access\/order-request\/(?:confirmation\/)?[A-Za-z0-9][A-Za-z0-9_-]{0,191}$/,
 ];
 
-function safeQueryValue(key: string, value: string): boolean {
+function safeQueryValue(path: string, key: string, value: string): boolean {
   // A few non-secret view/selection hints. No raw search text, referral code,
   // claim/status credential, nested returnTo or arbitrary analytics payload.
   if (key === "from") return /^(?:sign-in|account|catalog|security)$/.test(value);
@@ -41,6 +41,9 @@ function safeQueryValue(key: string, value: string): boolean {
   if (key === "variant") return /^[A-Za-z0-9._-]{1,80}$/.test(value);
   if (key === "qty") return /^(?:[1-9][0-9]?|100)$/.test(value);
   if (key === "intent") return /^(?:buy_now|assisted_order|request_quote|care)$/.test(value);
+  // The assessment uses this exact mode to select monthly check-in data,
+  // not merely presentation. Do not allow modes on unrelated destinations.
+  if (key === "mode") return path === "/research/member/assessment" && value === "checkin";
   return false;
 }
 
@@ -57,7 +60,7 @@ export function safeResearchReturnTo(value: unknown): string | null {
     if (parsed.origin !== "https://xenios.invalid" || parsed.pathname !== rawPath) return null;
     const safeQuery = new URLSearchParams();
     for (const [key, entry] of parsed.searchParams) {
-      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(key, entry)) safeQuery.set(key, entry);
+      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(rawPath, key, entry)) safeQuery.set(key, entry);
     }
     const query = safeQuery.toString();
     return `${rawPath}${query ? `?${query}` : ""}`;

@@ -95,10 +95,21 @@ export function accountStanding(
   if (action !== null) return "attention";
   const billingSettled = membership.billing === "current" || membership.billing === "none";
   const historyComplete = orders.history.availability === "complete";
+  // A complete list does not make every row's state knowable. Suppressing an
+  // unsupported payment demand must not turn ambiguity or an exception into
+  // a green all-clear. Confirmed cancellation/refund is not itself unfinished
+  // work; unknown facts remain unknown independently of that terminal state.
+  const researchRowsSettled = orders.research.every((order) =>
+    order.recordKind !== "unknown" &&
+    order.paymentState !== "unknown" &&
+    order.fulfillmentState !== "unknown" &&
+    order.fulfillmentState !== "exception" &&
+    (order.paymentState !== "unpaid" || order.fulfillmentState === "cancelled"),
+  );
   const careKnowable =
     care.sourceState === "available" &&
     orders.carePharmacyHistory.availability === "available";
-  return billingSettled && historyComplete && careKnowable ? "current" : "indeterminate";
+  return billingSettled && historyComplete && researchRowsSettled && careKnowable ? "current" : "indeterminate";
 }
 
 export function createCustomerAccountService(ports: CustomerAccountPorts) {

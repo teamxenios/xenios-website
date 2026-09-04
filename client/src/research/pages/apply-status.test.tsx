@@ -16,7 +16,7 @@ afterEach(async () => {
 
 describe("application claim destination", () => {
   it.each(["/research/account/orders", "https://outside.invalid", "/research/account?token=SECRET"])("scrubs claim credentials but preserves only safe destination %s", async (requested) => {
-    window.history.replaceState(null, "", `/research/apply/status?token=fixture-claim-token&returnTo=${encodeURIComponent(requested)}`);
+    window.history.replaceState(null, "", `/research/apply/status?token=demo-claim&returnTo=${encodeURIComponent(requested)}`);
     vi.stubGlobal("fetch", vi.fn(async (input) => ({
       ok: true,
       json: async () => String(input).startsWith("/api/research/applications/status")
@@ -27,13 +27,13 @@ describe("application claim destination", () => {
     document.body.replaceChildren(container);
     root = createRoot(container);
     await act(async () => root!.render(<ApplyStatus />));
-    expect(window.location.search).not.toContain("fixture-claim-token");
+    expect(window.location.search).not.toContain("demo-claim");
     expect(window.location.search).not.toContain("SECRET");
     expect(window.location.search).not.toContain("outside");
     await act(async () => {
       for (const id of ["ca-password", "ca-confirm"]) {
         const input = container.querySelector(`#${id}`)!;
-        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "fixture-password");
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "demo-password");
         input.dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
@@ -41,6 +41,6 @@ describe("application claim destination", () => {
     expect(container.querySelector('[data-testid="card-claim-success"] a')?.getAttribute("href")).toBe(researchAuthPath("/research/sign-in", requested));
     expect(document.activeElement).toBe(container.querySelector('[data-testid="card-claim-success"]'));
     const claim = vi.mocked(fetch).mock.calls.find(([url]) => url === "/api/research/member/claim");
-    expect(JSON.parse(claim![1]!.body as string)).toEqual({ token: "fixture-claim-token", password: "fixture-password" });
+    expect(JSON.parse(claim![1]!.body as string)).toEqual({ token: "demo-claim", password: "demo-password" });
   });
 });

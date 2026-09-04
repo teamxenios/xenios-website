@@ -175,6 +175,34 @@ describe("structured next administrative action", () => {
 });
 
 describe("accountStanding — 'up to date' must be provable", () => {
+  it.each([
+    { recordKind: "unknown", paymentState: "unpaid", fulfillmentState: "unfulfilled" },
+    { recordKind: "order", paymentState: "unpaid", fulfillmentState: "unknown" },
+    { recordKind: "order", paymentState: "unpaid", fulfillmentState: "exception" },
+    { recordKind: "request", paymentState: "unpaid", fulfillmentState: "unfulfilled" },
+    { recordKind: "order", paymentState: "unpaid", fulfillmentState: "shipped" },
+    { recordKind: "order", paymentState: "unknown", fulfillmentState: "cancelled" },
+    { recordKind: "order", paymentState: "paid", fulfillmentState: "unknown" },
+    { recordKind: "unknown", paymentState: "paid", fulfillmentState: "delivered" },
+  ] as const)("withholds the all-clear for unresolved row truth %j without inventing a demand", (row) => {
+    const history = orders("complete", [{ ...FIXTURE_ORDERS[0], ...row }]);
+    const action = nextAdministrativeAction(membership(), FIXTURE_CARE_ENROLLED, history);
+    expect(action).toBeNull();
+    expect(accountStanding(membership(), FIXTURE_CARE_ENROLLED, history, action)).toBe("indeterminate");
+  });
+
+  it.each([
+    { paymentState: "unpaid", fulfillmentState: "cancelled" },
+    { paymentState: "paid", fulfillmentState: "delivered" },
+    { paymentState: "refunded", fulfillmentState: "cancelled" },
+    { paymentState: "partially_refunded", fulfillmentState: "delivered" },
+  ] as const)("does not invent unfinished work from affirmative terminal facts %j", (row) => {
+    const history = orders("complete", [{ ...FIXTURE_ORDERS[0], recordKind: "order", ...row }]);
+    const action = nextAdministrativeAction(membership(), FIXTURE_CARE_ENROLLED, history);
+    expect(action).toBeNull();
+    expect(accountStanding(membership(), FIXTURE_CARE_ENROLLED, history, action)).toBe("current");
+  });
+
   it("attention whenever an action is outstanding", () => {
     expect(
       accountStanding(membership({ billing: "past_due" }), FIXTURE_CARE_ENROLLED, orders("complete"), "pay"),
