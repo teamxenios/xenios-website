@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-04T14:54:58.150Z",
+  "updatedAt": "2026-09-04T20:12:00.000Z",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -1092,6 +1092,54 @@
         "referral V1 on the Gen 2 partner spine: opaque server-issued links, revocation/expiry enforced, recipient landing preserves destination, admin visibility, cross-partner isolation; no second identity/attribution system",
         "focused tests, tsc, build, responsive 1440-320, security negative controls; exact-SHA handoff; no deploy/merge/migration apply/env change"
       ]
+    },
+    {
+      "id": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+      "title": "Integrate the living Site System of Record, Order Entry Hub, and read-only Founder Command Center",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-major-ordering-admin-sor-20260904",
+      "paths": [
+        "scripts/agentic/generate-site-system-of-record.mjs",
+        "scripts/agentic/generate-site-system-of-record.test.mjs",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD_PROTOCOL.md",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.schema.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "shared/research/order-entry.ts",
+        "shared/research/order-entry.test.ts",
+        "client/src/research/pages/OrderEntryHub.tsx",
+        "client/src/research/pages/OrderEntryHub.test.tsx",
+        "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+        "client/src/research/pages/adminx/FounderCommandCenter.test.ts",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/pages/AccessHub.tsx",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "package.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-major-ordering-admin-sor-20260904.json",
+        ".xenios/handoffs/*XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904*"
+      ],
+      "dependsOn": [],
+      "createdAt": "2026-09-04T20:12:00.000Z",
+      "scopeNote": "Founder-directed local-only major sequence on accepted parent e3c9919b1b2f3478e5f2b07a9c93bee6218beb2f. Integrate the generator first, then /research/order, then the read-only founder command center. Preserve canonical account, commerce, referral, Care and admin authorities. No deploy, migration, environment or provider change, real communication, approval, payment, fulfillment, Care/referral mutation, commission or payout.",
+      "acceptance": [
+        "generated records use the current directive status vocabulary and distinguish source, test, browser and production truth without inference",
+        "registered route or important capability disappearance fails validation unless deliberately updated",
+        "/research/order exposes all seven legitimate pathways and preserves safe returnTo, referral and product intent",
+        "/admin/research/command-center is read-only, reports truthful counts or unavailable, and links to owning workflows",
+        "focused tests, typecheck, build, route uniqueness, core-site protection, scans, responsive 1440-320 QA and integration-boundary full suite",
+        "coherent commits and pushes with exact-SHA handoff; production untouched"
+      ],
+      "claimedAt": "2026-09-04T20:11:49.849Z"
     }
   ]
 }

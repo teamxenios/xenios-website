@@ -1,0 +1,10 @@
+{
+  "id": "codex-major-ordering-admin-sor-20260904",
+  "tool": "Codex",
+  "lane": "major-ordering-admin-sor",
+  "branch": "codex/xenios-major-ordering-admin-sor-20260904",
+  "state": "active",
+  "startedAt": "2026-09-04T20:11:27.933Z",
+  "heartbeatAt": "2026-09-04T20:11:27.940Z",
+  "note": "Founder-directed local major sequence from accepted e3c9919b: living SOR, Order Entry Hub, read-only Founder Command Center; no production mutation."
+}

@@ -1100,6 +1100,43 @@
       "state": "released",
       "claimedAt": "2026-09-04T18:58:32.849Z",
       "heartbeatAt": "2026-09-04T18:58:32.849Z"
+    },
+    {
+      "id": "d0a91ab7-4f22-4b1d-b074-dd7ddf1f5d38",
+      "task": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+      "session": "codex-major-ordering-admin-sor-20260904",
+      "paths": [
+        "scripts/agentic/generate-site-system-of-record.mjs",
+        "scripts/agentic/generate-site-system-of-record.test.mjs",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD_PROTOCOL.md",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.schema.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "shared/research/order-entry.ts",
+        "shared/research/order-entry.test.ts",
+        "client/src/research/pages/OrderEntryHub.tsx",
+        "client/src/research/pages/OrderEntryHub.test.tsx",
+        "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+        "client/src/research/pages/adminx/FounderCommandCenter.test.ts",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/pages/AccessHub.tsx",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "package.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-major-ordering-admin-sor-20260904.json",
+        ".xenios/handoffs/*XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T20:11:49.854Z",
+      "heartbeatAt": "2026-09-04T20:11:49.854Z"
     }
   ],
   "rules": [

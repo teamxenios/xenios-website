@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "repository": "teamxenios/xenios-website",
+  "productionEvidence": {
+    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dad08h740ujc73aprfcg",
+    "verificationStatus": "live_verified",
+    "observedAt": "2026-09-04T20:00:00Z",
+    "evidenceSource": "Read-only Render service/deploy inspection reconciled with .xenios production records; auto-deploy is off."
+  },
+  "capabilities": [
+    {
+      "id": "living_site_system_of_record",
+      "capability": "Living Site System of Record",
+      "persona": "founder_engineering_operations",
+      "route": null,
+      "owningClientComponent": null,
+      "owningServerRoute": null,
+      "authorizationBoundary": "Repository read access; generated artifacts contain only bounded technical coordination facts.",
+      "dataSource": "Current committed Git tree plus curated exact-SHA platform registry and bounded continuity records.",
+      "sourceStatus": "source_present",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Regenerate and byte-check the three artifacts after every committed coherent source checkpoint.",
+      "evidence": {
+        "source": [
+          "scripts/agentic/generate-site-system-of-record.mjs",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.schema.json",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
+        ],
+        "tests": [
+          "scripts/agentic/generate-site-system-of-record.test.mjs"
+        ],
+        "browser": [],
+        "production": []
+      },
+      "verification": {
+        "requiredClientRoute": false,
+        "requiredFiles": [
+          "scripts/agentic/generate-site-system-of-record.mjs",
+          "scripts/agentic/generate-site-system-of-record.test.mjs",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.schema.json",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD_PROTOCOL.md",
+          "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
+        ],
+        "serverRouteEvidenceFiles": []
+      }
+    },
+    {
+      "id": "research_public_gateway",
+      "capability": "Research public gateway",
+      "persona": "public_research_visitor",
+      "route": "/research",
+      "owningClientComponent": "client/src/research/pages/Gateway.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Public presentation; protected member and operator data remain behind their canonical server guards.",
+      "dataSource": "Curated Research content plus server-authorized catalog and pathway projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "ownerTaskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Keep pathway copy aligned with current server-authorized Research, Care, account, and assisted-order doors.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/Gateway.tsx",
+          "client/src/research/section.tsx"
+        ],
+        "tests": [
+          "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+          "client/src/research/pages/public-brand-pages.test.tsx"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/Gateway.tsx",
+          "client/src/research/section.tsx"
+        ],
+        "serverRouteEvidenceFiles": []
+      }
+    },
+    {
+      "id": "quick_early_access",
+      "capability": "Quick Early Access ordering",
+      "persona": "quick_early_access_customer",
+      "route": "/research/early-access",
+      "owningClientComponent": "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "owningServerRoute": "/api/research/early-access/session",
+      "authorizationBoundary": "Dedicated Early Access session gate; no admin, member, supplier, affiliate, or Care authority is granted.",
+      "dataSource": "Canonical Product Control/catalog, server-side eligibility and pricing, Early Access session and order authorities.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
+      "blocker": "Current authenticated production journey has not been re-smoked for this checkpoint.",
+      "founderAction": "Use separately authorized production smoke credentials only during a later release gate.",
+      "nextExactAction": "Simplify the existing state machine into the four-step Quick Early Access customer presentation without replacing server authority.",
+      "evidence": {
+        "source": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "server/research/early-access/register.ts"
+        ],
+        "tests": [
+          "server/research/early-access/open-access.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "server/research/early-access/register.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/early-access/register.ts"
+        ]
+      }
+    },
+    {
+      "id": "assisted_research_orders",
+      "capability": "Assisted and volume Research order requests",
+      "persona": "research_customer",
+      "route": "/research/early-access/order-request",
+      "owningClientComponent": "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "owningServerRoute": "/api/research/early-access/assisted-orders",
+      "authorizationBoundary": "Early Access or member context plus server-side agreements, pricing, idempotency, attribution, and request ownership checks.",
+      "dataSource": "Canonical assisted-order request repository and canonical catalog/pricing projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": "ASSISTED-ORDER-MOUNT",
+      "blocker": "A current authenticated end-to-end production smoke remains a separate release gate.",
+      "founderAction": "Perform only a separately authorized real-request smoke when release verification is scheduled.",
+      "nextExactAction": "Reuse this request authority from the Order Entry Hub and later Quick Early Access simplification.",
+      "evidence": {
+        "source": [
+          "client/src/research/assisted-order/AssistedOrderPage.tsx",
+          "server/research/assisted-order/http.ts"
+        ],
+        "tests": [
+          "server/research/assisted-order/http-e2e.test.ts",
+          "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md"
+        ],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/assisted-order/AssistedOrderPage.tsx",
+          "server/research/assisted-order/http.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/assisted-order/http.ts"
+        ]
+      }
+    },
+    {
+      "id": "customer_account_portal",
+      "capability": "Customer account and order history portal",
+      "persona": "research_customer",
+      "route": "/research/account",
+      "owningClientComponent": "client/src/research/account/AccountOverview.tsx",
+      "owningServerRoute": "/api/research/customer-account/*",
+      "authorizationBoundary": "Canonical member guard determines identity; request input cannot select another customer.",
+      "dataSource": "Canonical customer-account ports over order, Care, document, support, and membership authorities.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "unknown",
+      "ownerTaskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
+      "blocker": "The local account checkpoint is not a current authenticated production attestation.",
+      "founderAction": null,
+      "nextExactAction": "Build the normalized customer timeline on these canonical account and order projections.",
+      "evidence": {
+        "source": [
+          "client/src/research/account/AccountOverview.tsx",
+          "server/research/customer-account/routes.ts"
+        ],
+        "tests": [
+          "docs/research-launch/FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md"
+        ],
+        "browser": [
+          "docs/ux/auth-account-20260904/browser-results.json"
+        ],
+        "production": []
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/account/AccountOverview.tsx",
+          "server/research/customer-account/routes.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/customer-account/routes.ts"
+        ]
+      }
+    },
+    {
+      "id": "referral_v1",
+      "capability": "Referral recommendation and durable attribution continuity",
+      "persona": "partner_affiliate_and_referral_recipient",
+      "route": "/r/:code",
+      "owningClientComponent": "client/src/research/recommendation/Recipient.tsx",
+      "owningServerRoute": "/api/research/partner/links",
+      "authorizationBoundary": "Server-issued opaque links, current owner eligibility, guarded binding, and role-scoped partner/admin projections.",
+      "dataSource": "Canonical Gen2 referral links, touches, bindings, events, and downstream authorized lineage.",
+      "sourceStatus": "mounted",
+      "testStatus": "full_suite_pass",
+      "browserStatus": "browser_verified",
+      "productionStatus": "built_not_deployed",
+      "ownerTaskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
+      "blocker": "Production migration registration, feature activation, and production smoke remain separately gated.",
+      "founderAction": "Approve an exact-SHA migration and activation packet only when release review is complete.",
+      "nextExactAction": "Preserve referral and intended-destination context through the Order Entry Hub without changing referral authority.",
+      "evidence": {
+        "source": [
+          "shared/research/referral-v1.ts",
+          "server/research/partners/referral-v1-routes.ts",
+          "client/src/research/recommendation/Recipient.tsx"
+        ],
+        "tests": [
+          "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md"
+        ],
+        "browser": [
+          "docs/ux/referral-v1-20260904/browser-final-342a2c4-ninewidth/browser-results.json"
+        ],
+        "production": []
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "shared/research/referral-v1.ts",
+          "server/research/partners/referral-v1-routes.ts",
+          "client/src/research/recommendation/Recipient.tsx"
+        ],
+        "serverRouteEvidenceFiles": [
+          "shared/research/referral-v1.ts"
+        ]
+      }
+    },
+    {
+      "id": "care_manual_access",
+      "capability": "Xenios Care manual access request",
+      "persona": "care_requester",
+      "route": "/care",
+      "owningClientComponent": "client/src/care/CareAccessRequestForm.tsx",
+      "owningServerRoute": "/api/care/access-request",
+      "authorizationBoundary": "Public closed schema, honeypot and rate limit; operational routing data only and no clinical free text.",
+      "dataSource": "Care-owned operations record and notification outbox boundary.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "live_verified",
+      "ownerTaskId": "CARE-MANUAL-ACCESS-20260831",
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Keep Care access separate from Research ordering and route clinical needs only to this Care-owned workflow.",
+      "evidence": {
+        "source": [
+          "client/src/care/CareAccessRequestForm.tsx",
+          "server/care/manual-access.ts"
+        ],
+        "tests": [
+          "server/care/manual-access.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/care/CareAccessRequestForm.tsx",
+          "server/care/manual-access.ts",
+          "shared/care/manual-access.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "shared/care/manual-access.ts"
+        ]
+      }
+    },
+    {
+      "id": "care_admin_queue",
+      "capability": "Care access request operations queue",
+      "persona": "founder_care_operations",
+      "route": "/admin/research/care-requests",
+      "owningClientComponent": "client/src/research/pages/adminx/CareAccessRequests.tsx",
+      "owningServerRoute": "/api/admin/care/access-requests",
+      "authorizationBoundary": "Canonical Supabase admin guard; bounded operations projection excludes clinical, attribution, and raw request metadata.",
+      "dataSource": "Dedicated Care admin projection over Care-owned access request records.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": "CARE-ADMIN-RELIABILITY-20260903",
+      "blocker": "Authenticated production proof that the known incident record appears exactly once remains pending.",
+      "founderAction": "Run a read-only admin smoke in a separately authorized authenticated session.",
+      "nextExactAction": "Expose only bounded aggregate attention in the Founder Command Center and link here for operations.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/CareAccessRequests.tsx",
+          "server/care/manual-access-admin.ts"
+        ],
+        "tests": [
+          "server/care/manual-access-admin.test.ts"
+        ],
+        "browser": [],
+        "production": [
+          ".xenios/RELEASE_STATE.json"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/adminx/CareAccessRequests.tsx",
+          "server/care/manual-access-admin.ts",
+          "shared/care/manual-access-admin.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "shared/care/manual-access-admin.ts"
+        ]
+      }
+    },
+    {
+      "id": "membership_applications",
+      "capability": "Membership application and review",
+      "persona": "applicant_and_membership_operations",
+      "route": "/research/apply",
+      "owningClientComponent": "client/src/research/pages/Apply.tsx",
+      "owningServerRoute": "/api/admin/research/applications",
+      "authorizationBoundary": "Public write remains legal-version gated; review is protected by the canonical admin guard.",
+      "dataSource": "Canonical research applications and immutable legal-version authority.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "ownerTaskId": "APP-MEMBERSHIP",
+      "blocker": "Authoritative published Membership Application Terms and Privacy Policy versions are not yet approved for recording.",
+      "founderAction": "Approve exact published legal versions after counsel/version authority is ready.",
+      "nextExactAction": "Continue operator UX improvements without opening the public write until legal versions are authoritative.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/Apply.tsx",
+          "server/research/membership.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          ".xenios/BLOCKED_EXTERNAL.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/Apply.tsx",
+          "server/research/membership.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/membership.ts"
+        ]
+      }
+    },
+    {
+      "id": "product_control",
+      "capability": "Product Control and pricing operations",
+      "persona": "founder_product_operations",
+      "route": "/admin/research/products",
+      "owningClientComponent": "client/src/research/pages/adminx/ProductsAdmin.tsx",
+      "owningServerRoute": "/api/admin/research/products",
+      "authorizationBoundary": "Canonical admin guard and server-side validation; customer browsers never set authoritative price or release state.",
+      "dataSource": "Canonical products, variants, price versions, content, media, approvals, and audit history.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": null,
+      "blocker": "Current authenticated production behavior is not attested by this local checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Add reviewed price-approval, comparison, bulk-draft, import-preview, and release-readiness UX on this authority.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/ProductsAdmin.tsx",
+          "server/research/products-diagnostics/product-admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/adminx/ProductsAdmin.tsx",
+          "server/research/products-diagnostics/product-admin-routes.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/products-diagnostics/product-admin-routes.ts"
+        ]
+      }
+    },
+    {
+      "id": "payment_review",
+      "capability": "Manual payment review",
+      "persona": "founder_finance_operations",
+      "route": "/admin/research/early-access/payments",
+      "owningClientComponent": "client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx",
+      "owningServerRoute": "/api/admin/research/payments",
+      "authorizationBoundary": "Named admin guard; submitted proof is never treated as verified payment without authorized review.",
+      "dataSource": "Canonical Early Access payment review and order evidence projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": null,
+      "blocker": "No authenticated production finance smoke is included in this checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Expose a read-only attention count in the Founder Command Center and keep all review actions in this workflow.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/early-access/routes/admin-routes.ts"
+        ]
+      }
+    },
+    {
+      "id": "fulfillment_tracking",
+      "capability": "Fulfillment and tracking operations",
+      "persona": "founder_fulfillment_operations",
+      "route": "/admin/research/early-access/fulfillment",
+      "owningClientComponent": "client/src/research/pages/adminx/EarlyAccessFulfillment.tsx",
+      "owningServerRoute": "/api/admin/research/early-access/fulfillment",
+      "authorizationBoundary": "Named admin guard; no shipment, tracking, or delivery state is inferred or mutated by summary views.",
+      "dataSource": "Canonical Early Access supplier dispatch, fulfillment, tracking, and exception projections.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "deployed_not_authenticated_smoked",
+      "ownerTaskId": "FULFILLMENT-MOUNT",
+      "blocker": "Current authenticated production fulfillment smoke is not included in this checkpoint.",
+      "founderAction": null,
+      "nextExactAction": "Expose read-only paid-awaiting-release, missing-tracking, and exception attention in the Founder Command Center.",
+      "evidence": {
+        "source": [
+          "client/src/research/pages/adminx/EarlyAccessFulfillment.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/pages/adminx/EarlyAccessFulfillment.tsx",
+          "server/research/early-access/routes/admin-routes.ts"
+        ],
+        "serverRouteEvidenceFiles": [
+          "server/research/early-access/routes/admin-routes.ts"
+        ]
+      }
+    },
+    {
+      "id": "organization_access_orientation",
+      "capability": "Clinic, organization, and professional-buyer orientation",
+      "persona": "organization_buyer",
+      "route": "/research/organizations",
+      "owningClientComponent": "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Public orientation only; it does not claim an organization workspace or browser-granted role.",
+      "dataSource": "Static pathway guidance; future workspace uses canonical account-organization identity after governed schema activation.",
+      "sourceStatus": "mounted",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "blocked_external",
+      "ownerTaskId": "F7-ACCOUNT-MOUNT",
+      "blocker": "The renamed Pack 02 organization-account schema is not approved/applied for a real workspace.",
+      "founderAction": "Approve production application of the certified renamed Pack 02 schema when its release packet is current.",
+      "nextExactAction": "Route organization interest here without implying that a workspace already exists.",
+      "evidence": {
+        "source": [
+          "client/src/research/b2b/OrganizationAccessPage.tsx"
+        ],
+        "tests": [],
+        "browser": [],
+        "production": [
+          ".xenios/FOUNDER_ACTIONS.md"
+        ]
+      },
+      "verification": {
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "client/src/research/b2b/OrganizationAccessPage.tsx"
+        ],
+        "serverRouteEvidenceFiles": []
+      }
+    },
+    {
+      "id": "order_entry_hub",
+      "capability": "Order Entry Hub",
+      "persona": "all_legitimate_ordering_personas",
+      "route": "/research/order",
+      "owningClientComponent": "client/src/research/pages/OrderEntryHub.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Navigation and intent preservation only; every destination retains its existing server authority.",
+      "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
+      "sourceStatus": "unknown",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Implement and verify all seven required pathways with safe returnTo and referral/product intent continuity.",
+      "evidence": {
+        "source": [],
+        "tests": [],
+        "browser": [],
+        "production": []
+      },
+      "verification": {
+        "requiredClientRoute": false,
+        "requiredFiles": [],
+        "serverRouteEvidenceFiles": []
+      }
+    },
+    {
+      "id": "founder_command_center",
+      "capability": "Founder Command Center",
+      "persona": "founder_admin_operations",
+      "route": "/admin/research/command-center",
+      "owningClientComponent": "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+      "owningServerRoute": null,
+      "authorizationBoundary": "Canonical admin shell and guarded read adapters; summary cards perform no consequential mutation.",
+      "dataSource": "Bounded read projections from existing applications, Care, assisted-order, payment, fulfillment, product, referral, support, health, and release authorities.",
+      "sourceStatus": "unknown",
+      "testStatus": "unknown",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
+      "blocker": null,
+      "founderAction": null,
+      "nextExactAction": "Implement a read-only aggregate that reports count or unavailable, oldest wait, attention reason, source state, and owning workflow for all required operating areas.",
+      "evidence": {
+        "source": [],
+        "tests": [],
+        "browser": [],
+        "production": []
+      },
+      "verification": {
+        "requiredClientRoute": false,
+        "requiredFiles": [],
+        "serverRouteEvidenceFiles": []
+      }
+    }
+  ]
+}

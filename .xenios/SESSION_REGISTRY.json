@@ -351,6 +351,16 @@
       "startedAt": "2026-09-04T16:52:48.737Z",
       "heartbeatAt": "2026-09-04T18:05:35.847Z",
       "note": "PWA overlay policy accepted at 045e8ea with 82/82 targeted tests, typecheck/build/core/route gates green. Full integration suite next; production untouched."
+    },
+    {
+      "id": "codex-major-ordering-admin-sor-20260904",
+      "tool": "Codex",
+      "lane": "major-ordering-admin-sor",
+      "branch": "codex/xenios-major-ordering-admin-sor-20260904",
+      "state": "active",
+      "startedAt": "2026-09-04T20:11:27.933Z",
+      "heartbeatAt": "2026-09-04T20:11:27.940Z",
+      "note": "Founder-directed local major sequence from accepted e3c9919b: living SOR, Order Entry Hub, read-only Founder Command Center; no production mutation."
     }
   ]
 }

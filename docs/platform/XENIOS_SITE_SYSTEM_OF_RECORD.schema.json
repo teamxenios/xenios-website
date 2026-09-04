@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xeniostechnology.com/schemas/site-system-of-record-v1.json",
+  "title": "Xenios Site System of Record",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "repository",
+    "source",
+    "production",
+    "statusVocabulary",
+    "routeSummary",
+    "routes",
+    "capabilitySummary",
+    "capabilities",
+    "sources",
+    "invariants"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "repository": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "required": ["branch", "sha", "tree", "clean", "provenance"],
+      "properties": {
+        "branch": { "type": "string", "minLength": 1 },
+        "sha": { "$ref": "#/$defs/sha" },
+        "tree": { "$ref": "#/$defs/sha" },
+        "clean": { "const": true },
+        "provenance": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "production": {
+      "type": "object",
+      "required": ["sha", "deployId", "verificationStatus", "observedAt", "evidenceSource"],
+      "properties": {
+        "sha": { "$ref": "#/$defs/sha" },
+        "deployId": { "type": "string", "pattern": "^dep-[a-z0-9]+$" },
+        "verificationStatus": { "$ref": "#/$defs/status" },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "evidenceSource": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "statusVocabulary": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "source_present" },
+        { "const": "mounted" },
+        { "const": "focused_tests_pass" },
+        { "const": "full_suite_pass" },
+        { "const": "browser_verified" },
+        { "const": "built_not_deployed" },
+        { "const": "deployed_not_authenticated_smoked" },
+        { "const": "live_verified" },
+        { "const": "feature_gated" },
+        { "const": "blocked_external" },
+        { "const": "superseded" },
+        { "const": "unknown" }
+      ],
+      "items": false,
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "routeSummary": {
+      "type": "object",
+      "required": ["uniqueRoutes", "registrations", "byPersona", "byDomain", "productionStatus"],
+      "properties": {
+        "uniqueRoutes": { "type": "integer", "minimum": 1 },
+        "registrations": { "type": "integer", "minimum": 1 },
+        "byPersona": { "$ref": "#/$defs/namedCounts" },
+        "byDomain": { "$ref": "#/$defs/namedCounts" },
+        "productionStatus": { "$ref": "#/$defs/statusCounts" }
+      },
+      "additionalProperties": false
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "capabilitySummary": {
+      "type": "object",
+      "required": ["count", "sourceStatus", "testStatus", "browserStatus", "productionStatus"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 1 },
+        "sourceStatus": { "$ref": "#/$defs/statusCounts" },
+        "testStatus": { "$ref": "#/$defs/statusCounts" },
+        "browserStatus": { "$ref": "#/$defs/statusCounts" },
+        "productionStatus": { "$ref": "#/$defs/statusCounts" }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/capability" }
+    },
+    "sources": {
+      "type": "object",
+      "required": ["registry", "projectState", "releaseState", "activeTasks", "codeOwnership", "clientRouteFiles"],
+      "properties": {
+        "registry": { "$ref": "#/$defs/repoPath" },
+        "projectState": { "$ref": "#/$defs/repoPath" },
+        "releaseState": { "$ref": "#/$defs/repoPath" },
+        "activeTasks": { "$ref": "#/$defs/repoPath" },
+        "codeOwnership": { "$ref": "#/$defs/repoPath" },
+        "clientRouteFiles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/repoPath" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "status": {
+      "enum": [
+        "source_present",
+        "mounted",
+        "focused_tests_pass",
+        "full_suite_pass",
+        "browser_verified",
+        "built_not_deployed",
+        "deployed_not_authenticated_smoked",
+        "live_verified",
+        "feature_gated",
+        "blocked_external",
+        "superseded",
+        "unknown"
+      ]
+    },
+    "repoPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "namedCounts": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "statusCounts": {
+      "type": "object",
+      "properties": {
+        "source_present": { "type": "integer", "minimum": 0 },
+        "mounted": { "type": "integer", "minimum": 0 },
+        "focused_tests_pass": { "type": "integer", "minimum": 0 },
+        "full_suite_pass": { "type": "integer", "minimum": 0 },
+        "browser_verified": { "type": "integer", "minimum": 0 },
+        "built_not_deployed": { "type": "integer", "minimum": 0 },
+        "deployed_not_authenticated_smoked": { "type": "integer", "minimum": 0 },
+        "live_verified": { "type": "integer", "minimum": 0 },
+        "feature_gated": { "type": "integer", "minimum": 0 },
+        "blocked_external": { "type": "integer", "minimum": 0 },
+        "superseded": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "registration": {
+      "type": "object",
+      "required": ["source", "line"],
+      "properties": {
+        "source": { "$ref": "#/$defs/repoPath" },
+        "line": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "route": {
+      "type": "object",
+      "required": [
+        "path",
+        "persona",
+        "domain",
+        "sourceStatus",
+        "testStatus",
+        "browserStatus",
+        "productionStatus",
+        "registrations",
+        "capabilities"
+      ],
+      "properties": {
+        "path": { "type": "string", "pattern": "^/" },
+        "persona": { "type": "string", "minLength": 1 },
+        "domain": { "type": "string", "minLength": 1 },
+        "sourceStatus": { "$ref": "#/$defs/status" },
+        "testStatus": { "$ref": "#/$defs/status" },
+        "browserStatus": { "$ref": "#/$defs/status" },
+        "productionStatus": { "$ref": "#/$defs/status" },
+        "registrations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/registration" }
+        },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ownerAndLease": {
+      "type": "object",
+      "required": ["taskId", "owner", "leaseState"],
+      "properties": {
+        "taskId": { "type": ["string", "null"] },
+        "owner": { "type": ["string", "null"] },
+        "leaseState": { "enum": ["active", "handoff", "released", "unavailable"] }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["source", "tests", "browser", "production"],
+      "properties": {
+        "source": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "tests": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "browser": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "production": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    "capability": {
+      "type": "object",
+      "required": [
+        "id",
+        "capability",
+        "persona",
+        "route",
+        "owningClientComponent",
+        "owningServerRoute",
+        "authorizationBoundary",
+        "dataSource",
+        "sourceStatus",
+        "testStatus",
+        "browserStatus",
+        "productionStatus",
+        "currentSourceSha",
+        "productionSha",
+        "ownerAndLease",
+        "blocker",
+        "founderAction",
+        "nextExactAction",
+        "evidence"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+        "capability": { "type": "string", "minLength": 1 },
+        "persona": { "type": "string", "minLength": 1 },
+        "route": { "type": ["string", "null"], "pattern": "^/" },
+        "owningClientComponent": { "type": ["string", "null"] },
+        "owningServerRoute": { "type": ["string", "null"] },
+        "authorizationBoundary": { "type": "string", "minLength": 1 },
+        "dataSource": { "type": "string", "minLength": 1 },
+        "sourceStatus": { "$ref": "#/$defs/status" },
+        "testStatus": { "$ref": "#/$defs/status" },
+        "browserStatus": { "$ref": "#/$defs/status" },
+        "productionStatus": { "$ref": "#/$defs/status" },
+        "currentSourceSha": { "$ref": "#/$defs/sha" },
+        "productionSha": { "$ref": "#/$defs/sha" },
+        "ownerAndLease": { "$ref": "#/$defs/ownerAndLease" },
+        "blocker": { "type": ["string", "null"] },
+        "founderAction": { "type": ["string", "null"] },
+        "nextExactAction": { "type": "string", "minLength": 1 },
+        "evidence": { "$ref": "#/$defs/evidence" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

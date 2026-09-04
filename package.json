@@ -24,7 +24,9 @@
     "verify:release-manifest": "tsx scripts/acceptance/verify-release-manifest.ts",
     "verify:migration-dag": "tsx scripts/acceptance/verify-migration-dag.ts",
     "verify:route-uniqueness": "tsx scripts/acceptance/verify-route-uniqueness.ts",
-    "verify:production-state": "tsx scripts/acceptance/verify-production-state.ts"
+    "verify:production-state": "tsx scripts/acceptance/verify-production-state.ts",
+    "site:record": "node scripts/agentic/generate-site-system-of-record.mjs",
+    "site:record:check": "node scripts/agentic/generate-site-system-of-record.mjs --check"
   },
   "dependencies": {
     "@fontsource/inter-tight": "5.3.0",
