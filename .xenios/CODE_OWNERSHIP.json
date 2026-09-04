@@ -1164,6 +1164,8 @@
         "client/src/research/early-access/EarlyAccessRoute.tsx",
         "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.test.tsx",
         "client/src/research/adapters/earlyAccessAgreement.ts",
