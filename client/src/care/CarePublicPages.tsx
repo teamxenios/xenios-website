@@ -5,6 +5,7 @@ import SeoHead from "@/components/SeoHead";
 import CareAccessRequestForm, {
   CareAccessAvailabilitySummary,
 } from "./CareAccessRequestForm";
+import { HEALTH_CONTACT_PAGE_PATH } from "@/lib/waitlist-service";
 
 export const CARE_PUBLIC_PATHS = {
   home: "/care",
@@ -272,7 +273,7 @@ export function CareSupportPage() {
           <article className="card">
             <h3 className="h3">Xenios site support</h3>
             <p className="body-m text-ink-2 mt-3">Contact Xenios for website access, pathway navigation, operational status, tracking visibility, lifestyle-program support, or escalation. Do not send medical information through the general contact page.</p>
-            <Link className="btn btn-secondary min-h-11 mt-6" href="/contact">Contact Xenios</Link>
+            <Link className="btn btn-secondary min-h-11 mt-6" href={HEALTH_CONTACT_PAGE_PATH}>Contact Xenios</Link>
           </article>
         </div>
       </section>

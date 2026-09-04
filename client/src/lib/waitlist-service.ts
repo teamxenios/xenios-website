@@ -34,15 +34,34 @@ export interface ContactSubmission {
   website?: string;
 }
 
+const CONTACT_API_PATH = "/api/contact";
+export const HEALTH_CONTACT_API_PATH = "/api/care/contact";
+export const HEALTH_CONTACT_CONTEXT_SEARCH = "?context=health";
+export const HEALTH_CONTACT_PAGE_PATH = `/contact${HEALTH_CONTACT_CONTEXT_SEARCH}`;
+
+export function isHealthContactContext(search: string): boolean {
+  return search === HEALTH_CONTACT_CONTEXT_SEARCH;
+}
+
+async function submitContact(
+  path: string,
+  data: ContactSubmission,
+): Promise<{ success: boolean; message?: string }> {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Failed to submit");
+  return result;
+}
+
 export const contactService = {
   submit: async (data: ContactSubmission): Promise<{ success: boolean; message?: string }> => {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    if (!res.ok) throw new Error(result.message || "Failed to submit");
-    return result;
+    return submitContact(CONTACT_API_PATH, data);
+  },
+  submitHealth: async (data: ContactSubmission): Promise<{ success: boolean; message?: string }> => {
+    return submitContact(HEALTH_CONTACT_API_PATH, data);
   },
 };

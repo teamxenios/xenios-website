@@ -23,15 +23,16 @@ import {
   type LoiInput,
 } from "../supabase-store";
 import { rateLimitHit, requestIp } from "../research/rate-limit";
-import { getResendClient, TEAM_EMAIL } from "../services/email";
+import {
+  getResendClient,
+  TEAM_EMAIL,
+  XENIOS_HEALTH_EMAIL_FROM,
+} from "../services/email";
 import {
   adminRecipients,
   resolveEmailConfiguration,
 } from "../services/email-config";
 import { verifyTurnstile } from "../turnstile";
-
-export const XENIOS_HEALTH_EMAIL_FROM =
-  `Xenios Health <${TEAM_EMAIL}>` as const;
 
 export type CareManualAccessReadiness = Readonly<{
   persistenceReady: boolean;

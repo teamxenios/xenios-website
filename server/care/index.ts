@@ -11,6 +11,11 @@ import {
 } from "./access";
 import { careCapabilityStatusForState } from "./capability";
 import {
+  buildCareContactProductionDependencies,
+  registerCareContactApi,
+  type CareContactDependencies,
+} from "./contact";
+import {
   buildCareManualAccessProductionDependencies,
   careManualAccessAvailability,
   registerCareManualAccessApi,
@@ -45,6 +50,7 @@ export interface RegisterCareApiOptions {
   env?: NodeJS.ProcessEnv;
   tebraAuthoritySource?: TebraPublicAuthoritySource;
   manualAccessDependencies?: CareManualAccessDependencies;
+  contactDependencies?: CareContactDependencies;
   manualAccessAdminDependencies?: CareManualAccessAdminDependencies;
   manualAccessAdminGuard?: RequestHandler;
   loiBoundaryDependencies?: CareLoiBoundaryDependencies;
@@ -69,6 +75,10 @@ export function registerCareApi(
   const manualAccess =
     options.manualAccessDependencies ?? buildCareManualAccessProductionDependencies();
   registerCareManualAccessApi(app, manualAccess);
+  registerCareContactApi(
+    app,
+    options.contactDependencies ?? buildCareContactProductionDependencies(),
+  );
 
   const manualAccessAdmin =
     options.manualAccessAdminDependencies ??
@@ -152,6 +162,7 @@ export * from "./capability";
 export * from "./clinician-review";
 export * from "./consent";
 export * from "./consent-repository";
+export * from "./contact";
 export * from "./eligibility";
 export * from "./eligibility-repository";
 export * from "./eligibility-routes";

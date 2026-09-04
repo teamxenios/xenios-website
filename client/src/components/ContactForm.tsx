@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { CONTACT_PAGE } from "@/lib/content";
-import { contactService, type ContactSubmission } from "@/lib/waitlist-service";
+import {
+  contactService,
+  isHealthContactContext,
+  type ContactSubmission,
+} from "@/lib/waitlist-service";
 
 const C = CONTACT_PAGE;
 
@@ -61,7 +65,11 @@ export default function ContactForm({ onSuccess }: Props) {
     if (!persona) return;
     setSubmitting(true);
     try {
-      await contactService.submit({
+      const submit =
+        typeof window !== "undefined" && isHealthContactContext(window.location.search)
+          ? contactService.submitHealth
+          : contactService.submit;
+      await submit({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         persona,

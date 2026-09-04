@@ -10,6 +10,7 @@ const provider = vi.hoisted(() => ({
 
 vi.mock("../services/email", () => ({
   TEAM_EMAIL: "team@xeniostechnology.com",
+  XENIOS_HEALTH_EMAIL_FROM: "Xenios Health <team@xeniostechnology.com>",
   getResendClient: async () => ({
     client: { emails: { send: provider.send } },
     // Care owns its sender identity. A generic site override must not win.
@@ -29,8 +30,8 @@ vi.mock("../services/email-config", () => ({
 
 import {
   buildCareManualAccessProductionDependencies,
-  XENIOS_HEALTH_EMAIL_FROM,
 } from "./manual-access";
+import { XENIOS_HEALTH_EMAIL_FROM } from "../services/email";
 
 const request: CareManualAccessRequest = {
   fullName: "Jordan Test",

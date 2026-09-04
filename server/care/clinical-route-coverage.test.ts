@@ -20,6 +20,7 @@ import { registerCareApi } from "./index";
 import type { CareManualAccessDependencies } from "./manual-access";
 import { careManualAccessOperationsRecord } from "./manual-access";
 import type { CareManualAccessAdminDependencies } from "./manual-access-admin";
+import type { CareContactDependencies } from "./contact";
 import type { LoiRow } from "../supabase-store";
 import type { CareIntakeRepository } from "./intake-repository";
 import { registerCareIntakeApi } from "./intake-routes";
@@ -63,6 +64,9 @@ const ROUTE_MODULE_FILES = [
   // Registered transitively by registerCareApi; owns the public manual access
   // status and bounded contact-routing write.
   "manual-access.ts",
+  // Registered transitively by registerCareApi; owns the nonclinical public
+  // Care support message boundary.
+  "contact.ts",
 ] as const;
 
 /**
@@ -135,6 +139,8 @@ const NONCLINICAL_ROUTES: Readonly<Record<string, string>> = {
     "manual workflow readiness booleans and fixed public labels, no person and no record",
   "POST /api/care/access-request":
     "a nonclinical contact-routing record with no symptoms, diagnoses, medications, health history, clinical free text, appointment, provider relationship, treatment decision, or prescription",
+  "POST /api/care/contact":
+    "a nonclinical site-support message using the same closed generic contact schema; Care copy expressly forbids medical information and this route creates no patient, intake, appointment, provider relationship, treatment decision, or prescription",
   "GET /api/care/tebra/configuration":
     "a fail-closed public provider configuration projection with no principal, patient, appointment, intake, or clinical field",
   "GET /api/care/audit/access":
@@ -675,13 +681,14 @@ describe("Care route coverage: the walk covers every registrar the real server c
     expect(unaccounted).toEqual([]);
   });
 
-  it("registers the five routes registerCareApi owns, and classifies all five", () => {
+  it("registers the six routes registerCareApi owns, and classifies all six", () => {
     const keys = walkRegisteredCareRoutes().map((route) => route.key);
     expect(keys).toEqual(
       expect.arrayContaining([
         "GET /api/care/status",
         "GET /api/care/access-request/status",
         "POST /api/care/access-request",
+        "POST /api/care/contact",
         "GET /api/care/tebra/configuration",
         "GET /api/care/audit/access",
       ]),
@@ -689,6 +696,7 @@ describe("Care route coverage: the walk covers every registrar the real server c
     expect("GET /api/care/status" in NONCLINICAL_ROUTES).toBe(true);
     expect("GET /api/care/access-request/status" in NONCLINICAL_ROUTES).toBe(true);
     expect("POST /api/care/access-request" in NONCLINICAL_ROUTES).toBe(true);
+    expect("POST /api/care/contact" in NONCLINICAL_ROUTES).toBe(true);
     expect("GET /api/care/tebra/configuration" in NONCLINICAL_ROUTES).toBe(true);
     expect("GET /api/care/audit/access" in NONCLINICAL_ROUTES).toBe(true);
   });
@@ -980,6 +988,14 @@ function proofManualAccess(): CareManualAccessDependencies {
   };
 }
 
+function proofCareContact(): CareContactDependencies {
+  return {
+    allowRequest: vi.fn(async () => true),
+    sendMessage: vi.fn(async () => undefined),
+    sendAutoReply: vi.fn(async () => undefined),
+  };
+}
+
 function proofApp(serviceCoverageActive = true) {
   const app = express();
   app.use(express.json());
@@ -1028,6 +1044,7 @@ function proofApp(serviceCoverageActive = true) {
   // URLs. The resolver must fail closed without reflecting any value or field.
   registerCareApi(app, deps, {
     manualAccessDependencies: proofManualAccess(),
+    contactDependencies: proofCareContact(),
     // The admin queue is driven past its guard on purpose: the proof checks
     // the SUCCESS payload of the projection for the fields its reason drops.
     manualAccessAdminGuard: (_req, _res, next) => next(),
@@ -1135,6 +1152,18 @@ const RESPONSE_PROOFS: Readonly<Record<string, ResponseProof>> = {
       contactWindow: "anytime",
       adultConfirmation: true,
       boundaryAcknowledgement: true,
+    },
+    forbid: ALL_SENTINELS,
+  },
+  "POST /api/care/contact": {
+    method: "post",
+    path: "/api/care/contact",
+    body: {
+      name: "Coverage Test",
+      email: "coverage@example.com",
+      persona: "other",
+      subject: "Care site support",
+      message: "I need help navigating the nonclinical Care support pathway.",
     },
     forbid: ALL_SENTINELS,
   },

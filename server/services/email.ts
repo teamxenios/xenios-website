@@ -20,6 +20,7 @@ export async function getResendClient() {
 }
 
 export const TEAM_EMAIL = "team@xeniostechnology.com";
+export const XENIOS_HEALTH_EMAIL_FROM = `Xenios Health <${TEAM_EMAIL}>` as const;
 const FROM_DEFAULT = `xenios <${TEAM_EMAIL}>`;
 
 const ROLE_LABELS: Record<string, string> = {
@@ -180,13 +181,16 @@ xenios
 }
 
 // E4 — Contact forward to team inbox
-export async function sendContactMessage(msg: ContactMessage) {
+async function sendContactMessageFrom(
+  msg: ContactMessage,
+  requiredFrom?: string,
+) {
   let client: Resend;
   let fromEmail: string;
   try {
     const r = await getResendClient();
     client = r.client;
-    fromEmail = r.fromEmail || FROM_DEFAULT;
+    fromEmail = requiredFrom || r.fromEmail || FROM_DEFAULT;
   } catch {
     return;
   }
@@ -225,14 +229,25 @@ xenios
   }
 }
 
+export async function sendContactMessage(msg: ContactMessage) {
+  return sendContactMessageFrom(msg);
+}
+
+export async function sendHealthContactMessage(msg: ContactMessage) {
+  return sendContactMessageFrom(msg, XENIOS_HEALTH_EMAIL_FROM);
+}
+
 // E5 — Contact auto-reply
-export async function sendContactAutoReply(msg: ContactMessage) {
+async function sendContactAutoReplyFrom(
+  msg: ContactMessage,
+  requiredFrom?: string,
+) {
   let client: Resend;
   let fromEmail: string;
   try {
     const r = await getResendClient();
     client = r.client;
-    fromEmail = r.fromEmail || FROM_DEFAULT;
+    fromEmail = requiredFrom || r.fromEmail || FROM_DEFAULT;
   } catch {
     return;
   }
@@ -279,6 +294,14 @@ The AI-adjunct operations system for coaches, trainers, and practitioners.
   } catch (err) {
     console.error("[email] contact auto-reply failed:", err);
   }
+}
+
+export async function sendContactAutoReply(msg: ContactMessage) {
+  return sendContactAutoReplyFrom(msg);
+}
+
+export async function sendHealthContactAutoReply(msg: ContactMessage) {
+  return sendContactAutoReplyFrom(msg, XENIOS_HEALTH_EMAIL_FROM);
 }
 
 // ===========================================================================
