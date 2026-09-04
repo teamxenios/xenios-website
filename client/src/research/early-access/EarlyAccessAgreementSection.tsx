@@ -7,6 +7,7 @@ import {
   redeemEarlyAccessVerification,
   requestEarlyAccessVerification,
   type EarlyAccessAcceptResult,
+  type EarlyAccessAgreementPair,
   type EarlyAccessAgreementState,
   type EarlyAccessVerificationRequestResult,
   type EarlyAccessVerifyResult,
@@ -41,7 +42,7 @@ export interface EarlyAccessAgreementSectionProps {
   /** Injected for tests. Defaults to the real mounted endpoints. */
   loadPolicy?: () => Promise<ResearchPolicyLoad>;
   loadState?: () => Promise<EarlyAccessAgreementState>;
-  accept?: () => Promise<EarlyAccessAcceptResult>;
+  accept?: (agreement: EarlyAccessAgreementPair) => Promise<EarlyAccessAcceptResult>;
   /** Told once, whenever the server confirms this customer is agreed. */
   onAccepted?: (accepted: boolean) => void;
   /**
@@ -67,6 +68,15 @@ type Phase =
   | { status: "fault"; message: string };
 
 const ASSENT = "I have read and agree to the Research Use Policy.";
+const AGREEMENT_POLICY_MISMATCH =
+  "The agreement identity does not match the Research Use Policy that was served. Nothing has been recorded.";
+
+function sameAgreement(
+  left: EarlyAccessAgreementPair,
+  right: EarlyAccessAgreementPair,
+): boolean {
+  return left.kind === right.kind && left.version === right.version;
+}
 
 /**
  * Hoisted so each default has ONE identity for the life of the module.
@@ -77,7 +87,8 @@ const ASSENT = "I have read and agree to the Research Use Policy.";
  */
 const loadPolicyFromServer = () => loadResearchUsePolicy();
 const loadStateFromServer = () => loadEarlyAccessAgreementState();
-const acceptOnServer = () => acceptEarlyAccessAgreement();
+const acceptOnServer = (agreement: EarlyAccessAgreementPair) =>
+  acceptEarlyAccessAgreement(agreement);
 const requestVerificationOnServer = (email: string) => requestEarlyAccessVerification(email);
 const redeemVerificationOnServer = (token: string) => redeemEarlyAccessVerification(token);
 
@@ -95,6 +106,7 @@ export function EarlyAccessAgreementSection({
   const checkboxId = useId();
   const [policy, setPolicy] = useState<ResearchPolicyLoad | null>(null);
   const [phase, setPhase] = useState<Phase>({ status: "loading" });
+  const [agreement, setAgreement] = useState<EarlyAccessAgreementPair | null>(null);
   // Unchecked, always, on every mount. An agreement screen that arrives already
   // ticked has collected nothing.
   const [checked, setChecked] = useState(false);
@@ -103,6 +115,7 @@ export function EarlyAccessAgreementSection({
   const reload = useCallback(() => {
     // A successful verification changes what the SERVER will say about this
     // session, so the answer is re-read rather than assumed.
+    setAgreement(null);
     setPhase({ status: "loading" });
     setReloadKey((key) => key + 1);
   }, []);
@@ -114,30 +127,55 @@ export function EarlyAccessAgreementSection({
     void Promise.all([loadPolicy(), loadState()]).then(([policyResult, stateResult]) => {
       if (!live) return;
       setPolicy(policyResult);
+      if (stateResult.kind === "locked") {
+        setAgreement(null);
+        setPhase({ status: "locked" });
+        onAccepted(false);
+        onBlocked("locked");
+        return;
+      }
+      if (stateResult.kind === "unverified") {
+        setAgreement(null);
+        setPhase({ status: "unverified" });
+        onAccepted(false);
+        onBlocked("unverified");
+        return;
+      }
+      if (stateResult.kind === "error") {
+        setAgreement(null);
+        setPhase({ status: "fault", message: stateResult.message });
+        onAccepted(false);
+        return;
+      }
+      if (policyResult.kind !== "ok") {
+        // A status row cannot identify what the customer saw. Without the
+        // policy's own exact metadata there is no consent to carry forward,
+        // including when the status endpoint says an old row is accepted.
+        setAgreement(null);
+        setPhase({ status: "ready" });
+        onBlocked(null);
+        onAccepted(false);
+        return;
+      }
+      if (!sameAgreement(policyResult.policy.agreement, stateResult.agreement)) {
+        setAgreement(null);
+        setPhase({ status: "fault", message: AGREEMENT_POLICY_MISMATCH });
+        onBlocked(null);
+        onAccepted(false);
+        return;
+      }
+      setAgreement(policyResult.policy.agreement);
       if (stateResult.kind === "accepted") {
-        // Already on file, from a previous visit or before a refresh. The
-        // server said so; nothing here remembered it.
+        // A persisted acceptance is usable only after its exact identity has
+        // also been found on the exact policy object rendered below.
         setPhase({ status: "accepted", alreadyAccepted: true });
         onBlocked(null);
         onAccepted(true);
         return;
       }
-      if (stateResult.kind === "locked") {
-        setPhase({ status: "locked" });
-        onBlocked("locked");
-        return;
-      }
-      if (stateResult.kind === "unverified") {
-        setPhase({ status: "unverified" });
-        onBlocked("unverified");
-        return;
-      }
-      if (stateResult.kind === "error") {
-        setPhase({ status: "fault", message: stateResult.message });
-        return;
-      }
       setPhase({ status: "ready" });
       onBlocked(null);
+      onAccepted(false);
     });
     return () => {
       live = false;
@@ -149,24 +187,37 @@ export function EarlyAccessAgreementSection({
   }, [loadPolicy, loadState, reloadKey]);
 
   const submit = useCallback(() => {
+    if (agreement === null) {
+      setPhase({
+        status: "fault",
+        message: "The agreement identity could not be verified. Nothing has been recorded.",
+      });
+      onAccepted(false);
+      return;
+    }
     setPhase({ status: "submitting" });
-    void accept().then((result) => {
-      if (result.kind === "accepted") {
+    void accept(agreement).then((result) => {
+      if (result.kind === "accepted" && sameAgreement(result.agreement, agreement)) {
         // BOTH outcomes are success. A duplicate write means the acceptance is
         // on file, which is the only thing checkout asks about, so telling the
         // customer it failed would be false.
+        setAgreement(result.agreement);
         setPhase({ status: "accepted", alreadyAccepted: result.alreadyAccepted });
         onBlocked(null);
         onAccepted(true);
         return;
       }
       if (result.kind === "locked") {
+        setAgreement(null);
         setPhase({ status: "locked" });
+        onAccepted(false);
         onBlocked("locked");
         return;
       }
       if (result.kind === "unverified") {
+        setAgreement(null);
         setPhase({ status: "unverified" });
+        onAccepted(false);
         onBlocked("unverified");
         return;
       }
@@ -174,12 +225,15 @@ export function EarlyAccessAgreementSection({
       setPhase({
         status: "fault",
         message:
-          result.kind === "refused"
+          result.kind === "accepted"
+            ? AGREEMENT_POLICY_MISMATCH
+            : result.kind === "refused"
             ? "Your agreement was not recorded. Nothing has been ordered or charged. Please try again."
             : result.message,
       });
+      onAccepted(false);
     });
-  }, [accept, onAccepted, onBlocked]);
+  }, [accept, agreement, onAccepted, onBlocked]);
 
   const accepted = phase.status === "accepted";
   const busy = phase.status === "submitting";
@@ -231,6 +285,21 @@ export function EarlyAccessAgreementSection({
             testId={`${testId}-verification`}
           />
         </div>
+      </section>
+    );
+  }
+
+  if (phase.status === "fault" && agreement === null) {
+    return (
+      <section data-testid={testId} data-state="agreement-unavailable">
+        <p
+          aria-live="polite"
+          role="status"
+          className="body-s text-ink-2"
+          data-testid={`${testId}-error`}
+        >
+          {phase.message}
+        </p>
       </section>
     );
   }
@@ -335,6 +404,15 @@ export function EarlyAccessAgreementSection({
           )}
           {policyBody}
         </>
+      )}
+
+      {agreement !== null && (
+        <p
+          className="body-s text-ink-mute mt-3"
+          data-testid={`${testId}-provenance`}
+        >
+          Agreement: {agreement.kind} · Version: {agreement.version}
+        </p>
       )}
 
       {accepted ? (

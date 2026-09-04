@@ -4,6 +4,24 @@ import type {
 } from "./EarlyAccessProductCard";
 import { isEarlyAccessQuantity } from "@shared/research/early-access-quantity";
 
+const EARLY_ACCESS_CATEGORY_MAX_LENGTH = 120;
+const EARLY_ACCESS_CATEGORY_UNSAFE_TEXT =
+  /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u;
+
+/** A category is optional display copy, never a reason to keep or drop a row. */
+export function earlyAccessCategoryLabel(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const category = value.trim();
+  if (
+    category.length === 0 ||
+    category.length > EARLY_ACCESS_CATEGORY_MAX_LENGTH ||
+    EARLY_ACCESS_CATEGORY_UNSAFE_TEXT.test(category)
+  ) {
+    return null;
+  }
+  return category;
+}
+
 /**
  * Reads the availability the SERVER decided for one catalogue row.
  *
@@ -29,6 +47,7 @@ export type EarlyAccessCatalogRowView = Readonly<{
   productId?: unknown;
   variantId?: unknown;
   displayName?: unknown;
+  category?: unknown;
   strength?: unknown;
   priceCents?: unknown;
   currency?: unknown;
@@ -99,6 +118,7 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
     productId: row.productId,
     variantId: row.variantId,
     name: row.displayName,
+    category: earlyAccessCategoryLabel(row.category),
     strength: row.strength,
     unitPriceCents,
     currency: isNonEmptyString(row.currency) ? row.currency : "USD",

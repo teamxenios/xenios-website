@@ -3,7 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { EarlyAccessProgress } from "./EarlyAccessProgress";
-import { EARLY_ACCESS_CHECKOUT_STEPS } from "./history";
+import { EARLY_ACCESS_CUSTOMER_STEPS } from "../customerSteps";
 import { EarlyAccessCartAgreements } from "./EarlyAccessCartAgreements";
 
 /**
@@ -12,12 +12,12 @@ import { EarlyAccessCartAgreements } from "./EarlyAccessCartAgreements";
  * jsdom does not lay anything out, so these do not measure pixels. They assert
  * the structural decisions that make the narrow case work, which is the part
  * that actually regresses: a fixed column count, a missing `min-w-0`, or a
- * track that cannot scroll are what turn eight steps at 390px into unreadable
+ * track that cannot scroll are what turn step chips at 390px into unreadable
  * slivers or a page that scrolls sideways.
  *
  * The accessibility assertions are about saying each thing ONCE. The step
  * position is a sentence; the boxes are the same sentence drawn, so they are
- * hidden from the accessibility tree rather than read out nine times.
+ * hidden from the accessibility tree rather than read out repeatedly.
  */
 
 let host: HTMLElement;
@@ -43,8 +43,7 @@ describe("the progress indicator survives 390px", () => {
     render(<EarlyAccessProgress step="agreements" />);
     const list = host.querySelector('[data-testid="early-access-progress-steps"]')!;
     const className = list.className;
-    // A grid-cols-N here is what breaks the narrow case: eight fixed columns in
-    // 390px is roughly 40px each, which cannot hold "Contact & Shipping".
+    // A fixed grid squeezes long labels such as "Confirmation and tracking".
     expect(className).not.toMatch(/grid-cols-\d/);
     expect(className).toContain("overflow-x-auto");
     expect(className).toContain("min-w-0");
@@ -55,18 +54,20 @@ describe("the progress indicator survives 390px", () => {
     const items = Array.from(
       host.querySelectorAll('[data-testid="early-access-progress-steps"] li'),
     );
-    expect(items.length).toBe(EARLY_ACCESS_CHECKOUT_STEPS.length);
+    expect(items.length).toBe(4);
     // Each chip keeps its width and the row scrolls, rather than each chip
     // being squeezed until the labels wrap into unreadable columns.
     for (const item of items) expect(item.className).toContain("shrink-0");
   });
 
-  it("covers every step in the journey, in the journey's own order", () => {
+  it("shows exactly the four customer stages in their shared order", () => {
     render(<EarlyAccessProgress step="submit" />);
     const steps = Array.from(
       host.querySelectorAll('[data-testid="early-access-progress-steps"] li'),
     ).map((item) => item.getAttribute("data-step"));
-    expect(steps).toEqual([...EARLY_ACCESS_CHECKOUT_STEPS]);
+    expect(steps).toEqual(EARLY_ACCESS_CUSTOMER_STEPS.map(({ key }) => key));
+    expect(host.querySelector('[data-testid="early-access-progress-steps"]')?.textContent)
+      .toBe("Choose productsContact and deliveryReview and paymentConfirmation and tracking");
   });
 
   it("marks exactly one step current, and marks the ones behind it done", () => {
@@ -80,12 +81,28 @@ describe("the progress indicator survives 390px", () => {
   });
 });
 
-describe("the position is announced once, not nine times", () => {
+describe("the eight internal states are announced through four customer stages", () => {
+  it.each([
+    ["catalog", "Step 1 of 4 · Choose products"],
+    ["cart", "Step 1 of 4 · Choose products"],
+    ["details", "Step 2 of 4 · Contact and delivery"],
+    ["agreements", "Step 2 of 4 · Contact and delivery"],
+    ["review", "Step 3 of 4 · Review and payment"],
+    ["payment", "Step 3 of 4 · Review and payment"],
+    ["submit", "Step 3 of 4 · Review and payment"],
+    ["status", "Step 4 of 4 · Confirmation and tracking"],
+  ] as const)("projects %s without changing its internal identity", (step, announcement) => {
+    render(<EarlyAccessProgress step={step} />);
+    expect(host.querySelector('[data-testid="early-access-progress-position"]')?.textContent)
+      .toContain(announcement);
+    expect(host.querySelectorAll('[data-testid="early-access-progress-steps"] li')).toHaveLength(4);
+  });
+
   it("states the step in words and hides the drawn track from assistive tech", () => {
     render(<EarlyAccessProgress step="agreements" />);
     const position = host.querySelector('[data-testid="early-access-progress-position"]');
-    expect(position?.textContent).toContain("Step 4 of 8");
-    expect(position?.textContent).toContain("Agreements");
+    expect(position?.textContent).toContain("Step 2 of 4");
+    expect(position?.textContent).toContain("Contact and delivery");
 
     const list = host.querySelector('[data-testid="early-access-progress-steps"]');
     expect(list?.getAttribute("aria-hidden")).toBe("true");

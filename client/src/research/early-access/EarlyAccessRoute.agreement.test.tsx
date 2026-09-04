@@ -23,6 +23,7 @@ const POLICIES = {
   "research-use": {
     title: "Research Use Policy",
     updated: "July 2026",
+    agreement: { kind: "early_access_terms", version: "v1" },
     sections: [
       {
         heading: "Purpose",
@@ -35,6 +36,8 @@ const POLICIES = {
   terms: { title: "Terms of Service", updated: "July 2026", sections: [] },
   privacy: { title: "Privacy Policy", updated: "July 2026", sections: [] },
 };
+
+const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v1" });
 
 /** Two live units, so a product can actually be selected in these tests. */
 const UNITS = [
@@ -64,7 +67,11 @@ const UNITS = [
   },
 ];
 
-type Answers = { accepted: boolean; identity?: boolean };
+type Answers = {
+  accepted: boolean;
+  identity?: boolean;
+  agreement?: Readonly<{ kind: string; version: string }>;
+};
 
 function jsonResponse(body: unknown, status = 200): Response {
   return {
@@ -77,6 +84,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 /** Every call the route and its children make, answered in one place. */
 function stubFetch(answers: Answers) {
+  const agreement = answers.agreement ?? AGREEMENT;
   const posted: Array<{ path: string; body: unknown }> = [];
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
@@ -84,7 +92,7 @@ function stubFetch(answers: Answers) {
       posted.push({ path, body: init.body === undefined ? null : JSON.parse(String(init.body)) });
       if (path.endsWith("/agreements/accept")) {
         answers.accepted = true;
-        return jsonResponse({ ok: true, kind: "early_access_terms", version: "v1", alreadyAccepted: false });
+        return jsonResponse({ ok: true, ...agreement, alreadyAccepted: false });
       }
       if (path.endsWith("/early-access/verify")) {
         answers.identity = true;
@@ -105,7 +113,7 @@ function stubFetch(answers: Answers) {
       if (answers.identity === false) {
         return jsonResponse({ ok: false, code: "IDENTITY_REQUIRED" }, 403);
       }
-      return jsonResponse({ ok: true, required: [{ kind: "early_access_terms", version: "v1" }], accepted: answers.accepted });
+      return jsonResponse({ ok: true, required: [agreement], accepted: answers.accepted });
     }
     if (path.endsWith("/early-access/catalog")) {
       return jsonResponse({ ok: true, units: UNITS });
@@ -187,6 +195,14 @@ describe("the checkout continuation is gated on the server's answer", () => {
     const review = reviewButton(host);
     expect(review.disabled).toBe(true);
     expect(review.textContent).toContain("Accept policy to continue");
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-provenance"]')
+        ?.textContent,
+    ).toBe("Agreement: early_access_terms · Version: v1");
+    expect(
+      host.querySelector('[data-testid="early-access-stepper-step-0"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
     // No checkout surface exists yet.
     expect(host.querySelector("[data-testid='early-access-checkout-mount']")).toBeNull();
   });
@@ -211,6 +227,12 @@ describe("the checkout continuation is gated on the server's answer", () => {
 
     const acceptCall = posted.find((call) => call.path.endsWith("/agreements/accept"));
     expect(acceptCall?.body).toEqual({ kind: "early_access_terms", version: "v1" });
+    // Accepting a prerequisite while still browsing must not make progress run
+    // backward from Contact and delivery to Choose products.
+    expect(
+      host.querySelector('[data-testid="early-access-stepper-step-0"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
 
     selectFirstUnit(host);
     const review = reviewButton(host);
@@ -226,6 +248,42 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(
       host.querySelector("[data-testid='early-access-checkout']")?.getAttribute("data-phase"),
     ).toBe("details");
+    expect(
+      host.querySelector('[data-testid="early-access-stepper-step-1"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
+  });
+
+  it("refuses a required pair that does not identify the policy being displayed", async () => {
+    const agreement = Object.freeze({
+      kind: "research_pilot_terms",
+      version: "2026.09",
+    });
+    const { posted } = stubFetch({ accepted: false, agreement });
+    const host = await mountRoute();
+
+    expect(host.querySelector('[data-testid="early-access-agreement-provenance"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
+    expect(posted.some((call) => call.path.endsWith("/agreements/accept"))).toBe(false);
+
+    selectFirstUnit(host);
+    expect(reviewButton(host).disabled).toBe(true);
+  });
+
+  it("does not honor an already-accepted pair for a different served policy", async () => {
+    const { posted } = stubFetch({
+      accepted: true,
+      agreement: { kind: "early_access_terms", version: "v2" },
+    });
+    const host = await mountRoute();
+
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(posted.some((call) => call.path.endsWith("/agreements/accept"))).toBe(false);
+    selectFirstUnit(host);
+    expect(reviewButton(host).disabled).toBe(true);
   });
 
   it("is usable on a fresh load when the server already has the acceptance", async () => {
@@ -236,6 +294,10 @@ describe("the checkout continuation is gated on the server's answer", () => {
 
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-provenance"]')
+        ?.textContent,
+    ).toBe("Agreement: early_access_terms · Version: v1");
 
     selectFirstUnit(host);
     expect(reviewButton(host).disabled).toBe(false);

@@ -24,6 +24,9 @@ const DURABLE_ENV = Object.freeze({
   SUPABASE_URL: "https://example.supabase.co",
   SUPABASE_SERVICE_ROLE_KEY: "service-role-key-for-shape-only",
   RESEARCH_EARLY_ACCESS_OWNER_ID: "3f2f0e5a-9d1c-4b8e-a6d0-1c2b3a4d5e6f",
+  RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: JSON.stringify([
+    { kind: "early_access_terms", version: "v1" },
+  ]),
 });
 
 describe("the durable persistence build carries the order-history read pair", () => {

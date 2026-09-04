@@ -128,6 +128,12 @@ export interface EarlyAccessCatalogRow {
   readonly slug: string;
   readonly displayName: string;
   readonly canonicalName: string;
+  /**
+   * Product Control's display category. It is descriptive only: a missing or
+   * malformed value becomes null and can never affect price, availability,
+   * eligibility, or order authority.
+   */
+  readonly category?: string | null;
   /** The exact variant. Early Access sells a presentation, never a molecule. */
   readonly variantId: string;
   readonly sku: string;
@@ -156,6 +162,30 @@ export interface EarlyAccessCatalogRow {
   readonly purchasable: boolean;
   /** The exact machine codes holding this row. Empty when purchasable. */
   readonly blockers: readonly EarlyAccessBlocker[];
+}
+
+const EARLY_ACCESS_CATEGORY_MAX_LENGTH = 120;
+const EARLY_ACCESS_CATEGORY_UNSAFE_TEXT =
+  /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u;
+
+/**
+ * Read one customer-displayable category without turning it into authority.
+ *
+ * Product Control normally supplies a validated string. This runtime seam is
+ * intentionally defensive because imported/legacy records may not. Returning
+ * null omits the label while leaving every commerce field untouched.
+ */
+export function earlyAccessCategoryLabel(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const category = value.trim();
+  if (
+    category.length === 0 ||
+    category.length > EARLY_ACCESS_CATEGORY_MAX_LENGTH ||
+    EARLY_ACCESS_CATEGORY_UNSAFE_TEXT.test(category)
+  ) {
+    return null;
+  }
+  return category;
 }
 
 export interface EarlyAccessCatalogInput {
@@ -350,6 +380,7 @@ function projectRow(
     slug: product.slug,
     displayName: product.displayName,
     canonicalName: product.canonicalName,
+    category: earlyAccessCategoryLabel(product.category),
     variantId: variant.id,
     sku: variant.sku,
     strength: variant.strength,

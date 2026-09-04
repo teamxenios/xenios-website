@@ -55,6 +55,14 @@ import {
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
 import type { EarlyAccessPersistenceCall } from "./executor";
+import { publishedResearchUsePolicyAgreement } from "../../policies-data";
+import { earlyAccessCartEnabled } from "../cart/feature-flag";
+import type {
+  EarlyAccessCartStorePorts,
+  EarlyAccessCartQuoteRecord,
+} from "../cart/ports";
+import type { EarlyAccessAgreementGate } from "../routes/ports";
+import { ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR } from "../../assisted-order/production-deps";
 
 /**
  * The Early Access persistence composition root.
@@ -179,6 +187,112 @@ export type EarlyAccessPersistenceBuild = Readonly<{
   orderHistory?: EarlyAccessOrderHistoryDependencies;
 }>;
 
+function refusingPersistenceBuild(
+  reason: string,
+  warnings: readonly string[],
+): EarlyAccessPersistenceBuild {
+  // No `repository` here, deliberately: the session layer's own gate then
+  // forces the customer surface closed. No cart store is present either, so a
+  // durable quote written by an older process cannot be committed after this
+  // process discovers that its legal authority has drifted.
+  return Object.freeze({
+    mode: "refused" as const,
+    warnings: Object.freeze([...warnings]),
+    reason,
+    options: {
+      store: new RefusingEarlyAccessCommerceStore(),
+      audit: new RefusingEarlyAccessAuditSink(),
+      customers: new RefusingEarlyAccessCustomerRepository(),
+      sessionBindings: new RefusingSessionBindingStore(),
+      consumed: new RefusingConsumedTokenStore(),
+    },
+  });
+}
+
+function requiredAgreementMatchesPublishedPolicy(
+  required: readonly EarlyAccessRequiredAgreement[],
+): boolean {
+  const published = publishedResearchUsePolicyAgreement();
+  return (
+    published !== null &&
+    required.length === 1 &&
+    required[0]?.kind === published.kind &&
+    required[0]?.version === published.version
+  );
+}
+
+/**
+ * The environment agreement list and the policy metadata are process-start
+ * inputs: changing either requires a new process, which rebuilds this
+ * composition and reruns the exact-identity check above. This wrapper is a
+ * second, decision-time check. It protects every consumer of the shared gate
+ * (direct orders, cart quotes and assisted orders) if policy metadata is
+ * removed or replaced inside a running process.
+ */
+function createPolicyBoundAgreementGate(
+  query: (call: EarlyAccessPersistenceCall) => Promise<unknown>,
+  required: readonly EarlyAccessRequiredAgreement[],
+): EarlyAccessAgreementGate {
+  const durable =
+    required.length > 0
+      ? new SupabaseEarlyAccessAgreementGate({ query, required })
+      : null;
+  return Object.freeze({
+    async accepted(customerRef: string): Promise<boolean> {
+      if (durable === null || !requiredAgreementMatchesPublishedPolicy(required)) {
+        return false;
+      }
+      const accepted = await durable.accepted(customerRef);
+      // Check again after the asynchronous database read. Published policy
+      // drift can only narrow authority; it can never inherit a stale `true`.
+      return accepted && requiredAgreementMatchesPublishedPolicy(required);
+    },
+  });
+}
+
+/**
+ * A durable quote can outlive the process that created it. Reading it in a
+ * later process therefore rechecks the customer's acceptance of THAT
+ * process's exact published policy, and committing a checkout checks once
+ * more immediately before the persistence call. Returning null for a quote
+ * deliberately keeps missing, foreign and no-longer-authorized quotes
+ * indistinguishable. A commit-side failure is handled by the Early Access
+ * unavailable boundary, never as a write.
+ */
+function createPolicyBoundCartStore(
+  durable: EarlyAccessCartStorePorts,
+  agreements: EarlyAccessAgreementGate,
+  required: readonly EarlyAccessRequiredAgreement[],
+): EarlyAccessCartStorePorts {
+  return new Proxy(durable, {
+    get(target, property) {
+      if (property === "get") {
+        return async (quoteId: string): Promise<EarlyAccessCartQuoteRecord | null> => {
+          if (!requiredAgreementMatchesPublishedPolicy(required)) return null;
+          const record = await target.get(quoteId);
+          if (record === null) return null;
+          return (await agreements.accepted(record.customerRef)) ? record : null;
+        };
+      }
+      if (property === "commit") {
+        return async (checkout: Parameters<EarlyAccessCartStorePorts["commit"]>[0]) => {
+          if (
+            !requiredAgreementMatchesPublishedPolicy(required) ||
+            !(await agreements.accepted(checkout.customerRef))
+          ) {
+            throw new Error(
+              "Early Access cart checkout agreement authority is unavailable.",
+            );
+          }
+          return target.commit(checkout);
+        };
+      }
+      const value = Reflect.get(target, property, target) as unknown;
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
+}
+
 /**
  * Build the registration options for the decided mode.
  *
@@ -209,23 +323,39 @@ export function buildEarlyAccessPersistence(
     // `decideEarlyAccessAdapter` sees an in-memory repository in production
     // with the flag on and forces the gate closed with its own loud error.
     // Two independent fail-closed layers, one refusal.
-    return Object.freeze({
-      mode: decision.mode,
-      warnings: decision.warnings,
-      reason: decision.reason,
-      options: {
-        store: new RefusingEarlyAccessCommerceStore(),
-        audit: new RefusingEarlyAccessAuditSink(),
-        customers: new RefusingEarlyAccessCustomerRepository(),
-        sessionBindings: new RefusingSessionBindingStore(),
-        consumed: new RefusingConsumedTokenStore(),
-      },
-    });
+    return refusingPersistenceBuild(decision.reason, decision.warnings);
+  }
+
+  const agreementWarnings: string[] = [];
+  const required = readRequiredAgreements(env, agreementWarnings);
+  const productionCommerceEnabled =
+    environment.productionLike &&
+    (environment.earlyAccessFlag === "true" ||
+      earlyAccessCartEnabled(env) ||
+      env[ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR] === "true");
+  if (
+    productionCommerceEnabled &&
+    !requiredAgreementMatchesPublishedPolicy(required)
+  ) {
+    return refusingPersistenceBuild(
+      "Early Access commerce is enabled in a production-like process, but " +
+        "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS does not exactly match the agreement " +
+        "identity published on the Research Use Policy. The session, direct-order, cart-quote, " +
+        "and persisted-quote checkout paths are forced closed so an old acceptance cannot " +
+        "authorize commerce.",
+      agreementWarnings,
+    );
   }
 
   const run = query ?? createEarlyAccessSupabaseQuery();
+  const agreements = createPolicyBoundAgreementGate(run, required);
+  const cartStore = createPolicyBoundCartStore(
+    buildEarlyAccessDurableCartStore(run),
+    agreements,
+    required,
+  );
   const fulfillmentOps = new SupabaseEarlyAccessFulfillmentOpsReads(run);
-  const warnings = [...decision.warnings];
+  const warnings = [...decision.warnings, ...agreementWarnings];
   // The deployment's session-identity stance is stated in the logs on every
   // boot, deliberately and without any secret: whether the shared launch code
   // mints per-session checkout identities is exactly the kind of fact an
@@ -308,7 +438,7 @@ export function buildEarlyAccessPersistence(
     // every other durable repository above uses. It is built in durable mode
     // ONLY; refused and memory mode return before reaching this object, so
     // production still cannot arrive at process memory by omission.
-    cartCheckoutStore: buildEarlyAccessDurableCartStore(run),
+    cartCheckoutStore: cartStore,
     // THE CUSTOMER PAYMENT-PROOF DOOR'S DURABLE DEPENDENCIES.
     //
     // Built ONLY here, in the durable branch, for the same reason the cart
@@ -366,9 +496,8 @@ export function buildEarlyAccessPersistence(
   // Until then the route's named 503 is the correct, honest answer.
   // options.settledAwaitingFulfillment = () => fulfillmentOps.settledAwaitingFulfillment();
 
-  const required = readRequiredAgreements(env, warnings);
   if (required.length > 0) {
-    options.agreements = new SupabaseEarlyAccessAgreementGate({ query: run, required });
+    options.agreements = agreements;
     // The write half. Without it the gate above can only ever answer false,
     // because nothing else in the process can put an acceptance on file.
     options.agreementRecorder = new SupabaseEarlyAccessAgreementRecorder(run);

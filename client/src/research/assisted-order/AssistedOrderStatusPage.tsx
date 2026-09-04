@@ -5,6 +5,8 @@ import { money } from "./wizard-state";
 import { readAssistedOrderToken } from "./storage";
 import { SecureDocumentUpload } from "./SecureDocumentUpload";
 import { assistedOrderStatusErrorCopy } from "./customer-safe-errors";
+import { EarlyAccessStepper } from "../early-access/EarlyAccessStepper";
+import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
 import "./assisted-order.css";
 
 function referenceFromPath(): string {
@@ -61,6 +63,13 @@ export function AssistedOrderStatusPage() {
             : "We verify this link before showing any request details."}
         </p>
       </header>
+      {status ? (
+        <EarlyAccessStepper
+          steps={EARLY_ACCESS_CUSTOMER_STEP_LABELS}
+          activeIndex={3}
+          testId="assisted-order-customer-progress"
+        />
+      ) : null}
       {loading ? <p className="xenios-order-loading">Checking request…</p> : null}
       {error ? <div className="xenios-order-error" role="alert">{error}</div> : null}
       {status ? (

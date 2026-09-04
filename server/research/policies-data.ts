@@ -1,7 +1,28 @@
-export const policies: Record<string, { title: string; updated: string; sections: Array<{ heading: string; paragraphs: string[]; bullets?: string[] }> }> = {
+import { createHash } from "node:crypto";
+
+export type ResearchPolicyAgreementMetadata = Readonly<{
+  kind: string;
+  version: string;
+}>;
+
+export type ResearchPublishedPolicy = Readonly<{
+  title: string;
+  updated: string;
+  sections: Array<{ heading: string; paragraphs: string[]; bullets?: string[] }>;
+  /** Present only when accepting this exact policy creates an agreement row. */
+  agreement?: ResearchPolicyAgreementMetadata;
+}>;
+
+export const RESEARCH_USE_POLICY_AGREEMENT = Object.freeze({
+  kind: "early_access_terms",
+  version: "v1",
+}) satisfies ResearchPolicyAgreementMetadata;
+
+export const policies: Record<string, ResearchPublishedPolicy> = {
   "research-use": {
     title: "Research Use Policy",
     updated: "July 2026",
+    agreement: RESEARCH_USE_POLICY_AGREEMENT,
     sections: [
       { heading: "Purpose", paragraphs: ["Research materials listed through xenios are offered solely for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not offered for human or veterinary use."] },
       { heading: "Prohibited use", paragraphs: ["A purchaser may not ingest, inject, administer, prescribe, dispense, recommend, or distribute research materials for human or veterinary use."], bullets: ["No personal use", "No client or patient use", "No dosing or protocol support", "No resale for human use", "No use as medicine, supplement, food, cosmetic, or treatment"] },
@@ -61,3 +82,97 @@ export const policies: Record<string, { title: string; updated: string; sections
     ],
   },
 };
+
+/**
+ * Canonical bytes for the exact Research Use Policy carried by
+ * `early_access_terms` / `v1`.
+ *
+ * The durable agreement table stores the pair rather than a document body.
+ * Pinning that pair to the body digest makes an unversioned wording or date
+ * edit fail closed: a deliberate policy revision must also mint a new version
+ * and update the deployment requirement instead of silently inheriting every
+ * v1 acceptance.
+ */
+export const RESEARCH_USE_POLICY_CONTENT_SHA256 =
+  "98918e35e5a0f749790fb31cd406399818ced5d197cbed02679744ccf94ac325";
+
+export function researchPolicyContentSha256(policy: unknown): string | null {
+  if (typeof policy !== "object" || policy === null || Array.isArray(policy)) {
+    return null;
+  }
+  const record = policy as Record<string, unknown>;
+  if (
+    typeof record.title !== "string" ||
+    typeof record.updated !== "string" ||
+    !Array.isArray(record.sections)
+  ) {
+    return null;
+  }
+
+  const sections: Array<{
+    heading: string;
+    paragraphs: string[];
+    bullets: string[] | null;
+  }> = [];
+  for (const value of record.sections) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+    const section = value as Record<string, unknown>;
+    if (
+      typeof section.heading !== "string" ||
+      !Array.isArray(section.paragraphs) ||
+      !section.paragraphs.every((paragraph) => typeof paragraph === "string") ||
+      (section.bullets !== undefined &&
+        (!Array.isArray(section.bullets) ||
+          !section.bullets.every((bullet) => typeof bullet === "string")))
+    ) {
+      return null;
+    }
+    sections.push({
+      heading: section.heading,
+      paragraphs: [...section.paragraphs] as string[],
+      bullets: section.bullets === undefined ? null : [...section.bullets] as string[],
+    });
+  }
+
+  const canonical = { title: record.title, updated: record.updated, sections };
+  try {
+    return createHash("sha256")
+      .update(JSON.stringify(canonical), "utf8")
+      .digest("hex");
+  } catch {
+    return null;
+  }
+}
+
+const AGREEMENT_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
+
+/**
+ * Read the agreement identity from the policy object that the policies API
+ * actually publishes. The acceptance route calls this at decision time, so a
+ * missing, malformed, or replaced metadata object closes the write boundary
+ * instead of letting deployment configuration name a different document.
+ */
+export function publishedResearchUsePolicyAgreement(): ResearchPolicyAgreementMetadata | null {
+  const policy = policies["research-use"];
+  const value = (policy as unknown as Record<string, unknown> | undefined)?.agreement;
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  if (
+    Object.keys(record).length !== 2 ||
+    !Object.prototype.hasOwnProperty.call(record, "kind") ||
+    !Object.prototype.hasOwnProperty.call(record, "version") ||
+    typeof record.kind !== "string" ||
+    typeof record.version !== "string" ||
+    record.kind !== record.kind.trim() ||
+    record.version !== record.version.trim() ||
+    !AGREEMENT_IDENTIFIER.test(record.kind) ||
+    !AGREEMENT_IDENTIFIER.test(record.version) ||
+    record.kind !== RESEARCH_USE_POLICY_AGREEMENT.kind ||
+    record.version !== RESEARCH_USE_POLICY_AGREEMENT.version ||
+    policy === undefined ||
+    researchPolicyContentSha256(policy) !== RESEARCH_USE_POLICY_CONTENT_SHA256
+  ) {
+    return null;
+  }
+  return Object.freeze({ kind: record.kind, version: record.version });
+}

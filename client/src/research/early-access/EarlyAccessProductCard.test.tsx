@@ -2,13 +2,15 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { ReactElement } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   EarlyAccessProductCard,
   type EarlyAccessAvailabilityState,
   type EarlyAccessCardProduct,
 } from "./EarlyAccessProductCard";
+import { ASSISTED_ORDER_CTA_PATH } from "../assisted-order/AssistedOrderCta";
+import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 
 /** The canonical sentence, passed in exactly as the server states it. */
 const FULFILLMENT =
@@ -27,6 +29,25 @@ function render(element: ReactElement): HTMLElement {
   return container;
 }
 
+function configResponse(enabled: boolean): Response {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ enabled }),
+  } as Response;
+}
+
+async function settleConfig(): Promise<void> {
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+}
+
+beforeEach(() => {
+  resetAssistedOrderConfigCache();
+});
+
 afterEach(() => {
   act(() => {
     root?.unmount();
@@ -34,6 +55,8 @@ afterEach(() => {
   container?.remove();
   container = null;
   root = null;
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCardProduct {
@@ -41,6 +64,7 @@ function product(overrides: Partial<EarlyAccessCardProduct> = {}): EarlyAccessCa
     productId: "prod-clean",
     variantId: "var-10mg",
     name: "Clean Unit",
+    category: "Research materials",
     strength: "10 mg",
     unitPriceCents: 5_600,
     currency: "USD",
@@ -63,6 +87,26 @@ function card(overrides: Partial<EarlyAccessCardProduct> = {}, quantity: 1 | 2 |
 }
 
 describe("early access product card", () => {
+  it("shows the canonical category as display copy", () => {
+    const el = card({ category: "Specialty research materials" });
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-category']")?.textContent,
+    ).toBe("Specialty research materials");
+  });
+
+  it.each([undefined, null, 17, { private: true }, "  ", "Research\nmaterials"])(
+    "omits malformed category %s without changing the offer",
+    (category) => {
+      const el = card({ category: category as unknown as string });
+      expect(
+        el.querySelector("[data-testid='early-access-product-card-category']"),
+      ).toBeNull();
+      expect(el.textContent).toContain("$56.00 per unit");
+      expect(el.textContent).toContain("Available to order");
+      expect(el.textContent).toContain("Select");
+    },
+  );
+
   it("shows the single unit price and no computed total anywhere", () => {
     // THE RULE THIS FILE EXISTS FOR. The server computes every total. If the card
     // ever multiplies, these numbers appear and the customer is shown a figure
@@ -216,7 +260,9 @@ describe("early access product card", () => {
     expect(input?.getAttribute("max")).toBe("50");
   });
 
-  it("offers an order request above explicit product authority without quantity review copy", () => {
+  it("links an above-limit quantity to the canonical assisted-order route only when enabled", async () => {
+    const fetchStub = vi.fn(async () => configResponse(true));
+    vi.stubGlobal("fetch", fetchStub);
     const onQuantityChange = vi.fn();
     const el = render(
       <EarlyAccessProductCard
@@ -226,13 +272,118 @@ describe("early access product card", () => {
         onSelect={() => {}}
       />,
     );
+    await settleConfig();
     const input = el.querySelector<HTMLInputElement>("input[type='number']");
     expect(input?.max).toBe("50");
     expect(el.textContent).toContain("assisted order requests support 1–100 units per exact variant");
     expect(el.textContent).toContain("Featured checkout is currently limited to 50 units");
-    expect(el.textContent).toContain("Request this order");
+    expect(el.textContent).toContain("Open assisted ordering");
+    expect(el.textContent).not.toContain("Request this order");
+    expect(el.textContent).toContain(
+      "Reselect the product, exact variant, and quantity in the assisted-order form.",
+    );
     expect(el.textContent).not.toMatch(/manual review/i);
     expect(onQuantityChange).not.toHaveBeenCalled();
+    const link = el.querySelector<HTMLAnchorElement>(
+      "[data-testid='early-access-product-card-action']",
+    );
+    expect(link?.getAttribute("href")).toBe(ASSISTED_ORDER_CTA_PATH);
+    expect(link?.getAttribute("href")).not.toContain("?");
+    expect(link?.className).toContain("w-full");
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-assisted-order']")
+        ?.className,
+    ).toContain("min-w-0");
+    expect(
+      el.querySelector("[data-testid='early-access-product-card-assisted-order-reselect']")
+        ?.className,
+    ).toContain("break-words");
+    expect(fetchStub).toHaveBeenCalledTimes(1);
+  });
+
+  it("removes a direct-checkout selection when its quantity moves into assisted ordering", () => {
+    const onQuantityChange = vi.fn();
+    const onSelect = vi.fn();
+    const el = render(
+      <EarlyAccessProductCard
+        product={product({ quantityLimit: 20 })}
+        quantity={20}
+        selected
+        onQuantityChange={onQuantityChange}
+        onSelect={onSelect}
+      />,
+    );
+    const input = el.querySelector<HTMLInputElement>("input[type='number']");
+    if (input === null) throw new Error("quantity input missing");
+
+    act(() => {
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      )?.set;
+      setter?.call(input, "21");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+    });
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onQuantityChange).toHaveBeenCalledWith(21);
+  });
+
+  it("offers no assisted-order link when the capability is disabled", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => configResponse(false)));
+    const el = render(
+      <EarlyAccessProductCard
+        product={product({ quantityLimit: 20 })}
+        quantity={21}
+        onQuantityChange={() => {}}
+        onSelect={() => {}}
+      />,
+    );
+    await settleConfig();
+
+    expect(el.querySelector(`a[href='${ASSISTED_ORDER_CTA_PATH}']`)).toBeNull();
+    expect(el.textContent).toContain("Assisted ordering is temporarily unavailable");
+    expect(el.textContent).toContain(
+      "Nothing was added to your cart or sent as an order request",
+    );
+    expect(el.querySelector("a[href='/research/support']")?.textContent).toContain(
+      "Contact support",
+    );
+  });
+
+  it("does not offer a link while capability is still being checked", () => {
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(() => {})));
+    const el = render(
+      <EarlyAccessProductCard
+        product={product({ quantityLimit: 20 })}
+        quantity={21}
+        onQuantityChange={() => {}}
+        onSelect={() => {}}
+      />,
+    );
+
+    expect(el.querySelector(`a[href='${ASSISTED_ORDER_CTA_PATH}']`)).toBeNull();
+    expect(el.textContent).toContain("Checking assisted-order availability");
+  });
+
+  it("fails closed to support when the capability check cannot be completed", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      throw new Error("network unavailable");
+    }));
+    const el = render(
+      <EarlyAccessProductCard
+        product={product({ quantityLimit: 20 })}
+        quantity={21}
+        onQuantityChange={() => {}}
+        onSelect={() => {}}
+      />,
+    );
+    await settleConfig();
+
+    expect(el.querySelector(`a[href='${ASSISTED_ORDER_CTA_PATH}']`)).toBeNull();
+    expect(el.textContent).toContain("We could not confirm assisted-order availability");
+    expect(el.querySelector("a[href='/research/support']")).not.toBeNull();
   });
 
   it("shows no product photography, and no longer reserves a square for it", () => {

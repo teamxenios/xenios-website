@@ -459,6 +459,20 @@ describe("AssistedOrderPage", () => {
     expect(byTestId("order-step-products")?.getAttribute("aria-current")).toBe("step");
     expect(byTestId<HTMLButtonElement>("order-step-contact")?.disabled).toBe(true);
     expect(byTestId<HTMLButtonElement>("order-step-review")?.disabled).toBe(true);
+    expect(byTestId<HTMLButtonElement>("order-step-confirmation")?.disabled).toBe(true);
+    expect(document.querySelectorAll(".xenios-order-steps button")).toHaveLength(4);
+    expect(document.querySelector(".xenios-order-steps")?.textContent).toContain(
+      "Choose products",
+    );
+    expect(document.querySelector(".xenios-order-steps")?.textContent).toContain(
+      "Contact and delivery",
+    );
+    expect(document.querySelector(".xenios-order-steps")?.textContent).toContain(
+      "Review and payment",
+    );
+    expect(document.querySelector(".xenios-order-steps")?.textContent).toContain(
+      "Confirmation and tracking",
+    );
 
     click(byTestId(`order-card-add-${directRuoItem.variantId}`));
     click(byTestId("order-continue-contact"));
@@ -497,7 +511,8 @@ describe("AssistedOrderPage", () => {
     render({ embedded: true, continuationEnabled: false });
     await settle();
 
-    expect(byTestId("order-step-products")?.getAttribute("aria-current")).toBe("step");
+    expect(byTestId("order-step-products")).toBeNull();
+    expect(document.querySelector('nav[aria-label="Order request progress"]')).toBeNull();
     expect(byTestId("order-contact-name")).toBeNull();
     expect(byTestId("order-submit")).toBeNull();
     expect(api.submitAssistedOrder).not.toHaveBeenCalled();
@@ -809,6 +824,14 @@ describe("AssistedOrderConfirmationPage landmarks", () => {
     expect(byTestId("order-confirmation-reference")!.textContent).toContain(
       "XRR-20260819-ABCDEF1234",
     );
+    const progress = byTestId("assisted-order-customer-progress");
+    expect(progress?.querySelectorAll("li")).toHaveLength(4);
+    expect(
+      progress
+        ?.querySelector('[data-testid="assisted-order-customer-progress-step-3"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
+    expect(progress?.textContent).toContain("Confirmation and tracking");
   });
 
   it("does not report a server-accepted request as failed when the sessionStorage getter is denied", async () => {
@@ -847,6 +870,7 @@ describe("AssistedOrderConfirmationPage landmarks", () => {
     act(() => root!.render(<AssistedOrderConfirmationPage />));
 
     expect(byTestId("order-confirmation-unavailable")).not.toBeNull();
+    expect(byTestId("assisted-order-customer-progress")).toBeNull();
     expect(host.textContent).toContain("Confirmation unavailable");
     expect(host.textContent).not.toMatch(/request received|status:\s*submitted/i);
     expect(host.querySelectorAll("h1")).toHaveLength(1);
@@ -939,10 +963,18 @@ describe("AssistedOrderStatusPage verified identity", () => {
     renderStatus();
 
     expect(byTestId("order-status-heading")?.textContent).toBe("Request status");
+    expect(byTestId("assisted-order-customer-progress")).toBeNull();
     expect(host!.textContent).not.toContain(receipt.publicReference);
     pending.resolve(statusView);
     await settle(20);
     expect(byTestId("order-status-heading")?.textContent).toBe(receipt.publicReference);
+    const progress = byTestId("assisted-order-customer-progress");
+    expect(progress?.querySelectorAll("li")).toHaveLength(4);
+    expect(
+      progress
+        ?.querySelector('[data-testid="assisted-order-customer-progress-step-3"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
     expect(host!.textContent).toContain("Request received for review.");
     expect(
       host!.querySelector('a.xenios-order-return-link[href="/research/early-access"]')

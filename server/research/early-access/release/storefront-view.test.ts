@@ -13,6 +13,7 @@ function row(overrides: Partial<EarlyAccessCatalogRow> = {}): EarlyAccessCatalog
     slug: "product-a",
     displayName: "Product A",
     canonicalName: "product-a",
+    category: "Research materials",
     variantId: "var-1",
     sku: "A-1",
     strength: "10 mg",
@@ -59,6 +60,49 @@ function releaseFor(target: EarlyAccessCatalogRow, overrides: Record<string, unk
 }
 
 describe("the storefront the customer sees behind the gate", () => {
+  it("preserves the canonical Product Control category without making it authority", () => {
+    const source = row({ category: "Specialty research materials" });
+    const store = buildEarlyAccessStorefront({
+      projection: projection([source]),
+      releases: [releaseFor(source)],
+    });
+
+    expect(store.units[0]?.category).toBe("Specialty research materials");
+    expect(store.units[0]?.state).toBe("purchasable");
+    expect(store.units[0]?.priceCents).toBe(24_900);
+  });
+
+  it("does not stale a founder release when only display category changes", () => {
+    const approved = row({ category: "Research materials" });
+    const release = releaseFor(approved);
+    const renamedCategory = row({ category: "Specialty research materials" });
+    const store = buildEarlyAccessStorefront({
+      projection: projection([renamedCategory]),
+      releases: [release],
+    });
+
+    expect(store.units[0]?.category).toBe("Specialty research materials");
+    expect(store.units[0]?.state).toBe("purchasable");
+    expect(store.units[0]?.hold).toBeNull();
+    expect(store.units[0]?.releaseId).toBe("rel-0001");
+  });
+
+  it.each([undefined, null, 42, "", "Research\nmaterials", "x".repeat(121)])(
+    "omits malformed category %s without changing availability or order authority",
+    (category) => {
+      const source = row({ category: category as string | null | undefined });
+      const store = buildEarlyAccessStorefront({
+        projection: projection([source]),
+        releases: [releaseFor(source)],
+      });
+
+      expect(store.units[0]?.category).toBeNull();
+      expect(store.units[0]?.availability).toBe("AVAILABLE");
+      expect(store.units[0]?.purchasable).toBe(true);
+      expect(store.units[0]?.priceCents).toBe(24_900);
+    },
+  );
+
   it("a founder-released unit is purchasable at the release price", () => {
     const unit = row();
     const store = buildEarlyAccessStorefront({

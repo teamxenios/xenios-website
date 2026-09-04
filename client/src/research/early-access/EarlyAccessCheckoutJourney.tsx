@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "wouter";
 
 import type { EarlyAccessCatalogSelection } from "./EarlyAccessCatalogSection";
 import {
@@ -595,13 +596,27 @@ export function EarlyAccessCheckoutJourney({
           keep using this same browser; if you lose this page, your order number above is what
           support needs.
         </p>
+        <div
+          className="mt-4 grid gap-3"
+          data-testid={`${testId}-reference-continuity`}
+        >
+          <p className="body-s text-ink-2 max-w-[62ch]">
+            Signing in does not itself link this Early Access order to your account. This same
+            authorized Early Access session remains the authority for viewing its current status.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link className="btn btn-secondary" href="/research/account/orders">
+              Sign in or view account orders
+            </Link>
+            <Link className="btn btn-secondary" href="/research/support">
+              Contact Research support
+            </Link>
+          </div>
+        </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" className="btn btn-secondary" onClick={() => void refresh()} data-testid={`${testId}-refresh`}>
             Refresh order status
           </button>
-          <a className="btn btn-secondary" href="/support">
-            Contact support
-          </a>
         </div>
         {error ? (
           <p role="alert" className="mt-3 body-s text-pulse">

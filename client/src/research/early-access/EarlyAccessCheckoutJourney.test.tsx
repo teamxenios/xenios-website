@@ -267,6 +267,18 @@ describe("details, then a TRUE review, then one explicit confirmation", () => {
     expect(host.querySelector("[data-testid='early-access-checkout-proof-entry']")).not.toBeNull();
     expect(host.querySelector("[data-testid='early-access-checkout-proof-method']")).not.toBeNull();
     expect(host.querySelector("[data-testid='early-access-checkout-proof']")).not.toBeNull();
+    const continuity = host.querySelector(
+      "[data-testid='early-access-checkout-reference-continuity']",
+    );
+    expect(continuity?.textContent).toContain(
+      "Signing in does not itself link this Early Access order to your account.",
+    );
+    expect(continuity?.textContent).toContain(
+      "same authorized Early Access session remains the authority",
+    );
+    expect(continuity?.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
+    expect(continuity?.querySelector('a[href="/research/support"]')).not.toBeNull();
+    expect(continuity?.textContent).not.toContain(["Claim", "this", "order"].join(" "));
   });
 
   it("cannot double-click its way into two orders", async () => {

@@ -18,21 +18,51 @@ export const EARLY_ACCESS_AGREEMENT_STATUS_PATH = "/api/research/early-access/ag
 export const EARLY_ACCESS_AGREEMENT_ACCEPT_PATH =
   "/api/research/early-access/agreements/accept";
 
-/**
- * The one policy a customer must accept, exactly as the deployment configures
- * it in RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS.
- *
- * The persisted identity is `early_access_terms` / `v1`, which is what the
- * order gate reads. The DOCUMENT shown is the Research Use Policy: the founder
- * decision is that a customer agrees to the live research-use policy and not to
- * a Terms document that labels itself a draft. These two names differing is
- * intentional, and changing either one without the other would record an
- * acceptance of something nobody was shown.
- */
-export const EARLY_ACCESS_REQUIRED_AGREEMENT = Object.freeze({
-  kind: "early_access_terms",
-  version: "v1",
-});
+/** The exact configured identity returned by the server's agreement read. */
+export type EarlyAccessAgreementPair = Readonly<{
+  kind: string;
+  version: string;
+}>;
+
+const AGREEMENT_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
+const UNREADABLE_AGREEMENT_IDENTITY =
+  "The agreement service returned an unreadable agreement identity.";
+
+function agreementIdentifier(value: unknown): string | null {
+  return typeof value === "string" &&
+    value === value.trim() &&
+    AGREEMENT_IDENTIFIER.test(value)
+    ? value
+    : null;
+}
+
+function agreementPair(
+  value: unknown,
+  exactKeys: boolean,
+): EarlyAccessAgreementPair | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  if (
+    exactKeys &&
+    (Object.keys(record).length !== 2 ||
+      !Object.prototype.hasOwnProperty.call(record, "kind") ||
+      !Object.prototype.hasOwnProperty.call(record, "version"))
+  ) {
+    return null;
+  }
+  const kind = agreementIdentifier(record.kind);
+  const version = agreementIdentifier(record.version);
+  return kind === null || version === null
+    ? null
+    : Object.freeze({ kind, version });
+}
+
+function singleRequiredAgreement(value: unknown): EarlyAccessAgreementPair | null {
+  if (!Array.isArray(value) || value.length !== 1) return null;
+  return agreementPair(value[0], true);
+}
 
 /** The slug of the policy document rendered on the acceptance screen. */
 export const RESEARCH_USE_POLICY_SLUG = "research-use";
@@ -47,6 +77,8 @@ export type ResearchPolicyView = Readonly<{
   title: string;
   /** Empty when the server sent none. Never invented. */
   updated: string;
+  /** The exact agreement row this served policy is allowed to create. */
+  agreement: EarlyAccessAgreementPair;
   sections: readonly ResearchPolicySection[];
 }>;
 
@@ -100,6 +132,13 @@ export async function loadResearchUsePolicy(
   if (!isNonEmptyString(record.title)) {
     return { kind: "unreadable", reason: "The policy had no title." };
   }
+  const agreement = agreementPair(record.agreement, true);
+  if (agreement === null) {
+    return {
+      kind: "unreadable",
+      reason: "The policy had no readable agreement identity.",
+    };
+  }
 
   const sections: ResearchPolicySection[] = [];
   if (Array.isArray(record.sections)) {
@@ -129,6 +168,7 @@ export async function loadResearchUsePolicy(
     policy: Object.freeze({
       title: record.title,
       updated: isNonEmptyString(record.updated) ? record.updated : "",
+      agreement,
       sections: Object.freeze(sections),
     }),
   };
@@ -139,8 +179,8 @@ export async function loadResearchUsePolicy(
 // ---------------------------------------------------------------------------
 
 export type EarlyAccessAgreementState =
-  | { kind: "accepted" }
-  | { kind: "required" }
+  | { kind: "accepted"; agreement: EarlyAccessAgreementPair }
+  | { kind: "required"; agreement: EarlyAccessAgreementPair }
   /** The private session lapsed. Not the same as "has not agreed". */
   | { kind: "locked" }
   /**
@@ -169,7 +209,9 @@ export type EarlyAccessAgreementState =
 export async function loadEarlyAccessAgreementState(
   get: <T>(path: string) => Promise<ApiResult<T>> = (path) => apiGet(path),
 ): Promise<EarlyAccessAgreementState> {
-  const result = await get<{ accepted?: unknown }>(EARLY_ACCESS_AGREEMENT_STATUS_PATH);
+  const result = await get<{ accepted?: unknown; required?: unknown }>(
+    EARLY_ACCESS_AGREEMENT_STATUS_PATH,
+  );
 
   if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
   if (result.kind === "denied") {
@@ -186,9 +228,18 @@ export async function loadEarlyAccessAgreementState(
   }
   if (result.kind === "error") return { kind: "error", message: result.message };
 
-  // Only an explicit true is acceptance. A missing or oddly-typed field leaves
-  // the agreement in front of the customer, which is the safe direction.
-  return (result.data ?? {}).accepted === true ? { kind: "accepted" } : { kind: "required" };
+  // This screen can collect exactly one agreement. The configured identity
+  // must therefore be a single, exact {kind, version} pair and acceptance must
+  // be an explicit boolean. Missing, ambiguous, or malformed provenance is a
+  // fault, never permission and never a client-invented default.
+  const agreement = singleRequiredAgreement((result.data ?? {}).required);
+  const accepted = (result.data ?? {}).accepted;
+  if (agreement === null || typeof accepted !== "boolean") {
+    return { kind: "error", message: UNREADABLE_AGREEMENT_IDENTITY };
+  }
+  return accepted
+    ? { kind: "accepted", agreement }
+    : { kind: "required", agreement };
 }
 
 // ---------------------------------------------------------------------------
@@ -196,7 +247,11 @@ export async function loadEarlyAccessAgreementState(
 // ---------------------------------------------------------------------------
 
 export type EarlyAccessAcceptResult =
-  | { kind: "accepted"; alreadyAccepted: boolean }
+  | {
+      kind: "accepted";
+      alreadyAccepted: boolean;
+      agreement: EarlyAccessAgreementPair;
+    }
   | { kind: "locked" }
   /** Signed in, but no approved customer to record the acceptance for. */
   | { kind: "unverified" }
@@ -216,12 +271,22 @@ export type EarlyAccessAcceptResult =
  * double-clicks is agreed either way.
  */
 export async function acceptEarlyAccessAgreement(
+  agreement: EarlyAccessAgreementPair,
   post: <T>(path: string, body: unknown) => Promise<ApiResult<T>> = (path, body) =>
     apiPost(path, body),
 ): Promise<EarlyAccessAcceptResult> {
-  const result = await post<{ alreadyAccepted?: unknown }>(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH, {
-    kind: EARLY_ACCESS_REQUIRED_AGREEMENT.kind,
-    version: EARLY_ACCESS_REQUIRED_AGREEMENT.version,
+  const required = agreementPair(agreement, true);
+  if (required === null) {
+    return { kind: "error", message: UNREADABLE_AGREEMENT_IDENTITY };
+  }
+
+  const result = await post<{
+    kind?: unknown;
+    version?: unknown;
+    alreadyAccepted?: unknown;
+  }>(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH, {
+    kind: required.kind,
+    version: required.version,
   });
 
   if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
@@ -238,7 +303,23 @@ export async function acceptEarlyAccessAgreement(
   }
   if (result.kind === "error") return { kind: "error", message: result.message };
 
-  return { kind: "accepted", alreadyAccepted: (result.data ?? {}).alreadyAccepted === true };
+  // The write response must confirm the same identity that was requested.
+  // A 2xx body naming another pair (or no pair) cannot prove this agreement is
+  // on file, so it remains closed instead of showing a false accepted state.
+  const recorded = agreementPair(result.data, false);
+  if (
+    recorded === null ||
+    recorded.kind !== required.kind ||
+    recorded.version !== required.version
+  ) {
+    return { kind: "error", message: UNREADABLE_AGREEMENT_IDENTITY };
+  }
+
+  return {
+    kind: "accepted",
+    alreadyAccepted: (result.data ?? {}).alreadyAccepted === true,
+    agreement: recorded,
+  };
 }
 
 // ---------------------------------------------------------------------------

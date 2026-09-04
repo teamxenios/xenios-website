@@ -189,7 +189,11 @@ function stubFetch(accepted = true) {
       });
     }
     if (path.endsWith("/early-access/agreements")) {
-      return jsonResponse({ ok: true, required: [], accepted });
+      return jsonResponse({
+        ok: true,
+        required: [{ kind: "early_access_terms", version: "v1" }],
+        accepted,
+      });
     }
     if (path.endsWith("/status")) return jsonResponse(statusBody(statusOverrides));
     if (path.includes("/payment-instructions")) return jsonResponse({ ok: true, presentation: null });

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   buildEarlyAccessPersistence,
@@ -21,8 +21,26 @@ import { SupabasePrivateAccessSessionRepository } from "../private-access-sessio
 import { SupabaseEarlyAccessCartStore } from "../cart/supabase-store";
 import { SupabaseProofSubmissionStore } from "../proof/supabase-submission-store";
 import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
+import {
+  policies,
+  RESEARCH_USE_POLICY_AGREEMENT,
+} from "../../policies-data";
 
 const OWNER = "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90";
+
+const PRODUCTION_DURABLE_ENV = Object.freeze({
+  NODE_ENV: "production",
+  RESEARCH_EARLY_ACCESS_ENABLED: "true",
+  SUPABASE_URL: "https://example.supabase.co",
+  SUPABASE_SERVICE_ROLE_KEY: "sb_secret_test",
+  RESEARCH_EARLY_ACCESS_OWNER_ID: OWNER,
+});
+
+function exactAgreementConfig(
+  agreement: Readonly<{ kind: string; version: string }> = RESEARCH_USE_POLICY_AGREEMENT,
+): string {
+  return JSON.stringify([agreement]);
+}
 
 function environment(
   overrides: Partial<{
@@ -257,6 +275,200 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
       async () => null,
     );
     expect(build.options.agreements).toBeDefined();
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["an older version", JSON.stringify([{ kind: "early_access_terms", version: "v0" }])],
+    [
+      "multiple pairs",
+      JSON.stringify([
+        RESEARCH_USE_POLICY_AGREEMENT,
+        { kind: "early_access_terms", version: "v0" },
+      ]),
+    ],
+  ])(
+    "production commerce refuses before constructing authority when required agreements are %s",
+    (_label, configured) => {
+      const query = vi.fn(async () => true);
+      const build = buildEarlyAccessPersistence(
+        {
+          ...PRODUCTION_DURABLE_ENV,
+          ...(configured === undefined
+            ? {}
+            : { RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: configured }),
+        } as NodeJS.ProcessEnv,
+        query,
+      );
+
+      expect(build.mode).toBe("refused");
+      expect(build.reason).toContain("does not exactly match");
+      expect(build.options.store).toBeInstanceOf(RefusingEarlyAccessCommerceStore);
+      expect(build.options.repository).toBeUndefined();
+      expect(build.options.agreements).toBeUndefined();
+      expect(build.options.agreementRecorder).toBeUndefined();
+      expect(build.options.requiredAgreements).toBeUndefined();
+      expect(build.options.cartCheckoutStore).toBeUndefined();
+      expect(build.orderHistory).toBeUndefined();
+      expect(query).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    ["cart", { RESEARCH_EARLY_ACCESS_CART_ENABLED: "true" }],
+    ["assisted order", { RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED: "true" }],
+  ])(
+    "the independently enabled production %s cannot mount an old agreement gate",
+    (_label, enabledFlag) => {
+      const query = vi.fn(async () => true);
+      const build = buildEarlyAccessPersistence(
+        {
+          ...PRODUCTION_DURABLE_ENV,
+          RESEARCH_EARLY_ACCESS_ENABLED: "false",
+          ...enabledFlag,
+          RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: JSON.stringify([
+            { kind: "early_access_terms", version: "v0" },
+          ]),
+        } as NodeJS.ProcessEnv,
+        query,
+      );
+
+      expect(build.mode).toBe("refused");
+      expect(build.options.requiredAgreements).toBeUndefined();
+      expect(build.options.agreements).toBeUndefined();
+      expect(build.options.cartCheckoutStore).toBeUndefined();
+      expect(query).not.toHaveBeenCalled();
+    },
+  );
+
+  it("production refuses when the policy API has no published agreement identity", () => {
+    const policy = policies["research-use"] as unknown as { agreement?: unknown };
+    const originalAgreement = policy.agreement;
+    const query = vi.fn(async () => true);
+    Reflect.deleteProperty(policy, "agreement");
+    try {
+      const build = buildEarlyAccessPersistence(
+        {
+          ...PRODUCTION_DURABLE_ENV,
+          RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: exactAgreementConfig(),
+        } as NodeJS.ProcessEnv,
+        query,
+      );
+      expect(build.mode).toBe("refused");
+      expect(build.reason).toContain("does not exactly match");
+      expect(build.options.agreements).toBeUndefined();
+      expect(build.options.cartCheckoutStore).toBeUndefined();
+      expect(query).not.toHaveBeenCalled();
+    } finally {
+      policy.agreement = originalAgreement;
+    }
+  });
+
+  it("production refuses when the published policy body changes without a new pinned identity", () => {
+    const policy = policies["research-use"] as unknown as { title: string };
+    const originalTitle = policy.title;
+    const query = vi.fn(async () => true);
+    policy.title = `${originalTitle} changed without versioning`;
+    try {
+      const build = buildEarlyAccessPersistence(
+        {
+          ...PRODUCTION_DURABLE_ENV,
+          RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: exactAgreementConfig(),
+        } as NodeJS.ProcessEnv,
+        query,
+      );
+      expect(build.mode).toBe("refused");
+      expect(build.options.agreements).toBeUndefined();
+      expect(build.options.cartCheckoutStore).toBeUndefined();
+      expect(query).not.toHaveBeenCalled();
+    } finally {
+      policy.title = originalTitle;
+    }
+  });
+
+  it("the shared production gate rechecks published identity at decision time", async () => {
+    const policy = policies["research-use"] as unknown as { agreement?: unknown };
+    const originalAgreement = policy.agreement;
+    const query = vi.fn(async () => true);
+    const build = buildEarlyAccessPersistence(
+      {
+        ...PRODUCTION_DURABLE_ENV,
+        RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: exactAgreementConfig(),
+      } as NodeJS.ProcessEnv,
+      query,
+    );
+    expect(build.mode).toBe("durable");
+    await expect(build.options.agreements?.accepted(OWNER)).resolves.toBe(true);
+    expect(query).toHaveBeenCalledTimes(1);
+
+    policy.agreement = { kind: "early_access_terms", version: "v2" };
+    try {
+      await expect(build.options.agreements?.accepted(OWNER)).resolves.toBe(false);
+      // Policy drift is refused before asking whether an old row exists.
+      expect(query).toHaveBeenCalledTimes(1);
+    } finally {
+      policy.agreement = originalAgreement;
+    }
+  });
+
+  it("a persisted quote cannot become a checkout when only an older acceptance is on file", async () => {
+    const calls: string[] = [];
+    const query = vi.fn(async (call: { fn: string }) => {
+      calls.push(call.fn);
+      if (call.fn === "research_early_access_cart_quote_record") {
+        return { customerRef: OWNER };
+      }
+      if (call.fn === "research_early_access_agreements_accepted") return false;
+      throw new Error(`unexpected authority call: ${call.fn}`);
+    });
+    const build = buildEarlyAccessPersistence(
+      {
+        ...PRODUCTION_DURABLE_ENV,
+        RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: exactAgreementConfig(),
+      } as NodeJS.ProcessEnv,
+      query,
+    );
+    expect(build.mode).toBe("durable");
+    const cart = build.options.cartCheckoutStore;
+    expect(cart).toBeDefined();
+
+    await expect(cart?.get("xeaq_old_policy_quote")).resolves.toBeNull();
+    await expect(
+      cart?.commit({ customerRef: OWNER } as never),
+    ).rejects.toThrow("agreement authority is unavailable");
+    expect(calls).toEqual([
+      "research_early_access_cart_quote_record",
+      "research_early_access_agreements_accepted",
+      "research_early_access_agreements_accepted",
+    ]);
+    expect(calls).not.toContain("research_early_access_commit_cart_checkout");
+    expect(query.mock.calls[1]?.[0]).toMatchObject({
+      args: { p_required: [RESEARCH_USE_POLICY_AGREEMENT] },
+    });
+  });
+
+  it("the policy-bound cart store still returns a quote with the current acceptance", async () => {
+    const quote = Object.freeze({ customerRef: OWNER, marker: "current-policy" });
+    const query = vi.fn(async (call: { fn: string }) => {
+      if (call.fn === "research_early_access_cart_quote_record") return quote;
+      if (call.fn === "research_early_access_agreements_accepted") return true;
+      throw new Error(`unexpected authority call: ${call.fn}`);
+    });
+    const build = buildEarlyAccessPersistence(
+      {
+        ...PRODUCTION_DURABLE_ENV,
+        RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: exactAgreementConfig(),
+      } as NodeJS.ProcessEnv,
+      query,
+    );
+
+    await expect(
+      build.options.cartCheckoutStore?.get("xeaq_current_policy_quote"),
+    ).resolves.toMatchObject(quote);
+    expect(query.mock.calls.map(([call]) => call.fn)).toEqual([
+      "research_early_access_cart_quote_record",
+      "research_early_access_agreements_accepted",
+    ]);
   });
 
   it("a malformed required-agreements value is treated as unset, fail-closed, with a warning", () => {

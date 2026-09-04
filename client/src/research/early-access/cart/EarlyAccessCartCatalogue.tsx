@@ -1,5 +1,9 @@
-import { useMemo, useState } from "react";
-import type { EarlyAccessCardProduct } from "../EarlyAccessProductCard";
+import { useEffect, useMemo, useState } from "react";
+import {
+  EarlyAccessAssistedOrderQuantityAction,
+  type EarlyAccessCardProduct,
+} from "../EarlyAccessProductCard";
+import { earlyAccessCategoryLabel } from "../earlyAccessCatalogView";
 import {
   EarlyAccessQuantitySelector,
   type EarlyAccessQuantity,
@@ -31,23 +35,71 @@ export function EarlyAccessCartCatalogue({
   onPut,
   onRemove,
   onOpenCart,
-  onRequestOrder,
 }: Readonly<{
   products: readonly EarlyAccessCardProduct[];
   cart: BrowserCart;
   onPut(item: BrowserCartItem): void;
   onRemove(productId: string, variantId: string): void;
   onOpenCart(): void;
+  /**
+   * Compatibility callback for older parents. High quantities now follow the
+   * capability-gated canonical assisted-order link and are never represented
+   * as transferred client state.
+   */
   onRequestOrder(request: EarlyAccessOrderRequest): void;
 }>) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "held">("all");
   const [draftQuantities, setDraftQuantities] = useState<Record<string, EarlyAccessQuantity>>({});
+  const [removedDirectCartQuantities, setRemovedDirectCartQuantities] = useState<
+    Record<string, EarlyAccessQuantity>
+  >({});
 
   const cartByKey = useMemo(
     () => new Map(cart.items.map((item) => [`${item.productId}\u0000${item.variantId}`, item])),
     [cart],
   );
+  const productsByKey = useMemo(
+    () => new Map(products.map((product) => [keyOf(product), product])),
+    [products],
+  );
+  const overLimitCartItems = useMemo(
+    () => cart.items.filter((item) => {
+      const product = productsByKey.get(keyOf(item));
+      if (
+        product === undefined ||
+        product.availability === "TEMPORARILY_HELD" ||
+        product.unitPriceCents === null
+      ) {
+        return false;
+      }
+      return routeEarlyAccessQuantity(item.quantity, product.quantityLimit)?.kind ===
+        "order_request";
+    }),
+    [cart.items, productsByKey],
+  );
+
+  useEffect(() => {
+    if (overLimitCartItems.length === 0) return;
+
+    // The browser cart is only a convenience copy. Reconcile it against the
+    // current server-projected ceiling before the customer can open the direct
+    // checkout, while retaining the requested number solely as local display
+    // state for the assisted-order explanation below.
+    setDraftQuantities((current) => {
+      const next = { ...current };
+      for (const item of overLimitCartItems) next[keyOf(item)] = item.quantity;
+      return next;
+    });
+    setRemovedDirectCartQuantities((current) => {
+      const next = { ...current };
+      for (const item of overLimitCartItems) next[keyOf(item)] = item.quantity;
+      return next;
+    });
+    for (const item of overLimitCartItems) {
+      onRemove(item.productId, item.variantId);
+    }
+  }, [onRemove, overLimitCartItems]);
   const counts = useMemo(
     () => ({
       all: products.length,
@@ -63,7 +115,12 @@ export function EarlyAccessCartCatalogue({
       if (filter === "available" && !available) return false;
       if (filter === "held" && available) return false;
       if (!term) return true;
-      return [product.name, product.strength, product.description]
+      return [
+        product.name,
+        product.strength,
+        product.description,
+        earlyAccessCategoryLabel(product.category) ?? "",
+      ]
         .some((value) => value.toLowerCase().includes(term));
     });
   }, [filter, products, query]);
@@ -101,7 +158,7 @@ export function EarlyAccessCartCatalogue({
         <button
           type="button"
           className="btn btn-primary"
-          disabled={cart.items.length === 0}
+          disabled={cart.items.length === 0 || overLimitCartItems.length > 0}
           onClick={onOpenCart}
         >
           View cart ({cart.items.length})
@@ -119,8 +176,17 @@ export function EarlyAccessCartCatalogue({
             const quantity = item?.quantity ?? draftQuantities[key] ?? 1;
             const route = routeEarlyAccessQuantity(quantity, product.quantityLimit);
             const needsOrderRequest = route?.kind === "order_request";
+            const category = earlyAccessCategoryLabel(product.category);
             return (
               <article key={key} className="card grid min-w-0 content-start gap-2 p-4">
+                {category !== null ? (
+                  <p
+                    className="mono-label min-w-0 break-words text-ink-mute"
+                    data-testid={`cart-catalogue-category-${product.variantId}`}
+                  >
+                    {category}
+                  </p>
+                ) : null}
                 <h2 className="body-m font-700 leading-snug">{product.name}</h2>
                 <p className="mono-label text-ink-mute">{product.strength}</p>
                 {product.description ? (
@@ -138,44 +204,84 @@ export function EarlyAccessCartCatalogue({
                   <>
                     <EarlyAccessQuantitySelector
                       value={quantity as EarlyAccessQuantity}
-                      {...(item !== null && product.quantityLimit !== null
-                        ? { maxQuantity: product.quantityLimit }
-                        : {})}
                       onChange={(next) => {
                         setDraftQuantities((current) => ({ ...current, [key]: next }));
                         if (item !== null) {
-                          onPut({ ...item, quantity: next });
+                          const nextRoute = routeEarlyAccessQuantity(
+                            next,
+                            product.quantityLimit,
+                          );
+                          if (nextRoute?.kind === "order_request") {
+                            setRemovedDirectCartQuantities((current) => ({
+                              ...current,
+                              [key]: next,
+                            }));
+                            onRemove(item.productId, item.variantId);
+                          } else if (nextRoute?.kind === "direct_cart") {
+                            setRemovedDirectCartQuantities((current) => {
+                              if (!(key in current)) return current;
+                              const nextState = { ...current };
+                              delete nextState[key];
+                              return nextState;
+                            });
+                            onPut({ ...item, quantity: nextRoute.quantity });
+                          }
+                        } else if (
+                          routeEarlyAccessQuantity(next, product.quantityLimit)?.kind ===
+                          "direct_cart"
+                        ) {
+                          setRemovedDirectCartQuantities((current) => {
+                            if (!(key in current)) return current;
+                            const nextState = { ...current };
+                            delete nextState[key];
+                            return nextState;
+                          });
                         }
                       }}
                       testId={`cart-catalogue-quantity-${product.variantId}`}
                     />
-                    <button
-                      type="button"
-                      className={`btn mt-1 w-full ${item ? "btn-secondary" : "btn-primary"}`}
-                      onClick={() => {
-                        if (item !== null) {
-                          onRemove(item.productId, item.variantId);
-                        } else if (route?.kind === "order_request") {
-                          onRequestOrder({
-                            productId: product.productId,
-                            variantId: product.variantId,
-                            requestedQuantity: route.quantity,
-                          });
-                        } else if (route?.kind === "direct_cart") {
-                          onPut({
-                            productId: product.productId,
-                            variantId: product.variantId,
-                            quantity: route.quantity,
-                          });
-                        }
-                      }}
-                    >
-                      {item
-                        ? "Remove from cart"
-                        : needsOrderRequest
-                          ? "Request this order"
-                          : "Add to cart"}
-                    </button>
+                    {needsOrderRequest ? (
+                      <>
+                        {removedDirectCartQuantities[key] !== undefined ? (
+                          <p
+                            className="body-xs min-w-0 break-words text-ink-2"
+                            role="status"
+                            data-testid={`cart-catalogue-${product.variantId}-removed-from-direct-cart`}
+                          >
+                            This line was removed from the direct cart because its quantity is
+                            above the current server limit. No order request was sent and nothing
+                            was transferred to assisted ordering.
+                          </p>
+                        ) : null}
+                        <EarlyAccessAssistedOrderQuantityAction
+                          testId={`cart-catalogue-${product.variantId}`}
+                        />
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`btn mt-1 w-full ${item ? "btn-secondary" : "btn-primary"}`}
+                        onClick={() => {
+                          if (item !== null) {
+                            onRemove(item.productId, item.variantId);
+                          } else if (route?.kind === "direct_cart") {
+                            setRemovedDirectCartQuantities((current) => {
+                              if (!(key in current)) return current;
+                              const nextState = { ...current };
+                              delete nextState[key];
+                              return nextState;
+                            });
+                            onPut({
+                              productId: product.productId,
+                              variantId: product.variantId,
+                              quantity: route.quantity,
+                            });
+                          }
+                        }}
+                      >
+                        {item ? "Remove from cart" : "Add to cart"}
+                      </button>
+                    )}
                   </>
                 )}
               </article>

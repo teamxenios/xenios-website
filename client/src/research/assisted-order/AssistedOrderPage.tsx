@@ -44,6 +44,7 @@ import {
 } from "./draft-store";
 import { refreshSelectionSnapshots } from "./selection-refresh";
 import { storeAssistedOrderReceipt } from "./storage";
+import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
 import "./assisted-order.css";
 
 // The full acknowledgment surface, published by the server. The wizard never
@@ -775,26 +776,32 @@ export function AssistedOrderPage({
         </p>
       </header>
 
-      <nav className="xenios-order-steps" aria-label="Order request progress">
-        {(["products", "contact", "review"] as const).map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={step === value ? "is-active" : ""}
-            data-testid={`order-step-${value}`}
-            aria-current={step === value ? "step" : undefined}
-            disabled={stepIndex[value] > stepIndex[step]}
-            onClick={() => {
-              if (value === "products") setStep(value);
-              if (continuationEnabled && value === "contact" && selections.size > 0) setStep(value);
-              if (continuationEnabled && value === "review" && selections.size > 0 && validateContact()) setStep(value);
-            }}
-          >
-            <span>{stepIndex[value] + 1}</span>
-            {value === "products" ? "Products" : value === "contact" ? "Contact and shipping" : "Review and submit"}
+      {embedded ? null : (
+        <nav className="xenios-order-steps" aria-label="Order request progress">
+          {(["products", "contact", "review"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={step === value ? "is-active" : ""}
+              data-testid={`order-step-${value}`}
+              aria-current={step === value ? "step" : undefined}
+              disabled={stepIndex[value] > stepIndex[step]}
+              onClick={() => {
+                if (value === "products") setStep(value);
+                if (continuationEnabled && value === "contact" && selections.size > 0) setStep(value);
+                if (continuationEnabled && value === "review" && selections.size > 0 && validateContact()) setStep(value);
+              }}
+            >
+              <span>{stepIndex[value] + 1}</span>
+              {EARLY_ACCESS_CUSTOMER_STEP_LABELS[stepIndex[value]]}
+            </button>
+          ))}
+          <button type="button" data-testid="order-step-confirmation" disabled>
+            <span>4</span>
+            {EARLY_ACCESS_CUSTOMER_STEP_LABELS[3]}
           </button>
-        ))}
-      </nav>
+        </nav>
+      )}
 
       {error ? <div className="xenios-order-error" role="alert" data-testid="order-error">{error}{fieldError ? ` (${fieldError})` : ""}</div> : null}
       {notice ? <div className="xenios-order-notice" role="status" data-testid="order-notice">{notice}</div> : null}

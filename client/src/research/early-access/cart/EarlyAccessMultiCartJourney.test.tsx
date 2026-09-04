@@ -3,7 +3,10 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { EarlyAccessMultiCartJourney } from "./EarlyAccessMultiCartJourney";
+import {
+  EarlyAccessCartReferenceContinuity,
+  EarlyAccessMultiCartJourney,
+} from "./EarlyAccessMultiCartJourney";
 import type { EarlyAccessCardProduct } from "../EarlyAccessProductCard";
 import {
   CART_ATTEMPT_STORAGE_KEY,
@@ -274,6 +277,41 @@ describe("the cart holds several different products", () => {
     root = createRoot(container);
     await mountJourney();
     expect(text()).toContain("2 products");
+  });
+});
+
+describe("durable checkout reference continuity", () => {
+  it("does not offer account or support actions before the server creates a reference", async () => {
+    stubFetch();
+    await mountJourney();
+
+    expect(container.querySelector('[data-testid="early-access-reference-continuity"]'))
+      .toBeNull();
+    expect(container.querySelector('a[href="/research/account/orders"]')).toBeNull();
+  });
+
+  it("offers canonical account and support destinations without inventing account linkage", () => {
+    act(() => {
+      root.render(
+        <EarlyAccessCartReferenceContinuity checkoutNumber="XEC-ABCDEFGH12345678" />,
+      );
+    });
+
+    const continuity = container.querySelector(
+      '[data-testid="early-access-reference-continuity"]',
+    );
+    expect(continuity?.textContent).toContain("XEC-ABCDEFGH12345678");
+    expect(continuity?.textContent).toContain(
+      "Signing in does not itself link this XEC checkout to your account.",
+    );
+    expect(continuity?.textContent).toContain(
+      "same authorized Early Access session remains the authority",
+    );
+    expect(continuity?.querySelector('a[href="/research/account/orders"]')?.textContent)
+      .toContain("Sign in or view account orders");
+    expect(continuity?.querySelector('a[href="/research/support"]')?.textContent)
+      .toContain("Contact Research support");
+    expect(continuity?.textContent).not.toContain(["Claim", "this", "order"].join(" "));
   });
 });
 

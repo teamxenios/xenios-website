@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "wouter";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import type {
   EarlyAccessCartCheckout,
@@ -83,6 +84,39 @@ function titleFor(step: EarlyAccessCheckoutStep): string {
     case "submit": return "Submit Order";
     case "status": return "Status";
   }
+}
+
+export function EarlyAccessCartReferenceContinuity({
+  checkoutNumber,
+}: Readonly<{ checkoutNumber: string }>) {
+  return (
+    <aside
+      className="card min-w-0 grid gap-3"
+      data-testid="early-access-reference-continuity"
+    >
+      <div>
+        <p className="mono-label text-pulse">Keep your checkout reference</p>
+        <p className="body-s text-ink-2 mt-2 break-all">
+          Checkout reference: <strong>{checkoutNumber}</strong>
+        </p>
+      </div>
+      <p
+        className="body-s text-ink-2 max-w-[62ch]"
+        data-testid="early-access-reference-authority-copy"
+      >
+        Signing in does not itself link this XEC checkout to your account. This same authorized
+        Early Access session remains the authority for viewing its current status.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <Link className="btn btn-secondary" href="/research/account/orders">
+          Sign in or view account orders
+        </Link>
+        <Link className="btn btn-secondary" href="/research/support">
+          Contact Research support
+        </Link>
+      </div>
+    </aside>
+  );
 }
 
 export type EarlyAccessMultiCartJourneyProps = Readonly<{
@@ -643,6 +677,10 @@ export function EarlyAccessMultiCartJourney({
           onSubmitOrder={() => navigate("submit")}
           onContinueShopping={() => navigate("catalog")}
         />
+      ) : null}
+
+      {checkout !== null ? (
+        <EarlyAccessCartReferenceContinuity checkoutNumber={checkout.cartCheckoutNumber} />
       ) : null}
 
       <p className="body-xs text-ink-mute">

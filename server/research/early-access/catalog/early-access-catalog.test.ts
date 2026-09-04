@@ -186,6 +186,7 @@ describe("projectEarlyAccessCatalog", () => {
       slug: "early-access-test-item",
       displayName: "Early Access Test Item",
       canonicalName: "Early Access Test Item",
+      category: "Research materials",
       variantId: VARIANT_ID,
       sku: NEUTRAL_SKU,
       strength: "10 mg",
@@ -204,6 +205,38 @@ describe("projectEarlyAccessCatalog", () => {
       purchasable: true,
       blockers: [],
     });
+  });
+
+  it("projects Product Control category as display-only copy", () => {
+    const category = "Specialty research materials";
+    const projected = projectOne(
+      satisfied({ product: product({ category }) }),
+    );
+    expect(projected.category).toBe(category);
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["non-string", { internal: true }],
+    ["blank", "   "],
+    ["control characters", "Research\nmaterials"],
+    ["C1 control character", "Research\u0085materials"],
+    ["zero-width format character", "\u200B"],
+    ["bidirectional format mark", "Research\u200Ematerials"],
+    ["overlong", "x".repeat(121)],
+  ])("omits a %s category without changing commerce authority", (_label, category) => {
+    const projected = projectOne(
+      satisfied({
+        product: product({ category: category as string }),
+      }),
+    );
+
+    expect(projected.category).toBeNull();
+    expect(projected.priceCents).toBe(24_900);
+    expect(projected.availability).toBe("available");
+    expect(projected.purchasable).toBe(true);
+    expect(projected.blockers).toEqual([]);
+    expect(projected.quantityLimit).toBe(3);
   });
 
   it("reports the evaluation instant it was given and reads no clock", () => {

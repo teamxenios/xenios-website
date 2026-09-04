@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { Link } from "wouter";
 import { money } from "./wizard-state";
 import { readStoredAssistedOrderReceipt } from "./storage";
+import { EarlyAccessStepper } from "../early-access/EarlyAccessStepper";
+import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
 import "./assisted-order.css";
 
 // The wizard navigates here as .../confirmation/<publicReference>, matching
@@ -59,6 +61,11 @@ export function AssistedOrderConfirmationPage() {
     // MinimalChrome supplies the page's main landmark; nesting a second main
     // inside it is invalid (P2-4), so this page renders a section.
     <section className="xenios-order-page">
+      <EarlyAccessStepper
+        steps={EARLY_ACCESS_CUSTOMER_STEP_LABELS}
+        activeIndex={3}
+        testId="assisted-order-customer-progress"
+      />
       <section className="xenios-order-panel">
         <p className="xenios-order-eyebrow">Request received</p>
         <h1 data-testid="order-confirmation-reference">Reference: {receipt.publicReference}</h1>

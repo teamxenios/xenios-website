@@ -13,4 +13,16 @@ describe("assisted-order pointer target source contracts", () => {
     );
     expect(css).toMatch(/\.xenios-order-check input \{ width: 18px; height: 18px;/u);
   });
+
+  it("lays out all four customer stages without orphaning the final stage", () => {
+    expect(css).toMatch(
+      /\.xenios-order-steps \{ display: grid; grid-template-columns: repeat\(4, minmax\(0, 1fr\)\);/u,
+    );
+    expect(css).toMatch(
+      /@media \(max-width: 1000px\)[\s\S]*?\.xenios-order-steps \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/u,
+    );
+    expect(css).toMatch(
+      /@media \(max-width: 700px\)[\s\S]*?\.xenios-order-steps \{ grid-template-columns: 1fr; \}/u,
+    );
+  });
 });

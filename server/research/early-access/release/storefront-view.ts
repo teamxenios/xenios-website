@@ -1,8 +1,9 @@
 import type { EarlyAccessBlocker } from "../catalog/eligibility";
 import { EARLY_ACCESS_MAX_QUANTITY } from "@shared/research/early-access-quantity";
-import type {
-  EarlyAccessCatalogProjection,
-  EarlyAccessCatalogRow,
+import {
+  earlyAccessCategoryLabel,
+  type EarlyAccessCatalogProjection,
+  type EarlyAccessCatalogRow,
 } from "../catalog/early-access-catalog";
 import {
   decideEarlyAccessRelease,
@@ -64,6 +65,8 @@ export interface EarlyAccessStorefrontUnit {
   readonly slug: string;
   readonly displayName: string;
   readonly canonicalName: string;
+  /** Display-only Product Control category; never an order decision input. */
+  readonly category?: string | null;
   readonly sku: string;
   readonly strength: string | null;
   readonly presentation: string | null;
@@ -185,6 +188,7 @@ function toUnit(
     slug: row.slug,
     displayName: row.displayName,
     canonicalName: row.canonicalName,
+    category: earlyAccessCategoryLabel(row.category),
     sku: row.sku,
     strength: row.strength,
     presentation: row.presentation,

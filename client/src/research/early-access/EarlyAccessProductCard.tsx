@@ -2,6 +2,12 @@ import {
   EarlyAccessQuantitySelector,
   type EarlyAccessQuantity,
 } from "./EarlyAccessQuantitySelector";
+import { Link } from "wouter";
+import {
+  ASSISTED_ORDER_CTA_PATH,
+  useAssistedOrderBridgeState,
+} from "../assisted-order/AssistedOrderCta";
+import { earlyAccessCategoryLabel } from "./earlyAccessCatalogView";
 
 /**
  * One product card in the Private Early Access catalogue.
@@ -37,6 +43,8 @@ export type EarlyAccessCardProduct = Readonly<{
   productId: string;
   variantId: string;
   name: string;
+  /** Display-only Product Control category. Never a commerce decision input. */
+  category?: string | null;
   strength: string;
   /**
    * Server-approved single-unit price, and the ONLY money on this card.
@@ -84,6 +92,87 @@ const ACTION_COPY: Record<EarlyAccessAvailabilityState, string> = {
   TEMPORARILY_HELD: "Unavailable",
 };
 
+/**
+ * Capability-gated route for a quantity above this unit's direct authority.
+ *
+ * No product, variant, or quantity is appended to the URL: that wizard has no
+ * accepted prefill contract, so claiming that the selection transfers would be
+ * misleading. The member is told to make the selection again after following
+ * the canonical link.
+ */
+export function EarlyAccessAssistedOrderQuantityAction({
+  testId,
+  selected = false,
+  onRemoveSelection,
+}: Readonly<{
+  testId: string;
+  selected?: boolean;
+  onRemoveSelection?: () => void;
+}>) {
+  const bridge = useAssistedOrderBridgeState();
+
+  return (
+    <div className="mt-2 grid min-w-0 gap-2" data-testid={`${testId}-assisted-order`}>
+      <p className="body-xs min-w-0 break-words text-ink-mute">
+        This quantity is above this product&apos;s current direct-checkout limit.
+      </p>
+
+      {bridge.kind === "enabled" ? (
+        <>
+          <Link
+            href={ASSISTED_ORDER_CTA_PATH}
+            className="btn btn-primary w-full"
+            data-testid={`${testId}-action`}
+          >
+            Open assisted ordering
+          </Link>
+          <p
+            className="body-xs min-w-0 break-words text-ink-mute"
+            data-testid={`${testId}-assisted-order-reselect`}
+          >
+            This selection cannot be transferred. Reselect the product, exact
+            variant, and quantity in the assisted-order form.
+          </p>
+        </>
+      ) : bridge.kind === "checking" ? (
+        <p
+          className="body-xs text-ink-mute"
+          role="status"
+          data-testid={`${testId}-assisted-order-checking`}
+        >
+          Checking assisted-order availability.
+        </p>
+      ) : (
+        <div className="grid min-w-0 gap-2">
+          <p
+            className="body-xs min-w-0 break-words text-ink-mute"
+            role="status"
+            data-testid={`${testId}-assisted-order-unavailable`}
+          >
+            {bridge.kind === "disabled"
+              ? "Assisted ordering is temporarily unavailable. Nothing was added to your cart or sent as an order request."
+              : "We could not confirm assisted-order availability. Nothing was added to your cart or sent as an order request."}
+          </p>
+          <Link className="btn btn-secondary w-full" href="/research/support">
+            Contact support
+          </Link>
+        </div>
+      )}
+
+      {selected && onRemoveSelection !== undefined ? (
+        <button
+          type="button"
+          className="btn btn-secondary w-full"
+          onClick={onRemoveSelection}
+          data-testid={`${testId}-remove-selection`}
+        >
+          Remove featured selection
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 export function EarlyAccessProductCard({
   product,
   quantity,
@@ -93,6 +182,7 @@ export function EarlyAccessProductCard({
   testId = "early-access-product-card",
 }: EarlyAccessProductCardProps) {
   const sellable = product.availability !== "TEMPORARILY_HELD";
+  const category = earlyAccessCategoryLabel(product.category);
   const needsOrderRequest =
     sellable &&
     quantity !== null &&
@@ -112,6 +202,14 @@ export function EarlyAccessProductCard({
         product is worse than none. Removing it is the compression; the policy
         it encoded is unchanged.
       */}
+      {category !== null ? (
+        <p
+          data-testid={`${testId}-category`}
+          className="mono-label min-w-0 break-words text-ink-mute"
+        >
+          {category}
+        </p>
+      ) : null}
       <h3 data-testid={`${testId}-name`} className="body-m font-medium leading-snug">
         {product.name}
       </h3>
@@ -159,7 +257,17 @@ export function EarlyAccessProductCard({
       {sellable ? (
         <EarlyAccessQuantitySelector
           value={quantity}
-          onChange={onQuantityChange}
+          onChange={(nextQuantity) => {
+            // A direct-checkout selection cannot remain active after its
+            // quantity moves into the separate assisted-order lane.
+            if (
+              selected &&
+              (product.quantityLimit === null || nextQuantity > product.quantityLimit)
+            ) {
+              onSelect();
+            }
+            onQuantityChange(nextQuantity);
+          }}
           testId={`${testId}-quantity`}
         />
       ) : null}
@@ -183,7 +291,13 @@ export function EarlyAccessProductCard({
         </p>
       ) : null}
 
-      {sellable ? (
+      {sellable && needsOrderRequest ? (
+        <EarlyAccessAssistedOrderQuantityAction
+          testId={testId}
+          selected={selected}
+          onRemoveSelection={onSelect}
+        />
+      ) : sellable ? (
         <button
           type="button"
           data-testid={`${testId}-action`}
@@ -192,9 +306,7 @@ export function EarlyAccessProductCard({
         >
           {selected
             ? "Remove"
-            : needsOrderRequest
-              ? "Request this order"
-              : ACTION_COPY[product.availability]}
+            : ACTION_COPY[product.availability]}
         </button>
       ) : null}
     </article>

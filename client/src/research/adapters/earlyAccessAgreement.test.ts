@@ -4,7 +4,6 @@ import {
   acceptEarlyAccessAgreement,
   EARLY_ACCESS_AGREEMENT_ACCEPT_PATH,
   EARLY_ACCESS_AGREEMENT_STATUS_PATH,
-  EARLY_ACCESS_REQUIRED_AGREEMENT,
   loadEarlyAccessAgreementState,
   loadResearchUsePolicy,
   RESEARCH_POLICIES_PATH,
@@ -16,13 +15,20 @@ import type { ApiResult } from "../lib/api";
  *
  * The property under test throughout is that the browser contributes NOTHING
  * to the record: not who agreed, not when, not the evidence. It names the
- * configured pair and carries the server's answers back unchanged.
+ * exact pair returned by the server and carries the server's answers back.
  */
+
+const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v1" });
+const FUTURE_AGREEMENT = Object.freeze({
+  kind: "research_pilot_terms",
+  version: "2026.09",
+});
 
 const POLICIES = {
   "research-use": {
     title: "Research Use Policy",
     updated: "July 2026",
+    agreement: AGREEMENT,
     sections: [
       {
         heading: "Purpose",
@@ -58,6 +64,7 @@ describe("reading the policy", () => {
     if (result.kind !== "ok") return;
     expect(result.policy.title).toBe("Research Use Policy");
     expect(result.policy.updated).toBe("July 2026");
+    expect(result.policy.agreement).toEqual(AGREEMENT);
     expect(result.policy.sections).toHaveLength(2);
     expect(result.policy.sections[0].paragraphs[0]).toContain(
       "They are not offered for human or veterinary use.",
@@ -86,8 +93,8 @@ describe("reading the policy", () => {
 
   it("is unreadable rather than blank when the document has no content", async () => {
     for (const policies of [
-      { "research-use": { title: "Research Use Policy", sections: [] } },
-      { "research-use": { title: "", sections: [{ heading: "x", paragraphs: ["y"] }] } },
+      { "research-use": { title: "Research Use Policy", agreement: AGREEMENT, sections: [] } },
+      { "research-use": { title: "", agreement: AGREEMENT, sections: [{ heading: "x", paragraphs: ["y"] }] } },
     ]) {
       const result = await loadResearchUsePolicy(async () => ok({ policies }) as never);
       expect(result.kind).toBe("unreadable");
@@ -98,6 +105,30 @@ describe("reading the policy", () => {
     const result = await loadResearchUsePolicy(async () => ok({ policies: { terms: POLICIES.terms } }) as never);
     expect(result.kind).toBe("missing");
   });
+
+  it("fails closed when the served policy has no exact agreement identity", async () => {
+    const validDocument = {
+      title: "Research Use Policy",
+      updated: "July 2026",
+      sections: [{ heading: "Purpose", paragraphs: ["Research use only."] }],
+    };
+    for (const agreement of [
+      undefined,
+      null,
+      {},
+      { kind: "early_access_terms" },
+      { kind: " early_access_terms", version: "v1" },
+      { ...AGREEMENT, extra: true },
+    ]) {
+      const policy = agreement === undefined
+        ? validDocument
+        : { ...validDocument, agreement };
+      const result = await loadResearchUsePolicy(async () =>
+        ok({ policies: { "research-use": policy } }) as never,
+      );
+      expect(result.kind).toBe("unreadable");
+    }
+  });
 });
 
 describe("reading whether this customer has agreed", () => {
@@ -105,20 +136,36 @@ describe("reading whether this customer has agreed", () => {
     const paths: string[] = [];
     const state = await loadEarlyAccessAgreementState(async (path) => {
       paths.push(path);
-      return ok({ ok: true, required: [EARLY_ACCESS_REQUIRED_AGREEMENT], accepted: true }) as never;
+      return ok({ ok: true, required: [AGREEMENT], accepted: true }) as never;
     });
 
     // No query string, no identifier, nothing but the bare path. There is no
     // shape of call here that asks about another person.
     expect(paths).toEqual([EARLY_ACCESS_AGREEMENT_STATUS_PATH]);
     expect(paths[0]).not.toContain("?");
-    expect(state).toEqual({ kind: "accepted" });
+    expect(state).toEqual({ kind: "accepted", agreement: AGREEMENT });
   });
 
-  it("treats anything but an explicit true as not yet agreed", async () => {
-    for (const accepted of [false, undefined, null, "true", 1, {}]) {
-      const state = await loadEarlyAccessAgreementState(async () => ok({ accepted }) as never);
-      expect(state).toEqual({ kind: "required" });
+  it("carries the exact required pair when acceptance is explicitly false", async () => {
+    const state = await loadEarlyAccessAgreementState(async () =>
+      ok({ required: [FUTURE_AGREEMENT], accepted: false }) as never,
+    );
+    expect(state).toEqual({ kind: "required", agreement: FUTURE_AGREEMENT });
+  });
+
+  it("fails closed on an ambiguous, malformed, or incomplete status response", async () => {
+    const malformed = [
+      { accepted: true },
+      { required: [], accepted: true },
+      { required: [AGREEMENT, FUTURE_AGREEMENT], accepted: false },
+      { required: [{ kind: "early_access_terms" }], accepted: false },
+      { required: [{ kind: " early_access_terms", version: "v1" }], accepted: false },
+      { required: [{ ...AGREEMENT, clientDefault: true }], accepted: false },
+      { required: [AGREEMENT], accepted: "true" },
+    ];
+    for (const response of malformed) {
+      const state = await loadEarlyAccessAgreementState(async () => ok(response) as never);
+      expect(state.kind).toBe("error");
     }
   });
 
@@ -148,18 +195,18 @@ describe("reading whether this customer has agreed", () => {
 });
 
 describe("recording the acceptance", () => {
-  it("posts the configured pair and NOTHING else", async () => {
+  it("posts the validated server pair and NOTHING else", async () => {
     const calls: Array<{ path: string; body: unknown }> = [];
-    await acceptEarlyAccessAgreement(async (path, body) => {
+    await acceptEarlyAccessAgreement(FUTURE_AGREEMENT, async (path, body) => {
       calls.push({ path, body });
-      return ok({ ok: true, alreadyAccepted: false }) as never;
+      return ok({ ok: true, ...FUTURE_AGREEMENT, alreadyAccepted: false }) as never;
     });
 
     expect(calls).toHaveLength(1);
     expect(calls[0].path).toBe(EARLY_ACCESS_AGREEMENT_ACCEPT_PATH);
     // Exactly two keys. A customerRef, an acceptedAt or an evidence object sent
     // from here would be a browser-authored claim about who agreed and when.
-    expect(calls[0].body).toEqual({ kind: "early_access_terms", version: "v1" });
+    expect(calls[0].body).toEqual(FUTURE_AGREEMENT);
     expect(Object.keys(calls[0].body as object).sort()).toEqual(["kind", "version"]);
     for (const forbidden of [
       "customerRef",
@@ -177,21 +224,55 @@ describe("recording the acceptance", () => {
   });
 
   it("treats a first acceptance and a repeat acceptance as the same success", async () => {
-    const first = await acceptEarlyAccessAgreement(async () =>
-      ok({ ok: true, alreadyAccepted: false }) as never,
+    const first = await acceptEarlyAccessAgreement(AGREEMENT, async () =>
+      ok({ ok: true, ...AGREEMENT, alreadyAccepted: false }) as never,
     );
-    const second = await acceptEarlyAccessAgreement(async () =>
-      ok({ ok: true, alreadyAccepted: true }) as never,
+    const second = await acceptEarlyAccessAgreement(AGREEMENT, async () =>
+      ok({ ok: true, ...AGREEMENT, alreadyAccepted: true }) as never,
     );
 
-    expect(first).toEqual({ kind: "accepted", alreadyAccepted: false });
+    expect(first).toEqual({
+      kind: "accepted",
+      alreadyAccepted: false,
+      agreement: AGREEMENT,
+    });
     // The duplicate is NOT an error. The row is on file either way, which is
     // the only thing checkout asks about.
-    expect(second).toEqual({ kind: "accepted", alreadyAccepted: true });
+    expect(second).toEqual({
+      kind: "accepted",
+      alreadyAccepted: true,
+      agreement: AGREEMENT,
+    });
+  });
+
+  it("fails closed when a success response does not confirm the posted pair", async () => {
+    for (const response of [
+      { ok: true, alreadyAccepted: false },
+      { ok: true, kind: AGREEMENT.kind, version: "v2", alreadyAccepted: false },
+    ]) {
+      const result = await acceptEarlyAccessAgreement(AGREEMENT, async () =>
+        ok(response) as never,
+      );
+      expect(result.kind).toBe("error");
+    }
+  });
+
+  it("does not post when the supplied pair is not a validated agreement identity", async () => {
+    let calls = 0;
+    const result = await acceptEarlyAccessAgreement(
+      { kind: "early_access_terms", version: " v1" },
+      async () => {
+        calls += 1;
+        return ok({ ok: true, ...AGREEMENT }) as never;
+      },
+    );
+
+    expect(result.kind).toBe("error");
+    expect(calls).toBe(0);
   });
 
   it("reports a genuine persistence failure as refused, not as accepted", async () => {
-    const result = await acceptEarlyAccessAgreement(async () => ({
+    const result = await acceptEarlyAccessAgreement(AGREEMENT, async () => ({
       kind: "denied",
       code: "NOT_RECORDED",
     }) as never);
@@ -199,7 +280,7 @@ describe("recording the acceptance", () => {
   });
 
   it("reports a refused pair rather than claiming an acceptance", async () => {
-    const result = await acceptEarlyAccessAgreement(async () => ({
+    const result = await acceptEarlyAccessAgreement(AGREEMENT, async () => ({
       kind: "denied",
       code: "AGREEMENT_NOT_REQUIRED",
     }) as never);
@@ -210,22 +291,12 @@ describe("recording the acceptance", () => {
     // Same correction as the read path: IDENTITY_REQUIRED is unverified, and a
     // genuinely absent session is what 401/403-without-a-code means.
     for (const denial of [{ kind: "unauthorized" }, { kind: "forbidden" }] as const) {
-      const result = await acceptEarlyAccessAgreement(async () => denial as never);
+      const result = await acceptEarlyAccessAgreement(
+        AGREEMENT,
+        async () => denial as never,
+      );
       expect(result).toEqual({ kind: "locked" });
     }
-  });
-});
-
-describe("the configured pair", () => {
-  it("is exactly what the deployment requires", () => {
-    // The persisted identity is early_access_terms/v1 while the DOCUMENT shown
-    // is the research-use policy. Changing one without the other would record
-    // an acceptance of something the customer was never shown.
-    expect(EARLY_ACCESS_REQUIRED_AGREEMENT).toEqual({
-      kind: "early_access_terms",
-      version: "v1",
-    });
-    expect(Object.isFrozen(EARLY_ACCESS_REQUIRED_AGREEMENT)).toBe(true);
   });
 });
 
@@ -254,7 +325,7 @@ describe("a signed-in customer with no approved account is NOT a lapsed session"
   });
 
   it("reports an unverified acceptance attempt as unverified, and records nothing", async () => {
-    const result = await acceptEarlyAccessAgreement(async () => ({
+    const result = await acceptEarlyAccessAgreement(AGREEMENT, async () => ({
       kind: "denied",
       code: "IDENTITY_REQUIRED",
     }) as never);

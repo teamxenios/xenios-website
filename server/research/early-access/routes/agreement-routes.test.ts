@@ -8,6 +8,13 @@ import {
   type EarlyAccessAgreementRecorder,
 } from "./agreement-routes";
 import { NoEarlyAccessAgreements, type EarlyAccessAgreementGate } from "./ports";
+import {
+  RESEARCH_USE_POLICY_AGREEMENT,
+  RESEARCH_USE_POLICY_CONTENT_SHA256,
+  policies,
+  publishedResearchUsePolicyAgreement,
+  researchPolicyContentSha256,
+} from "../../policies-data";
 
 /**
  * The acceptance route.
@@ -18,7 +25,7 @@ import { NoEarlyAccessAgreements, type EarlyAccessAgreementGate } from "./ports"
  * against configuration or ignored.
  */
 
-const REQUIRED = [{ kind: "early_access_terms", version: "v1" }] as const;
+const REQUIRED = [RESEARCH_USE_POLICY_AGREEMENT] as const;
 const CUSTOMER_REF = "eac_00000000000000000000000000000001";
 const NOW = () => Date.parse("2026-08-05T20:00:00.000Z");
 
@@ -94,6 +101,44 @@ function route(overrides: Partial<Parameters<typeof createEarlyAccessAgreementAc
 }
 
 describe("what it will record", () => {
+  it("binds the production pair to the agreement metadata on the published policy", () => {
+    expect(policies["research-use"]?.agreement).toEqual({
+      kind: "early_access_terms",
+      version: "v1",
+    });
+    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
+    expect(Object.isFrozen(RESEARCH_USE_POLICY_AGREEMENT)).toBe(true);
+    expect(researchPolicyContentSha256(policies["research-use"]!)).toBe(
+      RESEARCH_USE_POLICY_CONTENT_SHA256,
+    );
+  });
+
+  it("fails closed when policy text changes without a new agreement version", () => {
+    const original = policies["research-use"]!;
+    policies["research-use"] = { ...original, updated: "August 2026" };
+    try {
+      expect(researchPolicyContentSha256(policies["research-use"]!)).not.toBe(
+        RESEARCH_USE_POLICY_CONTENT_SHA256,
+      );
+      expect(publishedResearchUsePolicyAgreement()).toBeNull();
+    } finally {
+      policies["research-use"] = original;
+    }
+    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
+  });
+
+  it("returns unavailable instead of throwing for malformed published policy content", () => {
+    const original = policies["research-use"]!;
+    policies["research-use"] = { ...original, sections: null } as never;
+    try {
+      expect(researchPolicyContentSha256(policies["research-use"])).toBeNull();
+      expect(publishedResearchUsePolicyAgreement()).toBeNull();
+    } finally {
+      policies["research-use"] = original;
+    }
+    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
+  });
+
   it("records the configured pair for the session's customer", async () => {
     const store = recorder();
     const accept = route({ recorder: store });
@@ -207,6 +252,34 @@ describe("what it will refuse", () => {
 
     expect(seen.code).toBe(400);
     expect(store.rows).toHaveLength(0);
+  });
+
+  it("refuses configured pairs that are not the exact published policy pair", async () => {
+    for (const configured of [
+      { kind: "early_access_terms", version: "v2" },
+      { kind: "research_pilot_terms", version: "2026.09" },
+    ]) {
+      const store = recorder();
+      let identityReads = 0;
+      const accept = route({
+        recorder: store,
+        required: [configured],
+        identity: {
+          async resolve() {
+            identityReads += 1;
+            return { customerRef: CUSTOMER_REF } as never;
+          },
+        } as never,
+      });
+      const { port, seen } = response();
+
+      await accept({ cookieHeader: "ea=x", body: configured }, port);
+
+      expect(seen.code).toBe(400);
+      expect(seen.body).toEqual({ ok: false, code: "AGREEMENT_NOT_REQUIRED" });
+      expect(identityReads).toBe(0);
+      expect(store.rows).toHaveLength(0);
+    }
   });
 
   it("refuses without a resolved session customer", async () => {

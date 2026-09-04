@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
 import type {
   EarlyAccessAcceptResult,
+  EarlyAccessAgreementPair,
   EarlyAccessAgreementState,
   ResearchPolicyLoad,
 } from "../adapters/earlyAccessAgreement";
@@ -50,11 +51,17 @@ async function settle(): Promise<void> {
   });
 }
 
+const AGREEMENT: EarlyAccessAgreementPair = Object.freeze({
+  kind: "early_access_terms",
+  version: "v1",
+});
+
 const POLICY: ResearchPolicyLoad = {
   kind: "ok",
   policy: {
     title: "Research Use Policy",
     updated: "July 2026",
+    agreement: AGREEMENT,
     sections: [
       {
         heading: "Purpose",
@@ -77,7 +84,7 @@ const POLICY: ResearchPolicyLoad = {
 type Options = {
   policy?: ResearchPolicyLoad;
   state?: EarlyAccessAgreementState;
-  accept?: () => Promise<EarlyAccessAcceptResult>;
+  accept?: (agreement: EarlyAccessAgreementPair) => Promise<EarlyAccessAcceptResult>;
   onAccepted?: (accepted: boolean) => void;
   onBlocked?: (reason: "unverified" | "locked" | null) => void;
 };
@@ -86,8 +93,16 @@ async function mount(options: Options = {}): Promise<HTMLElement> {
   const element = render(
     <EarlyAccessAgreementSection
       loadPolicy={async () => options.policy ?? POLICY}
-      loadState={async () => options.state ?? { kind: "required" }}
-      accept={options.accept ?? (async () => ({ kind: "accepted", alreadyAccepted: false }))}
+      loadState={async () =>
+        options.state ?? { kind: "required", agreement: AGREEMENT }}
+      accept={
+        options.accept ??
+        (async (agreement) => ({
+          kind: "accepted",
+          alreadyAccepted: false,
+          agreement,
+        }))
+      }
       onAccepted={options.onAccepted}
       onBlocked={options.onBlocked}
     />,
@@ -155,6 +170,10 @@ describe("what the customer is shown", () => {
     ]);
     // The sentence that makes this a research-use agreement at all.
     expect(host.textContent).toContain("They are not offered for human or veterinary use.");
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-provenance"]')
+        ?.textContent,
+    ).toBe("Agreement: early_access_terms · Version: v1");
   });
 
   it("shows the research-use policy and NOT the draft Terms or draft Privacy documents", async () => {
@@ -197,11 +216,70 @@ describe("what the customer is shown", () => {
   it("refuses to collect agreement to a policy that did not load", async () => {
     // No checkbox at all. Collecting a tick against a blank page would record
     // an acceptance of nothing.
-    const host = await mount({ policy: { kind: "error", message: "down" } });
+    const accepted: boolean[] = [];
+    const accept = vi.fn();
+    const host = await mount({
+      policy: { kind: "error", message: "down" },
+      state: { kind: "accepted", agreement: AGREEMENT },
+      accept,
+      onAccepted: (value) => accepted.push(value),
+    });
 
     expect(host.querySelector('[data-testid="early-access-agreement-policy-fault"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
+    expect(accept).not.toHaveBeenCalled();
+    expect(accepted).toEqual([false]);
+  });
+
+  it("refuses to collect agreement when the server provenance did not validate", async () => {
+    const host = await mount({
+      state: {
+        kind: "error",
+        message: "The agreement service returned an unreadable agreement identity.",
+      },
+    });
+
+    expect(section(host).getAttribute("data-state")).toBe("agreement-unavailable");
+    expect(host.querySelector('[data-testid="early-access-agreement-error"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+  });
+
+  it("refuses a required pair that does not identify the served policy", async () => {
+    const accepted: boolean[] = [];
+    const accept = vi.fn();
+    const host = await mount({
+      state: {
+        kind: "required",
+        agreement: { kind: "early_access_terms", version: "v2" },
+      },
+      accept,
+      onAccepted: (value) => accepted.push(value),
+    });
+
+    expect(section(host).getAttribute("data-state")).toBe("agreement-unavailable");
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();
+    expect(accept).not.toHaveBeenCalled();
+    expect(accepted).toEqual([false]);
+  });
+
+  it("does not honor an already-accepted row for a different policy identity", async () => {
+    const accepted: boolean[] = [];
+    const host = await mount({
+      state: {
+        kind: "accepted",
+        agreement: { kind: "research_pilot_terms", version: "2026.09" },
+      },
+      onAccepted: (value) => accepted.push(value),
+    });
+
+    expect(section(host).getAttribute("data-state")).toBe("agreement-unavailable");
+    expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
+    expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(accepted).toEqual([false]);
   });
 
   it("says the session lapsed rather than showing an unanswerable form", async () => {
@@ -232,13 +310,17 @@ describe("agreeing on purpose", () => {
 
     tick(host);
     // Ticked, but not submitted. Nothing is on file, so nothing is unlocked.
-    expect(accepted).toEqual([]);
+    expect(accepted).toEqual([false]);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
   });
 
   it("records the acceptance and unlocks continuation", async () => {
     const accepted: boolean[] = [];
-    const accept = vi.fn(async () => ({ kind: "accepted" as const, alreadyAccepted: false }));
+    const accept = vi.fn(async (agreement: EarlyAccessAgreementPair) => ({
+      kind: "accepted" as const,
+      alreadyAccepted: false,
+      agreement,
+    }));
     const host = await mount({ accept, onAccepted: (value) => accepted.push(value) });
 
     tick(host);
@@ -246,7 +328,8 @@ describe("agreeing on purpose", () => {
     await settle();
 
     expect(accept).toHaveBeenCalledTimes(1);
-    expect(accepted).toEqual([true]);
+    expect(accept).toHaveBeenCalledWith(AGREEMENT);
+    expect(accepted).toEqual([false, true]);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-error"]')).toBeNull();
   });
@@ -257,7 +340,11 @@ describe("agreeing on purpose", () => {
     // double-clicks is agreed either way.
     const accepted: boolean[] = [];
     const host = await mount({
-      accept: async () => ({ kind: "accepted", alreadyAccepted: true }),
+      accept: async (agreement) => ({
+        kind: "accepted",
+        alreadyAccepted: true,
+        agreement,
+      }),
       onAccepted: (value) => accepted.push(value),
     });
 
@@ -265,7 +352,7 @@ describe("agreeing on purpose", () => {
     press(submit(host));
     await settle();
 
-    expect(accepted).toEqual([true]);
+    expect(accepted).toEqual([false, true]);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-error"]')).toBeNull();
     expect(section(host).getAttribute("data-state")).toBe("accepted");
@@ -283,7 +370,7 @@ describe("agreeing on purpose", () => {
     await settle();
 
     // Nothing is recorded, so nothing is unlocked, and the customer is told.
-    expect(accepted).toEqual([]);
+    expect(accepted).toEqual([false, false]);
     const error = host.querySelector('[data-testid="early-access-agreement-error"]');
     expect(error?.textContent).toContain("not recorded");
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).toBeNull();
@@ -296,13 +383,17 @@ describe("acceptance survives a refresh, because the server remembers it", () =>
     // browser storage: the server was asked, and it answered.
     const accepted: boolean[] = [];
     const host = await mount({
-      state: { kind: "accepted" },
+      state: { kind: "accepted", agreement: AGREEMENT },
       onAccepted: (value) => accepted.push(value),
     });
 
     expect(accepted).toEqual([true]);
     expect(host.querySelector('[data-testid="early-access-agreement-accepted"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-provenance"]')
+        ?.textContent,
+    ).toBe("Agreement: early_access_terms · Version: v1");
   });
 
   it("writes nothing to browser storage", async () => {
@@ -357,7 +448,7 @@ describe("keyboard, focus and small screens", () => {
   });
 
   it("announces the outcome politely rather than silently swapping the screen", async () => {
-    const host = await mount({ state: { kind: "accepted" } });
+    const host = await mount({ state: { kind: "accepted", agreement: AGREEMENT } });
     const status = host.querySelector('[data-testid="early-access-agreement-accepted"]');
     expect(status?.getAttribute("role")).toBe("status");
     expect(status?.getAttribute("aria-live")).toBe("polite");
@@ -389,7 +480,12 @@ describe("it reads the policy and the standing once", () => {
           ok: true,
           status: 200,
           headers: { get: () => "application/json" },
-          json: async () => ({ ok: true, policies: {}, accepted: false }),
+          json: async () => ({
+            ok: true,
+            policies: {},
+            required: [AGREEMENT],
+            accepted: false,
+          }),
         } as unknown as Response;
       }),
     );
@@ -447,7 +543,7 @@ describe("signed in, but not verified against an approved account", () => {
     press(submit(host));
     await settle();
 
-    expect(accepted).toEqual([]);
+    expect(accepted).toEqual([false, false]);
     // Initial required standing clears any stale outer block; the server's
     // unverified submit result then closes continuation again.
     expect(seen).toEqual([null, "unverified"]);
@@ -460,7 +556,7 @@ describe("once accepted, the policy collapses instead of burying the catalogue",
     // Before acceptance the policy IS the page. After it, the page is the
     // catalogue, and re-rendering the whole document every visit pushed the
     // products below the fold for a customer who had already agreed.
-    const host = await mount({ state: { kind: "accepted" } });
+    const host = await mount({ state: { kind: "accepted", agreement: AGREEMENT } });
     const disclosure = host.querySelector(
       "[data-testid='early-access-agreement-disclosure']",
     ) as HTMLDetailsElement | null;
@@ -471,7 +567,7 @@ describe("once accepted, the policy collapses instead of burying the catalogue",
   it("still offers the exact policy through View policy, word for word", async () => {
     // Collapsed is not the same as gone. A customer who agreed to something
     // must still be able to read precisely what they agreed to.
-    const host = await mount({ state: { kind: "accepted" } });
+    const host = await mount({ state: { kind: "accepted", agreement: AGREEMENT } });
     expect(
       host.querySelector("[data-testid='early-access-agreement-view-policy']")?.textContent,
     ).toContain("View policy");
@@ -488,7 +584,7 @@ describe("once accepted, the policy collapses instead of burying the catalogue",
   });
 
   it("still shows the whole policy expanded BEFORE acceptance", async () => {
-    const host = await mount({ state: { kind: "required" } });
+    const host = await mount({ state: { kind: "required", agreement: AGREEMENT } });
     expect(
       host.querySelector("[data-testid='early-access-agreement-disclosure']"),
     ).toBeNull();

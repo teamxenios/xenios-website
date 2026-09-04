@@ -20,6 +20,7 @@ function row(overrides: EarlyAccessCatalogRowView = {}): EarlyAccessCatalogRowVi
     productId: "prod-aod",
     variantId: "var-5mg",
     displayName: "AOD-9604",
+    category: "Research materials",
     strength: "5 mg",
     priceCents: 5_600,
     currency: "USD",
@@ -83,7 +84,29 @@ describe("row projection", () => {
     const product = toCardProduct(row());
     expect(product).not.toBeNull();
     expect(product?.name).toBe("AOD-9604");
+    expect(product?.category).toBe("Research materials");
     expect(product?.strength).toBe("5 mg");
+    expect(product?.unitPriceCents).toBe(5_600);
+    expect(product?.availability).toBe("AVAILABLE");
+    expect(product?.quantityLimit).toBe(50);
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["null", null],
+    ["number", 7],
+    ["object", { private: "value" }],
+    ["blank", "  "],
+    ["control characters", "Research\nmaterials"],
+    ["C1 control character", "Research\u0085materials"],
+    ["zero-width format character", "\u200B"],
+    ["bidirectional format mark", "Research\u200Ematerials"],
+    ["overlong", "x".repeat(121)],
+  ])("omits a %s category without dropping or changing the row", (_label, category) => {
+    const product = toCardProduct(row({ category }));
+
+    expect(product).not.toBeNull();
+    expect(product?.category).toBeNull();
     expect(product?.unitPriceCents).toBe(5_600);
     expect(product?.availability).toBe("AVAILABLE");
     expect(product?.quantityLimit).toBe(50);

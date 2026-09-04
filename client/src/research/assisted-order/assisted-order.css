@@ -18,7 +18,7 @@
 .xenios-order-hero h1, .xenios-order-hero h3 { font-size: clamp(2rem, 5vw, 4.2rem); line-height: .98; margin: 8px 0 18px; letter-spacing: -.04em; }
 .xenios-order-hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.7; }
 .xenios-order-eyebrow { margin: 0; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; font-size: .76rem; color: #6c806f; }
-.xenios-order-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 24px; }
+.xenios-order-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 24px; }
 .xenios-order-steps button { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--surface); padding: 14px 16px; border-radius: 14px; color: var(--muted); font: inherit; text-align: left; }
 .xenios-order-steps button span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--soft); font-weight: 700; }
 .xenios-order-steps button.is-active { border-color: var(--accent); color: var(--ink); }
@@ -100,6 +100,7 @@
   .xenios-order-catalog-layout { grid-template-columns: 1fr; }
   .xenios-order-summary { position: static; order: -1; }
   .xenios-order-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xenios-order-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 700px) {
   .xenios-order-page { width: min(100% - 20px, 1440px); padding-top: 24px; }

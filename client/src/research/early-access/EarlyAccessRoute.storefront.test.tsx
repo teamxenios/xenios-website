@@ -16,6 +16,8 @@ import { act } from "react";
 import EarlyAccessRoute from "./EarlyAccessRoute";
 import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+
 let container: HTMLDivElement;
 let root: Root;
 
@@ -24,6 +26,7 @@ const POLICIES = {
     slug: "research-use",
     title: "Research Use Policy",
     updated: "July 2026",
+    agreement: { kind: "early_access_terms", version: "v1" },
     sections: [{
       heading: "Purpose",
       paragraphs: ["Research materials are supplied for laboratory research only."],
@@ -35,14 +38,18 @@ const POLICIES = {
 /** The curated opening set the storefront shows as Featured. */
 const FEATURED_UNITS = [
   {
+    productId: "pc_bpc_1",
+    variantId: "pcv_bpc_5",
     sku: "XEN-BPC-5",
-    productName: "BPC-157 Research Material",
+    displayName: "BPC-157 Research Material",
+    category: "Specialty research materials",
     strength: "5 MG",
     priceCents: 5600,
+    currency: "USD",
     description: "Featured research peptide.",
     availability: "AVAILABLE",
     purchasable: true,
-    quantityLimit: 100,
+    quantityLimit: 20,
   },
 ];
 
@@ -156,10 +163,24 @@ type AgreementFixture = "accepted" | "required" | "unverified" | "locked";
 function stubFetch(options: {
   bridgeEnabled: boolean;
   agreement?: AgreementFixture;
+  featuredUnits?: readonly unknown[];
 }) {
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
-    if (init?.method === "POST") return jsonResponse({ ok: true });
+    if (init?.method === "POST") {
+      if (path.endsWith("/early-access/agreements/accept")) {
+        const submitted = JSON.parse(String(init.body ?? "{}")) as {
+          kind?: unknown;
+          version?: unknown;
+        };
+        return jsonResponse({
+          kind: submitted.kind,
+          version: submitted.version,
+          alreadyAccepted: false,
+        });
+      }
+      return jsonResponse({ ok: true });
+    }
     if (path.endsWith("/early-access/session")) {
       return jsonResponse({ authenticated: true, expiresAt: null });
     }
@@ -178,7 +199,7 @@ function stubFetch(options: {
       });
     }
     if (path.endsWith("/early-access/catalog")) {
-      return jsonResponse({ ok: true, units: FEATURED_UNITS });
+      return jsonResponse({ ok: true, units: options.featuredUnits ?? FEATURED_UNITS });
     }
     if (path.includes("/assisted-orders/config")) {
       return jsonResponse({
@@ -257,12 +278,29 @@ describe("the unified Early Access storefront", () => {
     const featured = container.querySelector('[data-testid="early-access-featured-catalog"]');
     expect(allProducts).toBeTruthy();
     expect(featured).toBeTruthy();
+    expect(
+      featured?.querySelector("[data-testid$='-category']")?.textContent,
+    ).toBe("Specialty research materials");
     // The historically faster, primary canonical surface must precede the
     // heavier Featured projection so a slow secondary fetch cannot own first
     // useful product time.
     expect(
       allProducts!.compareDocumentPosition(featured!) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+  });
+
+  it("omits a malformed Featured category without hiding or changing the product", async () => {
+    stubFetch({
+      bridgeEnabled: true,
+      featuredUnits: [{ ...FEATURED_UNITS[0], category: { private: "not display copy" } }],
+    });
+    const text = await renderStorefront();
+    const featured = container.querySelector('[data-testid="early-access-featured-catalog"]');
+
+    expect(featured?.querySelector("[data-testid$='-category']")).toBeNull();
+    expect(text).toContain("BPC-157 Research Material");
+    expect(text).toContain("$56.00 per unit");
+    expect(text).toContain("Available to order");
   });
 
   it("shows only the assisted-order journey after the embedded catalog advances", async () => {
@@ -291,14 +329,22 @@ describe("the unified Early Access storefront", () => {
     act(() => continueButton!.click());
 
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
-    expect(container.querySelector('[data-testid="early-access-stepper"]')).toBeNull();
+    const routeStepper = container.querySelector('[data-testid="early-access-stepper"]');
+    expect(routeStepper).toBeTruthy();
+    expect(routeStepper?.querySelectorAll("li")).toHaveLength(4);
+    expect(
+      routeStepper
+        ?.querySelector('[data-testid="early-access-stepper-step-1"]')
+        ?.getAttribute("aria-current"),
+    ).toBe("step");
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("h1")?.textContent).toBe("Complete your order request");
     expect(
       container.querySelector('[data-testid="early-access-full-catalog"] h2')?.textContent,
     ).toBe("Contact and shipping");
-    expect(container.querySelector('[data-testid="order-step-contact"]')?.getAttribute("aria-current"))
-      .toBe("step");
+    expect(container.querySelector('[data-testid="order-step-contact"]')).toBeNull();
+    expect(container.querySelector('nav[aria-label="Order request progress"]')).toBeNull();
+    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
   });
 
   it("allows browsing but unlocks Contact only after the agreement is recorded", async () => {

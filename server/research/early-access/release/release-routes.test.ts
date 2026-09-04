@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type { EarlyAccessCatalogProjection, EarlyAccessCatalogRow } from "../catalog/early-access-catalog";
+import { createEarlyAccessAgreementStatusRoute } from "../routes/agreement-routes";
+import {
+  RESEARCH_USE_POLICY_AGREEMENT,
+  publishedResearchUsePolicyAgreement,
+} from "../../policies-data";
 import { InMemoryEarlyAccessReleaseLedger, earlyAccessReleaseVersion } from "./founder-release";
 import {
   EmptyEarlyAccessCatalogSource,
@@ -307,5 +312,31 @@ describe("the release history", () => {
     const { port, state } = res();
     await createReleaseHistoryRoute(deps())({ query: { productId: "prod-a" } }, port);
     expect(state.status).toBe(400);
+  });
+});
+
+describe("the customer agreement provenance contract", () => {
+  it("returns each configured required agreement with its exact kind and version", async () => {
+    const { port, state } = res();
+    const required = Object.freeze([RESEARCH_USE_POLICY_AGREEMENT]);
+    const route = createEarlyAccessAgreementStatusRoute({
+      identity: {
+        resolve: async () => ({
+          customerRef: "eac_0123456789abcdef0123456789abcdef",
+        }),
+      },
+      agreements: { accepted: async () => false },
+      required,
+    });
+
+    await route({ cookieHeader: "xenios_early_access=server-signed" }, port);
+
+    expect(state.status).toBe(200);
+    expect(state.body).toEqual({
+      ok: true,
+      required: [{ kind: "early_access_terms", version: "v1" }],
+      accepted: false,
+    });
+    expect(publishedResearchUsePolicyAgreement()).toEqual(required[0]);
   });
 });

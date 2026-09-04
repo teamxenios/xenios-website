@@ -32,6 +32,10 @@ import { clearBrowserCart } from "./cart/cartStore";
 import { clearCartRecovery } from "./cart/cartAttemptStore";
 import { EarlyAccessCartMount } from "./cart/EarlyAccessCartMount";
 import { EARLY_ACCESS_FULFILLMENT_TARGET_COPY } from "./fulfillment-copy";
+import {
+  EARLY_ACCESS_CUSTOMER_STEP_LABELS,
+  earlyAccessCustomerStepIndex,
+} from "./customerSteps";
 
 // The mounted Private Early Access route.
 //
@@ -47,21 +51,8 @@ const SESSION_PATH = "/api/research/early-access/session";
 const UNLOCK_PATH = "/api/research/early-access/unlock";
 const LOGOUT_PATH = "/api/research/early-access/logout";
 
-export const EARLY_ACCESS_STEPS = [
-  "Welcome",
-  "Identity and Agreements",
-  "Research Catalog",
-  "Contact and Shipping",
-  "Review Order",
-  "Payment",
-  "Payment Confirmation",
-  "Status",
-] as const;
-
-/** "Identity and Agreements", where a customer sits until they have agreed. */
-export const EARLY_ACCESS_AGREEMENT_STEP = 1;
-/** "Research Catalog", reached only once the SERVER confirms the acceptance. */
-export const EARLY_ACCESS_CATALOG_STEP = 2;
+/** The four customer-visible stages projected over the internal journey. */
+export const EARLY_ACCESS_STEPS = EARLY_ACCESS_CUSTOMER_STEP_LABELS;
 
 type GateState =
   | { kind: "checking" }
@@ -484,26 +475,16 @@ export default function EarlyAccessRoute() {
                   : "Complete your order request"}
             </h1>
 
-            {embeddedOrderStep === "products" ? (
-              <div className="mt-4">
-                <EarlyAccessStepper
-                  steps={EARLY_ACCESS_STEPS}
-                  activeIndex={
-                    !agreed || blocked !== null
-                      ? EARLY_ACCESS_AGREEMENT_STEP
-                      : selection === null
-                        ? EARLY_ACCESS_CATALOG_STEP
-                        : checkoutPhase === "details"
-                          ? 1
-                          : checkoutPhase === "payment"
-                            ? 5
-                            : checkoutPhase === "status"
-                              ? 7
-                              : 4
-                  }
-                />
-              </div>
-            ) : null}
+            <div className="mt-4">
+              <EarlyAccessStepper
+                steps={EARLY_ACCESS_STEPS}
+                activeIndex={
+                  selection === null
+                    ? earlyAccessCustomerStepIndex(embeddedOrderStep)
+                    : earlyAccessCustomerStepIndex(checkoutPhase)
+                }
+              />
+            </div>
 
             {/*
               The required agreement, above the catalogue. Browsing is not
