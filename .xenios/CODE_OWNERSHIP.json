@@ -1138,6 +1138,7 @@
         "client/src/research/routes-parity.test.ts",
         "client/src/research/ui/admin-shell.test.tsx",
         "package.json",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".xenios/PROJECT_STATE.json",
         ".xenios/RELEASE_STATE.json",
         ".xenios/ACTIVE_TASKS.json",
@@ -1151,7 +1152,43 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-04T20:11:49.854Z",
-      "heartbeatAt": "2026-09-04T20:51:16.796Z"
+      "heartbeatAt": "2026-09-04T22:17:55.644Z"
+    },
+    {
+      "id": "98e42d76-da4e-444f-b4c3-3e768abc9175",
+      "task": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
+      "session": "codex-major-ordering-admin-sor-20260904",
+      "paths": [
+        "client/src/research/early-access/customerSteps.ts",
+        "client/src/research/early-access/customerSteps.test.ts",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
+        "client/src/research/adapters/earlyAccessAgreement.ts",
+        "client/src/research/adapters/earlyAccessAgreement.test.ts",
+        "client/src/research/early-access/EarlyAccessAgreementSection.tsx",
+        "client/src/research/early-access/EarlyAccessAgreementSection.test.tsx",
+        "client/src/research/early-access/earlyAccessCatalogView.ts",
+        "client/src/research/early-access/earlyAccessCatalogView.test.ts",
+        "client/src/research/early-access/EarlyAccessProductCard.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessProgress.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.quantity-routing.test.tsx",
+        "client/src/research/early-access/cart/journey-responsive-a11y.test.tsx",
+        "client/src/research/early-access/cart/journey-agreements-submit.test.tsx",
+        "server/research/early-access/catalog/early-access-catalog.ts",
+        "server/research/early-access/catalog/early-access-catalog.test.ts",
+        "server/research/early-access/release/storefront-view.ts",
+        "server/research/early-access/release/storefront-view.test.ts",
+        "server/research/early-access/release/release-routes.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T22:17:40.125Z",
+      "heartbeatAt": "2026-09-04T22:17:55.644Z"
     }
   ],
   "rules": [

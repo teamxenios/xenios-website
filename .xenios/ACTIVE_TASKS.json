@@ -1141,6 +1141,7 @@
         "client/src/research/routes-parity.test.ts",
         "client/src/research/ui/admin-shell.test.tsx",
         "package.json",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".xenios/PROJECT_STATE.json",
         ".xenios/RELEASE_STATE.json",
         ".xenios/ACTIVE_TASKS.json",
@@ -1164,6 +1165,55 @@
         "coherent commits and pushes with exact-SHA handoff; production untouched"
       ],
       "claimedAt": "2026-09-04T20:11:49.849Z"
+    },
+    {
+      "id": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
+      "title": "Simplify Quick Early Access into four customer-visible steps over existing canonical authorities",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-major-ordering-admin-sor-20260904",
+      "paths": [
+        "client/src/research/early-access/customerSteps.ts",
+        "client/src/research/early-access/customerSteps.test.ts",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
+        "client/src/research/adapters/earlyAccessAgreement.ts",
+        "client/src/research/adapters/earlyAccessAgreement.test.ts",
+        "client/src/research/early-access/EarlyAccessAgreementSection.tsx",
+        "client/src/research/early-access/EarlyAccessAgreementSection.test.tsx",
+        "client/src/research/early-access/earlyAccessCatalogView.ts",
+        "client/src/research/early-access/earlyAccessCatalogView.test.ts",
+        "client/src/research/early-access/EarlyAccessProductCard.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessProgress.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.quantity-routing.test.tsx",
+        "client/src/research/early-access/cart/journey-responsive-a11y.test.tsx",
+        "client/src/research/early-access/cart/journey-agreements-submit.test.tsx",
+        "server/research/early-access/catalog/early-access-catalog.ts",
+        "server/research/early-access/catalog/early-access-catalog.test.ts",
+        "server/research/early-access/release/storefront-view.ts",
+        "server/research/early-access/release/storefront-view.test.ts",
+        "server/research/early-access/release/release-routes.test.ts"
+      ],
+      "dependsOn": [
+        "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
+      ],
+      "createdAt": "2026-09-04T22:01:08.944Z",
+      "scopeNote": "Local-only Wave 4 projection. Preserve the eight-state internal machine, all server price/order/agreement authority, Research/Care separation, referral continuity, and existing identity model. Do not add account-claim authority, migrations, environment changes, provider actions, production writes, real communications, payment verification, fulfillment mutation, commissions, or payouts.",
+      "acceptance": [
+        "both active-cart and capability-off fallback present exactly four customer-visible steps while retaining existing internal states and guards",
+        "agreement kind and version come from the validated server response and the client posts that exact pair",
+        "Product Control category is projected without affecting price, availability, eligibility, or order authority",
+        "high-quantity routing uses the existing capability-gated assisted-order destination and never claims browser state was transferred",
+        "durable-reference states offer canonical account history/sign-in and support actions without claiming that an XEC reference was linked",
+        "focused authority and negative tests, typecheck, build, responsive 1440-320 browser QA, system-of-record refresh, scans, coherent commit and push; production untouched"
+      ],
+      "claimedAt": "2026-09-04T22:17:40.122Z"
     }
   ]
 }
