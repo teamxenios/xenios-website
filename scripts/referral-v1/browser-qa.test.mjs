@@ -1,7 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { localOrigin, safeEvidenceUrl, safeEvidenceError, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser, PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION } from "./browser-qa.mjs";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
+import { localOrigin, safeEvidenceUrl, safeEvidenceError, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser, PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION, confirmOwnedBrowserProfileCleanup } from "./browser-qa.mjs";
 
 describe("referral browser evidence boundaries", () => {
   it("permits only an explicit loopback origin", () => {
@@ -11,6 +13,40 @@ describe("referral browser evidence boundaries", () => {
   it("keeps generated artifacts inside the owned directory", () => {
     assert.match(evidenceDirectory("candidate-320"), /browser-candidate-320$/);
     for (const value of ["../elsewhere", "A", "", "a/b", "a\\b"]) assert.throws(() => evidenceDirectory(value));
+  });
+  it("retries only an exact owned browser profile until a descendant releases it", async () => {
+    const profile = resolve(tmpdir(), "xr-evidence-chrome-fixture");
+    let time = 0, present = true, attempts = 0;
+    const result = await confirmOwnedBrowserProfileCleanup({
+      profile,
+      closeBrowser: async () => { attempts += 1; if (attempts === 3) present = false; },
+      exists: candidate => { assert.equal(candidate, profile); return present; },
+      pause: async milliseconds => { assert.equal(milliseconds, 200); time += milliseconds; },
+      now: () => time,
+      timeoutMs: 1000,
+      retryMs: 200,
+    });
+    assert.equal(result, true);
+    assert.equal(attempts, 3);
+    assert.equal(time, 400);
+  });
+  it("fails closed at the cleanup deadline and rejects any non-owned path", async () => {
+    const profile = resolve(tmpdir(), "xr-evidence-chrome-locked");
+    let time = 0, attempts = 0;
+    await assert.rejects(confirmOwnedBrowserProfileCleanup({
+      profile,
+      closeBrowser: async () => { attempts += 1; },
+      exists: () => true,
+      pause: async milliseconds => { time += milliseconds; },
+      now: () => time,
+      timeoutMs: 400,
+      retryMs: 200,
+    }), /profile cleanup was not confirmed/);
+    assert.equal(attempts, 3);
+    await assert.rejects(confirmOwnedBrowserProfileCleanup({
+      profile: resolve(tmpdir(), "unrelated-profile"),
+      closeBrowser: async () => { throw new Error("must not run"); },
+    }), /Unexpected profile path/);
   });
   it("redacts navigation credentials and opaque invitation paths from telemetry", () => {
     assert.equal(safeEvidenceUrl("http://127.0.0.1:5238/r/r1_secret?token=private#access_token=secret"), "http://127.0.0.1:5238/r/OPAQUE-REDACTED?REDACTED#REDACTED");

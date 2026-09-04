@@ -48,6 +48,32 @@ export function evidenceDirectory(suffix) {
   assert(dirname(target) === EVIDENCE_ROOT, "Evidence path escaped its owned directory");
   return target;
 }
+export async function confirmOwnedBrowserProfileCleanup({
+  profile,
+  closeBrowser,
+  exists = existsSync,
+  pause = sleep,
+  now = Date.now,
+  timeoutMs = 10000,
+  retryMs = 200,
+}) {
+  const resolvedProfile = resolve(profile);
+  assert(dirname(resolvedProfile) === resolve(tmpdir()) && basename(resolvedProfile).startsWith("xr-evidence-chrome-"), "Unexpected profile path; refusing recursive cleanup");
+  assert(Number.isFinite(timeoutMs) && timeoutMs > 0 && Number.isFinite(retryMs) && retryMs > 0, "Browser profile cleanup bounds must be positive");
+  const deadline = now() + timeoutMs;
+  while (exists(resolvedProfile)) {
+    // launchChromium.close targets only its captured child and this exact
+    // validated profile. Repeating it lets short-lived Chrome descendants
+    // release Windows file locks; it never enumerates or kills other Chrome.
+    await closeBrowser();
+    if (!exists(resolvedProfile)) return true;
+    const remaining = deadline - now();
+    if (remaining <= 0) break;
+    await pause(Math.min(retryMs, remaining));
+  }
+  assert(!exists(resolvedProfile), "Owned temporary browser profile cleanup was not confirmed");
+  return true;
+}
 export function parseOptions(args) {
   const options = { origin: "http://127.0.0.1:5238", suffix: new Date().toISOString().replace(/[^0-9]/g, "").slice(0, 18), widths: [...WIDTHS], previewScript: resolve(REPO, "scripts/referral-v1/preview.ts") };
   for (const arg of args) {
@@ -147,8 +173,7 @@ export class ReferralBrowser {
         });
       }
       assert(process.exitCode !== null || process.signalCode !== null, "Owned browser process is still running");
-      if (existsSync(profile)) await this.browser.close();
-      assert(!existsSync(profile), "Owned temporary browser profile cleanup was not confirmed");
+      await confirmOwnedBrowserProfileCleanup({ profile, closeBrowser: () => this.browser.close() });
     }
   }
   async wait(expression, timeout = 15000) {
