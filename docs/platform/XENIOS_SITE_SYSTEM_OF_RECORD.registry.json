@@ -584,27 +584,54 @@
       "persona": "founder_admin_operations",
       "route": "/admin/research/command-center",
       "owningClientComponent": "client/src/research/pages/adminx/FounderCommandCenter.tsx",
-      "owningServerRoute": null,
-      "authorizationBoundary": "Canonical admin shell and guarded read adapters; summary cards perform no consequential mutation.",
-      "dataSource": "Bounded read projections from existing applications, Care, assisted-order, payment, fulfillment, product, referral, support, health, and release authorities.",
-      "sourceStatus": "unknown",
-      "testStatus": "unknown",
+      "owningServerRoute": "/api/admin/research/command-center",
+      "authorizationBoundary": "Canonical requireSupabaseAdmin server guard; one privacy-minimal GET; summary cards and client controls perform no consequential mutation.",
+      "dataSource": "Isolated read projections over canonical applications, bounded Care classification, assisted orders, payment review, exceptions, products, required inputs, referral flags, support, notification outbox, and last-verified release evidence; unavailable authorities remain explicit.",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
       "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Implement a read-only aggregate that reports count or unavailable, oldest wait, attention reason, source state, and owning workflow for all required operating areas.",
+      "nextExactAction": "Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority.",
       "evidence": {
-        "source": [],
-        "tests": [],
+        "source": [
+          "shared/research/founder-command-center.ts",
+          "server/research/founder-command-center.ts",
+          "server/research/founder-command-center-production.ts",
+          "server/index.ts",
+          "client/src/research/adapters/founderCommandCenter.ts",
+          "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+          "client/src/research/adminx-section.tsx"
+        ],
+        "tests": [
+          "server/research/founder-command-center.test.ts",
+          "server/research/founder-command-center-production.test.ts",
+          "client/src/research/pages/adminx/FounderCommandCenter.test.tsx",
+          "client/src/research/routes-parity.test.ts",
+          "client/src/research/ui/admin-shell.test.tsx",
+          "server/release-control-plane.test.ts"
+        ],
         "browser": [],
         "production": []
       },
       "verification": {
-        "requiredClientRoute": false,
-        "requiredFiles": [],
-        "serverRouteEvidenceFiles": []
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "shared/research/founder-command-center.ts",
+          "server/research/founder-command-center.ts",
+          "server/research/founder-command-center-production.ts",
+          "server/research/founder-command-center.test.ts",
+          "server/research/founder-command-center-production.test.ts",
+          "client/src/research/adapters/founderCommandCenter.ts",
+          "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+          "client/src/research/pages/adminx/FounderCommandCenter.test.tsx",
+          "client/src/research/adminx-section.tsx"
+        ],
+        "serverRouteEvidenceFiles": [
+          "shared/research/founder-command-center.ts"
+        ]
       }
     }
   ]
