@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { localOrigin, safeEvidenceUrl, safeEvidenceError, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser } from "./browser-qa.mjs";
+import { localOrigin, safeEvidenceUrl, safeEvidenceError, evidenceDirectory, parseOptions, WIDTHS, browserCapabilitiesSource, assertPersonaBinding, ReferralBrowser, PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION } from "./browser-qa.mjs";
 
 describe("referral browser evidence boundaries", () => {
   it("permits only an explicit loopback origin", () => {
@@ -40,6 +40,26 @@ describe("referral browser evidence boundaries", () => {
     assert.doesNotMatch(source, /fetch|XMLHttpRequest|localStorage|Supabase/);
     const harness = readFileSync(new URL("./browser-qa.mjs", import.meta.url), "utf8");
     assert.doesNotMatch(harness, /Network\.setBypassServiceWorker|ServiceWorker\.stopAllWorkers|Fetch\.fulfillRequest|unregister\(/);
+  });
+  it("fails closed when either install promotion is present without rejecting the update notice", async () => {
+    const evaluate = (texts) => Function("document", `return ${PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION}`)({
+      querySelectorAll: selector => { assert.equal(selector, '[role="status"]'); return texts.map(textContent => ({ textContent })); },
+    });
+    assert.equal(evaluate([]), true);
+    assert.equal(evaluate(["A new version of xenios is ready."]), true);
+    assert.equal(evaluate(["Add xenios to your home screen. Install"]), false);
+    assert.equal(evaluate(["Install xenios: tap Share, then “Add to Home Screen”."]), false);
+
+    await assert.doesNotReject(ReferralBrowser.prototype.assertNoPwaInstallPromotion.call({ page: { evaluate: async expression => { assert.equal(expression, PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION); return true; } } }, "fixture"));
+    await assert.rejects(ReferralBrowser.prototype.assertNoPwaInstallPromotion.call({ page: { evaluate: async () => false } }, "fixture"), /PWA install promotion was visible on sensitive fixture/);
+  });
+  it("asserts install-promotion absence for snapshots plus explicit public Research and Care arrivals", () => {
+    const harness = readFileSync(new URL("./browser-qa.mjs", import.meta.url), "utf8");
+    const snapshot = harness.slice(harness.indexOf("async snapshot("), harness.indexOf("\n}\n\nconst buttonExpression"));
+    assert.equal((snapshot.match(/assertNoPwaInstallPromotion/g) ?? []).length, 2);
+    assert.match(harness, /arrive\("location\.pathname \+ location\.search === '\/research'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("public Research arrival"\)/);
+    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("Care arrival"\)/);
+    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("Care recovery-path arrival"\)/);
   });
   it("cannot substitute aggregate counts, an early binding, or a different link for per-persona proof", () => {
     assert.throws(() => assertPersonaBinding({ db: { bindings: 3 } }, "recovery", null));

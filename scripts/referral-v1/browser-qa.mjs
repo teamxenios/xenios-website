@@ -36,6 +36,12 @@ export function safeEvidenceError(value) {
     .replace(/\br1_[A-Za-z0-9_-]{43}\b/g, "r1_[REDACTED]")
     .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[JWT-REDACTED]");
 }
+export const PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION = `(() => {
+  const installCopy = ['Add xenios to your home screen.', 'Install xenios: tap Share, then “Add to Home Screen”.'];
+  return ![...document.querySelectorAll('[role="status"]')].some(element =>
+    installCopy.some(copy => (element.textContent || '').includes(copy))
+  );
+})()`;
 export function evidenceDirectory(suffix) {
   assert(/^[a-z0-9][a-z0-9-]{0,60}$/.test(suffix), "Evidence suffix must be a short lowercase identifier");
   const target = resolve(EVIDENCE_ROOT, `browser-${suffix}`);
@@ -163,6 +169,10 @@ export class ReferralBrowser {
     await this.page.settle({ quietMs: 800, maxSettleMs: 30000 });
     assert(await this.page.evaluate(expression), "Destination changed while its document was settling");
   }
+  async assertNoPwaInstallPromotion(context) {
+    assert(await this.page.evaluate(PWA_INSTALL_PROMOTION_ABSENT_EXPRESSION), `PWA install promotion was visible on sensitive ${context}`);
+    return true;
+  }
   async clickExpression(expression) {
     const point = await this.page.evaluate(`(() => { const e = ${expression}; if (!e || e.disabled) throw new Error('Missing or disabled target'); e.scrollIntoView({block:'center'}); const r=e.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2}; })()`);
     await this.page.send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
@@ -205,6 +215,7 @@ export class ReferralBrowser {
   async snapshot(name, { scope = "main", assertTouch = true } = {}) {
     await this.page.settle({ quietMs: 800, maxSettleMs: 30000 });
     await this.page.evaluate("Promise.race([document.fonts.ready.then(() => true),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Fonts did not settle')),5000))])");
+    await this.assertNoPwaInstallPromotion(`snapshot ${name}`);
     let previous = "", stable = 0;
     const started = Date.now();
     while (stable < 4) {
@@ -215,9 +226,10 @@ export class ReferralBrowser {
     }
     const layout = await this.layout(scope);
     const shot = await this.page.screenshot({ fullPage: true });
+    await this.assertNoPwaInstallPromotion(`snapshot ${name}`);
     const path = resolve(this.out, `${name}.png`);
     writeFileSync(path, shot.bytes);
-    const evidence = { name, path, coverage: shot.coverage, layout };
+    const evidence = { name, path, coverage: shot.coverage, layout, pwaInstallPromotionAbsent: true };
     assert(layout.documentWidth <= layout.width + 1 && layout.bodyWidth <= layout.width + 1 && layout.overflows.length === 0, `Horizontal overflow at ${name}`);
     if (assertTouch) assert(layout.smallTargets.length === 0, `Touch target below 44px at ${name}: ${JSON.stringify(layout.smallTargets)}`);
     return evidence;
@@ -314,6 +326,8 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   await browser.clickText("Continue without confirming referral");
   // Preview follows the canonical server's asset-only redirect:false policy.
   await browser.arrive("location.pathname + location.search === '/research'");
+  await browser.assertNoPwaInstallPromotion("public Research arrival");
+  row.checks.pwaInstallPromotionAbsent = { publicResearchArrival: true };
   assert(browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length === capturesBeforeChoice, "Continue without referral captured attribution");
   row.checks.healthChoice = { choiceRequired: true, explicitResearchPath: true, browseWithoutCapture: true };
   const capturesBeforeContext = browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length;
@@ -325,6 +339,8 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   row.checks.contextDidNotCapture = true;
   await browser.clickText("Continue with recommendation");
   await browser.arrive("location.pathname === '/care'");
+  await browser.assertNoPwaInstallPromotion("Care arrival");
+  row.checks.pwaInstallPromotionAbsent.careArrival = true;
   row.checks.careExplicitContinue = true;
   const capturesBeforeResearch = browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length;
   await browser.navigate(links.research);
@@ -379,6 +395,8 @@ export async function recoveryJourney(browser, fixture, row, link, verifyBinding
   await browser.wait("document.body.textContent.includes('Explore the Care pathway')");
   await browser.clickText("Continue with recommendation");
   await browser.arrive("location.pathname === '/care'");
+  await browser.assertNoPwaInstallPromotion("Care recovery-path arrival");
+  row.checks.pwaInstallPromotionAbsent.careRecoveryPathArrival = true;
   await browser.navigate(`/research/reset-password?returnTo=${encodeURIComponent(destination)}`);
   await browser.wait("!!document.querySelector('[data-testid=\"form-request-reset\"]')");
   await browser.enter("#rp-email", fixture.recovery.email);
