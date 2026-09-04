@@ -6,7 +6,7 @@
       "id": "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904",
       "title": "Suppress install promotion on sensitive workflows while preserving independent update notices and service-worker privacy",
       "priority": "P2",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-ux-referral-20260904",
       "paths": [
         "client/src/pwa/PwaLifecycle.tsx",
@@ -19,7 +19,16 @@
       "dependsOn": [],
       "baseSha": "6f2cfd81b7543b835feb231613f25e6d8716b8de",
       "scopeNote": "Separate PWA install-promotion display policy after referral and supplier checkpoints. Dynamic path/hash fail-closed suppression; update notice remains independent. Do not edit PWA registration, service worker, main shell, or feature authority. Add exact reviewed core-protection seam, not a broad allowance.",
-      "claimedAt": "2026-09-04T17:56:25.705Z"
+      "claimedAt": "2026-09-04T17:56:25.705Z",
+      "handoff": {
+        "session": "codex-ux-referral-20260904",
+        "sha": "045e8ea7235469e6213dd38fcb8fb446b2f80380",
+        "file": ".xenios/handoffs/2026-09-04T18-05-23-437Z-PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904-codex-ux-referral-20260904.md",
+        "at": "2026-09-04T18:05:23.439Z"
+      },
+      "acceptedSha": "045e8ea7235469e6213dd38fcb8fb446b2f80380",
+      "acceptedBy": "codex-ux-referral-20260904",
+      "acceptedAt": "2026-09-04T18:05:23.513Z"
     },
     {
       "id": "DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904",

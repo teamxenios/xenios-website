@@ -349,8 +349,8 @@
       "branch": "codex/ux-continuation-20260904",
       "state": "active",
       "startedAt": "2026-09-04T16:52:48.737Z",
-      "heartbeatAt": "2026-09-04T17:47:47.553Z",
-      "note": "Frozen ef6c616 pushed. Browser has passed Care/Research selection, normal sign-in binding and ordinary-member isolation; reset/claim/admin checks running. No production mutation."
+      "heartbeatAt": "2026-09-04T18:05:35.847Z",
+      "note": "PWA overlay policy accepted at 045e8ea with 82/82 targeted tests, typecheck/build/core/route gates green. Full integration suite next; production untouched."
     }
   ]
 }

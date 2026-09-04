@@ -1062,9 +1062,9 @@
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "docs/research-launch/PWA_SENSITIVE_WORKFLOW_OVERLAY_POLICY_2026-09-04.md"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-04T17:56:25.708Z",
-      "heartbeatAt": "2026-09-04T17:56:25.708Z"
+      "heartbeatAt": "2026-09-04T17:56:53.584Z"
     }
   ],
   "rules": [
