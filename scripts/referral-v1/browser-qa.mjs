@@ -283,7 +283,8 @@ export async function recipientJourney(browser, links, row, fixture = {}) {
   row.screenshots.push(await browser.snapshot(`recipient-health-choice-${row.width}`));
   await browser.click('input[value="/research"]');
   await browser.clickText("Continue without confirming referral");
-  await browser.wait("location.pathname === '/research'");
+  // Express may add the public static-directory slash; private auth returns stay exact.
+  await browser.wait("['/research', '/research/'].includes(location.pathname + location.search)");
   assert(browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length === capturesBeforeChoice, "Continue without referral captured attribution");
   row.checks.healthChoice = { choiceRequired: true, explicitResearchPath: true, browseWithoutCapture: true };
   const capturesBeforeContext = browser.report.network.referralMethods.filter(entry => entry.path.endsWith("/capture")).length;

@@ -1,7 +1,9 @@
 # Referral / recommendation V1 — local implementation
 
-Task: `UX-REFERRAL-RECOMMENDATION-V1-20260904`  
-Base: `306b2996feb27578fa5434f6a20810cc8f6d83db` (tested auth code `c93c48704c6842f6f65fdc0698cfb3fe627cad2e` plus its records)  
+Task: `UX-REFERRAL-RECOMMENDATION-V1-20260904`
+
+Base: `306b2996feb27578fa5434f6a20810cc8f6d83db` (tested auth code `c93c48704c6842f6f65fdc0698cfb3fe627cad2e` plus its records)
+
 Production remains `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 This is local candidate engineering, not a release or whole-website completion.
