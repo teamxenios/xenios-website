@@ -3,6 +3,31 @@
   "updatedAt": "2026-09-04T14:54:58.150Z",
   "tasks": [
     {
+      "id": "XENIOS-HEALTH-CANONICAL-EMAIL-SENDER-20260904",
+      "title": "Lock every current Xenios Health outbound email to the team address without changing Research mail",
+      "priority": "P0",
+      "state": "done",
+      "owner": "codex-ux-referral-20260904",
+      "paths": [
+        "server/care/manual-access.ts",
+        "server/care/manual-access-email.test.ts",
+        "docs/research-launch/XENIOS_HEALTH_CANONICAL_EMAIL_SENDER_2026-09-04.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "c140be058e01610f3b58d7261548a7ceaf3d2188",
+      "scopeNote": "Founder requested all Xenios Health email originate from team@xeniostechnology.com. Enforce the sender envelope for the two current Care manual-access emails through the existing Resend client, even when generic FROM_EMAIL differs. Preserve recipient/reply-to privacy boundaries and the distinct Xenios Research sender. Local code, tests, build and handoff only: no email send, environment, provider, DNS, Supabase SMTP, merge or production mutation.",
+      "claimedAt": "2026-09-04T18:50:51.353Z",
+      "handoff": {
+        "session": "codex-ux-referral-20260904",
+        "sha": "07deeb53ef24d692d11db94d76b0ecf0a360af24",
+        "file": ".xenios/handoffs/2026-09-04T18-56-48-094Z-XENIOS-HEALTH-CANONICAL-EMAIL-SENDER-20260904-codex-ux-referral-20260904.md",
+        "at": "2026-09-04T18:56:48.096Z"
+      },
+      "acceptedSha": "07deeb53ef24d692d11db94d76b0ecf0a360af24",
+      "acceptedBy": "codex-ux-referral-20260904",
+      "acceptedAt": "2026-09-04T18:56:48.159Z"
+    },
+    {
       "id": "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904",
       "title": "Suppress install promotion on sensitive workflows while preserving independent update notices and service-worker privacy",
       "priority": "P2",
