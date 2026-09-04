@@ -72,6 +72,7 @@ describe("password recovery intent continuity (synthetic provider)", () => {
   it.each([
     "/research/account/orders/XRR-Fixture_01?tab=payment",
     "/research/member/assessment?mode=checkin",
+    "/research/member/security?from=expired-session",
     "/research/member/catalog/research_vials/fixture-product?variant=fixture.1&qty=2&intent=buy_now",
     "/research/early-access/order-request/XRR-Fixture_01",
     "/care/schedule",

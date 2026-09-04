@@ -34,7 +34,7 @@ const DYNAMIC_PATHS = [
 function safeQueryValue(path: string, key: string, value: string): boolean {
   // A few non-secret view/selection hints. No raw search text, referral code,
   // claim/status credential, nested returnTo or arbitrary analytics payload.
-  if (key === "from") return /^(?:sign-in|account|catalog|security)$/.test(value);
+  if (key === "from") return /^(?:sign-in|account|catalog|security|expired-session)$/.test(value);
   if (key === "tab") return /^(?:overview|payment|tracking|documents|history)$/.test(value);
   // Match the existing storefront entry-intent contract (variant/qty/intent),
   // including catalog-generated variant IDs containing dots.

@@ -22,6 +22,8 @@ describe("shared credential-free auth navigation", () => {
   });
 
   it("keeps only bounded non-secret view/selection hints", () => {
+    expect(safeResearchReturnTo("/research/member/security?from=expired-session"))
+      .toBe("/research/member/security?from=expired-session");
     expect(safeResearchReturnTo("/research/account/orders/XRR-Fixture_01?tab=payment&access_token=SECRET&refresh_token=SECRET&token=SECRET&code=SECRET&returnTo=https://outside.invalid&email=private%40example.invalid&q=private&ref=private"))
       .toBe("/research/account/orders/XRR-Fixture_01?tab=payment");
     expect(safeResearchReturnTo("/research/member/catalog/research_vials/bpc-157?variant=fixture.1&qty=2&intent=buy_now"))
