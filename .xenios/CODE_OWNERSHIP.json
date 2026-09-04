@@ -1166,6 +1166,8 @@
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.test.tsx",
         "client/src/research/adapters/earlyAccessAgreement.ts",
@@ -1188,6 +1190,9 @@
         "server/research/early-access/release/storefront-view.ts",
         "server/research/early-access/release/storefront-view.test.ts",
         "server/research/early-access/release/release-routes.test.ts",
+        "server/research/early-access/routes/agreement-routes.ts",
+        "server/research/early-access/routes/agreement-routes.test.ts",
+        "server/research/policies-data.ts",
         "docs/ux/quick-early-access-v2-20260904/browser-results.json",
         "docs/ux/quick-early-access-v2-20260904/pii-scan.json",
         "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json"
