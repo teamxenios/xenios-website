@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `9cd28b72d04b6bab4d067fd53f6e002656d71c58` (2026-09-04T15:23:55-05:00)
+Generated from source commit: `893532914c41a4526ebf83ed8ea67da177860d7c` (2026-09-04T15:25:49-05:00)
 
-Source tree: `0d0955bc4f3c88bdd7ca457f2f153f18aeeeed21` on `codex/xenios-major-ordering-admin-sor-20260904`
+Source tree: `6a1368a498627be1173a0f6eebd26bc4e15c41ef` on `codex/xenios-major-ordering-admin-sor-20260904`
 
 Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740ujc73aprfcg` (live_verified)
 
@@ -272,4 +272,3 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 - One canonical identity, catalog, pricing, order, referral, Care, notification, and audit authority is extended rather than duplicated.
 - Requests are not paid orders; payment is not fulfillment; Care access requests are not appointments, treatment, prescriptions, or clinical decisions.
 - Generated records contain technical coordination facts only: no credentials, customer exports, patient data, clinical narratives, or raw payment evidence.
-
