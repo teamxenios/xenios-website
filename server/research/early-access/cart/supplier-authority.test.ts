@@ -21,7 +21,7 @@ import {
   EARLY_ACCESS_NONWAIVABLE_BLOCKERS,
 } from "../release/founder-release";
 import { seedFounderFirstRelease } from "../release/founder-first-release-seed";
-import { seedRawPeptidesConfirmations } from "../release/founder-supply-seed";
+import { RAW_PEPTIDES_EXPIRES_AT, seedRawPeptidesConfirmations } from "../release/founder-supply-seed";
 import { InMemorySupplierConfirmationStore } from "../ops/supplier-confirmation";
 import { decideSupplierAvailability } from "../ops/supplier-availability";
 import { quoteEarlyAccessCart } from "./quote-service";
@@ -70,6 +70,8 @@ const QUOTE = "/api/research/early-access/cart/quote";
 const CHECKOUT = "/api/research/early-access/cart/checkout";
 
 const CART_ON = { NODE_ENV: "test", [EARLY_ACCESS_CART_ENV]: "true" } as NodeJS.ProcessEnv;
+// Shared by seed evaluation and the injected request clock; production is unchanged.
+const FIXTURE_NOW = Date.parse("2026-08-08T10:00:00.000Z");
 
 type Unit = Readonly<{
   productId: string;
@@ -133,7 +135,7 @@ class ControlledSupplierDirectory implements EarlyAccessSupplierDirectory {
   }
 }
 
-async function realApp(): Promise<{
+async function realApp(options: Readonly<{ now?: () => number }> = {}): Promise<{
   app: Express;
   suppliers: ControlledSupplierDirectory;
   ledger: InMemoryEarlyAccessReleaseLedger;
@@ -149,7 +151,8 @@ async function realApp(): Promise<{
     }),
   } as never);
 
-  const now = Date.now();
+  // Expiry tests retain this valid seed and move only the mounted request clock.
+  const now = FIXTURE_NOW;
   const context = { earlyAccessCustomer: { customerRef: "cus_supplier_authority" } };
   const before = await source.load(new Date(now), context);
   await seedRawPeptidesConfirmations({ rows: before.rows as never, store: confirmations });
@@ -168,6 +171,7 @@ async function realApp(): Promise<{
   app.use(express.json());
   registerPrivateEarlyAccessApi(app, {
     config: EARLY_ACCESS_TEST_CONFIG,
+    now: options.now ?? (() => FIXTURE_NOW),
     sessionIdentity: true,
     env: CART_ON,
     cartStore,
@@ -447,6 +451,31 @@ describe("E: a malformed supplier identifier cannot manufacture a route", () => 
 });
 
 describe("F: an expired supplier confirmation fails closed", () => {
+  it.each([0, 1])("real seeded confirmation expires at its recorded boundary + %i ms", async (offsetMs) => {
+    let requestNow = FIXTURE_NOW;
+    const { app, suppliers } = await realApp({ now: () => requestNow });
+    requestNow = Date.parse(RAW_PEPTIDES_EXPIRES_AT) - 1;
+    const beforeCookie = await unlock(app);
+    const unit = firstPurchasable(await shelf(app, beforeCookie));
+    expect((await quoteOne(app, beforeCookie, unit)).status).toBe(200);
+
+    requestNow = Date.parse(RAW_PEPTIDES_EXPIRES_AT) + offsetMs;
+    // Do not mutate the supplier directory or reseed/extend the confirmation.
+    // A newly issued session keeps this assertion about supply, not old auth.
+    const expiredCookie = await unlock(app);
+    expect(await suppliers.forUnit(unit.productId, unit.variantId)).not.toBeNull();
+    const expired = unitOn(await shelf(app, expiredCookie), unit.productId);
+    expect(expired.purchasable).toBe(false);
+    expect(expired.priceCents).toBeNull();
+    const refused = await quoteOne(app, expiredCookie, unit);
+    expect(refused.status).toBe(409);
+    expect(refused.body.code).toBe("LINE_REFUSED");
+    expect(refused.body.lines).toHaveLength(1);
+    expect(refused.body.lines[0].productId).toBe(unit.productId);
+    expect(refused.body.lines[0].code).toBe("PRODUCT_HELD");
+    expect(refused.body.quote).toBeUndefined();
+  });
+
   it("a lapsed confirmation withdraws the unit rather than selling it", async () => {
     const { app, suppliers } = await realApp();
     const cookie = await unlock(app);
@@ -593,7 +622,7 @@ describe("gate 2 in isolation: the quote refuses even when the shelf did not", (
       },
       agreements: { accepted: async () => true },
       quotes: new InMemoryEarlyAccessCartStore(),
-      now: () => Date.parse("2026-08-08T10:00:00.000Z"),
+      now: () => FIXTURE_NOW,
       quoteId: () => "xeaq_gatetwo000000000001",
     };
   }
@@ -673,7 +702,7 @@ describe("gate 2 in isolation: the quote refuses even when the shelf did not", (
         supplierConfirmations: confirmations,
       }),
     } as never);
-    const now = Date.now();
+    const now = FIXTURE_NOW;
     const context = { earlyAccessCustomer: { customerRef: "cus_no_supplier_authority" } };
     const before = await source.load(new Date(now), context);
     await seedRawPeptidesConfirmations({ rows: before.rows as never, store: confirmations });
@@ -685,6 +714,7 @@ describe("gate 2 in isolation: the quote refuses even when the shelf did not", (
     app.use(express.json());
     registerPrivateEarlyAccessApi(app, {
       config: EARLY_ACCESS_TEST_CONFIG,
+      now: () => FIXTURE_NOW,
       sessionIdentity: true,
       env: CART_ON,
       cartStore: new InMemoryEarlyAccessCartStore(),
@@ -701,6 +731,7 @@ describe("gate 2 in isolation: the quote refuses even when the shelf did not", (
     const cookie = await unlock(app);
     const units = await shelf(app, cookie);
     const offered = units.filter((unit) => unit.purchasable && unit.priceCents !== null);
+    expect(offered.length).toBeGreaterThan(0);
     // Whatever the unwrapped shelf happens to offer, NONE of it may be quoted,
     // because nothing in this process can route any of it.
     for (const unit of offered.slice(0, 3)) {

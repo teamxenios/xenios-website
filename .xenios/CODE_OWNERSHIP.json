@@ -1036,6 +1036,19 @@
       "state": "handoff",
       "claimedAt": "2026-09-04T16:52:48.812Z",
       "heartbeatAt": "2026-09-04T17:47:47.553Z"
+    },
+    {
+      "id": "4441ee7d-5e0c-415c-9177-a104e08d75ed",
+      "task": "DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904",
+      "session": "codex-ux-referral-20260904",
+      "paths": [
+        "server/research/early-access/cart/cart-shelf-agreement.test.ts",
+        "server/research/early-access/cart/supplier-authority.test.ts",
+        "docs/research-launch/DETERMINISTIC_SUPPLIER_FIXTURE_MAINTENANCE_2026-09-04.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T17:53:58.891Z",
+      "heartbeatAt": "2026-09-04T17:53:58.891Z"
     }
   ],
   "rules": [

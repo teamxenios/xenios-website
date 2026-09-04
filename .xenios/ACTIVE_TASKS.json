@@ -3,6 +3,22 @@
   "updatedAt": "2026-09-04T14:54:58.150Z",
   "tasks": [
     {
+      "id": "DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904",
+      "title": "Pin supplier/cart test fixture clocks while preserving live expiry and expiry-negative coverage",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ux-referral-20260904",
+      "paths": [
+        "server/research/early-access/cart/cart-shelf-agreement.test.ts",
+        "server/research/early-access/cart/supplier-authority.test.ts",
+        "docs/research-launch/DETERMINISTIC_SUPPLIER_FIXTURE_MAINTENANCE_2026-09-04.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "83fe0a1d4e0825d9ddaa2ee1bf4f53a03898e419",
+      "scopeNote": "Separate test-only task after sealed/pushed referral QA checkpoint. Fixed injected clocks, unchanged live RAW_PEPTIDES_EXPIRES_AT=2026-09-03T23:30:00.000Z. Preserve existing expiry/withdrawal/route-negative coverage. No production seed/register/PWA/Care/referral source changes.",
+      "claimedAt": "2026-09-04T17:53:58.889Z"
+    },
+    {
       "id": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
       "title": "Local canonical Gen2 referral vertical slice: authorized share, contextual recipient, durable first-valid attribution, auth binding, safe lifecycle projections",
       "priority": "P0",

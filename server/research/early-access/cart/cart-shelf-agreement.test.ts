@@ -13,7 +13,7 @@ import {
 } from "../release/first-release-canonical-source";
 import { InMemoryEarlyAccessReleaseLedger } from "../release/founder-release";
 import { seedFounderFirstRelease } from "../release/founder-first-release-seed";
-import { seedRawPeptidesConfirmations } from "../release/founder-supply-seed";
+import { RAW_PEPTIDES_EXPIRES_AT, seedRawPeptidesConfirmations } from "../release/founder-supply-seed";
 import { InMemorySupplierConfirmationStore } from "../ops/supplier-confirmation";
 import {
   EARLY_ACCESS_TEST_CONFIG,
@@ -50,6 +50,8 @@ const CATALOG = "/api/research/early-access/catalog";
 const QUOTE = "/api/research/early-access/cart/quote";
 
 const CART_ON = { NODE_ENV: "test", [EARLY_ACCESS_CART_ENV]: "true" } as NodeJS.ProcessEnv;
+// Fixture time is within the unchanged founder supply window, not today's clock.
+const FIXTURE_NOW = Date.parse("2026-08-08T10:00:00.000Z");
 
 /** Two DIFFERENT suppliers, both valid, so nothing is withdrawn for a missing route. */
 const SUPPLIERS = {
@@ -61,7 +63,7 @@ const SUPPLIERS = {
 };
 
 async function realCatalogueApp(
-  options: Readonly<{ withSuppliers: boolean }>,
+  options: Readonly<{ withSuppliers: boolean; now?: () => number }>,
 ): Promise<Express> {
   const confirmations = new InMemorySupplierConfirmationStore();
   const source = new ProductControlCatalogSource({
@@ -73,7 +75,8 @@ async function realCatalogueApp(
     }),
   } as never);
 
-  const now = Date.now();
+  // Seed the original valid facts once. Expiry tests advance only request time.
+  const now = FIXTURE_NOW;
   const context = { earlyAccessCustomer: { customerRef: "cus_shelf_agreement" } };
   const before = await source.load(new Date(now), context);
   await seedRawPeptidesConfirmations({ rows: before.rows as never, store: confirmations });
@@ -85,6 +88,7 @@ async function realCatalogueApp(
   app.use(express.json());
   registerPrivateEarlyAccessApi(app, {
     config: EARLY_ACCESS_TEST_CONFIG,
+    now: options.now ?? (() => FIXTURE_NOW),
     sessionIdentity: true,
     env: CART_ON,
     cartStore: new InMemoryEarlyAccessCartStore(),
@@ -201,5 +205,38 @@ describe("the real catalogue and the cart answer the same question the same way"
     for (const unit of units.filter((row) => !row.purchasable)) {
       expect(unit.priceCents).toBeNull();
     }
+  });
+
+  it.each([0, 1])("the valid-seeded shelf and cart both refuse supply at expiry + %i ms", async (offsetMs) => {
+    let requestNow = FIXTURE_NOW;
+    const app = await realCatalogueApp({ withSuppliers: true, now: () => requestNow });
+
+    // The same seeded release still offers real units immediately before expiry.
+    requestNow = Date.parse(RAW_PEPTIDES_EXPIRES_AT) - 1;
+    const beforeCookie = await unlock(app);
+    const before = await shelf(app, beforeCookie);
+    const offered = before.filter((unit) => unit.purchasable && unit.priceCents !== null);
+    expect(offered).toHaveLength(18);
+
+    requestNow = Date.parse(RAW_PEPTIDES_EXPIRES_AT) + offsetMs;
+    // Mint a fresh session at this instant, so a session refusal cannot mask expiry.
+    const expiredCookie = await unlock(app);
+    const after = await shelf(app, expiredCookie);
+    expect(after).toHaveLength(before.length);
+    expect(after.filter((unit) => unit.purchasable)).toHaveLength(0);
+    expect(after.every((unit) => unit.priceCents === null)).toBe(true);
+
+    const response = await supertest(app).post(QUOTE).set("Cookie", expiredCookie).send({
+      items: offered.slice(0, 2).map((unit) => ({
+        productId: unit.productId, variantId: unit.variantId, quantity: 1,
+        expectedUnitPriceCents: unit.priceCents, expectedCurrency: "USD",
+      })),
+      contact: ORDER_CONTACT, shipTo: SHIP_TO,
+    });
+    expect(response.status).toBe(409);
+    expect(response.body.code).toBe("LINE_REFUSED");
+    expect(response.body.lines).toHaveLength(2);
+    expect(response.body.lines.every((line: { code: string }) => line.code === "PRODUCT_HELD")).toBe(true);
+    expect(response.body.quote).toBeUndefined();
   });
 });
