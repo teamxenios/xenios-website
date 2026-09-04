@@ -1046,9 +1046,25 @@
         "server/research/early-access/cart/supplier-authority.test.ts",
         "docs/research-launch/DETERMINISTIC_SUPPLIER_FIXTURE_MAINTENANCE_2026-09-04.md"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-04T17:53:58.891Z",
       "heartbeatAt": "2026-09-04T17:53:58.891Z"
+    },
+    {
+      "id": "7a8298c7-9a3e-47ba-85ee-972f022db847",
+      "task": "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904",
+      "session": "codex-ux-referral-20260904",
+      "paths": [
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        "client/src/pwa/pwa.test.ts",
+        "server/core-site-protection.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/research-launch/PWA_SENSITIVE_WORKFLOW_OVERLAY_POLICY_2026-09-04.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-04T17:56:25.708Z",
+      "heartbeatAt": "2026-09-04T17:56:25.708Z"
     }
   ],
   "rules": [

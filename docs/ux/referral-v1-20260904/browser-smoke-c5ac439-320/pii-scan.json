@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 4,
+  "kind": "evidence-pii-scan",
+  "candidateSha": "c5ac43907ffe024ffcba847fb761836211ae4118",
+  "scannedAtUtc": "2026-09-04T17:55:23.653Z",
+  "evidenceRoot": ".",
+  "textFilesScanned": 1,
+  "textArtifacts": [
+    "browser-results.json"
+  ],
+  "fileInventory": [
+    {
+      "path": "admin-lifecycle-320.png",
+      "bytes": 797277,
+      "sha256": "e5bd04904ed6d8116cc47e3bfee3c650addfeb7f704a4a0613263a563307fb9e"
+    },
+    {
+      "path": "browser-results.json",
+      "bytes": 89334,
+      "sha256": "2f753fc7e7cdec745164081b3d4d2eb80bed9bd93fa33f3d79842892882986cf"
+    },
+    {
+      "path": "owner-copy-failure-320.png",
+      "bytes": 198521,
+      "sha256": "dc039d519b38a6e3c7fbb2f8e73b3457af9e72545c1cf1add451bb676147b38c"
+    },
+    {
+      "path": "owner-links-320.png",
+      "bytes": 194954,
+      "sha256": "f861353718b1a2f3ff0e6f8b1c58a1dec7b974079bf8b51f05bc9af12912ce5e"
+    },
+    {
+      "path": "owner-native-share-simulated-320.png",
+      "bytes": 198854,
+      "sha256": "9440ee98e3c6c877338e771602f66fc29ffddc03f760bbb32cacfbf3c646ebca"
+    },
+    {
+      "path": "owner-revoke-confirmation-320.png",
+      "bytes": 205309,
+      "sha256": "65d2b9828a4dd377b2e75f8d2edccbd48fc7f026ad18d07bb419fe7c49676f93"
+    },
+    {
+      "path": "owner-signin-320.png",
+      "bytes": 51527,
+      "sha256": "e9eb08ae16cb19a1205a2e14e027fe849a61511623111e47adb3375b45d26d06"
+    },
+    {
+      "path": "recipient-account-claim-320.png",
+      "bytes": 43306,
+      "sha256": "6ba5d30f41cbf49e30e4a1e3b767aa0c59732c4750ab92ebb3bdaa2ed6687b0a"
+    },
+    {
+      "path": "recipient-admin-denied-320.png",
+      "bytes": 64443,
+      "sha256": "347f2e0177d018da6872a5274da88b9cb85ee05060a29f3595b2b28518ba671e"
+    },
+    {
+      "path": "recipient-care-320.png",
+      "bytes": 71780,
+      "sha256": "8309a79b5bdafadfaf861b9b0b8f0f08299f024e704618f0e9297bcf5288d0a0"
+    },
+    {
+      "path": "recipient-claim-activation-gated-320.png",
+      "bytes": 68792,
+      "sha256": "d3bc12276e37b96f9df36ecb0f60775fb2a8ad5f4d8f2bf894257c63f286c0da"
+    },
+    {
+      "path": "recipient-expired-320.png",
+      "bytes": 39640,
+      "sha256": "c07e601cf1f2ec4d07999ef75c1752263abda4cfb6ebfae0781594b48c634e0d"
+    },
+    {
+      "path": "recipient-health-choice-320.png",
+      "bytes": 89185,
+      "sha256": "95fcbb7c538b5bfac119c4ea351fc60e4dfd306f9fdce8b82ee71d29f6e38b06"
+    },
+    {
+      "path": "recipient-invalid-320.png",
+      "bytes": 39640,
+      "sha256": "c07e601cf1f2ec4d07999ef75c1752263abda4cfb6ebfae0781594b48c634e0d"
+    },
+    {
+      "path": "recipient-link-management-denied-320.png",
+      "bytes": 52212,
+      "sha256": "f6a5e911620d701eb63ff4c3632864443b558af7074ea6b6864dcee495bb14ab"
+    },
+    {
+      "path": "recipient-password-recovery-320.png",
+      "bytes": 41533,
+      "sha256": "949d0e6b03ee072f64103a12fdacaa7634d10f2dbe0cba875c5d9b8f2f2b3bb0"
+    },
+    {
+      "path": "recipient-research-320.png",
+      "bytes": 71669,
+      "sha256": "2f9de60923c0f5f065388d879207ca1512949bcf302b0931dbdc7ae73d9856c1"
+    },
+    {
+      "path": "recipient-reset-request-320.png",
+      "bytes": 32278,
+      "sha256": "effae743592c80e5c67dd052675bcc70a19191390653d04c4efedf97d9b77b73"
+    },
+    {
+      "path": "recipient-revoked-320.png",
+      "bytes": 39640,
+      "sha256": "c07e601cf1f2ec4d07999ef75c1752263abda4cfb6ebfae0781594b48c634e0d"
+    },
+    {
+      "path": "recipient-signed-in-320.png",
+      "bytes": 44009,
+      "sha256": "fe970b2fb035d66604c67e97c1d8f410738d6fc3c5f3e6c4f6564a98b5b7998e"
+    },
+    {
+      "path": "recipient-signin-320.png",
+      "bytes": 51892,
+      "sha256": "47471c31ff268935f91b472a798bc0bcce184b0eca51e66e33b5b1c88be2f209"
+    }
+  ],
+  "inventorySha256": "0d1d18cc66505745e10c4561d49dff4715f1cb3231f7dee49fe25ed0bfd5b26a",
+  "scanCoverage": {
+    "result": "COMPLETE",
+    "classifiedFiles": 21,
+    "totalFiles": 21,
+    "textFiles": 1,
+    "manualImageFiles": 20,
+    "unscannableFiles": 0
+  },
+  "summary": {
+    "total": 0,
+    "byId": {},
+    "result": "CLEAN"
+  },
+  "findings": [],
+  "screenshots": [
+    "admin-lifecycle-320.png",
+    "owner-copy-failure-320.png",
+    "owner-links-320.png",
+    "owner-native-share-simulated-320.png",
+    "owner-revoke-confirmation-320.png",
+    "owner-signin-320.png",
+    "recipient-account-claim-320.png",
+    "recipient-admin-denied-320.png",
+    "recipient-care-320.png",
+    "recipient-claim-activation-gated-320.png",
+    "recipient-expired-320.png",
+    "recipient-health-choice-320.png",
+    "recipient-invalid-320.png",
+    "recipient-link-management-denied-320.png",
+    "recipient-password-recovery-320.png",
+    "recipient-research-320.png",
+    "recipient-reset-request-320.png",
+    "recipient-revoked-320.png",
+    "recipient-signed-in-320.png",
+    "recipient-signin-320.png"
+  ],
+  "unscannableArtifacts": [],
+  "screenshotReview": "MANUAL_PENDING: validated PNG pixels cannot be text-scanned; each capture's *.text.txt page text was scanned instead."
+}
