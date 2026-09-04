@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T15:25:49-05:00",
+  "generatedAt": "2026-09-04T15:41:13-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-major-ordering-admin-sor-20260904",
-    "sha": "893532914c41a4526ebf83ed8ea67da177860d7c",
-    "tree": "6a1368a498627be1173a0f6eebd26bc4e15c41ef",
+    "sha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
+    "tree": "87e696740dd197be0d3bce12f5ed21148accd386",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
@@ -31,9 +31,10 @@
     "unknown"
   ],
   "routeSummary": {
-    "uniqueRoutes": 217,
-    "registrations": 219,
+    "uniqueRoutes": 218,
+    "registrations": 220,
     "byPersona": {
+      "all_legitimate_ordering_personas": 1,
       "applicant_and_membership_operations": 1,
       "care_requester": 10,
       "founder_admin_operations": 42,
@@ -54,7 +55,7 @@
     },
     "byDomain": {
       "care": 11,
-      "commerce": 12,
+      "commerce": 13,
       "corporate_site": 33,
       "identity_accounts": 46,
       "operations": 46,
@@ -65,7 +66,7 @@
     },
     "productionStatus": {
       "blocked_external": 2,
-      "built_not_deployed": 1,
+      "built_not_deployed": 2,
       "deployed_not_authenticated_smoked": 6,
       "live_verified": 2,
       "unknown": 206
@@ -1495,7 +1496,7 @@
         },
         {
           "source": "client/src/research/section.tsx",
-          "line": 301
+          "line": 302
         }
       ],
       "capabilities": [
@@ -1513,7 +1514,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 348
+          "line": 350
         }
       ],
       "capabilities": []
@@ -1545,7 +1546,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 327
+          "line": 329
         }
       ],
       "capabilities": []
@@ -1561,7 +1562,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 450
+          "line": 452
         }
       ],
       "capabilities": []
@@ -1577,7 +1578,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 452
+          "line": 454
         }
       ],
       "capabilities": []
@@ -1593,7 +1594,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 304
+          "line": 305
         }
       ],
       "capabilities": []
@@ -1609,7 +1610,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 322
+          "line": 324
         }
       ],
       "capabilities": []
@@ -1625,7 +1626,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 361
+          "line": 363
         }
       ],
       "capabilities": [
@@ -1643,7 +1644,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 355
+          "line": 357
         }
       ],
       "capabilities": []
@@ -1659,7 +1660,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 356
+          "line": 358
         }
       ],
       "capabilities": []
@@ -1675,7 +1676,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 359
+          "line": 361
         }
       ],
       "capabilities": []
@@ -1691,7 +1692,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 353
+          "line": 355
         }
       ],
       "capabilities": []
@@ -1707,7 +1708,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 352
+          "line": 354
         }
       ],
       "capabilities": []
@@ -1723,7 +1724,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 357
+          "line": 359
         }
       ],
       "capabilities": []
@@ -1739,7 +1740,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 358
+          "line": 360
         }
       ],
       "capabilities": []
@@ -1755,7 +1756,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 354
+          "line": 356
         }
       ],
       "capabilities": []
@@ -1771,7 +1772,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 360
+          "line": 362
         }
       ],
       "capabilities": []
@@ -1787,7 +1788,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 321
+          "line": 323
         }
       ],
       "capabilities": []
@@ -1803,7 +1804,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 340
+          "line": 342
         }
       ],
       "capabilities": []
@@ -1819,7 +1820,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 318
+          "line": 320
         }
       ],
       "capabilities": []
@@ -1835,7 +1836,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 317
+          "line": 319
         }
       ],
       "capabilities": []
@@ -1851,7 +1852,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 313
+          "line": 315
         }
       ],
       "capabilities": [
@@ -1869,7 +1870,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 314
+          "line": 316
         }
       ],
       "capabilities": []
@@ -1885,7 +1886,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 316
+          "line": 318
         }
       ],
       "capabilities": []
@@ -1901,7 +1902,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 315
+          "line": 317
         }
       ],
       "capabilities": []
@@ -1917,7 +1918,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 443
+          "line": 445
         }
       ],
       "capabilities": []
@@ -1933,7 +1934,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 445
+          "line": 447
         }
       ],
       "capabilities": []
@@ -1949,7 +1950,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 335
+          "line": 337
         }
       ],
       "capabilities": []
@@ -1965,7 +1966,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 332
+          "line": 334
         }
       ],
       "capabilities": []
@@ -1981,7 +1982,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 306
+          "line": 308
         }
       ],
       "capabilities": [
@@ -1999,7 +2000,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 310
+          "line": 312
         }
       ],
       "capabilities": [
@@ -2017,7 +2018,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 312
+          "line": 314
         }
       ],
       "capabilities": []
@@ -2033,7 +2034,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 311
+          "line": 313
         }
       ],
       "capabilities": []
@@ -2049,7 +2050,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 329
+          "line": 331
         }
       ],
       "capabilities": []
@@ -2065,7 +2066,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 447
+          "line": 449
         }
       ],
       "capabilities": []
@@ -2081,7 +2082,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 433
+          "line": 435
         }
       ],
       "capabilities": []
@@ -2097,7 +2098,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 328
+          "line": 330
         }
       ],
       "capabilities": []
@@ -2113,7 +2114,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 444
+          "line": 446
         }
       ],
       "capabilities": []
@@ -2129,7 +2130,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 333
+          "line": 335
         }
       ],
       "capabilities": []
@@ -2145,7 +2146,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 365
+          "line": 367
         }
       ],
       "capabilities": []
@@ -2161,7 +2162,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 370
+          "line": 372
         }
       ],
       "capabilities": []
@@ -2177,7 +2178,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 371
+          "line": 373
         }
       ],
       "capabilities": []
@@ -2193,7 +2194,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 395
+          "line": 397
         }
       ],
       "capabilities": []
@@ -2209,7 +2210,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 382
+          "line": 384
         }
       ],
       "capabilities": []
@@ -2225,7 +2226,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 381
+          "line": 383
         }
       ],
       "capabilities": []
@@ -2241,7 +2242,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 396
+          "line": 398
         }
       ],
       "capabilities": []
@@ -2257,7 +2258,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 387
+          "line": 389
         }
       ],
       "capabilities": []
@@ -2273,7 +2274,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 374
+          "line": 376
         }
       ],
       "capabilities": []
@@ -2289,7 +2290,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 375
+          "line": 377
         }
       ],
       "capabilities": []
@@ -2305,7 +2306,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 389
+          "line": 391
         }
       ],
       "capabilities": []
@@ -2321,7 +2322,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 377
+          "line": 379
         }
       ],
       "capabilities": []
@@ -2337,7 +2338,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 378
+          "line": 380
         }
       ],
       "capabilities": []
@@ -2353,7 +2354,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 393
+          "line": 395
         }
       ],
       "capabilities": []
@@ -2369,7 +2370,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 394
+          "line": 396
         }
       ],
       "capabilities": []
@@ -2385,7 +2386,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 384
+          "line": 386
         }
       ],
       "capabilities": []
@@ -2401,7 +2402,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 383
+          "line": 385
         }
       ],
       "capabilities": []
@@ -2417,7 +2418,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 366
+          "line": 368
         }
       ],
       "capabilities": []
@@ -2433,7 +2434,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 386
+          "line": 388
         }
       ],
       "capabilities": []
@@ -2449,7 +2450,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 397
+          "line": 399
         }
       ],
       "capabilities": []
@@ -2465,7 +2466,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 398
+          "line": 400
         }
       ],
       "capabilities": []
@@ -2481,7 +2482,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 368
+          "line": 370
         }
       ],
       "capabilities": []
@@ -2497,7 +2498,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 392
+          "line": 394
         }
       ],
       "capabilities": []
@@ -2513,7 +2514,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 391
+          "line": 393
         }
       ],
       "capabilities": []
@@ -2529,7 +2530,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 379
+          "line": 381
         }
       ],
       "capabilities": []
@@ -2545,7 +2546,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 380
+          "line": 382
         }
       ],
       "capabilities": []
@@ -2561,7 +2562,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 369
+          "line": 371
         }
       ],
       "capabilities": []
@@ -2577,7 +2578,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 400
+          "line": 402
         }
       ],
       "capabilities": []
@@ -2593,7 +2594,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 401
+          "line": 403
         }
       ],
       "capabilities": []
@@ -2609,7 +2610,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 367
+          "line": 369
         }
       ],
       "capabilities": []
@@ -2625,7 +2626,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 388
+          "line": 390
         }
       ],
       "capabilities": []
@@ -2641,7 +2642,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 399
+          "line": 401
         }
       ],
       "capabilities": []
@@ -2657,7 +2658,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 385
+          "line": 387
         }
       ],
       "capabilities": []
@@ -2673,7 +2674,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 390
+          "line": 392
         }
       ],
       "capabilities": []
@@ -2689,7 +2690,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 376
+          "line": 378
         }
       ],
       "capabilities": []
@@ -2705,7 +2706,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 323
+          "line": 325
         }
       ],
       "capabilities": []
@@ -2721,7 +2722,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 372
+          "line": 374
         }
       ],
       "capabilities": []
@@ -2737,7 +2738,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 373
+          "line": 375
         }
       ],
       "capabilities": []
@@ -2753,10 +2754,28 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 446
+          "line": 448
         }
       ],
       "capabilities": []
+    },
+    {
+      "path": "/research/order",
+      "persona": "all_legitimate_ordering_personas",
+      "domain": "commerce",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
+      "browserStatus": "unknown",
+      "productionStatus": "built_not_deployed",
+      "registrations": [
+        {
+          "source": "client/src/research/section.tsx",
+          "line": 306
+        }
+      ],
+      "capabilities": [
+        "order_entry_hub"
+      ]
     },
     {
       "path": "/research/orders",
@@ -2769,7 +2788,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 434
+          "line": 436
         }
       ],
       "capabilities": []
@@ -2785,7 +2804,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 338
+          "line": 340
         }
       ],
       "capabilities": [
@@ -2803,7 +2822,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 339
+          "line": 341
         }
       ],
       "capabilities": []
@@ -2819,7 +2838,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 405
+          "line": 407
         }
       ],
       "capabilities": []
@@ -2835,7 +2854,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 410
+          "line": 412
         }
       ],
       "capabilities": []
@@ -2851,7 +2870,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 414
+          "line": 416
         }
       ],
       "capabilities": []
@@ -2867,7 +2886,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 417
+          "line": 419
         }
       ],
       "capabilities": []
@@ -2883,7 +2902,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 413
+          "line": 415
         }
       ],
       "capabilities": []
@@ -2899,7 +2918,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 408
+          "line": 410
         }
       ],
       "capabilities": []
@@ -2915,7 +2934,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 411
+          "line": 413
         }
       ],
       "capabilities": []
@@ -2931,7 +2950,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 412
+          "line": 414
         }
       ],
       "capabilities": []
@@ -2947,7 +2966,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 409
+          "line": 411
         }
       ],
       "capabilities": []
@@ -2963,7 +2982,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 406
+          "line": 408
         }
       ],
       "capabilities": []
@@ -2979,7 +2998,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 416
+          "line": 418
         }
       ],
       "capabilities": []
@@ -2995,7 +3014,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 415
+          "line": 417
         }
       ],
       "capabilities": []
@@ -3011,7 +3030,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 418
+          "line": 420
         }
       ],
       "capabilities": []
@@ -3027,7 +3046,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 420
+          "line": 422
         }
       ],
       "capabilities": []
@@ -3043,7 +3062,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 419
+          "line": 421
         }
       ],
       "capabilities": []
@@ -3059,7 +3078,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 407
+          "line": 409
         }
       ],
       "capabilities": []
@@ -3075,7 +3094,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 439
+          "line": 441
         }
       ],
       "capabilities": []
@@ -3091,7 +3110,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 334
+          "line": 336
         }
       ],
       "capabilities": []
@@ -3107,7 +3126,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 341
+          "line": 343
         }
       ],
       "capabilities": []
@@ -3123,7 +3142,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 325
+          "line": 327
         }
       ],
       "capabilities": []
@@ -3139,7 +3158,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 430
+          "line": 432
         }
       ],
       "capabilities": []
@@ -3155,7 +3174,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 423
+          "line": 425
         }
       ],
       "capabilities": []
@@ -3171,7 +3190,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 427
+          "line": 429
         }
       ],
       "capabilities": []
@@ -3187,7 +3206,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 424
+          "line": 426
         }
       ],
       "capabilities": []
@@ -3203,7 +3222,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 426
+          "line": 428
         }
       ],
       "capabilities": []
@@ -3219,7 +3238,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 425
+          "line": 427
         }
       ],
       "capabilities": []
@@ -3235,7 +3254,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 449
+          "line": 451
         }
       ],
       "capabilities": []
@@ -3251,7 +3270,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 437
+          "line": 439
         }
       ],
       "capabilities": []
@@ -3267,7 +3286,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 448
+          "line": 450
         }
       ],
       "capabilities": []
@@ -3283,7 +3302,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 330
+          "line": 332
         }
       ],
       "capabilities": []
@@ -3299,7 +3318,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 441
+          "line": 443
         }
       ],
       "capabilities": []
@@ -3315,7 +3334,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 436
+          "line": 438
         }
       ],
       "capabilities": []
@@ -3331,7 +3350,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 320
+          "line": 322
         }
       ],
       "capabilities": []
@@ -3347,7 +3366,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 442
+          "line": 444
         }
       ],
       "capabilities": []
@@ -3363,7 +3382,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 319
+          "line": 321
         }
       ],
       "capabilities": []
@@ -3379,7 +3398,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 435
+          "line": 437
         }
       ],
       "capabilities": []
@@ -3395,7 +3414,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 440
+          "line": 442
         }
       ],
       "capabilities": []
@@ -3411,7 +3430,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 305
+          "line": 307
         }
       ],
       "capabilities": []
@@ -3427,7 +3446,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 324
+          "line": 326
         }
       ],
       "capabilities": []
@@ -3443,7 +3462,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 438
+          "line": 440
         }
       ],
       "capabilities": []
@@ -3459,7 +3478,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 326
+          "line": 328
         }
       ],
       "capabilities": []
@@ -3475,7 +3494,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 331
+          "line": 333
         }
       ],
       "capabilities": []
@@ -3491,7 +3510,7 @@
       "registrations": [
         {
           "source": "client/src/research/section.tsx",
-          "line": 451
+          "line": 453
         }
       ],
       "capabilities": []
@@ -3580,14 +3599,14 @@
   "capabilitySummary": {
     "count": 15,
     "sourceStatus": {
-      "mounted": 12,
+      "mounted": 13,
       "source_present": 1,
-      "unknown": 2
+      "unknown": 1
     },
     "testStatus": {
-      "focused_tests_pass": 6,
+      "focused_tests_pass": 7,
       "full_suite_pass": 2,
-      "unknown": 7
+      "unknown": 6
     },
     "browserStatus": {
       "browser_verified": 2,
@@ -3615,7 +3634,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -3651,7 +3670,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
@@ -3689,7 +3708,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
@@ -3726,7 +3745,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
@@ -3764,7 +3783,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
@@ -3801,7 +3820,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -3839,7 +3858,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
@@ -3876,7 +3895,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
@@ -3913,7 +3932,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
@@ -3948,7 +3967,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -3983,7 +4002,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4018,7 +4037,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
@@ -4053,7 +4072,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
@@ -4083,11 +4102,11 @@
       "owningServerRoute": null,
       "authorizationBoundary": "Navigation and intent preservation only; every destination retains its existing server authority.",
       "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
-      "sourceStatus": "unknown",
-      "testStatus": "unknown",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4096,10 +4115,19 @@
       },
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Implement and verify all seven required pathways with safe returnTo and referral/product intent continuity.",
+      "nextExactAction": "Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority.",
       "evidence": {
-        "source": [],
-        "tests": [],
+        "source": [
+          "shared/research/order-entry.ts",
+          "client/src/research/pages/OrderEntryHub.tsx",
+          "client/src/research/section.tsx",
+          "client/src/research/layout.tsx"
+        ],
+        "tests": [
+          "shared/research/order-entry.test.ts",
+          "client/src/research/pages/OrderEntryHub.test.tsx",
+          "client/src/research/routes-parity.test.ts"
+        ],
         "browser": [],
         "production": []
       }
@@ -4117,7 +4145,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "893532914c41a4526ebf83ed8ea67da177860d7c",
+      "currentSourceSha": "c835ad771878c6ec7db4769c5c74ce825b95f26e",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
