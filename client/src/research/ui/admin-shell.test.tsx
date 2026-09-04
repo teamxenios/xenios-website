@@ -36,9 +36,14 @@ describe("ResearchAdminShell grouped navigation", () => {
     expect(nav?.classList.contains("ra-admin-nav")).toBe(true);
     expect(nav?.classList.contains("ra-subnav")).toBe(false);
     // 2026-09-03: +1 "Care" group carrying the Care requests queue (incident CARE-2A99C6F7).
-    expect(nav?.querySelectorAll("details")).toHaveLength(6);
+    expect(nav?.querySelectorAll("details")).toHaveLength(7);
     // Referral V1 adds one mounted destination in Content & partners.
-    expect(nav?.querySelectorAll("a")).toHaveLength(28);
+    expect(nav?.querySelectorAll("a")).toHaveLength(29);
+    expect(
+      Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
+        link.getAttribute("href") === "/admin/research/command-center",
+      ).map((link) => link.textContent?.trim()),
+    ).toEqual(["Command center"]);
     expect(
       Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
         link.getAttribute("href") === "/admin/research/referral-lifecycle",
@@ -49,6 +54,7 @@ describe("ResearchAdminShell grouped navigation", () => {
         summary.textContent?.trim(),
       ),
     ).toEqual([
+      "Founder",
       "Care",
       "Members",
       "Commerce",
@@ -73,6 +79,25 @@ describe("ResearchAdminShell grouped navigation", () => {
     expect(
       Array.from(nav.querySelectorAll("details"))
         .filter((detail) => detail !== commerce)
+        .every((detail) => !detail.open),
+    ).toBe(true);
+    view.unmount();
+  });
+
+  it("opens the Founder group on the command center route", () => {
+    const view = renderAt("/admin/research/command-center");
+    const nav = view.host.querySelector('nav[aria-label="Research operations areas"]')!;
+    const founder = Array.from(nav.querySelectorAll("details")).find((detail) =>
+      detail.querySelector("summary")?.textContent?.includes("Founder"),
+    );
+    const current = nav.querySelectorAll('[aria-current="page"]');
+
+    expect(founder?.open).toBe(true);
+    expect(current).toHaveLength(1);
+    expect(current[0]?.textContent).toBe("Command center");
+    expect(
+      Array.from(nav.querySelectorAll("details"))
+        .filter((detail) => detail !== founder)
         .every((detail) => !detail.open),
     ).toBe(true);
     view.unmount();

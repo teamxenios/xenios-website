@@ -158,6 +158,12 @@ type AdminNavGroup = { label: string; items: AdminNavItem[] };
 
 const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
+    label: "Founder",
+    items: [
+      { href: ADMIN_ROUTES.commandCenter, label: "Command center" },
+    ],
+  },
+  {
     label: "Care",
     items: [
       { href: ADMIN_ROUTES.careRequests, label: "Care requests" },

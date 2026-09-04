@@ -136,6 +136,7 @@ export const PARTNER_ROUTES = {
 
 export const ADMIN_ROUTES = {
   home: "/admin/research",
+  commandCenter: "/admin/research/command-center",
   careRequests: "/admin/research/care-requests",
   referralLifecycle: "/admin/research/referral-lifecycle",
   applications: "/admin/research/applications",
@@ -173,6 +174,7 @@ export const ADMIN_ROUTES = {
   activationReadiness: "/admin/research/activation-readiness",
   esignDocuments: "/admin/research/esign",
   earlyAccessReleases: "/admin/research/early-access/releases",
+  earlyAccessPayments: "/admin/research/early-access/payments",
   earlyAccessFulfillment: "/admin/research/early-access/fulfillment",
   audit: "/admin/research/audit",
 } as const;

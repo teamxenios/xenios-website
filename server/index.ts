@@ -152,7 +152,10 @@ import { getSupabaseAdmin, supabaseConfigured } from "./supabase";
 import { promoteHeldRewards } from "./research/referrals";
 import { sweepExpiredApprovals } from "./research/expiry";
 import { runProductionFoundingSchedulerTick } from "./research/membership-activation/scheduler";
-import { logEmailStartupDiagnostics } from "./services/email-config";
+import {
+  logEmailStartupDiagnostics,
+  resolveEmailConfiguration,
+} from "./services/email-config";
 import { serveStatic } from "./static";
 import {
   apiLogPath,
@@ -172,6 +175,12 @@ import { createSupabasePlanDocumentsSource } from "./research/customer-account/p
 import { createCatalogPriorityPort } from "./research/product-activation/catalog-projection";
 import { registerClientImportAdminApi } from "./research/client-import/admin-routes";
 import { createMemoryClientImportStagingStore } from "./research/client-import/staging-store";
+import { registerFounderCommandCenterApi } from "./research/founder-command-center";
+import {
+  buildFounderCommandCenterProductionSources,
+  createSupabaseFounderCommandCenterReadPort,
+  type FounderCommandCenterAssistedOrderPort,
+} from "./research/founder-command-center-production";
 import { randomUUID } from "crypto";
 import { createServer } from "http";
 
@@ -854,7 +863,9 @@ const assistedOrderUnavailableDoor = (path: string, reason: string): RequestHand
 // release scanner sees them and a customer
 // can never receive a generic 404 for an assisted-order door; when the
 // composition is refused or disabled they answer the explicit state above.
-async function composeAssistedOrderBridge(): Promise<void> {
+async function composeAssistedOrderBridge(): Promise<
+  FounderCommandCenterAssistedOrderPort | undefined
+> {
   const assistedOrderAudit = await resolveAssistedOrderAuditAuthority({
     env: process.env,
     rpc: supabaseConfigured()
@@ -1001,6 +1012,22 @@ async function composeAssistedOrderBridge(): Promise<void> {
       "assisted-order",
     );
   }
+  if (assistedOrderComposition.service === null) return undefined;
+  const assistedOrderService = assistedOrderComposition.service;
+  return Object.freeze({
+    async list(req, input) {
+      const page = await assistedOrderService.listAdmin(
+        await assistedOrderViewers.admin(req),
+        input,
+      );
+      return Object.freeze({
+        total: page.total,
+        items: Object.freeze(
+          page.items.map((item) => Object.freeze({ createdAt: item.createdAt })),
+        ),
+      });
+    },
+  });
 }
 
 // Website 3 products and diagnostics. Uses the same active-member/admin guards,
@@ -1267,7 +1294,44 @@ void logEmailStartupDiagnostics(log).catch(() => {});
 startOutboxWorker(log);
 
 (async () => {
-  await composeAssistedOrderBridge();
+  const assistedOrders = await composeAssistedOrderBridge();
+  const commandCenterStore = earlyAccessPersistence.options.store;
+  const commandCenterExceptions = earlyAccessPersistence.options.openExceptions;
+  registerFounderCommandCenterApi(
+    app,
+    buildFounderCommandCenterProductionSources({
+      reads: supabaseConfigured()
+        ? createSupabaseFounderCommandCenterReadPort(getSupabaseAdmin())
+        : null,
+      ...(assistedOrders === undefined ? {} : { assistedOrders }),
+      ...(commandCenterStore === undefined
+        ? {}
+        : {
+            awaitingPaymentReview: async () =>
+              Object.freeze(
+                (await commandCenterStore.awaitingReview()).map((row) =>
+                  Object.freeze({ placedAt: row.placedAt }),
+                ),
+              ),
+          }),
+      ...(commandCenterExceptions === undefined
+        ? {}
+        : {
+            openExceptions: async () =>
+              Object.freeze(
+                (await commandCenterExceptions()).map((row) =>
+                  Object.freeze({ raisedAt: row.raisedAt }),
+                ),
+              ),
+          }),
+      // Deliberately omit settledAwaitingFulfillment until its founder-gated
+      // canonical reader is mounted. Payment/order state is not fulfillment.
+      emailConfiguration: async () => {
+        const configuration = await resolveEmailConfiguration();
+        return Object.freeze({ provider: configuration.provider });
+      },
+    }),
+  );
   await registerRoutes(httpServer, app);
 
   app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {

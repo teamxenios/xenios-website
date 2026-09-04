@@ -2043,8 +2043,14 @@ describe("route uniqueness validator", () => {
     // Gen2 referral V1 moves the existing GET links door (no duplicate) and
     // adds seven canonical doors: issue/revoke/resolve/bootstrap/capture/bind
     // and the guarded admin projection. Exact census remains a regression gate.
-    expect(result.callSites).toBe(412);
-    expect(result.routes).toHaveLength(421);
+    // The measured pre-Command-Center worktree was already 422 registrations
+    // across 413 call sites, one above this inherited pin. Wave 3 adds exactly
+    // one literal, mounted, read-only door: GET
+    // /api/admin/research/command-center. The post-change scanner measurement
+    // is therefore 423 registrations across 414 call sites; this records both
+    // the inherited +1 drift and Wave 3's intentional +1 without hiding either.
+    expect(result.callSites).toBe(414);
+    expect(result.routes).toHaveLength(423);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

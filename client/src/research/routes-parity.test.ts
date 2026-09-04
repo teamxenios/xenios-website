@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { ACCESS_ROUTES, ALL_MANIFEST_ROUTES, PARTNER_ROUTES } from "./lib/routes";
+import {
+  ACCESS_ROUTES,
+  ADMIN_ROUTES,
+  ALL_MANIFEST_ROUTES,
+  PARTNER_ROUTES,
+} from "./lib/routes";
 import { PUBLIC_QUALITY_ROUTES } from "./quality/routes";
 
 // The route manifest is the single source of truth; this parity test fails
@@ -16,6 +21,25 @@ describe("route manifest parity", () => {
   it("registers every manifest route in a router", () => {
     const missing = ALL_MANIFEST_ROUTES.filter((route) => !sources.includes(`"${route}"`));
     expect(missing).toEqual([]);
+  });
+
+  it("mounts each founder command route exactly once", () => {
+    expect(ADMIN_ROUTES.commandCenter).toBe("/admin/research/command-center");
+    expect(ADMIN_ROUTES.earlyAccessPayments).toBe(
+      "/admin/research/early-access/payments",
+    );
+    for (const route of [
+      ADMIN_ROUTES.commandCenter,
+      ADMIN_ROUTES.earlyAccessPayments,
+    ]) {
+      expect(ALL_MANIFEST_ROUTES.filter((candidate) => candidate === route))
+        .toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu")))
+        .toHaveLength(1);
+    }
+    expect(sources).toContain(
+      'lazy(() => import("./pages/adminx/FounderCommandCenter"))',
+    );
   });
 
   it("keeps the emailed status-link path registered alongside the manifest alias", () => {
