@@ -1,0 +1,7 @@
+{
+  "id": "6160e2ab-0d76-425d-8ae2-182e07f401ec",
+  "from": "claude-care-admin-domain-integrity-20260904",
+  "to": "release-owner",
+  "text": "CARE-ADMIN-DOMAIN-INTEGRITY-20260904 checkpoint 11e4b6d81da325bdc877968e61e8b8a5f2e1be2c; PRODUCTION FINDING: Early Access supplier confirmations expired 2026-09-03T23:30Z (0 purchasable units inferred); founder supply decision required; nothing changed",
+  "createdAt": "2026-09-04T14:53:20.136Z"
+}

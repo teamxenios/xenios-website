@@ -780,7 +780,7 @@
       "id": "CARE-ADMIN-DOMAIN-INTEGRITY-20260904",
       "title": "P0: make the dedicated Care admin queue the sole operational projection and sole status writer for Care access requests; exclude Care rows from the generic LOI list, CSV, analytics and PATCH (refuse before mutation) via one canonical pure classifier",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-care-admin-domain-integrity-20260904",
       "paths": [
         "server/care/manual-access-classifier.ts",
@@ -808,7 +808,13 @@
         "focused, wiring, census, clinical coverage, core-site, tsc, build and full suite green; exact-SHA handoff; no deploy"
       ],
       "claimedAt": "2026-09-04T14:19:49.213Z",
-      "updatedAt": "2026-09-04T14:49:12Z"
+      "updatedAt": "2026-09-04T14:49:12Z",
+      "handoff": {
+        "session": "claude-care-admin-domain-integrity-20260904",
+        "sha": "11e4b6d81da325bdc877968e61e8b8a5f2e1be2c",
+        "file": ".xenios/handoffs/2026-09-04T14-53-19-567Z-CARE-ADMIN-DOMAIN-INTEGRITY-20260904-claude-care-admin-domain-integrity-20260904.md",
+        "at": "2026-09-04T14:53:19.587Z"
+      }
     },
     {
       "id": "STRATEGIC-PARTNER-LAUNCH-V1-20260904",

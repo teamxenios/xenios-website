@@ -1,0 +1,9 @@
+# Handoff — CARE-ADMIN-DOMAIN-INTEGRITY-20260904 (P0) checkpoint
+
+Session: claude-care-admin-domain-integrity-20260904 (Claude Fable 5.1). Branch: claude/care-admin-domain-integrity-20260904. Base: 2d0d7477 (live runtime db5a2d44 + records). Exact code SHA: 11e4b6d81da325bdc877968e61e8b8a5f2e1be2c. Production unchanged (db5a2d44 / dep-dad08h740ujc73aprfcg). GitHub Actions externally blocked (account billing); recorded, not a code failure.
+
+Done: one canonical Care classifier (server/care/manual-access-classifier.ts); Care-domain boundary (server/care/loi-boundary.ts) ahead of the protected generic LOI routes so the generic list, CSV and analytics exclude Care rows and the generic status writer is refused for Care rows before any write (case-insensitive, uuid-normalised); seam server/care/index.ts re-pinned; 43 new tests incl. full-stack parity against the real routes.ts and guard; adversarial review P1s fixed. Gates: focused 149/149, control plane 51/1, tsc 0, build PASS. Full suite: red only in cart-shelf-agreement + supplier-authority (pre-existing: seeded supplier confirmations expired 2026-09-03T23:30Z).
+
+PRODUCTION FINDING (founder decision): the 22 opening-set supplier confirmations expired 2026-09-03T23:30Z (founder-supply-seed.ts, seeded to production by scripts/initialize-supplier-confirmations.ts); every Early Access unit now fails closed to held. Needs a new supplier confirmation from Samuel and an authorized production data write. Not observed directly; nothing changed. See docs/research-launch/CARE_ADMIN_DOMAIN_INTEGRITY_CHECKPOINT_2026-09-04.md.
+
+Next: FULL-UX-FOUNDATION-AND-REFERRAL-V1-20260904 (journey matrix + route inventory captured in CONTROL/EVIDENCE/ux-truth-map-20260904; first slice: canonical sign-in returnTo, account-home next action, referral V1 on the Gen 2 partner spine). Not deployed; PR #306 open.

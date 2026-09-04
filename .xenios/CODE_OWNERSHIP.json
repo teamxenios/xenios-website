@@ -950,7 +950,7 @@
         "docs/research-launch/CARE_ADMIN_RELIABILITY_RELEASE_PACKET_2026-09-03.md",
         "docs/coordination/CURRENT_PRODUCTION_STATE.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-04T14:19:49.220Z",
       "heartbeatAt": "2026-09-04T14:49:12Z"
     }
