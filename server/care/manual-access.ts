@@ -30,6 +30,9 @@ import {
 } from "../services/email-config";
 import { verifyTurnstile } from "../turnstile";
 
+export const XENIOS_HEALTH_EMAIL_FROM =
+  `Xenios Health <${TEAM_EMAIL}>` as const;
+
 export type CareManualAccessReadiness = Readonly<{
   persistenceReady: boolean;
   notificationsReady: boolean;
@@ -152,7 +155,7 @@ async function sendCareAccessInternalAlert(
   reference: string,
 ): Promise<boolean> {
   try {
-    const { client, fromEmail } = await getResendClient();
+    const { client } = await getResendClient();
     const subject = `[Xenios Care] New access request ${reference}`;
     const text = `New Xenios Care access request.
 
@@ -168,7 +171,7 @@ Best time: ${CARE_CONTACT_WINDOW_LABELS[request.contactWindow]}
 The requester confirmed they are 18 or older and in the United States. The public form collected no symptoms, diagnoses, medications, medical history, or clinical free text. Move any clinical intake to an authorized secure system before requesting medical information.
 `;
     await client.emails.send({
-      from: fromEmail || `xenios <${TEAM_EMAIL}>`,
+      from: XENIOS_HEALTH_EMAIL_FROM,
       to: adminRecipients(),
       replyTo: request.email,
       subject,
@@ -186,7 +189,7 @@ async function sendCareAccessConfirmation(
   reference: string,
 ): Promise<boolean> {
   try {
-    const { client, fromEmail } = await getResendClient();
+    const { client } = await getResendClient();
     const firstName = request.fullName.trim().split(/\s+/u)[0] || "there";
     const subject = `We received your Xenios Care request (${reference})`;
     const text = `Hi ${firstName},
@@ -216,7 +219,7 @@ The Xenios team
       </div>
     `;
     await client.emails.send({
-      from: fromEmail || `xenios <${TEAM_EMAIL}>`,
+      from: XENIOS_HEALTH_EMAIL_FROM,
       to: request.email,
       replyTo: TEAM_EMAIL,
       subject,
