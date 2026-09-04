@@ -1179,6 +1179,7 @@
         "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney.test.tsx",
         "client/src/research/adapters/earlyAccessAgreement.ts",
         "client/src/research/adapters/earlyAccessAgreement.test.ts",
         "client/src/research/early-access/EarlyAccessAgreementSection.tsx",
@@ -1198,7 +1199,10 @@
         "server/research/early-access/catalog/early-access-catalog.test.ts",
         "server/research/early-access/release/storefront-view.ts",
         "server/research/early-access/release/storefront-view.test.ts",
-        "server/research/early-access/release/release-routes.test.ts"
+        "server/research/early-access/release/release-routes.test.ts",
+        "docs/ux/quick-early-access-v2-20260904/browser-results.json",
+        "docs/ux/quick-early-access-v2-20260904/pii-scan.json",
+        "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
