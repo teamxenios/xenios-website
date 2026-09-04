@@ -976,6 +976,7 @@
         "shared/research/customer-account/**",
         "docs/ux/**",
         "docs/research-launch/FULL_UX_FOUNDATION_*.md",
+        ".xenios/PROJECT_STATE.json",
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/CODE_OWNERSHIP.json",
@@ -983,9 +984,9 @@
         ".xenios/sessions/claude-full-ux-foundation-20260904.json",
         ".xenios/handoffs/*UX-AUTH-ACCOUNT-CONTINUITY*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-04T15:42:01.901Z",
-      "heartbeatAt": "2026-09-04T15:42:01.901Z"
+      "heartbeatAt": "2026-09-04T16:10:55.007Z"
     }
   ],
   "rules": [

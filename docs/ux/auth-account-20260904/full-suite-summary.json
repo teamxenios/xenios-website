@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "c93c48704c6842f6f65fdc0698cfb3fe627cad2e",
+  "command": "npm test -- --maxWorkers=4 --reporter=json --outputFile=C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/full-suite-c93c487.json",
+  "node": "20.19.0",
+  "npm": "10.8.2",
+  "exitCode": 1,
+  "success": false,
+  "disposition": "AUTH_REGRESSION_CORRECTED_BASELINE_SUPPLIER_FAILURES_REMAIN",
+  "startTimeEpochMs": 1788538081692,
+  "lastTestEndTimeEpochMs": 1788538485242.227,
+  "rawReportSha256": "1735c541bdb9ef530265a0fe9e4f52a244df70828f9a17c5a2d9b00d26aa51f4",
+  "files": { "total": 822, "passed": 820, "failed": 2 },
+  "tests": { "total": 12395, "passed": 12335, "failed": 17, "skipped": 43 },
+  "failedFiles": [
+    {
+      "path": "server/research/early-access/cart/cart-shelf-agreement.test.ts",
+      "failedTests": 2,
+      "introducedByThisContinuation": false
+    },
+    {
+      "path": "server/research/early-access/cart/supplier-authority.test.ts",
+      "failedTests": 15,
+      "introducedByThisContinuation": false
+    }
+  ],
+  "baselineEvidence": "Both failed files, their cart code and founder-supply-seed.ts are unchanged from f318a85. Recovered predecessor and completed 7b42005 reports contain the same 17 supplier/catalogue failures. The seed expires at 2026-09-03T23:30:00.000Z and these tests use Date.now(). No supplier fact or clock was altered to obtain a pass.",
+  "keyGuards": [
+    { "path": "server/core-site-protection.test.ts", "passed": 35, "skipped": 0 },
+    { "path": "server/release-control-plane.test.ts", "passed": 51, "skipped": 1 },
+    { "path": "shared/research/recovery.test.ts", "passed": 10, "skipped": 0 },
+    { "path": "client/src/research/recovery-isolation.test.tsx", "passed": 18, "skipped": 0 },
+    { "path": "client/src/research/recovery-route-isolation.test.tsx", "passed": 56, "skipped": 0 },
+    { "path": "server/research/early-access/preview-harness.guard.test.ts", "passed": 3, "skipped": 0 }
+  ],
+  "previousCompletedRun": {
+    "sourceSha": "7b420057a2b7c8f61b5c612c2ac19dcb6e202780",
+    "rawReportSha256": "1e952396c3d6c8ec4f33eb22dd883961206222d7a04d0ee762155a8400fbe65c",
+    "files": { "total": 822, "passed": 819, "failed": 3 },
+    "tests": { "total": 12394, "passed": 12333, "failed": 18, "skipped": 43 },
+    "newFailure": "client/src/research/persona-states.test.tsx: existing from=expired-session hint was dropped; corrected at c93c487 without weakening that test."
+  },
+  "limitations": [
+    "This full suite is not green and is not a release approval.",
+    "Supplier seed/test-clock maintenance belongs in its own owned slice; live supplier availability is not inferred from test output.",
+    "No real email, payment, shipment, clinical action or production mutation was performed.",
+    "Raw JSON reports remain in the task recovery directory; this committed summary omits repetitive stack traces."
+  ]
+}

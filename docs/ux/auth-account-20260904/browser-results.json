@@ -1,0 +1,1120 @@
+{
+  "generatedAt": "2026-09-04T16:14:58.306Z",
+  "source": "actual production client bundle + existing synthetic account portal preview",
+  "requestedDestination": "/research/account?from=expired-session",
+  "worktree": "C:/Users/sboad/projects/xenios-ux-codex-20260904",
+  "bundleIndexSha256": "28490a091ee22a08009a908b7d12425ddc9361ce316f9b2bca0d9e4d2cdf5154",
+  "sourceSha": "c93c48704c6842f6f65fdc0698cfb3fe627cad2e",
+  "worktreeStatusAtStart": [
+    "M .xenios/ACTIVE_TASKS.json",
+    " M .xenios/CODE_OWNERSHIP.json",
+    " M .xenios/PROJECT_STATE.json",
+    " M .xenios/SESSION_REGISTRY.json",
+    " M .xenios/sessions/codex-ux-continuation-20260904.json",
+    " M docs/research-launch/FULL_UX_FOUNDATION_TAKEOVER_2026-09-04.md",
+    " M docs/ux/XENIOS_FULL_PERSONA_JOURNEY_MATRIX_2026-09-04.md",
+    " M docs/ux/xenios-persona-journey-matrix.json",
+    "?? docs/research-launch/FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md",
+    "?? docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_NEXT_SLICE_2026-09-04.md",
+    "?? docs/ux/auth-account-20260904/"
+  ],
+  "environment": "fresh headless profile, localhost only, clean server env, server outgoing sockets and fetch denied, browser CDP origin boundary and closed proxy",
+  "evidenceTiming": {
+    "networkQuietMs": 800,
+    "maxNetworkSettleMs": 30000,
+    "fontSettleTimeoutMs": 5000,
+    "geometryStableMeasurements": 4,
+    "geometryMeasurementIntervalMs": 200,
+    "maxGeometrySettleMs": 5000
+  },
+  "limitations": [
+    "Authentication/account records are explicit synthetic fixtures.",
+    "No real password-reset email sent. Provider redirect/request behavior is proven by server unit tests.",
+    "Default rich fixture has requests, not unpaid orders: no actionable item is correct; actionable CTA branches remain unit-test evidence."
+  ],
+  "widths": [
+    {
+      "width": 1440,
+      "checks": {
+        "signInLayout": {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-1440.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1440,
+            "contentHeightCssPx": 1109,
+            "postContentWidthCssPx": 1440,
+            "postContentHeightCssPx": 1109,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1440,
+            "capturedHeightPx": 1109
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-1440.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1440,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 1440,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1440,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-1440.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1440,
+            "contentHeightCssPx": 7835,
+            "postContentWidthCssPx": 1440,
+            "postContentHeightCssPx": 7835,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1440,
+            "capturedHeightPx": 7835
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-1440.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1440,
+            "contentHeightCssPx": 1079,
+            "postContentWidthCssPx": 1440,
+            "postContentHeightCssPx": 1079,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1440,
+            "capturedHeightPx": 1079
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 1366,
+      "checks": {
+        "signInLayout": {
+          "width": 1366,
+          "documentWidth": 1366,
+          "bodyWidth": 1366,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 1366,
+          "documentWidth": 1366,
+          "bodyWidth": 1366,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 1366,
+          "documentWidth": 1366,
+          "bodyWidth": 1366,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 1366,
+          "documentWidth": 1366,
+          "bodyWidth": 1366,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-1366.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1366,
+            "contentHeightCssPx": 1103,
+            "postContentWidthCssPx": 1366,
+            "postContentHeightCssPx": 1103,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1366,
+            "capturedHeightPx": 1103
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-1366.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1366,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 1366,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1366,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-1366.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1366,
+            "contentHeightCssPx": 7974,
+            "postContentWidthCssPx": 1366,
+            "postContentHeightCssPx": 7974,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1366,
+            "capturedHeightPx": 7974
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-1366.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1366,
+            "contentHeightCssPx": 1079,
+            "postContentWidthCssPx": 1366,
+            "postContentHeightCssPx": 1079,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1366,
+            "capturedHeightPx": 1079
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "checks": {
+        "signInLayout": {
+          "width": 1024,
+          "documentWidth": 1024,
+          "bodyWidth": 1024,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 1024,
+          "documentWidth": 1024,
+          "bodyWidth": 1024,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 1024,
+          "documentWidth": 1024,
+          "bodyWidth": 1024,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 1024,
+          "documentWidth": 1024,
+          "bodyWidth": 1024,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-1024.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1024,
+            "contentHeightCssPx": 1074,
+            "postContentWidthCssPx": 1024,
+            "postContentHeightCssPx": 1074,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1024,
+            "capturedHeightPx": 1074
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-1024.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1024,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 1024,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1024,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-1024.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1024,
+            "contentHeightCssPx": 8423,
+            "postContentWidthCssPx": 1024,
+            "postContentHeightCssPx": 8423,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1024,
+            "capturedHeightPx": 8423
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-1024.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 1024,
+            "contentHeightCssPx": 1096,
+            "postContentWidthCssPx": 1024,
+            "postContentHeightCssPx": 1096,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 1024,
+            "capturedHeightPx": 1096
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 768,
+      "checks": {
+        "signInLayout": {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-768.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 768,
+            "contentHeightCssPx": 1045,
+            "postContentWidthCssPx": 768,
+            "postContentHeightCssPx": 1045,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 768,
+            "capturedHeightPx": 1045
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-768.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 768,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 768,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 768,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-768.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 768,
+            "contentHeightCssPx": 10518,
+            "postContentWidthCssPx": 768,
+            "postContentHeightCssPx": 10518,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 768,
+            "capturedHeightPx": 10518
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-768.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 768,
+            "contentHeightCssPx": 1234,
+            "postContentWidthCssPx": 768,
+            "postContentHeightCssPx": 1234,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 768,
+            "capturedHeightPx": 1234
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 430,
+      "checks": {
+        "signInLayout": {
+          "width": 430,
+          "documentWidth": 430,
+          "bodyWidth": 430,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 430,
+          "documentWidth": 430,
+          "bodyWidth": 430,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 430,
+          "documentWidth": 430,
+          "bodyWidth": 430,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 430,
+          "documentWidth": 430,
+          "bodyWidth": 430,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-430.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 430,
+            "contentHeightCssPx": 1060,
+            "postContentWidthCssPx": 430,
+            "postContentHeightCssPx": 1060,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 430,
+            "capturedHeightPx": 1060
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-430.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 430,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 430,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 430,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-430.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 430,
+            "contentHeightCssPx": 15252,
+            "postContentWidthCssPx": 430,
+            "postContentHeightCssPx": 15252,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 430,
+            "capturedHeightPx": 15252
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-430.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 430,
+            "contentHeightCssPx": 1474,
+            "postContentWidthCssPx": 430,
+            "postContentHeightCssPx": 1474,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 430,
+            "capturedHeightPx": 1474
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 390,
+      "checks": {
+        "signInLayout": {
+          "width": 390,
+          "documentWidth": 390,
+          "bodyWidth": 390,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 390,
+          "documentWidth": 390,
+          "bodyWidth": 390,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 390,
+          "documentWidth": 390,
+          "bodyWidth": 390,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 390,
+          "documentWidth": 390,
+          "bodyWidth": 390,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-390.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 390,
+            "contentHeightCssPx": 1086,
+            "postContentWidthCssPx": 390,
+            "postContentHeightCssPx": 1086,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 390,
+            "capturedHeightPx": 1086
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-390.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 390,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 390,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 390,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-390.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 390,
+            "contentHeightCssPx": 15685,
+            "postContentWidthCssPx": 390,
+            "postContentHeightCssPx": 15685,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 390,
+            "capturedHeightPx": 15685
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-390.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 390,
+            "contentHeightCssPx": 1587,
+            "postContentWidthCssPx": 390,
+            "postContentHeightCssPx": 1587,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 390,
+            "capturedHeightPx": 1587
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "checks": {
+        "signInLayout": {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-375.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 375,
+            "contentHeightCssPx": 1074,
+            "postContentWidthCssPx": 375,
+            "postContentHeightCssPx": 1074,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 375,
+            "capturedHeightPx": 1074
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-375.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 375,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 375,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 375,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-375.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 375,
+            "contentHeightCssPx": 15757,
+            "postContentWidthCssPx": 375,
+            "postContentHeightCssPx": 15757,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 375,
+            "capturedHeightPx": 15757
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-375.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 375,
+            "contentHeightCssPx": 1577,
+            "postContentWidthCssPx": 375,
+            "postContentHeightCssPx": 1577,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 375,
+            "capturedHeightPx": 1577
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 360,
+      "checks": {
+        "signInLayout": {
+          "width": 360,
+          "documentWidth": 360,
+          "bodyWidth": 360,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 360,
+          "documentWidth": 360,
+          "bodyWidth": 360,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 360,
+          "documentWidth": 360,
+          "bodyWidth": 360,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 360,
+          "documentWidth": 360,
+          "bodyWidth": 360,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-360.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 360,
+            "contentHeightCssPx": 1074,
+            "postContentWidthCssPx": 360,
+            "postContentHeightCssPx": 1074,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 360,
+            "capturedHeightPx": 1074
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-360.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 360,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 360,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 360,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-360.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 360,
+            "contentHeightCssPx": 15760,
+            "postContentWidthCssPx": 360,
+            "postContentHeightCssPx": 15760,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 360,
+            "capturedHeightPx": 15760
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-360.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 360,
+            "contentHeightCssPx": 1618,
+            "postContentWidthCssPx": 360,
+            "postContentHeightCssPx": 1618,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 360,
+            "capturedHeightPx": 1618
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "width": 320,
+      "checks": {
+        "signInLayout": {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflows": []
+        },
+        "passwordToggle": {
+          "name": "Show password",
+          "pressed": "false",
+          "width": 51.03125,
+          "height": 44,
+          "tabIndex": 0,
+          "inputType": "password",
+          "fontSize": "16px",
+          "keyboardOperable": true,
+          "hidesAgain": true
+        },
+        "forgotReturnTo": {
+          "expected": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session",
+          "observed": "/research/reset-password?returnTo=%2Fresearch%2Faccount%3Ffrom%3Dexpired-session"
+        },
+        "resetLayout": {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflows": []
+        },
+        "signInDestination": "/research/account?from=expired-session",
+        "overview": {
+          "headline": "No administrative action is recorded, but some account information is currently unavailable.",
+          "actions": [],
+          "badge": "Status unavailable"
+        },
+        "overviewLayout": {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflows": []
+        },
+        "securityReset": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+        "securityLayout": {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflows": []
+        }
+      },
+      "screenshots": [
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/signin-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1122,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1122,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1122
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/reset-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 900,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 900,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 900
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/overview-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 16370,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 16370,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 16370
+          }
+        },
+        {
+          "path": "C:/Users/sboad/projects/xenios-ux-claude-recovery-20260904/browser-qa-results-c93c487-post-suite/security-320.png",
+          "coverage": {
+            "fullPage": true,
+            "truncated": false,
+            "layoutStable": true,
+            "contentWidthCssPx": 320,
+            "contentHeightCssPx": 1644,
+            "postContentWidthCssPx": 320,
+            "postContentHeightCssPx": 1644,
+            "maxHeightCssPx": 24000,
+            "devicePixelRatio": 1,
+            "capturedWidthPx": 320,
+            "capturedHeightPx": 1644
+          }
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "boundaryViolations": [],
+  "console": [],
+  "browserNetwork": {
+    "requestCount": 670,
+    "origins": {
+      "http://127.0.0.1:5237": 670
+    },
+    "externalHttpRequestCount": 0
+  },
+  "freshBrowserPerWidth": true,
+  "browserVersion": "152.0.7977.76",
+  "serverOutbound": {
+    "outboundAttemptsDenied": 0,
+    "fetchDenied": true,
+    "socketConnectDenied": true
+  },
+  "sourceShaAtEnd": "c93c48704c6842f6f65fdc0698cfb3fe627cad2e",
+  "bundleIndexSha256AtEnd": "28490a091ee22a08009a908b7d12425ddc9361ce316f9b2bca0d9e4d2cdf5154",
+  "pass": true,
+  "completedAt": "2026-09-04T16:16:39.986Z"
+}

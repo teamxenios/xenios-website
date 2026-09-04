@@ -6,7 +6,7 @@
       "id": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
       "title": "Continue the paused UX foundation: safe password-recovery round trip, account next action, and persona journey matrix",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-ux-continuation-20260904",
       "dependsOn": [],
       "paths": [
@@ -27,6 +27,7 @@
         "shared/research/customer-account/**",
         "docs/ux/**",
         "docs/research-launch/FULL_UX_FOUNDATION_*.md",
+        ".xenios/PROJECT_STATE.json",
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/CODE_OWNERSHIP.json",
@@ -35,7 +36,13 @@
         ".xenios/handoffs/*UX-AUTH-ACCOUNT-CONTINUITY*"
       ],
       "pathsNote": "Founder requested continuation of paused Claude session d067e872. Isolated Codex worktree from exact f318a85; original dirty metadata preserved and untouched. This narrow subtask avoids legacy affiliate and Early Access leases. No merge, deploy, migration, production configuration or external communications. Full UX/referral parent remains incomplete.",
-      "claimedAt": "2026-09-04T15:42:01.898Z"
+      "claimedAt": "2026-09-04T15:42:01.898Z",
+      "handoff": {
+        "session": "codex-ux-continuation-20260904",
+        "sha": "c93c48704c6842f6f65fdc0698cfb3fe627cad2e",
+        "file": ".xenios/handoffs/2026-09-04T16-18-11-679Z-UX-AUTH-ACCOUNT-CONTINUITY-20260904-codex-ux-continuation-20260904.md",
+        "at": "2026-09-04T16:18:11.692Z"
+      }
     },
     {
       "id": "F7-PACK02-RENAME",
@@ -876,6 +883,8 @@
     },
     {
       "id": "FULL-UX-FOUNDATION-AND-REFERRAL-V1-20260904",
+      "progressNote": "Auth/account child slice implemented at pushed c93c48704c6842f6f65fdc0698cfb3fe627cad2e, with exact-source verification in FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md. Parent program remains incomplete; referral V1 and remaining persona journeys are not claimed complete.",
+      "nextTaskDocument": "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_NEXT_SLICE_2026-09-04.md",
       "priority": "P0",
       "state": "ready",
       "owner": null,

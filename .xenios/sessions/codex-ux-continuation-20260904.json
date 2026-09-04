@@ -1,10 +1,10 @@
 {
   "id": "codex-ux-continuation-20260904",
-  "tool": "Codex",
+  "tool": "codex",
   "lane": "ux-auth-account-continuity",
   "branch": "codex/ux-continuation-20260904",
-  "state": "active",
+  "state": "paused",
   "startedAt": "2026-09-04T15:42:01.816Z",
-  "heartbeatAt": "2026-09-04T15:42:01.824Z",
-  "note": "Founder-requested takeover of paused Claude UX work at f318a85; original worktree and metadata backup preserved; no production mutation"
+  "heartbeatAt": "2026-09-04T16:17:39Z",
+  "note": "Handoff-ready local auth/account checkpoint c93c487: 293 focused tests and 98 independent recheck tests pass; tsc, build, route census, secret scan and nine-width browser pass. Full suite 12335 pass, 17 inherited supplier/catalogue failures, 43 skip. Full UX/referral remains incomplete. No production mutation. Resume from the exact-source handoff, not the paused original worktree."
 }

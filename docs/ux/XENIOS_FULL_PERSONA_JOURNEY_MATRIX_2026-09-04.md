@@ -2,6 +2,10 @@
 
 Audit date: 2026-09-04. Covers all 15 requested personas. This is a source-grounded baseline and implementation checklist, not a claim that every journey is live or complete. The companion JSON is the field-complete structured version.
 
+Implementation delta: the auth/account slice is now implemented at `c93c48704c6842f6f65fdc0698cfb3fe627cad2e`.
+See `docs/research-launch/FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md` for exact tests, browser evidence and limits.
+The baseline rows below intentionally retain the original findings; this delta does not mark complete the broader invitation, request-history, referral or full-persona journeys.
+
 ## Evidence and scope
 
 Current route registrations, guards and relevant components were inspected. The saved UX digest was used only as a lead: its old line numbers and several conclusions did not match current code. No customer examples, patient data, credentials, deployment identifiers or production account identifiers are included.

@@ -1,5 +1,9 @@
 # UX foundation continuation — 2026-09-04
 
+Successor implementation/evidence record: `FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md`.
+Tested code `c93c48704c6842f6f65fdc0698cfb3fe627cad2e` is pushed; nothing deployed.
+This initial takeover note is historical, not the final test or completion attestation.
+
 ## Recovered checkpoint
 
 The founder asked Codex to locate Claude's session-limit pause and continue.

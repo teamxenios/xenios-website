@@ -4,6 +4,12 @@
   "scope": "Source-grounded baseline for the paused UX foundation; auth/account continuation is a bounded local slice.",
   "authority": "Current code and fresh production evidence outrank this matrix. Deployment identifiers, customer examples and clinical data are intentionally omitted.",
   "baseline": "Paused UX foundation before this continuation's auth/account implementation; update delta notes after its tests, not by assuming concurrent edits passed.",
+  "implementationDelta": {
+    "codeSha": "c93c48704c6842f6f65fdc0698cfb3fe627cad2e",
+    "handoff": "docs/research-launch/FULL_UX_FOUNDATION_AUTH_ACCOUNT_CHECKPOINT_2026-09-04.md",
+    "scope": "Safe auth intent and truthful account actions implemented locally; see exact evidence and limits. Baseline persona rows are retained. Full UX, invitations, request-history and referral journeys remain incomplete.",
+    "deployed": false
+  },
   "evidencePolicy": {
     "evidenceState": "SOURCE_INSPECTED_NOT_JOURNEY_PROVEN",
     "liveVerification": "Not re-attested by this matrix. Route presence is not a successful live journey.",
