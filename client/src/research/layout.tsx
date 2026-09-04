@@ -293,7 +293,7 @@ function isAccountPortalPath(path: string): boolean {
     || isAccountOrderDetailPath(path);
 }
 
-function isPublicResearchPath(path: string): boolean {
+export function isPublicResearchPath(path: string): boolean {
   const normalized = normalizeResearchPath(path);
   if (!normalized) return false;
 
@@ -320,6 +320,10 @@ function isPublicResearchPath(path: string): boolean {
 
   return normalized === "/research"
     || normalized === "/research/access-hub"
+    // Public here means bypassing the legacy reviewer-password gate. The
+    // Order Entry Hub remains transactional and noindex through the Research
+    // section policy plus its own explicit SeoHead directive.
+    || normalized === "/research/order"
     || normalized === "/research/supplier-access"
     || normalized === "/research/organizations"
     || normalized === "/research/partners"

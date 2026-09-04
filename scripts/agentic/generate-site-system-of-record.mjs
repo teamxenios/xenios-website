@@ -246,6 +246,18 @@ function validStatus(value) {
   return STATUS_VOCABULARY.includes(value);
 }
 
+function uniqueStringArray(value) {
+  return Array.isArray(value)
+    && value.every((item) => typeof item === "string")
+    && new Set(value).size === value.length;
+}
+
+function validIsoDateTime(value) {
+  return typeof value === "string"
+    && /^\d{4}-\d{2}-\d{2}T/.test(value)
+    && Number.isFinite(Date.parse(value));
+}
+
 function safeRelativePath(value) {
   return typeof value === "string" && value.length > 0 && !value.startsWith("/") && !value.includes("..") && !value.includes("\\");
 }
@@ -427,34 +439,115 @@ export function validateSnapshot(snapshot) {
     "routeSummary", "routes", "capabilitySummary", "capabilities", "sources", "invariants",
   ]);
   if (snapshot?.schemaVersion !== 1) errors.push("schemaVersion must be 1");
+  if (typeof snapshot?.repository !== "string" || snapshot.repository.length === 0) errors.push("repository is required");
+  if (!validIsoDateTime(snapshot?.generatedAt)) errors.push("generatedAt must be an ISO date-time");
+  errors.push(...exactKeys(snapshot?.source, ["branch", "sha", "tree", "clean", "provenance"])
+    .map((error) => `source ${error}`));
   if (!/^[a-f0-9]{40}$/i.test(snapshot?.source?.sha ?? "")) errors.push("source.sha must be full length");
   if (!/^[a-f0-9]{40}$/i.test(snapshot?.source?.tree ?? "")) errors.push("source.tree must be full length");
   if (snapshot?.source?.clean !== true) errors.push("source.clean must be true");
+  if (typeof snapshot?.source?.branch !== "string" || snapshot.source.branch.length === 0) errors.push("source.branch is required");
+  if (typeof snapshot?.source?.provenance !== "string" || snapshot.source.provenance.length === 0) errors.push("source.provenance is required");
+  errors.push(...exactKeys(snapshot?.production, ["sha", "deployId", "verificationStatus", "observedAt", "evidenceSource"])
+    .map((error) => `production ${error}`));
   if (!/^[a-f0-9]{40}$/i.test(snapshot?.production?.sha ?? "")) errors.push("production.sha must be full length");
+  if (!/^dep-[a-z0-9]+$/.test(snapshot?.production?.deployId ?? "")) errors.push("production.deployId is invalid");
   if (!validStatus(snapshot?.production?.verificationStatus)) errors.push("production.verificationStatus is invalid");
+  if (!validIsoDateTime(snapshot?.production?.observedAt)) errors.push("production.observedAt must be an ISO date-time");
+  if (typeof snapshot?.production?.evidenceSource !== "string" || snapshot.production.evidenceSource.length === 0) errors.push("production.evidenceSource is required");
   if (JSON.stringify(snapshot?.statusVocabulary) !== JSON.stringify(STATUS_VOCABULARY)) errors.push("statusVocabulary drifted");
+  errors.push(...exactKeys(snapshot?.routeSummary, ["uniqueRoutes", "registrations", "byPersona", "byDomain", "productionStatus"])
+    .map((error) => `routeSummary ${error}`));
+  errors.push(...exactKeys(snapshot?.capabilitySummary, ["count", "sourceStatus", "testStatus", "browserStatus", "productionStatus"])
+    .map((error) => `capabilitySummary ${error}`));
   if (!Array.isArray(snapshot?.routes) || snapshot.routes.length === 0) errors.push("routes must be non-empty");
   if (!Array.isArray(snapshot?.capabilities) || snapshot.capabilities.length === 0) errors.push("capabilities must be non-empty");
   const routePaths = new Set();
   for (const route of snapshot?.routes ?? []) {
+    errors.push(...exactKeys(route, [
+      "path", "persona", "domain", "sourceStatus", "testStatus", "browserStatus",
+      "productionStatus", "registrations", "capabilities",
+    ]).map((error) => `${route?.path ?? "route"} ${error}`));
+    if (typeof route?.path !== "string" || !route.path.startsWith("/")) errors.push("route path must start with /");
     if (routePaths.has(route.path)) errors.push(`duplicate route ${route.path}`);
     routePaths.add(route.path);
+    if (typeof route?.persona !== "string" || route.persona.length === 0) errors.push(`${route.path} persona is required`);
+    if (typeof route?.domain !== "string" || route.domain.length === 0) errors.push(`${route.path} domain is required`);
     for (const key of ["sourceStatus", "testStatus", "browserStatus", "productionStatus"]) {
       if (!validStatus(route[key])) errors.push(`${route.path} ${key} is invalid`);
     }
     if (!Array.isArray(route.registrations) || route.registrations.length === 0) errors.push(`${route.path} has no registration evidence`);
+    for (const registration of route.registrations ?? []) {
+      errors.push(...exactKeys(registration, ["source", "line"])
+        .map((error) => `${route.path} registration ${error}`));
+      if (!safeRelativePath(registration?.source)) errors.push(`${route.path} registration source is unsafe`);
+      if (!Number.isInteger(registration?.line) || registration.line < 1) errors.push(`${route.path} registration line is invalid`);
+    }
+    if (!uniqueStringArray(route.capabilities)) errors.push(`${route.path} capabilities must be unique strings`);
   }
   const capabilityIds = new Set();
   for (const capability of snapshot?.capabilities ?? []) {
     const requiredErrors = exactKeys(capability, ["id", ...CAPABILITY_REQUIRED_FIELDS, "evidence"]);
     errors.push(...requiredErrors.map((error) => `${capability.id ?? "capability"} ${error}`));
+    if (!/^[a-z0-9][a-z0-9_-]*$/.test(capability?.id ?? "")) errors.push(`${capability?.id ?? "capability"} id is invalid`);
     if (capabilityIds.has(capability.id)) errors.push(`duplicate capability ${capability.id}`);
     capabilityIds.add(capability.id);
+    for (const key of ["capability", "persona", "authorizationBoundary", "dataSource", "nextExactAction"]) {
+      if (typeof capability?.[key] !== "string" || capability[key].length === 0) errors.push(`${capability.id} ${key} is required`);
+    }
+    for (const key of ["route", "owningClientComponent", "owningServerRoute", "blocker", "founderAction"]) {
+      if (capability?.[key] !== null && typeof capability?.[key] !== "string") errors.push(`${capability.id} ${key} must be string or null`);
+    }
+    if (typeof capability?.route === "string" && !capability.route.startsWith("/")) errors.push(`${capability.id} route must start with /`);
+    if (typeof capability?.owningClientComponent === "string" && !safeRelativePath(capability.owningClientComponent)) errors.push(`${capability.id} owningClientComponent is unsafe`);
+    if (typeof capability?.owningServerRoute === "string" && !capability.owningServerRoute.startsWith("/")) errors.push(`${capability.id} owningServerRoute must start with /`);
     for (const key of ["sourceStatus", "testStatus", "browserStatus", "productionStatus"]) {
       if (!validStatus(capability[key])) errors.push(`${capability.id} ${key} is invalid`);
     }
     if (capability.currentSourceSha !== snapshot?.source?.sha) errors.push(`${capability.id} source SHA drifted`);
     if (capability.productionSha !== snapshot?.production?.sha) errors.push(`${capability.id} production SHA drifted`);
+    errors.push(...exactKeys(capability?.ownerAndLease, ["taskId", "owner", "leaseState"])
+      .map((error) => `${capability.id} ownerAndLease ${error}`));
+    if (capability?.ownerAndLease?.taskId !== null && typeof capability?.ownerAndLease?.taskId !== "string") errors.push(`${capability.id} owner task is invalid`);
+    if (capability?.ownerAndLease?.owner !== null && typeof capability?.ownerAndLease?.owner !== "string") errors.push(`${capability.id} owner is invalid`);
+    if (!["active", "handoff", "released", "unavailable"].includes(capability?.ownerAndLease?.leaseState)) errors.push(`${capability.id} leaseState is invalid`);
+    errors.push(...exactKeys(capability?.evidence, ["source", "tests", "browser", "production"])
+      .map((error) => `${capability.id} evidence ${error}`));
+    for (const key of ["source", "tests", "browser", "production"]) {
+      if (!uniqueStringArray(capability?.evidence?.[key])) errors.push(`${capability.id} evidence.${key} must be unique strings`);
+    }
+  }
+  for (const route of snapshot?.routes ?? []) {
+    for (const capabilityId of route.capabilities ?? []) {
+      if (!capabilityIds.has(capabilityId)) errors.push(`${route.path} references unknown capability ${capabilityId}`);
+    }
+  }
+  errors.push(...exactKeys(snapshot?.sources, [
+    "registry", "projectState", "releaseState", "activeTasks", "codeOwnership", "clientRouteFiles",
+  ]).map((error) => `sources ${error}`));
+  for (const key of ["registry", "projectState", "releaseState", "activeTasks", "codeOwnership"]) {
+    if (!safeRelativePath(snapshot?.sources?.[key])) errors.push(`sources.${key} is unsafe`);
+  }
+  if (!uniqueStringArray(snapshot?.sources?.clientRouteFiles)
+      || snapshot.sources.clientRouteFiles.some((path) => !safeRelativePath(path))) {
+    errors.push("sources.clientRouteFiles must contain unique safe paths");
+  }
+  if (!uniqueStringArray(snapshot?.invariants) || snapshot.invariants.length === 0) errors.push("invariants must be non-empty unique strings");
+  if (Array.isArray(snapshot?.routes)) {
+    const registrationCount = snapshot.routes.reduce((total, route) => total + (route.registrations?.length ?? 0), 0);
+    if (snapshot?.routeSummary?.uniqueRoutes !== snapshot.routes.length) errors.push("routeSummary.uniqueRoutes does not match routes");
+    if (snapshot?.routeSummary?.registrations !== registrationCount) errors.push("routeSummary.registrations does not match routes");
+    if (JSON.stringify(snapshot?.routeSummary?.byPersona) !== JSON.stringify(countBy(snapshot.routes, "persona"))) errors.push("routeSummary.byPersona does not match routes");
+    if (JSON.stringify(snapshot?.routeSummary?.byDomain) !== JSON.stringify(countBy(snapshot.routes, "domain"))) errors.push("routeSummary.byDomain does not match routes");
+    if (JSON.stringify(snapshot?.routeSummary?.productionStatus) !== JSON.stringify(countBy(snapshot.routes, "productionStatus"))) errors.push("routeSummary.productionStatus does not match routes");
+  }
+  if (Array.isArray(snapshot?.capabilities)) {
+    if (snapshot?.capabilitySummary?.count !== snapshot.capabilities.length) errors.push("capabilitySummary.count does not match capabilities");
+    for (const key of ["sourceStatus", "testStatus", "browserStatus", "productionStatus"]) {
+      if (JSON.stringify(snapshot?.capabilitySummary?.[key]) !== JSON.stringify(countBy(snapshot.capabilities, key))) {
+        errors.push(`capabilitySummary.${key} does not match capabilities`);
+      }
+    }
   }
   errors.push(...sensitiveRecordFindings(snapshot));
   return errors;

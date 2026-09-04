@@ -9,6 +9,7 @@ import { ACCOUNT_PORTAL_EXTENSION_ROUTES } from "../account-portal/routes";
 export const ACCESS_ROUTES = {
   gateway: "/research",
   accessHub: "/research/access-hub",
+  order: "/research/order",
   supplierAccess: "/research/supplier-access",
   organizations: "/research/organizations",
   affiliates: "/research/affiliates",

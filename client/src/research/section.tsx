@@ -29,6 +29,7 @@ const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
+const OrderEntryHub = lazy(() => import("./pages/OrderEntryHub"));
 const AboutResearch = lazy(() => import("./pages/AboutResearch"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Faq = lazy(() => import("./pages/Faq"));
@@ -302,6 +303,7 @@ export default function ResearchSection() {
 
           {/* Access family */}
           <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
+          <Route path="/research/order">{() => <L component={OrderEntryHub} />}</Route>
           <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
           <Route path="/research/early-access" component={EarlyAccessRoute} />
           {/* The assisted-order wizard, additive beside the existing Early

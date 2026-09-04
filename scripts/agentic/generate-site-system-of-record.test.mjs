@@ -261,6 +261,26 @@ test("snapshot validation enforces capability shape, exact SHAs, statuses, uniqu
   assert.match(errors, /email address/);
 });
 
+test("snapshot validation rejects nested contract drift and summary mismatches", () => {
+  const invalid = snapshot();
+  invalid.source.unexpected = true;
+  invalid.routes[0].registrations[0].unexpected = true;
+  invalid.routes[0].capabilities.push("missing_capability");
+  invalid.routeSummary.uniqueRoutes = 99;
+  invalid.capabilities[0].ownerAndLease.unexpected = true;
+  invalid.capabilities[0].evidence.source.push(invalid.capabilities[0].evidence.source[0]);
+  invalid.sources.clientRouteFiles.push("../outside.tsx");
+
+  const errors = validateSnapshot(invalid).join("\n");
+  assert.match(errors, /source unexpected unexpected/);
+  assert.match(errors, /registration unexpected unexpected/);
+  assert.match(errors, /references unknown capability missing_capability/);
+  assert.match(errors, /routeSummary\.uniqueRoutes does not match routes/);
+  assert.match(errors, /ownerAndLease unexpected unexpected/);
+  assert.match(errors, /evidence\.source must be unique strings/);
+  assert.match(errors, /sources\.clientRouteFiles must contain unique safe paths/);
+});
+
 test("privacy scanner finds credentials and identifiers but ignores ordinary route words", () => {
   const findings = sensitiveRecordFindings({
     route: "/research/reset-password",

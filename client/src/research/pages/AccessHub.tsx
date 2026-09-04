@@ -19,7 +19,7 @@ const ACCESS_OPTIONS = [
     title: "Xenios Research",
     body: "Explore legitimate nonclinical Research access with exact product and variant identity, plain-language evidence, current status, documentation, authorized requests, orders, and support.",
     availability: "Research access never includes personal-use guidance, prescribing, dosing, reconstitution, injection, or treatment recommendations.",
-    primary: { label: "Explore Research access", href: "/research/apply" },
+    primary: { label: "Choose how to order", href: "/research/order" },
     secondary: { label: "Research member sign in", href: "/research/sign-in" },
   },
   {

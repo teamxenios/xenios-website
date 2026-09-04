@@ -345,18 +345,23 @@ export function ResearchPublicShell({
   eyebrow,
   title,
   lead,
+  contentMaxWidth = 720,
   children,
 }: {
   eyebrow: string;
   title: string;
   lead?: string;
+  /** Public decision surfaces may opt into a wider, responsive card grid. */
+  contentMaxWidth?: number | string;
   children: ReactNode;
 }) {
   return (
     <div className="research-app container-x" style={{ paddingTop: 40, paddingBottom: 64 }}>
       <PageHeader eyebrow={eyebrow} title={title} lead={lead} />
       {/* Not a landmark: see the comment in ResearchMemberShell above. */}
-      <div className="mt-8" style={{ maxWidth: 720 }}>{children}</div>
+      <div className="mt-8 min-w-0" style={{ maxWidth: contentMaxWidth }}>
+        {children}
+      </div>
     </div>
   );
 }

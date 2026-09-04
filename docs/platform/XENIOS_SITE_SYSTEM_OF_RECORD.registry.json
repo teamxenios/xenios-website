@@ -541,23 +541,40 @@
       "owningServerRoute": null,
       "authorizationBoundary": "Navigation and intent preservation only; every destination retains its existing server authority.",
       "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
-      "sourceStatus": "unknown",
-      "testStatus": "unknown",
+      "sourceStatus": "mounted",
+      "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
       "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Implement and verify all seven required pathways with safe returnTo and referral/product intent continuity.",
+      "nextExactAction": "Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority.",
       "evidence": {
-        "source": [],
-        "tests": [],
+        "source": [
+          "shared/research/order-entry.ts",
+          "client/src/research/pages/OrderEntryHub.tsx",
+          "client/src/research/section.tsx",
+          "client/src/research/layout.tsx"
+        ],
+        "tests": [
+          "shared/research/order-entry.test.ts",
+          "client/src/research/pages/OrderEntryHub.test.tsx",
+          "client/src/research/routes-parity.test.ts"
+        ],
         "browser": [],
         "production": []
       },
       "verification": {
-        "requiredClientRoute": false,
-        "requiredFiles": [],
+        "requiredClientRoute": true,
+        "requiredFiles": [
+          "shared/research/order-entry.ts",
+          "shared/research/order-entry.test.ts",
+          "client/src/research/pages/OrderEntryHub.tsx",
+          "client/src/research/pages/OrderEntryHub.test.tsx",
+          "client/src/research/lib/routes.ts",
+          "client/src/research/section.tsx",
+          "client/src/research/layout.tsx"
+        ],
         "serverRouteEvidenceFiles": []
       }
     },
