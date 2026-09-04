@@ -154,9 +154,13 @@ describe("the changed-file classifier", () => {
       "client/src/lib/tracking.ts",
       "client/src/lib/attribution.ts",
     ];
+    const pwaSensitiveWorkflowFiles = [
+      "client/src/pwa/PwaLifecycle.tsx",
+    ];
     const reviewedHashLockedSeams = [
       ...typographyFiles,
       ...healthEntrypointFiles,
+      ...pwaSensitiveWorkflowFiles,
     ];
     const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 
@@ -173,6 +177,23 @@ describe("the changed-file classifier", () => {
         /^sha256:[0-9a-f]{64}$/,
       );
     }
+  });
+
+  it("admits only the exact PWA display seam and keeps registration, worker and app shell protected", () => {
+    const result = classifyChangedFiles([
+      "client/src/pwa/PwaLifecycle.tsx",
+      "client/src/pwa/register.ts",
+      "client/public/sw.js",
+      "client/src/main.tsx",
+    ], manifest);
+    expect(result.seam).toEqual(["client/src/pwa/PwaLifecycle.tsx", "client/src/main.tsx"]);
+    expect(result.allowed).toEqual([]);
+    expect(result.violations.sort()).toEqual(["client/public/sw.js", "client/src/pwa/register.ts"]);
+    const policy = manifest.permittedSeamFiles.files.find(
+      (entry: { path: string }) => entry.path === "client/src/pwa/PwaLifecycle.tsx",
+    );
+    expect(policy.allowed).toContain("update notices independent");
+    expect(policy.forbidden).toContain("service-worker registration");
   });
 
   it("still FAILS adjacent font and dependency paths instead of widening a subtree", () => {

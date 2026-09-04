@@ -526,6 +526,12 @@
         "forbidden": "any provider, initialization, tracking, attribution, render-order, application, or additional import change; any byte change fails the fileHashes tripwire"
       },
       {
+        "path": "client/src/pwa/PwaLifecycle.tsx",
+        "seam": "hash-locked PWA install-promotion sensitive-route policy",
+        "allowed": "the founder-requested route-aware suppression of install promotion on sensitive Care, Health, Research, referral, admin, auth/account recovery, checkout, payment, billing and security paths, with update notices independent; current complete file recorded in fileHashes",
+        "forbidden": "changing service-worker registration, update application, cache/network policy, provider order, application authority, or showing install promotion on a sensitive or malformed location; any unreviewed byte change fails the fileHashes tripwire"
+      },
+      {
         "path": "client/src/fonts.ts",
         "seam": "hash-locked Fontsource import entry only",
         "allowed": "the seven reviewed Fontsource 5.3.0 weight imports recorded in fileHashes; the current complete file is hash-pinned",
@@ -644,12 +650,14 @@
       "client/public/sitemap.xml: old sha256:e065ea855d43904b8104bf191435bf8ba1a28b08c38788e9048ba5f5b84750ea, new sha256:4e86dd4dbe020a3bc621cf48249dff4d3dea3883ff6b710499f4dbca96f3f84f (one /health canonical URL added; no prior identity removed or changed).",
       "client/public/llms.txt: new sha256:b1e4c1940cd19229a1fba393ba9c82370c2bde5ccaedd5b5a2f9078a1f0aac37 (one /health route-description line added).",
       "client/src/lib/tracking.ts: new sha256:3faaf74047b57328dc25ddb12fcc853901ee3acf6f0cba1e27b946e740a79288 (the exact normalized /health identity joins the fail-closed tracking block and its own full-document privacy zone).",
-      "client/src/lib/attribution.ts: new sha256:09f052ab8255202e20e985c03f216424a6062a596634ef819a9c95fd319e439d (the exact normalized /health identity joins the existing sensitive-attribution clearing boundary)."
+      "client/src/lib/attribution.ts: new sha256:09f052ab8255202e20e985c03f216424a6062a596634ef819a9c95fd319e439d (the exact normalized /health identity joins the existing sensitive-attribution clearing boundary).",
+      "2026-09-04, founder-requested PWA sensitive-workflow overlay policy: only client/src/pwa/PwaLifecycle.tsx changes. Install promotion now fails closed dynamically on sensitive/malformed locations and rechecks before prompting; update notices remain independent. register.ts, main.tsx and sw.js remain untouched. old sha256:54e38238f46643a63b6570702a8c9fc24419c0e2826cbf7d6d32fae12eca5238, new sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741."
     ],
     "files": {
       "client/index.html": "sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba",
       "client/src/index.css": "sha256:c674bfe3cb6d1af28e49283eac037828d3b82bcfbd13e89ebfb04db70143b3fc",
       "client/src/main.tsx": "sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
+      "client/src/pwa/PwaLifecycle.tsx": "sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
       "client/src/fonts.ts": "sha256:643c7a1a30fcf0f6a1a300c0bf7a044cf2e426e579405493cc4251474f4a73a5",
       "client/src/components/Navbar.tsx": "sha256:a4d414440431bc646811f82b6551d5d877667e3a755484eda4e1b1de01746fad",
       "client/src/components/Footer.tsx": "sha256:cef8d1891e42b2213dd90324fafea257a7164d762af7ef7bb05ea14b30176247",

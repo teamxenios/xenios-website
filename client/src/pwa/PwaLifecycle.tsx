@@ -13,6 +13,11 @@
 // no identifiers, nothing durable, nothing private.
 
 import { useEffect, useState } from "react";
+import { useLocationProperty } from "wouter/use-browser-location";
+import { normalizeCarePath, isHealthGatewayPath } from "@shared/care/paths";
+import { isResearchPath } from "@shared/research/paths";
+import { isRecommendationPath } from "@shared/research/referral-v1";
+import { isRecoveryErrorHash, isRecoveryHash } from "@shared/research/recovery";
 import { applyPwaUpdate } from "./register";
 
 const DISMISS_KEY = "xenios-pwa-hint-dismissed";
@@ -21,6 +26,43 @@ type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
+
+const SENSITIVE_ROOTS = new Set([
+  "/admin", "/adminx", "/auth", "/account", "/accounts", "/login", "/logout",
+  "/sign-in", "/sign-up", "/signin", "/signup", "/register", "/claim",
+  "/activate", "/activation", "/reset-password", "/forgot-password", "/verify",
+  "/verify-email", "/callback", "/checkout", "/payment", "/payments", "/billing",
+  "/security",
+]);
+const ENCODED_STRUCTURAL_PATH_CHARACTER = /%(?:2e|2f|3f|5c|23)/iu;
+
+function isAtRoot(pathname: string, root: string): boolean {
+  return pathname === root || pathname.startsWith(`${root}/`);
+}
+
+/** Install education is acquisition UI, so uncertain paths fail closed. This
+ * is intentionally stricter than routing: a malformed or encoded structural
+ * boundary must never make a sensitive workflow eligible for an overlay.
+ */
+export function isPwaInstallLocationAllowed(pathname: string, hash = ""): boolean {
+  const normalized = normalizeCarePath(pathname);
+  if (normalized === null || ENCODED_STRUCTURAL_PATH_CHARACTER.test(pathname)) return false;
+  if (
+    isResearchPath(pathname) ||
+    isRecommendationPath(pathname) ||
+    normalized === "/care" ||
+    normalized.startsWith("/care/") ||
+    isHealthGatewayPath(pathname) ||
+    isRecoveryHash(hash) ||
+    isRecoveryErrorHash(hash)
+  ) return false;
+  return ![...SENSITIVE_ROOTS].some((root) => isAtRoot(normalized, root));
+}
+
+function currentInstallLocationAllowed(): boolean {
+  return typeof window !== "undefined" &&
+    isPwaInstallLocationAllowed(window.location.pathname, window.location.hash);
+}
 
 function isStandalone(): boolean {
   if (typeof window === "undefined") return true;
@@ -105,6 +147,10 @@ const dismissStyle: React.CSSProperties = {
 };
 
 export function PwaLifecycle(): React.JSX.Element | null {
+  const installLocationAllowed = useLocationProperty(
+    currentInstallLocationAllowed,
+    () => false,
+  );
   const [updateRegistration, setUpdateRegistration] =
     useState<ServiceWorkerRegistration | null>(null);
   const [installPrompt, setInstallPrompt] =
@@ -120,6 +166,8 @@ export function PwaLifecycle(): React.JSX.Element | null {
     window.addEventListener("xenios:pwa-update-available", onUpdate);
 
     const onBeforeInstall = (event: Event) => {
+      // Suppress the browser's automatic UI everywhere. The retained event is
+      // rendered only when the current location is eligible.
       event.preventDefault();
       if (!wasHintDismissed()) setInstallPrompt(event as InstallPromptEvent);
     };
@@ -171,6 +219,8 @@ export function PwaLifecycle(): React.JSX.Element | null {
 
   if (dismissed) return null;
 
+  if (!installLocationAllowed || isStandalone()) return null;
+
   if (installPrompt) {
     return (
       <div style={pillStyle} role="status" aria-live="polite">
@@ -178,6 +228,9 @@ export function PwaLifecycle(): React.JSX.Element | null {
         <button
           style={buttonStyle}
           onClick={() => {
+            // Close the same-tick navigation race: React may not have rendered
+            // the newly blocked route yet when a stale Install button is tapped.
+            if (!currentInstallLocationAllowed() || isStandalone()) return;
             void installPrompt.prompt();
             setInstallPrompt(null);
           }}
