@@ -1,0 +1,1117 @@
+{
+  "schemaVersion": 4,
+  "kind": "evidence-pii-scan",
+  "candidateSha": "342a2c4fa446d89e796f4aee400661fa360b2378",
+  "scannedAtUtc": "2026-09-04T18:44:57.418Z",
+  "evidenceRoot": ".",
+  "textFilesScanned": 1,
+  "textArtifacts": [
+    "browser-results.json"
+  ],
+  "fileInventory": [
+    {
+      "path": "admin-lifecycle-1024.png",
+      "bytes": 650013,
+      "sha256": "28db0cd71fc0b60a43cdc60e530b93e7b41f42e19277b43092b63402f5543477"
+    },
+    {
+      "path": "admin-lifecycle-1366.png",
+      "bytes": 511579,
+      "sha256": "aaed8839822888bf25d384628c59a4f50c4a55e2d69bccf4fa53e645bc67d20e"
+    },
+    {
+      "path": "admin-lifecycle-1440.png",
+      "bytes": 488059,
+      "sha256": "3c8b75ecd2d522eccdeff6d6e694c23665633a3ab30d1ea619009cb1bc8b9377"
+    },
+    {
+      "path": "admin-lifecycle-320.png",
+      "bytes": 792973,
+      "sha256": "a959d08e415a1bde16e58aee563872c794506d46225004a13ec9ee2952bd34b0"
+    },
+    {
+      "path": "admin-lifecycle-360.png",
+      "bytes": 788855,
+      "sha256": "88046702521efbe16cc86bb57cfa81cc9d414cf111ec5c12ef868078d7e037dc"
+    },
+    {
+      "path": "admin-lifecycle-375.png",
+      "bytes": 803507,
+      "sha256": "1059af897f84e765667cb7a23286e689308b797af6c7b2f78c0583b058089957"
+    },
+    {
+      "path": "admin-lifecycle-390.png",
+      "bytes": 806523,
+      "sha256": "1e61f9fa9bc0557e83b2452852d24e11c7503879aad07bfcb15fe435eab6027a"
+    },
+    {
+      "path": "admin-lifecycle-430.png",
+      "bytes": 773507,
+      "sha256": "cc8c9e7b87903e6d5e18d3dd023fb1ccd796028045f477c6b04dea4dafec2ddb"
+    },
+    {
+      "path": "admin-lifecycle-768.png",
+      "bytes": 628095,
+      "sha256": "cad57e3dbbc46f458bee005ecf22f5f7724fd5288700fc3bd5d59f33b9c6dbfc"
+    },
+    {
+      "path": "browser-results.json",
+      "bytes": 778145,
+      "sha256": "137e58de5c5ee7746170a77e6badff08a6c58953ebc932e200f7e6d6f1b0ea03"
+    },
+    {
+      "path": "owner-copy-failure-1024.png",
+      "bytes": 203071,
+      "sha256": "db5d3824ebebb3f6357716874bf9b1f3ea8027deef3524e63deef94fdb8e2620"
+    },
+    {
+      "path": "owner-copy-failure-1366.png",
+      "bytes": 198035,
+      "sha256": "35abc75496b7eb98f363c083bb802ae0b4394824aeb652d0afde51f937e56a11"
+    },
+    {
+      "path": "owner-copy-failure-1440.png",
+      "bytes": 173035,
+      "sha256": "ebdee55292acf1b6a12daae498f4ba089cefe245bfde2d930cf17af8c76276c3"
+    },
+    {
+      "path": "owner-copy-failure-320.png",
+      "bytes": 192359,
+      "sha256": "c484806aafaeb78442fe9c2c7e267cf93cb88dd55b78a23bfb6d2a6218093a6d"
+    },
+    {
+      "path": "owner-copy-failure-360.png",
+      "bytes": 195206,
+      "sha256": "f9a533e768d6505e4645e4325b11642201476da3e8c767c96f8a123e5f88c394"
+    },
+    {
+      "path": "owner-copy-failure-375.png",
+      "bytes": 197793,
+      "sha256": "2f479a8f8076bb35453fca627da74ee45d9a751b3318f397dd14586ff3c6d77c"
+    },
+    {
+      "path": "owner-copy-failure-390.png",
+      "bytes": 198586,
+      "sha256": "96e8d74ab92c6301f2567c83164ecd6e5803106fb934c80d37b5d7b4b136bb66"
+    },
+    {
+      "path": "owner-copy-failure-430.png",
+      "bytes": 198689,
+      "sha256": "e0e6460698cf6f604613691826ed547ef1e2da1373369cdc448d6015dd2f2bd9"
+    },
+    {
+      "path": "owner-copy-failure-768.png",
+      "bytes": 192940,
+      "sha256": "0e8f75a3ab05fb4ab0318d6d351d38dfd734e49cc7c3e4720aacf98e42093786"
+    },
+    {
+      "path": "owner-links-1024.png",
+      "bytes": 197134,
+      "sha256": "4c4e611d93a29ed8cd64796b030afa062400c4cd1f716616b59c3ddb17ea7339"
+    },
+    {
+      "path": "owner-links-1366.png",
+      "bytes": 192764,
+      "sha256": "8f5a00a71096786cb7e2cb4312df76a875305a252d8238de881655abd1cefbe9"
+    },
+    {
+      "path": "owner-links-1440.png",
+      "bytes": 165097,
+      "sha256": "0ebc282e22c352a808d85f010702dffa26911770d014106c51f596b337563528"
+    },
+    {
+      "path": "owner-links-320.png",
+      "bytes": 187726,
+      "sha256": "7accd05eea07f28e14e9b3cc6fc9facd176f47593cc564aa9152e21a78781d29"
+    },
+    {
+      "path": "owner-links-360.png",
+      "bytes": 190597,
+      "sha256": "7a2894772d8df0746ea0339184d3cbaead4955b55a4bdf0e9a3e3f7ca23487bd"
+    },
+    {
+      "path": "owner-links-375.png",
+      "bytes": 193652,
+      "sha256": "ab3a91b3dd7e0767509a73f44019262dc627a909348bcf2468d66ab56cb03b81"
+    },
+    {
+      "path": "owner-links-390.png",
+      "bytes": 194541,
+      "sha256": "093372f1c4c297db56fc7ddb26038a519c20cf1537825e6f858c6adc71cbdc0e"
+    },
+    {
+      "path": "owner-links-430.png",
+      "bytes": 194944,
+      "sha256": "f46a38a2b3cec3b12aa15ed82c9bc98828ffec8bb55a1c59ae95855aa7a48a6d"
+    },
+    {
+      "path": "owner-links-768.png",
+      "bytes": 186454,
+      "sha256": "261048f506071a85d60d31541b4f2d7b17021596e4794d3c93986dffa7e6c06b"
+    },
+    {
+      "path": "owner-native-share-simulated-1024.png",
+      "bytes": 203312,
+      "sha256": "9d0b64aca361391b138db1cddac2965ba1c114fc075411c48035e08741e0007a"
+    },
+    {
+      "path": "owner-native-share-simulated-1366.png",
+      "bytes": 197993,
+      "sha256": "fa667e282c02ae673dd78eba89110300d8e7295ce35419e7f359536e83d09e06"
+    },
+    {
+      "path": "owner-native-share-simulated-1440.png",
+      "bytes": 172952,
+      "sha256": "4c246dd21ca4e87ec73e1224d7d619dcfa341d51123b037a4919cf745e566daf"
+    },
+    {
+      "path": "owner-native-share-simulated-320.png",
+      "bytes": 192604,
+      "sha256": "63a5345118544e79370343df138d6b377903c0d60b89fa200a5e513dcc06aefd"
+    },
+    {
+      "path": "owner-native-share-simulated-360.png",
+      "bytes": 195272,
+      "sha256": "3c6170acdb2e19bee0615e63331a5c5aa5c6202e8b19b9979994f7e5b2f670a8"
+    },
+    {
+      "path": "owner-native-share-simulated-375.png",
+      "bytes": 197944,
+      "sha256": "b27cb1bb9e700677c3111cfa82d6ea0a2d274590598738fdff129aa7aa0559d1"
+    },
+    {
+      "path": "owner-native-share-simulated-390.png",
+      "bytes": 198709,
+      "sha256": "db8257f19989b38ef84b5c32698bb21ca89493ab6766e404526f52e8a033fbb6"
+    },
+    {
+      "path": "owner-native-share-simulated-430.png",
+      "bytes": 198987,
+      "sha256": "c71978f8c49a82d2da2ded7f74c090a37ab105032df10d7d208740a840fc9167"
+    },
+    {
+      "path": "owner-native-share-simulated-768.png",
+      "bytes": 192570,
+      "sha256": "e302d52767a0ae1a56b7c47621606cf05e413fc2a6881258304f041801cfdb40"
+    },
+    {
+      "path": "owner-revoke-confirmation-1024.png",
+      "bytes": 211332,
+      "sha256": "1adba9b0ca0a186c23711bd9e16694041967854b70e66dc930825f838d7ef5d1"
+    },
+    {
+      "path": "owner-revoke-confirmation-1366.png",
+      "bytes": 205204,
+      "sha256": "39ebc925ac1545ed91504108e319e188bcf7183b141af592011229e33e3d8530"
+    },
+    {
+      "path": "owner-revoke-confirmation-1440.png",
+      "bytes": 180533,
+      "sha256": "33838ce77003ab5b841eee56d96d0d417439de7786f3dd9008230d62800c045f"
+    },
+    {
+      "path": "owner-revoke-confirmation-320.png",
+      "bytes": 198325,
+      "sha256": "547e3de66eeb02e2311f4cf39e574561095d94969c373002a83f180f17b68008"
+    },
+    {
+      "path": "owner-revoke-confirmation-360.png",
+      "bytes": 200899,
+      "sha256": "badd98b5dcf78b02a6570d20f9ce6fb6b8d254a211e79eb5042ac404d03f91d1"
+    },
+    {
+      "path": "owner-revoke-confirmation-375.png",
+      "bytes": 203153,
+      "sha256": "2ae20c940b6501d5a7f0750a0fc6cb62eda4c45273c6d7be9574ca87f85b6420"
+    },
+    {
+      "path": "owner-revoke-confirmation-390.png",
+      "bytes": 203746,
+      "sha256": "87d54b147f78ac92dad6e0b7328da50c2205cb43c4d9888994aaeeaa3f58e40c"
+    },
+    {
+      "path": "owner-revoke-confirmation-430.png",
+      "bytes": 204889,
+      "sha256": "f0ba3cec792adafd590b8a526ecd46bdd8f7e722666bb6e2651f930928ac98fe"
+    },
+    {
+      "path": "owner-revoke-confirmation-768.png",
+      "bytes": 199465,
+      "sha256": "9f37da0655cf25042d7baf5c4852f1ad0f213adec292c91be9ccc1c4a70fd8db"
+    },
+    {
+      "path": "owner-signin-1024.png",
+      "bytes": 46346,
+      "sha256": "f18baacd7210fcbfe4303776559d55fd0b131e364d619a9d75d71d05d135227e"
+    },
+    {
+      "path": "owner-signin-1366.png",
+      "bytes": 50070,
+      "sha256": "392731e8605cb0ffb22b946cf64bd00348eeea25f2b3a9489988a8c79e897f28"
+    },
+    {
+      "path": "owner-signin-1440.png",
+      "bytes": 49784,
+      "sha256": "5dae73126ee48c881cc22e27c7189d573a082dfb85e47ed08ad9e9501935daaf"
+    },
+    {
+      "path": "owner-signin-320.png",
+      "bytes": 39439,
+      "sha256": "1ab027072e02d069b6e77881b5a89f1005a0d1d32b46b7a96f76d9eb0af246c6"
+    },
+    {
+      "path": "owner-signin-360.png",
+      "bytes": 38549,
+      "sha256": "f018585099d35ccbeabdc65698d3aa53f2d17f3c24ac5d276802d863c268a4cb"
+    },
+    {
+      "path": "owner-signin-375.png",
+      "bytes": 38733,
+      "sha256": "1eccf8bcbde0c87eb031e5afb433709625149c0248d7c9fa4462949e04fb663a"
+    },
+    {
+      "path": "owner-signin-390.png",
+      "bytes": 38472,
+      "sha256": "c4b0fc32e809f6ab0deeb3c733dc28b3f6cc724bc0a033a5cf477a746f9f55f3"
+    },
+    {
+      "path": "owner-signin-430.png",
+      "bytes": 40722,
+      "sha256": "77030e2e0746662598f848fb7fee38082b49da52456485c972a1ca994e5a8dc9"
+    },
+    {
+      "path": "owner-signin-768.png",
+      "bytes": 43645,
+      "sha256": "b032f9c8b51adfd81bae3fc63c56d917732b89b74d23f4a474ee87bf4e187afa"
+    },
+    {
+      "path": "recipient-account-claim-1024.png",
+      "bytes": 42339,
+      "sha256": "936546077853c8bf2805d00df666168bcbb057262d75ecdab163184e9f99b712"
+    },
+    {
+      "path": "recipient-account-claim-1366.png",
+      "bytes": 47071,
+      "sha256": "bce4969e4b6c46bff6b49e253b707a52abdfce9995134cf9ee0f075d5a4ee0b0"
+    },
+    {
+      "path": "recipient-account-claim-1440.png",
+      "bytes": 47182,
+      "sha256": "14e8d483627f08f5417c18da5ce3540eeb35dc0d65cde4786f70e898bc0b0dff"
+    },
+    {
+      "path": "recipient-account-claim-320.png",
+      "bytes": 36081,
+      "sha256": "9fd4814ca1624a1fb81bbd2b0ea003fbf757eafa166877e8d1d5d36b6a41edd3"
+    },
+    {
+      "path": "recipient-account-claim-360.png",
+      "bytes": 35656,
+      "sha256": "1c2b0f2791803f785f497f6564667012ddfb78b888f24b8433869f45a2476bbc"
+    },
+    {
+      "path": "recipient-account-claim-375.png",
+      "bytes": 35828,
+      "sha256": "726430a38e7b345db056b1152bd941de87a539a6415ac1591e472ff6a100f257"
+    },
+    {
+      "path": "recipient-account-claim-390.png",
+      "bytes": 36104,
+      "sha256": "c13dc10b0bdf2b0ac9e0addb4177bbc411bfac02ca2a5b4cbf2053347b528230"
+    },
+    {
+      "path": "recipient-account-claim-430.png",
+      "bytes": 38087,
+      "sha256": "4cb55310feb5aa78505cad0d05365c758a24c7907163b124dc39e2eb48b25b18"
+    },
+    {
+      "path": "recipient-account-claim-768.png",
+      "bytes": 39604,
+      "sha256": "0135ff020daf61428ebf1712353046b3796bb288d8defa0b6db05c7b73535ce3"
+    },
+    {
+      "path": "recipient-admin-denied-1024.png",
+      "bytes": 53720,
+      "sha256": "9b2348840abe3c4f9acff08653270613cf09b4d21ec451bd3846b63c63723523"
+    },
+    {
+      "path": "recipient-admin-denied-1366.png",
+      "bytes": 54520,
+      "sha256": "6a7ba9780c16a7f74770148307df69f905dcce987e97f90d17717c63eb3c6bb7"
+    },
+    {
+      "path": "recipient-admin-denied-1440.png",
+      "bytes": 54453,
+      "sha256": "ed3fe73647829613107a99a8d41db965bd3d3a69862c07ca0a0b7cf9d4f74502"
+    },
+    {
+      "path": "recipient-admin-denied-320.png",
+      "bytes": 53483,
+      "sha256": "884a176388ee2901014dff3c4e13fb823ad720ba74cf75eacc6e1313c2ea4d56"
+    },
+    {
+      "path": "recipient-admin-denied-360.png",
+      "bytes": 53520,
+      "sha256": "103b87db5728268d3a849bd6e32ab2240527c48955cd53dc26a3b52a4391e288"
+    },
+    {
+      "path": "recipient-admin-denied-375.png",
+      "bytes": 53637,
+      "sha256": "7b16830603ee1ab880ff91d56aed927daf060a9b1ff92781c2a7ab9b23230d45"
+    },
+    {
+      "path": "recipient-admin-denied-390.png",
+      "bytes": 52897,
+      "sha256": "08864f39e11fb69c9d3a1399e70c0afcbdaf6b3d14e82730db1929a17a57ad4a"
+    },
+    {
+      "path": "recipient-admin-denied-430.png",
+      "bytes": 52096,
+      "sha256": "4c16b8d6cdf57810b0ce1d133ff89c88df5c5899ddb1ff9481fb9ffa98b580c1"
+    },
+    {
+      "path": "recipient-admin-denied-768.png",
+      "bytes": 55325,
+      "sha256": "a1108878929d0a2e9247ab4a00c342f6395ba865403f81dc1c55209cc294e2f5"
+    },
+    {
+      "path": "recipient-care-1024.png",
+      "bytes": 66899,
+      "sha256": "911e23f0598e5d067e7174d3381ebefd93523ed197a2e56a97a0d36b98f4458f"
+    },
+    {
+      "path": "recipient-care-1366.png",
+      "bytes": 74364,
+      "sha256": "136b9ac6e4a0e563d1812de43fa8884a575a8cb3f1e70277b6f37416ca6f2f1c"
+    },
+    {
+      "path": "recipient-care-1440.png",
+      "bytes": 74432,
+      "sha256": "963e397461fb67c0fb5c94b0bac08a4a8c46d5a1c23bbb0f20a5fbc54781ea77"
+    },
+    {
+      "path": "recipient-care-320.png",
+      "bytes": 63046,
+      "sha256": "4bc506aec9109aab8afbeaa6438001dbb199ebd77c88c1bbac684bdc91ee63b0"
+    },
+    {
+      "path": "recipient-care-360.png",
+      "bytes": 61163,
+      "sha256": "c20399e1047456a539ccfd39eca7f42fabcafc016e85124b1a07b09235dc69a9"
+    },
+    {
+      "path": "recipient-care-375.png",
+      "bytes": 60514,
+      "sha256": "2b5ec5b2a37993b5ce008f97f4ee2da235fea440e9598ef1a16d05ba4be6a2c8"
+    },
+    {
+      "path": "recipient-care-390.png",
+      "bytes": 60718,
+      "sha256": "1a914e9cb399fcf981caae987c121be91a96e2d4a7f9207c7000433eec1270b6"
+    },
+    {
+      "path": "recipient-care-430.png",
+      "bytes": 57820,
+      "sha256": "0be72ebacb28019a55b2f7acaf164830cdd04a6fb03df4b1d21ffcb4181acfc6"
+    },
+    {
+      "path": "recipient-care-768.png",
+      "bytes": 64487,
+      "sha256": "23b2813d59fc510bbc8cd6fa1692704bd1c6ff6df8ed04c2185dd5e5d4646161"
+    },
+    {
+      "path": "recipient-claim-activation-gated-1024.png",
+      "bytes": 71606,
+      "sha256": "27873bf3266e2d14e6a5988ca82bcc62b11c03688c767e79c9e80e3d5d0aa747"
+    },
+    {
+      "path": "recipient-claim-activation-gated-1366.png",
+      "bytes": 74964,
+      "sha256": "dec6bd8d941ca9cb42b6977edc439c8b071ec4801975c81bdbc2a436c72ddc9a"
+    },
+    {
+      "path": "recipient-claim-activation-gated-1440.png",
+      "bytes": 75924,
+      "sha256": "2738e261e21d2314c8b8fe2ad09f56e292120279ab2d3ef44a50a9ab19ce5104"
+    },
+    {
+      "path": "recipient-claim-activation-gated-320.png",
+      "bytes": 62506,
+      "sha256": "d49ea2b50737523d6bfba926179290d7d6af0c0e06bc1806f7760fda4f22e1bc"
+    },
+    {
+      "path": "recipient-claim-activation-gated-360.png",
+      "bytes": 60674,
+      "sha256": "ddcf54768b3388341083a5a7453c613957cc62d8cfd3b19ccd65eaab1ded48a5"
+    },
+    {
+      "path": "recipient-claim-activation-gated-375.png",
+      "bytes": 61145,
+      "sha256": "a7bf9adf8143b9a54faef9c6c6ea07e4610f8df49eea82615e1f7da33d7bde4b"
+    },
+    {
+      "path": "recipient-claim-activation-gated-390.png",
+      "bytes": 61491,
+      "sha256": "366e87e9c8e608b51928448f30b533c4fd0995adc471d9efd25aedfcab3c4d45"
+    },
+    {
+      "path": "recipient-claim-activation-gated-430.png",
+      "bytes": 59540,
+      "sha256": "316254d8fcc59177b384f1f3be7d9bf1807a232ed55261d0dea4aaaafe7a0fe5"
+    },
+    {
+      "path": "recipient-claim-activation-gated-768.png",
+      "bytes": 68749,
+      "sha256": "6fdd7f2eb9f73bd264a1bd870b6a5a89f6290d587de71895316f7dfc9a2ef70c"
+    },
+    {
+      "path": "recipient-expired-1024.png",
+      "bytes": 32773,
+      "sha256": "3b7c5c249c23a5570f70cc87eb1672516955f5eafe984177351415e82363116c"
+    },
+    {
+      "path": "recipient-expired-1366.png",
+      "bytes": 39053,
+      "sha256": "56e94f66444db0d4ad9572d5dbdc2fe3bbe8775463f8dcefe5e022cd6e5854cc"
+    },
+    {
+      "path": "recipient-expired-1440.png",
+      "bytes": 39170,
+      "sha256": "5a2bd1262791588c0fc385cfb348f9aa7fdf2b363a51c5ac7de2a1af5295f486"
+    },
+    {
+      "path": "recipient-expired-320.png",
+      "bytes": 28499,
+      "sha256": "7fdf6c575a760841319bc6d7c65dc1c456bcc84afa4a0cd5ada01669ec52a237"
+    },
+    {
+      "path": "recipient-expired-360.png",
+      "bytes": 28842,
+      "sha256": "ddbf34b2fb1ac422f7c35b1fe7a46f1fe95e04ca84da9010db60f9cd655c63da"
+    },
+    {
+      "path": "recipient-expired-375.png",
+      "bytes": 28220,
+      "sha256": "45485280e1118fbb8308c63d84302239431417a2a067b16817da6b09d5eaf254"
+    },
+    {
+      "path": "recipient-expired-390.png",
+      "bytes": 28311,
+      "sha256": "e84db6a3e6a96fada7a488493c21a60970bf7808304e59a5b7898f4022114da6"
+    },
+    {
+      "path": "recipient-expired-430.png",
+      "bytes": 27225,
+      "sha256": "52bb2ac196c4062ebc491f0ea05e653bfc9002bc2c599baeeabe22f288c6c4c9"
+    },
+    {
+      "path": "recipient-expired-768.png",
+      "bytes": 31401,
+      "sha256": "cd9595ecd3983def9bb9d4ffa34e199058a977d40fa75f6922a9ab3ba05c6a44"
+    },
+    {
+      "path": "recipient-health-choice-1024.png",
+      "bytes": 85010,
+      "sha256": "a31e3b8f0222408395d75986cd10f89ed3b4f362b65269486f731ba086c202b8"
+    },
+    {
+      "path": "recipient-health-choice-1366.png",
+      "bytes": 92975,
+      "sha256": "299b540af08dfbfc3445b109000a3805cf01b6fd3af291120fbd5b1c5a818a79"
+    },
+    {
+      "path": "recipient-health-choice-1440.png",
+      "bytes": 93448,
+      "sha256": "d650da7db5b1e1884be5a3627d80c9bb5cb710b0d25b00f4805aea13b5fe08e6"
+    },
+    {
+      "path": "recipient-health-choice-320.png",
+      "bytes": 81134,
+      "sha256": "1efaefd1192e42e303ed7c2b95cee3db80ff2836b8d5616d34de31c5e127d2ee"
+    },
+    {
+      "path": "recipient-health-choice-360.png",
+      "bytes": 78471,
+      "sha256": "f8b07cb35e8725f058235806da1c6bb95a2e8b11941b12731ea159cd685df645"
+    },
+    {
+      "path": "recipient-health-choice-375.png",
+      "bytes": 78157,
+      "sha256": "da14ec7a8f8e20b5ec5c864795143dd330538f70a828639b8ad340673853e721"
+    },
+    {
+      "path": "recipient-health-choice-390.png",
+      "bytes": 77594,
+      "sha256": "7aa032f225454dbb49638f7774a6079bd3bfb0d4f89a45c8307ab38785110274"
+    },
+    {
+      "path": "recipient-health-choice-430.png",
+      "bytes": 74515,
+      "sha256": "057b2473d7a12fd7d096751a5d667a988f00d18791194f6d3a4907502b55a8ca"
+    },
+    {
+      "path": "recipient-health-choice-768.png",
+      "bytes": 81229,
+      "sha256": "7fcc059935b33f894279593089bd5fb09c68bae2f5f1023672c6851bfa77acab"
+    },
+    {
+      "path": "recipient-invalid-1024.png",
+      "bytes": 32773,
+      "sha256": "3b7c5c249c23a5570f70cc87eb1672516955f5eafe984177351415e82363116c"
+    },
+    {
+      "path": "recipient-invalid-1366.png",
+      "bytes": 39053,
+      "sha256": "56e94f66444db0d4ad9572d5dbdc2fe3bbe8775463f8dcefe5e022cd6e5854cc"
+    },
+    {
+      "path": "recipient-invalid-1440.png",
+      "bytes": 39170,
+      "sha256": "5a2bd1262791588c0fc385cfb348f9aa7fdf2b363a51c5ac7de2a1af5295f486"
+    },
+    {
+      "path": "recipient-invalid-320.png",
+      "bytes": 28499,
+      "sha256": "7fdf6c575a760841319bc6d7c65dc1c456bcc84afa4a0cd5ada01669ec52a237"
+    },
+    {
+      "path": "recipient-invalid-360.png",
+      "bytes": 28842,
+      "sha256": "ddbf34b2fb1ac422f7c35b1fe7a46f1fe95e04ca84da9010db60f9cd655c63da"
+    },
+    {
+      "path": "recipient-invalid-375.png",
+      "bytes": 28220,
+      "sha256": "45485280e1118fbb8308c63d84302239431417a2a067b16817da6b09d5eaf254"
+    },
+    {
+      "path": "recipient-invalid-390.png",
+      "bytes": 28311,
+      "sha256": "e84db6a3e6a96fada7a488493c21a60970bf7808304e59a5b7898f4022114da6"
+    },
+    {
+      "path": "recipient-invalid-430.png",
+      "bytes": 27225,
+      "sha256": "52bb2ac196c4062ebc491f0ea05e653bfc9002bc2c599baeeabe22f288c6c4c9"
+    },
+    {
+      "path": "recipient-invalid-768.png",
+      "bytes": 31401,
+      "sha256": "cd9595ecd3983def9bb9d4ffa34e199058a977d40fa75f6922a9ab3ba05c6a44"
+    },
+    {
+      "path": "recipient-link-management-denied-1024.png",
+      "bytes": 54998,
+      "sha256": "1afc670f227a61ea95b80ca34be532be57a25d9853332f1d733d0992c5b93bf6"
+    },
+    {
+      "path": "recipient-link-management-denied-1366.png",
+      "bytes": 52160,
+      "sha256": "3667e8ea9bf36c46412ff0c3862519af9fd1c08b3d55dc9c94d4f642dedd1822"
+    },
+    {
+      "path": "recipient-link-management-denied-1440.png",
+      "bytes": 52664,
+      "sha256": "d0aabe805257f24f4a9545daa768065a7e6153a689d52e57c81dfcdf8c3a6c90"
+    },
+    {
+      "path": "recipient-link-management-denied-320.png",
+      "bytes": 45185,
+      "sha256": "13051c1a8baa1d2ddf2070178c5f8947cf7218359ce6c0586d91ba8b2c93866a"
+    },
+    {
+      "path": "recipient-link-management-denied-360.png",
+      "bytes": 45797,
+      "sha256": "b55e7b8ec15dcc7dca75e4a9303450dfba60e3a0552fe7b69d6e4d563fae55a0"
+    },
+    {
+      "path": "recipient-link-management-denied-375.png",
+      "bytes": 45033,
+      "sha256": "cca99445734bc63cbb5c90677888957691ceb4a0ad514d0621affd76fe968b84"
+    },
+    {
+      "path": "recipient-link-management-denied-390.png",
+      "bytes": 45249,
+      "sha256": "6ecfe799d584b5313f0782feb2e47e313bb0d214025ba1eb293139524d4d1560"
+    },
+    {
+      "path": "recipient-link-management-denied-430.png",
+      "bytes": 44397,
+      "sha256": "c913b2e19bee3c6f11ee5bc07bccd89dc04be9d01facb1b5978fbed1e188a294"
+    },
+    {
+      "path": "recipient-link-management-denied-768.png",
+      "bytes": 54438,
+      "sha256": "56ea623a393e9cd3d46549cd8dc122e88b5b60441b911fb5a7ae8c267c9c4206"
+    },
+    {
+      "path": "recipient-password-recovery-1024.png",
+      "bytes": 36836,
+      "sha256": "43e7f8ed2fb43cbaa07b7b01c5b2d25a7717596e565d7c26eabe149d51d1a8ad"
+    },
+    {
+      "path": "recipient-password-recovery-1366.png",
+      "bytes": 42614,
+      "sha256": "d22bfa4d57944054d54d178fb628ca059571f1a59147046a82eda86aa8c4a3db"
+    },
+    {
+      "path": "recipient-password-recovery-1440.png",
+      "bytes": 43532,
+      "sha256": "ab03b085b6080a731cc39da82c16f6969266fe2531da0a7b560f8a1674770b90"
+    },
+    {
+      "path": "recipient-password-recovery-320.png",
+      "bytes": 30737,
+      "sha256": "eda62a9481c0b28b7dd429f9c577139c6884068c82c98f86cd20714db984025d"
+    },
+    {
+      "path": "recipient-password-recovery-360.png",
+      "bytes": 31018,
+      "sha256": "7d42cdba7a5d1277faf70fc336636536dfef2921050b332e14fb2e958565fdc1"
+    },
+    {
+      "path": "recipient-password-recovery-375.png",
+      "bytes": 31182,
+      "sha256": "b20f25e0deb8432330bc481e5b507224bb696cc9745108591953a8b422229530"
+    },
+    {
+      "path": "recipient-password-recovery-390.png",
+      "bytes": 31137,
+      "sha256": "e1f2aaea1f6de399c2f945f23bd92a90c8654786117881d4a64593a5a4c1c97f"
+    },
+    {
+      "path": "recipient-password-recovery-430.png",
+      "bytes": 32601,
+      "sha256": "d67bee32604ea1ef89b0afee5dfd9a6e20fe05de3f11c29f022327fbf53caf85"
+    },
+    {
+      "path": "recipient-password-recovery-768.png",
+      "bytes": 33845,
+      "sha256": "4e46db718db8e758b4482fdccb35657bcc9a330dfe1428fb8770b76532d30cfc"
+    },
+    {
+      "path": "recipient-research-1024.png",
+      "bytes": 66912,
+      "sha256": "fbb629a5136526d2cf735167e65752fa2f46178f5d0e111a9d6dc00346112fdf"
+    },
+    {
+      "path": "recipient-research-1366.png",
+      "bytes": 73910,
+      "sha256": "1d38cc5f883ca674c9d60d102fb664d90f9dcdba7986a09fe3039be2f50b3236"
+    },
+    {
+      "path": "recipient-research-1440.png",
+      "bytes": 74163,
+      "sha256": "f1b6b3bab165ca1613b9ba644d6ac12571d5eed40d28a5b7d6c5cdb422b2b974"
+    },
+    {
+      "path": "recipient-research-320.png",
+      "bytes": 62944,
+      "sha256": "7434c74b8b5169ce29aa077900a4438c3d47a62e69a1d895d4b4e7fcbb21a1a8"
+    },
+    {
+      "path": "recipient-research-360.png",
+      "bytes": 61052,
+      "sha256": "a361d2ec8c0a71080fcc30a29f04e2f0ee01f857f3c42510223407791e94d424"
+    },
+    {
+      "path": "recipient-research-375.png",
+      "bytes": 60405,
+      "sha256": "b3a17d546ef66f056244bd15f0f3d8b4b4b9a402fae636f3fa861305f73d4b22"
+    },
+    {
+      "path": "recipient-research-390.png",
+      "bytes": 60613,
+      "sha256": "42e4ddad65316d241f25ba441c8d250cdbac66ca4fb2783d72658759aa1f9739"
+    },
+    {
+      "path": "recipient-research-430.png",
+      "bytes": 57629,
+      "sha256": "2623da0b093e3be29049906570b3e258d949b9ac690ebd309475b1a98782ef31"
+    },
+    {
+      "path": "recipient-research-768.png",
+      "bytes": 64446,
+      "sha256": "9fab7d03baff6c55ddef4219a4e35ecf8bfeb0c1bf7b2686b4dcd8ef1e67ef6e"
+    },
+    {
+      "path": "recipient-reset-request-1024.png",
+      "bytes": 26555,
+      "sha256": "17539497cc69073646159b5fdc4939fae27fd76ce54a9a5c23336d4bca431691"
+    },
+    {
+      "path": "recipient-reset-request-1366.png",
+      "bytes": 31046,
+      "sha256": "c15453bea82759fd0691fe6083dee7d937901f125478dcf7b3997ecc6c1951cd"
+    },
+    {
+      "path": "recipient-reset-request-1440.png",
+      "bytes": 31008,
+      "sha256": "244080fb6a1a6c8e7876340143614a518cb3fc1b6bb1493e67104c78b98f3c15"
+    },
+    {
+      "path": "recipient-reset-request-320.png",
+      "bytes": 21265,
+      "sha256": "f741820511506114816cb57e71edb866022376e5f8a5fe3fd83853a58978264f"
+    },
+    {
+      "path": "recipient-reset-request-360.png",
+      "bytes": 21077,
+      "sha256": "8eb52f09d1a446cc05d6beab6652afc856a3822a8b3c3f097f6f16eb5cf86107"
+    },
+    {
+      "path": "recipient-reset-request-375.png",
+      "bytes": 21223,
+      "sha256": "136bb143cac1754dbb59eadefc484eea0355efb2f5ba35bc75394d51b452fd6f"
+    },
+    {
+      "path": "recipient-reset-request-390.png",
+      "bytes": 21338,
+      "sha256": "0aa45b3edc10d0a32b800a3370b5c30ec09ce71edab0721237477a435cd77025"
+    },
+    {
+      "path": "recipient-reset-request-430.png",
+      "bytes": 21511,
+      "sha256": "4f779a39a8979e2a4c5e40085855e6e2f757141088de24f1720ac059d3d98461"
+    },
+    {
+      "path": "recipient-reset-request-768.png",
+      "bytes": 23594,
+      "sha256": "e32f3fede497380e0dea73ae9c7b23d8cddc583eea5bd92fffb2c070f4052520"
+    },
+    {
+      "path": "recipient-revoked-1024.png",
+      "bytes": 32773,
+      "sha256": "3b7c5c249c23a5570f70cc87eb1672516955f5eafe984177351415e82363116c"
+    },
+    {
+      "path": "recipient-revoked-1366.png",
+      "bytes": 39053,
+      "sha256": "56e94f66444db0d4ad9572d5dbdc2fe3bbe8775463f8dcefe5e022cd6e5854cc"
+    },
+    {
+      "path": "recipient-revoked-1440.png",
+      "bytes": 39170,
+      "sha256": "5a2bd1262791588c0fc385cfb348f9aa7fdf2b363a51c5ac7de2a1af5295f486"
+    },
+    {
+      "path": "recipient-revoked-320.png",
+      "bytes": 28499,
+      "sha256": "7fdf6c575a760841319bc6d7c65dc1c456bcc84afa4a0cd5ada01669ec52a237"
+    },
+    {
+      "path": "recipient-revoked-360.png",
+      "bytes": 28842,
+      "sha256": "ddbf34b2fb1ac422f7c35b1fe7a46f1fe95e04ca84da9010db60f9cd655c63da"
+    },
+    {
+      "path": "recipient-revoked-375.png",
+      "bytes": 28220,
+      "sha256": "45485280e1118fbb8308c63d84302239431417a2a067b16817da6b09d5eaf254"
+    },
+    {
+      "path": "recipient-revoked-390.png",
+      "bytes": 28311,
+      "sha256": "e84db6a3e6a96fada7a488493c21a60970bf7808304e59a5b7898f4022114da6"
+    },
+    {
+      "path": "recipient-revoked-430.png",
+      "bytes": 27225,
+      "sha256": "52bb2ac196c4062ebc491f0ea05e653bfc9002bc2c599baeeabe22f288c6c4c9"
+    },
+    {
+      "path": "recipient-revoked-768.png",
+      "bytes": 31401,
+      "sha256": "cd9595ecd3983def9bb9d4ffa34e199058a977d40fa75f6922a9ab3ba05c6a44"
+    },
+    {
+      "path": "recipient-signed-in-1024.png",
+      "bytes": 40312,
+      "sha256": "e2d092aed5ba8d461421e11c562317d3d1993f5573231f3641c9eadf1f112611"
+    },
+    {
+      "path": "recipient-signed-in-1366.png",
+      "bytes": 41918,
+      "sha256": "5f3e5d43de1ca5fcba3f9960e335ed24bf14ea692258ecdf58ab32e5b332d813"
+    },
+    {
+      "path": "recipient-signed-in-1440.png",
+      "bytes": 42423,
+      "sha256": "35e98bc4a1cf28164c6118439af9fbb868ed998f2577f36d209c53ccd39e4d9e"
+    },
+    {
+      "path": "recipient-signed-in-320.png",
+      "bytes": 34731,
+      "sha256": "b87076d9df12e9d6a0b2849943752b27f31d3ad7f186d76c83a2ff06f4ffdd5a"
+    },
+    {
+      "path": "recipient-signed-in-360.png",
+      "bytes": 34903,
+      "sha256": "1a6e4cce62f905524e80b1e4630a85e6a3a3df2fccb5ed476d92a9d3a17a2b0f"
+    },
+    {
+      "path": "recipient-signed-in-375.png",
+      "bytes": 35074,
+      "sha256": "e50acb0b84d8c1a4ad403885da0624e3b7a0beb35da7f6b1de10a7cb03d6c36e"
+    },
+    {
+      "path": "recipient-signed-in-390.png",
+      "bytes": 35306,
+      "sha256": "385549444378469fe40f7e38c2306bff691079d1cbbdf1467f0d99f1d99b717b"
+    },
+    {
+      "path": "recipient-signed-in-430.png",
+      "bytes": 34688,
+      "sha256": "b7892aa7f994a1eef689c05f1fc06967cbee73146d7fd94e6cc9a34f4abdc2bf"
+    },
+    {
+      "path": "recipient-signed-in-768.png",
+      "bytes": 39041,
+      "sha256": "c73a62fc73802aa2ce84661f25a305c6c5b0bcfdd70769bde7b53692b096681c"
+    },
+    {
+      "path": "recipient-signin-1024.png",
+      "bytes": 46918,
+      "sha256": "6ba643c3bf600ee1990f7d39cd13cbdf1affb9ef2a1e03aca1aaa07430d3eb93"
+    },
+    {
+      "path": "recipient-signin-1366.png",
+      "bytes": 50612,
+      "sha256": "7873d044d7a598b93af3ba3fc89fb47d48adcac399c6707359f1b54335b45262"
+    },
+    {
+      "path": "recipient-signin-1440.png",
+      "bytes": 50324,
+      "sha256": "475ef271884f70ded4862c22c0a7021bae3013b6fc9cfaefabfcac7b15604c4d"
+    },
+    {
+      "path": "recipient-signin-320.png",
+      "bytes": 39939,
+      "sha256": "be1b3e477e8e681d019d0f2ab0b3a8b2187b7d0d22b63ecd1ce45c4d46eeddf2"
+    },
+    {
+      "path": "recipient-signin-360.png",
+      "bytes": 39045,
+      "sha256": "76e1796738d3e05ab1d8b5bf2726951d049860a1eaa7c68fca73f49c27f3348d"
+    },
+    {
+      "path": "recipient-signin-375.png",
+      "bytes": 39229,
+      "sha256": "0d23dac66070c1facd3be1f37a8c6ce5889b0d2da98946b7aaa7cdc8f66e0990"
+    },
+    {
+      "path": "recipient-signin-390.png",
+      "bytes": 38974,
+      "sha256": "10d0a9a20e02ec4e21d239f91bec7afa6c150901899a0aebf26e13dbb9533f1e"
+    },
+    {
+      "path": "recipient-signin-430.png",
+      "bytes": 41238,
+      "sha256": "f4676e582d109910251e6748e6476a3b06a9181eb88d2afaaabc8b2c99a7c823"
+    },
+    {
+      "path": "recipient-signin-768.png",
+      "bytes": 44084,
+      "sha256": "8cb6c9b8b127c0fc6d84c21405393c3b19353563e8726fd5837d48a85e9997db"
+    }
+  ],
+  "inventorySha256": "31462a403526a8a14bcde93a884695605b420c0ee2ce1a714eab254e33b5d073",
+  "scanCoverage": {
+    "result": "COMPLETE",
+    "classifiedFiles": 181,
+    "totalFiles": 181,
+    "textFiles": 1,
+    "manualImageFiles": 180,
+    "unscannableFiles": 0
+  },
+  "summary": {
+    "total": 0,
+    "byId": {},
+    "result": "CLEAN"
+  },
+  "findings": [],
+  "screenshots": [
+    "admin-lifecycle-1024.png",
+    "admin-lifecycle-1366.png",
+    "admin-lifecycle-1440.png",
+    "admin-lifecycle-320.png",
+    "admin-lifecycle-360.png",
+    "admin-lifecycle-375.png",
+    "admin-lifecycle-390.png",
+    "admin-lifecycle-430.png",
+    "admin-lifecycle-768.png",
+    "owner-copy-failure-1024.png",
+    "owner-copy-failure-1366.png",
+    "owner-copy-failure-1440.png",
+    "owner-copy-failure-320.png",
+    "owner-copy-failure-360.png",
+    "owner-copy-failure-375.png",
+    "owner-copy-failure-390.png",
+    "owner-copy-failure-430.png",
+    "owner-copy-failure-768.png",
+    "owner-links-1024.png",
+    "owner-links-1366.png",
+    "owner-links-1440.png",
+    "owner-links-320.png",
+    "owner-links-360.png",
+    "owner-links-375.png",
+    "owner-links-390.png",
+    "owner-links-430.png",
+    "owner-links-768.png",
+    "owner-native-share-simulated-1024.png",
+    "owner-native-share-simulated-1366.png",
+    "owner-native-share-simulated-1440.png",
+    "owner-native-share-simulated-320.png",
+    "owner-native-share-simulated-360.png",
+    "owner-native-share-simulated-375.png",
+    "owner-native-share-simulated-390.png",
+    "owner-native-share-simulated-430.png",
+    "owner-native-share-simulated-768.png",
+    "owner-revoke-confirmation-1024.png",
+    "owner-revoke-confirmation-1366.png",
+    "owner-revoke-confirmation-1440.png",
+    "owner-revoke-confirmation-320.png",
+    "owner-revoke-confirmation-360.png",
+    "owner-revoke-confirmation-375.png",
+    "owner-revoke-confirmation-390.png",
+    "owner-revoke-confirmation-430.png",
+    "owner-revoke-confirmation-768.png",
+    "owner-signin-1024.png",
+    "owner-signin-1366.png",
+    "owner-signin-1440.png",
+    "owner-signin-320.png",
+    "owner-signin-360.png",
+    "owner-signin-375.png",
+    "owner-signin-390.png",
+    "owner-signin-430.png",
+    "owner-signin-768.png",
+    "recipient-account-claim-1024.png",
+    "recipient-account-claim-1366.png",
+    "recipient-account-claim-1440.png",
+    "recipient-account-claim-320.png",
+    "recipient-account-claim-360.png",
+    "recipient-account-claim-375.png",
+    "recipient-account-claim-390.png",
+    "recipient-account-claim-430.png",
+    "recipient-account-claim-768.png",
+    "recipient-admin-denied-1024.png",
+    "recipient-admin-denied-1366.png",
+    "recipient-admin-denied-1440.png",
+    "recipient-admin-denied-320.png",
+    "recipient-admin-denied-360.png",
+    "recipient-admin-denied-375.png",
+    "recipient-admin-denied-390.png",
+    "recipient-admin-denied-430.png",
+    "recipient-admin-denied-768.png",
+    "recipient-care-1024.png",
+    "recipient-care-1366.png",
+    "recipient-care-1440.png",
+    "recipient-care-320.png",
+    "recipient-care-360.png",
+    "recipient-care-375.png",
+    "recipient-care-390.png",
+    "recipient-care-430.png",
+    "recipient-care-768.png",
+    "recipient-claim-activation-gated-1024.png",
+    "recipient-claim-activation-gated-1366.png",
+    "recipient-claim-activation-gated-1440.png",
+    "recipient-claim-activation-gated-320.png",
+    "recipient-claim-activation-gated-360.png",
+    "recipient-claim-activation-gated-375.png",
+    "recipient-claim-activation-gated-390.png",
+    "recipient-claim-activation-gated-430.png",
+    "recipient-claim-activation-gated-768.png",
+    "recipient-expired-1024.png",
+    "recipient-expired-1366.png",
+    "recipient-expired-1440.png",
+    "recipient-expired-320.png",
+    "recipient-expired-360.png",
+    "recipient-expired-375.png",
+    "recipient-expired-390.png",
+    "recipient-expired-430.png",
+    "recipient-expired-768.png",
+    "recipient-health-choice-1024.png",
+    "recipient-health-choice-1366.png",
+    "recipient-health-choice-1440.png",
+    "recipient-health-choice-320.png",
+    "recipient-health-choice-360.png",
+    "recipient-health-choice-375.png",
+    "recipient-health-choice-390.png",
+    "recipient-health-choice-430.png",
+    "recipient-health-choice-768.png",
+    "recipient-invalid-1024.png",
+    "recipient-invalid-1366.png",
+    "recipient-invalid-1440.png",
+    "recipient-invalid-320.png",
+    "recipient-invalid-360.png",
+    "recipient-invalid-375.png",
+    "recipient-invalid-390.png",
+    "recipient-invalid-430.png",
+    "recipient-invalid-768.png",
+    "recipient-link-management-denied-1024.png",
+    "recipient-link-management-denied-1366.png",
+    "recipient-link-management-denied-1440.png",
+    "recipient-link-management-denied-320.png",
+    "recipient-link-management-denied-360.png",
+    "recipient-link-management-denied-375.png",
+    "recipient-link-management-denied-390.png",
+    "recipient-link-management-denied-430.png",
+    "recipient-link-management-denied-768.png",
+    "recipient-password-recovery-1024.png",
+    "recipient-password-recovery-1366.png",
+    "recipient-password-recovery-1440.png",
+    "recipient-password-recovery-320.png",
+    "recipient-password-recovery-360.png",
+    "recipient-password-recovery-375.png",
+    "recipient-password-recovery-390.png",
+    "recipient-password-recovery-430.png",
+    "recipient-password-recovery-768.png",
+    "recipient-research-1024.png",
+    "recipient-research-1366.png",
+    "recipient-research-1440.png",
+    "recipient-research-320.png",
+    "recipient-research-360.png",
+    "recipient-research-375.png",
+    "recipient-research-390.png",
+    "recipient-research-430.png",
+    "recipient-research-768.png",
+    "recipient-reset-request-1024.png",
+    "recipient-reset-request-1366.png",
+    "recipient-reset-request-1440.png",
+    "recipient-reset-request-320.png",
+    "recipient-reset-request-360.png",
+    "recipient-reset-request-375.png",
+    "recipient-reset-request-390.png",
+    "recipient-reset-request-430.png",
+    "recipient-reset-request-768.png",
+    "recipient-revoked-1024.png",
+    "recipient-revoked-1366.png",
+    "recipient-revoked-1440.png",
+    "recipient-revoked-320.png",
+    "recipient-revoked-360.png",
+    "recipient-revoked-375.png",
+    "recipient-revoked-390.png",
+    "recipient-revoked-430.png",
+    "recipient-revoked-768.png",
+    "recipient-signed-in-1024.png",
+    "recipient-signed-in-1366.png",
+    "recipient-signed-in-1440.png",
+    "recipient-signed-in-320.png",
+    "recipient-signed-in-360.png",
+    "recipient-signed-in-375.png",
+    "recipient-signed-in-390.png",
+    "recipient-signed-in-430.png",
+    "recipient-signed-in-768.png",
+    "recipient-signin-1024.png",
+    "recipient-signin-1366.png",
+    "recipient-signin-1440.png",
+    "recipient-signin-320.png",
+    "recipient-signin-360.png",
+    "recipient-signin-375.png",
+    "recipient-signin-390.png",
+    "recipient-signin-430.png",
+    "recipient-signin-768.png"
+  ],
+  "unscannableArtifacts": [],
+  "screenshotReview": "MANUAL_PENDING: validated PNG pixels cannot be text-scanned; each capture's *.text.txt page text was scanned instead."
+}

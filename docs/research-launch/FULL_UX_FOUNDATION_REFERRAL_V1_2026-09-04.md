@@ -1,9 +1,10 @@
-# Referral V1 local checkpoint — functional demonstration, mobile acceptance pending
+# Referral V1 local checkpoint — nine-width functional acceptance complete
 
-The local 320px functional demonstration passed. This bounded checkpoint is ready
-for handoff in QA, not full acceptance: the nine-width matrix and known install-
-promotion overlap remain open for the separately requested PWA follow-up. It is
-not a production attestation, migration approval or deployment request.
+The bounded local Referral V1 journey passed the complete required nine-width
+functional matrix with the sensitive-workflow PWA overlay policy integrated.
+Automated screenshot and text evidence is complete; exhaustive manual inspection
+of screenshot pixels remains explicitly pending. This is not a production
+attestation, migration approval or deployment request.
 
 [ACTIVE XENIOS EXPERIENCE BUILD CHECKPOINT]
 
@@ -17,7 +18,7 @@ BRANCH: codex/ux-continuation-20260904
 
 BASE SHA: 306b2996feb27578fa5434f6a20810cc8f6d83db; tested auth code c93c48704c6842f6f65fdc0698cfb3fe627cad2e
 
-CODE SHA: c5ac43907ffe024ffcba847fb761836211ae4118 (pushed; actual complete 320px browser demonstration; core implementation c9c81bb, API stream cleanup ef6c616)
+CODE SHA: 342a2c4fa446d89e796f4aee400661fa360b2378 (pushed; exact final nine-width matrix source; integrated PWA checkpoint 8264ad973b4a6be20b86e35cfd488d21cd0ef404; browser overlay assertion 74951ef0b05ff40101ffc67823c6c051a56ac45e; core Referral V1 implementation c9c81bb)
 
 PRODUCTION SHA: db5a2d447114c1e8a14185a9865ded50ee3f1ac6; read-only Render inspection confirmed live deployment dep-dad08h740ujc73aprfcg, service srv-d8s9vej7uimc7384dfcg, auto-deploy disabled. No production database inspection/application is implied.
 
@@ -35,7 +36,7 @@ ADMIN UX: /admin/research/referral-lifecycle exposes bounded authorized links/to
 
 PARTNER / USER UX: Owner-only links and aggregate recorded captures/account bindings; no recipient contacts, no fake new-account/earnings status. Ordinary members cannot issue or inspect another partner's links; admin remains separately guarded.
 
-MOBILE SHARE: 320px functional create/copy/simulated Web Share/fallback/failure/revoke PASS; 44px new controls and no horizontal overflow. Capability shims do not attest OS-share delivery. QR deferred (no existing renderer; dependency expansion not required for V1). Nine-width browser run pending. A pre-existing PWA install promotion visibly obscures part of the referral card and Health choice: retained P2 evidence, not a clean visual acceptance claim.
+MOBILE SHARE: Functional create/copy/simulated Web Share/fallback/failure/revoke PASS at every required width; automated layout checks report 44px new controls and no horizontal overflow. Capability shims do not attest OS-share delivery. QR remains deferred (no existing renderer; dependency expansion not required for V1). The integrated PWA policy withheld install promotion on the sensitive routes, and the harness recorded overlay absence on all 180 captures.
 
 PRIVACY: /r document no-store/no-referrer/noindex, marketing/tracking isolation, opaque public URLs, server-held capture cookies, no clinical fields in referral DTOs, no financial writes. Browser uses real controller/SQL and synthetic local Auth only; no service-worker bypass.
 
@@ -45,27 +46,29 @@ FOCUSED TESTS: Latest broad focused run: 720 PASS, 16 opt-in database skips acro
 
 TYPECHECK: npm run check PASS. Explicit preview-inclusive check found two guard-return typing errors at ef6c616; awaited wrappers fixed them in c5ac439 and the complete explicit check then reported zero diagnostics. Ordinary tsconfig excludes the preview roots; its pass was not used to hide those errors.
 
-BUILD: npm run build PASS after API stream cleanup; production bundle index-DYgRgIb2.js. Browser records the entire bundle/source fingerprint, not this asset name alone.
+BUILD: npm run build PASS at the integrated checkpoint. The final browser record locks the complete 327-file bundle to SHA-256 c6d0d5b5e2bc09e7cbbe09e9ff5f4500d00b9ad0d0f6e32262c14a183f77a630 and the 2,094-file source tree to SHA-256 7f188571adbe0a641aed843a3b0cc14b7618bee55741d36d8101b15c8c5c0155; both matched before and after the matrix.
 
-FULL SUITE: Integration run: 834 files (828 passed, 6 failed), 12,580 tests (12,500 passed, 22 failed, 58 skipped). Five new failures were stale route/nav/legacy-controller contracts; all were corrected and their exact suites rerun green. Seventeen inherited supplier-clock failures remain unmodified. This is not a claim that a second full-suite run at the final frozen SHA has already passed. The 15 opt-in database cases skipped in the default run separately passed against real PostgreSQL.
+FULL SUITE: PASS at 8264ad973b4a6be20b86e35cfd488d21cd0ef404: 838/838 files, 12,620 tests passed, 59 environment/fixture skips, 0 failures, 439.38s. Skips are reported separately and are not counted as passes. The browser-only successor commits add the overlay-absence assertion and owned-profile cleanup handling; the final matrix below is locked independently to its exact source and bundle fingerprints.
 
-BROWSER QA: FUNCTIONAL 320px PASS at c5ac439, 20 screenshots, 495 requests all exact loopback, zero outbound attempts/boundary violations/runtime exceptions, confirmed browser/profile and preview/database cleanup. Source fingerprint 6ade325985c1df208b8448e75be7bab0e4f83e409f6d5ca83e33e1b731659b7b and entire bundle fingerprint 5069e6fb51045747878ca29acea5496566a0dce5a70e62acd04b169d246cc464 match before/after. Actual SQL: 4 links/0 touches/0 bindings/4 events -> 8/3/3/15. Each persona has zero binding before fresh sign-in, exactly the expected first-valid link afterward; recovery-only and claimed-but-not-signed-in states do not bind. Claim remains activation-gated. Admin sees real attribution plus explicitly inserted synthetic downstream lineage, not a submitted/paid order. Evidence: docs/ux/referral-v1-20260904/browser-smoke-c5ac439-320/browser-results.json. Four failed diagnostic attempts are retained and explained; synthetic recovery URLs were redacted without changing results. Full nine-width matrix will run after the separate PWA policy fix; clean visual/mobile acceptance remains pending.
+BROWSER QA: PASS at exact source 342a2c4fa446d89e796f4aee400661fa360b2378 in required order 1440, 1366, 1024, 768, 430, 390, 375, 360 and 320. The matrix produced 180 screenshots (20 per width), with automated PWA install-overlay absence recorded on every capture. All 4,401 browser requests used exact loopback origin http://127.0.0.1:5238; external HTTP requests, server outbound attempts, boundary violations, runtime exceptions and harness errors were all zero. Each fresh width finished at actual SQL counts 8 links/3 touches/3 bindings/15 events. Browser-profile and preview/database cleanup were confirmed for all 18 owned resources. Source fingerprint 7f188571adbe0a641aed843a3b0cc14b7618bee55741d36d8101b15c8c5c0155 over 2,094 files and bundle fingerprint c6d0d5b5e2bc09e7cbbe09e9ff5f4500d00b9ad0d0f6e32262c14a183f77a630 over 327 files matched before/after. Each persona has zero binding before fresh sign-in and exactly the expected first-valid link afterward; recovery-only and claimed-but-not-signed-in states do not bind. Claim remains activation-gated. Admin sees real attribution plus explicitly inserted synthetic downstream lineage, not a submitted/paid order. Evidence: docs/ux/referral-v1-20260904/browser-final-342a2c4-ninewidth/browser-results.json.
 
-ROUTE UNIQUE: PASS, 421 static Express API registrations across 412 call sites at ef6c616; c5ac439 changes no production routes. Core-site gate PASS at ef6c616: 27 protected hashes plus all five declared seam hashes match; /r/:code explicitly inventoried, no unrelated marketing redesign.
+The retained 74951ef0b05ff40101ffc67823c6c051a56ac45e diagnostic run completed all functional checks at seven widths through 375px, but the overall run correctly failed closed when immediate cleanup of that width's owned temporary browser profile was not confirmed; 360px and 320px were therefore not run. The record does not establish a descendant process or another root cause. The compact report is retained at docs/ux/referral-v1-20260904/browser-diagnostic-74951ef-sevenwidth/browser-results.json; its redundant screenshots remain outside the repository in the local recovery workspace.
+
+ROUTE UNIQUE: PASS, 421 static Express API registrations across 412 call sites at the integrated checkpoint; later browser-harness changes add no production routes. Core-site gate PASS at 045e8ea: all 28 protected hashes match and the PWA lifecycle is an exact hash-locked seam; /r/:code is explicitly inventoried, with no unrelated marketing redesign.
 
 SECRET SCAN: Automated diff scan reported 10 generic assigned-secret matches, all manually reviewed as synthetic UI test tokens, local preview password, or explicitly synthetic test signing keys. No live credential found; automated exit was findings, not a clean scan. Scanner was not weakened or bypassed.
 
-PII SCAN: Out-of-repository name-list scan NOT RUN: no names file supplied/available. DTO and URL negative tests passed; this is not a substitute for a named-person/production PII attestation. Preview identities/contacts are synthetic only.
+PII SCAN: The final evidence scanner reported CLEAN with 0 findings across the browser-results textual artifact. It classified the complete evidence inventory, including all 180 PNGs, but PNG pixels remain MANUAL_PENDING because they are not text-scannable. Manual visual review covered representative 320px and 1440px captures only, not all 180 images. Preview identities and contacts are synthetic; this is not a named-person or production PII attestation. Evidence: docs/ux/referral-v1-20260904/browser-final-342a2c4-ninewidth/pii-scan.json.
 
 MIGRATION: Two local SQL candidates plus precheck/postcheck/rollout notes. Actual PostgreSQL 18.3 fresh/adoption, transaction, concurrency and grants rehearsals passed. Docker Desktop failed to start; checksum-verified portable Ubuntu packages ran only in fresh owned WSL clusters, with no system install/config repair or production connection. Candidates are not registered in the production DAG or applied to production.
 
 PRODUCTION MUTATED: NO. No merge, deploy, migration, environment/activation change, real invitation/email, payment, commission, fulfillment or clinical action.
 
-INHERITED FAILURES: cart-shelf-agreement.test.ts (2) and supplier-authority.test.ts (15), caused by wall-clock-dependent fixtures reading the expired founder supply seed. Live RAW_PEPTIDES_EXPIRES_AT remains 2026-09-03T23:30:00.000Z. Separate deterministic-fixture task follows the referral checkpoint.
+DETERMINISTIC FIXTURES: The 17 previously inherited supplier-clock failures were resolved locally with fixed injected fixture clocks while leaving the recorded live expiry unchanged. The complete 8264ad9 suite result above is the authoritative successor result.
 
-BLOCKERS: No external credential or approval blocks the next two local follow-ups. Nine-width visual/mobile acceptance remains required after the PWA policy fix; task stays QA rather than done. Production activation requires separate exact-SHA authority and target-schema/flags review. Real provider email/OS-share behavior, full EA conversion lineage and whole-website completion are not attested. Existing Care static accepting/live copy conflicts with an unavailable status; later Care journey work must reconcile that independently, and this preview does not attest Care intake readiness.
+BLOCKERS: No blocker remains for this bounded local functional matrix. Exhaustive manual review of all 180 screenshot pixels remains pending. Production activation still requires separate exact-SHA authority and target-schema/flags review. Real provider email/OS-share behavior, full EA conversion lineage and whole-website completion are not attested. Existing Care static accepting/live copy conflicts with an unavailable status; later Care journey work must reconcile that independently, and this preview does not attest Care intake readiness.
 
-NEXT EXACT CODE ACTION: Separately implement DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904 with fixed injected clocks and unchanged live expiry, commit/handoff it, then PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904; rebuild and run all nine required widths before accepting the referral task. Production remains untouched.
+NEXT EXACT ACTION: Complete the remaining manual screenshot-pixel review, then use a separately authorized exact-SHA production schema/flag review before any activation. Production remains untouched.
 
 ## Coordination and preserved work
 
