@@ -27,6 +27,8 @@ them to approval or purchase authority. It contains no action controls.
 - Product Control price review + Products Admin regression tests plus this
   slice: **102/102 passed**.
 - TypeScript `tsc --noEmit`: **PASS**.
+- Production build (`npm run build`): **PASS** (existing dynamic-import and
+  large-chunk warnings only).
 - `git diff --check`: **PASS**.
 
 This is a client read/validation slice only. It does not add an endpoint,
