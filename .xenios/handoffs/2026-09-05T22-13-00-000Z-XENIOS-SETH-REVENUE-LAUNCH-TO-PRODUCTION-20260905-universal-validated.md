@@ -10,6 +10,7 @@
 - Runtime candidate SHA: `14503661423a844e406d3cfc1ef75b4d9c436c30`
 - Runtime candidate tree: `f37d439c3f9c84f57444a546cf205d23721b88f2`
 - This runtime candidate is pushed. It includes the approved-customer e2e replacement, protected-seam review/repin, truthful disabled partner reads, UUID-compatible production partner creation, and ASTRA-B's reviewed partner-copy correction (`bb40cddd366394028ee58114dc002b516f031f35`, integrated as `5d2fa0b`).
+- Records checkpoint: `548fa754ea0bdafc6a3ad4fbdb3204d60be25149` (tree `20b399ffab3a78799a457fdf79c80cbb0db01733`), pushed with the generated Site System of Record. This handoff update and the continuity pointer are pushed in the subsequent records commit.
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
