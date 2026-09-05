@@ -60,6 +60,7 @@ function LifecycleOperation({ token, partner, memberId, requirements, onPendingC
   const [agreementKey, setAgreementKey] = useState(requirements.agreements[0]?.key ?? "");
   const [moduleKey, setModuleKey] = useState(requirements.trainingModules[0]?.key ?? "");
   const [version, setVersion] = useState(requirements.agreements[0]?.version ?? "");
+  const [evidenceAt, setEvidenceAt] = useState("");
   const [hash, setHash] = useState("");
   const [reviewed, setReviewed] = useState(false);
   const [reason, setReason] = useState("");
@@ -77,9 +78,9 @@ function LifecycleOperation({ token, partner, memberId, requirements, onPendingC
     const raw: unknown = action === "record_clearance"
       ? { ...common, kind, decision, evidenceReference: reference, reviewedEvidence: reviewed }
       : action === "record_agreement"
-        ? { ...common, agreementKey, version, contentHash: hash, acceptedAt: new Date().toISOString(), evidenceReference: reference, reviewedEvidence: reviewed }
+        ? { ...common, agreementKey, version, contentHash: hash, acceptedAt: evidenceAt, evidenceReference: reference, reviewedEvidence: reviewed }
         : action === "record_training"
-          ? { ...common, moduleKey, version, completedAt: new Date().toISOString(), evidenceReference: reference, reviewedEvidence: reviewed }
+          ? { ...common, moduleKey, version, completedAt: evidenceAt, evidenceReference: reference, reviewedEvidence: reviewed }
           : common;
     const parsed = PartnerOperationInput.safeParse(raw);
     if (!parsed.success || reason.trim().length < 8 || ["record_clearance", "record_agreement", "record_training"].includes(action) && (!reference.trim() || !reviewed)) {
@@ -116,6 +117,7 @@ function LifecycleOperation({ token, partner, memberId, requirements, onPendingC
       </>}
       {action === "record_agreement" && <><label htmlFor={`${id}-agreement`} className="form-label">Current agreement</label><select id={`${id}-agreement`} className="input-field" value={agreementKey} onChange={e => { setAgreementKey(e.target.value); setVersion(requirements.agreements.find(item => item.key === e.target.value)?.version ?? ""); }} disabled={state.kind !== "editing"}>{requirements.agreements.map(item => <option key={`${item.key}-${item.version}`} value={item.key}>{item.key} v{item.version}</option>)}</select><label htmlFor={`${id}-hash`} className="form-label">Agreement content hash</label><input id={`${id}-hash`} className="input-field" value={hash} onChange={e => setHash(e.target.value)} disabled={state.kind !== "editing"} /> </>}
       {action === "record_training" && <><label htmlFor={`${id}-module`} className="form-label">Current training module</label><select id={`${id}-module`} className="input-field" value={moduleKey} onChange={e => { setModuleKey(e.target.value); setVersion(requirements.trainingModules.find(item => item.key === e.target.value)?.version ?? ""); }} disabled={state.kind !== "editing"}>{requirements.trainingModules.map(item => <option key={`${item.key}-${item.version}`} value={item.key}>{item.key} v{item.version}</option>)}</select></>}
+      {["record_agreement", "record_training"].includes(action) && <><label htmlFor={`${id}-evidence-at`} className="form-label">Recorded acceptance/completion time</label><input id={`${id}-evidence-at`} className="input-field" value={evidenceAt} onChange={e => setEvidenceAt(e.target.value)} placeholder="2026-09-05T12:00:00-05:00" disabled={state.kind !== "editing"} /><p className="body-s text-ink-mute">Enter the timestamp from the reviewed record; this form never creates one.</p></>}
       {["record_clearance", "record_agreement", "record_training"].includes(action) && <><label htmlFor={`${id}-reference`} className="form-label">Reviewed evidence reference</label><input id={`${id}-reference`} className="input-field" value={reference} onChange={e => setReference(e.target.value)} disabled={state.kind !== "editing"} /><label className="body-s"><input type="checkbox" checked={reviewed} onChange={e => setReviewed(e.target.checked)} disabled={state.kind !== "editing"} /> I reviewed the referenced evidence; this checkbox is not proof by itself.</label></>}
       <label htmlFor={`${id}-reason`} className="form-label">Internal reason</label><textarea id={`${id}-reason`} className="input-field" rows={2} value={reason} onChange={e => setReason(e.target.value)} disabled={state.kind !== "editing"} />
       {state.kind === "editing" && state.message ? <p role="alert" className="body-s">{state.message}</p> : null}
