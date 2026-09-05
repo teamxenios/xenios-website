@@ -1,0 +1,123 @@
+{
+  "observedAt": "2026-09-05T04:39:56.311641+00:00",
+  "head": "04dd4e43ef33aa4a08d45c0d60ffac7721f5bb3f",
+  "remoteHead": "04dd4e43ef33aa4a08d45c0d60ffac7721f5bb3f",
+  "registeredWorktreeCount": 572,
+  "presentWorktreeCount": 517,
+  "dirtyWorktreeCount": 74,
+  "activeLeases": [
+    {
+      "id": "9f3a4d21-2bcc-478f-8db7-00183df53203",
+      "task": "F7-PACK02-RENAME",
+      "session": "claude-opus5-main",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-15T21:55:26.572Z",
+      "heartbeatAt": "2026-08-17T13:04:50.389Z"
+    },
+    {
+      "id": "77a0406e-4874-4719-9cc0-6dd3126e3679",
+      "task": "CATALOG-ACTION-UNIFICATION",
+      "session": "claude-fable-s7",
+      "paths": [
+        "shared/research/master-offerings/**",
+        "server/research/master-offerings/**",
+        "server/research/catalog/**",
+        "server/research/catalog-display/**",
+        "server/research/pricing/catalog-price-projection.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-20T17:51:40.949Z",
+      "heartbeatAt": "2026-08-21T16:11:42.803Z"
+    },
+    {
+      "id": "32c03dd5-158b-4127-a1e7-0d4ea70503b8",
+      "task": "ADMIN-ORDER-EMAIL-COMPLETENESS",
+      "session": "claude-fable-s3",
+      "paths": [
+        "server/research/assisted-order/communications.ts",
+        "server/research/assisted-order/communications.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T15:35:03.376Z",
+      "heartbeatAt": "2026-08-21T16:05:26.697Z"
+    },
+    {
+      "id": "cea2fe7a-235b-445e-8162-ecc08043cfaf",
+      "task": "BROWSER-PERF-PROOF",
+      "session": "claude-fable-browser-perf",
+      "paths": [
+        "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
+        "e2e/browser-perf/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-08-21T16:38:03.056Z",
+      "heartbeatAt": "2026-08-21T16:38:03.056Z"
+    },
+    {
+      "id": "271bd273-a77d-48ff-8768-804e5cee224a",
+      "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "scripts/revenue-launch/**",
+        "docs/revenue-launch/**",
+        "config/research/revenue-launch/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md",
+        ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "shared/research/price-quantity-tiers.ts",
+        "shared/research/price-quantity-tiers.test.ts",
+        "shared/research/product-admin.ts",
+        "server/research/products-diagnostics/product-control-price-resolver.ts",
+        "server/research/products-diagnostics/product-control-price-resolver.quantity-tiers.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/pricing/authoritative-price-resolver.ts",
+        "server/research/pricing/authoritative-price-resolver.quantity-tiers.test.ts",
+        "server/research/pricing/cart-price-binding.ts",
+        "server/research/pricing/cart-price-binding.quantity-tiers.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T04:13:59.534Z",
+      "heartbeatAt": "2026-09-05T04:36:54.960Z"
+    }
+  ],
+  "otherWorktreesModified": false,
+  "worktreeInventorySha256": "f23519b6048ebf03eb009faeadcd22a45512132b58ef91a2c617ac8af1475f28",
+  "worktreeReadFailures": [
+    {
+      "path": "C:/Users/sboad/projects/reviews/xenios-pr80",
+      "exitCode": 128,
+      "status": null
+    },
+    {
+      "path": "C:/Users/sboad/projects/wt-integration-research-commerce-wave1-nav-mobile-fix",
+      "exitCode": 128,
+      "status": null
+    },
+    {
+      "path": "C:/Users/sboad/projects/wt-integration-research-commerce-wave1-shared",
+      "exitCode": 128,
+      "status": null
+    },
+    {
+      "path": "C:/Users/sboad/projects/wt-website-4-c5-affiliate-white-label-operations",
+      "exitCode": 128,
+      "status": null
+    }
+  ],
+  "sourceOfRecordCheckBeforeRefresh": "FAIL_STALE_JSON_AND_MARKDOWN",
+  "sourceOfRecordCheckBasisSha": "04dd4e43ef33aa4a08d45c0d60ffac7721f5bb3f"
+}

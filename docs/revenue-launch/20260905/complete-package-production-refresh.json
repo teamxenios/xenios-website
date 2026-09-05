@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-05T04:36:56.095994+00:00",
+  "serviceId": "srv-d8s9vej7uimc7384dfcg",
+  "projectHost": "https://yvzeduaxbwgcwllhywff.supabase.co",
+  "productionMutated": false,
+  "runtimeEnvironmentVerified": false,
+  "migrationLedgerVerified": false,
+  "service": {
+    "id": "srv-d8s9vej7uimc7384dfcg",
+    "name": "xenios-website",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "no",
+    "suspended": "not_suspended"
+  },
+  "latestDeploy": {
+    "id": "dep-dad08h740ujc73aprfcg",
+    "status": "live",
+    "finishedAt": "2026-09-03T23:36:32.75103Z",
+    "commitSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6"
+  },
+  "serviceEnvironmentKeys": [
+    "ADMIN_EMAIL",
+    "AFFILIATE_CODES_ENABLED",
+    "AFFILIATE_PORTAL_ENABLED",
+    "AFFILIATE_PROGRAM_ENABLED",
+    "AFFILIATE_SYSTEM_ENABLED",
+    "CALENDLY_WEBHOOK_SECRET",
+    "EARLY_ACCESS_PAYMENT_INSTRUCTIONS",
+    "EARLY_ACCESS_PAYMENT_METHOD_REGISTRY",
+    "FROM_EMAIL",
+    "NODE_VERSION",
+    "PAYMENT_INSTRUCTIONS_ENC_KEY",
+    "REPLY_TO_EMAIL",
+    "RESEARCH_ACCESS_PASSWORD",
+    "RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL",
+    "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED",
+    "RESEARCH_EARLY_ACCESS_CART_ENABLED",
+    "RESEARCH_EARLY_ACCESS_COOKIE_NAME",
+    "RESEARCH_EARLY_ACCESS_ENABLED",
+    "RESEARCH_EARLY_ACCESS_LOCKOUT_MINUTES",
+    "RESEARCH_EARLY_ACCESS_MAX_ATTEMPTS",
+    "RESEARCH_EARLY_ACCESS_OPEN_ACCESS",
+    "RESEARCH_EARLY_ACCESS_OWNER_ID",
+    "RESEARCH_EARLY_ACCESS_PASSWORD_HASH",
+    "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS",
+    "RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED",
+    "RESEARCH_EARLY_ACCESS_SESSION_SECRET",
+    "RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES",
+    "RESEARCH_EMAIL_FROM",
+    "RESEARCH_EMAIL_REPLY_TO",
+    "RESEARCH_ESIGN_BUCKET",
+    "RESEARCH_ESIGN_ENABLED",
+    "RESEARCH_FOUNDING_ACTIVATION_ENABLED",
+    "RESEARCH_IDENTITY_BUCKET",
+    "RESEARCH_INDEXABLE",
+    "RESEARCH_KRIS_LAUNCH_A_ENABLED",
+    "RESEARCH_MASTER_OFFERINGS_ENABLED",
+    "RESEARCH_MASTER_OFFERINGS_FOUNDER_ADMIN_ONLY",
+    "RESEARCH_MEDIA_BUCKET",
+    "RESEARCH_NOTIFICATION_EMAILS",
+    "RESEARCH_PARTNER_LINK_SECRET",
+    "RESEARCH_PRODUCT_REQUESTS_BUCKET",
+    "RESEARCH_PRODUCT_REQUEST_ADMIN_EMAILS",
+    "RESEARCH_PUBLIC",
+    "RESEARCH_SESSION_SECRET",
+    "RESEND_API_KEY",
+    "SITE_URL",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "XENIOS_BUYER_SCOPED_PRICING",
+    "XENIOS_KRIS_PARTNER_MEMBER_ID",
+    "XENIOS_RECRUITING_AUTOMATION_TOKEN"
+  ],
+  "booleanConfiguration": {
+    "RESEARCH_FOUNDING_ACTIVATION_ENABLED": "true",
+    "AFFILIATE_CODES_ENABLED": "true",
+    "RESEARCH_EARLY_ACCESS_CART_ENABLED": "false",
+    "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED": "true",
+    "RESEARCH_ESIGN_ENABLED": "true",
+    "RESEARCH_KRIS_LAUNCH_A_ENABLED": "true",
+    "RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED": "true",
+    "RESEARCH_EARLY_ACCESS_ENABLED": "true",
+    "AFFILIATE_SYSTEM_ENABLED": "true",
+    "AFFILIATE_PORTAL_ENABLED": "true",
+    "RESEARCH_MASTER_OFFERINGS_ENABLED": "true",
+    "AFFILIATE_PROGRAM_ENABLED": "true"
+  },
+  "credentialPresence": {
+    "SUPABASE_URL": true,
+    "SUPABASE_SERVICE_ROLE_KEY": true,
+    "DATABASE_URL": false,
+    "SUPABASE_DB_URL": false
+  },
+  "tables": {
+    "research_products": {
+      "ok": true,
+      "rowCount": 236,
+      "rowsCanonicalJsonSha256": "953e3dce2f62043cb564748349653b3b26f6577c3be5521805c5537e26d633d0",
+      "rowsReference": {
+        "path": "docs/revenue-launch/20260905/production-startup.json",
+        "commit": "58feb6467d118fc38e8eaa84b2c18d3fe28607e7",
+        "table": "research_products",
+        "freshReadExactlyEqual": true
+      }
+    },
+    "research_product_variants": {
+      "ok": true,
+      "rowCount": 439,
+      "rowsCanonicalJsonSha256": "4f37f0ae06500ed3633f2137e2c9749424ff858e058cc6486a793c7470ccc113",
+      "rowsReference": {
+        "path": "docs/revenue-launch/20260905/production-startup.json",
+        "commit": "58feb6467d118fc38e8eaa84b2c18d3fe28607e7",
+        "table": "research_product_variants",
+        "freshReadExactlyEqual": true
+      }
+    },
+    "research_product_prices": {
+      "ok": true,
+      "rowCount": 452,
+      "rowsCanonicalJsonSha256": "1cbb127a49a4a460e5cac940cfbb480341e440807243259a9a3cde6956bfee6c",
+      "rowsReference": {
+        "path": "docs/revenue-launch/20260905/production-startup.json",
+        "commit": "58feb6467d118fc38e8eaa84b2c18d3fe28607e7",
+        "table": "research_product_prices",
+        "freshReadExactlyEqual": true
+      }
+    }
+  },
+  "liveSupplierConfirmations": {
+    "ok": false,
+    "status": 404
+  },
+  "rowDigestMethod": "UTF-8 JSON of rows, sort_keys=True, separators=(comma,colon), ensure_ascii=True. Each table was freshly fetched and exactly equals its pinned historical payload; only duplicate payload bytes are referenced."
+}

@@ -1,0 +1,1370 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-05T04:39:24.177310+00:00",
+  "workbookSha256": "41ab91bfd7120a0f0a47bc6ab9d8cd7ea7ba5ea63efe50aeb4894de2e31fcc83",
+  "workbookCellsReconciled": true,
+  "method": "Independent Decimal calculation of allowlisted exact Excel formulas, compared with cached cells, original JSON/CSV, launch JSON/CSV; raw notes compared in memory only.",
+  "checks": {
+    "comparisons": 8758,
+    "independentlyEvaluatedTierFormulas": 214,
+    "independentlyEvaluatedOtherFormulas": 156,
+    "explicitUnknownProxyCells": 6
+  },
+  "phaseARows": 39,
+  "phaseATierValues": 117,
+  "phaseBRows": 68,
+  "phaseBTierValues": 204,
+  "phaseAReviewStatuses": {
+    "Review": 39
+  },
+  "statisticsVerified": true,
+  "sourceExceptions": [
+    {
+      "sourceId": "SETH-CAND-046",
+      "issues": [
+        "missing_positive_price"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-063",
+      "issues": [
+        "tier_inversion"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-064",
+      "issues": [
+        "tier_inversion"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-066",
+      "issues": [
+        "tier_inversion"
+      ]
+    }
+  ],
+  "sourceCapsuleSectionContext": {
+    "cell": "MISSING PRODUCTS!A50",
+    "text": "CAPSULES (all 60 count - except labled single)",
+    "canonicalUnitOfSaleApproved": false
+  },
+  "rowProvenance": [
+    {
+      "sourceId": "XRUO-001",
+      "sheet": "PRICING REVIEW",
+      "row": 5,
+      "priceCells": [
+        "I5",
+        "J5",
+        "K5"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-002",
+      "sheet": "PRICING REVIEW",
+      "row": 6,
+      "priceCells": [
+        "I6",
+        "J6",
+        "K6"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-003",
+      "sheet": "PRICING REVIEW",
+      "row": 7,
+      "priceCells": [
+        "I7",
+        "J7",
+        "K7"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-004",
+      "sheet": "PRICING REVIEW",
+      "row": 8,
+      "priceCells": [
+        "I8",
+        "J8",
+        "K8"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-005",
+      "sheet": "PRICING REVIEW",
+      "row": 9,
+      "priceCells": [
+        "I9",
+        "J9",
+        "K9"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-006",
+      "sheet": "PRICING REVIEW",
+      "row": 10,
+      "priceCells": [
+        "I10",
+        "J10",
+        "K10"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-007",
+      "sheet": "PRICING REVIEW",
+      "row": 11,
+      "priceCells": [
+        "I11",
+        "J11",
+        "K11"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-008",
+      "sheet": "PRICING REVIEW",
+      "row": 12,
+      "priceCells": [
+        "I12",
+        "J12",
+        "K12"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-009",
+      "sheet": "PRICING REVIEW",
+      "row": 13,
+      "priceCells": [
+        "I13",
+        "J13",
+        "K13"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-010",
+      "sheet": "PRICING REVIEW",
+      "row": 14,
+      "priceCells": [
+        "I14",
+        "J14",
+        "K14"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-011",
+      "sheet": "PRICING REVIEW",
+      "row": 15,
+      "priceCells": [
+        "I15",
+        "J15",
+        "K15"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-012",
+      "sheet": "PRICING REVIEW",
+      "row": 16,
+      "priceCells": [
+        "I16",
+        "J16",
+        "K16"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-013",
+      "sheet": "PRICING REVIEW",
+      "row": 17,
+      "priceCells": [
+        "I17",
+        "J17",
+        "K17"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-014",
+      "sheet": "PRICING REVIEW",
+      "row": 18,
+      "priceCells": [
+        "I18",
+        "J18",
+        "K18"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-015",
+      "sheet": "PRICING REVIEW",
+      "row": 19,
+      "priceCells": [
+        "I19",
+        "J19",
+        "K19"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-016",
+      "sheet": "PRICING REVIEW",
+      "row": 20,
+      "priceCells": [
+        "I20",
+        "J20",
+        "K20"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-017",
+      "sheet": "PRICING REVIEW",
+      "row": 21,
+      "priceCells": [
+        "I21",
+        "J21",
+        "K21"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-018",
+      "sheet": "PRICING REVIEW",
+      "row": 22,
+      "priceCells": [
+        "I22",
+        "J22",
+        "K22"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-019",
+      "sheet": "PRICING REVIEW",
+      "row": 23,
+      "priceCells": [
+        "I23",
+        "J23",
+        "K23"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-020",
+      "sheet": "PRICING REVIEW",
+      "row": 24,
+      "priceCells": [
+        "I24",
+        "J24",
+        "K24"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-021",
+      "sheet": "PRICING REVIEW",
+      "row": 25,
+      "priceCells": [
+        "I25",
+        "J25",
+        "K25"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-022",
+      "sheet": "PRICING REVIEW",
+      "row": 26,
+      "priceCells": [
+        "I26",
+        "J26",
+        "K26"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-023",
+      "sheet": "PRICING REVIEW",
+      "row": 27,
+      "priceCells": [
+        "I27",
+        "J27",
+        "K27"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-024",
+      "sheet": "PRICING REVIEW",
+      "row": 28,
+      "priceCells": [
+        "I28",
+        "J28",
+        "K28"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-025",
+      "sheet": "PRICING REVIEW",
+      "row": 29,
+      "priceCells": [
+        "I29",
+        "J29",
+        "K29"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-026",
+      "sheet": "PRICING REVIEW",
+      "row": 30,
+      "priceCells": [
+        "I30",
+        "J30",
+        "K30"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-027",
+      "sheet": "PRICING REVIEW",
+      "row": 31,
+      "priceCells": [
+        "I31",
+        "J31",
+        "K31"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-028",
+      "sheet": "PRICING REVIEW",
+      "row": 32,
+      "priceCells": [
+        "I32",
+        "J32",
+        "K32"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-029",
+      "sheet": "PRICING REVIEW",
+      "row": 33,
+      "priceCells": [
+        "I33",
+        "J33",
+        "K33"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-030",
+      "sheet": "PRICING REVIEW",
+      "row": 34,
+      "priceCells": [
+        "I34",
+        "J34",
+        "K34"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-031",
+      "sheet": "PRICING REVIEW",
+      "row": 35,
+      "priceCells": [
+        "I35",
+        "J35",
+        "K35"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-032",
+      "sheet": "PRICING REVIEW",
+      "row": 36,
+      "priceCells": [
+        "I36",
+        "J36",
+        "K36"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-033",
+      "sheet": "PRICING REVIEW",
+      "row": 37,
+      "priceCells": [
+        "I37",
+        "J37",
+        "K37"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-034",
+      "sheet": "PRICING REVIEW",
+      "row": 38,
+      "priceCells": [
+        "I38",
+        "J38",
+        "K38"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-035",
+      "sheet": "PRICING REVIEW",
+      "row": 39,
+      "priceCells": [
+        "I39",
+        "J39",
+        "K39"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-036",
+      "sheet": "PRICING REVIEW",
+      "row": 40,
+      "priceCells": [
+        "I40",
+        "J40",
+        "K40"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-037",
+      "sheet": "PRICING REVIEW",
+      "row": 41,
+      "priceCells": [
+        "I41",
+        "J41",
+        "K41"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-038",
+      "sheet": "PRICING REVIEW",
+      "row": 42,
+      "priceCells": [
+        "I42",
+        "J42",
+        "K42"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "XRUO-039",
+      "sheet": "PRICING REVIEW",
+      "row": 43,
+      "priceCells": [
+        "I43",
+        "J43",
+        "K43"
+      ],
+      "reviewStatus": "Review"
+    },
+    {
+      "sourceId": "SETH-CAND-001",
+      "sheet": "MISSING PRODUCTS",
+      "row": 5,
+      "priceCells": [
+        "E5",
+        "F5",
+        "G5"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-002",
+      "sheet": "MISSING PRODUCTS",
+      "row": 6,
+      "priceCells": [
+        "E6",
+        "F6",
+        "G6"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-003",
+      "sheet": "MISSING PRODUCTS",
+      "row": 7,
+      "priceCells": [
+        "E7",
+        "F7",
+        "G7"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-004",
+      "sheet": "MISSING PRODUCTS",
+      "row": 8,
+      "priceCells": [
+        "E8",
+        "F8",
+        "G8"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": true
+    },
+    {
+      "sourceId": "SETH-CAND-005",
+      "sheet": "MISSING PRODUCTS",
+      "row": 9,
+      "priceCells": [
+        "E9",
+        "F9",
+        "G9"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-006",
+      "sheet": "MISSING PRODUCTS",
+      "row": 10,
+      "priceCells": [
+        "E10",
+        "F10",
+        "G10"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-007",
+      "sheet": "MISSING PRODUCTS",
+      "row": 11,
+      "priceCells": [
+        "E11",
+        "F11",
+        "G11"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-008",
+      "sheet": "MISSING PRODUCTS",
+      "row": 12,
+      "priceCells": [
+        "E12",
+        "F12",
+        "G12"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-009",
+      "sheet": "MISSING PRODUCTS",
+      "row": 13,
+      "priceCells": [
+        "E13",
+        "F13",
+        "G13"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-010",
+      "sheet": "MISSING PRODUCTS",
+      "row": 14,
+      "priceCells": [
+        "E14",
+        "F14",
+        "G14"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": true
+    },
+    {
+      "sourceId": "SETH-CAND-011",
+      "sheet": "MISSING PRODUCTS",
+      "row": 15,
+      "priceCells": [
+        "E15",
+        "F15",
+        "G15"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-012",
+      "sheet": "MISSING PRODUCTS",
+      "row": 16,
+      "priceCells": [
+        "E16",
+        "F16",
+        "G16"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-013",
+      "sheet": "MISSING PRODUCTS",
+      "row": 17,
+      "priceCells": [
+        "E17",
+        "F17",
+        "G17"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-014",
+      "sheet": "MISSING PRODUCTS",
+      "row": 18,
+      "priceCells": [
+        "E18",
+        "F18",
+        "G18"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-015",
+      "sheet": "MISSING PRODUCTS",
+      "row": 19,
+      "priceCells": [
+        "E19",
+        "F19",
+        "G19"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-016",
+      "sheet": "MISSING PRODUCTS",
+      "row": 20,
+      "priceCells": [
+        "E20",
+        "F20",
+        "G20"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-017",
+      "sheet": "MISSING PRODUCTS",
+      "row": 21,
+      "priceCells": [
+        "E21",
+        "F21",
+        "G21"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-018",
+      "sheet": "MISSING PRODUCTS",
+      "row": 22,
+      "priceCells": [
+        "E22",
+        "F22",
+        "G22"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-019",
+      "sheet": "MISSING PRODUCTS",
+      "row": 23,
+      "priceCells": [
+        "E23",
+        "F23",
+        "G23"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-020",
+      "sheet": "MISSING PRODUCTS",
+      "row": 24,
+      "priceCells": [
+        "E24",
+        "F24",
+        "G24"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-021",
+      "sheet": "MISSING PRODUCTS",
+      "row": 25,
+      "priceCells": [
+        "E25",
+        "F25",
+        "G25"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-022",
+      "sheet": "MISSING PRODUCTS",
+      "row": 26,
+      "priceCells": [
+        "E26",
+        "F26",
+        "G26"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": true
+    },
+    {
+      "sourceId": "SETH-CAND-023",
+      "sheet": "MISSING PRODUCTS",
+      "row": 27,
+      "priceCells": [
+        "E27",
+        "F27",
+        "G27"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-024",
+      "sheet": "MISSING PRODUCTS",
+      "row": 28,
+      "priceCells": [
+        "E28",
+        "F28",
+        "G28"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-025",
+      "sheet": "MISSING PRODUCTS",
+      "row": 29,
+      "priceCells": [
+        "E29",
+        "F29",
+        "G29"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-026",
+      "sheet": "MISSING PRODUCTS",
+      "row": 30,
+      "priceCells": [
+        "E30",
+        "F30",
+        "G30"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-027",
+      "sheet": "MISSING PRODUCTS",
+      "row": 31,
+      "priceCells": [
+        "E31",
+        "F31",
+        "G31"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-028",
+      "sheet": "MISSING PRODUCTS",
+      "row": 32,
+      "priceCells": [
+        "E32",
+        "F32",
+        "G32"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-029",
+      "sheet": "MISSING PRODUCTS",
+      "row": 33,
+      "priceCells": [
+        "E33",
+        "F33",
+        "G33"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-030",
+      "sheet": "MISSING PRODUCTS",
+      "row": 34,
+      "priceCells": [
+        "E34",
+        "F34",
+        "G34"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-031",
+      "sheet": "MISSING PRODUCTS",
+      "row": 35,
+      "priceCells": [
+        "E35",
+        "F35",
+        "G35"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-032",
+      "sheet": "MISSING PRODUCTS",
+      "row": 36,
+      "priceCells": [
+        "E36",
+        "F36",
+        "G36"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-033",
+      "sheet": "MISSING PRODUCTS",
+      "row": 37,
+      "priceCells": [
+        "E37",
+        "F37",
+        "G37"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-034",
+      "sheet": "MISSING PRODUCTS",
+      "row": 38,
+      "priceCells": [
+        "E38",
+        "F38",
+        "G38"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-035",
+      "sheet": "MISSING PRODUCTS",
+      "row": 39,
+      "priceCells": [
+        "E39",
+        "F39",
+        "G39"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-036",
+      "sheet": "MISSING PRODUCTS",
+      "row": 40,
+      "priceCells": [
+        "E40",
+        "F40",
+        "G40"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-037",
+      "sheet": "MISSING PRODUCTS",
+      "row": 41,
+      "priceCells": [
+        "E41",
+        "F41",
+        "G41"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-038",
+      "sheet": "MISSING PRODUCTS",
+      "row": 42,
+      "priceCells": [
+        "E42",
+        "F42",
+        "G42"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-039",
+      "sheet": "MISSING PRODUCTS",
+      "row": 43,
+      "priceCells": [
+        "E43",
+        "F43",
+        "G43"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-040",
+      "sheet": "MISSING PRODUCTS",
+      "row": 44,
+      "priceCells": [
+        "E44",
+        "F44",
+        "G44"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-041",
+      "sheet": "MISSING PRODUCTS",
+      "row": 45,
+      "priceCells": [
+        "E45",
+        "F45",
+        "G45"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-042",
+      "sheet": "MISSING PRODUCTS",
+      "row": 46,
+      "priceCells": [
+        "E46",
+        "F46",
+        "G46"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-043",
+      "sheet": "MISSING PRODUCTS",
+      "row": 47,
+      "priceCells": [
+        "E47",
+        "F47",
+        "G47"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-044",
+      "sheet": "MISSING PRODUCTS",
+      "row": 48,
+      "priceCells": [
+        "E48",
+        "F48",
+        "G48"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-045",
+      "sheet": "MISSING PRODUCTS",
+      "row": 49,
+      "priceCells": [
+        "E49",
+        "F49",
+        "G49"
+      ],
+      "sourceSection": "peptides_and_blends",
+      "sectionContextCell": null,
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-046",
+      "sheet": "MISSING PRODUCTS",
+      "row": 51,
+      "priceCells": [
+        "E51",
+        "F51",
+        "G51"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": true
+    },
+    {
+      "sourceId": "SETH-CAND-047",
+      "sheet": "MISSING PRODUCTS",
+      "row": 52,
+      "priceCells": [
+        "E52",
+        "F52",
+        "G52"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-048",
+      "sheet": "MISSING PRODUCTS",
+      "row": 53,
+      "priceCells": [
+        "E53",
+        "F53",
+        "G53"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-049",
+      "sheet": "MISSING PRODUCTS",
+      "row": 54,
+      "priceCells": [
+        "E54",
+        "F54",
+        "G54"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-050",
+      "sheet": "MISSING PRODUCTS",
+      "row": 55,
+      "priceCells": [
+        "E55",
+        "F55",
+        "G55"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-051",
+      "sheet": "MISSING PRODUCTS",
+      "row": 56,
+      "priceCells": [
+        "E56",
+        "F56",
+        "G56"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-052",
+      "sheet": "MISSING PRODUCTS",
+      "row": 57,
+      "priceCells": [
+        "E57",
+        "F57",
+        "G57"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-053",
+      "sheet": "MISSING PRODUCTS",
+      "row": 58,
+      "priceCells": [
+        "E58",
+        "F58",
+        "G58"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-054",
+      "sheet": "MISSING PRODUCTS",
+      "row": 59,
+      "priceCells": [
+        "E59",
+        "F59",
+        "G59"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-055",
+      "sheet": "MISSING PRODUCTS",
+      "row": 60,
+      "priceCells": [
+        "E60",
+        "F60",
+        "G60"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-056",
+      "sheet": "MISSING PRODUCTS",
+      "row": 61,
+      "priceCells": [
+        "E61",
+        "F61",
+        "G61"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-057",
+      "sheet": "MISSING PRODUCTS",
+      "row": 62,
+      "priceCells": [
+        "E62",
+        "F62",
+        "G62"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-058",
+      "sheet": "MISSING PRODUCTS",
+      "row": 63,
+      "priceCells": [
+        "E63",
+        "F63",
+        "G63"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-059",
+      "sheet": "MISSING PRODUCTS",
+      "row": 64,
+      "priceCells": [
+        "E64",
+        "F64",
+        "G64"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-060",
+      "sheet": "MISSING PRODUCTS",
+      "row": 65,
+      "priceCells": [
+        "E65",
+        "F65",
+        "G65"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-061",
+      "sheet": "MISSING PRODUCTS",
+      "row": 66,
+      "priceCells": [
+        "E66",
+        "F66",
+        "G66"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-062",
+      "sheet": "MISSING PRODUCTS",
+      "row": 67,
+      "priceCells": [
+        "E67",
+        "F67",
+        "G67"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-063",
+      "sheet": "MISSING PRODUCTS",
+      "row": 68,
+      "priceCells": [
+        "E68",
+        "F68",
+        "G68"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-064",
+      "sheet": "MISSING PRODUCTS",
+      "row": 69,
+      "priceCells": [
+        "E69",
+        "F69",
+        "G69"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-065",
+      "sheet": "MISSING PRODUCTS",
+      "row": 70,
+      "priceCells": [
+        "E70",
+        "F70",
+        "G70"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-066",
+      "sheet": "MISSING PRODUCTS",
+      "row": 71,
+      "priceCells": [
+        "E71",
+        "F71",
+        "G71"
+      ],
+      "sourceSection": "capsules",
+      "sectionContextCell": "A50",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-067",
+      "sheet": "MISSING PRODUCTS",
+      "row": 73,
+      "priceCells": [
+        "E73",
+        "F73",
+        "G73"
+      ],
+      "sourceSection": "topical",
+      "sectionContextCell": "A72",
+      "rawNotesPresent": false
+    },
+    {
+      "sourceId": "SETH-CAND-068",
+      "sheet": "MISSING PRODUCTS",
+      "row": 74,
+      "priceCells": [
+        "E74",
+        "F74",
+        "G74"
+      ],
+      "sourceSection": "topical",
+      "sectionContextCell": "A72",
+      "rawNotesPresent": false
+    }
+  ],
+  "sourceApprovalVerified": false,
+  "productionReady": false,
+  "errors": []
+}

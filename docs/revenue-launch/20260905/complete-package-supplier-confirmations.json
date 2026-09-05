@@ -1,0 +1,216 @@
+{
+  "observedAt": "2026-09-05T04:41:46.263961+00:00",
+  "readInterface": "research_early_access_supplier_confirmation_for_unit",
+  "method": "GET",
+  "productionMutated": false,
+  "canonicalIdentitiesReverified": 34,
+  "readSuccessCount": 34,
+  "currentConfirmationCount": 0,
+  "unresolvedSourceBindings": 5,
+  "rows": [
+    {
+      "sourceId": "XRUO-001",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-002",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-003",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-004",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-005",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-006",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-008",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-009",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-010",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-011",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-012",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-013",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-015",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-016",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-017",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-018",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-019",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-020",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-021",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-022",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-023",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-025",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-027",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-028",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-029",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-030",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-031",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-032",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-033",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-034",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-036",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-037",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-038",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    },
+    {
+      "sourceId": "XRUO-039",
+      "ok": true,
+      "status": 200,
+      "currentConfirmationPresent": false
+    }
+  ]
+}

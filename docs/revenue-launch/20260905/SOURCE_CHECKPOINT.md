@@ -1,5 +1,10 @@
 # Seth revenue launch: source and production reconciliation
 
+Historical pre-gate report. The complete package and workbook were supplied
+later on September 5. Its missing-file assertions are superseded by
+[the complete-package verification](COMPLETE_PACKAGE_GATE.md). The refreshed
+implementation gate is still blocked by unavailable current migration history.
+
 This is an engineering checkpoint, not a release candidate or a live launch.
 Session `codex-seth-revenue-launch-20260905` continues on isolated branch
 `codex/xenios-seth-revenue-launch-20260905`, based on accepted parent

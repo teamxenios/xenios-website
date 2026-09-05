@@ -1,0 +1,14 @@
+{
+  "observedAt": "2026-09-05T04:39:17.206925+00:00",
+  "productionMutated": false,
+  "additionalBooleanConfiguration": {
+    "RESEARCH_OPEN_ACCESS_MODE": "not_set_or_nonboolean",
+    "RESEARCH_BUYER_SCOPED_CHECKOUT_MODE": "not_set_or_nonboolean",
+    "RESEARCH_EARLY_ACCESS_CART_ENABLED": "false"
+  },
+  "managementReadCredentialPresent": true,
+  "migrationLedger": {
+    "ok": false,
+    "status": 403
+  }
+}

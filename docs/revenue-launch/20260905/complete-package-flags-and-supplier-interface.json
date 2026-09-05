@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-09-05T04:40:46.178307+00:00",
+  "productionMutated": false,
+  "flags": {
+    "RESEARCH_EARLY_ACCESS_OPEN_ACCESS": "true",
+    "buyerScopedKrisModeConfigured": true
+  },
+  "supplierPerUnitRead": {
+    "ok": true,
+    "status": 200,
+    "data": null
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "mapped": 34,
+  "unmappedSourceIds": [
+    "XRUO-007",
+    "XRUO-014",
+    "XRUO-024",
+    "XRUO-026",
+    "XRUO-035"
+  ],
+  "gates": {
+    "missing_format": 0,
+    "missing_presentation": 34,
+    "missing_shipping_class": 34,
+    "commerce_blocked_pending_written_approval": 34,
+    "documentation_missing": 34
+  },
+  "productionMigrationHistoryVerified": false,
+  "localMigrationsAddedSinceProductionBaseline": [],
+  "localMigrationChangesSinceProductionBaseline": [],
+  "localMigrationsIntroducedBySethSlice": []
+}

@@ -1,0 +1,100 @@
+{
+  "copy": "C:\\Users\\sboad\\.codex\\tmp\\seth-complete-package-audit-20260905\\starter-55u40k48\\package",
+  "originalSourceUnchanged": true,
+  "generatedSemanticAgreement": {
+    "runtime-launch-evidence.template.json": true,
+    "xenios-live-launch-plan.generated.json": true,
+    "xenios-phase-a-live-launch-matrix.generated.csv": true,
+    "xenios-phase-b-expansion-matrix.generated.csv": true
+  },
+  "runs": [
+    {
+      "name": "unmodified supplied Node test entrypoint",
+      "exitCode": 0,
+      "output": "TAP version 13\n# Subtest: source manifest validates\nok 1 - source manifest validates\n  ---\n  duration_ms: 185.0224\n  ...\n# Subtest: launch plan and evidence template generate\nok 2 - launch plan and evidence template generate\n  ---\n  duration_ms: 181.7888\n  ...\n# Subtest: unknown runtime evidence fails closed\nok 3 - unknown runtime evidence fails closed\n  ---\n  duration_ms: 150.6673\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 628.5734\n"
+    },
+    {
+      "name": "explicit package root validate-launch-source",
+      "exitCode": 0,
+      "output": "{\n  \"ok\": true,\n  \"manifest\": \"manifests\\\\XENIOS_SETH_LIVE_REVENUE_LAUNCH_MANIFEST_2026-09-05.json\",\n  \"sha256\": \"6b19efe85ff533bccc34ea2d26a895c1d735fcf2def2a7631e7f798b7fb2e211\",\n  \"phaseA\": 39,\n  \"phaseATiers\": 117,\n  \"phaseB\": 68,\n  \"totalRows\": 107,\n  \"warningCount\": 4,\n  \"warnings\": [\n    \"SETH-CAND-046 has no positive Seth price recommendation\",\n    \"SETH-CAND-063 has an inverted volume ladder\",\n    \"SETH-CAND-064 has an inverted volume ladder\",\n    \"SETH-CAND-066 has an inverted volume ladder\"\n  ],\n  \"errors\": []\n}\n"
+    },
+    {
+      "name": "explicit package root build-launch-plan",
+      "exitCode": 0,
+      "output": "{\n  \"ok\": true,\n  \"outDir\": \"C:\\\\Users\\\\sboad\\\\.codex\\\\tmp\\\\seth-complete-package-audit-20260905\\\\starter-55u40k48\\\\package\\\\generated\",\n  \"phaseA\": 39,\n  \"phaseB\": 68\n}\n"
+    },
+    {
+      "name": "explicit package root seed-runtime-evidence",
+      "exitCode": 0,
+      "output": "{\n  \"ok\": true,\n  \"output\": \"C:\\\\Users\\\\sboad\\\\.codex\\\\tmp\\\\seth-complete-package-audit-20260905\\\\starter-55u40k48\\\\package\\\\generated\\\\runtime-launch-evidence.template.json\"\n}\n"
+    },
+    {
+      "name": "unknown evidence must block",
+      "exitCode": 1,
+      "outputSha256": "811f81bb23477d47a821e52903fadfefa7f92eddefeb53debba8847335b46be5",
+      "outputSummary": {
+        "ok": false,
+        "mode": "phase-a",
+        "checkedItems": 39,
+        "failureCount": 702
+      },
+      "failureReasons": [
+        "approved_active_price_version=unknown",
+        "canonical identity missing",
+        "canonical_product_match=unknown",
+        "canonical_variant_match=unknown",
+        "checkout_total_server_confirmed=unknown",
+        "current_inventory_or_fulfillment_capacity_verified=unknown",
+        "founder_exact_release_approval=unknown",
+        "fulfillment_and_tracking_working=unknown",
+        "mobile_and_accessibility_qa_passed=unknown",
+        "order_confirmation_and_status_working=unknown",
+        "payment_path_authorized=unknown",
+        "quality_documentation_verified=unknown",
+        "release candidate SHA missing",
+        "research_classification_approved=unknown",
+        "returns_and_support_policy_configured=unknown",
+        "shipping_class_and_serviceability_configured=unknown",
+        "supplier_authority_verified=unknown",
+        "unit_of_sale_confirmed=unknown"
+      ]
+    },
+    {
+      "name": "starter TypeScript",
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "adversarialCases": {
+    "syntheticLocalOnly": true,
+    "results": [
+      {
+        "case": "empty-row-set",
+        "expectedSafeExit": "nonzero",
+        "actualExit": 0,
+        "output": {
+          "ok": true,
+          "mode": "phase-a",
+          "evidenceFile": "C:\\Users\\sboad\\.codex\\tmp\\seth-complete-package-audit-20260905\\empty-row-set.json",
+          "checkedItems": 0,
+          "failureCount": 0,
+          "failures": []
+        }
+      },
+      {
+        "case": "one-row-no-gates",
+        "expectedSafeExit": "nonzero",
+        "actualExit": 0,
+        "output": {
+          "ok": true,
+          "mode": "phase-a",
+          "evidenceFile": "C:\\Users\\sboad\\.codex\\tmp\\seth-complete-package-audit-20260905\\one-row-no-gates.json",
+          "checkedItems": 1,
+          "failureCount": 0,
+          "failures": []
+        }
+      }
+    ]
+  },
+  "interpretation": "Supplied starter smoke tests pass, but adversarial empty/incomplete evidence is incorrectly accepted. Starter is not an authoritative release gate."
+}

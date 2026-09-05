@@ -1,0 +1,14 @@
+{
+  "zipBytes": 440992,
+  "zipSha256": "cb33226b379268f42a9ca1a1b62ad59eb3f1d929778fdc33c631c159ef910033",
+  "archiveFiles": 46,
+  "archiveDirectories": 20,
+  "extractionFilesVerified": 46,
+  "requiredPathsReadable": 16,
+  "manifestEntriesVerified": 44,
+  "checksumEntriesVerified": 44,
+  "extraExtractedFiles": [],
+  "errors": [],
+  "missingFiles": [],
+  "scope": "Archive and file integrity phase only; workbook and starter verification are recorded separately."
+}

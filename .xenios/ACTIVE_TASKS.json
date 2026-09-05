@@ -1271,7 +1271,7 @@
       "id": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
       "title": "Reconcile Seth source pricing and build the canonical Phase A revenue launch through exact-SHA production approval",
       "priority": "P0",
-      "state": "claimed",
+      "state": "blocked_external",
       "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         "scripts/revenue-launch/**",
@@ -1305,8 +1305,10 @@
       ],
       "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
       "createdAt": "2026-09-05T04:13:59.4380733Z",
-      "scopeNote": "Initial exact path lease for convergence, source validation and reconciliation. Expand only after current authority and existing leases are inspected. Current directive permits engineering; no production writes, activation/publication, release merge, real communications, financial or clinical actions until specifically approved.",
-      "claimedAt": "2026-09-05T04:13:59.531Z"
+      "scopeNote": "Implementation is paused under the refreshed founder directive. Source/package and current facts may be validated read-only and recorded. Pre-gate runtime is pushed at 04dd4e43ef33aa4a08d45c0d60ffac7721f5bb3f. No production mutation, activation/publication, deployment, release merge, financial, clinical or communication actions are approved.",
+      "claimedAt": "2026-09-05T04:13:59.531Z",
+      "blockedAt": "2026-09-05T04:45:09.674760+00:00",
+      "blockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent."
     }
   ]
 }

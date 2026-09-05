@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-09-05T04:42:48.964850+00:00",
+  "method": "GET",
+  "authenticated": false,
+  "productionMutated": false,
+  "paths": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "fields": {
+        "status": "Xenios API is running"
+      }
+    },
+    {
+      "path": "/api/research/early-access/catalog",
+      "status": 401
+    }
+  ]
+}
