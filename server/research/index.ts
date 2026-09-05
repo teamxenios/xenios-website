@@ -520,6 +520,11 @@ export function registerResearchApi(app: Express) {
   // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
     "/partner/links", // Independent Gen2 controller owns canonical member/partner guard.
+    // Commerce routes requireMember, then resolve the partner exclusively from
+    // that authenticated member. A navigation destination or partner id supplied
+    // by the browser cannot select an account. Admit these two reads only.
+    "/partner/me",
+    "/partner/dashboard",
     // agreements.ts:337, requireResearchSubject. That guard is
     // resolveResearchMember(..., allowClosed: true): it demands the same
     // non-recovery Supabase JWT and the same member row as requireMember and
@@ -681,6 +686,8 @@ export function registerResearchApi(app: Express) {
     const privateMemberReadRoute =
       (req.method === "GET" || req.method === "HEAD") &&
       (req.path === "/catalog" ||
+        req.path === "/partner/me" ||
+        req.path === "/partner/dashboard" ||
         req.path === "/member/catalog" ||
         req.path === "/member/me" ||
         privateOrderReadPath ||
