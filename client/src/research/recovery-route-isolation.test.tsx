@@ -10,10 +10,15 @@ vi.mock("wouter", () => ({
   Link: ({ href, children, ...props }: any) => <a href={href} {...props}>{children}</a>,
 }));
 vi.mock("@/components/Wordmark", () => ({ default: () => <span>xenios</span> }));
+// This is signed-out route/chrome coverage, not a recovery-purpose session.
+// Recovery credentials and private-data denial are exercised separately in
+// recovery-isolation.test.tsx and the ordinary Auth/partner boundary tests.
 vi.mock("./core", () => ({
   useResearch: () => ({
     gate: "locked",
     member: null,
+    memberToken: null,
+    recovery: "none",
     submitPassword: vi.fn(),
     signOutMember: vi.fn(),
   }),
@@ -87,14 +92,28 @@ describe("recovery route chrome isolation", () => {
 
   it.each([
     "/research/partners/apply",
-    "/research/partners/dashboard",
     "/research/partners/payouts",
+    "/research/partners/dashboard/extra",
+    "/research/partners/links/extra",
     "/research/organizations/private",
     "/research/affiliates/private",
   ])("keeps B2B descendants behind the shared review gate at %s", (path) => {
     const view = renderAt(path);
     expect(view.querySelector('[data-testid="recovery-content"]')).toBeNull();
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
+  });
+
+  it.each([
+    "/research/partners/dashboard",
+    "/research/partners/links",
+  ])("lets exact partner entry %s mount its own account chrome and authorization boundary", (path) => {
+    const view = renderAt(path);
+    // Reaching the routed boundary is not a partner-access grant. These
+    // pages verify normal Auth and their own private server authorities.
+    expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('nav[aria-label="Research information"]')).toBeNull();
+    expect(view.querySelector('a[href="/research"]')).toBeNull();
   });
 
   it.each([

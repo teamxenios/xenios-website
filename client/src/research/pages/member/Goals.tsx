@@ -43,7 +43,7 @@ export default function Goals() {
         <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
           Every goal page puts lifestyle, training, and nutrition before any product. Supplement sections name
           categories only, and the products shown come from the live catalog when it is available to your
-          membership. xenios does not promise outcomes, and nothing here is medical advice.
+          account. xenios does not promise outcomes, and nothing here is medical advice.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href={MEMBER_ROUTES.assessment} className="btn btn-secondary">

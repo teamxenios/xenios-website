@@ -36,9 +36,9 @@ async function follow(status: "active" | "pending_activation" | "past_due" | "pa
 }
 
 describe("legacy member welcome routing", () => {
-  it("sends active members to the member home", async () => {
+  it("sends active accounts to the canonical account home", async () => {
     await follow("active");
-    expect(window.location.pathname).toBe("/research/member");
+    expect(window.location.pathname).toBe("/research/account");
   });
 
   it("sends pending members to activation", async () => {

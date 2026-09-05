@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { inspectApprovedUserAccess } from "./adminOps";
+import { inspectApprovedUserAccess, approveCustomerAccess } from "./adminOps";
+import type { CustomerApprovalInput } from "@shared/research/approved-customer-access";
 import type { ApprovedUserAccess } from "@shared/research/approved-user-access";
 
 const inspection: ApprovedUserAccess = {
   schemaVersion: 1, observedAt: "2026-09-05T18:00:00.000Z", email: "customer-a@fixture.invalid", identityState: "absent",
   authAccounts: [], applications: [], members: [], partners: [],
   organizationRelationships: { state: "unavailable", records: [] },
-  boundaries: { care: "separate_authority", membershipBillingEnabled: false,
+  boundaries: { care: "separate_authority", membershipBillingEnabled: false, customerAccessApproval: "unavailable",
     partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" },
   nextActions: [{ label: "Review requirements", href: null, consequence: "No record was changed.", notification: "none" }],
 };
@@ -72,5 +73,64 @@ describe("read-only approved-user access inspection adapter", () => {
   it("does not treat an unpublished HTML endpoint as an empty account", async () => {
     stub({}, 200, "text/html");
     expect(await inspectApprovedUserAccess("synthetic-admin", inspection.email)).toEqual({ kind: "unavailable" });
+  });
+});
+
+describe("explicit customer approval adapter", () => {
+  const input: CustomerApprovalInput = { email: "customer-a@fixture.invalid", firstName: "Customer", lastName: "Example",
+    reason: "Reviewed approved customer access", expectedApplicationId: null, expectedUpdatedAt: null,
+    idempotencyKey: "approval-fixture-request-0001" };
+  const approved = { ok: true, applicationId: "00000000-0000-4000-8000-000000000002", approvalVersion: 1,
+    state: "approved_customer", delivery: "queued", expiresAt: "2026-09-19T18:00:00Z", replayed: false };
+  it("posts only the strict exact request, explicit bearer and unchanged idempotency key", async () => {
+    const fetch = stub(approved);
+    expect(await approveCustomerAccess("synthetic-admin", input)).toEqual({ kind: "ok", data: approved });
+    const [path, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(path).toBe("/api/admin/research/access/approve-customer");
+    expect(path).not.toContain(input.email);
+    expect(init).toMatchObject({ method: "POST", cache: "no-store", body: JSON.stringify(input) });
+    expect(init.headers).toMatchObject({ Authorization: "Bearer synthetic-admin" });
+  });
+  it("does not mutate without the admin credential", async () => {
+    const fetch = stub(approved);
+    expect(await approveCustomerAccess("", input)).toEqual({ kind: "unauthorized" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it.each([
+    { ...input, email: "invalid" }, { ...input, reason: "short" }, { ...input, firstName: "" },
+    { ...input, expectedApplicationId: approved.applicationId }, { ...input, expectedUpdatedAt: "2026-09-05T18:00:00Z" },
+    { ...input, idempotencyKey: "short" }, { ...input, role: "admin" },
+  ])("rejects malformed or extra approval input without sending %j", async bad => {
+    const fetch = stub(approved);
+    expect(await approveCustomerAccess("synthetic-admin", bad)).toEqual({ kind: "denied", code: "invalid_input" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it.each([
+    { ...approved, delivery: "delivered" }, { ...approved, state: "active" }, { ...approved, approvalVersion: 0 },
+    { ...approved, applicationId: "invalid" }, { ...approved, expiresAt: "later" }, { ...approved, secret: "private" }, { ok: true },
+  ])("never confirms malformed or exaggerated success %j", async bad => {
+    stub(bad);
+    expect((await approveCustomerAccess("synthetic-admin", input)).kind).toBe("error");
+  });
+  it("binds an existing application result to its exact inspected ID", async () => {
+    stub(approved);
+    const result = await approveCustomerAccess("synthetic-admin", { ...input,
+      expectedApplicationId: "00000000-0000-4000-8000-000000000099", expectedUpdatedAt: "2026-09-05T18:00:00Z" });
+    expect(result.kind).toBe("error");
+  });
+  it("retains the exact current revision and replayed result on a retry", async () => {
+    const fetch = stub({ ...approved, replayed: true });
+    const retry = { ...input, expectedApplicationId: approved.applicationId, expectedUpdatedAt: "2026-09-05T18:00:00Z" };
+    expect(await approveCustomerAccess("synthetic-admin", retry)).toEqual({ kind: "ok", data: { ...approved, replayed: true } });
+    const init = fetch.mock.calls[0][1] as RequestInit;
+    expect(JSON.parse(String(init.body))).toEqual(retry);
+  });
+  it.each(["stale_inspection", "identity_review_required", "idempotency_conflict"])("preserves server refusal %s", async code => {
+    stub({ ok: false, code }, 409);
+    expect(await approveCustomerAccess("synthetic-admin", input)).toMatchObject({ kind: "denied", code });
+  });
+  it("does not infer successful approval from an unavailable or HTML API", async () => {
+    stub({}, 200, "text/html");
+    expect(await approveCustomerAccess("synthetic-admin", input)).toEqual({ kind: "unavailable" });
   });
 });

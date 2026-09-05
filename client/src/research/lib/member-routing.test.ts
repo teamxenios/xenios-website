@@ -155,8 +155,17 @@ describe("memberDestination", () => {
       .toBe("/research/access-state?code=billing_past_due");
   });
 
-  it("routes active members away from activation to the member site", () => {
-    expect(memberDestination(active, "/research/activate")).toBe("/research/member");
+  it("routes active accounts away from activation to their canonical account", () => {
+    expect(memberDestination(active, "/research/activate")).toBe("/research/account");
+  });
+
+  it.each([undefined, null, "/research", "https://evil.example"])("defaults verified active access to the canonical account for %s", path => {
+    expect(memberDestination(active, path)).toBe("/research/account");
+  });
+
+  it.each(["pending_activation", "past_due", "paused", "cancelled", "closed", "unrecognized"])("does not promote %s via approved_customer metadata or billing", status => {
+    const record = { ...active, status, accessBasis: "approved_customer", billingState: "active" };
+    expect(memberDestination(record, "/research/account")).not.toBe("/research/account");
   });
 
   it("never lets a non-active member bypass activation", () => {

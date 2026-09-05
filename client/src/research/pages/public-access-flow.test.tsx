@@ -17,7 +17,8 @@ import { fetchPolicies } from "../core";
 
 vi.mock("../core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../core")>();
-  return { ...actual, fetchPolicies: vi.fn() };
+  const refreshMember = vi.fn(async () => {});
+  return { ...actual, fetchPolicies: vi.fn(), useResearch: () => ({ recovery: "none", refreshMember }) };
 });
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -164,19 +165,24 @@ describe("Research public application flow", () => {
 
   it("uses the shared loading treatment while a signed status lookup is pending", async () => {
     window.sessionStorage.setItem("xr-application-token", "signed-status-token");
-    vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
     const view = await render(<ApplyStatus />);
     expect(view.querySelector('[data-testid="ra-loading"]')).not.toBeNull();
     expect(view.querySelectorAll("h1")).toHaveLength(1);
+    expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(
+      "/api/research/applications/status?token=signed-status-token",
+      expect.objectContaining({ credentials: "same-origin", cache: "no-store", referrerPolicy: "no-referrer" }),
+    );
   });
 
   it("keeps resend feedback enumeration-safe and announces its outcome", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({ ok: true, message: "A private record exists." }),
     } as Response);
     const view = await render(<ApplyStatus />);
     expect(view.querySelector('[data-testid="ra-error"]')).not.toBeNull();
+    expect(fetchSpy).not.toHaveBeenCalled();
 
     const input = view.querySelector<HTMLInputElement>('[data-testid="input-resend-email"]')!;
     await act(async () => {
@@ -196,9 +202,14 @@ describe("Research public application flow", () => {
     const message = view.querySelector('[data-testid="text-resend-message"]');
     expect(message?.getAttribute("role")).toBe("status");
     expect(message?.textContent).toBe(
-      "If an application exists for that address, a secure status link is on its way.",
+      "If an application exists for that address, a secure status link has been requested.",
     );
     expect(message?.textContent).not.toContain("private record");
+    expect(message?.textContent).not.toMatch(/sent|on its way/i);
+    expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(
+      "/api/research/applications/resend-link",
+      expect.objectContaining({ method: "POST", body: JSON.stringify({ email: "member@example.com" }) }),
+    );
   });
 
   const draftPolicy = {

@@ -276,7 +276,7 @@ describe("Cart page", () => {
       },
     ]);
     const view = await renderPage(<Cart />);
-    expect(view.textContent).toContain("Membership is not active.");
+    expect(view.textContent).toContain("Account access is not active.");
     expect(view.textContent).not.toContain("membership_inactive");
   });
 });

@@ -74,7 +74,7 @@ const MEMBER_SUBNAV = [
   { href: MEMBER_ROUTES.questions, label: "Questions" },
   { href: MEMBER_ROUTES.referrals, label: "Referrals" },
   { href: "/research/partners/links", label: "Recommend Xenios" },
-  { href: MEMBER_ROUTES.membership, label: "Membership" },
+  { href: MEMBER_ROUTES.membership, label: "Account access" },
   { href: MEMBER_ROUTES.profile, label: "Profile" },
   { href: MEMBER_ROUTES.security, label: "Security" },
   { href: MEMBER_ROUTES.privacy, label: "Privacy" },

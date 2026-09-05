@@ -6,8 +6,8 @@ import type { ApprovedUserAccess } from "@shared/research/approved-user-access";
 import type { ApiResult } from "../../lib/api";
 import { MemberAccessDiagnosisPanel } from "./MemberAccessDiagnosisPanel";
 
-const api = vi.hoisted(() => ({ inspect: vi.fn() }));
-vi.mock("../../adapters/adminOps", () => ({ inspectApprovedUserAccess: api.inspect }));
+const api = vi.hoisted(() => ({ inspect: vi.fn(), approve: vi.fn() }));
+vi.mock("../../adapters/adminOps", () => ({ inspectApprovedUserAccess: api.inspect, approveCustomerAccess: api.approve }));
 
 const ids = {
   auth: "00000000-0000-4000-8000-000000000001",
@@ -26,7 +26,7 @@ const fixture = (patch: Partial<ApprovedUserAccess> = {}): ApprovedUserAccess =>
   members: [{ id: ids.member, status: "pending", authUserId: ids.auth, binding: "verified", href: memberHref }],
   partners: [{ id: ids.partner, memberId: ids.member, role: "member_referral", state: "certification_pending", binding: "verified", missingRequirements: ["admin_certification", "tax_status"] }],
   organizationRelationships: { state: "available", records: [{ organizationId: ids.organization, state: "active", roles: ["organization_member"] }] },
-  boundaries: { care: "separate_authority", membershipBillingEnabled: false, partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" },
+  boundaries: { care: "separate_authority", membershipBillingEnabled: false, customerAccessApproval: "unavailable", partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" },
   nextActions: [{ label: "Review customer application", href: appHref, consequence, notification: "application_email" }],
   ...patch,
 });
@@ -59,10 +59,44 @@ beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
   token = "synthetic-admin-one"; api.inspect.mockReset().mockResolvedValue(success());
+  api.approve.mockReset();
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.restoreAllMocks(); });
 
 describe("read-only exact-email account diagnosis", () => {
+  it("retains the same pending approval request when diagnosis refresh or email editing is attempted", async () => {
+    const eligible = absent(); eligible.boundaries.customerAccessApproval = "available";
+    eligible.applications = [{ id: ids.application, status: "under_review", href: appHref, updatedAt: eligible.observedAt }];
+    api.inspect.mockResolvedValue(success(eligible));
+    api.approve.mockResolvedValueOnce({ kind: "unavailable" }).mockResolvedValueOnce({ kind: "ok", data: {
+      ok: true, applicationId: ids.application, approvalVersion: 1, state: "approved_customer", delivery: "queued",
+      expiresAt: "2026-09-19T12:00:00Z", replayed: true,
+    } });
+    await render(); await inspect();
+    for (const [suffix, value] of [["first", "Customer"], ["last", "Example"], ["reason", "Reviewed account access"]]) {
+      await act(async () => {
+        const field = host.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[id$="-${suffix}"]`)!;
+        Object.getOwnPropertyDescriptor(field instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype, "value")!.set!.call(field, value);
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    }
+    await act(async () => { host.querySelector('[aria-label="Prepare customer approval"]')!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
+    await act(async () => { Array.from(host.querySelectorAll("button")).find(button => button.textContent === "Approve customer and queue onboarding email")!.click(); });
+    expect(api.approve).toHaveBeenCalledTimes(1);
+    expect(input().disabled).toBe(true);
+    expect(host.textContent).toContain("Diagnosis is locked");
+    expect(links()).toEqual([]);
+    expect(host.textContent).toContain("Record navigation is paused");
+    expect(Array.from(host.querySelectorAll("button")).find(button => button.textContent === "Refresh diagnosis")?.disabled).toBe(true);
+    await submit(); await enter("different@example.invalid");
+    expect(api.inspect).toHaveBeenCalledTimes(1); expect(api.approve).toHaveBeenCalledTimes(1);
+    expect(host.textContent).not.toContain("different@example.invalid");
+    await act(async () => { Array.from(host.querySelectorAll("button")).find(button => button.textContent === "Retry the same approval request")!.click(); });
+    expect(api.approve.mock.calls[1]).toEqual(api.approve.mock.calls[0]);
+    expect(host.textContent).toContain("Customer approval recorded"); expect(input().disabled).toBe(false);
+    expect(host.textContent).not.toContain("Diagnosis is locked");
+  });
+
   it("does not inspect on mount, typing, or Strict Mode effects, and never puts email in navigation or storage", async () => {
     const storage = vi.spyOn(Storage.prototype, "setItem");
     const beforeUrl = location.href;

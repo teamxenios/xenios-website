@@ -201,8 +201,8 @@ function ReferralProgram({ summary, isFixture }: { summary: ReferralSummary; isF
         <section className="card" aria-label="Referral eligibility" role="status">
           <p className="mono-label text-ink-mute">Eligibility</p>
           <p className="body-s text-ink-2 mt-2" style={{ maxWidth: "56ch" }}>
-            Referral rewards require an active membership. Your link remains yours, and rewards resume once your
-            membership is active again.
+            Referral rewards are not currently enabled for this account. The referral authority determines
+            eligibility; account approval alone does not enable rewards.
           </p>
         </section>
       )}
@@ -210,18 +210,18 @@ function ReferralProgram({ summary, isFixture }: { summary: ReferralSummary; isF
       <section aria-label="How rewards work" className="card">
         <p className="mono-label text-ink-mute">How rewards work</p>
         <p className="body-m mt-2" style={{ maxWidth: "56ch" }}>
-          new members receive $10 store credit; you receive $15 store credit
+          Under the recorded referral program, qualifying new customers receive $10 store credit; you receive $15 store credit.
         </p>
         <ul className="mt-3 grid gap-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
           <li className="body-s text-ink-2">
-            Credit is held for 14 days after the new membership activates, then released to your available balance.
+            Legacy referral credit is held for 14 days after its qualifying activation, then released under the recorded referral terms.
           </li>
           <li className="body-s text-ink-2">
-            If a membership is refunded during the hold, the associated credit is reversed instead of released.
+            If the qualifying historical charge is refunded during the hold, the associated credit is reversed instead of released.
           </li>
           <li className="body-s text-ink-2">
-            Membership is $50 at activation, including the first 30 days, then $25 per additional 30-day
-            period. There is no annual plan, and your invitation changes neither price.
+            Account approval does not require purchasing a membership and does not itself award referral credit.
+            Historical charges and credits are not cancelled or changed by this page.
           </li>
         </ul>
       </section>
@@ -342,8 +342,8 @@ function InvitationCard({ code }: { code: string | null }) {
         A personal link, just for the people you would actually recommend this to.
       </p>
       <p className="body-s mt-2" style={{ color: "#e9e2ff", maxWidth: "56ch" }}>
-        Anyone who applies through your link is reviewed the same way as every applicant. Sharing it never affects your
-        own membership.
+        Anyone who applies through your link is reviewed the same way as every applicant. Sharing the link does not
+        grant account approval or referral eligibility.
       </p>
 
       {shareLink ? (

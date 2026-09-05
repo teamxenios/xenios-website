@@ -32,15 +32,15 @@ export default function MemberDetail() {
   const id = params.id ?? "";
   return (
     <AdminScreen
-      title="Member"
-      lead="Account and membership state for one member."
+      title="Customer account"
+      lead="Recorded account status and history for one customer."
       actions={
         <Link href={ADMIN_ROUTES.members} className="btn btn-secondary">
-          Back to members
+          Back to customer accounts
         </Link>
       }
     >
-      {(token) => <MemberDetailBody token={token} id={id} />}
+      {(token) => <MemberDetailBody key={`${token}:${id}`} token={token} id={id} />}
     </AdminScreen>
   );
 }
@@ -56,12 +56,13 @@ function MemberDetailBody({ token, id }: { token: string; id: string }) {
         message={resource.message}
         deniedCode={resource.deniedCode}
         onRetry={resource.reload}
-        unavailableTitle="Member records publish with the member platform."
-        unavailableBody="This page renders the account, membership, consent, and account timeline the moment the members API responds. If this member came through an application, their application file already holds the review history."
+        unavailableTitle="Customer record unavailable."
+        unavailableBody="The account record could not be read. Its presence or access status has not been determined. An existing application file may contain separate review history."
       >
         {(() => {
           const m = resource.data?.member;
           if (!m) return null;
+          if (m.id !== id) return <p role="alert">The returned customer record could not be verified.</p>;
           return (
             <>
               <section className="card" aria-label="Account">
@@ -76,8 +77,8 @@ function MemberDetailBody({ token, id }: { token: string; id: string }) {
                 </div>
                 <div className="grid gap-x-8 gap-y-3 mt-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
                   <div>
-                    <p className="mono-label text-ink-mute">Plan</p>
-                    <p className="body-s mt-1">{m.plan ?? "Founding Membership"}</p>
+                    <p className="mono-label text-ink-mute">Historical plan</p>
+                    <p className="body-s mt-1">{m.plan || "Not recorded"}</p>
                   </div>
                   <div>
                     <p className="mono-label text-ink-mute">Activated</p>
@@ -125,7 +126,7 @@ function MemberDetailBody({ token, id }: { token: string; id: string }) {
 
       <ResearchSecureNotice>
         By design, this page never shows assessment answers, tracker entries, or question content. Those live in the
-        member's own record; operations sees account and membership state only.
+        customer's own record; operations sees recorded account state and history only. Paid membership is not an access prerequisite.
       </ResearchSecureNotice>
     </div>
   );

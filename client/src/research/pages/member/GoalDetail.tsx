@@ -51,7 +51,7 @@ function RelatedProducts({ goal }: { goal: ResearchGoal }) {
         body={
           member
             ? "The catalog has not loaded yet for this session. When it is available, products relevant to this goal appear here automatically."
-            : "The product catalog is available to active members. Once your membership is active, products relevant to this goal appear here."
+            : "The product catalog requires an approved, active customer account. Sign in to check access; product-specific eligibility still applies."
         }
         action={
           <Link href={MEMBER_ROUTES.products} className="btn btn-ghost">

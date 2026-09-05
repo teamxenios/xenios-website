@@ -94,6 +94,8 @@ describe("account portal extension routes", () => {
     expect(navigation?.textContent).toContain("Commerce");
     expect(navigation?.textContent).toContain("Profile");
     expect(navigation?.textContent).toContain("Security");
+    expect(navigation?.querySelector('a[href="/research/account/subscription"]')?.textContent).toBe("Billing history");
+    expect(navigation?.textContent).not.toContain("Membership");
     expect(navigation?.querySelector('a[href="/research/account/orders"]')?.getAttribute("aria-current"))
       .toBe("page");
     expect(container.querySelector("a")?.getAttribute("href")).toBe("#account-main-content");

@@ -26,9 +26,8 @@ import { formatDate, frequencyLabel, subscriptionStateMeta } from "./commerce-pr
 // frozen GET /api/research/subscriptions (SubscriptionDto) and
 // POST /api/research/subscriptions/:id (SubscriptionActionRequest).
 //
-// This is the PRODUCT subscription manager, deliberately distinct from
-// membership (the Founding Membership, $50 at activation including the
-// first 30 days, lives on the Membership page).
+// This is the PRODUCT subscription manager, distinct from approved account
+// access and any historical billing records.
 //
 // Rules baked in from the frozen contract:
 // - Every subscription fact is a SubscriptionDto field. Nothing is invented,
@@ -94,7 +93,7 @@ const CONFIRM_COPY: Record<ConfirmableAction, { title: string; body: string; lab
   },
   cancel: {
     title: "Cancel this subscription?",
-    body: "Future charges and shipments stop. This does not affect your membership, and you can start a new subscription any time.",
+    body: "Future charges and shipments for this product stop. This does not change account approval or any separate historical billing record. You can start a new product subscription when it is available.",
     label: "Cancel subscription",
     danger: true,
   },
@@ -484,16 +483,16 @@ export default function SubscriptionsPage() {
       title="Subscriptions"
       lead="Recurring product deliveries: their schedule, their next charge, and the controls to pause, skip, reschedule, or cancel."
     >
-      {/* Distinct from membership, stated plainly and up front. */}
+      {/* Product schedules are separate from account access and historical billing. */}
       <div className="card mb-6">
-        <p className="mono-label text-ink-mute">Product subscriptions, not membership</p>
+        <p className="mono-label text-ink-mute">Product subscriptions and account access</p>
         <p className="body-s text-ink-2 mt-2 max-w-[58ch]">
-          This page manages recurring product deliveries only. Your Founding Membership ($50 at activation
-          including your first 30 days, then $25 per additional 30-day period) is separate and is managed on the{" "}
+          This page manages recurring product deliveries only. Account access does not require a paid membership.
+          Any historical billing records remain on the{" "}
           <Link href={MEMBER_ROUTES.membership} className="font-700">
-            Membership page
+            Historical billing page
           </Link>
-          . Cancelling a product subscription never changes your membership.
+          . Cancelling a product subscription changes that product schedule, not account approval or separate historical charges.
         </p>
       </div>
 

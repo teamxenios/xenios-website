@@ -1,249 +1,129 @@
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
+import { z } from "zod";
 import { useResearch, formatMoney } from "../../core";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
-  ResearchAgreementViewer,
-  ResearchCapabilityBoundary,
-  ResearchConfirmation,
   ResearchDataTable,
   ResearchDenialNotice,
   ResearchEmptyState,
   ResearchLoadingState,
   ResearchRouteBoundary,
   ResearchStatusBadge,
-  capabilityStatusOrPending,
 } from "../../ui/kit";
-import { cancelMembership, getMembership } from "../../adapters/member";
+import { getMembership } from "../../adapters/member";
 import { getStoreCredit } from "../../adapters/commerce";
-import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
-import { denialPresentation } from "../../lib/denials";
-import { devFixture } from "../../lib/fixtures";
+import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import type { StoreCreditDto } from "@shared/research/commerce-api";
 
 // ---------------------------------------------------------------------------
-// Membership (/research/member/membership). The economics are fixed and
-// public inside the member area: ONE Founding Membership, $50 due at
-// activation (including the first 30 days), then $25 for each additional
-// 30-day period. There is no annual plan and no $25 due at activation.
-// Everything transactional (renewal date, payment
-// history, cancellation) renders ONLY from server data; when the contract is
-// not published the page shows honest unavailable states, never invented
-// billing facts.
+// Compatibility route, now read-only account access and historical billing.
+// Approved customer access does not require a paid membership. Legacy records
+// remain source-derived; this page does not cancel charges, refund payments,
+// sell activation, or mutate account access.
 // ---------------------------------------------------------------------------
 
-type MembershipPayment = {
-  id: string;
-  at: string;
-  label: string;
-  amountCents: number;
-  status: string;
-};
-
-type MembershipAgreement = {
-  key: string;
-  title: string;
-  version: string;
-  summary?: string | null;
-  accepted?: boolean | null;
-};
-
-type MembershipData = {
-  status?: string | null;
-  startedAt?: string | null;
-  nextChargeAt?: string | null;
-  payments?: MembershipPayment[] | null;
-  agreements?: MembershipAgreement[] | null;
-};
-
-// Agreements shown before the contract publishes real ones. Acceptance is
-// never simulated: the viewer renders "Acceptance opens later".
-const DEFAULT_AGREEMENTS: MembershipAgreement[] = [
-  {
-    key: "membership",
-    title: "Membership Agreement",
-    version: "pending",
-    summary:
-      "The full membership agreement text is published here before acceptance opens. Nothing has been accepted on your behalf.",
-  },
-  {
-    key: "research-use",
-    title: "Research Use Terms",
-    version: "pending",
-    summary:
-      "The research use terms are published here before acceptance opens. You will review and accept them yourself.",
-  },
-];
-
-type CancelState =
-  | { phase: "idle" }
-  | { phase: "confirming" }
-  | { phase: "busy" }
-  | { phase: "done" }
-  | { phase: "unavailable" }
-  | { phase: "error"; message: string };
+const HistoricalBillingSchema = z.object({
+  status: z.string().nullable().optional(),
+  planLabel: z.string().nullable().optional(),
+  startedAt: z.string().nullable().optional(),
+  nextChargeAt: z.string().nullable().optional(),
+  payments: z.array(z.object({
+    id: z.string(), at: z.string(), label: z.string(),
+    amountCents: z.number().int().safe(), status: z.string(),
+  })).nullable().optional(),
+  agreements: z.array(z.object({
+    key: z.string(), title: z.string(), version: z.string(),
+    summary: z.string().nullable().optional(), accepted: z.boolean().nullable().optional(),
+  })).nullable().optional(),
+});
+type HistoricalBillingData = z.infer<typeof HistoricalBillingSchema>;
+type MembershipPayment = NonNullable<HistoricalBillingData["payments"]>[number];
+type HistoryState = { kind: "loading" | "unavailable" | "unauthorized" }
+  | { kind: "ready"; data: HistoricalBillingData };
 
 export default function MembershipPage() {
-  const { member, memberChecking, memberToken, refreshMember } = useResearch();
-  const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
-  const [data, setData] = useState<MembershipData | null>(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [sessionEnded, setSessionEnded] = useState(false);
-  const [cancel, setCancel] = useState<CancelState>({ phase: "idle" });
-
-  useEffect(() => {
-    let alive = true;
-    void fetchCapabilities(memberToken).then((statuses) => {
-      if (alive) setCapabilities(statuses);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [memberToken]);
-
-  useEffect(() => {
-    if (!member || !memberToken) return;
-    let alive = true;
-    (async () => {
-      const res = await getMembership<MembershipData>(memberToken);
-      if (!alive) return;
-      if (res.kind === "ok") {
-        setData(res.data);
-      } else if (res.kind === "unauthorized") {
-        setSessionEnded(true);
-      } else if (res.kind === "denied") {
-        // A machine denial is not "no data yet": render the page's honest
-        // empty billing states, never the development fixture.
-        setData(null);
-      } else {
-        setData(
-          devFixture<MembershipData>(() => ({
-            status: "active",
-            startedAt: "2026-06-02",
-            nextChargeAt: "2026-08-02",
-            payments: [
-              { id: "pay_2", at: "2026-07-02", label: "30-day renewal", amountCents: 2500, status: "Paid" },
-              { id: "pay_1", at: "2026-06-02", label: "Activation (includes first 30 days)", amountCents: 5000, status: "Paid" },
-            ],
-          })),
-        );
-      }
-      setDataLoaded(true);
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [member, memberToken]);
-
-  const billingStatus = capabilityStatusOrPending(capabilities, "membership_billing");
-  const payments = data?.payments ?? null;
-  const agreements = data?.agreements?.length ? data.agreements : DEFAULT_AGREEMENTS;
-
-  async function confirmCancel() {
-    if (!memberToken) return;
-    setCancel({ phase: "busy" });
-    const res = await cancelMembership(memberToken);
-    if (res.kind === "ok") {
-      setCancel({ phase: "done" });
-      await refreshMember();
-      return;
-    }
-    if (res.kind === "unavailable") {
-      setCancel({ phase: "unavailable" });
-      return;
-    }
-    if (res.kind === "unauthorized") {
-      setSessionEnded(true);
-      setCancel({ phase: "idle" });
-      return;
-    }
-    if (res.kind === "denied") {
-      // Route on the machine code, never on the server message; the copy for
-      // every code is ours (lib/denials).
-      const p = denialPresentation(res.code, res.message);
-      setCancel({ phase: "error", message: `${p.title} ${p.body}` });
-      return;
-    }
-    setCancel({
-      phase: "error",
-      message: res.kind === "forbidden" ? res.message ?? "This action is not permitted." : res.message,
-    });
-  }
-
-  const state: "loading" | "ok" | "unauthorized" = memberChecking
-    ? "loading"
-    : !member || sessionEnded
-      ? "unauthorized"
-      : !dataLoaded
-        ? "loading"
-        : "ok";
+  const { member, memberChecking, memberToken } = useResearch();
+  const state = memberChecking ? "loading" : !member || !memberToken ? "unauthorized" : "ok";
 
   return (
     <ResearchMemberShell
-      eyebrow="Member"
-      title="Membership"
-      lead="Your plan, your payment history, your agreements, and how to leave."
+      eyebrow="Account"
+      title="Account access and billing history"
+      lead="Your recorded account status, historical billing records, and separate store credit."
     >
       <ResearchRouteBoundary state={state}>
-        {/* The Founding Membership card. Fixed economics; live facts only when supplied. */}
         <section aria-labelledby="ra-membership-plan" className="card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="ra-membership-plan" className="body-m font-700">
-              Founding Membership
+              Account access
             </h2>
             {member && <ResearchStatusBadge label={member.status} tone={member.status === "active" ? "success" : "neutral"} />}
           </div>
-          <dl className="mt-4 grid gap-3">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="body-s text-ink-2">Activation (includes your first 30 days)</dt>
-              <dd className="body-m tabular">{formatMoney(5000)} once</dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="body-s text-ink-2">Each additional 30-day period after that</dt>
-              <dd className="body-m tabular">{formatMoney(2500)}</dd>
-            </div>
-            {data?.startedAt && (
-              <div className="flex items-baseline justify-between gap-4">
-                <dt className="body-s text-ink-2">Member since</dt>
-                <dd className="body-m tabular">{data.startedAt}</dd>
-              </div>
-            )}
-            {data?.nextChargeAt && (
-              <div className="flex items-baseline justify-between gap-4">
-                <dt className="body-s text-ink-2">Next renewal due</dt>
-                <dd className="body-m tabular">{data.nextChargeAt}</dd>
-              </div>
-            )}
-          </dl>
-          <p className="body-s text-ink-mute mt-4">
-            There is no annual plan. The $50 activation is paid once and includes your first 30 days; your
-            first renewal date is calculated when your activation payment is verified, and you initiate each
-            renewal yourself.
+          <p className="body-s text-ink-2 mt-4">
+            Paid membership is not required for approved customer access. The status above comes from your
+            account record; this page does not approve access or change it.
+          </p>
+          <p className="body-s text-ink-mute mt-3">
+            Historical charges and agreements are preserved for review. This page does not refund payments or
+            cancel existing recurring charges. Product subscriptions, Care, and
+            account approval remain separate.
           </p>
         </section>
+        {memberToken ? <>
+          <HistoricalBilling key={`billing:${memberToken}`} token={memberToken} />
+          <StoreCreditSection key={`credit:${memberToken}`} token={memberToken} />
+        </> : null}
+        <section className="mt-10 card">
+          <h2 className="body-m font-700">Review billing records</h2>
+          <p className="body-s text-ink-2 mt-2">Historical billing questions need review; account access is not purchased or canceled here.</p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <Link className="btn btn-secondary" href={ACCOUNT_PORTAL_ROUTES.subscription}>Open billing history</Link>
+            <Link className="btn btn-secondary" href={ACCOUNT_PORTAL_ROUTES.support}>Request billing support</Link>
+          </div>
+        </section>
+      </ResearchRouteBoundary>
+    </ResearchMemberShell>
+  );
+}
 
-        {/* Billing management is provider-backed: honest pending until enabled. */}
-        <div className="mt-6">
-          <ResearchCapabilityBoundary status={billingStatus}>
-            <section aria-labelledby="ra-membership-billing" className="card">
-              <h2 id="ra-membership-billing" className="body-m font-700">
-                Billing
-              </h2>
-              <p className="body-s text-ink-2 mt-2">
-                Your payment method and invoices are managed here.
-              </p>
-            </section>
-          </ResearchCapabilityBoundary>
-        </div>
-
-        {/* Activation and payment history: server-supplied only. */}
+function HistoricalBilling({ token }: { token: string }) {
+  const [state, setState] = useState<HistoryState>({ kind: "loading" });
+  useEffect(() => {
+    let alive = true;
+    void getMembership<unknown>(token).then((result) => {
+      if (!alive) return;
+      if (result.kind === "unauthorized") { setState({ kind: "unauthorized" }); return; }
+      const parsed = result.kind === "ok" ? HistoricalBillingSchema.safeParse(result.data) : null;
+      setState(parsed?.success ? { kind: "ready", data: parsed.data } : { kind: "unavailable" });
+    }).catch(() => { if (alive) setState({ kind: "unavailable" }); });
+    return () => { alive = false; };
+  }, [token]);
+  if (state.kind === "loading") return <ResearchLoadingState label="Loading historical billing records" />;
+  if (state.kind === "unauthorized") return <p role="alert" className="body-s mt-6">Your session cannot read these billing records. Sign in again to review them.</p>;
+  if (state.kind !== "ready") return <div className="mt-6"><ResearchEmptyState title="Historical billing records are unavailable."
+    body="This does not mean there were no payments, no scheduled charges, or no agreements. No account-access change is inferred." /></div>;
+  const { data } = state;
+  const payments = data.payments;
+  return <>
+        <section className="card mt-6" aria-label="Recorded historical plan">
+          <h2 className="body-m font-700">Historical plan record</h2>
+          <dl className="grid gap-3 mt-3">
+            <div><dt className="body-s text-ink-mute">Recorded plan</dt><dd>{data.planLabel ?? "Plan label unavailable"}</dd></div>
+            <div><dt className="body-s text-ink-mute">Recorded billing-plan status</dt><dd>{data.status ?? "Status unavailable"}</dd></div>
+            <div><dt className="body-s text-ink-mute">Recorded start date</dt><dd>{data.startedAt ?? "Start date unavailable"}</dd></div>
+            <div><dt className="body-s text-ink-mute">Recorded legacy charge date</dt><dd>{data.nextChargeAt ?? "Charge schedule unavailable"}</dd></div>
+          </dl>
+          <p className="body-s text-ink-mute mt-3">These are historical source fields, not a new charge or a prerequisite for account access. Review any outstanding or scheduled charge with support.</p>
+        </section>
         <section aria-labelledby="ra-membership-history" className="mt-10">
           <h2 id="ra-membership-history" className="body-m font-700">
-            Activation and payment history
+            Historical payment records
           </h2>
           <div className="mt-4">
             {payments && payments.length > 0 ? (
               <ResearchDataTable<MembershipPayment>
-                caption="Membership payments, newest first"
+                caption="Historical payments as recorded by the source"
                 columns={[
                   { key: "at", header: "Date", render: (row) => <span className="tabular">{row.at}</span> },
                   { key: "label", header: "Payment", render: (row) => row.label },
@@ -259,101 +139,30 @@ export default function MembershipPage() {
               />
             ) : (
               <ResearchEmptyState
-                title="Payment history is not available yet."
-                body="Your activation and renewal payments will appear here once billing records are connected. Nothing is wrong with your membership."
+                title={payments ? "No payment rows were returned." : "Payment history is unavailable."}
+                body="History completeness is not reported by this endpoint. An empty or missing list does not erase past payments or confirm that no charges exist."
               />
             )}
           </div>
         </section>
 
-        {/* Agreements: never auto-accepted. */}
         <section aria-labelledby="ra-membership-agreements" className="mt-10">
           <h2 id="ra-membership-agreements" className="body-m font-700">
-            Agreements
+            Recorded agreements
           </h2>
           <div className="mt-4 grid gap-4">
-            {agreements.map((agreement) => (
-              <ResearchAgreementViewer
-                key={agreement.key}
-                title={agreement.title}
-                version={agreement.version}
-                accepted={agreement.accepted ?? null}
-                content={
-                  <p>
-                    {agreement.summary ??
-                      "The full agreement text is published here before acceptance opens. Nothing has been accepted on your behalf."}
-                  </p>
-                }
-              />
-            ))}
+            {data.agreements?.length ? data.agreements.map((agreement) => (
+              <article key={agreement.key} className="card" aria-label={`${agreement.title} historical agreement`}>
+                <p className="mono-label text-ink-mute">Recorded agreement · v{agreement.version}</p>
+                <h3 className="body-m font-700 mt-1">{agreement.title}</h3>
+                <p className="body-s mt-3">{agreement.summary ?? "Agreement content is unavailable in this record. Nothing has been accepted on your behalf."}</p>
+                <p className="body-s mt-3">{agreement.accepted === true ? "Recorded accepted" : agreement.accepted === false ? "Recorded not accepted" : "Acceptance record unavailable"}</p>
+              </article>
+            )) : <p className="body-s text-ink-mute">{data.agreements ? "No agreement rows were returned. History completeness is not reported." : "Agreement history is unavailable."}</p>}
           </div>
         </section>
 
-        {/* Store credit: spendable and pending balances kept visibly apart. */}
-        <StoreCreditSection token={memberToken} />
-
-        {/* Cancellation. The confirmation states the consequences exactly. */}
-        <section aria-labelledby="ra-membership-cancel" className="mt-10 card">
-          <h2 id="ra-membership-cancel" className="body-m font-700">
-            Cancel membership
-          </h2>
-          <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-            You can cancel at any time. Read the consequences carefully before you confirm; they take effect
-            immediately.
-          </p>
-          <div className="mt-4">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setCancel({ phase: "confirming" })}
-              disabled={cancel.phase === "busy" || cancel.phase === "done"}
-            >
-              Cancel my membership
-            </button>
-          </div>
-          <div role="status" aria-live="polite" className="mt-3">
-            {cancel.phase === "done" && (
-              <p className="body-s text-ink-2">
-                Your cancellation was received. Your access has ended, and a confirmation is on record.
-              </p>
-            )}
-            {cancel.phase === "unavailable" && (
-              <p className="body-s text-ink-2">
-                Online cancellation is not available yet. Email{" "}
-                <a href="mailto:research@xeniostechnology.com" className="underline">
-                  research@xeniostechnology.com
-                </a>{" "}
-                and a person will cancel it for you.
-              </p>
-            )}
-            {cancel.phase === "error" && <p className="body-s text-ink-2">{cancel.message}</p>}
-          </div>
-        </section>
-
-        <ResearchConfirmation
-          open={cancel.phase === "confirming" || cancel.phase === "busy"}
-          title="Cancel your membership?"
-          danger
-          busy={cancel.phase === "busy"}
-          confirmLabel="Yes, cancel my membership"
-          onConfirm={() => void confirmCancel()}
-          onCancel={() => setCancel({ phase: "idle" })}
-          body={
-            <div>
-              <p>Before you confirm, understand exactly what happens:</p>
-              <ul className="mt-3 grid gap-2" style={{ paddingLeft: 18, listStyle: "disc" }}>
-                <li>Access ends immediately.</li>
-                <li>Remaining paid access is forfeited, subject to applicable law.</li>
-                <li>Product subscriptions are handled separately and are not canceled here.</li>
-                <li>Download your plans and data first.</li>
-                <li>Required records may be retained.</li>
-              </ul>
-            </div>
-          }
-        />
-      </ResearchRouteBoundary>
-    </ResearchMemberShell>
-  );
+  </>;
 }
 
 // ---------------------------------------------------------------------------
@@ -413,7 +222,7 @@ function StoreCreditSection({ token }: { token: string | null }) {
         {state.kind === "unavailable" && (
           <ResearchEmptyState
             title="Store credit is not available yet."
-            body="Your credit balance appears here once the credit ledger is connected. Nothing is wrong with your membership."
+            body="The credit ledger could not provide a balance. No zero balance or account-access change is inferred."
           />
         )}
         {state.kind === "denied" && <ResearchDenialNotice code={state.code} message={state.message} />}
