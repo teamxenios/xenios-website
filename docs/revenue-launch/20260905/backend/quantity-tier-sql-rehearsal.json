@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "checks": 37,
+  "engine": "PostgreSQL 18.3 (PGlite 0.5.8) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.74 (1092ec30a3fb1d46b1782ff1b4db5094d3d06ae5), 32-bit",
+  "baselinePath": "supabase/migrations/20260726143000_research_product_control_center.sql",
+  "baselineGitBlobSha256": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203",
+  "candidatePath": "supabase/candidates/20260905_research_product_price_quantity_tiers.sql",
+  "candidateLfSha256": "a8d3909335a1fc0ccd8f679ed9b525995464dfd1f0d92957bdfcfbdee650daec",
+  "productionMutated": false,
+  "scope": "Isolated SQL engine; canonical price/audit/RPC baseline with minimal product/variant parent fixtures. No production schema parity, live RLS policies, concurrent-session or remote integration attestation."
+}

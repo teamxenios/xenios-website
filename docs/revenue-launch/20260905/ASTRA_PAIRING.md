@@ -14,8 +14,11 @@ A works in `C:/Users/sboad/.codex/worktrees/f36a/xenios-website` on
 `1bd9431b0eac6d12a255832fe2f676f07e2a5027`. B uses its own isolated worktree.
 No session writes in the other's checkout. Exact active paths are in
 `.xenios/CODE_OWNERSHIP.json`; the initial A lease covers continuity and migration
-evidence only and will expand explicitly before runtime edits. B's exact path
-confirmation is pending. A owns shared DTO changes and will publish the contract
+evidence only and will expand explicitly before runtime edits. B's exact client/doc paths were confirmed and registered at
+`d54cdb9cc0bb935af2864e01171c3b077ad8430f`, session
+`codex-seth-astra-b-20260905`; the accepted list-page expansion is recorded in
+the same canonical lease. B works on `codex/xenios-seth-astra-b-20260905` at
+`C:/Users/sboad/projects/xenios-seth-astra-b-20260905`. A owns shared DTO changes and will publish the contract
 before B integrates clients. A retains source validation scripts; B may own
 source mapping/configuration artifacts once exact paths are agreed.
 

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { readCanonicalPriceTiers } from "@shared/research/price-quantity-tiers";
 import {
   PRODUCT_AVAILABILITY,
   PRODUCT_LANES,
@@ -522,10 +523,21 @@ function normalizePrice(value: CreateAdminPriceInput): CreateAdminPriceInput {
       "expiresAt must be after effectiveAt",
     );
   }
+  // Omitted/empty ladders retain the scalar write contract, including legacy
+  // zero-valued drafts. Any present nonempty ladder must be valid in full.
+  const hasTiers = value.quantityTiers !== undefined &&
+    !(Array.isArray(value.quantityTiers) && value.quantityTiers.length === 0);
+  const quantityTiers = hasTiers
+    ? readCanonicalPriceTiers(value.amountCents, value.quantityTiers)
+    : undefined;
+  if (quantityTiers === null) {
+    throw new ProductAdminValidationError("quantityTiers must be a valid canonical price ladder");
+  }
   return {
     variantId: requiredText(value.variantId, "variantId", 120),
     audience: exactString(value.audience, PRICE_AUDIENCES, "audience"),
     amountCents: value.amountCents,
+    ...(quantityTiers ? { quantityTiers } : {}),
     currency,
     effectiveAt,
     expiresAt,
@@ -850,9 +862,12 @@ export class ProductAdminService {
       `product_admin.approve_price.${price}`,
       requiredText(idempotencyKey, "idempotencyKey", 200),
       async () => {
-        refusePriceWrite(
-          screenPriceForApproval(await this.repository.get(product), price),
-        );
+        const record = await this.repository.get(product);
+        refusePriceWrite(screenPriceForApproval(record, price));
+        const row = record!.prices.find((candidate) => candidate.id === price)!;
+        // Historical/imported drafts must pass the same economic validation as
+        // new writes. Re-read authority instead of accepting a browser ladder.
+        normalizePrice(row);
         return this.repository.approvePrice(
           product,
           price,

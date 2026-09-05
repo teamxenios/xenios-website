@@ -735,7 +735,12 @@ export class SupabaseProductAdminRepository
     at: string,
   ): Promise<AdminProductDetail> {
     return this.rpcProduct(
-      "research_admin_create_product_price",
+      // This capability-specific RPC does not exist on the old schema. Calling
+      // the legacy RPC with an extra JSON field would silently drop the ladder.
+      input.quantityTiers !== undefined &&
+        !(Array.isArray(input.quantityTiers) && input.quantityTiers.length === 0)
+        ? "research_admin_create_tiered_product_price"
+        : "research_admin_create_product_price",
       { p_product_id: productId, p_input: input, p_actor: actor, p_at: at },
       productId,
     );

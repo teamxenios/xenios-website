@@ -265,6 +265,8 @@ export interface CreateAdminPriceInput {
   variantId: string;
   audience: PriceAudience;
   amountCents: number;
+  /** Optional immutable quantity ladder; never a client-selected checkout price. */
+  quantityTiers?: readonly import("./price-quantity-tiers").PriceQuantityTier[];
   currency: string;
   effectiveAt: string;
   expiresAt?: string | null;

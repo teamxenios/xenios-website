@@ -1277,11 +1277,53 @@
         ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*",
         "docs/revenue-launch/20260905/migration-history/**",
         "docs/revenue-launch/20260905/ASTRA_PAIRING.md",
-        "docs/revenue-launch/20260905/COMPLETE_PACKAGE_GATE.md"
+        "docs/revenue-launch/20260905/COMPLETE_PACKAGE_GATE.md",
+        "shared/research/product-admin.ts",
+        "shared/research/price-quantity-tiers.ts",
+        "shared/research/price-quantity-tiers.test.ts",
+        "server/research/products-diagnostics/product-admin.ts",
+        "server/research/products-diagnostics/product-admin.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "server/research/products-diagnostics/product-admin-routes.ts",
+        "server/research/products-diagnostics/product-admin-routes.test.ts",
+        "server/research/products-diagnostics/product-admin-integration.ts",
+        "server/research/products-diagnostics/product-admin-integration.test.ts",
+        "server/research/products-diagnostics/product-admin.quantity-tiers.test.ts",
+        "server/research/products-diagnostics/product-admin-production.quantity-tiers.test.ts",
+        "supabase/candidates/20260905_research_product_price_quantity_tiers.sql",
+        "supabase/candidates/20260905_research_product_price_quantity_tiers.precheck.sql",
+        "supabase/candidates/20260905_research_product_price_quantity_tiers.postcheck.sql",
+        "supabase/candidates/20260905_research_product_price_quantity_tiers.rollback.md",
+        "docs/revenue-launch/20260905/backend/**",
+        "scripts/revenue-launch/**",
+        "config/research/revenue-launch/**",
+        ".xenios/sessions/codex-seth-astra-b-20260905.json"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T17:49:32.211Z"
+      "heartbeatAt": "2026-09-05T17:57:09.853Z"
+    },
+    {
+      "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",
+      "task": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",
+      "session": "codex-seth-astra-b-20260905",
+      "paths": [
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
+        "client/src/research/revenue-launch/reconciliation-review.ts",
+        "client/src/research/revenue-launch/reconciliation-review.test.ts",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
+        "docs/revenue-launch/astra-b/20260905/**",
+        "client/src/research/pages/adminx/ProductsAdmin.tsx",
+        "client/src/research/pages/adminx/ProductsAdmin.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T17:50:44.922Z",
+      "heartbeatAt": "2026-09-05T17:50:44.922Z",
+      "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f"
     }
   ],
   "rules": [
