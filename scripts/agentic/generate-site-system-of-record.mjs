@@ -183,7 +183,7 @@ export function extractClientRouteRegistrations(source, file = "fixture.tsx") {
 function routePersona(path) {
   if (path.startsWith("/admin")) return "founder_admin_operations";
   if (path === "/health") return "public_health_visitor";
-  if (path.startsWith("/care")) return "care_requester";
+  if (path === "/care" || path.startsWith("/care/")) return "care_requester";
   if (path.startsWith("/r/")) return "referral_recipient";
   if (path.includes("/partners") || path.includes("/affiliates")) return "partner_affiliate";
   if (path.includes("/organizations") || path.includes("/wholesale")) return "organization_buyer";
@@ -197,7 +197,7 @@ function routePersona(path) {
 
 function routeDomain(path) {
   if (path.startsWith("/admin")) return "operations";
-  if (path === "/health" || path.startsWith("/care")) return "care";
+  if (path === "/health" || path === "/care" || path.startsWith("/care/")) return "care";
   if (path.startsWith("/r/") || path.includes("/partners") || path.includes("/affiliates")) return "referrals_partners";
   if (path.includes("/organizations") || path.includes("/wholesale")) return "organizations";
   if (path.includes("/supplier")) return "supplier_fulfillment";

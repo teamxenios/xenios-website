@@ -359,8 +359,8 @@
       "branch": "codex/xenios-major-ordering-admin-sor-20260904",
       "state": "active",
       "startedAt": "2026-09-04T20:11:27.933Z",
-      "heartbeatAt": "2026-09-05T01:54:32.069Z",
-      "note": "Final intent-preservation corrections reviewed; integration build/full suite and local browser handoff proof in progress."
+      "heartbeatAt": "2026-09-05T02:05:16.653Z",
+      "note": "Frozen order intent code and browser evidence pushed; final 4-worker regression run isolated from SOR generation after an overloaded 8-worker attempt. Narrow Care-prefix inventory correction under review."
     }
   ]
 }

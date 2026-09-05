@@ -238,6 +238,24 @@ test("route inventory deduplicates paths while preserving registration evidence 
   assert.equal(routes.find((route) => route.path === "/admin/research").persona, "founder_admin_operations");
 });
 
+test("Care classification requires an exact route segment and never includes careers", () => {
+  const paths = ["/care", "/care/", "/care/schedule", "/care/*", "/careers", "/careers/:slug", "/careers/innovative-product-builder", "/health"];
+  const routes = buildRouteInventory(paths.map((path) => ({ path, source: "client/src/App.tsx", line: 1 })));
+  for (const path of ["/care", "/care/", "/care/schedule", "/care/*"]) {
+    const route = routes.find((entry) => entry.path === path);
+    assert.equal(route.persona, "care_requester", path);
+    assert.equal(route.domain, "care", path);
+  }
+  for (const path of ["/careers", "/careers/:slug", "/careers/innovative-product-builder"]) {
+    const route = routes.find((entry) => entry.path === path);
+    assert.equal(route.persona, "public_visitor", path);
+    assert.equal(route.domain, "corporate_site", path);
+  }
+  const health = routes.find((route) => route.path === "/health");
+  assert.equal(health.persona, "public_health_visitor");
+  assert.equal(health.domain, "care");
+});
+
 test("snapshot validation enforces capability shape, exact SHAs, statuses, uniqueness, and privacy", () => {
   assert.deepEqual(validateSnapshot(snapshot()), []);
 
