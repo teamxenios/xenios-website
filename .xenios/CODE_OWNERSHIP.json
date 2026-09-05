@@ -1269,6 +1269,8 @@
         "client/src/research/pages/adminx/ProductAdminDetail.tsx",
         "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
         "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
+        "client/src/research/pages/adminx/ProductsAdmin.tsx",
+        "client/src/research/pages/adminx/ProductsAdmin.test.tsx",
         "client/src/research/revenue-launch/reconciliation-review.ts",
         "client/src/research/revenue-launch/reconciliation-review.test.ts",
         "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
@@ -1277,7 +1279,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:50:44.922Z",
-      "heartbeatAt": "2026-09-05T17:50:44.922Z"
+      "heartbeatAt": "2026-09-05T17:54:53.551Z"
     }
   ],
   "rules": [

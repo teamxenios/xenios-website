@@ -12,6 +12,8 @@
         "client/src/research/pages/adminx/ProductAdminDetail.tsx",
         "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
         "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
+        "client/src/research/pages/adminx/ProductsAdmin.tsx",
+        "client/src/research/pages/adminx/ProductsAdmin.test.tsx",
         "client/src/research/revenue-launch/reconciliation-review.ts",
         "client/src/research/revenue-launch/reconciliation-review.test.ts",
         "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
