@@ -9,9 +9,9 @@ export default function AccountSubscription() {
   const snapshot = useAccountResource(loadAccountSubscription, memberToken);
   return (
     <AccountPortalShell
-      eyebrow="Membership + billing"
-      title="Membership, separated from Care."
-      lead="Review plan and renewal status without confusing administrative membership with provider or pharmacy operations."
+      eyebrow="Historical records"
+      title="Billing history"
+      lead="Review recorded plans, billing states, and receipts. Paid membership is not required for approved customer access; product subscriptions and Care remain separate."
     >
       <AccountResourceBoundary snapshot={snapshot}>
         {(data) => <AccountSubscriptionView data={data} />}

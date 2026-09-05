@@ -197,6 +197,7 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
   const cartHydratedRef = useRef(false);
   const verificationInFlightRef = useRef<{
     token: string;
+    generation: number;
     promise: Promise<MemberInfo | null>;
   } | null>(null);
 
@@ -283,9 +284,22 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
       return Promise.resolve(memberRef.current);
     }
     const existing = verificationInFlightRef.current;
-    if (existing?.token === accessToken) return existing.promise;
+    if (existing?.token === accessToken && existing.generation === verificationGenerationRef.current) return existing.promise;
 
     const generation = ++verificationGenerationRef.current;
+    // Auth can exist without an approved customer record. While verifying a
+    // new token, publish no previous principal's private data. Keep the opaque
+    // stored cart untouched until the server returns its verified scope, so a
+    // same-account refresh can restore it without trusting the Auth token.
+    catalogGenerationRef.current += 1;
+    memberRef.current = null;
+    memberTokenRef.current = null;
+    setMember(null);
+    setMemberToken(null);
+    setCatalog(null);
+    cartScopeRef.current = null;
+    cartHydratedRef.current = false;
+    setItems([]);
     // A fresh attempt owns the denial slot from here on: clearing at attempt
     // start means a denial recorded by an EARLIER attempt can never be read
     // as this attempt's outcome (the attempt's own result sets it below, and
@@ -303,7 +317,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         if (generation !== verificationGenerationRef.current) return null;
         if (res.ok && body?.ok && body.member) {
           const verifiedMember = body.member as MemberInfo;
-          hydrateCartSession(verifiedMember.cartScope);
+          if (verifiedMember.status === "active") hydrateCartSession(verifiedMember.cartScope);
+          else resetCartSession();
           catalogGenerationRef.current += 1;
           memberRef.current = verifiedMember;
           memberTokenRef.current = accessToken;
@@ -337,14 +352,14 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
         return null;
       }
     })();
-    verificationInFlightRef.current = { token: accessToken, promise };
+    verificationInFlightRef.current = { token: accessToken, generation, promise };
     void promise.finally(() => {
       if (verificationInFlightRef.current?.promise === promise) {
         verificationInFlightRef.current = null;
       }
     });
     return promise;
-  }, [clearMemberState, hydrateCartSession, noteMemberDenial]);
+  }, [clearMemberState, hydrateCartSession, noteMemberDenial, resetCartSession]);
 
   const refreshMember = useCallback(async () => {
     if (recoveryRef.current === "pending") {
@@ -426,6 +441,8 @@ export function ResearchProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
       authEventGenerationRef.current += 1;
+      verificationGenerationRef.current += 1;
+      catalogGenerationRef.current += 1;
       unsubscribe?.();
     };
   }, [clearMemberState, establishMemberSession]);

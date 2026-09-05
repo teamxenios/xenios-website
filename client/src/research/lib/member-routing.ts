@@ -2,7 +2,7 @@ import type { MemberInfo } from "../core";
 import { safeResearchReturnTo } from "@shared/research/auth-return-to";
 export { safeResearchReturnTo } from "@shared/research/auth-return-to";
 
-const MEMBER_ROOT = "/research/member";
+const ACCOUNT_ROOT = "/research/account";
 const ACTIVATION_ROOT = "/research/activate";
 const ACCESS_STATE_ROOT = "/research/access-state";
 
@@ -20,16 +20,10 @@ export function denialDestination(code: string): string {
 }
 
 /**
- * Route a server-verified member by their server-reported status, following
- * the STATUS half of the server guard's classification
- * (server/research/member-auth.ts requireActiveMember): pending_activation ->
- * activation flow, past_due -> the billing screen, anything else non-active ->
- * the inactive-membership screen. The status field is the server's own answer
- * from /api/research/member/me; the client maps it to a screen and decides
- * nothing. The guard's SECOND half (billing_state enforcement for
- * status-active members, emitted as dynamic billing_* codes by member-content
- * APIs) is not visible on /member/me and surfaces in place instead, via
- * ResearchDenialNotice with the billing-family copy in lib/denials.ts.
+ * Mirror the server-verified account status, never a local access basis or
+ * billing inference. Active accounts enter their account; pending, past-due,
+ * paused and closed records still need their separately authorized review.
+ * Historical billing cannot grant or remove customer access in this mapper.
  */
 export function memberDestination(member: MemberInfo, requestedReturnTo?: string | null): string {
   const safeReturnTo = safeResearchReturnTo(requestedReturnTo);
@@ -39,7 +33,7 @@ export function memberDestination(member: MemberInfo, requestedReturnTo?: string
     // for an already-active member, and no requested path retains the default.
     const pathname = safeReturnTo?.split("?", 1)[0];
     return safeReturnTo && pathname !== ACTIVATION_ROOT && pathname !== "/research"
-      ? safeReturnTo : MEMBER_ROOT;
+      ? safeReturnTo : ACCOUNT_ROOT;
   }
   if (member.status === "pending_activation") return ACTIVATION_ROOT;
   if (member.status === "past_due") return denialDestination("billing_past_due");

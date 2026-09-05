@@ -9,9 +9,9 @@ import { memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 // the member's own sign-in, verified server-side on every API call. The
 // shared gateway password never unlocks these pages.
 
-// Client-side route gate. This is presentation only; authorization is the
-// server's (requireMember on every member-authed API). Pending members may
-// access only the activation flow.
+// Presentation only: the server verifies canonical customer access on every
+// protected API. Paid billing is not inferred here. Pending, past-due, paused,
+// cancelled and closed statuses remain denied until explicitly reviewed.
 export function RequireMember({ children }: { children: ReactNode }) {
   const { member, memberChecking } = useResearch();
   const [location] = useLocation();
@@ -36,7 +36,7 @@ export function RequireMember({ children }: { children: ReactNode }) {
     // A verified former or paused member keeps access only to the privacy
     // rights surface so consent can be withdrawn. All ordinary member
     // content remains behind active status. The redirect target is the
-    // status's own screen (activation, billing, or inactive membership),
+    // status's own screen (setup, account review, or inactive access),
     // mirroring the server guard's classification.
     if (location === "/research/member/privacy") return <>{children}</>;
     return <Redirect to={memberDestination(member)} />;

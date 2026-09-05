@@ -26,6 +26,8 @@ const ALL_SCREEN_TESTIDS = [
   "access-state-billing_past_due",
   "access-state-billing_attention",
   "access-state-membership_inactive",
+  "access-state-account_access_required",
+  "access-state-account_closed",
   "access-state-unknown",
 ];
 
@@ -63,7 +65,8 @@ describe("the access-state screens", () => {
     const view = await renderAt("?code=billing_past_due");
     onlyScreen(view, "access-state-billing_past_due");
     expect(view.textContent).toContain("Billing needs attention.");
-    expect(view.textContent).toContain("past due");
+    expect(view.textContent).toContain("past-due account status");
+    expect(view.textContent).toContain("no payment or automatic reactivation is requested here");
     const support = view.querySelector('[data-testid="link-access-state-billing-support"]') as HTMLAnchorElement;
     expect(support?.getAttribute("href")).toBe("mailto:research@xeniostechnology.com");
   });
@@ -82,9 +85,24 @@ describe("the access-state screens", () => {
   it("renders the inactive-membership screen with apply and support next steps", async () => {
     const view = await renderAt("?code=membership_inactive");
     onlyScreen(view, "access-state-membership_inactive");
-    expect(view.textContent).toContain("Membership is not active.");
+    expect(view.textContent).toContain("Account access is not active.");
+    expect(view.textContent).toContain("need an explicit review");
+    expect(view.textContent).not.toContain("Apply for membership");
     const apply = view.querySelector('[data-testid="link-access-state-apply"]') as HTMLAnchorElement;
     expect(apply?.getAttribute("href")).toBe("/research/apply");
+  });
+
+  it.each([
+    ["account_access_required", "Customer access is not set up yet."],
+    ["account_closed", "This account is closed."],
+  ])("renders the exact %s refusal without promoting it into an approval", async (code, title) => {
+    const view = await renderAt(`?code=${code}`);
+    onlyScreen(view, `access-state-${code}`);
+    expect(view.textContent).toContain(title);
+    expect(view.querySelector('[data-testid="link-access-state-account-support"]')?.getAttribute("href"))
+      .toBe("mailto:research@xeniostechnology.com");
+    expect(view.querySelector("form")).toBeNull();
+    expect(view.querySelector('a[href="/research/account"]')).toBeNull();
   });
 
   it("redirects activation_required to the canonical activation flow instead of duplicating it", async () => {

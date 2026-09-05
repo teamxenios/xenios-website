@@ -25,7 +25,6 @@ import {
   formatAccountDate,
   formatMembershipRenewal,
   formatOrderQuantity,
-  safeBillingManagementUrl,
   safeExternalUrl,
   sentenceCase,
   statusTone,
@@ -53,11 +52,9 @@ export function AccountOverviewView({
     nextAdministrativeAction,
   } = data;
   const nextActionLink = accountNextActionLink(data.nextAdministrativeActionTarget);
-  const noBillingRelationship = membership.billing === "none";
-  const manageUrl = membership.billing !== "none"
-    ? safeBillingManagementUrl(membership.manageUrl)
-    : null;
-  const billing = billingPresentation(membership.billing);
+  const noBillingRelationship = membership?.billing === "none";
+  const billing = billingPresentation(membership?.billing ?? "unknown");
+  const billingMethodKnown = membership && ["current", "past_due", "disputed", "cancelled", "refunded"].includes(membership.billing);
   const recentOrders = researchOrders.slice(0, 2);
   const authoritativeResearchCount = authoritativeOrderCount(orderHistory);
   const historyProjectionComplete = authoritativeResearchCount !== null
@@ -106,11 +103,11 @@ export function AccountOverviewView({
 
       <section className="account-grid account-grid-3" aria-label="Account summary">
         <div className="account-stat">
-          <p className="account-section-label">Membership</p>
+          <p className="account-section-label">Account access</p>
           <p className="account-stat-value mt-2">
-            {membership.planLabel ?? (membership.state === "none" ? "No plan" : "Plan unavailable")}
+            {sentenceCase(identity.accountStatus)}
           </p>
-          <div className="mt-3"><ResearchStatusBadge label={sentenceCase(membership.state)} tone={statusTone(membership.state)} /></div>
+          <p className="body-s mt-3">Recorded account status. Paid membership is not required for approved customer access.</p>
         </div>
         <div className="account-stat">
           <p className="account-section-label">Research history</p>
@@ -141,28 +138,24 @@ export function AccountOverviewView({
           <div className="mt-5">
             <div className="account-data-row"><span className="account-data-label">Email</span><span className="account-data-value">{identity.email}</span></div>
             <div className="account-data-row"><span className="account-data-label">Account</span><span className="account-data-value"><ResearchStatusBadge label={sentenceCase(identity.accountStatus)} tone={statusTone(identity.accountStatus)} /></span></div>
-            <div className="account-data-row"><span className="account-data-label">Member since</span><span className="account-data-value">{formatAccountDate(identity.memberSince)}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Account since</span><span className="account-data-value">{formatAccountDate(identity.memberSince)}</span></div>
           </div>
         </section>
 
         <section className="account-surface account-surface-dark" aria-labelledby="membership-heading">
-          <p className="account-section-label" style={{ color: "#c8c4bb" }}>Xenios membership</p>
+          <p className="account-section-label" style={{ color: "#c8c4bb" }}>Historical billing</p>
           <h2 id="membership-heading" className="account-section-title">
-            {membership.planLabel ?? (membership.state === "none" ? "No active membership" : "Membership plan unavailable")}
+            {membership?.planLabel ?? (!membership ? "Billing data unavailable" : noBillingRelationship ? "No billing relationship recorded" : "Plan label unavailable")}
           </h2>
           {/* Billing truth renders ONLY through the canonical presentation (P1-C). */}
           <div className="mt-4"><ResearchStatusBadge label={`Billing: ${billing.label}`} tone={billing.tone} /></div>
           <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>
-            Renewal: {formatMembershipRenewal(membership)}
+            Recorded renewal evidence: {membership ? formatMembershipRenewal(membership) : "Renewal schedule unavailable"}
           </p>
           <p className="body-s mt-3" style={{ color: "#d9d6ce" }}>
-            Membership covers administrative and platform services. It does not guarantee treatment, a provider decision, or fulfillment.
+            Historical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.
           </p>
-          {manageUrl ? (
-            <a className="btn btn-on-dark btn-primary mt-5" href={manageUrl} target="_blank" rel="noopener noreferrer">Open billing management</a>
-          ) : (
-            <Link className="btn btn-on-dark btn-ghost mt-5" href={ACCOUNT_PORTAL_ROUTES.subscription}>View billing details</Link>
-          )}
+          <Link className="btn btn-on-dark btn-ghost mt-5" href={ACCOUNT_PORTAL_ROUTES.subscription}>View billing history</Link>
         </section>
       </div>
 
@@ -289,8 +282,8 @@ export function AccountOverviewView({
         </Link>
         <Link className="account-surface" href={ACCOUNT_PORTAL_ROUTES.subscription}>
           <p className="account-section-label">Billing</p>
-          <p className="account-section-title">{noBillingRelationship ? "No billing relationship" : membership.manualBilling ? "Manual / offline" : "Online management"}</p>
-          <p className="body-s text-ink-2 mt-3">Membership billing remains separate from product fulfillment.</p>
+          <p className="account-section-title">{noBillingRelationship ? "No billing relationship" : !billingMethodKnown ? "Billing information unavailable" : membership?.manualBilling ? "Manual / offline" : "Recorded billing history"}</p>
+          <p className="body-s text-ink-2 mt-3">Historical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.</p>
         </Link>
       </section>
     </div>

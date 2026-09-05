@@ -21,6 +21,8 @@ import type {
   RequiredInput,
   RequiredInputSummary,
 } from "@shared/research/required-inputs";
+import { APPROVE_CUSTOMER_ACCESS_PATH, ApprovedCustomerApprovalInput, CustomerApprovalResult,
+  type CustomerApprovalInput } from "@shared/research/approved-customer-access";
 
 // The shape useAdminResource loads through. Loaders with parameters are bound
 // in the page (module-level or useCallback on the parameter) so identity only
@@ -189,6 +191,22 @@ export function listAdminClaims<T>(token: string): Promise<ApiResult<T>> {
 }
 
 // -------------------------------- actions ----------------------------------
+
+/** Explicit, audited customer approval; this may dispatch an onboarding email.
+ * Retry an uncertain result with the SAME input and idempotency key.
+ */
+export async function approveCustomerAccess(token: string, raw: CustomerApprovalInput) {
+  if (!token) return { kind: "unauthorized" } as const;
+  const input = ApprovedCustomerApprovalInput.safeParse(raw);
+  if (!input.success) return { kind: "denied", code: "invalid_input" } as const;
+  const result = await apiPost<unknown>(APPROVE_CUSTOMER_ACCESS_PATH, input.data, token);
+  if (result.kind !== "ok") return result;
+  const parsed = CustomerApprovalResult.safeParse(result.data);
+  if (!parsed.success || input.data.expectedApplicationId !== null && parsed.data.applicationId !== input.data.expectedApplicationId) {
+    return { kind: "error", message: "The approval outcome could not be verified. Retry only the same request." } as const;
+  }
+  return { kind: "ok", data: parsed.data } as const;
+}
 
 // The application review verbs (approve, decline, request-information, and
 // friends) share one URL shape; the page supplies the verb it already knows.

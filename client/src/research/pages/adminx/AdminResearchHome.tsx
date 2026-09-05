@@ -224,8 +224,10 @@ export const APPLICATION_STATUS_LABEL: Record<string, string> = {
   resubmitted: "Resubmitted",
   under_review: "Under review",
   more_information_requested: "Needs information",
-  approved_pending_payment: "Approved, awaiting activation",
-  payment_pending: "Activation in progress",
+  approved_pending_payment: "Legacy approval, review needed",
+  approved_customer: "Customer approved, account setup pending",
+  approved_sponsored_b2b: "Recorded sponsored business approval",
+  payment_pending: "Historical payment review pending",
   active: "Active",
   paused: "Paused",
   declined: "Declined",
@@ -237,7 +239,7 @@ export const APPLICATION_QUEUES: Array<{ key: string; label: string }> = [
   { key: "new", label: "New" },
   { key: "under_review", label: "Under review" },
   { key: "needs_information", label: "Needs info" },
-  { key: "approved_awaiting_payment", label: "Approved" },
+  { key: "approved_awaiting_payment", label: "Legacy approvals" },
   { key: "active", label: "Active" },
   { key: "declined", label: "Declined" },
   { key: "all", label: "All" },
@@ -263,9 +265,9 @@ export default function AdminResearchHome() {
   return (
     <AdminScreen
       title="Research operations"
-      lead="The daily operating picture for Xenios Research: the application queue, activation candidates, email delivery, and referral integrity, with links into every surface."
+      lead="The daily operating picture for Xenios Research: application review, approved account setup, email delivery, and referral integrity."
     >
-      {(token) => <OverviewBody token={token} />}
+      {(token) => <OverviewBody key={token} token={token} />}
     </AdminScreen>
   );
 }
@@ -334,16 +336,21 @@ function QueueOverview({
               summary: "Waiting on the applicant to resubmit.",
             },
             {
-              label: "Awaiting activation",
-              statuses: ["approved_pending_payment"],
-              summary: "Approved. Waiting on the $50 activation payment (includes the first 30 days).",
+              label: "Approved account setup",
+              statuses: ["approved_customer"],
+              summary: "Customer approval recorded. The emailed account link must still be claimed.",
             },
             {
-              label: "Activation in progress",
-              statuses: ["payment_pending"],
-              summary: "The activation payment is being verified by a person.",
+              label: "Legacy approval review",
+              statuses: ["approved_pending_payment"],
+              summary: "Historical paid-approval state. Review account access separately; no payment is required for new customer approval.",
             },
-            { label: "Active members", statuses: ["active"], summary: "Fully activated memberships." },
+            {
+              label: "Historical payment review",
+              statuses: ["payment_pending"],
+              summary: "Recorded payment-review state. This does not confirm payment or active customer access.",
+            },
+            { label: "Active customer applications", statuses: ["active"], summary: "Applications recorded as active. Partner and product eligibility remain separate." },
           ];
           return (
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
@@ -370,15 +377,15 @@ function ActivationCandidates({
 }) {
   if (resource.state !== "ok") return null;
   const candidates = (resource.data?.applications ?? []).filter(
-    (a) => a.status === "approved_pending_payment" || a.status === "payment_pending",
+    (a) => a.status === "approved_customer",
   );
   return (
-    <section aria-label="Activation candidates">
-      <h2 className="body-l font-700 mb-4">Activation candidates</h2>
+    <section aria-label="Approved account setup">
+      <h2 className="body-l font-700 mb-4">Approved account setup</h2>
       {candidates.length === 0 ? (
         <ResearchEmptyState
-          title="No one is waiting on activation."
-          body="Approved applicants appear here until their $50 activation payment (which includes the first 30 days of membership) is verified."
+          title="No approved account setup recorded in this queue."
+          body="Customer-approved applications appear here while account setup is pending. Email delivery and successful sign-in must be verified separately."
         />
       ) : (
         <div className="grid gap-3">

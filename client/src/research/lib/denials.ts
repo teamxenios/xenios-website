@@ -26,18 +26,18 @@ type Copy = { title: string; body: string; tone: DenialTone };
 const DENIAL_COPY: Record<CommerceDenialCode, Copy> = {
   // Inherited account-state guards.
   activation_required: {
-    title: "Activate your membership first.",
-    body: "This area opens once your membership is activated. Nothing here is lost.",
+    title: "Account access needs review.",
+    body: "The server has not confirmed active customer access. Reopen your approved account link or contact support for review. Paid membership is not required.",
     tone: "error",
   },
   billing_past_due: {
     title: "Billing needs attention.",
-    body: "Your membership payment is past due. Update billing to continue; nothing you entered was lost.",
+    body: "The server reported a past due account restriction. Contact support to review the recorded status and any historical billing. Making a payment here does not grant customer access.",
     tone: "error",
   },
   membership_inactive: {
-    title: "Membership is not active.",
-    body: "This area is for active members. Reactivate your membership to continue.",
+    title: "Account access is not active.",
+    body: "The server has not confirmed an active customer account. Contact support to review the account status. This screen cannot approve or reopen access.",
     tone: "error",
   },
   recovery_session: {
@@ -218,15 +218,25 @@ const FALLBACK: Copy = {
   tone: "error",
 };
 
-// The server's active-member guard emits `billing_${state}` dynamically for
-// any non-active billing state (server/research/member-auth.ts), so codes
-// beyond billing_past_due are legitimate and expected. They all mean the same
-// thing to a member: billing needs attention. Without this family mapping they
-// would fall to the generic FALLBACK and lose that meaning.
+// Retain presentation for historical billing refusals without implying that a
+// payment grants access. Canonical active account status is server-owned.
 const BILLING_FAMILY: Copy = {
   title: "Billing needs attention.",
-  body: "Your membership billing needs attention before this area reopens. Contact support and a person will resolve it with you.",
+  body: "The server reported a billing restriction. Contact support to review the account status and historical billing records. No payment or access change is performed here.",
   tone: "error",
+};
+
+const ACCOUNT_DENIAL_COPY: Record<string, Copy> = {
+  account_access_required: {
+    title: "Customer access is not set up yet.",
+    body: "Your sign-in does not yet have approved customer access. Reopen your approved account link or contact support. Signing in alone does not approve access.",
+    tone: "error",
+  },
+  account_closed: {
+    title: "This account is closed.",
+    body: "Contact support for an account review. Signing in or paying does not reopen a closed account.",
+    tone: "error",
+  },
 };
 
 /** True for any code in the server's dynamic billing_* denial family. */
@@ -245,6 +255,7 @@ export const KNOWN_DENIAL_CODES = Object.keys(DENIAL_COPY) as CommerceDenialCode
 export function denialPresentation(code: string, _message?: string): DenialPresentation {
   const copy =
     (DENIAL_COPY as Record<string, Copy>)[code] ??
+    ACCOUNT_DENIAL_COPY[code] ??
     (isBillingDenialCode(code) ? BILLING_FAMILY : FALLBACK);
   return { title: copy.title, body: copy.body, tone: copy.tone };
 }

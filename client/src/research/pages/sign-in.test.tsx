@@ -6,17 +6,18 @@ import { createRoot, type Root } from "react-dom/client";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const supa = vi.hoisted(() => {
-  const state = { currentToken: "password-session-token" as string | null };
+  const state = { currentToken: "password-session-token" as string | null, currentUserId: "auth-a" };
   const auth = {
     signInWithPassword: vi.fn(async () => {
       state.currentToken = "password-session-token";
+      state.currentUserId = "auth-a";
       return {
-        data: { session: { access_token: "password-session-token" } },
+        data: { session: { access_token: "password-session-token", user: { id: "auth-a" } } },
         error: null,
       };
     }),
     getSession: vi.fn(async () => ({
-      data: { session: state.currentToken ? { access_token: state.currentToken } : null },
+      data: { session: state.currentToken ? { access_token: state.currentToken, user: { id: state.currentUserId } } : null },
     })),
     signOut: vi.fn(async () => {
       state.currentToken = null;
@@ -28,6 +29,7 @@ const supa = vi.hoisted(() => {
 
 vi.mock("@/lib/supabaseBrowser", () => ({
   getSupabaseBrowser: async () => ({ auth: supa.auth }),
+  isRecoveryAccessToken: (token: string) => token.includes("recovery"),
 }));
 
 import { ResearchContext, type MemberInfo, type ResearchContextValue } from "../core";
@@ -39,6 +41,7 @@ let container: HTMLDivElement | null = null;
 function context(
   establishMemberSession: (token: string) => Promise<MemberInfo | null>,
   peekMemberDenial: () => { code: string; message?: string } | null = () => null,
+  recovery: ResearchContextValue["recovery"] = "none",
 ): ResearchContextValue {
   return {
     gate: "locked",
@@ -46,7 +49,7 @@ function context(
     memberToken: null,
     memberChecking: false,
     memberSessionStatus: "signed_out",
-    recovery: "none",
+    recovery,
     establishMemberSession,
     peekMemberDenial,
   } as ResearchContextValue;
@@ -71,6 +74,7 @@ async function renderSignIn(
   establishMemberSession: (token: string) => Promise<MemberInfo | null>,
   search = "",
   peekMemberDenial?: () => { code: string; message?: string } | null,
+  recovery: ResearchContextValue["recovery"] = "none",
 ) {
   window.history.replaceState(null, "", `/research/sign-in${search}`);
   container = document.createElement("div");
@@ -78,7 +82,7 @@ async function renderSignIn(
   root = createRoot(container);
   await act(async () => {
     root!.render(
-      <ResearchContext.Provider value={context(establishMemberSession, peekMemberDenial)}>
+      <ResearchContext.Provider value={context(establishMemberSession, peekMemberDenial, recovery)}>
         <SignIn />
       </ResearchContext.Provider>,
     );
@@ -99,6 +103,8 @@ function submit() {
 beforeEach(() => {
   vi.clearAllMocks();
   supa.state.currentToken = "password-session-token";
+  supa.state.currentUserId = "auth-a";
+  sessionStorage.clear();
 });
 
 afterEach(() => {
@@ -130,7 +136,7 @@ describe("member sign-in", () => {
     expect(window.location.pathname).toBe("/research/activate");
   });
 
-  it("routes an active member to the member website after deterministic verification", async () => {
+  it("routes an active account to the canonical account page after deterministic verification", async () => {
     const establish = vi.fn(async () => ({
       firstName: "Avery",
       status: "active",
@@ -139,7 +145,7 @@ describe("member sign-in", () => {
     await renderSignIn(establish);
     submit();
     await flush();
-    expect(window.location.pathname).toBe("/research/member");
+    expect(window.location.pathname).toBe("/research/account");
   });
 
   it("retains and verifies a newer refreshed token when the submitted token becomes stale", async () => {
@@ -169,7 +175,7 @@ describe("member sign-in", () => {
     expect(establish).toHaveBeenNthCalledWith(1, "password-session-token");
     expect(establish).toHaveBeenNthCalledWith(2, "refreshed-password-token");
     expect(supa.auth.signOut).not.toHaveBeenCalled();
-    expect(window.location.pathname).toBe("/research/member");
+    expect(window.location.pathname).toBe("/research/account");
   });
 
   it("does not let an external returnTo override the server-authoritative member destination", async () => {
@@ -223,23 +229,162 @@ describe("member sign-in", () => {
     expect(new URLSearchParams(window.location.search).get("code")).toBe("billing_past_due");
   });
 
-  it("keeps the uncoded no-membership refusal inline and signs the local session out", async () => {
+  it("keeps an uncoded verification failure inline without signing the Auth session out", async () => {
     const establish = vi.fn(async () => null);
     await renderSignIn(establish, "", () => null);
     submit();
     await flush();
     expect(window.location.pathname).toBe("/research/sign-in");
     expect(container!.querySelector('[data-testid="text-signin-error"]')?.textContent)
-      .toContain("No research membership is attached to this account.");
-    expect(supa.auth.signOut).toHaveBeenCalled();
+      .toContain("Your sign-in was retained, but customer access could not be verified.");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
   });
 
-  it("explains that approval links are one-time account-claim links", async () => {
+  it("separates ordinary password sign-in from approved account setup", async () => {
     await renderSignIn(vi.fn(async () => null));
     expect(container!.textContent).toContain(
-      "Your approval link is only used once when you first create your account.",
+      "An approval link connects approved customer access to your account; it does not replace your password.",
     );
-    expect(container!.textContent).toContain("Returning members do not need another approval email.");
+    expect(container!.textContent).toContain("Returning customers can sign in normally.");
+  });
+});
+
+describe("Auth-only approved-customer claim continuity", () => {
+  const claimSearch = "?returnTo=%2Fresearch%2Fapply%2Fstatus";
+
+  it("resumes only the exact claim status page with its ephemeral link marker, retaining Auth", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-claim-secret");
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, claimSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/apply/status");
+    expect(window.location.search).toBe("");
+    expect(window.location.href).not.toContain("synthetic-claim-secret");
+    expect(sessionStorage.getItem("xr-application-token")).toBe("synthetic-claim-secret");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+    expect(establish).toHaveBeenCalledWith("password-session-token");
+  });
+
+  it.each([null, "", "   "])("does not resume a claim without an ephemeral marker (%s)", async marker => {
+    if (marker !== null) sessionStorage.setItem("xr-application-token", marker);
+    await renderSignIn(vi.fn(async () => null), claimSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it.each(["https://evil.example/research/apply/status", "/research/account", "/research/partners/dashboard", "/research/apply/status/extra", "/research/apply/status?from=account"])("does not treat %s as Auth-only customer access", async path => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    await renderSignIn(vi.fn(async () => null), `?returnTo=${encodeURIComponent(path)}`);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it.each(["recovery_session", "membership_inactive", "account_closed", "unknown_refusal"])("never lets claim context bypass server denial %s", async code => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    await renderSignIn(vi.fn(async () => null), claimSearch, () => ({ code }));
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe(code);
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("resumes the explicit absent-customer denial only with its ephemeral claim context", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    await renderSignIn(vi.fn(async () => null), claimSearch, () => ({ code: "account_access_required" }));
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/apply/status");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("does not treat the explicit absent-customer denial as arbitrary private access", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    await renderSignIn(vi.fn(async () => null), "?returnTo=%2Fresearch%2Faccount", () => ({ code: "account_access_required" }));
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/access-state");
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("account_access_required");
+  });
+
+  it("retains and verifies a same-principal refreshed Auth-only session before claim resume", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    const establish = vi.fn(async (token: string) => {
+      if (token === "password-session-token") supa.state.currentToken = "refreshed-auth-only";
+      return null;
+    });
+    await renderSignIn(establish, claimSearch);
+    submit();
+    await flush();
+    expect(establish.mock.calls.map(([token]) => token)).toEqual(["password-session-token", "refreshed-auth-only"]);
+    expect(window.location.pathname).toBe("/research/apply/status");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it.each([null, { firstName: "Account A", status: "active", applicationStatus: "active" }])("does not navigate an old principal's completion: %j", async result => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    const establish = vi.fn(async () => {
+      supa.state.currentToken = "account-b-token";
+      supa.state.currentUserId = "auth-b";
+      return result;
+    });
+    await renderSignIn(establish, claimSearch);
+    submit();
+    await flush();
+    expect(establish).toHaveBeenCalledTimes(1);
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(container!.textContent).toContain("Your session changed while signing in.");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("does not resume after the provider signs out during verification", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    await renderSignIn(vi.fn(async () => { supa.state.currentToken = null; return null; }), claimSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("never completes navigation after the sign-in form unmounts", async () => {
+    let resolve!: (value: MemberInfo | null) => void;
+    const pending = new Promise<MemberInfo | null>(done => { resolve = done; });
+    await renderSignIn(vi.fn(() => pending));
+    submit();
+    await flush(1);
+    act(() => root!.unmount());
+    root = null;
+    await act(async () => { resolve({ firstName: "Account A", status: "active", applicationStatus: "active" }); await pending; });
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("does not replace or verify a password-recovery session to resume a claim", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, claimSearch, undefined, "pending");
+    submit();
+    await flush();
+    expect(supa.auth.signInWithPassword).not.toHaveBeenCalled();
+    expect(establish).not.toHaveBeenCalled();
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("recovery_session");
+  });
+
+  it("rejects a recovery-grade provider token even without a recovery context marker", async () => {
+    sessionStorage.setItem("xr-application-token", "synthetic-link");
+    supa.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: "recovery-session", user: { id: "auth-a" } } } });
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, claimSearch);
+    submit();
+    await flush();
+    expect(establish).not.toHaveBeenCalled();
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("recovery_session");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
   });
 });
 
@@ -274,7 +419,7 @@ describe("SEN-0025: sign in is not a dead end", () => {
     const support = container!.querySelector('[data-testid="link-signin-support"]') as HTMLAnchorElement;
     expect(privacy?.getAttribute("href")).toBe("/research/policies/privacy");
     expect(terms?.getAttribute("href")).toBe("/research/policies/terms");
-    expect(support?.getAttribute("href")).toBe("mailto:research@xeniostechnology.com");
+    expect(support?.getAttribute("href")).toBe("mailto:team@xeniostechnology.com");
   });
 
   it("keeps the existing forgot-password route intact", async () => {

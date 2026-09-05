@@ -175,7 +175,7 @@ const AREA_GROUPS: Array<{ heading: string; links: Array<{ href: string; label: 
     heading: "Help and account",
     links: [
       { href: MEMBER_ROUTES.questions, label: "Questions" },
-      { href: MEMBER_ROUTES.membership, label: "Membership" },
+      { href: MEMBER_ROUTES.membership, label: "Historical billing" },
       { href: MEMBER_ROUTES.referrals, label: "Referrals" },
       { href: MEMBER_ROUTES.security, label: "Security" },
       { href: MEMBER_ROUTES.privacy, label: "Privacy" },

@@ -63,6 +63,8 @@ describe("canonical account partner navigation", () => {
     expect(container.querySelector('a[href="/research/member/catalog"]')?.textContent).toBe("Browse products");
     expect(container.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
     expect(container.querySelector('a[href="/research/account/support"]')).not.toBeNull();
+    expect(container.querySelector('a[href="/research/account/subscription"]')?.textContent).toBe("Billing history");
+    expect(container.textContent).not.toMatch(/Membership|activate.*\$|pay.*access/);
     expect(container.textContent).toContain("Own commerce history");
   });
 

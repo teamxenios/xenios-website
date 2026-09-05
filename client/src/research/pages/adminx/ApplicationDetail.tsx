@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "wouter";
 import { getApplication, postApplicationAction } from "../../adapters/adminOps";
 import {
@@ -17,13 +17,10 @@ import { statusTone } from "./Applications";
 
 // ---------------------------------------------------------------------------
 // /admin/research/applications/:id, the full application file. Mirrors the
-// state machine the server enforces: begin review, request information,
-// approve (confirmed), decline (confirmed, internal note), begin activation,
-// and activation. The canonical economics: $50 due at activation, which
-// includes the first 30 days of membership; then $25 per additional 30-day
-// period; nothing else is due at activation. Every action posts to the real
-// admin API and re-reads the file; the timeline renders the audit events the
-// server returns.
+// state machine the server enforces. Paid membership approval/activation is
+// retired. Customer approval starts from a fresh exact-email inspection in
+// account operations, not a relabeled legacy paid-approval endpoint. Existing
+// billing and application events remain historical facts in the timeline.
 // ---------------------------------------------------------------------------
 
 type AdminEvent = {
@@ -58,7 +55,7 @@ export default function ApplicationDetail() {
         </Link>
       }
     >
-      {(token) => <DetailBody token={token} id={id} />}
+      {(token) => <DetailBody key={`${token}:${id}`} token={token} id={id} />}
     </AdminScreen>
   );
 }
@@ -67,11 +64,18 @@ function DetailBody({ token, id }: { token: string; id: string }) {
   const [state, setState] = useState<DetailState>({ kind: "loading" });
   const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const lifecycle = useRef({ active: true, generation: 0, acting: false });
 
   const load = useCallback(() => {
+    const generation = ++lifecycle.current.generation;
     setState({ kind: "loading" });
     void getApplication<{ ok: boolean; application: AdminApplication; events: AdminEvent[] }>(token, id).then((result) => {
+      if (!lifecycle.current.active || lifecycle.current.generation !== generation) return;
       if (result.kind === "ok") {
+        if (result.data?.ok !== true || result.data.application?.id !== id || !Array.isArray(result.data.events)) {
+          setState({ kind: "error", message: "The application response could not be verified." });
+          return;
+        }
         setState({ kind: "ok", application: result.data.application, events: result.data.events ?? [] });
       } else if (result.kind === "unavailable") {
         setState({ kind: "unavailable" });
@@ -84,21 +88,32 @@ function DetailBody({ token, id }: { token: string; id: string }) {
       } else {
         setState({ kind: "error", message: result.message });
       }
+    }).catch(() => {
+      if (lifecycle.current.active && lifecycle.current.generation === generation) {
+        setState({ kind: "error", message: "The application could not be read. Please retry." });
+      }
     });
   }, [token, id]);
 
   useEffect(() => {
+    lifecycle.current.active = true;
     load();
+    return () => { lifecycle.current.active = false; lifecycle.current.generation++; };
   }, [load]);
 
   const act = useCallback(
     async (path: string, body?: Record<string, unknown>): Promise<boolean> => {
-      if (busy) return false;
+      if (!lifecycle.current.active || lifecycle.current.acting) return false;
+      lifecycle.current.acting = true;
+      const generation = lifecycle.current.generation;
       setBusy(true);
       setActionError(null);
-      const result = await postApplicationAction<{ ok: boolean }>(token, id, path, body ?? {});
+      const result = await postApplicationAction<{ ok: boolean }>(token, id, path, body ?? {})
+        .catch(() => ({ kind: "error" as const, message: "The action outcome could not be confirmed. Refresh the application before retrying." }));
+      if (!lifecycle.current.active || lifecycle.current.generation !== generation) return false;
+      lifecycle.current.acting = false;
       setBusy(false);
-      if (result.kind === "ok") {
+      if (result.kind === "ok" && result.data?.ok === true) {
         load();
         return true;
       }
@@ -108,10 +123,10 @@ function DetailBody({ token, id }: { token: string; id: string }) {
       else if (result.kind === "denied") {
         const p = denialPresentation(result.code, result.message);
         setActionError(`${p.title} ${p.body}`);
-      } else setActionError(result.message);
+      } else setActionError(result.kind === "error" ? result.message : "The action response could not be verified.");
       return false;
     },
-    [busy, id, token, load],
+    [id, token, load],
   );
 
   if (state.kind === "loading") return <ResearchLoadingState label="Loading the application" />;
@@ -119,8 +134,8 @@ function DetailBody({ token, id }: { token: string; id: string }) {
   if (state.kind === "unavailable")
     return (
       <ResearchEmptyState
-        title="This application could not be found."
-        body="It may have been removed, or the applications API is not responding."
+        title="Application unavailable."
+        body="The application could not be read. Its presence or absence has not been determined."
         action={
           <Link href={ADMIN_ROUTES.applications} className="btn btn-secondary">
             Back to the queue
@@ -235,15 +250,10 @@ function ActionsPanel({
 }) {
   const [infoNote, setInfoNote] = useState("");
   const [declineNote, setDeclineNote] = useState("");
-  const [confirmApprove, setConfirmApprove] = useState(false);
   const [confirmDecline, setConfirmDecline] = useState(false);
-  const [paymentRef, setPaymentRef] = useState("");
-  const [subscriptionRef, setSubscriptionRef] = useState("");
 
   const canBeginReview = app.status === "submitted" || app.status === "resubmitted";
   const inReview = app.status === "under_review";
-  const awaitingActivation = app.status === "approved_pending_payment";
-  const paymentPending = app.status === "payment_pending";
 
   return (
     <section className="card" aria-label="Review actions">
@@ -291,35 +301,10 @@ function ActionsPanel({
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => setConfirmApprove(true)} data-testid="button-approve">
-              Approve
-            </button>
             <button type="button" className="btn btn-secondary" disabled={busy} onClick={() => setConfirmDecline(true)} data-testid="button-decline">
               Decline
             </button>
           </div>
-
-          <ResearchConfirmation
-            open={confirmApprove}
-            title="Approve this application"
-            body={
-              <>
-                <p>
-                  Approving sends the approval email immediately and starts the approval window (default 14 days). The
-                  Founding Membership is $50.00 due at activation, which includes the first 30 days; then $25.00 per
-                  additional 30-day period.
-                </p>
-              </>
-            }
-            confirmLabel="Confirm approval"
-            busy={busy}
-            onConfirm={() =>
-              void act("approve").then((ok) => {
-                if (ok) setConfirmApprove(false);
-              })
-            }
-            onCancel={() => setConfirmApprove(false)}
-          />
 
           <ResearchConfirmation
             open={confirmDecline}
@@ -361,75 +346,16 @@ function ActionsPanel({
         </div>
       )}
 
-      {awaitingActivation && (
-        <div className="grid gap-3">
-          <p className="body-s text-ink-2 max-w-[64ch]">
-            Approved and waiting on activation: $50 due at activation, which includes the first 30 days of
-            membership. Nothing else is due today. When the applicant has paid, begin activation to record the
-            references.
-          </p>
-          <div>
-            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => void act("begin-activation")} data-testid="button-begin-activation">
-              {busy ? "Working..." : "Begin activation"}
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="mt-5">
+        <p className="body-s text-ink-2 max-w-[64ch]">
+          Customer access no longer requires a paid membership. Inspect the exact account email in customer accounts
+          before reviewing a new approval. Historical payment and application records are retained; this page does not
+          approve customer access, activate a paid membership, or grant partner or referral eligibility.
+        </p>
+        <Link href={ADMIN_ROUTES.members} className="btn btn-secondary mt-3">Open account access diagnosis</Link>
+      </div>
 
-      {paymentPending && (
-        <div className="grid gap-4">
-          <p className="body-s text-ink-2 max-w-[64ch]">
-            Activation requires the verified $50 activation payment (it includes the first 30 days; no $25 is due at
-            activation) plus the membership record reference. The applicant must have created their member account
-            first (the link in their approval email). No member becomes active until verification completes;
-            activation then triggers referral qualification automatically.
-          </p>
-          <div>
-            <label htmlFor="app-payment-ref" className="form-label">
-              Activation payment reference (required)
-            </label>
-            <input
-              id="app-payment-ref"
-              className="input-field"
-              maxLength={120}
-              placeholder="e.g. a receipt id for the verified $50 activation payment"
-              value={paymentRef}
-              onChange={(e) => setPaymentRef(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="app-subscription-ref" className="form-label">
-              Membership record reference (required)
-            </label>
-            <input
-              id="app-subscription-ref"
-              className="input-field"
-              maxLength={120}
-              placeholder="e.g. the member's membership record id"
-              value={subscriptionRef}
-              onChange={(e) => setSubscriptionRef(e.target.value)}
-            />
-          </div>
-          <div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={busy || !paymentRef.trim() || !subscriptionRef.trim()}
-              onClick={() =>
-                void act("activate", {
-                  paymentReference: paymentRef.trim(),
-                  subscriptionReference: subscriptionRef.trim(),
-                })
-              }
-              data-testid="button-activate-membership"
-            >
-              {busy ? "Activating..." : "Mark activated"}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!canBeginReview && !inReview && !awaitingActivation && !paymentPending && (
+      {!canBeginReview && !inReview && (
         <p className="body-s text-ink-mute max-w-[64ch]">
           No actions are available in the {APPLICATION_STATUS_LABEL[app.status] ?? app.status} state.
           {app.status === "more_information_requested" &&

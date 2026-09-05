@@ -126,7 +126,7 @@ describe("customer account portal views", () => {
       partnerAttribution: { sourcePartner: "internal_partner_fixture", relationshipOwner: "Internal Owner Fixture" },
     } as const;
     const container = await render(<AccountOverviewView data={data} />);
-    expect(container.textContent).toContain("Xenios membership");
+    expect(container.textContent).toContain("Historical billing");
     expect(container.textContent).toContain("Care enrollment");
     expect(container.textContent).toContain("Research commerce history");
     expect(container.textContent).toContain("does not guarantee treatment");
@@ -459,10 +459,10 @@ describe("customer account portal views", () => {
       "/research/account/subscription",
     );
     expect(unavailable.textContent).toContain("Billing-document history is currently unavailable");
-    expect(unavailable.textContent).not.toContain("No membership receipts");
+    expect(unavailable.textContent).not.toContain("No billing receipts");
   });
 
-  it("renders an authoritative no-membership state without inventing a billing pathway", async () => {
+  it("renders an authoritative billing-none state without inventing a paid access pathway", async () => {
     const subscription = await render(
       <AccountSubscriptionView data={{
         subscription: { membership: FIXTURE_MEMBERSHIP_NONE, careEnrollment: FIXTURE_CARE_ENROLLED },
@@ -470,9 +470,9 @@ describe("customer account portal views", () => {
       }} />,
       "/research/account/subscription",
     );
-    expect(subscription.textContent).toContain("No active membership");
+    expect(subscription.textContent).toContain("No billing relationship recorded");
     expect(subscription.textContent).toContain("No billing method");
-    expect(subscription.textContent).not.toContain("Membership data unavailable");
+    expect(subscription.textContent).not.toContain("Billing data unavailable");
     expect(subscription.textContent).not.toContain("Manual / offline");
 
     const overview = await render(
@@ -509,7 +509,7 @@ describe("customer account portal views", () => {
     expect(overview.querySelector('a[href^="https://billing.stripe.com/"]')).toBeNull();
   });
 
-  it("keeps billing management available when billing evidence outlives access", async () => {
+  it("preserves outstanding billing evidence with internal support, without retired payment controls", async () => {
     const endedAccessWithBilling = {
       ...FIXTURE_MEMBERSHIP_NONE,
       billing: "past_due" as const,
@@ -523,14 +523,66 @@ describe("customer account portal views", () => {
       }} />,
       "/research/account/subscription",
     );
-    expect(subscription.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')?.textContent)
-      .toContain("Open billing management");
+    expect(subscription.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')).toBeNull();
+    expect(subscription.textContent).toContain("Past due — attention required");
+    expect(subscription.querySelector('a[href="/research/account/support"]')?.textContent).toContain("Request billing support");
 
     const overview = await render(
       <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, membership: endedAccessWithBilling }} />,
     );
-    expect(overview.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')?.textContent)
-      .toContain("Open billing management");
+    expect(overview.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')).toBeNull();
+    expect(overview.textContent).toContain("Past due — attention required");
+    expect(overview.querySelector('a[href="/research/account/subscription"]')?.textContent).toContain("View billing history");
+  });
+
+  it.each([null, undefined])("does not turn a missing historical billing source %s into a zero or no-charge claim", async membership => {
+    const subscription = await render(<AccountSubscriptionView data={{
+      subscription: { membership: membership as MembershipDto | null, careEnrollment: FIXTURE_CARE_ENROLLED },
+      billingDocuments: null,
+    }} />);
+    expect(subscription.textContent).toContain("Billing data unavailable");
+    expect(subscription.textContent).toContain("Billing status unavailable");
+    expect(subscription.textContent).toContain("Renewal schedule unavailable");
+    expect(subscription.textContent).not.toMatch(/\$0|No billing relationship|No billing method|Not scheduled/);
+    expect(subscription.querySelector('a[href^="https://billing."]')).toBeNull();
+
+    const overview = await render(<AccountOverviewView data={{
+      ...FIXTURE_ACCOUNT_OVERVIEW, membership: membership as unknown as MembershipDto,
+    }} />);
+    expect(overview.textContent).toContain("Billing data unavailable");
+    expect(overview.textContent).toContain("Billing information unavailable");
+    expect(overview.textContent).not.toMatch(/\$0|No billing relationship|Online management/);
+  });
+
+  it("keeps the approved account summary separate from historical plan and billing states", async () => {
+    const overview = await render(<AccountOverviewView data={{
+      ...FIXTURE_ACCOUNT_OVERVIEW,
+      identity: { ...FIXTURE_ACCOUNT_OVERVIEW.identity, accountStatus: "active" },
+      membership: { ...FIXTURE_MEMBERSHIP_MANUAL, state: "canceled", billing: "refunded", planLabel: "Former fixture plan" },
+    }} />);
+    const summary = overview.querySelector('[aria-label="Account summary"] .account-stat');
+    expect(summary?.textContent).toContain("Account accessActive");
+    expect(summary?.textContent).not.toContain("canceled");
+    expect(overview.textContent).toContain("Former fixture plan");
+    expect(overview.textContent).toContain("Billing: Refunded");
+    expect(overview.textContent).toContain("Paid membership is not required for approved customer access");
+    expect(overview.querySelector('a[href*="activate"], a[href*="renew"], button')).toBeNull();
+  });
+
+  it("retains historical plan, scheduled renewal evidence and receipts without charging or cancellation claims", async () => {
+    const view = await render(<AccountSubscriptionView data={{
+      subscription: { membership: { ...FIXTURE_MEMBERSHIP_MANUAL, planLabel: "Historical plan label" }, careEnrollment: FIXTURE_CARE_ENROLLED },
+      billingDocuments: FIXTURE_DOCUMENTS.filter(document => document.kind === "receipt"),
+    }} />);
+    expect(view.textContent).toContain("Historical plan label");
+    expect(view.textContent).toContain("Recorded renewal evidence");
+    expect(view.textContent).toContain("Sep 26, 2026");
+    expect(view.textContent).toContain("This page does not refund payments, cancel existing recurring charges");
+    for (const receipt of FIXTURE_DOCUMENTS.filter(document => document.kind === "receipt")) {
+      expect(view.textContent).toContain(receipt.title);
+    }
+    expect(view.querySelector('button, form, a[href*="activate"], a[href*="renew"], a[href*="cancel"]')).toBeNull();
+    expect(view.textContent).not.toMatch(/\$50|\$25|Access ends immediately|Pause or cancellation options/);
   });
 
   it("renders disputed billing through the canonical presentation, never as current", async () => {

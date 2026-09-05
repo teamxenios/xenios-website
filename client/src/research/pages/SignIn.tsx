@@ -1,21 +1,24 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
-import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser";
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 
-// Member sign-in (V3 sections 4.3 and 13). Auth is Supabase (same provider as
-// the rest of the site); membership itself is verified SERVER-side on every
-// protected route via /api/research/member/*. No UI-only authorization.
-// After sign-in: active members land on the private member website
-// (/research/member); approved-but-not-activated members land on the
-// activation flow only (canonical access architecture).
+// Ordinary Supabase sign-in; canonical customer access is verified by the
+// server. An Auth account alone grants no private customer or partner access.
+
+function pendingClaimDestination(returnTo: string | null): string | null {
+  if (returnTo !== "/research/apply/status") return null;
+  try {
+    return window.sessionStorage.getItem("xr-application-token")?.trim() ? returnTo : null;
+  } catch { return null; }
+}
 
 export default function SignIn() {
-  const { establishMemberSession, peekMemberDenial } = useResearch();
+  const { establishMemberSession, peekMemberDenial, recovery } = useResearch();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,72 +26,103 @@ export default function SignIn() {
   const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lifecycle = useRef({ active: false, generation: 0 });
+  const recoveryRef = useRef(recovery);
+  recoveryRef.current = recovery;
+  // Read afresh after every await; recovery can change while Auth is pending.
+  const recoveryPending = () => recoveryRef.current === "pending";
+  useEffect(() => {
+    lifecycle.current.active = true;
+    return () => { lifecycle.current.active = false; lifecycle.current.generation++; };
+  }, []);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || !lifecycle.current.active) return;
+    if (recoveryPending()) {
+      navigate(denialDestination("recovery_session"));
+      return;
+    }
+    const generation = ++lifecycle.current.generation;
+    const current = () => lifecycle.current.active && lifecycle.current.generation === generation;
     setBusy(true);
     setError(null);
     try {
       const supabase = await getSupabaseBrowser();
+      if (!current()) return;
       if (!supabase) {
         setError("Sign-in is not available right now.");
         return;
       }
       const { data, error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+      if (!current()) return;
       if (signInError || !data.session) {
         setError("That email and password combination is not correct.");
         return;
       }
-      const submittedToken = data.session.access_token;
-      let verifiedMember = await establishMemberSession(submittedToken);
-      if (!verifiedMember) {
-        // TOKEN_REFRESHED may supersede the exact token returned by
-        // signInWithPassword while its verification is in flight. Verify and
-        // retain that newer provider session; never let the stale request sign
-        // it out.
-        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
-        if (currentToken && currentToken !== submittedToken) {
-          verifiedMember = await establishMemberSession(currentToken);
-          if (!verifiedMember) {
-            setError("Your session changed while signing in. Please try again.");
-            return;
-          }
+      const submitted = data.session;
+      let token = submitted.access_token;
+      // A refresh may replace the password token, but a different principal
+      // must not inherit this submission or its application link. Bound the
+      // retry loop; an unstable session requires another explicit sign-in.
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const before = (await supabase.auth.getSession()).data.session;
+        if (!current()) return;
+        if (!before || (before.user?.id !== submitted.user?.id)
+          || (before.access_token !== token && !submitted.user?.id)) break;
+        token = before.access_token;
+        if (recoveryPending() || isRecoveryAccessToken(token)) {
+          navigate(denialDestination("recovery_session"));
+          return;
         }
-      }
-      if (verifiedMember) {
-        navigate(memberDestination(verifiedMember, returnTo));
-      } else {
-        // The server guard may have refused with a machine-readable code
-        // (e.g. recovery_session). Route it to its distinct screen; the
-        // Supabase session is left as-is because the screen's remedy (finish
-        // the reset, settle billing) still needs it. Only the uncoded
-        // no-membership refusal signs out locally and stays inline.
+        const verifiedMember = await establishMemberSession(token);
+        const after = (await supabase.auth.getSession()).data.session;
+        if (!current()) return;
+        if (!after || after.user?.id !== submitted.user?.id) break;
+        if (recoveryPending() || isRecoveryAccessToken(after.access_token)) {
+          navigate(denialDestination("recovery_session"));
+          return;
+        }
+        if (after.access_token !== token) {
+          if (!submitted.user?.id) break;
+          token = after.access_token;
+          continue;
+        }
+        if (verifiedMember) {
+          navigate(memberDestination(verifiedMember, returnTo));
+          return;
+        }
+        // The latest server denial always wins over a navigation hint.
         const denial = peekMemberDenial();
-        if (denial?.code) {
+        const claimDestination = pendingClaimDestination(returnTo);
+        if (denial?.code && !(denial.code === "account_access_required" && claimDestination)) {
           navigate(denialDestination(denial.code));
           return;
         }
-        const currentToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
-        if (!currentToken || currentToken === submittedToken) {
-          await supabase.auth.signOut({ scope: "local" });
+        if (claimDestination) {
+          // Keep only the ordinary Auth session. ApplyStatus must submit the
+          // bearer + ephemeral link to the server; this grants nothing here.
+          navigate(claimDestination);
+          return;
         }
-        setError("No research membership is attached to this account.");
+        setError("Your sign-in was retained, but customer access could not be verified. Use your approval link to finish account setup, or contact support.");
+        return;
       }
+      if (current()) setError("Your session changed while signing in. Please try again.");
     } catch {
-      setError("Sign-in failed. Please try again.");
+      if (current()) setError("Sign-in failed. Please try again.");
     } finally {
-      setBusy(false);
+      if (current()) setBusy(false);
     }
   }
 
   return (
     <>
-      <SeoHead title="Member sign in, xenios research" description="Sign in to your xenios research membership." path="/research/sign-in" />
+      <SeoHead title="Account sign in, xenios research" description="Sign in to your Xenios customer account." path="/research/sign-in" />
       <PageIntro
-        eyebrow="Members"
+        eyebrow="Your account"
         title="Sign in."
-        lead="Use the email and password connected to your Xenios Research account. Your approval link is only used once when you first create your account."
+        lead="Use the email and password connected to your Xenios account. An approval link connects approved customer access to your account; it does not replace your password."
       />
       <section className="container-x pb-20">
         <form onSubmit={onSubmit} className="max-w-[420px] space-y-5" data-testid="form-member-signin">
@@ -111,7 +145,7 @@ export default function SignIn() {
             <Link href={researchAuthPath("/research/reset-password", returnTo)} className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
           <p className="body-s text-ink-mute">
-            Returning members do not need another approval email. If you have not created your account yet, use the one-time claim link in your approval email.
+            Returning customers can sign in normally. If you still need to finish approved account setup, open your secure approval link and continue with this same sign-in.
           </p>
         </form>
         {/*
@@ -127,14 +161,14 @@ export default function SignIn() {
             <Link href="/research" className="underline ra-documentation-link" data-testid="link-signin-gateway">Back to gateway</Link>
           </p>
           <p className="body-s text-ink-mute">
-            Not a member yet? <Link href="/research/apply" className="underline ra-documentation-link" data-testid="link-signin-apply">Apply for membership</Link>
+            Need customer access? <Link href="/research/apply" className="underline ra-documentation-link" data-testid="link-signin-apply">View application information</Link>
           </p>
           <p className="body-s text-ink-mute">
             <Link href="/research/policies/privacy" className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>
             {" · "}
             <Link href="/research/policies/terms" className="underline ra-documentation-link" data-testid="link-signin-terms">Terms</Link>
             {" · "}
-            <a href="mailto:research@xeniostechnology.com" className="underline ra-documentation-link" data-testid="link-signin-support">Support</a>
+            <a href="mailto:team@xeniostechnology.com" className="underline ra-documentation-link" data-testid="link-signin-support">Support</a>
           </p>
         </div>
       </section>

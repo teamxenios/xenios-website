@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { href: ACCOUNT_PORTAL_ROUTES.home, label: "Overview" },
   { href: ACCOUNT_PORTAL_ROUTES.orders, label: "Commerce" },
   { href: MEMBER_ROUTES.fullCatalog, label: "Browse products" },
-  { href: ACCOUNT_PORTAL_ROUTES.subscription, label: "Membership" },
+  { href: ACCOUNT_PORTAL_ROUTES.subscription, label: "Billing history" },
   { href: ACCOUNT_PORTAL_ROUTES.care, label: "Care status" },
   { href: ACCOUNT_PORTAL_EXTENSION_ROUTES.interests, label: "Interests" },
   { href: ACCOUNT_PORTAL_ROUTES.documents, label: "Documents" },
@@ -82,7 +82,7 @@ export function AccountPortalShell({
       <header className="account-portal-header">
         <div>
           <p className="account-portal-kicker">XENIOS <span aria-hidden="true">/</span> RESEARCH + CARE</p>
-          <p className="body-s account-portal-trust">One private view for membership, commerce history, Care operations, and support.</p>
+          <p className="body-s account-portal-trust">One private view for account access, commerce and billing history, Care operations, and support.</p>
         </div>
         <div className="account-portal-controls">
           <span className="account-private-mark">Private account</span>

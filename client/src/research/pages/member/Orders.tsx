@@ -157,8 +157,8 @@ export default function Orders() {
         state={boundaryState}
         errorMessage={state.phase === "error" ? state.message : undefined}
         onRetry={() => void load()}
-        unavailableTitle="Ordering has not opened yet."
-        unavailableBody="Your orders will appear here the moment ordering opens for your membership. Nothing is wrong with your account."
+        unavailableTitle="Order history is unavailable."
+        unavailableBody="Your order history could not be loaded. Account and product eligibility are checked separately; this does not establish whether an order exists."
       >
         {state.phase === "denied" ? (
           <ResearchDenialNotice code={state.code} message={state.message} />

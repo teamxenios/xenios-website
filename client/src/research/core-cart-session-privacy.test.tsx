@@ -62,7 +62,9 @@ const api: {
 function Probe() {
   const context = useResearch();
   api.current = context;
-  return <output data-testid="cart" data-items={JSON.stringify(context.items)} />;
+  return <output data-testid="cart" data-items={JSON.stringify(context.items)}
+    data-member={context.member?.firstName ?? ""} data-token={context.memberToken ?? ""}
+    data-products={context.products.length} data-session={context.memberSessionStatus} />;
 }
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -185,6 +187,76 @@ describe("ResearchProvider cart identity isolation", () => {
     const view = await mount();
     expect(items(view.host)).toEqual([]);
     expect(localStorage.getItem(LEGACY_RESEARCH_CART_STORAGE_KEY)).toBeNull();
+    act(() => view.root.unmount());
+  });
+
+  it("retains Auth-only sign-in without hydrating private customer, catalog or cart state", async () => {
+    supa.state.session = { access_token: "auth-only-token" };
+    writeResearchCartForScope(sessionStorage, MEMBER_A, [{ slug: PRODUCT.slug, quantity: 2 }], localStorage);
+    const previousFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn((input, init) => String(input).split("?")[0] === "/api/research/member/me"
+      ? Promise.resolve(jsonResponse({ ok: false, code: "account_access_required" }, 403))
+      : previousFetch(input, init));
+    const view = await mount();
+    const probe = view.host.querySelector("output")!;
+    expect(probe.getAttribute("data-member")).toBe("");
+    expect(probe.getAttribute("data-token")).toBe("");
+    expect(probe.getAttribute("data-products")).toBe("0");
+    expect(items(view.host)).toEqual([]);
+    expect(sessionStorage.getItem(RESEARCH_CART_SESSION_KEY)).toBeNull();
+    expect(supa.state.session?.access_token).toBe("auth-only-token");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+    expect(vi.mocked(globalThis.fetch).mock.calls.some(([url]) => String(url).startsWith("/api/research/catalog"))).toBe(false);
+    act(() => view.root.unmount());
+  });
+
+  it("hides account A immediately while an Auth-only principal is still being verified", async () => {
+    supa.state.session = { access_token: "member-a-token" };
+    const view = await mount();
+    act(() => api.current!.addItem(PRODUCT));
+    await flush();
+    expect(view.host.querySelector("output")!.getAttribute("data-member")).toBe("Member A");
+    let resolve!: (value: Response) => void;
+    const pending = new Promise<Response>(done => { resolve = done; });
+    const previousFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn((input, init) => bearer(init) === "auth-only-b"
+      ? pending : previousFetch(input, init));
+    let verification!: ReturnType<NonNullable<typeof api.current>["establishMemberSession"]>;
+    act(() => { verification = api.current!.establishMemberSession("auth-only-b"); });
+    const probe = view.host.querySelector("output")!;
+    expect(probe.getAttribute("data-session")).toBe("checking");
+    expect(probe.getAttribute("data-member")).toBe("");
+    expect(probe.getAttribute("data-token")).toBe("");
+    expect(probe.getAttribute("data-products")).toBe("0");
+    expect(items(view.host)).toEqual([]);
+    await act(async () => { resolve(jsonResponse({ ok: false, code: "account_access_required" }, 403)); await verification; });
+    expect(items(view.host)).toEqual([]);
+    expect(probe.getAttribute("data-member")).toBe("");
+    expect(sessionStorage.getItem(RESEARCH_CART_SESSION_KEY)).toBeNull();
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+    act(() => view.root.unmount());
+  });
+
+  it("restores a refreshed principal's cart only after its opaque scope is verified again", async () => {
+    supa.state.session = { access_token: "member-a-token" };
+    const view = await mount();
+    act(() => api.current!.addItem(PRODUCT));
+    await flush();
+    let resolve!: (value: Response) => void;
+    const pending = new Promise<Response>(done => { resolve = done; });
+    const previousFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn((input, init) => String(input).split("?")[0] === "/api/research/member/me" && bearer(init) === "refreshed-a"
+      ? pending : previousFetch(input, init));
+    let verification!: ReturnType<NonNullable<typeof api.current>["establishMemberSession"]>;
+    act(() => { verification = api.current!.establishMemberSession("refreshed-a"); });
+    expect(items(view.host)).toEqual([]);
+    expect(view.host.querySelector("output")!.getAttribute("data-member")).toBe("");
+    await act(async () => {
+      resolve(jsonResponse({ ok: true, member: { firstName: "Member A", status: "active", applicationStatus: "active", cartScope: MEMBER_A } }));
+      await verification;
+    });
+    expect(items(view.host)).toEqual([{ slug: PRODUCT.slug, quantity: 1 }]);
+    expect(view.host.querySelector("output")!.getAttribute("data-token")).toBe("refreshed-a");
     act(() => view.root.unmount());
   });
 });

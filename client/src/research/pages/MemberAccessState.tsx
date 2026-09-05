@@ -69,6 +69,22 @@ export default function MemberAccessState() {
   // Activation has its own canonical screen; never render a duplicate here.
   if (code === "activation_required") return <Redirect to="/research/activate" />;
 
+  if (code === "account_access_required" || code === "account_closed") {
+    return (
+      <ScreenShell testid={`access-state-${code}`} code={code}>
+        <div className="card">
+          <p className="mono-label text-ink-mute">Next step</p>
+          <p className="body-s text-ink-2 mt-2">
+            {code === "account_access_required"
+              ? "If you have an approved account link, open it to finish setup with your existing sign-in. Otherwise contact support. This screen cannot create or approve an account."
+              : "A closed account needs an explicit support review. An approval link, a partner role or a payment does not reopen it here."}
+          </p>
+          <div className="mt-5"><SupportLink testid="link-access-state-account-support" /></div>
+        </div>
+      </ScreenShell>
+    );
+  }
+
   if (code === "recovery_session") {
     return (
       <ScreenShell testid="access-state-recovery_session" code={code}>
@@ -82,7 +98,7 @@ export default function MemberAccessState() {
               Finish password reset
             </Link>
             <Link href="/research/sign-in" className="btn btn-ghost" data-testid="link-access-state-signin">
-              Member sign in
+              Account sign in
             </Link>
           </div>
         </div>
@@ -96,7 +112,7 @@ export default function MemberAccessState() {
         <div className="card">
           <p className="mono-label text-ink-mute">Next step</p>
           <p className="body-s text-ink-2 mt-2">
-            Your membership stays reserved while billing is settled. Contact support and a person will put it right with you; nothing on your account is lost.
+            A past-due account status is recorded. Customer access needs an explicit review; no payment or automatic reactivation is requested here. Historical records remain separate.
           </p>
           <div className="mt-5">
             <SupportLink testid="link-access-state-billing-support" />
@@ -115,7 +131,7 @@ export default function MemberAccessState() {
         <div className="card">
           <p className="mono-label text-ink-mute">Next step</p>
           <p className="body-s text-ink-2 mt-2">
-            Contact support and a person will review your membership billing with you. Nothing on your account is lost.
+            Contact support for an account review. This page does not change historical billing records or require a paid membership to reopen access.
           </p>
           <div className="mt-5">
             <SupportLink testid="link-access-state-billing-support" />
@@ -131,11 +147,11 @@ export default function MemberAccessState() {
         <div className="card">
           <p className="mono-label text-ink-mute">Next step</p>
           <p className="body-s text-ink-2 mt-2">
-            There is no active research membership on this account. If your membership was paused or closed, support can walk you through reactivating; if you have not joined yet, apply for membership.
+            Customer access is not active on this account. Pending, paused or closed records need an explicit review; signing in or holding a partner record does not reopen them.
           </p>
           <div className="mt-5 flex gap-3" style={{ flexWrap: "wrap" }}>
             <Link href="/research/apply" className="btn btn-primary" data-testid="link-access-state-apply">
-              Apply for membership
+              Application information
             </Link>
             <SupportLink testid="link-access-state-inactive-support" />
           </div>
@@ -154,7 +170,7 @@ export default function MemberAccessState() {
         </p>
         <div className="mt-5 flex gap-3" style={{ flexWrap: "wrap" }}>
           <Link href="/research/sign-in" className="btn btn-primary" data-testid="link-access-state-signin">
-            Member sign in
+            Account sign in
           </Link>
           <SupportLink testid="link-access-state-unknown-support" />
         </div>

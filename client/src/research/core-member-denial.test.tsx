@@ -5,7 +5,7 @@
 // start so a denial can never outlive the attempt that produced it. These
 // tests drive the actual fetch path against stubbed /api/research/member/me
 // responses - no hand-written peekMemberDenial stubs.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
@@ -46,12 +46,13 @@ function jsonResponse(body: unknown, status = 200) {
 type ProbeApi = {
   establishMemberSession: (token: string) => Promise<MemberInfo | null>;
   peekMemberDenial: () => MemberDenial | null;
+  signOutMember: () => Promise<void>;
 };
 const probeApi: { current: ProbeApi | null } = { current: null };
 
 function Probe() {
-  const { establishMemberSession, peekMemberDenial, memberDenial, memberSessionStatus, member } = useResearch();
-  probeApi.current = { establishMemberSession, peekMemberDenial };
+  const { establishMemberSession, peekMemberDenial, memberDenial, memberSessionStatus, member, signOutMember } = useResearch();
+  probeApi.current = { establishMemberSession, peekMemberDenial, signOutMember };
   return (
     <output
       data-testid="denial-probe"
@@ -64,6 +65,14 @@ function Probe() {
 
 let root: Root | null = null;
 let container: HTMLElement | null = null;
+
+afterEach(() => {
+  if (root) act(() => root!.unmount());
+  container?.remove();
+  root = null;
+  container = null;
+  probeApi.current = null;
+});
 
 async function flush(rounds = 6) {
   for (let i = 0; i < rounds; i += 1) {
@@ -116,6 +125,14 @@ beforeEach(() => {
 });
 
 describe("denial capture on the real member verification wire", () => {
+  it.each(["account_access_required", "account_closed", "unrecognized_refusal"])("preserves exact %s without creating customer access or signing Auth out", async code => {
+    memberMe.respond = () => jsonResponse({ ok: false, code }, 403);
+    await mountProvider();
+    await act(async () => { await probeApi.current!.establishMemberSession("auth-only"); });
+    expect(probeApi.current!.peekMemberDenial()).toEqual({ code, message: undefined });
+    expect(probe().getAttribute("data-member")).toBe("");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
   it("preserves a coded 403 refusal exactly as the server sent it", async () => {
     memberMe.respond = () =>
       jsonResponse({ ok: false, code: "recovery_session", message: "server text" }, 403);
@@ -211,5 +228,51 @@ describe("denial capture on the real member verification wire", () => {
     });
     await flush();
     expect(probeApi.current!.peekMemberDenial()).toBeNull();
+  });
+
+  it("ignores a prior principal's late success after the current account is refused", async () => {
+    await mountProvider();
+    let resolve!: (value: Response) => void;
+    const oldResponse = new Promise<Response>(done => { resolve = done; });
+    memberMe.respond = () => oldResponse;
+    let oldVerification!: Promise<MemberInfo | null>;
+    act(() => { oldVerification = probeApi.current!.establishMemberSession("principal-a"); });
+    memberMe.respond = () => jsonResponse({ ok: false, code: "account_closed" }, 403);
+    await act(async () => { await probeApi.current!.establishMemberSession("principal-b"); });
+    await act(async () => {
+      resolve(jsonResponse({ ok: true, member: { firstName: "Old A", status: "active", applicationStatus: "active" } }));
+      expect(await oldVerification).toBeNull();
+    });
+    expect(probe().getAttribute("data-member")).toBe("");
+    expect(probe().getAttribute("data-denial-code")).toBe("account_closed");
+  });
+
+  it("does not reuse a verification invalidated by sign-out when the same token is tried again", async () => {
+    await mountProvider();
+    let resolve!: (value: Response) => void;
+    const oldResponse = new Promise<Response>(done => { resolve = done; });
+    memberMe.respond = () => oldResponse;
+    let oldVerification!: Promise<MemberInfo | null>;
+    act(() => { oldVerification = probeApi.current!.establishMemberSession("same-token"); });
+    await act(async () => { await probeApi.current!.signOutMember(); });
+    memberMe.respond = () => jsonResponse({ ok: true, member: { firstName: "Fresh A", status: "active", applicationStatus: "active" } });
+    await act(async () => {
+      expect((await probeApi.current!.establishMemberSession("same-token"))?.firstName).toBe("Fresh A");
+    });
+    await act(async () => { resolve(jsonResponse({ ok: false, code: "account_closed" }, 403)); expect(await oldVerification).toBeNull(); });
+    expect(probe().getAttribute("data-member")).toBe("Fresh A");
+    expect(probeApi.current!.peekMemberDenial()).toBeNull();
+  });
+
+  it("does not return a verified member after the provider unmounts", async () => {
+    await mountProvider();
+    let resolve!: (value: Response) => void;
+    memberMe.respond = () => new Promise<Response>(done => { resolve = done; });
+    let verification!: Promise<MemberInfo | null>;
+    act(() => { verification = probeApi.current!.establishMemberSession("late-token"); });
+    act(() => root!.unmount());
+    root = null;
+    resolve(jsonResponse({ ok: true, member: { firstName: "Late A", status: "active", applicationStatus: "active" } }));
+    expect(await verification).toBeNull();
   });
 });

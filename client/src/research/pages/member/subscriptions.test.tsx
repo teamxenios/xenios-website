@@ -244,7 +244,7 @@ describe("Subscriptions page", () => {
   it("renders a denied list read through the designed copy", async () => {
     stubFetch([subscriptionsRoute(403, { ok: false, code: "membership_inactive" })]);
     const view = await renderPage(<SubscriptionsPage />);
-    expect(view.textContent).toContain("Membership is not active.");
+    expect(view.textContent).toContain("Account access is not active.");
     expect(view.textContent).not.toContain("membership_inactive");
   });
 
