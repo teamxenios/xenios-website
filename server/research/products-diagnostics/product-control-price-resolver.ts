@@ -2,6 +2,7 @@ import type {
   AdminProductPrice,
   AdminProductVariant,
 } from "@shared/research/product-admin";
+import { readCanonicalPriceTiers } from "@shared/research/price-quantity-tiers";
 import {
   CART_PURCHASE_AUDIENCES,
   type CartAudienceEligibility,
@@ -276,6 +277,7 @@ export function decideProductControlPrice(
       const valid =
         Boolean(price.id.trim()) &&
         isCustomerSafeAmountCents(price.amountCents) &&
+        readCanonicalPriceTiers(price.amountCents, price.quantityTiers) !== null &&
         Number.isInteger(price.version) &&
         price.version > 0 &&
         effectiveAt !== null &&

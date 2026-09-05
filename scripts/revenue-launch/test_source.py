@@ -33,7 +33,7 @@ class SourceIntegrityTests(unittest.TestCase):
         self.assertEqual(dollars_to_cents("5.50"), 550)
         self.assertEqual(dollars_to_cents("129.0"), 12900)
         self.assertIsNone(dollars_to_cents(""))
-        for value in ("1.001", "1e2", "NaN", "Infinity", "=1+1", "-5", True, 129, "21474836.48"):
+        for value in ("1.001", "1e2", "NaN", "Infinity", "=1+1", "-5", True, 129, "90071992547409.92"):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 dollars_to_cents(value)
 

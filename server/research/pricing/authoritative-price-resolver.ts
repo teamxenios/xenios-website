@@ -29,6 +29,7 @@ import type {
   AdminProductVariant,
 } from "@shared/research/product-admin";
 import type { CartAudienceEligibility } from "@shared/research/cart-product-selection";
+import { resolveCanonicalQuantityPrice } from "@shared/research/price-quantity-tiers";
 import {
   CUSTOMER_PRICE_AUDIENCES,
   isCustomerSafeAmountCents,
@@ -131,6 +132,8 @@ export interface ResolveApprovedResearchPriceInput {
   authenticatedAudience: ServerAuthorizedAudience;
   currency: string;
   at: string;
+  /** Exact aggregated variant quantity; omitted only for a one-unit display. */
+  quantity?: number;
 }
 
 function unavailable(reason: PriceUnavailableReason): PriceResolution {
@@ -145,6 +148,7 @@ function toCustomerPrice(
   price: AdminProductPrice,
   audience: CustomerPriceAudience,
   currency: SupportedPriceCurrency,
+  amountCents: number,
 ): CustomerPrice {
   // Explicit field picks only. Never spread the admin record: approvalNote,
   // approvedBy, createdBy, and audit timestamps must not cross this boundary.
@@ -153,7 +157,7 @@ function toCustomerPrice(
     productId: price.productId,
     variantId: price.variantId,
     audience,
-    amountCents: price.amountCents,
+    amountCents,
     currency,
     effectiveAt: price.effectiveAt,
     expiresAt: price.expiresAt,
@@ -329,9 +333,14 @@ export class AuthoritativePriceResolver {
       if (!isCustomerSafeAmountCents(resolved.amountCents)) {
         return unavailable("price_missing");
       }
+      const selected = resolveCanonicalQuantityPrice(
+        resolved.amountCents, resolved.quantityTiers,
+        input.quantity === undefined ? 1 : input.quantity,
+      );
+      if (selected === null) return unavailable("price_missing");
       return {
         state: "available",
-        price: toCustomerPrice(resolved, authorized.audience, currency),
+        price: toCustomerPrice(resolved, authorized.audience, currency, selected.amountCents),
       };
     }
 

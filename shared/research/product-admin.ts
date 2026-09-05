@@ -134,6 +134,8 @@ export interface AdminProductPrice {
   variantId: string;
   audience: PriceAudience;
   amountCents: number;
+  /** Immutable quantity ladder belonging to this exact price version. */
+  quantityTiers?: readonly import("./price-quantity-tiers").PriceQuantityTier[];
   currency: string;
   effectiveAt: string;
   expiresAt: string | null;

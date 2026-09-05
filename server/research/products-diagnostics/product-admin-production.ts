@@ -137,6 +137,11 @@ function priceRow(row: Record<string, unknown>): AdminProductPrice {
     variantId: rowText(row.variant_id),
     audience: rowText(row.audience) as AdminProductPrice["audience"],
     amountCents: rowNumber(row.amount_cents),
+    // Preserve malformed present values for the canonical resolver to refuse;
+    // never drop them and accidentally fall back to the scalar price.
+    ...(Object.hasOwn(row, "quantity_tiers")
+      ? { quantityTiers: row.quantity_tiers as AdminProductPrice["quantityTiers"] }
+      : {}),
     currency: rowText(row.currency, "USD"),
     effectiveAt: rowText(row.effective_at),
     expiresAt: rowNullableText(row.expires_at),

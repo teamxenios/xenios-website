@@ -21,7 +21,7 @@ WORKBOOK = "inputs/" + PREFIX + "PRICING_REVIEW_FORM_2026-09-04.xlsx"
 TIERS = ((1, "seth_single_unit_price_cents", "single_unit_price"),
          (5, "seth_5_plus_unit_price_cents", "price_5_plus"),
          (10, "seth_10_plus_unit_price_cents", "price_10_plus"))
-MAX_CENTS = 2_147_483_647
+MAX_CENTS = 9_007_199_254_740_991
 
 
 def read_json(path):

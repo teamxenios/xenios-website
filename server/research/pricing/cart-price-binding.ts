@@ -163,6 +163,7 @@ export interface ResolveSkuPriceInput {
   authenticatedAudience: ServerAuthorizedAudience;
   currency: string;
   at: string;
+  quantity?: number;
 }
 
 export type SkuPriceOutcome =
@@ -223,6 +224,7 @@ export async function resolveSkuPrice(
     authenticatedAudience: input.authenticatedAudience,
     currency,
     at: input.at,
+    ...(input.quantity === undefined ? {} : { quantity: input.quantity }),
   });
 
   if (resolution.state === "ambiguous") return failed("price_ambiguous");
@@ -318,6 +320,7 @@ export async function bindCartPrice(
   const outcome = await resolveSkuPrice(
     {
       sku: input.sku,
+      quantity: input.quantity,
       authenticatedAudience: input.authenticatedAudience,
       currency: input.currency,
       at: input.at,
@@ -423,6 +426,7 @@ export async function revalidateCartPriceSnapshot(
   const outcome = await resolveSkuPrice(
     {
       sku: snapshot.sku,
+      quantity: snapshot.quantity,
       authenticatedAudience: input.authenticatedAudience,
       currency: input.currency,
       at: input.at,
