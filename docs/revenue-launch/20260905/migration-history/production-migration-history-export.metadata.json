@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-05T17:41:52.924387+00:00",
+  "command": [
+    "supabase",
+    "migration",
+    "list",
+    "--linked"
+  ],
+  "executable": "C:\\Users\\sboad\\AppData\\Local\\npm-cache\\_npx\\b96a6bd565c470ce\\node_modules\\@supabase\\cli-windows-x64\\bin\\supabase.exe",
+  "cliSha256": "5ccda93866ff48a3ec4a580679d71a44b9ee41150fb6143bdd4a6a57d3ecef1a",
+  "cliVersion": "2.116.0",
+  "projectRef": "yvzeduaxbwgcwllhywff",
+  "repository": "teamxenios/xenios-website",
+  "worktree": "C:\\Users\\sboad\\.codex\\worktrees\\f36a\\xenios-website",
+  "head": "1bd9431b0eac6d12a255832fe2f676f07e2a5027",
+  "branch": "codex/xenios-seth-revenue-launch-20260905",
+  "linkedIdentity": {
+    "linkedRefs": [
+      {
+        "path": "supabase/.temp/project-ref",
+        "sha256": "1d560299db389853a6597844fef9f5d170e2ef2e74842d89494e008731c30d73",
+        "projectRef": "yvzeduaxbwgcwllhywff"
+      }
+    ],
+    "conflictingEnvironmentKeys": [],
+    "explicitProfileOverride": false,
+    "explicitWorkdirOverride": false,
+    "explicitDbUrlOverride": false,
+    "poolerProjectBindingVerified": true
+  },
+  "productionMutated": false,
+  "prohibitedCommandsRun": [],
+  "exitCode": 0,
+  "completedAt": "2026-09-05T17:41:55.143908+00:00",
+  "stdoutSha256": "c64eaec4ed4312521d231fa7b27f896efd58218a040bcbaa1254830389aad73b",
+  "stderrSha256": "b9977cb727ae28f6dfc5ee83a4ca928c7a9f42b11c4757f73dd5a17e85681a5f",
+  "stdoutBytes": 4823,
+  "stderrBytes": 60,
+  "rawQuarantineScreenFindings": [],
+  "exportSha256": "51d48efd89c6f01767830c3afaa7bf256cb2069e7ec8ff752f5c5c48f2230441",
+  "exportFile": "production-migration-history-export.txt",
+  "rawStdoutFile": "cli-migration-list.stdout.json",
+  "rawStderrFile": "cli-migration-list.stderr.txt",
+  "versionEvidenceOnly": true,
+  "remoteSqlByteEqualityVerified": false,
+  "credentialScreen": "Raw outputs quarantined, automated credential/connection-string patterns absent, stdout strictly validated to dates/version fields and known message, stderr exact allowlisted connection-progress lines."
+}

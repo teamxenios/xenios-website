@@ -1,0 +1,1027 @@
+{
+  "schemaVersion": 1,
+  "projectRef": "yvzeduaxbwgcwllhywff",
+  "observedAt": "2026-09-05T17:41:52.924387+00:00",
+  "completedAt": "2026-09-05T17:41:55.143908+00:00",
+  "sourceGitSha": "1bd9431b0eac6d12a255832fe2f676f07e2a5027",
+  "exportSha256": "51d48efd89c6f01767830c3afaa7bf256cb2069e7ec8ff752f5c5c48f2230441",
+  "stdoutSha256": "c64eaec4ed4312521d231fa7b27f896efd58218a040bcbaa1254830389aad73b",
+  "summary": {
+    "tableRows": 69,
+    "localCount": 35,
+    "remoteCount": 40,
+    "sameVersionCount": 6,
+    "localOnlyCount": 29,
+    "remoteOnlyCount": 34,
+    "documentedDifferentVersionAliases": 5,
+    "duplicateLocalVersions": {},
+    "duplicateRemoteVersions": {},
+    "localFilenameVersionConflicts": [],
+    "localLedgerCoversEveryMigrationFile": true,
+    "localGitBlobChecksumMatches": 35,
+    "remoteVersionsWithUnknownHistoricalName": 9,
+    "remoteSqlByteAttestationCount": 0
+  },
+  "localOnlyVersions": [
+    "20260726143000",
+    "20260726214500",
+    "20260727200000",
+    "20260728010000",
+    "20260728020000",
+    "20260729000000",
+    "20260729100000",
+    "20260804120000",
+    "20260804121000",
+    "20260804122000",
+    "20260804123000",
+    "20260804130000",
+    "20260804140000",
+    "20260804150000",
+    "20260804160000",
+    "20260807200000",
+    "20260809130000",
+    "20260810120000",
+    "20260810130000",
+    "20260811120000",
+    "20260812120000",
+    "20260813120000",
+    "20260814061500",
+    "20260815150000",
+    "20260819170000",
+    "20260819170100",
+    "20260819170200",
+    "20260820190000",
+    "20260821170000"
+  ],
+  "remoteOnlyVersions": [
+    "20260724163934",
+    "20260724170132",
+    "20260724171056",
+    "20260724185842",
+    "20260724185858",
+    "20260725210633",
+    "20260725210826",
+    "20260725210945",
+    "20260725225920",
+    "20260725231517",
+    "20260726011239",
+    "20260726020513",
+    "20260726020534",
+    "20260726020554",
+    "20260726025009",
+    "20260726045307",
+    "20260726064113",
+    "20260726080248",
+    "20260726093600",
+    "20260726112848",
+    "20260726214102",
+    "20260726215603",
+    "20260814040633",
+    "20260814041723",
+    "20260814042047",
+    "20260814043320",
+    "20260814051903",
+    "20260814054754",
+    "20260814060630",
+    "20260814061243",
+    "20260814110250",
+    "20260814173019",
+    "20260819203614",
+    "20260820224041"
+  ],
+  "local": [
+    {
+      "localVersion": "20260726143000",
+      "repositoryPath": "supabase/migrations/20260726143000_research_product_control_center.sql",
+      "gitBlobSha256": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260726214102 research_product_control_center",
+      "recordedAliasVersion": "20260726214102",
+      "recordedAliasPresent": true,
+      "classification": "recorded_managed_alias_present_remote_sql_bytes_unverified",
+      "nextAction": "Keep both local and managed version identities; do not rename, reapply or repair history."
+    },
+    {
+      "localVersion": "20260726214500",
+      "repositoryPath": "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql",
+      "gitBlobSha256": "2fb96f105fcfb1d6f77bf6e9bcf191b48decbc9206f2045b32cf7595d31551db",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260726215603 research_product_control_center_privilege_hardening",
+      "recordedAliasVersion": "20260726215603",
+      "recordedAliasPresent": true,
+      "classification": "recorded_managed_alias_present_remote_sql_bytes_unverified",
+      "nextAction": "Keep both local and managed version identities; do not rename, reapply or repair history."
+    },
+    {
+      "localVersion": "20260727120000",
+      "repositoryPath": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+      "gitBlobSha256": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260727120000 research_inventory_lot_coa_admin",
+      "recordedAliasVersion": "20260727120000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260727160000",
+      "repositoryPath": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "gitBlobSha256": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260727160000 research_inventory_reservation_commands",
+      "recordedAliasVersion": "20260727160000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260727200000",
+      "repositoryPath": "supabase/migrations/20260727200000_research_persistent_cart.sql",
+      "gitBlobSha256": "6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260728010000",
+      "repositoryPath": "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
+      "gitBlobSha256": "dd8895522862383f2dcc3b2d4013a2a9d4a4ef5385efcf237980756c13b6df53",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260728020000",
+      "repositoryPath": "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
+      "gitBlobSha256": "989cc6e5929d1297056c3f600898c07bab191c378107f12c8029263c9c77a722",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260729000000",
+      "repositoryPath": "supabase/migrations/20260729000000_research_pricing_lineage.sql",
+      "gitBlobSha256": "377fe1eec2655026de94454254602a77227adfc0afa4297b8f11711dfe164666",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260729100000",
+      "repositoryPath": "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
+      "gitBlobSha256": "406c9a481dd588c56ec1cff467e091a2e154e92671e3cba30bac3b458013e87d",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260801120000",
+      "repositoryPath": "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql",
+      "gitBlobSha256": "6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260801120000 research_variant_strength_write_gate",
+      "recordedAliasVersion": "20260801120000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260804120000",
+      "repositoryPath": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+      "gitBlobSha256": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "SQL-EDITOR (founder-run, 2026-08 EA launch series)",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "historical_sql_editor_application_claim_not_a_version_match",
+      "nextAction": "Retain historical claim separately; obtain authorized deployed-object evidence before any production DDL."
+    },
+    {
+      "localVersion": "20260804121000",
+      "repositoryPath": "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+      "gitBlobSha256": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "SQL-EDITOR (founder-run, 2026-08 EA launch series)",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "historical_sql_editor_application_claim_not_a_version_match",
+      "nextAction": "Retain historical claim separately; obtain authorized deployed-object evidence before any production DDL."
+    },
+    {
+      "localVersion": "20260804122000",
+      "repositoryPath": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+      "gitBlobSha256": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260804123000",
+      "repositoryPath": "supabase/migrations/20260804123000_research_early_access_reservation_holds.sql",
+      "gitBlobSha256": "3085cfe06fc2340c75e28a4f30491a2dae48773bc94572b763113933cd2df590",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260804130000",
+      "repositoryPath": "supabase/migrations/20260804130000_research_early_access_unit_holds.sql",
+      "gitBlobSha256": "cea8f8bcde4d31a4a2d77a7b2b11ed831aadd46eb38600f820f17a9c84ffede2",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260804140000",
+      "repositoryPath": "supabase/migrations/20260804140000_research_early_access_settled_transaction_refs.sql",
+      "gitBlobSha256": "ff7179abd2991bd1f4eb2f4ae735c6109683173780dd3439ae971cb483aae20b",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260804150000",
+      "repositoryPath": "supabase/migrations/20260804150000_research_early_access_proof_bucket_privacy.sql",
+      "gitBlobSha256": "803d68913a08ecf18b0f1dcc260b4f9a426ca6b0f6a0dc092b5757f067f7da13",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260804160000",
+      "repositoryPath": "supabase/migrations/20260804160000_research_early_access_strength_registry_mirror.sql",
+      "gitBlobSha256": "0391876a285023d58a6dfa8f113693140ca69e570bd61cf5069b7903dbe351b2",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260807193000",
+      "repositoryPath": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+      "gitBlobSha256": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260807193000 research_early_access_cart_checkout",
+      "recordedAliasVersion": "20260807193000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260807200000",
+      "repositoryPath": "supabase/migrations/20260807200000_research_affiliate_access_and_portal_v2.sql",
+      "gitBlobSha256": "061c2c59317ef9f6e915f06a8333289225c3b16d23b34f41331aacb82710ad4a",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260808100000",
+      "repositoryPath": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+      "gitBlobSha256": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260808100000 research_early_access_cart_completion",
+      "recordedAliasVersion": "20260808100000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260809120000",
+      "repositoryPath": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+      "gitBlobSha256": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260809120000 research_early_access_cart_duplicate_guard",
+      "recordedAliasVersion": "20260809120000",
+      "recordedAliasPresent": true,
+      "classification": "same_version_present_remote_sql_bytes_unverified",
+      "nextAction": "Retain exact version; verify relevant deployed object/SQL provenance before any production migration."
+    },
+    {
+      "localVersion": "20260809130000",
+      "repositoryPath": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+      "gitBlobSha256": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "SQL-EDITOR (founder-run, M62 release, 2026-08-10)",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "historical_sql_editor_application_claim_not_a_version_match",
+      "nextAction": "Retain historical claim separately; obtain authorized deployed-object evidence before any production DDL."
+    },
+    {
+      "localVersion": "20260810120000",
+      "repositoryPath": "supabase/migrations/20260810120000_research_fm_document_category_expansion.sql",
+      "gitBlobSha256": "a09ae3c0f5a5a321e51aabfbcd61ec7f313cd52d3d61de30fda4e314ade646fc",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260810130000",
+      "repositoryPath": "supabase/migrations/20260810130000_research_early_access_cart_shipping_commitments.sql",
+      "gitBlobSha256": "2a4f3a216bd5a0f154f3a249affde8ce1a8d64b36b6612a46420e5dd38585147",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260811120000",
+      "repositoryPath": "supabase/migrations/20260811120000_research_early_access_cart_quantity_band.sql",
+      "gitBlobSha256": "3d9baf21b99c52333d9686eeb003b6599c1529cd6fc8542088188068aa2a10b5",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260812120000",
+      "repositoryPath": "supabase/migrations/20260812120000_research_early_access_cart_quantity_band_50.sql",
+      "gitBlobSha256": "b353d33bd712c8a4a558feb0bf2a235723e58a775e2e83ea15df7182ac5e121d",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260813120000",
+      "repositoryPath": "supabase/migrations/20260813120000_research_early_access_member_order_history.sql",
+      "gitBlobSha256": "2a92b84f635d9a5171d09db83717c0a11f075f36dfc5816ff0d06dee90afac2f",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260814040633 research_early_access_member_order_history",
+      "recordedAliasVersion": "20260814040633",
+      "recordedAliasPresent": true,
+      "classification": "recorded_managed_alias_present_remote_sql_bytes_unverified",
+      "nextAction": "Keep both local and managed version identities; do not rename, reapply or repair history."
+    },
+    {
+      "localVersion": "20260814061500",
+      "repositoryPath": "supabase/migrations/20260814061500_research_function_search_path_hardening.sql",
+      "gitBlobSha256": "7954e9dbeaf14549e1bc9bd3fe47d75550dd5fa9018157315f1ef11d0d90b973",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260814060630 research_function_search_path_hardening",
+      "recordedAliasVersion": "20260814060630",
+      "recordedAliasPresent": true,
+      "classification": "recorded_managed_alias_present_remote_sql_bytes_unverified",
+      "nextAction": "Keep both local and managed version identities; do not rename, reapply or repair history."
+    },
+    {
+      "localVersion": "20260815150000",
+      "repositoryPath": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "gitBlobSha256": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": true,
+      "historicalManagedId": "20260819203614",
+      "recordedAliasVersion": "20260819203614",
+      "recordedAliasPresent": true,
+      "classification": "recorded_managed_alias_present_remote_sql_bytes_unverified",
+      "nextAction": "Keep both local and managed version identities; do not rename, reapply or repair history."
+    },
+    {
+      "localVersion": "20260819170000",
+      "repositoryPath": "supabase/migrations/20260819170000_research_ea_cart_commission_settlement.sql",
+      "gitBlobSha256": "d364055e6f99abdb5cd47ca03eb9b55daeeedc4e461946f87714952d633116d4",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260819170100",
+      "repositoryPath": "supabase/migrations/20260819170100_research_ea_cart_member_order_history.sql",
+      "gitBlobSha256": "62e7fc553fd763ead70255ba67e6d0d4138ee1a20f6629715fb96ad7201f1e60",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260819170200",
+      "repositoryPath": "supabase/migrations/20260819170200_research_ea_cart_settlement_canonical_txn.sql",
+      "gitBlobSha256": "52a3a392d957b0c564bb9561aa7ee4310803d3f581ca869860e6cc78faa1b92c",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    },
+    {
+      "localVersion": "20260820190000",
+      "repositoryPath": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+      "gitBlobSha256": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "historical_applied_vs_pending_conflict_no_verified_managed_id",
+      "nextAction": "Resolve M75 DAG/ledger pending claim against the applied release record and future authorized SQL provenance; do not infer a managed alias from timestamps."
+    },
+    {
+      "localVersion": "20260821170000",
+      "repositoryPath": "supabase/migrations/20260821170000_research_early_access_bulk_unit_facts.sql",
+      "gitBlobSha256": "39cb384b71ecd6c95c7eff2b12448f94332d3499baf658d06a2acd73efd4a474",
+      "dagChecksumMatches": true,
+      "historicalDagAppliedClaim": false,
+      "historicalManagedId": "PENDING",
+      "recordedAliasVersion": null,
+      "recordedAliasPresent": false,
+      "classification": "local_version_absent_remote_application_not_established_by_list",
+      "nextAction": "Treat as unapproved candidate; check dependencies and actual deployed state before proposing any application; never db push all local-only files."
+    }
+  ],
+  "remote": [
+    {
+      "remoteVersion": "20260724163934",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_fm_esign_native",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260724170132",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_fm_esign_native_hardening",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260724171056",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_fm_esign_native_attempt_lease",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260724185842",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_idempotency_keys",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260724185858",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_fm_activation_verify_atomic",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260725210633",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_product_requests",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260725210826",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_product_requests_table_grants_hardening",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260725210945",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_product_requests_function_grants_hardening",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260725225920",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_agreement_package_notifications",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260725231517",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "research_security_definer_grants_hardening",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726011239",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "release_train_0_research_assessment_v2",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726020513",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "release_train_1_research_catalog",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726020534",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "release_train_1_research_inventory_lots",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726020554",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "release_train_1_research_products_diagnostics",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726025009",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "canonical_prelaunch_foundation",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726045307",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "canonical_required_input_readiness",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726064113",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "care_access_foundation",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726080248",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "care_eligibility_intake",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726093600",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "care_appointments_clinician",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726112848",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": "care_prescription_pharmacy",
+      "historicalNameSource": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "classification": "historical_name_only_no_versioned_file_or_sql_byte_attestation",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726214102",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260726143000_research_product_control_center.sql"
+      ],
+      "historicalName": "research_product_control_center",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "documented_different_local_version_binding",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260726215603",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260726214500_research_product_control_center_privilege_hardening.sql"
+      ],
+      "historicalName": "research_product_control_center_privilege_hardening",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "documented_different_local_version_binding",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260727120000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"
+      ],
+      "historicalName": "research_inventory_lot_coa_admin",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260727160000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql"
+      ],
+      "historicalName": "research_inventory_reservation_commands",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260801120000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260801120000_research_variant_strength_write_gate.sql"
+      ],
+      "historicalName": "research_variant_strength_write_gate",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260807193000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql"
+      ],
+      "historicalName": "research_early_access_cart_checkout",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260808100000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260808100000_research_early_access_cart_completion.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260808100000_research_early_access_cart_completion.sql"
+      ],
+      "historicalName": "research_early_access_cart_completion",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260809120000",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [
+        "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql"
+      ],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql"
+      ],
+      "historicalName": "research_early_access_cart_duplicate_guard",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "same_version_repository_file_present",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814040633",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260813120000_research_early_access_member_order_history.sql"
+      ],
+      "historicalName": "research_early_access_member_order_history",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "documented_different_local_version_binding",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814041723",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814042047",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814043320",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814051903",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814054754",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814060630",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260814061500_research_function_search_path_hardening.sql"
+      ],
+      "historicalName": "research_function_search_path_hardening",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "documented_different_local_version_binding",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814061243",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814110250",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260814173019",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260819203614",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [
+        "supabase/migrations/20260815150000_research_assisted_order_bridge.sql"
+      ],
+      "historicalName": "research_assisted_order_bridge",
+      "historicalNameSource": "docs/coordination/MIGRATION_DAG.json",
+      "classification": "documented_different_local_version_binding",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    },
+    {
+      "remoteVersion": "20260820224041",
+      "presentInFreshRemoteHistory": true,
+      "sameVersionRepositoryPaths": [],
+      "documentedLocalBindings": [],
+      "historicalName": null,
+      "historicalNameSource": null,
+      "classification": "remote_version_present_name_and_repository_provenance_missing",
+      "remoteSqlBytesVerified": false,
+      "nextAction": "Preserve this applied history entry. Obtain authorized name/SQL provenance for migration release review; do not delete or repair it."
+    }
+  ],
+  "versionHistoryStartupGate": {
+    "closed": true,
+    "scope": "Fresh complete linked project LOCAL/REMOTE version history, exact local file coverage, duplicate checks, and individually dispositioned discrepancies. This closes the unavailable-history startup blocker only.",
+    "runtimeImplementationMayResumeAfterRecordCommitted": true
+  },
+  "productionMigrationReadiness": {
+    "ready": false,
+    "remoteSqlByteEqualityVerified": false,
+    "unresolvedProvenanceRequiredBeforeProductionMigration": true,
+    "blanketDbPushOrMigrationRepairAllowed": false
+  },
+  "explicitGaps": [
+    "The list command reports versions, not remote SQL bodies, names, checksums or deployed object fingerprints.",
+    "34 remote versions have no same-version file in supabase/migrations; five have exact documented DAG aliases, twenty have only older historical names, and nine lack repository-backed names.",
+    "Three local migrations have historical SQL-editor application claims; absence of their file timestamps does not prove absence of deployed objects.",
+    "M75 is pending in MIGRATION_DAG/MIGRATIONS.md but the August 20 deployment record says applied. Remote 20260820224041 exists; no exact recorded alias binds it to M75, so no timestamp-based inference is accepted.",
+    "M76 local version is absent from remote history; bulk RPC earlier returned 404. Actual schema/SQL provenance is not certified by this list."
+  ],
+  "evidenceSources": [
+    {
+      "path": "docs/coordination/MIGRATION_DAG.json",
+      "gitBlobSha256": "bd1f7191b39edca5eaa8f8863ed141960545cfa55c501cceecaa8122cec888e6"
+    },
+    {
+      "path": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-07-30.json",
+      "gitBlobSha256": "0c227c8fa884029bc63e12ec53f03d1fed1a4124a10d554247dfd26e4363fb0e"
+    },
+    {
+      "path": "supabase/MIGRATIONS.md",
+      "gitBlobSha256": "c143164619f379a5df5fd4919dbd36e8ac7fa99c7be9f9ba3a1e27ccf8b04518"
+    },
+    {
+      "path": "docs/research-launch/DEPLOY_RECORD_2026-08-20_M75_AFFILIATE_CODE.md",
+      "gitBlobSha256": "90d7b451893e1d91099580f0cb664ad307291ef33b5cf2dd08d0d3c494ac0e18"
+    }
+  ],
+  "productionMutationCommandsIssued": []
+}

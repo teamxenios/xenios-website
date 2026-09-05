@@ -1260,6 +1260,28 @@
       "heartbeatAt": "2026-09-05T04:49:58.516244+00:00",
       "releasedAt": "2026-09-05T04:49:58.516244+00:00",
       "releaseReason": "blocked_external_current_migration_history_gate"
+    },
+    {
+      "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+      "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md",
+        ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*",
+        "docs/revenue-launch/20260905/migration-history/**",
+        "docs/revenue-launch/20260905/ASTRA_PAIRING.md",
+        "docs/revenue-launch/20260905/COMPLETE_PACKAGE_GATE.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T17:49:32.211Z",
+      "heartbeatAt": "2026-09-05T17:49:32.211Z"
     }
   ],
   "rules": [

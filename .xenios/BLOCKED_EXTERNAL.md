@@ -1,15 +1,15 @@
 # Externally blocked work
 
-- Seth revenue launch (2026-09-05, refreshed gate): the complete package is
-  present, all 44 hashes match, and all workbook/manifest rows reconcile.
-  Further implementation is paused because the authorized production migration
-  history read returned 403; no complete fresh ledger exists in retained parent
-  evidence. Restore authorized read access or supply a fresh complete export.
+- Seth revenue launch (2026-09-05): the missing-history startup blocker is
+  closed for local engineering by the authorized linked CLI export at 17:41 UTC.
+  See `docs/revenue-launch/20260905/migration-history/MIGRATION_RECONCILIATION.md`.
+  Production migration preflight still requires remote SQL/object provenance,
+  including nine unnamed remote versions, historical SQL-editor claims and the
+  M75 bookkeeping conflict. No blanket push, rename or migration repair is safe.
   All 34 mapped variants lack current supplier confirmation, presentation,
-  shipping class, commerce approval and approved product documentation. Price
-  approval, inventory/capacity and payment authority remain release gates.
-  See `docs/revenue-launch/20260905/COMPLETE_PACKAGE_GATE.md`. Do not waive the
-  migration gate or resume implementation merely because local work exists.
+  shipping class, commerce approval and approved product documentation at the
+  recorded source observation. Price approval, inventory/capacity and payment
+  authority remain release gates; dependency-ready implementation continues.
 
 - Membership application cannot open until the exact published Membership Application Terms and Privacy Policy versions are authoritative and recordable.
 - Provider/Care clinical availability depends on licensed providers, state coverage, prescription/pharmacy relationships, and approved clinical workflows.

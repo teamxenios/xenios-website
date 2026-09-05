@@ -1,12 +1,10 @@
 {
   "id": "codex-seth-revenue-launch-20260905",
   "tool": "Codex",
-  "lane": "seth-revenue-launch",
+  "lane": "astra-a-revenue-backend-integrator",
   "branch": "codex/xenios-seth-revenue-launch-20260905",
-  "state": "blocked_external",
-  "startedAt": "2026-09-05T04:13:38.782Z",
-  "heartbeatAt": "2026-09-05T04:49:58.516244+00:00",
-  "note": "Blocked by refreshed founder gate: current production migration-history read returned 403. Complete source/workbook verified. Exact pushed verification fc3f579f60c1375f34b7b7f31e9d14960f38269e; runtime preserved at 04dd4e43ef33aa4a08d45c0d60ffac7721f5bb3f. Lease released; await authorized fresh ledger/read restoration before implementation.",
-  "pausedAt": "2026-09-05T04:49:58.516244+00:00",
-  "handoffDocument": ".xenios/handoffs/2026-09-05T04-50-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-complete-package-gate.md"
+  "state": "active",
+  "startedAt": "2026-09-05T17:49:32.118Z",
+  "heartbeatAt": "2026-09-05T17:49:32.125Z",
+  "note": "Resumed existing session under Samuel paired directive; original startedAt 2026-09-05T04:13:38.782Z. ASTRA-A; linked CLI migration evidence obtained, recording gate disposition before runtime edits."
 }

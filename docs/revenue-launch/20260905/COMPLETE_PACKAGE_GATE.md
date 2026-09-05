@@ -1,3 +1,8 @@
+> Historical verification checkpoint. Its missing-history implementation pause
+> was superseded by the authorized linked CLI evidence and Samuel's paired
+> continuation directive. Current disposition:
+> [migration reconciliation](migration-history/MIGRATION_RECONCILIATION.md).
+
 # Complete-package verification — implementation paused
 
 Samuel supplied the complete September 5 package. The earlier missing ZIP,
