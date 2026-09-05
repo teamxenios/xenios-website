@@ -1260,6 +1260,24 @@
       "heartbeatAt": "2026-09-05T04:49:58.516244+00:00",
       "releasedAt": "2026-09-05T04:49:58.516244+00:00",
       "releaseReason": "blocked_external_current_migration_history_gate"
+    },
+    {
+      "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",
+      "task": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",
+      "session": "codex-seth-astra-b-20260905",
+      "paths": [
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
+        "client/src/research/revenue-launch/reconciliation-review.ts",
+        "client/src/research/revenue-launch/reconciliation-review.test.ts",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
+        "docs/revenue-launch/astra-b/20260905/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T17:50:44.922Z",
+      "heartbeatAt": "2026-09-05T17:50:44.922Z"
     }
   ],
   "rules": [

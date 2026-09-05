@@ -3,6 +3,29 @@
   "updatedAt": "2026-09-05T04:13:59.4490779Z",
   "tasks": [
     {
+      "id": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",
+      "title": "Paired ASTRA-B canonical Product Control price and reconciliation review",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-seth-astra-b-20260905",
+      "paths": [
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
+        "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
+        "client/src/research/revenue-launch/reconciliation-review.ts",
+        "client/src/research/revenue-launch/reconciliation-review.test.ts",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
+        "docs/revenue-launch/astra-b/20260905/**"
+      ],
+      "dependsOn": [],
+      "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "baseSha": "1bd9431b0eac6d12a255832fe2f676f07e2a5027",
+      "scopeNote": "Founder two-Astra directive supersedes global local-engineering pause. This isolated worktree is ASTRA-B; ASTRA-A owns backend/shared DTOs, source scripts/config, migration history, release and canonical corpus integration. This first slice uses existing read contracts; no batch/activation authority, generated raw evidence in client bundles, production mutations or release approval. Local registration/lease bookkeeping is retained separately from feature commits for A integration.",
+      "createdAt": "2026-09-05T17:50:25Z",
+      "claimedAt": "2026-09-05T17:50:44.919Z"
+    },
+    {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
       "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
       "priority": "P0",
