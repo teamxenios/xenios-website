@@ -1285,7 +1285,20 @@
         ".xenios/BLOCKED_EXTERNAL.md",
         ".xenios/FOUNDER_ACTIONS.md",
         ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
-        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*"
+        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "shared/research/price-quantity-tiers.ts",
+        "shared/research/price-quantity-tiers.test.ts",
+        "shared/research/product-admin.ts",
+        "server/research/products-diagnostics/product-control-price-resolver.ts",
+        "server/research/products-diagnostics/product-control-price-resolver.quantity-tiers.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/pricing/authoritative-price-resolver.ts",
+        "server/research/pricing/authoritative-price-resolver.quantity-tiers.test.ts",
+        "server/research/pricing/cart-price-binding.ts",
+        "server/research/pricing/cart-price-binding.quantity-tiers.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"

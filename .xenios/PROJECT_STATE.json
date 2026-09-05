@@ -8,6 +8,8 @@
     "branch": "codex/xenios-seth-revenue-launch-20260905",
     "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
     "sourceCheckpoint": "docs/revenue-launch/20260905/SOURCE_CHECKPOINT.md",
+    "sourceCheckpointSha": "58feb6467d118fc38e8eaa84b2c18d3fe28607e7",
+    "sourceCheckpointPushed": true,
     "verifiedPackageFiles": 14,
     "declaredPackageFiles": 44,
     "phaseARows": 39,
