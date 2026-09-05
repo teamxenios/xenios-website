@@ -1170,7 +1170,7 @@
       "id": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
       "title": "Simplify Quick Early Access into four customer-visible steps over existing canonical authorities",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-major-ordering-admin-sor-20260904",
       "paths": [
         "client/src/research/early-access/customerSteps.ts",
@@ -1234,7 +1234,16 @@
         "durable-reference states offer canonical account history/sign-in and support actions without claiming that an XEC reference was linked",
         "focused authority and negative tests, typecheck, build, responsive 1440-320 browser QA, system-of-record refresh, scans, coherent commit and push; production untouched"
       ],
-      "claimedAt": "2026-09-04T22:17:40.122Z"
+      "claimedAt": "2026-09-04T22:17:40.122Z",
+      "handoff": {
+        "session": "codex-major-ordering-admin-sor-20260904",
+        "sha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
+        "file": ".xenios/handoffs/2026-09-05T01-30-30-890Z-XENIOS-QUICK-EARLY-ACCESS-V2-20260904-codex-major-ordering-admin-sor-20260904.md",
+        "at": "2026-09-05T01:30:30.892Z"
+      },
+      "acceptedSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
+      "acceptedBy": "codex-wave4-frozen-review-20260904",
+      "acceptedAt": "2026-09-05T01:30:36.956Z"
     }
   ]
 }

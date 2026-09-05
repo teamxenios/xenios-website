@@ -1152,7 +1152,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-04T20:11:49.854Z",
-      "heartbeatAt": "2026-09-05T00:17:51.500Z"
+      "heartbeatAt": "2026-09-05T01:30:55.000Z"
     },
     {
       "id": "98e42d76-da4e-444f-b4c3-3e768abc9175",
@@ -1207,9 +1207,9 @@
         "docs/ux/quick-early-access-v2-20260904/CHECKPOINT.md",
         ".xenios/handoffs/*XENIOS-QUICK-EARLY-ACCESS-V2-20260904*"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-04T22:17:40.125Z",
-      "heartbeatAt": "2026-09-05T00:17:51.500Z"
+      "heartbeatAt": "2026-09-05T01:20:51.752Z"
     }
   ],
   "rules": [
