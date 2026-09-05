@@ -41,7 +41,7 @@ describe("partner account reads independently of purchasing", () => {
     const s = source();
     const deps = buildCommerceDependencies(now, config, { resolvePartnerMemberStore: () => s.members, resolveCommissionLedgerStore: () => s.ledger });
     expect(deps.partners.readAvailable?.()).toBe(false);
-    await expect(deps.partners.findByMemberId("a")).rejects.toThrow("unavailable");
+    expect(await deps.partners.findByMemberId("a")).toBeNull();
     expect(s.findByMemberId).not.toHaveBeenCalled();
   });
 
@@ -66,7 +66,16 @@ describe("partner account reads independently of purchasing", () => {
   it("disabled ports never create a memory substitute", async () => {
     const members = vi.fn(); const ledger = vi.fn();
     const reads = createOwnPartnerReads({ available: false, members, ledger });
-    await expect(reads.findByMemberId("a")).rejects.toThrow();
+    expect(await reads.findByMemberId("a")).toBeNull();
+    const empty = await reads.dashboardFor({
+      partnerId: "partner-a", role: "affiliate", state: "active",
+      certifiedAt: null, activatedAt: null, training: [], agreements: [],
+    });
+    expect(empty).toEqual({
+      partnerId: "partner-a", role: "affiliate", state: "active",
+      leadCount: 0, conversionCount: 0, totalCommissionCents: 0, payableCents: 0,
+      conversions: [], outstandingTraining: [],
+    });
     expect(members).not.toHaveBeenCalled(); expect(ledger).not.toHaveBeenCalled();
   });
 });
