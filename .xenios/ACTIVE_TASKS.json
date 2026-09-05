@@ -6,7 +6,7 @@
       "id": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",
       "title": "Paired ASTRA-B canonical Product Control price and reconciliation review",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-seth-astra-b-20260905",
       "paths": [
         "client/src/research/pages/adminx/ProductAdminDetail.tsx",
@@ -25,7 +25,13 @@
       "baseSha": "1bd9431b0eac6d12a255832fe2f676f07e2a5027",
       "scopeNote": "Founder two-Astra directive supersedes global local-engineering pause. This isolated worktree is ASTRA-B; ASTRA-A owns backend/shared DTOs, source scripts/config, migration history, release and canonical corpus integration. This first slice uses existing read contracts; no batch/activation authority, generated raw evidence in client bundles, production mutations or release approval. Local registration/lease bookkeeping is retained separately from feature commits for A integration.",
       "createdAt": "2026-09-05T17:50:25Z",
-      "claimedAt": "2026-09-05T17:50:44.919Z"
+      "claimedAt": "2026-09-05T17:50:44.919Z",
+      "handoff": {
+        "session": "codex-seth-astra-b-20260905",
+        "sha": "afac265d0a4e4e6f2eb414dd99879812f6348263",
+        "file": ".xenios/handoffs/2026-09-05T22-30-50-481Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-codex-seth-astra-b-20260905.md",
+        "at": "2026-09-05T22:30:50.483Z"
+      }
     },
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",

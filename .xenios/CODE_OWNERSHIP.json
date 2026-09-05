@@ -1277,9 +1277,9 @@
         "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
         "docs/revenue-launch/astra-b/20260905/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-05T17:50:44.922Z",
-      "heartbeatAt": "2026-09-05T17:54:53.551Z"
+      "heartbeatAt": "2026-09-05T18:07:26.578Z"
     }
   ],
   "rules": [
