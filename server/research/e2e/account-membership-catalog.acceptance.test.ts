@@ -35,6 +35,7 @@ const state = vi.hoisted(() => {
         email: String(input.email),
         password: String(input.password),
         emailConfirmed: input.email_confirm === true,
+        email_confirmed_at: input.email_confirm === true ? new Date().toISOString() : null,
       };
       authUsers.push(user);
       return { data: { user }, error: null };
@@ -67,6 +68,7 @@ const state = vi.hoisted(() => {
         return { data: { user: null }, error: { message: "invalid token", status: 401 } };
       }
     }),
+    rpc: vi.fn(async (..._args: any[]) => ({ data: true, error: null })),
   };
 });
 
@@ -187,7 +189,7 @@ vi.mock("../../supabase", () => {
     supabaseConfigured: () => true,
     getSupabaseAdmin: () => ({
       from: query,
-      rpc: vi.fn(async () => ({ data: true, error: null })),
+      rpc: state.rpc,
       auth: {
         admin: {
           createUser: state.createUser,
@@ -220,12 +222,20 @@ vi.mock("../outbox", () => ({
 
 import { registerMemberAccessApi } from "../guards";
 import { registerResearchApi } from "../index";
-import { registerMembershipApi } from "../membership";
+import { makeApprovedCustomerClaimToken, makeResearchToken, registerMembershipApi } from "../membership";
 import { registerMemberApi } from "../members";
+import {
+  APPROVED_CUSTOMER_SCHEMA_VERSION,
+  APPROVE_CUSTOMER_ACCESS_PATH,
+} from "@shared/research/approved-customer-access";
+import {
+  type ApprovedCustomerAccessDependencies,
+} from "../approved-customer-access";
 
 const REVIEW_PASSWORD = "synthetic-review-password";
 const MEMBER_PASSWORD = "synthetic-member-password";
 const CANONICAL_CATALOG_PATH = "/api/research/catalog";
+const ADMIN_ID = "00000000-0000-4000-8000-000000000099";
 
 const APPLICATION = {
   firstName: "Infinity",
@@ -287,6 +297,8 @@ beforeEach(() => {
   for (const rows of Object.values(state.tables)) rows.length = 0;
   state.authUsers.length = 0;
   vi.clearAllMocks();
+  state.rpc.mockReset();
+  state.rpc.mockResolvedValue({ data: true, error: null });
   process.env.RESEARCH_ACCESS_PASSWORD = REVIEW_PASSWORD;
   process.env.RESEARCH_SESSION_SECRET = "synthetic-e2e-session-secret";
   delete process.env.RESEARCH_PUBLIC;
@@ -343,15 +355,19 @@ describe("Research application-to-active-member acceptance", () => {
     expect(reviewed.status).toBe(200);
     expect(application.status).toBe("under_review");
 
-    const approved = await request(app)
+    const retiredApproval = await request(app)
       .post(`/api/admin/research/applications/${application.id}/approve`)
       .send({ internalNote: "Synthetic acceptance approval." });
-    expect(approved.status).toBe(200);
-    expect(application.status).toBe("approved_pending_payment");
-    await vi.waitFor(() => expect(emails.sendApplicationApproved).toHaveBeenCalledTimes(1));
-    const accountClaimToken = emails.sendApplicationApproved.mock.calls[0][0].token as string;
-    expect(accountClaimToken).toBeTruthy();
-    expect(accountClaimToken).not.toBe(originalStatusToken);
+    expect(retiredApproval.status).toBe(409);
+    expect(retiredApproval.body.code).toBe("customer_approval_workflow_required");
+    expect(application.status).toBe("under_review");
+
+    // This keeps the historical paid-membership activation contract covered
+    // without using the retired approval writer. The fixture represents a
+    // previously approved billing row; the live launch path below uses the
+    // separate approved-customer authority.
+    application.status = "approved_pending_payment";
+    const accountClaimToken = makeResearchToken("account_claim", application.id);
 
     const refusedStatusClaim = await request(app)
       .post("/api/research/member/claim")
@@ -401,7 +417,8 @@ describe("Research application-to-active-member acceptance", () => {
         paymentReference: "synthetic-payment-reference",
         subscriptionReference: "synthetic-subscription-reference",
       });
-    expect(heldActivation.status).toBe(503);
+    expect(heldActivation.status).toBe(409);
+    expect(heldActivation.body.code).toBe("paid_membership_retired");
     expect(application.status).toBe("approved_pending_payment");
     expect(member.status).toBe("pending_activation");
 
@@ -409,14 +426,17 @@ describe("Research application-to-active-member acceptance", () => {
     const begun = await request(app)
       .post(`/api/admin/research/applications/${application.id}/begin-activation`)
       .send({});
-    expect(begun.status).toBe(200);
-    expect(application.status).toBe("payment_pending");
+    expect(begun.status).toBe(409);
+    expect(begun.body.code).toBe("paid_membership_retired");
+    expect(application.status).toBe("approved_pending_payment");
+    expect(member.status).toBe("pending_activation");
 
     const oneReferenceOnly = await request(app)
       .post(`/api/admin/research/applications/${application.id}/activate`)
       .send({ paymentReference: "synthetic-payment-reference" });
-    expect(oneReferenceOnly.status).toBe(400);
-    expect(application.status).toBe("payment_pending");
+    expect(oneReferenceOnly.status).toBe(409);
+    expect(oneReferenceOnly.body.code).toBe("paid_membership_retired");
+    expect(application.status).toBe("approved_pending_payment");
     expect(member.status).toBe("pending_activation");
 
     const activated = await request(app)
@@ -425,27 +445,142 @@ describe("Research application-to-active-member acceptance", () => {
         paymentReference: "synthetic-payment-reference",
         subscriptionReference: "synthetic-subscription-reference",
       });
-    expect(activated.status).toBe(200);
-    expect(application.status).toBe("active");
-    expect(member.status).toBe("active");
-    expect(member.billing_state).toBe("active");
-    const activationEvent = state.tables.research_application_events.find(
-      (event) => event.new_status === "active",
-    );
-    expect(activationEvent.internal_note).toContain("payment_reference=synthetic-payment-reference");
-    expect(activationEvent.internal_note).toContain("subscription_reference=synthetic-subscription-reference");
+    expect(activated.status).toBe(409);
+    expect(activated.body.code).toBe("paid_membership_retired");
+    expect(application.status).toBe("approved_pending_payment");
+    expect(member.status).toBe("pending_activation");
+    expect(member.billing_state).toBeUndefined();
 
     const catalog = await request(app)
       .get(CANONICAL_CATALOG_PATH)
       .set("Authorization", passwordBearer);
-    expect(catalog.status).toBe(200);
-    expect(catalog.headers["cache-control"]).toContain("no-store");
-    expect(catalog.body.commerce).toEqual({ research: false, consumer: false });
-    expect(catalog.body.products.length).toBeGreaterThan(0);
-    for (const product of catalog.body.products) {
-      expect(product.priceCents).toBeNull();
-      expect(product.compareAtCents).toBeNull();
-    }
-    expect(JSON.stringify(catalog.body)).not.toMatch(/33999|34999|38999/);
+    expect(catalog.status).toBe(403);
+    expect(catalog.body.code).toBe("activation_required");
+    expect(catalog.body.products).toBeUndefined();
+  });
+
+  it("approves and claims an account without membership billing", async () => {
+    const app = makeApp();
+    const applicationId = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 13 * 24 * 60 * 60 * 1000).toISOString();
+    state.tables.research_applications.push({
+      id: applicationId,
+      email: APPLICATION.email,
+      first_name: APPLICATION.firstName,
+      last_name: APPLICATION.lastName,
+      status: "under_review",
+      access_approval_version: 0,
+      approval_expires_at: null,
+    });
+
+    const approvedDeps: ApprovedCustomerAccessDependencies = {
+      authority: vi.fn(async () => ({ schemaVersion: APPROVED_CUSTOMER_SCHEMA_VERSION })),
+      approve: vi.fn(async (input) => {
+        expect(input.actorAuthUserId).toBe(ADMIN_ID);
+        const row = state.tables.research_applications.find((candidate) => candidate.id === applicationId);
+        if (!row) return { ok: false, code: "claim_not_available" };
+        row.status = "approved_customer";
+        row.access_approval_version = 1;
+        row.approval_expires_at = expiresAt;
+        return {
+          ok: true,
+          applicationId,
+          approvalVersion: 1,
+          state: "approved_customer",
+          delivery: "queued",
+          expiresAt,
+          replayed: false,
+        };
+      }),
+      claim: vi.fn(async (id, authUserId) => {
+        const row = state.tables.research_applications.find((candidate) => candidate.id === id);
+        if (!row || row.status !== "approved_customer") return { ok: false, code: "claim_not_available" };
+        row.status = "active";
+        const member = {
+          id: crypto.randomUUID(),
+          application_id: id,
+          auth_user_id: authUserId,
+          email: row.email,
+          first_name: row.first_name,
+          status: "active",
+          billing_state: "not_started",
+        };
+        state.tables.research_members.push(member);
+        return { ok: true, applicationId: id, memberId: member.id, state: "active", replayed: false };
+      }),
+      createAuth: async (email, password) => {
+        const result = await state.createUser({ email, password, email_confirm: true });
+        if (result.error || !result.data.user?.id || !result.data.user.email) return { kind: "failed" };
+        return {
+          kind: "created",
+          userId: result.data.user.id,
+          email: result.data.user.email,
+          emailVerified: result.data.user.emailConfirmed,
+        };
+      },
+      verifySignIn: vi.fn(async () => null),
+      kickOutbox: vi.fn(async () => {}),
+    };
+
+    state.rpc.mockImplementation(async (name: string, input: Record<string, unknown>) => {
+      if (name === "research_approved_customer_access_authority") {
+        return { data: { schemaVersion: APPROVED_CUSTOMER_SCHEMA_VERSION }, error: null };
+      }
+      if (name === "research_admin_approve_customer_access") {
+        return {
+          data: await approvedDeps.approve({
+            actorAuthUserId: String(input.p_actor_auth_user_id),
+            email: String(input.p_email),
+            firstName: String(input.p_first_name),
+            lastName: String(input.p_last_name),
+            reason: String(input.p_reason),
+            expectedApplicationId: (input.p_expected_application_id as string | null) ?? null,
+            expectedUpdatedAt: (input.p_expected_updated_at as string | null) ?? null,
+            idempotencyKey: String(input.p_idempotency_key),
+          }),
+          error: null,
+        };
+      }
+      if (name === "research_claim_approved_customer_access") {
+        return { data: await approvedDeps.claim(String(input.p_application_id), String(input.p_auth_user_id)), error: null };
+      }
+      return { data: true, error: null };
+    });
+
+    const adminBearer = `Bearer ${makePasswordSession({ id: ADMIN_ID, email: "admin@example.invalid" })}`;
+    const approved = await request(app)
+      .post(APPROVE_CUSTOMER_ACCESS_PATH)
+      .set("Authorization", adminBearer)
+      .send({
+        email: ` ${APPLICATION.email} `,
+        firstName: APPLICATION.firstName,
+        lastName: APPLICATION.lastName,
+        reason: "Approved for customer access",
+        expectedApplicationId: null,
+        expectedUpdatedAt: null,
+        idempotencyKey: "synthetic-approved-0001",
+      });
+    expect(approved.status).toBe(200);
+    expect(approved.body).toMatchObject({ ok: true, state: "approved_customer", delivery: "queued" });
+    expect(JSON.stringify(approved.body)).not.toMatch(/payment|subscription|price/i);
+    expect(state.tables.research_applications[0].status).toBe("approved_customer");
+    expect(state.tables.research_members).toHaveLength(0);
+
+    const claimToken = makeApprovedCustomerClaimToken(applicationId, expiresAt);
+    const claimed = await request(app)
+      .post("/api/research/member/claim")
+      .set("X-Forwarded-For", "198.51.100.44")
+      .send({ token: claimToken, password: MEMBER_PASSWORD });
+    expect(claimed.status).toBe(200);
+    expect(claimed.body).toEqual({ ok: true, applicationId, memberId: expect.any(String), state: "active", replayed: false });
+    expect(state.tables.research_members).toHaveLength(1);
+    expect(state.tables.research_members[0]).toMatchObject({
+      application_id: applicationId,
+      email: APPLICATION.email,
+      status: "active",
+      billing_state: "not_started",
+    });
+    expect(state.createUser).toHaveBeenCalledWith({ email: APPLICATION.email, password: MEMBER_PASSWORD, email_confirm: true });
+    expect(approvedDeps.claim).toHaveBeenCalledWith(applicationId, state.tables.research_members[0].auth_user_id);
   });
 });

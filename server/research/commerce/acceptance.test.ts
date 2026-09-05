@@ -1537,7 +1537,7 @@ describe("the partner surface over HTTP", () => {
     expect(applied.body.partner.certifiedAt).toBeNull();
     expect(applied.body.partner.activatedAt).toBeNull();
     const partnerId = applied.body.partner.partnerId as string;
-    expect(partnerId).toMatch(/^prt_/);
+    expect(partnerId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[4-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
 
     // Legal name and contact email are write-only through this surface.
     const wire = JSON.stringify(applied.body);

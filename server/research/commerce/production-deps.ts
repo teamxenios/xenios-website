@@ -1189,7 +1189,10 @@ function liveDependencies(
     async applyForMember(memberId: string, input: PartnerApplyWireInput, asOf: Date) {
       try {
         const link = await partnerMemberStore.createPartnerForMember({
-          partnerId: `prt_${randomUUID()}`,
+          // research_partners.id is a Postgres UUID. Keep the durable write
+          // compatible with production; the in-memory harness can still use
+          // human-readable IDs in its own fixtures.
+          partnerId: randomUUID(),
           memberId,
           role: input.role,
           legalName: input.legalName,
