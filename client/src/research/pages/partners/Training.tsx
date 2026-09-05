@@ -25,7 +25,7 @@ type TrainingPayload = { modules?: TrainingModule[]; certified?: boolean | null 
 const CURRICULUM = [
   {
     title: "The program, honestly",
-    body: "What Xenios Research is, what membership costs ($50 at activation including the first 30 days, then $25 per additional 30-day period), and what a rep's role is and is not.",
+    body: "What Xenios Research is, how customer access works without a paid membership prerequisite, and what a partner's role is and is not.",
   },
   {
     title: "Compliance rules",
@@ -37,7 +37,7 @@ const CURRICULUM = [
   },
   {
     title: "Certification check",
-    body: "A short check on the rules above. Passing it is required before your link is issued.",
+    body: "A short check on the rules above. Completion is reviewed with the other current requirements before certification and activation.",
   },
 ];
 
@@ -86,8 +86,8 @@ export default function Training() {
                 />
                 <p className="body-s text-ink-2">
                   {data.certified
-                    ? "You have passed the certification check."
-                    : "Complete the required modules to unlock the certification check."}
+                    ? "The team has recorded certification for the current requirements."
+                    : "Required modules are reviewed with identity, tax, payout, and agreement evidence before certification."}
                 </p>
               </div>
             )}

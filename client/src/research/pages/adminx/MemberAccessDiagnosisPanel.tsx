@@ -4,6 +4,7 @@ import { ApprovedUserAccessInput, type ApprovedUserAccess } from "@shared/resear
 import { inspectApprovedUserAccess } from "../../adapters/adminOps";
 import { ACCESS_ROUTES, ADMIN_ROUTES } from "../../lib/routes";
 import { CustomerAccessApprovalForm } from "./CustomerAccessApprovalForm";
+import { PartnerLifecycleReviewPanel } from "./PartnerLifecycleReviewPanel";
 
 type InspectionState =
   | { kind: "idle" | "loading" | "invalid" | "unauthorized" | "denied" | "unavailable" | "disabled" | "error" }
@@ -46,8 +47,9 @@ const NOTIFICATION_WARNING: Record<ApprovedUserAccess["nextActions"][number]["no
   not_available: "The associated notification workflow is not available; no delivery is confirmed.",
 };
 
-function InspectionResult({ inspection, id, token, approvalPending, onApprovalPendingChange }: {
-  inspection: ApprovedUserAccess; id: string; token: string; approvalPending: boolean; onApprovalPendingChange: (pending: boolean) => void;
+function InspectionResult({ inspection, id, token, diagnosisPending, approvalPending, partnerPending, onApprovalPendingChange, onPartnerPendingChange, onPartnerConfirmed }: {
+  inspection: ApprovedUserAccess; id: string; token: string; diagnosisPending: boolean; approvalPending: boolean; partnerPending: boolean; onApprovalPendingChange: (pending: boolean) => void;
+  onPartnerPendingChange: (pending: boolean) => void; onPartnerConfirmed: () => void;
 }) {
   return (
     <div className="grid min-w-0 gap-6 mt-5" data-testid="access-inspection-result">
@@ -89,7 +91,7 @@ function InspectionResult({ inspection, id, token, approvalPending, onApprovalPe
                   <Fact label="Application ID">{application.id}</Fact>
                   <Fact label="Recorded application status">{application.status}</Fact>
                 </dl>
-                <RecordLink href={recordHref("application", application.id, application.href)} disabled={approvalPending}>Open application record</RecordLink>
+                <RecordLink href={recordHref("application", application.id, application.href)} disabled={diagnosisPending}>Open application record</RecordLink>
               </li>
             ))}
           </ul>
@@ -108,7 +110,7 @@ function InspectionResult({ inspection, id, token, approvalPending, onApprovalPe
                   <Fact label="Bound authentication account ID">{member.authUserId ?? "No authentication account bound"}</Fact>
                   <Fact label="Identity binding">{member.binding}</Fact>
                 </dl>
-                <RecordLink href={recordHref("member", member.id, member.href)} disabled={approvalPending}>Open customer record</RecordLink>
+                <RecordLink href={recordHref("member", member.id, member.href)} disabled={diagnosisPending}>Open customer record</RecordLink>
               </li>
             ))}
           </ul>
@@ -195,7 +197,7 @@ function InspectionResult({ inspection, id, token, approvalPending, onApprovalPe
                   <p className="body-s whitespace-pre-wrap mt-2">{action.consequence}</p>
                   <p className="body-s text-ink-mute mt-2">Notification classification: {action.notification}</p>
                   <p className="body-s mt-2">{NOTIFICATION_WARNING[action.notification]}</p>
-                  {href ? <RecordLink href={href} disabled={approvalPending}>Open related page</RecordLink> : action.href !== null ? (
+                  {href ? <RecordLink href={href} disabled={diagnosisPending}>Open related page</RecordLink> : action.href !== null ? (
                     <p className="body-s text-ink-mute mt-3">The reported link is outside the allowed local record paths and is not enabled.</p>
                   ) : <p className="body-s text-ink-mute mt-3">No navigation link was provided for this step.</p>}
                 </li>
@@ -204,7 +206,8 @@ function InspectionResult({ inspection, id, token, approvalPending, onApprovalPe
           </ol>
         )}
       </section>
-      <CustomerAccessApprovalForm token={token} inspection={inspection} onPendingChange={onApprovalPendingChange} />
+      <PartnerLifecycleReviewPanel token={token} inspection={inspection} onPendingChange={onPartnerPendingChange} onConfirmed={onPartnerConfirmed} />
+      <CustomerAccessApprovalForm token={token} inspection={inspection} onPendingChange={onApprovalPendingChange} externalPending={partnerPending} />
     </div>
   );
 }
@@ -214,6 +217,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<InspectionState>({ kind: "idle" });
   const [approvalPending, setApprovalPending] = useState(false);
+  const [partnerPending, setPartnerPending] = useState(false);
   const approvalPendingRef = useRef(false);
   const lifecycle = useRef({ active: false, generation: 0 });
 
@@ -228,7 +232,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
   }, []);
 
   function changeEmail(value: string) {
-    if (approvalPendingRef.current) return;
+    if (approvalPendingRef.current || partnerPending) return;
     // Invalidate before publishing the new input: an older completion can
     // never repaint the former query, even if the text changes back again.
     lifecycle.current.generation++;
@@ -238,7 +242,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!lifecycle.current.active || !token || approvalPendingRef.current) return;
+    if (!lifecycle.current.active || !token || approvalPendingRef.current || partnerPending) return;
     const generation = ++lifecycle.current.generation;
     const input = ApprovedUserAccessInput.safeParse({ email });
     if (!input.success) { setState({ kind: "invalid" }); return; }
@@ -272,7 +276,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
           {state.kind === "loading" ? "Inspecting account…" : state.kind === "ready" ? "Refresh diagnosis" : "Inspect account access"}
         </button>
       </form>
-      {approvalPending ? <p role="status" className="body-s mt-3">Diagnosis is locked while this approval is submitting or unconfirmed. Resolve it using the same request below before inspecting another account. Do not reload or leave this page until the outcome is reconciled.</p> : null}
+      {approvalPending || partnerPending ? <p role="status" className="body-s mt-3">Diagnosis is locked while a record-changing operation is submitting or unconfirmed. Resolve it using the same request below before inspecting another account. Do not reload or leave this page until the outcome is reconciled.</p> : null}
       {state.kind === "idle" ? <p className="body-s text-ink-mute mt-3">No account has been inspected for this email entry.</p> : null}
       {state.kind === "invalid" ? <p id={`${id}-email-error`} role="alert" className="body-s mt-3">Enter one valid, complete email address.</p> : null}
       {state.kind === "loading" ? <p role="status" aria-live="polite" className="body-s mt-3">Reading the authorized account records. No records are being changed.</p> : null}
@@ -281,7 +285,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
       {state.kind === "disabled" ? <p role="status" className="body-s mt-3">Account diagnosis is not enabled in this environment. The account’s presence and access state have not been determined.</p> : null}
       {state.kind === "unavailable" ? <p role="status" className="body-s mt-3">Account diagnosis is unavailable right now. This does not mean an account or relationship is absent.</p> : null}
       {state.kind === "error" ? <p role="alert" className="body-s mt-3">The inspection could not be completed safely. Submit again to retry; no account state can be inferred from this failed read.</p> : null}
-      {state.kind === "ready" ? <InspectionResult inspection={state.inspection} id={id} token={token} approvalPending={approvalPending} onApprovalPendingChange={noteApprovalPending} /> : null}
+      {state.kind === "ready" ? <InspectionResult inspection={state.inspection} id={id} token={token} diagnosisPending={approvalPending || partnerPending} approvalPending={approvalPending} partnerPending={partnerPending} onApprovalPendingChange={noteApprovalPending} onPartnerPendingChange={setPartnerPending} onPartnerConfirmed={() => void 0} /> : null}
     </>
   );
 }

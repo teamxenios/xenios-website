@@ -23,6 +23,13 @@ import type {
 } from "@shared/research/required-inputs";
 import { APPROVE_CUSTOMER_ACCESS_PATH, ApprovedCustomerApprovalInput, CustomerApprovalResult,
   type CustomerApprovalInput } from "@shared/research/approved-customer-access";
+import {
+  PARTNER_ADMIN_OPERATION_PATH,
+  PartnerOperationDenial,
+  PartnerOperationInput,
+  PartnerOperationResult,
+  type PartnerOperation,
+} from "@shared/research/partner-lifecycle";
 
 // The shape useAdminResource loads through. Loaders with parameters are bound
 // in the page (module-level or useCallback on the parameter) so identity only
@@ -204,6 +211,47 @@ export async function approveCustomerAccess(token: string, raw: CustomerApproval
   const parsed = CustomerApprovalResult.safeParse(result.data);
   if (!parsed.success || input.data.expectedApplicationId !== null && parsed.data.applicationId !== input.data.expectedApplicationId) {
     return { kind: "error", message: "The approval outcome could not be verified. Retry only the same request." } as const;
+  }
+  return { kind: "ok", data: parsed.data } as const;
+}
+
+const PARTNER_RESULT_STATES: Record<PartnerOperation["action"], readonly string[]> = {
+  prepare: ["application"],
+  record_clearance: ["identity_verification_pending", "tax_status_pending", "payout_status_pending", "agreement_pending", "training_pending", "certification_pending", "quality_review", "active"],
+  record_agreement: ["agreement_pending", "training_pending", "certification_pending", "quality_review", "active"],
+  record_training: ["training_pending", "certification_pending", "quality_review", "active"],
+  certify: ["certification_pending", "quality_review", "active"],
+  activate: ["active"],
+  suspend: ["suspended"],
+  terminate: ["terminated"],
+  reinstate: ["active", "quality_review", "certification_pending"],
+};
+
+/**
+ * Execute one explicit partner lifecycle operation. The operation remains the
+ * caller's exact object for retries; this adapter only validates the private
+ * result and binds it to the inspected partner/member snapshot.
+ */
+export async function performPartnerOperation(
+  token: string,
+  raw: PartnerOperation,
+  expectedMemberId?: string,
+) {
+  if (!token) return { kind: "unauthorized" } as const;
+  const input = PartnerOperationInput.safeParse(raw);
+  if (!input.success) return { kind: "denied", code: "invalid_input" } as const;
+  const result = await apiPost<unknown>(PARTNER_ADMIN_OPERATION_PATH, input.data, token);
+  if (result.kind !== "ok") return result;
+  const denial = PartnerOperationDenial.safeParse(result.data);
+  if (denial.success) return { kind: "denied", code: denial.data.code, missingRequirements: denial.data.missingRequirements } as const;
+  const parsed = PartnerOperationResult.safeParse(result.data);
+  if (!parsed.success
+    || parsed.data.action !== input.data.action
+    || (input.data.action === "prepare" && parsed.data.memberId !== input.data.memberId)
+    || (input.data.action !== "prepare" && parsed.data.partnerId !== input.data.partnerId)
+    || (expectedMemberId !== undefined && parsed.data.memberId !== expectedMemberId)
+    || !PARTNER_RESULT_STATES[input.data.action].includes(parsed.data.state)) {
+    return { kind: "error", message: "The partner operation outcome could not be verified. Retry only the same request." } as const;
   }
   return { kind: "ok", data: parsed.data } as const;
 }

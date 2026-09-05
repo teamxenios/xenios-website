@@ -45,11 +45,11 @@ const STEPS = [
   },
   {
     title: "Compliance certification",
-    body: "The training modules and the certification check. Certification is required before your link is issued.",
+    body: "The training modules and certification review. Current training and reviewed evidence are required before activation.",
   },
   {
-    title: "Payout and tax setup",
-    body: "Payout details and tax documentation are collected before your first payout, never before.",
+    title: "Payout and tax clearance",
+    body: "Payout readiness and tax documentation are reviewed before certification and activation. No fee or payment is required to begin customer access.",
   },
 ];
 
@@ -137,15 +137,15 @@ export default function Onboarding() {
 
       <section aria-labelledby="po-payout" className="mt-10">
         <h2 id="po-payout" className="mono-cap text-ink-mute">
-          Payout and tax setup
+          Payout and tax clearance
         </h2>
         <div className="mt-4">
           <ResearchCapabilityBoundary status={payoutStatus}>
             <div className="card">
               <p className="body-m font-700">Payout details</p>
               <p className="body-s text-ink-2 mt-2">
-                Payout method and tax documentation are collected here once the payout system is live. Until both are on
-                file, cleared commissions wait as payable and nothing is lost.
+                Payout readiness and tax documentation are shown here when the canonical review is available. Both are
+                required before partner certification and activation; this page does not fabricate evidence or claim a payout.
               </p>
               <div className="mt-3">
                 <ResearchStatusBadge label="Setup pending" tone="pending" />
