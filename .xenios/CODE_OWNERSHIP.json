@@ -23,7 +23,7 @@
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-15T21:55:26.572Z",
       "heartbeatAt": "2026-08-17T13:04:50.389Z"
     },
@@ -1451,6 +1451,19 @@
       "claimedAt": "2026-09-05T17:50:44.922Z",
       "heartbeatAt": "2026-09-05T18:07:26.578Z",
       "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f"
+    },
+    {
+      "id": "e5b5c053-28c7-416f-81ff-631b63b28ca8",
+      "task": "F7-PACK02-RENAME",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T23:32:27.160Z",
+      "heartbeatAt": "2026-09-05T23:32:27.161Z"
     }
   ],
   "rules": [

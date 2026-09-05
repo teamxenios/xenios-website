@@ -57,7 +57,10 @@ describe("sponsored B2B claim candidate", () => {
     expect(sql).toMatch(/set status='active',billing_state='not_started',access_basis='sponsored_b2b'/i);
     expect(sql).toContain("public.research_activate_b2b_buyer_bridge");
     expect(sql).toContain("'b2b_buyer_sponsorship_activated'");
-    expect(membership.match(/row\.source_page === "b2b_buyer_sponsored_claim"/g)).toHaveLength(2);
+    // The membership router centralizes this refusal in the shared
+    // adminAction transition guard, so one source-page check protects every
+    // legacy transition path that reaches it. Do not require duplicate guards.
+    expect(membership.match(/row\.source_page === "b2b_buyer_sponsored_claim"/g)).toHaveLength(1);
     expect(membership).toContain("Sponsored B2B buyers must use the atomic business-buyer activation path.");
   });
 
