@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T22:20:40.632795+00:00",
+  "updatedAt": "2026-09-05T22:31:48.458954+00:00",
   "sethRevenueLaunch": {
     "state": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_PRODUCTION_AUTHORITY",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -95,8 +95,8 @@
     "integratedValidation": {
       "candidateSha": "f8804aa9fd48e19492b2b1ce2dab20bba54c741e",
       "candidateTree": "5b1af342ccab698a58c25513694e992646234dc8",
-      "recordsTipSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
-      "recordsTipTree": "22c0901a73c4c6170334d074b3c4d493e087388b",
+      "recordsTipSha": "8ef1a4afb3e450ebd786c9a319ed7821a706cf02",
+      "recordsTipTree": "5fa84489fff7ea3566bce7a76be9144efac1df24",
       "integratedSlices": [
         "d65bfe7 approved customer access without paid memberships",
         "d46cb69 audited partner lifecycle backend",
@@ -114,6 +114,7 @@
       "approvedCustomerRehearsal": "PASS 35 checks",
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
+      "reconciliationReview": "PASS 102/102; deferred unmounted presentation; build re-run PASS",
       "fullSuite": "866 passed files, 7 failed files, 5 skipped; 13472 passed tests, 12 failed, 59 skipped",
       "productionMutated": false,
       "productionAuthoritiesPresent": false,

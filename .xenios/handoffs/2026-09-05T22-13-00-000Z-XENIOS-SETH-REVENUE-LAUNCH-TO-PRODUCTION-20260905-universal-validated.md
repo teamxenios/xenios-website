@@ -9,7 +9,7 @@
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
 - Runtime candidate SHA: `f8804aa9fd48e19492b2b1ce2dab20bba54c741e`
 - Runtime candidate tree: `5b1af342ccab698a58c25513694e992646234dc8`
-- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, and `0c7ef94` add only QA/state/system-of-record records; the records checkpoint before this handoff update is `024e19aba893fd8465190bf66eebd0ffa1729f18` (tree `22c0901a73c4c6170334d074b3c4d493e087388b`).
+- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, and `8ef1a4a` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `8ef1a4afb3e450ebd786c9a319ed7821a706cf02` (tree `5fa84489fff7ea3566bce7a76be9144efac1df24`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
