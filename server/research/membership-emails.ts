@@ -84,7 +84,7 @@ export async function sendApplicationReceived(input: { email: string; firstName:
 
 Thank you for applying to xenios research. Your application has been received and will be reviewed individually.
 
-You will hear from us by email. You will not be charged unless your application is approved and you choose to activate the membership.
+You will hear from us by email. Customer access is reviewed separately from any purchase.
 
 Check your application status any time:
 ${statusUrl(input.token)}
@@ -250,7 +250,7 @@ export async function sendAccountClaimSuccess(input: { email: string; firstName:
 Your xenios research member account has been created. You can sign in with your email and the password you chose:
 ${SITE}/research/sign-in
 
-Membership activates after the one-time $50 activation and the $25 monthly membership are both verified. Until then your account shows as pending activation.
+Customer access requires approval. If your account still needs an access review, reply to this email for help.
 
 If you did not set up this account, reply to this email immediately.
 

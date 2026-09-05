@@ -37,17 +37,30 @@ product, payment, fulfillment or Care authority is granted.
 The legacy admin approve action is retired and directs operators to explicit
 customer approval. Active account authorization no longer consults paid billing
 state. Pending, past_due, paused and closed states are not silently migrated.
-Full retirement of the old activation/renewal composition, all UI changes, and
-the selected production pre/post/rollback packet are subsequent work before a
-release can be proposed. This checkpoint is not deployment-ready.
+The production mount now disables all historical activation writers regardless
+of old flags. Interim paid approve/activate commands refuse without mutation;
+the production scheduler runs the same identity retention policy without any
+renewal, payment or suspension operation. Obsolete paid-approval/renewal outbox
+jobs become visible permanent failures rather than sending payment demands.
+Normal password recovery remains available for an unexpired approved customer
+whose Auth creation succeeded before the member claim response was interrupted.
+All UI integration, partner lifecycle work, production parity and release gates
+remain required. This checkpoint is not deployment-ready.
 
 Validation: 232 focused tests across seven files passed after claim/outbox/auth
 integration; separate email/membership regression gate passed 139 tests before
 the final claim additions. Full repository TypeScript check passed. Offline
-PostgreSQL 18.3/PGlite 0.5.8 rehearsal passed 29 checks including apply twice,
+PostgreSQL 18.3/PGlite 0.5.8 rehearsal passed 31 checks including read-only pre/post
+scripts, apply twice,
 service privileges, exact identity, expiry, idempotent replay, stale snapshots
 and transaction rollback on outbox failure. Current candidate LF SHA-256:
-`b416ef6a27f3dfec1aad25b29d46012c5f1104484f248c8f589f4532f126d53b`.
+`dc9e760941d42947db9361b37a001cd91c901dd3ebddbfe95ca506a311fc43dc`.
+
+The retirement/retention/recovery integration gate passed 134 tests in six files.
+The combined B inspection integration had 143/144 passing tests; its sole failure
+and the sole TypeScript error are an old B fixture missing the newly added
+customerAccessApproval boundary, being updated by its owner. These are not
+represented as a clean final combined release gate.
 
 The rehearsal uses Git baseline application/member/outbox schemas and a minimal
 synthetic Auth parent; it is not production object parity, cross-session

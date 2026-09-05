@@ -251,6 +251,10 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
       : "status";
   const token = job.application_id ? makeResearchToken(purpose, String(job.application_id)) : "";
   try {
+    if (job.template_key === "applicant_approved" || job.template_key === "fm_activation_obligation_created"
+      || /^fm_membership_/.test(job.template_key) || /^fm_renewal_/.test(job.template_key)) {
+      return { ok: false, providerId: null, error: "paid membership notification retired; customer access requires the approved-account workflow", nonRetryable: true };
+    }
     let result: unknown;
     switch (job.template_key) {
       case "approved_customer_claim": {

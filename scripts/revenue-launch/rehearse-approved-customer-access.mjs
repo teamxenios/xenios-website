@@ -41,7 +41,9 @@ try {
     await db.exec(sql.replace(/^create extension if not exists "pgcrypto";\s*$/gm, ''));
   }
   await db.query('insert into auth.users values($1,$2,clock_timestamp())', [admin,'admin@example.invalid']);
+  await db.exec(readFileSync(candidatePath.replace('.sql','.precheck.sql'), 'utf8')); checked();
   await db.exec(candidate); await db.exec(candidate); checked();
+  await db.exec(readFileSync(candidatePath.replace('.sql','.postcheck.sql'), 'utf8')); checked();
   for (const role of ['anon','authenticated']) {
     await db.exec(`set role ${role}`);
     await refused(() => approve(), /permission denied/);

@@ -8,7 +8,7 @@ import { createAccessInspectionDependencies } from "./access-admin-production";
 import { registerApprovedCustomerAccessApi } from "./approved-customer-access";
 import { createApprovedCustomerAccessDependencies } from "./approved-customer-access-production";
 import { sessionSecretOk } from "./index";
-import { linkApplicationToAttribution, qualifyReferralForMembershipActivation } from "./referrals";
+import { linkApplicationToAttribution } from "./referrals";
 import { rateLimitHit, requestIp } from "./rate-limit";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { adminRecipients } from "../services/email-config";
@@ -716,127 +716,15 @@ export function registerMembershipApi(app: Express) {
         message: "Paid membership approval has been retired. Inspect the identity and use Approve customer access." });
     });
 
-  // ---------------------------------------------------------------------------
-  // Activation (interim, admin-verified) behind RESEARCH_MEMBERSHIP_BILLING_ENABLED
-  // (default FALSE): while billing is off there is NO path to an active member
-  // and NO path to referral qualification. Membership is a $50 one-time
-  // activation PLUS a $25 recurring monthly membership; a member becomes
-  // active only when BOTH are verified, so activation requires both the
-  // activation payment reference and the active monthly-membership reference.
-  // Phase 5 replaces the attestations with verified Stripe webhook events.
-  // ---------------------------------------------------------------------------
-  const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
-  const requireBillingEnabled = (_req: Request, res: Response, next: NextFunction) => {
-    if (!billingEnabled()) {
-      return res.status(503).json({
-        ok: false,
-        message: "Membership billing is not enabled (RESEARCH_MEMBERSHIP_BILLING_ENABLED=false). Activation is disabled until billing verification is live.",
-      });
-    }
-    next();
+  // Retired paid-membership commands remain explicit refusals so stale clients
+  // cannot trigger old payment verification or referral qualification.
+  const membershipRetired = (_req: Request, res: Response) => {
+    res.set("Cache-Control", "private, no-store");
+    return res.status(409).json({ ok: false, code: "paid_membership_retired",
+      message: "Paid membership activation is retired. Use approved customer access." });
   };
-
-  app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin,
-    requireBillingEnabled, adminAction("payment_pending", undefined, async () => {}));
-
-  app.post("/api/admin/research/applications/:id/activate", requireSupabaseAdmin, requireBillingEnabled, async (req, res) => {
-    try {
-      if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
-      const row = await getApplication(String(req.params.id));
-      if (!row) return res.status(404).json({ ok: false, message: "Not found" });
-      if (row.source_page === "b2b_buyer_sponsored_claim") {
-        return res.status(409).json({
-          ok: false,
-          message: "Sponsored B2B buyers must use the atomic business-buyer activation path.",
-        });
-      }
-
-      // The applicant must have claimed their account: activation binds to a member.
-      const { data: member } = await getSupabaseAdmin()
-        .from("research_members")
-        .select("*")
-        .eq("application_id", row.id)
-        .maybeSingle();
-      if (!member) {
-        return res.status(409).json({ ok: false, message: "The applicant has not created their member account yet. Ask them to use the link in their approval email first." });
-      }
-
-      const adminEmail = (req as any).adminEmail as string | undefined;
-      // Both attestations are REQUIRED (fail closed): the $50 activation
-      // payment AND the active $25 monthly membership. A single click must
-      // never mint an active member or referral credit with anything
-      // unverified behind it (V3 section 71).
-      const ref = (field: string) =>
-        typeof req.body?.[field] === "string" && req.body[field].trim()
-          ? (req.body[field].trim().slice(0, 120) as string)
-          : null;
-      const paymentReference = ref("paymentReference");
-      const subscriptionReference = ref("subscriptionReference");
-      if (!paymentReference || !subscriptionReference) {
-        return res.status(400).json({
-          ok: false,
-          message: "Activation requires BOTH references: the verified $50 activation payment (paymentReference) and the active $25 monthly membership (subscriptionReference).",
-        });
-      }
-
-      // Idempotent recovery: if a previous activation attempt moved the
-      // application but failed on the member update, a retry must not 409 on
-      // the active -> active transition.
-      const updated =
-        row.status === "active"
-          ? row
-          : await transition(
-              row,
-              "active",
-              { type: "admin", id: adminEmail ?? "admin" },
-              {},
-              {
-                reasonCode: "admin_verified_activation",
-                internalNote: `payment_reference=${paymentReference} subscription_reference=${subscriptionReference}`,
-              },
-            );
-
-      // Admin-verified activation IS billing verification (both references
-      // required above), so billing_state becomes active together with the
-      // member status. Pre-migration schemas have no billing_state column;
-      // retry without it so activation never silently fails.
-      const activatedAt = new Date();
-      const memberPatch = {
-        status: "active",
-        activated_at: activatedAt.toISOString(),
-        updated_at: activatedAt.toISOString(),
-      };
-      let { error: memberUpdateError } = await getSupabaseAdmin()
-        .from("research_members")
-        .update({ ...memberPatch, billing_state: "active" })
-        .eq("id", (member as any).id);
-      if (memberUpdateError && /billing_state|column|schema/i.test(String(memberUpdateError.message ?? ""))) {
-        ({ error: memberUpdateError } = await getSupabaseAdmin()
-          .from("research_members")
-          .update(memberPatch)
-          .eq("id", (member as any).id));
-      }
-      if (memberUpdateError) {
-        console.error("[research membership] member activation update failed:", memberUpdateError.message);
-        return res.status(500).json({ ok: false, message: "The member record could not be activated. Retry the activation." });
-      }
-
-      // Referral qualification: the same idempotent service a Stripe webhook
-      // will call in Phase 5. Flag-gated inside; failures never block activation.
-      const qualification = await qualifyReferralForMembershipActivation({
-        applicationId: row.id,
-        memberId: (member as any).id,
-        paymentId: paymentReference,
-        activationTimestamp: activatedAt,
-      }).catch(() => ({ qualified: false, reason: "qualification_error" }));
-
-      res.json({ ok: true, application: updated, referral: qualification });
-    } catch (error: any) {
-      const code = error?.statusCode === 409 ? 409 : 500;
-      if (code !== 409) console.error("[research membership] activate error:", error);
-      res.status(code).json({ ok: false, message: code === 409 ? error.message : "The activation failed." });
-    }
-  });
+  app.post("/api/admin/research/applications/:id/begin-activation", requireSupabaseAdmin, membershipRetired);
+  app.post("/api/admin/research/applications/:id/activate", requireSupabaseAdmin, membershipRetired);
 
   app.post("/api/admin/research/applications/:id/decline", requireSupabaseAdmin,
     adminAction("declined", () => ({ reviewed_at: new Date().toISOString() }), async (row) => {

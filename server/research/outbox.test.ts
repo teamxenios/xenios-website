@@ -397,7 +397,7 @@ describe("worker tick", () => {
     expect(emails.sendInternalApplicationAlert.mock.calls[0][0].to).toBe("second-admin@xeniostechnology.com");
   });
 
-  it("mints tokens with the purpose decided at enqueue time", async () => {
+  it("keeps status-token purpose while refusing obsolete paid approval mail", async () => {
     await enqueueNotification(job()); // no tokenPurpose -> status
     await enqueueNotification(
       job({
@@ -408,10 +408,11 @@ describe("worker tick", () => {
     );
     await runOutboxTick(new Date());
     expect(emails.sendApplicationReceived.mock.calls[0][0].token).toMatch(/^v2\.status\./);
-    expect(emails.sendApplicationApproved.mock.calls[0][0].token).toMatch(/^v2\.account_claim\./);
+    expect(emails.sendApplicationApproved).not.toHaveBeenCalled();
+    expect(state.outbox.find((row) => row.template_key === "applicant_approved").status).toBe("failed_permanent");
   });
 
-  it("a legacy applicant_approved row (no tokenPurpose in payload) still mints a claim-capable token", async () => {
+  it("a legacy paid approval job is recorded as retired without sending", async () => {
     await enqueueNotification(
       job({
         eventKey: `approved:${crypto.randomUUID()}`,
@@ -420,7 +421,8 @@ describe("worker tick", () => {
       }),
     );
     await runOutboxTick(new Date());
-    expect(emails.sendApplicationApproved.mock.calls[0][0].token).toMatch(/^v2\.account_claim\./);
+    expect(emails.sendApplicationApproved).not.toHaveBeenCalled();
+    expect(state.outbox[0].status).toBe("failed_permanent");
   });
 
   it("a provider rejection WITHOUT a throw (SDK error field) is a recorded failure, not a sent", async () => {

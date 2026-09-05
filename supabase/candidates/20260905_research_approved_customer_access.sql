@@ -100,7 +100,8 @@ begin
     if a.id is distinct from p_expected_application_id or a.updated_at is distinct from p_expected_updated_at then
       return jsonb_build_object('ok',false,'code','stale_inspection');
     end if;
-    if a.status in ('paused','declined','withdrawn') or a.source_page='b2b_buyer_sponsored_claim' then
+    if a.status not in ('draft','submitted','under_review','more_information_requested','resubmitted',
+      'approved_pending_payment','approved_customer','payment_pending','expired') or a.source_page='b2b_buyer_sponsored_claim' then
       return jsonb_build_object('ok',false,'code','identity_review_required');
     end if;
     v_previous:=a.status;

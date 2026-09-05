@@ -288,7 +288,17 @@ export function registerMemberApi(app: Express) {
         return res.json(generic);
       }
       const member = await getMemberByEmail(parsed.data.email);
-      if (member && member.status !== "closed") {
+      let recoverable = Boolean(member && member.status !== "closed");
+      if (!member) {
+        // A claim can create Auth before its database response is lost. Normal
+        // recovery must remain usable without granting customer access here.
+        const { data: application, error } = await getSupabaseAdmin().from(APPLICATIONS)
+          .select("status,access_approval_version,approval_expires_at").eq("email", parsed.data.email).maybeSingle();
+        recoverable = !error && application?.status === "approved_customer"
+          && Number(application.access_approval_version) > 0
+          && Date.parse(application.approval_expires_at) > Date.now();
+      }
+      if (recoverable) {
         // Fire-and-forget: the response returns on the same path for existing
         // and unknown addresses, so completion timing cannot enumerate.
         void getSupabaseAnon()

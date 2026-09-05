@@ -60,12 +60,8 @@ import {
 } from "./identity-documents";
 import type { IdentityVerificationRecord } from "./identity-reviews";
 import type { MembershipStateWriter } from "./activation";
-import { resolveObligationsStore } from "./persistence/obligations-store";
-import { resolvePeriodsStore } from "./persistence/periods-store";
 import { resolveIdentityStore } from "./persistence/identity-store";
-import { createSupabaseMembershipWriter } from "./production-deps";
-import { enqueueNotification } from "../outbox";
-import { getSupabaseAdmin, supabaseConfigured } from "../../supabase";
+import { supabaseConfigured } from "../../supabase";
 
 // ---------------------------------------------------------------------------
 // The dependency seams
@@ -258,33 +254,7 @@ export async function runFoundingSchedulerTick(
   }
 
   // ---- 4: identity raw-source retention deletions --------------------------
-  if (deps.identity) {
-    try {
-      const identity = deps.identity;
-      const cases = await identity.listCasesWithRawSource();
-      const reviews: IdentityVerificationRecord[] = [];
-      for (const kase of cases) {
-        const review = await identity.reviewForCase(kase.caseId);
-        if (review) reviews.push(review);
-      }
-      const sweep = await runRawDeletionSweep({
-        now,
-        cases,
-        reviews,
-        provider: identity.provider,
-        audit: identity.audit,
-        ...(identity.config ? { config: identity.config } : {}),
-      });
-      for (const updated of sweep.updatedCases) await identity.saveCase(updated);
-      for (const updated of sweep.updatedReviews) await identity.saveReview(updated);
-      result.identityRawDeletions = sweep.deletedPaths.length;
-    } catch (error) {
-      console.error(
-        "[founding-scheduler] identity retention sweep failed:",
-        error instanceof Error ? error.message : "unknown error",
-      );
-    }
-  }
+  if (deps.identity) result.identityRawDeletions = await runIdentityRetention(now, deps.identity);
 
   // ---- 5: reservation-expiry release (only where the seam exists) ----------
   if (deps.releaseExpiredReservations) {
@@ -307,49 +277,38 @@ export async function runFoundingSchedulerTick(
 
 /** The member's email for notifications. Null on any failure: an email that
  * cannot resolve must never block the sweep. */
-async function productionMemberEmail(memberId: string): Promise<string | null> {
+async function runIdentityRetention(now: Date, identity: SchedulerIdentity): Promise<number> {
   try {
-    const { data, error } = await getSupabaseAdmin()
-      .from("research_members")
-      .select("email")
-      .eq("id", memberId)
-      .maybeSingle();
-    if (error || !data) return null;
-    const email = (data as { email?: unknown }).email;
-    return typeof email === "string" && email.length > 0 ? email : null;
-  } catch {
-    return null;
+    const cases = await identity.listCasesWithRawSource();
+    const reviews: IdentityVerificationRecord[] = [];
+    for (const kase of cases) {
+      const review = await identity.reviewForCase(kase.caseId);
+      if (review) reviews.push(review);
+    }
+    const sweep = await runRawDeletionSweep({ now, cases, reviews, provider: identity.provider,
+      audit: identity.audit, ...(identity.config ? { config: identity.config } : {}) });
+    for (const updated of sweep.updatedCases) await identity.saveCase(updated);
+    for (const updated of sweep.updatedReviews) await identity.saveReview(updated);
+    return sweep.deletedPaths.length;
+  } catch (error) {
+    console.error("[founding-scheduler] identity retention sweep failed:", error instanceof Error ? error.message : "unknown error");
+    return 0;
   }
 }
 
-/**
- * One production tick. The flag AND storage are read here, at tick time, so
- * the interval in index.ts is a no-op until RESEARCH_FOUNDING_ACTIVATION_ENABLED
- * is true with storage provisioned, and turning the flag off stops the next
- * tick without a restart. The resolved Supabase stores are stateless over the
- * database, so re-resolving per tick holds no state of its own.
- */
-export async function runProductionFoundingSchedulerTick(
-  now: Date = new Date(),
-): Promise<FoundingSchedulerTickResult> {
-  if (!foundingActivationEnabled() || !supabaseConfigured()) return emptyResult();
+/** Paid renewal processing is retired. Existing identity retention continues
+ * independently of the obsolete membership flag, using the same policy/store. */
+export async function runProductionFoundingSchedulerTick(now: Date = new Date()): Promise<FoundingSchedulerTickResult> {
+  if (!supabaseConfigured()) return emptyResult();
   const identityStore = resolveIdentityStore();
-  return runFoundingSchedulerTick(now, {
-    obligations: resolveObligationsStore(),
-    membership: createSupabaseMembershipWriter(),
-    periods: resolvePeriodsStore(),
-    recipientFor: productionMemberEmail,
-    enqueue: enqueueNotification,
-    identity: {
-      listCasesWithRawSource: () => identityStore.listCasesWithRawSource(IDENTITY_DEFAULT_TENANT),
-      reviewForCase: (caseId) => identityStore.getReviewForCase(IDENTITY_DEFAULT_TENANT, caseId),
-      saveCase: (record) => identityStore.saveCase(record),
-      saveReview: (record) => identityStore.saveReview(record),
-      provider: new SupabaseIdentityMediaProvider(),
-      audit: (event) => identityStore.appendAuditEvent(event),
-    },
-    // No releaseExpiredReservations: the persistent ReservationRepository has
-    // no cross-member listing, so no honest global sweep exists yet. The seam
-    // stays injectable for the composition that gains one.
+  const result = { ...emptyResult(), ran: true };
+  result.identityRawDeletions = await runIdentityRetention(now, {
+    listCasesWithRawSource: () => identityStore.listCasesWithRawSource(IDENTITY_DEFAULT_TENANT),
+    reviewForCase: (caseId) => identityStore.getReviewForCase(IDENTITY_DEFAULT_TENANT, caseId),
+    saveCase: (record) => identityStore.saveCase(record),
+    saveReview: (record) => identityStore.saveReview(record),
+    provider: new SupabaseIdentityMediaProvider(),
+    audit: (event) => identityStore.appendAuditEvent(event),
   });
+  return result;
 }

@@ -202,9 +202,8 @@ async function resolveResearchMember(
     // even when it maps to an active member (correction-pass blocker 3).
     if (denyRecoveryPurposeSession(jwt, res)) return;
     const member = await getMemberByAuthUserId(data.user.id);
-    if (!member || (!allowClosed && member.status === "closed")) {
-      return res.status(403).json({ ok: false, message: "No research membership for this account." });
-    }
+    if (!member) return res.status(403).json({ ok: false, code: "account_access_required", message: "Customer account access requires approval." });
+    if (!allowClosed && member.status === "closed") return res.status(403).json({ ok: false, code: "account_closed", message: "This customer account is closed." });
     (req as any).researchMember = member;
     next();
   } catch (err) {

@@ -422,6 +422,19 @@ describe("account claiming", () => {
 });
 
 describe("forgot password", () => {
+  it("allows normal recovery after an interrupted approved-customer claim without granting access", async () => {
+    const application = seedApplication({ email: "interrupted@example.invalid", status: "approved_customer", access_approval_version: 1, approval_expires_at: new Date(Date.now() + 86400000).toISOString() });
+    const response = await request(makeApp()).post("/api/research/member/forgot-password").set("X-Forwarded-For", uniqueIp()).send({ email: application.email, returnTo: "/research/apply/status?token=private" });
+    expect(response.status).toBe(200); expect(state.auth.resetPasswordForEmail).toHaveBeenCalledWith(application.email, { redirectTo: expect.stringContaining("returnTo=%2Fresearch%2Fapply%2Fstatus") });
+    expect(state.auth.resetPasswordForEmail.mock.calls[0][1].redirectTo).not.toContain("private");
+    expect(state.tables.research_members).toEqual([]); expect(application.status).toBe("approved_customer");
+    expect(state.auth.createUser).not.toHaveBeenCalled();
+  });
+  it("does not send a stranded-claim reset without current customer approval", async () => {
+    seedApplication({ email: "expired-customer@example.invalid", status: "approved_customer", access_approval_version: 1, approval_expires_at: "2020-01-01T00:00:00Z" });
+    const response = await request(makeApp()).post("/api/research/member/forgot-password").set("X-Forwarded-For", uniqueIp()).send({ email: "expired-customer@example.invalid" });
+    expect(response.status).toBe(200); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
   // Distinct addresses per test: the per-email cooldown's in-memory fallback
   // window persists across tests in this file.
   function seedMemberRow(email: string) {

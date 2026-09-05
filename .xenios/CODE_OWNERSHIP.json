@@ -1337,11 +1337,18 @@
         "server/research/partners/own-reads.ts",
         "server/research/partners/own-reads.test.ts",
         "server/research/commerce/production-deps.test.ts",
-        ".xenios/DECISIONS.md"
+        ".xenios/DECISIONS.md",
+        "server/research/membership-activation/production-deps.ts",
+        "server/research/membership-activation/production-deps.test.ts",
+        "server/research/membership-activation/scheduler.ts",
+        "server/research/membership-activation/scheduler.test.ts",
+        "server/research/membership-activation/retirement.test.ts",
+        "server/index.ts",
+        "server/research/membership.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T18:43:26.904Z"
+      "heartbeatAt": "2026-09-05T18:57:48.027Z"
     },
     {
       "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",
@@ -1401,7 +1408,14 @@
         "client/src/research/account-portal/views/OverviewView.tsx",
         "client/src/research/account-portal/views/SubscriptionView.tsx",
         "client/src/research/account-portal/views/account-portal.test.tsx",
-        "client/src/research/pages/adminx/ApplicationDetail.tsx"
+        "client/src/research/pages/adminx/ApplicationDetail.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/pages/adminx/MemberDetail.tsx",
+        "client/src/research/pages/adminx/AdminResearchHome.tsx",
+        "client/src/research/lib/denials.ts",
+        "client/src/research/pages/adminx/ApplicationDetail.test.tsx",
+        "client/src/research/pages/adminx/CustomerAccessApprovalForm.tsx",
+        "client/src/research/pages/adminx/CustomerAccessApprovalForm.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:50:44.922Z",

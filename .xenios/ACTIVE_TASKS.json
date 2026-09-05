@@ -1345,7 +1345,14 @@
         "server/research/partners/own-reads.ts",
         "server/research/partners/own-reads.test.ts",
         "server/research/commerce/production-deps.test.ts",
-        ".xenios/DECISIONS.md"
+        ".xenios/DECISIONS.md",
+        "server/research/membership-activation/production-deps.ts",
+        "server/research/membership-activation/production-deps.test.ts",
+        "server/research/membership-activation/scheduler.ts",
+        "server/research/membership-activation/scheduler.test.ts",
+        "server/research/membership-activation/retirement.test.ts",
+        "server/index.ts",
+        "server/research/membership.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1436,7 +1443,14 @@
         "client/src/research/account-portal/views/OverviewView.tsx",
         "client/src/research/account-portal/views/SubscriptionView.tsx",
         "client/src/research/account-portal/views/account-portal.test.tsx",
-        "client/src/research/pages/adminx/ApplicationDetail.tsx"
+        "client/src/research/pages/adminx/ApplicationDetail.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/pages/adminx/MemberDetail.tsx",
+        "client/src/research/pages/adminx/AdminResearchHome.tsx",
+        "client/src/research/lib/denials.ts",
+        "client/src/research/pages/adminx/ApplicationDetail.test.tsx",
+        "client/src/research/pages/adminx/CustomerAccessApprovalForm.tsx",
+        "client/src/research/pages/adminx/CustomerAccessApprovalForm.test.tsx"
       ],
       "dependsOn": [],
       "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",

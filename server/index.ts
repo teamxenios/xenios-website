@@ -88,7 +88,6 @@ import {
 } from "./care";
 import { careDocumentCsp } from "./care-document-csp";
 import { registerFoundingActivationApi } from "./research/membership-activation/routes";
-import { buildFoundingActivationDependencies } from "./research/membership-activation/production-deps";
 import {
   createPrivateEarlyAccessPaymentOptionsContainmentMiddleware,
 } from "./research/early-access/private-access-route";
@@ -1136,7 +1135,9 @@ registerInventoryLotAdminApi(
 
 // Founding membership activation (three-state: capability_disabled by default,
 // not_provisioned without storage, live only when flag + storage exist).
-registerFoundingActivationApi(app, buildFoundingActivationDependencies(), {
+// Founder policy: paid membership is retired. Preserve historical modules and
+// records, but no environment flag may remount activation or renewal writers.
+registerFoundingActivationApi(app, { state: "disabled" }, {
   requireMember: adaptGuard(requireMember),
   requireSupabaseAdmin: adaptGuard(requireSupabaseAdmin),
 });
