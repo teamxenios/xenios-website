@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "kind": "order-entry-intent-final-browser-evidence",
+  "candidateSha": "7c92e7a0e1cc0207680bcf847c2323f0bc62607a",
+  "candidateTree": "ea6b433c4fbd1f39cbdb875ede2edd089cf9ff9b",
+  "recordedAtUtc": "2026-09-05T02:00:37Z",
+  "bundleIndexSha256": "dc3acc6650f3ef6c82aa1a1be5d32d32cc06c6795e2f030b1f6af00d27c6b938",
+  "environment": {
+    "origin": "http://localhost:5219",
+    "server": "scripts/preview-step1-hotfix.ts",
+    "browser": "Codex in-app browser through computer-use",
+    "content": "Actual production build; local synthetic in-memory authentication, catalog and request authorities; production credentials removed from preview process",
+    "networkInterception": false,
+    "productionCertification": false
+  },
+  "fixture": {
+    "sourceFamily": "research_peptides_materials",
+    "sourceSlug": "qa-research-direct",
+    "sourceVariant": "mo-qa-research-direct-5mg",
+    "productControlProduct": "qa-research-direct",
+    "productControlVariant": "qa-research-direct-5mg",
+    "displayName": "QA Research Direct",
+    "specification": "5 mg vial",
+    "unitPriceCents": 3350
+  },
+  "journeys": [
+    {
+      "quantity": 100,
+      "route": "hub Quick link to Early Access embedded assisted catalog",
+      "allFiveIntentFieldsRetained": true,
+      "canonicalProductAndSpecificationResolved": true,
+      "noAutoAddAfterReloadOfEmptyDraft": true,
+      "explicitAddQuantity": 100,
+      "estimatedTotalCents": 335000,
+      "agreementGateRemainedVisible": true,
+      "continueDisabledUntilExistingChecks": true
+    },
+    {
+      "quantity": 51,
+      "route": "hub assisted link to Early Access then explicit standalone assisted catalog link",
+      "allFiveIntentFieldsRetained": true,
+      "canonicalProductAndSpecificationResolved": true,
+      "emptyDraftBeforeExplicitAdd": true,
+      "explicitAddQuantity": 51,
+      "estimatedTotalCents": 170850
+    },
+    {
+      "sourceVariant": "mo-unknown",
+      "quantity": 100,
+      "result": "Unmatched selection is retained with reselection guidance; no product name guessed and no products selected"
+    },
+    {
+      "quantity": 101,
+      "result": "Invalid quantity discarded at hub; Quick link safely falls back to /research/early-access without a selection query"
+    }
+  ],
+  "assertionsAtEveryWidth": {
+    "hubH1Count": 1,
+    "hubPathwayArticles": 7,
+    "hubMainLinks": 8,
+    "hubClippedLinks": 0,
+    "hubExpectedHrefsPresent": true,
+    "hubHorizontalOverflow": false,
+    "retainedSelectionClipped": false,
+    "assistedHorizontalOverflow": false,
+    "explicitlyAddedQuantity": 100,
+    "noticeCopyRemainsAccurateAfterAdd": true
+  },
+  "matrix": [
+    { "width": 1440, "clientAndScrollWidth": 1425, "hubMinimumActionHeight": 44.66666793823242, "intentActionHeight": 64, "pass": true },
+    { "width": 1366, "clientAndScrollWidth": 1351, "hubMinimumActionHeight": 44.66666793823242, "intentActionHeight": 64, "pass": true },
+    { "width": 1024, "clientAndScrollWidth": 1009, "hubMinimumActionHeight": 44.66666793823242, "intentActionHeight": 64, "pass": true },
+    { "width": 768, "clientAndScrollWidth": 753, "hubMinimumActionHeight": 44.66666793823242, "intentActionHeight": 60, "pass": true },
+    { "width": 430, "clientAndScrollWidth": 415, "hubMinimumActionHeight": 44, "intentActionHeight": 56, "pass": true },
+    { "width": 390, "clientAndScrollWidth": 375, "hubMinimumActionHeight": 44, "intentActionHeight": 56, "pass": true },
+    { "width": 375, "clientAndScrollWidth": 360, "hubMinimumActionHeight": 44, "intentActionHeight": 52, "pass": true },
+    { "width": 360, "clientAndScrollWidth": 345, "hubMinimumActionHeight": 44, "intentActionHeight": 52, "pass": true },
+    { "width": 320, "clientAndScrollWidth": 305, "hubMinimumActionHeight": 44, "intentActionHeight": 52, "pass": true }
+  ],
+  "visualReview": "320px hub screenshots inspected after final rebuild: legible wrapping and no horizontal overlap. The 100-unit request panel screenshot was inspected before the sole notice-copy correction; final-build DOM matrix reverified quantity, dimensions and corrected notice. No PNG files retained.",
+  "founderEvidenceLineage": "The separately recorded founder nine-width matrix exercises candidate 229db5da0297fc7ab8fb59567dabd4b2ef49b607. Its component, adapter, shared contract, endpoint and production projection are unchanged through this candidate; only endpoint tests were strengthened.",
+  "limits": [
+    "Synthetic local requests only; no real identities or credentials recorded.",
+    "No request was submitted by this browser exercise; no payment, communication, shipment, Care or production action occurred.",
+    "Direct active-cart prefill is not claimed. Intent remains available through its explicit assisted-catalog continuation; direct-cart authority and quantity limits remain unchanged.",
+    "Referral and hostile query cases are additionally covered by focused tests, not a live referral browser session."
+  ],
+  "pass": true
+}

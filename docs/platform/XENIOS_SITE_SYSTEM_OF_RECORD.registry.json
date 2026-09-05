@@ -574,7 +574,8 @@
           "client/src/research/routes-parity.test.ts"
         ],
         "browser": [
-          "docs/ux/major-ordering-admin-sor-20260904/order-entry-hub-browser-results.json"
+          "docs/ux/major-ordering-admin-sor-20260904/order-entry-hub-browser-results.json",
+          "docs/ux/major-ordering-admin-sor-20260904/order-entry-intent-browser-results.json"
         ],
         "production": []
       },

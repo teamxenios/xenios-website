@@ -1,13 +1,14 @@
 {
   "schemaVersion": 4,
   "kind": "evidence-pii-scan",
-  "candidateSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
-  "scannedAtUtc": "2026-09-05T01:43:31.581Z",
+  "candidateSha": "7c92e7a0e1cc0207680bcf847c2323f0bc62607a",
+  "scannedAtUtc": "2026-09-05T02:00:58.382Z",
   "evidenceRoot": ".",
-  "textFilesScanned": 2,
+  "textFilesScanned": 3,
   "textArtifacts": [
     "founder-command-center-browser-results.json",
-    "order-entry-hub-browser-results.json"
+    "order-entry-hub-browser-results.json",
+    "order-entry-intent-browser-results.json"
   ],
   "fileInventory": [
     {
@@ -19,14 +20,19 @@
       "path": "order-entry-hub-browser-results.json",
       "bytes": 3245,
       "sha256": "296a836bb95ea52283b623a71af318f8a3127b5fb669a7bc8ea661155efd3d49"
+    },
+    {
+      "path": "order-entry-intent-browser-results.json",
+      "bytes": 4980,
+      "sha256": "76ee5126333894e68f891372b8f134cdb84e0f7736b5be39bff0814d7dd11fd8"
     }
   ],
-  "inventorySha256": "8229dcb5a4ed836989cfe97cfbe9c772f5b16463c8450f4c734906aced720f8e",
+  "inventorySha256": "3510b94edbbd8afadf8826dd5e2c88d429dc4d6018f01e229426cf4e030addd4",
   "scanCoverage": {
     "result": "COMPLETE",
-    "classifiedFiles": 2,
-    "totalFiles": 2,
-    "textFiles": 2,
+    "classifiedFiles": 3,
+    "totalFiles": 3,
+    "textFiles": 3,
     "manualImageFiles": 0,
     "unscannableFiles": 0
   },
