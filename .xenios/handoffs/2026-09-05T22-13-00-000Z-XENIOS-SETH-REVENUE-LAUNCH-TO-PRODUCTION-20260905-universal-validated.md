@@ -9,7 +9,7 @@
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
 - Runtime candidate SHA: `f8804aa9fd48e19492b2b1ce2dab20bba54c741e`
 - Runtime candidate tree: `5b1af342ccab698a58c25513694e992646234dc8`
-- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, and `8ef1a4a` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `8ef1a4afb3e450ebd786c9a319ed7821a706cf02` (tree `5fa84489fff7ea3566bce7a76be9144efac1df24`).
+- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, `8ef1a4a`, and `05e2c0e` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `05e2c0e314d8dbb88ecd3d3142b70004a204f2cb` (tree `5a42d5767451ad690e4ad0f7bb5ebc535de1eaab`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
@@ -36,7 +36,7 @@
 - Partner-lifecycle PGlite rehearsal: **57 checks**, PASS.
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
 - Reconciliation adapter and presentation tests: **102/102**, PASS; build re-run after integration, PASS.
-- Broad repository suite result: **866 passed files, 7 failed files, 5 skipped; 13,472 passed tests, 12 failed, 59 skipped**. Failures were: the stale protected-seam hash test; the member-session wall's old expectation that `/api/research/partner/me` is unlisted; a stale sponsored-B2B SQL assertion; the old paid activation e2e; three legacy commerce partner-surface expectations; four disabled partner-read production-wiring expectations; and the portal route coverage assertion that omits the admitted `/api/research/partner/me` path. These remain explicit full-suite blockers and are not represented as a passing release gate.
+- Fresh broad repository suite (`npm test -- --reporter=dot`, 2026-09-05): **868 passed files, 7 failed files, 5 skipped; 13,480 passed tests, 12 failed, 59 skipped** (341 seconds). This supersedes the earlier 866-file count; the seven failing files and twelve failing tests are unchanged: the stale protected-seam hash test; the member-session wall's old expectation that `/api/research/partner/me` is unlisted; a stale sponsored-B2B SQL assertion; the old paid activation e2e; three legacy commerce partner-surface expectations; four disabled partner-read production-wiring expectations; and the portal route coverage assertion that omits the admitted `/api/research/partner/me` path. These remain explicit full-suite blockers and are not represented as a passing release gate.
 
 ## Production truth and blockers
 
