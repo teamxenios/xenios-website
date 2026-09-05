@@ -6,8 +6,10 @@
  * route table, the response envelopes, the returnTo/sign-in journey, and the
  * audited catalog-priority overlay projection (read from the real config
  * files). What is SYNTHETIC: member authentication (a local GoTrue-shaped
- * stub issuing opaque preview tokens for three fixture personas) and the
- * account data (the shared synthetic memory seeds). No provider, email,
+ * stub issuing opaque preview tokens for fixed fixture personas), the
+ * account data (the shared synthetic memory seeds), and owned partner self /
+ * dashboard responses (explicit preview fixtures, NOT production evidence).
+ * No provider, email,
  * storage, database, or Supabase request can leave this process.
  *
  * Refuses NODE_ENV=production outright.
@@ -25,6 +27,8 @@ import {
 } from "../server/research/customer-account/memory-adapters";
 import { createCatalogPriorityPort } from "../server/research/product-activation/catalog-projection";
 import type { CustomerAccountPorts } from "../server/research/customer-account/ports";
+import type { PartnerSelfDto } from "../server/research/commerce/routes";
+import type { PartnerDashboardDto } from "../shared/research/commerce-api";
 
 export const ACCOUNT_PORTAL_PREVIEW_PASSWORD = "preview-password";
 
@@ -37,7 +41,7 @@ type PreviewPersona = Readonly<{
 }>;
 
 export const PREVIEW_PERSONAS: readonly PreviewPersona[] = Object.freeze([
-  // The rich fixture: orders, documents, support history, Care enrollment.
+  // Partner A: rich account plus an owned synthetic partner ledger.
   Object.freeze({
     email: "fixture1@preview.invalid",
     token: "preview-member-token-1",
@@ -62,7 +66,73 @@ export const PREVIEW_PERSONAS: readonly PreviewPersona[] = Object.freeze([
     firstName: "Casey",
     status: "paused",
   }),
+  // Partner B: a distinct owner with a measured empty synthetic ledger.
+  Object.freeze({
+    email: "partner-b@preview.invalid",
+    token: "preview-member-token-partner-b",
+    memberKey: "member-fixture-partner-b",
+    firstName: "Partner B",
+    status: "active",
+  }),
+  // Org A owns only this relationship, never another partner's aggregate.
+  Object.freeze({
+    email: "org-a@preview.invalid",
+    token: "preview-member-token-org-a",
+    memberKey: "member-fixture-org-a",
+    firstName: "Org A",
+    status: "active",
+  }),
 ]);
+
+type PreviewPartnerFixture = Readonly<{
+  self: PartnerSelfDto;
+  dashboard: PartnerDashboardDto;
+}>;
+
+// Fixed bearer -> member -> owned relation is the ONLY selection path. These
+// fixture aggregates contain no customer identity, order, clinical, or cost
+// fields. The numeric leadCount is retained solely to match the current wire
+// contract. It is not evidence that the production application-count source is
+// connected: the client must keep unsupported application counts unavailable.
+const PREVIEW_PARTNERS: Readonly<Record<string, PreviewPartnerFixture>> = Object.freeze({
+  "member-fixture-1": {
+    self: {
+      partnerId: "partner-fixture-a", role: "affiliate", state: "active",
+      certified: true, active: true, training: [], agreements: [],
+    },
+    dashboard: {
+      partnerId: "partner-fixture-a", role: "affiliate", state: "active",
+      leadCount: 0, conversionCount: 2, totalCommissionCents: 7000, payableCents: 2000,
+      conversions: [
+        { attributedAt: "2026-08-20T12:00:00.000Z", eligibleNetCents: 50000, commissionCents: 5000, state: "held" },
+        { attributedAt: "2026-08-21T12:00:00.000Z", eligibleNetCents: 20000, commissionCents: 2000, state: "payable" },
+      ],
+      outstandingTraining: [],
+    },
+  },
+  "member-fixture-partner-b": {
+    self: {
+      partnerId: "partner-fixture-b", role: "research_rep", state: "active",
+      certified: true, active: true, training: [], agreements: [],
+    },
+    dashboard: {
+      partnerId: "partner-fixture-b", role: "research_rep", state: "active",
+      leadCount: 0, conversionCount: 0, totalCommissionCents: 0, payableCents: 0,
+      conversions: [], outstandingTraining: [],
+    },
+  },
+  "member-fixture-org-a": {
+    self: {
+      partnerId: "partner-fixture-org-a", role: "organization_partner", state: "training_pending",
+      certified: false, active: false, training: [], agreements: [],
+    },
+    dashboard: {
+      partnerId: "partner-fixture-org-a", role: "organization_partner", state: "training_pending",
+      leadCount: 0, conversionCount: 0, totalCommissionCents: 0, payableCents: 0,
+      conversions: [], outstandingTraining: [{ moduleKey: "preview-compliance", version: "preview-v1" }],
+    },
+  },
+});
 
 function personaByEmail(email: string): PreviewPersona | null {
   return PREVIEW_PERSONAS.find((p) => p.email === email.toLowerCase().trim()) ?? null;
@@ -135,7 +205,20 @@ export const PREVIEW_DOCUMENT_UUIDS: Readonly<Record<string, string>> = Object.f
 const PREVIEW_REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function previewPorts(): CustomerAccountPorts {
-  const memory = createMemoryCustomerAccountPorts(defaultMemorySeeds());
+  const memory = createMemoryCustomerAccountPorts([
+    ...defaultMemorySeeds(),
+    ...PREVIEW_PERSONAS.filter((persona) =>
+      persona.memberKey === "member-fixture-partner-b" || persona.memberKey === "member-fixture-org-a",
+    ).map((persona) => ({
+      identity: {
+        memberKey: persona.memberKey,
+        displayName: persona.firstName,
+        email: persona.email,
+        accountStatus: "active" as const,
+        memberSince: null,
+      },
+    })),
+  ]);
   return {
     ...memory,
     documents: {
@@ -292,6 +375,8 @@ export function buildAccountPortalPreviewApp(previewEnv: NodeJS.ProcessEnv = pro
     "/customer-account/documents",
     "/customer-account/support",
     "/customer-account/catalog-priority",
+    "/partner/me",
+    "/partner/dashboard",
   ]);
   const PREVIEW_DOCUMENT_DOOR = /^\/customer-account\/documents\/[A-Za-z0-9-]+$/;
   const previewBoundary: RequestHandler = (req, res, next) => {
@@ -309,6 +394,37 @@ export function buildAccountPortalPreviewApp(previewEnv: NodeJS.ProcessEnv = pro
   // The REAL research registration: the allowlist wall, private headers, and
   // the fail-closed public surface all come from production code.
   registerResearchApi(app);
+
+  // These exact read-only fixture routes intentionally sit AFTER the real
+  // research wall. The preview therefore cannot conceal a missing production
+  // bearer admission. No preview credential or session cookie widens that wall.
+  // There is no partner-id route parameter and any query/body selector is
+  // refused, rather than used to select another persona's record.
+  for (const [route, view] of [
+    ["/api/research/partner/me", "self"],
+    ["/api/research/partner/dashboard", "dashboard"],
+  ] as const) {
+    app.get(route, (req, res) => {
+      res.set("Cache-Control", "private, no-store, max-age=0");
+      res.set("Pragma", "no-cache");
+      res.vary("Authorization");
+      const persona = personaByToken(bearerOf(req) ?? "");
+      if (!persona) {
+        res.status(401).json({ ok: false, code: "member_required" });
+        return;
+      }
+      if (Object.keys(req.query).length > 0 || (req.body && Object.keys(req.body).length > 0)) {
+        res.status(400).json({ ok: false, code: "preview_request_selector_not_supported" });
+        return;
+      }
+      const fixture = PREVIEW_PARTNERS[persona.memberKey];
+      if (!fixture) {
+        res.status(404).json({ ok: false, code: "partner_not_found" });
+        return;
+      }
+      res.json({ ok: true, partner: fixture[view] });
+    });
+  }
 
   // The REAL customer-account route table over synthetic ports, guarded by
   // preview guards with the exact production guard shapes. requireActiveMember
