@@ -2,11 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import type { AccessInspectionDependencies, AccessInspectionFacts } from "./access-admin";
+import { APPROVED_CUSTOMER_SCHEMA_VERSION } from "@shared/research/approved-customer-access";
 
 const id = z.string().uuid();
 const timestamp = z.string().datetime({ offset: true }).nullable();
 const authRow = z.object({ id, email: z.string().email(), email_confirmed_at: timestamp.optional(), last_sign_in_at: timestamp.optional() });
-const applicationRow = z.object({ id, email: z.string().email(), status: z.string() });
+const applicationRow = z.object({ id, email: z.string().email(), status: z.string(), updated_at: timestamp });
 const memberRow = z.object({ id, email: z.string().email(), auth_user_id: id.nullable(), status: z.string() });
 const partnerRow = z.object({ id, member_id: id, role: z.string(), state: z.string(), identity_verified: z.boolean(), tax_status: z.string(), payout_status: z.string(), certified_at: timestamp });
 const agreementRow = z.object({ partner_id: id, agreement_key: z.string(), agreement_version: z.string(), decision: z.string(), content_hash: z.string(), decided_at: z.string() });
@@ -46,7 +47,7 @@ export function createAccessInspectionDependencies(client: () => SupabaseClient 
       }
       if (!complete) throw new Error("auth inspection incomplete");
       const [applications, emailMembers] = await Promise.all([
-        rows(db.from("research_applications").select("id,email,status").eq("email", email).limit(26), applicationRow),
+        rows(db.from("research_applications").select("id,email,status,updated_at").eq("email", email).limit(26), applicationRow),
         rows(db.from("research_members").select("id,email,auth_user_id,status").eq("email", email).limit(26), memberRow),
       ]);
       const authMembers = auth.length ? await rows(db.from("research_members").select("id,email,auth_user_id,status").in("auth_user_id", auth.map((a) => a.id)).limit(26), memberRow) : [];
@@ -67,8 +68,13 @@ export function createAccessInspectionDependencies(client: () => SupabaseClient 
           organizations.records = records.map((r) => ({ organizationId: r.organization_id, state: r.state, roles: r.roles }));
         } catch { organizations = { state: "unavailable", records: [] }; }
       }
+      let approvedCustomerAccess = false;
+      try {
+        const authority = await db.rpc("research_approved_customer_access_authority");
+        approvedCustomerAccess = !authority.error && z.object({ schemaVersion: z.literal(APPROVED_CUSTOMER_SCHEMA_VERSION) }).strict().safeParse(authority.data).success;
+      } catch { /* Optional writer is unavailable; read-only diagnosis remains useful. */ }
       return {
-        auth, applications,
+        auth, applications: applications.map((a) => ({ id: a.id, email: a.email, status: a.status, updatedAt: a.updated_at })), approvedCustomerAccess,
         members: members.map((m) => ({ id: m.id, email: m.email, authUserId: m.auth_user_id, status: m.status })),
         partners: partners.map((p) => ({
           id: p.id, memberId: p.member_id, role: p.role, state: p.state,

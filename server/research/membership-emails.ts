@@ -14,21 +14,24 @@ const RESEARCH_REPLY_TO_DEFAULT = "research@xeniostechnology.com";
 
 export type SendResult = { ok: boolean; id: string | null; errorCode?: string | null };
 
-async function send(to: string, subject: string, text: string): Promise<SendResult> {
+async function send(to: string, subject: string, text: string, health?: { idempotencyKey: string }): Promise<SendResult> {
   try {
     const r = await getResendClient();
-    const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_FROM_DEFAULT;
-    const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
+    const from = health ? "Xenios Health <team@xeniostechnology.com>" : process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_FROM_DEFAULT;
+    const replyTo = health ? "team@xeniostechnology.com" : process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
     // The Resend SDK reports API rejections via the error field WITHOUT
     // throwing; treating a non-throw as success recorded provider failures
     // as "sent". Inspect the result.
-    const { data, error } = await r.client.emails.send({
+    const message = {
       from,
       to,
       subject,
       text,
       replyTo,
-    });
+    };
+    const { data, error } = health
+      ? await r.client.emails.send(message, { idempotencyKey: health.idempotencyKey })
+      : await r.client.emails.send(message);
     if (error) {
       console.warn("[research emails] provider rejected send:", (error as any)?.message ?? "unknown error");
       return { ok: false, id: null, errorCode: (error as any)?.name ?? "provider_rejected" };
@@ -42,6 +45,35 @@ async function send(to: string, subject: string, text: string): Promise<SendResu
 
 export function statusUrl(token: string): string {
   return `${SITE}/research/apply/status?token=${encodeURIComponent(token)}`;
+}
+
+export function sendApprovedCustomerClaim(input: { email: string; firstName: string; token: string; approvalExpiresAt: Date; idempotencyKey: string }) {
+  const expires = input.approvalExpiresAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+  return send(input.email, "Your Xenios Health account access is approved", `Hi ${input.firstName},
+
+Your customer account access has been approved. Open your secure link to finish setting up your account:
+${statusUrl(input.token)}
+
+If you already have a sign-in for this email, sign in normally and reopen the link to continue. This link is available until ${expires}.
+
+Your account will show the products, requests and services available to you. Partner access is reviewed separately.
+
+For help, reply to this email.
+
+Xenios Health
+team@xeniostechnology.com`, { idempotencyKey: input.idempotencyKey });
+}
+
+export function sendApprovedCustomerWelcome(input: { email: string; firstName: string; idempotencyKey: string }) {
+  return send(input.email, "Your Xenios Health account is ready", `Hi ${input.firstName},
+
+Your customer account is ready. Sign in to view your account, browse available products and follow your requests:
+${SITE}/research/sign-in?returnTo=%2Fresearch%2Faccount
+
+For help, reply to this email.
+
+Xenios Health
+team@xeniostechnology.com`, { idempotencyKey: input.idempotencyKey });
 }
 
 export async function sendApplicationReceived(input: { email: string; firstName: string; token: string }) {

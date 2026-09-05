@@ -85,6 +85,9 @@ const emails = vi.hoisted(() => ({
   sendAdminTestEmail: vi.fn(async () => ({ ok: true, id: "resend-test-id" })),
 }));
 
+const approvedAccess = vi.hoisted(() => ({ authority: vi.fn(), approve: vi.fn(), claim: vi.fn(), createAuth: vi.fn(), verifySignIn: vi.fn(), kickOutbox: vi.fn(async () => {}) }));
+vi.mock("./approved-customer-access-production", () => ({ createApprovedCustomerAccessDependencies: () => approvedAccess }));
+
 vi.mock("../supabase", () => {
   function query(table: string) {
     const list = state.tables[table];
@@ -259,6 +262,25 @@ beforeEach(() => {
 });
 
 describe("account claiming", () => {
+  it("claims approved customer access through the atomic authority, never the historical billing writer", async () => {
+    const application = seedApplication({ status: "approved_customer", access_approval_version: 1 });
+    const userId = crypto.randomUUID(), memberId = crypto.randomUUID();
+    approvedAccess.authority.mockResolvedValue({ schemaVersion: "approved_customer_access_20260905" });
+    approvedAccess.verifySignIn.mockResolvedValue({ userId, email: application.email, emailVerified: true });
+    approvedAccess.claim.mockResolvedValue({ ok: true, applicationId: application.id, memberId, state: "active", replayed: false });
+    const response = await request(makeApp()).post("/api/research/member/claim").set("X-Forwarded-For", uniqueIp())
+      .set("Authorization", "Bearer normal-verified-sign-in").send({ token: claimToken(application.id) });
+    expect(response.status).toBe(200); expect(response.body.state).toBe("active");
+    expect(approvedAccess.claim).toHaveBeenCalledWith(application.id, userId);
+    expect(state.auth.createUser).not.toHaveBeenCalled(); expect(state.auth.updateUserById).not.toHaveBeenCalled(); expect(state.tables.research_members).toEqual([]);
+    expect(response.headers["cache-control"]).toContain("no-store");
+  });
+  it("requires a claim-purpose credential even when an approved customer is signed in", async () => {
+    const application = seedApplication({ status: "approved_customer", access_approval_version: 1 });
+    const response = await request(makeApp()).post("/api/research/member/claim").set("X-Forwarded-For", uniqueIp())
+      .set("Authorization", "Bearer normal-sign-in").send({ token: makeStatusToken(application.id) });
+    expect(response.status).toBe(401); expect(approvedAccess.claim).not.toHaveBeenCalled(); expect(approvedAccess.authority).not.toHaveBeenCalled();
+  });
   it("rejects an invalid token", async () => {
     const res = await request(makeApp())
       .post("/api/research/member/claim")
@@ -593,13 +615,13 @@ describe("active-member authorization (requireActiveMember)", () => {
     expect(res.status).toBe(403);
   });
 
-  it("billing enforcement: active status with explicit non-active billing_state denies when the flag is on", async () => {
+  it("approved active account access is independent of historical billing and the retired billing flag", async () => {
     process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED = "true";
     try {
       seedMemberWithStatus("active", { billing_state: "past_due" });
       const res = await request(makeApp()).get("/api/research/member/catalog").set("Authorization", "Bearer good-jwt");
-      expect(res.status).toBe(403);
-      expect(res.body.code).toBe("billing_past_due");
+      expect(res.status).toBe(200);
+      expect(state.tables.research_members[0].billing_state).toBe("past_due");
     } finally {
       delete process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED;
     }

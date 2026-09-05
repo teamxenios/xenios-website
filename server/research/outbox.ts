@@ -4,6 +4,8 @@ import { requireSupabaseAdmin } from "../routes";
 import { adminRecipients, resolveEmailConfiguration } from "../services/email-config";
 import {
   sendAccountClaimSuccess,
+  sendApprovedCustomerClaim,
+  sendApprovedCustomerWelcome,
   sendAdminTestEmail,
   sendApplicationApproved,
   sendB2BBuyerClaim,
@@ -15,7 +17,7 @@ import {
   sendResubmittedConfirmation,
   sendStatusLink,
 } from "./membership-emails";
-import { makeResearchToken, type TokenPurpose } from "./membership";
+import { makeResearchToken, makeApprovedCustomerClaimToken, type TokenPurpose } from "./membership";
 import { MEMBER_PLATFORM_TEMPLATES } from "./member-platform-emails";
 import { getResendClient } from "../services/email";
 import {
@@ -236,7 +238,7 @@ export async function sendFoundingEmail(input: {
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
-async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string }> {
+async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
   // Rows enqueued before purposes existed have no payload.tokenPurpose; for
@@ -251,6 +253,28 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
   try {
     let result: unknown;
     switch (job.template_key) {
+      case "approved_customer_claim": {
+        // Recheck the approval before minting/sending its ownership credential.
+        // A stale or revoked job is a visible failure, never recorded as sent.
+        const { data: application, error } = await getSupabaseAdmin().from("research_applications")
+          .select("email,status,access_approval_version,approval_expires_at")
+          .eq("id", job.application_id).maybeSingle();
+        if (error) return { ok: false, providerId: null, error: "approved account notification source unavailable" };
+        if (!application || application.email?.toLowerCase() !== String(job.recipient).toLowerCase()
+          || application.status !== "approved_customer"
+          || !Number.isInteger(payload.approvalVersion) || payload.approvalVersion < 1
+          || application.access_approval_version !== payload.approvalVersion
+          || !Number.isFinite(Date.parse(application.approval_expires_at)) || Date.parse(application.approval_expires_at) <= Date.now()) {
+          return { ok: false, providerId: null, error: "approved account notification superseded, expired or revoked", nonRetryable: true };
+        }
+        result = await sendApprovedCustomerClaim({ email: job.recipient, firstName,
+          token: makeApprovedCustomerClaimToken(String(job.application_id), application.approval_expires_at),
+          approvalExpiresAt: new Date(application.approval_expires_at), idempotencyKey: String(job.event_key) });
+        break;
+      }
+      case "approved_customer_welcome":
+        result = await sendApprovedCustomerWelcome({ email: job.recipient, firstName, idempotencyKey: String(job.event_key) });
+        break;
       case "applicant_received":
         result = await sendApplicationReceived({ email: job.recipient, firstName, token });
         break;
@@ -544,7 +568,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
         })
         .eq("id", job.id);
       result.sent += 1;
-    } else if (attempt >= MAX_ATTEMPTS) {
+    } else if (outcome.nonRetryable || attempt >= MAX_ATTEMPTS) {
       await getSupabaseAdmin()
         .from(OUTBOX)
         .update({

@@ -5,7 +5,7 @@
  * fragments and arbitrary query data. Manifest parity is tested on the client.
  */
 export const AUTH_RETURN_STATIC_PATHS = [
-  "/research", "/research/activate",
+  "/research", "/research/activate", "/research/apply/status",
   ...[
     "", "/profile", "/assessment", "/blueprint", "/xenios-30", "/xenios-90",
     "/documents", "/tracker", "/goals", "/products", "/catalog", "/kris-catalog",

@@ -9,6 +9,8 @@ import { rateLimitHit, requestIp } from "./rate-limit";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import type { ReferralDashboardState } from "@shared/research/referral-types";
 import { bindConfiguredMemberReferral } from "./partners/referral-v1-production";
+import { claimApprovedCustomerAccount } from "./approved-customer-access";
+import { createApprovedCustomerAccessDependencies } from "./approved-customer-access-production";
 
 // ---------------------------------------------------------------------------
 // xenios research member accounts (V3 sections 13, 83 Then item 3), plus the
@@ -32,15 +34,15 @@ const ATTRIBUTIONS = "referral_attributions";
 const REWARDS = "referral_rewards";
 
 const CLAIMABLE_STATUSES = new Set([
-  "approved_pending_payment", "approved_sponsored_b2b", "payment_pending", "active",
+  "approved_pending_payment", "approved_sponsored_b2b", "approved_customer", "payment_pending", "active",
 ]);
 
 const SITE = process.env.SITE_URL || "https://xeniostechnology.com";
 
 const claimSchema = z.object({
   token: z.string().min(10).max(400),
-  password: z.string().min(10).max(200),
-});
+  password: z.string().min(10).max(200).optional(),
+}).strict();
 
 // Rate-limit keys never store a raw address.
 function hashedEmail(email: string): string {
@@ -102,6 +104,7 @@ async function findAuthUserByEmail(email: string): Promise<{ id: string } | null
 export function registerMemberApi(app: Express) {
   // Claim: approved applicant + signed claim token -> auth user + member row.
   app.post("/api/research/member/claim", async (req, res) => {
+    res.set({ "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow", Vary: "Authorization, Cookie" });
     try {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Temporarily unavailable." });
       if (!(await allowClaim(req))) return res.status(429).json({ ok: false, message: "Too many attempts. Try again in a few minutes." });
@@ -121,12 +124,23 @@ export function registerMemberApi(app: Express) {
         return res.status(409).json({ ok: false, message: "Your account opens after approval. Check your application status." });
       }
       const approvalExpiresAt = (application as any).approval_expires_at as string | null;
-      if (["approved_pending_payment", "approved_sponsored_b2b"].includes((application as any).status)
+      if (["approved_pending_payment", "approved_sponsored_b2b", "approved_customer"].includes((application as any).status)
           && approvalExpiresAt && Date.parse(approvalExpiresAt) < Date.now()) {
         return res.status(409).json({ ok: false, message: "This approval has expired. Contact research support to reopen it." });
       }
 
       const email = String((application as any).email).toLowerCase();
+      // The new approval authority must be claimed atomically. Never fall
+      // through to the historical billing or stranded-password-reset path.
+      if ((application as any).status === "approved_customer" || Number((application as any).access_approval_version) > 0) {
+        if (!parsed.data.token.startsWith("v2.account_claim.")) return res.status(401).json({ ok: false, message: "Use the current account approval link from your email." });
+        const result = await claimApprovedCustomerAccount(createApprovedCustomerAccessDependencies(), {
+          applicationId, email, password: parsed.data.password, authorization: req.headers.authorization,
+        });
+        return res.status(result.ok ? 200 : result.code === "invalid_input" ? 400
+          : result.code === "approved_access_unavailable" || result.code === "claim_incomplete" ? 503 : 409).json(result);
+      }
+      if (!parsed.data.password) return res.status(400).json({ ok: false, message: "Enter a password of at least 10 characters." });
       const memberStatus = (application as any).status === "active" ? "active" : "pending_activation";
       const existing = await getMemberByEmail(email);
       if (existing) return res.status(409).json({ ok: false, message: "This account is already set up. Sign in instead." });

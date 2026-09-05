@@ -127,54 +127,35 @@ export async function getMemberByAuthUserId(userId: string): Promise<MemberRow |
   return (data as MemberRow) ?? null;
 }
 
-const billingEnabled = () => process.env.RESEARCH_MEMBERSHIP_BILLING_ENABLED === "true";
-
-// Verifies the Supabase JWT, resolves the member row, and requires ACTIVE
-// membership. This is the guard for member CONTENT (catalog, orders): an
-// approved-but-not-activated member may access only the activation flow, so
-// pending_activation is refused here (master guide P0: the generic member
-// check alone would let pending members reach the catalog). Denials carry a
-// machine-readable `code` so the client can route (activation vs billing
-// recovery vs signed-out). Once billing enforcement is live
-// (RESEARCH_MEMBERSHIP_BILLING_ENABLED=true), billing_state must agree:
-// activation writes billing_state='active'; rows created before the
-// research-member-billing.sql migration have no billing_state and status
-// 'active' is only ever set through admin-verified activation, so a MISSING
-// state reads as verified-legacy while an EXPLICIT non-active state denies.
+// Verifies Auth and the canonical active account status. Paid membership is
+// retired as an access prerequisite; historical billing fields are not an
+// entitlement. Pending, paused and closed accounts still require explicit
+// authorized review; this change does not grant or migrate their status.
 export async function requireActiveMember(req: Request, res: Response, next: NextFunction) {
   await requireMember(req, res, () => {
     const member = (req as any).researchMember as MemberRow | undefined;
     const status = String(member?.status ?? "");
     if (status === "active") {
-      const billing = String((member as any)?.billing_state ?? "");
-      const sponsoredB2B = String((member as any)?.access_basis ?? "") === "sponsored_b2b";
-      if (billingEnabled() && billing && billing !== "active" && !sponsoredB2B) {
-        return res.status(403).json({
-          ok: false,
-          code: `billing_${billing}`,
-          message: "Membership billing needs attention before this area reopens.",
-        });
-      }
       return next();
     }
     if (status === "pending_activation") {
       return res.status(403).json({
         ok: false,
         code: "activation_required",
-        message: "Membership is not active yet. Complete activation to access member content.",
+        message: "Customer access requires approval. Contact support to complete account access.",
       });
     }
     if (status === "past_due") {
       return res.status(403).json({
         ok: false,
         code: "billing_past_due",
-        message: "Membership billing needs attention before this area reopens.",
+        message: "This account requires an access review. Contact support.",
       });
     }
     return res.status(403).json({
       ok: false,
       code: "membership_inactive",
-      message: "No active research membership for this account.",
+      message: "No active research account access for this identity.",
     });
   });
 }

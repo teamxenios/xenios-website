@@ -5,8 +5,10 @@ import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
 import { registerAccessInspectionApi } from "./access-admin";
 import { createAccessInspectionDependencies } from "./access-admin-production";
+import { registerApprovedCustomerAccessApi } from "./approved-customer-access";
+import { createApprovedCustomerAccessDependencies } from "./approved-customer-access-production";
 import { sessionSecretOk } from "./index";
-import { linkApplicationToAttribution, markAttributionApproved, qualifyReferralForMembershipActivation } from "./referrals";
+import { linkApplicationToAttribution, qualifyReferralForMembershipActivation } from "./referrals";
 import { rateLimitHit, requestIp } from "./rate-limit";
 import { enqueueNotification, runOutboxTick } from "./outbox";
 import { adminRecipients } from "../services/email-config";
@@ -17,7 +19,6 @@ import {
   type ApplicationStatusView,
 } from "@shared/research/membership-types";
 import {
-  sendApplicationApproved,
   sendApplicationDeclined,
   sendApplicationReceived,
   sendInternalApplicationAlert,
@@ -86,6 +87,15 @@ export function makeResearchToken(purpose: TokenPurpose, applicationId: string):
   return `${payload}.${signTokenPayload(payload)}`;
 }
 
+// A durable approval job has a stable expiry. Binding the token to it keeps
+// retry payloads identical for the email provider's idempotency key.
+export function makeApprovedCustomerClaimToken(applicationId: string, expiresAt: string): string {
+  const exp = Date.parse(expiresAt);
+  if (!Number.isFinite(exp) || exp <= Date.now() || exp > Date.now() + 14 * DAY_MS) throw new Error("customer approval expiry invalid");
+  const payload = `v2.account_claim.${applicationId}.${exp}`;
+  return `${payload}.${signTokenPayload(payload)}`;
+}
+
 // Reads a token and returns the application id when the signature verifies,
 // the token is unexpired, and its purpose is in the accepted set. Legacy
 // unscoped tokens (three parts, minted before purposes existed) verify for
@@ -123,7 +133,7 @@ export function readStatusToken(token: string): string | null {
 // application is claimable, its links must be claim-capable so the approved
 // applicant can recover a lost approval email through resend-link.
 export function tokenPurposeFor(status: ApplicationStatus): TokenPurpose {
-  return status === "approved_pending_payment" || status === "approved_sponsored_b2b"
+  return status === "approved_customer" || status === "approved_pending_payment" || status === "approved_sponsored_b2b"
     || status === "payment_pending" || status === "active"
     ? "account_claim"
     : "status";
@@ -289,6 +299,7 @@ function statusView(row: ApplicationRow, memberVisibleNote: string | null): Appl
 
 export function registerMembershipApi(app: Express) {
   registerAccessInspectionApi(app, createAccessInspectionDependencies(), requireSupabaseAdmin);
+  registerApprovedCustomerAccessApi(app, createApprovedCustomerAccessDependencies(), requireSupabaseAdmin);
   // Fail closed: in production without RESEARCH_SESSION_SECRET, no signed
   // artifact can be issued or verified, so the whole membership API refuses.
   app.use("/api/research/applications", (_req, res, next) => {
@@ -699,35 +710,11 @@ export function registerMembershipApi(app: Express) {
     }));
 
   app.post("/api/admin/research/applications/:id/approve", requireSupabaseAdmin,
-    adminAction(
-      "approved_pending_payment",
-      () => {
-        const expires = new Date(Date.now() + approvalExpiryDays() * DAY_MS);
-        return { reviewed_at: new Date().toISOString(), approval_expires_at: expires.toISOString() };
-      },
-      async (row) => {
-        // Referral visibility: the attribution (if any) advances to approved.
-        // Qualification still happens only at verified activation.
-        void markAttributionApproved(row.id).catch(() => {});
-        await notify(
-          {
-            eventKey: `approved:${row.id}`,
-            eventType: "application_approved_applicant",
-            templateKey: "applicant_approved",
-            recipient: row.email,
-            applicationId: row.id,
-            payload: { firstName: row.first_name, approvalExpiresAt: row.approval_expires_at, tokenPurpose: "account_claim" },
-          },
-          () =>
-            sendApplicationApproved({
-              email: row.email,
-              firstName: row.first_name,
-              token: makeResearchToken("account_claim", row.id),
-              approvalExpiresAt: new Date(row.approval_expires_at as string),
-            }),
-        );
-      },
-    ));
+    (_req, res) => {
+      res.set("Cache-Control", "private, no-store");
+      return res.status(409).json({ ok: false, code: "customer_approval_workflow_required",
+        message: "Paid membership approval has been retired. Inspect the identity and use Approve customer access." });
+    });
 
   // ---------------------------------------------------------------------------
   // Activation (interim, admin-verified) behind RESEARCH_MEMBERSHIP_BILLING_ENABLED

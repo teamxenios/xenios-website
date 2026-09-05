@@ -22,6 +22,8 @@ describe("shared credential-free auth navigation", () => {
   });
 
   it("keeps only bounded non-secret view/selection hints", () => {
+    expect(safeResearchReturnTo("/research/apply/status?token=PRIVATE&email=private%40example.invalid&returnTo=https://outside.invalid"))
+      .toBe("/research/apply/status");
     expect(safeResearchReturnTo("/research/partners/dashboard?partnerId=foreign&role=admin&email=private%40example.invalid"))
       .toBe("/research/partners/dashboard");
     expect(safeResearchReturnTo("/research/partners/dashboard/foreign")).toBeNull();

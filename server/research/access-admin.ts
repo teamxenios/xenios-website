@@ -4,7 +4,8 @@ import { DEFAULT_PARTNER_REQUIREMENTS } from "./partners/partners";
 
 export interface AccessInspectionFacts {
   auth: Array<{ id: string; email: string; emailVerified: boolean; signInRecorded: boolean }>;
-  applications: Array<{ id: string; email: string; status: string }>;
+  applications: Array<{ id: string; email: string; status: string; updatedAt?: string | null }>;
+  approvedCustomerAccess?: boolean;
   members: Array<{ id: string; email: string; authUserId: string | null; status: string }>;
   partners: Array<{
     id: string; memberId: string; role: string; state: string; identityVerified: boolean;
@@ -58,12 +59,16 @@ export function projectAccessInspection(email: string, facts: AccessInspectionFa
   if (identityConflict || members.some((m) => m.binding === "conflict")) {
     nextActions.push({ label: "Resolve identity conflict", href: null, notification: "none", consequence: "Review the exact Auth and member identifiers. No email-based rebinding or account merging is performed." });
   } else if (facts.applications.length === 0 && members.length === 0) {
-    nextActions.push({ label: "Complete a Research application", href: "/research/apply", notification: "application_email", consequence: "The applicant supplies their own application and consent. Submission sends the configured receipt and internal alert; it grants no customer, partner or Care permission." });
+    nextActions.push({ label: facts.approvedCustomerAccess ? "Approve customer access" : "Prepare approved account access", href: null,
+      notification: facts.approvedCustomerAccess ? "application_email" : "not_available",
+      consequence: facts.approvedCustomerAccess
+        ? "The explicit approval action records customer approval and queues an ownership-verification email. Claiming it opens customer access without a paid membership. Partner and Care authority are separate."
+        : "No account or application exists. The public application page is currently read-only. Use the approved-account workflow once provisioned; it must send an ownership-verification link and grant no partner or Care authority." });
   }
   for (const application of facts.applications) {
-    nextActions.push({ label: "Review customer application", href: `/admin/research/applications/${application.id}`, notification: "application_email", consequence: "Reviewing the record sends nothing. The separate Approve action sends an account-claim email and sets approved_pending_payment; it does not activate membership, verify payment or approve a partner." });
+    nextActions.push({ label: "Review customer application", href: `/admin/research/applications/${application.id}`, notification: "none", consequence: "Reviewing the record sends nothing. Paid membership approval has been retired. Use the explicit Approve customer access workflow; it does not verify payment or approve a partner." });
   }
-  if (members.some((m) => m.status !== "active") && !deps.membershipBillingEnabled()) {
+  if (members.some((m) => m.status !== "active") && !facts.approvedCustomerAccess) {
     nextActions.push({ label: "Customer access approval required", href: null, notification: "not_available", consequence: "Paid membership is no longer the launch access model. The approved-account workflow must be provisioned before granting access; do not invent payment verification or use a sponsored business claim as a shortcut." });
   }
   if (partners.length || members.length) {
@@ -73,9 +78,9 @@ export function projectAccessInspection(email: string, facts: AccessInspectionFa
     schemaVersion: 1, observedAt: now.toISOString(), email,
     identityState: identityConflict || members.some((m) => m.binding === "conflict") ? "conflict" : !auth ? "absent" : auth.emailVerified ? "verified" : "unverified",
     authAccounts: facts.auth.map((a) => ({ authUserId: a.id, emailVerified: a.emailVerified, signInRecorded: a.signInRecorded })),
-    applications: facts.applications.map((a) => ({ id: a.id, status: a.status, href: `/admin/research/applications/${a.id}` })),
+    applications: facts.applications.map((a) => ({ id: a.id, status: a.status, href: `/admin/research/applications/${a.id}`, updatedAt: a.updatedAt ?? null })),
     members, partners, organizationRelationships: facts.organizations,
-    boundaries: { care: "separate_authority", membershipBillingEnabled: deps.membershipBillingEnabled(), partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" },
+    boundaries: { care: "separate_authority", membershipBillingEnabled: deps.membershipBillingEnabled(), customerAccessApproval: facts.approvedCustomerAccess ? "available" : "unavailable", partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" },
     nextActions,
   });
 }

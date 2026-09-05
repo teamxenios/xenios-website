@@ -33,7 +33,7 @@ describe("admin approved-user diagnosis", () => {
   it("states absent records without treating them as approval or verified ownership", () => {
     const result = projectAccessInspection(email, empty(), deps);
     expect(result.identityState).toBe("absent");
-    expect(result.nextActions).toEqual([expect.objectContaining({ href: "/research/apply", notification: "application_email" })]);
+    expect(result.nextActions).toEqual([expect.objectContaining({ href: null, notification: "not_available" })]);
     expect(result.boundaries).toMatchObject({ care: "separate_authority", partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority" });
     expect(JSON.stringify(result)).not.toMatch(/seth|jmiami/i);
   });
@@ -44,7 +44,7 @@ describe("admin approved-user diagnosis", () => {
     expect(result.members[0].binding).toBe("verified");
     expect(result.partners[0].missingRequirements).toHaveLength(23);
     expect(result.nextActions.map((a) => a.label)).toContain("Customer access approval required");
-    expect(result.nextActions.find((a) => a.label === "Review customer application")?.consequence).toContain("does not activate membership");
+    expect(result.nextActions.find((a) => a.label === "Review customer application")?.consequence).toContain("does not verify payment or approve a partner");
   });
 
   it("does not bind a partner by matching email when the member id differs", () => {

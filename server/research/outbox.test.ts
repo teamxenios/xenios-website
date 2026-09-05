@@ -12,6 +12,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   outbox: [] as any[],
   attempts: [] as any[],
+  applications: [] as any[],
   sendMode: "ok" as "ok" | "throw" | "false",
 }));
 
@@ -27,6 +28,8 @@ const emails = vi.hoisted(() => ({
   sendMoreInformationRequested: vi.fn(async () => true),
   sendResubmittedConfirmation: vi.fn(async () => true),
   sendAccountClaimSuccess: vi.fn(async () => true),
+  sendApprovedCustomerClaim: vi.fn(async () => ({ ok: true, id: "provider-approved-test-only" })),
+  sendApprovedCustomerWelcome: vi.fn(async () => ({ ok: true, id: "provider-welcome-test-only" })),
   sendEmailFailureAlert: vi.fn(async () => ({ ok: true, id: "resend-alert-id" })),
   sendAdminTestEmail: vi.fn(async () => ({ ok: true, id: "resend-test-id" })),
 }));
@@ -37,7 +40,7 @@ const resend = vi.hoisted(() => ({
 
 vi.mock("../supabase", () => {
   function query(table: string) {
-    const list = table === "research_notification_attempts" ? state.attempts : state.outbox;
+    const list = table === "research_applications" ? state.applications : table === "research_notification_attempts" ? state.attempts : state.outbox;
     let mode: "select" | "insert" | "update" = "select";
     let insertPayload: any = null;
     let updatePayload: any = null;
@@ -149,8 +152,32 @@ function job(overrides: Record<string, unknown> = {}) {
 beforeEach(() => {
   state.outbox.length = 0;
   state.attempts.length = 0;
+  state.applications.length = 0;
   state.sendMode = "ok";
   vi.clearAllMocks();
+});
+
+describe("approved customer notification authority", () => {
+  async function approvedJob() {
+    const applicationId = crypto.randomUUID();
+    state.applications.push({ id: applicationId, email: "customer@example.invalid", status: "approved_customer", access_approval_version: 2, approval_expires_at: new Date(Date.now() + 86400000).toISOString() });
+    await enqueueNotification(job({ applicationId, recipient: "customer@example.invalid", templateKey: "approved_customer_claim", payload: { firstName: "Customer", approvalVersion: 2, tokenPurpose: "account_claim" } }));
+    return state.applications[0];
+  }
+  it("checks current approval, mints a purpose-scoped link at send time and uses the durable event key", async () => {
+    await approvedJob(); const result = await runOutboxTick(new Date()); expect(result.sent).toBe(1);
+    expect(emails.sendApprovedCustomerClaim).toHaveBeenCalledWith(expect.objectContaining({ email: "customer@example.invalid", idempotencyKey: state.outbox[0].event_key, token: expect.any(String) }));
+    expect(state.outbox[0].payload).not.toHaveProperty("token"); expect(state.outbox[0].provider_message_id).toBe("provider-approved-test-only");
+  });
+  it.each(["revoked", "expired", "superseded", "recipient"])("does not send or claim delivery for %s approval", async (reason) => {
+    const application = await approvedJob();
+    if (reason === "revoked") application.status = "withdrawn";
+    if (reason === "expired") application.approval_expires_at = "2020-01-01T00:00:00Z";
+    if (reason === "superseded") application.access_approval_version = 3;
+    if (reason === "recipient") application.email = "other@example.invalid";
+    await runOutboxTick(new Date()); expect(emails.sendApprovedCustomerClaim).not.toHaveBeenCalled();
+    expect(state.outbox[0].status).toBe("failed_permanent"); expect(state.outbox[0].provider_message_id).toBeUndefined();
+  });
 });
 
 describe("enqueue", () => {
