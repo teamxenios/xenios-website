@@ -85,6 +85,19 @@ try {
   await db.query("update public.research_members set status='closed' where id=$1",[claimed.memberId]);
   assert.equal((await claim(approved.applicationId)).code,'identity_review_required'); checked();
   await db.query("update public.research_members set status='active' where id=$1",[claimed.memberId]);
+  const reapprove = [...defaultInput]; reapprove[5]=approved.applicationId;
+  reapprove[6]=await scalar('select updated_at::text value from public.research_applications where id=$1',[approved.applicationId]);
+  reapprove[7]='synthetic-reapproval-0001';
+  assert.equal((await approve(reapprove)).code,'claim_not_available'); checked();
+  // A former fee-suspended account is restored only after an explicit review
+  // and a verified claim; no financial record is fabricated or erased.
+  await db.exec("alter table public.research_members drop constraint research_members_status_check; alter table public.research_members add constraint research_members_status_check check(status in ('pending_activation','active','past_due','paused','cancelled','closed'))");
+  await db.query("update public.research_members set status='past_due',billing_state='past_due',access_basis='paid_membership' where id=$1",[claimed.memberId]);
+  const restoredApproval=await approve(reapprove); assert.equal(restoredApproval.ok,true); checked();
+  assert.equal(await scalar('select status value from public.research_members where id=$1',[claimed.memberId]),'past_due'); checked();
+  assert.equal((await claim(approved.applicationId)).ok,true);
+  const restored=(await db.query('select status,billing_state,access_basis from public.research_members where id=$1',[claimed.memberId])).rows[0];
+  assert.deepEqual(restored,{status:'active',billing_state:'past_due',access_basis:'approved_customer'}); checked();
   // An expired approval never grants access even with a verified matching Auth.
   const expInput = [...defaultInput]; expInput[1]='expired@example.invalid'; expInput[7]='synthetic-expiry-0001';
   const exp = await approve(expInput);

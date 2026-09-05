@@ -50,11 +50,17 @@ remain required. This checkpoint is not deployment-ready.
 Validation: 232 focused tests across seven files passed after claim/outbox/auth
 integration; separate email/membership regression gate passed 139 tests before
 the final claim additions. Full repository TypeScript check passed. Offline
-PostgreSQL 18.3/PGlite 0.5.8 rehearsal passed 31 checks including read-only pre/post
+PostgreSQL 18.3/PGlite 0.5.8 rehearsal passed 35 checks including read-only pre/post
 scripts, apply twice,
 service privileges, exact identity, expiry, idempotent replay, stale snapshots
 and transaction rollback on outbox failure. Current candidate LF SHA-256:
-`dc9e760941d42947db9361b37a001cd91c901dd3ebddbfe95ca506a311fc43dc`.
+`026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5`.
+
+An active historical application may receive explicit customer approval only
+when its same verified Auth-bound member is pending_activation or past_due.
+The subsequent claim restores customer access without settling or deleting any
+historical billing facts. Already-active customers use normal sign-in; paused,
+closed and cancelled accounts remain subject to separate review.
 
 The retirement/retention/recovery integration gate passed 134 tests in six files.
 The combined B inspection integration had 143/144 passing tests; its sole failure

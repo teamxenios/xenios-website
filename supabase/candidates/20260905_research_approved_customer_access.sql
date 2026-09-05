@@ -101,7 +101,7 @@ begin
       return jsonb_build_object('ok',false,'code','stale_inspection');
     end if;
     if a.status not in ('draft','submitted','under_review','more_information_requested','resubmitted',
-      'approved_pending_payment','approved_customer','payment_pending','expired') or a.source_page='b2b_buyer_sponsored_claim' then
+      'approved_pending_payment','approved_customer','payment_pending','active','expired') or a.source_page='b2b_buyer_sponsored_claim' then
       return jsonb_build_object('ok',false,'code','identity_review_required');
     end if;
     v_previous:=a.status;
@@ -122,6 +122,12 @@ begin
     -- The newly inserted application must not survive a refused operation.
     if v_previous is null then delete from public.research_applications where id=a.id; end if;
     return jsonb_build_object('ok',false,'code','identity_review_required');
+  end if;
+  -- An already active customer needs sign-in, not a new approval. A historical
+  -- paid activation/renewal may leave an active application paired with a
+  -- pending or past-due member; explicit review can convert that exact binding.
+  if a.status='active' and (not v_member_found or m.status not in ('pending_activation','past_due')) then
+    return jsonb_build_object('ok',false,'code','claim_not_available');
   end if;
   v_expires:=v_now+interval '14 days';
   update public.research_applications set status='approved_customer',approval_expires_at=v_expires,

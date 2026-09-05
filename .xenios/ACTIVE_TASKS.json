@@ -1352,7 +1352,16 @@
         "server/research/membership-activation/scheduler.test.ts",
         "server/research/membership-activation/retirement.test.ts",
         "server/index.ts",
-        "server/research/membership.test.ts"
+        "server/research/membership.test.ts",
+        "shared/research/partner-lifecycle.ts",
+        "server/research/partners/lifecycle-admin.ts",
+        "server/research/partners/lifecycle-admin.test.ts",
+        "server/research/partners/lifecycle-production.ts",
+        "server/research/partners/lifecycle-production.test.ts",
+        "supabase/candidates/20260905_research_partner_lifecycle.sql",
+        "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
+        "supabase/candidates/20260905_research_partner_lifecycle.postcheck.sql",
+        "supabase/candidates/20260905_research_partner_lifecycle.rollback.md"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1450,7 +1459,24 @@
         "client/src/research/lib/denials.ts",
         "client/src/research/pages/adminx/ApplicationDetail.test.tsx",
         "client/src/research/pages/adminx/CustomerAccessApprovalForm.tsx",
-        "client/src/research/pages/adminx/CustomerAccessApprovalForm.test.tsx"
+        "client/src/research/pages/adminx/CustomerAccessApprovalForm.test.tsx",
+        "client/src/research/pages/member/SubscriptionsPage.tsx",
+        "client/src/research/pages/member/ReferralsUpgrade.tsx",
+        "client/src/research/pages/member/Dashboard.tsx",
+        "client/src/research/pages/member/GoalDetail.tsx",
+        "client/src/research/pages/member/Orders.tsx",
+        "client/src/research/pages/member/Goals.tsx",
+        "client/src/research/pages/member/subscriptions.test.tsx",
+        "client/src/research/legacy-member-welcome.test.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx",
+        "client/src/research/pages/member/cart-checkout.test.tsx",
+        "client/src/research/recovery-route-isolation.test.tsx",
+        "client/src/research/pages/adminx/PartnerLifecycleReviewPanel.tsx",
+        "client/src/research/pages/adminx/PartnerLifecycleReviewPanel.test.tsx",
+        "client/src/research/pages/partners/Training.tsx",
+        "client/src/research/pages/partners/Training.test.tsx",
+        "client/src/research/pages/partners/Onboarding.tsx",
+        "client/src/research/pages/partners/Onboarding.test.tsx"
       ],
       "dependsOn": [],
       "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",

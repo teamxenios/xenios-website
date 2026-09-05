@@ -3,13 +3,14 @@ import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import type { AccessInspectionDependencies, AccessInspectionFacts } from "./access-admin";
 import { APPROVED_CUSTOMER_SCHEMA_VERSION } from "@shared/research/approved-customer-access";
+import { validPartnerLifecycleAuthority } from "./partners/lifecycle-admin";
 
 const id = z.string().uuid();
 const timestamp = z.string().datetime({ offset: true }).nullable();
 const authRow = z.object({ id, email: z.string().email(), email_confirmed_at: timestamp.optional(), last_sign_in_at: timestamp.optional() });
 const applicationRow = z.object({ id, email: z.string().email(), status: z.string(), updated_at: timestamp });
 const memberRow = z.object({ id, email: z.string().email(), auth_user_id: id.nullable(), status: z.string() });
-const partnerRow = z.object({ id, member_id: id, role: z.string(), state: z.string(), identity_verified: z.boolean(), tax_status: z.string(), payout_status: z.string(), certified_at: timestamp });
+const partnerRow = z.object({ id, member_id: id, role: z.string(), state: z.string(), identity_verified: z.boolean(), tax_status: z.string(), payout_status: z.string(), certified_at: timestamp, updated_at: timestamp });
 const agreementRow = z.object({ partner_id: id, agreement_key: z.string(), agreement_version: z.string(), decision: z.string(), content_hash: z.string(), decided_at: z.string() });
 const trainingRow = z.object({ partner_id: id, module_key: z.string(), module_version: z.string(), completed_at: z.string() });
 const orgRow = z.object({ organization_id: id, state: z.string(), roles: z.array(z.string()) });
@@ -52,7 +53,7 @@ export function createAccessInspectionDependencies(client: () => SupabaseClient 
       ]);
       const authMembers = auth.length ? await rows(db.from("research_members").select("id,email,auth_user_id,status").in("auth_user_id", auth.map((a) => a.id)).limit(26), memberRow) : [];
       const members = unique([...emailMembers, ...authMembers]);
-      const partnerFields = "id,member_id,role,state,identity_verified,tax_status,payout_status,certified_at";
+      const partnerFields = "id,member_id,role,state,identity_verified,tax_status,payout_status,certified_at,updated_at";
       const contactPartners = await rows(db.from("research_partners").select(partnerFields).eq("contact_email", email).limit(26), partnerRow);
       const boundPartners = members.length ? await rows(db.from("research_partners").select(partnerFields).in("member_id", members.map((m) => m.id)).limit(26), partnerRow) : [];
       const partners = unique([...contactPartners, ...boundPartners]);
@@ -73,11 +74,16 @@ export function createAccessInspectionDependencies(client: () => SupabaseClient 
         const authority = await db.rpc("research_approved_customer_access_authority");
         approvedCustomerAccess = !authority.error && z.object({ schemaVersion: z.literal(APPROVED_CUSTOMER_SCHEMA_VERSION) }).strict().safeParse(authority.data).success;
       } catch { /* Optional writer is unavailable; read-only diagnosis remains useful. */ }
+      let partnerLifecycleReview = false;
+      try {
+        const authority = await db.rpc("research_partner_lifecycle_authority");
+        partnerLifecycleReview = !authority.error && validPartnerLifecycleAuthority(authority.data);
+      } catch { /* Partner review availability does not hide account diagnosis. */ }
       return {
-        auth, applications: applications.map((a) => ({ id: a.id, email: a.email, status: a.status, updatedAt: a.updated_at })), approvedCustomerAccess,
+        auth, applications: applications.map((a) => ({ id: a.id, email: a.email, status: a.status, updatedAt: a.updated_at })), approvedCustomerAccess, partnerLifecycleReview,
         members: members.map((m) => ({ id: m.id, email: m.email, authUserId: m.auth_user_id, status: m.status })),
         partners: partners.map((p) => ({
-          id: p.id, memberId: p.member_id, role: p.role, state: p.state,
+          id: p.id, memberId: p.member_id, role: p.role, state: p.state, updatedAt: p.updated_at,
           identityVerified: p.identity_verified, taxStatus: p.tax_status, payoutStatus: p.payout_status, certifiedAt: p.certified_at,
           agreements: agreements.filter((a) => a.partner_id === p.id).map((a) => ({ key: a.agreement_key, version: a.agreement_version, accepted: a.decision === "accepted", contentHash: a.content_hash, decidedAt: a.decided_at })),
           training: training.filter((t) => t.partner_id === p.id).map((t) => ({ key: t.module_key, version: t.module_version, completedAt: t.completed_at })),

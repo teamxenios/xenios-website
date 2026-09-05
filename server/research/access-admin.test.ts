@@ -30,6 +30,17 @@ function appWith(facts: AccessInspectionFacts = empty()) {
 }
 
 describe("admin approved-user diagnosis", () => {
+  it("exposes a partner snapshot and canonical requirements only with confirmed lifecycle authority", () => {
+    const facts = linked(); facts.partners[0].updatedAt = "2026-09-01T00:00:00Z";
+    expect(projectAccessInspection(email, facts, deps).partnerRequirements).toBeNull();
+    facts.partnerLifecycleReview = true;
+    const result = projectAccessInspection(email, facts, deps);
+    expect(result.boundaries.partnerLifecycleReview).toBe("available");
+    expect(result.partnerRequirements).toEqual(DEFAULT_PARTNER_REQUIREMENTS);
+    expect(result.partners[0].updatedAt).toBe("2026-09-01T00:00:00Z");
+    expect(result.partners[0].missingRequirements).toContain("active_customer_access");
+    expect(result.nextActions.find((a) => a.label === "Review partner access")).toMatchObject({ notification: "none" });
+  });
   it("states absent records without treating them as approval or verified ownership", () => {
     const result = projectAccessInspection(email, empty(), deps);
     expect(result.identityState).toBe("absent");
@@ -42,7 +53,7 @@ describe("admin approved-user diagnosis", () => {
     const result = projectAccessInspection(email, linked(), deps);
     expect(result.identityState).toBe("verified");
     expect(result.members[0].binding).toBe("verified");
-    expect(result.partners[0].missingRequirements).toHaveLength(23);
+    expect(result.partners[0].missingRequirements).toHaveLength(24);
     expect(result.nextActions.map((a) => a.label)).toContain("Customer access approval required");
     expect(result.nextActions.find((a) => a.label === "Review customer application")?.consequence).toContain("does not verify payment or approve a partner");
   });
@@ -67,6 +78,7 @@ describe("admin approved-user diagnosis", () => {
 
   it("requires actual current agreement and training evidence, refusing declined/future facts", () => {
     const facts = linked(); const p = facts.partners[0];
+    facts.members[0].status = "active";
     p.identityVerified = true; p.taxStatus = "verified"; p.payoutStatus = "verified";
     p.state = "active"; p.certifiedAt = "2026-09-01T00:00:00Z";
     p.agreements = DEFAULT_PARTNER_REQUIREMENTS.agreements.map((a) => ({ ...a, accepted: true, contentHash: "evidence-hash", decidedAt: "2026-09-01T00:00:00Z" }));
