@@ -1951,6 +1951,12 @@ describe("state 3: partner portal", () => {
     };
     expect(applied.ok).toBe(true);
     expect(applied.partner.state).toBe("application");
+    // The durable `research_partners.id` column is Postgres UUID. Keep the
+    // production composition compatible with that schema instead of emitting
+    // an in-memory-only `prt_` identifier.
+    expect(applied.partner.partnerId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[4-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
 
     // Resolvable by the owning member, invisible to anyone else.
     const self = await deps.partners.findByMemberId("mem_p1");

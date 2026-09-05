@@ -7,9 +7,9 @@
 ## Exact candidate
 
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
-- Runtime candidate SHA: `f8804aa9fd48e19492b2b1ce2dab20bba54c741e`
-- Runtime candidate tree: `5b1af342ccab698a58c25513694e992646234dc8`
-- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, `8ef1a4a`, `05e2c0e`, and `3e61213` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `3e6121374b2ac4abcf69ca383e15581198716e02` (tree `c3be3cb76fc3664f78fce3f5b9dbea193165cd43`).
+- Runtime candidate SHA: `14503661423a844e406d3cfc1ef75b4d9c436c30`
+- Runtime candidate tree: `f37d439c3f9c84f57444a546cf205d23721b88f2`
+- This runtime candidate is pushed. It includes the approved-customer e2e replacement, protected-seam review/repin, truthful disabled partner reads, UUID-compatible production partner creation, and ASTRA-B's reviewed partner-copy correction (`bb40cddd366394028ee58114dc002b516f031f35`, integrated as `5d2fa0b`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
@@ -19,24 +19,26 @@
 - Admin identity diagnosis and customer approval UI, with queued-not-delivered email status. No live approval or email was sent.
 - Partner lifecycle operations (`prepare`, reviewed clearances, reviewed agreements, reviewed training, certify, activate, suspend, terminate, reinstate) with exact snapshots, idempotency, append-only evidence, and no fabricated proof. Agreement/training forms require the timestamp from the reviewed record.
 - Partner lifecycle review panel mounted in the admin diagnosis flow and source-truthful partner onboarding/training surfaces.
+- Partner compliance and conversion copy now states that approved customer access has no paid-membership prerequisite; historical plan/billing records remain historical facts.
 - Canonical product price-version review and readiness filters in existing Product Control. This is review tooling; it does not activate prices or create a new pricing authority.
 - Server-owned reconciliation review adapter and deferred read-only presentation for formulation and identity exceptions; it adds no route or authority.
 
 ## Validation evidence
 
-- Focused client launch tests: **208/208** across 14 files.
+- Focused client launch tests: **208/208** across 14 files; ASTRA-B partner-copy checks **4/4**.
 - Product price-review tests: **94/94**.
 - Focused server launch tests: **58/58**.
+- Integrated access/partner closure: **426/426** across 8 files, including the UUID-shaped production partner identifier assertion.
 - Release-control-plane gate: **51 passed, 1 intentional skip**.
 - Route uniqueness: **426 registrations across 417 call sites**, PASS.
 - Typecheck: `npm run check`, PASS.
 - Production build: `npm run build`, PASS (known dynamic-import and large-chunk warnings only).
-- Protected-site gate: PASS against `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` with 28 protected hashes verified.
+- Protected-site gate: **36/36 PASS** against `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, with the two reviewed intentional seam hashes repinned and all other protections retained.
 - Approved-customer PGlite rehearsal: **35 checks**, PASS.
 - Partner-lifecycle PGlite rehearsal: **57 checks**, PASS.
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
 - Reconciliation adapter and presentation tests: **102/102**, PASS; build re-run after integration, PASS.
-- Fresh broad repository suite (`npm test -- --reporter=dot`, 2026-09-05): **868 passed files, 7 failed files, 5 skipped; 13,480 passed tests, 12 failed, 59 skipped** (341 seconds). This supersedes the earlier 866-file count; the seven failing files and twelve failing tests are unchanged: the stale protected-seam hash test; the member-session wall's old expectation that `/api/research/partner/me` is unlisted; a stale sponsored-B2B SQL assertion; the old paid activation e2e; three legacy commerce partner-surface expectations; four disabled partner-read production-wiring expectations; and the portal route coverage assertion that omits the admitted `/api/research/partner/me` path. These remain explicit full-suite blockers and are not represented as a passing release gate.
+- Fresh broad repository suite (`npm test -- --reporter=dot`, observed 2026-09-05 23:04–23:16 UTC): **870 passed files, 5 failed files, 5 skipped; 13,487 passed tests, 9 failed, 59 skipped** (741.22 seconds). Four failures were default 5-second resource/time-limit failures in repository scans/render-heavy suites; serialized 60-second reruns passed pgcrypto **17/17**, release-control-plane **51/51 + 1 intentional skip**, preview-harness **3/3**, and Kris presentation **16/16**. The remaining failure is the leased F7 sponsored-B2B assertion (`server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`), which expects two source-page call sites while the implementation has one. The exact account-identity lease is held by `claude-opus5-main`; this session did not edit, skip, or waive it, so the complete release suite is not yet a zero-failure gate.
 
 ## Production truth and blockers
 

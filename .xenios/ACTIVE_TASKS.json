@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T17:49:32.056944+00:00",
+  "updatedAt": "2026-09-05T12:49:32.056944-05:00",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -315,7 +315,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-08-21T15:46:37.875Z",
       "releasedAt": "2026-08-21T15:51:29.849Z"
     },
@@ -360,7 +360,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -1362,7 +1362,10 @@
         "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.postcheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.rollback.md",
-        "server/release-control-plane.test.ts"
+        "server/release-control-plane.test.ts",
+        "server/research/e2e/account-membership-catalog.acceptance.test.ts",
+        "server/research/commerce/acceptance.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1371,19 +1374,19 @@
       "createdAt": "2026-09-05T04:13:59.4380733Z",
       "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
       "claimedAt": "2026-09-05T17:49:32.208Z",
-      "blockedAt": "2026-09-05T04:45:09.674760+00:00",
+      "blockedAt": "2026-09-04T23:45:09.67476-05:00",
       "lastOwner": "codex-seth-revenue-launch-20260905",
-      "releasedAt": "2026-09-05T04:49:58.516244+00:00",
+      "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
         "sha": "f8a2cb74f181e3379dfd8fc4e44f9a372c5d4205",
         "file": ".xenios/handoffs/2026-09-05T18-17-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-universal-priority.md",
-        "at": "2026-09-05T18:15:06.163154+00:00",
+        "at": "2026-09-05T13:15:06.163154-05:00",
         "status": "active_continuing_not_release_ready"
       },
       "previousBlockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent.",
       "pairing": {
-        "recordedAt": "2026-09-05T17:49:32.056944+00:00",
+        "recordedAt": "2026-09-05T12:49:32.056944-05:00",
         "role": "ASTRA-A",
         "partnerRole": "ASTRA-B",
         "partnerThread": "01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35",
@@ -1391,7 +1394,7 @@
         "partnerPaths": "Confirmed exact B client/doc lease in CODE_OWNERSHIP, registration d54cdb9 and approved list-page expansion",
         "partnerSession": "codex-seth-astra-b-20260905"
       },
-      "resumedAt": "2026-09-05T17:49:32.056944+00:00"
+      "resumedAt": "2026-09-05T12:49:32.056944-05:00"
     },
     {
       "id": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",

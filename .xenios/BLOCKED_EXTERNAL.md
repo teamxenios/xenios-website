@@ -1,5 +1,15 @@
 # Externally blocked work
 
+- Seth universal launch (2026-09-05): the integrated access/partner closure is
+  green (426/426 focused; release-control-plane 51 PASS + 1 intentional skip),
+  but the complete repository suite is not yet zero-failure. One exact leased
+  assertion remains in `server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`:
+  it expects two `b2b_buyer_sponsored_claim` source-page call sites while the
+  implementation contains one. The path is held by `claude-opus5-main`
+  (`F7-PACK02-RENAME`); this session must not edit or waive it. Four broad-run
+  timeout failures were independently rerun with a serialized 60-second
+  configuration and passed. No production mutation or approval is authorized.
+
 - Seth revenue launch (2026-09-05): the missing-history startup blocker is
   closed for local engineering by the authorized linked CLI export at 17:41 UTC.
   See `docs/revenue-launch/20260905/migration-history/MIGRATION_RECONCILIATION.md`.

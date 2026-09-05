@@ -1257,8 +1257,8 @@
       ],
       "state": "released",
       "claimedAt": "2026-09-05T04:13:59.534Z",
-      "heartbeatAt": "2026-09-05T04:49:58.516244+00:00",
-      "releasedAt": "2026-09-05T04:49:58.516244+00:00",
+      "heartbeatAt": "2026-09-04T23:49:58.516244-05:00",
+      "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "releaseReason": "blocked_external_current_migration_history_gate"
     },
     {
@@ -1354,11 +1354,14 @@
         "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.postcheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.rollback.md",
-        "server/release-control-plane.test.ts"
+        "server/release-control-plane.test.ts",
+        "server/research/e2e/account-membership-catalog.acceptance.test.ts",
+        "server/research/commerce/acceptance.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T22:33:47.139Z"
+      "heartbeatAt": "2026-09-05T23:22:07.734Z"
     },
     {
       "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",

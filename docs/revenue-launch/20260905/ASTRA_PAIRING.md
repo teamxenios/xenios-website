@@ -43,3 +43,15 @@ account, partner, referral and legitimate ordering/request vertical slice. Prese
 all source coverage; do not hardcode the first acceptance person. Each capability
 needs persona, route, authority, source, tests, browser proof, production state,
 SHA, owner, blocker and next action. Normal user credentials remain user-entered.
+
+## 2026-09-05 closeout checkpoint
+
+A remains the integration and release owner; B remains the independent QA and
+ordinary-user acceptance owner. B's reviewed partner-copy slice is pushed at
+`bb40cddd366394028ee58114dc002b516f031f35` and integrated into A's candidate as
+`5d2fa0b`. The integrated access/partner closure is **426/426 PASS**. The only
+remaining product-suite assertion is the exact leased F7 sponsored-B2B count in
+`server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`, held by
+`claude-opus5-main`; it remains an owner dependency rather than a skipped or
+waived test. Production approval, migrations, live account changes, notifications,
+payments and shipments remain unperformed.
