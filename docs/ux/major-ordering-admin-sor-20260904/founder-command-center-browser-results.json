@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "kind": "founder-command-center-responsive-browser-evidence",
+  "recordedAtUtc": "2026-09-05T01:42:26Z",
+  "candidateSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
+  "continuityHeadAtExercise": "c1d92578bcd9ea425079ca7c2e16cd18cc5db4f7",
+  "bundleIndexSha256": "b50cf42013275d67642640efa8e997c528b43d5a014736285ce0a7cbc94becd1",
+  "environment": {
+    "origin": "http://localhost:5221",
+    "route": "/admin/research/command-center",
+    "server": "scripts/preview-account-portal.ts",
+    "browser": "Codex in-app browser through computer-use",
+    "content": "Actual production SPA build with local synthetic auth and an in-page API fixture installed through browser CDP Runtime.evaluate",
+    "fixture": "All 13 canonical definitions; null unavailable counts, unknown attention, no record identifiers or production facts",
+    "productionCertification": false
+  },
+  "authentication": {
+    "beforeSignIn": "Admin sign-in form displayed; no command-center cards",
+    "fixtureAuthorization": "Exact synthetic bearer identity required by the local fixture; no actual token persisted in this artifact",
+    "observedFixtureRequests": [
+      { "path": "/api/admin/me", "method": "GET", "authorized": true },
+      { "path": "/api/admin/research/command-center", "method": "GET", "authorized": true },
+      { "path": "/api/admin/me", "method": "GET", "authorized": true }
+    ],
+    "afterSignOut": { "signInFormCount": 1, "signOutButtonCount": 0, "route": "/admin/research/command-center" },
+    "serverGuardProof": "Separate requireSupabaseAdmin integration and negative tests; the browser fixture does not prove production authorization"
+  },
+  "assertionsAtEveryWidth": {
+    "mainCount": 1,
+    "h1Count": 1,
+    "h1": "Founder command center",
+    "cardCount": 13,
+    "directActionCount": 13,
+    "horizontalOverflow": false,
+    "clippedDirectActions": 0,
+    "readOnlyNoticePresent": true,
+    "unavailableCardCount": 13,
+    "unknownAttentionCount": 13,
+    "exactZeroTextNodes": 0,
+    "cardEmailLike": false,
+    "cardCredentialLike": false,
+    "visibleTextLength": 6087
+  },
+  "matrix": [
+    { "viewportWidth": 1440, "clientWidth": 1425, "scrollWidth": 1425, "minimumActionHeight": 64, "pass": true },
+    { "viewportWidth": 1366, "clientWidth": 1351, "scrollWidth": 1351, "minimumActionHeight": 64, "pass": true },
+    { "viewportWidth": 1024, "clientWidth": 1009, "scrollWidth": 1009, "minimumActionHeight": 64, "pass": true },
+    { "viewportWidth": 768, "clientWidth": 753, "scrollWidth": 753, "minimumActionHeight": 60, "pass": true },
+    { "viewportWidth": 430, "clientWidth": 415, "scrollWidth": 415, "minimumActionHeight": 56, "pass": true },
+    { "viewportWidth": 390, "clientWidth": 375, "scrollWidth": 375, "minimumActionHeight": 56, "pass": true },
+    { "viewportWidth": 375, "clientWidth": 360, "scrollWidth": 360, "minimumActionHeight": 52, "pass": true },
+    { "viewportWidth": 360, "clientWidth": 345, "scrollWidth": 345, "minimumActionHeight": 52, "pass": true },
+    { "viewportWidth": 320, "clientWidth": 305, "scrollWidth": 305, "minimumActionHeight": 52, "pass": true }
+  ],
+  "canonicalActionHrefsInOrder": [
+    "/admin/research/applications",
+    "/admin/research/care-requests",
+    "/admin/research/assisted-orders",
+    "/admin/research/early-access/payments",
+    "/admin/research/early-access/fulfillment",
+    "/admin/research/early-access/fulfillment",
+    "/admin/research/products",
+    "/admin/research/products",
+    "/admin/research/required-inputs",
+    "/admin/research/referral-lifecycle",
+    "/admin/research/questions",
+    "/admin/research/security",
+    "/admin/research/audit"
+  ],
+  "visualReview": "320px header/navigation and Applications card screenshots inspected in the task: labels, metadata, owning workflow and primary action wrap without overlap. Pixel captures were not saved as repository artifacts.",
+  "limitations": [
+    "The browser exercised all-unavailable rendering. Exact, bounded, partial and malicious DTO handling are covered separately by tests.",
+    "Synthetic auth and the local in-page fixture bypass the production server data path; this is local UI/session evidence only.",
+    "An initial raw Fetch interception held requests without readable events. It was cleared, the fixture was installed in the page, and navigation through the SPA remounted the view before the recorded matrix.",
+    "No linked operational mutation was invoked. No real admin, member, Care, order, payment, supplier, or referral data was used."
+  ],
+  "pass": true
+}

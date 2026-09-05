@@ -9,18 +9,14 @@ import {
   type OrderEntryMode,
 } from "@shared/research/order-entry";
 import { researchAuthPath } from "@shared/research/auth-return-to";
-import {
-  isCustomerAction,
-  type CustomerAction,
-} from "@shared/research/launch/customer-action";
 import { useResearch, type MemberInfo, type MemberSessionStatus } from "../core";
 import { memberDestination } from "../lib/member-routing";
 import {
   memberReturnToForIntent,
-  safeStorefrontIntent,
   signInHrefForIntent,
   type StorefrontIntent,
 } from "../storefront/entry-intent";
+import { orderEntryIntentFromSearch, orderEntryIntentFromReturnTo, orderEntryIntentHref } from "../early-access/orderEntryIntent";
 import { ResearchPublicShell } from "../ui/shells";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import "./public-editorial.css";
@@ -41,21 +37,6 @@ const EMPTY_CONTINUATION: OrderEntryContinuation = Object.freeze({
   returnTo: null,
   intent: null,
 });
-
-const INTENT_QUERY_KEYS = new Set([
-  "family",
-  "slug",
-  "variant",
-  "qty",
-  "intent",
-]);
-
-const QUERY_ACTIONS: Readonly<Record<string, CustomerAction>> = {
-  buy_now: "BUY_NOW",
-  assisted_order: "ASSISTED_ORDER",
-  request_quote: "REQUEST_QUOTE",
-  care: "CARE",
-};
 
 /**
  * Read exactly one bounded continuation shape from the public URL.
@@ -94,29 +75,7 @@ function orderEntryContinuationFromSearch(
     };
   }
 
-  if (
-    keys.length !== INTENT_QUERY_KEYS.size ||
-    keys.some(
-      (key) =>
-        !INTENT_QUERY_KEYS.has(key) || params.getAll(key).length !== 1,
-    )
-  ) {
-    return EMPTY_CONTINUATION;
-  }
-
-  const action = QUERY_ACTIONS[params.get("intent") ?? ""];
-  const quantityText = params.get("qty") ?? "";
-  if (!action || !isCustomerAction(action) || !/^[1-9]\d{0,2}$/.test(quantityText)) {
-    return EMPTY_CONTINUATION;
-  }
-
-  const intent = safeStorefrontIntent({
-    family: params.get("family") ?? "",
-    slug: params.get("slug") ?? "",
-    variantId: params.get("variant") ?? "",
-    quantity: Number(quantityText),
-    action,
-  });
+  const intent = orderEntryIntentFromSearch(search);
   return intent ? { returnTo: null, intent } : EMPTY_CONTINUATION;
 }
 
@@ -137,6 +96,9 @@ function destinationForMode(
   mode: OrderEntryMode,
   continuation: OrderEntryContinuation,
 ): string {
+  if (mode.id === "quick_early_access" || mode.id === "assisted_or_volume") {
+    return orderEntryIntentHref("/research/early-access", continuation.intent ?? orderEntryIntentFromReturnTo(continuation.returnTo));
+  }
   if (mode.id === "member_account") {
     if (continuation.intent) return memberReturnToForIntent(continuation.intent);
     return orderEntryDestination("member_account", continuation.returnTo);
@@ -158,6 +120,10 @@ function resolvedAction(
   state: AccountPresentation,
   member: MemberInfo | null,
 ): ResolvedAction {
+  const intent = continuation.intent ?? orderEntryIntentFromReturnTo(continuation.returnTo);
+  if (intent?.action === "CARE" && ["member_account", "quick_early_access", "assisted_or_volume"].includes(mode.id)) {
+    return { href: "/care/schedule", label: "Continue through Xenios Care" };
+  }
   const destination = destinationForMode(mode, continuation);
   if (!mode.accountDestination) {
     return { href: destination, label: mode.actionLabel };
@@ -498,8 +464,9 @@ export default function OrderEntryHub() {
             Safe selections continue; private credentials do not travel in links.
           </h2>
           <p className="body-s text-ink-2 mt-3 max-w-[72ch]">
-            A validated member product, variant, quantity, or account-order
-            destination can continue through sign-in. Unknown destinations and
+            A validated product, variant, and quantity continue into Quick Early
+            Access, assisted ordering, or member sign-in for review against the
+            current catalog. Account-order destinations continue through sign-in. Unknown destinations and
             credential-like query data are discarded. Any already-recognized
             referral remains with the server-owned referral session; this page
             does not copy a referral code into its links.

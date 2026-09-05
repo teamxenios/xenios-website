@@ -219,6 +219,24 @@ export function authorityFor(
   });
 }
 
+/** Preserve the exact source identity after the action/price projection. */
+function projectWithSourceSelection(
+  offering: NormalizedMasterOffering,
+  variant: NormalizedMasterOffering["variants"][number],
+  authority: AssistedOrderCatalogAuthority,
+): AssistedOrderCatalogItem | null {
+  const item = projectAssistedOrderCatalogItem(authority);
+  if (!item) return null;
+  return Object.freeze({
+    ...item,
+    sourceSelection: Object.freeze({
+      family: offering.family,
+      slug: offering.slug,
+      variantId: variant.id,
+    }),
+  });
+}
+
 export function createAssistedOrderMasterCatalogCallbacks(
   input: AssistedOrderMasterCatalogInput,
 ): Readonly<{
@@ -280,7 +298,9 @@ export function createAssistedOrderMasterCatalogCallbacks(
           }
           for (const variant of offering.variants) {
             const identity = input.bindingFor(variant.id);
-            const item = projectAssistedOrderCatalogItem(
+            const item = projectWithSourceSelection(
+              offering,
+              variant,
               authorityFor(
                 offering,
                 variant,
@@ -426,7 +446,9 @@ export function createAssistedOrderMasterCatalogCallbacks(
             ) {
               return null;
             }
-            return projectAssistedOrderCatalogItem(
+            return projectWithSourceSelection(
+              offering,
+              variant,
               authorityFor(
                 offering,
                 variant,

@@ -15,6 +15,8 @@ const FullCanonicalCatalog = lazy(() =>
 );
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
+import { OrderEntryIntentNotice } from "./OrderEntryIntentNotice";
+import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "./orderEntryIntent";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
 import { EarlyAccessCatalogSection, type EarlyAccessCatalogSelection } from "./EarlyAccessCatalogSection";
 import {
@@ -106,6 +108,8 @@ export function clearEarlyAccessCustomerStorage(): void {
 }
 
 export default function EarlyAccessRoute() {
+  const entryIntent = orderEntryIntentFromSearch(typeof window === "undefined" ? "" : window.location.search);
+  const [entryResolution, setEntryResolution] = useState<OrderEntryIntentResolution | null>(null);
   const [state, setState] = useState<GateState>({ kind: "checking" });
   // Whether the SERVER says this customer has agreed. It starts false on every
   // load and is only ever set from a server answer, so a refresh re-asks rather
@@ -453,6 +457,13 @@ export default function EarlyAccessRoute() {
       )}
 
       {state.kind === "authenticated" && (
+        <>
+        {entryIntent ? <div className="container-x pt-6"><OrderEntryIntentNotice
+          intent={entryIntent}
+          enabled={bridgeState.kind === "enabled"}
+          onResolved={setEntryResolution}
+          showAssistedAction
+        /></div> : null}
         <EarlyAccessCartMount
           onExitEarlyAccess={signOut}
           fallback={
@@ -574,6 +585,8 @@ export default function EarlyAccessRoute() {
                     >
                       <FullCanonicalCatalog
                         embedded
+                        entryIntent={entryIntent}
+                        entryResolution={entryResolution}
                         continuationEnabled={agreed && blocked === null}
                         onStepChange={setEmbeddedOrderStep}
                       />
@@ -647,6 +660,7 @@ export default function EarlyAccessRoute() {
         </section>
           }
         />
+        </>
       )}
     </>
   );

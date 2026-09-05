@@ -1,6 +1,6 @@
 import express from "express";
 import request from "supertest";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   FOUNDER_COMMAND_CENTER_ALLOWED_ACTION_HREFS,
   FOUNDER_COMMAND_CENTER_API_PATH,
@@ -13,8 +13,25 @@ import {
   exactCount,
   registerFounderCommandCenterApi,
   type FounderCommandCenterSourceSnapshot,
+  type FounderCommandCenterSourceContext,
   type FounderCommandCenterSources,
 } from "./founder-command-center";
+
+// Keep routes.ts and its recovery-purpose guard real. Only the external Auth
+// edge is replaced; none of these requests can reach a database or provider.
+const authEdge = vi.hoisted(() => ({
+  configured: vi.fn(() => true),
+  getUser: vi.fn(),
+  getAdmin: vi.fn(() => {
+    throw new Error("Unexpected database access in command-center auth test");
+  }),
+}));
+
+vi.mock("../supabase", () => ({
+  supabaseConfigured: authEdge.configured,
+  getSupabaseAnon: () => ({ auth: { getUser: authEdge.getUser } }),
+  getSupabaseAdmin: authEdge.getAdmin,
+}));
 
 const NOW = new Date("2026-09-04T20:00:00.000Z");
 const OLDEST = "2026-09-01T12:00:00.000Z";
@@ -219,5 +236,191 @@ describe("Founder Command Center read-only API", () => {
       .post(FOUNDER_COMMAND_CENTER_API_PATH)
       .send({ status: "closed" })
       .expect(404);
+  });
+});
+
+describe("Founder Command Center endpoint with the real canonical admin guard", () => {
+  const allowedEmail = "founder@command-center.example.invalid";
+
+  function guardedApp() {
+    const sources = Object.fromEntries(
+      FOUNDER_COMMAND_CENTER_AREA_IDS.map((area) => [
+        area,
+        vi.fn(async (_context: FounderCommandCenterSourceContext) =>
+          successfulSnapshot(area),
+        ),
+      ]),
+    );
+    const app = express();
+    // Deliberately omit requireAdmin: this exercises the production default.
+    registerFounderCommandCenterApi(app, sources, { now: () => NOW });
+    return { app, sources };
+  }
+
+  function expectNoSourceReads(sources: ReturnType<typeof guardedApp>["sources"]) {
+    for (const source of Object.values(sources)) {
+      expect(source).not.toHaveBeenCalled();
+    }
+    expect(authEdge.getAdmin).not.toHaveBeenCalled();
+  }
+
+  function syntheticClaims(claims: Record<string, unknown>): string {
+    // This is only a claims fixture, accepted by the mocked Auth edge below.
+    // It is not a signed session and cannot authenticate against Supabase.
+    return [
+      Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url"),
+      Buffer.from(JSON.stringify(claims)).toString("base64url"),
+      "synthetic-test-signature",
+    ].join(".");
+  }
+
+  beforeEach(() => {
+    authEdge.configured.mockReset().mockReturnValue(true);
+    authEdge.getUser.mockReset();
+    authEdge.getAdmin.mockClear();
+    vi.stubEnv("ADMIN_EMAIL", allowedEmail);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  it.each([undefined, "Basic synthetic-credentials", "Bearer "])(
+    "denies absent or malformed bearer authentication (%s) before any source read",
+    async (authorization) => {
+      const { app, sources } = guardedApp();
+      const probe = request(app).get(FOUNDER_COMMAND_CENTER_API_PATH);
+      if (authorization !== undefined) probe.set("Authorization", authorization);
+      const response = await probe.expect(401);
+
+      expect(response.body).toEqual({ success: false, message: "Unauthorized" });
+      expect(response.headers["cache-control"]).toBe("no-store, max-age=0");
+      expect(response.headers["referrer-policy"]).toBe("no-referrer");
+      expect(authEdge.getUser).not.toHaveBeenCalled();
+      expectNoSourceReads(sources);
+    },
+  );
+
+  it.each(["member", "care_provider", "partner"])(
+    "denies a verified %s identity even with client-supplied admin claims",
+    async (persona) => {
+      authEdge.getUser.mockResolvedValue({
+        data: {
+          user: {
+            id: `synthetic-${persona}`,
+            email: `${persona}@command-center.example.invalid`,
+            role: "authenticated",
+            app_metadata: { role: persona },
+            user_metadata: { role: "admin", email: allowedEmail },
+          },
+        },
+        error: null,
+      });
+      const { app, sources } = guardedApp();
+      const bearer = syntheticClaims({ email: allowedEmail, role: "admin", amr: ["password"] });
+      const response = await request(app)
+        .get(FOUNDER_COMMAND_CENTER_API_PATH)
+        .set("Authorization", `Bearer ${bearer}`)
+        .set("X-Admin-Email", allowedEmail)
+        .set("X-Role", "admin")
+        .expect(403);
+
+      expect(response.body).toEqual({ success: false, message: "Forbidden" });
+      expect(authEdge.getUser).toHaveBeenCalledExactlyOnceWith(bearer);
+      expectNoSourceReads(sources);
+    },
+  );
+
+  it.each(["admin email missing", "auth service unconfigured"])(
+    "fails closed when %s without contacting Auth or reading sources",
+    async (condition) => {
+      if (condition === "admin email missing") vi.stubEnv("ADMIN_EMAIL", " ");
+      else authEdge.configured.mockReturnValue(false);
+      const { app, sources } = guardedApp();
+      const response = await request(app)
+        .get(FOUNDER_COMMAND_CENTER_API_PATH)
+        .set("Authorization", "Bearer synthetic-command-center-session")
+        .expect(503);
+
+      expect(response.body).toEqual({ success: false, message: "Admin access not configured" });
+      expect(authEdge.getUser).not.toHaveBeenCalled();
+      expectNoSourceReads(sources);
+    },
+  );
+
+  it.each([
+    ["missing user", { data: { user: null }, error: null }],
+    ["missing data", { data: null, error: null }],
+    ["rejected admin session", { data: { user: { email: allowedEmail } }, error: { message: "private auth failure" } }],
+  ])("fails closed on %s without reading any projection", async (_label, reply) => {
+    authEdge.getUser.mockResolvedValue(reply);
+    const { app, sources } = guardedApp();
+    const response = await request(app)
+      .get(FOUNDER_COMMAND_CENTER_API_PATH)
+      .set("Authorization", "Bearer synthetic-command-center-session")
+      .expect(401);
+
+    expect(response.body).toEqual({ success: false, message: "Unauthorized" });
+    expect(authEdge.getUser).toHaveBeenCalledOnce();
+    expectNoSourceReads(sources);
+  });
+
+  it("fails closed when Auth throws, without returning provider details or reading sources", async () => {
+    authEdge.getUser.mockRejectedValue(new Error("synthetic provider outage"));
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { app, sources } = guardedApp();
+    const response = await request(app)
+      .get(FOUNDER_COMMAND_CENTER_API_PATH)
+      .set("Authorization", "Bearer synthetic-command-center-session")
+      .expect(401);
+
+    expect(response.body).toEqual({ success: false, message: "Unauthorized" });
+    expectNoSourceReads(sources);
+  });
+
+  it.each([
+    ["recovery", ["otp"]],
+    ["mixed recovery/password", [{ method: "recovery" }, { method: "password" }]],
+    ["second-factor only", ["mfa/totp"]],
+  ])("denies the allowed admin's %s session before reading sources", async (_label, amr) => {
+    authEdge.getUser.mockResolvedValue({ data: { user: { email: allowedEmail } }, error: null });
+    const { app, sources } = guardedApp();
+    const bearer = syntheticClaims({ email: allowedEmail, amr });
+    const response = await request(app)
+      .get(FOUNDER_COMMAND_CENTER_API_PATH)
+      .set("Authorization", `Bearer ${bearer}`)
+      .expect(403);
+
+    expect(response.body.code).toBe("recovery_session");
+    expect(authEdge.getUser).toHaveBeenCalledExactlyOnceWith(bearer);
+    expectNoSourceReads(sources);
+  });
+
+  it("reads all thirteen sources only for the configured, Auth-verified ordinary admin session", async () => {
+    vi.stubEnv("ADMIN_EMAIL", `  ${allowedEmail.toUpperCase()}  `);
+    const verifiedEmail = allowedEmail.toUpperCase();
+    authEdge.getUser.mockResolvedValue({
+      data: { user: { id: "synthetic-founder", email: verifiedEmail, role: "authenticated" } },
+      error: null,
+    });
+    const { app, sources } = guardedApp();
+    const bearer = syntheticClaims({ amr: ["password", "mfa/totp"] });
+    const response = await request(app)
+      .get(FOUNDER_COMMAND_CENTER_API_PATH)
+      .set("Authorization", `Bearer ${bearer}`)
+      .expect(200);
+
+    expect(authEdge.getUser).toHaveBeenCalledExactlyOnceWith(bearer);
+    expect(isFounderCommandCenterResponse(response.body)).toBe(true);
+    expect(response.body.readOnly).toBe(true);
+    expect(response.body.cards.map((card: { area: string }) => card.area)).toEqual(FOUNDER_COMMAND_CENTER_AREA_IDS);
+    for (const source of Object.values(sources)) {
+      expect(source).toHaveBeenCalledOnce();
+      expect(source.mock.calls[0][0].request).toMatchObject({ adminEmail: verifiedEmail });
+    }
+    expect(authEdge.getAdmin).not.toHaveBeenCalled();
+    expect(response.text).not.toContain(verifiedEmail);
+    expect(response.text).not.toContain(bearer);
   });
 });

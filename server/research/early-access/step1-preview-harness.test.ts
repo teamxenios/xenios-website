@@ -127,6 +127,14 @@ describe("Step 1 real-browser preview composition", () => {
     ).set("Cookie", cookieHeader!);
     expect(fullCatalog.status).toBe(200);
     expect(fullCatalog.body.items).toHaveLength(4);
+    expect(fullCatalog.body.items[0]).toMatchObject({
+      variantId: "qa-research-direct-5mg",
+      sourceSelection: {
+        family: "research_peptides_materials",
+        slug: "qa-research-direct",
+        variantId: "mo-qa-research-direct-5mg",
+      },
+    });
     expect(fullCatalog.body.items.map((item: { actionLabel: string }) => item.actionLabel)).toEqual([
       "Add to order request",
       "Request Order",
@@ -148,7 +156,7 @@ describe("Step 1 real-browser preview composition", () => {
     ).set("Cookie", cookieHeader!);
     expect(searched.body.total).toBe(2);
     const intersection = await browser.get(
-      "/api/research/early-access/assisted-orders/catalog?family=Research&action=request_order",
+      "/api/research/early-access/assisted-orders/catalog?family=research_peptides_materials&action=request_order",
     ).set("Cookie", cookieHeader!);
     expect(intersection.body.total).toBe(1);
     expect(intersection.body.items[0].productName).toBe("QA Research Request");

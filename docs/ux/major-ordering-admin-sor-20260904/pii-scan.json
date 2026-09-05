@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 4,
+  "kind": "evidence-pii-scan",
+  "candidateSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
+  "scannedAtUtc": "2026-09-05T01:43:31.581Z",
+  "evidenceRoot": ".",
+  "textFilesScanned": 2,
+  "textArtifacts": [
+    "founder-command-center-browser-results.json",
+    "order-entry-hub-browser-results.json"
+  ],
+  "fileInventory": [
+    {
+      "path": "founder-command-center-browser-results.json",
+      "bytes": 4565,
+      "sha256": "b50a44694643d6245214e5b9fdbf273fcf2499f1d96a0aa01c12b2439e235883"
+    },
+    {
+      "path": "order-entry-hub-browser-results.json",
+      "bytes": 3245,
+      "sha256": "296a836bb95ea52283b623a71af318f8a3127b5fb669a7bc8ea661155efd3d49"
+    }
+  ],
+  "inventorySha256": "8229dcb5a4ed836989cfe97cfbe9c772f5b16463c8450f4c734906aced720f8e",
+  "scanCoverage": {
+    "result": "COMPLETE",
+    "classifiedFiles": 2,
+    "totalFiles": 2,
+    "textFiles": 2,
+    "manualImageFiles": 0,
+    "unscannableFiles": 0
+  },
+  "summary": {
+    "total": 0,
+    "byId": {},
+    "result": "CLEAN"
+  },
+  "findings": [],
+  "screenshots": [],
+  "unscannableArtifacts": [],
+  "screenshotReview": "MANUAL_PENDING: validated PNG pixels cannot be text-scanned; each capture's *.text.txt page text was scanned instead."
+}

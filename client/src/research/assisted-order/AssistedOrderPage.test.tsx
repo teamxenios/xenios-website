@@ -30,6 +30,7 @@ import { AssistedOrderConfirmationPage } from "./AssistedOrderConfirmationPage";
 import { AssistedOrderPage } from "./AssistedOrderPage";
 import { AssistedOrderStatusPage } from "./AssistedOrderStatusPage";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
+import { orderEntryIntentFromSearch } from "../early-access/orderEntryIntent";
 import {
   assistedOrderReceiptKey,
   storeAssistedOrderReceipt,
@@ -450,6 +451,50 @@ describe("AssistedOrderPage", () => {
     expect(quantity.step).toBe("10");
     click(card.querySelector('button[aria-label="Increase quantity"]'));
     expect(quantity.value).toBe("20");
+  });
+
+  it("prefills exact server-mapped intent only after the customer chooses Add", async () => {
+    const entryIntent = orderEntryIntentFromSearch("?family=research_peptides_materials&slug=alpha&variant=mo-alpha&qty=100&intent=assisted_order")!;
+    const mapped = { ...directRuoItem, sourceSelection: { family: entryIntent.family, slug: entryIntent.slug, variantId: entryIntent.variantId } };
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([mapped]));
+    render({ embedded: true, entryIntent, entryResolution: { kind: "matched", item: mapped, quantity: 100 } });
+    await settle();
+    expect(byTestId<HTMLInputElement>("order-filter-search")?.value).toBe(mapped.productName);
+    expect(byTestId(`order-card-requested-${mapped.variantId}`)?.textContent).toContain("Requested quantity: 100");
+    expect(byTestId(`order-card-${mapped.variantId}`)?.querySelector('input[type="number"]')).toBeNull();
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+    click(byTestId(`order-card-add-${mapped.variantId}`));
+    expect(byTestId(`order-card-${mapped.variantId}`)?.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe("100");
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
+
+  it.each(["missing_mapping", "changed_variant", "lower_limit", "wrong_increment", "family_mismatch", "stale_quantity"] as const)("never prefills a %s current option from an earlier match", async (reason) => {
+    const entryIntent = orderEntryIntentFromSearch("?family=research_peptides_materials&slug=alpha&variant=mo-alpha&qty=7&intent=buy_now")!;
+    const mapped = { ...directRuoItem, sourceSelection: { family: entryIntent.family, slug: entryIntent.slug, variantId: entryIntent.variantId } };
+    const current = reason === "missing_mapping" ? { ...mapped, sourceSelection: undefined }
+      : reason === "changed_variant" ? { ...mapped, variantId: "different-pc-variant" }
+        : reason === "lower_limit" ? { ...mapped, maximumQuantity: 5 }
+          : reason === "wrong_increment" ? { ...mapped, quantityIncrement: 4 }
+            : reason === "family_mismatch" ? { ...mapped, family: "clinical_formulations_503a" } : mapped;
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([current]));
+    render({ embedded: true, entryIntent, entryResolution: { kind: "matched", item: mapped, quantity: reason === "stale_quantity" ? 2 : 7 } });
+    await settle();
+    expect(byTestId(`order-card-requested-${current.variantId}`)).toBeNull();
+    click(byTestId(`order-card-add-${current.variantId}`));
+    expect(byTestId(`order-card-${current.variantId}`)?.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe("1");
+  });
+
+  it("resolves standalone retained intent before narrowing the catalog, without auto-adding", async () => {
+    window.history.replaceState({}, "", "/research/early-access/order-request?family=research_peptides_materials&slug=alpha&variant=mo-alpha&qty=7&intent=request_quote");
+    const mapped = { ...pricePendingItem, family: "research_peptides_materials", sourceSelection: { family: "research_peptides_materials", slug: "alpha", variantId: "mo-alpha" } };
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([mapped]));
+    render();
+    await settle();
+    await settle();
+    expect(byTestId("order-entry-intent-notice")?.textContent).toContain(mapped.productName);
+    expect(byTestId(`order-card-requested-${mapped.variantId}`)?.textContent).toContain("Requested quantity: 7");
+    expect(byTestId(`order-card-${mapped.variantId}`)?.querySelector('input[type="number"]')).toBeNull();
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
   });
 
   it("marks the current wizard step and disables unavailable future steps", async () => {

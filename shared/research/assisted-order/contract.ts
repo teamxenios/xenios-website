@@ -268,6 +268,18 @@ export type AssistedOrderStatusView = Readonly<{
 export type AssistedOrderCatalogItem = Readonly<{
   productId: string;
   variantId: string;
+  /**
+   * Read-only provenance for a selection arriving from the public/member
+   * catalog. These are Master Offering identifiers, not Product Control
+   * order identities. Only the canonical catalog projection supplies them;
+   * they never establish price, eligibility, or a submitted order line.
+   * Older and non-master catalog sources may omit this mapping.
+   */
+  sourceSelection?: Readonly<{
+    family: string;
+    slug: string;
+    variantId: string;
+  }>;
   productName: string;
   family: string;
   channel: string;

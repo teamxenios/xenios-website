@@ -555,12 +555,12 @@
       "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
       "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority.",
+      "nextExactAction": "Resolve canonical request and shipment-event read-authority gaps before the normalized customer timeline; preserve this hub's intent-only role. Local browser evidence is not production certification.",
       "evidence": {
         "source": [
           "shared/research/order-entry.ts",
@@ -573,7 +573,9 @@
           "client/src/research/pages/OrderEntryHub.test.tsx",
           "client/src/research/routes-parity.test.ts"
         ],
-        "browser": [],
+        "browser": [
+          "docs/ux/major-ordering-admin-sor-20260904/order-entry-hub-browser-results.json"
+        ],
         "production": []
       },
       "verification": {
@@ -601,12 +603,12 @@
       "dataSource": "Isolated read projections over canonical applications, bounded Care classification, assisted orders, payment review, exceptions, products, required inputs, referral flags, support, notification outbox, and last-verified release evidence; unavailable authorities remain explicit.",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
       "ownerTaskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority.",
+      "nextExactAction": "Preserve the read-only projection while extending canonical workflow sources. Local synthetic auth/unavailable-state browser evidence is not production admin/API certification.",
       "evidence": {
         "source": [
           "shared/research/founder-command-center.ts",
@@ -625,7 +627,9 @@
           "client/src/research/ui/admin-shell.test.tsx",
           "server/release-control-plane.test.ts"
         ],
-        "browser": [],
+        "browser": [
+          "docs/ux/major-ordering-admin-sor-20260904/founder-command-center-browser-results.json"
+        ],
         "production": []
       },
       "verification": {

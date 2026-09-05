@@ -118,6 +118,39 @@ function callbacks(
 }
 
 describe("assisted-order production catalog mapping", () => {
+  it("carries exact Master Offering provenance across a different Product Control identity", async () => {
+    const source = callbacks([offering()], new Map([["var_1", priced(5000)]]));
+    const page = await source.list(viewer, { page: 1, pageSize: 24 });
+    const resolved = await source.resolve(viewer, "pc-prod-1", "pc-var-1");
+    const expected = {
+      family: "research_peptides_materials",
+      slug: "bpc-157",
+      variantId: "var_1",
+    };
+    expect(page.items[0].sourceSelection).toEqual(expected);
+    expect(resolved?.sourceSelection).toEqual(expected);
+    expect(resolved?.variantId).toBe("pc-var-1");
+    expect(resolved?.unitPriceCents).toBe(5000);
+    // Provenance is not a substitute for the order's canonical identity.
+    expect(await source.resolve(viewer, "off_1", "var_1")).toBeNull();
+  });
+
+  it("retains source provenance without upgrading unbound or Care purchase authority", async () => {
+    const unbound = await callbacks([offering()], new Map([["var_1", priced(5000)]]), false)
+      .list(viewer, { page: 1, pageSize: 24 });
+    expect(unbound.items[0].sourceSelection?.variantId).toBe("var_1");
+    expect(unbound.items[0].variantId).toBe("unbound:var_1");
+    expect(unbound.items[0].unitPriceCents).toBeNull();
+    expect(unbound.items[0].workflowMode).toBe("request_pricing");
+
+    const care = await callbacks(
+      [offering({ family: "clinical_formulations_503a", displayState: "care_pathway" })],
+      new Map([["var_1", priced(5000)]]),
+    ).list(viewer, { page: 1, pageSize: 24 });
+    expect(care.items[0].sourceSelection?.family).toBe("clinical_formulations_503a");
+    expect(care.items[0].workflowMode).toBe("provider_request");
+  });
+
   it("projects a priced bound research variant as direct-eligible with the exact price", async () => {
     const page = await callbacks([offering()], new Map([["var_1", priced(5000)]])).list(viewer, { page: 1, pageSize: 24 });
     expect(page.items).toHaveLength(1);

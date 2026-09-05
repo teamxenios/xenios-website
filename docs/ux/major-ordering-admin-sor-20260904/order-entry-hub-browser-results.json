@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "order-entry-hub-responsive-browser-evidence",
+  "recordedAtUtc": "2026-09-05T01:42:26Z",
+  "candidateSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
+  "continuityHeadAtExercise": "c1d92578bcd9ea425079ca7c2e16cd18cc5db4f7",
+  "bundleIndexSha256": "b50cf42013275d67642640efa8e997c528b43d5a014736285ce0a7cbc94becd1",
+  "environment": {
+    "origin": "http://localhost:5221",
+    "route": "/research/order",
+    "server": "scripts/preview-account-portal.ts",
+    "browser": "Codex in-app browser through computer-use",
+    "content": "Actual production SPA build served by a local synthetic preview",
+    "productionCertification": false
+  },
+  "assertionsAtEveryWidth": {
+    "mainCount": 1,
+    "h1Count": 1,
+    "h1": "How would you like to begin?",
+    "pathwayArticleCount": 7,
+    "mainLinkCount": 8,
+    "regionCount": 5,
+    "horizontalOverflow": false,
+    "clippedMainLinks": 0,
+    "expectedHrefsPresent": true,
+    "visibleTextLength": 4507
+  },
+  "matrix": [
+    { "viewportWidth": 1440, "clientWidth": 1425, "scrollWidth": 1425, "pass": true },
+    { "viewportWidth": 1366, "clientWidth": 1351, "scrollWidth": 1351, "pass": true },
+    { "viewportWidth": 1024, "clientWidth": 1009, "scrollWidth": 1009, "pass": true },
+    { "viewportWidth": 768, "clientWidth": 753, "scrollWidth": 753, "pass": true },
+    { "viewportWidth": 430, "clientWidth": 415, "scrollWidth": 415, "pass": true },
+    { "viewportWidth": 390, "clientWidth": 375, "scrollWidth": 375, "pass": true },
+    { "viewportWidth": 375, "clientWidth": 360, "scrollWidth": 360, "pass": true },
+    { "viewportWidth": 360, "clientWidth": 345, "scrollWidth": 345, "pass": true },
+    { "viewportWidth": 320, "clientWidth": 305, "scrollWidth": 305, "pass": true }
+  ],
+  "mobileActionsAt320": [
+    { "label": "Open Quick Early Access", "href": "/research/early-access", "height": 44 },
+    { "label": "Sign in and continue", "href": "/research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog", "height": 44 },
+    { "label": "Sign in to view orders", "href": "/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders", "height": 44 },
+    { "label": "Resume in this browser", "href": "/research/early-access", "height": 44 },
+    { "label": "Start an assisted request", "href": "/research/early-access", "height": 44 },
+    { "label": "Explore organization access", "href": "/research/organizations", "height": 61.33333587646485 },
+    { "label": "Start with Xenios Care", "href": "/care/schedule", "height": 44 },
+    { "label": "Contact Xenios Research", "href": "/research/contact", "height": 44 }
+  ],
+  "visualReview": "320px screenshot inspected in the task: heading and pathway content wrap legibly, with no overlap or horizontal clipping. Pixel capture was not saved as a repository artifact.",
+  "limitations": [
+    "This proves the local rendered hub and link destinations, not each destination's complete customer journey.",
+    "Referral, product/variant/quantity intent and hostile returnTo handling are covered by focused shared and component tests; the browser matrix used a plain route URL.",
+    "No production route, real identity, payment, Care action, or delivered communication was exercised."
+  ],
+  "pass": true
+}

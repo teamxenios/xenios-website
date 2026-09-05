@@ -45,6 +45,9 @@ import {
 import { refreshSelectionSnapshots } from "./selection-refresh";
 import { storeAssistedOrderReceipt } from "./storage";
 import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
+import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
+import { matchesOrderEntryIntent, orderEntryIntentFromSearch, orderEntryQuantityAllowed, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
+import type { StorefrontIntent } from "../storefront/entry-intent";
 import "./assisted-order.css";
 
 // The full acknowledgment surface, published by the server. The wizard never
@@ -164,6 +167,7 @@ function ProductCard(props: {
   onAdd: (item: AssistedOrderCatalogItem) => void;
   onQuantity: (item: AssistedOrderCatalogItem, quantity: number) => void;
   onRemove: (item: AssistedOrderCatalogItem) => void;
+  requestedQuantity?: number;
 }) {
   const { item, selection, onAdd, onQuantity, onRemove } = props;
   const selectable = selectableInResearchRequest(item);
@@ -262,6 +266,8 @@ function ProductCard(props: {
           <button className="xenios-order-link" type="button" onClick={() => onRemove(item)}>Remove</button>
         </div>
       ) : (
+        <>
+        {props.requestedQuantity !== undefined ? <p className="xenios-order-notice" data-testid={`order-card-requested-${item.variantId}`}>Requested quantity: {props.requestedQuantity}. Review this option before adding it.</p> : null}
         <button
           className="xenios-order-button"
           type="button"
@@ -270,6 +276,7 @@ function ProductCard(props: {
         >
           {item.actionLabel}
         </button>
+        </>
       )}
     </article>
   );
@@ -279,11 +286,19 @@ export function AssistedOrderPage({
   embedded = false,
   continuationEnabled = true,
   onStepChange,
+  entryIntent: suppliedEntryIntent,
+  entryResolution,
 }: Readonly<{
   embedded?: boolean;
   continuationEnabled?: boolean;
   onStepChange?: (step: AssistedOrderWizardStep) => void;
+  entryIntent?: StorefrontIntent | null;
+  entryResolution?: OrderEntryIntentResolution | null;
 }> = {}) {
+  const entryIntent = suppliedEntryIntent ?? orderEntryIntentFromSearch(typeof window === "undefined" ? "" : window.location.search);
+  const [localEntryResolution, setLocalEntryResolution] = useState<OrderEntryIntentResolution | null>(null);
+  const resolvedEntry = embedded ? entryResolution : localEntryResolution;
+  const seededEntry = useRef<string | null>(null);
   // A draft persisted before a session bounce restores the basket and the
   // idempotency key, so the resumed submission replays as the SAME request.
   // Contact details are never persisted, so a restored wizard can resume at
@@ -332,6 +347,17 @@ export function AssistedOrderPage({
   const [notice, setNotice] = useState<string | null>(null);
   const refreshedDraft = useRef(false);
   const [, navigate] = useLocation();
+
+  useEffect(() => {
+    if (!entryIntent || entryIntent.action === "CARE" || resolvedEntry?.kind !== "matched" ||
+      resolvedEntry.quantity !== entryIntent.quantity) return;
+    const key = JSON.stringify(entryIntent);
+    if (seededEntry.current === key || !matchesOrderEntryIntent(resolvedEntry.item, entryIntent)) return;
+    seededEntry.current = key;
+    setSearch(resolvedEntry.item.productName);
+    setFamily(entryIntent.family);
+    setPage(1);
+  }, [entryIntent, resolvedEntry]);
 
   useEffect(() => {
     onStepChange?.(step);
@@ -546,9 +572,19 @@ export function AssistedOrderPage({
     setContact((previous) => ({ ...previous, [key]: value }));
   };
 
+  const requestedQuantityFor = (item: AssistedOrderCatalogItem): number | undefined => {
+    if (!entryIntent || entryIntent.action === "CARE" || resolvedEntry?.kind !== "matched" ||
+      resolvedEntry.quantity !== entryIntent.quantity || item.family !== entryIntent.family ||
+      !matchesOrderEntryIntent(item, entryIntent) ||
+      item.productId !== resolvedEntry.item.productId || item.variantId !== resolvedEntry.item.variantId ||
+      !selectableInResearchRequest(item) || !orderEntryQuantityAllowed(item, entryIntent.quantity) ||
+      catalog?.items.filter((candidate) => matchesOrderEntryIntent(candidate, entryIntent)).length !== 1) return undefined;
+    return entryIntent.quantity;
+  };
+
   const addItem = (item: AssistedOrderCatalogItem) => {
     if (!selectableInResearchRequest(item)) return;
-    setSelections((current) => addOrUpdateSelection(current, item, item.minimumQuantity));
+    setSelections((current) => addOrUpdateSelection(current, item, requestedQuantityFor(item) ?? item.minimumQuantity));
   };
 
   const setQuantity = (item: AssistedOrderCatalogItem, quantity: number) => {
@@ -776,6 +812,8 @@ export function AssistedOrderPage({
         </p>
       </header>
 
+      {!embedded && entryIntent ? <OrderEntryIntentNotice intent={entryIntent} enabled={config.kind === "ready"} onResolved={setLocalEntryResolution} /> : null}
+
       {embedded ? null : (
         <nav className="xenios-order-steps" aria-label="Order request progress">
           {(["products", "contact", "review"] as const).map((value) => (
@@ -881,7 +919,7 @@ export function AssistedOrderPage({
                   <div className="xenios-order-cards">
                     {catalog.items.map((item) => {
                       const selection = selections.get(catalogItemKey(item));
-                      return <ProductCard key={catalogItemKey(item)} item={item} selection={selection} onAdd={addItem} onQuantity={setQuantity} onRemove={removeItem} />;
+                      return <ProductCard key={catalogItemKey(item)} item={item} selection={selection} requestedQuantity={requestedQuantityFor(item)} onAdd={addItem} onQuantity={setQuantity} onRemove={removeItem} />;
                     })}
                   </div>
                   {catalog.total === 0 ? (

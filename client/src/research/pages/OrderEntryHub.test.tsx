@@ -235,6 +235,25 @@ describe("OrderEntryHub", () => {
     expect(href("resume_or_track")).not.toMatch(/SECRET|email/i);
   });
 
+  it.each([7, 51, 100])("preserves exact selection and quantity %s through all three entry paths", async (quantity) => {
+    const search = `?family=research_vials&slug=alpha&variant=mov_alpha&qty=${quantity}&intent=assisted_order`;
+    const memberPath = `/research/member/catalog/research_vials/alpha?variant=mov_alpha&qty=${quantity}&intent=assisted_order`;
+    for (const requested of [search, `?returnTo=${encodeURIComponent(memberPath)}`]) {
+      await renderPage({}, requested);
+      expect(href("quick_early_access")).toBe(`/research/early-access${search}`);
+      expect(href("assisted_or_volume")).toBe(`/research/early-access${search}`);
+      expect(returnTo("member_account")).toBe(memberPath);
+    }
+  });
+
+  it("routes carried Care selections to Care without Research preselection", async () => {
+    await renderPage({}, "?family=clinical_formulations_503a&slug=clinical&variant=mov_care&qty=1&intent=care");
+    for (const mode of ["quick_early_access", "assisted_or_volume", "member_account"]) {
+      expect(href(mode)).toBe("/care/schedule");
+      expect(action(mode).textContent).toBe("Continue through Xenios Care");
+    }
+  });
+
   it.each([
     "?returnTo=https%3A%2F%2Foutside.invalid%2Fresearch%2Fmember%2Fcatalog",
     "?returnTo=%2Fadmin%2Fresearch%2Forders",
@@ -242,10 +261,15 @@ describe("OrderEntryHub", () => {
     "?returnTo=%2Fresearch%2Fmember%2Fcatalog&returnTo=%2Fresearch%2Faccount%2Forders",
     "?family=research_vials&slug=research-vials-bpc-157&variant=mov_v1&qty=2&intent=buy_now&token=SECRET",
     "?family=research_vials&slug=research-vials-bpc-157&variant=mov_v1&qty=2&intent=buy_now&ref=PARTNER",
+    "?family=research_vials&slug=alpha&variant=mov_v1&qty=2&intent=toString",
+    "?family=research_vials&slug=alpha&variant=mov_v1&qty=2&intent=constructor",
+    "?family=research_vials&slug=alpha&variant=mov_v1&qty=2&intent=__proto__",
   ])("drops unsafe, mixed, duplicated, or credential-bearing intent: %s", async (search) => {
     await renderPage({}, search);
     expect(returnTo("member_account")).toBe("/research/member/catalog");
     expect(returnTo("resume_or_track")).toBe("/research/account/orders");
+    expect(href("quick_early_access")).toBe("/research/early-access");
+    expect(href("assisted_or_volume")).toBe("/research/early-access");
     for (const link of container!.querySelectorAll("a")) {
       expect(link.getAttribute("href") ?? "").not.toMatch(
         /outside\.invalid|admin\/research|SECRET|PARTNER|[?&]ref=/,
