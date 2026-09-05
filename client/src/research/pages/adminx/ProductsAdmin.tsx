@@ -10,6 +10,7 @@ import type {
 import {
   ResearchDataTable,
   ResearchDrawer,
+  ResearchEmptyState,
   ResearchFilterBar,
   ResearchPagination,
   ResearchSearch,
@@ -25,6 +26,8 @@ import {
 } from "../../adapters/productAdmin";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { ReconciliationReviewContent } from "../../revenue-launch/ReconciliationReviewPanel";
+import { getReconciliationReview } from "../../revenue-launch/reconciliation-review";
 
 const PAGE_SIZE = 20;
 
@@ -111,6 +114,7 @@ function ProductsBody({ token }: { token: string }) {
   const [missingOnly, setMissingOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
+  const [reconciliationOpen, setReconciliationOpen] = useState(false);
   const debounced = useDebounced(search);
   const loader = useCallback(
     (currentToken: string) =>
@@ -292,14 +296,28 @@ function ProductsBody({ token }: { token: string }) {
             Clear filters
           </button>
         </ResearchFilterBar>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => setCreateOpen(true)}
-        >
-          Create product
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            aria-expanded={reconciliationOpen}
+            onClick={() => setReconciliationOpen((open) => !open)}
+          >
+            {reconciliationOpen ? "Hide source reconciliation" : "Review source reconciliation"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setCreateOpen(true)}
+          >
+            Create product
+          </button>
+        </div>
       </div>
+
+      {reconciliationOpen ? (
+        <ReconciliationReviewSection token={token} onClose={() => setReconciliationOpen(false)} />
+      ) : null}
 
       <AdminBoundary
         state={resource.state}
@@ -426,6 +444,61 @@ function ProductsBody({ token }: { token: string }) {
         }}
       />
     </div>
+  );
+}
+
+/**
+ * Read-only launch-source review is opt-in so ordinary Product Control loads
+ * do not imply that a source review is required for every catalog record. The
+ * server owns the projection and all evidence state; this surface only renders
+ * an AVAILABLE response and keeps an unavailable response explicit.
+ */
+function ReconciliationReviewSection({
+  token,
+  onClose,
+}: {
+  token: string;
+  onClose: () => void;
+}) {
+  const loader = useCallback(
+    (currentToken: string) => getReconciliationReview(currentToken),
+    [],
+  );
+  const resource = useAdminResource(token, loader);
+  return (
+    <section className="card min-w-0" aria-label="Source reconciliation review">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="body-l font-700">Source reconciliation review</h2>
+          <p className="body-s text-ink-2 mt-2">
+            Review source mappings and formulation exceptions as read-only evidence. Nothing here approves,
+            activates, publishes, or makes a product purchasable.
+          </p>
+        </div>
+        <button type="button" className="btn btn-ghost" onClick={onClose}>
+          Hide review
+        </button>
+      </div>
+      <div className="mt-5">
+        <AdminBoundary
+          state={resource.state}
+          message={resource.message}
+          deniedCode={resource.deniedCode}
+          onRetry={resource.reload}
+          unavailableTitle="Source reconciliation is not connected."
+          unavailableBody="The server-owned reconciliation projection is not available. No source fact or readiness state is inferred in its absence."
+        >
+          {resource.data?.status === "AVAILABLE" ? (
+            <ReconciliationReviewContent review={resource.data} />
+          ) : (
+            <ResearchEmptyState
+              title="Source reconciliation is unavailable."
+              body="No complete review projection was returned. Existing product and price records remain unchanged."
+            />
+          )}
+        </AdminBoundary>
+      </div>
+    </section>
   );
 }
 

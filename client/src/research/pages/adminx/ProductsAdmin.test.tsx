@@ -28,6 +28,7 @@ vi.mock("./auth", async (importOriginal) => ({
 import ProductsAdmin from "./ProductsAdmin";
 
 const BASE = "/api/admin/research/products";
+const RECONCILIATION = "/api/admin/research/products/revenue-launch/reconciliation";
 let host: HTMLDivElement;
 let root: Root;
 let products: AdminProductSummary[];
@@ -118,7 +119,7 @@ function requests(): Array<[string, RequestInit]> {
 function expectReadsOnly() {
   expect(requests().length).toBeGreaterThan(0);
   for (const [url, init] of requests()) {
-    expect(url.startsWith(BASE)).toBe(true);
+    expect(url.startsWith(BASE) || url === RECONCILIATION).toBe(true);
     expect(init).toEqual({
       method: "GET",
       credentials: "same-origin",
@@ -288,6 +289,26 @@ describe("Product Control server-backed review filters", () => {
       /buy now|in stock|ready to buy|complete/i,
     );
     expect(host.textContent).toContain("not direct-buy or stock confirmation");
+    expectReadsOnly();
+  });
+
+  it("loads source reconciliation only when opened and keeps an unavailable projection explicit", async () => {
+    mocks.fetch.mockImplementation(async (url: string) => {
+      if (url === RECONCILIATION) {
+        return response(200, {
+          status: "UNAVAILABLE",
+          schemaVersion: 1,
+          reason: "projection_unavailable",
+        });
+      }
+      return response(200);
+    });
+    await renderPage();
+    expect(requests().map(([url]) => url)).toEqual([BASE]);
+    await click("Review source reconciliation");
+    expect(requests().at(-1)![0]).toBe(RECONCILIATION);
+    expect(host.textContent).toContain("Source reconciliation is unavailable.");
+    expect(host.textContent).toContain("Nothing here approves, activates, publishes");
     expectReadsOnly();
   });
 
