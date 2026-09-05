@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-05T17:10:35-05:00",
+  "generatedAt": "2026-09-05T17:26:21-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-seth-revenue-launch-20260905",
-    "sha": "04bef1861e12e05c1391781bfa9458019e335de6",
-    "tree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
+    "sha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
+    "tree": "22c0901a73c4c6170334d074b3c4d493e087388b",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
@@ -3651,7 +3651,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -3687,7 +3687,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
@@ -3725,7 +3725,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
@@ -3774,7 +3774,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
@@ -3812,7 +3812,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
@@ -3849,7 +3849,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -3887,7 +3887,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
@@ -3924,7 +3924,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
@@ -3961,7 +3961,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
@@ -3996,7 +3996,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4031,7 +4031,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4066,7 +4066,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
@@ -4101,7 +4101,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
@@ -4135,7 +4135,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4177,7 +4177,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "currentSourceSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",

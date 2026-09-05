@@ -7,9 +7,9 @@
 ## Exact candidate
 
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
-- Runtime candidate SHA: `04bef1861e12e05c1391781bfa9458019e335de6`
-- Runtime candidate tree: `5b196d821b5103b2a6d64894292d8ebce9beb2fc`
-- The runtime candidate is pushed; `b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7` and later `4af1141cbaf23768a0ba6f227a712ee21a5e33dd` add only continuity/state and handoff records. The records checkpoint before this handoff update is `4af1141cbaf23768a0ba6f227a712ee21a5e33dd` (tree `240b2501295b2703967294b99af9ff0d6c875653`).
+- Runtime candidate SHA: `f8804aa9fd48e19492b2b1ce2dab20bba54c741e`
+- Runtime candidate tree: `5b1af342ccab698a58c25513694e992646234dc8`
+- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, and `0c7ef94` add only QA/state/system-of-record records; the records checkpoint before this handoff update is `024e19aba893fd8465190bf66eebd0ffa1729f18` (tree `22c0901a73c4c6170334d074b3c4d493e087388b`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
@@ -20,6 +20,7 @@
 - Partner lifecycle operations (`prepare`, reviewed clearances, reviewed agreements, reviewed training, certify, activate, suspend, terminate, reinstate) with exact snapshots, idempotency, append-only evidence, and no fabricated proof. Agreement/training forms require the timestamp from the reviewed record.
 - Partner lifecycle review panel mounted in the admin diagnosis flow and source-truthful partner onboarding/training surfaces.
 - Canonical product price-version review and readiness filters in existing Product Control. This is review tooling; it does not activate prices or create a new pricing authority.
+- Server-owned reconciliation review adapter and deferred read-only presentation for formulation and identity exceptions; it adds no route or authority.
 
 ## Validation evidence
 
@@ -34,6 +35,7 @@
 - Approved-customer PGlite rehearsal: **35 checks**, PASS.
 - Partner-lifecycle PGlite rehearsal: **57 checks**, PASS.
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
+- Reconciliation adapter and presentation tests: **102/102**, PASS; build re-run after integration, PASS.
 - Broad repository suite result: **866 passed files, 7 failed files, 5 skipped; 13,472 passed tests, 12 failed, 59 skipped**. Failures were: the stale protected-seam hash test; the member-session wall's old expectation that `/api/research/partner/me` is unlisted; a stale sponsored-B2B SQL assertion; the old paid activation e2e; three legacy commerce partner-surface expectations; four disabled partner-read production-wiring expectations; and the portal route coverage assertion that omits the admitted `/api/research/partner/me` path. These remain explicit full-suite blockers and are not represented as a passing release gate.
 
 ## Production truth and blockers

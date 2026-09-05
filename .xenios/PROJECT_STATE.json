@@ -54,7 +54,7 @@
     "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority.",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "4af1141cbaf23768a0ba6f227a712ee21a5e33dd",
+    "latestEngineeringCheckpointSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -93,16 +93,17 @@
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
-      "candidateSha": "04bef1861e12e05c1391781bfa9458019e335de6",
-      "candidateTree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
-      "recordsTipSha": "4af1141cbaf23768a0ba6f227a712ee21a5e33dd",
-      "recordsTipTree": "240b2501295b2703967294b99af9ff0d6c875653",
+      "candidateSha": "f8804aa9fd48e19492b2b1ce2dab20bba54c741e",
+      "candidateTree": "5b1af342ccab698a58c25513694e992646234dc8",
+      "recordsTipSha": "024e19aba893fd8465190bf66eebd0ffa1729f18",
+      "recordsTipTree": "22c0901a73c4c6170334d074b3c4d493e087388b",
       "integratedSlices": [
         "d65bfe7 approved customer access without paid memberships",
         "d46cb69 audited partner lifecycle backend",
         "e79c65c recorded partner evidence timestamps",
         "bd747b1 canonical product price review UI",
-        "04bef18 route inventory regression baseline"
+        "04bef18 route inventory regression baseline",
+        "f8804aa server-owned reconciliation adapter and deferred presentation"
       ],
       "focusedTests": "client 208/208; pricing review 94/94; server 58/58",
       "releaseControlPlane": "51 passed, 1 intentional skip",
