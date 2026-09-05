@@ -7,9 +7,9 @@
 ## Exact candidate
 
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
-- Pushed candidate SHA: `b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7`
-- Pushed candidate tree: `57ad797d7d41b8c8bb318da40731e8a805bc87da`
-- Origin was fetched after push and matches this SHA/tree.
+- Runtime candidate SHA: `04bef1861e12e05c1391781bfa9458019e335de6`
+- Runtime candidate tree: `5b196d821b5103b2a6d64894292d8ebce9beb2fc`
+- The runtime candidate is pushed; `b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7` and later `4af1141cbaf23768a0ba6f227a712ee21a5e33dd` add only continuity/state and handoff records. The records checkpoint before this handoff update is `4af1141cbaf23768a0ba6f227a712ee21a5e33dd` (tree `240b2501295b2703967294b99af9ff0d6c875653`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
@@ -34,7 +34,7 @@
 - Approved-customer PGlite rehearsal: **35 checks**, PASS.
 - Partner-lifecycle PGlite rehearsal: **57 checks**, PASS.
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
-- The broad repository suite was not green: it was interrupted after known legacy/integration assumptions failed (old paid activation, commerce fixtures, preview-harness guard, production-wiring assumptions, and one stale core/partner expectation). Those failures are not represented as a passing full-suite gate.
+- Broad repository suite result: **866 passed files, 7 failed files, 5 skipped; 13,472 passed tests, 12 failed, 59 skipped**. Failures were: the stale protected-seam hash test; the member-session wall's old expectation that `/api/research/partner/me` is unlisted; a stale sponsored-B2B SQL assertion; the old paid activation e2e; three legacy commerce partner-surface expectations; four disabled partner-read production-wiring expectations; and the portal route coverage assertion that omits the admitted `/api/research/partner/me` path. These remain explicit full-suite blockers and are not represented as a passing release gate.
 
 ## Production truth and blockers
 

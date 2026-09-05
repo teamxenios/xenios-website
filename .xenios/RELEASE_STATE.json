@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T22:13:09.045710+00:00",
+  "updatedAt": "2026-09-05T22:20:40.632795+00:00",
   "sethRevenueLaunch": {
     "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_VALIDATED_NO_PRODUCTION_AUTHORITY",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
@@ -47,7 +47,7 @@
     "renderResumeRead": "2026-09-05 resume: same live SHA/deploy, autoDeploy off; exact tool observation timestamp not retained",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7",
+    "latestEngineeringCheckpointSha": "4af1141cbaf23768a0ba6f227a712ee21a5e33dd",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -75,8 +75,8 @@
     ],
     "accessPolicy": "admin_approved_customer_no_paid_membership",
     "accessPolicyDecision": "Founder response 2026-09-05: remove memberships",
-    "latestBackendSliceSha": "b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7",
-    "latestBackendSliceTree": "57ad797d7d41b8c8bb318da40731e8a805bc87da",
+    "latestBackendSliceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+    "latestBackendSliceTree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
     "approvedCustomerCandidateLfSha256": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5",
     "partnerLifecycleCandidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
     "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
@@ -85,8 +85,10 @@
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
-      "candidateSha": "b267ec7dde3b314403b7cf0ea0e69e7a1bca17d7",
-      "candidateTree": "57ad797d7d41b8c8bb318da40731e8a805bc87da",
+      "candidateSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "candidateTree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
+      "recordsTipSha": "4af1141cbaf23768a0ba6f227a712ee21a5e33dd",
+      "recordsTipTree": "240b2501295b2703967294b99af9ff0d6c875653",
       "integratedSlices": [
         "d65bfe7 approved customer access without paid memberships",
         "d46cb69 audited partner lifecycle backend",
@@ -103,6 +105,7 @@
       "approvedCustomerRehearsal": "PASS 35 checks",
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
+      "fullSuite": "866 passed files, 7 failed files, 5 skipped; 13472 passed tests, 12 failed, 59 skipped",
       "productionMutated": false,
       "productionAuthoritiesPresent": false,
       "candidateMigrationsApplied": false
