@@ -1382,7 +1382,9 @@
         "client/src/research/adapters/partner.test.ts",
         "client/src/research/lib/api.ts",
         "client/src/research/lib/api.test.ts",
-        "scripts/preview-account-portal.ts"
+        "scripts/preview-account-portal.ts",
+        "server/research/customer-account/account-portal-preview.guard.test.ts",
+        "client/src/research/account-portal/views/account-extension.test.tsx"
       ],
       "dependsOn": [],
       "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",

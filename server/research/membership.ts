@@ -3,6 +3,8 @@ import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
+import { registerAccessInspectionApi } from "./access-admin";
+import { createAccessInspectionDependencies } from "./access-admin-production";
 import { sessionSecretOk } from "./index";
 import { linkApplicationToAttribution, markAttributionApproved, qualifyReferralForMembershipActivation } from "./referrals";
 import { rateLimitHit, requestIp } from "./rate-limit";
@@ -286,6 +288,7 @@ function statusView(row: ApplicationRow, memberVisibleNote: string | null): Appl
 }
 
 export function registerMembershipApi(app: Express) {
+  registerAccessInspectionApi(app, createAccessInspectionDependencies(), requireSupabaseAdmin);
   // Fail closed: in production without RESEARCH_SESSION_SECRET, no signed
   // artifact can be issued or verified, so the whole membership API refuses.
   app.use("/api/research/applications", (_req, res, next) => {
