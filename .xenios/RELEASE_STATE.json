@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T18:46:41.858137+00:00",
+  "updatedAt": "2026-09-05T21:55:00.000000+00:00",
   "sethRevenueLaunch": {
     "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_RELEASE_CANDIDATE",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
@@ -47,7 +47,7 @@
     "renderResumeRead": "2026-09-05 resume: same live SHA/deploy, autoDeploy off; exact tool observation timestamp not retained",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "59dd820750e4fc52f7718f6c6350dcadeb4e8cc7",
+    "latestEngineeringCheckpointSha": "5b1aedb4963d23e6b561f606f86a942e5e32eb8c",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -74,7 +74,16 @@
       "cloud expansion"
     ],
     "accessPolicy": "admin_approved_customer_no_paid_membership",
-    "accessPolicyDecision": "Founder response 2026-09-05: remove memberships"
+    "accessPolicyDecision": "Founder response 2026-09-05: remove memberships",
+    "latestBackendSliceSha": "5b1aedb4963d23e6b561f606f86a942e5e32eb8c",
+    "latestBackendSliceTree": "0529c369d4245051a65a7d0bcc20935c7f79c4bd",
+    "approvedCustomerCandidateLfSha256": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5",
+    "partnerLifecycleCandidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
+    "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
+    "productionAccountPartnerSchemaReadSha256": "daa4b7fbb775a8363168f44464dbbab3531ec86fd6c158cf5d9d51ad80f1f569",
+    "productionAccountPartnerSchemaObservedAt": "2026-09-05T21:52:55.027685+00:00",
+    "productionAuthoritiesPresent": false,
+    "productionReferralV1AuthoritiesPresent": false
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
