@@ -9,7 +9,7 @@
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
 - Runtime candidate SHA: `f8804aa9fd48e19492b2b1ce2dab20bba54c741e`
 - Runtime candidate tree: `5b1af342ccab698a58c25513694e992646234dc8`
-- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, `8ef1a4a`, and `05e2c0e` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `05e2c0e314d8dbb88ecd3d3142b70004a204f2cb` (tree `5a42d5767451ad690e4ad0f7bb5ebc535de1eaab`).
+- This runtime candidate is pushed. Later commits `0edb5b1`, `024e19a`, `0c7ef94`, `8ef1a4a`, `05e2c0e`, and `3e61213` add only QA/state/system-of-record records; the records checkpoint immediately before this handoff update is `3e6121374b2ac4abcf69ca383e15581198716e02` (tree `c3be3cb76fc3664f78fce3f5b9dbea193165cd43`).
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
 ## Included reusable slices
@@ -41,7 +41,7 @@
 ## Production truth and blockers
 
 - Live service: `srv-d8s9vej7uimc7384dfcg`; live deploy `dep-dad08h740ujc73aprfcg`; live SHA remains `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`; auto-deploy is off.
-- Read-only schema evidence: `docs/revenue-launch/20260905/backend/production-account-partner-schema.json` (observed 2026-09-05T21:52:55.027685+00:00; SHA256 `daa4b7fbb775a8363168f44464dbbab3531ec86fd6c158cf5d9d51ad80f1f569`).
+- Read-only schema evidence: `docs/revenue-launch/20260905/backend/production-account-partner-schema.json` (observed 2026-09-05T22:43:06.5168+00:00; SHA256 `9254b6d9b7e8717c42b23e9752cb2eaccf90d43d9f1812d77eac44990d21cf77`).
 - Canonical production member/partner/notification/attribution tables exist, but the approved-customer authority and partner-lifecycle authority functions are absent. The candidate migrations are unapplied. Referral V1 production authorities are also absent.
 - Production schema still has the legacy member access basis and application-state checks; exact candidate object parity, grants, RLS, and function compatibility require an authorized precheck.
 - Seth's selected email is not ownership proof. Read-only diagnosis found no matching Auth/member/partner record for the selected email; no identity was merged or granted.

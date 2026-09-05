@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T22:38:29.455194+00:00",
+  "updatedAt": "2026-09-05T22:43:06.516800+00:00",
   "sethRevenueLaunch": {
     "state": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_PRODUCTION_AUTHORITY",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -88,15 +88,15 @@
     "approvedCustomerCandidateLfSha256": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5",
     "partnerLifecycleCandidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
     "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
-    "productionAccountPartnerSchemaReadSha256": "daa4b7fbb775a8363168f44464dbbab3531ec86fd6c158cf5d9d51ad80f1f569",
-    "productionAccountPartnerSchemaObservedAt": "2026-09-05T21:52:55.027685+00:00",
+    "productionAccountPartnerSchemaReadSha256": "9254b6d9b7e8717c42b23e9752cb2eaccf90d43d9f1812d77eac44990d21cf77",
+    "productionAccountPartnerSchemaObservedAt": "2026-09-05T22:43:06.5168+00:00",
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
       "candidateSha": "f8804aa9fd48e19492b2b1ce2dab20bba54c741e",
       "candidateTree": "5b1af342ccab698a58c25513694e992646234dc8",
-      "recordsTipSha": "05e2c0e314d8dbb88ecd3d3142b70004a204f2cb",
-      "recordsTipTree": "5a42d5767451ad690e4ad0f7bb5ebc535de1eaab",
+      "recordsTipSha": "3e6121374b2ac4abcf69ca383e15581198716e02",
+      "recordsTipTree": "c3be3cb76fc3664f78fce3f5b9dbea193165cd43",
       "integratedSlices": [
         "d65bfe7 approved customer access without paid memberships",
         "d46cb69 audited partner lifecycle backend",
