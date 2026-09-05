@@ -1,0 +1,186 @@
+{
+  "generatedAt": "2026-09-05T00:18:40.1967984Z",
+  "classification": "local synthetic browser evidence against the actual production client bundle; not a production certification",
+  "source": {
+    "worktree": "C:/Users/sboad/projects/xenios-major-ordering-admin-sor-20260904",
+    "branch": "codex/xenios-major-ordering-admin-sor-20260904",
+    "sourceSha": "72fe632f980d63a3d2222781565b626f4a600b34",
+    "treeSha": "c329049363cf48c96a924f1a4e68d51634f94be6",
+    "bundleIndexSha256": "b50cf42013275d67642640efa8e997c528b43d5a014736285ce0a7cbc94becd1"
+  },
+  "environment": {
+    "origin": "http://localhost:5219",
+    "harness": "scripts/preview-step1-hotfix.ts",
+    "authority": "explicit synthetic in-memory fixtures through the application's real Express registrations and adapters",
+    "productionMutated": false,
+    "realCommunicationsSent": false,
+    "realPaymentAttempted": false,
+    "realCustomerDataUsed": false
+  },
+  "expectedProgressLabels": [
+    "Choose products",
+    "Contact and delivery",
+    "Review and payment",
+    "Confirmation and tracking"
+  ],
+  "widthMatrix": [
+    {
+      "viewportWidth": 1440,
+      "clientWidth": 1425,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 1,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 1366,
+      "clientWidth": 1351,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 1,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 1024,
+      "clientWidth": 1009,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 1,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 768,
+      "clientWidth": 753,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 2,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 430,
+      "clientWidth": 415,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 4,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 390,
+      "clientWidth": 375,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 4,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 375,
+      "clientWidth": 360,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 4,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 360,
+      "clientWidth": 345,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 4,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    },
+    {
+      "viewportWidth": 320,
+      "clientWidth": 305,
+      "earlyAccessStages": [1, 2, 3, 4],
+      "progressListsPerStage": 1,
+      "currentStepsPerStage": 1,
+      "horizontalOverflow": false,
+      "standaloneAssistedOrderProgressRows": 4,
+      "standaloneProgressButtons": 4,
+      "standaloneMinimumTargetPx": 44,
+      "pass": true
+    }
+  ],
+  "semanticChecks": {
+    "exactSharedLabelsAtEveryWidth": true,
+    "oneMainAtEveryEarlyAccessStage": true,
+    "oneProgressListAtEveryEarlyAccessStage": true,
+    "oneAriaCurrentStepAtEveryEarlyAccessStage": true,
+    "currentStageAnnouncementMatchesProjection": true,
+    "embeddedAssistedOrderSuppressesNestedProgress": true,
+    "standaloneFourthStageDisabledUntilConfirmation": true,
+    "invalidReferenceSuppressesProgress": true
+  },
+  "syntheticEndToEnd": {
+    "unlockedPreview": true,
+    "agreementProvenanceDisplayed": "early_access_terms/v1",
+    "agreementAccepted": true,
+    "selectedProduct": "QA Research Direct",
+    "stagesReached": [1, 2, 3, 4],
+    "requiredAcknowledgementsChecked": 5,
+    "assistedOrderSubmittedInMemory": true,
+    "syntheticReferencePrefix": "XRR",
+    "confirmationRenderedAtStage": 4,
+    "serverBackedStatusRenderedAtStage": 4,
+    "externalSystemTouched": false
+  },
+  "negativeChecks": {
+    "route": "/research/early-access/order-request/XRR-INVALID",
+    "heading": "Request status",
+    "invalidOrExpiredAlertShown": true,
+    "progressLists": 0,
+    "currentSteps": 0,
+    "horizontalOverflow": false,
+    "pass": true
+  },
+  "visualInspection": {
+    "width": 320,
+    "screens": [
+      "catalogue top",
+      "confirmation",
+      "standalone assisted-order navigation"
+    ],
+    "issuesFound": []
+  },
+  "limitations": [
+    "The preview cart capability was disabled, so active-cart high-quantity transitions are covered by focused unit and integration tests rather than browser integration.",
+    "The safe fixture held direct-checkout products, so the browser run covered the XRR assisted-request journey, confirmation, and server-backed status but not a successful XEA direct checkout.",
+    "The browser performance resource list was empty; the observed page origin was localhost and no external origin was observed, but this artifact does not claim exhaustive network instrumentation.",
+    "No authenticated production smoke, payment-provider interaction, real email, or real customer data was used."
+  ],
+  "errors": [],
+  "pass": true,
+  "completedAt": "2026-09-05T00:18:40.1967984Z"
+}

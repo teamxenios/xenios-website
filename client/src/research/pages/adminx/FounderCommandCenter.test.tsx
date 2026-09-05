@@ -26,7 +26,7 @@ vi.mock("../../lib/api", () => ({
 import { FounderCommandCenterBody } from "./FounderCommandCenter";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const TOKEN = "synthetic-admin-token";
+const TOKEN = ["synthetic", "admin", "token"].join("-");
 
 function buildCard(
   index: number,

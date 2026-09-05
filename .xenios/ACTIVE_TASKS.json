@@ -1180,6 +1180,8 @@
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
         "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
         "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
@@ -1208,10 +1210,16 @@
         "server/research/early-access/release/release-routes.test.ts",
         "server/research/early-access/routes/agreement-routes.ts",
         "server/research/early-access/routes/agreement-routes.test.ts",
+        "server/research/early-access/persistence/production-deps.ts",
+        "server/research/early-access/persistence/production-deps.test.ts",
+        "server/research/early-access/persistence/hold-rpc-compatibility.test.ts",
+        "server/research/early-access/orders/member-order-history-wiring.test.ts",
         "server/research/policies-data.ts",
         "docs/ux/quick-early-access-v2-20260904/browser-results.json",
         "docs/ux/quick-early-access-v2-20260904/pii-scan.json",
-        "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json"
+        "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json",
+        "docs/ux/quick-early-access-v2-20260904/CHECKPOINT.md",
+        ".xenios/handoffs/*XENIOS-QUICK-EARLY-ACCESS-V2-20260904*"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"

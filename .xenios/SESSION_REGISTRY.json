@@ -359,8 +359,8 @@
       "branch": "codex/xenios-major-ordering-admin-sor-20260904",
       "state": "active",
       "startedAt": "2026-09-04T20:11:27.933Z",
-      "heartbeatAt": "2026-09-04T22:17:55.644Z",
-      "note": "Waves 1-3 committed and pushed; protection gate reconciled at 890a176; Quick Early Access V2 claimed for local-only implementation; production untouched."
+      "heartbeatAt": "2026-09-05T00:17:51.500Z",
+      "note": "Wave 4 browser QA complete; locking candidate metadata and final evidence/validation."
     }
   ]
 }

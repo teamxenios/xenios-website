@@ -1152,7 +1152,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-04T20:11:49.854Z",
-      "heartbeatAt": "2026-09-04T22:17:55.644Z"
+      "heartbeatAt": "2026-09-05T00:17:51.500Z"
     },
     {
       "id": "98e42d76-da4e-444f-b4c3-3e768abc9175",
@@ -1166,6 +1166,8 @@
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.tsx",
         "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
         "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
         "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
         "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
@@ -1194,14 +1196,20 @@
         "server/research/early-access/release/release-routes.test.ts",
         "server/research/early-access/routes/agreement-routes.ts",
         "server/research/early-access/routes/agreement-routes.test.ts",
+        "server/research/early-access/persistence/production-deps.ts",
+        "server/research/early-access/persistence/production-deps.test.ts",
+        "server/research/early-access/persistence/hold-rpc-compatibility.test.ts",
+        "server/research/early-access/orders/member-order-history-wiring.test.ts",
         "server/research/policies-data.ts",
         "docs/ux/quick-early-access-v2-20260904/browser-results.json",
         "docs/ux/quick-early-access-v2-20260904/pii-scan.json",
-        "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json"
+        "docs/ux/quick-early-access-v2-20260904/release-diff-secret-pii-scan.json",
+        "docs/ux/quick-early-access-v2-20260904/CHECKPOINT.md",
+        ".xenios/handoffs/*XENIOS-QUICK-EARLY-ACCESS-V2-20260904*"
       ],
       "state": "active",
       "claimedAt": "2026-09-04T22:17:40.125Z",
-      "heartbeatAt": "2026-09-04T22:17:55.644Z"
+      "heartbeatAt": "2026-09-05T00:17:51.500Z"
     }
   ],
   "rules": [
