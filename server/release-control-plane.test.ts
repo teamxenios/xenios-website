@@ -2049,12 +2049,13 @@ describe("route uniqueness validator", () => {
     // /api/admin/research/command-center. The post-change scanner measurement
     // is therefore 423 registrations across 414 call sites; this records both
     // the inherited +1 drift and Wave 3's intentional +1 without hiding either.
-    // The universal launch adds one explicit approved-customer operation door
-    // and one explicit partner-lifecycle operation door, each mounted behind
-    // the canonical admin guard. The current scanner measurement is therefore
-    // 426 registrations across 417 call sites.
-    expect(result.callSites).toBe(417);
-    expect(result.routes).toHaveLength(426);
+    // The universal launch adds one explicit approved-customer operation door,
+    // one explicit partner-lifecycle operation door and one read-only Product
+    // Control reconciliation door, each mounted behind the canonical admin
+    // guard. The current scanner measurement is therefore 427 registrations
+    // across 418 call sites.
+    expect(result.callSites).toBe(418);
+    expect(result.routes).toHaveLength(427);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
