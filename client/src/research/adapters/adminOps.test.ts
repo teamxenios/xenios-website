@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { inspectApprovedUserAccess, approveCustomerAccess } from "./adminOps";
+import { inspectApprovedUserAccess, approveCustomerAccess, performPartnerOperation } from "./adminOps";
 import type { CustomerApprovalInput } from "@shared/research/approved-customer-access";
 import type { ApprovedUserAccess } from "@shared/research/approved-user-access";
+import type { PartnerOperation } from "@shared/research/partner-lifecycle";
 
 const inspection: ApprovedUserAccess = {
   schemaVersion: 1, observedAt: "2026-09-05T18:00:00.000Z", email: "customer-a@fixture.invalid", identityState: "absent",
@@ -132,5 +133,35 @@ describe("explicit customer approval adapter", () => {
   it("does not infer successful approval from an unavailable or HTML API", async () => {
     stub({}, 200, "text/html");
     expect(await approveCustomerAccess("synthetic-admin", input)).toEqual({ kind: "unavailable" });
+  });
+});
+
+describe("explicit partner lifecycle adapter", () => {
+  const operation: PartnerOperation = {
+    action: "record_clearance", partnerId: "00000000-0000-4000-8000-000000000003",
+    expectedUpdatedAt: "2026-09-05T18:00:00.123456Z", reason: "Reviewed current identity evidence", idempotencyKey: "partner-fixture-request-0001",
+    kind: "identity", decision: "verified", evidenceReference: "review:identity-0001", reviewedEvidence: true,
+  };
+  const success = { ok: true, partnerId: operation.partnerId, memberId: "00000000-0000-4000-8000-000000000002", action: "record_clearance", state: "identity_verification_pending", updatedAt: "2026-09-05T18:00:01Z", replayed: false };
+  it("posts the exact selected snapshot and retains the server result", async () => {
+    const fetch = stub(success);
+    expect(await performPartnerOperation("synthetic-admin", operation, success.memberId)).toEqual({ kind: "ok", data: success });
+    const [path, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(path).toBe("/api/admin/research/partners/operations");
+    expect(init.method).toBe("POST"); expect(init.cache).toBe("no-store");
+    expect(JSON.parse(String(init.body))).toEqual(operation);
+    expect(init.headers).toMatchObject({ Authorization: "Bearer synthetic-admin" });
+  });
+  it("rejects a result bound to another inspected member or incompatible state", async () => {
+    stub({ ...success, memberId: "00000000-0000-4000-8000-000000000099" });
+    expect((await performPartnerOperation("synthetic-admin", operation, success.memberId)).kind).toBe("error");
+    stub({ ...success, state: "terminated" });
+    expect((await performPartnerOperation("synthetic-admin", operation, success.memberId)).kind).toBe("error");
+  });
+  it("preserves durable denials and never sends without an admin token", async () => {
+    const fetch = stub({ ok: false, code: "evidence_conflict" }, 409);
+    expect(await performPartnerOperation("synthetic-admin", operation, success.memberId)).toMatchObject({ kind: "denied", code: "evidence_conflict" });
+    expect(await performPartnerOperation("", operation, success.memberId)).toEqual({ kind: "unauthorized" });
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

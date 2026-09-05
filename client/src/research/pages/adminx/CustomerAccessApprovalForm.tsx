@@ -46,9 +46,9 @@ const REFUSALS: Record<string, string> = {
   claim_not_available: "The server did not permit this account transition. Refresh diagnosis for its current state.",
 };
 
-type Props = { token: string; inspection: ApprovedUserAccess; onPendingChange?: (pending: boolean) => void };
+type Props = { token: string; inspection: ApprovedUserAccess; onPendingChange?: (pending: boolean) => void; externalPending?: boolean };
 
-function ApprovalForm({ token, inspection, onPendingChange }: Props) {
+function ApprovalForm({ token, inspection, onPendingChange, externalPending = false }: Props) {
   const id = useId();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -111,11 +111,12 @@ function ApprovalForm({ token, inspection, onPendingChange }: Props) {
       <p className="body-s mt-2">Exact recipient: <strong>{inspection.email}</strong>. Paid membership is not required. Historical billing records are retained.</p>
       {state.kind === "editing" ? (
         <form onSubmit={prepare} noValidate autoComplete="off" className="grid gap-4 mt-4" aria-label="Prepare customer approval">
-          <div><label htmlFor={`${id}-first`} className="form-label">First name</label><input id={`${id}-first`} className="input-field w-full" value={firstName} onChange={event => setFirstName(event.target.value)} required maxLength={80} /></div>
-          <div><label htmlFor={`${id}-last`} className="form-label">Last name</label><input id={`${id}-last`} className="input-field w-full" value={lastName} onChange={event => setLastName(event.target.value)} required maxLength={80} /></div>
-          <div><label htmlFor={`${id}-reason`} className="form-label">Internal approval reason</label><textarea id={`${id}-reason`} className="input-field w-full" value={reason} onChange={event => setReason(event.target.value)} rows={3} required maxLength={1000} /></div>
+          {externalPending ? <p role="status" className="body-s">Customer approval is paused while the partner operation is reconciled. The exact approval details remain on this page.</p> : null}
+          <div><label htmlFor={`${id}-first`} className="form-label">First name</label><input id={`${id}-first`} className="input-field w-full" value={firstName} onChange={event => setFirstName(event.target.value)} required maxLength={80} disabled={externalPending} /></div>
+          <div><label htmlFor={`${id}-last`} className="form-label">Last name</label><input id={`${id}-last`} className="input-field w-full" value={lastName} onChange={event => setLastName(event.target.value)} required maxLength={80} disabled={externalPending} /></div>
+          <div><label htmlFor={`${id}-reason`} className="form-label">Internal approval reason</label><textarea id={`${id}-reason`} className="input-field w-full" value={reason} onChange={event => setReason(event.target.value)} rows={3} required maxLength={1000} disabled={externalPending} /></div>
           {state.message ? <p role="alert" className="body-s">{state.message}</p> : null}
-          <button type="submit" className="btn btn-secondary" style={{ minHeight: 44, whiteSpace: "normal" }}>Review approval and email</button>
+          <button type="submit" className="btn btn-secondary" style={{ minHeight: 44, whiteSpace: "normal" }} disabled={externalPending}>Review approval and email</button>
         </form>
       ) : frozen ? (
         <div className="grid gap-3 mt-4">
@@ -125,7 +126,7 @@ function ApprovalForm({ token, inspection, onPendingChange }: Props) {
           <p className="body-s">Application: {frozen.expectedApplicationId ?? "No application found in this inspection"}</p>
           <p className="body-s">Inspected revision: {frozen.expectedUpdatedAt ?? "No existing application revision"}</p>
           {state.kind === "uncertain" ? <p role="alert" className="body-s">The outcome was not confirmed. Approval or email queuing may already have occurred. Retry this same request to recover its result; do not create a new approval to work around an uncertain response.</p> : null}
-          <button type="button" className="btn btn-primary" style={{ minHeight: 44, whiteSpace: "normal" }} disabled={state.kind === "sending"} onClick={() => void confirm(frozen)}>
+          <button type="button" className="btn btn-primary" style={{ minHeight: 44, whiteSpace: "normal" }} disabled={state.kind === "sending" || externalPending} onClick={() => void confirm(frozen)}>
             {state.kind === "sending" ? "Submitting approval…" : state.kind === "uncertain" ? "Retry the same approval request" : "Approve customer and queue onboarding email"}
           </button>
           {state.kind === "confirm" ? <button type="button" className="btn btn-ghost" onClick={() => setState({ kind: "editing" })}>Back to details</button> : null}
@@ -135,7 +136,7 @@ function ApprovalForm({ token, inspection, onPendingChange }: Props) {
   );
 }
 
-export function CustomerAccessApprovalForm({ token, inspection, onPendingChange }: Props) {
+export function CustomerAccessApprovalForm({ token, inspection, onPendingChange, externalPending }: Props) {
   if (!token) return null;
-  return <ApprovalForm key={`${token}:${inspection.email}:${inspection.observedAt}`} token={token} inspection={inspection} onPendingChange={onPendingChange} />;
+  return <ApprovalForm key={`${token}:${inspection.email}:${inspection.observedAt}`} token={token} inspection={inspection} onPendingChange={onPendingChange} externalPending={externalPending} />;
 }
