@@ -174,6 +174,10 @@ const ADMITTED = [
   ["get", `/api/research/customer-account/documents/${DOCUMENT_ID}`],
   ["get", "/api/research/customer-account/support"],
   ["get", "/api/research/customer-account/catalog-priority"],
+  // The independently guarded partner workspace is an admitted member read;
+  // ownership remains resolved from the authenticated member.
+  ["get", "/api/research/partner/me"],
+  ["get", "/api/research/partner/dashboard"],
   ["post", "/api/research/customer-account/support"],
   ["get", "/api/research/store-credit"],
   ["head", "/api/research/store-credit"],
@@ -419,7 +423,6 @@ describe("SEN-0023 member-session wall bypass", () => {
     ["get", "/api/research/catalog-display/catalog"],
     ["get", "/api/research/no-such-surface"],
     ["get", "/api/research/plans/xenios90"],
-    ["get", "/api/research/partner/me"],
     ["post", "/api/research/cart"],
     ["get", "/api/research/cart/lines"],
     ["get", "/api/research/carts"],
