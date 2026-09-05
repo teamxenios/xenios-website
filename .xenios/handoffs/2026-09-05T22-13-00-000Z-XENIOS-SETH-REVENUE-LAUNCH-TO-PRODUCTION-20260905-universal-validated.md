@@ -1,7 +1,7 @@
 # Xenios Health universal approved-user and partner launch
 
-**Task:** `XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905`  
-**Session:** `codex-seth-revenue-launch-20260905` (Astra-A)  
+**Task:** `XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905`
+**Session:** `codex-seth-revenue-launch-20260905` (Astra-A)
 **Status:** local candidate validated; production authority not granted
 
 ## Exact candidate
@@ -50,4 +50,3 @@
 A founder exact-SHA GO is required before any production precheck/apply, deployment, price/configuration activation, account approval, partner operation, email send, payment, or shipment. The GO must name the exact candidate SHA, migrations/functions, account/partner records, notification behavior, controlled purchase, and rollback. Until then keep `releaseCandidateSha` unset for production, `productionMutated=false`, and all new authorities dark.
 
 Rollback remains separate: revert the application candidate; disable any explicitly approved price/configuration entry; and use the migration rollback only if the approved migration postcheck and rollback conditions require it. No rollback or production mutation was performed in this session.
-
