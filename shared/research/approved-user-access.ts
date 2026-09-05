@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PartnerLifecycleRequirements } from "./partner-lifecycle";
 
 export const APPROVED_USER_ACCESS_PATH = "/api/admin/research/access/inspect";
 export const ApprovedUserAccessInput = z.object({
@@ -20,8 +21,10 @@ export const ApprovedUserAccessSchema = z.object({
   members: z.array(z.object({ id, status: z.string(), authUserId: id.nullable(), binding, href: z.string() }).strict()).max(25),
   partners: z.array(z.object({
     id, memberId: id, role: z.string(), state: z.string(), binding,
+    updatedAt: z.string().datetime({ offset: true }).nullable().optional(),
     missingRequirements: z.array(z.string()),
   }).strict()).max(25),
+  partnerRequirements: PartnerLifecycleRequirements.nullable().optional(),
   organizationRelationships: z.object({
     state: z.enum(["available", "unavailable"]),
     records: z.array(z.object({ organizationId: id, state: z.string(), roles: z.array(z.string()) }).strict()).max(25),
