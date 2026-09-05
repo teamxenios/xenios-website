@@ -13,6 +13,7 @@ import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import { denialPresentation } from "../lib/denials";
 import type { PartnerDashboardDto } from "@shared/research/commerce-api";
 import type { RecommendationLinks } from "@shared/research/referral-v1";
+import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
 
 export type PartnerToken = string | null;
 
@@ -21,6 +22,7 @@ export type PartnerToken = string | null;
 export type PartnerLoader<T> = (token: PartnerToken) => Promise<ApiResult<T>>;
 
 export const PARTNER_API = {
+  self: "/api/research/partner/me",
   apply: "/api/research/partner/apply",
   dashboard: "/api/research/partner/dashboard",
   links: "/api/research/partner/links",
@@ -50,8 +52,53 @@ export const PARTNER_API = {
 // The dashboard retains the commerce contract; links now use canonical Gen2
 // recommendation V1. Mutation/share UX lives in recommendation/api.ts.
 // Aggregates only; the server never puts member identity in these shapes.
+/** Minimal navigation projection of the existing owned /partner/me response.
+ * These facts are not referral, earning, payout, or purchase authorization.
+ */
+export interface OwnedPartnerWorkspace {
+  partnerId: string;
+  role: PartnerRole;
+  state: PartnerState;
+  certified: boolean;
+  active: boolean;
+}
+
+const PARTNER_STATES: Record<PartnerState, true> = {
+  application: true, identity_verification_pending: true, tax_status_pending: true,
+  payout_status_pending: true, agreement_pending: true, training_pending: true,
+  certification_pending: true, active: true, quality_review: true, suspended: true, terminated: true,
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export async function getPartnerSelf(token: PartnerToken): Promise<ApiResult<{ partner: OwnedPartnerWorkspace }>> {
+  if (!token) return { kind: "unauthorized" };
+  const result = await apiGet<unknown>(PARTNER_API.self, token, ["partner_not_found"]);
+  if (result.kind !== "ok") return result;
+  const body = result.data;
+  const partner = isRecord(body) && body.ok === true ? body.partner : null;
+  if (!isRecord(partner)
+    || typeof partner.partnerId !== "string" || !partner.partnerId.trim()
+    || !PARTNER_ROLES.includes(partner.role as PartnerRole)
+    || typeof partner.state !== "string" || !Object.hasOwn(PARTNER_STATES, partner.state)
+    || typeof partner.certified !== "boolean" || typeof partner.active !== "boolean") {
+    return { kind: "error", message: "Partner access could not be confirmed. Please try again." };
+  }
+  // Explicit projection: no contact, internal review, or organization fields
+  // from an unexpected response can enter account navigation state.
+  return { kind: "ok", data: { partner: {
+    partnerId: partner.partnerId,
+    role: partner.role as PartnerRole,
+    state: partner.state as PartnerState,
+    certified: partner.certified,
+    active: partner.active,
+  } } };
+}
+
 export function getPartnerDashboard(token: PartnerToken): Promise<ApiResult<{ partner: PartnerDashboardDto }>> {
-  return apiGet(PARTNER_API.dashboard, token);
+  return apiGet(PARTNER_API.dashboard, token, ["partner_not_found"]);
 }
 
 export function getPartnerLinks(token: PartnerToken): Promise<ApiResult<RecommendationLinks>> {

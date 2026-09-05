@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { ACCESS_ROUTES, ACCOUNT_PORTAL_ROUTES } from "../lib/routes";
+import { ACCESS_ROUTES, ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES, PARTNER_ROUTES } from "../lib/routes";
 import { ResearchContext } from "../core";
+import { getPartnerSelf } from "../adapters/partner";
+import { usePartnerResource } from "../pages/partners/shared";
 import {
   ACCOUNT_PORTAL_EXTENSION_ROUTES,
   isAccountOrderDetailPath,
@@ -11,6 +13,7 @@ import "./account-portal.css";
 const NAV_ITEMS = [
   { href: ACCOUNT_PORTAL_ROUTES.home, label: "Overview" },
   { href: ACCOUNT_PORTAL_ROUTES.orders, label: "Commerce" },
+  { href: MEMBER_ROUTES.fullCatalog, label: "Browse products" },
   { href: ACCOUNT_PORTAL_ROUTES.subscription, label: "Membership" },
   { href: ACCOUNT_PORTAL_ROUTES.care, label: "Care status" },
   { href: ACCOUNT_PORTAL_EXTENSION_ROUTES.interests, label: "Interests" },
@@ -19,6 +22,19 @@ const NAV_ITEMS = [
   { href: ACCOUNT_PORTAL_EXTENSION_ROUTES.security, label: "Security" },
   { href: ACCOUNT_PORTAL_ROUTES.support, label: "Support" },
 ] as const;
+
+function PartnerWorkspaceNavigation({ token }: { token: string }) {
+  const { state, data, denied } = usePartnerResource(getPartnerSelf, token);
+  if (state === "ok" && data?.partner) {
+    return <Link href={PARTNER_ROUTES.dashboard} className="account-portal-nav-link">Partner workspace</Link>;
+  }
+  // A missing owned relation is not an account failure. Other failures do not
+  // imply that this member lacks a partner relationship or that it is approved.
+  if (denied?.code === "partner_not_found") return null;
+  return <span className="account-portal-nav-link" role="status">
+    {state === "loading" ? "Checking partner access…" : "Partner access not confirmed"}
+  </span>;
+}
 
 export function AccountPortalShell({
   eyebrow = "Private account",
@@ -93,6 +109,7 @@ export function AccountPortalShell({
             </Link>
           );
         })}
+        {research?.memberToken ? <PartnerWorkspaceNavigation key={research.memberToken} token={research.memberToken} /> : null}
       </nav>
 
       <section className="account-page-heading">

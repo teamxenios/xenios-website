@@ -29,7 +29,13 @@ describe("referral destinations reach their existing member guard, not the share
     render(<Router hook={location.hook}><ResearchLayout><RequireMember><div>Private destination</div></RequireMember></ResearchLayout></Router>);
     expect(document.body.textContent).toContain("Private destination");
   });
-  it.each(["/research/member/cart", "/research/member/products", "/research/member/products/a/extra"])("unrelated %s retains the review gate", (path) => {
+  it.each(["/research/partners/links", "/research/partners/dashboard"])("%s reaches its own partner boundary without a reviewer password", (path) => {
+    const location = memoryLocation({ path });
+    render(<Router hook={location.hook}><ResearchLayout><div>Partner-owned boundary</div></ResearchLayout></Router>);
+    expect(document.body.textContent).toContain("Partner-owned boundary");
+    expect(document.querySelector('[id="research-password"]')).toBeNull();
+  });
+  it.each(["/research/member/cart", "/research/member/products", "/research/member/products/a/extra", "/research/partners/dashboard/extra", "/research/partners/commissions", "/research/partners/links/extra"])("unrelated %s retains the review gate", (path) => {
     const location = memoryLocation({ path });
     render(<Router hook={location.hook}><ResearchLayout><div>Unrelated private content</div></ResearchLayout></Router>);
     expect(document.body.textContent).not.toContain("Unrelated private content");

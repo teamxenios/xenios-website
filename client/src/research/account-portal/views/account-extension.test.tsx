@@ -88,7 +88,8 @@ describe("account portal extension routes", () => {
       "/research/account/orders/XRR-FIXTURE",
     );
     const navigation = container.querySelector('nav[aria-label="Account areas"]');
-    expect(navigation?.querySelectorAll("a")).toHaveLength(9);
+    expect(navigation?.querySelectorAll("a")).toHaveLength(10);
+    expect(navigation?.querySelector('a[href="/research/member/catalog"]')?.textContent).toBe("Browse products");
     expect(navigation?.textContent).toContain("Interests");
     expect(navigation?.textContent).toContain("Commerce");
     expect(navigation?.textContent).toContain("Profile");

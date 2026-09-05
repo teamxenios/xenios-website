@@ -380,9 +380,12 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   if (isAccountPortalPath(location)) {
     return <>{children}</>;
   }
-  // Link management owns a canonical member/partner API guard. The review
-  // password is not partner authority; the page itself handles sign-in/denial.
-  if (normalizedLocation === "/research/partners/links") return <>{children}</>;
+  // These exact partner entry pages own canonical member/partner API guards.
+  // The review password is not partner authority; each page handles sign-in
+  // and denial. Do not exempt the rest of the parked partner route family.
+  if (normalizedLocation === "/research/partners/links" || normalizedLocation === "/research/partners/dashboard") {
+    return <>{children}</>;
+  }
   // These exact shared destinations already mount RequireMember in section.tsx.
   // Let that guard preserve sign-in/returnTo instead of showing the review gate.
   if (normalizedLocation.startsWith("/research/member/") && safeReferralDestination(normalizedLocation)) {
