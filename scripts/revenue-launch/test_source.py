@@ -6,10 +6,34 @@ import tempfile
 import unittest
 
 from inspect_source import inventory, safe_relative
-from validate_source import checksums_agree, dollars_to_cents, read_csv, read_json, validate_rows
+from validate_source import checksums_agree, dollars_to_cents, read_csv, read_json, validate_rows, source_row_digest, verify_workbook_record
+from reconcile_source import exact_identity_index
 
 
 class SourceIntegrityTests(unittest.TestCase):
+    def test_duplicate_canonical_identity_cannot_be_overwritten(self):
+        for rows in ([{"id": "one"}, {"id": "one", "sku": "different"}], [{"id": ""}], [{}]):
+            with self.assertRaises(ValueError):
+                exact_identity_index(rows)
+
+    def test_complete_row_digest_changes_with_non_display_source_facts(self):
+        row = {"product": "Fixture", "configuration": "10 mg", "risk": ["unreviewed"], "sourceNote": "private fixture"}
+        digest = source_row_digest(row)
+        self.assertEqual(digest, source_row_digest(dict(reversed(list(row.items())))))
+        self.assertNotEqual(digest, source_row_digest({**row, "sourceNote": "changed private fixture"}))
+        self.assertNotEqual(digest, source_row_digest({**row, "risk": []}))
+
+    def test_workbook_evidence_requires_exact_complete_matching_verification(self):
+        p = Path(__file__).resolve().parents[2] / "docs/revenue-launch/20260905/complete-workbook-reconciliation.json"
+        record = read_json(p)
+        verify_workbook_record(record, record["workbookSha256"])
+        for key, value in [("workbookSha256", "a" * 64), ("workbookCellsReconciled", False), ("phaseATierValues", 116), ("statisticsVerified", False)]:
+            changed = {**record, key: value}
+            with self.assertRaises(ValueError):
+                verify_workbook_record(changed, record["workbookSha256"])
+        with self.assertRaises(ValueError):
+            verify_workbook_record({**record, "checks": {"comparisons": 1}}, record["workbookSha256"])
+
     def test_inventory_uses_bytes_not_names_and_rejects_changed_content(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

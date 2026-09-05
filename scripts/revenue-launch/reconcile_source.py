@@ -12,13 +12,27 @@ from inspect_source import sha256
 from validate_source import read_json
 
 
+def exact_identity_index(rows):
+    result = {}
+    for row in rows:
+        identity = row.get("id")
+        if not isinstance(identity, str) or not identity.strip() or identity in result:
+            raise ValueError("Missing or duplicate canonical identity")
+        result[identity] = row
+    return result
+
+
 def reconcile(source, production, historical):
     tables = production["tables"]
     for table in ("research_products", "research_product_variants", "research_product_prices"):
         if tables[table].get("ok") is not True:
             raise ValueError("Canonical product read incomplete")
-    products = {row["id"]: row for row in tables["research_products"]["rows"]}
-    variants = {row["id"]: row for row in tables["research_product_variants"]["rows"]}
+    products = exact_identity_index(tables["research_products"]["rows"])
+    variants = exact_identity_index(tables["research_product_variants"]["rows"])
+    exact_identity_index(tables["research_product_prices"]["rows"])
+    source_ids = [row["sourceId"] for row in source["phaseA"]]
+    if len(source_ids) != 39 or set(source_ids) != {f"XRUO-{i:03}" for i in range(1, 40)}:
+        raise ValueError("Incomplete or duplicate Phase A source rows")
     references = {}
     for row in historical["changes"]:
         key = row["founderBookSku"]
@@ -70,6 +84,7 @@ def reconcile(source, production, historical):
         blockers.extend(["canonical_seth_price_batch_not_approved", "inventory_or_capacity_not_verified",
                          "exact_release_approval_missing"])
         results.append({"sourceId": row["sourceId"], "sourceProduct": row["sourceProduct"],
+                        "sourcePointer": row.get("sourcePointer"), "sourceRowSha256": row.get("sourceRowSha256"),
                         "sourceConfiguration": row["sourceConfiguration"],
                         "identityEvidence": "historical_exact_ids_reverified" if match else "unresolved",
                         "historicalReference": reference, "currentCanonicalIdentity": match,
