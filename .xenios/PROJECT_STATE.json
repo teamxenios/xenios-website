@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T17:50:26.718159+00:00",
+  "updatedAt": "2026-09-05T18:15:06.163154+00:00",
   "sethRevenueLaunch": {
     "state": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_PRODUCTION_AUTHORITY",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -33,7 +33,7 @@
     "sourceGateComplete": true,
     "missingSourcePackageBlockerSuperseded": true,
     "initialSourceCheckpointSha": "58feb6467d118fc38e8eaa84b2c18d3fe28607e7",
-    "handoffDocument": ".xenios/handoffs/2026-09-05T04-50-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-complete-package-gate.md",
+    "handoffDocument": ".xenios/handoffs/2026-09-05T18-17-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-universal-priority.md",
     "systemOfRecordSourceSha": "fc3f579f60c1375f34b7b7f31e9d14960f38269e",
     "systemOfRecordCheck": "PASS",
     "preservedRuntimeTypecheck": "PASS_Node_20.19.0_tsc_noEmit",
@@ -51,7 +51,34 @@
     "productionMigrationReady": false,
     "remoteSqlByteEqualityVerified": false,
     "pairingDocument": "docs/revenue-launch/20260905/ASTRA_PAIRING.md",
-    "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority."
+    "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority.",
+    "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
+    "scopeNote": "Universal approved-user and partner launch; first real acceptance persona is an instance, never runtime architecture. A owns server authority and final integration; B owns agreed client/browser paths. Broader price/source work preserved, no production GO, account creation, invitation, approval, fee waiver, notification, payment or shipment authorized.",
+    "latestEngineeringCheckpointSha": "f8a2cb74f181e3379dfd8fc4e44f9a372c5d4205",
+    "latestEngineeringCheckpointPushed": true,
+    "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
+    "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
+    "productionReverifiedAt": "2026-09-05T18:03:20.102167+00:00",
+    "acceptanceIdentityDiagnosis": {
+      "observedAt": "2026-09-05T18:13:40.776543+00:00",
+      "exactEmailCandidates": 2,
+      "authScanComplete": true,
+      "authMatches": 0,
+      "researchApplications": 0,
+      "researchMembers": 0,
+      "researchPartners": 0,
+      "existingCareOperationalRequest": true,
+      "identityBindingInferred": false,
+      "intendedEmailDecisionPending": true,
+      "productionMutated": false
+    },
+    "deferredWork": [
+      "broader pricing review and activation",
+      "Phase B 68 candidates",
+      "full CRM",
+      "representative hierarchy",
+      "cloud expansion"
+    ]
   },
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
@@ -70,14 +97,28 @@
     "acceptedBy": "codex-founder-guard-parent-review-20260905",
     "acceptedAt": "2026-09-05T02:13:41.094Z",
     "handoffDocument": ".xenios/handoffs/2026-09-05T02-12-45-530Z-XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904-codex-major-ordering-admin-sor-20260904.md",
-    "scope": ["living_site_system_of_record", "order_entry_hub", "founder_command_center"],
+    "scope": [
+      "living_site_system_of_record",
+      "order_entry_hub",
+      "founder_command_center"
+    ],
     "previousWave4AcceptedSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
     "fullSuite": "845 passed files, 5 skipped; 12849 passed tests, 59 skipped; zero failures; final frozen-source four-worker run",
     "generatorTests": "12/12 PASS including Care versus careers segment classification",
     "typecheck": "PASS",
     "build": "PASS",
     "browserEvidence": "docs/ux/major-ordering-admin-sor-20260904",
-    "browserWidthsPassed": [1440, 1366, 1024, 768, 430, 390, 375, 360, 320],
+    "browserWidthsPassed": [
+      1440,
+      1366,
+      1024,
+      768,
+      430,
+      390,
+      375,
+      360,
+      320
+    ],
     "browserLimits": "Local synthetic evidence only; founder runtime unchanged from its recorded 229db5d matrix. Direct active-cart prefill and authenticated production journeys are not certified.",
     "privacy": "Evidence directory CLEAN/COMPLETE, three text files. Major-sequence added-line secret scan zero findings. Full production-range scan retains 11 inherited synthetic-pattern findings; approved external name corpus unavailable, so named-PII release gate remains incomplete.",
     "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
@@ -100,11 +141,16 @@
     "originVerified": true,
     "handoffDocument": "docs/research-launch/FULL_UX_FOUNDATION_REFERRAL_V1_2026-09-04.md",
     "browserEvidence": "docs/ux/referral-v1-20260904/browser-smoke-c5ac439-320/browser-results.json",
-    "browserWidthsFunctionallyPassed": [320],
+    "browserWidthsFunctionallyPassed": [
+      320
+    ],
     "mobileVisualAcceptance": "PENDING_PWA_OVERLAY_POLICY_AND_NINE_WIDTH_MATRIX",
     "productionMutated": false,
     "migration": "TWO_LOCAL_CANDIDATES_NOT_APPLIED",
-    "nextTasks": ["DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904", "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904"]
+    "nextTasks": [
+      "DETERMINISTIC-SUPPLIER-FIXTURE-MAINTENANCE-20260904",
+      "PWA-SENSITIVE-WORKFLOW-OVERLAY-POLICY-20260904"
+    ]
   },
   "uxAuthAccountCheckpoint": {
     "state": "LOCAL_IMPLEMENTATION_CHECKPOINT_NOT_DEPLOYED",
@@ -120,7 +166,17 @@
     "focusedTests": "293 PASS; independent final bounded review 98 PASS",
     "fullSuite": "12335 PASS, 17 FAIL, 43 SKIP; 820 passed files, 2 inherited supplier/catalogue failures; not green",
     "fullSuiteEvidence": "docs/ux/auth-account-20260904/full-suite-summary.json",
-    "browserWidthsPassed": [1440, 1366, 1024, 768, 430, 390, 375, 360, 320],
+    "browserWidthsPassed": [
+      1440,
+      1366,
+      1024,
+      768,
+      430,
+      390,
+      375,
+      360,
+      320
+    ],
     "typecheck": "PASS",
     "productionBuild": "PASS",
     "productionMutated": false,
@@ -192,7 +248,7 @@
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
-    "2026-08-19 HARD PAUSE: full build reconciliation complete — authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
+    "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
     "2026-09-03 PRODUCTION-TRUTH RECONCILIATION: Render live is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records had drifted to 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and release/early-access-code-session-checkout still pointed there. Coupled flip of production state, release graph, ownership origin, migration DAG and control-plane test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; release branch fast-forwarded to the reconciliation successor; auto-deploy off; nothing deployed; no migration; no service or env change. Follow-ups: re-derive endpoint/evidence expectations against 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; port Step 1 hotfix b8359eba file-by-file.",
     "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary.",
     "2026-09-03 CARE ADMIN RELIABILITY DEPLOYED: db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (dep-dad08h740ujc73aprfcg, live 2026-09-03T23:36:32Z) by commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03); critical-endpoint diff PASS 30/0/0/0; Care admin doors 401; boot clean; no rollback; no migration; no env change; no Care status change. Production truth records flipped to db5a2d447114c1e8a14185a9865ded50ee3f1ac6 in the same session. PENDING: founder read-only smoke with an admin session proving CARE-2A99C6F7 appears exactly once in /admin/research/care-requests. Follow-ups: hide Care rows from the generic /admin LOI list; add the Care admin doors to the critical-endpoint default list."

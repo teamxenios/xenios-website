@@ -33,3 +33,13 @@ supplier/readiness exceptions and nine-width browser QA.
 No production writes, migration apply/repair, activation, publication, deployment,
 release-branch merge, real payment/shipment facts or customer communications are
 authorized. Production execution remains a later exact-SHA decision by Samuel.
+
+## Current founder priority — universal approved users
+
+Universal approved-user and partner launch; first real acceptance persona is an instance, never runtime architecture. A owns server authority and final integration; B owns agreed client/browser paths. Broader price/source work preserved, no production GO, account creation, invitation, approval, fee waiver, notification, payment or shipment authorized.
+
+The earlier all-39-row release sequence is deferred behind the universal access,
+account, partner, referral and legitimate ordering/request vertical slice. Preserve
+all source coverage; do not hardcode the first acceptance person. Each capability
+needs persona, route, authority, source, tests, browser proof, production state,
+SHA, owner, blocker and next action. Normal user credentials remain user-entered.

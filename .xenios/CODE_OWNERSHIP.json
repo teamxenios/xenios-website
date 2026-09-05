@@ -1302,11 +1302,15 @@
         "shared/research/revenue-launch.ts",
         "shared/research/revenue-launch.test.ts",
         "server/research/products-diagnostics/revenue-launch-reconciliation.ts",
-        "server/research/products-diagnostics/revenue-launch-reconciliation.test.ts"
+        "server/research/products-diagnostics/revenue-launch-reconciliation.test.ts",
+        "server/research/index.ts",
+        "server/research/partner-access-wall.test.ts",
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T17:57:09.853Z"
+      "heartbeatAt": "2026-09-05T18:15:06.251Z"
     },
     {
       "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",
@@ -1322,7 +1326,15 @@
         "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
         "docs/revenue-launch/astra-b/20260905/**",
         "client/src/research/pages/adminx/ProductsAdmin.tsx",
-        "client/src/research/pages/adminx/ProductsAdmin.test.tsx"
+        "client/src/research/pages/adminx/ProductsAdmin.test.tsx",
+        "client/src/research/pages/partners/shared.ts",
+        "client/src/research/pages/partners/shared.test.tsx",
+        "client/src/research/pages/partners/Dashboard.tsx",
+        "client/src/research/pages/partners/Dashboard.test.tsx",
+        "client/src/research/layout.tsx",
+        "client/src/research/recommendation/layout-referral.test.tsx",
+        "client/src/research/account-portal/AccountPortalShell.tsx",
+        "client/src/research/account-portal/AccountPortalShell.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:50:44.922Z",
