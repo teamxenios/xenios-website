@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import type {
   AdminProductDetail,
@@ -28,8 +28,9 @@ import {
   ResearchStatusBadge,
 } from "../../ui/kit";
 import { ADMIN_ROUTES } from "../../lib/routes";
-import { fmtDate, fmtDateTime, useAdminResource } from "./auth";
+import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { ProductPriceReviewPanel, readDraftAmountCents, readDraftEffectiveAt } from "./ProductPriceReviewPanel";
 import {
   Website3RequiredInputNotice,
   Website3RequiredInputValue,
@@ -718,7 +719,7 @@ function VariantPanel({
   );
 }
 
-function PricePanel({
+export function PricePanel({
   token,
   product,
   onSaved,
@@ -739,18 +740,21 @@ function PricePanel({
   useEffect(() => {
     if (!variantId && firstVariant) setVariantId(firstVariant);
   }, [firstVariant, variantId]);
-  const dollars = Number(amount);
-  const validAmount = Number.isFinite(dollars) && dollars >= 0;
+  const amountCents = readDraftAmountCents(amount);
+  const effectiveTimestamp = readDraftEffectiveAt(effectiveAt);
+  const exactVariants = product.variants.filter((variant) => variant.id === variantId);
+  const validVariant = exactVariants.length === 1 && exactVariants[0].productId === product.id;
+  const validDraft = validVariant && amountCents !== null && effectiveTimestamp !== null;
   async function create() {
-    if (!variantId || !validAmount) return;
+    if (busy || !validVariant || amountCents === null || effectiveTimestamp === null) return;
     setBusy(true);
     setError(null);
     const input: CreateAdminPriceInput = {
       variantId,
       audience,
-      amountCents: Math.round(dollars * 100),
+      amountCents,
       currency: "USD",
-      effectiveAt: new Date(`${effectiveAt}T00:00:00.000Z`).toISOString(),
+      effectiveAt: effectiveTimestamp,
     };
     const result = await createAdminPrice(
       token,
@@ -765,6 +769,7 @@ function PricePanel({
     } else setError(resultError(result));
   }
   async function approve(priceId: string) {
+    if (busy) return;
     setBusy(true);
     setError(null);
     const result = await approveAdminPrice(
@@ -777,70 +782,26 @@ function PricePanel({
     if (result.kind === "ok") onSaved();
     else setError(resultError(result));
   }
-  const skuFor = useMemo(
-    () => new Map(product.variants.map((variant) => [variant.id, variant.sku])),
-    [product.variants],
-  );
   return (
-    <section aria-labelledby="product-pricing-heading">
-      <h2 id="product-pricing-heading" className="body-l font-700 mb-4">
-        Pricing and history
-      </h2>
-      <ResearchDataTable
-        caption="Product prices"
-        rows={product.prices}
-        rowKey={(price) => price.id}
-        empty="No prices entered. Add a draft price below."
-        columns={[
-          {
-            key: "sku",
-            header: "SKU",
-            render: (price) => skuFor.get(price.variantId) ?? "Unknown variant",
-          },
-          {
-            key: "audience",
-            header: "Audience",
-            render: (price) => price.audience.replace(/_/g, " "),
-          },
-          {
-            key: "amount",
-            header: "Price",
-            render: (price) =>
-              new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: price.currency,
-              }).format(price.amountCents / 100),
-          },
-          {
-            key: "effective",
-            header: "Effective",
-            render: (price) => fmtDate(price.effectiveAt),
-          },
-          {
-            key: "status",
-            header: "Status",
-            render: (price) => (
-              <div className="flex items-center gap-2">
-                <ResearchStatusBadge
-                  label={price.status}
-                  tone={price.status === "active" ? "success" : "neutral"}
-                />
-                {price.status === "draft" ? (
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    disabled={busy}
-                    onClick={() => void approve(price.id)}
-                  >
-                    Approve
-                  </button>
-                ) : null}
-              </div>
-            ),
-          },
-        ]}
-      />
-      <details className="card mt-4">
+    <div className="min-w-0">
+      <ProductPriceReviewPanel product={product} />
+      {product.prices.some((price) => price.status === "draft") ? (
+        <section aria-label="Existing draft price approvals" className="card min-w-0 mt-4">
+          <h3 className="body-m font-700">Draft price approvals</h3>
+          <p className="body-s text-ink-mute mt-2">Explicit approval uses the existing admin policy. It does not grant purchase eligibility.</p>
+          <ul className="grid gap-4 mt-4">
+            {product.prices.filter((price) => price.status === "draft").map((price, index) => (
+              <li key={`${price.id}:${index}`} className="min-w-0">
+                <p className="body-s mb-2" style={{ overflowWrap: "anywhere" }}>Price {price.id} · variant {price.variantId} · version {price.version}</p>
+                <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => void approve(price.id)} aria-label={`Approve draft price ${price.id}`}>
+                  Approve
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      <details className="card min-w-0 mt-4">
         <summary className="body-m font-700" style={{ cursor: "pointer" }}>
           Add price
         </summary>
@@ -893,7 +854,10 @@ function PricePanel({
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 placeholder="0.00"
+                aria-describedby="price-amount-help"
+                aria-invalid={amount.length > 0 && amountCents === null}
               />
+              <p id="price-amount-help" className="body-s text-ink-mute mt-2">Enter a positive USD amount with at most two decimal places.</p>
             </div>
             <div>
               <label className="form-label" htmlFor="price-effective">
@@ -905,13 +869,16 @@ function PricePanel({
                 type="date"
                 value={effectiveAt}
                 onChange={(event) => setEffectiveAt(event.target.value)}
+                aria-describedby="price-effective-help"
+                aria-invalid={effectiveTimestamp === null}
               />
+              <p id="price-effective-help" className="body-s text-ink-mute mt-2">A valid date is required; it is stored at 00:00 UTC.</p>
             </div>
             <div>
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={busy || !validAmount}
+                disabled={busy || !validDraft}
                 onClick={() => void create()}
               >
                 {busy ? "Saving..." : "Save draft price"}
@@ -924,13 +891,13 @@ function PricePanel({
             body="Every price belongs to one exact SKU."
           />
         )}
-        {error ? (
-          <p role="alert" className="body-s mt-4" style={{ color: "var(--error)" }}>
-            {error}
-          </p>
-        ) : null}
       </details>
-    </section>
+      {error ? (
+        <p role="alert" className="body-s mt-4" style={{ color: "var(--error)" }}>
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
