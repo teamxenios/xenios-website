@@ -12,6 +12,10 @@
 import { apiGet, apiPost, apiPut, type ApiResult } from "../lib/api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
 import type { AdminCommerceQueuesDto } from "@shared/research/commerce-api";
+import {
+  APPROVED_USER_ACCESS_PATH, ApprovedUserAccessInput, ApprovedUserAccessSchema,
+  type ApprovedUserAccess,
+} from "@shared/research/approved-user-access";
 import type {
   DomainReadiness,
   RequiredInput,
@@ -27,6 +31,25 @@ const BASE = "/api/admin/research";
 const enc = encodeURIComponent;
 
 // --------------------------------- reads -----------------------------------
+
+/** Read-only exact-email inspection. Email is deliberately a JSON body, never
+ * a query string; this request does not approve, invite, or change an account.
+ */
+export async function inspectApprovedUserAccess(token: string, email: string): Promise<ApiResult<{ inspection: ApprovedUserAccess }>> {
+  if (!token) return { kind: "unauthorized" };
+  const input = ApprovedUserAccessInput.safeParse({ email });
+  if (!input.success) return { kind: "denied", code: "invalid_input", message: "Enter one valid email address." };
+  const result = await apiPost<unknown>(APPROVED_USER_ACCESS_PATH, input.data, token);
+  if (result.kind !== "ok") return result;
+  const body = result.data;
+  const parsed = ApprovedUserAccessSchema.safeParse(
+    body && typeof body === "object" && "ok" in body && body.ok === true && "inspection" in body ? body.inspection : null,
+  );
+  if (!parsed.success || parsed.data.email.toLowerCase() !== input.data.email) {
+    return { kind: "error", message: "The access inspection could not be verified. Please retry." };
+  }
+  return { kind: "ok", data: { inspection: parsed.data } };
+}
 
 export function listApplications<T>(token: string, queue: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/applications?queue=${enc(queue)}`, token);
