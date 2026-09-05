@@ -262,6 +262,27 @@ function ScopedInspectionForm({ token }: { token: string }) {
     } catch { publish({ kind: "error" }); }
   }
 
+  async function refreshAfterPartnerOperation() {
+    if (!lifecycle.current.active || !token || !email || approvalPendingRef.current) return;
+    const generation = ++lifecycle.current.generation;
+    setPartnerPending(true);
+    setState({ kind: "loading" });
+    const publish = (next: InspectionState) => {
+      if (lifecycle.current.active && lifecycle.current.generation === generation) {
+        setState(next);
+        setPartnerPending(false);
+      }
+    };
+    try {
+      const response = await inspectApprovedUserAccess(token, email);
+      if (response.kind === "ok") publish({ kind: "ready", inspection: response.data.inspection });
+      else if (response.kind === "denied") publish({ kind: response.code === "capability_disabled" ? "disabled" : "denied" });
+      else if (response.kind === "forbidden") publish({ kind: "denied" });
+      else if (response.kind === "unauthorized" || response.kind === "unavailable") publish({ kind: response.kind });
+      else publish({ kind: "error" });
+    } catch { publish({ kind: "error" }); }
+  }
+
   return (
     <>
       <form onSubmit={(event) => void submit(event)} aria-label="Exact email access diagnosis" noValidate autoComplete="off" className="mt-4 min-w-0">
@@ -285,7 +306,7 @@ function ScopedInspectionForm({ token }: { token: string }) {
       {state.kind === "disabled" ? <p role="status" className="body-s mt-3">Account diagnosis is not enabled in this environment. The account’s presence and access state have not been determined.</p> : null}
       {state.kind === "unavailable" ? <p role="status" className="body-s mt-3">Account diagnosis is unavailable right now. This does not mean an account or relationship is absent.</p> : null}
       {state.kind === "error" ? <p role="alert" className="body-s mt-3">The inspection could not be completed safely. Submit again to retry; no account state can be inferred from this failed read.</p> : null}
-      {state.kind === "ready" ? <InspectionResult inspection={state.inspection} id={id} token={token} diagnosisPending={approvalPending || partnerPending} approvalPending={approvalPending} partnerPending={partnerPending} onApprovalPendingChange={noteApprovalPending} onPartnerPendingChange={setPartnerPending} onPartnerConfirmed={() => void 0} /> : null}
+      {state.kind === "ready" ? <InspectionResult inspection={state.inspection} id={id} token={token} diagnosisPending={approvalPending || partnerPending} approvalPending={approvalPending} partnerPending={partnerPending} onApprovalPendingChange={noteApprovalPending} onPartnerPendingChange={setPartnerPending} onPartnerConfirmed={() => void refreshAfterPartnerOperation()} /> : null}
     </>
   );
 }
