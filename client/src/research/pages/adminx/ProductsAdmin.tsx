@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "wouter";
 import type {
+  AdminProductListFilters,
   AdminProductSummary,
   CreateAdminProductInput,
   ProductAdminStatus,
@@ -27,6 +28,37 @@ import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 
 const PAGE_SIZE = 20;
 
+const LANE_LABELS: Record<
+  NonNullable<AdminProductListFilters["lane"]>,
+  string
+> = {
+  research_material: "Research material",
+  supplement: "Supplement",
+  quantum: "Quantum",
+  non_product_program: "Program",
+  future_clinical: "Future clinical",
+};
+
+const COMMERCE_LABELS: Record<
+  NonNullable<AdminProductListFilters["commerceApproval"]>,
+  string
+> = {
+  approved: "Approved",
+  blocked_pending_written_approval: "Pending written approval",
+  blocked_by_lane: "Blocked by lane",
+  blocked_by_documentation: "Blocked by documentation",
+};
+
+const DOCUMENT_LABELS: Record<
+  NonNullable<AdminProductListFilters["qualityDocumentState"]>,
+  string
+> = {
+  approved: "Approved",
+  pending: "Pending",
+  missing: "Missing",
+  expired: "Expired",
+};
+
 const EMPTY_PRODUCT: CreateAdminProductInput = {
   productCode: "",
   slug: "",
@@ -38,7 +70,9 @@ const EMPTY_PRODUCT: CreateAdminProductInput = {
   classification: "research_material",
 };
 
-function mutationMessage(result: Awaited<ReturnType<typeof createAdminProduct>>) {
+function mutationMessage(
+  result: Awaited<ReturnType<typeof createAdminProduct>>,
+) {
   if (result.kind === "denied" || result.kind === "error") {
     return result.message ?? "The product could not be saved.";
   }
@@ -65,9 +99,15 @@ export default function ProductsAdmin() {
 
 function ProductsBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
-  const [visibility, setVisibility] =
-    useState<ProductVisibilityState | "">("");
+  const [visibility, setVisibility] = useState<ProductVisibilityState | "">("");
   const [status, setStatus] = useState<ProductAdminStatus | "">("");
+  const [lane, setLane] = useState<AdminProductListFilters["lane"] | "">("");
+  const [commerceApproval, setCommerceApproval] = useState<
+    AdminProductListFilters["commerceApproval"] | ""
+  >("");
+  const [qualityDocumentState, setQualityDocumentState] = useState<
+    AdminProductListFilters["qualityDocumentState"] | ""
+  >("");
   const [missingOnly, setMissingOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
@@ -78,9 +118,20 @@ function ProductsBody({ token }: { token: string }) {
         query: debounced || undefined,
         visibility: visibility || undefined,
         status: status || undefined,
+        lane: lane || undefined,
+        commerceApproval: commerceApproval || undefined,
+        qualityDocumentState: qualityDocumentState || undefined,
         missingInputsOnly: missingOnly || undefined,
       }),
-    [debounced, missingOnly, status, visibility],
+    [
+      commerceApproval,
+      debounced,
+      lane,
+      missingOnly,
+      qualityDocumentState,
+      status,
+      visibility,
+    ],
   );
   const resource = useAdminResource(token, loader);
   const rows = resource.data?.products ?? [];
@@ -110,7 +161,9 @@ function ProductsBody({ token }: { token: string }) {
               className="input-field"
               value={visibility}
               onChange={(event) => {
-                setVisibility(event.target.value as ProductVisibilityState | "");
+                setVisibility(
+                  event.target.value as ProductVisibilityState | "",
+                );
                 setPage(1);
               }}
             >
@@ -138,6 +191,70 @@ function ProductsBody({ token }: { token: string }) {
               <option value="archived">Archived</option>
             </select>
           </label>
+          <label className="body-s">
+            <span className="block mb-1">Product lane</span>
+            <select
+              className="input-field"
+              value={lane}
+              onChange={(event) => {
+                setLane(
+                  event.target.value as AdminProductListFilters["lane"] | "",
+                );
+                setPage(1);
+              }}
+            >
+              <option value="">All product lanes</option>
+              {Object.entries(LANE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="body-s">
+            <span className="block mb-1">Commerce review</span>
+            <select
+              className="input-field"
+              value={commerceApproval}
+              onChange={(event) => {
+                setCommerceApproval(
+                  event.target.value as
+                    | AdminProductListFilters["commerceApproval"]
+                    | "",
+                );
+                setPage(1);
+              }}
+            >
+              <option value="">All commerce review states</option>
+              {Object.entries(COMMERCE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="body-s">
+            <span className="block mb-1">Quality documents</span>
+            <select
+              className="input-field"
+              value={qualityDocumentState}
+              onChange={(event) => {
+                setQualityDocumentState(
+                  event.target.value as
+                    | AdminProductListFilters["qualityDocumentState"]
+                    | "",
+                );
+                setPage(1);
+              }}
+            >
+              <option value="">All quality document states</option>
+              {Object.entries(DOCUMENT_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="flex items-center gap-2 body-s">
             <input
               type="checkbox"
@@ -149,6 +266,31 @@ function ProductsBody({ token }: { token: string }) {
             />
             Missing inputs
           </label>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={
+              !search &&
+              !visibility &&
+              !status &&
+              !lane &&
+              !commerceApproval &&
+              !qualityDocumentState &&
+              !missingOnly
+            }
+            onClick={() => {
+              setSearch("");
+              setVisibility("");
+              setStatus("");
+              setLane("");
+              setCommerceApproval("");
+              setQualityDocumentState("");
+              setMissingOnly(false);
+              setPage(1);
+            }}
+          >
+            Clear filters
+          </button>
         </ResearchFilterBar>
         <button
           type="button"
@@ -189,8 +331,15 @@ function ProductsBody({ token }: { token: string }) {
             },
             {
               key: "category",
-              header: "Category",
-              render: (product) => product.category,
+              header: "Category / lane",
+              render: (product) => (
+                <div>
+                  {product.category}
+                  <p className="body-s text-ink-mute mt-1">
+                    {LANE_LABELS[product.lane]}
+                  </p>
+                </div>
+              ),
             },
             {
               key: "variants",
@@ -219,6 +368,18 @@ function ProductsBody({ token }: { token: string }) {
               ),
             },
             {
+              key: "review",
+              header: "Review status",
+              render: (product) => (
+                <div className="grid gap-2">
+                  <p>Commerce: {COMMERCE_LABELS[product.commerceApproval]}</p>
+                  <p>
+                    Documents: {DOCUMENT_LABELS[product.qualityDocumentState]}
+                  </p>
+                </div>
+              ),
+            },
+            {
               key: "inputs",
               header: "Required inputs",
               render: (product) =>
@@ -228,7 +389,7 @@ function ProductsBody({ token }: { token: string }) {
                     tone="warning"
                   />
                 ) : (
-                  <ResearchStatusBadge label="Complete" tone="success" />
+                  <ResearchStatusBadge label="None reported" tone="neutral" />
                 ),
             },
             {
@@ -250,7 +411,9 @@ function ProductsBody({ token }: { token: string }) {
 
       <ResearchSecureNotice>
         Creating a product does not make it visible or purchasable. Publishing
-        remains server-gated by the canonical required-input system.
+        remains server-gated by the canonical required-input system. Review
+        states and missing-input counts are not direct-buy or stock
+        confirmation.
       </ResearchSecureNotice>
 
       <CreateProductDrawer
