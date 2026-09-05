@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `a0b3f4f8faff904999997ad4770a9eb4ee40bfe2` (2026-09-04T16:58:35-05:00)
+Generated from source commit: `6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71` (2026-09-04T19:21:42-05:00)
 
-Source tree: `e95faeaa85483e6e5559c4714d01f0077b95c534` on `codex/xenios-major-ordering-admin-sor-20260904`
+Source tree: `6845a045016ec1a04b3dde5c169c352107d340f4` on `codex/xenios-major-ordering-admin-sor-20260904`
 
 Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740ujc73aprfcg` (live_verified)
 
@@ -14,7 +14,7 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Living Site System of Record | founder_engineering_operations | — | source_present | focused_tests_pass | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Regenerate and byte-check the three artifacts after every committed coherent source checkpoint. |
 | Research public gateway | public_research_visitor | /research | mounted | focused_tests_pass | unknown | live_verified | CARE-RESEARCH-POSTLAUNCH-20260831 | Keep pathway copy aligned with current server-authorized Research, Care, account, and assisted-order doors. |
-| Quick Early Access ordering | quick_early_access_customer | /research/early-access | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825 | Simplify the existing state machine into the four-step Quick Early Access customer presentation without replacing server authority. |
+| Quick Early Access ordering | quick_early_access_customer | /research/early-access | mounted | focused_tests_pass | browser_verified | deployed_not_authenticated_smoked | XENIOS-QUICK-EARLY-ACCESS-V2-20260904 | Build the source-qualified, member-scoped normalized customer timeline from canonical account and order projections without inferring source from reference prefixes or list scans. |
 | Assisted and volume Research order requests | research_customer | /research/early-access/order-request | mounted | full_suite_pass | unknown | deployed_not_authenticated_smoked | ASSISTED-ORDER-MOUNT | Reuse this request authority from the Order Entry Hub and later Quick Early Access simplification. |
 | Customer account and order history portal | research_customer | /research/account | mounted | focused_tests_pass | browser_verified | unknown | UX-AUTH-ACCOUNT-CONTINUITY-20260904 | Build the normalized customer timeline on these canonical account and order projections. |
 | Referral recommendation and durable attribution continuity | partner_affiliate_and_referral_recipient | /r/:code | mounted | full_suite_pass | browser_verified | built_not_deployed | UX-REFERRAL-RECOMMENDATION-V1-20260904 | Preserve referral and intended-destination context through the Order Entry Hub without changing referral authority. |
@@ -150,7 +150,7 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | /research/cart | public_research_visitor | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:447 |
 | /research/contact | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:337 |
 | /research/documents | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:334 |
-| /research/early-access | quick_early_access_customer | commerce | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | client/src/research/section.tsx:308 |
+| /research/early-access | quick_early_access_customer | commerce | mounted | focused_tests_pass | browser_verified | deployed_not_authenticated_smoked | client/src/research/section.tsx:308 |
 | /research/early-access/order-request | research_customer | commerce | mounted | full_suite_pass | unknown | deployed_not_authenticated_smoked | client/src/research/section.tsx:312 |
 | /research/early-access/order-request/:publicReference | quick_early_access_customer | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:314 |
 | /research/early-access/order-request/confirmation/:publicReference | quick_early_access_customer | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:313 |

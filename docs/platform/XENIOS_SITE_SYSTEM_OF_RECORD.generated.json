@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T16:58:35-05:00",
+  "generatedAt": "2026-09-04T19:21:42-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-major-ordering-admin-sor-20260904",
-    "sha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
-    "tree": "e95faeaa85483e6e5559c4714d01f0077b95c534",
+    "sha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
+    "tree": "6845a045016ec1a04b3dde5c169c352107d340f4",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
@@ -1995,7 +1995,7 @@
       "domain": "commerce",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "deployed_not_authenticated_smoked",
       "registrations": [
         {
@@ -3626,8 +3626,8 @@
       "unknown": 5
     },
     "browserStatus": {
-      "browser_verified": 2,
-      "unknown": 13
+      "browser_verified": 3,
+      "unknown": 12
     },
     "productionStatus": {
       "blocked_external": 2,
@@ -3651,7 +3651,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -3687,7 +3687,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
@@ -3723,27 +3723,39 @@
       "dataSource": "Canonical Product Control/catalog, server-side eligibility and pricing, Early Access session and order authorities.",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
-        "taskId": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",
-        "owner": "codex-step1-live-hotfix-20260825",
-        "leaseState": "released"
+        "taskId": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
+        "owner": "codex-major-ordering-admin-sor-20260904",
+        "leaseState": "active"
       },
-      "blocker": "Current authenticated production journey has not been re-smoked for this checkpoint.",
+      "blocker": "Local browser verification covers the synthetic assisted-order and fail-closed fallback/status surfaces only; active-cart high-quantity behavior and the authenticated production journey remain separate release gates.",
       "founderAction": "Use separately authorized production smoke credentials only during a later release gate.",
-      "nextExactAction": "Simplify the existing state machine into the four-step Quick Early Access customer presentation without replacing server authority.",
+      "nextExactAction": "Build the source-qualified, member-scoped normalized customer timeline from canonical account and order projections without inferring source from reference prefixes or list scans.",
       "evidence": {
         "source": [
+          "client/src/research/early-access/customerSteps.ts",
           "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/assisted-order/AssistedOrderPage.tsx",
+          "server/research/early-access/persistence/production-deps.ts",
+          "server/research/policies-data.ts",
           "server/research/early-access/register.ts"
         ],
         "tests": [
+          "client/src/research/early-access/customerSteps.test.ts",
+          "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
+          "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+          "client/src/research/early-access/cart/EarlyAccessCartCatalogue.quantity-routing.test.tsx",
+          "server/research/early-access/routes/agreement-routes.test.ts",
+          "server/research/early-access/persistence/production-deps.test.ts",
           "server/research/early-access/open-access.test.ts"
         ],
-        "browser": [],
+        "browser": [
+          "docs/ux/quick-early-access-v2-20260904/browser-results.json"
+        ],
         "production": [
           "docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md"
         ]
@@ -3762,7 +3774,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
@@ -3800,7 +3812,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
@@ -3837,7 +3849,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -3875,7 +3887,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
@@ -3912,7 +3924,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
@@ -3949,7 +3961,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
@@ -3984,7 +3996,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4019,7 +4031,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4054,7 +4066,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
@@ -4089,7 +4101,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
@@ -4123,7 +4135,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4162,7 +4174,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "a0b3f4f8faff904999997ad4770a9eb4ee40bfe2",
+      "currentSourceSha": "6cfdf4a8dfee17cc7525e6c701e5b4639cd30a71",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",

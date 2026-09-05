@@ -117,7 +117,7 @@ path,persona,domain,source_status,test_status,browser_status,production_status,c
 /research/cart,public_research_visitor,commerce,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:447
 /research/contact,public_research_visitor,research_experience,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:337
 /research/documents,public_research_visitor,research_experience,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:334
-/research/early-access,quick_early_access_customer,commerce,mounted,focused_tests_pass,unknown,deployed_not_authenticated_smoked,quick_early_access,client/src/research/section.tsx:308
+/research/early-access,quick_early_access_customer,commerce,mounted,focused_tests_pass,browser_verified,deployed_not_authenticated_smoked,quick_early_access,client/src/research/section.tsx:308
 /research/early-access/order-request,research_customer,commerce,mounted,full_suite_pass,unknown,deployed_not_authenticated_smoked,assisted_research_orders,client/src/research/section.tsx:312
 /research/early-access/order-request/:publicReference,quick_early_access_customer,commerce,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:314
 /research/early-access/order-request/confirmation/:publicReference,quick_early_access_customer,commerce,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:313
