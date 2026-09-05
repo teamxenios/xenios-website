@@ -1298,7 +1298,11 @@
         "docs/revenue-launch/20260905/backend/**",
         "scripts/revenue-launch/**",
         "config/research/revenue-launch/**",
-        ".xenios/sessions/codex-seth-astra-b-20260905.json"
+        ".xenios/sessions/codex-seth-astra-b-20260905.json",
+        "shared/research/revenue-launch.ts",
+        "shared/research/revenue-launch.test.ts",
+        "server/research/products-diagnostics/revenue-launch-reconciliation.ts",
+        "server/research/products-diagnostics/revenue-launch-reconciliation.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",

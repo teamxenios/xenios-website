@@ -1306,7 +1306,11 @@
         "docs/revenue-launch/20260905/backend/**",
         "scripts/revenue-launch/**",
         "config/research/revenue-launch/**",
-        ".xenios/sessions/codex-seth-astra-b-20260905.json"
+        ".xenios/sessions/codex-seth-astra-b-20260905.json",
+        "shared/research/revenue-launch.ts",
+        "shared/research/revenue-launch.test.ts",
+        "server/research/products-diagnostics/revenue-launch-reconciliation.ts",
+        "server/research/products-diagnostics/revenue-launch-reconciliation.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
