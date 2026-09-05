@@ -92,10 +92,12 @@ describe("referral browser evidence boundaries", () => {
   it("asserts install-promotion absence for snapshots plus explicit public Research and Care arrivals", () => {
     const harness = readFileSync(new URL("./browser-qa.mjs", import.meta.url), "utf8");
     const snapshot = harness.slice(harness.indexOf("async snapshot("), harness.indexOf("\n}\n\nconst buttonExpression"));
-    assert.equal((snapshot.match(/assertNoPwaInstallPromotion/g) ?? []).length, 2);
-    assert.match(harness, /arrive\("location\.pathname \+ location\.search === '\/research'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("public Research arrival"\)/);
-    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("Care arrival"\)/);
-    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\n\s+await browser\.assertNoPwaInstallPromotion\("Care recovery-path arrival"\)/);
+    // Count the two snapshot assertions only; the harness also has explicit
+    // public Research/Care arrival checks below this method.
+    assert.equal((snapshot.match(/await this\.assertNoPwaInstallPromotion/g) ?? []).length, 2);
+    assert.match(harness, /arrive\("location\.pathname \+ location\.search === '\/research'"\);\r?\n\s+await browser\.assertNoPwaInstallPromotion\("public Research arrival"\)/);
+    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\r?\n\s+await browser\.assertNoPwaInstallPromotion\("Care arrival"\)/);
+    assert.match(harness, /arrive\("location\.pathname === '\/care'"\);\r?\n\s+await browser\.assertNoPwaInstallPromotion\("Care recovery-path arrival"\)/);
   });
   it("cannot substitute aggregate counts, an early binding, or a different link for per-persona proof", () => {
     assert.throws(() => assertPersonaBinding({ db: { bindings: 3 } }, "recovery", null));
