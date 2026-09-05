@@ -9,11 +9,17 @@ import {
   ApprovedUserAccessSchema,
   type ApprovedUserAccess,
 } from "../../../../shared/research/approved-user-access";
+import {
+  APPROVE_CUSTOMER_ACCESS_PATH,
+  ApprovedCustomerApprovalInput,
+  CustomerApprovalResult,
+} from "../../../../shared/research/approved-customer-access";
 import { MemberAccessDiagnosisPanel } from "../../../../client/src/research/pages/adminx/MemberAccessDiagnosisPanel";
 import "../../../../client/src/index.css";
 import "../../../../client/src/fonts";
 
-type Scenario = "absent" | "customer" | "partner" | "conflict" | "unavailable" | "invalid";
+type Scenario = "absent" | "customer" | "partner" | "conflict" | "unavailable" | "invalid"
+  | "approval-ready" | "approval-reviewed" | "approval-uncertain" | "approval-stale";
 type FixtureAdmin = "A" | "B";
 const ADMIN_TOKENS: Record<FixtureAdmin, string> = {
   A: "synthetic-access-inspection-admin-a-not-a-credential",
@@ -21,6 +27,11 @@ const ADMIN_TOKENS: Record<FixtureAdmin, string> = {
 };
 let activeScenario: Scenario = "absent";
 let activeAdmin: FixtureAdmin = "A";
+// Ephemeral synthetic request identity only: never store names, reasons,
+// addresses, credentials, or approval data in browser storage or logs.
+let mockApprovalRequestKey: string | null = null;
+const APPROVAL_SCENARIOS = new Set<Scenario>(["approval-ready", "approval-reviewed", "approval-uncertain", "approval-stale"]);
+const FIXTURE_REVISION = "2026-09-05T12:00:00.000Z";
 const fixtureIds = {
   auth: "00000000-0000-4000-8000-000000000a01",
   otherAuth: "00000000-0000-4000-8000-000000000a02",
@@ -42,7 +53,7 @@ function inspectionFor(email: string, scenario: Scenario): ApprovedUserAccess {
     authAccounts: [], applications: [], members: [], partners: [],
     organizationRelationships: { state: "unavailable", records: [] },
     boundaries: {
-      care: "separate_authority", membershipBillingEnabled: false,
+      care: "separate_authority", membershipBillingEnabled: false, customerAccessApproval: "unavailable",
       partnerLifecycleReview: "unavailable", referralEligibility: "checked_by_referral_authority",
     },
     nextActions: [{
@@ -109,6 +120,31 @@ function inspectionFor(email: string, scenario: Scenario): ApprovedUserAccess {
       notification: "not_available",
     });
   }
+  if (APPROVAL_SCENARIOS.has(scenario)) {
+    inspection.boundaries.customerAccessApproval = "available";
+    inspection.nextActions = [{
+      label: "Review the separate synthetic approval form",
+      href: null,
+      consequence: "Only the explicit confirmation below simulates approval. No real record changes or emails can occur in this fixture; the mock result reports queued, never delivered.",
+      notification: "none",
+    }];
+    if (scenario !== "approval-ready") {
+      inspection.identityState = "verified";
+      inspection.authAccounts = [{ authUserId: fixtureIds.auth, emailVerified: true, signInRecorded: true }];
+      inspection.applications = [{
+        id: fixtureIds.application,
+        status: scenario === "approval-reviewed" ? "active" : scenario === "approval-uncertain" ? "approved_customer" : "under_review",
+        href: applicationHref,
+        updatedAt: FIXTURE_REVISION,
+      }];
+      inspection.members = [{
+        id: fixtureIds.member,
+        status: scenario === "approval-reviewed" ? "past_due" : "pending_activation",
+        authUserId: fixtureIds.auth, binding: "verified", href: memberHref,
+      }];
+      inspection.boundaries.membershipBillingEnabled = scenario === "approval-reviewed";
+    }
+  }
   // Every nominal response is reconciled with the exact shared strict schema.
   return ApprovedUserAccessSchema.parse(inspection);
 }
@@ -120,18 +156,21 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-// No fallback to native fetch exists. Every fetch outside this one exact
-// local mock is refused. No input is logged or sent to a real API or provider.
+// No fallback to native fetch exists. Only these two exact local mock POSTs
+// are accepted. No input is logged or sent to a real API or provider.
 window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  const scenario = activeScenario;
+  const admin = activeAdmin;
   const url = new URL(input instanceof Request ? input.url : String(input), window.location.origin);
   const method = (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
   const headers = new Headers(init?.headers ?? (input instanceof Request ? input.headers : undefined));
-  if (url.origin !== window.location.origin || url.pathname !== APPROVED_USER_ACCESS_PATH
+  if (url.origin !== window.location.origin || url.username !== "" || url.password !== ""
+    || ![APPROVED_USER_ACCESS_PATH, APPROVE_CUSTOMER_ACCESS_PATH].includes(url.pathname)
     || url.search !== "" || url.hash !== "" || method !== "POST"
-    || !headers.get("Content-Type")?.toLowerCase().startsWith("application/json")) {
+    || headers.get("Content-Type")?.split(";", 1)[0].trim().toLowerCase() !== "application/json") {
     throw new TypeError("This synthetic fixture has no network access.");
   }
-  if (headers.get("Authorization") !== `Bearer ${ADMIN_TOKENS[activeAdmin]}`) {
+  if (headers.get("Authorization") !== `Bearer ${ADMIN_TOKENS[admin]}`) {
     return jsonResponse({ ok: false, code: "fixture_admin_required" }, 401);
   }
   let body: unknown;
@@ -141,6 +180,37 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Res
   } catch {
     return jsonResponse({ ok: false, code: "invalid_input" }, 400);
   }
+  if (scenario !== activeScenario || admin !== activeAdmin) {
+    return jsonResponse({ ok: false, code: "stale_inspection" }, 409);
+  }
+  if (url.pathname === APPROVE_CUSTOMER_ACCESS_PATH) {
+    const approval = ApprovedCustomerApprovalInput.safeParse(body);
+    if (!approval.success || !approval.data.email.endsWith("@fixture.invalid")) {
+      return jsonResponse({ ok: false, code: "invalid_input" }, 400);
+    }
+    if (!APPROVAL_SCENARIOS.has(scenario)) {
+      return jsonResponse({ ok: false, code: "capability_disabled" }, 403);
+    }
+    const application = inspectionFor(approval.data.email, scenario).applications[0];
+    if (scenario === "approval-stale" || approval.data.expectedApplicationId !== (application?.id ?? null)
+      || approval.data.expectedUpdatedAt !== (application?.updatedAt ?? null)) {
+      return jsonResponse({ ok: false, code: "stale_inspection" }, 409);
+    }
+    if (mockApprovalRequestKey !== null && mockApprovalRequestKey !== approval.data.idempotencyKey) {
+      return jsonResponse({ ok: false, code: "idempotency_conflict" }, 409);
+    }
+    const replayed = mockApprovalRequestKey === approval.data.idempotencyKey;
+    mockApprovalRequestKey = approval.data.idempotencyKey;
+    if (scenario === "approval-uncertain" && !replayed) {
+      // Simulate a lost result AFTER the invented request was recorded. The
+      // real form must retain its exact key and payload for the next attempt.
+      return jsonResponse({ ok: false, code: "fixture_outcome_unconfirmed" }, 503);
+    }
+    return jsonResponse(CustomerApprovalResult.parse({
+      ok: true, applicationId: fixtureIds.application, approvalVersion: 1,
+      state: "approved_customer", delivery: "queued", expiresAt: "2026-09-19T12:00:00.000Z", replayed,
+    }));
+  }
   const parsed = ApprovedUserAccessInput.safeParse(body);
   if (!parsed.success || !parsed.data.email.endsWith("@fixture.invalid")) {
     return jsonResponse({
@@ -148,11 +218,11 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Res
       message: "Use only a synthetic address ending @fixture.invalid. Nothing was sent.",
     }, 400);
   }
-  if (activeScenario === "unavailable") {
+  if (scenario === "unavailable") {
     return jsonResponse({ ok: false, code: "inspection_unavailable" }, 503);
   }
-  const inspection = inspectionFor(parsed.data.email, activeScenario);
-  if (activeScenario === "invalid") {
+  const inspection = inspectionFor(parsed.data.email, scenario);
+  if (scenario === "invalid") {
     return jsonResponse({ ok: true, inspection: { ...inspection, schemaVersion: 99 } });
   }
   return jsonResponse({ ok: true, inspection });
@@ -170,13 +240,14 @@ function Fixture() {
   }
   return <main className="research-app ra-admin container-x" style={{ paddingTop: 24, paddingBottom: 48, overflowWrap: "anywhere" }} onClickCapture={preventFixtureNavigation}>
     <h1 className="body-l font-700">Synthetic access inspection QA</h1>
-    <p className="body-s my-4">Synthetic UI fixture, no real provider or admin authority. Only local mock data is used; there are no approval, invitation, billing, or production actions.</p>
+    <p className="body-s my-4">Synthetic UI fixture, no real provider or admin authority. Approval scenarios simulate ephemeral local mutations only. No actual approvals, emails, invitations, billing changes or production actions occur.</p>
     <p className="body-s mb-4">Enter any invented address ending <code>@fixture.invalid</code>, such as <code>customer@fixture.invalid</code>. Other addresses are refused locally and nothing is logged. The observation time is a fixed fixture timestamp.</p>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: 16, marginBottom: 24 }}>
       <div>
         <label className="form-label" htmlFor="access-qa-scenario">QA scenario</label>
         <select id="access-qa-scenario" className="input-field" value={scenario} onChange={event => {
           activeScenario = event.target.value as Scenario;
+          mockApprovalRequestKey = null;
           setScenario(activeScenario);
           setNavigationNotice("");
         }}>
@@ -186,12 +257,17 @@ function Fixture() {
           <option value="conflict">Conflicting identity bindings</option>
           <option value="unavailable">Inspection unavailable</option>
           <option value="invalid">Invalid server response</option>
+          <option value="approval-ready">Approval ready — absent customer</option>
+          <option value="approval-reviewed">Reviewed past-due customer — active application</option>
+          <option value="approval-uncertain">Pending customer — uncertain approval, same-key retry</option>
+          <option value="approval-stale">Pending customer — stale approval refusal</option>
         </select>
       </div>
       <div>
         <label className="form-label" htmlFor="access-qa-admin">Synthetic admin context</label>
         <select id="access-qa-admin" className="input-field" value={admin} onChange={event => {
           activeAdmin = event.target.value as FixtureAdmin;
+          mockApprovalRequestKey = null;
           setAdmin(activeAdmin);
           setNavigationNotice("");
         }}>
@@ -200,7 +276,7 @@ function Fixture() {
         </select>
       </div>
     </div>
-    <p className="body-s mb-4">Changing either control remounts the panel and clears the previous inspection. Record-review links are visibly present for QA, but navigation is suppressed in this fixture.</p>
+    <p className="body-s mb-4">Changing either QA control resets this invented scenario, including its ephemeral mock request key. Resolve the uncertain scenario with the same-request retry before resetting it. Record-review links are visible for QA, but navigation is suppressed.</p>
     {navigationNotice && <p className="body-s mb-4" role="status">{navigationNotice}</p>}
     <MemberAccessDiagnosisPanel key={`${scenario}:${admin}`} token={ADMIN_TOKENS[admin]} />
   </main>;
