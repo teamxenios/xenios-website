@@ -1,0 +1,3575 @@
+{
+  "schemaVersion": 1,
+  "purpose": "unapproved_source_reconciliation_input",
+  "packageManifestSha256": "8f805f1a13defcd552bf838c4575af8a25a5aa25ffcab2ea4ddb2458188827e7",
+  "checksumsSha256": "cafd6b590a6ea45215bdefd15c9c306e415ee1f90bf1811e7a53d9f850c4e11c",
+  "declaredChecksumCount": 44,
+  "verifiedFileCount": 14,
+  "sourceHashes": {
+    "manifests/XENIOS_SETH_LIVE_REVENUE_LAUNCH_MANIFEST_2026-09-05.json": "6b19efe85ff533bccc34ea2d26a895c1d735fcf2def2a7631e7f798b7fb2e211",
+    "manifests/XENIOS_SETH_PHASE_A_DIRECT_BUY_PRICES_2026-09-05.csv": "081a27417b133c6f3da4bff7a183e11df8951944ac7210c6ca2eb88c796775ff",
+    "manifests/XENIOS_SETH_PHASE_B_EXPANSION_QUEUE_2026-09-05.csv": "d66e59bc6c50a9c0b35dc99c2cd6e84e6da5ae02abd1dad7d267c120fe854f97"
+  },
+  "missingFiles": [
+    "code/README_START_HERE.md",
+    "code/client/src/research/revenue-launch/presentation.ts",
+    "code/cloud/README.md",
+    "code/cloud/codex-task-queue.json",
+    "code/cloud/model-routing-policy.json",
+    "code/revenue-launch.config.json",
+    "code/scripts/revenue-launch/build-launch-plan.mjs",
+    "code/scripts/revenue-launch/generate-founder-revenue-brief.mjs",
+    "code/scripts/revenue-launch/lib.mjs",
+    "code/scripts/revenue-launch/postdeploy-smoke.mjs",
+    "code/scripts/revenue-launch/release-candidate-check.mjs",
+    "code/scripts/revenue-launch/revenue-launch.test.mjs",
+    "code/scripts/revenue-launch/seed-runtime-evidence.mjs",
+    "code/scripts/revenue-launch/validate-launch-source.mjs",
+    "code/scripts/revenue-launch/verify-live-readiness.mjs",
+    "code/server/research/revenue-launch/launch-plan-service.ts",
+    "code/shared/research/revenue-launch/launch-gates.test.ts",
+    "code/shared/research/revenue-launch/launch-gates.ts",
+    "code/shared/research/revenue-launch/price-tiers.test.ts",
+    "code/shared/research/revenue-launch/price-tiers.ts",
+    "code/tsconfig.starter.json",
+    "generated/runtime-launch-evidence.template.json",
+    "generated/xenios-live-launch-plan.generated.json",
+    "generated/xenios-phase-a-live-launch-matrix.generated.csv",
+    "generated/xenios-phase-b-expansion-matrix.generated.csv",
+    "inputs/XENIOS_SETH_EXISTING_PRICE_UPDATE_MANIFEST_2026-09-04.csv",
+    "inputs/XENIOS_SETH_MISSING_PRODUCT_CANDIDATE_MANIFEST_2026-09-04.csv",
+    "inputs/XENIOS_SETH_PRICING_IMPLEMENTATION_MANIFEST_2026-09-04.json",
+    "inputs/XENIOS_SETH_PRICING_REVIEW_FORM_2026-09-04.xlsx",
+    "manifests/SOURCE_INPUT_SHA256.json"
+  ],
+  "workbookBytesVerified": false,
+  "workbookCellsVerified": false,
+  "sourceApprovalVerified": false,
+  "productionReady": false,
+  "phaseACount": 39,
+  "phaseATierCount": 117,
+  "phaseBCount": 68,
+  "phaseBExceptions": [
+    {
+      "sourceId": "SETH-CAND-046",
+      "issues": [
+        "missing_positive_price"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-063",
+      "issues": [
+        "tier_inversion"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-064",
+      "issues": [
+        "tier_inversion"
+      ]
+    },
+    {
+      "sourceId": "SETH-CAND-066",
+      "issues": [
+        "tier_inversion"
+      ]
+    }
+  ],
+  "phaseA": [
+    {
+      "sourceId": "XRUO-001",
+      "launchItemId": "LIVE-EXISTING-001",
+      "sourceProduct": "Tirzepatide",
+      "sourceConfiguration": "30 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-002",
+      "launchItemId": "LIVE-EXISTING-002",
+      "sourceProduct": "Tirzepatide",
+      "sourceConfiguration": "60 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-003",
+      "launchItemId": "LIVE-EXISTING-003",
+      "sourceProduct": "Semaglutide",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-004",
+      "launchItemId": "LIVE-EXISTING-004",
+      "sourceProduct": "Semaglutide",
+      "sourceConfiguration": "20 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-005",
+      "launchItemId": "LIVE-EXISTING-005",
+      "sourceProduct": "Retatrutide",
+      "sourceConfiguration": "20 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-006",
+      "launchItemId": "LIVE-EXISTING-006",
+      "sourceProduct": "Retatrutide",
+      "sourceConfiguration": "40 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 32900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 31300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 29700
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-007",
+      "launchItemId": "LIVE-EXISTING-007",
+      "sourceProduct": "Retatrutide",
+      "sourceConfiguration": "60 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 44900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 42700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 40500
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-008",
+      "launchItemId": "LIVE-EXISTING-008",
+      "sourceProduct": "BPC-157",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 5900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 5700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 5400
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-009",
+      "launchItemId": "LIVE-EXISTING-009",
+      "sourceProduct": "BPC-157 + TB-500",
+      "sourceConfiguration": "10 mg total (5 mg + 5 mg assumed)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_ASSUMPTION_REQUIRES_IDENTITY_CONFIRMATION"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-010",
+      "launchItemId": "LIVE-EXISTING-010",
+      "sourceProduct": "BPC-157 + TB-500",
+      "sourceConfiguration": "20 mg total (10 mg + 10 mg assumed)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_ASSUMPTION_REQUIRES_IDENTITY_CONFIRMATION",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-011",
+      "launchItemId": "LIVE-EXISTING-011",
+      "sourceProduct": "GHK-Cu",
+      "sourceConfiguration": "50 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 5900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 5700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 5400
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-012",
+      "launchItemId": "LIVE-EXISTING-012",
+      "sourceProduct": "Tesamorelin",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 10900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 10400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9900
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-013",
+      "launchItemId": "LIVE-EXISTING-013",
+      "sourceProduct": "CJC-1295 + Ipamorelin",
+      "sourceConfiguration": "10 mg total, No DAC (5 mg + 5 mg assumed)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_ASSUMPTION_REQUIRES_IDENTITY_CONFIRMATION",
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-014",
+      "launchItemId": "LIVE-EXISTING-014",
+      "sourceProduct": "CJC-1295 + Ipamorelin",
+      "sourceConfiguration": "5 mg with DAC (exact split pending)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_SPLIT_PENDING",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-015",
+      "launchItemId": "LIVE-EXISTING-015",
+      "sourceProduct": "Sermorelin",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-016",
+      "launchItemId": "LIVE-EXISTING-016",
+      "sourceProduct": "NAD+",
+      "sourceConfiguration": "500 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 10900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 10400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9900
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-017",
+      "launchItemId": "LIVE-EXISTING-017",
+      "sourceProduct": "NAD+",
+      "sourceConfiguration": "1000 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 14900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 14200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 13500
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-018",
+      "launchItemId": "LIVE-EXISTING-018",
+      "sourceProduct": "Ipamorelin",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-019",
+      "launchItemId": "LIVE-EXISTING-019",
+      "sourceProduct": "PT-141",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 7900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 7600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 7200
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-020",
+      "launchItemId": "LIVE-EXISTING-020",
+      "sourceProduct": "Cagrilintide",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-021",
+      "launchItemId": "LIVE-EXISTING-021",
+      "sourceProduct": "Cagrilintide",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-022",
+      "launchItemId": "LIVE-EXISTING-022",
+      "sourceProduct": "Melanotan II",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-023",
+      "launchItemId": "LIVE-EXISTING-023",
+      "sourceProduct": "MOTS-C",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-024",
+      "launchItemId": "LIVE-EXISTING-024",
+      "sourceProduct": "MOTS-C",
+      "sourceConfiguration": "40 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 15900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 15200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 14400
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-025",
+      "launchItemId": "LIVE-EXISTING-025",
+      "sourceProduct": "GLOW",
+      "sourceConfiguration": "70 mg (BPC-157 10 + TB-500 10 + GHK-Cu 50 assumed)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 18900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 18000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 17100
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_ASSUMPTION_REQUIRES_IDENTITY_CONFIRMATION",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-026",
+      "launchItemId": "LIVE-EXISTING-026",
+      "sourceProduct": "Glutathione",
+      "sourceConfiguration": "600 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-027",
+      "launchItemId": "LIVE-EXISTING-027",
+      "sourceProduct": "AOD-9604",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 5900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 5700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 5400
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-028",
+      "launchItemId": "LIVE-EXISTING-028",
+      "sourceProduct": "AOD-9604",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-029",
+      "launchItemId": "LIVE-EXISTING-029",
+      "sourceProduct": "KPV",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-030",
+      "launchItemId": "LIVE-EXISTING-030",
+      "sourceProduct": "Thymosin Alpha-1",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 7900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 7600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 7200
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-031",
+      "launchItemId": "LIVE-EXISTING-031",
+      "sourceProduct": "Thymosin Alpha-1",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-032",
+      "launchItemId": "LIVE-EXISTING-032",
+      "sourceProduct": "Semax",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-033",
+      "launchItemId": "LIVE-EXISTING-033",
+      "sourceProduct": "Selank",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-034",
+      "launchItemId": "LIVE-EXISTING-034",
+      "sourceProduct": "DSIP",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-035",
+      "launchItemId": "LIVE-EXISTING-035",
+      "sourceProduct": "Kisspeptin-10",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-036",
+      "launchItemId": "LIVE-EXISTING-036",
+      "sourceProduct": "Oxytocin",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-037",
+      "launchItemId": "LIVE-EXISTING-037",
+      "sourceProduct": "Oxytocin",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-038",
+      "launchItemId": "LIVE-EXISTING-038",
+      "sourceProduct": "Hexarelin",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 7900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 7600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 7200
+        }
+      ],
+      "riskFlags": [
+        "PRICE_INCREASE_50_PERCENT_OR_MORE",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "XRUO-039",
+      "launchItemId": "LIVE-EXISTING-039",
+      "sourceProduct": "KLOW",
+      "sourceConfiguration": "80 mg (BPC-157 10 + TB-500 10 + GHK-Cu 50 + KPV 10 assumed)",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [
+        "CONFIGURATION_ASSUMPTION_REQUIRES_IDENTITY_CONFIRMATION",
+        "ABOVE_MARKET_MEDIAN_25_PERCENT_OR_MORE"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    }
+  ],
+  "phaseB": [
+    {
+      "sourceId": "SETH-CAND-001",
+      "launchItemId": "LIVE-CANDIDATE-001",
+      "sourceProduct": "Semaglutide",
+      "sourceConfiguration": "30 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 15900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 15200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 14400
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-002",
+      "launchItemId": "LIVE-CANDIDATE-002",
+      "sourceProduct": "Retatrutide",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 15000
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 14300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 13500
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-003",
+      "launchItemId": "LIVE-CANDIDATE-003",
+      "sourceProduct": "ARA-290",
+      "sourceConfiguration": "30 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 14900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 14200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 13500
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-004",
+      "launchItemId": "LIVE-CANDIDATE-004",
+      "sourceProduct": "ARA-290",
+      "sourceConfiguration": "50 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [
+        "UNKNOWN_COST_PROXY",
+        "INTERNAL_NOTE_CLAIM_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-005",
+      "launchItemId": "LIVE-CANDIDATE-005",
+      "sourceProduct": "BPC-157",
+      "sourceConfiguration": "15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 7900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 7600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 7200
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-006",
+      "launchItemId": "LIVE-CANDIDATE-006",
+      "sourceProduct": "Cartalax (AED/t-31)",
+      "sourceConfiguration": "20 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "CANONICAL_IDENTITY_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-007",
+      "launchItemId": "LIVE-CANDIDATE-007",
+      "sourceProduct": "CJC-1295 No DAC",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-008",
+      "launchItemId": "LIVE-CANDIDATE-008",
+      "sourceProduct": "Elamipretide / SS-31",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 7900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 7600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 7200
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-009",
+      "launchItemId": "LIVE-CANDIDATE-009",
+      "sourceProduct": "Elamipretide / SS-31",
+      "sourceConfiguration": "30 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-010",
+      "launchItemId": "LIVE-CANDIDATE-010",
+      "sourceProduct": "Elamipretide / SS-31",
+      "sourceConfiguration": "75 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-011",
+      "launchItemId": "LIVE-CANDIDATE-011",
+      "sourceProduct": "Epithalon / Epitalon",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-012",
+      "launchItemId": "LIVE-CANDIDATE-012",
+      "sourceProduct": "Epithalon / Epitalon",
+      "sourceConfiguration": "20 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-013",
+      "launchItemId": "LIVE-CANDIDATE-013",
+      "sourceProduct": "Epithalon / Epitalon",
+      "sourceConfiguration": "50 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-014",
+      "launchItemId": "LIVE-CANDIDATE-014",
+      "sourceProduct": "FOXO4-DRI",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-015",
+      "launchItemId": "LIVE-CANDIDATE-015",
+      "sourceProduct": "GHK-Cu",
+      "sourceConfiguration": "100 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-016",
+      "launchItemId": "LIVE-CANDIDATE-016",
+      "sourceProduct": "Gonadorelin",
+      "sourceConfiguration": "1 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-017",
+      "launchItemId": "LIVE-CANDIDATE-017",
+      "sourceProduct": "IGF-1 LR3",
+      "sourceConfiguration": "1 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-018",
+      "launchItemId": "LIVE-CANDIDATE-018",
+      "sourceProduct": "LL-37 (CAP-18)",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-019",
+      "launchItemId": "LIVE-CANDIDATE-019",
+      "sourceProduct": "Melanotan I",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-020",
+      "launchItemId": "LIVE-CANDIDATE-020",
+      "sourceProduct": "PEG-MGF",
+      "sourceConfiguration": "2 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 5900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 5700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 5400
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-021",
+      "launchItemId": "LIVE-CANDIDATE-021",
+      "sourceProduct": "PEG-MGF",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-022",
+      "launchItemId": "LIVE-CANDIDATE-022",
+      "sourceProduct": "Relamorelin (RM-131)",
+      "sourceConfiguration": "3 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 30000
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 28500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 27000
+        }
+      ],
+      "riskFlags": [
+        "UNKNOWN_COST_PROXY",
+        "INTERNAL_NOTE_CLAIM_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-023",
+      "launchItemId": "LIVE-CANDIDATE-023",
+      "sourceProduct": "Sermorelin",
+      "sourceConfiguration": "15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-024",
+      "launchItemId": "LIVE-CANDIDATE-024",
+      "sourceProduct": "TB-500 / Thymosin Beta-4",
+      "sourceConfiguration": "5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 6900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 6600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 6300
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-025",
+      "launchItemId": "LIVE-CANDIDATE-025",
+      "sourceProduct": "TB-500 / Thymosin Beta-4",
+      "sourceConfiguration": "10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-026",
+      "launchItemId": "LIVE-CANDIDATE-026",
+      "sourceProduct": "TB-500",
+      "sourceConfiguration": "50 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 16900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 16100
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 15300
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-027",
+      "launchItemId": "LIVE-CANDIDATE-027",
+      "sourceProduct": "Tesamorelin",
+      "sourceConfiguration": "15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-028",
+      "launchItemId": "LIVE-CANDIDATE-028",
+      "sourceProduct": "Tesamorelin",
+      "sourceConfiguration": "24 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 18900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 18000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 17100
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-029",
+      "launchItemId": "LIVE-CANDIDATE-029",
+      "sourceProduct": "Thymosin Alpha-1",
+      "sourceConfiguration": "15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 15900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 15200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 14400
+        }
+      ],
+      "riskFlags": [],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-030",
+      "launchItemId": "LIVE-CANDIDATE-030",
+      "sourceProduct": "Thymosin A1 / KPV / LL-37",
+      "sourceConfiguration": "10/10/5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 20900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18900
+        }
+      ],
+      "riskFlags": [
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-031",
+      "launchItemId": "LIVE-CANDIDATE-031",
+      "sourceProduct": "IGF-1 LR3 / MOTS-C",
+      "sourceConfiguration": "1/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-032",
+      "launchItemId": "LIVE-CANDIDATE-032",
+      "sourceProduct": "Wolverine — BPC-157 / TB-500 / MGF",
+      "sourceConfiguration": "10/2.5/1 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "CANONICAL_IDENTITY_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-033",
+      "launchItemId": "LIVE-CANDIDATE-033",
+      "sourceProduct": "Tesamorelin / Ipamorelin / MOTS-C",
+      "sourceConfiguration": "10/5/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 16900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 16100
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 15300
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-034",
+      "launchItemId": "LIVE-CANDIDATE-034",
+      "sourceProduct": "Tesamorelin / Ipamorelin",
+      "sourceConfiguration": "10/5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-035",
+      "launchItemId": "LIVE-CANDIDATE-035",
+      "sourceProduct": "Selank / Semax / DSIP",
+      "sourceConfiguration": "10/10/2 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-036",
+      "launchItemId": "LIVE-CANDIDATE-036",
+      "sourceProduct": "Selank / Semax",
+      "sourceConfiguration": "5/5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-037",
+      "launchItemId": "LIVE-CANDIDATE-037",
+      "sourceProduct": "GHK-Cu / Epithalon",
+      "sourceConfiguration": "50/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-038",
+      "launchItemId": "LIVE-CANDIDATE-038",
+      "sourceProduct": "GHK-Cu / Epithalon / MOTS-C",
+      "sourceConfiguration": "50/10/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-039",
+      "launchItemId": "LIVE-CANDIDATE-039",
+      "sourceProduct": "CJC-1295 / Ipamorelin",
+      "sourceConfiguration": "10/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-040",
+      "launchItemId": "LIVE-CANDIDATE-040",
+      "sourceProduct": "GLP-R / Cagrilintide",
+      "sourceConfiguration": "10/2.5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 18900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 18000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 17100
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "CANONICAL_IDENTITY_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-041",
+      "launchItemId": "LIVE-CANDIDATE-041",
+      "sourceProduct": "BPC-157 / TB-500",
+      "sourceConfiguration": "15/15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 15900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 15200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 14400
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-042",
+      "launchItemId": "LIVE-CANDIDATE-042",
+      "sourceProduct": "DSIP / Selank",
+      "sourceConfiguration": "2/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 8900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 8500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 8100
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-043",
+      "launchItemId": "LIVE-CANDIDATE-043",
+      "sourceProduct": "AOD-9604 / MOTS-C / Tesamorelin / Ipamorelin",
+      "sourceConfiguration": "6/10/10/10 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 19900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 19000
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 18000
+        }
+      ],
+      "riskFlags": [
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-044",
+      "launchItemId": "LIVE-CANDIDATE-044",
+      "sourceProduct": "Sermorelin / Ipamorelin",
+      "sourceConfiguration": "15/18 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 14900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 14200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 13500
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-045",
+      "launchItemId": "LIVE-CANDIDATE-045",
+      "sourceProduct": "Tesamorelin / Ipamorelin",
+      "sourceConfiguration": "12/6 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-046",
+      "launchItemId": "LIVE-CANDIDATE-046",
+      "sourceProduct": "Anamorelin",
+      "sourceConfiguration": "Capsule — 100 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": null
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 0
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 0
+        }
+      ],
+      "riskFlags": [
+        "UNKNOWN_COST_PROXY",
+        "ZERO_OR_MISSING_RECOMMENDED_RETAIL",
+        "UNIT_OF_SALE_REVIEW",
+        "INTERNAL_NOTE_CLAIM_REVIEW"
+      ],
+      "sourceIssues": [
+        "missing_positive_price"
+      ],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-047",
+      "launchItemId": "LIVE-CANDIDATE-047",
+      "sourceProduct": "Thymosin Alpha-1",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-048",
+      "launchItemId": "LIVE-CANDIDATE-048",
+      "sourceProduct": "Tesofensine",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-049",
+      "launchItemId": "LIVE-CANDIDATE-049",
+      "sourceProduct": "TB-500",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-050",
+      "launchItemId": "LIVE-CANDIDATE-050",
+      "sourceProduct": "SLU-PP-332",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-051",
+      "launchItemId": "LIVE-CANDIDATE-051",
+      "sourceProduct": "Sermorelin",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-052",
+      "launchItemId": "LIVE-CANDIDATE-052",
+      "sourceProduct": "KPV",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-053",
+      "launchItemId": "LIVE-CANDIDATE-053",
+      "sourceProduct": "GHK-Cu",
+      "sourceConfiguration": "Capsule — 2 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 10900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 10400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9900
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-054",
+      "launchItemId": "LIVE-CANDIDATE-054",
+      "sourceProduct": "BPC-157",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 9900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 9500
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 9000
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-055",
+      "launchItemId": "LIVE-CANDIDATE-055",
+      "sourceProduct": "BPC-157 / KPV",
+      "sourceConfiguration": "Capsule — 500/500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-056",
+      "launchItemId": "LIVE-CANDIDATE-056",
+      "sourceProduct": "BPC-157 / TB-500",
+      "sourceConfiguration": "Capsule — 500/500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 13900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 13300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 12600
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-057",
+      "launchItemId": "LIVE-CANDIDATE-057",
+      "sourceProduct": "AOD-9604 (per capsule price)",
+      "sourceConfiguration": "Troche — 300 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 400
+        }
+      ],
+      "riskFlags": [
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-058",
+      "launchItemId": "LIVE-CANDIDATE-058",
+      "sourceProduct": "Dihexa (per capsule price)",
+      "sourceConfiguration": "Capsule — 5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 400
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-059",
+      "launchItemId": "LIVE-CANDIDATE-059",
+      "sourceProduct": "Dihexa (per capsule price)",
+      "sourceConfiguration": "Capsule — 25 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 700
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 700
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-060",
+      "launchItemId": "LIVE-CANDIDATE-060",
+      "sourceProduct": "Ibutamoren (per capsule price)",
+      "sourceConfiguration": "Capsule — 12.5 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 200
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 200
+        }
+      ],
+      "riskFlags": [
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-061",
+      "launchItemId": "LIVE-CANDIDATE-061",
+      "sourceProduct": "Ibutamoren",
+      "sourceConfiguration": "Capsule — 25 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 12900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 12300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 11700
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-062",
+      "launchItemId": "LIVE-CANDIDATE-062",
+      "sourceProduct": "Larazotide (per capsule price)",
+      "sourceConfiguration": "Capsule — 250 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 400
+        }
+      ],
+      "riskFlags": [
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-063",
+      "launchItemId": "LIVE-CANDIDATE-063",
+      "sourceProduct": "Larazotide (per capsule price)",
+      "sourceConfiguration": "Capsule — 500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 550
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 600
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 500
+        }
+      ],
+      "riskFlags": [
+        "TIER_INVERSION",
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW"
+      ],
+      "sourceIssues": [
+        "tier_inversion"
+      ],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-064",
+      "launchItemId": "LIVE-CANDIDATE-064",
+      "sourceProduct": "Larazotide / KPV (per capsule price)",
+      "sourceConfiguration": "Capsule — 500/500 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 650
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 600
+        }
+      ],
+      "riskFlags": [
+        "TIER_INVERSION",
+        "UNIT_OF_SALE_REVIEW",
+        "CANONICAL_IDENTITY_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [
+        "tier_inversion"
+      ],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-065",
+      "launchItemId": "LIVE-CANDIDATE-065",
+      "sourceProduct": "SLU-PP-332",
+      "sourceConfiguration": "Capsule — 250 mcg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 200
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 200
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 200
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "UNIT_OF_SALE_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-066",
+      "launchItemId": "LIVE-CANDIDATE-066",
+      "sourceProduct": "SLU-PP-332 / BAM15",
+      "sourceConfiguration": "Capsule — 100 mcg / 15 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 250
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 300
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 300
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "TIER_INVERSION",
+        "UNIT_OF_SALE_REVIEW",
+        "BLEND_OR_NAMING_REVIEW"
+      ],
+      "sourceIssues": [
+        "tier_inversion"
+      ],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-067",
+      "launchItemId": "LIVE-CANDIDATE-067",
+      "sourceProduct": "GHK-Cu",
+      "sourceConfiguration": "Topical — 50 mg",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 11900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 11400
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 10800
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "CANONICAL_IDENTITY_REVIEW",
+        "CLASSIFICATION_AND_FULFILLMENT_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    },
+    {
+      "sourceId": "SETH-CAND-068",
+      "launchItemId": "LIVE-CANDIDATE-068",
+      "sourceProduct": "EXOSOMES",
+      "sourceConfiguration": "Topical — 30mL",
+      "currency": "USD",
+      "tiers": [
+        {
+          "minimumQuantity": 1,
+          "amountCents": 24900
+        },
+        {
+          "minimumQuantity": 5,
+          "amountCents": 23700
+        },
+        {
+          "minimumQuantity": 10,
+          "amountCents": 22500
+        }
+      ],
+      "riskFlags": [
+        "RECOMMENDED_AT_OR_BELOW_SETH_PAY_PROXY",
+        "PROXY_MARGIN_BELOW_35_PERCENT",
+        "CANONICAL_IDENTITY_REVIEW",
+        "CLASSIFICATION_AND_FULFILLMENT_REVIEW"
+      ],
+      "sourceIssues": [],
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "canonicalSku": null,
+      "unitOfSale": null,
+      "state": "unreconciled",
+      "approved": false,
+      "activated": false
+    }
+  ]
+}

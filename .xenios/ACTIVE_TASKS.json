@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-04T20:12:00.000Z",
+  "updatedAt": "2026-09-05T04:13:59.4490779Z",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -114,7 +114,7 @@
       },
       "acceptedSha": "6f2cfd81b7543b835feb231613f25e6d8716b8de",
       "acceptedBy": "codex-ux-referral-20260904",
-      "acceptedAt": "2026-09-04T17:56:15.170Z"
+      "acceptedAt": "2026-09-04T17:56:15.17Z"
     },
     {
       "id": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -229,7 +229,7 @@
         "shared/research/account-identity.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-15T21:55:26.570Z",
+      "claimedAt": "2026-08-15T21:55:26.57Z",
       "releasedAt": "2026-08-15T21:54:57.887Z"
     },
     {
@@ -418,7 +418,7 @@
         "session": "claude-fable-main",
         "sha": "2ed32263bc3cb472096f94ce3421aaf0e5fde108",
         "file": ".xenios/handoffs/2026-08-16T18-56-04-068Z-ASSISTED-ORDER-MOUNT-claude-fable-main.md",
-        "at": "2026-08-16T18:56:04.070Z"
+        "at": "2026-08-16T18:56:04.07Z"
       }
     },
     {
@@ -606,7 +606,7 @@
         "session": "claude-fable-s3",
         "sha": "68271321551ee0d5b86982129ecfe39f6bd72fb7",
         "file": ".xenios/handoffs/2026-08-21T14-43-07-698Z-PEPTIDE-LAUNCH-ACCEPTANCE-claude-fable-s3.md",
-        "at": "2026-08-21T14:43:07.700Z"
+        "at": "2026-08-21T14:43:07.7Z"
       }
     },
     {
@@ -683,11 +683,11 @@
         "session": "codex-step1-live-hotfix-20260825",
         "sha": "b8359eba179fb7a901df58be6b949b3956a43c39",
         "file": ".xenios/handoffs/2026-09-04T20-48-50-776Z-STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825-codex-step1-live-hotfix-20260825.md",
-        "at": "2026-09-04T20:48:50.780Z"
+        "at": "2026-09-04T20:48:50.78Z"
       },
       "acceptedSha": "b8359eba179fb7a901df58be6b949b3956a43c39",
       "acceptedBy": "codex-major-ordering-admin-sor-20260904",
-      "acceptedAt": "2026-09-04T20:48:55.160Z"
+      "acceptedAt": "2026-09-04T20:48:55.16Z"
     },
     {
       "id": "CLIENT-ACCOUNT-PORTAL-UI-20260826",
@@ -740,12 +740,12 @@
         "CLIENT-ACCOUNT-PORTAL-UI-20260826"
       ],
       "pathsNote": "Release-authority integration pass per the 2026-08-26 blitz plan: the seam edits ride the protected-seam protocol with chained manifest notes. No deploy, no migration apply, no invitation, no activation, no production mutation. Founder decisions enumerated in the RC report section 26.",
-      "claimedAt": "2026-08-27T17:30:00.000Z",
+      "claimedAt": "2026-08-27T17:30:00Z",
       "handoff": {
         "session": "claude-fable-final-integrator-20260827",
         "sha": "assigned-by-the-freezing-commit; origin-verified via ls-remote in the session report",
         "file": ".xenios/handoffs/2026-08-27T21-45-00-000Z-CLIENT-ACCOUNT-FINAL-RC-claude-fable-final-integrator-20260827.md",
-        "at": "2026-08-27T21:45:00.000Z"
+        "at": "2026-08-27T21:45:00Z"
       }
     },
     {
@@ -898,7 +898,7 @@
         "CARE-RESEARCH-POSTLAUNCH-20260831"
       ],
       "pathsNote": "Founder-requested canonical umbrella entrypoint at /health. Preserve /care and /research for compatibility, preserve health-surface tracking and attribution isolation, and limit the protected main-site change to the requested Health navigation target plus exact sitemap/route seams. Implementation and verification only: no new production deployment is authorized until Samuel gives a later current exact-SHA GO.",
-      "claimedAt": "2026-08-31T17:05:56.410Z",
+      "claimedAt": "2026-08-31T17:05:56.41Z",
       "releasedAt": "2026-08-31T17:05:47.557Z",
       "handoff": {
         "session": "codex-health-entrypoint-20260831",
@@ -1092,7 +1092,7 @@
         "client/src/care/CarePublicPages.tsx",
         "docs/research-launch/FULL_UX_FOUNDATION_*.md"
       ],
-      "createdAt": "2026-09-04T14:54:58.150Z",
+      "createdAt": "2026-09-04T14:54:58.15Z",
       "acceptance": [
         "journey matrix (md + json) without customer/patient data or production identifiers",
         "one sign-in helper decides the post-auth destination; returnTo survives reset, claim, invite and Early Access / assisted-order / Care paths; nothing outside the allowlist is honoured",
@@ -1167,7 +1167,7 @@
         ".xenios/handoffs/*XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904*"
       ],
       "dependsOn": [],
-      "createdAt": "2026-09-04T20:12:00.000Z",
+      "createdAt": "2026-09-04T20:12:00Z",
       "scopeNote": "Founder-directed local-only major sequence on accepted parent e3c9919b1b2f3478e5f2b07a9c93bee6218beb2f. Integrate the generator first, then /research/order, then the read-only founder command center. Preserve canonical account, commerce, referral, Care and admin authorities. No deploy, migration, environment or provider change, real communication, approval, payment, fulfillment, Care/referral mutation, commission or payout.",
       "acceptance": [
         "generated records use the current directive status vocabulary and distinguish source, test, browser and production truth without inference",
@@ -1266,6 +1266,34 @@
       "acceptedSha": "229db5da0297fc7ab8fb59567dabd4b2ef49b607",
       "acceptedBy": "codex-wave4-frozen-review-20260904",
       "acceptedAt": "2026-09-05T01:30:36.956Z"
+    },
+    {
+      "id": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "title": "Reconcile Seth source pricing and build the canonical Phase A revenue launch through exact-SHA production approval",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "scripts/revenue-launch/**",
+        "docs/revenue-launch/**",
+        "config/research/revenue-launch/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md",
+        ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*"
+      ],
+      "dependsOn": [
+        "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
+      ],
+      "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
+      "createdAt": "2026-09-05T04:13:59.4380733Z",
+      "scopeNote": "Initial exact path lease for convergence, source validation and reconciliation. Expand only after current authority and existing leases are inspected. Current directive permits engineering; no production writes, activation/publication, release merge, real communications, financial or clinical actions until specifically approved.",
+      "claimedAt": "2026-09-05T04:13:59.531Z"
     }
   ]
 }

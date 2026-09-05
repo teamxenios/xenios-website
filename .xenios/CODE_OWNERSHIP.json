@@ -1223,6 +1223,28 @@
       "state": "released",
       "claimedAt": "2026-09-04T22:17:40.125Z",
       "heartbeatAt": "2026-09-05T01:20:51.752Z"
+    },
+    {
+      "id": "271bd273-a77d-48ff-8768-804e5cee224a",
+      "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "scripts/revenue-launch/**",
+        "docs/revenue-launch/**",
+        "config/research/revenue-launch/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md",
+        ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+        ".xenios/handoffs/*XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-05T04:13:59.534Z",
+      "heartbeatAt": "2026-09-05T04:24:43.379Z"
     }
   ],
   "rules": [

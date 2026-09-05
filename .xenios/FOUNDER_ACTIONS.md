@@ -4,6 +4,13 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
+- Seth revenue launch: provide the complete package including the exact
+  September 4 pricing workbook so source cells and approval evidence can be
+  validated. The parent task has already requested the missing ZIP. Resolve
+  only the documented formulation/source and operational exceptions once
+  Product Control presents the concrete rows. Production approval will be a
+  later exact full-SHA and Render-service GO after release gates pass.
+
 - After Phase Zero completes and the seat is released, and BEFORE launching the cashflow/demo lane sessions: delete `SUPABASE_ACCESS_TOKEN` from the Claude Desktop Local environment, REVOKE the temporary PAT in the Supabase dashboard, remove or disable the local `.mcp.json` production connection, and fully restart Claude Desktop. Lane sessions must never inherit a production database credential (see SESSION_LAUNCH_RUNBOOK_2026-08-17.md).
 - Unblock the Phase Zero DB preflight: add `SUPABASE_ACCESS_TOKEN` to the Claude Desktop Local environment (environment selector → Local → gear), fully quit and reopen Claude Desktop, then launch the successor Local Code session at the worktree with the recovery prompt. The scoped `supabase-xenios-prod` MCP cannot authenticate in any session started without that variable; every other Phase Zero preflight item is already green (see PHASE_ZERO_PRODUCTION_PACKET.md, baseline reconciled 2026-08-17). Identify or confirm the actor of manual Render deploy dep-da1lmgu417fc73elr8f0 while doing so.
 - Approve the exact legal versions required for the public membership application once counsel/version authority is ready.

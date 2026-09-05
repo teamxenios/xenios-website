@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "packageManifestSha256": "8f805f1a13defcd552bf838c4575af8a25a5aa25ffcab2ea4ddb2458188827e7",
+  "package": "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_2026-09-05",
+  "files": [
+    {
+      "path": "00_START_HERE.txt",
+      "bytes": 1540,
+      "sha256": "1c18c8e716736b8a8bb0d2e06649d6ad903e708ee3755ecf5a328c015ef7af01",
+      "status": "verified",
+      "locatedNames": [
+        "00_START_HERE(2).txt"
+      ]
+    },
+    {
+      "path": "CODEX_START_REVENUE_LAUNCH_NOW.txt",
+      "bytes": 3490,
+      "sha256": "ebc4090e50375de7a5840373019deb7a90d4b39c43125aa312b06c1f6147727c",
+      "status": "verified",
+      "locatedNames": [
+        "CODEX_START_REVENUE_LAUNCH_NOW.txt"
+      ]
+    },
+    {
+      "path": "FOUNDER_EXACT_SHA_GO_TEMPLATE.txt",
+      "bytes": 694,
+      "sha256": "663f0ea5b99d7947dfae856f671753865ff4a4a186b92236bd3e4b8a457b1fea",
+      "status": "verified",
+      "locatedNames": [
+        "FOUNDER_EXACT_SHA_GO_TEMPLATE.txt"
+      ]
+    },
+    {
+      "path": "POST_DEPLOY_LIVE_CLOSEOUT_TEMPLATE.txt",
+      "bytes": 579,
+      "sha256": "9c0316f6743b53d20f819c390d6ab13d982d2bc430c276db2480088828db552d",
+      "status": "verified",
+      "locatedNames": [
+        "POST_DEPLOY_LIVE_CLOSEOUT_TEMPLATE.txt"
+      ]
+    },
+    {
+      "path": "VALIDATION_REPORT.txt",
+      "bytes": 2602,
+      "sha256": "e72867da7c19b38073aaed6fb442beca532e63d78b3ad97a80eaebcae8652bf1",
+      "status": "verified",
+      "locatedNames": [
+        "VALIDATION_REPORT(1).txt"
+      ]
+    },
+    {
+      "path": "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.docx",
+      "bytes": 72954,
+      "sha256": "7c057f61403e00db4d2f4fd70a20debde0b332f07d03a5766ed7825d7374de0f",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.docx"
+      ]
+    },
+    {
+      "path": "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.md",
+      "bytes": 62584,
+      "sha256": "590fc38db2fb57e0f92f2ba05e792a78b21342be32c34b7e5e1392b1171cb130",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.md"
+      ]
+    },
+    {
+      "path": "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.pdf",
+      "bytes": 955787,
+      "sha256": "d064974049ccfbe61f94a52abde3c77f2d1d1bfe84b1da3a0895c426d65c25ca",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_REVENUE_LAUNCH_TO_PRODUCTION_SUPER_MEGA_PROMPT_2026-09-05.pdf"
+      ]
+    },
+    {
+      "path": "code/README_START_HERE.md",
+      "bytes": 2478,
+      "sha256": "8e718af5f393ffd5d18b7c7c200b75d0e2424ab0e752586a78c4ba31e26362ba",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/client/src/research/revenue-launch/presentation.ts",
+      "bytes": 1443,
+      "sha256": "b8e5ea27e7753f8a4084cced6b6bb90190d4b8cf92d804a4ba32603d08e27ad5",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/cloud/README.md",
+      "bytes": 828,
+      "sha256": "ba7123a5e6a92abb06d52b97212041fd97a4436ced6a9793d2d7d9a6d591bc73",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/cloud/codex-task-queue.json",
+      "bytes": 2327,
+      "sha256": "0df2e49c35238e331c684a9e80b1a63e864fa1ab6c3c700360b52c66da193d75",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/cloud/model-routing-policy.json",
+      "bytes": 732,
+      "sha256": "5f2c303a86320f50266502c4bb98c733c5bba5437b75091d609576001605d326",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/docs/revenue-launch/DEPLOYMENT_RUNBOOK.md",
+      "bytes": 3675,
+      "sha256": "cc19b899888666e7cbc5b38e46ed7178dc5f00353d9b82f401ab5e5b808db718",
+      "status": "verified",
+      "locatedNames": [
+        "DEPLOYMENT_RUNBOOK.md"
+      ]
+    },
+    {
+      "path": "code/docs/revenue-launch/PATCH_MAP.md",
+      "bytes": 4189,
+      "sha256": "1e284e9ca54408bb25fcefcc2b99340edd96dd8f95409fd63c2a3a7f0e445f82",
+      "status": "verified",
+      "locatedNames": [
+        "PATCH_MAP.md"
+      ]
+    },
+    {
+      "path": "code/revenue-launch.config.json",
+      "bytes": 945,
+      "sha256": "9e2b892e58d8198e90acc27edb8c07547ec74d6e3db5970fd4dcf365dee61274",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/build-launch-plan.mjs",
+      "bytes": 2764,
+      "sha256": "2911dfe408451bd019bfb54210af7213f6d1a881223dfaf7a9a233a3e9c8c18c",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/generate-founder-revenue-brief.mjs",
+      "bytes": 1544,
+      "sha256": "cda987b5ec111411b71000c280a869e2255b941a80dbbd6d2ba93a7b23e89633",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/lib.mjs",
+      "bytes": 1392,
+      "sha256": "877f77ec5bf224cc4d71d3ffea78416f9c3495a826ce9c8efce494d55a49039a",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/postdeploy-smoke.mjs",
+      "bytes": 896,
+      "sha256": "273a7aeeb263524b48359465a9a0d90afce77755febfde14aa3eaa0f853a7bca",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/release-candidate-check.mjs",
+      "bytes": 1422,
+      "sha256": "7dd77d6281dc27905145e221b9674fc56ae8c792ac6421632fdbfe46c9030eac",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/revenue-launch.test.mjs",
+      "bytes": 1716,
+      "sha256": "12de90119831d2d8d7fc3ed42abbd7df017f2943452a05279f594b64a6d8cce7",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/seed-runtime-evidence.mjs",
+      "bytes": 1464,
+      "sha256": "627be94d4f0899db6e966890cbf92cf1e259013da80f0ec27e0d5067f79e0ee7",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/validate-launch-source.mjs",
+      "bytes": 3436,
+      "sha256": "ebaed633fa2e13f88747b769ed3d4e67fa32723f24b18fa1886e9fdb65765581",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/scripts/revenue-launch/verify-live-readiness.mjs",
+      "bytes": 1439,
+      "sha256": "063062f6bd342f808d3d73bb05292744ade9937b3b78201ca25b33b7d2bd3313",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/server/research/revenue-launch/launch-plan-service.ts",
+      "bytes": 1679,
+      "sha256": "a8322b7bb6877af4a55ccf0455cebd1f10a6d61e5936ee8140c191f34b2816fa",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/shared/research/revenue-launch/launch-gates.test.ts",
+      "bytes": 1629,
+      "sha256": "7ac3cff9268434b87b2b91db000b925bdaa471d02c08f80601908a8d44ebb46e",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/shared/research/revenue-launch/launch-gates.ts",
+      "bytes": 3231,
+      "sha256": "91034fcab68b55d21701b16be1ff8be593c9d68ddeb707bc0ca6f3f112629d52",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/shared/research/revenue-launch/price-tiers.test.ts",
+      "bytes": 1009,
+      "sha256": "ea9ee88eaa0b896d6d35103353704e3505175922739c5d954bf9ee07a4f405f6",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/shared/research/revenue-launch/price-tiers.ts",
+      "bytes": 2415,
+      "sha256": "7fcf17abfabd013ae809b30abeacd0f093dc99cb57f64d71f2611a5f5d80277e",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "code/tsconfig.starter.json",
+      "bytes": 424,
+      "sha256": "da2695367ca46be3c8bdfcd441ae0a4a056f6edb64a233687e902b3b901d32f9",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "generated/runtime-launch-evidence.template.json",
+      "bytes": 414233,
+      "sha256": "cfc17586daf678caab6fe1937dff980b21108d009ee494f8092158c0871811fd",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "generated/xenios-live-launch-plan.generated.json",
+      "bytes": 58588,
+      "sha256": "56982e881c69556bd25947fcf542359830d361d583a2003aea66d9e786dd4142",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "generated/xenios-phase-a-live-launch-matrix.generated.csv",
+      "bytes": 6822,
+      "sha256": "2e50caa39c2b579bbef4d5ed38cfc34b2339862d58eeff962ce1de71aaccb089",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "generated/xenios-phase-b-expansion-matrix.generated.csv",
+      "bytes": 12871,
+      "sha256": "dbd566cbcbac7724ac97e6199a06c3d91f6079ec1c37319af9fcdea255d14949",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "inputs/XENIOS_SETH_EXISTING_PRICE_UPDATE_MANIFEST_2026-09-04.csv",
+      "bytes": 10064,
+      "sha256": "9f90c1bdd8743bda7d94147be36f18ad96c81b424a1aaa2aa50f871cd3007c97",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "inputs/XENIOS_SETH_MISSING_PRODUCT_CANDIDATE_MANIFEST_2026-09-04.csv",
+      "bytes": 14416,
+      "sha256": "340b5a5e60ffc9b5d0d289a30a2627b62387897301a0a9e720538bd4c0a9bc18",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "inputs/XENIOS_SETH_PRICING_IMPLEMENTATION_MANIFEST_2026-09-04.json",
+      "bytes": 79844,
+      "sha256": "c5f2c8136419534929e55d967ac485641c5dde0a05a0e7268a3612e210936734",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "inputs/XENIOS_SETH_PRICING_REVIEW_FORM_2026-09-04.xlsx",
+      "bytes": 25300,
+      "sha256": "41ab91bfd7120a0f0a47bc6ab9d8cd7ea7ba5ea63efe50aeb4894de2e31fcc83",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "manifests/SOURCE_INPUT_SHA256.json",
+      "bytes": 522,
+      "sha256": "7aae3480cbcde825d24c236478a10621e87a5b344db043eaa4a64e4872a65fd9",
+      "status": "missing",
+      "locatedNames": []
+    },
+    {
+      "path": "manifests/XENIOS_DEIDENTIFIED_CLIENT_DEMAND_SIGNALS_2026-09-05.csv",
+      "bytes": 4988,
+      "sha256": "ede159ab031ddf1db7e52e710e67f0bcaf355af31f45ab2909a0ebf9af92d036",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_DEIDENTIFIED_CLIENT_DEMAND_SIGNALS_2026-09-05.csv"
+      ]
+    },
+    {
+      "path": "manifests/XENIOS_SETH_LIVE_REVENUE_LAUNCH_MANIFEST_2026-09-05.json",
+      "bytes": 189615,
+      "sha256": "6b19efe85ff533bccc34ea2d26a895c1d735fcf2def2a7631e7f798b7fb2e211",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_LIVE_REVENUE_LAUNCH_MANIFEST_2026-09-05.json"
+      ]
+    },
+    {
+      "path": "manifests/XENIOS_SETH_PHASE_A_DIRECT_BUY_PRICES_2026-09-05.csv",
+      "bytes": 7140,
+      "sha256": "081a27417b133c6f3da4bff7a183e11df8951944ac7210c6ca2eb88c796775ff",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_PHASE_A_DIRECT_BUY_PRICES_2026-09-05.csv"
+      ]
+    },
+    {
+      "path": "manifests/XENIOS_SETH_PHASE_B_EXPANSION_QUEUE_2026-09-05.csv",
+      "bytes": 15424,
+      "sha256": "d66e59bc6c50a9c0b35dc99c2cd6e84e6da5ae02abd1dad7d267c120fe854f97",
+      "status": "verified",
+      "locatedNames": [
+        "XENIOS_SETH_PHASE_B_EXPANSION_QUEUE_2026-09-05.csv"
+      ]
+    }
+  ],
+  "verifiedFileCount": 14,
+  "declaredFileCount": 44,
+  "packageComplete": false,
+  "suppliedStarterExecuted": false,
+  "productionMutated": false
+}
