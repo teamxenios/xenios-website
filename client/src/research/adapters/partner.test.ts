@@ -398,6 +398,40 @@ function mountedRoot(node: ReactNode): { root: Root; container: HTMLElement } {
 }
 
 describe("admin persona presentation", () => {
+  it("keeps exact-email diagnosis mounted when the separate customer roster is unavailable", async () => {
+    supa.state.session = { access_token: "synthetic-admin-token" };
+    installFetch((url) => {
+      if (url === "/api/admin/me") return jsonResponse({ success: true, email: "admin@fixture.invalid" });
+      return jsonResponse({}, 503);
+    });
+    const { root, container } = mountedRoot(createElement(Members));
+    await flush();
+    expect(container.textContent).toContain("The customer roster is unavailable.");
+    expect(container.querySelector('[data-testid="member-access-diagnosis"]')).not.toBeNull();
+    expect(container.querySelector('form[aria-label="Exact email access diagnosis"]')).not.toBeNull();
+    expect(calls.some(call => call.url === "/api/admin/research/access/inspect")).toBe(false);
+    expect(container.textContent).not.toContain("No customer account records returned.");
+    act(() => root.unmount());
+  });
+
+  it("shows an absent recorded plan without assigning a paid membership", async () => {
+    supa.state.session = { access_token: "synthetic-admin-token" };
+    installFetch((url) => {
+      if (url === "/api/admin/me") return jsonResponse({ success: true, email: "admin@fixture.invalid" });
+      if (url === "/api/admin/research/members") return jsonResponse({ ok: true, members: [{
+        id: "00000000-0000-4000-8000-000000000001", email: "customer@fixture.invalid",
+        first_name: null, last_name: null, status: "active", plan: null, activated_at: null, last_sign_in_at: null,
+      }] });
+      return jsonResponse({}, 503);
+    });
+    const { root, container } = mountedRoot(createElement(Members));
+    await flush();
+    expect(container.textContent).toContain("Not recorded");
+    expect(container.textContent).not.toContain("Founding Membership");
+    expect(container.textContent).not.toContain("$50");
+    act(() => root.unmount());
+  });
+
   it("a 401 from the admin API renders the honest denied state via the shared boundary, not data", async () => {
     supa.state.session = { access_token: "admin-token" };
     installFetch((url) => {

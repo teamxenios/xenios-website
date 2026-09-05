@@ -13,6 +13,7 @@ import { ADMIN_ROUTES } from "../../lib/routes";
 import { listMembers } from "../../adapters/adminOps";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { MemberAccessDiagnosisPanel } from "./MemberAccessDiagnosisPanel";
 
 // ---------------------------------------------------------------------------
 // /admin/research/members: the member roster. The dedicated members API
@@ -38,10 +39,10 @@ const PAGE_SIZE = 20;
 export default function Members() {
   return (
     <AdminScreen
-      title="Members"
-      lead="Every member account: status, plan, and activation date. Health data never appears in this list."
+      title="Customer accounts"
+      lead="Recorded account status, plan history, and sign-in activity. Health data never appears in this list."
     >
-      {(token) => <MembersBody token={token} />}
+      {(token) => <MembersBody key={token} token={token} />}
     </AdminScreen>
   );
 }
@@ -68,6 +69,7 @@ function MembersBody({ token }: { token: string }) {
 
   return (
     <div className="grid gap-6">
+      <MemberAccessDiagnosisPanel key={token} token={token} />
       <ResearchFilterBar>
         <ResearchSearch
           value={search}
@@ -75,7 +77,7 @@ function MembersBody({ token }: { token: string }) {
             setSearch(v);
             setPage(1);
           }}
-          label="Search members"
+          label="Search customer records"
           placeholder="Name or email"
         />
       </ResearchFilterBar>
@@ -85,15 +87,15 @@ function MembersBody({ token }: { token: string }) {
         message={resource.message}
         deniedCode={resource.deniedCode}
         onRetry={resource.reload}
-        unavailableTitle="The member roster publishes with the member platform."
-        unavailableBody="This page is built and renders live accounts the moment the members API responds. Until then, active memberships are visible in the Applications queue under the Active chip."
+        unavailableTitle="The customer roster is unavailable."
+        unavailableBody="This list could not be loaded. The exact-email inspection above is separate and can be used if its service is available. An unavailable roster does not mean that no accounts exist."
       >
         <ResearchDataTable<AdminMemberRow>
-          caption="Member accounts"
+          caption="Customer account records"
           columns={[
             {
               key: "member",
-              header: "Member",
+              header: "Account",
               render: (m) => (
                 <Link href={`${ADMIN_ROUTES.members}/${m.id}`} className="font-700 underline">
                   {[m.first_name, m.last_name].filter(Boolean).join(" ") || m.email}
@@ -111,22 +113,23 @@ function MembersBody({ token }: { token: string }) {
                 />
               ),
             },
-            { key: "plan", header: "Plan", render: (m) => m.plan ?? "Founding Membership" },
+            { key: "plan", header: "Recorded plan", render: (m) => m.plan ?? "Not recorded" },
             { key: "activated", header: "Activated", render: (m) => fmtDate(m.activated_at) },
             { key: "seen", header: "Last sign-in", render: (m) => fmtDate(m.last_sign_in_at) },
           ]}
           rows={filtered.slice((clamped - 1) * PAGE_SIZE, clamped * PAGE_SIZE)}
           rowKey={(m) => m.id}
-          empty="No member accounts yet."
+          empty="No customer account records returned."
         />
         <ResearchPagination page={clamped} pageCount={pageCount} onPage={setPage} />
       </AdminBoundary>
 
       <div className="card">
-        <p className="mono-label text-ink-mute">Where members come from</p>
+        <p className="mono-label text-ink-mute">Separate account decisions</p>
         <p className="body-s text-ink-2 mt-2 max-w-[64ch]">
-          Membership is application-first: every account here started as an approved application whose $50
-          activation payment (including the first 30 days of membership) was verified by a person.
+          Customer approval, verified sign-in, partner eligibility, and product access are separate decisions.
+          Paid membership is not the customer-access model. Historical plan and payment records remain available;
+          a blank plan does not establish approval or a billing obligation.
         </p>
         <Link href={ADMIN_ROUTES.applications} className="body-s underline text-ink-mute mt-3 inline-block">
           Open the application queue
