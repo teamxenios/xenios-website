@@ -138,6 +138,10 @@ export function acceptanceEnv(): NodeJS.ProcessEnv {
   return {
     NODE_ENV: "test",
     NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+    // Partner HTTP cases exercise the independently gated portal capability.
+    // These flags exist only in the injected synthetic environment.
+    AFFILIATE_SYSTEM_ENABLED: "true",
+    AFFILIATE_PORTAL_ENABLED: "true",
     SUPABASE_URL: "https://acceptance.supabase.co",
     SUPABASE_SERVICE_ROLE_KEY: "sb_secret_acceptance_key",
     RESEARCH_SERVICEABLE_STATES: "TX,CA",

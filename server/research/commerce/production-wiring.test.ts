@@ -217,6 +217,9 @@ function cleanLot(): InventoryLot {
 const LIVE_ENV: NodeJS.ProcessEnv = {
   NODE_ENV: "test",
   NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+  // State-3 partner tests explicitly exercise the independently gated portal.
+  AFFILIATE_SYSTEM_ENABLED: "true",
+  AFFILIATE_PORTAL_ENABLED: "true",
   SUPABASE_URL: "https://wiring.supabase.co",
   SUPABASE_SERVICE_ROLE_KEY: "sb_secret_wiring_key",
   RESEARCH_SERVICEABLE_STATES: "TX,CA",
