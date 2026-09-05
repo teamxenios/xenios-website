@@ -17,7 +17,7 @@ path,persona,domain,source_status,test_status,browser_status,production_status,c
 /admin/research/blueprint-review,founder_admin_operations,operations,mounted,unknown,unknown,unknown,,client/src/research/adminx-section.tsx:151
 /admin/research/capabilities,founder_admin_operations,operations,mounted,unknown,unknown,unknown,,client/src/research/adminx-section.tsx:176
 /admin/research/care-requests,founder_care_operations,operations,mounted,focused_tests_pass,unknown,deployed_not_authenticated_smoked,care_admin_queue,client/src/research/adminx-section.tsx:143
-/admin/research/command-center,founder_admin_operations,operations,mounted,focused_tests_pass,unknown,built_not_deployed,founder_command_center,client/src/research/adminx-section.tsx:142
+/admin/research/command-center,founder_admin_operations,operations,mounted,focused_tests_pass,browser_verified,built_not_deployed,founder_command_center,client/src/research/adminx-section.tsx:142
 /admin/research/commerce-queues,founder_admin_operations,operations,mounted,unknown,unknown,unknown,,client/src/research/adminx-section.tsx:167
 /admin/research/early-access/fulfillment,founder_fulfillment_operations,operations,mounted,unknown,unknown,deployed_not_authenticated_smoked,fulfillment_tracking,client/src/research/adminx-section.tsx:186
 /admin/research/early-access/payments,founder_finance_operations,operations,mounted,unknown,unknown,deployed_not_authenticated_smoked,payment_review,client/src/research/adminx-section.tsx:185
@@ -58,9 +58,9 @@ path,persona,domain,source_status,test_status,browser_status,production_status,c
 /care/eligibility,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:192
 /care/pharmacy,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:196
 /care/prescriptions,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:195
-/careers,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:168
-/careers/:slug,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:167
-/careers/innovative-product-builder,care_requester,care,mounted,unknown,unknown,unknown,,client/src/App.tsx:166
+/careers,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:168
+/careers/:slug,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:167
+/careers/innovative-product-builder,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:166
 /compliance,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:172
 /concepts,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:180
 /contact,public_visitor,corporate_site,mounted,unknown,unknown,unknown,,client/src/App.tsx:170
@@ -166,7 +166,7 @@ path,persona,domain,source_status,test_status,browser_status,production_status,c
 /research/member/xenios-30,research_member,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:374
 /research/member/xenios-90,research_member,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:375
 /research/membership,research_member,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:448
-/research/order,all_legitimate_ordering_personas,commerce,mounted,focused_tests_pass,unknown,built_not_deployed,order_entry_hub,client/src/research/section.tsx:306
+/research/order,all_legitimate_ordering_personas,commerce,mounted,focused_tests_pass,browser_verified,built_not_deployed,order_entry_hub,client/src/research/section.tsx:306
 /research/orders,public_research_visitor,commerce,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:436
 /research/organizations,organization_buyer,organizations,mounted,unknown,unknown,blocked_external,organization_access_orientation,client/src/research/section.tsx:340
 /research/partners,partner_affiliate,referrals_partners,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:341

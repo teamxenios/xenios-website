@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `0981042712e62784b904c26562caa1fa0379f174` (2026-09-04T19:23:27-05:00)
+Generated from source commit: `a33bb75e4466d33c43e867fbafc97bf4524f712a` (2026-09-04T21:05:29-05:00)
 
-Source tree: `6e90010be4542aec0dbe286fa85e8c638bd4ea6b` on `codex/xenios-major-ordering-admin-sor-20260904`
+Source tree: `c9160f0c7144f7be87100b6fa4d7a2c80a59cfca` on `codex/xenios-major-ordering-admin-sor-20260904`
 
 Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740ujc73aprfcg` (live_verified)
 
@@ -25,8 +25,8 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | Manual payment review | founder_finance_operations | /admin/research/early-access/payments | mounted | unknown | unknown | deployed_not_authenticated_smoked | unassigned | Expose a read-only attention count in the Founder Command Center and keep all review actions in this workflow. |
 | Fulfillment and tracking operations | founder_fulfillment_operations | /admin/research/early-access/fulfillment | mounted | unknown | unknown | deployed_not_authenticated_smoked | FULFILLMENT-MOUNT | Expose read-only paid-awaiting-release, missing-tracking, and exception attention in the Founder Command Center. |
 | Clinic, organization, and professional-buyer orientation | organization_buyer | /research/organizations | mounted | unknown | unknown | blocked_external | F7-ACCOUNT-MOUNT | Route organization interest here without implying that a workspace already exists. |
-| Order Entry Hub | all_legitimate_ordering_personas | /research/order | mounted | focused_tests_pass | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority. |
-| Founder Command Center | founder_admin_operations | /admin/research/command-center | mounted | focused_tests_pass | unknown | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority. |
+| Order Entry Hub | all_legitimate_ordering_personas | /research/order | mounted | focused_tests_pass | browser_verified | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Resolve canonical request and shipment-event read-authority gaps before the normalized customer timeline; preserve this hub's intent-only role. Local browser evidence is not production certification. |
+| Founder Command Center | founder_admin_operations | /admin/research/command-center | mounted | focused_tests_pass | browser_verified | built_not_deployed | XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904 | Preserve the read-only projection while extending canonical workflow sources. Local synthetic auth/unavailable-state browser evidence is not production admin/API certification. |
 
 ## Site route inventory
 
@@ -50,7 +50,7 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | /admin/research/blueprint-review | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:151 |
 | /admin/research/capabilities | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:176 |
 | /admin/research/care-requests | founder_care_operations | operations | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:143 |
-| /admin/research/command-center | founder_admin_operations | operations | mounted | focused_tests_pass | unknown | built_not_deployed | client/src/research/adminx-section.tsx:142 |
+| /admin/research/command-center | founder_admin_operations | operations | mounted | focused_tests_pass | browser_verified | built_not_deployed | client/src/research/adminx-section.tsx:142 |
 | /admin/research/commerce-queues | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:167 |
 | /admin/research/early-access/fulfillment | founder_fulfillment_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:186 |
 | /admin/research/early-access/payments | founder_finance_operations | operations | mounted | unknown | unknown | deployed_not_authenticated_smoked | client/src/research/adminx-section.tsx:185 |
@@ -91,9 +91,9 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | /care/eligibility | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:192 |
 | /care/pharmacy | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:196 |
 | /care/prescriptions | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:195 |
-| /careers | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:168 |
-| /careers/:slug | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:167 |
-| /careers/innovative-product-builder | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:166 |
+| /careers | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:168 |
+| /careers/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:167 |
+| /careers/innovative-product-builder | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:166 |
 | /compliance | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:172 |
 | /concepts | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:180 |
 | /contact | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:170 |
@@ -199,7 +199,7 @@ Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740
 | /research/member/xenios-30 | research_member | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:374 |
 | /research/member/xenios-90 | research_member | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:375 |
 | /research/membership | research_member | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:448 |
-| /research/order | all_legitimate_ordering_personas | commerce | mounted | focused_tests_pass | unknown | built_not_deployed | client/src/research/section.tsx:306 |
+| /research/order | all_legitimate_ordering_personas | commerce | mounted | focused_tests_pass | browser_verified | built_not_deployed | client/src/research/section.tsx:306 |
 | /research/orders | public_research_visitor | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:436 |
 | /research/organizations | organization_buyer | organizations | mounted | unknown | unknown | blocked_external | client/src/research/section.tsx:340 |
 | /research/partners | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:341 |

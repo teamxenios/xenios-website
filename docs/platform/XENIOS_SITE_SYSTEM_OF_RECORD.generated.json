@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T19:23:27-05:00",
+  "generatedAt": "2026-09-04T21:05:29-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-major-ordering-admin-sor-20260904",
-    "sha": "0981042712e62784b904c26562caa1fa0379f174",
-    "tree": "6e90010be4542aec0dbe286fa85e8c638bd4ea6b",
+    "sha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
+    "tree": "c9160f0c7144f7be87100b6fa4d7a2c80a59cfca",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
@@ -36,7 +36,7 @@
     "byPersona": {
       "all_legitimate_ordering_personas": 1,
       "applicant_and_membership_operations": 1,
-      "care_requester": 10,
+      "care_requester": 7,
       "founder_admin_operations": 43,
       "founder_care_operations": 1,
       "founder_finance_operations": 1,
@@ -47,16 +47,16 @@
       "partner_affiliate_and_referral_recipient": 1,
       "public_health_visitor": 1,
       "public_research_visitor": 50,
-      "public_visitor": 33,
+      "public_visitor": 36,
       "quick_early_access_customer": 3,
       "research_customer": 11,
       "research_member": 39,
       "supplier_fulfillment": 1
     },
     "byDomain": {
-      "care": 11,
+      "care": 8,
       "commerce": 13,
-      "corporate_site": 33,
+      "corporate_site": 36,
       "identity_accounts": 46,
       "operations": 47,
       "organizations": 2,
@@ -373,7 +373,7 @@
       "domain": "operations",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
       "registrations": [
         {
@@ -1035,8 +1035,8 @@
     },
     {
       "path": "/careers",
-      "persona": "care_requester",
-      "domain": "care",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
       "sourceStatus": "mounted",
       "testStatus": "unknown",
       "browserStatus": "unknown",
@@ -1051,8 +1051,8 @@
     },
     {
       "path": "/careers/:slug",
-      "persona": "care_requester",
-      "domain": "care",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
       "sourceStatus": "mounted",
       "testStatus": "unknown",
       "browserStatus": "unknown",
@@ -1067,8 +1067,8 @@
     },
     {
       "path": "/careers/innovative-product-builder",
-      "persona": "care_requester",
-      "domain": "care",
+      "persona": "public_visitor",
+      "domain": "corporate_site",
       "sourceStatus": "mounted",
       "testStatus": "unknown",
       "browserStatus": "unknown",
@@ -2783,7 +2783,7 @@
       "domain": "commerce",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
       "registrations": [
         {
@@ -3626,8 +3626,8 @@
       "unknown": 5
     },
     "browserStatus": {
-      "browser_verified": 3,
-      "unknown": 12
+      "browser_verified": 5,
+      "unknown": 10
     },
     "productionStatus": {
       "blocked_external": 2,
@@ -3651,7 +3651,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -3687,7 +3687,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
@@ -3725,12 +3725,12 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
         "owner": "codex-major-ordering-admin-sor-20260904",
-        "leaseState": "active"
+        "leaseState": "released"
       },
       "blocker": "Local browser verification covers the synthetic assisted-order and fail-closed fallback/status surfaces only; active-cart high-quantity behavior and the authenticated production journey remain separate release gates.",
       "founderAction": "Use separately authorized production smoke credentials only during a later release gate.",
@@ -3774,7 +3774,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
@@ -3812,7 +3812,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
@@ -3849,7 +3849,7 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
@@ -3887,7 +3887,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
@@ -3924,7 +3924,7 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
@@ -3961,7 +3961,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
@@ -3996,7 +3996,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4031,7 +4031,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": null,
@@ -4066,7 +4066,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
@@ -4101,7 +4101,7 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
@@ -4133,9 +4133,9 @@
       "dataSource": "Canonical route and pathway registry; no second cart, checkout, order, Care, organization, referral, or support store.",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4144,7 +4144,7 @@
       },
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Run the integrated nine-width browser matrix, then simplify Quick Early Access without changing its server authority.",
+      "nextExactAction": "Resolve canonical request and shipment-event read-authority gaps before the normalized customer timeline; preserve this hub's intent-only role. Local browser evidence is not production certification.",
       "evidence": {
         "source": [
           "shared/research/order-entry.ts",
@@ -4157,7 +4157,10 @@
           "client/src/research/pages/OrderEntryHub.test.tsx",
           "client/src/research/routes-parity.test.ts"
         ],
-        "browser": [],
+        "browser": [
+          "docs/ux/major-ordering-admin-sor-20260904/order-entry-hub-browser-results.json",
+          "docs/ux/major-ordering-admin-sor-20260904/order-entry-intent-browser-results.json"
+        ],
         "production": []
       }
     },
@@ -4172,9 +4175,9 @@
       "dataSource": "Isolated read projections over canonical applications, bounded Care classification, assisted orders, payment review, exceptions, products, required inputs, referral flags, support, notification outbox, and last-verified release evidence; unavailable authorities remain explicit.",
       "sourceStatus": "mounted",
       "testStatus": "focused_tests_pass",
-      "browserStatus": "unknown",
+      "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "0981042712e62784b904c26562caa1fa0379f174",
+      "currentSourceSha": "a33bb75e4466d33c43e867fbafc97bf4524f712a",
       "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
@@ -4183,7 +4186,7 @@
       },
       "blocker": null,
       "founderAction": null,
-      "nextExactAction": "Run the integrated authenticated browser matrix, then continue into the four-step Quick Early Access presentation without changing its canonical server authority.",
+      "nextExactAction": "Preserve the read-only projection while extending canonical workflow sources. Local synthetic auth/unavailable-state browser evidence is not production admin/API certification.",
       "evidence": {
         "source": [
           "shared/research/founder-command-center.ts",
@@ -4202,7 +4205,9 @@
           "client/src/research/ui/admin-shell.test.tsx",
           "server/release-control-plane.test.ts"
         ],
-        "browser": [],
+        "browser": [
+          "docs/ux/major-ordering-admin-sor-20260904/founder-command-center-browser-results.json"
+        ],
         "production": []
       }
     }
