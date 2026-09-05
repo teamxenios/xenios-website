@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T23:24:35.469112Z",
+  "updatedAt": "2026-09-05T23:28:55.601294Z",
   "sethRevenueLaunch": {
     "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_VALIDATED_NO_PRODUCTION_AUTHORITY",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
@@ -85,8 +85,8 @@
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
-      "candidateSha": "14503661423a844e406d3cfc1ef75b4d9c436c30",
-      "candidateTree": "f37d439c3f9c84f57444a546cf205d23721b88f2",
+      "candidateSha": "5d2fa0b850807ad792a3a97b598106d5326895ca",
+      "candidateTree": "f39589a4af6bfc0e4681079579305b931d5192e7",
       "recordsTipSha": "548fa754ea0bdafc6a3ad4fbdb3204d60be25149",
       "recordsTipTree": "20b399ffab3a78799a457fdf79c80cbb0db01733",
       "integratedSlices": [
@@ -110,7 +110,7 @@
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
       "reconciliationReview": "PASS 102/102; deferred unmounted presentation; build re-run PASS",
-      "fullSuite": "870 passed files, 5 failed files, 5 skipped; 13487 passed tests, 9 failed, 59 skipped; four default-timeout failures triaged and pass under serialized 60s reruns; one F7 owner-blocked assertion remains",
+      "fullSuite": "870 passed files, 5 failed files, 5 skipped; 13487 passed tests, 9 failed, 59 skipped on pre-copy runtime 1450366; four default-timeout failures triaged and pass under serialized 60s reruns; partner-copy delta passes 4/4; one F7 owner-blocked assertion remains",
       "fullSuiteCommand": "npm test -- --reporter=dot",
       "fullSuiteObservedAt": "2026-09-05T23:16:29.000Z",
       "fullSuiteDurationSeconds": 741.22,

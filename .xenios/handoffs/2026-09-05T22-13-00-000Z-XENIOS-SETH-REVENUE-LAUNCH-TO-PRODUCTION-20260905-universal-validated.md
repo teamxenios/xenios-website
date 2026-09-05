@@ -7,9 +7,9 @@
 ## Exact candidate
 
 - Branch: `codex/xenios-seth-revenue-launch-20260905`
-- Runtime candidate SHA: `14503661423a844e406d3cfc1ef75b4d9c436c30`
-- Runtime candidate tree: `f37d439c3f9c84f57444a546cf205d23721b88f2`
-- This runtime candidate is pushed. It includes the approved-customer e2e replacement, protected-seam review/repin, truthful disabled partner reads, UUID-compatible production partner creation, and ASTRA-B's reviewed partner-copy correction (`bb40cddd366394028ee58114dc002b516f031f35`, integrated as `5d2fa0b`).
+- Runtime candidate SHA: `5d2fa0b850807ad792a3a97b598106d5326895ca`
+- Runtime candidate tree: `f39589a4af6bfc0e4681079579305b931d5192e7`
+- This runtime candidate is pushed. It includes the approved-customer e2e replacement, protected-seam review/repin, truthful disabled partner reads, UUID-compatible production partner creation, and ASTRA-B's reviewed partner-copy correction (`bb40cddd366394028ee58114dc002b516f031f35`).
 - Records checkpoint: `548fa754ea0bdafc6a3ad4fbdb3204d60be25149` (tree `20b399ffab3a78799a457fdf79c80cbb0db01733`), pushed with the generated Site System of Record. This handoff update and the continuity pointer are pushed in the subsequent records commit.
 - Runtime code is based on the live production baseline `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`.
 
@@ -39,7 +39,7 @@
 - Partner-lifecycle PGlite rehearsal: **57 checks**, PASS.
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
 - Reconciliation adapter and presentation tests: **102/102**, PASS; build re-run after integration, PASS.
-- Fresh broad repository suite (`npm test -- --reporter=dot`, observed 2026-09-05 23:04–23:16 UTC): **870 passed files, 5 failed files, 5 skipped; 13,487 passed tests, 9 failed, 59 skipped** (741.22 seconds). Four failures were default 5-second resource/time-limit failures in repository scans/render-heavy suites; serialized 60-second reruns passed pgcrypto **17/17**, release-control-plane **51/51 + 1 intentional skip**, preview-harness **3/3**, and Kris presentation **16/16**. The remaining failure is the leased F7 sponsored-B2B assertion (`server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`), which expects two source-page call sites while the implementation has one. The exact account-identity lease is held by `claude-opus5-main`; this session did not edit, skip, or waive it, so the complete release suite is not yet a zero-failure gate.
+- Fresh broad repository suite (`npm test -- --reporter=dot`, observed 2026-09-05 23:04–23:16 UTC on pre-copy runtime `1450366`): **870 passed files, 5 failed files, 5 skipped; 13,487 passed tests, 9 failed, 59 skipped** (741.22 seconds). Four failures were default 5-second resource/time-limit failures in repository scans/render-heavy suites; serialized 60-second reruns passed pgcrypto **17/17**, release-control-plane **51/51 + 1 intentional skip**, preview-harness **3/3**, and Kris presentation **16/16**. ASTRA-B's final partner-copy delta passes **4/4**. The remaining failure is the leased F7 sponsored-B2B assertion (`server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`), which expects two source-page call sites while the implementation has one. The exact account-identity lease is held by `claude-opus5-main`; this session did not edit, skip, or waive it, so the complete release suite is not yet a zero-failure gate on the combined candidate.
 
 ## Production truth and blockers
 
