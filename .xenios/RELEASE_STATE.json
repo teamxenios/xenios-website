@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T23:28:55.601294Z",
+  "updatedAt": "2026-09-05T23:42:51.007Z",
   "sethRevenueLaunch": {
     "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_VALIDATED_NO_PRODUCTION_AUTHORITY",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
@@ -110,13 +110,17 @@
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
       "reconciliationReview": "PASS 102/102; deferred unmounted presentation; build re-run PASS",
-      "fullSuite": "870 passed files, 5 failed files, 5 skipped; 13487 passed tests, 9 failed, 59 skipped on pre-copy runtime 1450366; four default-timeout failures triaged and pass under serialized 60s reruns; partner-copy delta passes 4/4; referral browser-boundary test passes 12/12; no actual browser journey evidence was claimed because clean harness npm ci hit Windows EPERM/EBUSY; one F7 owner-blocked assertion remains",
-      "fullSuiteCommand": "npm test -- --reporter=dot",
-      "fullSuiteObservedAt": "2026-09-05T23:16:29.000Z",
-      "fullSuiteDurationSeconds": 741.22,
+      "fullSuite": "875 passed files, 5 skipped; 13496 passed tests, 59 skipped; zero failures on validation source d20b41726b5aa33bc380dc02678f157ed041aeaf (runtime candidate 5d2fa0b); no actual browser journey evidence was claimed because clean harness npm ci hit Windows EPERM/EBUSY",
+      "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=60000",
+      "fullSuiteObservedAt": "2026-09-05T23:40:43.000Z",
+      "fullSuiteDurationSeconds": 444.03,
       "productionMutated": false,
       "productionAuthoritiesPresent": false,
-      "candidateMigrationsApplied": false
+      "candidateMigrationsApplied": false,
+      "validationHeadSha": "d20b41726b5aa33bc380dc02678f157ed041aeaf",
+      "validationHeadTree": "c07173f9d2f6703f35d2b4cd552a8fc81c5a1485",
+      "f7SponsoredB2BAssertion": "PASS 13/13; centralized guard count corrected under reclaimed scoped lease; no skip or waiver",
+      "browserJourneyEvidence": "NOT_CLAIMED: clean detached harness npm ci hit Windows EPERM/EBUSY replacing native esbuild/bufferutil"
     }
   },
   "canonicalBranch": "release/early-access-code-session-checkout",

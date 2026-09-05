@@ -2,13 +2,15 @@
 
 - Seth universal launch (2026-09-05): the integrated access/partner closure is
   green (426/426 focused; release-control-plane 51 PASS + 1 intentional skip),
-  but the complete repository suite is not yet zero-failure. One exact leased
-  assertion remains in `server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`:
-  it expects two `b2b_buyer_sponsored_claim` source-page call sites while the
-  implementation contains one. The path is held by `claude-opus5-main`
-  (`F7-PACK02-RENAME`); this session must not edit or waive it. Four broad-run
-  timeout failures were independently rerun with a serialized 60-second
-  configuration and passed. No production mutation or approval is authorized.
+  and the corrected complete frozen-source suite is green (875 passed files,
+  5 skipped; 13,496 passed tests, 59 skipped; zero failures). The stale
+  `claude-opus5-main` lease for `F7-PACK02-RENAME` was explicitly reclaimed
+  under scoped repair authorization; its centralized sponsored-B2B assertion
+  now passes 13/13 and the lease is released. Actual browser journey evidence
+  remains environment-blocked because a clean detached harness could not finish
+  `npm ci` after repeated Windows `EPERM/EBUSY` replacement failures for native
+  `esbuild`/`bufferutil`. Production authorities, migrations, and approval
+  remain absent; no production mutation or approval is authorized.
 
 - Seth revenue launch (2026-09-05): the missing-history startup blocker is
   closed for local engineering by the authorized linked CLI export at 17:41 UTC.

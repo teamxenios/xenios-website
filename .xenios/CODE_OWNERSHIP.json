@@ -1361,7 +1361,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T23:27:48.502Z"
+      "heartbeatAt": "2026-09-05T23:40:49.174Z"
     },
     {
       "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",
@@ -1461,9 +1461,9 @@
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-05T23:32:27.160Z",
-      "heartbeatAt": "2026-09-05T23:32:27.161Z"
+      "heartbeatAt": "2026-09-05T23:40:49.174Z"
     }
   ],
   "rules": [
