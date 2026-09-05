@@ -1255,9 +1255,11 @@
         "server/research/pricing/cart-price-binding.ts",
         "server/research/pricing/cart-price-binding.quantity-tiers.test.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-05T04:13:59.534Z",
-      "heartbeatAt": "2026-09-05T04:46:08.819Z"
+      "heartbeatAt": "2026-09-05T04:49:58.516244+00:00",
+      "releasedAt": "2026-09-05T04:49:58.516244+00:00",
+      "releaseReason": "blocked_external_current_migration_history_gate"
     }
   ],
   "rules": [
