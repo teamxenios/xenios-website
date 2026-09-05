@@ -1314,7 +1314,13 @@
         "server/research/index.ts",
         "server/research/partner-access-wall.test.ts",
         "shared/research/auth-return-to.ts",
-        "shared/research/auth-return-to.test.ts"
+        "shared/research/auth-return-to.test.ts",
+        "shared/research/approved-user-access.ts",
+        "server/research/membership.ts",
+        "server/research/access-admin.ts",
+        "server/research/access-admin.test.ts",
+        "server/research/access-admin-production.ts",
+        "server/research/access-admin-production.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1369,7 +1375,14 @@
         "client/src/research/layout.tsx",
         "client/src/research/recommendation/layout-referral.test.tsx",
         "client/src/research/account-portal/AccountPortalShell.tsx",
-        "client/src/research/account-portal/AccountPortalShell.test.tsx"
+        "client/src/research/account-portal/AccountPortalShell.test.tsx",
+        "client/src/research/lib/capabilities.ts",
+        "client/src/research/lib/capabilities.test.ts",
+        "client/src/research/adapters/partner.ts",
+        "client/src/research/adapters/partner.test.ts",
+        "client/src/research/lib/api.ts",
+        "client/src/research/lib/api.test.ts",
+        "scripts/preview-account-portal.ts"
       ],
       "dependsOn": [],
       "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",

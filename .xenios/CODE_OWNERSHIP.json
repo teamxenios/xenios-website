@@ -1306,7 +1306,13 @@
         "server/research/index.ts",
         "server/research/partner-access-wall.test.ts",
         "shared/research/auth-return-to.ts",
-        "shared/research/auth-return-to.test.ts"
+        "shared/research/auth-return-to.test.ts",
+        "shared/research/approved-user-access.ts",
+        "server/research/membership.ts",
+        "server/research/access-admin.ts",
+        "server/research/access-admin.test.ts",
+        "server/research/access-admin-production.ts",
+        "server/research/access-admin-production.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
@@ -1334,7 +1340,14 @@
         "client/src/research/layout.tsx",
         "client/src/research/recommendation/layout-referral.test.tsx",
         "client/src/research/account-portal/AccountPortalShell.tsx",
-        "client/src/research/account-portal/AccountPortalShell.test.tsx"
+        "client/src/research/account-portal/AccountPortalShell.test.tsx",
+        "client/src/research/lib/capabilities.ts",
+        "client/src/research/lib/capabilities.test.ts",
+        "client/src/research/adapters/partner.ts",
+        "client/src/research/adapters/partner.test.ts",
+        "client/src/research/lib/api.ts",
+        "client/src/research/lib/api.test.ts",
+        "scripts/preview-account-portal.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:50:44.922Z",

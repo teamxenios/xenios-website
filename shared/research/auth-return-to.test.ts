@@ -22,6 +22,10 @@ describe("shared credential-free auth navigation", () => {
   });
 
   it("keeps only bounded non-secret view/selection hints", () => {
+    expect(safeResearchReturnTo("/research/partners/dashboard?partnerId=foreign&role=admin&email=private%40example.invalid"))
+      .toBe("/research/partners/dashboard");
+    expect(safeResearchReturnTo("/research/partners/dashboard/foreign")).toBeNull();
+    expect(safeResearchReturnTo("/research/partners/admin")).toBeNull();
     expect(safeResearchReturnTo("/research/member/security?from=expired-session"))
       .toBe("/research/member/security?from=expired-session");
     expect(safeResearchReturnTo("/research/account/orders/XRR-Fixture_01?tab=payment&access_token=SECRET&refresh_token=SECRET&token=SECRET&code=SECRET&returnTo=https://outside.invalid&email=private%40example.invalid&q=private&ref=private"))
