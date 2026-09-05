@@ -28,12 +28,12 @@ export default function Conversions() {
   return (
     <ResearchPartnerShell
       title="Conversions"
-      lead="Aggregate counts of memberships activated from your referrals, by period. An activation is the verified $50 start of a membership, which includes the member's first 30 days."
+      lead="Aggregate referral conversion records by period. Legacy membership activations and renewals are historical reporting fields only; approved customer access does not require paid membership."
     >
       <div className="mb-6">
         <ResearchSecureNotice>
-          Conversion reporting is aggregate only. You will never see which person converted, what they purchased beyond
-          membership, or anything about their participation. Counts, never people.
+          Conversion reporting is aggregate only. You will never see which person converted, what they purchased, or
+          anything about their participation. Historical membership fields do not establish current access or pricing.
         </ResearchSecureNotice>
       </div>
 
@@ -45,23 +45,23 @@ export default function Conversions() {
         unavailableBody="Aggregate conversion counts appear here once your link is issued and tracking begins."
       >
         <ResearchDataTable<ConversionAggregate>
-          caption="Aggregate membership conversions by period"
+          caption="Aggregate referral conversions by period"
           columns={[
             { key: "period", header: "Period", render: (r) => r.period },
             {
               key: "activations",
-              header: "Activations",
+              header: "Recorded conversions",
               render: (r) => <span className="tabular">{r.activations}</span>,
             },
             {
               key: "renewals",
-              header: "Active renewals",
+              header: "Historical renewals",
               render: (r) => <span className="tabular">{r.renewals ?? "Reported later"}</span>,
             },
           ]}
           rows={data?.rows ?? []}
           rowKey={(r) => r.period}
-          empty="Conversion counts appear when tracking begins."
+          empty="Referral conversion counts appear when tracking begins."
         />
       </ResearchRouteBoundary>
     </ResearchPartnerShell>
