@@ -16,7 +16,7 @@ function linked(): AccessInspectionFacts {
     applications: [{ id: ids[3], email, status: "approved_pending_payment" }],
     members: [{ id: ids[1], email, authUserId: ids[0], status: "pending_activation" }],
     partners: [{ id: ids[2], memberId: ids[1], role: "affiliate", state: "application", identityVerified: false,
-      taxStatus: "not_started", payoutStatus: "not_started", certifiedAt: null, agreements: [], training: [] }],
+      taxStatus: "not_started", payoutStatus: "not_started", certifiedAt: null, certifiedByAdminId: null, agreements: [], training: [] }],
   };
 }
 function appWith(facts: AccessInspectionFacts = empty()) {
@@ -80,7 +80,7 @@ describe("admin approved-user diagnosis", () => {
     const facts = linked(); const p = facts.partners[0];
     facts.members[0].status = "active";
     p.identityVerified = true; p.taxStatus = "verified"; p.payoutStatus = "verified";
-    p.state = "active"; p.certifiedAt = "2026-09-01T00:00:00Z";
+    p.state = "active"; p.certifiedAt = "2026-09-01T00:00:00Z"; p.certifiedByAdminId = ids[0];
     p.agreements = DEFAULT_PARTNER_REQUIREMENTS.agreements.map((a) => ({ ...a, accepted: true, contentHash: "evidence-hash", decidedAt: "2026-09-01T00:00:00Z" }));
     p.training = DEFAULT_PARTNER_REQUIREMENTS.trainingModules.map((t) => ({ ...t, completedAt: "2026-09-01T00:00:00Z" }));
     expect(projectAccessInspection(email, facts, deps).partners[0].missingRequirements).toEqual([]);

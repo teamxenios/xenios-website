@@ -10,7 +10,7 @@ export interface AccessInspectionFacts {
   members: Array<{ id: string; email: string; authUserId: string | null; status: string }>;
   partners: Array<{
     id: string; memberId: string; role: string; state: string; identityVerified: boolean; updatedAt?: string | null;
-    taxStatus: string; payoutStatus: string; certifiedAt: string | null;
+    taxStatus: string; payoutStatus: string; certifiedAt: string | null; certifiedByAdminId?: string | null;
     agreements: Array<{ key: string; version: string; accepted: boolean; contentHash: string; decidedAt: string }>;
     training: Array<{ key: string; version: string; completedAt: string }>;
   }>;
@@ -53,7 +53,7 @@ export function projectAccessInspection(email: string, facts: AccessInspectionFa
         missing.push(`training:${required.key}:${required.version}`);
       }
     }
-    if (!validPast(partner.certifiedAt)) missing.push("admin_certification");
+    if (!validPast(partner.certifiedAt) || !partner.certifiedByAdminId) missing.push("admin_certification");
     if (partner.state !== "active") missing.push("admin_activation");
     return { id: partner.id, memberId: partner.memberId, role: partner.role, state: partner.state, binding: member?.binding ?? "missing", updatedAt: partner.updatedAt ?? null, missingRequirements: missing };
   });

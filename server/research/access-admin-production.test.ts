@@ -33,7 +33,7 @@ function fixture(options: { pages?: unknown[][]; authError?: boolean; failedTabl
 
 describe("canonical access inspection production reads", () => {
   it("requires the complete versioned partner authority and reads an exact partner timestamp", async () => {
-    const partner = { id: uid, member_id: mid, role: "affiliate", state: "application", identity_verified: false, tax_status: "not_started", payout_status: "not_started", certified_at: null, updated_at: "2026-09-04T00:00:00Z" };
+    const partner = { id: uid, member_id: mid, role: "affiliate", state: "application", identity_verified: false, tax_status: "not_started", payout_status: "not_started", certified_at: null, certified_by_admin_id: null, updated_at: "2026-09-04T00:00:00Z" };
     const f = fixture({ records: { research_partners: [partner] }, partnerAuthority: { schemaVersion: PARTNER_LIFECYCLE_SCHEMA_VERSION, requirements: DEFAULT_PARTNER_REQUIREMENTS } });
     const facts = await f.deps.inspect(email);
     expect(facts.partnerLifecycleReview).toBe(true); expect(facts.partners[0].updatedAt).toBe(partner.updated_at);
