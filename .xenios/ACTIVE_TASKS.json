@@ -1361,7 +1361,8 @@
         "supabase/candidates/20260905_research_partner_lifecycle.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.postcheck.sql",
-        "supabase/candidates/20260905_research_partner_lifecycle.rollback.md"
+        "supabase/candidates/20260905_research_partner_lifecycle.rollback.md",
+        "server/release-control-plane.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"

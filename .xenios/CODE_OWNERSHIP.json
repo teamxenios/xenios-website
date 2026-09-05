@@ -1353,11 +1353,12 @@
         "supabase/candidates/20260905_research_partner_lifecycle.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
         "supabase/candidates/20260905_research_partner_lifecycle.postcheck.sql",
-        "supabase/candidates/20260905_research_partner_lifecycle.rollback.md"
+        "supabase/candidates/20260905_research_partner_lifecycle.rollback.md",
+        "server/release-control-plane.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-05T19:09:46.066Z"
+      "heartbeatAt": "2026-09-05T22:11:48.696Z"
     },
     {
       "id": "cd6d82ff-d27d-45ab-95f4-ab47c2d732dc",

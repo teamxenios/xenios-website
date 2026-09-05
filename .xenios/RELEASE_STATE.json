@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T21:55:00.000000+00:00",
+  "updatedAt": "2026-09-05T22:10:31.825533+00:00",
   "sethRevenueLaunch": {
-    "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_RELEASE_CANDIDATE",
+    "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_VALIDATED_NO_PRODUCTION_AUTHORITY",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
     "productionReverifiedAt": "2026-09-05T18:03:20.102167+00:00",
     "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
@@ -47,7 +47,7 @@
     "renderResumeRead": "2026-09-05 resume: same live SHA/deploy, autoDeploy off; exact tool observation timestamp not retained",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "5b1aedb4963d23e6b561f606f86a942e5e32eb8c",
+    "latestEngineeringCheckpointSha": "04bef1861e12e05c1391781bfa9458019e335de6",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -67,7 +67,7 @@
       "ownershipVerified": false
     },
     "deferredWork": [
-      "broader pricing review and activation",
+      "price activation and broader catalog readiness",
       "Phase B 68 candidates",
       "full CRM",
       "representative hierarchy",
@@ -75,15 +75,38 @@
     ],
     "accessPolicy": "admin_approved_customer_no_paid_membership",
     "accessPolicyDecision": "Founder response 2026-09-05: remove memberships",
-    "latestBackendSliceSha": "5b1aedb4963d23e6b561f606f86a942e5e32eb8c",
-    "latestBackendSliceTree": "0529c369d4245051a65a7d0bcc20935c7f79c4bd",
+    "latestBackendSliceSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+    "latestBackendSliceTree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
     "approvedCustomerCandidateLfSha256": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5",
     "partnerLifecycleCandidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
     "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
     "productionAccountPartnerSchemaReadSha256": "daa4b7fbb775a8363168f44464dbbab3531ec86fd6c158cf5d9d51ad80f1f569",
     "productionAccountPartnerSchemaObservedAt": "2026-09-05T21:52:55.027685+00:00",
     "productionAuthoritiesPresent": false,
-    "productionReferralV1AuthoritiesPresent": false
+    "productionReferralV1AuthoritiesPresent": false,
+    "integratedValidation": {
+      "candidateSha": "04bef1861e12e05c1391781bfa9458019e335de6",
+      "candidateTree": "5b196d821b5103b2a6d64894292d8ebce9beb2fc",
+      "integratedSlices": [
+        "d65bfe7 approved customer access without paid memberships",
+        "d46cb69 audited partner lifecycle backend",
+        "e79c65c recorded partner evidence timestamps",
+        "bd747b1 canonical product price review UI",
+        "04bef18 route inventory regression baseline"
+      ],
+      "focusedTests": "client 208/208; pricing review 94/94; server 58/58",
+      "releaseControlPlane": "51 passed, 1 intentional skip",
+      "routeUniqueness": "426 registrations across 417 call sites",
+      "typecheck": "PASS",
+      "build": "PASS",
+      "coreSiteProtection": "PASS against db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "approvedCustomerRehearsal": "PASS 35 checks",
+      "partnerLifecycleRehearsal": "PASS 57 checks",
+      "priceTierRehearsal": "PASS 37 checks",
+      "productionMutated": false,
+      "productionAuthoritiesPresent": false,
+      "candidateMigrationsApplied": false
+    }
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
