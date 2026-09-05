@@ -27,6 +27,7 @@
 ## Validation evidence
 
 - Focused client launch tests: **208/208** across 14 files; ASTRA-B partner-copy checks **4/4**.
+- Referral browser-boundary test: **12/12** (`scripts/referral-v1/browser-qa.test.mjs`), with exact snapshot assertions and line-ending handling.
 - Product price-review tests: **94/94**.
 - Focused server launch tests: **58/58**.
 - Integrated access/partner closure: **426/426** across 8 files, including the UUID-shaped production partner identifier assertion.
@@ -40,6 +41,7 @@
 - Quantity-tier PGlite rehearsal: **37 checks**, PASS.
 - Reconciliation adapter and presentation tests: **102/102**, PASS; build re-run after integration, PASS.
 - Fresh broad repository suite (`npm test -- --reporter=dot`, observed 2026-09-05 23:04–23:16 UTC on pre-copy runtime `1450366`): **870 passed files, 5 failed files, 5 skipped; 13,487 passed tests, 9 failed, 59 skipped** (741.22 seconds). Four failures were default 5-second resource/time-limit failures in repository scans/render-heavy suites; serialized 60-second reruns passed pgcrypto **17/17**, release-control-plane **51/51 + 1 intentional skip**, preview-harness **3/3**, and Kris presentation **16/16**. ASTRA-B's final partner-copy delta passes **4/4**. The remaining failure is the leased F7 sponsored-B2B assertion (`server/research/account-identity/b2b-sponsored-claim-sql.test.ts:60`), which expects two source-page call sites while the implementation has one. The exact account-identity lease is held by `claude-opus5-main`; this session did not edit, skip, or waive it, so the complete release suite is not yet a zero-failure gate on the combined candidate.
+- B's clean detached browser-harness attempt did not produce journey evidence: mandatory `npm ci` repeatedly hit Windows `EPERM/EBUSY` while replacing native `esbuild`/`bufferutil` modules. This is recorded as an environment blocker, not as a product pass.
 
 ## Production truth and blockers
 

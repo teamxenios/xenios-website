@@ -100,7 +100,7 @@
         "1450366 approved-customer e2e, protected-seam review, and production UUID compatibility",
         "5d2fa0b ASTRA-B partner no-membership copy closure (source bb40cddd)"
       ],
-      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4",
+      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12",
       "releaseControlPlane": "51 passed, 1 intentional skip",
       "routeUniqueness": "426 registrations across 417 call sites",
       "typecheck": "PASS",
@@ -110,7 +110,7 @@
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
       "reconciliationReview": "PASS 102/102; deferred unmounted presentation; build re-run PASS",
-      "fullSuite": "870 passed files, 5 failed files, 5 skipped; 13487 passed tests, 9 failed, 59 skipped on pre-copy runtime 1450366; four default-timeout failures triaged and pass under serialized 60s reruns; partner-copy delta passes 4/4; one F7 owner-blocked assertion remains",
+      "fullSuite": "870 passed files, 5 failed files, 5 skipped; 13487 passed tests, 9 failed, 59 skipped on pre-copy runtime 1450366; four default-timeout failures triaged and pass under serialized 60s reruns; partner-copy delta passes 4/4; referral browser-boundary test passes 12/12; no actual browser journey evidence was claimed because clean harness npm ci hit Windows EPERM/EBUSY; one F7 owner-blocked assertion remains",
       "fullSuiteCommand": "npm test -- --reporter=dot",
       "fullSuiteObservedAt": "2026-09-05T23:16:29.000Z",
       "fullSuiteDurationSeconds": 741.22,
