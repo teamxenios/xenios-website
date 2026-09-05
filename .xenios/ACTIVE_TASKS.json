@@ -1106,7 +1106,7 @@
       "id": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
       "title": "Integrate the living Site System of Record, Order Entry Hub, and read-only Founder Command Center",
       "priority": "P0",
-      "state": "qa",
+      "state": "done",
       "owner": "codex-major-ordering-admin-sor-20260904",
       "paths": [
         "scripts/agentic/generate-site-system-of-record.mjs",
@@ -1183,7 +1183,10 @@
         "sha": "4c95dbd806e42b591e395a42caf7f9f7b23bb21f",
         "file": ".xenios/handoffs/2026-09-05T02-12-45-530Z-XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904-codex-major-ordering-admin-sor-20260904.md",
         "at": "2026-09-05T02:12:45.531Z"
-      }
+      },
+      "acceptedSha": "4c95dbd806e42b591e395a42caf7f9f7b23bb21f",
+      "acceptedBy": "codex-founder-guard-parent-review-20260905",
+      "acceptedAt": "2026-09-05T02:13:41.094Z"
     },
     {
       "id": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
