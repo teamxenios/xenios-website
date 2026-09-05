@@ -27,7 +27,7 @@ function appFor() {
   });
   const deny: CommerceGuards["requireMember"] = (_req, res) => { res.status(403).json({ ok: false }); };
   const base = buildCommerceDependencies(() => new Date("2026-09-05T00:00:00Z"), {});
-  registerCommerceApi(app, { ...base, partners: { ...base.partners, findByMemberId, dashboardFor } }, {
+  registerCommerceApi(app, { ...base, partners: { ...base.partners, readAvailable: () => true, findByMemberId, dashboardFor } }, {
     requireMember: guard, requireActiveMember: deny, requireAdmin: deny,
   });
   return { app, guard, findByMemberId, dashboardFor };

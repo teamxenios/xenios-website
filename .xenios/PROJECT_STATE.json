@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T18:15:06.163154+00:00",
+  "updatedAt": "2026-09-05T18:46:41.858137+00:00",
   "sethRevenueLaunch": {
     "state": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_PRODUCTION_AUTHORITY",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -53,8 +53,8 @@
     "pairingDocument": "docs/revenue-launch/20260905/ASTRA_PAIRING.md",
     "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority.",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
-    "scopeNote": "Universal approved-user and partner launch; first real acceptance persona is an instance, never runtime architecture. A owns server authority and final integration; B owns agreed client/browser paths. Broader price/source work preserved, no production GO, account creation, invitation, approval, fee waiver, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "f8a2cb74f181e3379dfd8fc4e44f9a372c5d4205",
+    "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
+    "latestEngineeringCheckpointSha": "59dd820750e4fc52f7718f6c6350dcadeb4e8cc7",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -69,8 +69,10 @@
       "researchPartners": 0,
       "existingCareOperationalRequest": true,
       "identityBindingInferred": false,
-      "intendedEmailDecisionPending": true,
-      "productionMutated": false
+      "intendedEmailDecisionPending": false,
+      "productionMutated": false,
+      "intendedEmailSelectedByFounder": true,
+      "ownershipVerified": false
     },
     "deferredWork": [
       "broader pricing review and activation",
@@ -78,7 +80,9 @@
       "full CRM",
       "representative hierarchy",
       "cloud expansion"
-    ]
+    ],
+    "accessPolicy": "admin_approved_customer_no_paid_membership",
+    "accessPolicyDecision": "Founder response 2026-09-05: remove memberships"
   },
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",

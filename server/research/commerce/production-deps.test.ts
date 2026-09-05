@@ -76,9 +76,10 @@ describe("production commerce dependencies", () => {
       code: "commerce_disabled",
     });
     expect(await deps.claims.submitClaim("mem_1", {} as never, asOf)).toEqual({ ok: false, code: "commerce_disabled" });
-    // Reads return empty, never another member's data.
+    // Disabled partner capability is unavailable, never false absence.
     expect(await deps.orders.listForMember("mem_1")).toEqual([]);
-    expect(await deps.partners.findByMemberId("mem_1")).toBeNull();
+    expect(deps.partners.readAvailable?.()).toBe(false);
+    await expect(deps.partners.findByMemberId("mem_1")).rejects.toThrow("partner reads unavailable");
   });
 });
 

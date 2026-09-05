@@ -93,6 +93,8 @@ export interface CommerceDependencies {
     forMember(memberId: string): Promise<unknown>;
   };
   partners: {
+    /** Capability only; downstream member and partner ownership checks still run. */
+    readAvailable?(): boolean;
     /** Resolves the partner owned by this member, or null. Never takes a partner id. */
     findByMemberId(memberId: string): Promise<PartnerSelfSource | null>;
     /**
@@ -576,12 +578,20 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
     "/api/research/partner/me",
     member,
     withSubject(async (memberId, _req, res) => {
-      const partner = await deps.partners.findByMemberId(memberId);
-      if (!partner) {
-        deny(res, 404, "partner_not_found");
+      if (deps.partners.readAvailable?.() === false) {
+        deny(res, 503, "capability_disabled", "Partner records are temporarily unavailable.");
         return;
       }
-      ok(res, { partner: toPartnerSelfDto(partner) });
+      try {
+        const partner = await deps.partners.findByMemberId(memberId);
+        if (!partner) {
+          deny(res, 404, "partner_not_found");
+          return;
+        }
+        ok(res, { partner: toPartnerSelfDto(partner) });
+      } catch {
+        deny(res, 503, "capability_disabled", "Partner records are temporarily unavailable.");
+      }
     }),
   );
 
@@ -589,14 +599,22 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
     "/api/research/partner/dashboard",
     member,
     withSubject(async (memberId, _req, res) => {
-      const partner = await deps.partners.findByMemberId(memberId);
-      if (!partner) {
-        deny(res, 404, "partner_not_found");
+      if (deps.partners.readAvailable?.() === false) {
+        deny(res, 503, "capability_disabled", "Partner records are temporarily unavailable.");
         return;
       }
-      // The resolved partner is handed over whole, so the dashboard layer never
-      // receives an id it could confuse with a client-supplied one.
-      ok(res, { partner: await deps.partners.dashboardFor(partner) });
+      try {
+        const partner = await deps.partners.findByMemberId(memberId);
+        if (!partner) {
+          deny(res, 404, "partner_not_found");
+          return;
+        }
+        // The resolved partner is handed over whole, so the dashboard layer never
+        // receives an id it could confuse with a client-supplied one.
+        ok(res, { partner: await deps.partners.dashboardFor(partner) });
+      } catch {
+        deny(res, 503, "capability_disabled", "Partner records are temporarily unavailable.");
+      }
     }),
   );
 

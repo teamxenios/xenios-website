@@ -73,6 +73,8 @@ import {
 import { resolveCommissionLedgerStore } from "./persistence/commissions-store";
 import type { CommissionLedgerRepository } from "../partners/commissions";
 import { createLedgerPartnerStatsSource } from "../partners/member-linkage";
+import { createOwnPartnerReads } from "../partners/own-reads";
+import { affiliatePortalEnabled } from "../affiliates/v2/feature-flags";
 import type { ClaimRecord, RefundService } from "./refunds";
 import { resolvePaymentProvider, type PaymentProvider } from "../providers/payment";
 import { resolveShippingProvider, type ShippingProvider } from "../providers/shipping";
@@ -1598,7 +1600,15 @@ export function buildCommerceDependencies(
   // guide library is real read-only content, exactly like the catalog.
   const guides = guidesDependency(products);
 
-  if (!commerceEnabled) return disabledDependencies(catalogService, guides, now);
-  if (!dbConfigured) return unprovisionedDependencies(catalogService, guides, now);
-  return liveDependencies(now, env, resolved, products, catalogService, guides, quantumEnabled);
+  const dependencies = !commerceEnabled ? disabledDependencies(catalogService, guides, now)
+    : !dbConfigured ? unprovisionedDependencies(catalogService, guides, now)
+    : liveDependencies(now, env, resolved, products, catalogService, guides, quantumEnabled);
+  // Ordinary partner account reads depend on their own portal capability and
+  // durable sources, independently of purchasing. Disabled/unavailable does
+  // not mean the authenticated user has no partner relationship.
+  return { ...dependencies, partners: { ...dependencies.partners, ...createOwnPartnerReads({
+    available: affiliatePortalEnabled(env) && dbConfigured,
+    members: () => resolved.resolvePartnerMemberStore(),
+    ledger: () => resolved.resolveCommissionLedgerStore(),
+  }) } };
 }

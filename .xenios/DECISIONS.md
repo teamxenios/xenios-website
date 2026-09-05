@@ -97,3 +97,7 @@ independent and does not block engineering today.
 CONSEQUENCE FOR THE MOUNT: `createAssistedOrderProductionComposition` must gain
 a `legal` input and pass it to the service. It currently does not, which is why
 the composition as written refuses every submission.
+
+## 2026-09-05: Paid membership removed from approved customer access
+
+Samuel answered the explicit launch access-policy question: “remove memberships.” Customer access uses explicit admin approval, proof of email ownership and canonical Auth-bound active account status, without an activation fee or recurring membership prerequisite. Preserve historical financial/audit facts; never mark an unpaid account paid. Partner, affiliate, organization, product and Care authorities remain separate. The founder selected the intended first acceptance email privately; this is not verified ownership. Local engineering is authorized. Live migration, deployment, grants and delivery require the later concrete exact-SHA decision.
