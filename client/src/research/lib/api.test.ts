@@ -80,6 +80,31 @@ describe("apiDelete", () => {
 });
 
 describe("shared request guards (unchanged behavior)", () => {
+  it("only preserves an explicitly allowed missing-record denial for an opted-in GET", async () => {
+    stubFetch(404, { ok: false, code: "partner_not_found", message: "No relation" });
+    expect(await apiGet("/api/research/partner/me", "tok", ["partner_not_found"])).toEqual({ kind: "denied", code: "partner_not_found", message: "No relation" });
+    expect(await apiGet("/api/research/partner/me", "tok")).toEqual({ kind: "unavailable" });
+    expect(await apiPatch("/api/research/partner/me", {}, "tok")).toEqual({ kind: "unavailable" });
+  });
+
+  it.each([
+    { ok: true, code: "partner_not_found" }, { code: "partner_not_found" },
+    { ok: false, code: "unknown_code" }, { ok: false, code: 404 }, null, undefined,
+  ])("does not promote an unknown or malformed 404 body %j", async (body) => {
+    stubFetch(404, body);
+    expect(await apiGet("/api/research/partner/me", "tok", ["partner_not_found"])).toEqual({ kind: "unavailable" });
+  });
+
+  it.each([501, 503])("does not promote an opted-in %i to a missing-record denial", async (status) => {
+    stubFetch(status, { ok: false, code: "partner_not_found" });
+    expect(await apiGet("/api/research/partner/me", "tok", ["partner_not_found"])).toEqual({ kind: "unavailable" });
+  });
+
+  it("does not read an HTML 404 as a missing-record denial", async () => {
+    stubFetch(404, { ok: false, code: "partner_not_found" }, "text/html");
+    expect(await apiGet("/api/research/partner/me", "tok", ["partner_not_found"])).toEqual({ kind: "unavailable" });
+  });
+
   it.each([404, 501, 503, 200])("releases an unused %i response stream without changing unavailable semantics", async (status) => {
     const cancel = vi.fn();
     const stream = new ReadableStream({

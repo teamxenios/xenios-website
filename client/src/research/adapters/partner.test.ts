@@ -37,6 +37,7 @@ import {
   applyAsPartner,
   getPartnerCommissions,
   getPartnerDashboard,
+  getPartnerSelf,
   getPartnerLeads,
   requestCampaign,
 } from "./partner";
@@ -102,6 +103,43 @@ async function flush(rounds = 6) {
 // ---------------------------------------------------------------------------
 
 describe("partner adapter result mapping", () => {
+  const ownPartner = { partnerId: "partner-fixture-a", role: "affiliate", state: "active", certified: true, active: true };
+
+  it("reads only the authenticated member's own partner projection without identifiers in the URL", async () => {
+    installFetch(() => jsonResponse({ ok: true, partner: { ...ownPartner, internalNotes: "never render", contactEmail: "private@fixture.invalid" } }));
+    expect(await getPartnerSelf("synthetic-a")).toEqual({ kind: "ok", data: { partner: ownPartner } });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toBe("/api/research/partner/me");
+    expect(calls[0].headers.Authorization).toBe("Bearer synthetic-a");
+    expect(calls[0].body).toBeUndefined();
+  });
+
+  it("does not read a private relation without a member token", async () => {
+    installFetch(() => jsonResponse({ ok: true, partner: ownPartner }));
+    expect(await getPartnerSelf(null)).toEqual({ kind: "unauthorized" });
+    expect(calls).toHaveLength(0);
+  });
+
+  it.each([null, {}, { ...ownPartner, partnerId: " " }, { ...ownPartner, role: "admin" },
+    { ...ownPartner, state: "toString" }, { ...ownPartner, certified: "true" }, { ...ownPartner, active: undefined }])(
+    "refuses malformed owned-partner projection %j", async (partner) => {
+      installFetch(() => jsonResponse({ ok: true, partner }));
+      expect((await getPartnerSelf("synthetic-a")).kind).toBe("error");
+    },
+  );
+
+  it("requires the successful canonical envelope", async () => {
+    installFetch(() => jsonResponse({ partner: ownPartner }));
+    expect((await getPartnerSelf("synthetic-a")).kind).toBe("error");
+  });
+
+  it("distinguishes an absent owned relation from an unpublished endpoint only on the two declared reads", async () => {
+    installFetch(() => jsonResponse({ ok: false, code: "partner_not_found" }, 404));
+    expect(await getPartnerSelf("synthetic-a")).toEqual({ kind: "denied", code: "partner_not_found" });
+    expect(await getPartnerDashboard("synthetic-a")).toEqual({ kind: "denied", code: "partner_not_found" });
+    expect(await getPartnerCommissions("synthetic-a")).toEqual({ kind: "unavailable" });
+  });
+
   it("200 with a JSON body maps to ok with the parsed data", async () => {
     installFetch(() => jsonResponse({ entries: [{ id: "c1" }] }));
     const result = await getPartnerCommissions<{ entries: Array<{ id: string }> }>("member-jwt");

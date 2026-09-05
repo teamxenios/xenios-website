@@ -44,10 +44,13 @@ export interface CapabilityStatus {
 // provider-backed capability is pending, nothing is enabled by assumption.
 const PENDING: Record<ResearchCapability, string> = {
   transactional_email: "Email delivery is being configured.",
-  membership_billing: "Membership billing opens soon. You will be emailed the moment it does.",
-  product_commerce: "Ordering is not open yet. The catalog is available for review.",
+  membership_billing:
+    "Membership billing opens soon. You will be emailed the moment it does.",
+  product_commerce:
+    "Ordering is not open yet. The catalog is available for review.",
   identity_verification: "Identity verification is being configured.",
-  telegram_support: "Telegram support is being configured. Questions here still reach a person.",
+  telegram_support:
+    "Telegram support is being configured. Questions here still reach a person.",
   private_media: "Private photo, voice, and video storage is being configured.",
   live_shipping_rates: "Live shipping rates are being configured.",
   mitch_fulfillment: "Fulfillment integration is being configured.",
@@ -55,16 +58,24 @@ const PENDING: Record<ResearchCapability, string> = {
   quantum_commerce: "Quantum is coming soon.",
   referrals: "The referral program is not open yet.",
   tracker: "The tracker unlocks after your assessment.",
-  assessment: "The assessment is awaiting final privacy and consent approval. No answers are collected while it is pending.",
+  assessment:
+    "The assessment is awaiting final privacy and consent approval. No answers are collected while it is pending.",
   blueprint: "Your Blueprint is prepared after the assessment.",
   questions: "Questions open with your active membership.",
 };
 
 const PRODUCT_GATES = new Set<ResearchCapability>([
-  "referrals", "tracker", "assessment", "blueprint", "questions", "quantum_commerce",
+  "referrals",
+  "tracker",
+  "assessment",
+  "blueprint",
+  "questions",
+  "quantum_commerce",
 ]);
 
-export function pendingStatus(capability: ResearchCapability): CapabilityStatus {
+export function pendingStatus(
+  capability: ResearchCapability,
+): CapabilityStatus {
   return {
     capability,
     state: PRODUCT_GATES.has(capability) ? "disabled" : "pending_credentials",
@@ -73,11 +84,20 @@ export function pendingStatus(capability: ResearchCapability): CapabilityStatus 
   };
 }
 
-let cache: { at: number; statuses: Map<ResearchCapability, CapabilityStatus> } | null = null;
+// One ephemeral slot, scoped to the exact credential used by the request.
+// A different principal (including signed out) must never inherit a prior
+// credential's successful capability response. Nothing is persisted.
+let cache: {
+  token: string | null;
+  at: number;
+  statuses: Map<ResearchCapability, CapabilityStatus>;
+} | null = null;
+let cacheGeneration = 0;
 
 /** Test-only: clears the 60s memo so each test observes its own fetch stub. */
 export function __resetCapabilitiesCache(): void {
   cache = null;
+  cacheGeneration++;
 }
 
 // Fetches member-visible capability statuses from the frozen registry
@@ -87,8 +107,13 @@ export function __resetCapabilitiesCache(): void {
 // the honest presentation defaults (PRODUCT_GATES read coming_soon, provider
 // capabilities read pending_credentials). An absent or failing endpoint keeps
 // the same defaults. Never throws.
-export async function fetchCapabilities(token: string | null): Promise<Map<ResearchCapability, CapabilityStatus>> {
-  if (cache && Date.now() - cache.at < 60_000) return cache.statuses;
+export async function fetchCapabilities(
+  token: string | null,
+): Promise<Map<ResearchCapability, CapabilityStatus>> {
+  if (cache && cache.token === token && Date.now() - cache.at < 60_000)
+    return cache.statuses;
+  const generation = ++cacheGeneration;
+  cache = null;
   const statuses = new Map<ResearchCapability, CapabilityStatus>();
   try {
     const res = await fetch("/api/research/capabilities", {
@@ -99,7 +124,9 @@ export async function fetchCapabilities(token: string | null): Promise<Map<Resea
     if (res.ok) {
       const body = await res.json().catch(() => null);
       const caps =
-        body?.ok === true && body.capabilities && typeof body.capabilities === "object"
+        body?.ok === true &&
+        body.capabilities &&
+        typeof body.capabilities === "object"
           ? (body.capabilities as Record<string, { enabled?: unknown }>)
           : null;
       if (caps) {
@@ -122,7 +149,11 @@ export async function fetchCapabilities(token: string | null): Promise<Map<Resea
   } catch {
     // endpoint unreachable: fall through to pending defaults below
   }
-  cache = { at: Date.now(), statuses };
+  // A late prior-principal request still resolves to its own caller, but may
+  // not replace the newest request's memo. Hooks separately bind rendering
+  // to request identity, so superseded completions cannot repaint a new user.
+  if (generation === cacheGeneration)
+    cache = { token, at: Date.now(), statuses };
   return statuses;
 }
 

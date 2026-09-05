@@ -18,8 +18,8 @@ export type ApiResult<T> =
   | { kind: "unavailable" }
   | { kind: "error"; code?: string; message: string };
 
-export async function apiGet<T>(path: string, token?: string | null): Promise<ApiResult<T>> {
-  return request<T>("GET", path, undefined, token);
+export async function apiGet<T>(path: string, token?: string | null, knownNotFoundDenials: readonly string[] = []): Promise<ApiResult<T>> {
+  return request<T>("GET", path, undefined, token, knownNotFoundDenials);
 }
 
 export async function apiPost<T>(path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {
@@ -46,7 +46,7 @@ async function releaseUnusedBody(response: Response): Promise<void> {
   try { await response.body?.cancel(); } catch { /* Preserve the original status. */ }
 }
 
-async function request<T>(method: string, path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {
+async function request<T>(method: string, path: string, body: unknown, token?: string | null, knownNotFoundDenials: readonly string[] = []): Promise<ApiResult<T>> {
   try {
     const res = await fetch(path, {
       method,
@@ -69,6 +69,18 @@ async function request<T>(method: string, path: string, body: unknown, token?: s
       return { kind: "forbidden", message: b?.message };
     }
     if (res.status === 404 || res.status === 501 || res.status === 503) {
+      // Only an explicitly opted-in endpoint's known missing-record denial
+      // differs from an unpublished API. Unknown/HTML/invalid 404s and all
+      // default callers retain unavailable semantics; no permission is added.
+      if (res.status === 404 && knownNotFoundDenials.length > 0
+        && (res.headers.get("content-type") ?? "").includes("application/json")) {
+        const missing = await res.json().catch(() => null);
+        if (missing?.ok === false && typeof missing.code === "string" && knownNotFoundDenials.includes(missing.code)) {
+          return { kind: "denied", code: missing.code,
+            ...(typeof missing.message === "string" ? { message: missing.message } : {}) };
+        }
+        return { kind: "unavailable" };
+      }
       await releaseUnusedBody(res);
       return { kind: "unavailable" };
     }
