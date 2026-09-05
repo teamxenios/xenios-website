@@ -16,7 +16,7 @@ export const ApprovedUserAccessSchema = z.object({
   schemaVersion: z.literal(1), observedAt: z.string().datetime({ offset: true }), email: z.string().email(),
   identityState: z.enum(["absent", "unverified", "verified", "conflict"]),
   authAccounts: z.array(z.object({ authUserId: id, emailVerified: z.boolean(), signInRecorded: z.boolean() }).strict()).max(2),
-  applications: z.array(z.object({ id, status: z.string(), href: z.string() }).strict()).max(25),
+  applications: z.array(z.object({ id, status: z.string(), href: z.string(), updatedAt: z.string().datetime({ offset: true }).nullable().optional() }).strict()).max(25),
   members: z.array(z.object({ id, status: z.string(), authUserId: id.nullable(), binding, href: z.string() }).strict()).max(25),
   partners: z.array(z.object({
     id, memberId: id, role: z.string(), state: z.string(), binding,
@@ -28,6 +28,7 @@ export const ApprovedUserAccessSchema = z.object({
   }).strict(),
   boundaries: z.object({
     care: z.literal("separate_authority"), membershipBillingEnabled: z.boolean(),
+    customerAccessApproval: z.enum(["unavailable", "available"]).default("unavailable"),
     partnerLifecycleReview: z.enum(["unavailable", "available"]),
     referralEligibility: z.literal("checked_by_referral_authority"),
   }).strict(),

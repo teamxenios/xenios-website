@@ -9,6 +9,7 @@ export const APPLICATION_STATUSES = [
   "resubmitted",
   "approved_pending_payment",
   "approved_sponsored_b2b",
+  "approved_customer",
   "payment_pending",
   "active",
   "paused",
@@ -28,6 +29,9 @@ export const ALLOWED_TRANSITIONS: Record<ApplicationStatus, ApplicationStatus[]>
   resubmitted: ["under_review", "withdrawn"],
   approved_pending_payment: ["payment_pending", "expired", "withdrawn"],
   approved_sponsored_b2b: ["active", "expired", "withdrawn"],
+  // Approval itself uses the audited customer-access RPC; generic status
+  // transitions cannot create this authority or its provenance.
+  approved_customer: ["active", "expired", "withdrawn"],
   payment_pending: ["active", "approved_pending_payment", "expired"],
   active: ["paused"],
   paused: ["active"],
@@ -56,10 +60,8 @@ export const MEMBER_STATUSES = [
 
 export type MemberStatus = (typeof MEMBER_STATUSES)[number];
 
-// Billing state, tracked separately from membership status. A single generic
-// "active" boolean cannot represent dunning, refunds, or disputes; membership
-// authorization requires status AND billing to agree once billing is live
-// (RESEARCH_MEMBERSHIP_BILLING_ENABLED). Stored in research_members.billing_state
+// Historical billing facts remain separate from approved account access.
+// Paid membership is no longer an access prerequisite. Stored in research_members.billing_state
 // after the research-member-billing.sql migration; a missing column or null
 // reads as 'not_started'.
 export const MEMBER_BILLING_STATES = [
