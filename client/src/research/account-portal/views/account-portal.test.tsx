@@ -575,7 +575,7 @@ describe("customer account portal views", () => {
       billingDocuments: FIXTURE_DOCUMENTS.filter(document => document.kind === "receipt"),
     }} />);
     expect(view.textContent).toContain("Historical plan label");
-    expect(view.textContent).toContain("Recorded renewal evidence");
+    expect(view.textContent).toContain("Next billing / renewal");
     expect(view.textContent).toContain("Sep 26, 2026");
     expect(view.textContent).toContain("This page does not refund payments, cancel existing recurring charges");
     for (const receipt of FIXTURE_DOCUMENTS.filter(document => document.kind === "receipt")) {
