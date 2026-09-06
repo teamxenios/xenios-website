@@ -119,8 +119,11 @@ and what changed:
 - **Store parity (P3).** Both stores apply exactly `MUTABLE_VERSION_FIELDS` on a patch.
 - **Active-content scan (P2/P3).** The scan now decodes `#xx` name escapes, inflates every
   FlateDecode stream (object streams included) within bounds and scans inside, refuses
-  encrypted files and streams it cannot inflate, and names the marker it found. It remains
-  a first-line filter, not a sandbox; Slice 5 (reviewed intake) keeps human review.
+  encrypted files and streams it cannot inflate, and names the marker it found. Printed
+  text is not structure: string literals `(...)` are blanked before matching, and
+  `/OpenAction` is refused only when it carries an action dictionary or an indirect
+  reference (a bare destination array such as `[3 0 R /Fit]` is accepted). It remains a
+  first-line filter, not a sandbox; Slice 5 (reviewed intake) keeps human review.
 - **Idempotency key bound to one file (P3).** The same key with different bytes or a
   different filename is refused (409) instead of replaying the earlier version; the admin
   page also mints a new key whenever any form field or the chosen file changes, and keeps

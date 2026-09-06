@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { RESOURCE_PDF_MAX_BYTES, type ResourceUploadInput } from "@shared/research/resource-hub/contract";
 import { createMemoryResourceBytesStore, notConfiguredResourceBytesStore } from "./bytes-store";
-import { createResourceHubService, decodePdfNameEscapes, inflatedPdfStreams, sha256Hex, validatePdfUpload } from "./service";
+import { createResourceHubService, decodePdfNameEscapes, inflatedPdfStreams, sha256Hex, stripPdfStringLiterals, validatePdfUpload } from "./service";
 import { ResourceHubConflict, createInMemoryResourceHubStore } from "./store";
 
 // ---------------------------------------------------------------------------
@@ -459,5 +459,28 @@ describe("an idempotency key is bound to one file", () => {
     expect(await h.service.createVersion(ADMIN, upload({ originalFilename: "renamed.pdf" }), file())).toMatchObject({ ok: false, code: "resource_state_conflict" });
     expect((await h.service.listAdmin())[0]!.versions).toHaveLength(1);
     expect(h.bytes.keys()).toHaveLength(1);
+  });
+});
+
+describe("the scan judges structure, not printed text", () => {
+  const judge = (body: string) => validatePdfUpload({ bytes: Buffer.from(body, "latin1"), declaredContentType: "application/pdf", originalFilename: "brochure.pdf" });
+
+  it("accepts a bare /OpenAction destination array and printed text that happens to contain a marker", () => {
+    expect(judge("%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R /OpenAction [3 0 R /Fit] >> endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
+    expect(judge("%PDF-1.4\n4 0 obj << /Length 30 >> stream\nBT (Route /AA 12) Tj ET\nendstream endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
+    expect(judge("%PDF-1.4\n4 0 obj << /Length 30 >> stream\nBT (See /JS section \(and \) more) Tj ET\nendstream endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
+  });
+
+  it("still refuses an /OpenAction that carries or references an action, and real action keys", () => {
+    expect(judge("%PDF-1.4\n1 0 obj << /Type /Catalog /OpenAction << /S /JavaScript /JS (app.alert(1)) >> >> endobj\n%%EOF\n").ok).toBe(false);
+    expect(judge("%PDF-1.4\n1 0 obj << /Type /Catalog /OpenAction 7 0 R >> endobj\n%%EOF\n").ok).toBe(false);
+    expect(judge("%PDF-1.4\n5 0 obj << /Type /Annot /A << /S /Launch /F (cmd.exe) >> >> endobj\n%%EOF\n").ok).toBe(false);
+    expect(judge("%PDF-1.4\n5 0 obj << /S /JavaScript /JS (this.print()) >> endobj\n%%EOF\n").ok).toBe(false);
+  });
+
+  it("blanks string literals without losing the structure around them", () => {
+    expect(stripPdfStringLiterals("/JS (app.alert(1)) /Next")).toBe("/JS () /Next");
+    expect(stripPdfStringLiterals(String.raw`(a \) b) /AA <<`)).toBe("() /AA <<");
+    expect(stripPdfStringLiterals("(unterminated /JS ")).toBe("()");
   });
 });
