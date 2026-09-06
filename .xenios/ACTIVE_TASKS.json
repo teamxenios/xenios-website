@@ -1518,6 +1518,21 @@
       "createdAt": "2026-09-06T00:30:00.000Z",
       "claimedAt": "2026-09-06T00:33:59.087Z",
       "releasedAt": "2026-09-06T03:34:42.826Z"
+    },
+    {
+      "id": "XENIOS-SETH-FABLE-PARTNER-MAIN-LANDMARK-20260906",
+      "title": "Repair partner route main landmark and verify exact browser seam",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "client/src/research/layout.tsx",
+        "client/src/research/recommendation/layout-referral.test.tsx"
+      ],
+      "dependsOn": [],
+      "parentTask": "XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905",
+      "createdAt": "2026-09-06T03:37:41.233Z",
+      "scopeNote": "Narrow browser defect found in exact e722 real bundle: partner links/dashboard render zero main landmarks. Wrap only the two exact route children in one main and add tight regression/browser proof. No broad copy changes, feature work, production action, or unrelated lease takeover."
     }
   ]
 }
