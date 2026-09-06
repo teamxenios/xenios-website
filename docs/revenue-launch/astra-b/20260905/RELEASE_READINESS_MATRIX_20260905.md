@@ -41,3 +41,11 @@ that delta.
 The matrix is an engineering handoff, not a production GO. Samuel must later
 approve one exact final SHA and the listed production mutations before any
 release action.
+
+## Read-only Render observation
+
+The Render monitoring read confirmed service `srv-d8s9vej7uimc7384dfcg` is
+healthy and not suspended, with auto-deploy **off**. Its latest live deploy is
+`dep-dad08h740ujc73aprfcg`, commit
+`db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, status `live`. No deploy was
+triggered by this observation.
