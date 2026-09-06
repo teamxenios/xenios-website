@@ -50,7 +50,54 @@ const BLOCKED_PARTNER_STATES: ReadonlySet<PartnerState> = new Set(["suspended", 
 
 const PDF_MAGIC = "%PDF-";
 /** Names of PDF features that execute or open something. V1 refuses them outright. */
-const ACTIVE_CONTENT_MARKERS = ["/JavaScript", "/JS ", "/JS(", "/JS<", "/JS/", "/Launch", "/OpenAction", "/AA ", "/AA<", "/AA/", "/EmbeddedFile", "/RichMedia"];
+const ACTIVE_CONTENT_MARKERS = ["/JavaScript", "/JS ", "/JS(", "/JS<", "/JS/", "/Launch", "/AA ", "/AA<", "/AA/", "/EmbeddedFile", "/RichMedia"];
+/**
+ * /OpenAction is benign when it is a bare destination array ("[3 0 R /Fit]":
+ * open at page 3) and only dangerous when it carries an action dictionary or
+ * points at one through an indirect reference (which cannot be judged without
+ * a full parse, so it is refused conservatively).
+ */
+const OPEN_ACTION_WITH_ACTION = /\/OpenAction\s*(?:<<|\d+\s+\d+\s+R\b)/u;
+
+/**
+ * Text inside PDF string literals "(...)" is data (what a page prints), not
+ * structure. Blanking it before the marker scan keeps a brochure that prints
+ * "Route /AA 12" from being refused, while a real "/JS (code)" key survives
+ * because the key precedes the literal. Nesting and backslash escapes follow
+ * the PDF grammar; an unterminated literal blanks to the end of the text.
+ */
+export function stripPdfStringLiterals(text: string): string {
+  let out = "";
+  let i = 0;
+  const n = text.length;
+  while (i < n) {
+    const ch = text[i]!;
+    if (ch === "\\") {
+      out += ch + (text[i + 1] ?? "");
+      i += 2;
+      continue;
+    }
+    if (ch !== "(") {
+      out += ch;
+      i += 1;
+      continue;
+    }
+    // Skip the literal, honouring nesting and escapes.
+    let depth = 1;
+    i += 1;
+    while (i < n && depth > 0) {
+      const c = text[i]!;
+      if (c === "\\") i += 2;
+      else {
+        if (c === "(") depth += 1;
+        else if (c === ")") depth -= 1;
+        i += 1;
+      }
+    }
+    out += "()";
+  }
+  return out;
+}
 /** Bounds for the inflated-stream scan: a decompression bomb must not become a memory problem. */
 const MAX_INFLATED_STREAM_BYTES = 8 * 1024 * 1024;
 const MAX_INFLATED_TOTAL_BYTES = 48 * 1024 * 1024;
@@ -112,8 +159,9 @@ export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStr
 }
 
 function findActiveContentMarker(text: string): string | null {
-  const decoded = decodePdfNameEscapes(text);
+  const decoded = stripPdfStringLiterals(decodePdfNameEscapes(text));
   for (const marker of ACTIVE_CONTENT_MARKERS) if (decoded.includes(marker)) return marker.trim();
+  if (OPEN_ACTION_WITH_ACTION.test(decoded)) return "/OpenAction";
   return null;
 }
 
