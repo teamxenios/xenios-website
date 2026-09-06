@@ -160,3 +160,13 @@ the partial directory remains preserved at
 excluded from acceptance. Its dedicated preview, capture, and Chrome process
 tree was stopped after the partial census, with no production or provider
 contact.
+
+## Repair batch and selective Astra-B integration — 2026-09-06
+
+Patch 01 from `XENIOS_CODE_REPAIR_2026-09-06` was checked against the exact A base and applied at commit `ff3c496245739233b71e46f9e5d6e26af9d57017`. The actual target partner data-port assertions passed **101/101**; existing partner production-port, portal, and route suites passed **68/68**; `npm run check` passed. The submission test fixture was updated to provide the durable returned reference required by the hardened contract.
+
+The selective-handoff planner verified B’s exact pushed source `d04da477f7b2828411810c927cbaa3aa709476dc` against A integration `ff3c496245739233b71e46f9e5d6e26af9d57017`. Only manifest-listed evidence and handoff records were integrated, preserving earlier browser evidence and avoiding a wholesale B merge. The B review task was accepted against the exact `d04da477...` handoff after review; no runtime or production authority was imported from B.
+
+Patch 02 remains deferred to B’s recovered Resource Hub implementation. The package checker sees the current public Resources page at its exact base, but applying it would risk replacing newer local Resource Hub work; no overwrite was performed.
+
+The resulting records tip is `1bab7c9`; Site System of Record write/check passes with 219 routes and 15 capabilities. Production remains at `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`; no deployment, migration, price activation, grant, notification, payment, shipment, or provider/database mutation occurred.
