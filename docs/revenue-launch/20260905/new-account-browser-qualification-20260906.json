@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-09-06T17:05:07.069Z",
+  "observedAt": "2026-09-06T17:06:12.234Z",
   "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
   "candidateTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
   "harness": "scripts/revenue-launch/new-account-qa-harness.ts",
   "runner": "scripts/revenue-launch/new-account-browser-qualification.mjs",
-  "runCommand": "PORT=5237 npx tsx scripts/revenue-launch/new-account-qa-harness.ts && node scripts/revenue-launch/new-account-browser-qualification.mjs",
+  "runCommand": "npx tsx scripts/revenue-launch/new-account-qa-harness.ts && node scripts/revenue-launch/new-account-browser-qualification.mjs",
   "environment": "local loopback disposable preview on 127.0.0.1:5237",
   "browserProfiles": {
     "admin": "ephemeral Chromium profile A",
