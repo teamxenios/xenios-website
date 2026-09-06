@@ -44,7 +44,11 @@ content. No mutation or activation control was added.
 
 The clean detached browser harness remains blocked by Windows `EPERM/EBUSY`
 while installing native `esbuild`/`bufferutil`; browser journey evidence is
-not claimed. Synthetic referral boundary evidence remains 12/12.
+not claimed. Astra-B recorded a fresh post-integration attempt against exact
+head `cd5500fe903e601fc967e536b08d2458e4304df9` in QA commit
+`1a24c2a515384ae06b5fdfe5a99da704e2580154`; it stopped before browser startup
+when Windows could not unlink `bufferutil.node` (`EPERM`, `-4048`). Synthetic
+referral boundary evidence remains 12/12.
 
 ## Production boundary
 

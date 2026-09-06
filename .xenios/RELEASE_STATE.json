@@ -123,7 +123,7 @@
       "validationHeadSha": "feffd8fad6033b8743c81302de351e1915912e40",
       "validationHeadTree": "f4a39bdca6c6d72fd8e78a47e2330ce1fd691f09",
       "f7SponsoredB2BAssertion": "PASS 13/13; centralized guard count corrected under reclaimed scoped lease; no skip or waiver",
-      "browserJourneyEvidence": "NOT_CLAIMED: clean detached harness npm ci hit Windows EPERM/EBUSY replacing native esbuild/bufferutil"
+      "browserJourneyEvidence": "NOT_CLAIMED: fresh post-integration attempt at cd5500fe stopped before browser startup when clean npm ci hit Windows EPERM unlinking native bufferutil; synthetic referral boundary remains 12/12"
     }
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
