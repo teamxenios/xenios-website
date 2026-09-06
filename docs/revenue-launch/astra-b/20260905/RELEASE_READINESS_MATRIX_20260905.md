@@ -29,6 +29,15 @@ deploy, migrate, activate prices, change flags, or send communications.
 - Runtime environment verification: unverified
 - Production and Referral V1 authorities: absent
 
+## Runtime-to-records boundary
+
+The current A tip `8f444fe8796f0b1275d5504f03b6a22c653d46ce` differs from the
+reviewed runtime candidate `13c971ceaeb20bf60c8061fc7d0739101499a668` only in
+coordination/evidence/Site-System-of-Record paths. The runtime candidate tree
+is `e1e0abb247d3913a6c058a0fbd24b8cb6e5f26e8`; the records tip tree is
+`5568b4acbddbe5163f514e39c0647065c637d687`. No non-document source path is in
+that delta.
+
 The matrix is an engineering handoff, not a production GO. Samuel must later
 approve one exact final SHA and the listed production mutations before any
 release action.
