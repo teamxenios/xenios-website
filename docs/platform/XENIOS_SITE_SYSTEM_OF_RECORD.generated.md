@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `89572a6793496d7dea7f4fcdb4262f3a279707ad` (2026-09-06T09:07:31-05:00)
+Generated from source commit: `22f0dd87fdce542a4357881c32e282d9ec93936e` (2026-09-06T09:30:01-05:00)
 
-Source tree: `34aee1106a877669ce20ce448a3ab7c02d02bef2` on `codex/xenios-seth-revenue-launch-20260905`
+Source tree: `5362f26af5d90a3abd64b076191919af78837ba8` on `codex/xenios-seth-revenue-launch-20260905`
 
 Recorded production: `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` / `dep-dad08h740ujc73aprfcg` (live_verified)
 
