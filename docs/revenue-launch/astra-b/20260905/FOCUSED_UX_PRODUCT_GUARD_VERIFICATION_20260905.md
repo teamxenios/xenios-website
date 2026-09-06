@@ -69,6 +69,12 @@ The stale paths are the A-owned generated site-system-of-record JSON/Markdown
 and route-inventory CSV. ASTRA-B did not regenerate or overwrite those records;
 ASTRA-A must reconcile them on the integration tree before release acceptance.
 
+For clarity, a separate read-only check on the current ASTRA-A integration tree
+passed the same gate with source SHA `f681afe6e19bede4de75fb4e7b811fa09a0bb339`,
+production SHA `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, 219 routes, and 15
+capabilities. The B checkout warning is therefore a branch-record freshness
+condition, not evidence that the current A integration tree is stale.
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
