@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 
 import {
+  CATALOG_HARNESS_PREWARM_READINESS_BUDGET_MS,
   SYNTHETIC_CAPTURE_CASES,
   SYNTHETIC_PERSONA_STORAGE_TYPES,
   STATUS_CREDENTIAL_TRANSPORT,
@@ -9,10 +10,12 @@ import {
   buildArtifactInventory,
   classifyBrowserBoundaryRequest,
   clearSyntheticPersonaState,
+  closePageWithinCleanupBudget,
   evaluateSyntheticRouteStateContract,
   forgedStatusFailureDeclaration,
   partnerNotFoundFailureDeclaration,
   parseArgs,
+  prewarmCatalogHarness,
   safeChildEnvironment,
   sanitizeEvidenceText,
   sanitizeNetworkUrl,
@@ -22,6 +25,176 @@ import {
 import { ASSERTION_IDS } from "./lib/report.mjs";
 
 describe("capture-synthetic-journeys", () => {
+  it("warms the catalog through the exact real heading without a second success probe", async () => {
+    const calls = [];
+    const page = {
+      loaded: true,
+      inflight: new Map(),
+      console: [],
+      network: [],
+      async navigate(url, options) {
+        calls.push({ kind: "navigate", url, options });
+        return { navigationMs: 12_345 };
+      },
+      async evaluate(source) {
+        calls.push({ kind: "evaluate", source });
+        return source ===
+          "document.querySelector('h1')?.textContent?.trim() === 'Full catalog'";
+      },
+    };
+    const url =
+      "http://127.0.0.1:5201/src/research/master-offerings/__harness__/catalog-harness.html";
+
+    const result = await prewarmCatalogHarness(page, url);
+
+    expect(calls).toEqual([
+      {
+        kind: "navigate",
+        url,
+        options: {
+          loadTimeoutMs: CATALOG_HARNESS_PREWARM_READINESS_BUDGET_MS,
+        },
+      },
+      {
+        kind: "evaluate",
+        source:
+          "document.querySelector('h1')?.textContent?.trim() === 'Full catalog'",
+      },
+    ]);
+    expect(result).toMatchObject({
+      result: "AUTOMATED_PASS",
+      kind: "BROWSER_VITE_WARMUP",
+      readinessBudgetMs: 90_000,
+      navigationMs: 12_345,
+      readiness: {
+        diagnostic: "SUCCESS_PATH_NO_EXTRA_PROBE",
+        attemptedUrl: url,
+        headingMatch: "EXACT_TRIMMED_TEXT",
+        expectedHeading: "Full catalog",
+        loadedEventObserved: true,
+        inflightRequests: 0,
+      },
+    });
+    expect(Object.isFrozen(result)).toBe(true);
+    expect(Object.isFrozen(result.readiness)).toBe(true);
+  });
+
+  it("rejects a substring heading within the local readiness budget", async () => {
+    vi.useFakeTimers();
+    try {
+      const evaluated = [];
+      const page = {
+        loaded: true,
+        inflight: new Map(),
+        console: [],
+        network: [],
+        async navigate() {
+          return { navigationMs: 1 };
+        },
+        async evaluate(source) {
+          evaluated.push(source);
+          return false;
+        },
+      };
+      const pending = prewarmCatalogHarness(
+        page,
+        "http://127.0.0.1:5201/catalog-harness.html",
+        { readinessBudgetMs: 20 },
+      );
+      const rejected = expect(pending).rejects.toThrow(
+        /20 ms readiness budget exhausted/u,
+      );
+      await vi.advanceTimersByTimeAsync(20);
+      await rejected;
+      expect(evaluated).toEqual([
+        "document.querySelector('h1')?.textContent?.trim() === 'Full catalog'",
+      ]);
+      expect(evaluated[0]).not.toContain("includes");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("redacts query credentials from prewarm failure diagnostics", async () => {
+    const url =
+      "http://127.0.0.1:5201/catalog-harness.html?token=do-not-leak#fragment";
+    const page = {
+      loaded: false,
+      inflight: new Map([
+        ["pending", { method: "GET", type: "Document", url }],
+      ]),
+      console: [{ level: "error", text: `failed ${url}`, url }],
+      network: [{ method: "GET", type: "Document", status: 500, url }],
+      async navigate() {
+        throw new Error(`navigate ${url}: load event unavailable`);
+      },
+      async evaluate() {
+        return {
+          href: url,
+          readyState: "interactive",
+          h1: "Not Full catalog",
+          bodyTextLength: 12,
+        };
+      },
+    };
+
+    let message = "";
+    try {
+      await prewarmCatalogHarness(page, url);
+    } catch (error) {
+      message = String(error?.message ?? error);
+    }
+
+    expect(message).toContain("Page.loadEventFired timeout configured to 90000 ms");
+    expect(message).toContain("failure diagnostic budget 1000 ms");
+    expect(message).toContain("?REDACTED");
+    expect(message).toContain('"readyState":"interactive"');
+    expect(message).toContain('"inflightRequests":1');
+    expect(message).not.toContain("do-not-leak");
+    expect(message).not.toContain("#fragment");
+  });
+
+  it("bounds cleanup after a prewarm operation leaves CDP unresolved", async () => {
+    vi.useFakeTimers();
+    try {
+      const page = { close: () => new Promise(() => {}) };
+      const pending = closePageWithinCleanupBudget(page, 20);
+      await vi.advanceTimersByTimeAsync(20);
+      await expect(pending).resolves.toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+    await expect(
+      closePageWithinCleanupBudget({ close: async () => {} }, 20),
+    ).resolves.toBe(true);
+  });
+
+  it("installs the boundary before warmup and retains the ordinary evidence navigation", () => {
+    const source = readFileSync(
+      new URL("./capture-synthetic-journeys.mjs", import.meta.url),
+      "utf8",
+    );
+    const boundary = source.indexOf(
+      "removeBoundary = await installLocalOriginBoundary",
+    );
+    const prewarm = source.indexOf(
+      "catalogPrewarm = await prewarmCatalogHarness",
+      boundary,
+    );
+    const reset = source.indexOf("resetPageTelemetry(page);", prewarm);
+    const evidenceNavigation = source.indexOf(
+      "await page.navigate(catalogHarnessUrl);",
+      reset,
+    );
+    expect(boundary).toBeGreaterThan(-1);
+    expect(prewarm).toBeGreaterThan(boundary);
+    expect(reset).toBeGreaterThan(prewarm);
+    expect(evidenceNavigation).toBeGreaterThan(reset);
+    expect(source.slice(evidenceNavigation, evidenceNavigation + 80)).not.toContain(
+      "loadTimeoutMs",
+    );
+  });
+
   it("defines the exact ten representative and status-truth states required by the supplemental gate", () => {
     expect(
       Object.values(SYNTHETIC_CAPTURE_CASES).map(({ surface, state }) => surface + "/" + state),
