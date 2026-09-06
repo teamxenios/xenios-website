@@ -58,6 +58,17 @@ npm run build  PASS — Vite 2,265 modules; server bundle emitted (dist/index.cj
 The build retained existing dynamic-import/chunk warnings only; it emitted no
 build failure.
 
+The platform-record gate was also run and must remain open on this B checkout:
+
+```text
+node scripts/agentic/xenios-os.mjs validate  PASS
+npm run site:record:check                 NOT PASS — generated platform records stale
+```
+
+The stale paths are the A-owned generated site-system-of-record JSON/Markdown
+and route-inventory CSV. ASTRA-B did not regenerate or overwrite those records;
+ASTRA-A must reconcile them on the integration tree before release acceptance.
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
