@@ -1481,6 +1481,18 @@
       "state": "released",
       "claimedAt": "2026-09-06T00:33:59.092Z",
       "heartbeatAt": "2026-09-06T00:33:59.092Z"
+    },
+    {
+      "id": "5cb9e4b9-c6f5-400e-86c5-38ab8815d1cc",
+      "task": "XENIOS-SETH-FABLE-PARTNER-MAIN-LANDMARK-20260906",
+      "session": "fable-browser-unblock-20260905",
+      "paths": [
+        "client/src/research/layout.tsx",
+        "client/src/research/recommendation/layout-referral.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-06T03:38:54.370Z",
+      "heartbeatAt": "2026-09-06T03:38:54.370Z"
     }
   ],
   "rules": [
