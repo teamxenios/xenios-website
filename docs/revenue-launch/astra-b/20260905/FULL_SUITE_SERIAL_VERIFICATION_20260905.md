@@ -37,3 +37,6 @@ gates remain separate and are not claimed by this run.
 - `npm run verify:route-uniqueness`: PASS — 427 static Express registrations
   across 418 call sites
 - `npm run test:release-control-plane`: 51 passed, 1 intentional skip (52)
+- `npm run build`: PASS — Vite transformed 2,265 modules; server bundle emitted
+  (`dist/index.cjs` 1.6 MB), with only the existing dynamic-import and chunk-size
+  warnings.
