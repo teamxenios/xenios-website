@@ -60,6 +60,68 @@ describe("reconciliation review adapter", () => {
     expect(reconciliationReviewResponseValid(malformed)).toBe(false);
   });
 
+  it("fails closed when a fact state is paired with the wrong fact authority", () => {
+    const malformed = available();
+    malformed.rows[0].facts.unit_of_sale = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence,
+    };
+    expect(reconciliationReviewResponseValid(malformed)).toBe(false);
+
+    const supplierAuthority = available();
+    supplierAuthority.rows[0].facts.supplier = {
+      state: "CONFIRMED",
+      reason: "verified_fact",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence: { ...evidence, authority: "required_input" },
+    };
+    expect(reconciliationReviewResponseValid(supplierAuthority)).toBe(false);
+  });
+
+  it("fails closed when identity evidence says confirmed without an exact identity", () => {
+    const malformed = available();
+    malformed.rows[0].facts.identity_binding = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence,
+    };
+    expect(reconciliationReviewResponseValid(malformed)).toBe(false);
+  });
+
+  it("accepts only the exact product evidence link for a confirmed identity", () => {
+    const valid = available();
+    valid.rows[0].exactIdentity = { productId: "prod-1", variantId: "variant-1", sku: "SKU-1" };
+    valid.rows[0].facts.identity_binding = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence: { ...evidence, href: "/admin/research/products/prod-1" },
+    };
+    expect(reconciliationReviewResponseValid(valid)).toBe(true);
+
+    valid.rows[0].facts.identity_binding.evidence = { ...evidence, href: "/admin/research/products/other" };
+    expect(reconciliationReviewResponseValid(valid)).toBe(false);
+  });
+
+  it("rejects evidence observed after the projection or already expired at projection time", () => {
+    const future = available();
+    future.rows[0].facts.unit_of_sale.evidence = { ...evidence, observedAt: "2026-09-05T12:02:00.000Z" };
+    expect(reconciliationReviewResponseValid(future)).toBe(false);
+
+    const expired = available();
+    expired.rows[0].exactIdentity = { productId: "prod-1", variantId: "variant-1", sku: "SKU-1" };
+    expired.rows[0].facts.identity_binding = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence: { ...evidence, href: "/admin/research/products/prod-1", expiresAt: "2026-09-05T12:00:30.000Z" },
+    };
+    expect(reconciliationReviewResponseValid(expired)).toBe(false);
+  });
+
   it.each([401, 403, 404, 503, 500])("preserves the honest API boundary for HTTP %d", async (status) => {
     vi.stubGlobal("fetch", vi.fn(async () => json({ ok: false, code: "unavailable" }, status)));
     const result = await getReconciliationReview("admin-token");

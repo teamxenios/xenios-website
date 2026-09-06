@@ -1495,6 +1495,28 @@
         "at": "2026-09-05T22:30:50.483Z"
       },
       "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f"
+    },
+    {
+      "id": "XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905",
+      "title": "Bounded Fable browser/toolchain unblock and capture proof",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "fable-browser-unblock-20260905",
+      "paths": [
+        "scripts/evidence/lib/cdp.mjs",
+        "scripts/evidence/lib/cdp-import-order.test.mjs",
+        "scripts/evidence/capture-synthetic-journeys.mjs",
+        "scripts/evidence/capture-synthetic-journeys.test.mjs",
+        "scripts/evidence/build-candidate-preview.mjs",
+        "scripts/evidence/capture-browser-matrix.mjs",
+        "scripts/evidence/capture-browser-matrix.test.mjs"
+      ],
+      "dependsOn": [],
+      "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+      "baseSha": "734d0b01e50bfa694eb77dd4fb170404225eb229",
+      "scopeNote": "Founder explicitly added one bounded Fable browser/toolchain specialist. Diagnose the capture runner's possible ws/bufferutil self-lock, test the smallest lazy-import repair only if causal, and execute real browser evidence in a disposable isolated checkout. Preserve mandatory npm ci, real WebSocket transport, auth/network boundaries, fingerprints and cleanup. No application features, migrations, production access, deployment, price activation, account grant, notification, payment or shipment.",
+      "createdAt": "2026-09-06T00:30:00.000Z",
+      "claimedAt": "2026-09-06T00:33:59.087Z"
     }
   ]
 }

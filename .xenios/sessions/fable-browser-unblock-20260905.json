@@ -1,0 +1,10 @@
+{
+  "id": "fable-browser-unblock-20260905",
+  "tool": "Fable",
+  "lane": "browser-toolchain-specialist",
+  "branch": "codex/xenios-seth-revenue-launch-20260905",
+  "state": "active",
+  "startedAt": "2026-09-06T00:33:56.967Z",
+  "heartbeatAt": "2026-09-06T00:33:56.968Z",
+  "note": "Founder-directed bounded browser/toolchain specialist; isolated QA only; no production."
+}

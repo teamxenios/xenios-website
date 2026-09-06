@@ -1464,6 +1464,23 @@
       "state": "released",
       "claimedAt": "2026-09-05T23:32:27.160Z",
       "heartbeatAt": "2026-09-05T23:40:49.174Z"
+    },
+    {
+      "id": "161bc437-b311-4ccb-8b8f-68fae8acc7a2",
+      "task": "XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905",
+      "session": "fable-browser-unblock-20260905",
+      "paths": [
+        "scripts/evidence/lib/cdp.mjs",
+        "scripts/evidence/lib/cdp-import-order.test.mjs",
+        "scripts/evidence/capture-synthetic-journeys.mjs",
+        "scripts/evidence/capture-synthetic-journeys.test.mjs",
+        "scripts/evidence/build-candidate-preview.mjs",
+        "scripts/evidence/capture-browser-matrix.mjs",
+        "scripts/evidence/capture-browser-matrix.test.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-06T00:33:59.092Z",
+      "heartbeatAt": "2026-09-06T00:33:59.092Z"
     }
   ],
   "rules": [

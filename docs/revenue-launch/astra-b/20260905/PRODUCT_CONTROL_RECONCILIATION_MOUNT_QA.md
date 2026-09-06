@@ -31,9 +31,11 @@ existing product and price reads remain unchanged when the review is closed.
 The additional integration assertion covers an `AVAILABLE` projection: a
 formulation `PENDING` fact and missing supplier/identity evidence render as
 their server-supplied states, while the mounted controls contain no approve,
-activate, or purchase action. It is recorded in commit
-`0ebb6d76cdb5d974b5c283c5ec43330a18bb343e` (tree
-`90ca0c59b2ada13af79bdfd231d73338552333db`).
+activate, or purchase action. The client wire validator also rejects a
+confirmed fact paired with the wrong authority/kind, and rejects confirmed
+identity evidence when the exact identity is absent. The resulting targeted
+suite is **47/47 PASS**. These checks are recorded in commits
+`0ebb6d76cdb5d974b5c283c5ec43330a18bb343e` and the follow-up validator slice.
 
 The server projection and route remain ASTRA-A's authority. This client slice
 does not claim that source facts, supplier confirmations, prices, or products
