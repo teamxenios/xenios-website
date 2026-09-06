@@ -49,3 +49,15 @@ inventory, or price activation readiness.
 
 No production configuration, migration, price, account, communication, payment,
 or shipment was changed by this audit.
+
+The current B checkout also passed the release-control-plane guard suite:
+
+```text
+Test Files  1 passed (1)
+Tests       51 passed | 1 skipped (52)
+Failures    0
+Duration    41.23 seconds
+```
+
+The single skip is the suite's intentional non-authority case; it is not a
+production approval or mutation waiver.
