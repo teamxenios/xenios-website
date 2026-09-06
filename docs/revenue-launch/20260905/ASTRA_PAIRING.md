@@ -80,7 +80,7 @@ The server projection/route plus Product Control mount focused check is
 skipped; 13,502 passed tests, 59 skipped; zero failures** in **488.03
 seconds**. Route uniqueness is **427 registrations across 418 call sites**.
 Typecheck, build, Xenios continuity validation, and Site System of Record
-checks remain required after this records update. The clean detached browser
+checks all pass for this integrated source. The clean detached browser
 harness is still blocked by Windows `EPERM/EBUSY` native-module installation;
 synthetic referral boundary evidence remains the only browser-boundary result.
 Production authorities and migrations remain absent; no live grant, email,

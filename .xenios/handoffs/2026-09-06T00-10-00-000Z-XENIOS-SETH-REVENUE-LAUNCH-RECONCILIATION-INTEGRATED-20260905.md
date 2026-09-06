@@ -37,7 +37,7 @@ content. No mutation or activation control was added.
 - `npm run check`: PASS.
 - `npm run build`: PASS (known dynamic-import and large-chunk warnings only).
 - `node scripts/agentic/xenios-os.mjs validate`: PASS.
-- `npm run site:record:check`: rerun after the records commit below.
+- `npm run site:record:check`: PASS after the records update.
 - Complete `npm test -- --reporter=dot --testTimeout=60000`: **876 passed
   files, 5 skipped; 13,502 passed tests, 59 skipped; zero failures** in
   **488.03 seconds**, observed 2026-09-06T00:07:32.030Z.
