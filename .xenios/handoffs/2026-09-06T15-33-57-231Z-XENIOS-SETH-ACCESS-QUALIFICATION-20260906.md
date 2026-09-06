@@ -4,7 +4,7 @@
 - Session: codex-seth-revenue-launch-20260905
 - Branch: codex/xenios-seth-revenue-launch-20260905
 - Exact pushed implementation candidate: `ff3c496245739233b71e46f9e5d6e26af9d57017`
-- Exact pushed records/evidence commit: `bc367a9`
+- Exact pushed records/evidence commit: `bfa1d4427ac59a46a706786033017be7ce1a5aaf`
 - Production mutation: none
 
 ## Closed qualification items
