@@ -54,7 +54,7 @@
     "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority.",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "28e4b7802c84c01b4433040a36e622ce6bbf27de",
+    "latestEngineeringCheckpointSha": "13c971ceaeb20bf60c8061fc7d0739101499a668",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -93,8 +93,8 @@
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
-      "candidateSha": "28e4b7802c84c01b4433040a36e622ce6bbf27de",
-      "candidateTree": "17b204350602f8be22b6b722eddd5d5a1c421930",
+      "candidateSha": "13c971ceaeb20bf60c8061fc7d0739101499a668",
+      "candidateTree": "e1e0abb247d3913a6c058a0fbd24b8cb6e5f26e8",
       "recordsTipSha": "548fa754ea0bdafc6a3ad4fbdb3204d60be25149",
       "recordsTipTree": "20b399ffab3a78799a457fdf79c80cbb0db01733",
       "integratedSlices": [
@@ -114,9 +114,10 @@
         "e14b579/204091b/b1fb9a5 Fable CDP lazy import, import-order/transport regression, and Vitest compatibility",
         "42ab494 Chrome DevToolsActivePort transient EBUSY/EPERM readiness retry",
         "1d46e06 exact empty-orders partner_absence evidence declaration and manifest validator",
-        "28e4b78 bounded catalog/Vite prewarm for cold browser navigation"
+        "28e4b78 bounded catalog/Vite prewarm for cold browser navigation",
+        "13c971c partner-route main landmark wrapper and regression (Fable e79324a)"
       ],
-      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12; reconciliation route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; CDP import/transport 5/5; Chrome readiness 4/4; combined evidence 32/32; empty-partner declaration/manifest 54/54; prewarm/evidence aggregate 91/91",
+      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12; reconciliation route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; CDP import/transport 5/5; Chrome readiness 4/4; combined evidence 32/32; empty-partner declaration/manifest 54/54; prewarm/evidence aggregate 91/91; partner main-landmark seam 74/74",
       "releaseControlPlane": "51 passed, 1 intentional skip",
       "routeUniqueness": "427 registrations across 418 call sites",
       "typecheck": "PASS",
@@ -125,7 +126,7 @@
       "approvedCustomerRehearsal": "PASS 35 checks",
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
-      "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; Chrome readiness 4/4; prewarm/evidence aggregate 91/91; build re-run PASS",
+      "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; Chrome readiness 4/4; prewarm/evidence aggregate 91/91; build re-run PASS; partner main-landmark seam 74/74",
       "fullSuite": "Parallel full-suite observation was not green under host contention: 873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped; one Vitest worker-start error. The two migration-DAG timeout cases pass serially at 120s (2/2), the roster-privacy timeout case passes serially at 120s (1/1); no assertion regression reproduced.",
       "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=60000",
       "fullSuiteObservedAt": "2026-09-06T01:39:44.000Z",
@@ -136,7 +137,7 @@
       "validationHeadSha": "b1fb9a5e64d90210b9b267214bb20fcc66e4b117",
       "validationHeadTree": "68426af116445394a05ace33a1397eac96b4244e",
       "f7SponsoredB2BAssertion": "PASS 13/13; centralized guard count corrected under reclaimed scoped lease; no skip or waiver",
-      "browserJourneyEvidence": "PASS_WITH_NOTES: sole-owned exact-tree Fable capture at 28e4b78/tree 17b20435 emitted 20/20 captures, 16 AUTOMATED_PASS and 4 AUTOMATED_PASS_WITH_NOTES (two forged-reference denials and two exact no-partner denials), zero AUTOMATED_FAIL, completeWithExpectedDenialNotes=true, zeroUndeclaredFailures=true, externalMutations=0. Manifest SHA-256 6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b; artifact inventory SHA-256 05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377; dist inventory SHA-256 3c79e3c8ea4638ed6b49adb785c11f8ae033920019a7ee3c804d2446af398972; claimScope UI_PRESENTATION_ONLY; no production contact or mutation.",
+      "browserJourneyEvidence": "PASS_WITH_NOTES: sole-owned exact-tree Fable capture at 28e4b78/tree 17b20435 emitted 20/20 captures, 16 AUTOMATED_PASS and 4 AUTOMATED_PASS_WITH_NOTES (two forged-reference denials and two exact no-partner denials), zero AUTOMATED_FAIL, completeWithExpectedDenialNotes=true, zeroUndeclaredFailures=true, externalMutations=0. Manifest SHA-256 6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b; artifact inventory SHA-256 05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377; dist inventory SHA-256 3c79e3c8ea4638ed6b49adb785c11f8ae033920019a7ee3c804d2446af398972; claimScope UI_PRESENTATION_ONLY; no production contact or mutation. Supplemental exact-candidate partner landmark proof: 4/4 SINGLE_MAIN_LANDMARK captures at 1440/390 for links/dashboard; visual review clean.",
       "fableBrowserRun": {
         "candidateSha": "28e4b7802c84c01b4433040a36e622ce6bbf27de",
         "candidateTree": "17b204350602f8be22b6b722eddd5d5a1c421930",
