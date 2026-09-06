@@ -1,0 +1,955 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-06T15:31:29.284Z",
+  "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "environment": "local nonproduction preview on 127.0.0.1:5221",
+  "productionMutated": false,
+  "syntheticAuthAndData": true,
+  "journey": {
+    "status": "PASS",
+    "scope": "real production route handlers and SPA bundle; synthetic preview Auth/data; no provider, email, storage, database, or production request"
+  },
+  "steps": [
+    {
+      "name": "signed-in-account-home",
+      "url": "http://127.0.0.1:5221/research/account",
+      "title": "Your account, clearly organized. | Xenios Research",
+      "text": "Skip to account content\n\nXENIOS / RESEARCH + CARE\n\nOne private view for account access, commerce and billing history, Care operations, and support.\n\nPRIVATE ACCOUNT\nSign out\nOverview\nCommerce\nBrowse products\nBilling history\nCare status\nInterests\nDocuments\nProfile\nSecurity\nSupport\nPartner workspace\n\nPRIVATE ACCOUNT\n\nYour account, clearly organized.\n\nAccount access, commerce and billing history, Care operations, documents, and support—each with its own source of truth.\n\nNEXT ADMINISTRATIVE ACTION\n\nNo administrative action is recorded, but some account information is currently unavailable.\n\nThis is an account step only. It is not a medical recommendation or a promise of product approval.\n\nSTATUS UNAVAILABLE\n\nACCOUNT ACCESS\n\nActive\n\nRecorded account status. Paid membership is not required for approved customer access.\n\nRESEARCH HISTORY\n\n—\n\ncount unavailable — commerce history incomplete\n\nView commerce history\n\nCARE OPERATIONS\n\nProvider review\n\nView separate Care timeline\n\nACCOUNT IDENTITY\n\nTest Customer\nEmail\ntest.customer@example.invalid\nAccount\nACTIVE\nAccount since\nJul 1, 2026\n\nHISTORICAL BILLING\n\nXenios Research Membership\nBILLING: CURRENT\n\nRecorded renewal evidence: Sep 26, 2026\n\nHistorical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.\n\nView billing history\n\nRESEARCH COMMERCE HISTORY\n\nRecent activity\nAll records\n\nSome commerce history is currently unavailable.\n\nThese sources do not provide a complete history: Early Access cart checkouts (XEC), assisted order requests (XRR).\n\nREQUEST · XRR-20260820-TESTFIX01 · REQUESTED AUG 20, 2026\n\nExample Research Material A\n\n10 mg · Qty 2\n\nFULFILLMENT: UNFULFILLED\nOpen record details\n\nREQUEST · XRR-20260811-TESTFIX02 · REQUESTED AUG 11, 2026\n\nExample Research Material B\n\n5 mg · Qty 1\n\nFULFILLMENT: SHIPPED\nOpen record details\nTrack shipment\n\nCARE ENROLLMENT\n\nOperational status\nEnrollment\nEnrolled\nProvider stage\nProvider review\nPharmacy\nNone\nOpen Care status\n\nSAVED INTERESTS\n\nAvailability without implied ordering\n\nEach status is shown exactly from the account projection. A saved interest is not an order, reservation, provider decision, or activation approval.\n\nBPC157-TB500\n\nBPC-157 / TB-500 blends\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nRETATRUTIDE\n\nRetatrutide\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nPRIORITY COLLECTION\n\nCurrent availability priorities\n\nStatuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it.\n\nNO DEMAND COUNTS SHOWN\n\nRESEARCH\n\nREQUEST ONLY\nBPC-157 + TB-500\n\n15mg / 15mg total strength\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nPROVIDER / CARE\n\nDOCUMENTATION PENDING\nAOD-9604 + MOTS-C + Tesamorelin + Ipamorelin\n\nThis item is not active or orderable while documentation remains incomplete.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nMelanotan-2\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nRetatrutide\n\nExact strength shown only when catalog-authorized\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nThymosin Alpha-1 + KPV + LL-37\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nCJC-1295 + Ipamorelin\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nIGF-1 LR3\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nDSIP\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nNAD+\n\nFormats remain distinct\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\nCapsules / Oral / Nasal / Topical\n\nNO ORDERING ACTION AVAILABLE\n\nPRIORITY COLLECTION\n\nExact variants pending activation\n\nThese exact formulations are recorded for verification and are not orderable.\n\nNO DEMAND COUNTS SHOWN\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nRetatrutide 48 mg\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin availability list: Retatrutide 48 mg\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nProvider/Care Retatrutide variants (exact pharmacy formulary strengths)\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin av",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "Skip to account content",
+          "href": "#account-main-content"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Sign out",
+          "href": null
+        },
+        {
+          "tag": "A",
+          "text": "Overview",
+          "href": "/research/account"
+        },
+        {
+          "tag": "A",
+          "text": "Commerce",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Browse products",
+          "href": "/research/member/catalog"
+        },
+        {
+          "tag": "A",
+          "text": "Billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Interests",
+          "href": "/research/account/interests"
+        },
+        {
+          "tag": "A",
+          "text": "Documents",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "Profile",
+          "href": "/research/account/profile"
+        },
+        {
+          "tag": "A",
+          "text": "Security",
+          "href": "/research/account/security"
+        },
+        {
+          "tag": "A",
+          "text": "Support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Partner workspace",
+          "href": "/research/partners/dashboard"
+        },
+        {
+          "tag": "A",
+          "text": "View commerce history",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "View separate Care timeline",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "View billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "All records",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260820-TESTFIX01"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260811-TESTFIX02"
+        },
+        {
+          "tag": "A",
+          "text": "Track shipment",
+          "href": "https://tracking.invalid/fixture/1Z999TEST"
+        },
+        {
+          "tag": "A",
+          "text": "Open Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Retatrutide 48 mg",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Provider/Care Retatrutide variants (exact pharmacy formulary strengths)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 + TB-500 + MGF (Wolverine blend)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: IGF-1 LR3 + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: GHK-Cu + Epithalon + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + IGF-1 LR3 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + AOD-9604 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Semax + Selank 5mg/5mg exact formulation",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 500 mcg capsules, 100-count package",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "DOCUMENTS\n\n2 visible\n\nReceipts, approved COAs, and account documents.",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "SUPPORT\n\n1 visible open\n\nOrder, account, Care, and pharmacy support.",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "BILLING\n\nManual / offline\n\nHistorical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Privacy",
+          "href": "/research/privacy"
+        }
+      ]
+    },
+    {
+      "name": "partner-workspace",
+      "url": "http://127.0.0.1:5221/research/partners/dashboard",
+      "title": "xenios | The operating system for proactive health",
+      "text": "PARTNERS\n\nPartner dashboard\n\nYour partner activity, without individual customer details.\n\nMy account\nBrowse catalog\nReferral links\nAccount support\n\nReferral eligibility is checked when you open the referral tools.\n\nAFFILIATE\nACTIVE\n\nLEADS\n\nNot reported\n\nLead counts are not reported by this dashboard. This is not a zero count.\n\nCOMMISSION-LINKED CONVERSIONS\n\n2\n\nCommission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases.\n\nNET RECORDED COMMISSIONS\n\n$70.00\n\nRecorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance.\n\nPAYABLE BALANCE\n\n$20.00\n\nRemaining commissions whose current state is payable. This does not confirm a scheduled or completed payout.\n\nCOMMISSION-LINKED ACTIVITY\n\nOne row per commission chain with remaining value, as reported by the server. Fully reversed and forfeited chains are not counted.\n\nCommission-linked activity with attribution date, eligible net, remaining commission, and current state\nATTRIBUTED\tELIGIBLE NET\tREMAINING COMMISSION\tSTATE\n2026-08-20T12:00:00.000Z\t$500.00\t$50.00\tHELD\n2026-08-21T12:00:00.000Z\t$200.00\t$20.00\tPAYABLE\n\n🔒 Dashboard figures are computed by the server. This view does not display customer names, contact details, purchased items, or health information. Referral opens and linked accounts are separate figures on the referral links page.",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "My account",
+          "href": "/research/account"
+        },
+        {
+          "tag": "A",
+          "text": "Browse catalog",
+          "href": "/research/member/catalog"
+        },
+        {
+          "tag": "A",
+          "text": "Referral links",
+          "href": "/research/partners/links"
+        },
+        {
+          "tag": "A",
+          "text": "Account support",
+          "href": "/research/account/support"
+        }
+      ]
+    },
+    {
+      "name": "partner-workspace-after-refresh",
+      "url": "http://127.0.0.1:5221/research/partners/dashboard",
+      "title": "xenios | The operating system for proactive health",
+      "text": "PARTNERS\n\nPartner dashboard\n\nYour partner activity, without individual customer details.\n\nMy account\nBrowse catalog\nReferral links\nAccount support\n\nReferral eligibility is checked when you open the referral tools.\n\nAFFILIATE\nACTIVE\n\nLEADS\n\nNot reported\n\nLead counts are not reported by this dashboard. This is not a zero count.\n\nCOMMISSION-LINKED CONVERSIONS\n\n2\n\nCommission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases.\n\nNET RECORDED COMMISSIONS\n\n$70.00\n\nRecorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance.\n\nPAYABLE BALANCE\n\n$20.00\n\nRemaining commissions whose current state is payable. This does not confirm a scheduled or completed payout.\n\nCOMMISSION-LINKED ACTIVITY\n\nOne row per commission chain with remaining value, as reported by the server. Fully reversed and forfeited chains are not counted.\n\nCommission-linked activity with attribution date, eligible net, remaining commission, and current state\nATTRIBUTED\tELIGIBLE NET\tREMAINING COMMISSION\tSTATE\n2026-08-20T12:00:00.000Z\t$500.00\t$50.00\tHELD\n2026-08-21T12:00:00.000Z\t$200.00\t$20.00\tPAYABLE\n\n🔒 Dashboard figures are computed by the server. This view does not display customer names, contact details, purchased items, or health information. Referral opens and linked accounts are separate figures on the referral links page.",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "My account",
+          "href": "/research/account"
+        },
+        {
+          "tag": "A",
+          "text": "Browse catalog",
+          "href": "/research/member/catalog"
+        },
+        {
+          "tag": "A",
+          "text": "Referral links",
+          "href": "/research/partners/links"
+        },
+        {
+          "tag": "A",
+          "text": "Account support",
+          "href": "/research/account/support"
+        }
+      ]
+    },
+    {
+      "name": "before-signout",
+      "url": "http://127.0.0.1:5221/research/account",
+      "title": "Your account, clearly organized. | Xenios Research",
+      "text": "Skip to account content\n\nXENIOS / RESEARCH + CARE\n\nOne private view for account access, commerce and billing history, Care operations, and support.\n\nPRIVATE ACCOUNT\nSign out\nOverview\nCommerce\nBrowse products\nBilling history\nCare status\nInterests\nDocuments\nProfile\nSecurity\nSupport\nPartner workspace\n\nPRIVATE ACCOUNT\n\nYour account, clearly organized.\n\nAccount access, commerce and billing history, Care operations, documents, and support—each with its own source of truth.\n\nNEXT ADMINISTRATIVE ACTION\n\nNo administrative action is recorded, but some account information is currently unavailable.\n\nThis is an account step only. It is not a medical recommendation or a promise of product approval.\n\nSTATUS UNAVAILABLE\n\nACCOUNT ACCESS\n\nActive\n\nRecorded account status. Paid membership is not required for approved customer access.\n\nRESEARCH HISTORY\n\n—\n\ncount unavailable — commerce history incomplete\n\nView commerce history\n\nCARE OPERATIONS\n\nProvider review\n\nView separate Care timeline\n\nACCOUNT IDENTITY\n\nTest Customer\nEmail\ntest.customer@example.invalid\nAccount\nACTIVE\nAccount since\nJul 1, 2026\n\nHISTORICAL BILLING\n\nXenios Research Membership\nBILLING: CURRENT\n\nRecorded renewal evidence: Sep 26, 2026\n\nHistorical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.\n\nView billing history\n\nRESEARCH COMMERCE HISTORY\n\nRecent activity\nAll records\n\nSome commerce history is currently unavailable.\n\nThese sources do not provide a complete history: Early Access cart checkouts (XEC), assisted order requests (XRR).\n\nREQUEST · XRR-20260820-TESTFIX01 · REQUESTED AUG 20, 2026\n\nExample Research Material A\n\n10 mg · Qty 2\n\nFULFILLMENT: UNFULFILLED\nOpen record details\n\nREQUEST · XRR-20260811-TESTFIX02 · REQUESTED AUG 11, 2026\n\nExample Research Material B\n\n5 mg · Qty 1\n\nFULFILLMENT: SHIPPED\nOpen record details\nTrack shipment\n\nCARE ENROLLMENT\n\nOperational status\nEnrollment\nEnrolled\nProvider stage\nProvider review\nPharmacy\nNone\nOpen Care status\n\nSAVED INTERESTS\n\nAvailability without implied ordering\n\nEach status is shown exactly from the account projection. A saved interest is not an order, reservation, provider decision, or activation approval.\n\nBPC157-TB500\n\nBPC-157 / TB-500 blends\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nRETATRUTIDE\n\nRetatrutide\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nPRIORITY COLLECTION\n\nCurrent availability priorities\n\nStatuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it.\n\nNO DEMAND COUNTS SHOWN\n\nRESEARCH\n\nREQUEST ONLY\nBPC-157 + TB-500\n\n15mg / 15mg total strength\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nPROVIDER / CARE\n\nDOCUMENTATION PENDING\nAOD-9604 + MOTS-C + Tesamorelin + Ipamorelin\n\nThis item is not active or orderable while documentation remains incomplete.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nMelanotan-2\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nRetatrutide\n\nExact strength shown only when catalog-authorized\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nThymosin Alpha-1 + KPV + LL-37\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nCJC-1295 + Ipamorelin\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nIGF-1 LR3\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nDSIP\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nNAD+\n\nFormats remain distinct\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\nCapsules / Oral / Nasal / Topical\n\nNO ORDERING ACTION AVAILABLE\n\nPRIORITY COLLECTION\n\nExact variants pending activation\n\nThese exact formulations are recorded for verification and are not orderable.\n\nNO DEMAND COUNTS SHOWN\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nRetatrutide 48 mg\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin availability list: Retatrutide 48 mg\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nProvider/Care Retatrutide variants (exact pharmacy formulary strengths)\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin av",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "Skip to account content",
+          "href": "#account-main-content"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Sign out",
+          "href": null
+        },
+        {
+          "tag": "A",
+          "text": "Overview",
+          "href": "/research/account"
+        },
+        {
+          "tag": "A",
+          "text": "Commerce",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Browse products",
+          "href": "/research/member/catalog"
+        },
+        {
+          "tag": "A",
+          "text": "Billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Interests",
+          "href": "/research/account/interests"
+        },
+        {
+          "tag": "A",
+          "text": "Documents",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "Profile",
+          "href": "/research/account/profile"
+        },
+        {
+          "tag": "A",
+          "text": "Security",
+          "href": "/research/account/security"
+        },
+        {
+          "tag": "A",
+          "text": "Support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Partner workspace",
+          "href": "/research/partners/dashboard"
+        },
+        {
+          "tag": "A",
+          "text": "View commerce history",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "View separate Care timeline",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "View billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "All records",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260820-TESTFIX01"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260811-TESTFIX02"
+        },
+        {
+          "tag": "A",
+          "text": "Track shipment",
+          "href": "https://tracking.invalid/fixture/1Z999TEST"
+        },
+        {
+          "tag": "A",
+          "text": "Open Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Retatrutide 48 mg",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Provider/Care Retatrutide variants (exact pharmacy formulary strengths)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 + TB-500 + MGF (Wolverine blend)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: IGF-1 LR3 + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: GHK-Cu + Epithalon + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + IGF-1 LR3 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + AOD-9604 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Semax + Selank 5mg/5mg exact formulation",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 500 mcg capsules, 100-count package",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "DOCUMENTS\n\n2 visible\n\nReceipts, approved COAs, and account documents.",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "SUPPORT\n\n1 visible open\n\nOrder, account, Care, and pharmacy support.",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "BILLING\n\nManual / offline\n\nHistorical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Privacy",
+          "href": "/research/privacy"
+        }
+      ]
+    },
+    {
+      "name": "signed-out",
+      "url": "http://127.0.0.1:5221/research",
+      "title": "Xenios | Care + Research",
+      "text": "Skip to main content\nxenios\nCARE + RESEARCH\nCARE\nRESEARCH\nHOW IT WORKS\nQUALITY\nABOUT\nFAQ\nMEMBER SIGN IN\nACCESS HUB\n\nCARE REQUESTS OPEN · EVIDENCE-LED RESEARCH ACCESS · HUMAN SUPPORT\n\nProvider-guided peptide care.\nEvidence-led Research access.\n\nXenios brings two distinct pathways into one clear starting point. For personal care, submit contact and routing details for human follow-up—never medical information in the public form. If an appropriate option is available, the team provides a separate secure clinical handoff. For legitimate nonclinical work, use Xenios Research to explore exact products, evidence, documentation, and current access status.\n\nSTART CARE REQUEST\n↗\nEXPLORE RESEARCH\n↗\n\nA Care request is not a clinical intake, appointment, provider relationship, treatment decision, or prescription. Any later clinical service remains subject to location, licensed review, medical appropriateness, serviceability, and current availability. Research-designated materials remain for legitimate nonclinical research only and are not for human or veterinary use.\n\nDISCOVER\n↓\n\n01 · TWO PATHWAYS\n\nStart with the path that matches what you need.\n\nXenios Care accepts a non-clinical access request, adds human follow-up, and uses a separate authorized secure system for clinical information when appropriate. Xenios Research supports qualified nonclinical work through exact product identity, evidence-aware education, documentation, and controlled access. One path never silently becomes the other.\n\nCare decisions remain with licensed clinicians and dispensing pharmacies. Research actions remain governed by exact product, documentation, availability, and account authority.\n\nSEE HOW ACCESS WORKS\n↗\n\n02 · CARE + RESEARCH\n\nA complete experience around the next responsible step.\n\nEach card preserves the authority, evidence boundary, and source status of its pathway.\n\n01\nCare access request\n\nShare contact, current-state, and routing preferences only. A Xenios team member follows up without collecting medical details in the public form.\n\n02\nSecure intake and licensed review\n\nWhen an appropriate handoff is available, clinical information moves to an authorized secure system and a licensed clinician independently reviews it.\n\n03\nU.S.-based pharmacy fulfillment\n\nWhen a prescription is clinically appropriate and serviceable, it may be fulfilled through a U.S.-based, state-licensed compounding pharmacy.\n\n04\nPersonalized lifestyle support\n\nEligible Care clients receive a personalized First-Month Foundations Plan from a CSCS professional, with weekly email check-ins.\n\n05\nResearch compounds and documentation\n\nResearch customers can review exact product identity, variants, evidence level, current status, quality records, and authorized next actions.\n\n06\nQuality and traceability\n\nProduct, formulation, lot, document, testing, storage, fulfillment, and exception records remain distinct and source-aware.\n\nFIND THE RIGHT PATHWAY\n↗\n\n03 · TRUST ARCHITECTURE\n\nCare decisions, Research evidence, and operational facts stay separate.\n\nUnknown and unavailable remain valid states. They are never quietly converted into approval, a prescription, payment, shipment, or completion.\n\n01\nClinical independence\n\nCommercial interest never determines diagnosis, treatment, or prescribing. The licensed clinician makes the clinical decision.\n\n02\nU.S.-based care network\n\nCare is supported through U.S.-licensed clinicians and U.S.-based, state-licensed compounding pharmacies where serviceable.\n\n03\nEvidence-aware education\n\nPublic interest, anecdotes, mechanisms, preclinical findings, human evidence, and established uses are labeled separately.\n\n04\nExact product and lot context\n\nA product name never substitutes for exact formulation, strength, source, lot, documentation, status, or pathway.\n\n04 · YOUR ACCOUNT\n\nOne place to follow Care and Research without blending them.\n\nYour Care request reference and any later secure clinical account remain separate from Research requests, orders, billing, documents, tracking, and support. A later stage is never implied before its source confirms it.\n\nACCESS YOUR ACCOUNT\n↗\nIdentity\nProduct + exact variant\nFormat\nOffering-specific\nDocumentation\nShown when available\nAccess\nServer-authorized pathway\nStatus\nEvidence-aware and current\n\n05 · QUALITY AND DOCUMENTATION\n\nThe label is the beginning of the record, not the end.\n\nXenios treats identity, formulation, receiving, lot capture, documentation, testing where applicable, storage, release, dispensing or fulfillment, and later exceptions as separate checkpoints.\n\nExact product, formulation, and lot traceability\nDocumentation shown only when it matches the exact item or lot\nTesting described only when the applicable record supports it\nClear release, hold, unavailable, replacement, and escalation states\nASK ABOUT DOCUMENTATION\n↗\n\n06 · HOW IT WORKS\n\nFrom first interest to a responsible next action.\n01\nChoose\n\nSelect Care for personal health or Research for legitimate nonclinical work.\n\n02\nOpen th",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "Skip to main content",
+          "href": "#research-main"
+        },
+        {
+          "tag": "A",
+          "text": "xenios\nCARE + RESEARCH",
+          "href": "/health"
+        },
+        {
+          "tag": "A",
+          "text": "CARE",
+          "href": "/care"
+        },
+        {
+          "tag": "A",
+          "text": "RESEARCH",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "HOW IT WORKS",
+          "href": "/research/how-it-works"
+        },
+        {
+          "tag": "A",
+          "text": "QUALITY",
+          "href": "/research/quality"
+        },
+        {
+          "tag": "A",
+          "text": "ABOUT",
+          "href": "/research/about"
+        },
+        {
+          "tag": "A",
+          "text": "FAQ",
+          "href": "/research/faq"
+        },
+        {
+          "tag": "A",
+          "text": "MEMBER SIGN IN",
+          "href": "/research/sign-in"
+        },
+        {
+          "tag": "A",
+          "text": "ACCESS HUB",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "Care",
+          "href": "/care"
+        },
+        {
+          "tag": "A",
+          "text": "Research",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "How it works",
+          "href": "/research/how-it-works"
+        },
+        {
+          "tag": "A",
+          "text": "Quality",
+          "href": "/research/quality"
+        },
+        {
+          "tag": "A",
+          "text": "About",
+          "href": "/research/about"
+        },
+        {
+          "tag": "A",
+          "text": "FAQ",
+          "href": "/research/faq"
+        },
+        {
+          "tag": "A",
+          "text": "Organizations",
+          "href": "/research/organizations"
+        },
+        {
+          "tag": "A",
+          "text": "Partners",
+          "href": "/research/partners"
+        },
+        {
+          "tag": "A",
+          "text": "Policies",
+          "href": "/research/policies"
+        },
+        {
+          "tag": "A",
+          "text": "Member sign in",
+          "href": "/research/sign-in"
+        },
+        {
+          "tag": "A",
+          "text": "Contact & support",
+          "href": "/research/support"
+        },
+        {
+          "tag": "A",
+          "text": "START CARE REQUEST\n↗",
+          "href": "/care/schedule"
+        },
+        {
+          "tag": "A",
+          "text": "EXPLORE RESEARCH\n↗",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "DISCOVER\n↓",
+          "href": "#offering"
+        },
+        {
+          "tag": "A",
+          "text": "SEE HOW ACCESS WORKS\n↗",
+          "href": "/research/how-it-works"
+        },
+        {
+          "tag": "A",
+          "text": "FIND THE RIGHT PATHWAY\n↗",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "ACCESS YOUR ACCOUNT\n↗",
+          "href": "/research/sign-in"
+        },
+        {
+          "tag": "A",
+          "text": "ASK ABOUT DOCUMENTATION\n↗",
+          "href": "/research/support"
+        },
+        {
+          "tag": "A",
+          "text": "REVIEW THE COMPLETE JOURNEY\n↗",
+          "href": "/research/how-it-works"
+        },
+        {
+          "tag": "A",
+          "text": "ACCESS YOUR ACCOUNT\n↗",
+          "href": "/research/sign-in"
+        },
+        {
+          "tag": "A",
+          "text": "CHOOSE A RELATIONSHIP PATH\n↗",
+          "href": "/research/partners"
+        },
+        {
+          "tag": "A",
+          "text": "REVIEW ORGANIZATION ACCESS\n↗",
+          "href": "/research/organizations"
+        },
+        {
+          "tag": "A",
+          "text": "REVIEW AFFILIATE ACCESS\n↗",
+          "href": "/research/affiliates"
+        },
+        {
+          "tag": "A",
+          "text": "START CARE REQUEST\n↗",
+          "href": "/care/schedule"
+        },
+        {
+          "tag": "A",
+          "text": "READ ALL QUESTIONS\n↗",
+          "href": "/research/faq"
+        },
+        {
+          "tag": "A",
+          "text": "START CARE REQUEST\n↗",
+          "href": "/care/schedule"
+        },
+        {
+          "tag": "A",
+          "text": "EXPLORE RESEARCH\n↗",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "xenios\nCARE + RESEARCH",
+          "href": "/health"
+        },
+        {
+          "tag": "A",
+          "text": "Access Hub",
+          "href": "/research/access-hub"
+        },
+        {
+          "tag": "A",
+          "text": "How it works",
+          "href": "/research/how-it-works"
+        },
+        {
+          "tag": "A",
+          "text": "About",
+          "href": "/research/about"
+        },
+        {
+          "tag": "A",
+          "text": "FAQ",
+          "href": "/research/faq"
+        },
+        {
+          "tag": "A",
+          "text": "Organizations",
+          "href": "/research/organizations"
+        },
+        {
+          "tag": "A",
+          "text": "Partners",
+          "href": "/research/partners"
+        },
+        {
+          "tag": "A",
+          "text": "Affiliates",
+          "href": "/research/affiliates"
+        },
+        {
+          "tag": "A",
+          "text": "Care",
+          "href": "/care"
+        },
+        {
+          "tag": "A",
+          "text": "Early Access",
+          "href": "/research/early-access"
+        },
+        {
+          "tag": "A",
+          "text": "Member sign in",
+          "href": "/research/sign-in"
+        },
+        {
+          "tag": "A",
+          "text": "Contact & support",
+          "href": "/research/support"
+        },
+        {
+          "tag": "A",
+          "text": "Contact",
+          "href": "/research/contact"
+        },
+        {
+          "tag": "A",
+          "text": "Policy status",
+          "href": "/research/policies"
+        },
+        {
+          "tag": "A",
+          "text": "Privacy",
+          "href": "/research/privacy"
+        },
+        {
+          "tag": "A",
+          "text": "Terms",
+          "href": "/research/terms"
+        },
+        {
+          "tag": "A",
+          "text": "Accessibility",
+          "href": "/research/policies/accessibility"
+        },
+        {
+          "tag": "A",
+          "text": "Start Care request ↗",
+          "href": "/care/schedule"
+        }
+      ]
+    },
+    {
+      "name": "signed-in-account-home",
+      "url": "http://127.0.0.1:5221/research/account",
+      "title": "Your account, clearly organized. | Xenios Research",
+      "text": "Skip to account content\n\nXENIOS / RESEARCH + CARE\n\nOne private view for account access, commerce and billing history, Care operations, and support.\n\nPRIVATE ACCOUNT\nSign out\nOverview\nCommerce\nBrowse products\nBilling history\nCare status\nInterests\nDocuments\nProfile\nSecurity\nSupport\nPartner workspace\n\nPRIVATE ACCOUNT\n\nYour account, clearly organized.\n\nAccount access, commerce and billing history, Care operations, documents, and support—each with its own source of truth.\n\nNEXT ADMINISTRATIVE ACTION\n\nNo administrative action is recorded, but some account information is currently unavailable.\n\nThis is an account step only. It is not a medical recommendation or a promise of product approval.\n\nSTATUS UNAVAILABLE\n\nACCOUNT ACCESS\n\nActive\n\nRecorded account status. Paid membership is not required for approved customer access.\n\nRESEARCH HISTORY\n\n—\n\ncount unavailable — commerce history incomplete\n\nView commerce history\n\nCARE OPERATIONS\n\nProvider review\n\nView separate Care timeline\n\nACCOUNT IDENTITY\n\nTest Customer\nEmail\ntest.customer@example.invalid\nAccount\nACTIVE\nAccount since\nJul 1, 2026\n\nHISTORICAL BILLING\n\nXenios Research Membership\nBILLING: CURRENT\n\nRecorded renewal evidence: Sep 26, 2026\n\nHistorical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.\n\nView billing history\n\nRESEARCH COMMERCE HISTORY\n\nRecent activity\nAll records\n\nSome commerce history is currently unavailable.\n\nThese sources do not provide a complete history: Early Access cart checkouts (XEC), assisted order requests (XRR).\n\nREQUEST · XRR-20260820-TESTFIX01 · REQUESTED AUG 20, 2026\n\nExample Research Material A\n\n10 mg · Qty 2\n\nFULFILLMENT: UNFULFILLED\nOpen record details\n\nREQUEST · XRR-20260811-TESTFIX02 · REQUESTED AUG 11, 2026\n\nExample Research Material B\n\n5 mg · Qty 1\n\nFULFILLMENT: SHIPPED\nOpen record details\nTrack shipment\n\nCARE ENROLLMENT\n\nOperational status\nEnrollment\nEnrolled\nProvider stage\nProvider review\nPharmacy\nNone\nOpen Care status\n\nSAVED INTERESTS\n\nAvailability without implied ordering\n\nEach status is shown exactly from the account projection. A saved interest is not an order, reservation, provider decision, or activation approval.\n\nBPC157-TB500\n\nBPC-157 / TB-500 blends\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nRETATRUTIDE\n\nRetatrutide\n\nThis saved interest records demand only. It is not an order and does not reserve inventory.\n\nRecorded Aug 26, 2026.\n\nREQUEST ONLY\nAsk account support\n\nPRIORITY COLLECTION\n\nCurrent availability priorities\n\nStatuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it.\n\nNO DEMAND COUNTS SHOWN\n\nRESEARCH\n\nREQUEST ONLY\nBPC-157 + TB-500\n\n15mg / 15mg total strength\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nPROVIDER / CARE\n\nDOCUMENTATION PENDING\nAOD-9604 + MOTS-C + Tesamorelin + Ipamorelin\n\nThis item is not active or orderable while documentation remains incomplete.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nMelanotan-2\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nRetatrutide\n\nExact strength shown only when catalog-authorized\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nThymosin Alpha-1 + KPV + LL-37\n\nAn availability request is not an order or a promise of supply.\n\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nCJC-1295 + Ipamorelin\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\nBlends\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nREQUEST ONLY\nIGF-1 LR3\n\nAn availability request is not an order or a promise of supply.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nDSIP\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\n\nNO ORDERING ACTION AVAILABLE\n\nRESEARCH\n\nLIVE\nNAD+\n\nFormats remain distinct\n\nCurrent catalog access still follows the server-resolved ordering pathway.\n\nProvider / Care\nCapsules / Oral / Nasal / Topical\n\nNO ORDERING ACTION AVAILABLE\n\nPRIORITY COLLECTION\n\nExact variants pending activation\n\nThese exact formulations are recorded for verification and are not orderable.\n\nNO DEMAND COUNTS SHOWN\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nRetatrutide 48 mg\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin availability list: Retatrutide 48 mg\n\nREQUEST-ONLY / PENDING ACTIVATION\n\nDOCUMENTATION PENDING\nProvider/Care Retatrutide variants (exact pharmacy formulary strengths)\n\nExact documentation required\n\nThis item is not active or orderable while documentation remains incomplete.\n\nJoin av",
+      "controls": [
+        {
+          "tag": "A",
+          "text": "Skip to account content",
+          "href": "#account-main-content"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Sign out",
+          "href": null
+        },
+        {
+          "tag": "A",
+          "text": "Overview",
+          "href": "/research/account"
+        },
+        {
+          "tag": "A",
+          "text": "Commerce",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Browse products",
+          "href": "/research/member/catalog"
+        },
+        {
+          "tag": "A",
+          "text": "Billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Interests",
+          "href": "/research/account/interests"
+        },
+        {
+          "tag": "A",
+          "text": "Documents",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "Profile",
+          "href": "/research/account/profile"
+        },
+        {
+          "tag": "A",
+          "text": "Security",
+          "href": "/research/account/security"
+        },
+        {
+          "tag": "A",
+          "text": "Support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Partner workspace",
+          "href": "/research/partners/dashboard"
+        },
+        {
+          "tag": "A",
+          "text": "View commerce history",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "View separate Care timeline",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "View billing history",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "All records",
+          "href": "/research/account/orders"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260820-TESTFIX01"
+        },
+        {
+          "tag": "A",
+          "text": "Open record details",
+          "href": "/research/account/orders/XRR-20260811-TESTFIX02"
+        },
+        {
+          "tag": "A",
+          "text": "Track shipment",
+          "href": "https://tracking.invalid/fixture/1Z999TEST"
+        },
+        {
+          "tag": "A",
+          "text": "Open Care status",
+          "href": "/research/account/care"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Ask account support",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Retatrutide 48 mg",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Provider/Care Retatrutide variants (exact pharmacy formulary strengths)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 + TB-500 + MGF (Wolverine blend)",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: IGF-1 LR3 + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: GHK-Cu + Epithalon + MOTS-C blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + IGF-1 LR3 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: CJC-1295 + Ipamorelin + AOD-9604 blend",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: Semax + Selank 5mg/5mg exact formulation",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "Join availability list: BPC-157 500 mcg capsules, 100-count package",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "DOCUMENTS\n\n2 visible\n\nReceipts, approved COAs, and account documents.",
+          "href": "/research/account/documents"
+        },
+        {
+          "tag": "A",
+          "text": "SUPPORT\n\n1 visible open\n\nOrder, account, Care, and pharmacy support.",
+          "href": "/research/account/support"
+        },
+        {
+          "tag": "A",
+          "text": "BILLING\n\nManual / offline\n\nHistorical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.",
+          "href": "/research/account/subscription"
+        },
+        {
+          "tag": "A",
+          "text": "Privacy",
+          "href": "/research/privacy"
+        }
+      ]
+    },
+    {
+      "name": "cross-partner-isolation-boundary",
+      "ownerStatus": 200,
+      "owner": {
+        "ok": true,
+        "partner": {
+          "partnerId": "partner-fixture-b",
+          "role": "research_rep",
+          "state": "active",
+          "leadCount": 0,
+          "conversionCount": 0,
+          "totalCommissionCents": 0,
+          "payableCents": 0,
+          "conversions": [],
+          "outstandingTraining": []
+        }
+      },
+      "selectorStatus": 400,
+      "selector": {
+        "ok": false,
+        "code": "preview_request_selector_not_supported"
+      }
+    }
+  ]
+}

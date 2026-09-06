@@ -1,6 +1,8 @@
 # Xenios release qualification and deployment preparation — 2026-09-06
 
-Status: **ready for founder review; not a production GO**.
+Status: **qualification addendum recorded; ready for founder review, not a production GO**.
+
+Qualification addendum: `ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md`.
 
 ## Candidate and live deployment
 
@@ -56,6 +58,20 @@ Observed 2026-09-06T14:28:58Z using GET-only allowlisted reads:
 - Supplier-confirmation RPC returned HTTP 404, so live supplier confirmation could not be established.
 - Runtime environment and migration ledger were not marked verified by this read.
 
+## Fresh read-only SQL prechecks
+
+The pinned approved-customer and partner-lifecycle prechecks were executed on
+2026-09-06T15:23:19Z through the authorized Supabase management database-query
+connection. Each statement was wrapped in a read-only transaction and rolled
+back. Full schema, constraint, index, trigger, policy, function, and aggregate
+outputs are recorded in `production-account-partner-prechecks-20260906.json`
+(SHA-256 `8e94f885842be95a03042f29c154582670bc863bc244786b7f09c9aa865ba658`).
+Both prechecks returned HTTP 201 with no duplicate-identity or duplicate-
+partner-binding guard failures. The existing production shape is compatible
+with the selected idempotent candidates; candidate authority functions and
+approval/operation columns are not yet present. The DDL replacement and
+post-apply parity checks remain migration-window work.
+
 ## Rehearsal and validation
 
 - Disposable PGlite rehearsals: approved-customer **35 checks**, partner lifecycle **57 checks**.
@@ -64,9 +80,10 @@ Observed 2026-09-06T14:28:58Z using GET-only allowlisted reads:
 - Site System of Record check and Xenios OS validator: pass.
 - Browser evidence remains presentation/fixture-backed, not authenticated production proof.
 
-## Configuration and price boundary
+## Rollback configuration and price boundary
 
-No configuration changes are proposed in this packet. Commerce remains disabled. No price batch is approved and no SKU is purchasable: canonical reconciliation records **39/39 blocked** by missing supplier confirmation, inventory/capacity, exact release approval, and Seth price approval.
+No configuration changes were made during qualification. Before reverting
+application code, rollback must explicitly set `RESEARCH_FOUNDING_ACTIVATION_ENABLED=false` (currently `true`) and keep `RESEARCH_MEMBERSHIP_BILLING_ENABLED` absent or explicitly `false` (currently absent, effective default `false`). This prevents historical membership activation/billing writers from remounting. Preserve all account, approval, audit, billing, and notification-outbox history; do not delete new workflow records. Commerce remains disabled. No price batch is approved and no SKU is purchasable: canonical reconciliation records **39/39 blocked** by missing supplier confirmation, inventory/capacity, exact release approval, and Seth price approval.
 
 ## Rollback and forward recovery
 
@@ -78,6 +95,13 @@ If an authorized migration precheck or postcheck fails, stop before the next mig
 - Run authenticated customer approval/claim, partner isolation, and sign-out/account-switching journeys with controlled test identities.
 - Verify notification outbox processing without claiming provider delivery.
 - Keep purchases, payments, price activation, grants, and shipments separately authorized.
+
+The local browser evidence proves the existing-account sign-in, account home,
+partner workspace, refresh, rendered sign-out, sign-back-in, and cross-partner
+selector boundary over synthetic preview Auth/data. The new-account approval and
+claim path passes the real-handler acceptance suite but remains unproven as one
+browser sequence; deployment qualification therefore remains blocked until that
+bounded journey is captured.
 
 ## Remaining external blockers
 

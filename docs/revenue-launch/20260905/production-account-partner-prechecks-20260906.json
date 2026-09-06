@@ -1,0 +1,1885 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-06T15:23:19.373312+00:00",
+  "projectRef": "yvzeduaxbwgcwllhywff",
+  "projectHost": "https://yvzeduaxbwgcwllhywff.supabase.co",
+  "productionMutated": false,
+  "accessMethod": "Supabase management database query; each statement wrapped in BEGIN READ ONLY and ROLLBACK",
+  "domains": {
+    "customer": {
+      "precheckPath": "supabase/candidates/20260905_research_approved_customer_access.precheck.sql",
+      "precheckSha256": "f275d2d98c3e5349a619952ba0674202f260f85cff6066ace6a46a5ad8287451",
+      "statements": [
+        {
+          "label": "database_identity",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "database_name": "postgres",
+              "server_version": "17.6"
+            }
+          ]
+        },
+        {
+          "label": "required_schema_and_normalized_identity_guard",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "required_schema_present": true,
+              "duplicate_normalized_email_present": false
+            }
+          ]
+        },
+        {
+          "label": "columns",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "table_schema": "auth",
+              "table_name": "users",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "auth",
+              "table_name": "users",
+              "column_name": "email",
+              "data_type": "character varying",
+              "udt_name": "varchar",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "auth",
+              "table_name": "users",
+              "column_name": "email_confirmed_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "application_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "previous_status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "new_status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "actor_type",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "actor_id",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "reason_code",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "internal_note",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "member_visible_note",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_application_events",
+              "column_name": "created_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "email",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "first_name",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "last_name",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "phone",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "country",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "region",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "city",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "age_confirmed",
+              "data_type": "boolean",
+              "udt_name": "bool",
+              "is_nullable": "NO",
+              "column_default": "false"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "applicant_type",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'individual'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "occupation",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "organization",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "interests",
+              "data_type": "jsonb",
+              "udt_name": "jsonb",
+              "is_nullable": "NO",
+              "column_default": "'[]'::jsonb"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "goals_text",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "fit_text",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "referral_source",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "referral_code",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "marketing_consent",
+              "data_type": "boolean",
+              "udt_name": "bool",
+              "is_nullable": "NO",
+              "column_default": "false"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'submitted'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "approval_expires_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "submitted_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "review_started_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "reviewed_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "reviewed_by",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "ip",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "source_page",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "created_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_applications",
+              "column_name": "updated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "application_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "auth_user_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "email",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "first_name",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'pending_activation'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "activated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "created_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "updated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "billing_state",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'not_started'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "access_basis",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'paid_membership'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "event_key",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "application_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "member_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "event_type",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "channel",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'email'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "recipient",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "template_key",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "payload",
+              "data_type": "jsonb",
+              "udt_name": "jsonb",
+              "is_nullable": "NO",
+              "column_default": "'{}'::jsonb"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'pending'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "attempt_count",
+              "data_type": "integer",
+              "udt_name": "int4",
+              "is_nullable": "NO",
+              "column_default": "0"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "next_attempt_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "last_attempt_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "provider_message_id",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "last_error_code",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "last_error_summary",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "created_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "updated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_notification_outbox",
+              "column_name": "completed_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            }
+          ]
+        },
+        {
+          "label": "constraints",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "relation": "referral_fraud_flags",
+              "conname": "referral_fraud_flags_application_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id)"
+            },
+            {
+              "relation": "research_application_events",
+              "conname": "research_application_events_actor_type_check",
+              "contype": "c",
+              "definition": "CHECK ((actor_type = ANY (ARRAY['applicant'::text, 'admin'::text, 'system'::text])))"
+            },
+            {
+              "relation": "research_application_events",
+              "conname": "research_application_events_application_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_application_events",
+              "conname": "research_application_events_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_applications",
+              "conname": "research_applications_applicant_type_check",
+              "contype": "c",
+              "definition": "CHECK ((applicant_type = ANY (ARRAY['individual'::text, 'professional'::text])))"
+            },
+            {
+              "relation": "research_applications",
+              "conname": "research_applications_email_key",
+              "contype": "u",
+              "definition": "UNIQUE (email)"
+            },
+            {
+              "relation": "research_applications",
+              "conname": "research_applications_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_applications",
+              "conname": "research_applications_status_check",
+              "contype": "c",
+              "definition": "CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'under_review'::text, 'more_information_requested'::text, 'resubmitted'::text, 'approved_pending_payment'::text, 'approved_sponsored_b2b'::text, 'payment_pending'::text, 'active'::text, 'paused'::text, 'declined'::text, 'withdrawn'::text, 'expired'::text])))"
+            },
+            {
+              "relation": "research_b2b_buyer_events",
+              "conname": "research_b2b_buyer_events_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_buyer_operators",
+              "conname": "research_b2b_buyer_operators_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_order_ownership",
+              "conname": "research_b2b_order_ownership_placed_by_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (placed_by_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_sponsored_claims",
+              "conname": "research_b2b_sponsored_claims_activated_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (activated_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_sponsored_claims",
+              "conname": "research_b2b_sponsored_claims_application_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_biomarker_records",
+              "conname": "research_biomarker_records_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_biomarker_uploads",
+              "conname": "research_biomarker_uploads_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_certificate_access_audit",
+              "conname": "research_certificate_access_audit_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_access_basis_check",
+              "contype": "c",
+              "definition": "CHECK ((access_basis = ANY (ARRAY['paid_membership'::text, 'sponsored_b2b'::text])))"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_application_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_application_id_key",
+              "contype": "u",
+              "definition": "UNIQUE (application_id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_auth_user_id_key",
+              "contype": "u",
+              "definition": "UNIQUE (auth_user_id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_billing_state_check",
+              "contype": "c",
+              "definition": "CHECK ((billing_state = ANY (ARRAY['not_started'::text, 'activation_pending'::text, 'subscription_pending'::text, 'active'::text, 'past_due'::text, 'cancelled'::text, 'refunded'::text, 'disputed'::text])))"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_email_key",
+              "contype": "u",
+              "definition": "UNIQUE (email)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_status_check",
+              "contype": "c",
+              "definition": "CHECK ((status = ANY (ARRAY['pending_activation'::text, 'active'::text, 'past_due'::text, 'paused'::text, 'cancelled'::text, 'closed'::text])))"
+            },
+            {
+              "relation": "research_metabolic_interests",
+              "conname": "research_metabolic_interests_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_notification_outbox",
+              "conname": "research_notification_outbox_event_key_key",
+              "contype": "u",
+              "definition": "UNIQUE (event_key)"
+            },
+            {
+              "relation": "research_notification_outbox",
+              "conname": "research_notification_outbox_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_notification_outbox",
+              "conname": "research_notification_outbox_status_check",
+              "contype": "c",
+              "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'processing'::text, 'sent'::text, 'delivered'::text, 'failed_retryable'::text, 'failed_permanent'::text, 'cancelled'::text])))"
+            },
+            {
+              "relation": "research_product_request_files",
+              "conname": "research_product_request_files_uploader_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (uploader_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_product_requests",
+              "conname": "research_product_requests_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            }
+          ]
+        },
+        {
+          "label": "indexes",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "schemaname": "public",
+              "tablename": "research_application_events",
+              "indexname": "research_application_events_app_idx",
+              "indexdef": "CREATE INDEX research_application_events_app_idx ON public.research_application_events USING btree (application_id, created_at)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_application_events",
+              "indexname": "research_application_events_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_application_events_pkey ON public.research_application_events USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_applications",
+              "indexname": "research_applications_created_idx",
+              "indexdef": "CREATE INDEX research_applications_created_idx ON public.research_applications USING btree (created_at DESC)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_applications",
+              "indexname": "research_applications_email_key",
+              "indexdef": "CREATE UNIQUE INDEX research_applications_email_key ON public.research_applications USING btree (email)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_applications",
+              "indexname": "research_applications_normalized_email_uidx",
+              "indexdef": "CREATE UNIQUE INDEX research_applications_normalized_email_uidx ON public.research_applications USING btree (lower(btrim(email)))"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_applications",
+              "indexname": "research_applications_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_applications_pkey ON public.research_applications USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_applications",
+              "indexname": "research_applications_status_idx",
+              "indexdef": "CREATE INDEX research_applications_status_idx ON public.research_applications USING btree (status, submitted_at DESC)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_application_id_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_application_id_key ON public.research_members USING btree (application_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_auth_user_id_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_auth_user_id_key ON public.research_members USING btree (auth_user_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_email_idx",
+              "indexdef": "CREATE INDEX research_members_email_idx ON public.research_members USING btree (email)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_email_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_email_key ON public.research_members USING btree (email)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_normalized_email_uidx",
+              "indexdef": "CREATE UNIQUE INDEX research_members_normalized_email_uidx ON public.research_members USING btree (lower(btrim(email)))"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_members_pkey ON public.research_members USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_notification_outbox",
+              "indexname": "research_notification_outbox_event_key_key",
+              "indexdef": "CREATE UNIQUE INDEX research_notification_outbox_event_key_key ON public.research_notification_outbox USING btree (event_key)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_notification_outbox",
+              "indexname": "research_notification_outbox_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_notification_outbox_pkey ON public.research_notification_outbox USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_notification_outbox",
+              "indexname": "research_outbox_application_idx",
+              "indexdef": "CREATE INDEX research_outbox_application_idx ON public.research_notification_outbox USING btree (application_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_notification_outbox",
+              "indexname": "research_outbox_due_idx",
+              "indexdef": "CREATE INDEX research_outbox_due_idx ON public.research_notification_outbox USING btree (status, next_attempt_at)"
+            }
+          ]
+        },
+        {
+          "label": "triggers",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        },
+        {
+          "label": "policies",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        },
+        {
+          "label": "aggregate_counts",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "relation": "research_applications",
+              "rows": 3
+            },
+            {
+              "relation": "research_members",
+              "rows": 3
+            },
+            {
+              "relation": "research_application_events",
+              "rows": 10
+            },
+            {
+              "relation": "research_notification_outbox",
+              "rows": 58
+            }
+          ]
+        },
+        {
+          "label": "functions",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        }
+      ]
+    },
+    "partner": {
+      "precheckPath": "supabase/candidates/20260905_research_partner_lifecycle.precheck.sql",
+      "precheckSha256": "04ec1bff31b8363f8e816c22bd8d9ad65bf13fa43604bfd8755af377cdae29e9",
+      "statements": [
+        {
+          "label": "database_identity",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "database_name": "postgres",
+              "server_version": "17.6"
+            }
+          ]
+        },
+        {
+          "label": "required_schema_and_partner_binding_guard",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "required_schema_present": true,
+              "duplicate_member_binding_present": false
+            }
+          ]
+        },
+        {
+          "label": "columns",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "application_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "auth_user_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "email",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "first_name",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'pending_activation'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "activated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "created_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "updated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "billing_state",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'not_started'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_members",
+              "column_name": "access_basis",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'paid_membership'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "partner_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "agreement_key",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "agreement_version",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "content_hash",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "decision",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'accepted'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_agreements",
+              "column_name": "decided_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "partner_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "from_state",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "to_state",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "detail",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "actor_id",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_lifecycle_events",
+              "column_name": "occurred_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_training",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_training",
+              "column_name": "partner_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_training",
+              "column_name": "module_key",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_training",
+              "column_name": "module_version",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partner_training",
+              "column_name": "completed_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": "gen_random_uuid()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "member_id",
+              "data_type": "uuid",
+              "udt_name": "uuid",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "role",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "state",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'application'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "legal_name",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "contact_email",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "internal_notes",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "identity_verified",
+              "data_type": "boolean",
+              "udt_name": "bool",
+              "is_nullable": "NO",
+              "column_default": "false"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "tax_status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'not_started'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "payout_status",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "NO",
+              "column_default": "'not_started'::text"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "certified_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "certified_by_admin_id",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "activated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "activated_by_admin_id",
+              "data_type": "text",
+              "udt_name": "text",
+              "is_nullable": "YES",
+              "column_default": null
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "applied_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            },
+            {
+              "table_schema": "public",
+              "table_name": "research_partners",
+              "column_name": "updated_at",
+              "data_type": "timestamp with time zone",
+              "udt_name": "timestamptz",
+              "is_nullable": "NO",
+              "column_default": "now()"
+            }
+          ]
+        },
+        {
+          "label": "constraints",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "relation": "research_attribution_conversions",
+              "conname": "research_attribution_conversions_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id)"
+            },
+            {
+              "relation": "research_attribution_touches",
+              "conname": "research_attribution_touches_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id)"
+            },
+            {
+              "relation": "research_b2b_buyer_events",
+              "conname": "research_b2b_buyer_events_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_buyer_operators",
+              "conname": "research_b2b_buyer_operators_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_order_ownership",
+              "conname": "research_b2b_order_ownership_placed_by_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (placed_by_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_b2b_sponsored_claims",
+              "conname": "research_b2b_sponsored_claims_activated_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (activated_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_biomarker_records",
+              "conname": "research_biomarker_records_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_biomarker_uploads",
+              "conname": "research_biomarker_uploads_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_certificate_access_audit",
+              "conname": "research_certificate_access_audit_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_content_assets",
+              "conname": "research_content_assets_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_content_violations",
+              "conname": "research_content_violations_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_access_basis_check",
+              "contype": "c",
+              "definition": "CHECK ((access_basis = ANY (ARRAY['paid_membership'::text, 'sponsored_b2b'::text])))"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_application_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_application_id_key",
+              "contype": "u",
+              "definition": "UNIQUE (application_id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_auth_user_id_key",
+              "contype": "u",
+              "definition": "UNIQUE (auth_user_id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_billing_state_check",
+              "contype": "c",
+              "definition": "CHECK ((billing_state = ANY (ARRAY['not_started'::text, 'activation_pending'::text, 'subscription_pending'::text, 'active'::text, 'past_due'::text, 'cancelled'::text, 'refunded'::text, 'disputed'::text])))"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_email_key",
+              "contype": "u",
+              "definition": "UNIQUE (email)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_members",
+              "conname": "research_members_status_check",
+              "contype": "c",
+              "definition": "CHECK ((status = ANY (ARRAY['pending_activation'::text, 'active'::text, 'past_due'::text, 'paused'::text, 'cancelled'::text, 'closed'::text])))"
+            },
+            {
+              "relation": "research_metabolic_interests",
+              "conname": "research_metabolic_interests_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id)"
+            },
+            {
+              "relation": "research_organization_representatives",
+              "conname": "research_organization_representatives_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_organizations",
+              "conname": "research_organizations_owner_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (owner_partner_id) REFERENCES research_partners(id)"
+            },
+            {
+              "relation": "research_partner_agreements",
+              "conname": "research_partner_agreements_decision_check",
+              "contype": "c",
+              "definition": "CHECK ((decision = ANY (ARRAY['accepted'::text, 'declined'::text])))"
+            },
+            {
+              "relation": "research_partner_agreements",
+              "conname": "research_partner_agreements_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_partner_agreements",
+              "conname": "research_partner_agreements_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_partner_agreements",
+              "conname": "research_partner_agreements_unique",
+              "contype": "u",
+              "definition": "UNIQUE (partner_id, agreement_key, agreement_version)"
+            },
+            {
+              "relation": "research_partner_lifecycle_events",
+              "conname": "research_partner_lifecycle_events_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_partner_lifecycle_events",
+              "conname": "research_partner_lifecycle_events_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_partner_links",
+              "conname": "research_partner_links_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_partner_training",
+              "conname": "research_partner_training_module_key_check",
+              "contype": "c",
+              "definition": "CHECK ((module_key = ANY (ARRAY['xenios_membership'::text, 'privacy_and_sensitive_data'::text, 'product_lanes'::text, 'ftc_disclosures'::text, 'claims_restrictions'::text, 'no_diagnosis_or_dosing'::text, 'lead_handling'::text, 'telegram_boundaries'::text, 'product_concerns'::text, 'fraud'::text, 'brand_and_content'::text, 'organizations'::text, 'events'::text, 'security'::text])))"
+            },
+            {
+              "relation": "research_partner_training",
+              "conname": "research_partner_training_partner_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (partner_id) REFERENCES research_partners(id) ON DELETE CASCADE"
+            },
+            {
+              "relation": "research_partner_training",
+              "conname": "research_partner_training_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_partner_training",
+              "conname": "research_partner_training_unique",
+              "contype": "u",
+              "definition": "UNIQUE (partner_id, module_key, module_version)"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_activation_names_an_admin",
+              "contype": "c",
+              "definition": "CHECK (((activated_at IS NULL) OR (activated_by_admin_id IS NOT NULL)))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_active_is_fully_gated",
+              "contype": "c",
+              "definition": "CHECK (((state <> 'active'::text) OR ((identity_verified = true) AND (tax_status = 'verified'::text) AND (payout_status = 'verified'::text) AND (certified_at IS NOT NULL) AND (activated_at IS NOT NULL))))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_certification_names_an_admin",
+              "contype": "c",
+              "definition": "CHECK (((certified_at IS NULL) OR (certified_by_admin_id IS NOT NULL)))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_member_id_key",
+              "contype": "u",
+              "definition": "UNIQUE (member_id)"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_payout_status_check",
+              "contype": "c",
+              "definition": "CHECK ((payout_status = ANY (ARRAY['not_started'::text, 'submitted'::text, 'verified'::text, 'rejected'::text])))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_pkey",
+              "contype": "p",
+              "definition": "PRIMARY KEY (id)"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_role_check",
+              "contype": "c",
+              "definition": "CHECK ((role = ANY (ARRAY['member_referral'::text, 'affiliate'::text, 'research_rep'::text, 'senior_research_rep'::text, 'organization_partner'::text, 'private_community_partner'::text, 'professional_partner'::text, 'future_wholesale'::text, 'future_institutional'::text])))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_state_check",
+              "contype": "c",
+              "definition": "CHECK ((state = ANY (ARRAY['application'::text, 'identity_verification_pending'::text, 'tax_status_pending'::text, 'payout_status_pending'::text, 'agreement_pending'::text, 'training_pending'::text, 'certification_pending'::text, 'active'::text, 'quality_review'::text, 'suspended'::text, 'terminated'::text])))"
+            },
+            {
+              "relation": "research_partners",
+              "conname": "research_partners_tax_status_check",
+              "contype": "c",
+              "definition": "CHECK ((tax_status = ANY (ARRAY['not_started'::text, 'submitted'::text, 'verified'::text, 'rejected'::text])))"
+            },
+            {
+              "relation": "research_product_request_files",
+              "conname": "research_product_request_files_uploader_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (uploader_member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            },
+            {
+              "relation": "research_product_requests",
+              "conname": "research_product_requests_member_id_fkey",
+              "contype": "f",
+              "definition": "FOREIGN KEY (member_id) REFERENCES research_members(id) ON DELETE RESTRICT"
+            }
+          ]
+        },
+        {
+          "label": "indexes",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_application_id_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_application_id_key ON public.research_members USING btree (application_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_auth_user_id_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_auth_user_id_key ON public.research_members USING btree (auth_user_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_email_idx",
+              "indexdef": "CREATE INDEX research_members_email_idx ON public.research_members USING btree (email)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_email_key",
+              "indexdef": "CREATE UNIQUE INDEX research_members_email_key ON public.research_members USING btree (email)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_normalized_email_uidx",
+              "indexdef": "CREATE UNIQUE INDEX research_members_normalized_email_uidx ON public.research_members USING btree (lower(btrim(email)))"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_members",
+              "indexname": "research_members_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_members_pkey ON public.research_members USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_agreements",
+              "indexname": "research_partner_agreements_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_partner_agreements_pkey ON public.research_partner_agreements USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_agreements",
+              "indexname": "research_partner_agreements_unique",
+              "indexdef": "CREATE UNIQUE INDEX research_partner_agreements_unique ON public.research_partner_agreements USING btree (partner_id, agreement_key, agreement_version)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_lifecycle_events",
+              "indexname": "research_partner_lifecycle_events_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_partner_lifecycle_events_pkey ON public.research_partner_lifecycle_events USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_lifecycle_events",
+              "indexname": "research_partner_lifecycle_partner_idx",
+              "indexdef": "CREATE INDEX research_partner_lifecycle_partner_idx ON public.research_partner_lifecycle_events USING btree (partner_id, occurred_at)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_training",
+              "indexname": "research_partner_training_partner_idx",
+              "indexdef": "CREATE INDEX research_partner_training_partner_idx ON public.research_partner_training USING btree (partner_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_training",
+              "indexname": "research_partner_training_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_partner_training_pkey ON public.research_partner_training USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partner_training",
+              "indexname": "research_partner_training_unique",
+              "indexdef": "CREATE UNIQUE INDEX research_partner_training_unique ON public.research_partner_training USING btree (partner_id, module_key, module_version)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partners",
+              "indexname": "research_partners_member_id_key",
+              "indexdef": "CREATE UNIQUE INDEX research_partners_member_id_key ON public.research_partners USING btree (member_id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partners",
+              "indexname": "research_partners_pkey",
+              "indexdef": "CREATE UNIQUE INDEX research_partners_pkey ON public.research_partners USING btree (id)"
+            },
+            {
+              "schemaname": "public",
+              "tablename": "research_partners",
+              "indexname": "research_partners_state_idx",
+              "indexdef": "CREATE INDEX research_partners_state_idx ON public.research_partners USING btree (state)"
+            }
+          ]
+        },
+        {
+          "label": "triggers",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        },
+        {
+          "label": "policies",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        },
+        {
+          "label": "functions",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": []
+        },
+        {
+          "label": "aggregate_counts",
+          "httpStatus": 201,
+          "ok": true,
+          "rows": [
+            {
+              "relation": "research_partners",
+              "rows": 0
+            },
+            {
+              "relation": "research_partner_agreements",
+              "rows": 0
+            },
+            {
+              "relation": "research_partner_training",
+              "rows": 0
+            },
+            {
+              "relation": "research_partner_lifecycle_events",
+              "rows": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

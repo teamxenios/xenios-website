@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T23:42:51.006Z",
+  "updatedAt": "2026-09-06T15:35:00.000Z",
   "sethRevenueLaunch": {
     "state": "ACTIVE_PAIRED_LOCAL_ENGINEERING_NO_PRODUCTION_AUTHORITY",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -173,7 +173,26 @@
       },
       "fullSuiteValidationHeadSha": "372142dca45525445a40145244e46f69fc464ca5",
       "fullSuiteParallelObservation": "Earlier parallel run under host contention: 873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped; one worker-start error. Superseded by the serial zero-failure run."
-    }
+    },
+    "productionPrechecksObservedAt": "2026-09-06T15:23:19.373312Z",
+    "productionPrechecksEvidence": "docs/revenue-launch/20260905/production-account-partner-prechecks-20260906.json",
+    "productionPrechecksEvidenceSha256": "8e94f885842be95a03042f29c154582670bc863bc244786b7f09c9aa865ba658",
+    "productionPrecheckStatus": "PASS_READ_ONLY_NO_MUTATION",
+    "productionPrecheckCompatibility": "PASS_PREFLIGHT_WITH_POST_APPLY_DDL_PARITY_PENDING",
+    "nonproductionAccountBrowserEvidence": "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
+    "nonproductionAccountBrowserStatus": "PASS_EXISTING_ACCOUNT_PARTIAL_NEW_ACCOUNT_BROWSER_SEQUENCE_PENDING",
+    "authenticatedRevenueJourneyVerified": false,
+    "rollbackConfiguration": {
+      "RESEARCH_FOUNDING_ACTIVATION_ENABLED": {
+        "observed": "true",
+        "rollback": "false"
+      },
+      "RESEARCH_MEMBERSHIP_BILLING_ENABLED": {
+        "observed": "absent_default_false",
+        "rollback": "absent_or_false"
+      }
+    },
+    "qualificationStatus": "BLOCKED_NEW_ACCOUNT_BROWSER_SEQUENCE_AND_PRODUCTION_AUTHORITY"
   },
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
