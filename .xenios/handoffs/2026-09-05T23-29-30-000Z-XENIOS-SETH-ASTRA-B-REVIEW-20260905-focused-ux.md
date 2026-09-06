@@ -4,10 +4,10 @@
 - session: `codex-seth-astra-b-20260905`
 - owner: ASTRA-B
 - source branch: `codex/xenios-seth-astra-b-20260905`
-- source commit: `7d299d0facafe798252adea102db14c19298d5ba`
+- source commit: `f7ca54e1f3d8389019a10020f62aa1b250cc6bcd`
 - evidence: `docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md`
-- evidence Git blob: `79c15fa89fc2f9b78c202776dab4e1464ff4b215`
-- evidence SHA-256 (working-tree bytes): `FEF3F0A858446D390685662CF9C7C079689DA0AA56EE9529B3E3DDFFB11EAE13`
+- evidence Git blob: `58c219321c6c74a8db04f41d5cbafe9b05e85028`
+- evidence SHA-256 (working-tree bytes): `B884CB0AF5CF4C352A1009E205A8879C218B6FAD5D9655368CE38C3FA30A8B87`
 
 ## Review result
 
@@ -17,8 +17,9 @@ application/adapter command passed 2 files and 55 tests with zero failures in
 3.31 seconds. The checkout also passed `npm run check`, route uniqueness
 verification (423 static registrations across 414 call sites), and the
 production build (2,265 Vite modules; `dist/index.cjs` 1.7 MB). The OS
-corpus validator passed, while the site-record check remains open because
-three A-owned generated records are stale. Together these cover the leased Product Control
+corpus validator passed. The B checkout's site-record check is branch-stale
+because three A-owned generated records are older; the current A integration
+tree passes that same check. Together these cover the leased Product Control
 pricing/reconciliation review, customer/admin access UX, partner application
 request shape, partner guards, account-portal continuity, and
 recovery-isolation seams.
