@@ -59,3 +59,29 @@ failures**. Actual browser journey evidence remains blocked by the clean
 detached harness's Windows `EPERM/EBUSY` native-module install failure.
 Production approval, migrations, live account changes, notifications, payments
 and shipments remain unperformed.
+
+## 2026-09-06 reconciliation integration checkpoint
+
+A mounted the server-owned, fail-closed reconciliation projection and the
+shared read-only route in `1a3d7787ecd2205aed0e62cc33a37145e61c1980`; B's
+Product Control mount is
+integrated in runtime candidate `9d066b18aabf8b6abc18f1b8ea73e11b22e0a1fb`
+(tree `ff698f0be242d2fa4d5b1315807858d397f852f5`). The route is
+`GET /api/admin/research/products/revenue-launch/reconciliation`, behind the
+existing admin guard, with no-store response headers, optional scoped reads,
+and explicit unavailable/partial states. Product Control opens it only from
+the operator's **Review source reconciliation** action; it has no approval,
+price, purchase, fulfillment, or evidence-writing control.
+
+The server projection/route plus Product Control mount focused check is
+**54/54 PASS**; the complete suite at validation head
+`feffd8fad6033b8743c81302de351e1915912e40` (tree
+`f4a39bdca6c6d72fd8e78a47e2330ce1fd691f09`) is **876 passed files, 5
+skipped; 13,502 passed tests, 59 skipped; zero failures** in **488.03
+seconds**. Route uniqueness is **427 registrations across 418 call sites**.
+Typecheck, build, Xenios continuity validation, and Site System of Record
+checks remain required after this records update. The clean detached browser
+harness is still blocked by Windows `EPERM/EBUSY` native-module installation;
+synthetic referral boundary evidence remains the only browser-boundary result.
+Production authorities and migrations remain absent; no live grant, email,
+payment, shipment, deployment, or other production mutation occurred.

@@ -39,3 +39,29 @@ The current integrated candidate is `5d2fa0b850807ad792a3a97b598106d5326895ca` (
 - Production customer-approval, partner-lifecycle, and Referral V1 authorities remain absent; candidate migrations and configuration remain unapplied. No deployment, live grant, notification, price activation, payment, or shipment occurred.
 
 This closure update is evidence only and does not authorize migrations, configuration changes, deployment, price activation, live approvals, communications, payment, or shipment.
+
+## Reconciliation route and Product Control mount — 2026-09-06
+
+The deferred presentation is now mounted through the existing Product Control
+surface. A's server projection and guarded route are in `1a3d778`; B's client
+mount is in runtime candidate `9d066b18aabf8b6abc18f1b8ea73e11b22e0a1fb`
+(tree `ff698f0be242d2fa4d5b1315807858d397f852f5`). The route is
+`GET /api/admin/research/products/revenue-launch/reconciliation`, and the
+operator must explicitly open **Review source reconciliation**. The review is
+read-only and keeps unavailable, denied, malformed, and partial states
+visible; it grants no source approval, price activation, purchase, fulfillment,
+or evidence-writing authority.
+
+- Server projection/route plus Product Control mount focused tests: **54/54 PASS**.
+- Route census: **427 registrations across 418 call sites**, PASS.
+- Complete suite at validation head `feffd8fad6033b8743c81302de351e1915912e40`
+  (tree `f4a39bdca6c6d72fd8e78a47e2330ce1fd691f09`): **876 passed files, 5
+  skipped; 13,502 passed tests, 59 skipped; zero failures** in **488.03
+  seconds**.
+- Clean detached browser journey remains **NOT CLAIMED** because Windows
+  `EPERM/EBUSY` blocked mandatory native-module installation; synthetic
+  referral boundary checks remain **12/12**.
+
+Production authorities and candidate migrations remain absent. This update is
+evidence only and does not authorize deployment, migration, price activation,
+live approval, communication, payment, or shipment.

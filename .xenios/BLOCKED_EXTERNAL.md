@@ -12,6 +12,18 @@
   `esbuild`/`bufferutil`. Production authorities, migrations, and approval
   remain absent; no production mutation or approval is authorized.
 
+- Seth universal launch reconciliation follow-through (2026-09-06): the
+  server-owned read-only reconciliation route and Product Control mount are
+  integrated in runtime candidate `9d066b18aabf8b6abc18f1b8ea73e11b22e0a1fb`
+  (tree `ff698f0be242d2fa4d5b1315807858d397f852f5`), with focused route/mount
+  coverage **54/54 PASS**. The complete suite at validation head
+  `feffd8fad6033b8743c81302de351e1915912e40` is green (**876 passed files, 5
+  skipped; 13,502 passed tests, 59 skipped; zero failures; 488.03 seconds**),
+  and route uniqueness is **427 registrations across 418 call sites**. Browser
+  journey evidence remains blocked by Windows `EPERM/EBUSY` during clean native
+  module installation. Production authorities and migrations remain absent;
+  no production mutation, approval, or communication occurred.
+
 - Seth revenue launch (2026-09-05): the missing-history startup blocker is
   closed for local engineering by the authorized linked CLI export at 17:41 UTC.
   See `docs/revenue-launch/20260905/migration-history/MIGRATION_RECONCILIATION.md`.
