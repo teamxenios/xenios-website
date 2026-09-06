@@ -53,6 +53,7 @@ const GuidesAdmin = lazy(() => import("./pages/adminx/GuidesAdmin"));
 const GuideAdminDetail = lazy(() => import("./pages/adminx/GuideAdminDetail"));
 const PartnersAdmin = lazy(() => import("./pages/adminx/PartnersAdmin"));
 const PartnerAdminDetail = lazy(() => import("./pages/adminx/PartnerAdminDetail"));
+const ResourceHubAdmin = lazy(() => import("./pages/adminx/ResourceHubAdmin"));
 const SecurityAdmin = lazy(() => import("./pages/adminx/SecurityAdmin"));
 const PrivacyAdmin = lazy(() => import("./pages/adminx/PrivacyAdmin"));
 const Capabilities = lazy(() => import("./pages/adminx/Capabilities"));
@@ -171,6 +172,7 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/guides/:id">{() => <S><GuideAdminDetail /></S>}</Route>
       <Route path="/admin/research/partners">{() => <S><PartnersAdmin /></S>}</Route>
       <Route path="/admin/research/partners/:id">{() => <S><PartnerAdminDetail /></S>}</Route>
+      <Route path="/admin/research/resource-hub">{() => <S><ResourceHubAdmin /></S>}</Route>
       <Route path="/admin/research/security">{() => <S><SecurityAdmin /></S>}</Route>
       <Route path="/admin/research/privacy">{() => <S><PrivacyAdmin /></S>}</Route>
       <Route path="/admin/research/capabilities">{() => <S><Capabilities /></S>}</Route>

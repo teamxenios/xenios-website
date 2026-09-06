@@ -14,6 +14,13 @@ import { denialPresentation } from "../lib/denials";
 import type { PartnerDashboardDto } from "@shared/research/commerce-api";
 import type { RecommendationLinks } from "@shared/research/referral-v1";
 import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
+import {
+  RESOURCE_AUDIENCE_ALL_PARTNERS,
+  RESOURCE_HUB_PARTNER_LIBRARY_PATH,
+  partnerResourceDownloadPath,
+  type ResourceAudience,
+  type ResourceLibraryResponse,
+} from "@shared/research/resource-hub/contract";
 
 export type PartnerToken = string | null;
 
@@ -30,7 +37,9 @@ export const PARTNER_API = {
   leads: "/api/research/partner/leads",
   commissions: "/api/research/partner/commissions",
   payouts: "/api/research/partner/payouts",
-  resources: "/api/research/partner/resources",
+  // The Resource Hub library path is owned by the shared resource-hub
+  // contract (same literal); the download path is derived per resource below.
+  resources: RESOURCE_HUB_PARTNER_LIBRARY_PATH,
   training: "/api/research/partner/training",
   campaigns: "/api/research/partner/campaigns",
   campaignRequest: "/api/research/partner/campaigns/request",
@@ -121,8 +130,96 @@ export function getPartnerPayouts<T>(token: PartnerToken): Promise<ApiResult<T>>
   return apiGet<T>(PARTNER_API.payouts, token);
 }
 
-export function getPartnerResources<T>(token: PartnerToken): Promise<ApiResult<T>> {
-  return apiGet<T>(PARTNER_API.resources, token);
+// The Resource Hub library: typed on the shared DTO. The server builds each
+// card by explicit construction (no storage key, no signed storage URL), and
+// this client renders actions strictly from card.actions. The download path
+// on a card is an application path the server authorizes per request.
+export function getPartnerResources(token: PartnerToken): Promise<ApiResult<ResourceLibraryResponse>> {
+  return apiGet<ResourceLibraryResponse>(PARTNER_API.resources, token);
+}
+
+export { partnerResourceDownloadPath };
+
+// Plain-language audience labels for the resource library. Shared by the
+// partner card and the admin hub so both surfaces name an audience the same
+// way. A recruiter audience is added by the recruiter slice, not by string.
+const RESOURCE_AUDIENCE_LABELS: Readonly<Record<ResourceAudience, string>> = {
+  [RESOURCE_AUDIENCE_ALL_PARTNERS]: "All partners",
+  member_referral: "Member referral",
+  affiliate: "Affiliate",
+  research_rep: "Research Rep",
+  senior_research_rep: "Senior Research Rep",
+  organization_partner: "Organization partner",
+  private_community_partner: "Private community partner",
+  professional_partner: "Professional partner",
+  future_wholesale: "Wholesale (future)",
+  future_institutional: "Institutional (future)",
+};
+
+export function resourceAudienceLabel(audience: ResourceAudience): string {
+  return RESOURCE_AUDIENCE_LABELS[audience] ?? audience;
+}
+
+// A server-streamed document fetched with the bearer token. The bytes never
+// travel through a storage URL: the client asks the application path, the
+// server re-reads entitlement and streams application/pdf. Every non-2xx
+// outcome is a named kind so the page can render an honest state; nothing
+// here retries, invents a file, or follows a redirect off the application.
+export type ResourceDownloadResult =
+  | { kind: "ok"; blob: Blob; filename: string | null }
+  | { kind: "unauthorized" }
+  | { kind: "forbidden" }
+  | { kind: "unavailable" }
+  | { kind: "error"; message: string };
+
+const PARTNER_RESOURCE_DOWNLOAD_PREFIX = `${RESOURCE_HUB_PARTNER_LIBRARY_PATH}/`;
+
+export function parseAttachmentFilename(contentDisposition: string | null): string | null {
+  if (!contentDisposition) return null;
+  const utf8 = /filename\*=UTF-8''([^;]+)/iu.exec(contentDisposition);
+  if (utf8?.[1]) {
+    try {
+      return decodeURIComponent(utf8[1].trim());
+    } catch {
+      /* fall through to the plain form */
+    }
+  }
+  const plain = /filename="?([^";]+)"?/iu.exec(contentDisposition);
+  return plain?.[1]?.trim() || null;
+}
+
+export async function downloadPartnerResource(
+  downloadPath: string,
+  token: PartnerToken,
+): Promise<ResourceDownloadResult> {
+  if (!token) return { kind: "unauthorized" };
+  // Only the application's own partner resource path is ever fetched. A card
+  // carrying anything else (a storage host, a signed URL, another origin) is
+  // refused here rather than followed.
+  if (!downloadPath.startsWith(PARTNER_RESOURCE_DOWNLOAD_PREFIX) || downloadPath.includes("//")) {
+    return { kind: "error", message: "This resource did not come with a valid download path." };
+  }
+  try {
+    const res = await fetch(downloadPath, {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      redirect: "error",
+      headers: { Authorization: "Bearer " + token },
+    });
+    if (res.status === 401) return { kind: "unauthorized" };
+    if (res.status === 403) return { kind: "forbidden" };
+    if (res.status === 404 || res.status === 501 || res.status === 503) return { kind: "unavailable" };
+    if (!res.ok) return { kind: "error", message: "The download did not complete. Please try again." };
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/pdf")) {
+      return { kind: "error", message: "The server did not return a PDF for this resource." };
+    }
+    const blob = await res.blob();
+    return { kind: "ok", blob, filename: parseAttachmentFilename(res.headers.get("content-disposition")) };
+  } catch {
+    return { kind: "error", message: "The connection failed before the download completed. Please try again." };
+  }
 }
 
 export function getPartnerTraining<T>(token: PartnerToken): Promise<ApiResult<T>> {

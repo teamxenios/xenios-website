@@ -48,6 +48,12 @@
 
 import type { Express, Request, Response } from "express";
 import {
+  RESOURCE_HUB_PARTNER_DOWNLOAD_PATH,
+  RESOURCE_HUB_PARTNER_LIBRARY_PATH,
+} from "@shared/research/resource-hub/contract";
+import { resolveResourceHubService } from "../resource-hub/production";
+import type { ResourceHubService } from "../resource-hub/service";
+import {
   createPartnerPortalService,
   type PartnerPortalPort,
   type PortalContentSubmissionInput,
@@ -67,7 +73,11 @@ export const PARTNER_PORTAL_PATHS = {
   conversions: "/api/research/partner/conversions",
   commissions: "/api/research/partner/commissions",
   payouts: "/api/research/partner/payouts",
+  // The Resource Hub library and its authorized delivery door. Both literals
+  // are pinned equal to the shared resource-hub contract by a test; the
+  // download path is a server-authorized application path, never a storage URL.
   resources: "/api/research/partner/resources",
+  resourceDownload: "/api/research/partner/resources/:resourceId/download",
   campaigns: "/api/research/partner/campaigns",
   campaignRequest: "/api/research/partner/campaigns/request",
   events: "/api/research/partner/events",
@@ -128,6 +138,12 @@ export interface PartnerPortalDependencies {
    * answers capability_disabled rather than accepting content into nowhere.
    */
   submissionsEnabled: boolean;
+  /**
+   * The Resource Hub: Xenios-published materials, role-scoped. Injected for
+   * tests; production composition resolves the flag-gated service, which is
+   * dark (empty library, no delivery) until RESEARCH_RESOURCE_HUB_ENABLED=true.
+   */
+  resourceHub?: ResourceHubService;
 }
 
 export function registerPartnerPortalApi(
@@ -137,6 +153,13 @@ export function registerPartnerPortalApi(
 ): void {
   const member = guards.requireMember;
   const service = createPartnerPortalService(deps.port);
+  const resourceHub = deps.resourceHub ?? resolveResourceHubService();
+  if (
+    PARTNER_PORTAL_PATHS.resources !== RESOURCE_HUB_PARTNER_LIBRARY_PATH ||
+    PARTNER_PORTAL_PATHS.resourceDownload !== RESOURCE_HUB_PARTNER_DOWNLOAD_PATH
+  ) {
+    throw new Error("partner portal resource paths drifted from the resource-hub contract");
+  }
 
   /**
    * Resolves the acting member's own partner, or answers for the caller.
@@ -228,11 +251,47 @@ export function registerPartnerPortalApi(
 
   // ---- content and program ------------------------------------------------
 
+  // The Resource Hub library for THIS partner's role and state. The service
+  // answers only current published versions whose audience includes the
+  // partner, projected by explicit construction (no storage key, no signed
+  // storage URL, no admin identity). A suspended or terminated partner sees
+  // an empty library, not an error.
   app.get(
     PARTNER_PORTAL_PATHS.resources,
     member,
-    withPartner(async (_partner, _req, res) => {
-      ok(res, await service.resources());
+    withPartner(async (partner, _req, res) => {
+      const resources = await resourceHub.libraryFor({ role: partner.role, state: partner.state });
+      ok(res, { resources, asOf: new Date().toISOString() });
+    }),
+  );
+
+  // Authorized delivery. Entitlement is re-read at use time inside the hub
+  // (published, audience, policy) and every attempt is recorded with its
+  // outcome. A resource the partner may not receive answers 404, never 403,
+  // so the door is not an existence oracle. The bytes stream from the server
+  // with no-store; the filename carries the resource id and version only.
+  app.get(
+    PARTNER_PORTAL_PATHS.resourceDownload,
+    member,
+    withPartner(async (partner, req, res) => {
+      const resourceId = String(req.params.resourceId ?? "");
+      const result = await resourceHub.deliverToPartner(
+        { memberId: partner.memberId, role: partner.role, state: partner.state },
+        resourceId,
+      );
+      if (!result.ok) {
+        if (result.code === "not_found") {
+          deny(res, 404, "not_found", "This resource is not available to you.");
+          return;
+        }
+        deny(res, 503, "capability_disabled", "Resource delivery is not available right now.");
+        return;
+      }
+      secure(res);
+      res.set("Content-Type", result.contentType);
+      res.set("Content-Disposition", `attachment; filename="${result.filename}"`);
+      res.set("X-Content-Type-Options", "nosniff");
+      res.send(Buffer.from(result.bytes));
     }),
   );
 

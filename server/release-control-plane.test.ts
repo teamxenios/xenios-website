@@ -2052,10 +2052,18 @@ describe("route uniqueness validator", () => {
     // The universal launch adds one explicit approved-customer operation door,
     // one explicit partner-lifecycle operation door and one read-only Product
     // Control reconciliation door, each mounted behind the canonical admin
-    // guard. The current scanner measurement is therefore 427 registrations
-    // across 418 call sites.
-    expect(result.callSites).toBe(418);
-    expect(result.routes).toHaveLength(427);
+    // guard. That scanner measurement was 427 registrations across 418 call
+    // sites.
+    // Resource Hub V1 (task RECRUITER-RESOURCE-HUB-V1-20260906) adds six
+    // literal doors: five admin doors under /api/admin/research/resource-hub
+    // (list, upload, item, version review, version preview) behind the
+    // canonical requireSupabaseAdmin guard, mounted from the Research seam,
+    // and one member-guarded partner delivery door
+    // (GET /api/research/partner/resources/:resourceId/download) inside the
+    // existing partner portal registrar. The current scanner measurement is
+    // therefore 433 registrations across 424 call sites.
+    expect(result.callSites).toBe(424);
+    expect(result.routes).toHaveLength(433);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

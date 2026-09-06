@@ -161,6 +161,10 @@ export const ADMIN_ROUTES = {
   guide: "/admin/research/guides/:id",
   partners: "/admin/research/partners",
   partner: "/admin/research/partners/:id",
+  // Resource Hub V1 (slice 1): Xenios-published PDF versions, audience,
+  // usage policy, review and publish. Partners read the published set on
+  // PARTNER_ROUTES.resources.
+  resourceHub: "/admin/research/resource-hub",
   security: "/admin/research/security",
   privacy: "/admin/research/privacy",
   capabilities: "/admin/research/capabilities",
