@@ -7,12 +7,11 @@
 // sides of the repair without mocks:
 //   1. importing the complete capture-runner graph loads neither dependency;
 //   2. CdpConnection.open() still uses the real installed WebSocket transport.
-import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
-import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { expect, test } from "vitest";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cdpUrl = pathToFileURL(resolve(here, "cdp.mjs")).href;
@@ -45,7 +44,7 @@ function importCacheReport(moduleUrl) {
 }
 
 test("importing the complete synthetic-capture graph leaves native tooling unloaded", () => {
-  assert.deepEqual(importCacheReport(captureRunnerUrl), {
+  expect(importCacheReport(captureRunnerUrl)).toEqual({
     cacheHasWs: false,
     cacheHasBufferutil: false,
     cacheHasBufferutilNative: false,
@@ -54,7 +53,7 @@ test("importing the complete synthetic-capture graph leaves native tooling unloa
 });
 
 test("importing the CDP helper alone leaves ws and bufferutil unloaded", () => {
-  assert.deepEqual(importCacheReport(cdpUrl), {
+  expect(importCacheReport(cdpUrl)).toEqual({
     cacheHasWs: false,
     cacheHasBufferutil: false,
     cacheHasBufferutilNative: false,
@@ -78,10 +77,10 @@ test("control: loading ws reaches the installed native bufferutil addon", () => 
     }));
   `);
 
-  assert.equal(report.cacheHasWs, true);
+  expect(report.cacheHasWs).toBe(true);
   if (report.bufferutilInstalled) {
-    assert.equal(report.cacheHasBufferutil, true);
-    assert.equal(report.cacheHasBufferutilNative, true);
+    expect(report.cacheHasBufferutil).toBe(true);
+    expect(report.cacheHasBufferutilNative).toBe(true);
   }
 });
 
@@ -91,9 +90,9 @@ test("CdpConnection.open uses real ws for a loopback request and clean close", a
   const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });
   await new Promise((resolveListening) => server.once("listening", resolveListening));
   const address = server.address();
-  assert.notEqual(address, null);
+  expect(address).not.toBeNull();
   const port = typeof address === "object" ? address.port : null;
-  assert.equal(typeof port, "number");
+  expect(typeof port).toBe("number");
 
   let received = null;
   let connection = null;
@@ -106,12 +105,12 @@ test("CdpConnection.open uses real ws for a loopback request and clean close", a
 
   try {
     connection = await new CdpConnection(`ws://127.0.0.1:${port}/devtools/browser/test`).open();
-    assert.equal(connection.ws instanceof WebSocket, true);
+    expect(connection.ws instanceof WebSocket).toBe(true);
     const result = await connection.send("Target.getTargets", {}, undefined, { timeoutMs: 5_000 });
-    assert.deepEqual(result, { echoed: "Target.getTargets" });
-    assert.deepEqual(received, { id: 1, method: "Target.getTargets", params: {} });
+    expect(result).toEqual({ echoed: "Target.getTargets" });
+    expect(received).toEqual({ id: 1, method: "Target.getTargets", params: {} });
     await connection.close();
-    assert.equal(connection.ws.readyState, WebSocket.CLOSED);
+    expect(connection.ws.readyState).toBe(WebSocket.CLOSED);
     connection = null;
   } finally {
     if (connection?.ws && connection.ws.readyState !== WebSocket.CLOSED) {
@@ -123,8 +122,7 @@ test("CdpConnection.open uses real ws for a loopback request and clean close", a
 
 test("CdpConnection.open rejects a refused loopback connection", async () => {
   const { CdpConnection } = await import(cdpUrl);
-  await assert.rejects(
+  await expect(
     new CdpConnection("ws://127.0.0.1:1/devtools/browser/none").open(),
-    Error,
-  );
+  ).rejects.toBeInstanceOf(Error);
 });
