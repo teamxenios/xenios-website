@@ -17,8 +17,8 @@
 
 - Database prechecks: PASS.
 - Disposable migration rehearsals: PASS (35 approved-customer checks; 57 partner-lifecycle checks).
-- Approval-to-login browser journey: BLOCK for full closure. The new-account approval/ownership-verified claim path passes the real-handler acceptance suite but has not been proven in the same browser sequence as normal login. No live approval, claim, email, notification, migration, deploy, config change, payment, or purchase occurred.
-- The bounded new-account attempt is recorded separately in `docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json` (SHA-256 `b8afdcf7a36e5224bc01c3f8c7192147ca9e743702f3ba88f0e885dd7a18f1ab`): first failure is step 1 because the account-only preview has no admin-authenticated inspection surface or local notification inbox.
+- Approval-to-login browser journey: PASS in bounded nonproduction qualification. The dedicated harness used isolated admin/customer Chromium profiles and the real inspection, approval, claim, token-validation, Auth session, account, sign-out, and protected-route UI paths over local synthetic boundaries. No live approval, claim, email, notification, migration, deploy, config change, payment, or purchase occurred.
+- The passing new-account run is recorded in `docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json` (SHA-256 `57c051e75cdd3dbbd2eb9bcf4ce23cbc6b78d2490cb2cffc9393330b9ac767c2`).
 - Resource Hub/B work remains separate and is not integrated or required for this account/partner slice.
 
-Next action is a new bounded browser run for the new-account approval-to-claim sequence, followed by Samuel's exact-SHA production authorization. Do not apply migrations or deploy without that approval.
+Next action is Samuel's exact-SHA production authorization. Do not apply migrations or deploy without that approval.

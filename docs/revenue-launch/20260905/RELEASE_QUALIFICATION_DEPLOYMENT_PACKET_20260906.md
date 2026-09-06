@@ -1,6 +1,6 @@
 # Xenios release qualification and deployment preparation — 2026-09-06
 
-Status: **qualification addendum recorded; ready for founder review, not a production GO**.
+Status: **qualification PASS recorded; awaiting founder exact-SHA production GO**.
 
 Qualification addendum: `ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md`.
 
@@ -97,13 +97,12 @@ If an authorized migration precheck or postcheck fails, stop before the next mig
 - Keep purchases, payments, price activation, grants, and shipments separately authorized.
 
 The qualification addendum records the local browser evidence and rollback
-settings. Existing-account sign-in, account home, partner workspace, refresh,
-rendered sign-out, sign-back-in, and cross-partner selector boundary pass over
-synthetic preview Auth/data. The separate new-account browser run is recorded as
-blocked at step 1 because the account-only preview has no admin-authenticated
-inspection surface or local notification inbox; a direct approval call would not
-meet the required actual-admin-interface proof. Deployment qualification remains
-blocked until that bounded journey is captured.
+settings. The dedicated new-account run passed the continuous admin approval →
+generated local claim link → signed-out claim/password → normal login → refresh
+→ rendered sign-out → protected denial → sign-in-again sequence over isolated
+synthetic Auth/data boundaries. Existing-account and partner-isolation evidence
+remain separately recorded. Deployment still requires the founder's exact-SHA
+production authorization.
 
 ## Remaining external blockers
 

@@ -172,7 +172,9 @@
     "productionPrecheckStatus": "PASS_READ_ONLY_NO_MUTATION",
     "productionPrecheckCompatibility": "PASS_PREFLIGHT_WITH_POST_APPLY_DDL_PARITY_PENDING",
     "nonproductionAccountBrowserEvidence": "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
-    "nonproductionAccountBrowserStatus": "PASS_EXISTING_ACCOUNT_PARTIAL_NEW_ACCOUNT_BROWSER_SEQUENCE_PENDING",
+    "nonproductionAccountBrowserStatus": "PASS_EXISTING_AND_NEW_ACCOUNT_CONTINUOUS_LOCAL_BROWSER",
+    "newAccountBrowserQualificationEvidence": "docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json",
+    "newAccountBrowserQualificationEvidenceSha256": "57c051e75cdd3dbbd2eb9bcf4ce23cbc6b78d2490cb2cffc9393330b9ac767c2",
     "rollbackConfiguration": {
       "RESEARCH_FOUNDING_ACTIVATION_ENABLED": {
         "observed": "true",
@@ -183,7 +185,7 @@
         "rollback": "absent_or_false"
       }
     },
-    "qualificationStatus": "BLOCKED_NEW_ACCOUNT_BROWSER_SEQUENCE_AND_PRODUCTION_AUTHORITY"
+    "qualificationStatus": "QUALIFIED_PENDING_EXACT_SHA_PRODUCTION_AUTHORITY"
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
   "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
