@@ -29,6 +29,7 @@ import ProductsAdmin from "./ProductsAdmin";
 
 const BASE = "/api/admin/research/products";
 const RECONCILIATION = "/api/admin/research/products/revenue-launch/reconciliation";
+const RECONCILIATION_SHA = "b".repeat(64);
 let host: HTMLDivElement;
 let root: Root;
 let products: AdminProductSummary[];
@@ -67,6 +68,67 @@ function response(status: number, payload: unknown = { ok: true, products }) {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+function availableReconciliationPayload() {
+  return {
+    status: "AVAILABLE",
+    schemaVersion: 1,
+    projectedAt: "2026-09-05T12:01:00.000Z",
+    source: {
+      sourceSetId: "seth-phase-a",
+      packageSha256: RECONCILIATION_SHA,
+      manifestSha256: RECONCILIATION_SHA,
+      sourceFileSha256: RECONCILIATION_SHA,
+      scope: "phase_a_exceptions",
+    },
+    coverage: { complete: true, expectedRows: 1, returnedRows: 1 },
+    rows: [{
+      sourceId: "source-1",
+      launchItemId: "launch-1",
+      sourcePointer: "/rows/0",
+      sourceRowSha256: RECONCILIATION_SHA,
+      productLabel: "Seth specimen",
+      configurationLabel: "Source assumption — formulation requires confirmation.",
+      issueKinds: ["formulation"],
+      exactIdentity: null,
+      proposedIdentity: null,
+      facts: {
+        identity_binding: { state: "UNKNOWN", reason: "missing_binding", observedAt: null, evidence: null },
+        formulation: {
+          state: "PENDING",
+          reason: "review_requested",
+          observedAt: "2026-09-05T12:00:00.000Z",
+          evidence: {
+            authority: "required_input",
+            recordId: "review-1",
+            recordRevision: "rev-1",
+            observedAt: "2026-09-05T12:00:00.000Z",
+            reviewedAt: null,
+            reviewerLabel: null,
+            expiresAt: null,
+            href: null,
+          },
+        },
+        unit_of_sale: {
+          state: "CONFIRMED",
+          reason: "exact_identity_reverified",
+          observedAt: "2026-09-05T12:00:00.000Z",
+          evidence: {
+            authority: "source_reconciliation",
+            recordId: "unit-1",
+            recordRevision: "rev-1",
+            observedAt: "2026-09-05T12:00:00.000Z",
+            reviewedAt: "2026-09-05T12:00:00.000Z",
+            reviewerLabel: "reviewer",
+            expiresAt: null,
+            href: null,
+          },
+        },
+        supplier: { state: "UNKNOWN", reason: "no_current_evidence", observedAt: "2026-09-05T12:00:00.000Z", evidence: null },
+      },
+    }],
+  };
 }
 
 function button(text: string): HTMLButtonElement {
@@ -309,6 +371,20 @@ describe("Product Control server-backed review filters", () => {
     expect(requests().at(-1)![0]).toBe(RECONCILIATION);
     expect(host.textContent).toContain("Source reconciliation is unavailable.");
     expect(host.textContent).toContain("Nothing here approves, activates, publishes");
+    expectReadsOnly();
+  });
+
+  it("renders available mapping and formulation facts without exposing an approval action", async () => {
+    mocks.fetch.mockImplementation(async (url: string) =>
+      url === RECONCILIATION ? response(200, availableReconciliationPayload()) : response(200));
+    await renderPage();
+    await click("Review source reconciliation");
+    expect(host.textContent).toContain("Seth specimen");
+    expect(host.textContent).toContain("Pending");
+    expect(host.textContent).toContain("Unknown");
+    expect(host.textContent).toContain("do not approve a price");
+    const buttonText = Array.from(host.querySelectorAll("button"), (button) => button.textContent ?? "").join(" ");
+    expect(buttonText).not.toMatch(/Approve|Activate|Buy now/i);
     expectReadsOnly();
   });
 
