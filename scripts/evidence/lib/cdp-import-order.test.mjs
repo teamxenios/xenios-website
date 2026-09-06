@@ -105,7 +105,7 @@ test("CdpConnection.open uses real ws for a loopback request and clean close", a
 
   try {
     connection = await new CdpConnection(`ws://127.0.0.1:${port}/devtools/browser/test`).open();
-    expect(connection.ws instanceof WebSocket).toBe(true);
+    expect(connection.ws).toBeInstanceOf(WebSocket);
     const result = await connection.send("Target.getTargets", {}, undefined, { timeoutMs: 5_000 });
     expect(result).toEqual({ echoed: "Target.getTargets" });
     expect(received).toEqual({ id: 1, method: "Target.getTargets", params: {} });
