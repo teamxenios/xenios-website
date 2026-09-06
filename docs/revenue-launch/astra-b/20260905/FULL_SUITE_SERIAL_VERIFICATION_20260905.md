@@ -31,3 +31,9 @@ earlier parallel host-contention observation for the full-suite assertion gate;
 browser, authenticated production, payment, supplier, and production-authority
 gates remain separate and are not claimed by this run.
 
+## Companion gates on the same tree
+
+- `npm run check`: PASS (`tsc`)
+- `npm run verify:route-uniqueness`: PASS — 427 static Express registrations
+  across 418 call sites
+- `npm run test:release-control-plane`: 51 passed, 1 intentional skip (52)
