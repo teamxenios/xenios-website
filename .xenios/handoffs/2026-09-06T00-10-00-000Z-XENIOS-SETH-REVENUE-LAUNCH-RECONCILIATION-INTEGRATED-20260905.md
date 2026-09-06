@@ -123,6 +123,28 @@ invitation, notification, email, payment, shipment, or other provider/database
 mutation occurred. The candidate remains local and gated pending an explicit
 exact-SHA production decision with prechecks, postchecks, rollback, and smoke.
 
+## Superseding candidate and browser defect closure — 2026-09-06
+
+The partner-route landmark defect is fixed in integrated candidate
+`13c971ceaeb20bf60c8061fc7d0739101499a668` (tree
+`e1e0abb247d3913a6c058a0fbd24b8cb6e5f26e8`), pushed with the continuity/SOR
+tip `08afa95`. The narrow change wraps only the exact partner links/dashboard
+routes in one `<main>` and adds the regression assertion. Focused verification
+is 74/74, with the independent Dashboard/Links checks included.
+
+Fable's real production-bundle-shaped local browser rerun against the same
+runtime change produced 18/18 PASS captures and 8/8 journeys across all nine
+widths for Partner A dashboard, Partner B isolation, account reload/session
+rehydration, organization `training_pending`, ordinary-member denial, and
+inactive-member denial. All captures had one main landmark, one h1, no overflow
+or accessibility assertion failures, and zero off-origin requests. The packet
+is fixture-backed synthetic account/partner proof; it does not establish the
+new admin-approval → approved-customer-claim path or a real payment/shipment.
+
+The broader seven-width public matrix remains excluded diagnostic evidence
+(stale route-copy assertions, unavailable-body telemetry classification, and
+sign-in path conversion). No production mutation occurred.
+
 ### Additional matrix diagnostic (not acceptance evidence)
 
 An isolated nine-width public-route matrix was started against the same exact
