@@ -73,8 +73,9 @@ and explicit unavailable/partial states. Product Control opens it only from
 the operator's **Review source reconciliation** action; it has no approval,
 price, purchase, fulfillment, or evidence-writing control.
 
-The server projection/route plus Product Control mount focused check is
-**54/54 PASS**; the complete suite at validation head
+The server projection/route plus Product Control mount focused check is now
+**55/55 PASS** (including **45/45** Products Admin/adapter/panel checks); the
+complete suite at validation head
 `feffd8fad6033b8743c81302de351e1915912e40` (tree
 `f4a39bdca6c6d72fd8e78a47e2330ce1fd691f09`) is **876 passed files, 5
 skipped; 13,502 passed tests, 59 skipped; zero failures** in **488.03

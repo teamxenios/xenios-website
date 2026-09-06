@@ -52,7 +52,7 @@ read-only and keeps unavailable, denied, malformed, and partial states
 visible; it grants no source approval, price activation, purchase, fulfillment,
 or evidence-writing authority.
 
-- Server projection/route plus Product Control mount focused tests: **54/54 PASS**.
+- Server projection/route plus Product Control mount focused tests: **55/55 PASS** (Products Admin/adapter/panel **45/45**).
 - Route census: **427 registrations across 418 call sites**, PASS.
 - Complete suite at validation head `feffd8fad6033b8743c81302de351e1915912e40`
   (tree `f4a39bdca6c6d72fd8e78a47e2330ce1fd691f09`): **876 passed files, 5

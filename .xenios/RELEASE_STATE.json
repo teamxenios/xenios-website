@@ -101,9 +101,11 @@
         "5d2fa0b ASTRA-B partner no-membership copy closure (source bb40cddd)",
         "1a3d778 server reconciliation route and fail-closed projection",
         "9d066b1 Product Control reconciliation mount and client contract",
-        "feffd8f Product Control reconciliation mount QA"
+        "feffd8f Product Control reconciliation mount QA",
+        "682b0d8 Product Control AVAILABLE-state reconciliation assertion",
+        "2114f22 reconciliation mount coverage record"
       ],
-      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12; reconciliation route + Product Control mount 54/54",
+      "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12; reconciliation route + Product Control mount 55/55 (Products Admin/adapter/panel 45/45)",
       "releaseControlPlane": "51 passed, 1 intentional skip",
       "routeUniqueness": "427 registrations across 418 call sites",
       "typecheck": "PASS",
@@ -112,7 +114,7 @@
       "approvedCustomerRehearsal": "PASS 35 checks",
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
-      "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 54/54; build re-run PASS",
+      "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 55/55 (Products Admin/adapter/panel 45/45); build re-run PASS",
       "fullSuite": "876 passed files, 5 skipped; 13502 passed tests, 59 skipped; zero failures on validation source feffd8fad6033b8743c81302de351e1915912e40 (runtime candidate 9d066b1); no actual browser journey evidence was claimed because clean harness npm ci hit Windows EPERM/EBUSY",
       "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=60000",
       "fullSuiteObservedAt": "2026-09-06T00:07:32.030Z",

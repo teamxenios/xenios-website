@@ -33,6 +33,10 @@ content. No mutation or activation control was added.
 ## Validation
 
 - Server projection/route plus Product Control mount focused tests: **54/54 PASS**.
+- Follow-up AVAILABLE-state Product Control assertion is integrated in test
+  commit `682b0d825a9e03689903d21427f5fc178197c799`; the refreshed focused
+  route/mount suite is **55/55 PASS**, including **45/45** Products
+  Admin/adapter/panel checks.
 - Route census: **427 registrations across 418 call sites**, PASS.
 - `npm run check`: PASS.
 - `npm run build`: PASS (known dynamic-import and large-chunk warnings only).
