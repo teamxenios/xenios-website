@@ -49,6 +49,15 @@ npm run check                       PASS (tsc)
 npm run verify:route-uniqueness    PASS — 423 static Express API registrations across 414 call sites
 ```
 
+The same checkout also completed the production build:
+
+```text
+npm run build  PASS — Vite 2,265 modules; server bundle emitted (dist/index.cjs 1.7 MB)
+```
+
+The build retained existing dynamic-import/chunk warnings only; it emitted no
+build failure.
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
