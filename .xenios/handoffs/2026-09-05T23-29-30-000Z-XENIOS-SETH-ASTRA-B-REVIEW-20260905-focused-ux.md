@@ -4,17 +4,20 @@
 - session: `codex-seth-astra-b-20260905`
 - owner: ASTRA-B
 - source branch: `codex/xenios-seth-astra-b-20260905`
-- source commit: `325f01330c55683d042529efb140d48932d20dec`
+- source commit: `bb9f5c1d8ce1c90a8e72a9914231357c7e331a6a`
 - evidence: `docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md`
-- evidence Git blob: `2945fd4c15a5a217a43ec70bdece8551a1ffb6c8`
-- evidence SHA-256 (working-tree bytes): `AB12D5F80D7479214D50162C003098A3753F5F5838038B1A22E0F506A5E671F1`
+- evidence Git blob: `d8a4cefd5c1d5494ef45997e53391720354c9f91`
+- evidence SHA-256 (working-tree bytes): `7B6DC50E56F0956EBE552E3D80E113DC11715E5E448F69794EE182652A813C6B`
 
 ## Review result
 
 The exact focused command recorded in the evidence file passed 15 test files
-and 299 tests with zero failures in 47.20 seconds. The pass covers the leased
-Product Control pricing/reconciliation review, customer/admin access UX,
-partner guards, account-portal continuity, and recovery-isolation seams.
+and 299 tests with zero failures in 47.20 seconds. An additional partner
+application/adapter command passed 2 files and 55 tests with zero failures in
+3.31 seconds. Together these cover the leased Product Control
+pricing/reconciliation review, customer/admin access UX, partner application
+request shape, partner guards, account-portal continuity, and
+recovery-isolation seams.
 
 ## Boundary
 
