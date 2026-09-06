@@ -112,3 +112,27 @@ No production authority or mutation exists. Live SHA
 `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, service
 `srv-d8s9vej7uimc7384dfcg`, and deployment
 `dep-dad08h740ujc73aprfcg` remain unchanged.
+
+
+## Browser capture checkpoint — 2026-09-06
+
+Fable's exact-current run against candidate `42ab49475148df18b82927491ae7bfc86d94a42e` (tree `72f682cb89b82b13f039197fd35da7db9aa60979`) completed the full 20-capture envelope with 16 AUTOMATED_PASS, 2 AUTOMATED_PASS_WITH_NOTES, and 2 AUTOMATED_FAIL. The two failures are the empty-orders fixture at 1440/390: fixture2 intentionally has no partner relation, so the preview returns the exact 404 `partner_not_found` for `GET /api/research/partner/me`; the runner descriptor had not yet declared that one exact expected denial. The neutral order-status 404 remains correctly declared and pass-with-notes. No external mutation occurred. Fable is preparing a narrow exact-declaration patch and rerun; browser acceptance remains **NOT CLAIMED** until the resulting envelope is complete with zero undeclared failures.
+
+
+## Exact denial contract patch — 2026-09-06
+
+Fable's evidence-only commit `46a9415b26564ee961251a141e5738e47ceb42a4` is integrated as root `1d46e068fecc4f1f555d7775fa5136f32406590f` (tree `d224ca1f273b7882f96d14be08a4ec95e6e5ba90`). It pins the fixture2 empty-orders `partner_not_found` 404 by exact URL, method, status, body hash, resource type, console/network counts, and separate partner-absence proof; manifest validation rejects the proof outside `orders|empty`. Focused coverage is **54/54 PASS**. Fable is running one fresh exact-tree recapture; browser acceptance remains pending.
+
+
+## Cold-navigation capture blocker — 2026-09-06
+
+The sole-owned exact `1d46e06` recapture passed bootstrap and build, then failed before the first account capture: `PageSession.navigate/setttle` reported six pending Document/Fetch/Font requests after its unchanged 8-second idle-through-paint window. Only catalog and product-detail widths (four captures) were written; no evidence envelope was emitted. This is not browser acceptance. Fable is analyzing the request identities and may add only a bounded, evidence-only prewarm helper if the requests are proven cold Vite/account-preview readiness debt; acceptance remains fail-closed.
+
+
+## Final browser acceptance — 2026-09-06
+
+Fable's sole-owned exact-tree capture is complete on `28e4b7802c84c01b4433040a36e622ce6bbf27de` (tree `17b204350602f8be22b6b722eddd5d5a1c421930`). The manifest at `C:\tmp\xenios-fable-synthetic-28e4b78-final-007\synthetic-journey-evidence.json` is 672,136 bytes (SHA-256 `6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b`); its 40-file artifact inventory (20 PNG + 20 text) is SHA-256 `05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377` with zero missing/extra/mismatch files.
+
+All 20 captures completed: 16 `AUTOMATED_PASS` and four exact `AUTOMATED_PASS_WITH_NOTES` (two forged-reference denials and two no-partner denials), zero failures, all boundary assertions pass, zero truncated screenshots, and warmup PASS in 13,668 ms. The run is `completeWithExpectedDenialNotes=true`, `zeroUndeclaredFailures=true`, `externalMutations=0`, and `claimScope=UI_PRESENTATION_ONLY`; manual PII/PHI review remains explicitly pending by design.
+
+This is synthetic local browser evidence, not production approval.

@@ -141,3 +141,19 @@ The Fable tooling slice is now integrated in root candidate `b1fb9a5e64d90210b9b
 The latest parallel full-suite observation was not green under host contention: **873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped**, with one Vitest worker-start error. The two migration-DAG timeout cases pass serially with a 120-second timeout (2/2), and the roster-privacy case passes serially with the same timeout (1/1); no assertion regression was reproduced. Final exact-current browser capture on `b1fb9a5` remains pending; no browser journey acceptance is claimed from the earlier partial artifact.
 
 This handoff remains QA evidence only. Production SHA `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, deployment `dep-dad08h740ujc73aprfcg`, and service `srv-d8s9vej7uimc7384dfcg` are unchanged. No deploy, migration, account grant, notification, payment, or shipment occurred.
+
+
+## Superseding tooling patch — exact denial contract
+
+Fable's readiness retry was integrated as root `42ab49475148df18b82927491ae7bfc86d94a42e`. The subsequent evidence-only patch from Fable commit `46a9415b26564ee961251a141e5738e47ceb42a4` is integrated in root `1d46e068fecc4f1f555d7775fa5136f32406590f` (tree `d224ca1f273b7882f96d14be08a4ec95e6e5ba90`). It predeclares only the empty fixture's exact authenticated `GET /api/research/partner/me` 404 (`partner_not_found`, canonical body hash `87d28f7e...`, one Fetch and one console signal), records separate `partnerAbsenceEvidence`, and adds manifest drift tests. Focused runner/report/manifest coverage is **54/54 PASS**.
+
+A fresh exact-tree browser recapture against `1d46e06` is pending; the prior `42ab494` envelope's two undeclared empty-fixture failures are superseded by this contract patch but remain non-final evidence.
+
+
+## Final browser acceptance — 2026-09-06
+
+Fable's sole-owned exact-tree capture is complete on `28e4b7802c84c01b4433040a36e622ce6bbf27de` (tree `17b204350602f8be22b6b722eddd5d5a1c421930`). The manifest at `C:\tmp\xenios-fable-synthetic-28e4b78-final-007\synthetic-journey-evidence.json` is 672,136 bytes (SHA-256 `6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b`); its 40-file artifact inventory (20 PNG + 20 text) is SHA-256 `05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377` with zero missing/extra/mismatch files.
+
+All 20 captures completed: 16 `AUTOMATED_PASS` and four exact `AUTOMATED_PASS_WITH_NOTES` (two forged-reference denials and two no-partner denials), zero failures, all boundary assertions pass, zero truncated screenshots, and warmup PASS in 13,668 ms. The run is `completeWithExpectedDenialNotes=true`, `zeroUndeclaredFailures=true`, `externalMutations=0`, and `claimScope=UI_PRESENTATION_ONLY`; manual PII/PHI review remains explicitly pending by design.
+
+This is synthetic local browser evidence, not production approval.

@@ -89,3 +89,27 @@ retained as diagnostic artifacts only and browser journey acceptance remains
 
 This ledger remains evidence only and does not authorize deployment, migration,
 price activation, live approval, communication, payment, or shipment.
+
+
+## Browser capture checkpoint — candidate 42ab494
+
+The Chrome readiness retry is integrated at `42ab49475148df18b82927491ae7bfc86d94a42e`. Fable's clean exact-tree run emitted 20 captures (16 pass, 2 pass-with-notes, 2 fail) and a 40-file artifact inventory (`6375f764a0bd70f7ae39b4e95cad78a607478e2155970cdc2248d2ef57734747`). The only undeclared failures are the empty-orders fixture's intentional `partner_not_found` 404 at `/api/research/partner/me` for widths 1440 and 390. This is a narrow evidence declaration gap in the preview contract; it is not being generalized into a blanket 404 waiver. Fable's exact-declaration patch and rerun are pending, so browser journey acceptance stays **NOT CLAIMED**.
+
+
+## Exact denial contract patch — candidate 1d46e06
+
+The empty-orders `partner_not_found` 404 is confirmed intentional for fixture2 and is now declared only for that exact `orders|empty` state. Fable's runner and manifest patch is integrated at `1d46e068fecc4f1f555d7775fa5136f32406590f` / `d224ca1f273b7882f96d14be08a4ec95e6e5ba90`; focused tests pass **54/54**. A fresh capture is pending, so no browser acceptance is claimed yet.
+
+
+## Cold-navigation blocker — exact 1d46e06 run
+
+The exact-tree run reached the browser and passed catalog/product-detail (four captures), but stopped at first account sign-in because six Document/Fetch/Font requests did not become idle within the existing 8-second settle window. No final JSON envelope exists. Fable is investigating whether this is a reproducible preview prewarm issue; no timeout is being loosened and browser acceptance remains **NOT CLAIMED**.
+
+
+## Final browser acceptance — 2026-09-06
+
+Fable's sole-owned exact-tree capture is complete on `28e4b7802c84c01b4433040a36e622ce6bbf27de` (tree `17b204350602f8be22b6b722eddd5d5a1c421930`). The manifest at `C:\tmp\xenios-fable-synthetic-28e4b78-final-007\synthetic-journey-evidence.json` is 672,136 bytes (SHA-256 `6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b`); its 40-file artifact inventory (20 PNG + 20 text) is SHA-256 `05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377` with zero missing/extra/mismatch files.
+
+All 20 captures completed: 16 `AUTOMATED_PASS` and four exact `AUTOMATED_PASS_WITH_NOTES` (two forged-reference denials and two no-partner denials), zero failures, all boundary assertions pass, zero truncated screenshots, and warmup PASS in 13,668 ms. The run is `completeWithExpectedDenialNotes=true`, `zeroUndeclaredFailures=true`, `externalMutations=0`, and `claimScope=UI_PRESENTATION_ONLY`; manual PII/PHI review remains explicitly pending by design.
+
+This is synthetic local browser evidence, not production approval.

@@ -68,3 +68,27 @@ signed evidence packet.
 
 No production endpoint was mutated and no deployment, migration, account grant,
 notification, payment, or shipment occurred.
+
+
+## Browser capture checkpoint — candidate 42ab494
+
+Fable's readiness-poll repair now lets the exact-tree capture reach all 20 states. The run is still **NOT CLAIMED** as acceptance because only the empty-orders fixture at widths 1440/390 has undeclared `partner_not_found` 404 telemetry; fixture2 intentionally has no partner relation. Fable is adding one exact expected-denial declaration with body/status/count matching and will rerun.
+
+
+## Exact denial contract patch — candidate 1d46e06
+
+The intentionally absent partner relation for fixture2 is represented as a separate, exact `partnerAbsenceEvidence` proof. The declaration is scoped to `orders|empty` and remains fail-closed on URL/status/body/count/resource drift. Integrated focused coverage is **54/54 PASS**; exact-tree browser recapture is pending.
+
+
+## Cold-navigation blocker — exact 1d46e06 run
+
+The exact browser capture passed the catalog and product-detail states, then failed before account capture on pending Document/Fetch/Font requests during sign-in. The output is partial and non-final. Fable is assessing a bounded prewarm fix; no production or Product Control mutation occurred.
+
+
+## Final browser acceptance — 2026-09-06
+
+Fable's sole-owned exact-tree capture is complete on `28e4b7802c84c01b4433040a36e622ce6bbf27de` (tree `17b204350602f8be22b6b722eddd5d5a1c421930`). The manifest at `C:\tmp\xenios-fable-synthetic-28e4b78-final-007\synthetic-journey-evidence.json` is 672,136 bytes (SHA-256 `6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b`); its 40-file artifact inventory (20 PNG + 20 text) is SHA-256 `05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377` with zero missing/extra/mismatch files.
+
+All 20 captures completed: 16 `AUTOMATED_PASS` and four exact `AUTOMATED_PASS_WITH_NOTES` (two forged-reference denials and two no-partner denials), zero failures, all boundary assertions pass, zero truncated screenshots, and warmup PASS in 13,668 ms. The run is `completeWithExpectedDenialNotes=true`, `zeroUndeclaredFailures=true`, `externalMutations=0`, and `claimScope=UI_PRESENTATION_ONLY`; manual PII/PHI review remains explicitly pending by design.
+
+This is synthetic local browser evidence, not production approval.
