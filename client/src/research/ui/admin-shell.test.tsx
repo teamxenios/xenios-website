@@ -38,7 +38,8 @@ describe("ResearchAdminShell grouped navigation", () => {
     // 2026-09-03: +1 "Care" group carrying the Care requests queue (incident CARE-2A99C6F7).
     expect(nav?.querySelectorAll("details")).toHaveLength(7);
     // Referral V1 adds one mounted destination in Content & partners.
-    expect(nav?.querySelectorAll("a")).toHaveLength(29);
+    // 2026-09-06: +1 "Resource Hub" in Content & partners (Resource Hub V1 slice 1).
+    expect(nav?.querySelectorAll("a")).toHaveLength(30);
     expect(
       Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
         link.getAttribute("href") === "/admin/research/command-center",
@@ -49,6 +50,11 @@ describe("ResearchAdminShell grouped navigation", () => {
         link.getAttribute("href") === "/admin/research/referral-lifecycle",
       ).map((link) => link.textContent?.trim()),
     ).toEqual(["Referral lifecycle"]);
+    expect(
+      Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
+        link.getAttribute("href") === "/admin/research/resource-hub",
+      ).map((link) => link.textContent?.trim()),
+    ).toEqual(["Resource Hub"]);
     expect(
       Array.from(nav?.querySelectorAll("summary") ?? []).map((summary) =>
         summary.textContent?.trim(),

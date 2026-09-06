@@ -208,6 +208,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: ADMIN_ROUTES.guides, label: "Guides" },
       { href: ADMIN_ROUTES.partners, label: "Partners" },
       { href: ADMIN_ROUTES.referralLifecycle, label: "Referral lifecycle" },
+      { href: ADMIN_ROUTES.resourceHub, label: "Resource Hub" },
     ],
   },
   {

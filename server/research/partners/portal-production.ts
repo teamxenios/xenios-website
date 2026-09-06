@@ -8,9 +8,12 @@
 //
 //   * APPROVED ASSET LIBRARY. research_content_assets holds content a PARTNER
 //     submitted for review, which is the opposite direction. There is no published
-//     library table, so `approvedLibrary` returns []. The Resources page's own empty
-//     copy ("Until an asset appears in this library, it is not approved for sharing")
-//     is the truthful state. MISSING TABLE: research_partner_assets (or similar).
+//     library table in the shipped schema, so `approvedLibrary` returns []. The
+//     partner Resources door no longer reads this port for its library: it is
+//     served by the Resource Hub (server/research/resource-hub/*), whose tables
+//     arrive with candidate migration 20260906120000_research_resource_library
+//     and whose production composition stays dark until that migration is applied
+//     and RESEARCH_RESOURCE_HUB_ENABLED=true is set.
 //   * PARTNER SESSION HISTORY. There is no partner or member session table, so
 //     `sessionsFor` returns []. MISSING TABLE: research_partner_sessions.
 //   * CAMPAIGN, EVENT, AND ORGANIZATION REQUESTS. There is no request-intake table,

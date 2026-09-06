@@ -15,6 +15,9 @@ import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
 import { EARLY_ACCESS_ORDER_NUMBER } from "./early-access/routes/order-number";
+import { requireSupabaseAdmin } from "../routes";
+import { registerResourceHubAdminApi } from "./resource-hub/admin-routes";
+import { resolveResourceHubService } from "./resource-hub/production";
 import { isRecommendationPath } from "@shared/research/referral-v1";
 
 // ---------------------------------------------------------------------------
@@ -229,6 +232,15 @@ export function registerResearchApi(app: Express) {
   // Production already registered the same exact handler before body parsers,
   // so this is a WeakSet-protected no-op there.
   registerLegacyResearchOrderContainment(app);
+
+  // Resource Hub admin doors (/api/admin/research/resource-hub/*): upload,
+  // review, publish, withdraw, and preview Xenios-published materials. They
+  // answer to the canonical requireSupabaseAdmin guard, injected here, and
+  // sit outside the /api/research wall below. The composition is dark in
+  // production until the hub's candidate migration is applied and
+  // RESEARCH_RESOURCE_HUB_ENABLED=true is set: while dark, reads answer an
+  // empty library / 404 and every write or byte read answers 503.
+  registerResourceHubAdminApi(app, requireSupabaseAdmin, { service: resolveResourceHubService() });
 
   // Every /api/research/* route: fail closed when unconfigured.
   app.use("/api/research", (_req, res, next) => {

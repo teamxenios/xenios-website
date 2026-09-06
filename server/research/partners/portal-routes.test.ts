@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Request, Response } from "express";
 import { PARTNER_API } from "@/research/adapters/partner";
+import { RESOURCE_HUB_PARTNER_DOWNLOAD_PATH, RESOURCE_HUB_PARTNER_LIBRARY_PATH } from "@shared/research/resource-hub/contract";
+import { createMemoryResourceBytesStore } from "../resource-hub/bytes-store";
+import { createResourceHubService, type ResourceHubService } from "../resource-hub/service";
+import { createInMemoryResourceHubStore } from "../resource-hub/store";
 import { PARTNER_LEDGERS, createInMemoryPartnerPortalPort, type InMemoryPortalData } from "./portal";
 import { PARTNER_PORTAL_PATHS, memberIdOf, parseSubmission, registerPartnerPortalApi } from "./portal-routes";
 
@@ -30,7 +34,7 @@ function fakeApp() {
 }
 
 function fakeRes() {
-  const captured = { status: 200, body: undefined as any, headers: {} as Record<string, string> };
+  const captured = { status: 200, body: undefined as any, headers: {} as Record<string, string>, sent: null as Buffer | null };
   const res = {
     set(key: string, value: string) {
       captured.headers[key] = value;
@@ -42,6 +46,10 @@ function fakeRes() {
     },
     json(payload: unknown) {
       captured.body = payload;
+      return res;
+    },
+    send(payload: Buffer) {
+      captured.sent = payload;
       return res;
     },
   };
@@ -113,14 +121,25 @@ const DATA: InMemoryPortalData = {
   },
 };
 
-function register(overrides: InMemoryPortalData = {}, submissionsEnabled = false) {
+function register(overrides: InMemoryPortalData = {}, submissionsEnabled = false, resourceHub?: ResourceHubService) {
   const { app, routes } = fakeApp();
   registerPartnerPortalApi(
     app,
-    { port: createInMemoryPartnerPortalPort({ ...DATA, ...overrides }), submissionsEnabled },
+    { port: createInMemoryPartnerPortalPort({ ...DATA, ...overrides }), submissionsEnabled, resourceHub: resourceHub ?? emptyResourceHub() },
     { requireMember: (_req, _res, next) => next() },
   );
   return routes;
+}
+
+// A Resource Hub with nothing published: the library answers empty and every
+// delivery is not found, which is also what production answers while dark.
+function emptyResourceHub(): ResourceHubService {
+  return createResourceHubService({
+    store: createInMemoryResourceHubStore(),
+    bytes: createMemoryResourceBytesStore(),
+    now: () => new Date(0),
+    newId: () => "id",
+  });
 }
 
 function route(routes: Registered[], method: string, path: string): Registered {
@@ -166,12 +185,19 @@ describe("the partner adapter has no dead calls", () => {
     expect(unserved).toEqual([]);
   });
 
-  it("publishes exactly the sixteen paths the commerce lane left unserved, and nothing else", () => {
+  it("publishes exactly the sixteen paths the commerce lane left unserved plus the resource delivery door, and nothing else", () => {
     const paths = register().map((r) => r.path).sort();
     expect(paths).toEqual(Object.values(PARTNER_PORTAL_PATHS).slice().sort());
-    expect(paths).toHaveLength(16);
+    // Sixteen inherited read/request doors plus the Resource Hub's one
+    // authorized delivery door (GET .../resources/:resourceId/download).
+    expect(paths).toHaveLength(17);
     // No overlap with the paths another module owns.
     paths.forEach((path) => expect(COMMERCE_OWNED.has(path)).toBe(false));
+  });
+
+  it("keeps the resource paths identical to the shared resource-hub contract", () => {
+    expect(PARTNER_PORTAL_PATHS.resources).toBe(RESOURCE_HUB_PARTNER_LIBRARY_PATH);
+    expect(PARTNER_PORTAL_PATHS.resourceDownload).toBe(RESOURCE_HUB_PARTNER_DOWNLOAD_PATH);
   });
 
   it("uses the method the client actually calls on each path", () => {
@@ -214,7 +240,7 @@ describe("authentication and partner resolution", () => {
   it("puts the member guard in front of every route", () => {
     const routes = register();
     expect(routes.every((r) => typeof r.guard === "function")).toBe(true);
-    expect(routes).toHaveLength(16);
+    expect(routes).toHaveLength(17);
   });
 
   it("fails closed with no authenticated member", async () => {
@@ -412,7 +438,7 @@ describe("every read surface answers with the shape its page reads", () => {
       [PARTNER_PORTAL_PATHS.conversions, "rows"],
       [PARTNER_PORTAL_PATHS.commissions, "entries"],
       [PARTNER_PORTAL_PATHS.payouts, "payouts"],
-      [PARTNER_PORTAL_PATHS.resources, "assets"],
+      [PARTNER_PORTAL_PATHS.resources, "resources"],
       [PARTNER_PORTAL_PATHS.campaigns, "campaigns"],
       [PARTNER_PORTAL_PATHS.events, "events"],
       [PARTNER_PORTAL_PATHS.organizations, "organizations"],
@@ -440,5 +466,144 @@ describe("every read surface answers with the shape its page reads", () => {
         expect(serialized).not.toContain(field);
       },
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Resource Hub integration: the library door is role-scoped and the delivery
+// door re-checks entitlement at use time (RES-01..10 subset at the HTTP seam).
+// ---------------------------------------------------------------------------
+
+describe("the resource library and delivery doors", () => {
+  const PDF = Buffer.from("%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\n%%EOF\n", "latin1");
+
+  async function hubWithPublished(audience: Array<"all_partners" | "research_rep" | "affiliate">, usagePolicy: "external_share" | "private" | "draft" = "external_share") {
+    let n = 0;
+    const hub = createResourceHubService({
+      store: createInMemoryResourceHubStore(),
+      bytes: createMemoryResourceBytesStore(),
+      now: () => new Date(Date.UTC(2026, 8, 6, 12, 0, n)),
+      newId: () => `id-${++n}`,
+    });
+    const created = await hub.createVersion("admin@xenios.test", {
+      title: "Partner introduction one-pager",
+      purpose: "A one-page introduction a partner may hand to a prospective member.",
+      usagePolicy,
+      audience,
+      originalFilename: "intro.pdf",
+      idempotencyKey: "upload-key-0001",
+    }, { bytes: new Uint8Array(PDF), contentType: "application/pdf" });
+    if (!created.ok) throw new Error("fixture upload failed");
+    const resourceId = created.resource.resourceId;
+    const versionId = created.resource.versions[0]!.versionId;
+    await hub.review("admin@xenios.test", resourceId, versionId, { action: "approve_content", reason: "ok", idempotencyKey: "review-a1" });
+    const published = await hub.review("admin@xenios.test", resourceId, versionId, { action: "publish", idempotencyKey: "review-p1" });
+    if (!published.ok) throw new Error("fixture publish failed");
+    return { hub, resourceId };
+  }
+
+  async function download(routes: Registered[], member: Record<string, unknown> | null, resourceId: string) {
+    const { res, captured } = fakeRes();
+    const request = { ...reqWith(member ?? undefined), params: { resourceId } } as unknown as Request;
+    await route(routes, "get", PARTNER_PORTAL_PATHS.resourceDownload).handler(request, res);
+    return captured;
+  }
+
+  it("lists a published resource to a role in its audience and to nobody else", async () => {
+    const { hub, resourceId } = await hubWithPublished(["research_rep"]);
+    const routes = register({}, false, hub);
+    const alice = await call(routes, "get", PARTNER_PORTAL_PATHS.resources, { id: "member_alice" });
+    expect(alice.status).toBe(200);
+    expect(alice.body.ok).toBe(true);
+    expect(alice.body.resources).toHaveLength(1);
+    expect(alice.body.resources[0]).toMatchObject({
+      resourceId,
+      usagePolicy: "external_share",
+      actions: { read: true, download: true, share: false },
+      downloadPath: `/api/research/partner/resources/${resourceId}/download`,
+    });
+    expect(typeof alice.body.asOf).toBe("string");
+    expect(alice.headers["Cache-Control"]).toBe("no-store");
+    const bruno = await call(routes, "get", PARTNER_PORTAL_PATHS.resources, { id: "member_bruno" });
+    expect(bruno.status).toBe(200);
+    expect(bruno.body.resources).toEqual([]);
+  });
+
+  it("an empty hub answers an empty library, never an error", async () => {
+    const captured = await call(register(), "get", PARTNER_PORTAL_PATHS.resources);
+    expect(captured.status).toBe(200);
+    expect(captured.body).toMatchObject({ ok: true, resources: [] });
+  });
+
+  it("a suspended partner sees an empty library", async () => {
+    const { hub } = await hubWithPublished(["all_partners"]);
+    const routes = register({ partners: [{ ...ALICE, state: "suspended" }, BRUNO] }, false, hub);
+    const captured = await call(routes, "get", PARTNER_PORTAL_PATHS.resources, { id: "member_alice" });
+    expect(captured.status).toBe(200);
+    expect(captured.body.resources).toEqual([]);
+  });
+
+  it("streams the bytes to an entitled partner with no-store and an id-only filename", async () => {
+    const { hub, resourceId } = await hubWithPublished(["research_rep"]);
+    const routes = register({}, false, hub);
+    const captured = await download(routes, { id: "member_alice" }, resourceId);
+    expect(captured.status).toBe(200);
+    expect(captured.headers["Content-Type"]).toBe("application/pdf");
+    expect(captured.headers["Content-Disposition"]).toBe(`attachment; filename="${resourceId}-v1.pdf"`);
+    expect(captured.headers["Cache-Control"]).toBe("no-store");
+    expect(captured.headers["X-Content-Type-Options"]).toBe("nosniff");
+    expect(captured.sent?.equals(PDF)).toBe(true);
+  });
+
+  it("answers 404 (not 403) to a partner outside the audience, and 403 to no member", async () => {
+    const { hub, resourceId } = await hubWithPublished(["research_rep"]);
+    const routes = register({}, false, hub);
+    const bruno = await download(routes, { id: "member_bruno" }, resourceId);
+    expect(bruno.status).toBe(404);
+    expect(bruno.body).toMatchObject({ ok: false, code: "not_found" });
+    expect(bruno.sent).toBeNull();
+    const nobody = await download(routes, null, resourceId);
+    expect(nobody.status).toBe(403);
+    expect(nobody.sent).toBeNull();
+    const stranger = await download(routes, { id: "member_nobody" }, resourceId);
+    expect(stranger.status).toBe(404);
+    expect(stranger.body).toMatchObject({ ok: false, code: "partner_not_found" });
+  });
+
+  it("answers 404 for an unknown resource and for a draft-policy version (which can never be published)", async () => {
+    const { hub, resourceId } = await hubWithPublished(["all_partners"]);
+    const routes = register({}, false, hub);
+    const draft = await hub.createVersion(
+      "admin@xenios.test",
+      {
+        title: "Draft outreach script",
+        purpose: "Not approved material; admin or assigned reviewer only.",
+        usagePolicy: "draft",
+        audience: ["all_partners"],
+        originalFilename: "draft.pdf",
+        idempotencyKey: "upload-key-0002",
+      },
+      { bytes: new Uint8Array(PDF), contentType: "application/pdf" },
+    );
+    if (!draft.ok) throw new Error("fixture draft upload failed");
+    const draftId = draft.resource.resourceId;
+    const draftVersion = draft.resource.versions[0]!.versionId;
+    await hub.review("admin@xenios.test", draftId, draftVersion, { action: "approve_content", reason: "ok", idempotencyKey: "review-d1" });
+    expect(await hub.review("admin@xenios.test", draftId, draftVersion, { action: "publish", idempotencyKey: "review-d2" })).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect((await download(routes, { id: "member_alice" }, draftId)).status).toBe(404);
+    expect((await download(routes, { id: "member_alice" }, "id-none")).status).toBe(404);
+    expect((await download(routes, { id: "member_alice" }, resourceId)).status).toBe(200);
+  });
+
+  it("serializes no storage key, admin identity, or review reason on either door", async () => {
+    const { hub, resourceId } = await hubWithPublished(["all_partners"]);
+    const routes = register({}, false, hub);
+    const library = JSON.stringify((await call(routes, "get", PARTNER_PORTAL_PATHS.resources)).body);
+    const denied = JSON.stringify((await download(routes, { id: "member_bruno" }, "id-none")).body);
+    for (const forbidden of ["storageKey", "resource-library/", "admin@xenios.test", "reviewReason", "uploadIdempotencyKey"]) {
+      expect(library, forbidden).not.toContain(forbidden);
+      expect(denied, forbidden).not.toContain(forbidden);
+    }
+    expect(library).toContain(resourceId);
   });
 });
