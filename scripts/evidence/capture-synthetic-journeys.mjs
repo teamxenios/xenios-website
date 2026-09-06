@@ -67,6 +67,12 @@ export const STATUS_CREDENTIAL_TRANSPORT = Object.freeze({
 });
 const EXPECTED_CAPTURE_COUNT = 20;
 const EXPECTED_ARTIFACT_COUNT = EXPECTED_CAPTURE_COUNT * 2;
+export const CATALOG_HARNESS_PREWARM_READINESS_BUDGET_MS = 90_000;
+const CATALOG_READINESS_DIAGNOSTIC_BUDGET_MS = 1_000;
+const PAGE_CLOSE_CLEANUP_BUDGET_MS = 1_000;
+const CATALOG_PREWARM_DEADLINE_CODE = "CATALOG_PREWARM_DEADLINE";
+const EXACT_CATALOG_HEADING_EXPRESSION =
+  "document.querySelector('h1')?.textContent?.trim() === 'Full catalog'";
 const EXACTLY_ONCE_SYNTHETIC_ASSERTIONS = Object.freeze([
   "EXPECTED_SYNTHETIC_VIEW",
   "LOCAL_ORIGIN_NETWORK_BOUNDARY",
@@ -673,6 +679,237 @@ async function waitForExpression(page, expression, label, timeoutMs = 20000) {
   );
 }
 
+function catalogPrewarmDeadlineError(readinessBudgetMs) {
+  const error = new Error(
+    `catalog harness browser/Vite prewarm exhausted its ${readinessBudgetMs} ms readiness budget`,
+  );
+  error.code = CATALOG_PREWARM_DEADLINE_CODE;
+  return error;
+}
+
+function sanitizeReadinessDiagnostic(value, attemptedUrl) {
+  const rawAttemptedUrl = String(attemptedUrl);
+  const safeAttemptedUrl = sanitizeNetworkUrl(rawAttemptedUrl);
+  return sanitizeEvidenceText(
+    String(value)
+      .split(rawAttemptedUrl)
+      .join(safeAttemptedUrl)
+      .replace(
+        /\b(?:https?|wss?):\/\/[^\s"'<>]+/giu,
+        (url) => sanitizeNetworkUrl(url),
+      ),
+  );
+}
+
+function catalogReadinessBase(page, attemptedUrl) {
+  let pendingRequests = [];
+  try {
+    pendingRequests = [...(page.inflight?.values?.() ?? [])]
+      .slice(0, 5)
+      .map((request) => ({
+        method: String(request?.method ?? "GET").toUpperCase(),
+        type: sanitizeEvidenceText(request?.type ?? "UNKNOWN").slice(0, 40),
+        url: sanitizeNetworkUrl(request?.url ?? ""),
+      }));
+  } catch {
+    pendingRequests = [];
+  }
+  const recentNetworkFailures = Array.isArray(page.network)
+    ? page.network
+      .filter((record) => record?.failed || Number(record?.status) >= 400)
+      .slice(-5)
+      .map((record) => ({
+        method: String(record?.method ?? "GET").toUpperCase(),
+        status: Number(record?.status) || 0,
+        type: sanitizeEvidenceText(record?.type ?? "UNKNOWN").slice(0, 40),
+        url: sanitizeNetworkUrl(record?.url ?? ""),
+        ...(record?.error
+          ? { error: sanitizeEvidenceText(record.error).slice(0, 120) }
+          : {}),
+      }))
+    : [];
+  const recentConsoleErrors = Array.isArray(page.console)
+    ? page.console.slice(-5).map((record) => ({
+      level: sanitizeEvidenceText(record?.level ?? "UNKNOWN").slice(0, 40),
+      text: sanitizeReadinessDiagnostic(record?.text ?? "", attemptedUrl).slice(0, 300),
+      ...(record?.url ? { url: sanitizeNetworkUrl(record.url) } : {}),
+    }))
+    : [];
+  return {
+    attemptedUrl: sanitizeNetworkUrl(attemptedUrl),
+    loadedEventObserved: Boolean(page.loaded),
+    inflightRequests: Number.isInteger(page.inflight?.size)
+      ? page.inflight.size
+      : null,
+    pendingRequests,
+    recentNetworkFailures,
+    recentConsoleErrors,
+  };
+}
+
+async function catalogReadinessSnapshot(
+  page,
+  attemptedUrl,
+  { probeDocument = true } = {},
+) {
+  const base = catalogReadinessBase(page, attemptedUrl);
+  if (!probeDocument) {
+    return {
+      diagnostic: "SKIPPED_READINESS_BUDGET_EXPIRED",
+      currentUrl: null,
+      readyState: null,
+      h1: null,
+      bodyTextLength: null,
+      ...base,
+    };
+  }
+  const timeoutMarker = Symbol("catalog-readiness-diagnostic-timeout");
+  let timeout = null;
+  try {
+    const raw = await Promise.race([
+      page.evaluate(
+        "({ href: location.href, readyState: document.readyState, " +
+          "h1: document.querySelector('h1')?.textContent ?? null, " +
+          "bodyTextLength: document.body?.innerText?.length ?? 0 })",
+      ),
+      new Promise((resolveTimeout) => {
+        timeout = setTimeout(
+          () => resolveTimeout(timeoutMarker),
+          CATALOG_READINESS_DIAGNOSTIC_BUDGET_MS,
+        );
+      }),
+    ]);
+    if (raw === timeoutMarker) {
+      return {
+        diagnostic: "TIMED_OUT",
+        currentUrl: null,
+        readyState: null,
+        h1: null,
+        bodyTextLength: null,
+        ...base,
+      };
+    }
+    return {
+      diagnostic: "AVAILABLE",
+      currentUrl: sanitizeNetworkUrl(raw?.href ?? ""),
+      readyState: sanitizeEvidenceText(raw?.readyState ?? "UNKNOWN").slice(0, 32),
+      h1: raw?.h1 == null ? null : sanitizeEvidenceText(raw.h1).slice(0, 200),
+      bodyTextLength: Number.isInteger(raw?.bodyTextLength)
+        ? raw.bodyTextLength
+        : null,
+      ...base,
+    };
+  } catch (error) {
+    return {
+      diagnostic:
+        "UNAVAILABLE: " +
+        sanitizeReadinessDiagnostic(error?.message ?? error, attemptedUrl).slice(0, 300),
+      currentUrl: null,
+      readyState: null,
+      h1: null,
+      bodyTextLength: null,
+      ...base,
+    };
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
+export async function prewarmCatalogHarness(
+  page,
+  url,
+  { readinessBudgetMs = CATALOG_HARNESS_PREWARM_READINESS_BUDGET_MS } = {},
+) {
+  if (!Number.isInteger(readinessBudgetMs) || readinessBudgetMs < 1) {
+    throw new Error("catalog harness prewarm readiness budget must be a positive integer");
+  }
+  const started = Date.now();
+  const deadline = started + readinessBudgetMs;
+  let deadlineTimer = null;
+  const deadlinePromise = new Promise((_, rejectDeadline) => {
+    deadlineTimer = setTimeout(
+      () => rejectDeadline(catalogPrewarmDeadlineError(readinessBudgetMs)),
+      readinessBudgetMs,
+    );
+  });
+  const readinessOperation = (async () => {
+    const navigation = await page.navigate(url, {
+      loadTimeoutMs: readinessBudgetMs,
+    });
+    const remainingMs = deadline - Date.now();
+    if (remainingMs <= 0) throw catalogPrewarmDeadlineError(readinessBudgetMs);
+    await waitForExpression(
+      page,
+      EXACT_CATALOG_HEADING_EXPRESSION,
+      "exact catalog heading",
+      remainingMs,
+    );
+    return navigation;
+  })();
+  try {
+    const navigation = await Promise.race([readinessOperation, deadlinePromise]);
+    if (Date.now() > deadline) {
+      throw catalogPrewarmDeadlineError(readinessBudgetMs);
+    }
+    return Object.freeze({
+      result: "AUTOMATED_PASS",
+      kind: "BROWSER_VITE_WARMUP",
+      readinessBudgetMs,
+      elapsedMs: Date.now() - started,
+      navigationMs: navigation?.navigationMs ?? null,
+      readiness: Object.freeze({
+        diagnostic: "SUCCESS_PATH_NO_EXTRA_PROBE",
+        attemptedUrl: sanitizeNetworkUrl(url),
+        headingMatch: "EXACT_TRIMMED_TEXT",
+        expectedHeading: "Full catalog",
+        loadedEventObserved: Boolean(page.loaded),
+        inflightRequests: Number.isInteger(page.inflight?.size)
+          ? page.inflight.size
+          : null,
+      }),
+    });
+  } catch (error) {
+    const readinessBudgetExpired =
+      error?.code === CATALOG_PREWARM_DEADLINE_CODE;
+    const readiness = await catalogReadinessSnapshot(page, url, {
+      probeDocument: !readinessBudgetExpired,
+    });
+    const timing = readinessBudgetExpired
+      ? `${readinessBudgetMs} ms readiness budget exhausted; active diagnostics skipped`
+      : `Page.loadEventFired timeout configured to ${readinessBudgetMs} ms; ` +
+        `failure diagnostic budget ${CATALOG_READINESS_DIAGNOSTIC_BUDGET_MS} ms`;
+    throw new Error(
+      "catalog harness browser/Vite prewarm failed (" + timing + "): " +
+        sanitizeReadinessDiagnostic(error?.message ?? error, url).slice(0, 500) +
+        `; readiness=${JSON.stringify(readiness)}`,
+    );
+  } finally {
+    if (deadlineTimer) clearTimeout(deadlineTimer);
+  }
+}
+
+export async function closePageWithinCleanupBudget(
+  page,
+  timeoutMs = PAGE_CLOSE_CLEANUP_BUDGET_MS,
+) {
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1) {
+    throw new Error("page-close cleanup budget must be a positive integer");
+  }
+  let timeout = null;
+  try {
+    return await Promise.race([
+      Promise.resolve()
+        .then(() => page.close())
+        .then(() => true, () => true),
+      new Promise((resolveTimeout) => {
+        timeout = setTimeout(() => resolveTimeout(false), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
 async function waitForSelector(page, selector, timeoutMs = 20000) {
   await waitForExpression(
     page,
@@ -1207,6 +1444,7 @@ async function main(argv = process.argv.slice(2)) {
   let conn = null;
   let page = null;
   let removeBoundary = null;
+  let catalogPrewarm = null;
   const captures = [];
   const blockedRequests = [];
   const observedWebSockets = [];
@@ -1246,13 +1484,25 @@ async function main(argv = process.argv.slice(2)) {
       blockedRequests,
     };
 
+    const catalogHarnessUrl =
+      catalogOrigin + "/src/research/master-offerings/__harness__/catalog-harness.html";
+    // The first Vite transform can exceed the evidence navigation contract on
+    // a cold Windows host. Warm the real page only after the fail-closed local
+    // network boundary is active, then discard its telemetry. The actual
+    // evidence navigation below retains PageSession's ordinary 30-second load
+    // contract and independently requires the exact real heading.
+    catalogPrewarm = await prewarmCatalogHarness(page, catalogHarnessUrl);
+    console.log(
+      "AUTOMATED_PASS catalog-harness/browser-vite-warmup " +
+        catalogPrewarm.elapsedMs + "ms (readiness budget " +
+        catalogPrewarm.readinessBudgetMs + "ms)",
+    );
+
     // Catalog and product detail: real components, stylesheet and deterministic
     // fixture data in the existing unrouted Vite harness.
     resetPageTelemetry(page);
-    await page.navigate(
-      catalogOrigin + "/src/research/master-offerings/__harness__/catalog-harness.html",
-    );
-    await waitForExpression(page, "document.querySelector('h1')?.textContent.includes('Full catalog')", "catalog");
+    await page.navigate(catalogHarnessUrl);
+    await waitForExpression(page, EXACT_CATALOG_HEADING_EXPRESSION, "catalog");
     captures.push(...await captureAtBothWidths(captureContext, CASES.catalog));
 
     resetPageTelemetry(page);
@@ -1593,6 +1843,7 @@ async function main(argv = process.argv.slice(2)) {
           synthetic: true,
           sourceTree: provenance.sourceTree,
           candidateBinding: "EXACT_CLEAN_CHECKOUT_SOURCE_TREE",
+          readinessPrewarm: catalogPrewarm,
         },
         {
           id: "account-portal-preview",
@@ -1626,7 +1877,7 @@ async function main(argv = process.argv.slice(2)) {
     return evidence;
   } finally {
     if (removeBoundary) removeBoundary();
-    if (page) await page.close().catch(() => {});
+    if (page) await closePageWithinCleanupBudget(page);
     if (conn) await conn.close().catch(() => {});
     if (browser) await browser.close().catch(() => {});
     await Promise.all(harnesses.map((harness) => stopHarness(harness)));
