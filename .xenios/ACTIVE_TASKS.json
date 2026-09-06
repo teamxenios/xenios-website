@@ -646,14 +646,15 @@
       "id": "BROWSER-PERF-PROOF",
       "title": "P0-3/P0-4: seeded local browser proof, mobile smoke 430-320, and catalog performance measurement for the manual-order launch",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "claude-fable-browser-perf",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
         "e2e/browser-perf/**"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-21T16:38:03.054Z"
+      "claimedAt": "2026-08-21T16:38:03.054Z",
+      "releasedAt": "2026-09-06T03:52:00.347Z"
     },
     {
       "id": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",

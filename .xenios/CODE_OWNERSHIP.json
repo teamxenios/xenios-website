@@ -287,7 +287,7 @@
         "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
         "e2e/browser-perf/**"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-21T16:38:03.056Z",
       "heartbeatAt": "2026-08-21T16:38:03.056Z"
     },
