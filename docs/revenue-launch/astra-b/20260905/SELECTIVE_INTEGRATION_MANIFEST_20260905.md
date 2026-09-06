@@ -35,3 +35,13 @@ release-readiness and integration-boundary records.
 All listed files are documentation/evidence surfaces. No production code,
 migration, configuration, price, account, payment, communication, or shipment
 authority is transferred by this manifest.
+
+## Ledger discrepancy observed
+
+The current A `CODE_OWNERSHIP.json` records lease
+`cd6d82ff-d27d-45ab-95f4-ab47c2d732dc` for this task as `state: handoff` with
+`integrationSourceSha: d54cdb9cc0bb935af2864e01171c3b077ad8430f`. The separate
+`ACTIVE_TASKS.json` still reports `state: qa`, `acceptedSha: null`, and the older
+`afac265` handoff. Treat the ownership map's `handoff` state as evidence that
+the specialist lease was released for integration, but do not claim final
+acceptance until the shared task ledger is updated consistently.
