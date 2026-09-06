@@ -384,7 +384,7 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // The review password is not partner authority; each page handles sign-in
   // and denial. Do not exempt the rest of the parked partner route family.
   if (normalizedLocation === "/research/partners/links" || normalizedLocation === "/research/partners/dashboard") {
-    return <>{children}</>;
+    return <main>{children}</main>;
   }
   // These exact shared destinations already mount RequireMember in section.tsx.
   // Let that guard preserve sign-in/returnTo instead of showing the review gate.

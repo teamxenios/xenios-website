@@ -34,6 +34,7 @@ describe("referral destinations reach their existing member guard, not the share
     render(<Router hook={location.hook}><ResearchLayout><div>Partner-owned boundary</div></ResearchLayout></Router>);
     expect(document.body.textContent).toContain("Partner-owned boundary");
     expect(document.querySelector('[id="research-password"]')).toBeNull();
+    expect(document.querySelectorAll("main")).toHaveLength(1);
   });
   it.each(["/research/member/cart", "/research/member/products", "/research/member/products/a/extra", "/research/partners/dashboard/extra", "/research/partners/commissions", "/research/partners/links/extra"])("unrelated %s retains the review gate", (path) => {
     const location = memoryLocation({ path });
