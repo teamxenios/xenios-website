@@ -42,6 +42,13 @@ Duration    3.31 seconds
 Combined with the focused pass above, the reviewed ASTRA-B client/admin slice
 has 17 passing test files and 354 passing tests across the two commands.
 
+The current B checkout also passed the fast static gates:
+
+```text
+npm run check                       PASS (tsc)
+npm run verify:route-uniqueness    PASS — 423 static Express API registrations across 414 call sites
+```
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
