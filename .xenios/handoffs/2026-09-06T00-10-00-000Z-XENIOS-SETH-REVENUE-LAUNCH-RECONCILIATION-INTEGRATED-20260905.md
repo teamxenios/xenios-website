@@ -66,3 +66,59 @@ mutation occurred.
 The next session should preserve this exact candidate and records, refresh the
 heartbeat, and keep the production release candidate unset until Samuel gives
 an exact-SHA production decision with prechecks and rollback conditions.
+
+## Superseding final integration checkpoint — 2026-09-06
+
+The earlier browser-blocked checkpoint is superseded by the exact-tree
+Fable qualification below. The integrated local runtime candidate is now
+`28e4b7802c84c01b4433040a36e622ce6bbf27de` with tree
+`17b204350602f8be22b6b722eddd5d5a1c421930`, pushed on
+`codex/xenios-seth-revenue-launch-20260905`.
+
+### Browser/toolchain acceptance
+
+Fable ran the browser harness in the clean detached checkout
+`C:\\tmp\\xenios-fable-release-28e4b78-final-007` and wrote the packet to
+`C:\\tmp\\xenios-fable-synthetic-28e4b78-final-007`. The exact manifest is
+`synthetic-journey-evidence.json` (672,136 bytes,
+SHA-256 `6e123d7e1703117f262087e7f6949c5590ebeb2aabd2495d7e8c3023e56d9e8b`).
+Its 40-file artifact inventory (20 PNG and 20 text files) hashes to
+`05e021f240db8c95e22370dca156da9ff950483db0ad6b8fbf42b653f475e377` with
+zero missing, extra, or mismatched files. The 336-file built-dist inventory
+hashes to `3c79e3c8ea4638ed6b49adb785c11f8ae033920019a7ee3c804d2446af398972`.
+
+The run produced 20/20 captures: 16 `AUTOMATED_PASS`, four
+`AUTOMATED_PASS_WITH_NOTES` for the two forged-reference denials and two
+exact no-partner denials, zero automated failures, zero undeclared failures,
+and zero external mutations. All 20 boundary assertions passed, no screenshot
+was truncated, and the bounded cold-start catalog/Vite warmup passed in
+13,668 ms. The packet is explicitly `claimScope=UI_PRESENTATION_ONLY`;
+`piiPhiReview=MANUAL_PENDING_BY_DESIGN` remains open for the required human
+review. Cleanup reported zero capture runners, Chrome processes, harness
+processes, or listeners.
+
+### Focused and full-suite validation
+
+The current focused record is green: reconciliation route/Product Control
+mount 59/59, account portal UX 105/105, canonical evidence 28/28, CDP
+import/transport 5/5, Chrome readiness 4/4, combined evidence 32/32, and the
+prewarm/evidence aggregate 91/91. Typecheck, build, route census, Xenios OS
+validation, and the generated Site System of Record check all pass.
+
+The latest parallel full-suite observation is recorded honestly as non-green
+under host contention (873 passed files, two timed-out files, five skipped;
+13,488 passed tests, three failed, 59 skipped, plus one worker-start error).
+The two release-control migration-DAG cases pass serially at a 120-second
+timeout (2/2), and the roster-privacy case also passes serially (1/1); no
+assertion regression reproduced. This does not constitute a zero-failure full
+suite gate.
+
+### Production boundary
+
+Live service `srv-d8s9vej7uimc7384dfcg`, deploy
+`dep-dad08h740ujc73aprfcg`, and live SHA
+`db5a2d447114c1e8a14185a9865ded50ee3f1ac6` remain unchanged. No production
+deployment, migration apply, price activation, customer or partner grant,
+invitation, notification, email, payment, shipment, or other provider/database
+mutation occurred. The candidate remains local and gated pending an explicit
+exact-SHA production decision with prechecks, postchecks, rollback, and smoke.
