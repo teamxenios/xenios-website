@@ -1523,7 +1523,7 @@
       "id": "XENIOS-SETH-FABLE-PARTNER-MAIN-LANDMARK-20260906",
       "title": "Repair partner route main landmark and verify exact browser seam",
       "priority": "P1",
-      "state": "qa",
+      "state": "done",
       "owner": "fable-browser-unblock-20260905",
       "paths": [
         "client/src/research/layout.tsx",
@@ -1539,7 +1539,10 @@
         "sha": "e79324a0b0fb54010533716c45c8d5c46cfaa5de",
         "file": ".xenios/handoffs/2026-09-06T03-48-05-610Z-XENIOS-SETH-FABLE-PARTNER-MAIN-LANDMARK-20260906-fable-browser-unblock-20260905.md",
         "at": "2026-09-06T03:48:05.627Z"
-      }
+      },
+      "acceptedSha": "e79324a0b0fb54010533716c45c8d5c46cfaa5de",
+      "acceptedBy": "codex-seth-revenue-launch-20260905",
+      "acceptedAt": "2026-09-06T03:50:13.667Z"
     }
   ]
 }

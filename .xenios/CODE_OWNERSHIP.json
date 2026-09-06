@@ -1490,7 +1490,7 @@
         "client/src/research/layout.tsx",
         "client/src/research/recommendation/layout-referral.test.tsx"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-09-06T03:38:54.370Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
     }
