@@ -49,3 +49,8 @@ healthy and not suspended, with auto-deploy **off**. Its latest live deploy is
 `dep-dad08h740ujc73aprfcg`, commit
 `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, status `live`. No deploy was
 triggered by this observation.
+
+The public health endpoint `https://xenios-website.onrender.com/api/health`
+returned HTTP 200 with `status: "Xenios API is running"`; the response reports
+`commerceEnabled: false`, consistent with the closed production price/commerce
+gate. This was a GET-only observation with no mutation.
