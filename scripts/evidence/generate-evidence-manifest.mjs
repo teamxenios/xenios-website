@@ -131,6 +131,26 @@ const REQUIRED_HTTP_ASSERTIONS = [
 const EXPECTED_FORGED_STATUS_BODY_SHA256 = createHash("sha256")
   .update('{"error":"not_found","message":"The request was not found."}')
   .digest("hex");
+const EXPECTED_PARTNER_NOT_FOUND_BODY_SHA256 = createHash("sha256")
+  .update('{"ok":false,"code":"partner_not_found"}')
+  .digest("hex");
+const EXPECTED_404_CONSOLE_TEXT =
+  "Failed to load resource: the server responded with a status of 404 (Not Found)";
+const PARTNER_ABSENCE_EVIDENCE_KEYS = [
+  "consoleCount",
+  "consoleText",
+  "declaredExpectedFailure",
+  "externalMutations",
+  "fixture",
+  "kind",
+  "localServerBodySha256",
+  "localServerErrorCode",
+  "localServerMethod",
+  "localServerStatus",
+  "localServerUrl",
+  "networkCount",
+  "resourceType",
+];
 const NEUTRAL_STATUS_TRUTH_KEYS = [
   "credentialPresent",
   "credentialSource",
@@ -660,8 +680,59 @@ function validStatusTruthEvidence(record) {
   );
 }
 
+function validPartnerAbsenceEvidence(record, harnessOrigins) {
+  const isOrdersEmpty = record?.surface === "orders" && record?.state === "empty";
+  if (!isOrdersEmpty) {
+    return record?.partnerAbsenceEvidence === null ||
+      record?.partnerAbsenceEvidence === undefined;
+  }
+
+  let actualUrl;
+  let localServerUrl;
+  try {
+    actualUrl = new URL(record.actualUrl);
+    localServerUrl = new URL(record.partnerAbsenceEvidence?.localServerUrl);
+  } catch {
+    return false;
+  }
+  const proof = record.partnerAbsenceEvidence;
+  const accountOrigin = harnessOrigins?.account;
+  return Boolean(
+    accountOrigin &&
+    record.serverHarness === "account-portal-preview" &&
+    record.syntheticFixtureId === "account-portal-empty-persona" &&
+    record.logicalRoute === "/research/account/orders" &&
+    actualUrl.origin === accountOrigin &&
+    actualUrl.pathname === "/research/account/orders" &&
+    !actualUrl.search &&
+    !actualUrl.hash &&
+    localServerUrl.toString() === `${accountOrigin}/api/research/partner/me` &&
+    hasExactKeys(proof, PARTNER_ABSENCE_EVIDENCE_KEYS) &&
+    proof.kind === "OWNED_PARTNER_RELATION_ABSENT" &&
+    proof.fixture === record.syntheticFixtureId &&
+    proof.localServerMethod === "GET" &&
+    proof.localServerStatus === 404 &&
+    proof.localServerErrorCode === "partner_not_found" &&
+    proof.localServerBodySha256 === EXPECTED_PARTNER_NOT_FOUND_BODY_SHA256 &&
+    proof.resourceType === "Fetch" &&
+    proof.networkCount === 1 &&
+    proof.consoleCount === 1 &&
+    proof.consoleText === EXPECTED_404_CONSOLE_TEXT &&
+    proof.declaredExpectedFailure === true &&
+    proof.externalMutations === 0
+  );
+}
+
+const supplementalCaptureHasDeclaredDenial = (record) =>
+  (record.surface === "order-status" &&
+    record.state === "neutral-error" &&
+    record.statusTruthEvidence?.kind === "VALID_SHAPED_REFERENCE_DENIED") ||
+  (record.surface === "orders" &&
+    record.state === "empty" &&
+    record.partnerAbsenceEvidence?.kind === "OWNED_PARTNER_RELATION_ABSENT");
+
 function validSupplementalAssertionResults(record) {
-  const expectedDenial = record.surface === "order-status" && record.state === "neutral-error";
+  const expectedDenial = supplementalCaptureHasDeclaredDenial(record);
   for (const assertion of record.assertions) {
     if (["CONSOLE_CLEAN", "NETWORK_CLEAN"].includes(assertion.id)) {
       const expected = expectedDenial ? "PASS_WITH_NOTES" : "PASS";
@@ -676,7 +747,7 @@ function validSupplementalAssertionResults(record) {
 }
 
 function validSupplementalSignalSummary(record) {
-  const expectedDenial = record.surface === "order-status" && record.state === "neutral-error";
+  const expectedDenial = supplementalCaptureHasDeclaredDenial(record);
   const matches = (assertionId, summary) => {
     const result = assertionResult(record, assertionId);
     return expectedDenial
@@ -1222,6 +1293,7 @@ function isValidSupplementalCapture(
       assertionResult(record, "EXTERNAL_MUTATIONS") === "PASS" &&
       validCompletedFocusWalk(record) &&
       validStatusTruthEvidence(record) &&
+      validPartnerAbsenceEvidence(record, harnessOrigins) &&
       validSupplementalSignalSummary(record) &&
       validSupplementalAssertionResults(record) &&
       validScreenshotCoverage(record, artifactExists) &&

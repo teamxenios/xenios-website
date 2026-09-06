@@ -11,6 +11,7 @@ import {
   clearSyntheticPersonaState,
   evaluateSyntheticRouteStateContract,
   forgedStatusFailureDeclaration,
+  partnerNotFoundFailureDeclaration,
   parseArgs,
   safeChildEnvironment,
   sanitizeEvidenceText,
@@ -172,7 +173,7 @@ describe("capture-synthetic-journeys", () => {
     );
   });
 
-  it("requires exactly twenty captures and distinguishes the two expected denial notes", () => {
+  it("requires exactly twenty captures and distinguishes all four expected denial notes", () => {
     const clean = Array.from({ length: 20 }, () => ({ verdict: "AUTOMATED_PASS" }));
     expect(summariseCaptures(clean)).toMatchObject({
       captures: 20,
@@ -185,18 +186,37 @@ describe("capture-synthetic-journeys", () => {
       result: "AUTOMATED_PASS",
       externalMutations: 0,
     });
-    const expectedDenials = Array.from({ length: 2 }, () => ({
+    const expectedReferenceDenials = Array.from({ length: 2 }, () => ({
       verdict: "AUTOMATED_PASS_WITH_NOTES",
       statusTruthEvidence: { kind: "VALID_SHAPED_REFERENCE_DENIED" },
     }));
+    const expectedPartnerAbsences = Array.from({ length: 2 }, () => ({
+      verdict: "AUTOMATED_PASS_WITH_NOTES",
+      partnerAbsenceEvidence: { kind: "OWNED_PARTNER_RELATION_ABSENT" },
+    }));
     expect(
-      summariseCaptures([...clean.slice(0, 18), ...expectedDenials]),
+      summariseCaptures([
+        ...clean.slice(0, 16),
+        ...expectedReferenceDenials,
+        ...expectedPartnerAbsences,
+      ]),
     ).toMatchObject({
       strictClean: false,
       completeWithExpectedDenialNotes: true,
       zeroUndeclaredFailures: true,
+      declaredDenialPassWithNotes: 4,
+      declaredReferenceDenialPassWithNotes: 2,
+      declaredPartnerAbsencePassWithNotes: 2,
       result: "AUTOMATED_PASS_WITH_NOTES",
     });
+    expect(
+      summariseCaptures([
+        ...clean.slice(0, 16),
+        ...expectedReferenceDenials,
+        ...expectedPartnerAbsences.slice(0, 1),
+        { verdict: "AUTOMATED_PASS_WITH_NOTES", partnerAbsenceEvidence: { kind: "OTHER" } },
+      ]).result,
+    ).toBe("AUTOMATED_FAIL");
     expect(summariseCaptures(clean.slice(0, 19))).toMatchObject({
       expectedCaptureCountMatched: false,
       result: "AUTOMATED_FAIL",
@@ -269,6 +289,19 @@ describe("capture-synthetic-journeys", () => {
     });
     expect(declaration.responseBodySha256).toMatch(/^[a-f0-9]{64}$/u);
     expect(sanitizeEvidenceText(declaration.url)).not.toMatch(/XRR-\d{8}-[A-F0-9]{10}/u);
+  });
+
+  it("predeclares only the empty persona's exact canonical partner absence", () => {
+    expect(partnerNotFoundFailureDeclaration("http://127.0.0.1:5202")).toEqual({
+      url: "http://127.0.0.1:5202/api/research/partner/me",
+      method: "GET",
+      status: 404,
+      count: 1,
+      resourceType: "Fetch",
+      responseBodySha256: "87d28f7ea8ea041e07906726a8d93d61da18844f7fdc7dee8ea804c143c51876",
+      consoleCount: 1,
+      consoleText: "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    });
   });
 
   it("builds an exact forty-file candidate-bound inventory", () => {
