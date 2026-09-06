@@ -170,3 +170,8 @@ The selective-handoff planner verified B’s exact pushed source `d04da477f7b282
 Patch 02 remains deferred to B’s recovered Resource Hub implementation. The package checker sees the current public Resources page at its exact base, but applying it would risk replacing newer local Resource Hub work; no overwrite was performed.
 
 The resulting records tip is `1bab7c9`; Site System of Record write/check passes with 219 routes and 15 capabilities. Production remains at `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`; no deployment, migration, price activation, grant, notification, payment, shipment, or provider/database mutation occurred.
+
+## Post-repair full-suite qualification — 2026-09-06
+
+The complete pinned serial repository suite was rerun after patch 01 and selective Astra-B evidence integration at source SHA `372142dca45525445a40145244e46f69fc464ca5`: **876 files passed, 5 skipped; 13,507 tests passed, 59 skipped; 0 failures** in 708.02 seconds. The detailed record is `docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md`.
+
