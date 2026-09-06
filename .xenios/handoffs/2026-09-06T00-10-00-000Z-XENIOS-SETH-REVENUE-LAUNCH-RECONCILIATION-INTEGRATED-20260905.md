@@ -122,3 +122,19 @@ deployment, migration apply, price activation, customer or partner grant,
 invitation, notification, email, payment, shipment, or other provider/database
 mutation occurred. The candidate remains local and gated pending an explicit
 exact-SHA production decision with prechecks, postchecks, rollback, and smoke.
+
+### Additional matrix diagnostic (not acceptance evidence)
+
+An isolated nine-width public-route matrix was started against the same exact
+candidate for diagnostic census only. It was stopped after 230 run records and
+692 files (122 pass, 24 notes, 84 failures) because the broad route contract
+set is unbounded for this release window and includes known legacy copy and
+classification expectations. In particular, `/research` and
+`/research/access-hub` assert superseded route text, while the unavailable
+`/research/early-access` response is classified differently by the current
+body telemetry. No `browser-matrix.json` or PII-scan envelope was produced;
+the partial directory remains preserved at
+`C:\\tmp\\xenios-fable-browser-matrix-28e4b78-final-008` and is explicitly
+excluded from acceptance. Its dedicated preview, capture, and Chrome process
+tree was stopped after the partial census, with no production or provider
+contact.
