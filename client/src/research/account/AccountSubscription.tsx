@@ -10,7 +10,7 @@ export default function AccountSubscription() {
   return (
     <AccountPortalShell
       eyebrow="Historical records"
-      title="Billing history"
+      title="Membership, separated from Care."
       lead="Review recorded plans, billing states, and receipts. Paid membership is not required for approved customer access; product subscriptions and Care remain separate."
     >
       <AccountResourceBoundary snapshot={snapshot}>

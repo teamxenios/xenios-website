@@ -37,7 +37,7 @@ export function AccountSubscriptionView({ data }: { data: SubscriptionPageDto })
         </div>
         <dl className="mt-6">
           <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Billing status</dt><dd className="account-data-value">{billing.label}</dd></div>
-          <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Recorded renewal evidence</dt><dd className="account-data-value">{membership ? formatMembershipRenewal(membership) : "Renewal schedule unavailable"}</dd></div>
+          <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Next billing / renewal</dt><dd className="account-data-value">{membership ? formatMembershipRenewal(membership) : "Renewal schedule unavailable"}</dd></div>
           <div className="account-data-row" style={{ borderColor: "#4c4a45" }}><dt className="account-data-label" style={{ color: "#c8c4bb" }}>Recorded billing method</dt><dd className="account-data-value">{!membership ? "Unavailable" : noBillingRelationship ? "No billing method" : !billingMethodKnown ? "Billing method unavailable" : membership.manualBilling ? "Manual / offline" : "Historical provider pathway"}</dd></div>
         </dl>
         <Link className="btn btn-on-dark btn-ghost mt-6" href={ACCOUNT_PORTAL_ROUTES.support}>Request billing support</Link>
