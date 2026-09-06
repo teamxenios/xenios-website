@@ -60,6 +60,7 @@ const SYNTHETIC_REFERENCE_REDACTION = "SYNTHETIC-REFERENCE-REDACTED";
 const FORGED_STATUS_REFERENCE = "XRR-20000101-0000000000";
 const FORGED_STATUS_RESPONSE_BODY =
   '{"error":"not_found","message":"The request was not found."}';
+const PARTNER_NOT_FOUND_RESPONSE_BODY = '{"ok":false,"code":"partner_not_found"}';
 export const STATUS_CREDENTIAL_TRANSPORT = Object.freeze({
   NONE: "NONE",
   REQUEST_HEADER: "x-xenios-order-status-token request header",
@@ -421,20 +422,28 @@ export function summariseCaptures(captures) {
     (capture) => capture.verdict === "AUTOMATED_PASS_WITH_NOTES",
   ).length;
   const automatedFail = captures.filter((capture) => capture.verdict === "AUTOMATED_FAIL").length;
-  const declaredDenialPassWithNotes = captures.filter(
+  const declaredReferenceDenialPassWithNotes = captures.filter(
     (capture) =>
       capture.verdict === "AUTOMATED_PASS_WITH_NOTES" &&
       capture.statusTruthEvidence?.kind === "VALID_SHAPED_REFERENCE_DENIED",
   ).length;
+  const declaredPartnerAbsencePassWithNotes = captures.filter(
+    (capture) =>
+      capture.verdict === "AUTOMATED_PASS_WITH_NOTES" &&
+      capture.partnerAbsenceEvidence?.kind === "OWNED_PARTNER_RELATION_ABSENT",
+  ).length;
+  const declaredDenialPassWithNotes =
+    declaredReferenceDenialPassWithNotes + declaredPartnerAbsencePassWithNotes;
   const strictClean = captures.length === EXPECTED_CAPTURE_COUNT
     && automatedPass === EXPECTED_CAPTURE_COUNT
     && automatedPassWithNotes === 0
     && automatedFail === 0;
   const completeWithExpectedDenialNotes = captures.length === EXPECTED_CAPTURE_COUNT
     && automatedFail === 0
-    && automatedPassWithNotes === 2
-    && declaredDenialPassWithNotes === 2
-    && automatedPass === EXPECTED_CAPTURE_COUNT - 2;
+    && automatedPassWithNotes === 4
+    && declaredReferenceDenialPassWithNotes === 2
+    && declaredPartnerAbsencePassWithNotes === 2
+    && automatedPass === EXPECTED_CAPTURE_COUNT - 4;
   return {
     captures: captures.length,
     expectedCaptures: EXPECTED_CAPTURE_COUNT,
@@ -443,6 +452,8 @@ export function summariseCaptures(captures) {
     automatedPassWithNotes,
     automatedFail,
     declaredDenialPassWithNotes,
+    declaredReferenceDenialPassWithNotes,
+    declaredPartnerAbsencePassWithNotes,
     strictClean,
     completeWithExpectedDenialNotes,
     zeroUndeclaredFailures: completeWithExpectedDenialNotes || strictClean,
@@ -744,6 +755,23 @@ export function forgedStatusFailureDeclaration(step1Origin) {
   });
 }
 
+/** Exact canonical denial for an authenticated customer with no owned partner relation. */
+export function partnerNotFoundFailureDeclaration(accountOrigin) {
+  return Object.freeze({
+    url: accountOrigin + "/api/research/partner/me",
+    method: "GET",
+    status: 404,
+    count: 1,
+    resourceType: "Fetch",
+    responseBodySha256: createHash("sha256")
+      .update(PARTNER_NOT_FOUND_RESPONSE_BODY)
+      .digest("hex"),
+    consoleCount: 1,
+    consoleText:
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  });
+}
+
 export function assertSyntheticAssertionSchema(assertions) {
   const expectedIds = [
     ...EXACTLY_ONCE_SYNTHETIC_ASSERTIONS,
@@ -870,6 +898,7 @@ async function captureCurrentPage({
   reviewer,
   blockedRequests,
   statusTruthEvidence = null,
+  partnerAbsenceEvidence = null,
 }) {
   const height = width <= 768 ? 844 : 900;
   await page.setViewport({ width, height, deviceScaleFactor: 1, mobile: width <= 768 });
@@ -1016,6 +1045,7 @@ async function captureCurrentPage({
     verdict,
     focusWalk: walk,
     ...(statusTruthEvidence ? { statusTruthEvidence } : {}),
+    ...(partnerAbsenceEvidence ? { partnerAbsenceEvidence } : {}),
   };
 }
 
@@ -1252,7 +1282,29 @@ async function main(argv = process.argv.slice(2)) {
 
     // Clear only auth/persona state for the loopback preview origin. Preserve
     // its service worker and static cache while switching to the authoritative
-    // empty persona through the same real sign-in journey.
+    // empty persona through the same real sign-in journey. This persona has no
+    // owned partner relation, so its navigation probe must receive the exact
+    // canonical production 404; any status, body, count or URL drift still fails.
+    const missingPartnerFailure = partnerNotFoundFailureDeclaration(accountOrigin);
+    const ordersEmptyDescriptor = Object.freeze({
+      ...CASES.ordersEmpty,
+      expectedHttpFailures: Object.freeze([missingPartnerFailure]),
+    });
+    const ordersEmptyPartnerAbsence = Object.freeze({
+      kind: "OWNED_PARTNER_RELATION_ABSENT",
+      fixture: CASES.ordersEmpty.fixture,
+      localServerUrl: missingPartnerFailure.url,
+      localServerMethod: missingPartnerFailure.method,
+      localServerStatus: missingPartnerFailure.status,
+      localServerErrorCode: "partner_not_found",
+      localServerBodySha256: missingPartnerFailure.responseBodySha256,
+      resourceType: missingPartnerFailure.resourceType,
+      networkCount: missingPartnerFailure.count,
+      consoleCount: missingPartnerFailure.consoleCount,
+      consoleText: missingPartnerFailure.consoleText,
+      declaredExpectedFailure: true,
+      externalMutations: 0,
+    });
     await clearSyntheticPersonaState(page, accountOrigin);
     resetPageTelemetry(page);
     await signInAccountPersona(
@@ -1261,7 +1313,10 @@ async function main(argv = process.argv.slice(2)) {
       "fixture2@preview.invalid",
       "/research/account/orders",
     );
-    captures.push(...await captureAtBothWidths(captureContext, CASES.ordersEmpty));
+    captures.push(...await captureAtBothWidths(
+      { ...captureContext, partnerAbsenceEvidence: ordersEmptyPartnerAbsence },
+      ordersEmptyDescriptor,
+    ));
 
     // Step 1: establish only the local preview session and required agreement,
     // then exercise the production wizard. The preview submission repository,

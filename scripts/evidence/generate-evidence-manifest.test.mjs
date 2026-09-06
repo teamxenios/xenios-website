@@ -27,6 +27,11 @@ const LOCK_HASH = "e".repeat(64);
 const FORGED_STATUS_BODY_SHA256 = createHash("sha256")
   .update('{"error":"not_found","message":"The request was not found."}')
   .digest("hex");
+const PARTNER_NOT_FOUND_BODY_SHA256 = createHash("sha256")
+  .update('{"ok":false,"code":"partner_not_found"}')
+  .digest("hex");
+const NOT_FOUND_CONSOLE_TEXT =
+  "Failed to load resource: the server responded with a status of 404 (Not Found)";
 const HARNESS_ORIGINS = Object.freeze({
   catalog: "http://127.0.0.1:5173",
   account: "http://127.0.0.1:5190",
@@ -567,6 +572,41 @@ function statusCapture(widthCssPx, state, overrides = {}) {
     capture.networkResult = "DECLARED_EXPECTED_FAILURE";
     capture.verdict = "AUTOMATED_PASS_WITH_NOTES";
   }
+  return { ...capture, ...overrides };
+}
+
+function ordersEmptyCapture(widthCssPx, overrides = {}) {
+  const capture = syntheticCapture(widthCssPx, {
+    surface: "orders",
+    state: "empty",
+    syntheticFixtureId: "account-portal-empty-persona",
+    logicalRoute: "/research/account/orders",
+    actualUrl: `${HARNESS_ORIGINS.account}/research/account/orders`,
+    serverHarness: "account-portal-preview",
+    artifactPath: `synthetic/captures/orders-empty-${widthCssPx}.png`,
+    textArtifactPath: `synthetic/captures/orders-empty-${widthCssPx}.text.txt`,
+    partnerAbsenceEvidence: {
+      kind: "OWNED_PARTNER_RELATION_ABSENT",
+      fixture: "account-portal-empty-persona",
+      localServerUrl: `${HARNESS_ORIGINS.account}/api/research/partner/me`,
+      localServerMethod: "GET",
+      localServerStatus: 404,
+      localServerErrorCode: "partner_not_found",
+      localServerBodySha256: PARTNER_NOT_FOUND_BODY_SHA256,
+      resourceType: "Fetch",
+      networkCount: 1,
+      consoleCount: 1,
+      consoleText: NOT_FOUND_CONSOLE_TEXT,
+      declaredExpectedFailure: true,
+      externalMutations: 0,
+    },
+  });
+  for (const id of ["CONSOLE_CLEAN", "NETWORK_CLEAN"]) {
+    capture.assertions.find((assertion) => assertion.id === id).result = "PASS_WITH_NOTES";
+  }
+  capture.consoleResult = "DECLARED_EXPECTED_FAILURE";
+  capture.networkResult = "DECLARED_EXPECTED_FAILURE";
+  capture.verdict = "AUTOMATED_PASS_WITH_NOTES";
   return { ...capture, ...overrides };
 }
 
@@ -1344,6 +1384,65 @@ describe("buildManifest strict evidence inspection", () => {
       duplicateRoutes: ["/research/orders"],
       duplicateRawHtmlPaths: ["raw-html/research-orders.html"],
     });
+  });
+
+  it("accepts only the exact declared partner absence for the empty orders persona", () => {
+    const template = makeTemplate();
+    template.requiredRepresentativeJourneys.push(
+      { surface: "orders", state: "empty", widthsCssPx: [1440, 390] },
+    );
+    const supplemental = makeSupplemental();
+    supplemental.captures.push(ordersEmptyCapture(1440), ordersEmptyCapture(390));
+    supplemental.artifactInventory = supplementalArtifactInventory(supplemental.captures);
+
+    expect(build({ template, supplemental }).syntheticJourneyEvidence.result)
+      .toBe("AUTOMATED_PASS");
+
+    const firstEmpty = (candidate) => candidate.captures.find(
+      (capture) => capture.surface === "orders" && capture.state === "empty",
+    );
+    const invalidMutations = [
+      (candidate) => { delete firstEmpty(candidate).partnerAbsenceEvidence; },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.localServerMethod = "POST"; },
+      (candidate) => {
+        firstEmpty(candidate).partnerAbsenceEvidence.localServerUrl =
+          `${HARNESS_ORIGINS.account}/api/research/partner/other`;
+      },
+      (candidate) => {
+        firstEmpty(candidate).partnerAbsenceEvidence.localServerUrl =
+          "http://127.0.0.1:5999/api/research/partner/me";
+      },
+      (candidate) => {
+        firstEmpty(candidate).partnerAbsenceEvidence.localServerUrl += "?forged=true";
+      },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.localServerStatus = 200; },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.localServerBodySha256 = HASH; },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.networkCount = 2; },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.consoleCount = 2; },
+      (candidate) => {
+        firstEmpty(candidate).partnerAbsenceEvidence.fixture = "account-portal-rich-persona";
+      },
+      (candidate) => { firstEmpty(candidate).partnerAbsenceEvidence.unexpected = true; },
+      (candidate) => {
+        candidate.captures.find((capture) => capture.state === "rich")
+          .partnerAbsenceEvidence = structuredClone(firstEmpty(candidate).partnerAbsenceEvidence);
+      },
+      (candidate) => {
+        const capture = firstEmpty(candidate);
+        for (const id of ["CONSOLE_CLEAN", "NETWORK_CLEAN"]) {
+          capture.assertions.find((assertion) => assertion.id === id).result = "PASS";
+        }
+        capture.consoleResult = "CLEAN";
+        capture.networkResult = "CLEAN";
+        capture.verdict = "AUTOMATED_PASS";
+      },
+    ];
+    for (const mutate of invalidMutations) {
+      const forged = structuredClone(supplemental);
+      mutate(forged);
+      expect(build({ template, supplemental: forged }).syntheticJourneyEvidence.result)
+        .toBe("INVALID_EVIDENCE");
+    }
   });
 
   it("requires the exact declared forged-neutral and server-verified status journeys", () => {
