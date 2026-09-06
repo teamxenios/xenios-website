@@ -24,9 +24,16 @@ existing product and price reads remain unchanged when the review is closed.
 
 - Commit: `4c85065cc7be8dab369222a163b80ba8ab7318c1`
 - Commit tree: `eba326426db3f491b4f7b3e94d00378789a2043e`
-- Products Admin + reconciliation adapter/panel tests: **44/44 PASS**
+- Products Admin + reconciliation adapter/panel tests: **45/45 PASS**
 - TypeScript `tsc --noEmit`: **PASS**
 - `git diff --check`: **PASS**
+
+The additional integration assertion covers an `AVAILABLE` projection: a
+formulation `PENDING` fact and missing supplier/identity evidence render as
+their server-supplied states, while the mounted controls contain no approve,
+activate, or purchase action. It is recorded in commit
+`0ebb6d76cdb5d974b5c283c5ec43330a18bb343e` (tree
+`90ca0c59b2ada13af79bdfd231d73338552333db`).
 
 The server projection and route remain ASTRA-A's authority. This client slice
 does not claim that source facts, supplier confirmations, prices, or products
