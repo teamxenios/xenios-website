@@ -31,3 +31,15 @@ existing product and price reads remain unchanged when the review is closed.
 The server projection and route remain ASTRA-A's authority. This client slice
 does not claim that source facts, supplier confirmations, prices, or products
 are approved or purchasable, and it performs no production mutation.
+
+## Browser evidence boundary
+
+After integration, a fresh synthetic production-shape run was attempted against
+exact head `cd5500fe903e601fc967e536b08d2458e4304df9` using the pinned Node
+`v20.19.0` and npm `10.8.2` toolchain. The required clean preview build stopped
+before browser startup because its mandatory `npm ci --no-audit --no-fund`
+could not unlink the locked native module
+`node_modules/bufferutil/prebuilds/win32-x64/bufferutil.node` (`EPERM`, Windows
+error `-4048`). No browser capture or journey pass is claimed; this remains an
+environment/toolchain blocker, not product evidence. No production endpoint was
+contacted and no mutation occurred.
