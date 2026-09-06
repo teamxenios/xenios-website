@@ -769,7 +769,11 @@ export function assertSyntheticAssertionSchema(assertions) {
   ]) {
     const assertion = assertions.find((candidate) => candidate.id === id);
     if (assertion?.result !== "PASS") {
-      throw new Error(`synthetic capture requires ${id}=PASS`);
+      // Name the failing route and carry the assertion's own detail: a bare
+      // "requires X=PASS" hides which page and which contract clause failed.
+      throw new Error(
+        `synthetic capture requires ${id}=PASS (${assertion?.result ?? "MISSING"}): ${assertion?.detail ?? "no detail"}`,
+      );
     }
   }
 }
