@@ -61,3 +61,5 @@ focused set completed with **15 test files passed and 191 tests passed** in
 completeness, price reads and tier guards, Product Control price review and
 admin projections, the reconciliation route/adapter/panel, and quantity-tier
 readiness. No activation or mutation path was invoked.
+
+`node scripts/agentic/xenios-os.mjs validate` also returned `{ "ok": true }`.
