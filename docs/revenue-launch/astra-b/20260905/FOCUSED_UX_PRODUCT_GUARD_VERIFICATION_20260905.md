@@ -75,6 +75,21 @@ production SHA `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, 219 routes, and 15
 capabilities. The B checkout warning is therefore a branch-record freshness
 condition, not evidence that the current A integration tree is stale.
 
+The catalog/Product Control requirement-specific regression also passed on this
+checkout:
+
+```text
+Test Files  15 passed (15)
+Tests       207 passed (207)
+Failures    0
+Duration    9.55 seconds
+```
+
+This pass covers formulation holds, quantity tiers, pricing reads, catalog
+reconciliation/completeness/boundaries, approved reconciliation adapters,
+Product Control read fan-out, quantum activation readiness, and the ASTRA-B
+reconciliation/price-review panels.
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
