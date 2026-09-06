@@ -18,7 +18,7 @@
 - Database prechecks: PASS.
 - Disposable migration rehearsals: PASS (35 approved-customer checks; 57 partner-lifecycle checks).
 - Approval-to-login browser journey: PASS in bounded nonproduction qualification. The dedicated harness used isolated admin/customer Chromium profiles and the real inspection, approval, claim, token-validation, Auth session, account, sign-out, and protected-route UI paths over local synthetic boundaries. No live approval, claim, email, notification, migration, deploy, config change, payment, or purchase occurred.
-- The passing new-account run is recorded in `docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json` (SHA-256 `3d6a7caaf1ef8b7b486ba77db569a71a85692e2de2f48da94459c475654ad096`).
+- The passing new-account run is recorded in `docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json` (SHA-256 `eac234d815ead9464aa23e7a1787a757ea70a382356800de1a84a64c7b2bf2ab`).
 - Resource Hub/B work remains separate and is not integrated or required for this account/partner slice.
 
 Next action is Samuel's exact-SHA production authorization. Do not apply migrations or deploy without that approval.
