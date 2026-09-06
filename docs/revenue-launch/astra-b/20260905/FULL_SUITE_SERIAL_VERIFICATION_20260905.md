@@ -40,3 +40,6 @@ gates remain separate and are not claimed by this run.
 - `npm run build`: PASS — Vite transformed 2,265 modules; server bundle emitted
   (`dist/index.cjs` 1.6 MB), with only the existing dynamic-import and chunk-size
   warnings.
+- `npm run site:record:check`: PASS — source SHA `f681afe6e19bede4de75fb4e7b811fa09a0bb339`,
+  production SHA `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, 219 routes, 15
+  capabilities.
