@@ -4,7 +4,7 @@
   "sethRevenueLaunch": {
     "status": "ACTIVE_PAIRED_LOCAL_ENGINEERING_VALIDATED_NO_PRODUCTION_AUTHORITY",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
-    "productionReverifiedAt": "2026-09-05T18:03:20.102167+00:00",
+    "productionReverifiedAt": "2026-09-05T13:03:20.102167-05:00",
     "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
     "renderService": "srv-d8s9vej7uimc7384dfcg",
     "renderDeploy": "dep-dad08h740ujc73aprfcg",
@@ -21,7 +21,7 @@
     "sourceApprovalVerified": false,
     "supplierConfirmationCheckedMappedRows": 34,
     "supplierCurrentConfirmationCount": 0,
-    "supplierObservedAt": "2026-09-05T04:41:46.263961+00:00",
+    "supplierObservedAt": "2026-09-04T23:41:46.263961-05:00",
     "authenticatedRevenueJourneyVerified": false,
     "runtimeEnvironmentVerified": false,
     "sourceGateComplete": true,
@@ -30,7 +30,7 @@
     "systemOfRecordCheck": "PASS",
     "systemOfRecordSourceSha": "fc3f579f60c1375f34b7b7f31e9d14960f38269e",
     "implementationLeaseReleased": false,
-    "migrationHistoryObservedAt": "2026-09-05T17:41:52.924387+00:00",
+    "migrationHistoryObservedAt": "2026-09-05T12:41:52.924387-05:00",
     "migrationHistoryVersionCounts": {
       "local": 35,
       "remote": 40,
@@ -47,12 +47,12 @@
     "renderResumeRead": "2026-09-05 resume: same live SHA/deploy, autoDeploy off; exact tool observation timestamp not retained",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
     "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "13c971ceaeb20bf60c8061fc7d0739101499a668",
+    "latestEngineeringCheckpointSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
     "acceptanceIdentityDiagnosis": {
-      "observedAt": "2026-09-05T18:13:40.776543+00:00",
+      "observedAt": "2026-09-05T13:13:40.776543-05:00",
       "exactEmailCandidates": 2,
       "authScanComplete": true,
       "authMatches": 0,
@@ -81,12 +81,12 @@
     "partnerLifecycleCandidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
     "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
     "productionAccountPartnerSchemaReadSha256": "9254b6d9b7e8717c42b23e9752cb2eaccf90d43d9f1812d77eac44990d21cf77",
-    "productionAccountPartnerSchemaObservedAt": "2026-09-05T22:43:06.5168+00:00",
+    "productionAccountPartnerSchemaObservedAt": "2026-09-05T17:43:06.5168-05:00",
     "productionAuthoritiesPresent": false,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
-      "candidateSha": "13c971ceaeb20bf60c8061fc7d0739101499a668",
-      "candidateTree": "e1e0abb247d3913a6c058a0fbd24b8cb6e5f26e8",
+      "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "candidateTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
       "recordsTipSha": "548fa754ea0bdafc6a3ad4fbdb3204d60be25149",
       "recordsTipTree": "20b399ffab3a78799a457fdf79c80cbb0db01733",
       "integratedSlices": [
@@ -107,7 +107,8 @@
         "42ab494 Chrome DevToolsActivePort transient EBUSY/EPERM readiness retry",
         "1d46e06 exact empty-orders partner_absence evidence declaration and manifest validator",
         "28e4b78 bounded catalog/Vite prewarm for cold browser navigation",
-        "13c971c partner-route main landmark wrapper and regression (Fable e79324a)"
+        "13c971c partner-route main landmark wrapper and regression (Fable e79324a)",
+        "ff3c496 partner production-port data-integrity hardening and durable submission reference"
       ],
       "focusedTests": "client 208/208; pricing review 94/94; server 58/58; integrated closure 426/426; partner copy 4/4; referral browser boundary 12/12; reconciliation route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; CDP import/transport 5/5; Chrome readiness 4/4; combined evidence 32/32; empty-partner declaration/manifest 54/54; prewarm/evidence aggregate 91/91; partner main-landmark seam 74/74",
       "releaseControlPlane": "51 passed, 1 intentional skip",
@@ -119,10 +120,10 @@
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
       "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; Chrome readiness 4/4; prewarm/evidence aggregate 91/91; build re-run PASS; partner main-landmark seam 74/74",
-      "fullSuite": "PASS serial: 876 passed files, 5 skipped; 13,507 passed tests, 59 skipped; zero failures; 780.75 seconds.",
+      "fullSuite": "PASS serial post-repair: 876 passed files, 5 skipped; 13,507 passed tests, 59 skipped; zero failures; 708.02 seconds.",
       "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=120000 --no-file-parallelism --maxWorkers=1",
-      "fullSuiteObservedAt": "2026-09-05T23:12:03-05:00",
-      "fullSuiteDurationSeconds": 780.75,
+      "fullSuiteObservedAt": "2026-09-06T08:55:16-05:00",
+      "fullSuiteDurationSeconds": 708.02,
       "productionMutated": false,
       "productionAuthoritiesPresent": false,
       "candidateMigrationsApplied": false,
@@ -162,7 +163,7 @@
         "startedAt": "2026-09-06T02:53:42.074Z",
         "generatedAt": "2026-09-06T02:54:47.635Z"
       },
-      "fullSuiteValidationHeadSha": "096d70c17c823fa6ad3fefc7a7d72f91edd54a39",
+      "fullSuiteValidationHeadSha": "372142dca45525445a40145244e46f69fc464ca5",
       "fullSuiteParallelObservation": "Earlier parallel run under host contention: 873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped; one worker-start error. Superseded by the serial zero-failure run."
     }
   },
