@@ -16,6 +16,40 @@ const CANDIDATE_RELATIVE = [
   "chrome-mac/Chromium.app/Contents/MacOS/Chromium",
 ];
 
+const RETRYABLE_DEVTOOLS_PORT_READ_ERRORS = new Set(["EBUSY", "EPERM"]);
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Wait for Chromium to publish a complete DevToolsActivePort file. */
+export async function waitForDevToolsPort({
+  child,
+  portFile,
+  timeoutMs,
+  pollIntervalMs = 50,
+  fileExists = existsSync,
+  readText = (path) => readFileSync(path, "utf8"),
+  now = Date.now,
+  wait = sleep,
+}) {
+  const started = now();
+  while (now() - started < timeoutMs) {
+    if (child.exitCode !== null) break;
+    if (fileExists(portFile)) {
+      try {
+        const text = readText(portFile).trim();
+        const first = text.split(/\r?\n/)[0];
+        if (/^\d+$/.test(first)) return Number(first);
+      } catch (error) {
+        if (!RETRYABLE_DEVTOOLS_PORT_READ_ERRORS.has(error?.code)) throw error;
+      }
+    }
+    await wait(pollIntervalMs);
+  }
+  return null;
+}
+
 export function playwrightBrowsersRoot() {
   if (process.env.PLAYWRIGHT_BROWSERS_PATH) return process.env.PLAYWRIGHT_BROWSERS_PATH;
   if (process.platform === "win32") return join(process.env.LOCALAPPDATA ?? "", "ms-playwright");
@@ -84,20 +118,7 @@ export async function launchChromium({ chromePath, timeoutMs = 20000, extraArgs 
   child.stderr.on("data", (d) => (stderr += String(d)));
 
   const portFile = join(userDataDir, "DevToolsActivePort");
-  const started = Date.now();
-  let port = null;
-  while (Date.now() - started < timeoutMs) {
-    if (child.exitCode !== null) break;
-    if (existsSync(portFile)) {
-      const text = readFileSync(portFile, "utf8").trim();
-      const first = text.split(/\r?\n/)[0];
-      if (/^\d+$/.test(first)) {
-        port = Number(first);
-        break;
-      }
-    }
-    await new Promise((r) => setTimeout(r, 50));
-  }
+  const port = await waitForDevToolsPort({ child, portFile, timeoutMs });
   if (!port) {
     child.kill();
     throw new Error(`Chromium did not expose a DevTools port within ${timeoutMs} ms. stderr: ${stderr.slice(0, 800)}`);
