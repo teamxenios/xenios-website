@@ -4,6 +4,7 @@ import {
   RECONCILIATION_REVIEW_PATH,
   type EvidenceReference,
   type EvidenceState,
+  type ExactIdentity,
   type FactKind,
   type ReconciliationReviewResponse,
   type ReconciliationReviewRow,
@@ -49,16 +50,19 @@ export function reconciliationReviewResponseValid(
       !Array.isArray(value.rows) ||
       !isSource(value.source)) return false;
   const coverage = value.coverage;
+  const projectedAt = value.projectedAt as string;
   if (value.rows.length !== coverage.returnedRows) return false;
   const seen = new Set<string>();
   return value.rows.every((row) => {
-    if (!isReviewRow(row) || seen.has(row.sourceId)) return false;
-    seen.add(row.sourceId);
+    if (!isReviewRow(row, projectedAt)) return false;
+    const reviewRow = row as ReconciliationReviewRow;
+    if (seen.has(reviewRow.sourceId)) return false;
+    seen.add(reviewRow.sourceId);
     return true;
   });
 }
 
-function isReviewRow(value: unknown): value is ReconciliationReviewRow {
+function isReviewRow(value: unknown, projectedAt: string): value is ReconciliationReviewRow {
   if (!isRecord(value) || !nonEmptyString(value.sourceId) || !nonEmptyString(value.launchItemId) ||
       !nonEmptyString(value.sourcePointer) || !sha256(value.sourceRowSha256) ||
       !nonEmptyString(value.productLabel) || !nonEmptyString(value.configurationLabel) ||
@@ -66,23 +70,30 @@ function isReviewRow(value: unknown): value is ReconciliationReviewRow {
       !isNullableIdentity(value.exactIdentity) || !isNullableIdentity(value.proposedIdentity) ||
       !isFacts(value.facts)) return false;
   const facts = value.facts;
-  if (!RECONCILIATION_FACT_KINDS.every((kind) => isReviewFact(kind, facts[kind]))) return false;
-  return ((facts.identity_binding as ReviewFact).state === "CONFIRMED") === (value.exactIdentity !== null);
+  const exactIdentity = value.exactIdentity as ExactIdentity | null;
+  if (!RECONCILIATION_FACT_KINDS.every((kind) => isReviewFact(kind, facts[kind], exactIdentity, projectedAt))) return false;
+  return ((facts.identity_binding as ReviewFact).state === "CONFIRMED") === (exactIdentity !== null);
 }
 
 function isFacts(value: unknown): value is Record<FactKind, ReviewFact> {
   return isRecord(value);
 }
 
-function isReviewFact(kind: FactKind, value: unknown): value is ReviewFact {
+function isReviewFact(kind: FactKind, value: unknown, exactIdentity: ExactIdentity | null, projectedAt: string): value is ReviewFact {
   if (!isRecord(value) || !isEvidenceState(value.state) || !nonEmptyString(value.reason) ||
-      !nullableTimestamp(value.observedAt) || !isNullableEvidence(value.evidence)) return false;
+      !nullableTimestamp(value.observedAt) || !isNullableEvidence(value.evidence, exactIdentity, projectedAt)) return false;
+  if (value.evidence !== null) {
+    if (Date.parse(value.evidence.observedAt) > Date.parse(projectedAt)) return false;
+    if (value.evidence.reviewedAt !== null && Date.parse(value.evidence.reviewedAt) > Date.parse(value.evidence.observedAt)) return false;
+  }
   if (value.state === "UNKNOWN") {
     return isUnknownReason(value.reason);
   }
   if (value.state === "PENDING") return value.reason === "review_requested" && value.evidence !== null;
   if (value.state === "CONFIRMED") {
-    if (value.evidence === null || typeof value.observedAt !== "string" || value.evidence.observedAt > value.observedAt) return false;
+    if (exactIdentity === null || value.evidence === null || typeof value.observedAt !== "string" ||
+        value.evidence.observedAt > value.observedAt ||
+        (value.evidence.expiresAt !== null && Date.parse(value.evidence.expiresAt) <= Date.parse(projectedAt))) return false;
     if (value.reason === "exact_identity_reverified") {
       return kind === "identity_binding" && value.evidence.authority === "source_reconciliation";
     }
@@ -92,22 +103,24 @@ function isReviewFact(kind: FactKind, value: unknown): value is ReviewFact {
   if (value.state === "EXPIRED") {
     if (value.reason !== "validity_ended" || value.evidence === null ||
         value.evidence.expiresAt === null || typeof value.observedAt !== "string") return false;
-    return Date.parse(value.evidence.expiresAt) <= Date.parse(value.observedAt);
+    return Date.parse(value.evidence.expiresAt) <= Date.parse(projectedAt);
   }
   return value.reason === "explicit_rejection" && value.evidence !== null;
 }
 
-function isEvidence(value: unknown): value is EvidenceReference {
+function isEvidence(value: unknown, exactIdentity: ExactIdentity | null, projectedAt: string): value is EvidenceReference {
   return isRecord(value) &&
     (value.authority === "source_reconciliation" || value.authority === "required_input" || value.authority === "supplier_confirmation") &&
     nonEmptyString(value.recordId) && nonEmptyString(value.recordRevision) &&
     typeof value.observedAt === "string" && nullableTimestamp(value.reviewedAt) &&
     nullableString(value.reviewerLabel) && nullableTimestamp(value.expiresAt) &&
-    nullableString(value.href);
+    nullableString(value.href) &&
+    (value.href === null || (exactIdentity !== null && value.href === `/admin/research/products/${exactIdentity.productId}`)) &&
+    Date.parse(value.observedAt as string) <= Date.parse(projectedAt);
 }
 
-function isNullableEvidence(value: unknown): value is EvidenceReference | null {
-  return value === null || isEvidence(value);
+function isNullableEvidence(value: unknown, exactIdentity: ExactIdentity | null, projectedAt: string): value is EvidenceReference | null {
+  return value === null || isEvidence(value, exactIdentity, projectedAt);
 }
 
 function isSource(value: Record<string, unknown>): boolean {
