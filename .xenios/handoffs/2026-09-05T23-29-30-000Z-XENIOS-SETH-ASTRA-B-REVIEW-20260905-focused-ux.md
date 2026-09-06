@@ -4,10 +4,10 @@
 - session: `codex-seth-astra-b-20260905`
 - owner: ASTRA-B
 - source branch: `codex/xenios-seth-astra-b-20260905`
-- source commit: `bee5cc384b2922e07edeb6f93ac2f8764f1c3ded`
+- source commit: `7d299d0facafe798252adea102db14c19298d5ba`
 - evidence: `docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md`
-- evidence Git blob: `a662a90bb7e633bf4712fe20da5117c830e8e064`
-- evidence SHA-256 (working-tree bytes): `7D6D6D43744373449F0D81FB75B59957509306B65B7C69649C079D84FE9CD43E`
+- evidence Git blob: `79c15fa89fc2f9b78c202776dab4e1464ff4b215`
+- evidence SHA-256 (working-tree bytes): `FEF3F0A858446D390685662CF9C7C079689DA0AA56EE9529B3E3DDFFB11EAE13`
 
 ## Review result
 
@@ -16,7 +16,9 @@ and 299 tests with zero failures in 47.20 seconds. An additional partner
 application/adapter command passed 2 files and 55 tests with zero failures in
 3.31 seconds. The checkout also passed `npm run check`, route uniqueness
 verification (423 static registrations across 414 call sites), and the
-production build (2,265 Vite modules; `dist/index.cjs` 1.7 MB). Together these cover the leased Product Control
+production build (2,265 Vite modules; `dist/index.cjs` 1.7 MB). The OS
+corpus validator passed, while the site-record check remains open because
+three A-owned generated records are stale. Together these cover the leased Product Control
 pricing/reconciliation review, customer/admin access UX, partner application
 request shape, partner guards, account-portal continuity, and
 recovery-isolation seams.
