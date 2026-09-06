@@ -1366,7 +1366,9 @@
         "server/release-control-plane.test.ts",
         "server/research/e2e/account-membership-catalog.acceptance.test.ts",
         "server/research/commerce/acceptance.test.ts",
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/research/partners/portal-production.ts",
+        "server/research/partners/portal-production.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1516,7 +1518,7 @@
       "parentTask": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
       "baseSha": "734d0b01e50bfa694eb77dd4fb170404225eb229",
       "scopeNote": "Founder explicitly added one bounded Fable browser/toolchain specialist. Diagnose the capture runner's possible ws/bufferutil self-lock, test the smallest lazy-import repair only if causal, and execute real browser evidence in a disposable isolated checkout. Preserve mandatory npm ci, real WebSocket transport, auth/network boundaries, fingerprints and cleanup. No application features, migrations, production access, deployment, price activation, account grant, notification, payment or shipment.",
-      "createdAt": "2026-09-06T00:30:00.000Z",
+      "createdAt": "2026-09-06T00:30:00Z",
       "claimedAt": "2026-09-06T00:33:59.087Z",
       "releasedAt": "2026-09-06T03:34:42.826Z"
     },

@@ -205,7 +205,7 @@ describe("the production port scopes every read to the acting partner", () => {
   });
 
   it("writes a submission only in the submitted state, under the acting partner", async () => {
-    const { client, queries } = fakeClient({ research_content_assets: [] });
+    const { client, queries } = fakeClient({ research_content_assets: [{ id: "a1" }] });
     const result = await createSupabasePartnerPortalPort(client).submitContent("p_alice", {
       title: "Reel",
       description: "About the program.",

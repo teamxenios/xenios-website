@@ -116,12 +116,39 @@ function asCommissionState(value: unknown): CommissionState | null {
 }
 
 function text(value: unknown): string | null {
-  return typeof value === "string" && value.length > 0 ? value : null;
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
+/** Missing or corrupt money is unavailable, never a plausible zero. */
 function cents(value: unknown): number {
-  const parsed = typeof value === "number" ? value : Number(value);
-  return Number.isFinite(parsed) && parsed >= 0 ? Math.floor(parsed) : 0;
+  const parsed = typeof value === "number"
+    ? value
+    : typeof value === "string" && /^(0|[1-9][0-9]*)$/.test(value)
+      ? Number(value)
+      : NaN;
+  if (!Number.isSafeInteger(parsed) || parsed < 0) {
+    // The route translates this to an unavailable state. Do not include row
+    // contents, customer identifiers, or financial values in the error.
+    throw new Error("Partner financial record is invalid");
+  }
+  return parsed;
+}
+
+/** A timestamp must be explicit and parseable; never infer an event time. */
+function recordedAt(value: unknown): string | null {
+  const valueText = text(value);
+  if (valueText === null) return null;
+  const parts = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(?:Z|[+-]\d{2}(?::?\d{2})?)$/.exec(valueText);
+  if (parts === null) return null;
+  const [year, month, day, hour, minute, second] = parts.slice(1).map(Number);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (year < 1 || month < 1 || month > 12 || day < 1 || day > days[month - 1] ||
+      hour > 23 || minute > 59 || second > 59) return null;
+  // PostgreSQL timestamptz may use a space and a +HH offset. Normalize only
+  // for validation; return the original recorded timestamp without rewriting it.
+  const normalized = valueText.replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00");
+  return Number.isFinite(Date.parse(normalized)) ? valueText : null;
 }
 
 type Row = Record<string, unknown>;
@@ -176,6 +203,9 @@ export function createSupabasePartnerPortalPort(
       const state = asPartnerState(row.state);
       const partnerId = text(row.id);
       if (role === null || state === null || partnerId === null) return null;
+      if (row.member_id !== memberId) {
+        throw new Error("Partner identity scope mismatch");
+      }
       return {
         partnerId,
         memberId,
@@ -184,8 +214,8 @@ export function createSupabasePartnerPortalPort(
         identityVerified: row.identity_verified === true,
         taxStatus: asClearance(row.tax_status),
         payoutStatus: asClearance(row.payout_status),
-        certifiedAt: text(row.certified_at),
-        activatedAt: text(row.activated_at),
+        certifiedAt: recordedAt(row.certified_at),
+        activatedAt: recordedAt(row.activated_at),
       };
     },
 
@@ -198,15 +228,15 @@ export function createSupabasePartnerPortalPort(
       return ((found.data ?? []) as Row[]).flatMap((row) => {
         const key = text(row.agreement_key);
         const version = text(row.agreement_version);
-        if (key === null || version === null) return [];
-        return [
-          {
-            agreementKey: key,
-            agreementVersion: version,
-            decision: row.decision === "declined" ? ("declined" as const) : ("accepted" as const),
-            decidedAt: text(row.decided_at) ?? "",
-          },
-        ];
+        const decision = row.decision;
+        const decidedAt = recordedAt(row.decided_at);
+        if (key === null || version === null || decidedAt === null ||
+            (decision !== "accepted" && decision !== "declined")) {
+          // A malformed later decision must not disappear and reveal an older
+          // acceptance. Fail the projection rather than inventing acceptance.
+          throw new Error("Partner agreement record is invalid");
+        }
+        return [{ agreementKey: key, agreementVersion: version, decision, decidedAt }];
       });
     },
 
@@ -219,8 +249,10 @@ export function createSupabasePartnerPortalPort(
       return ((found.data ?? []) as Row[]).flatMap((row) => {
         const key = text(row.module_key);
         const version = text(row.module_version);
-        const completedAt = text(row.completed_at);
-        if (key === null || version === null || completedAt === null) return [];
+        const completedAt = recordedAt(row.completed_at);
+        if (key === null || version === null || completedAt === null) {
+          throw new Error("Partner training record is invalid");
+        }
         return [{ moduleKey: key, moduleVersion: version, completedAt }];
       });
     },
@@ -276,7 +308,9 @@ export function createSupabasePartnerPortalPort(
         const id = text(row.id);
         const state = asCommissionState(row.state);
         const createdAt = text(row.created_at);
-        if (id === null || state === null || createdAt === null) return [];
+        if (id === null || state === null || createdAt === null) {
+          throw new Error("Partner commission record is invalid");
+        }
         return [
           {
             id,
@@ -300,7 +334,9 @@ export function createSupabasePartnerPortalPort(
         const id = text(row.id);
         const state = text(row.state);
         const builtAt = text(row.built_at);
-        if (id === null || state === null || builtAt === null) return [];
+        if (id === null || state === null || builtAt === null) {
+          throw new Error("Partner payout record is invalid");
+        }
         return [
           {
             batchId: id,
@@ -327,12 +363,13 @@ export function createSupabasePartnerPortalPort(
         // A row outside the resolved membership set is dropped, so even a wrong
         // filter upstream cannot widen what this partner sees.
         if (id === null || name === null || owner === null || !allowed.has(id)) return [];
-        return [{ orgId: id, name, state: text(row.state) ?? "active", ownerPartnerId: owner }];
+        return [{ orgId: id, name, state: text(row.state) ?? "unknown", ownerPartnerId: owner }];
       });
     },
 
     async eventsForOrganizations(orgIds): Promise<readonly PortalOrganizationEventRow[]> {
       if (orgIds.length === 0) return [];
+      const allowed = new Set(orgIds);
       const found = await client
         .from(ORGANIZATION_EVENTS)
         .select("id, organization_id, name, campaign, starts_at")
@@ -343,6 +380,9 @@ export function createSupabasePartnerPortalPort(
         const organizationId = text(row.organization_id);
         const name = text(row.name);
         if (id === null || organizationId === null || name === null) return [];
+        // Defense in depth mirrors organizationsFor: the returned projection
+        // cannot widen the caller's authorized organization set.
+        if (!allowed.has(organizationId)) return [];
         return [{ eventId: id, organizationId, name, campaign: text(row.campaign), startsAt: text(row.starts_at) }];
       });
     },
@@ -386,11 +426,20 @@ export function createSupabasePartnerPortalPort(
         return {
           ok: false,
           code: "capability_disabled",
-          message: "Content submissions are not reachable right now, so nothing was submitted.",
+          message: "We could not confirm your submission. Contact support before retrying.",
         };
       }
       const id = text((inserted.data as Row | null)?.id);
-      return { ok: true, submissionId: id ?? "" };
+      if (id === null) {
+        // The insert may already have committed. Neither claim success nor
+        // promise that nothing was stored; discourage a duplicate submission.
+        return {
+          ok: false,
+          code: "capability_disabled",
+          message: "We could not confirm your submission. Contact support before retrying.",
+        };
+      }
+      return { ok: true, submissionId: id };
     },
 
     async approvedLibrary() {
