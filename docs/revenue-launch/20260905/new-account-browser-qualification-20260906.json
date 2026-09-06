@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-06T16:10:00Z",
+  "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "candidateTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
+  "harness": "scripts/preview-account-portal.ts",
+  "harnessRevision": "d9af713",
+  "environment": "local loopback disposable preview only",
+  "productionMutated": false,
+  "externalCommunication": false,
+  "simulatedBoundaries": [
+    "local synthetic Auth/data fixtures only",
+    "no provider, email, storage, database, Supabase, or production request",
+    "local notification capture was unavailable in the existing account-only harness"
+  ],
+  "initialAbsence": "Not reached: the harness has no fresh-admin inspection fixture that can be established through the actual admin interface.",
+  "status": "BLOCK",
+  "firstFailedStep": {
+    "step": 1,
+    "action": "Admin browser: inspect and approve the fresh customer through the actual admin interface.",
+    "expected": "A real admin session opens the account-access diagnosis, inspects the exact email, and exposes the approval form.",
+    "actual": "The isolated account-portal preview only provides fixed customer personas; it does not provide an admin-authenticated Supabase session, the /admin/research/members inspection API, or a local notification inbox.",
+    "responsiblePath": "scripts/preview-account-portal.ts",
+    "owner": "account/partner qualification harness"
+  },
+  "stepsCompleted": [],
+  "cleanup": "Temporary qualification server and scripts stopped/removed; no credentials, tokens, claim URLs, or session data retained.",
+  "qualificationImpact": "The continuous new-account browser journey remains unproven. Existing-account and partner-isolation evidence remain valid and separate."
+}

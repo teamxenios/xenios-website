@@ -96,12 +96,14 @@ If an authorized migration precheck or postcheck fails, stop before the next mig
 - Verify notification outbox processing without claiming provider delivery.
 - Keep purchases, payments, price activation, grants, and shipments separately authorized.
 
-The local browser evidence proves the existing-account sign-in, account home,
-partner workspace, refresh, rendered sign-out, sign-back-in, and cross-partner
-selector boundary over synthetic preview Auth/data. The new-account approval and
-claim path passes the real-handler acceptance suite but remains unproven as one
-browser sequence; deployment qualification therefore remains blocked until that
-bounded journey is captured.
+The qualification addendum records the local browser evidence and rollback
+settings. Existing-account sign-in, account home, partner workspace, refresh,
+rendered sign-out, sign-back-in, and cross-partner selector boundary pass over
+synthetic preview Auth/data. The separate new-account browser run is recorded as
+blocked at step 1 because the account-only preview has no admin-authenticated
+inspection surface or local notification inbox; a direct approval call would not
+meet the required actual-admin-interface proof. Deployment qualification remains
+blocked until that bounded journey is captured.
 
 ## Remaining external blockers
 

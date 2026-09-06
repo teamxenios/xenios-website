@@ -18,6 +18,7 @@
 - Database prechecks: PASS.
 - Disposable migration rehearsals: PASS (35 approved-customer checks; 57 partner-lifecycle checks).
 - Approval-to-login browser journey: BLOCK for full closure. The new-account approval/ownership-verified claim path passes the real-handler acceptance suite but has not been proven in the same browser sequence as normal login. No live approval, claim, email, notification, migration, deploy, config change, payment, or purchase occurred.
+- The bounded new-account attempt is recorded separately in `docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json` (SHA-256 `b8afdcf7a36e5224bc01c3f8c7192147ca9e743702f3ba88f0e885dd7a18f1ab`): first failure is step 1 because the account-only preview has no admin-authenticated inspection surface or local notification inbox.
 - Resource Hub/B work remains separate and is not integrated or required for this account/partner slice.
 
 Next action is a new bounded browser run for the new-account approval-to-claim sequence, followed by Samuel's exact-SHA production authorization. Do not apply migrations or deploy without that approval.
