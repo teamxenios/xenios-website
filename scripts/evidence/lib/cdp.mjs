@@ -1,6 +1,5 @@
 // Minimal Chrome DevTools Protocol client on top of `ws` (flat session mode).
 import { createHash } from "node:crypto";
-import WebSocket from "ws";
 
 export class CdpConnection {
   constructor(wsUrl) {
@@ -11,6 +10,13 @@ export class CdpConnection {
   }
 
   async open() {
+    // `ws` is loaded here, not at module scope: importing it can load the
+    // native `bufferutil` addon, and a parent process that holds that addon
+    // makes the clean `npm ci` it later spawns in the same checkout fail on
+    // Windows (EPERM unlinking bufferutil.node). Deferring the import to the
+    // first real connection keeps the exact ws transport and lets the clean
+    // install/build finish before any native module is mapped from the tree.
+    const { default: WebSocket } = await import("ws");
     this.ws = new WebSocket(this.wsUrl, { perMessageDeflate: false, maxPayload: 256 * 1024 * 1024 });
     await new Promise((resolve, reject) => {
       this.ws.once("open", resolve);
