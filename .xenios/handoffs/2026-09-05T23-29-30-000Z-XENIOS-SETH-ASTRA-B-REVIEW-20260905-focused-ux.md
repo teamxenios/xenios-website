@@ -4,10 +4,10 @@
 - session: `codex-seth-astra-b-20260905`
 - owner: ASTRA-B
 - source branch: `codex/xenios-seth-astra-b-20260905`
-- source commit: `f7ca54e1f3d8389019a10020f62aa1b250cc6bcd`
+- source commit: `a7a395fa1d74b5774467d2f3833d1957c15ef21a`
 - evidence: `docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md`
-- evidence Git blob: `58c219321c6c74a8db04f41d5cbafe9b05e85028`
-- evidence SHA-256 (working-tree bytes): `B884CB0AF5CF4C352A1009E205A8879C218B6FAD5D9655368CE38C3FA30A8B87`
+- evidence Git blob: `2e026d7ec29e07997f0c50715d5aa2cdc1621beb`
+- evidence SHA-256 (working-tree bytes): `B59CE487FBD8039E995E88D7740B4AE0DEFE308A9B50486BBDC34F63C0F5935D`
 
 ## Review result
 
@@ -23,6 +23,11 @@ tree passes that same check. Together these cover the leased Product Control
 pricing/reconciliation review, customer/admin access UX, partner application
 request shape, partner guards, account-portal continuity, and
 recovery-isolation seams.
+
+The catalog/Product Control requirement-specific pass also covered formulation
+holds, quantity tiers, pricing reads, catalog reconciliation/completeness/
+boundaries, approved adapters, and quantum activation readiness (15 files, 207
+tests, zero failures).
 
 ## Boundary
 
