@@ -9,6 +9,7 @@ import {
   buildArtifactInventory,
   classifyBrowserBoundaryRequest,
   clearSyntheticPersonaState,
+  emptyPersonaPartnerFailureDeclaration,
   evaluateSyntheticRouteStateContract,
   forgedStatusFailureDeclaration,
   parseArgs,
@@ -172,7 +173,7 @@ describe("capture-synthetic-journeys", () => {
     );
   });
 
-  it("requires exactly twenty captures and distinguishes the two expected denial notes", () => {
+  it("requires exactly twenty captures and distinguishes every declared note", () => {
     const clean = Array.from({ length: 20 }, () => ({ verdict: "AUTOMATED_PASS" }));
     expect(summariseCaptures(clean)).toMatchObject({
       captures: 20,
@@ -185,17 +186,99 @@ describe("capture-synthetic-journeys", () => {
       result: "AUTOMATED_PASS",
       externalMutations: 0,
     });
+    const denialEvidence = {
+      kind: "VALID_SHAPED_REFERENCE_DENIED",
+      referenceShape: "XRR-YYYYMMDD-10_HEX",
+      credentialSource: "ABSENT",
+      credentialTransport: STATUS_CREDENTIAL_TRANSPORT.NONE,
+      credentialPresent: false,
+      localServerMethod: "GET",
+      localServerStatus: 404,
+      localServerErrorCode: "not_found",
+      localServerBodySha256: forgedStatusFailureDeclaration(
+        "http://127.0.0.1:5219",
+      ).responseBodySha256,
+      referenceRendered: false,
+      requestDetailsRendered: false,
+      declaredExpectedFailure: true,
+      externalMutations: 0,
+    };
+    const partnerAbsenceEvidence = {
+      kind: "EMPTY_PERSONA_PARTNER_RELATION_ABSENT",
+      endpoint: "/api/research/partner/me",
+      method: "GET",
+      status: 404,
+      code: "partner_not_found",
+      count: 1,
+      responseBodySha256:
+        "87d28f7ea8ea041e07906726a8d93d61da18844f7fdc7dee8ea804c143c51876",
+      declaredExpectedFailure: true,
+      externalMutations: 0,
+    };
     const expectedDenials = Array.from({ length: 2 }, () => ({
       verdict: "AUTOMATED_PASS_WITH_NOTES",
-      statusTruthEvidence: { kind: "VALID_SHAPED_REFERENCE_DENIED" },
+      statusTruthEvidence: { ...denialEvidence },
     }));
+    const expectedPartnerAbsences = Array.from({ length: 2 }, () => ({
+      verdict: "AUTOMATED_PASS_WITH_NOTES",
+      partnerAbsenceEvidence: { ...partnerAbsenceEvidence },
+    }));
+    expect(
+      summariseCaptures([
+        ...clean.slice(0, 16),
+        ...expectedDenials,
+        ...expectedPartnerAbsences,
+      ]),
+    ).toMatchObject({
+      strictClean: false,
+      completeWithExpectedDenialNotes: false,
+      completeWithExpectedNotes: true,
+      declaredDenialPassWithNotes: 2,
+      declaredPartnerAbsencePassWithNotes: 2,
+      zeroUndeclaredFailures: true,
+      result: "AUTOMATED_PASS_WITH_NOTES",
+    });
     expect(
       summariseCaptures([...clean.slice(0, 18), ...expectedDenials]),
     ).toMatchObject({
-      strictClean: false,
       completeWithExpectedDenialNotes: true,
-      zeroUndeclaredFailures: true,
-      result: "AUTOMATED_PASS_WITH_NOTES",
+      completeWithExpectedNotes: false,
+      zeroUndeclaredFailures: false,
+      result: "AUTOMATED_FAIL",
+    });
+    const dualTagged = Array.from({ length: 2 }, () => ({
+      verdict: "AUTOMATED_PASS_WITH_NOTES",
+      statusTruthEvidence: { ...denialEvidence },
+      partnerAbsenceEvidence: { ...partnerAbsenceEvidence },
+    }));
+    const unrelatedNotes = Array.from({ length: 2 }, () => ({
+      verdict: "AUTOMATED_PASS_WITH_NOTES",
+    }));
+    expect(
+      summariseCaptures([...clean.slice(0, 16), ...dualTagged, ...unrelatedNotes]),
+    ).toMatchObject({
+      unclassifiedPassWithNotes: 4,
+      zeroUndeclaredFailures: false,
+      result: "AUTOMATED_FAIL",
+    });
+    expect(
+      summariseCaptures([
+        ...clean.slice(0, 16),
+        ...expectedDenials,
+        expectedPartnerAbsences[0],
+        {
+          ...expectedPartnerAbsences[1],
+          partnerAbsenceEvidence: {
+            ...partnerAbsenceEvidence,
+            endpoint: "/api/research/partner/dashboard",
+          },
+        },
+      ]),
+    ).toMatchObject({
+      declaredPartnerAbsencePassWithNotes: 1,
+      unclassifiedPassWithNotes: 1,
+      zeroUndeclaredFailures: false,
+      result: "AUTOMATED_FAIL",
     });
     expect(summariseCaptures(clean.slice(0, 19))).toMatchObject({
       expectedCaptureCountMatched: false,
@@ -269,6 +352,23 @@ describe("capture-synthetic-journeys", () => {
     });
     expect(declaration.responseBodySha256).toMatch(/^[a-f0-9]{64}$/u);
     expect(sanitizeEvidenceText(declaration.url)).not.toMatch(/XRR-\d{8}-[A-F0-9]{10}/u);
+  });
+
+  it("predeclares only the empty persona's exact no-partner response", () => {
+    const declaration = emptyPersonaPartnerFailureDeclaration(
+      "http://127.0.0.1:5218",
+    );
+    expect(declaration).toEqual({
+      url: "http://127.0.0.1:5218/api/research/partner/me",
+      method: "GET",
+      status: 404,
+      count: 1,
+      responseBodySha256:
+        "87d28f7ea8ea041e07906726a8d93d61da18844f7fdc7dee8ea804c143c51876",
+      consoleText:
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    });
+    expect(Object.isFrozen(declaration)).toBe(true);
   });
 
   it("builds an exact forty-file candidate-bound inventory", () => {

@@ -60,6 +60,16 @@ const SYNTHETIC_REFERENCE_REDACTION = "SYNTHETIC-REFERENCE-REDACTED";
 const FORGED_STATUS_REFERENCE = "XRR-20000101-0000000000";
 const FORGED_STATUS_RESPONSE_BODY =
   '{"error":"not_found","message":"The request was not found."}';
+const EMPTY_PERSONA_PARTNER_RESPONSE_BODY =
+  '{"ok":false,"code":"partner_not_found"}';
+const FORGED_STATUS_RESPONSE_BODY_SHA256 = createHash("sha256")
+  .update(FORGED_STATUS_RESPONSE_BODY)
+  .digest("hex");
+const EMPTY_PERSONA_PARTNER_RESPONSE_BODY_SHA256 = createHash("sha256")
+  .update(EMPTY_PERSONA_PARTNER_RESPONSE_BODY)
+  .digest("hex");
+const EMPTY_PERSONA_PARTNER_ABSENCE_KIND =
+  "EMPTY_PERSONA_PARTNER_RELATION_ABSENT";
 export const STATUS_CREDENTIAL_TRANSPORT = Object.freeze({
   NONE: "NONE",
   REQUEST_HEADER: "x-xenios-order-status-token request header",
@@ -385,6 +395,43 @@ export function sanitizeNetworkUrl(value) {
   }
 }
 
+function classifyExpectedSyntheticNote(capture) {
+  const statusTruth = capture.statusTruthEvidence;
+  const partnerAbsence = capture.partnerAbsenceEvidence;
+  // A note must have exactly one provenance fingerprint. Dual-tagged and
+  // unclassified notes remain failures even when aggregate counts happen to
+  // look correct.
+  if (Boolean(statusTruth) === Boolean(partnerAbsence)) return null;
+  if (statusTruth) {
+    return statusTruth.kind === "VALID_SHAPED_REFERENCE_DENIED" &&
+      statusTruth.referenceShape === "XRR-YYYYMMDD-10_HEX" &&
+      statusTruth.credentialSource === "ABSENT" &&
+      statusTruth.credentialTransport === STATUS_CREDENTIAL_TRANSPORT.NONE &&
+      statusTruth.credentialPresent === false &&
+      statusTruth.localServerMethod === "GET" &&
+      statusTruth.localServerStatus === 404 &&
+      statusTruth.localServerErrorCode === "not_found" &&
+      statusTruth.localServerBodySha256 === FORGED_STATUS_RESPONSE_BODY_SHA256 &&
+      statusTruth.referenceRendered === false &&
+      statusTruth.requestDetailsRendered === false &&
+      statusTruth.declaredExpectedFailure === true &&
+      statusTruth.externalMutations === 0
+      ? "VALID_SHAPED_REFERENCE_DENIED"
+      : null;
+  }
+  return partnerAbsence.kind === EMPTY_PERSONA_PARTNER_ABSENCE_KIND &&
+    partnerAbsence.endpoint === "/api/research/partner/me" &&
+    partnerAbsence.method === "GET" &&
+    partnerAbsence.status === 404 &&
+    partnerAbsence.code === "partner_not_found" &&
+    partnerAbsence.count === 1 &&
+    partnerAbsence.responseBodySha256 === EMPTY_PERSONA_PARTNER_RESPONSE_BODY_SHA256 &&
+    partnerAbsence.declaredExpectedFailure === true &&
+    partnerAbsence.externalMutations === 0
+    ? EMPTY_PERSONA_PARTNER_ABSENCE_KIND
+    : null;
+}
+
 const SYSTEM_ENV_KEYS = Object.freeze([
   "SystemRoot",
   "SYSTEMROOT",
@@ -417,15 +464,19 @@ export function safeChildEnvironment(source = process.env, overrides = {}) {
 
 export function summariseCaptures(captures) {
   const automatedPass = captures.filter((capture) => capture.verdict === "AUTOMATED_PASS").length;
-  const automatedPassWithNotes = captures.filter(
+  const passWithNotes = captures.filter(
     (capture) => capture.verdict === "AUTOMATED_PASS_WITH_NOTES",
-  ).length;
+  );
+  const automatedPassWithNotes = passWithNotes.length;
   const automatedFail = captures.filter((capture) => capture.verdict === "AUTOMATED_FAIL").length;
-  const declaredDenialPassWithNotes = captures.filter(
-    (capture) =>
-      capture.verdict === "AUTOMATED_PASS_WITH_NOTES" &&
-      capture.statusTruthEvidence?.kind === "VALID_SHAPED_REFERENCE_DENIED",
+  const noteKinds = passWithNotes.map(classifyExpectedSyntheticNote);
+  const declaredDenialPassWithNotes = noteKinds.filter(
+    (kind) => kind === "VALID_SHAPED_REFERENCE_DENIED",
   ).length;
+  const declaredPartnerAbsencePassWithNotes = noteKinds.filter(
+    (kind) => kind === EMPTY_PERSONA_PARTNER_ABSENCE_KIND,
+  ).length;
+  const unclassifiedPassWithNotes = noteKinds.filter((kind) => kind === null).length;
   const strictClean = captures.length === EXPECTED_CAPTURE_COUNT
     && automatedPass === EXPECTED_CAPTURE_COUNT
     && automatedPassWithNotes === 0
@@ -435,6 +486,13 @@ export function summariseCaptures(captures) {
     && automatedPassWithNotes === 2
     && declaredDenialPassWithNotes === 2
     && automatedPass === EXPECTED_CAPTURE_COUNT - 2;
+  const completeWithExpectedNotes = captures.length === EXPECTED_CAPTURE_COUNT
+    && automatedFail === 0
+    && automatedPassWithNotes === 4
+    && declaredDenialPassWithNotes === 2
+    && declaredPartnerAbsencePassWithNotes === 2
+    && unclassifiedPassWithNotes === 0
+    && automatedPass === EXPECTED_CAPTURE_COUNT - 4;
   return {
     captures: captures.length,
     expectedCaptures: EXPECTED_CAPTURE_COUNT,
@@ -443,12 +501,15 @@ export function summariseCaptures(captures) {
     automatedPassWithNotes,
     automatedFail,
     declaredDenialPassWithNotes,
+    declaredPartnerAbsencePassWithNotes,
+    unclassifiedPassWithNotes,
     strictClean,
     completeWithExpectedDenialNotes,
-    zeroUndeclaredFailures: completeWithExpectedDenialNotes || strictClean,
+    completeWithExpectedNotes,
+    zeroUndeclaredFailures: completeWithExpectedNotes || strictClean,
     result: strictClean
       ? "AUTOMATED_PASS"
-      : completeWithExpectedDenialNotes
+      : completeWithExpectedNotes
         ? "AUTOMATED_PASS_WITH_NOTES"
         : "AUTOMATED_FAIL",
     externalMutations: 0,
@@ -736,9 +797,19 @@ export function forgedStatusFailureDeclaration(step1Origin) {
     method: "GET",
     status: 404,
     count: 1,
-    responseBodySha256: createHash("sha256")
-      .update(FORGED_STATUS_RESPONSE_BODY)
-      .digest("hex"),
+    responseBodySha256: FORGED_STATUS_RESPONSE_BODY_SHA256,
+    consoleText:
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  });
+}
+
+export function emptyPersonaPartnerFailureDeclaration(accountOrigin) {
+  return Object.freeze({
+    url: accountOrigin + "/api/research/partner/me",
+    method: "GET",
+    status: 404,
+    count: 1,
+    responseBodySha256: EMPTY_PERSONA_PARTNER_RESPONSE_BODY_SHA256,
     consoleText:
       "Failed to load resource: the server responded with a status of 404 (Not Found)",
   });
@@ -1016,6 +1087,9 @@ async function captureCurrentPage({
     verdict,
     focusWalk: walk,
     ...(statusTruthEvidence ? { statusTruthEvidence } : {}),
+    ...(descriptor.partnerAbsenceEvidence
+      ? { partnerAbsenceEvidence: descriptor.partnerAbsenceEvidence }
+      : {}),
   };
 }
 
@@ -1261,7 +1335,27 @@ async function main(argv = process.argv.slice(2)) {
       "fixture2@preview.invalid",
       "/research/account/orders",
     );
-    captures.push(...await captureAtBothWidths(captureContext, CASES.ordersEmpty));
+    // The empty customer deliberately has no partner relation. The production
+    // bundle probes that optional relation and the preview answers an exact,
+    // same-origin `partner_not_found`; declare only that byte-pinned response
+    // so any different 404, extra failure or response drift still fails closed.
+    const emptyPartnerFailure = emptyPersonaPartnerFailureDeclaration(accountOrigin);
+    const emptyOrdersDescriptor = Object.freeze({
+      ...CASES.ordersEmpty,
+      expectedHttpFailures: Object.freeze([emptyPartnerFailure]),
+      partnerAbsenceEvidence: Object.freeze({
+        kind: EMPTY_PERSONA_PARTNER_ABSENCE_KIND,
+        endpoint: "/api/research/partner/me",
+        method: emptyPartnerFailure.method,
+        status: emptyPartnerFailure.status,
+        code: "partner_not_found",
+        count: emptyPartnerFailure.count,
+        responseBodySha256: emptyPartnerFailure.responseBodySha256,
+        declaredExpectedFailure: true,
+        externalMutations: 0,
+      }),
+    });
+    captures.push(...await captureAtBothWidths(captureContext, emptyOrdersDescriptor));
 
     // Step 1: establish only the local preview session and required agreement,
     // then exercise the production wizard. The preview submission repository,
