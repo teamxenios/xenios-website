@@ -92,3 +92,7 @@ Fable's sole-owned exact-tree capture is complete on `28e4b7802c84c01b4433040a36
 All 20 captures completed: 16 `AUTOMATED_PASS` and four exact `AUTOMATED_PASS_WITH_NOTES` (two forged-reference denials and two no-partner denials), zero failures, all boundary assertions pass, zero truncated screenshots, and warmup PASS in 13,668 ms. The run is `completeWithExpectedDenialNotes=true`, `zeroUndeclaredFailures=true`, `externalMutations=0`, and `claimScope=UI_PRESENTATION_ONLY`; manual PII/PHI review remains explicitly pending by design.
 
 This is synthetic local browser evidence, not production approval.
+
+## Astra-B selective evidence update — 2026-09-06
+
+B’s later pushed review slice (`eca3fd6c6c564854cb48e0ad74e65f8b41d31069`, tree `0cb4211265e79065bf097c784c4e9d789e969099`) adds exact product-link allowlisting, projected-time evidence ordering/expiry, and fact-kind/authority binding checks. Its isolated regressions report **37/37 ProductsAdmin**, **10/10 panel plus adapter**, and **11/11 adapter-validator** tests, with TypeScript and diff checks passing. This update is additive; the earlier 59/59 reconciliation, account-portal, and browser checkpoints remain preserved above.

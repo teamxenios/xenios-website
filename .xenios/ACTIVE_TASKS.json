@@ -1403,7 +1403,7 @@
       "id": "XENIOS-SETH-ASTRA-B-REVIEW-20260905",
       "title": "Paired ASTRA-B canonical Product Control price and reconciliation review",
       "priority": "P0",
-      "state": "qa",
+      "state": "done",
       "owner": "codex-seth-astra-b-20260905",
       "paths": [
         "client/src/research/pages/adminx/ProductAdminDetail.tsx",
@@ -1493,11 +1493,15 @@
       "claimedAt": "2026-09-05T17:50:44.919Z",
       "handoff": {
         "session": "codex-seth-astra-b-20260905",
-        "sha": "afac265d0a4e4e6f2eb414dd99879812f6348263",
-        "file": ".xenios/handoffs/2026-09-05T22-30-50-481Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-codex-seth-astra-b-20260905.md",
-        "at": "2026-09-05T22:30:50.483Z"
+        "sha": "d04da477f7b2828411810c927cbaa3aa709476dc",
+        "file": ".xenios/handoffs/2026-09-06T13-55-00-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-selective-integration.md",
+        "at": "2026-09-06T13:52:38.3791596Z",
+        "status": "reviewed_selectively_by_astra_a"
       },
-      "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f"
+      "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f",
+      "acceptedSha": "d04da477f7b2828411810c927cbaa3aa709476dc",
+      "acceptedBy": "codex-seth-revenue-launch-20260905",
+      "acceptedAt": "2026-09-06T13:52:43.278Z"
     },
     {
       "id": "XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905",

@@ -1449,7 +1449,7 @@
         "client/src/research/pages/partners/Onboarding.tsx",
         "client/src/research/pages/partners/Onboarding.test.tsx"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-09-05T17:50:44.922Z",
       "heartbeatAt": "2026-09-05T18:07:26.578Z",
       "integrationSourceSha": "d54cdb9cc0bb935af2864e01171c3b077ad8430f"
