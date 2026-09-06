@@ -5,7 +5,6 @@
  * one loopback-only in-memory state.
  */
 import express, { type Express, type Request, type Response, type NextFunction } from "express";
-import crypto from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { buildAccountPortalPreviewApp } from "../preview-account-portal";
@@ -22,7 +21,8 @@ export const NEW_ACCOUNT_AUTH_ID = "00000000-0000-4000-8000-00000000c003";
 export const ADMIN_AUTH_ID = "00000000-0000-4000-8000-00000000c099";
 export const CONTROLLER_KEY = "local-qualification-controller";
 const ADMIN_EMAIL = "admin@preview.invalid";
-const ADMIN_TOKEN = "x." + Buffer.from(JSON.stringify({ sub: ADMIN_AUTH_ID, email: ADMIN_EMAIL, role: "authenticated", amr: [{ method: "password" }] })).toString("base64url") + ".x";
+export const makeQualificationToken = (id: string, email: string, recovery = false) => "x." + Buffer.from(JSON.stringify({ sub: id, email, role: "authenticated", amr: [{ method: recovery ? "recovery" : "password" }] })).toString("base64url") + ".x";
+const ADMIN_TOKEN = makeQualificationToken(ADMIN_AUTH_ID, ADMIN_EMAIL);
 
 export type QualificationState = {
   approved: boolean;
@@ -53,7 +53,7 @@ export function buildNewAccountQaHarness(): { app: Express; state: Qualification
   const indexPath = path.resolve(process.cwd(), "dist", "public", "index.html");
   const state: QualificationState = { approved: false, claimed: false, password: null, claimToken: null, outbox: [] };
   const users = new Map<string, { id: string; email: string; password: string; verified: boolean }>();
-  const tokenFor = (id: string, email: string, recovery = false) => "x." + Buffer.from(JSON.stringify({ sub: id, email, role: "authenticated", amr: [{ method: recovery ? "recovery" : "password" }] })).toString("base64url") + ".x";
+  const tokenFor = makeQualificationToken;
   const adminGuard: (req: Request, res: Response, next: NextFunction) => void = (req, res, next) => {
     const token = String(req.headers.authorization ?? "").replace(/^Bearer /, "");
     if (!token || token !== ADMIN_TOKEN) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -113,7 +113,9 @@ export function buildNewAccountQaHarness(): { app: Express; state: Qualification
     app.post("/auth/v1/token", issueToken);
     const userInfo = (req: Request, res: Response) => {
       const token = String(req.headers.authorization ?? "").replace(/^Bearer /, "");
-      if (token === ADMIN_TOKEN) return res.json({ id: ADMIN_AUTH_ID, email: ADMIN_EMAIL, email_confirmed_at: new Date().toISOString() });
+      const tokenClaims = (() => { try { const encoded = token.split(".")[1]; return encoded ? JSON.parse(Buffer.from(encoded, "base64url").toString("utf8")) as { sub?: string; email?: string } : null; } catch { return null; } })();
+      if (token === ADMIN_TOKEN || (tokenClaims?.sub === ADMIN_AUTH_ID && tokenClaims.email === ADMIN_EMAIL)) return res.json({ id: ADMIN_AUTH_ID, email: ADMIN_EMAIL, email_confirmed_at: new Date().toISOString() });
+      if (tokenClaims?.sub && tokenClaims.email) return res.json({ id: tokenClaims.sub, email: tokenClaims.email, email_confirmed_at: new Date().toISOString() });
       const u = [...users.values()].find((x) => token === tokenFor(x.id, x.email));
       return u ? res.json({ id: u.id, email: u.email, email_confirmed_at: new Date().toISOString() }) : res.status(401).json({ error: "invalid_token" });
     };
