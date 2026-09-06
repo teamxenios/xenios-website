@@ -119,10 +119,10 @@
       "partnerLifecycleRehearsal": "PASS 57 checks",
       "priceTierRehearsal": "PASS 37 checks",
       "reconciliationReview": "PASS 102/102 adapter/presentation; route + Product Control mount 59/59 (Products Admin/adapter/panel 47/47; validator 11/11); account portal UX 105/105; canonical evidence 28/28; Chrome readiness 4/4; prewarm/evidence aggregate 91/91; build re-run PASS; partner main-landmark seam 74/74",
-      "fullSuite": "Parallel full-suite observation was not green under host contention: 873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped; one Vitest worker-start error. The two migration-DAG timeout cases pass serially at 120s (2/2), the roster-privacy timeout case passes serially at 120s (1/1); no assertion regression reproduced.",
-      "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=60000",
-      "fullSuiteObservedAt": "2026-09-06T01:39:44.000Z",
-      "fullSuiteDurationSeconds": 613.1,
+      "fullSuite": "PASS serial: 876 passed files, 5 skipped; 13,507 passed tests, 59 skipped; zero failures; 780.75 seconds.",
+      "fullSuiteCommand": "npm test -- --reporter=dot --testTimeout=120000 --no-file-parallelism --maxWorkers=1",
+      "fullSuiteObservedAt": "2026-09-05T23:12:03-05:00",
+      "fullSuiteDurationSeconds": 780.75,
       "productionMutated": false,
       "productionAuthoritiesPresent": false,
       "candidateMigrationsApplied": false,
@@ -161,7 +161,9 @@
         "piiPhiReview": "MANUAL_PENDING_BY_DESIGN",
         "startedAt": "2026-09-06T02:53:42.074Z",
         "generatedAt": "2026-09-06T02:54:47.635Z"
-      }
+      },
+      "fullSuiteValidationHeadSha": "096d70c17c823fa6ad3fefc7a7d72f91edd54a39",
+      "fullSuiteParallelObservation": "Earlier parallel run under host contention: 873 passed files, 2 failed, 5 skipped; 13,488 passed tests, 3 failed, 59 skipped; one worker-start error. Superseded by the serial zero-failure run."
     }
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
