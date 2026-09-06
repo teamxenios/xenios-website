@@ -52,3 +52,12 @@ gates remain separate and are not claimed by this run.
 
 The working checkout is configured with `core.autocrlf=true`; hashes above are
 computed from exact Git blobs, avoiding false drift from checkout line endings.
+
+## Focused catalog and Product Control verification
+
+On the exact A tree, the catalog/formulation/reconciliation/Product Control
+focused set completed with **15 test files passed and 191 tests passed** in
+4.96 seconds. It covered formulation holds, catalog reconciliation/diff and
+completeness, price reads and tier guards, Product Control price review and
+admin projections, the reconciliation route/adapter/panel, and quantity-tier
+readiness. No activation or mutation path was invoked.
