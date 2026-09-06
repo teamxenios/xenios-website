@@ -1478,7 +1478,7 @@
         "scripts/evidence/capture-browser-matrix.mjs",
         "scripts/evidence/capture-browser-matrix.test.mjs"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-06T00:33:59.092Z",
       "heartbeatAt": "2026-09-06T00:33:59.092Z"
     }
