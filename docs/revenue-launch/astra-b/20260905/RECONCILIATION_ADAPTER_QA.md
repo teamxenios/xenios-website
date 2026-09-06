@@ -3,8 +3,8 @@
 ## Pushed slice
 
 - Branch: `codex/xenios-seth-astra-b-20260905`
-- Commit: `f1c1c6c545d2a31b7b94429a10278d83fc2f7113`
-- Tree: `2ce236b4f52f5567c60f92a985a1c4a1c2c6aa37`
+- Commit: `eca3fd6c6c564854cb48e0ad74e65f8b41d31069`
+- Tree: `0cb4211265e79065bf097c784c4e9d789e969099`
 
 ## What changed
 
@@ -19,11 +19,14 @@ that the shared contract does not permit.
 
 `ReconciliationReviewPanel.test.tsx` verifies that the presentation renders
 server-supplied `UNKNOWN`, `PENDING`, and `CONFIRMED` states without promoting
-them to approval or purchase authority. It contains no action controls.
+them to approval or purchase authority. The adapter additionally enforces
+projected-time evidence ordering/expiry, exact product-link allowlisting, and
+fact-kind/authority binding. It contains no action controls.
 
 ## Evidence
 
-- Adapter + component tests: **8/8 passed**.
+- Adapter validator tests: **11/11 passed**; panel plus adapter tests:
+  **10/10 passed**.
 - Product Control price review + Products Admin regression tests plus this
   slice: **102/102 passed**.
 - TypeScript `tsc --noEmit`: **PASS**.

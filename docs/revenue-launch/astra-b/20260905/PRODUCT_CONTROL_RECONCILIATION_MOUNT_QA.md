@@ -32,10 +32,13 @@ The additional integration assertion covers an `AVAILABLE` projection: a
 formulation `PENDING` fact and missing supplier/identity evidence render as
 their server-supplied states, while the mounted controls contain no approve,
 activate, or purchase action. The client wire validator also rejects a
-confirmed fact paired with the wrong authority/kind, and rejects confirmed
-identity evidence when the exact identity is absent. The resulting targeted
-suite is **47/47 PASS**. These checks are recorded in commits
-`0ebb6d76cdb5d974b5c283c5ec43330a18bb343e` and the follow-up validator slice.
+confirmed fact paired with the wrong authority/kind, rejects confirmed
+identity evidence when the exact identity is absent, restricts evidence links
+to the exact product path, and rejects future or expired evidence at the
+server-projected time. On the current pushed slice, the isolated suites are
+**37/37 ProductsAdmin**, **10/10 panel plus adapter**, and **11/11 adapter
+validator** tests; TypeScript and diff checks pass. These checks are sealed in
+`eca3fd6` (tree `0cb4211265e79065bf097c784c4e9d789e969099`).
 
 The server projection and route remain ASTRA-A's authority. This client slice
 does not claim that source facts, supplier confirmations, prices, or products
