@@ -5,6 +5,6 @@
   "branch": "codex/xenios-seth-revenue-launch-20260905",
   "state": "active",
   "startedAt": "2026-09-05T17:49:32.118Z",
-  "heartbeatAt": "2026-09-06T15:34:24.286Z",
-  "note": "Qualification addendum pushed at 71f5f56; prechecks PASS; browser full-closure BLOCK pending new-account approval-claim sequence; no production mutation."
+  "heartbeatAt": "2026-09-06T16:25:14.350Z",
+  "note": "New-account browser qualification recorded as BLOCK at step 1: account-only preview lacks admin inspection surface and local notification inbox; records commit c84e3c6 pushed; no production mutation."
 }
