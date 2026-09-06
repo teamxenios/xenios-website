@@ -28,6 +28,20 @@ Duration    47.20 seconds
 The runner emitted existing React `act(...)` warnings in recovery-isolation and
 partner-lifecycle tests; these were warnings only and did not produce failures.
 
+An additional client-contract pass covered the partner application form and
+adapter, including the audience/channel request shape and unavailable/error
+mapping:
+
+```text
+Test Files  2 passed (2)
+Tests       55 passed (55)
+Failures    0
+Duration    3.31 seconds
+```
+
+Combined with the focused pass above, the reviewed ASTRA-B client/admin slice
+has 17 passing test files and 354 passing tests across the two commands.
+
 ## Boundary
 
 This evidence proves the focused local regression set only. It is not evidence
