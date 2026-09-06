@@ -43,3 +43,12 @@ gates remain separate and are not claimed by this run.
 - `npm run site:record:check`: PASS — source SHA `f681afe6e19bede4de75fb4e7b811fa09a0bb339`,
   production SHA `db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, 219 routes, 15
   capabilities.
+
+## Reconciliation artifact integrity
+
+- Canonical reconciliation Git-blob SHA-256: `f4bc33e6e3ee45ec407adf795906d3149df44a17d738c705d717f3e8cd84af19`.
+- Source reconciliation input SHA-256: `7e338d041a1889b6c3dbf25e474d5b0440cc8f72e70dc8e5119a175137094d93`.
+- Production schema evidence Git-blob SHA-256: `9254b6d9b7e8717c42b23e9752cb2eaccf90d43d9f1812d77eac44990d21cf77`.
+
+The working checkout is configured with `core.autocrlf=true`; hashes above are
+computed from exact Git blobs, avoiding false drift from checkout line endings.
