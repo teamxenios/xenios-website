@@ -52,3 +52,19 @@ could not unlink the locked native module
 error `-4048`). No browser capture or journey pass is claimed; this remains an
 environment/toolchain blocker, not product evidence. No production endpoint was
 contacted and no mutation occurred.
+
+
+## Superseding integration note — 2026-09-06
+
+The Product Control mount and server reconciliation route are integrated in
+candidate `b1fb9a5e64d90210b9b267214bb20fcc66e4b117` (tree
+`68426af116445394a05ace33a1397eac96b4244e`). The focused reconciliation
+suite is **59/59 PASS** (Products Admin/adapter/panel **47/47**; validator
+**11/11**), and the account-portal UX correction is **105/105 PASS**. Fable's
+narrow CDP helper regression is **5/5 PASS**; its browser capture on this exact
+current tree is still pending after one host-saturation timeout. Browser
+journey acceptance is **NOT CLAIMED** until the fresh capture emits a complete
+signed evidence packet.
+
+No production endpoint was mutated and no deployment, migration, account grant,
+notification, payment, or shipment occurred.

@@ -86,3 +86,29 @@ harness is still blocked by Windows `EPERM/EBUSY` native-module installation;
 synthetic referral boundary evidence remains the only browser-boundary result.
 Production authorities and migrations remain absent; no live grant, email,
 payment, shipment, deployment, or other production mutation occurred.
+
+
+## Superseding checkpoint — 2026-09-06 integrated candidate
+
+A remains the release integrator and B remains the UX verifier. Fable is now a
+narrow browser/toolchain specialist under task
+`XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905`; its owned scope is limited to
+CDP/capture tooling and regression evidence. Root runtime candidate:
+`b1fb9a5e64d90210b9b267214bb20fcc66e4b117` (tree
+`68426af116445394a05ace33a1397eac96b4244e`).
+
+Focused integrated validation is **59/59** for reconciliation route/Product
+Control (Products Admin/adapter/panel **47/47**, validator **11/11**),
+account-portal UX **105/105**, canonical evidence **28/28**, and CDP
+import/transport **5/5**. Route census remains **427 registrations across 418
+call sites**. The latest parallel full-suite observation was not green under
+host contention (**873 passed files, 2 failed, 5 skipped; 13,488 passed tests,
+3 failed, 59 skipped; one worker-start error**); the two migration-DAG cases
+and roster-privacy case each pass serially with a 120-second timeout. Final
+browser journey evidence remains **NOT CLAIMED** pending one exact-current
+Fable run.
+
+No production authority or mutation exists. Live SHA
+`db5a2d447114c1e8a14185a9865ded50ee3f1ac6`, service
+`srv-d8s9vej7uimc7384dfcg`, and deployment
+`dep-dad08h740ujc73aprfcg` remain unchanged.

@@ -65,3 +65,27 @@ or evidence-writing authority.
 Production authorities and candidate migrations remain absent. This update is
 evidence only and does not authorize deployment, migration, price activation,
 live approval, communication, payment, or shipment.
+
+
+## Current closure checkpoint — integrated candidate b1fb9a5
+
+The current runtime candidate is `b1fb9a5e64d90210b9b267214bb20fcc66e4b117`
+(tree `68426af116445394a05ace33a1397eac96b4244e`). ASTRA-B's account copy
+closure is integrated (**Membership, separated from Care.** and **Next billing
+/ renewal**). Fable's CDP lazy-import repair is integrated; its focused
+import-order/transport regression is **5/5 PASS**, and canonical evidence
+checks are **28/28 PASS**. The route/Product Control reconciliation checks are
+**59/59 PASS** (Products Admin/adapter/panel **47/47**; validator **11/11**),
+with account-portal UX **105/105 PASS**.
+
+The latest parallel full suite is recorded as a non-green observation under
+host contention (**873 passed files, 2 failed, 5 skipped; 13,488 passed tests,
+3 failed, 59 skipped; one worker-start error**). The two migration-DAG timeout
+cases pass serially at 120 seconds (**2/2**) and the roster-privacy case passes
+serially (**1/1**), so no assertion regression was reproduced. Fable's final
+exact-current browser run remains pending; prior partial screenshots are
+retained as diagnostic artifacts only and browser journey acceptance remains
+**NOT CLAIMED**.
+
+This ledger remains evidence only and does not authorize deployment, migration,
+price activation, live approval, communication, payment, or shipment.
