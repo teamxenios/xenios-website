@@ -112,10 +112,10 @@ function availableReconciliationPayload() {
         },
         unit_of_sale: {
           state: "CONFIRMED",
-          reason: "exact_identity_reverified",
+          reason: "verified_fact",
           observedAt: "2026-09-05T12:00:00.000Z",
           evidence: {
-            authority: "source_reconciliation",
+            authority: "required_input",
             recordId: "unit-1",
             recordRevision: "rev-1",
             observedAt: "2026-09-05T12:00:00.000Z",

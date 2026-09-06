@@ -60,6 +60,37 @@ describe("reconciliation review adapter", () => {
     expect(reconciliationReviewResponseValid(malformed)).toBe(false);
   });
 
+  it("fails closed when a fact state is paired with the wrong fact authority", () => {
+    const malformed = available();
+    malformed.rows[0].facts.unit_of_sale = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence,
+    };
+    expect(reconciliationReviewResponseValid(malformed)).toBe(false);
+
+    const supplierAuthority = available();
+    supplierAuthority.rows[0].facts.supplier = {
+      state: "CONFIRMED",
+      reason: "verified_fact",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence: { ...evidence, authority: "required_input" },
+    };
+    expect(reconciliationReviewResponseValid(supplierAuthority)).toBe(false);
+  });
+
+  it("fails closed when identity evidence says confirmed without an exact identity", () => {
+    const malformed = available();
+    malformed.rows[0].facts.identity_binding = {
+      state: "CONFIRMED",
+      reason: "exact_identity_reverified",
+      observedAt: "2026-09-05T12:00:00.000Z",
+      evidence,
+    };
+    expect(reconciliationReviewResponseValid(malformed)).toBe(false);
+  });
+
   it.each([401, 403, 404, 503, 500])("preserves the honest API boundary for HTTP %d", async (status) => {
     vi.stubGlobal("fetch", vi.fn(async () => json({ ok: false, code: "unavailable" }, status)));
     const result = await getReconciliationReview("admin-token");

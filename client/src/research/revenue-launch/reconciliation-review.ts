@@ -66,22 +66,34 @@ function isReviewRow(value: unknown): value is ReconciliationReviewRow {
       !isNullableIdentity(value.exactIdentity) || !isNullableIdentity(value.proposedIdentity) ||
       !isFacts(value.facts)) return false;
   const facts = value.facts;
-  return RECONCILIATION_FACT_KINDS.every((kind) => isReviewFact(facts[kind]));
+  if (!RECONCILIATION_FACT_KINDS.every((kind) => isReviewFact(kind, facts[kind]))) return false;
+  return ((facts.identity_binding as ReviewFact).state === "CONFIRMED") === (value.exactIdentity !== null);
 }
 
 function isFacts(value: unknown): value is Record<FactKind, ReviewFact> {
   return isRecord(value);
 }
 
-function isReviewFact(value: unknown): value is ReviewFact {
+function isReviewFact(kind: FactKind, value: unknown): value is ReviewFact {
   if (!isRecord(value) || !isEvidenceState(value.state) || !nonEmptyString(value.reason) ||
       !nullableTimestamp(value.observedAt) || !isNullableEvidence(value.evidence)) return false;
   if (value.state === "UNKNOWN") {
     return isUnknownReason(value.reason);
   }
   if (value.state === "PENDING") return value.reason === "review_requested" && value.evidence !== null;
-  if (value.state === "CONFIRMED") return (value.reason === "exact_identity_reverified" || value.reason === "verified_fact") && value.evidence !== null;
-  if (value.state === "EXPIRED") return value.reason === "validity_ended" && value.evidence !== null && value.evidence.expiresAt !== null;
+  if (value.state === "CONFIRMED") {
+    if (value.evidence === null || typeof value.observedAt !== "string" || value.evidence.observedAt > value.observedAt) return false;
+    if (value.reason === "exact_identity_reverified") {
+      return kind === "identity_binding" && value.evidence.authority === "source_reconciliation";
+    }
+    return value.reason === "verified_fact" &&
+      value.evidence.authority === (kind === "supplier" ? "supplier_confirmation" : "required_input");
+  }
+  if (value.state === "EXPIRED") {
+    if (value.reason !== "validity_ended" || value.evidence === null ||
+        value.evidence.expiresAt === null || typeof value.observedAt !== "string") return false;
+    return Date.parse(value.evidence.expiresAt) <= Date.parse(value.observedAt);
+  }
   return value.reason === "explicit_rejection" && value.evidence !== null;
 }
 
