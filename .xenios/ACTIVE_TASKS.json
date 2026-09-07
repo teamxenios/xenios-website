@@ -3,6 +3,26 @@
   "updatedAt": "2026-09-05T12:49:32.056944-05:00",
   "tasks": [
     {
+      "id": "RESOURCE-HUB-BROWSER-FIXTURE-20260907",
+      "title": "Align the local Resource Hub preview with the actual portal flag predicate",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-resource-hub-browser-fixture-20260907",
+      "paths": [
+        "scripts/preview-resource-hub.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "9b5e61b53feb547a9fd384d02e75b0c2755546c8",
+      "scopeNote": "A explicitly assigned this one preview-only path to B. Keep synthetic auth limitations explicit and production guards unchanged. No production changes. UUID blocker was retracted after direct source verification; no identity rewrite. Local registry proposal only; A owns central integration.",
+      "claimedAt": "2026-09-07T22:55:58.001Z",
+      "handoff": {
+        "session": "codex-resource-hub-browser-fixture-20260907",
+        "sha": "a19037d1a1e066f5438798c237cea1d1d2cf8a42",
+        "file": ".xenios/handoffs/2026-09-07T22-57-23-465Z-RESOURCE-HUB-BROWSER-FIXTURE-20260907-codex-resource-hub-browser-fixture-20260907.md",
+        "at": "2026-09-07T22:57:23.469Z"
+      }
+    },
+    {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
       "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
       "priority": "P0",

@@ -392,6 +392,16 @@
       "startedAt": "2026-09-06T00:33:56.967Z",
       "heartbeatAt": "2026-09-06T00:33:56.968Z",
       "note": "Founder-directed bounded browser/toolchain specialist; isolated QA only; no production."
+    },
+    {
+      "id": "codex-resource-hub-browser-fixture-20260907",
+      "tool": "codex",
+      "lane": "astra-b-browser-fixture",
+      "branch": "codex/resource-hub-browser-fixture-20260907",
+      "state": "active",
+      "startedAt": "2026-09-07T22:54:05.334Z",
+      "heartbeatAt": "2026-09-07T22:54:05.334Z",
+      "note": "A-assigned isolated preview flag alignment; no production changes. UUID-blocker claim retracted. B owns only preview fixture source."
     }
   ]
 }

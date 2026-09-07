@@ -1454,7 +1454,6 @@
         "docs/resource-hub/SLICE_1_DESIGN.md",
         "docs/resource-hub/locked-gate-admission.patch",
         "docs/resource-hub/locked-gate-safety-bar.mjs",
-        "scripts/preview-resource-hub.ts",
         "server/research/partners/portal-routes.test.ts",
         "server/research/partners/portal-routes.ts",
         "server/research/resource-hub/admin-routes.test.ts",
@@ -1610,6 +1609,17 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.37Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "6c48eb38-177a-4d85-9dda-ec7706597ac9",
+      "task": "RESOURCE-HUB-BROWSER-FIXTURE-20260907",
+      "session": "codex-resource-hub-browser-fixture-20260907",
+      "paths": [
+        "scripts/preview-resource-hub.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-07T22:55:58.005Z",
+      "heartbeatAt": "2026-09-07T22:55:58.005Z"
     }
   ],
   "rules": [
