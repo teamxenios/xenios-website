@@ -1620,6 +1620,17 @@
       "state": "handoff",
       "claimedAt": "2026-09-07T22:55:58.005Z",
       "heartbeatAt": "2026-09-07T22:55:58.005Z"
+    },
+    {
+      "id": "ec356afb-79f0-4de4-87ea-69959c2e6bcf",
+      "task": "RESOURCE-HUB-BROWSER-FIXTURE-20260907",
+      "session": "codex-resource-hub-browser-fixture-20260907",
+      "paths": [
+        "scripts/preview-resource-hub.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-07T23:10:43.222Z",
+      "heartbeatAt": "2026-09-07T23:10:43.222Z"
     }
   ],
   "rules": [

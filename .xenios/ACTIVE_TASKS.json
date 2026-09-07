@@ -14,12 +14,12 @@
       "dependsOn": [],
       "baseSha": "9b5e61b53feb547a9fd384d02e75b0c2755546c8",
       "scopeNote": "A explicitly assigned this one preview-only path to B. Keep synthetic auth limitations explicit and production guards unchanged. No production changes. UUID blocker was retracted after direct source verification; no identity rewrite. Local registry proposal only; A owns central integration.",
-      "claimedAt": "2026-09-07T22:55:58.001Z",
+      "claimedAt": "2026-09-07T23:10:43.218Z",
       "handoff": {
         "session": "codex-resource-hub-browser-fixture-20260907",
-        "sha": "a19037d1a1e066f5438798c237cea1d1d2cf8a42",
-        "file": ".xenios/handoffs/2026-09-07T22-57-23-465Z-RESOURCE-HUB-BROWSER-FIXTURE-20260907-codex-resource-hub-browser-fixture-20260907.md",
-        "at": "2026-09-07T22:57:23.469Z"
+        "sha": "701fd585fcef9f73523192bd42be8a1d1409169e",
+        "file": ".xenios/handoffs/2026-09-07T23-11-39-789Z-RESOURCE-HUB-BROWSER-FIXTURE-20260907-codex-resource-hub-browser-fixture-20260907.md",
+        "at": "2026-09-07T23:11:39.791Z"
       }
     },
     {
