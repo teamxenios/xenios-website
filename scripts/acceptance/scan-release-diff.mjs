@@ -17,6 +17,7 @@
 
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { loadReviewedCredentialFixtures } from "./reviewed-credential-fixtures.mjs";
 
 const args = process.argv.slice(2);
 const refs = [];
@@ -81,12 +82,38 @@ const SECRET_ALLOWED_FILES = new Set([
 ]);
 
 const secretFindings = [];
+let rawSecretFindingCount = 0;
+let reviewedFixtures = null;
+let reviewedFixtureError = null;
+const registryPath = process.env.XENIOS_RELEASE_REVIEWED_FIXTURES_FILE;
+if (registryPath !== undefined) {
+  try {
+    const commit = (ref) => execFileSync("git", ["rev-parse", "--verify", `${ref}^{commit}`], { encoding: "utf8" }).trim();
+    reviewedFixtures = loadReviewedCredentialFixtures({
+      registryPath,
+      baseSha: commit(baseRef),
+      candidateSha: commit(headRef),
+      readBlob: (sha, path) => execFileSync("git", ["cat-file", "blob", `${sha}:${path}`], { maxBuffer: 32 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] }),
+      isAncestor: (older, newer) => {
+        try { execFileSync("git", ["merge-base", "--is-ancestor", older, newer], { stdio: "ignore" }); return true; }
+        catch { return false; }
+      },
+    });
+  } catch (error) {
+    reviewedFixtureError = error instanceof Error ? error.message : "reviewed fixture registry could not be loaded";
+  }
+}
 for (const { file: f, text } of added) {
   if (SECRET_ALLOWED_FILES.has(f)) continue;
   for (const [label, pattern] of SECRET_PATTERNS) {
-    if (pattern.test(text)) secretFindings.push({ file: f, label });
+    if (pattern.test(text)) {
+      rawSecretFindingCount++;
+      if (!reviewedFixtures?.consume(f, text, label)) secretFindings.push({ file: f, label });
+    }
   }
 }
+try { reviewedFixtures?.finish(); }
+catch (error) { reviewedFixtureError = error.message; }
 
 // --- PII (names) -------------------------------------------------------------
 let piiFindings = [];
@@ -112,7 +139,13 @@ if (namesFile) {
 }
 
 console.log(`scanned ${added.length} added lines across ${new Set(added.map((a) => a.file)).size} files (${baseRef}..${headRef})`);
+console.log(`raw secret findings: ${rawSecretFindingCount}`);
+console.log(`reviewed fixture findings: ${reviewedFixtures?.reviewedMatchCount ?? 0}`);
+console.log(`unresolved secret findings: ${secretFindings.length}`);
+// Backward-compatible strict-wrapper summary; N is the unresolved count.
 console.log(`secret findings: ${secretFindings.length}`);
+if (reviewedFixtures) console.log(`reviewed fixture registry sha256: ${reviewedFixtures.registrySha256}`);
+if (reviewedFixtureError) console.error(reviewedFixtureError);
 for (const f of secretFindings) console.log(`  SECRET ${f.label} in ${f.file}`);
 if (piiRan) {
   console.log(`pii findings: ${piiFindings.length}`);
@@ -121,4 +154,4 @@ if (piiRan) {
   console.log("pii scan: SKIPPED (no --names-file given — provide the out-of-repo name list to run it)");
 }
 
-process.exit(secretFindings.length + piiFindings.length > 0 ? 1 : 0);
+process.exit(secretFindings.length + piiFindings.length > 0 || reviewedFixtureError ? 1 : 0);
