@@ -472,8 +472,9 @@ describe("the scan judges structure, not printed text", () => {
 
   it("accepts a bare /OpenAction destination array and printed text that happens to contain a marker", () => {
     expect(judge("%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R /OpenAction [3 0 R /Fit] >> endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
-    expect(judge("%PDF-1.4\n4 0 obj << /Length 30 >> stream\nBT (Route /AA 12) Tj ET\nendstream endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
-    expect(judge("%PDF-1.4\n4 0 obj << /Length 30 >> stream\nBT (See /JS section \(and \) more) Tj ET\nendstream endobj\n%%EOF\n")).toEqual({ ok: true, reasons: [] });
+    for (const content of ["BT (Route /AA 12) Tj ET", String.raw`BT (See /JS section \(and \) more) Tj ET`]) {
+      expect(judge(`%PDF-1.4\n4 0 obj << /Length ${content.length} >> stream\n${content}\nendstream endobj\n%%EOF\n`)).toEqual({ ok: true, reasons: [] });
+    }
   });
 
   it("still refuses an /OpenAction that carries or references an action, and real action keys", () => {
@@ -537,7 +538,8 @@ describe("RH-B28-1: object content the scanner cannot read never passes", () => 
       const result = judge(bytes);
       if (expected === "unsupported") {
         expect(result.ok, tail).toBe(false);
-        expect(inflatedPdfStreams(bytes).unsupportedStreams, tail).toBe(1);
+        const scan = inflatedPdfStreams(bytes);
+        expect(scan.unsupportedStreams > 0 || scan.truncated, tail).toBe(true);
       } else {
         expect(result, tail).toEqual({ ok: true, reasons: [] });
       }
@@ -635,5 +637,110 @@ describe("RH-B28-1b: a decoy stream token cannot hide a real object stream", () 
       L("trailer << /Root 1 0 R >>\n%%EOF\n"),
     ]);
     expect(judge(bytes)).toEqual({ ok: true, reasons: [] });
+  });
+});
+
+describe("scanner lexer: PDF names and comments cannot hide object streams", () => {
+  const zlib = require("node:zlib") as typeof import("node:zlib");
+  const L = (text: string) => Buffer.from(text, "latin1");
+  const ACTION = "1 0 << /Type /Action /S /JavaScript /JS (void 0) >>";
+  const CLEAN = "1 0 << /Type /Page >>";
+  const judge = (bytes: Buffer) => validatePdfUpload({ bytes, declaredContentType: "application/pdf", originalFilename: "lexer.pdf" });
+  function objectStream(options: { beforeType?: string; tail?: string; prefix?: string; filter?: string; inner?: string } = {}): Buffer {
+    const inner = L(options.inner ?? ACTION);
+    const filter = options.filter ?? "/FlateDecode";
+    const body = filter === "/ASCIIHexDecode" ? L(inner.toString("hex") + ">") : zlib.deflateSync(inner);
+    return Buffer.concat([
+      L(`%PDF-1.5\n${options.prefix ?? ""}2 0 obj << ${options.beforeType ?? ""} /Type /ObjStm /N 1 /First 4 /Filter ${filter} ${options.tail ?? ""} /Length ${body.length} >>\nstream\n`),
+      body,
+      L("\nendstream\nendobj\n%%EOF\n"),
+    ]);
+  }
+
+  const decoys = [
+    { label: "obj name", tail: "/ReviewNote /obj" },
+    { label: "stream name", prefix: "1 0 obj << /Note /stream\n>> endobj\n" },
+    { label: "escaped parenthesis name", beforeType: "/ReviewNote /#28" },
+    { label: "comment parenthesis", beforeType: "% (\n" },
+    { label: "escaped name delimiters", beforeType: "/ReviewNote /#25obj#2fstream#20" },
+    { label: "20,000 byte literal", tail: `/ReviewNote (${"x".repeat(20000)})` },
+    { label: "nested Filter", beforeType: "/Metadata << /Filter [] >>" },
+    { label: "nested DecodeParms", beforeType: "/Metadata << /DecodeParms null >>" },
+  ];
+
+  it.each(decoys)("inspects supported Flate content through $label", (decoy) => {
+    const bytes = objectStream(decoy);
+    expect(judge(bytes).reasons.join(" ")).toMatch(/inside a compressed stream \(\/JavaScript\)/u);
+    expect(inflatedPdfStreams(bytes).text).toContain("/JavaScript");
+  });
+
+  it.each(decoys)("refuses unsupported ASCIIHex content through $label", (decoy) => {
+    const bytes = objectStream({ ...decoy, filter: "/ASCIIHexDecode" });
+    expect(judge(bytes).reasons.join(" ")).toMatch(/encoding this scanner does not read/u);
+    expect(inflatedPdfStreams(bytes).unsupportedStreams).toBe(1);
+  });
+
+  it.each(decoys)("accepts clean Flate content through $label", (decoy) => {
+    expect(judge(objectStream({ ...decoy, inner: CLEAN }))).toEqual({ ok: true, reasons: [] });
+  });
+
+  it("refuses ambiguous duplicate outer keys and never uses nested decode parameters", () => {
+    for (const tail of ["/Type /XObject", "/Filter []", "/DecodeParms null /DecodeParms << /Predictor 12 >>"]) {
+      expect(judge(objectStream({ tail })).ok, tail).toBe(false);
+    }
+    expect(judge(objectStream({ beforeType: "/Metadata << /DecodeParms null >>", tail: "/DecodeParms << /Predictor 12 >>" })).ok).toBe(false);
+  });
+
+  it("uses direct stream length so a data terminator cannot expose fake structure", () => {
+    const content = "BT (endstream (still page data) Tj ET";
+    const prefix = `1 0 obj << /Length ${content.length} >>\nstream\n${content}\nendstream\nendobj\n`;
+    expect(judge(objectStream({ prefix })).reasons.join(" ")).toMatch(/inside a compressed stream/u);
+    expect(judge(objectStream({ prefix, inner: CLEAN }))).toEqual({ ok: true, reasons: [] });
+  });
+
+  it("scans raw dictionaries after comments and escaped names without interpreting them as literals", () => {
+    for (const prefix of ["% (\n", "1 0 obj << /Note /#28 >> endobj\n"]) {
+      expect(judge(L(`%PDF-1.4\n${prefix}3 0 obj << /S /J#61vaScript /JS (void 0) >> endobj\n%%EOF\n`)).ok).toBe(false);
+    }
+    expect(judge(L("%PDF-1.4\n% /JavaScript (example)\n1 0 obj << /Note (Printed /JavaScript) >> endobj\n%%EOF\n"))).toEqual({ ok: true, reasons: [] });
+  });
+
+  it("never lexes opaque stream bytes as strings that could hide a later real dictionary", () => {
+    const data = "(binary image data";
+    const bytes = L(`%PDF-1.4\n1 0 obj << /Type /XObject /Subtype /Image /Length ${data.length} >>\nstream\n${data}\nendstream\nendobj\n3 0 obj << /S /JavaScript /JS (void 0) >> endobj\n%%EOF\n`);
+    expect(judge(bytes).reasons.join(" ")).toMatch(/active content/u);
+  });
+
+  it("still examines uncompressed object streams and refuses incomplete decoded syntax", () => {
+    const plain = L(`%PDF-1.5\n2 0 obj << /Type /ObjStm /N 1 /First 4 /Length ${ACTION.length} >>\nstream\n${ACTION}\nendstream\nendobj\n%%EOF\n`);
+    expect(judge(plain).ok).toBe(false);
+    expect(judge(objectStream({ inner: "1 0 << /Note (unterminated" })).reasons.join(" ")).toMatch(/not fully examined/u);
+  });
+
+  it("cannot close an incomplete literal using bytes from a later object stream", () => {
+    const bytes = Buffer.concat([
+      objectStream({ inner: "1 0 << /Note (unterminated" }),
+      objectStream({ inner: `${ACTION} )` }),
+    ]);
+    expect(judge(bytes).reasons.join(" ")).toMatch(/not fully examined/u);
+    expect(inflatedPdfStreams(bytes).truncated).toBe(true);
+  });
+
+  it("clamps each inflation to the aggregate bytes remaining without allocating a large fixture", () => {
+    const bytes = Buffer.concat(Array.from({ length: 7 }, () => objectStream({ inner: CLEAN })));
+    const limits: number[] = [];
+    const inflate = vi.spyOn(zlib, "inflateSync").mockImplementation((_input, options) => {
+      const limit = options?.maxOutputLength ?? 0;
+      limits.push(limit);
+      if (limit < 8 * 1024 * 1024 - 1) throw new Error("synthetic output exceeds remaining budget");
+      // Model the byte accounting only; the fixture never inflates megabytes.
+      return { byteLength: 8 * 1024 * 1024 - 1, toString: () => CLEAN } as Buffer;
+    });
+    try {
+      expect(judge(bytes).ok).toBe(false);
+      expect(limits).toEqual([...Array<number>(6).fill(8 * 1024 * 1024), 6]);
+    } finally {
+      inflate.mockRestore();
+    }
   });
 });

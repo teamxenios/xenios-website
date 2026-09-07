@@ -68,35 +68,15 @@ const OPEN_ACTION_WITH_ACTION = /\/OpenAction\s*(?:<<|\d+\s+\d+\s+R\b)/u;
  */
 export function stripPdfStringLiterals(text: string): string {
   let out = "";
-  let i = 0;
-  const n = text.length;
-  while (i < n) {
-    const ch = text[i]!;
-    if (ch === "\\") {
-      out += ch + (text[i + 1] ?? "");
-      i += 2;
-      continue;
-    }
-    if (ch !== "(") {
-      out += ch;
-      i += 1;
-      continue;
-    }
-    // Skip the literal, honouring nesting and escapes.
-    let depth = 1;
-    i += 1;
-    while (i < n && depth > 0) {
-      const c = text[i]!;
-      if (c === "\\") i += 2;
-      else {
-        if (c === "(") depth += 1;
-        else if (c === ")") depth -= 1;
-        i += 1;
-      }
-    }
-    out += "()";
+  let cursor = 0;
+  for (;;) {
+    const token = nextPdfToken(text, cursor);
+    if (!token) return out + text.slice(cursor);
+    out += text.slice(cursor, token.start);
+    out += token.kind === "literal" || (token.kind === "invalid" && text[token.start] === "(")
+      ? "()" : text.slice(token.start, token.end);
+    cursor = token.end;
   }
-  return out;
 }
 /** Bounds for the inflated-stream scan: a decompression bomb must not become a memory problem. */
 const MAX_INFLATED_STREAM_BYTES = 8 * 1024 * 1024;
@@ -114,23 +94,32 @@ const MAX_SCANNED_STREAMS = 20000;
  */
 export type ObjectStreamEncoding = "plain" | "flate" | "unsupported";
 export function classifyObjectStreamEncoding(dictionary: string): ObjectStreamEncoding {
-  const decoded = decodePdfNameEscapes(dictionary);
-  const filterAt = decoded.search(/\/Filter\b/u);
-  const hasParms = /\/DecodeParms\b/u.test(decoded) && !/\/DecodeParms\s*null\b/u.test(decoded);
-  if (filterAt < 0) return hasParms ? "unsupported" : "plain";
-  const after = decoded.slice(filterAt + "/Filter".length).replace(/^\s+/u, "");
-  let names: string[] = [];
-  if (after.startsWith("[")) {
-    const close = after.indexOf("]");
-    if (close < 0) return "unsupported";
-    names = after.slice(1, close).match(/\/[A-Za-z0-9]+/gu) ?? [];
-  } else {
-    const single = after.match(/^\/([A-Za-z0-9]+)/u);
-    if (!single) return "unsupported";
-    names = [`/${single[1]}`];
-  }
+  const fields = readPdfStreamDictionary(dictionary);
+  return fields ? objectStreamEncoding(dictionary, fields) : "unsupported";
+}
+
+function objectStreamEncoding(dictionary: string, fields: Map<string, PdfValue>): ObjectStreamEncoding {
+  const filter = fields.get("/Filter");
+  const parms = fields.get("/DecodeParms");
+  const hasParms = !!parms && (parms.indirect || parms.token.kind !== "word" || parms.token.value !== "null");
+  if (!filter) return hasParms ? "unsupported" : "plain";
+  if (filter.indirect) return "unsupported";
+  const names: string[] = [];
+  if (filter.token.kind === "name") names.push(filter.token.value);
+  else if (filter.token.value === "[") {
+    let cursor = filter.token.end;
+    for (;;) {
+      const token = nextPdfToken(dictionary, cursor);
+      if (!token || token.end > filter.end) return "unsupported";
+      if (token.kind === "delimiter" && token.value === "]") break;
+      if (token.kind !== "name") return "unsupported";
+      names.push(token.value);
+      cursor = token.end;
+    }
+  } else return "unsupported";
+  if (hasParms) return "unsupported";
   if (names.length === 0) return "plain";
-  if (names.length === 1 && names[0] === "/FlateDecode" && !hasParms) return "flate";
+  if (names.length === 1 && names[0] === "/FlateDecode") return "flate";
   return "unsupported";
 }
 
@@ -143,8 +132,8 @@ export function decodePdfNameEscapes(text: string): string {
 }
 
 /**
- * The latin1 text of every FlateDecode OBJECT stream (/Type /ObjStm) the file
- * carries, inflated within bounds. Object streams are the only streams whose
+ * The latin1 text of every plain or FlateDecode OBJECT stream (/Type /ObjStm)
+ * the file carries, inflated within bounds. Object streams are the only streams whose
  * content a viewer parses as object dictionaries, so they are the only place a
  * compressed action dictionary can hide; image, font, page-content, XRef and
  * metadata streams are pixel, glyph, drawing or table data and are left alone
@@ -153,7 +142,7 @@ export function decodePdfNameEscapes(text: string): string {
  * so the caller can refuse a file it cannot judge.
  */
 export interface PdfStreamScan {
-  /** Inflated latin1 text of every supported object stream. */
+  /** Latin1 text of every plain or supported compressed object stream. */
   text: string;
   /** Object streams declared FlateDecode that would not inflate within bounds. */
   opaqueStreams: number;
@@ -163,13 +152,138 @@ export interface PdfStreamScan {
   truncated: boolean;
 }
 
-/** True when the byte at `index` is outside a PDF token (whitespace, a delimiter, or the file edge). */
+/** PDF whitespace and delimiters, tested before decoding bytes inside a name. */
 function isPdfTokenBoundary(text: string, index: number): boolean {
   if (index < 0 || index >= text.length) return true;
-  return /[\s\u0000()<>\[\]{}\/%]/u.test(text[index]!);
+  return /[\u0000\t\n\f\r ()<>\[\]{}\/%]/u.test(text[index]!);
 }
 
-export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
+interface PdfToken {
+  kind: "name" | "word" | "literal" | "hex" | "delimiter" | "invalid";
+  value: string;
+  start: number;
+  end: number;
+}
+
+/** One lexer serves both stream discovery and content checks. Names are data,
+ * including decoded delimiters: /#28 is a name, never an opening parenthesis. */
+function nextPdfToken(text: string, from: number): PdfToken | null {
+  let i = from;
+  while (i < text.length) {
+    if (/[\u0000\t\n\f\r ]/u.test(text[i]!)) { i += 1; continue; }
+    if (text[i] !== "%") break;
+    while (i < text.length && text[i] !== "\n" && text[i] !== "\r") i += 1;
+  }
+  if (i >= text.length) return null;
+  const start = i;
+  const ch = text[i++]!;
+  if (ch === "/") {
+    while (i < text.length && !isPdfTokenBoundary(text, i)) i += 1;
+    return { kind: "name", value: decodePdfNameEscapes(text.slice(start, i)), start, end: i };
+  }
+  if (ch === "(") {
+    let depth = 1;
+    while (i < text.length && depth > 0) {
+      const c = text[i++]!;
+      if (c === "\\") i = Math.min(text.length, i + 1);
+      else if (c === "(") depth += 1;
+      else if (c === ")") depth -= 1;
+    }
+    return { kind: depth ? "invalid" : "literal", value: "()", start, end: i };
+  }
+  if (ch === "<" && text[i] !== "<") {
+    let valid = true;
+    while (i < text.length && text[i] !== ">") {
+      if (!/[0-9A-Fa-f\u0000\t\n\f\r ]/u.test(text[i]!)) valid = false;
+      i += 1;
+    }
+    const complete = valid && i < text.length;
+    return { kind: complete ? "hex" : "invalid", value: "<>", start, end: complete ? i + 1 : i };
+  }
+  if (ch === "<" || ch === ">") {
+    if (text[i] === ch) i += 1;
+    return { kind: "delimiter", value: text.slice(start, i), start, end: i };
+  }
+  if (isPdfTokenBoundary(text, start)) return { kind: "delimiter", value: ch, start, end: i };
+  while (i < text.length && !isPdfTokenBoundary(text, i)) i += 1;
+  return { kind: "word", value: text.slice(start, i), start, end: i };
+}
+
+function pdfTokenText(token: PdfToken): string {
+  if (token.kind !== "name") return token.value;
+  // Keep decoded name bytes from becoming grammar if this structural text is
+  // scanned again. In particular, #28, #25, #2f, and #20 stay inside the name.
+  return "/" + token.value.slice(1).replace(/[\u0000\t\n\f\r ()<>\[\]{}\/%#]/gu,
+    (ch) => `#${ch.charCodeAt(0).toString(16).padStart(2, "0")}`);
+}
+
+function pdfStructuralText(text: string): { text: string; truncated: boolean } {
+  let out = "";
+  let cursor = 0;
+  for (;;) {
+    const token = nextPdfToken(text, cursor);
+    if (!token) return { text: out, truncated: false };
+    if (token.kind === "invalid") return { text: out, truncated: true };
+    out += pdfTokenText(token) + " ";
+    cursor = token.end;
+  }
+}
+
+interface PdfValue { token: PdfToken; end: number; indirect: boolean }
+
+/** Skip exactly one value so nested metadata cannot supply outer stream keys. */
+function readPdfValue(text: string, from: number): PdfValue | null {
+  const token = nextPdfToken(text, from);
+  if (!token || token.kind === "invalid") return null;
+  let end = token.end;
+  if (token.kind === "delimiter") {
+    if (token.value !== "<<" && token.value !== "[") return null;
+    const closers = [token.value === "<<" ? ">>" : "]"];
+    while (closers.length) {
+      const part = nextPdfToken(text, end);
+      if (!part || part.kind === "invalid") return null;
+      end = part.end;
+      if (part.kind !== "delimiter") continue;
+      if (part.value === "<<" || part.value === "[") {
+        if (closers.length >= 128) return null;
+        closers.push(part.value === "<<" ? ">>" : "]");
+      } else if (part.value === ">>" || part.value === "]") {
+        if (closers.pop() !== part.value) return null;
+      } else return null;
+    }
+  } else if (token.kind === "word" && /^\d+$/u.test(token.value)) {
+    const generation = nextPdfToken(text, end);
+    const reference = generation && nextPdfToken(text, generation.end);
+    if (generation?.kind === "word" && /^\d+$/u.test(generation.value) && reference?.kind === "word" && reference.value === "R") {
+      return { token, end: reference.end, indirect: true };
+    }
+  }
+  return { token, end, indirect: false };
+}
+
+function readPdfStreamDictionary(text: string): Map<string, PdfValue> | null {
+  const open = nextPdfToken(text, 0);
+  if (open?.kind !== "delimiter" || open.value !== "<<") return null;
+  const fields = new Map<string, PdfValue>();
+  let cursor = open.end;
+  for (;;) {
+    const key = nextPdfToken(text, cursor);
+    if (!key) return null;
+    if (key.kind === "delimiter" && key.value === ">>") return nextPdfToken(text, key.end) ? null : fields;
+    if (key.kind !== "name") return null;
+    const value = readPdfValue(text, key.end);
+    if (!value) return null;
+    if (["/Type", "/Filter", "/DecodeParms", "/Length"].includes(key.value)) {
+      if (fields.has(key.value)) return null;
+      fields.set(key.value, value);
+    }
+    cursor = value.end;
+  }
+}
+
+interface PdfFileScan extends PdfStreamScan { rawSyntax: string }
+
+function scanPdfStreams(bytes: Uint8Array): PdfFileScan {
   const raw = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   // One position-preserving pass over the file. latin1 keeps one byte per
   // character, so every index here is a byte offset in `raw`.
@@ -181,62 +295,22 @@ export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
   let truncated = false;
   let total = 0;
   let scanned = 0;
-  // The nearest preceding `obj` keyword, so a stream's dictionary is read from
-  // its own object rather than from a fixed byte lookback.
+  // Full object boundaries; a long dictionary must never lose its /Type or
+  // /Filter because of a byte lookback. File size already bounds this span.
   let objectAt = -1;
   let i = 0;
+  let rawSyntax = "";
 
   while (i < n) {
-    const ch = text[i]!;
-    // A comment runs to the end of the line; nothing inside it is structure.
-    if (ch === "%") {
-      while (i < n && text[i] !== "\n" && text[i] !== "\r") i += 1;
-      continue;
-    }
-    // A string literal is DATA. Skipping it here is what stops a decoy
-    // "(stream )" from being read as a stream start and swallowing the real
-    // object stream that follows it. Nesting and backslash escapes follow the
-    // PDF grammar; a literal that never closes means the file cannot be lexed,
-    // which is reported as unexamined rather than treated as clean.
-    if (ch === "(") {
-      let depth = 1;
-      i += 1;
-      while (i < n && depth > 0) {
-        const c = text[i]!;
-        if (c === "\\") {
-          i += 2;
-          continue;
-        }
-        if (c === "(") depth += 1;
-        else if (c === ")") depth -= 1;
-        i += 1;
-      }
-      if (depth > 0) {
-        truncated = true;
-        break;
-      }
-      continue;
-    }
-    if (ch === "o" && text.startsWith("obj", i) && isPdfTokenBoundary(text, i - 1) && isPdfTokenBoundary(text, i + 3)) {
-      objectAt = i;
-      i += 3;
-      continue;
-    }
-    if (ch !== "s" || !text.startsWith("stream", i)) {
-      i += 1;
-      continue;
-    }
-    // "endstream" contains "stream": that is the end of a stream we already
-    // consumed, or a stray token; either way it is not a start.
-    if (i >= 3 && text.startsWith("end", i - 3)) {
-      i += 6;
-      continue;
-    }
-    if (!isPdfTokenBoundary(text, i - 1)) {
-      // Part of a longer name (e.g. /BitsPerStream): not a keyword.
-      i += 6;
-      continue;
-    }
+    const token = nextPdfToken(text, i);
+    if (!token) break;
+    if (token.kind === "invalid") { truncated = true; break; }
+    i = token.end;
+    rawSyntax += pdfTokenText(token) + " ";
+    if (token.kind !== "word") continue;
+    if (token.value === "obj") { objectAt = token.end; continue; }
+    if (token.value === "endobj") { objectAt = -1; continue; }
+    if (token.value !== "stream") continue;
     if (scanned >= MAX_SCANNED_STREAMS) {
       // More stream tokens remain than the budget allows: whatever follows is
       // unexamined, and an unexamined file is not a clean file.
@@ -246,28 +320,53 @@ export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
     scanned += 1;
     // Per the PDF grammar the keyword is followed by CRLF or LF. Anything else
     // is a file this scanner cannot lex with confidence.
-    let dataStart = i + 6;
+    let dataStart = token.end;
     if (text[dataStart] === "\r") dataStart += 1;
     if (text[dataStart] === "\n") dataStart += 1;
-    else if (dataStart === i + 6) {
+    else if (dataStart === token.end) {
       truncated = true;
       break;
     }
-    const end = text.indexOf("endstream", dataStart);
+    if (objectAt < 0) { truncated = true; break; }
+    const dictionary = text.slice(objectAt, token.start);
+    const fields = readPdfStreamDictionary(dictionary);
+    if (!fields) { truncated = true; break; }
+    const length = fields.get("/Length");
+    let end: number;
+    if (length && !length.indirect && length.token.kind === "word" && /^\d+$/u.test(length.token.value)) {
+      end = dataStart + Number(length.token.value);
+      if (text[end] === "\r") end += 1;
+      if (text[end] === "\n") end += 1;
+      if (!text.startsWith("endstream", end) || !isPdfTokenBoundary(text, end + 9)) {
+        truncated = true;
+        break;
+      }
+    } else {
+      // Preserve PDFs whose producer stores /Length in an indirect object.
+      // A candidate terminator must be a full keyword followed by endobj.
+      end = text.indexOf("endstream", dataStart);
+      while (end >= 0) {
+        const after = nextPdfToken(text, end + 9);
+        if (isPdfTokenBoundary(text, end - 1) && isPdfTokenBoundary(text, end + 9) && after?.kind === "word" && after.value === "endobj") break;
+        end = text.indexOf("endstream", end + 9);
+      }
+    }
     if (end < 0) {
       // A stream that never ends: the rest of the file is unexamined.
       truncated = true;
       break;
     }
-    const dictionaryFrom = objectAt >= 0 && i - objectAt < 20000 ? objectAt : Math.max(0, i - 2000);
-    // Literals inside the dictionary are data too: blank them before the
-    // /ObjStm and /Filter decisions so "(/ObjStm)" cannot pose as structure.
-    const dictionary = stripPdfStringLiterals(decodePdfNameEscapes(text.slice(dictionaryFrom, i)));
     // Stream data is binary: resume lexing after it, never inside it.
     i = end + 9;
-    if (!/\/ObjStm\b/u.test(dictionary)) continue;
-    const encoding = classifyObjectStreamEncoding(dictionary);
-    if (encoding === "plain") continue; // already covered by the raw-text scan
+    const type = fields.get("/Type");
+    if (type?.token.kind !== "name" || type.token.value !== "/ObjStm") continue;
+    const encoding = objectStreamEncoding(dictionary, fields);
+    if (encoding === "plain") {
+      const content = text.slice(dataStart, end);
+      if (pdfStructuralText(content).truncated) truncated = true;
+      parts.push(content);
+      continue;
+    }
     if (encoding === "unsupported") {
       unsupportedStreams += 1;
       continue;
@@ -277,20 +376,28 @@ export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
       break;
     }
     try {
-      const inflated = zlib.inflateSync(raw.subarray(dataStart, end), { maxOutputLength: MAX_INFLATED_STREAM_BYTES });
+      const inflated = zlib.inflateSync(raw.subarray(dataStart, end), {
+        maxOutputLength: Math.min(MAX_INFLATED_STREAM_BYTES, MAX_INFLATED_TOTAL_BYTES - total),
+      });
       total += inflated.byteLength;
-      parts.push(inflated.toString("latin1"));
+      const content = inflated.toString("latin1");
+      if (pdfStructuralText(content).truncated) truncated = true;
+      parts.push(content);
     } catch {
       opaqueStreams += 1;
     }
   }
-  return { text: parts.join("\n"), opaqueStreams, unsupportedStreams, truncated };
+  return { text: parts.join("\n"), opaqueStreams, unsupportedStreams, truncated, rawSyntax };
+}
+
+export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
+  const { rawSyntax: _rawSyntax, ...streams } = scanPdfStreams(bytes);
+  return streams;
 }
 
 function findActiveContentMarker(text: string): string | null {
-  const decoded = stripPdfStringLiterals(decodePdfNameEscapes(text));
-  for (const marker of ACTIVE_CONTENT_MARKERS) if (decoded.includes(marker)) return marker.trim();
-  if (OPEN_ACTION_WITH_ACTION.test(decoded)) return "/OpenAction";
+  for (const marker of ACTIVE_CONTENT_MARKERS) if (text.includes(marker)) return marker.trim();
+  if (OPEN_ACTION_WITH_ACTION.test(text)) return "/OpenAction";
   return null;
 }
 
@@ -320,18 +427,18 @@ export function validatePdfUpload(input: {
   }
   if (/[\u0000-\u001f\u007f]/u.test(name)) reasons.push("filename contains control characters");
   if (head === PDF_MAGIC && input.bytes.byteLength <= RESOURCE_PDF_MAX_BYTES) {
-    // Bounded scan of the raw bytes AND of every inflated FlateDecode stream
-    // (object streams included), with name escapes decoded first. This is a
+    // Bounded scan of outer PDF syntax and plain/FlateDecode object streams,
+    // with name escapes decoded only inside name tokens. This is a
     // first-line filter against scripts, launch actions, and embedded files,
     // not a sandbox: a file the scan cannot read (encrypted, or a stream that
     // will not inflate) is refused rather than trusted.
-    const text = Buffer.from(input.bytes).toString("latin1");
-    if (/\/Encrypt\b/u.test(decodePdfNameEscapes(text))) reasons.push("PDF is encrypted; upload an unencrypted file");
-    const marker = findActiveContentMarker(text);
+    const streams = scanPdfStreams(input.bytes);
+    if (/\/Encrypt(?=\s|$)/u.test(streams.rawSyntax)) reasons.push("PDF is encrypted; upload an unencrypted file");
+    const marker = findActiveContentMarker(streams.rawSyntax);
     if (marker) reasons.push(`PDF contains active content (${marker}: scripts, launch actions, or embedded files are not accepted)`);
     else {
-      const streams = inflatedPdfStreams(input.bytes);
-      const inner = findActiveContentMarker(streams.text);
+      const innerSyntax = pdfStructuralText(streams.text);
+      const inner = findActiveContentMarker(innerSyntax.text);
       if (inner) reasons.push(`PDF contains active content inside a compressed stream (${inner})`);
       if (streams.opaqueStreams > 0) reasons.push(`PDF has ${streams.opaqueStreams} compressed object stream(s) that could not be inspected`);
       if (streams.unsupportedStreams > 0) {
@@ -339,7 +446,7 @@ export function validatePdfUpload(input: {
           `PDF has ${streams.unsupportedStreams} object stream(s) with an encoding this scanner does not read (only a single FlateDecode filter without decode parameters is inspected)`,
         );
       }
-      if (streams.truncated) reasons.push("PDF has more stream content than this scanner inspects; it was not fully examined");
+      if (streams.truncated || innerSyntax.truncated) reasons.push("PDF has more stream content than this scanner inspects; it was not fully examined");
     }
   }
   return { ok: reasons.length === 0, reasons };
