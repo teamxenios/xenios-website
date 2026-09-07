@@ -1,0 +1,18 @@
+.xr-recommendation-print-overlay { position: fixed; inset: 0; z-index: 1000; overflow: auto; padding: 16px; background: rgb(0 0 0 / 65%); }
+.xr-recommendation-print-preview { width: min(100%, 620px); margin: 0 auto; background: white; color: #121525; border-radius: 12px; overflow: hidden; }
+.xr-recommendation-print-controls { display: flex; flex-wrap: wrap; gap: 12px; padding: 20px; background: #f1f2f7; }
+.xr-recommendation-print-controls p { width: 100%; font-size: 14px; line-height: 1.5; }
+.xr-recommendation-print-card { padding: 28px; text-align: center; color: #121525; background: white; }
+.xr-recommendation-print-card p { margin: 14px 0; font: 14px/1.5 Arial, sans-serif; }
+.xr-recommendation-print-card h2 { font: 700 26px/1.2 Arial, sans-serif; }
+.xr-recommendation-print-card .xr-recommendation-print-brand { letter-spacing: .15em; font-weight: 700; }
+.xr-recommendation-print-qr { display: block; width: min(100%, 280px); height: auto; aspect-ratio: 1; margin: 20px auto; }
+.xr-recommendation-print-card .xr-recommendation-print-url { overflow-wrap: anywhere; font-size: 12px; }
+@media print {
+  body:has([data-recommendation-print="true"]) > :not(.xr-recommendation-print-overlay) { display: none !important; }
+  .xr-recommendation-print-overlay { position: static; padding: 0; overflow: visible; background: white; }
+  .xr-recommendation-print-preview { width: 100%; max-width: 160mm; border-radius: 0; margin: 0 auto; }
+  .xr-recommendation-print-controls { display: none !important; }
+  .xr-recommendation-print-card { break-inside: avoid; padding: 8mm; }
+  .xr-recommendation-print-qr { width: 65mm; max-width: 100%; }
+}

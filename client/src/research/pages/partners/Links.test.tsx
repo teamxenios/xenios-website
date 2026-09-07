@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API, type RecommendationLink } from "@shared/research/referral-v1";
 import Links from "./Links";
 
-const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null }));
-vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token }) }));
+const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false }));
+vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking }) }));
 vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children }: { children: ReactNode }) => <div>{children}</div> }));
 let host: HTMLDivElement;
 let root: Root;
@@ -26,9 +26,159 @@ beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
   session.token = "synthetic-member-one";
+  session.checking = false;
+  vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-09-07T12:00:00Z"));
   fetcher = vi.fn().mockResolvedValue(list()); vi.stubGlobal("fetch", fetcher);
   vi.stubGlobal("crypto", { randomUUID: vi.fn().mockReturnValue("00000000-0000-4000-8000-000000000001") });
   Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: vi.fn().mockResolvedValue(undefined) } });
+});
+
+describe("canonical recommendation QR and print exports", () => {
+  let createUrl: ReturnType<typeof vi.fn>;
+  let revokeUrl: ReturnType<typeof vi.fn>;
+  let saved: string[];
+  let printed: ReturnType<typeof vi.fn>;
+  const allButton = (label: string) => Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(item => item.textContent === label)!;
+  const allClick = (label: string) => act(async () => allButton(label).click());
+  const card = () => document.querySelector('[data-recommendation-print="true"]');
+  function deferred<T>() {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>(yes => { resolve = yes; });
+    return { promise, resolve };
+  }
+  beforeEach(() => {
+    saved = [];
+    createUrl = vi.fn(() => "blob:synthetic-qr"); revokeUrl = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createUrl });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeUrl });
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) { saved.push(this.download); });
+    printed = vi.fn(); vi.stubGlobal("print", printed);
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => { queueMicrotask(() => callback(0)); return 1; });
+  });
+
+  it("requires explicit intent, rereads server eligibility, and downloads only a local SVG with no new tracking/mutation", async () => {
+    await render();
+    expect(createUrl).not.toHaveBeenCalled();
+    await click("Download QR (SVG)");
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher.mock.calls.every(([path, init]) => path === REFERRAL_API.links && init.method === "GET"
+      && init.body === undefined && init.cache === "no-store" && init.headers.Authorization === "Bearer synthetic-member-one")).toBe(true);
+    expect(createUrl).toHaveBeenCalledTimes(1);
+    expect(createUrl.mock.calls[0][0].type).toBe("image/svg+xml;charset=utf-8");
+    expect(saved).toEqual(["xenios-recommendation-qr.svg"]);
+    expect(revokeUrl).toHaveBeenCalledWith("blob:synthetic-qr");
+    expect(host.textContent).toContain("browser controls whether the file was saved");
+    expect(host.textContent).toContain("Include your partner relationship disclosure");
+    expect(document.querySelector('a[download]')).toBeNull();
+  });
+
+  it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("refuses a newly server-reported %s link during export", async state => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state })]));
+    await render(); await click("Download QR (SVG)");
+    expect(saved).toEqual([]); expect(card()).toBeNull();
+    expect(host.textContent).toContain("no longer available to export");
+    expect(button("Download QR (SVG)")).toBeUndefined();
+  });
+
+  it.each([false, true])("refuses partner eligibility false or changed canonical URL (changed URL: %s)", async changed => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(changed
+      ? list([link({ url: `${location.origin}/r/r1_${"B".repeat(43)}` })]) : list([link()], false));
+    await render(); await click("Preview print card");
+    expect(card()).toBeNull(); expect(createUrl).not.toHaveBeenCalled();
+    expect(host.textContent).toContain("no longer available to export");
+  });
+
+  it("never exposes an export for unsafe, locally expired, or revoked ready-looking rows", async () => {
+    fetcher.mockResolvedValue(list([
+      link({ id: "old", expiresAt: "2026-01-01T00:00:00Z" }),
+      link({ id: "revoked", revokedAt: "2026-09-07T00:00:00Z" }),
+      link({ id: "unsafe", url: `${link().url}?` }),
+    ]));
+    await render();
+    expect(button("Download QR (SVG)")).toBeUndefined();
+    expect(button("Preview print card")).toBeUndefined();
+    expect(host.querySelector("input[readonly]")).toBeNull();
+  });
+
+  it("a link expiring during the fresh read does not produce bytes", async () => {
+    await render(); const pending = deferred<ReturnType<typeof list>>();
+    fetcher.mockReturnValueOnce(pending.promise); await click("Download QR (SVG)");
+    vi.mocked(Date.now).mockReturnValue(Date.parse(link().expiresAt));
+    await act(async () => pending.resolve(list()));
+    expect(saved).toEqual([]); expect(createUrl).not.toHaveBeenCalled();
+  });
+
+  it.each(["logout", "account-switch", "checking", "unmount", "A-B-A", "refresh-token"])("drops an in-flight export on %s", async transition => {
+    await render(); const pending = deferred<ReturnType<typeof list>>();
+    fetcher.mockReturnValueOnce(pending.promise); await click("Download QR (SVG)");
+    if (transition === "unmount") { await act(async () => root.unmount()); root = createRoot(host); }
+    else if (transition === "checking") { session.checking = true; await render(); }
+    else if (transition === "logout") { session.token = null; await render(); }
+    else {
+      session.token = transition === "refresh-token" ? "synthetic-refreshed-one" : "synthetic-member-two";
+      fetcher.mockResolvedValueOnce(list([], false)); await render();
+      if (transition === "A-B-A") { session.token = "synthetic-member-one"; await render(); }
+    }
+    await act(async () => pending.resolve(list()));
+    expect(createUrl).not.toHaveBeenCalled(); expect(saved).toEqual([]); expect(card()).toBeNull();
+    expect(document.body.textContent).not.toContain("QR download requested");
+    expect(fetcher.mock.calls.every(([, init]) => init.method === "GET")).toBe(true);
+  });
+
+  it("a refresh cancels a pending export even if its old response arrives last", async () => {
+    await render(); const pending = deferred<ReturnType<typeof list>>();
+    fetcher.mockReturnValueOnce(pending.promise); await click("Download QR (SVG)");
+    fetcher.mockResolvedValueOnce(list([], false)); await click("Refresh");
+    await act(async () => pending.resolve(list()));
+    expect(saved).toEqual([]); expect(host.textContent).toContain("Referral access is not active");
+  });
+
+  it("latches duplicate export requests before React rerenders", async () => {
+    await render(); const pending = deferred<ReturnType<typeof list>>(); fetcher.mockReturnValueOnce(pending.promise);
+    await act(async () => { button("Download QR (SVG)").click(); button("Download QR (SVG)").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    await act(async () => pending.resolve(list())); expect(saved).toHaveLength(1);
+  });
+
+  it("opens a print-only card and rechecks before printing, without claiming a saved file", async () => {
+    await render(); await click("Preview print card");
+    expect(card()?.textContent).toContain(link().url);
+    expect(card()?.textContent).toContain("partner may receive compensation");
+    expect(printed).not.toHaveBeenCalled();
+    await allClick("Print / Save as PDF");
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(printed).toHaveBeenCalledTimes(1); expect(saved).toEqual([]);
+    expect(document.body.textContent).not.toContain("PDF saved");
+    session.token = null; await render();
+    expect(card()).toBeNull(); expect(document.body.textContent).not.toContain(link().url);
+  });
+
+  it("closing preview before the pending recheck resolves prevents print", async () => {
+    await render(); await click("Preview print card");
+    const pending = deferred<ReturnType<typeof list>>(); fetcher.mockReturnValueOnce(pending.promise);
+    await allClick("Print / Save as PDF"); await allClick("Close preview");
+    await act(async () => pending.resolve(list()));
+    expect(printed).not.toHaveBeenCalled(); expect(card()).toBeNull();
+  });
+
+  it("account switching after print verification but before the browser frame cannot print the old card", async () => {
+    let frame: FrameRequestCallback | undefined;
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => { frame = callback; return 1; });
+    await render(); await click("Preview print card"); await allClick("Print / Save as PDF");
+    expect(frame).toBeDefined();
+    session.token = "synthetic-member-two"; fetcher.mockResolvedValueOnce(list([], false)); await render();
+    await act(async () => frame!(0));
+    expect(printed).not.toHaveBeenCalled(); expect(card()).toBeNull();
+  });
+
+  it.each(["unavailable", "malformed", "duplicate"])("failed export recheck remains fail-closed: %s", async reason => {
+    await render();
+    fetcher.mockResolvedValueOnce(reason === "unavailable" ? response({ ok: false, code: "capability_disabled", message: "PRIVATE-DETAIL" }, 503)
+      : reason === "duplicate" ? list([link(), link()]) : response({ ok: true, eligible: true, links: null }));
+    await click("Download QR (SVG)");
+    expect(saved).toEqual([]); expect(card()).toBeNull(); expect(createUrl).not.toHaveBeenCalled();
+    expect(host.textContent).not.toContain("PRIVATE-DETAIL");
+  });
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
