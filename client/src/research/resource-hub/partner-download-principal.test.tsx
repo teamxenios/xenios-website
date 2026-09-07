@@ -141,6 +141,31 @@ function expectNothingSaved() {
 }
 
 describe("RH-B28-2: partner download bound to the session that started it", () => {
+  it.each(["unauthorized", "forbidden", "unavailable", "error"])("a terminal %s clears metadata before a same-account refresh retries", async (kind) => {
+    session.token = jwt("member-a", "initial");
+    await render();
+    await flush();
+    expect(host.textContent).toContain(card().title);
+
+    mocks.library.mockResolvedValueOnce({ kind, message: "The read failed." });
+    await switchSession(jwt("member-a", "denied"));
+    expect(host.textContent).not.toContain(card().title);
+    expect(downloadButton()).toBeNull();
+
+    const retry = deferred();
+    mocks.library.mockReturnValueOnce(retry.promise);
+    await switchSession(jwt("member-a", "retry"));
+    expect(mocks.library).toHaveBeenLastCalledWith(session.token);
+    expect(host.textContent).not.toContain(card().title);
+    expect(downloadButton()).toBeNull();
+    expectNothingSaved();
+
+    retry.resolve({ kind: "ok", data: library() });
+    await flush();
+    expect(host.textContent).toContain(card().title);
+    expect(downloadButton()).not.toBeNull();
+  });
+
   it("A signs out before the bytes arrive: the request is aborted and nothing is saved", async () => {
     const request = await startDownload();
     await switchSession(null);

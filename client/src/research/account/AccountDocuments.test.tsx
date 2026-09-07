@@ -70,8 +70,8 @@ beforeEach(() => {
   createObjectURL = vi.fn(() => "blob:synthetic-account-document");
   revokeObjectURL = vi.fn();
   vi.stubGlobal("URL", class extends URL {
-    static createObjectURL = createObjectURL;
-    static revokeObjectURL = revokeObjectURL;
+    static createObjectURL(object: Blob | MediaSource): string { return createObjectURL(object); }
+    static revokeObjectURL(url: string): void { revokeObjectURL(url); }
   });
   vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
     saved.push(this.href);

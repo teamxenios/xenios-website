@@ -217,7 +217,12 @@ export default function Resources() {
   // change renders loading, then B's own list.
   const principal = principalKeyOf(memberToken);
   const heldRef = useRef<{ principal: string | null; resources: ResourceCardDto[] } | null>(null);
-  if (data) heldRef.current = { principal, resources: data.resources };
+  // A terminal denial or failure ends the previous read's authority. A later
+  // retry must obtain a fresh list before it can show those cards again.
+  if (!principal || heldRef.current?.principal !== principal || (state !== "ok" && state !== "loading")) {
+    heldRef.current = null;
+  }
+  if (data && state === "ok") heldRef.current = { principal, resources: data.resources };
   const held = state === "loading" && heldRef.current && heldRef.current.principal === principal ? heldRef.current.resources : null;
   const resources = data?.resources ?? held ?? [];
   const boundaryState = held && !data ? "ok" : state;
