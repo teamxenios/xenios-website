@@ -1,38 +1,26 @@
 import { useResearch } from "../../core";
+import { Link } from "wouter";
 import { ResearchPartnerShell } from "../../ui/shells";
 import {
   ResearchCapabilityBoundary,
+  ResearchDenialNotice,
+  ResearchEmptyState,
+  ResearchLoadingState,
   ResearchRouteBoundary,
+  ResearchSecureNotice,
   ResearchStatusBadge,
   capabilityStatusOrPending,
 } from "../../ui/kit";
 import { getPartnerOnboarding } from "../../adapters/partner";
-import {
-  PARTNER_PENDING_BODY,
-  PARTNER_PENDING_TITLE,
-  usePartnerCapabilities,
-  usePartnerResource,
-} from "./shared";
+import { ACCOUNT_PORTAL_ROUTES, ACCESS_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
+import { IDENTITY_RECORD_LABELS, readPartnerOnboardingReport } from "../../partner-crm/onboarding-records";
+import { usePartnerCapabilities, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
-// Partner onboarding (/research/partners/onboarding). Verification status,
-// the agreements checklist, and payout/tax setup. Live status comes only
-// from GET /api/research/partner/onboarding; until that endpoint is
-// published the page shows the honest pending state. The payout and tax
-// section sits behind the affiliate_payouts capability boundary.
+// Existing onboarding GET reports identity and versioned acknowledgement facts,
+// not a review receipt or activation decision. Payout navigation retains its
+// affiliate_payouts capability boundary; no payout or tax facts are fetched here.
 // ---------------------------------------------------------------------------
-
-interface AgreementItem {
-  id: string;
-  title: string;
-  version?: string | null;
-  acknowledged?: boolean | null;
-}
-
-interface OnboardingPayload {
-  verification?: { state?: string; detail?: string } | null;
-  agreements?: AgreementItem[] | null;
-}
 
 const STEPS = [
   {
@@ -54,18 +42,12 @@ const STEPS = [
 ];
 
 export default function Onboarding() {
-  const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<OnboardingPayload>(
-    getPartnerOnboarding,
-    memberToken,
-  );
-  const capabilities = usePartnerCapabilities(memberToken);
-  const payoutStatus = capabilityStatusOrPending(capabilities, "affiliate_payouts");
+  const { memberToken, memberChecking } = useResearch();
 
   return (
     <ResearchPartnerShell
       title="Onboarding"
-      lead="The steps between an approved application and a live rep link. Each one is confirmed by the team, and your live status appears here as it moves."
+      lead="The program steps and onboarding facts returned for your partner account. The steps are guidance; the report does not establish that you are approved, activated, or ready to share."
     >
       <section aria-labelledby="po-steps">
         <h2 id="po-steps" className="mono-cap text-ink-mute">
@@ -86,74 +68,81 @@ export default function Onboarding() {
         </ol>
       </section>
 
+      <nav aria-label="Onboarding help" className="flex flex-wrap gap-3 my-6">
+        <Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary">My account</Link>
+        <Link href={PARTNER_ROUTES.training} className="btn btn-secondary">Training records</Link>
+        <Link href={PARTNER_ROUTES.support} className="btn btn-secondary">Partner support</Link>
+      </nav>
+      <ResearchSecureNotice>
+        Identity and agreement markers are separate from customer approval, partner activation, and sharing or product permissions.
+        This report does not start an identity review, accept an agreement, or change account access. A marker is not a review receipt or a promise about the next step.
+      </ResearchSecureNotice>
+
       <section aria-labelledby="po-status" className="mt-10">
         <h2 id="po-status" className="mono-cap text-ink-mute">
-          Your live status
+          Reported onboarding records
         </h2>
         <div className="mt-4">
-          <ResearchRouteBoundary
-            state={state}
-            errorMessage={errorMessage}
-            onRetry={() => void reload()}
-            unavailableTitle={PARTNER_PENDING_TITLE}
-            unavailableBody="Your verification status and agreements checklist appear here once partner onboarding opens. Nothing is required from you right now."
-          >
-            <div className="card">
-              <p className="mono-label text-ink-mute">Identity verification</p>
-              <div className="mt-2 flex items-center gap-3">
-                <ResearchStatusBadge
-                  label={data?.verification?.state ?? "Not started"}
-                  tone={data?.verification?.state === "verified" ? "success" : "pending"}
-                />
-                {data?.verification?.detail && <p className="body-s text-ink-2">{data.verification.detail}</p>}
-              </div>
-            </div>
-            <div className="card mt-4">
-              <p className="mono-label text-ink-mute">Agreements checklist</p>
-              {(data?.agreements ?? []).length === 0 ? (
-                <p className="body-s text-ink-2 mt-2">
-                  No agreements have been presented yet. They appear here when onboarding reaches that step.
-                </p>
-              ) : (
-                <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="mt-2 grid gap-3">
-                  {(data?.agreements ?? []).map((a) => (
-                    <li key={a.id} className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="body-s">
-                        {a.title}
-                        {a.version ? ` (v${a.version})` : ""}
-                      </span>
-                      <ResearchStatusBadge
-                        label={a.acknowledged ? "Accepted" : "Awaiting acceptance"}
-                        tone={a.acknowledged ? "success" : "warning"}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </ResearchRouteBoundary>
-        </div>
-      </section>
-
-      <section aria-labelledby="po-payout" className="mt-10">
-        <h2 id="po-payout" className="mono-cap text-ink-mute">
-          Payout and tax clearance
-        </h2>
-        <div className="mt-4">
-          <ResearchCapabilityBoundary status={payoutStatus}>
-            <div className="card">
-              <p className="body-m font-700">Payout details</p>
-              <p className="body-s text-ink-2 mt-2">
-                Payout readiness and tax documentation are shown here when the canonical review is available. Both are
-                required before partner certification and activation; this page does not fabricate evidence or claim a payout.
-              </p>
-              <div className="mt-3">
-                <ResearchStatusBadge label="Setup pending" tone="pending" />
-              </div>
-            </div>
-          </ResearchCapabilityBoundary>
+          {memberChecking ? <ResearchLoadingState label="Checking your account" />
+            : memberToken ? <OnboardingReporting key={memberToken} token={memberToken} /> : <SignInNotice />}
         </div>
       </section>
     </ResearchPartnerShell>
   );
+}
+
+function SignInNotice() {
+  return <ResearchEmptyState title="Sign in to view reported onboarding records"
+    body="Use your Xenios account. The server verifies partner reporting access separately."
+    action={<Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">Sign in</Link>} />;
+}
+
+function OnboardingReporting({ token }: { token: string }) {
+  const { state, denied, data, reload } = usePartnerResource<unknown>(getPartnerOnboarding, token);
+  const capabilities = usePartnerCapabilities(token);
+  const payoutStatus = capabilityStatusOrPending(capabilities, "affiliate_payouts");
+  if (state === "unauthorized") return <SignInNotice />;
+  if (denied) return <><ResearchDenialNotice code={denied.code} />
+    <p className="body-s mt-4">Partner reporting access is separate from customer approval. No account permissions were changed.</p></>;
+  const report = state === "ok" ? readPartnerOnboardingReport(data) : null;
+  return <>
+    <div className="flex justify-end mb-4"><button type="button" className="btn btn-secondary" onClick={() => void reload()}>Refresh onboarding records</button></div>
+    <ResearchRouteBoundary state={state === "ok" && report === null ? "error" : state}
+      errorMessage="Onboarding records could not be read safely. Please try again."
+      onRetry={() => void reload()}
+      unavailableTitle="Onboarding reporting is unavailable right now"
+      unavailableBody="The source could not be loaded. This does not establish your identity status, agreement history, or whether action is required.">
+      {report && <>
+        <div className="card" aria-label="Reported identity marker">
+          <p className="mono-label text-ink-mute">Reported identity marker</p>
+          <div className="mt-2"><ResearchStatusBadge label={`${IDENTITY_RECORD_LABELS[report.verification.state]} (reported)`} tone="neutral" /></div>
+          <p className="body-s text-ink-2 mt-2">The source does not supply an identity review receipt, date, or reviewer here. This marker does not confirm that a new review is queued or that no action is required.</p>
+        </div>
+        <div className="card mt-4" aria-label="Reported agreement records">
+          <p className="mono-label text-ink-mute">Reported agreement records</p>
+          <p className="body-s text-ink-2 mt-2">Acknowledgement is reported for each listed key and version. It does not itself confirm current partner eligibility, a signed document, or completion of all onboarding requirements.</p>
+          {report.agreements.length === 0 ? <ResearchEmptyState title="No agreement records were returned."
+            body="This is not evidence that no agreements exist, none have been presented, or your agreement history is complete." />
+            : <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="mt-4 grid gap-3">
+              {report.agreements.map((agreement) => <li key={agreement.id} className="flex flex-wrap items-center justify-between gap-3">
+                <span className="body-s">{agreement.title}<span className="block text-ink-2">Reported version: {agreement.version}</span></span>
+                <ResearchStatusBadge label={agreement.acknowledged ? "Acknowledgement recorded (reported)" : "Acknowledgement not recorded for this version"} tone="neutral" />
+              </li>)}
+            </ul>}
+        </div>
+        <section aria-labelledby="po-payout" className="mt-10">
+          <h2 id="po-payout" className="mono-cap text-ink-mute">Payout and tax clearance</h2>
+          <div className="mt-4">
+            <ResearchCapabilityBoundary status={payoutStatus}>
+              <div className="card" aria-label="Payout reporting handoff">
+                <p className="body-m font-700">Payout and tax status are not provided by this report.</p>
+                <p className="body-s text-ink-2 mt-2">Current payout readiness and tax clearance are not verified here. Opening a reporting page does not set up a provider, submit tax information, or initiate a payout.</p>
+                <Link href={PARTNER_ROUTES.payouts} className="btn btn-secondary mt-4">View payout records</Link>
+              </div>
+            </ResearchCapabilityBoundary>
+          </div>
+        </section>
+      </>}
+    </ResearchRouteBoundary>
+  </>;
 }
