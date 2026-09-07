@@ -3,6 +3,26 @@
   "updatedAt": "2026-09-05T12:49:32.056944-05:00",
   "tasks": [
     {
+      "id": "RESOURCE-HUB-INDEPENDENT-ACCEPTANCE-20260907",
+      "title": "Publish B independent correction and actual-browser acceptance",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-resource-hub-browser-fixture-20260907",
+      "paths": [
+        "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+      "scopeNote": "A requested concise independent acceptance after B browser completion. Documentation only; no runtime edits, heavy tests or production actions. External evidence artifacts retained with hashes.",
+      "claimedAt": "2026-09-07T23:16:36.888Z",
+      "handoff": {
+        "session": "codex-resource-hub-browser-fixture-20260907",
+        "sha": "66ab76e675846b8b400494d05d8ec8951e50cf81",
+        "file": ".xenios/handoffs/2026-09-07T23-16-54-859Z-RESOURCE-HUB-INDEPENDENT-ACCEPTANCE-20260907-codex-resource-hub-browser-fixture-20260907.md",
+        "at": "2026-09-07T23:16:54.863Z"
+      }
+    },
+    {
       "id": "RESOURCE-HUB-BROWSER-FIXTURE-20260907",
       "title": "Align the local Resource Hub preview with the actual portal flag predicate",
       "priority": "P0",

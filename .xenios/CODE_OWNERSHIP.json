@@ -1631,6 +1631,17 @@
       "state": "handoff",
       "claimedAt": "2026-09-07T23:10:43.222Z",
       "heartbeatAt": "2026-09-07T23:10:43.222Z"
+    },
+    {
+      "id": "956f3c1d-67ac-4d64-9f56-12d950438a3d",
+      "task": "RESOURCE-HUB-INDEPENDENT-ACCEPTANCE-20260907",
+      "session": "codex-resource-hub-browser-fixture-20260907",
+      "paths": [
+        "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-07T23:16:36.890Z",
+      "heartbeatAt": "2026-09-07T23:16:36.890Z"
     }
   ],
   "rules": [
