@@ -1,24 +1,17 @@
 import { useResearch } from "../../core";
+import { Link } from "wouter";
 import { ResearchPartnerShell } from "../../ui/shells";
-import { ResearchDataTable, ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
+import { ResearchDataTable, ResearchDenialNotice, ResearchEmptyState, ResearchLoadingState, ResearchRouteBoundary, ResearchSecureNotice } from "../../ui/kit";
 import { getPartnerSecuritySessions } from "../../adapters/partner";
-import { PARTNER_PENDING_TITLE, PARTNER_SUPPORT_EMAIL, usePartnerResource } from "./shared";
+import { ACCOUNT_PORTAL_ROUTES, ACCESS_ROUTES } from "../../lib/routes";
+import { readPartnerSecuritySessions, type ReportedPartnerSession } from "../../partner-crm/security-sessions";
+import { usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
 // Partner account security (/research/partners/security). The basics every
 // rep account follows, plus a session history surface served by the partner
 // API (honest pending state until it is published).
 // ---------------------------------------------------------------------------
-
-interface SessionRecord {
-  id: string;
-  startedAt: string;
-  device?: string | null;
-  approximateLocation?: string | null;
-  current?: boolean | null;
-}
-
-type SecurityPayload = { sessions?: SessionRecord[] };
 
 const BASICS = [
   {
@@ -44,11 +37,7 @@ const BASICS = [
 ];
 
 export default function Security() {
-  const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<SecurityPayload>(
-    getPartnerSecuritySessions,
-    memberToken,
-  );
+  const { memberToken, memberChecking } = useResearch();
 
   return (
     <ResearchPartnerShell
@@ -69,44 +58,63 @@ export default function Security() {
         </div>
       </section>
 
+      <div className="my-6"><Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary">My account</Link></div>
+      <ResearchSecureNotice>
+        This partner report is not a complete sign-in history or an account-safety check. Records do not prove
+        who used a device, whether a session is still valid, or that other sessions were signed out. No sessions are revoked here.
+      </ResearchSecureNotice>
       <section aria-labelledby="psc-sessions" className="mt-10">
         <h2 id="psc-sessions" className="mono-cap text-ink-mute">
-          Recent sessions
+          Reported session records
         </h2>
         <div className="mt-4">
-          <ResearchRouteBoundary
-            state={state}
-            errorMessage={errorMessage}
-            onRetry={() => void reload()}
-            unavailableTitle={PARTNER_PENDING_TITLE}
-            unavailableBody="Your session history appears here when the partner platform launches, so you can spot a sign-in that was not you."
-          >
-            <ResearchDataTable<SessionRecord>
-              caption="Recent sign-in sessions on your partner account"
-              columns={[
-                { key: "startedAt", header: "Signed in", render: (s) => s.startedAt },
-                { key: "device", header: "Device", render: (s) => s.device ?? "Unknown device" },
-                {
-                  key: "location",
-                  header: "Approximate location",
-                  render: (s) => s.approximateLocation ?? "Not recorded",
-                },
-                { key: "current", header: "This session", render: (s) => (s.current ? "Yes" : "No") },
-              ]}
-              rows={data?.sessions ?? []}
-              rowKey={(s) => s.id}
-              empty="No session history recorded yet."
-            />
-          </ResearchRouteBoundary>
+          {memberChecking ? <ResearchLoadingState label="Checking your account" />
+            : memberToken ? <SecurityReporting key={memberToken} token={memberToken} /> : <SignInNotice />}
         </div>
       </section>
 
       <div className="mt-8">
         <ResearchSecureNotice>
-          To report a security concern, email {PARTNER_SUPPORT_EMAIL} with "security" in the subject line. If you
-          believe your account is compromised, say so plainly and the team will lock it first and sort it out second.
+          To report a security concern, contact team@xeniostechnology.com. Do not include passwords, sign-in codes,
+          tokens, or bank details. Contacting support does not itself lock the account, change a password, or revoke a session.
         </ResearchSecureNotice>
+        <a className="btn btn-secondary mt-4" href="mailto:team@xeniostechnology.com?subject=Account%20security%20concern">Contact the security team</a>
       </div>
     </ResearchPartnerShell>
   );
+}
+
+function SignInNotice() {
+  return <ResearchEmptyState title="Sign in to view reported session records"
+    body="Use your Xenios account. The server verifies access to partner reporting separately."
+    action={<Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">Sign in</Link>} />;
+}
+
+function SecurityReporting({ token }: { token: string }) {
+  const { state, denied, data, reload } = usePartnerResource<unknown>(getPartnerSecuritySessions, token);
+  if (state === "unauthorized") return <SignInNotice />;
+  if (denied) return <><ResearchDenialNotice code={denied.code} />
+    <p className="body-s mt-4">Partner reporting access is separate from customer approval. This report does not change account access.</p></>;
+  const sessions = state === "ok" ? readPartnerSecuritySessions(data) : null;
+  const malformed = state === "ok" && sessions === null;
+  return <>
+    <div className="flex justify-end mb-4"><button type="button" className="btn btn-secondary" onClick={() => void reload()}>Refresh session records</button></div>
+    <ResearchRouteBoundary state={malformed ? "error" : state}
+      errorMessage="Session records could not be read safely. Please try again."
+      onRetry={() => void reload()}
+      unavailableTitle="Session reporting is unavailable right now"
+      unavailableBody="The source could not be loaded. This does not mean there were no sign-ins or that your account is secure.">
+      <ResearchDataTable<ReportedPartnerSession>
+        caption="Reported session records: start time, device label, approximate location, and current-session marker"
+        columns={[
+          { key: "startedAt", header: "Reported start", render: (row) => row.startedAt },
+          { key: "device", header: "Reported device", render: (row) => row.device ?? "Device not reported" },
+          { key: "location", header: "Reported approximate location", render: (row) => row.approximateLocation ?? "Location not reported" },
+          { key: "current", header: "Source current-session marker", render: (row) => row.current ? "Marked current (reported)" : "Not marked current (reported)" },
+        ]}
+        rows={sessions ?? []} rowKey={(row) => row.id}
+        empty="No session records were returned. The source may be unavailable or incomplete; this is not evidence of no sign-ins, no other sessions, or account safety."
+      />
+    </ResearchRouteBoundary>
+  </>;
 }
