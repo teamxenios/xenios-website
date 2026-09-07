@@ -1,5 +1,7 @@
 # ASTRA-B independent review: Resource Hub b28
 
+Latest follow-up: corrected candidate `b1b41c8084cbcf1b3b477fa47462862d6a71b509` remains **BLOCK**; see the dated addendum at the end. The original b28 findings and evidence below are preserved as history, not assertions that the fixes were never attempted.
+
 Review date: 2026-09-07. Disposition: **BLOCK — not accepted for integration or production release.**
 
 This is a source/evidence review, not production verification. The reviewer performed read-only Git/source/evidence inspection and one pure, in-memory scanner probe. No runtime files were edited, heavy test suites run, database commands executed, production configuration changed, migrations applied, deployments initiated, or communications sent. The only authorized write is this ASTRA-B review document and its documentation-only commit/push.
@@ -137,3 +139,90 @@ For the remediation handoff, provide an immutable evidence inventory binding the
 No role-specific materials were written. Any future ASTRA-B material allocation needs an explicitly non-overlapping destination (for example an agreed `docs/resource-hub/materials/astra-b/**` subtree) and separate approval for associated source/intake/asset paths. Permission to write this review is not permission to write those materials or edit Fable's worktree.
 
 **Final decision: BLOCK. b28 is a pushed code candidate with a clean records-only handoff successor, but the source defects and acceptance gaps above remain open. No production action is authorized or represented as completed by this review.**
+
+## Corrected-candidate follow-up — 2026-09-07 — b1b41c8
+
+**Decision: BLOCK.** The original ASCIIHex probe is fixed, and the principal-transition changes materially address RH-B28-2/3. A closely related scanner discovery bypass is independently reproduced below. Ordinary partner Resource Hub reachability under the locked review gate also remains an explicitly measured integration dependency.
+
+Reviewed code SHA: `b1b41c8084cbcf1b3b477fa47462862d6a71b509`; tree: `15df3adf3f4c56d4a753464caf6e3addff9a3ea4`. The Fable branch is clean and pushed at records-only successor `f41bff55bea860bf1f1838346503c36f4b6b3d70`, tree `004e0af129fd0ccfa739435128371aafa4162c39`. `git ls-remote` matches that successor. Only three `.xenios` records differ from the candidate; runtime source is unchanged. The actual candidate parent is b28's records successor `379f4b4f3eec34ab113f4fad57bca2ad83e86f31`.
+
+Reviewed handoff: `.xenios/handoffs/2026-09-07T16-03-00-427Z-RECRUITER-RESOURCE-HUB-V1-20260906-fable-recruiter-resource-hub-20260906.md`. This follow-up used read-only source/Git/evidence inspection, hash verification, two existing screenshots, and pure in-memory scanner probes; no new browser journey or heavy test suite was run. Supabase auth/privacy skill guidance informed the distinction between principal isolation and server authorization; its changelog fetch was unavailable and is not evidence for any finding. No runtime, database, production, migration, or configuration writes occurred.
+
+### RH-B1-1 — P1: dictionary-string content defeats object-stream discovery
+
+At `server/research/resource-hub/service.ts:196-200`, the scanner locates the containing object with `raw.lastIndexOf("obj", start, "latin1")`. This is a substring search, not an object-header/token boundary. Adding the innocuous dictionary entry `/ReviewNote (obj)` to the previously reported object stream makes that literal the chosen boundary; the resulting dictionary slice excludes `/Type /ObjStm`, so line 199 skips it before the new unsupported-filter classifier runs.
+
+The following pure probe was executed using Node v20.19.0, the existing TSX loader, and `TSX_DISABLE_CACHE=1`, passing code over stdin. It performs no file write, network call, or viewer/script execution:
+
+```js
+import { validatePdfUpload, inflatedPdfStreams } from "./server/research/resource-hub/service.ts";
+const encoded = Buffer.from(
+  "1 0 << /Type /Action /S /JavaScript /JS (void 0) >>", "latin1"
+).toString("hex") + ">";
+for (const [name, extra] of [
+  ["original-b28", ""], ["dictionary-literal-obj", " /ReviewNote (obj)"]
+]) {
+  const bytes = Buffer.from(
+    "%PDF-1.5\n2 0 obj << /Type /ObjStm /N 1 /First 4 /Filter /ASCIIHexDecode" +
+    extra + " /Length " + encoded.length + " >>\nstream\n" + encoded +
+    "\nendstream\nendobj\n%%EOF\n", "latin1"
+  );
+  console.log(JSON.stringify({ name,
+    validation: validatePdfUpload({ bytes, declaredContentType: "application/pdf",
+      originalFilename: "synthetic-scanner-check.pdf" }),
+    scan: inflatedPdfStreams(bytes)
+  }));
+}
+```
+
+Observed results:
+
+```json
+{"name":"original-b28","validation":{"ok":false,"reasons":["PDF has 1 object stream(s) with an encoding this scanner does not read (only a single FlateDecode filter without decode parameters is inspected)"]},"scan":{"text":"","opaqueStreams":0,"unsupportedStreams":1,"truncated":false}}
+{"name":"dictionary-literal-obj","validation":{"ok":true,"reasons":[]},"scan":{"text":"","opaqueStreams":0,"unsupportedStreams":0,"truncated":false}}
+```
+
+This is a scanner-level synthetic regression, not a completed malicious PDF or a demonstrated viewer exploit. It proves that fail-closed handling still depends on brittle object discovery. The new encoding classifier and exhaustion checks do not run on a missed object stream. Resolve object boundaries with bounded syntax-aware handling, or conservatively refuse ambiguous/uninspectable object content; add a regression for dictionary strings/comments containing `obj` and related boundary ambiguity without breaking normal image/font handling. Do not close RH-B28-1 solely because its exact original bytes now fail.
+
+### Findings that improved, and remaining limits
+
+| Previous finding | Follow-up assessment |
+| --- | --- |
+| RH-B28-1 unsupported encodings/exhaustion | Original probe now refuses; source adds unsupported-filter counting and stream-budget truncation, with focused regressions. Closure remains blocked by RH-B1-1 above. |
+| RH-B28-2 stale partner/admin downloads | Source now captures principal/generation, passes abort signals, checks mounted/current state after awaits, and gates the save side effect. Inspected tests cover A-to-B, A-to-null, unmount, older completion, current completion, and same-account refresh. Source-level finding addressed; not independently browser-replayed here. |
+| RH-B28-3 stale admin body/outcomes | `ResourceHubAdminForPrincipal` at lines 983-984 keys the entire body by principal, including forms/outcomes. A different principal remounts it; same-account refresh intentionally retains work. Inspected tests exercise switched/denied B, stale lists, unsaved forms, outcomes, and overlapping loads. Source-level composition finding addressed. |
+| RH-B28-4 logout evidence | A new journal reports 18 passing steps using rendered sign-out controls and delayed downloads, replacing manual-storage-clearing evidence. Screenshots inspected show admin sign-in required without resource metadata and B's authorized library. Outputs are stronger, but the referenced browser driver is not preserved at its declared path; see provenance limit below. |
+| INT-1 old-base integration | Selective manifest explicitly preserves ff3's `portal-production.ts`. Independent three-way file comparison confirms this is the only runtime file changed on both sides since `096d70c17c823fa6ad3fefc7a7d72f91edd54a39`; Fable's delta in it is comment-only. The manifest omits five coordination paths and their exclusion/reconciliation rules, detailed below. Keep the accepted runtime file; combined-runtime qualification is still required. |
+| INT-2 locked gate | `locked-gate-probe.json` records ordinary member bearer calls to library/download returning 401 while partner self/dashboard return 200. This remains an owner-approved exact-route integration prerequisite, not fixed by this candidate. Do not broadly bypass the wall. |
+
+The principal-key helper uses decoded JWT `sub` only as a UI isolation key, not as a grant. Server bearer authorization remains required. No new privilege inference was found in the reviewed corrective delta. The same-principal hold-during-reload behavior does not establish fresh server permission and must remain subordinate to actual denial responses. The tests' comments claiming a first-render check are stronger than their `await act(...)` observation, which flushes effects; the principal-keyed source, not that comment alone, supports synchronous remount isolation.
+
+### P2: selective integration manifest omits coordination changes
+
+The manifest presents a changed-file plan, but the complete `git diff --name-status 096d70c17c823fa6ad3fefc7a7d72f91edd54a39 b1b41c8084cbcf1b3b477fa47462862d6a71b509` includes five `.xenios` paths absent from its apply/preserve/exclude inventory:
+
+- `.xenios/ACTIVE_TASKS.json`
+- `.xenios/SESSION_REGISTRY.json`
+- `.xenios/handoffs/2026-09-07T14-42-01-604Z-RECRUITER-RESOURCE-HUB-V1-20260906-fable-recruiter-resource-hub-20260906.md`
+- `.xenios/messages/2026-09-06T05-32-27-143Z-fable-recruiter-resource-hub-20260906.json`
+- `.xenios/sessions/fable-recruiter-resource-hub-20260906.json`
+
+The all-path three-way comparison, unlike the runtime-only comparison, also finds `.xenios/ACTIVE_TASKS.json` changed on both sides. Add explicit **do-not-apply; reconcile by A** exclusions for these coordination records. Their omission must not let stale branch-local leases/session/task state overwrite the current canonical ledger. This is separate from the correctly identified `portal-production.ts` runtime overlap and does not invalidate the instruction to preserve ff3's runtime file. The later records-only successor has its own additional handoff/message/task delta and likewise needs explicit owner-controlled treatment, not automatic application.
+
+### Refreshed evidence integrity and bounded provenance
+
+Independently hashed all 62 artifacts in the new inventory and all 288 listed current `dist/public` assets: no mismatch or missing file. The current built `index.html`, preview harness SHA-256, and harness Git blob also match. The inventory binds the candidate/tree and discloses a then-untracked coordination message; that message is now committed in the records successor. These checks establish current file integrity, not an independent rebuild or a replay of browser actions.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| `EVIDENCE_INVENTORY.json` and identical `inventory-b1b41c8084cb.json` | `d5bd50be6378f93a085b67e1ab8c5f5f75b8c095ca4691ce99bc88e91fe66b6c` |
+| `scripts/preview-resource-hub.ts` | `8104bafbda9475dbba986260a2dd7328d2283aa7112197cb11e9690d409a47b5` |
+| `rendered-journey/rendered-journey.json` | `cabdf5f13f70aa4fe569e0cd18d98648c4ab5c9b2bc0e5f82ad94acb7c0ad987` |
+| `browser-journey-journal.md` | `e764caa9076dac507fa9dceb0d2c1b3bd79c6725bbe92646aff0f93568747a92` |
+| `locked-gate-probe.json` | `84c83b5231e90fcf3054c6de0c6fc63b4c76aae4b8ff1353cadcc7f4adae25f3` |
+
+The matching preview harness blob is `233b926a88a7c78bed7c1b5d42bba6246dadf855`. The inventory was generated at `2026-09-07T16:03:00.330Z`; the rendered journey records 18 passes, zero failures at `2026-09-07T16:00:44.879Z`. The handoff additionally reports 550 passing tests and one skip across 19 files, API 56/56, a new width sweep, and 483/494 real PDFs accepted; these were not independently rerun here.
+
+P2 reproducibility gap: the journal/commands reference `scratchpad/rendered-journey.mjs`, but that file is absent at its declared Fable-worktree path, absent from the candidate Git tree, and absent from the hashed artifact list. No matching driver was found in the two scoped worktree/evidence roots. Preserve the driver and dependencies at an exact immutable path with hashes, then demonstrate a reproducible invocation. Output/screenshot hashes alone cannot independently confirm the driver's assertions, control interactions, or save-counter instrumentation. The journal correctly discloses synthetic GoTrue-shaped identities and in-memory stores; it must not be promoted to production auth proof. The locked-gate download probe uses an unknown resource ID, so it proves outer-wall denial, not delivery of a known authorized item after admission.
+
+Next bounded handoff: fix RH-B1-1; preserve the browser driver; complete the manifest's explicit coordination exclusions; obtain the owner's exact locked-gate admission decision; then produce a new code SHA/tree and refreshed evidence. Selectively integrate only after acceptance and retain ff3 hardening, re-pinning core-site hashes and re-measuring route census on the combined tree. **No merge, deployment, migration, flag change, or production action was performed or authorized by this follow-up.**
