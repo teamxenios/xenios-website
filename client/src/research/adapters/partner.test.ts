@@ -478,7 +478,7 @@ describe("partner applicant persona presentation", () => {
 
     const text = container.textContent ?? "";
     // The honest pending panel, shared across the partner family.
-    expect(text).toContain("The partner platform is being prepared.");
+    expect(text).toContain("Commission reporting is unavailable right now");
     // No fabricated ledger: no empty-state that implies a working ledger, no
     // amounts, no fake rows.
     expect(text).not.toContain("No commission entries yet.");

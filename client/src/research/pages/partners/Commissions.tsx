@@ -1,9 +1,11 @@
-import { useResearch, formatMoney } from "../../core";
+import { Link } from "wouter";
+import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
-import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge, type BadgeTone } from "../../ui/kit";
+import { ResearchDataTable, ResearchDenialNotice, ResearchEmptyState, ResearchLoadingState, ResearchRouteBoundary, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { getPartnerCommissions } from "../../adapters/partner";
-import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
-import type { CommissionState } from "@shared/research/distribution";
+import { ACCOUNT_PORTAL_ROUTES, ACCESS_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
+import { COMMISSION_STATE_LABELS, formatCommissionCents, readCommissionLedger, type CommissionLedgerEntry } from "../../partner-crm/commission-ledger";
+import { usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
 // Partner commissions (/research/partners/commissions). The ledger of
@@ -11,124 +13,72 @@ import type { CommissionState } from "@shared/research/distribution";
 // Every figure comes from the partner API; nothing is projected or implied.
 // ---------------------------------------------------------------------------
 
-// Field names and states align to the frozen commission vocabulary
-// (shared/research/distribution.ts CommissionState); the endpoint itself is
-// not yet published, so the payload stays page-owned but never drifts from
-// the contract's names.
-interface LedgerEntry {
-  id: string;
-  date: string;
-  description: string;
-  commissionCents: number;
-  state: CommissionState | string;
-}
-
-type CommissionsPayload = { entries?: LedgerEntry[] };
-
-const STATE_TONES: Record<CommissionState, BadgeTone> = {
-  pending: "pending",
-  held: "warning",
-  approved: "info",
-  payable: "info",
-  paid: "success",
-  reversed: "danger",
-  disputed: "warning",
-  forfeited: "danger",
-};
-
 const VOCABULARY: Array<{ term: string; definition: string }> = [
   {
     term: "Pending",
-    definition: "The referred payment settled and the commission entry was created. It has not entered the hold window yet.",
+    definition: "The ledger reports an entry awaiting further processing. This view does not independently confirm the underlying payment.",
   },
   {
     term: "Held",
     definition:
-      "Every new commission sits held through the refund window on the payment behind it. Holds protect both sides; a held commission is not spendable and not lost.",
+      "The ledger reports a hold. This view does not establish its reason, release date, or a spendable balance.",
   },
   {
     term: "Approved",
-    definition: "The hold cleared with no refund. The commission is confirmed and moves to payable.",
+    definition: "The ledger reports approval. Approval alone does not confirm payout scheduling or execution.",
   },
   {
     term: "Payable",
-    definition: "Confirmed and queued for your next payout once payout setup is complete.",
+    definition: "The ledger reports the entry as payable. It does not confirm that a payout was queued or provide a payment date.",
   },
   {
     term: "Paid",
-    definition: "Included in a completed payout. The payout record on the Payouts page shows when and how.",
+    definition: "The commission ledger reports paid. This page has no bank or provider receipt; consult the separate payout records for available evidence.",
   },
   {
     term: "Reversed",
     definition:
-      "The payment behind the commission was refunded or charged back, so the commission is reversed. If it was already paid, the reversal nets against future payable amounts.",
+      "The ledger reports a reversal. The recorded signed amount is preserved; this page does not infer its cause or net it against other entries.",
   },
   {
     term: "Disputed",
-    definition: "Under review after a question was raised. It resolves back to approved, or to reversed or forfeited.",
+    definition: "The ledger reports a dispute. No resolution or timing is assumed here.",
   },
   {
     term: "Forfeited",
-    definition: "Closed without payment after review. Forfeitures are always recorded with a reason.",
+    definition: "The ledger reports forfeited. This view does not infer a reason or change the entry.",
   },
 ];
 
 export default function Commissions() {
-  const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<CommissionsPayload>(
-    getPartnerCommissions,
-    memberToken,
-  );
+  const { memberToken, memberChecking } = useResearch();
 
   return (
     <ResearchPartnerShell
       title="Commissions"
-      lead="Your commission ledger, entry by entry. Each entry ties to a referred membership payment and moves through hold before it is payable."
+      lead="Recorded affiliate commission entries for this account. Ledger status is reported evidence, not a promise of income or payout."
     >
+      <ResearchSecureNotice>
+        Affiliate commission and wholesale ledgers stay separate. This page does not calculate a balance, initiate a payout,
+        identify referred customers, or grant partner permissions. Approved customer access does not require paid membership.
+      </ResearchSecureNotice>
+      <div className="flex flex-wrap gap-3 my-6">
+        <Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary">My account</Link>
+        <Link href={PARTNER_ROUTES.payouts} className="btn btn-ghost">Payout records</Link>
+      </div>
       <section aria-labelledby="pcm-ledger">
         <h2 id="pcm-ledger" className="mono-cap text-ink-mute">
           Ledger
         </h2>
         <div className="mt-4">
-          <ResearchRouteBoundary
-            state={state}
-            errorMessage={errorMessage}
-            onRetry={() => void reload()}
-            unavailableTitle={PARTNER_PENDING_TITLE}
-            unavailableBody="Your commission ledger appears here once tracking begins. The vocabulary below is exactly how entries will be labeled."
-          >
-            <ResearchDataTable<LedgerEntry>
-              caption="Commission ledger entries with date, description, commission amount, and state"
-              columns={[
-                { key: "date", header: "Date", render: (r) => r.date },
-                { key: "description", header: "Description", render: (r) => r.description },
-                {
-                  key: "commission",
-                  header: "Commission",
-                  render: (r) => <span className="tabular">{formatMoney(r.commissionCents)}</span>,
-                },
-                {
-                  key: "state",
-                  header: "State",
-                  render: (r) => (
-                    <ResearchStatusBadge
-                      label={r.state}
-                      tone={STATE_TONES[r.state as CommissionState] ?? "neutral"}
-                    />
-                  ),
-                },
-              ]}
-              rows={data?.entries ?? []}
-              rowKey={(r) => r.id}
-              empty="No commission entries yet. Entries appear when referred memberships activate."
-            />
-          </ResearchRouteBoundary>
+          {memberChecking ? <ResearchLoadingState label="Checking your account" />
+            : memberToken ? <CommissionReporting key={memberToken} token={memberToken} /> : <SignInNotice />}
         </div>
       </section>
 
       <section aria-labelledby="pcm-vocab" className="mt-10">
         <h2 id="pcm-vocab" className="mono-cap text-ink-mute">
-          What each state means
+          Reading reported ledger states
         </h2>
         <dl className="grid gap-4 mt-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", margin: 0 }}>
           {VOCABULARY.map((v) => (
@@ -143,4 +93,41 @@ export default function Commissions() {
       </section>
     </ResearchPartnerShell>
   );
+}
+
+function SignInNotice() {
+  return <ResearchEmptyState title="Sign in to view your commission ledger"
+    body="Use your Xenios account. The server verifies partner reporting access separately."
+    action={<Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">Sign in</Link>} />;
+}
+
+function CommissionReporting({ token }: { token: string }) {
+  const { state, denied, data, reload } = usePartnerResource<unknown>(getPartnerCommissions, token);
+  if (state === "unauthorized") return <SignInNotice />;
+  if (denied) return <><ResearchDenialNotice code={denied.code} />
+    <p className="body-s mt-4">Commission reporting access is separate from customer approval. No role or account approval was changed.</p></>;
+  const entries = state === "ok" ? readCommissionLedger(data) : null;
+  const malformed = state === "ok" && entries === null;
+  return <>
+    <div className="flex justify-end mb-4"><button type="button" className="btn btn-secondary"
+      onClick={() => void reload()}>Refresh commission ledger</button></div>
+    <ResearchRouteBoundary state={malformed ? "error" : state}
+      errorMessage="The commission ledger could not be read safely. Please try again."
+      onRetry={() => void reload()}
+      unavailableTitle="Commission reporting is unavailable right now"
+      unavailableBody="The ledger could not be loaded. This does not mean a zero balance, no entries, or any change to your account access.">
+      <ResearchDataTable<CommissionLedgerEntry>
+        caption="Affiliate commission records: date, description, signed amount, and reported state"
+        columns={[
+          { key: "date", header: "Date", render: (entry) => entry.date },
+          { key: "description", header: "Description", render: (entry) => entry.description },
+          { key: "amount", header: "Recorded amount", render: (entry) => <span className="tabular">{formatCommissionCents(entry.commissionCents)}</span> },
+          { key: "state", header: "Reported state", render: (entry) => <ResearchStatusBadge label={COMMISSION_STATE_LABELS[entry.state]} tone="neutral" /> },
+        ]}
+        rows={entries ?? []}
+        rowKey={(entry) => entry.id}
+        empty="No affiliate commission entries were returned for this account. This is not a complete-history or zero-balance confirmation."
+      />
+    </ResearchRouteBoundary>
+  </>;
 }
