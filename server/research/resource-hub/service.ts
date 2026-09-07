@@ -101,7 +101,38 @@ export function stripPdfStringLiterals(text: string): string {
 /** Bounds for the inflated-stream scan: a decompression bomb must not become a memory problem. */
 const MAX_INFLATED_STREAM_BYTES = 8 * 1024 * 1024;
 const MAX_INFLATED_TOTAL_BYTES = 48 * 1024 * 1024;
-const MAX_SCANNED_STREAMS = 4000;
+/** Every "stream" token counts; a file with more is refused as not fully inspected. */
+const MAX_SCANNED_STREAMS = 20000;
+
+/**
+ * The one object-stream encoding this scanner can read: a single FlateDecode
+ * filter with no decode parameters (a predictor would rearrange the bytes it
+ * inspects). Anything else on an object stream (ASCIIHex, ASCII85, LZW,
+ * RunLength, DCT, JBIG2, Crypt, a filter chain, a malformed declaration) is
+ * "unsupported": not decoded, not trusted, counted, and refused by the
+ * validator. Ordinary image/font/content streams are never inflated.
+ */
+export type ObjectStreamEncoding = "plain" | "flate" | "unsupported";
+export function classifyObjectStreamEncoding(dictionary: string): ObjectStreamEncoding {
+  const decoded = decodePdfNameEscapes(dictionary);
+  const filterAt = decoded.search(/\/Filter\b/u);
+  const hasParms = /\/DecodeParms\b/u.test(decoded) && !/\/DecodeParms\s*null\b/u.test(decoded);
+  if (filterAt < 0) return hasParms ? "unsupported" : "plain";
+  const after = decoded.slice(filterAt + "/Filter".length).replace(/^\s+/u, "");
+  let names: string[] = [];
+  if (after.startsWith("[")) {
+    const close = after.indexOf("]");
+    if (close < 0) return "unsupported";
+    names = after.slice(1, close).match(/\/[A-Za-z0-9]+/gu) ?? [];
+  } else {
+    const single = after.match(/^\/([A-Za-z0-9]+)/u);
+    if (!single) return "unsupported";
+    names = [`/${single[1]}`];
+  }
+  if (names.length === 0) return "plain";
+  if (names.length === 1 && names[0] === "/FlateDecode" && !hasParms) return "flate";
+  return "unsupported";
+}
 
 /**
  * PDF names may spell any byte as #xx ("/J#61vaScript"). Decoding the escapes
@@ -121,17 +152,35 @@ export function decodePdfNameEscapes(text: string): string {
  * cost and false refusals). An object stream that will not inflate is reported
  * so the caller can refuse a file it cannot judge.
  */
-export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStreams: number; truncated: boolean } {
+export interface PdfStreamScan {
+  /** Inflated latin1 text of every supported object stream. */
+  text: string;
+  /** Object streams declared FlateDecode that would not inflate within bounds. */
+  opaqueStreams: number;
+  /** Object streams whose encoding this scanner does not read (see classifyObjectStreamEncoding). */
+  unsupportedStreams: number;
+  /** The scan stopped before the end of the file (stream count or inflation budget); content went unexamined. */
+  truncated: boolean;
+}
+
+export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
   const raw = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const parts: string[] = [];
   let opaqueStreams = 0;
+  let unsupportedStreams = 0;
   let truncated = false;
   let total = 0;
   let cursor = 0;
   let scanned = 0;
-  while (scanned < MAX_SCANNED_STREAMS) {
+  for (;;) {
     const start = raw.indexOf("stream", cursor, "latin1");
     if (start < 0) break;
+    if (scanned >= MAX_SCANNED_STREAMS) {
+      // More stream tokens remain than the budget allows: whatever follows is
+      // unexamined, and an unexamined file is not a clean file.
+      truncated = true;
+      break;
+    }
     scanned += 1;
     // "endstream" contains "stream" too; skip those hits.
     if (start >= 3 && raw.toString("latin1", start - 3, start) === "end") {
@@ -148,7 +197,12 @@ export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStr
     const dictionary = decodePdfNameEscapes(raw.toString("latin1", objAt >= 0 && start - objAt < 20000 ? objAt : Math.max(0, start - 2000), start));
     cursor = end + 9;
     if (!/\/ObjStm\b/u.test(dictionary)) continue;
-    if (!/\/FlateDecode\b/u.test(dictionary)) continue;
+    const encoding = classifyObjectStreamEncoding(dictionary);
+    if (encoding === "plain") continue; // already covered by the raw-text scan
+    if (encoding === "unsupported") {
+      unsupportedStreams += 1;
+      continue;
+    }
     if (total >= MAX_INFLATED_TOTAL_BYTES) {
       truncated = true;
       break;
@@ -161,7 +215,7 @@ export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStr
       opaqueStreams += 1;
     }
   }
-  return { text: parts.join("\n"), opaqueStreams, truncated };
+  return { text: parts.join("\n"), opaqueStreams, unsupportedStreams, truncated };
 }
 
 function findActiveContentMarker(text: string): string | null {
@@ -211,7 +265,12 @@ export function validatePdfUpload(input: {
       const inner = findActiveContentMarker(streams.text);
       if (inner) reasons.push(`PDF contains active content inside a compressed stream (${inner})`);
       if (streams.opaqueStreams > 0) reasons.push(`PDF has ${streams.opaqueStreams} compressed object stream(s) that could not be inspected`);
-      if (streams.truncated) reasons.push("PDF has more compressed object-stream content than can be inspected");
+      if (streams.unsupportedStreams > 0) {
+        reasons.push(
+          `PDF has ${streams.unsupportedStreams} object stream(s) with an encoding this scanner does not read (only a single FlateDecode filter without decode parameters is inspected)`,
+        );
+      }
+      if (streams.truncated) reasons.push("PDF has more stream content than this scanner inspects; it was not fully examined");
     }
   }
   return { ok: reasons.length === 0, reasons };

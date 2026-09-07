@@ -28,6 +28,7 @@ import {
 } from "../../adapters/resourceHubAdmin";
 import { ResearchEmptyState, ResearchMetricCard, ResearchStatusBadge, type BadgeTone } from "../../ui/kit";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { principalKeyOf, usePrincipalBoundOperations } from "../../resource-hub/principal-bound";
 import { fmtDateTime, useAdminResource } from "./auth";
 
 // ---------------------------------------------------------------------------
@@ -218,6 +219,7 @@ function UploadForm({
   const [status, setStatus] = useState<UploadStatus>({ kind: "idle" });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const attemptKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const begin = usePrincipalBoundOperations(token);
   const busy = status.kind === "submitting";
 
   function toggleAudience(value: ResourceAudience, checked: boolean) {
@@ -314,7 +316,18 @@ function UploadForm({
     }
 
     setStatus({ kind: "submitting" });
-    const result = await uploadResourceHubVersion(token, parsed.data, file);
+    // Bound to the admin who clicked: if that session ends or another account
+    // signs in before the server answers, the answer is discarded (the server
+    // may still have recorded the version; the next principal loads its own
+    // list). The attempt key is kept so a same-account retry stays idempotent.
+    const op = begin();
+    if (!op) {
+      setStatus({ kind: "failure", message: "Your admin session has ended. Sign in again to upload." });
+      return;
+    }
+    const result = await uploadResourceHubVersion(op.token, parsed.data, file, { signal: op.signal });
+    op.finish();
+    if (!op.isCurrent()) return;
     if (result.kind === "ok") {
       attemptKeyRef.current = null;
       const newest = [...result.data.resource.versions].sort((a, b) => b.versionNumber - a.versionNumber)[0];
@@ -565,6 +578,7 @@ function VersionRow({
   const [busy, setBusy] = useState<ReviewAction | "preview" | null>(null);
   const [error, setError] = useState("");
   const attemptKeyRef = useRef<string | null>(null);
+  const begin = usePrincipalBoundOperations(token);
   const can = transitionsFor(version);
   const vid = version.versionId;
 
@@ -580,9 +594,19 @@ function VersionRow({
       setError(parsed.error.issues.map((issue) => issue.message).join(" "));
       return;
     }
+    // Bound to the admin who clicked (see principal-bound.ts): a completion
+    // that outlives its session, or that an older click produced after a newer
+    // one started, is discarded without touching this row or the outcome line.
+    const op = begin();
+    if (!op) {
+      setError("Your admin session has ended. Sign in again to continue.");
+      return;
+    }
     setBusy(action);
     setError("");
-    const result = await reviewResourceHubVersion(token, resource.resourceId, vid, parsed.data);
+    const result = await reviewResourceHubVersion(op.token, resource.resourceId, vid, parsed.data, { signal: op.signal });
+    op.finish();
+    if (!op.isCurrent()) return;
     setBusy(null);
     if (result.kind === "ok") {
       attemptKeyRef.current = null;
@@ -605,11 +629,22 @@ function VersionRow({
   }
 
   async function preview() {
+    // Same boundary as the partner download: the bytes are saved only for
+    // the admin session that asked for them, on this mounted row, and only if
+    // no newer preview started here in the meantime.
+    const op = begin();
+    if (!op) {
+      setError("Your admin session has ended. Sign in again to preview this version.");
+      return;
+    }
     setBusy("preview");
     setError("");
-    const result = await downloadResourceHubVersion(token, resource.resourceId, vid);
+    const result = await downloadResourceHubVersion(op.token, resource.resourceId, vid, { signal: op.signal });
+    op.finish();
+    if (!op.isCurrent()) return;
     setBusy(null);
     if (result.kind === "ok") {
+      if (!op.isCurrent()) return;
       saveBlob(result.blob, result.filename ?? version.originalFilename);
       return;
     }
@@ -939,17 +974,31 @@ export default function ResourceHubAdmin() {
       title="Resource Hub"
       lead="Upload Xenios-published PDFs, assign audience and usage policy, review the exact version, and publish it to the partner Resources page. Bytes are immutable per version; every transition is recorded by the server."
     >
-      {(token) => <ResourceHubAdminBody token={token} />}
+      {(token) => <ResourceHubAdminForPrincipal token={token} />}
     </AdminScreen>
   );
 }
 
+/** The principal-keyed composition the page mounts; exported so the isolation is testable as composed. */
+export function ResourceHubAdminForPrincipal({ token }: { token: string }) {
+  return <ResourceHubAdminBody key={principalKeyOf(token) ?? "no-principal"} token={token} />;
+}
+
+/**
+ * The whole body is keyed by the current principal (see principal-bound.ts),
+ * so an account change remounts it SYNCHRONOUSLY: the loaded library, every
+ * form, every selection and the outcome line of the previous account are
+ * gone on the first render of the next one, before any effect runs. A
+ * same-account token refresh keeps the key, so it reloads without discarding
+ * what the operator was doing.
+ */
 export function ResourceHubAdminBody({ token }: { token: string }) {
   const resource = useAdminResource(token, loadResourceHub);
   // The one outcome line for the page. A recorded transition or upload
   // reloads the list from the server (the boundary shows loading and remounts
   // the hub), so the message is held here, above the boundary, where it
-  // survives the reload.
+  // survives the reload. It lives inside the principal-keyed body, so it
+  // never survives an account change.
   const [outcome, setOutcome] = useState<string | null>(null);
   const reload = resource.reload;
   const onChanged = useCallback(
@@ -959,6 +1008,12 @@ export function ResourceHubAdminBody({ token }: { token: string }) {
     },
     [reload],
   );
+
+  // While THIS principal's list reloads (after a recorded transition, or a
+  // same-account token refresh), the library it already loaded stays on
+  // screen so unsaved form text and open reason fields are not thrown away.
+  // The body is keyed by principal, so data here can only be this account's.
+  const boundaryState = resource.state === "loading" && resource.data ? "ok" : resource.state;
 
   return (
     <div className="grid gap-5">
@@ -970,7 +1025,7 @@ export function ResourceHubAdminBody({ token }: { token: string }) {
         </div>
       )}
       <AdminBoundary
-        state={resource.state}
+        state={boundaryState}
         message={resource.message}
         deniedCode={resource.deniedCode}
         onRetry={resource.reload}

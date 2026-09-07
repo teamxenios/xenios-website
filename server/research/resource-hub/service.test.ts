@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { RESOURCE_PDF_MAX_BYTES, type ResourceUploadInput } from "@shared/research/resource-hub/contract";
 import { createMemoryResourceBytesStore, notConfiguredResourceBytesStore } from "./bytes-store";
-import { createResourceHubService, decodePdfNameEscapes, inflatedPdfStreams, sha256Hex, stripPdfStringLiterals, validatePdfUpload } from "./service";
+import { classifyObjectStreamEncoding, createResourceHubService, decodePdfNameEscapes, inflatedPdfStreams, sha256Hex, stripPdfStringLiterals, validatePdfUpload } from "./service";
 import { ResourceHubConflict, createInMemoryResourceHubStore } from "./store";
 
 // ---------------------------------------------------------------------------
@@ -487,5 +487,91 @@ describe("the scan judges structure, not printed text", () => {
     expect(stripPdfStringLiterals("/JS (app.alert(1)) /Next")).toBe("/JS () /Next");
     expect(stripPdfStringLiterals(String.raw`(a \) b) /AA <<`)).toBe("() /AA <<");
     expect(stripPdfStringLiterals("(unterminated /JS ")).toBe("()");
+  });
+});
+
+describe("RH-B28-1: object content the scanner cannot read never passes", () => {
+  const { deflateSync } = require("node:zlib") as typeof import("node:zlib");
+  const judge = (bytes: Buffer) => validatePdfUpload({ bytes, declaredContentType: "application/pdf", originalFilename: "synthetic-scanner-check.pdf" });
+  const objStm = (dictionaryTail: string, body: Buffer) =>
+    Buffer.concat([
+      Buffer.from(`%PDF-1.5\n2 0 obj << /Type /ObjStm /N 1 /First 4 ${dictionaryTail} /Length ${body.byteLength} >>\nstream\n`, "latin1"),
+      body,
+      Buffer.from("\nendstream\nendobj\n%%EOF\n", "latin1"),
+    ]);
+  const ACTION = "1 0 << /Type /Action /S /JavaScript /JS (void 0) >>";
+
+  it("B's exact probe: an ASCIIHexDecode object stream hiding an action dictionary is refused (it passed on b28)", () => {
+    const encoded = Buffer.from(ACTION, "latin1").toString("hex") + ">";
+    const bytes = Buffer.from(
+      "%PDF-1.5\n2 0 obj << /Type /ObjStm /N 1 /First 4 /Filter /ASCIIHexDecode /Length " + encoded.length + " >>\nstream\n" + encoded + "\nendstream\nendobj\n%%EOF\n",
+      "latin1",
+    );
+    const result = judge(bytes);
+    expect(result.ok).toBe(false);
+    expect(result.reasons.join(" ")).toMatch(/encoding this scanner does not read/u);
+    expect(inflatedPdfStreams(bytes)).toMatchObject({ unsupportedStreams: 1, opaqueStreams: 0, truncated: false });
+  });
+
+  it("refuses every unsupported object-stream encoding and filter chain, but reads plain and single-Flate ones", () => {
+    const flate = deflateSync(Buffer.from("<< /Type /Page >>", "latin1"));
+    const cases: Array<[string, Buffer, ReturnType<typeof classifyObjectStreamEncoding>]> = [
+      ["/Filter /ASCII85Decode", Buffer.from("~>", "latin1"), "unsupported"],
+      ["/Filter /LZWDecode", Buffer.from("x", "latin1"), "unsupported"],
+      ["/Filter /RunLengthDecode", Buffer.from("x", "latin1"), "unsupported"],
+      ["/Filter [/ASCIIHexDecode /FlateDecode]", Buffer.from("x", "latin1"), "unsupported"],
+      ["/Filter [/FlateDecode /FlateDecode]", flate, "unsupported"],
+      ["/Filter /FlateDecode /DecodeParms << /Predictor 12 /Columns 4 >>", flate, "unsupported"],
+      ["/Filter /Crypt", Buffer.from("x", "latin1"), "unsupported"],
+      ["/Filter 42", Buffer.from("x", "latin1"), "unsupported"],
+      ["/Filter [/FlateDecode", flate, "unsupported"],
+      ["/Filter [/FlateDecode]", flate, "flate"],
+      ["/Filter /FlateDecode", flate, "flate"],
+      ["/Filter /FlateDecode /DecodeParms null", flate, "flate"],
+      ["", Buffer.from("<< /Type /Page >>", "latin1"), "plain"],
+      ["/Filter []", Buffer.from("<< /Type /Page >>", "latin1"), "plain"],
+    ];
+    for (const [tail, body, expected] of cases) {
+      const bytes = objStm(tail, body);
+      expect(classifyObjectStreamEncoding(`<< /Type /ObjStm ${tail} >>`), tail).toBe(expected);
+      const result = judge(bytes);
+      if (expected === "unsupported") {
+        expect(result.ok, tail).toBe(false);
+        expect(inflatedPdfStreams(bytes).unsupportedStreams, tail).toBe(1);
+      } else {
+        expect(result, tail).toEqual({ ok: true, reasons: [] });
+      }
+    }
+  });
+
+  it("a supported object stream that hides an action is still refused, and a corrupt one is opaque", () => {
+    const hidden = objStm("/Filter /FlateDecode", deflateSync(Buffer.from(ACTION, "latin1")));
+    expect(judge(hidden).reasons.join(" ")).toMatch(/inside a compressed stream \(\/JavaScript\)/u);
+    const corrupt = objStm("/Filter /FlateDecode", Buffer.from("not-zlib!", "latin1"));
+    expect(judge(corrupt).reasons.join(" ")).toMatch(/could not be inspected/u);
+  });
+
+  it("stream-count exhaustion is truncation, and a truncated scan is refused even when the visible part is clean", () => {
+    const filler = Buffer.from("1 0 obj << /Length 1 >>\nstream\nx\nendstream\nendobj\n".repeat(20001), "latin1");
+    const tail = deflateSync(Buffer.from(ACTION, "latin1"));
+    const bytes = Buffer.concat([
+      Buffer.from("%PDF-1.5\n", "latin1"),
+      filler,
+      Buffer.from(`2 0 obj << /Type /ObjStm /N 1 /First 4 /Filter /FlateDecode /Length ${tail.byteLength} >>\nstream\n`, "latin1"),
+      tail,
+      Buffer.from("\nendstream\nendobj\n%%EOF\n", "latin1"),
+    ]);
+    const scan = inflatedPdfStreams(bytes);
+    expect(scan.truncated).toBe(true);
+    const result = judge(bytes);
+    expect(result.ok).toBe(false);
+    expect(result.reasons.join(" ")).toMatch(/not fully examined/u);
+  });
+
+  it("ordinary image and font streams are still left alone whatever their filters", () => {
+    const image = Buffer.from("%PDF-1.4\n1 0 obj << /Type /XObject /Subtype /Image /Filter [/ASCIIHexDecode /DCTDecode] /Length 4 >>\nstream\nffd8\nendstream\nendobj\n%%EOF\n", "latin1");
+    expect(judge(image)).toEqual({ ok: true, reasons: [] });
+    const font = Buffer.from("%PDF-1.4\n1 0 obj << /Type /FontFile /Filter /LZWDecode /Length 1 >>\nstream\nx\nendstream\nendobj\n%%EOF\n", "latin1");
+    expect(judge(font)).toEqual({ ok: true, reasons: [] });
   });
 });

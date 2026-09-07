@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   RESOURCE_USAGE_POLICY_LABELS,
@@ -11,6 +11,7 @@ import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchEmptyState, ResearchRouteBoundary, ResearchStatusBadge, type BadgeTone } from "../../ui/kit";
 import { downloadPartnerResource, getPartnerResources, resourceAudienceLabel } from "../../adapters/partner";
+import { principalKeyOf, usePrincipalBoundOperations } from "../../resource-hub/principal-bound";
 import { PARTNER_PENDING_TITLE, usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
@@ -108,15 +109,29 @@ function Fact({ label, value }: { label: string; value: string }) {
 
 function ResourceCard({ card, token }: { card: ResourceCardDto; token: string | null }) {
   const [download, setDownload] = useState<DownloadState>({ kind: "idle" });
+  const begin = usePrincipalBoundOperations(token);
   const headingId = `resource-${card.resourceId}-title`;
   const canDownload =
     card.actions.download && typeof card.downloadPath === "string" && card.downloadPath.length > 0;
 
   async function handleDownload() {
     if (!canDownload || !card.downloadPath) return;
+    // The download is bound to the principal that clicked. If that session
+    // ends, another account signs in, this card unmounts, or a newer download
+    // starts here before this one completes, the completion is discarded:
+    // no file is saved and no state is touched for anyone else.
+    const op = begin();
+    if (!op) {
+      setDownload({ kind: "error", message: downloadErrorMessage("unauthorized") });
+      return;
+    }
     setDownload({ kind: "working" });
-    const result = await downloadPartnerResource(card.downloadPath, token);
+    const result = await downloadPartnerResource(card.downloadPath, op.token, { signal: op.signal });
+    op.finish();
+    if (!op.isCurrent()) return;
     if (result.kind === "ok") {
+      // Re-checked immediately before the only side effect.
+      if (!op.isCurrent()) return;
       saveBlob(result.blob, result.filename ?? fallbackFilename(card));
       setDownload({ kind: "idle" });
       return;
@@ -194,7 +209,17 @@ export default function Resources() {
     memberToken,
   );
 
-  const resources = data?.resources ?? [];
+  // A same-account token refresh reloads the library; while it does, the
+  // cards this SAME principal already loaded stay mounted so a download in
+  // flight completes for that person. The held list is tagged with the
+  // principal it was loaded for, so another account never sees it: an A-to-B
+  // change renders loading, then B's own list.
+  const principal = principalKeyOf(memberToken);
+  const heldRef = useRef<{ principal: string | null; resources: ResourceCardDto[] } | null>(null);
+  if (data) heldRef.current = { principal, resources: data.resources };
+  const held = state === "loading" && heldRef.current && heldRef.current.principal === principal ? heldRef.current.resources : null;
+  const resources = data?.resources ?? held ?? [];
+  const boundaryState = held && !data ? "ok" : state;
 
   return (
     <ResearchPartnerShell title="Resources" lead={LEAD}>
@@ -210,7 +235,7 @@ export default function Resources() {
       </div>
 
       <ResearchRouteBoundary
-        state={state}
+        state={boundaryState}
         errorMessage={errorMessage}
         onRetry={() => void reload()}
         unavailableTitle={PARTNER_PENDING_TITLE}

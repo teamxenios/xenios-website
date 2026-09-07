@@ -143,6 +143,53 @@ and what changed:
 - **Release gate (P1, confirmed).** The preview harness had been placed under `server/`,
   where the route census scans; it now lives in `scripts/preview-resource-hub.ts`.
 
+## Closeout of the three reviewed defects (B's review of b28, 2026-09-07)
+
+- **RH-B28-1, unsupported object-stream encodings.** B's exact probe (an `/ASCIIHexDecode`
+  object stream carrying an action dictionary) passed on b28 because only FlateDecode
+  object streams were inflated and anything else was silently skipped. Now every
+  `/ObjStm` is classified (`classifyObjectStreamEncoding`): plain (covered by the raw
+  scan), a single FlateDecode filter without decode parameters (inflated and scanned), or
+  unsupported (any other filter, any chain, any predictor, any malformed declaration),
+  which is counted and refused. Stream-count exhaustion is now truncation and refused.
+  Image, font, page-content, XRef and metadata streams are still left alone whatever their
+  filters. Regressions: B's probe verbatim, thirteen encoding/chain cases, corrupt Flate,
+  exhaustion, and the permitted cases. The real-PDF measurement is unchanged (483/494).
+- **RH-B28-2, downloads outliving their session.** `client/src/research/resource-hub/principal-bound.ts`
+  binds every partner download, admin preview, review and upload to the principal that
+  started it (JWT subject when the token is a JWT, else the token), a per-surface
+  generation, and the mounted state; the fetch is aborted on principal change or unmount,
+  and `isCurrent()` is re-checked after the await and immediately before `saveBlob`, so
+  a completion that outlived its session saves nothing, shows nothing and touches no
+  state. A same-account token refresh keeps the principal, so a legitimate download still
+  saves; the partner page keeps the current principal's cards mounted while its library
+  reloads. Delayed-response tests cover A→signed-out, A→B, unmount, older-after-newer,
+  stale success, stale failure, current completion, and refresh, for both surfaces.
+- **RH-B28-3, admin state across accounts.** The admin body is mounted through
+  `ResourceHubAdminForPrincipal`, which keys it by principal: an account change remounts
+  the body synchronously (loaded library, forms, selections, reason fields and the outcome
+  line are gone on the first render), a stale list completion for the previous principal
+  cannot overwrite the new one, and a same-account refresh keeps the operator's work while
+  the list reloads. Tests assert the first render after A→B and A→null, denied B,
+  overlapping loads, stale outcomes, and refresh.
+- **Rendered logout and account switching.** The browser journey now uses the page's own
+  controls only: the member sign-in form, the account portal's Sign out button, the admin
+  sign-in form and the admin shell's Sign out button, with a harness-only download delay
+  (`PREVIEW_DOWNLOAD_DELAY_MS`) so sign-out and switching happen while bytes are in flight.
+  Save side effects are counted by hooks installed before any page script runs.
+- **Locked review gate (measured, not changed).** With the harness started under
+  `PREVIEW_LOCK_GATE=1` (RESEARCH_PUBLIC unset, password set), the wall in
+  `server/research/index.ts` answers 401 "Access required." to the partner library and
+  delivery doors for a signed-in member, while `/partner/me` and `/partner/dashboard`
+  (explicitly admitted) answer 200 and the admin doors (outside the wall) answer 200. The
+  rendered Resources page reaches its shell but its API read is refused. Ordinary
+  approved-partner access under the locked policy therefore depends on one bounded change
+  the wall's owner must approve: admit `/partner/resources` (GET) and the
+  `/partner/resources/:id/download` pattern to `MEMBER_SESSION_READ_PATHS` /
+  `downstreamMemberGuardedDownload`, exactly as `/partner/me` and `/partner/dashboard`
+  are admitted. The same wall already gates the other fourteen portal doors the same way.
+  This slice changes neither the wall nor the layout gate.
+
 ## Production activation (not part of this slice)
 
 The composition is dark until both are true, each a separately approved production change:
