@@ -85,7 +85,39 @@ either:
    A's decision plus B's review. It should not be done to make a corpus pass.
 
 Option 1 needs nobody's permission and blocks nothing. Recommend shipping the
-scanner as A has it and re-exporting the eight internal documents.
+scanner as A has it.
+
+### Option 1 is done and proved, not just recommended
+
+`scripts/resource-hub/strip-embedded-attachments.mjs` removes the attachment
+and the objects behind it. Unlinking the name tree alone is not enough: an
+unreferenced attachment is still written back out and still reads as
+`/EmbeddedFile`, so the tool deletes every object reachable from
+`/Names /EmbeddedFiles` and from `/AF` on the catalog and on every page. It
+never writes over its input.
+
+Run against all 14 refused documents, with the resulting copies then judged by
+A's scanner at `33436c5`:
+
+| Check | Result |
+| --- | --- |
+| Documents processed | 14 |
+| `/EmbeddedFile`, `/EF`, `/Filespec` remaining | 0 in all 14 |
+| A's scanner before | **refuse 14/14** |
+| A's scanner after | **accept 14/14** |
+| Pages preserved | 94 of 94 |
+| Page content streams | **byte-identical**, all 94 pages, same page sizes |
+
+Nothing a reader sees changed; the sha256 of every decoded page content
+stream matches the original. Copies and journals are in the QA evidence
+directory under `republishable/` (`strip-journal.jsonl`,
+`republish-scanner-verdicts.json`). The originals in `Downloads` are
+untouched.
+
+The one remaining refusal, `s41587-026-03019-1.pdf`, is a third-party Nature
+paper with an unresolvable `/OpenAction 72 0 R`, not a document the Hub needs
+to publish. The tool does not touch `/OpenAction`, deliberately: removing an
+action a scanner cannot read is a policy decision, not a cleanup.
 
 ## 5. Status of A's tree, as verified
 
