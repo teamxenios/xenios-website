@@ -383,7 +383,7 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
   // These exact partner entry pages own canonical member/partner API guards.
   // The review password is not partner authority; each page handles sign-in
   // and denial. Do not exempt the rest of the parked partner route family.
-  if (normalizedLocation === "/research/partners/links" || normalizedLocation === "/research/partners/dashboard") {
+  if (normalizedLocation === "/research/partners/links" || normalizedLocation === "/research/partners/dashboard" || normalizedLocation === "/research/partners/resources") {
     return <main>{children}</main>;
   }
   // These exact shared destinations already mount RequireMember in section.tsx.

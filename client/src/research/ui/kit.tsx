@@ -666,6 +666,7 @@ export function ResearchRouteBoundary({
   onRetry,
   unavailableTitle = "This area is not available yet.",
   unavailableBody = "It is being prepared. Nothing is wrong with your account.",
+  signInHref = "/research/sign-in",
   children,
 }: {
   state: "loading" | "ok" | "error" | "unavailable" | "unauthorized";
@@ -673,6 +674,7 @@ export function ResearchRouteBoundary({
   onRetry?: () => void;
   unavailableTitle?: string;
   unavailableBody?: string;
+  signInHref?: string;
   children: ReactNode;
 }) {
   if (state === "loading") return <ResearchLoadingState />;
@@ -683,7 +685,7 @@ export function ResearchRouteBoundary({
       <ResearchEmptyState
         title="Please sign in."
         body="Your session has ended. Sign in again to continue."
-        action={<a href="/research/sign-in" className="btn btn-primary">Member Login</a>}
+        action={<a href={signInHref} className="btn btn-primary">Member Login</a>}
       />
     );
   return <>{children}</>;

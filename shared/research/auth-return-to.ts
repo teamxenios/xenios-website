@@ -20,7 +20,7 @@ export const AUTH_RETURN_STATIC_PATHS = [
   ].map((suffix) => `/research/account${suffix}`),
   "/research/early-access", "/research/early-access/order-request",
   "/health", "/care", "/care/schedule", "/care/portal", "/care/how-it-works",
-  "/research/partners/links", "/research/partners/dashboard",
+  "/research/partners/links", "/research/partners/dashboard", "/research/partners/resources",
   "/care/provider-review", "/care/support",
 ] as const;
 

@@ -29,7 +29,7 @@ describe("referral destinations reach their existing member guard, not the share
     render(<Router hook={location.hook}><ResearchLayout><RequireMember><div>Private destination</div></RequireMember></ResearchLayout></Router>);
     expect(document.body.textContent).toContain("Private destination");
   });
-  it.each(["/research/partners/links", "/research/partners/dashboard"])("%s reaches its own partner boundary without a reviewer password", (path) => {
+  it.each(["/research/partners/links", "/research/partners/dashboard", "/research/partners/resources"])("%s reaches its own partner boundary without a reviewer password", (path) => {
     const location = memoryLocation({ path });
     render(<Router hook={location.hook}><ResearchLayout><div>Partner-owned boundary</div></ResearchLayout></Router>);
     expect(document.body.textContent).toContain("Partner-owned boundary");

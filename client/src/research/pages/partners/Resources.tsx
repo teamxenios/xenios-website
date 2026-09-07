@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "wouter";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 import {
   RESOURCE_USAGE_POLICY_LABELS,
   type ResourceCardDto,
@@ -236,6 +237,7 @@ export default function Resources() {
 
       <ResearchRouteBoundary
         state={boundaryState}
+        signInHref={researchAuthPath("/research/sign-in", PARTNER_ROUTES.resources)}
         errorMessage={errorMessage}
         onRetry={() => void reload()}
         unavailableTitle={PARTNER_PENDING_TITLE}

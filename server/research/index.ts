@@ -537,6 +537,7 @@ export function registerResearchApi(app: Express) {
     // by the browser cannot select an account. Admit these two reads only.
     "/partner/me",
     "/partner/dashboard",
+    "/partner/resources", // Canonical member + partner + resource audience checks downstream.
     // agreements.ts:337, requireResearchSubject. That guard is
     // resolveResearchMember(..., allowClosed: true): it demands the same
     // non-recovery Supabase JWT and the same member row as requireMember and
@@ -627,6 +628,11 @@ export function registerResearchApi(app: Express) {
       // canonical-UUID anchor is the correct admission shape.
       const customerAccountDocument = /^\/customer-account\/documents\/([^/]+)$/.exec(path);
       if (customerAccountDocument !== null) return canonicalUuid(customerAccountDocument[1]);
+      // Resource bytes use this member-session route, not the unrelated
+      // signed-document URL door. Only GET/HEAD and one canonical UUID pass
+      // to the partner ownership and published-resource audience checks.
+      const partnerResource = /^\/partner\/resources\/([^/]+)\/download$/.exec(path);
+      if (partnerResource !== null) return canonicalUuid(partnerResource[1]);
       // Product detail is an Express one-segment route; reject literal or
       // encoded separators so the bypass cannot grow into a namespace prefix.
       if (isCanonicalProductPath(path)) return true;

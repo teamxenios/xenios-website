@@ -261,6 +261,8 @@ describe("partner resources library", () => {
     session.token = null;
     await render();
     expect(host.textContent).toContain("Please sign in.");
+    expect(host.querySelector('a.btn-primary')?.getAttribute("href"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fresources");
     expect(mocks.library).not.toHaveBeenCalled();
     expect(articles()).toHaveLength(0);
   });
