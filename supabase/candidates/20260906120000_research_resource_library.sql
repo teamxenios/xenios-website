@@ -106,6 +106,22 @@ alter table public.research_resource_library enable row level security;
 alter table public.research_resource_versions enable row level security;
 alter table public.research_resource_deliveries enable row level security;
 
+-- Do not depend on project/creator default ACLs. RLS does not protect TRUNCATE,
+-- and a fresh project may grant the service role nothing by default. Only the
+-- server adapter's actual table operations are allowed; evidence cannot be
+-- deleted or truncated through service_role either.
+revoke all on table public.research_resource_library,
+  public.research_resource_versions, public.research_resource_deliveries
+  from public, anon, authenticated, service_role;
+grant select, insert, update on table public.research_resource_library,
+  public.research_resource_versions to service_role;
+grant select, insert on table public.research_resource_deliveries to service_role;
+
+-- This trigger helper is not a remotely callable API. Trigger invocation does
+-- not require the acting role to hold EXECUTE on the trigger function.
+revoke all on function public.research_resource_versions_immutable()
+  from public, anon, authenticated, service_role;
+
 -- Private bucket, converged and ASSERTED private (same pattern as the payment
 -- proof bucket privacy migration). Skipped on a database without the storage
 -- schema (disposable verification database).
@@ -204,6 +220,8 @@ end $$;
 
 revoke execute on function public.research_resource_hub_publish(uuid, uuid, text, timestamptz) from public, anon, authenticated;
 revoke execute on function public.research_resource_hub_withdraw(uuid, uuid, text, timestamptz, text) from public, anon, authenticated;
+grant execute on function public.research_resource_hub_publish(uuid, uuid, text, timestamptz) to service_role;
+grant execute on function public.research_resource_hub_withdraw(uuid, uuid, text, timestamptz, text) to service_role;
 
 comment on table public.research_resource_library is
   'Xenios-published materials (Resource Hub). Separate from partner-submitted research_content_assets.';
