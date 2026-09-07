@@ -31,6 +31,7 @@ import { requireSupabaseAdmin } from "../server/routes";
 import { registerResearchApi, researchPageGate } from "../server/research/index";
 import { createInMemoryPartnerPortalPort, type PortalPartnerIdentity } from "../server/research/partners/portal";
 import { registerPartnerPortalApi } from "../server/research/partners/portal-routes";
+import { affiliatePortalEnabled } from "../server/research/affiliates/v2/feature-flags";
 
 export const RESOURCE_HUB_PREVIEW_PASSWORD = "preview-password";
 
@@ -134,6 +135,10 @@ export function buildResourceHubPreviewApp(port: number, previewEnv: NodeJS.Proc
   // Outside production the resolver composes the in-memory hub regardless of
   // the flag; unsetting it makes that explicit for anyone reading the log.
   delete process.env.RESEARCH_RESOURCE_HUB_ENABLED;
+  // Match the observed production portal mount inputs without changing any
+  // production configuration. Explicit false inputs remain usable controls.
+  process.env.AFFILIATE_SYSTEM_ENABLED = previewEnv.AFFILIATE_SYSTEM_ENABLED ?? "true";
+  process.env.AFFILIATE_PORTAL_ENABLED = previewEnv.AFFILIATE_PORTAL_ENABLED ?? "true";
 
   const app = express();
   // Mirror production's global JSON limit exactly, so the upload transport is
@@ -280,7 +285,9 @@ export function buildResourceHubPreviewApp(port: number, previewEnv: NodeJS.Proc
     next();
   };
   const partners = RESOURCE_HUB_PREVIEW_PERSONAS.map(portalIdentity).filter((p): p is PortalPartnerIdentity => p !== null);
-  registerPartnerPortalApi(app, { port: createInMemoryPartnerPortalPort({ partners }), submissionsEnabled: false }, { requireMember: previewRequireMember });
+  if (affiliatePortalEnabled(process.env)) {
+    registerPartnerPortalApi(app, { port: createInMemoryPartnerPortalPort({ partners }), submissionsEnabled: false }, { requireMember: previewRequireMember });
+  }
 
   const here = path.dirname(fileURLToPath(import.meta.url));
   const clientDist = path.resolve(here, "..", "dist", "public");
