@@ -163,18 +163,80 @@ export interface PdfStreamScan {
   truncated: boolean;
 }
 
+/** True when the byte at `index` is outside a PDF token (whitespace, a delimiter, or the file edge). */
+function isPdfTokenBoundary(text: string, index: number): boolean {
+  if (index < 0 || index >= text.length) return true;
+  return /[\s\u0000()<>\[\]{}\/%]/u.test(text[index]!);
+}
+
 export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
   const raw = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  // One position-preserving pass over the file. latin1 keeps one byte per
+  // character, so every index here is a byte offset in `raw`.
+  const text = raw.toString("latin1");
+  const n = text.length;
   const parts: string[] = [];
   let opaqueStreams = 0;
   let unsupportedStreams = 0;
   let truncated = false;
   let total = 0;
-  let cursor = 0;
   let scanned = 0;
-  for (;;) {
-    const start = raw.indexOf("stream", cursor, "latin1");
-    if (start < 0) break;
+  // The nearest preceding `obj` keyword, so a stream's dictionary is read from
+  // its own object rather than from a fixed byte lookback.
+  let objectAt = -1;
+  let i = 0;
+
+  while (i < n) {
+    const ch = text[i]!;
+    // A comment runs to the end of the line; nothing inside it is structure.
+    if (ch === "%") {
+      while (i < n && text[i] !== "\n" && text[i] !== "\r") i += 1;
+      continue;
+    }
+    // A string literal is DATA. Skipping it here is what stops a decoy
+    // "(stream )" from being read as a stream start and swallowing the real
+    // object stream that follows it. Nesting and backslash escapes follow the
+    // PDF grammar; a literal that never closes means the file cannot be lexed,
+    // which is reported as unexamined rather than treated as clean.
+    if (ch === "(") {
+      let depth = 1;
+      i += 1;
+      while (i < n && depth > 0) {
+        const c = text[i]!;
+        if (c === "\\") {
+          i += 2;
+          continue;
+        }
+        if (c === "(") depth += 1;
+        else if (c === ")") depth -= 1;
+        i += 1;
+      }
+      if (depth > 0) {
+        truncated = true;
+        break;
+      }
+      continue;
+    }
+    if (ch === "o" && text.startsWith("obj", i) && isPdfTokenBoundary(text, i - 1) && isPdfTokenBoundary(text, i + 3)) {
+      objectAt = i;
+      i += 3;
+      continue;
+    }
+    if (ch !== "s" || !text.startsWith("stream", i)) {
+      i += 1;
+      continue;
+    }
+    // "endstream" contains "stream": that is the end of a stream we already
+    // consumed, or a stray token; either way it is not a start.
+    if (i >= 3 && text.startsWith("end", i - 3)) {
+      i += 6;
+      continue;
+    }
+    if (!isPdfTokenBoundary(text, i - 1)) {
+      // Part of a longer name (e.g. /BitsPerStream): not a keyword.
+      i += 6;
+      continue;
+    }
     if (scanned >= MAX_SCANNED_STREAMS) {
       // More stream tokens remain than the budget allows: whatever follows is
       // unexamined, and an unexamined file is not a clean file.
@@ -182,20 +244,27 @@ export function inflatedPdfStreams(bytes: Uint8Array): PdfStreamScan {
       break;
     }
     scanned += 1;
-    // "endstream" contains "stream" too; skip those hits.
-    if (start >= 3 && raw.toString("latin1", start - 3, start) === "end") {
-      cursor = start + 6;
-      continue;
+    // Per the PDF grammar the keyword is followed by CRLF or LF. Anything else
+    // is a file this scanner cannot lex with confidence.
+    let dataStart = i + 6;
+    if (text[dataStart] === "\r") dataStart += 1;
+    if (text[dataStart] === "\n") dataStart += 1;
+    else if (dataStart === i + 6) {
+      truncated = true;
+      break;
     }
-    let dataStart = start + 6;
-    if (raw[dataStart] === 0x0d) dataStart += 1;
-    if (raw[dataStart] === 0x0a) dataStart += 1;
-    const end = raw.indexOf("endstream", dataStart, "latin1");
-    if (end < 0) break;
-    // The stream's own dictionary starts at the nearest preceding "obj".
-    const objAt = raw.lastIndexOf("obj", start, "latin1");
-    const dictionary = decodePdfNameEscapes(raw.toString("latin1", objAt >= 0 && start - objAt < 20000 ? objAt : Math.max(0, start - 2000), start));
-    cursor = end + 9;
+    const end = text.indexOf("endstream", dataStart);
+    if (end < 0) {
+      // A stream that never ends: the rest of the file is unexamined.
+      truncated = true;
+      break;
+    }
+    const dictionaryFrom = objectAt >= 0 && i - objectAt < 20000 ? objectAt : Math.max(0, i - 2000);
+    // Literals inside the dictionary are data too: blank them before the
+    // /ObjStm and /Filter decisions so "(/ObjStm)" cannot pose as structure.
+    const dictionary = stripPdfStringLiterals(decodePdfNameEscapes(text.slice(dictionaryFrom, i)));
+    // Stream data is binary: resume lexing after it, never inside it.
+    i = end + 9;
     if (!/\/ObjStm\b/u.test(dictionary)) continue;
     const encoding = classifyObjectStreamEncoding(dictionary);
     if (encoding === "plain") continue; // already covered by the raw-text scan
@@ -323,7 +392,8 @@ function toResourceAdminDto(resource: ResourceRow, versions: readonly ResourceVe
   };
 }
 
-function toCard(resource: ResourceRow, version: ResourceVersionRow): ResourceCardDto {
+/** The partner-facing card for one published version; explicit construction only. Shared with kits. */
+export function toCard(resource: ResourceRow, version: ResourceVersionRow): ResourceCardDto {
   const actions = partnerActionsFor(version.usagePolicy);
   return {
     resourceId: resource.resourceId,
@@ -344,7 +414,8 @@ function toCard(resource: ResourceRow, version: ResourceVersionRow): ResourceCar
   };
 }
 
-function audienceAllows(version: ResourceVersionRow, partner: { role: PartnerRole; state: PartnerState }): boolean {
+/** Whether this partner (role + state) may receive this version by audience and policy. Shared with kits. */
+export function audienceAllows(version: ResourceVersionRow, partner: { role: PartnerRole; state: PartnerState }): boolean {
   if (BLOCKED_PARTNER_STATES.has(partner.state)) return false;
   if (version.usagePolicy === "draft") return false;
   return version.audience.includes(RESOURCE_AUDIENCE_ALL_PARTNERS) || version.audience.includes(partner.role);
