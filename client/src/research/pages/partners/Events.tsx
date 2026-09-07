@@ -1,113 +1,153 @@
-import { useState, type FormEvent } from "react";
+import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { ResearchPartnerShell } from "../../ui/shells";
-import { ResearchDataTable, ResearchRouteBoundary, ResearchStatusBadge } from "../../ui/kit";
-import { getPartnerEvents, requestEvent, type SubmitOutcome } from "../../adapters/partner";
-import { PARTNER_PENDING_TITLE, PARTNER_SUPPORT_EMAIL, usePartnerResource } from "./shared";
+import { ResearchDataTable, ResearchDenialNotice, ResearchEmptyState, ResearchLoadingState, ResearchRouteBoundary, ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
+import { getPartnerEvents, requestEvent } from "../../adapters/partner";
+import { ACCOUNT_PORTAL_ROUTES, ACCESS_ROUTES } from "../../lib/routes";
+import { EVENT_SCHEDULE_LABELS, prepareEventRequest, readPartnerEventRecords, type ReportedPartnerEvent } from "../../partner-crm/event-records";
+import { usePartnerResource } from "./shared";
 
 // ---------------------------------------------------------------------------
-// Partner events (/research/partners/events). In-person or live events a rep
-// plans to host or speak at. Registered ahead of time so materials can be
-// cleared and attendance attributed in aggregate. Same rules on stage as
-// online: no medical claims, no income claims, no recruitment.
+// Partner events (/research/partners/events). Existing server-scoped organization
+// event records carry schedule facts, not registrations, approvals, or attendance.
+// The current request route remains server-disabled.
 // ---------------------------------------------------------------------------
-
-interface PartnerEvent {
-  id: string;
-  name: string;
-  date?: string | null;
-  location?: string | null;
-  status?: string | null;
-}
-
-type EventsPayload = { events?: PartnerEvent[] };
 
 const UNAVAILABLE_MESSAGE =
-  "Event requests are not being accepted through this form yet, so nothing was submitted. Email the team with the event name, date, location, and what you plan to present.";
-
-function statusTone(status?: string | null) {
-  if (status === "approved" || status === "confirmed") return "success" as const;
-  if (status === "declined") return "danger" as const;
-  return "pending" as const;
-}
+  "Event request intake is unavailable. This page cannot confirm a request was recorded. Your draft is kept; contact the team before resubmitting.";
 
 export default function Events() {
-  const { memberToken } = useResearch();
-  const { state, errorMessage, data, reload } = usePartnerResource<EventsPayload>(getPartnerEvents, memberToken);
+  const { memberToken, memberChecking } = useResearch();
+  return <ResearchPartnerShell title="Events" lead="Event records returned for your server-verified organization relationships. A schedule marker is not event approval, registration, or attendance evidence.">
+    <ResearchSecureNotice>
+      No medical claims, no income claims, no recruitment. This report does not establish content clearance, a confirmed venue,
+      event occurrence, attendance attribution, or organization permissions. The current integration does not provide event request intake.
+    </ResearchSecureNotice>
+    <div className="my-6"><Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary">My account</Link></div>
+    {memberChecking ? <ResearchLoadingState label="Checking your account" />
+      : memberToken ? <EventWorkspace key={memberToken} token={memberToken} /> : <SignInNotice />}
+  </ResearchPartnerShell>;
+}
+
+function SignInNotice() {
+  return <ResearchEmptyState title="Sign in to view reported events"
+    body="Use your Xenios account. The server verifies partner and organization reporting access separately."
+    action={<Link href={ACCESS_ROUTES.signIn} className="btn btn-primary">Sign in</Link>} />;
+}
+
+function EventWorkspace({ token }: { token: string }) {
+  const { state, denied, data, reload } = usePartnerResource<unknown>(getPartnerEvents, token);
+  const rows = state === "ok" ? readPartnerEventRecords(data) : null;
+  const readable = rows !== null;
 
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [validation, setValidation] = useState<string | null>(null);
-  const [outcome, setOutcome] = useState<SubmitOutcome>({ kind: "idle" });
+  const [outcome, setOutcome] = useState<"idle" | "submitting" | "responded" | "uncertain" | "unavailable">("idle");
+  const lifecycle = useRef({ active: false, generation: 0, locked: false, submitting: false });
+  const readableRef = useRef(readable);
+  readableRef.current = readable;
+  useLayoutEffect(() => {
+    lifecycle.current.active = true;
+    return () => { lifecycle.current.active = false; lifecycle.current.generation++; };
+  }, []);
+  const refresh = () => {
+    if (!lifecycle.current.active || lifecycle.current.submitting) return;
+    readableRef.current = false;
+    void reload();
+  };
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (outcome.kind === "submitting") return;
-    if (!name.trim() || !date.trim() || !location.trim() || !description.trim()) {
-      setValidation("Please fill in the event name, date, location, and description.");
-      return;
-    }
+    const current = lifecycle.current;
+    if (!current.active || !readableRef.current || current.locked) return;
+    const prepared = prepareEventRequest({ name, date, location, description });
+    if ("error" in prepared) { setValidation(prepared.error); return; }
     setValidation(null);
-    setOutcome({ kind: "submitting" });
-    const result = await requestEvent(
-      { name: name.trim(), date: date.trim(), location: location.trim(), description: description.trim() },
-      memberToken,
-      UNAVAILABLE_MESSAGE,
-    );
-    setOutcome(result);
-    if (result.kind === "accepted") {
-      setName("");
-      setDate("");
-      setLocation("");
-      setDescription("");
-      void reload();
+    current.locked = true;
+    current.submitting = true;
+    const generation = ++current.generation;
+    setOutcome("submitting");
+    try {
+      const result = await requestEvent(prepared.body, token, UNAVAILABLE_MESSAGE);
+      if (!current.active || current.generation !== generation) return;
+      if (result.kind === "accepted") {
+        // Compatibility only: the current server refuses intake with 503.
+        // The legacy adapter exposes no receipt, registration, or approval.
+        setOutcome("responded"); current.submitting = false; refresh();
+      } else setOutcome(result.kind === "unavailable" ? "unavailable" : "uncertain");
+    } catch {
+      if (current.active && current.generation === generation) setOutcome("uncertain");
+    } finally {
+      if (current.active && current.generation === generation) current.submitting = false;
     }
   };
+  const startAnother = () => {
+    if (!lifecycle.current.active || !readableRef.current || outcome !== "responded" || lifecycle.current.submitting) return;
+    setName(""); setDate(""); setLocation(""); setDescription(""); setValidation(null);
+    lifecycle.current.locked = false; setOutcome("idle");
+  };
+  if (state === "unauthorized") return <SignInNotice />;
+  if (denied) return <><ResearchDenialNotice code={denied.code} />
+    <p className="body-s mt-4">Partner and organization reporting access is separate from customer approval. No account permissions were changed.</p></>;
 
   return (
-    <ResearchPartnerShell
-      title="Events"
-      lead="Register talks, meetups, and live sessions before they happen so materials can be cleared. The same three hard lines apply on stage as online."
-    >
+    <>
+      <div className="flex justify-end my-4"><button type="button" className="btn btn-secondary" disabled={outcome === "submitting"}
+        onClick={refresh}>Refresh event records</button></div>
+      {outcome === "responded" && <p className="body-s my-4" role="status">
+        Request response received. The endpoint returned success but no receipt ID. This does not establish registration,
+        approval, venue confirmation, a schedule, attendance, attribution, or email delivery. Your draft is kept until you start another.
+      </p>}
+      {(outcome === "uncertain" || outcome === "unavailable") && <div className="my-4" role="alert">
+        <p className="body-s">{outcome === "unavailable" ? UNAVAILABLE_MESSAGE
+          : "The event request could not be confirmed. Your draft is kept. Contact the team before resubmitting."}</p>
+        <p className="body-s mt-2">Resubmission is blocked in this view to avoid duplicates. Do not reload or leave to retry; this safeguard is not stored after leaving.</p>
+      </div>}
+      <a className="btn btn-secondary mb-4" href="mailto:team@xeniostechnology.com?subject=Event%20request">Contact the event team</a>
       <section aria-labelledby="pe-list">
         <h2 id="pe-list" className="mono-cap text-ink-mute">
-          Your events
+          Reported organization event records
         </h2>
         <div className="mt-4">
           <ResearchRouteBoundary
-            state={state}
-            errorMessage={errorMessage}
-            onRetry={() => void reload()}
-            unavailableTitle={PARTNER_PENDING_TITLE}
-            unavailableBody="Your event list appears here when the partner platform launches. Requests you email in the meantime are carried over."
+            state={state === "ok" && !readable ? "error" : state}
+            errorMessage="Event records could not be read safely. Please try again."
+            onRetry={refresh}
+            unavailableTitle="Event reporting is unavailable right now"
+            unavailableBody="The source could not be loaded. This does not confirm an empty event list, organization access, or any event approval."
           >
-            <ResearchDataTable<PartnerEvent>
-              caption="Your registered events with dates, locations, and review status"
+            <ResearchDataTable<ReportedPartnerEvent>
+              caption="Reported organization events: recorded date, unavailable location, and schedule marker"
               columns={[
                 { key: "name", header: "Event", render: (ev) => ev.name },
-                { key: "date", header: "Date", render: (ev) => ev.date ?? "To be scheduled" },
-                { key: "location", header: "Location", render: (ev) => ev.location ?? "To be confirmed" },
+                { key: "date", header: "Reported date", render: (ev) => ev.date ?? "Date not reported" },
+                { key: "location", header: "Location", render: () => "Location not provided by this source" },
                 {
                   key: "status",
-                  header: "Status",
-                  render: (ev) => <ResearchStatusBadge label={ev.status ?? "In review"} tone={statusTone(ev.status)} />,
+                  header: "Reported schedule marker",
+                  render: (ev) => <ResearchStatusBadge label={`${EVENT_SCHEDULE_LABELS[ev.status]} (reported)`} tone="neutral" />,
                 },
               ]}
-              rows={data?.events ?? []}
+              rows={rows ?? []}
               rowKey={(ev) => ev.id}
-              empty="No events registered yet. Request one below when you have something planned."
+              empty="No event rows were returned for this account. This does not confirm complete event history, absence of organization relationships, or request status."
             />
           </ResearchRouteBoundary>
         </div>
       </section>
 
-      <section aria-labelledby="pe-request" className="mt-10">
+      {readable && <section aria-labelledby="pe-request" className="mt-10">
         <h2 id="pe-request" className="mono-cap text-ink-mute">
-          Register an event
+          Prepare an event request
         </h2>
         <form onSubmit={onSubmit} noValidate className="card mt-4" style={{ maxWidth: 680 }}>
+          <p className="body-s mb-4">The current request route is unavailable. Preparing this draft is not event registration.
+            Do not include passwords, sign-in codes, customer health information, or bank details.</p>
+          <fieldset disabled={outcome !== "idle"} style={{ border: 0, margin: 0, padding: 0 }}>
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
             <div>
               <label htmlFor="pe-name" className="form-label">
@@ -152,38 +192,21 @@ export default function Events() {
               required
             />
           </div>
+          </fieldset>
 
           {validation && (
             <p className="body-s mt-4" role="alert">
               {validation}
             </p>
           )}
-          {outcome.kind === "accepted" && (
-            <p className="body-s mt-4" role="status" aria-live="polite">
-              {outcome.message}
-            </p>
-          )}
-          {outcome.kind === "unavailable" && (
-            <div className="mt-4" role="status" aria-live="polite">
-              <p className="body-s text-ink-2">{outcome.message}</p>
-              <a className="btn btn-secondary mt-3" href={`mailto:${PARTNER_SUPPORT_EMAIL}?subject=Event%20registration`}>
-                Email the registration
-              </a>
-            </div>
-          )}
-          {outcome.kind === "error" && (
-            <p className="body-s mt-4" role="alert">
-              {outcome.message}
-            </p>
-          )}
-
           <div className="mt-6">
-            <button type="submit" className="btn btn-primary" disabled={outcome.kind === "submitting"}>
-              {outcome.kind === "submitting" ? "Submitting..." : "Submit registration"}
+            <button type="submit" className="btn btn-primary" disabled={outcome !== "idle"}>
+              {outcome === "submitting" ? "Submitting..." : "Submit request"}
             </button>
+            {outcome === "responded" && <button type="button" className="btn btn-secondary ml-3" onClick={startAnother}>Start another draft</button>}
           </div>
         </form>
-      </section>
-    </ResearchPartnerShell>
+      </section>}
+    </>
   );
 }
