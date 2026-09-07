@@ -34,9 +34,11 @@ Process exit code: **0**. Execution session: `21442`; completion output chunk: `
 
 The three executed suites were:
 
-1. `client/src/research/account/AccountDocuments.test.tsx`
-2. `client/src/research/account-portal/api.test.ts`
-3. `client/src/research/account-portal/views/support-documents.test.tsx`
+1. `client/src/research/account/AccountDocuments.test.tsx` — 19 tests passed.
+2. `client/src/research/account-portal/api.test.ts` — 13 tests passed.
+3. `client/src/research/account-portal/views/support-documents.test.tsx` — 10 tests passed.
+
+Per-suite total: **19 + 13 + 10 = 42 passed**, matching the aggregate runner output above.
 
 ## Scope and behavioral coverage
 
