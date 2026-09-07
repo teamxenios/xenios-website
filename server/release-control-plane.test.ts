@@ -1168,7 +1168,7 @@ describe("migration DAG validator", () => {
           } else if (path === DECLARED_AFFILIATE_CODE_PATH) {
             expect(sourceSha).toBe(DECLARED_AFFILIATE_CODE_SOURCE_SHA);
           } else if (path === "supabase/candidates/20260906120000_research_resource_library.sql") {
-            expect(sourceSha).toBe("9ed2203f152e522880707881acdbdc7d0902a752");
+            expect(sourceSha).toBe("6c77c5663071715f8fe47038f57100c16c430246");
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
               cwd: ROOT,
               encoding: "buffer",

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "status": "COMPLETED_COMPATIBILITY_MEASUREMENT",
+  "preparedAt": "2026-09-07T23:29:33.434Z",
+  "preparedFromCompletedReceiptsOnly": true,
+  "pdfFilesReread": 0,
+  "validatorReruns": 0,
+  "scanner": {
+    "path": "server/research/resource-hub/service.ts",
+    "export": "validatePdfUpload",
+    "requestedCandidate": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+    "observedCensusHead": "0c1ad35c81513a07f5ecbee2fb018c149bd9d52d",
+    "observedPackageHead": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+    "requestedAndObservedServiceBlobIdentical": true,
+    "gitBlob": "8a66a45ea0872e8b67bcba3f56cd2d5665ecff8e",
+    "lfSha256": "40ad433313f44c64289d42536e1da5acd43593f1f7b9a0a7098e67ad646af789",
+    "workingFileSha256": "6e3f402fa61a315e15aa9c2fe90018173ee6ffd7fb1189bc4dde220445e3a8c9",
+    "sourceUnchangedDuringRuns": true
+  },
+  "package": {
+    "scope": "User-provided XENIOS_RECRUITER_AND_RESOURCE_HUB package; recursive regular PDFs, links excluded",
+    "observedAt": "2026-09-07T23:14:16.746Z",
+    "filesRead": 1,
+    "accepted": 1,
+    "refused": 0,
+    "skippedLinks": 0,
+    "pdfSha256": "b88b0bc5df4139d8f7631b3190a72d8abb3e43f5b341d2b93fe636a66544e1bc",
+    "pdfSizeBytes": 95599
+  },
+  "downloads": {
+    "censusRule": "Fresh census of every regular case-insensitive *.pdf recursively under C:/Users/sboad/Downloads; do not traverse symlinks/junctions/reparse links; no other exclusions",
+    "startedAt": "2026-09-07T23:19:06.209Z",
+    "observedAt": "2026-09-07T23:23:16.510Z",
+    "directoriesVisited": 64879,
+    "excludedLinksAndJunctions": 3830,
+    "regularPdfsInventoried": 1133,
+    "filesRead": 1133,
+    "totalBytes": 1592842819,
+    "uniqueContentHashes": 905,
+    "acceptedFileOccurrences": 1034,
+    "refusedFileOccurrences": 99,
+    "contentHashesWithBothVerdicts": 2,
+    "mixedVerdictExplanation": "Validator includes original basename policy; same content can have distinct filename verdicts",
+    "enumerationErrors": 0,
+    "readErrors": 0,
+    "validatorErrors": 0,
+    "changedDuringRead": 0,
+    "reasonOccurrences": 101,
+    "reasonCounts": {
+      "filename must be a simple name ending in .pdf": 44,
+      "PDF contains active content (/EmbeddedFile: scripts, launch actions, or embedded files are not accepted)": 18,
+      "PDF contains active content (/OpenAction: scripts, launch actions, or embedded files are not accepted)": 7,
+      "file exceeds 15728640 bytes": 27,
+      "PDF is encrypted; upload an unencrypted file": 2,
+      "PDF contains active content inside a compressed stream (/OpenAction)": 2,
+      "PDF contains active content (/JavaScript: scripts, launch actions, or embedded files are not accepted)": 1
+    }
+  },
+  "evidence": {
+    "fullCensusReceipt": {
+      "externalFilename": "receipt.json",
+      "sha256": "2e43369e5de5885b0e78ee0334d9d7955f47f96acac9cc3bde72e6d02c6c82bd",
+      "bytes": 224159,
+      "inventory": "1133 records containing ordinal, content SHA-256, byte size, verdict and reasons; no PDF filenames or content"
+    },
+    "packageReceipt": {
+      "externalDirectoryLabel": "xenios-resource-package-pdf-compatibility-20260907",
+      "externalFilename": "receipt.json",
+      "sha256": "947907fd08698e75a8a8df6a8e96d2bad517a032138ba8cd04519ff2dc244f33"
+    },
+    "staticSummarySha256": "30caec5d81fb702916b9390a6475f16fef837dd59deab6c3cbf278c2aed6091d"
+  },
+  "historicalScope": {
+    "recordedDesignCounts": {
+      "files": 494,
+      "accepted": 483,
+      "refused": 11,
+      "source": "docs/resource-hub/SLICE_1_DESIGN.md:130"
+    },
+    "reportedCoordinatorCount": 521,
+    "coordinatorReceiptVerified": false,
+    "relationship": "Unrelated historical scope; neither count was reproduced or validated by this fresh explicit census"
+  },
+  "boundaries": {
+    "pdfFilenamesOrContentRetainedInArtifacts": false,
+    "sourceEdits": false,
+    "filesUploaded": false,
+    "productionConnections": false,
+    "productionMutated": false,
+    "realAccountsTouched": false
+  },
+  "limitations": [
+    "Counts are file occurrences; duplicate bytes can appear at several paths. Two content hashes receive different verdicts because original basenames differ.",
+    "Original basename was supplied only in memory to the unchanged validator. Declared MIME type was application/pdf; this was not an HTTP upload.",
+    "Refusal categories express the existing V1 intake/format policy, not a conclusion that a document is unsafe. Reasons overlap: 101 reason occurrences across 99 refused files.",
+    "Acceptance is compatibility with this first-line validator, not human content approval, security certification, publication permission, or proof of the complete upload/delivery workflow.",
+    "The completed full census has hash/size/verdict metadata only. Its snapshot is not a promise that Downloads contents remain unchanged after the run."
+  ]
+}

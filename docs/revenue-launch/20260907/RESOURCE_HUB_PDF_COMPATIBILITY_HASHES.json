@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "SHA-256",
+  "encoding": "UTF-8 without BOM; LF newlines",
+  "artifacts": [
+    {
+      "file": "RESOURCE_HUB_PDF_COMPATIBILITY.md",
+      "bytes": 3741,
+      "sha256": "386a0db1cdc1e6b610527f328778c7325c6095bb45d302ff8a366b4bd1270cc4"
+    },
+    {
+      "file": "RESOURCE_HUB_PDF_COMPATIBILITY_RECEIPT.json",
+      "bytes": 4866,
+      "sha256": "dc43610a9c49e3e0775a19114529610bee19c84013fa7e456940d18cfaedbab1"
+    }
+  ]
+}

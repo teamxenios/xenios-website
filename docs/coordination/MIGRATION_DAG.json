@@ -729,12 +729,12 @@
   {
    "id": "research_resource_library",
    "path": "supabase/migrations/20260906120000_research_resource_library.sql",
-   "sourceSha": "9ed2203f152e522880707881acdbdc7d0902a752",
+   "sourceSha": "6c77c5663071715f8fe47038f57100c16c430246",
    "sourcePath": "supabase/candidates/20260906120000_research_resource_library.sql",
    "dependsOn": [],
    "checksum": {
     "algorithm": "sha256",
-    "value": "6859a8d3b156f99b2f3f205de12e6fe84e3f484e186950543895801352f48633"
+    "value": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722"
    },
    "appliedToProduction": false,
    "managedMigrationId": "PENDING",

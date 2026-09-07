@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "classification": "ACTUAL_A_CONNECTION_READ_ONLY_REVERIFICATION",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "sql": {
+    "observedAt": "2026-09-07T23:28:22.250204Z",
+    "executor": "postgres",
+    "postgresVersion": "17.6",
+    "authorizedMigrationHistory": [
+      { "version": "20260907143147", "name": "20260905_research_approved_customer_access" },
+      { "version": "20260907143204", "name": "20260905_research_partner_lifecycle" }
+    ],
+    "resourceHubTablesAbsent": true,
+    "transaction": "BEGIN READ ONLY; metadata SELECT; ROLLBACK"
+  },
+  "render": {
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "deployId": "dep-dafcm567bikc7382rhng",
+    "status": "live",
+    "servingSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "finishedAt": "2026-09-07T14:33:55.150237Z"
+  },
+  "productionMutated": false,
+  "executorHandoffRequired": false,
+  "limitations": [
+    "Migration history presence is a fresh observation, not a repeat migration apply or a substitute for the original postchecks.",
+    "The original postchecks, public/read-only smoke and 60-second observation are recorded in the original account/partner production deployment report.",
+    "No new Resource Hub migration, feature activation, account action or deployment is authorized by this receipt."
+  ]
+}
