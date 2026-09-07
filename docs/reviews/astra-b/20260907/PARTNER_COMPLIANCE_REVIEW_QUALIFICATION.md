@@ -65,7 +65,7 @@ Focused TypeScript command (four roots and imports, no artifacts):
 & 'C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe' -e 'const ts=require("typescript"); const config=ts.readConfigFile("tsconfig.json",ts.sys.readFile); const parsed=ts.parseJsonConfigFileContent(config.config,ts.sys,"."); const roots=["client/src/research/pages/partners/Compliance.tsx","client/src/research/pages/partners/Compliance.test.tsx","client/src/research/partner-crm/compliance-review.ts","client/src/research/partner-crm/compliance-review.test.ts"]; const program=ts.createProgram(roots,{...parsed.options,noEmit:true,incremental:false}); const diagnostics=ts.getPreEmitDiagnostics(program); process.stdout.write(ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:p=>p,getCurrentDirectory:ts.sys.getCurrentDirectory,getNewLine:()=>"\n"})); process.stdout.write(JSON.stringify({roots,diagnostics:diagnostics.length})+"\n"); process.exitCode=diagnostics.length?1:0;'
 ```
 
-Terminal `116ec2`: **0 diagnostics, exit 0**. An earlier test-fixture union typing diagnostic was corrected before the final combined rerun. Staged diff check passed; code commit `711f73` includes only the four allocated code files.
+Terminal `116ec2`: **0 diagnostics, exit 0**. An earlier test-fixture union typing diagnostic was corrected before the final combined rerun. Staged diff check passed; code commit `be1d15f2a08ec4554f14fee91b884e6b961c550b` includes only the four allocated code files (commit/push terminal evidence `711f73`).
 
 ## Limits and integration handoff
 
