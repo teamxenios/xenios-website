@@ -1,13 +1,11 @@
 import { Link } from "wouter";
-import { PARTNER_ROUTES } from "../../lib/routes";
+import { ACCOUNT_PORTAL_ROUTES, ACCESS_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { ResearchSecureNotice } from "../../ui/kit";
-import { PARTNER_SUPPORT_EMAIL } from "./shared";
 
 // ---------------------------------------------------------------------------
-// Partner support (/research/partners/support). How to reach a person, what
-// to include, and where the self-serve answers live. No response-time
-// promises are invented; a person reads every message.
+// Static partner support handoff. This page does not read account data,
+// create a ticket, send a message, or infer permissions from navigation.
 // ---------------------------------------------------------------------------
 
 const TOPICS = [
@@ -41,8 +39,16 @@ export default function Support() {
   return (
     <ResearchPartnerShell
       title="Support"
-      lead="Every message is read by a person on the research team. Include your partner email and the topic, and you will get a real answer."
+      lead="Contact the Xenios team about your partner account or find the relevant account page. This page provides guidance, not a support inbox or ticket status."
     >
+      <nav aria-label="Account help" className="flex flex-wrap gap-3 my-6">
+        <Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary">My account</Link>
+        <Link href={ACCESS_ROUTES.signIn} className="btn btn-secondary">Sign in</Link>
+      </nav>
+      <p className="body-s mb-6">
+        Use your ordinary Xenios sign-in. These links do not approve an account or grant partner, organization,
+        product, or payout access; each destination verifies its own access requirements.
+      </p>
       <section aria-labelledby="ps-contact">
         <h2 id="ps-contact" className="mono-cap text-ink-mute">
           Contact
@@ -50,13 +56,27 @@ export default function Support() {
         <div className="card mt-4" style={{ maxWidth: 640 }}>
           <p className="body-m font-700">Email the partner team</p>
           <p className="body-s text-ink-2 mt-2">
-            Write from the email on your partner account so the team can find you quickly. Include what you were doing,
-            what you expected, and what happened instead.
+            The email link asks your device to open an email app. Review and send your message there if you choose.
+            If no email app opens, copy the address into your usual email service.
           </p>
-          <a className="btn btn-primary mt-4" href={`mailto:${PARTNER_SUPPORT_EMAIL}?subject=Partner%20support`}>
-            Email {PARTNER_SUPPORT_EMAIL}
+          <a className="btn btn-primary mt-4" href="mailto:team@xeniostechnology.com?subject=Partner%20support">
+            Email team@xeniostechnology.com
           </a>
+          <p className="body-s text-ink-2 mt-4">
+            Opening this link does not send a message or create a support ticket. This page cannot confirm receipt,
+            delivery, a reply, or a response time. Nothing is submitted by this page.
+          </p>
         </div>
+      </section>
+
+      <section aria-labelledby="ps-checklist" className="mt-10">
+        <h2 id="ps-checklist" className="mono-cap text-ink-mute">Before you send</h2>
+        <ul className="body-s mt-4 space-y-3" style={{ paddingLeft: "1.25rem", maxWidth: 680 }}>
+          <li>Briefly name the topic and the page you were using, what you expected, and what happened instead.</li>
+          <li>Include an approximate time and a non-sensitive reference if useful. Describe the page by name rather than copying a full URL or sign-in link.</li>
+          <li>Remove other people's information, secret values, and private account details from screenshots or copied error text. If you cannot safely remove them, describe the issue without attaching them.</li>
+          <li>Do not email passwords, sign-in codes, password-reset links, access tokens, customer health information, bank details, or payout credentials.</li>
+        </ul>
       </section>
 
       <section aria-labelledby="ps-topics" className="mt-10">
@@ -81,7 +101,8 @@ export default function Support() {
       <div className="mt-8">
         <ResearchSecureNotice>
           The team will never ask for your password, sign-in codes, or payout credentials over email. If a message asks
-          for any of those, do not answer it, and forward it to the partner team.
+          for any of those, do not reply or follow its links. Contact the team using the address above and describe the
+          concern without forwarding secret values, account-access links, or private customer information.
         </ResearchSecureNotice>
       </div>
     </ResearchPartnerShell>
