@@ -285,7 +285,7 @@ describe("Resource Hub admin page", () => {
     expect(mocks.review).toHaveBeenCalledWith(TOKEN, RESOURCE_A, versionId, {
       action,
       idempotencyKey: expect.stringMatching(/^.{8,120}$/u),
-    });
+    }, { signal: expect.any(AbortSignal) });
     expect(mocks.list).toHaveBeenCalledTimes(2);
     // The outcome line lives above the boundary so it survives the reload.
     expect(byTestId("resource-hub-outcome")?.getAttribute("role")).toBe("status");
@@ -318,7 +318,7 @@ describe("Resource Hub admin page", () => {
       action,
       reason: "Checked against the current partner rules.",
       idempotencyKey: expect.any(String),
-    });
+    }, { signal: expect.any(AbortSignal) });
     expect(mocks.list).toHaveBeenCalledTimes(2);
   });
 
@@ -351,7 +351,7 @@ describe("Resource Hub admin page", () => {
 
     await click(byTestId("preview-v-published"));
     await flush();
-    expect(mocks.download).toHaveBeenCalledWith(TOKEN, RESOURCE_A, "v-published");
+    expect(mocks.download).toHaveBeenCalledWith(TOKEN, RESOURCE_A, "v-published", { signal: expect.any(AbortSignal) });
     expect(createObjectURL).toHaveBeenCalledTimes(1);
     expect(saved).toEqual(["onboarding.pdf"]);
 
@@ -447,7 +447,8 @@ describe("Resource Hub admin page", () => {
 
     expect(mocks.upload).toHaveBeenCalledTimes(1);
     const call = mocks.upload.mock.calls[0];
-    expect(call).toHaveLength(3);
+    expect(call).toHaveLength(4);
+    expect(call[3]).toEqual({ signal: expect.any(AbortSignal) });
     const [, metadata, file] = call;
     expect(Object.keys(metadata).sort()).toEqual(
       ["audience", "idempotencyKey", "originalFilename", "purpose", "title", "usagePolicy"].sort(),

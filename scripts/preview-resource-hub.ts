@@ -114,7 +114,17 @@ export function buildResourceHubPreviewApp(port: number, previewEnv: NodeJS.Proc
   }
   process.env.RESEARCH_ACCESS_PASSWORD = "preview-resource-hub-review-password";
   process.env.RESEARCH_SESSION_SECRET = "preview-resource-hub-secret-not-production";
-  process.env.RESEARCH_PUBLIC = "true";
+  // PREVIEW_LOCK_GATE=1 runs the harness with the shared review gate LOCKED
+  // (RESEARCH_PUBLIC unset, password set) so the ordinary-auth reachability
+  // of the partner resource doors can be measured under the locked policy
+  // without touching any server guard. Default: public mode, as before.
+  const lockGate = previewEnv.PREVIEW_LOCK_GATE === "1";
+  if (lockGate) delete process.env.RESEARCH_PUBLIC;
+  else process.env.RESEARCH_PUBLIC = "true";
+  // PREVIEW_DOWNLOAD_DELAY_MS delays ONLY the partner and admin byte doors so
+  // a browser journey can sign out or switch accounts while a download is in
+  // flight. Preview-only; the production registrars are untouched.
+  const downloadDelayMs = Math.max(0, Number(previewEnv.PREVIEW_DOWNLOAD_DELAY_MS ?? 0) || 0);
   // The REAL admin guard verifies bearer tokens through this URL, which is the
   // GoTrue-shaped stub below. Nothing else in this process talks to it.
   process.env.SUPABASE_URL = `http://127.0.0.1:${port}/preview-auth`;
@@ -205,6 +215,14 @@ export function buildResourceHubPreviewApp(port: number, previewEnv: NodeJS.Proc
     res.json({ products: [], commerce: { research: false, consumer: false }, email: "research@xeniostechnology.com" });
   });
 
+  if (downloadDelayMs > 0) {
+    const DELAYED = [/^\/api\/research\/partner\/resources\/[A-Za-z0-9-]+\/download$/u, /^\/api\/admin\/research\/resource-hub\/resources\/[A-Za-z0-9-]+\/versions\/[A-Za-z0-9-]+\/download$/u];
+    app.use((req, _res, next) => {
+      if (req.method === "GET" && DELAYED.some((pattern) => pattern.test(req.path))) setTimeout(next, downloadDelayMs);
+      else next();
+    });
+  }
+
   app.use(researchPageGate);
 
   // Preview API boundaries: only the doors this preview is FOR stay reachable.
@@ -279,7 +297,7 @@ if (isDirectRun) {
     app.listen(port, "127.0.0.1", () => {
       // eslint-disable-next-line no-console
       console.log(
-        `[resource-hub-preview] listening on http://127.0.0.1:${port} serving ${clientDist}; ` +
+        `[resource-hub-preview] listening on http://127.0.0.1:${port} serving ${clientDist}; gate=${process.env.RESEARCH_PUBLIC === "true" ? "public" : "LOCKED"}; downloadDelayMs=${process.env.PREVIEW_DOWNLOAD_DELAY_MS ?? 0}; ` +
           `personas: ${RESOURCE_HUB_PREVIEW_PERSONAS.map((p) => p.email).join(", ")}; password "${RESOURCE_HUB_PREVIEW_PASSWORD}"`,
       );
     });

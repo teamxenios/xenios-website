@@ -56,6 +56,7 @@ export function uploadResourceHubVersion(
   token: string,
   input: ResourceUploadInput,
   file: Blob,
+  options: { signal?: AbortSignal } = {},
 ): Promise<ResourceHubWriteResult<ResourceAdminItemResponse>> {
   return post<ResourceAdminItemResponse>(
     RESOURCE_HUB_ADMIN_UPLOAD_PATH,
@@ -67,7 +68,7 @@ export function uploadResourceHubVersion(
       },
       body: file,
     },
-    { tooLargeMessage: "The file is larger than the server accepts." },
+    { tooLargeMessage: "The file is larger than the server accepts.", signal: options.signal },
   );
 }
 
@@ -76,8 +77,9 @@ export function reviewResourceHubVersion(
   resourceId: string,
   versionId: string,
   input: ResourceVersionReviewInput,
+  options: { signal?: AbortSignal } = {},
 ): Promise<ResourceHubWriteResult<ResourceAdminItemResponse>> {
-  return postJson<ResourceAdminItemResponse>(adminResourceVersionReviewPath(resourceId, versionId), input, token);
+  return postJson<ResourceAdminItemResponse>(adminResourceVersionReviewPath(resourceId, versionId), input, token, options.signal);
 }
 
 // The admin preview of one exact version: server-streamed bytes behind the
@@ -87,6 +89,7 @@ export async function downloadResourceHubVersion(
   token: string,
   resourceId: string,
   versionId: string,
+  options: { signal?: AbortSignal } = {},
 ): Promise<ResourceDownloadResult> {
   try {
     const res = await fetch(adminResourceVersionDownloadPath(resourceId, versionId), {
@@ -95,6 +98,7 @@ export async function downloadResourceHubVersion(
       cache: "no-store",
       redirect: "error",
       headers: { Authorization: "Bearer " + token },
+      ...(options.signal ? { signal: options.signal } : {}),
     });
     if (res.status === 401) return { kind: "unauthorized" };
     if (res.status === 403) return { kind: "forbidden" };
@@ -124,11 +128,16 @@ function fieldErrorsOf(value: unknown): Record<string, string[]> | undefined {
 }
 
 // A JSON write: the body is the serialized input, as lib/api would send it.
-function postJson<T>(path: string, body: unknown, token: string): Promise<ResourceHubWriteResult<T>> {
-  return post<T>(path, token, {
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+function postJson<T>(path: string, body: unknown, token: string, signal?: AbortSignal): Promise<ResourceHubWriteResult<T>> {
+  return post<T>(
+    path,
+    token,
+    {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+    { signal },
+  );
 }
 
 interface PostOptions {
@@ -138,6 +147,8 @@ interface PostOptions {
    * rather than "something went wrong". Only the raw-body upload sets it.
    */
   tooLargeMessage?: string;
+  /** Aborted by the caller when the principal that started the write is gone. */
+  signal?: AbortSignal;
 }
 
 // Mirrors lib/api's request() discipline (same-origin, no-store, bearer,
@@ -158,6 +169,7 @@ async function post<T>(
       cache: "no-store",
       headers: { ...init.headers, Authorization: "Bearer " + token },
       body: init.body,
+      ...(options.signal ? { signal: options.signal } : {}),
     });
     const contentType = res.headers.get("content-type") ?? "";
     const parsed: unknown = contentType.includes("application/json") ? await res.json().catch(() => null) : null;

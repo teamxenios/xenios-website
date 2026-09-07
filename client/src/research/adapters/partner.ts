@@ -191,6 +191,7 @@ export function parseAttachmentFilename(contentDisposition: string | null): stri
 export async function downloadPartnerResource(
   downloadPath: string,
   token: PartnerToken,
+  options: { signal?: AbortSignal } = {},
 ): Promise<ResourceDownloadResult> {
   if (!token) return { kind: "unauthorized" };
   // Only the application's own partner resource path is ever fetched. A card
@@ -206,6 +207,7 @@ export async function downloadPartnerResource(
       cache: "no-store",
       redirect: "error",
       headers: { Authorization: "Bearer " + token },
+      ...(options.signal ? { signal: options.signal } : {}),
     });
     if (res.status === 401) return { kind: "unauthorized" };
     if (res.status === 403) return { kind: "forbidden" };
@@ -218,6 +220,8 @@ export async function downloadPartnerResource(
     const blob = await res.blob();
     return { kind: "ok", blob, filename: parseAttachmentFilename(res.headers.get("content-disposition")) };
   } catch {
+    // An aborted request (the session that started it is gone) is reported
+    // like any other failed connection; the caller discards it as stale.
     return { kind: "error", message: "The connection failed before the download completed. Please try again." };
   }
 }
