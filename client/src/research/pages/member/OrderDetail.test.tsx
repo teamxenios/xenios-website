@@ -227,6 +227,16 @@ describe("existing issue-report action is exact and principal-bound", () => {
 });
 
 describe("record provenance and unavailable states", () => {
+  it.each([
+    ["resolved", "refund"], ["resolved", "replacement"], ["resolved", "partial_refund"],
+    ["approved", "refund"], ["approved", "replacement"], ["information_requested", null],
+  ])("does not promote reported claim state %s / %s to payment or shipment execution", async (state, resolution) => {
+    serve({ claims: () => claimsResponse([{ ...claim(), state, resolution }]) }); await render();
+    expect(text()).toContain("A report status or resolution does not confirm");
+    expect(text()).not.toContain("A refund was issued"); expect(text()).not.toContain("A replacement is being shipped");
+    expect(text()).not.toContain("research@xeniostechnology.com");
+    if (resolution) expect(text()).toContain("Reported resolution:");
+  });
   it("does not infer order type, shipment completeness, or a tracking URL from a legacy record", async () => {
     const { recordKind: _recordKind, ...legacy } = order();
     serve({ detail: () => detailResponse(legacy) }); await render();
