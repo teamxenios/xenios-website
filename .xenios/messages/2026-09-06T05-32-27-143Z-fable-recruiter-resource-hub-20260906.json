@@ -1,0 +1,7 @@
+{
+  "id": "64741c96-c96b-4466-b62b-fb8b0d80d4be",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "LEASE REQUEST (founder follow-on build 2026-09-06, task RECRUITER-RESOURCE-HUB-V1-20260906 recorded on branch fable/recruiter-resource-hub-20260906 from your head 096d70c). Disjoint paths, none under an active lease: shared/research/resource-hub/**, server/research/resource-hub/**, client/src/research/resource-hub/**, shared/research/recruiting/**, server/research/recruiting/**, client/src/research/recruiting/**, client/src/research/pages/partners/Resources.tsx(+test), server/research/partners/portal-routes.ts, portal-production.ts, portal-routes.test.ts, client/src/research/pages/adminx/ResourceHubAdmin*.tsx, RecruitingAdmin*.tsx, client/src/research/adminx-section.tsx, client/src/research/lib/routes.ts, client/src/research/ui/shells.tsx (+admin-shell.test.tsx), server/research/index.ts (seam, re-pin in same commit), server/release-control-plane.test.ts (census pin), docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json, supabase/candidates/2026090*_research_resource_hub*.sql and *_research_recruiting*.sql, docs/resource-hub/**. Runtime edits stay on my branch; you integrate. No production, migration apply, grant, message or economics change.",
+  "createdAt": "2026-09-06T05:32:27.153Z"
+}

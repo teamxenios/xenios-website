@@ -1,0 +1,10 @@
+{
+  "id": "fable-recruiter-resource-hub-20260906",
+  "tool": "Claude Fable 5.1",
+  "lane": "recruiter-resource-hub",
+  "branch": "fable/recruiter-resource-hub-20260906",
+  "state": "active",
+  "startedAt": "2026-09-06T03:56:58.895Z",
+  "heartbeatAt": "2026-09-06T03:56:58.896Z",
+  "note": "Founder follow-on build 2026-09-06; base = integration head 096d70c after A released the browser lease; isolated branch; local only; no production, migration apply, grant, message or economics activation"
+}
