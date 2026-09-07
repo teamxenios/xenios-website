@@ -6,6 +6,8 @@
 begin read only;
 set local statement_timeout = '30s';
 set local lock_timeout = '5s';
+-- Refuse filtered counts, including FORCE RLS on a non-bypass table owner.
+set local row_security = off;
 
 do $postcheck$
 declare
@@ -20,6 +22,10 @@ declare
   expression_text text;
   bucket_match text[];
 begin
+  if not exists(select 1 from pg_catalog.pg_roles
+    where rolname=current_user and (rolsuper or rolbypassrls)) then
+    raise exception 'Resource Hub checker requires SUPERUSER or BYPASSRLS executor';
+  end if;
   if not exists(select 1 from pg_roles where rolname='service_role' and rolbypassrls)
     or exists(select 1 from pg_roles where rolname in ('anon','authenticated') and (rolsuper or rolbypassrls))
     or pg_has_role('anon','service_role','MEMBER')
@@ -160,8 +166,11 @@ end
 $postcheck$;
 
 select clock_timestamp() as observed_at,current_database() as database_name,
-  current_setting('server_version') as server_version,
-  'PASS: exact schema/RPCs, service-only ACLs, private bucket; no seeded rows' as result;
+  current_user as migration_executor,current_setting('server_version') as server_version,
+  r.rolsuper as executor_superuser,r.rolbypassrls as executor_bypassrls,
+  current_setting('row_security') as row_security_mode,
+  'PASS: exact schema/RPCs, service-only ACLs, private bucket; no seeded rows' as result
+from pg_catalog.pg_roles r where r.rolname=current_user;
 select 'research_resource_library' as relation,count(*) as rows from public.research_resource_library
 union all select 'research_resource_versions',count(*) from public.research_resource_versions
 union all select 'research_resource_deliveries',count(*) from public.research_resource_deliveries

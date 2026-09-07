@@ -7,6 +7,8 @@
 begin read only;
 set local statement_timeout = '30s';
 set local lock_timeout = '5s';
+-- Refuse filtered visibility; this setting never grants an RLS bypass.
+set local row_security = off;
 
 do $precheck$
 declare
@@ -15,6 +17,10 @@ declare
   expression_text text;
   bucket_match text[];
 begin
+  if not exists(select 1 from pg_catalog.pg_roles
+    where rolname=current_user and (rolsuper or rolbypassrls)) then
+    raise exception 'Resource Hub checker requires SUPERUSER or BYPASSRLS executor';
+  end if;
   if current_setting('server_version_num')::integer < 150000
     or to_regprocedure('pg_catalog.gen_random_uuid()') is null then
     raise exception 'Resource Hub requires PostgreSQL 15+ and gen_random_uuid';
@@ -89,7 +95,10 @@ $precheck$;
 
 select clock_timestamp() as observed_at, current_database() as database_name,
   current_user as migration_executor, current_setting('server_version') as server_version,
-  'PASS: first-install objects absent; roles and Storage policy compatibility checked' as result;
+  r.rolsuper as executor_superuser, r.rolbypassrls as executor_bypassrls,
+  current_setting('row_security') as row_security_mode,
+  'PASS: first-install objects absent; roles and Storage policy compatibility checked' as result
+from pg_catalog.pg_roles r where r.rolname=current_user;
 -- Default ACLs are evidence only. The candidate explicitly replaces relevant
 -- grants and must pass even when these defaults are absent or overbroad.
 select n.nspname as schema_name, r.rolname as creator, d.defaclobjtype, d.defaclacl

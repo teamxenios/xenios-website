@@ -22,6 +22,9 @@ for(const mode of ['minimal','broad']){
   const postcheck=()=>db.exec(source('.postcheck.sql'));
   const reject=async(name,sql,pattern)=>{await assert.rejects(()=>db.exec(sql),pattern);record(mode+': '+name);};
   const rejectGate=async(name,gate,pattern)=>{await assert.rejects(gate,pattern);await db.exec('rollback');record(mode+': '+name);};
+  await db.exec('create role local_resource_checker nologin nosuperuser nobypassrls; grant usage,create on schema public to local_resource_checker; grant usage on schema storage to local_resource_checker; grant select on storage.buckets,storage.objects to local_resource_checker; set role local_resource_checker');
+  await rejectGate('fresh precheck rejects non-bypass executor',precheck,/checker requires SUPERUSER or BYPASSRLS executor/);
+  await db.exec('reset role');
   await precheck();record(mode+': fresh precheck');
   await db.exec('create table public.research_resource_library(id text)');
   await rejectGate('incompatible existing table precheck',precheck,/already exists/);await db.exec('drop table public.research_resource_library');
@@ -94,6 +97,7 @@ for(const mode of ['minimal','broad']){
    assert.equal(Number((await db.query(`select count(*) count from public.${table}`)).rows[0].count),0);
    record(mode+': FORCE RLS hides seeded rows from non-bypass owner '+table);
   }
+  await rejectGate('postcheck rejects non-bypass owner with hidden seeded rows',postcheck,/checker requires SUPERUSER or BYPASSRLS executor/);
   await db.exec('reset role; set role service_role');
   for(const [table,count] of seededTables){
    assert.equal(Number((await db.query(`select count(*) count from public.${table}`)).rows[0].count),count);
