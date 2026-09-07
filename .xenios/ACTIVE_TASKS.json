@@ -1598,7 +1598,7 @@
     {
       "id": "RESOURCE-HUB-SCANNER-LEXER-FIX-20260907",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-resource-hub-scanner-fix-20260907",
       "title": "Root-delegated isolated scanner lexer correction; A informed of exclusive two-file scope. No production or shared-checkout writes.",
       "paths": [
@@ -1609,7 +1609,13 @@
       "acceptance": [
         "Independent reviewer validates exact code SHA and bounded scanner regressions; author does not self-accept"
       ],
-      "claimedAt": "2026-09-07T22:00:22.859Z"
+      "claimedAt": "2026-09-07T22:00:22.859Z",
+      "handoff": {
+        "session": "codex-resource-hub-scanner-fix-20260907",
+        "sha": "188ad3cc616c6c5d028cea4b2471a42aa88fe0d3",
+        "file": ".xenios/handoffs/2026-09-07T22-10-01-543Z-RESOURCE-HUB-SCANNER-LEXER-FIX-20260907-codex-resource-hub-scanner-fix-20260907.md",
+        "at": "2026-09-07T22:10:01.557Z"
+      }
     }
   ]
 }

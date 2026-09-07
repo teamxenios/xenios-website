@@ -5,6 +5,6 @@
   "branch": "codex/resource-hub-scanner-fix-20260907",
   "state": "active",
   "startedAt": "2026-09-07T22:00:22.758Z",
-  "heartbeatAt": "2026-09-07T22:00:22.764Z",
-  "note": "Root delegated exact scanner files; isolated db0e527 worktree; no production."
+  "heartbeatAt": "2026-09-07T22:08:22.724Z",
+  "note": "Scanner regressions and nested dictionary parsing implemented; bounded service file verification pending; no production."
 }
