@@ -3,16 +3,15 @@ import type { CustomerOrdersDto } from "@shared/research/customer-account/contra
 import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import {
-  authoritativeOrderCount,
   cleanAccountText,
   commerceRecordPresentation,
   formatAccountDate,
   formatOrderQuantity,
   fulfillmentStatusLabel,
   paymentStatusLabel,
-  safeExternalUrl,
   statusTone,
 } from "../format";
+import { accountOrderGuidance, resolveAccountOrder } from "../order-journey";
 
 export function AccountOrderDetailView({
   data,
@@ -23,17 +22,9 @@ export function AccountOrderDetailView({
 }) {
   // Exact equality against the already member-scoped list is the only lookup.
   // Prefixes such as XRR/XEA/XEC carry no authority and are never interpreted.
-  const record = reference.length > 0
-    ? data.research.find((candidate) => candidate.reference === reference)
-    : undefined;
+  const lookup = resolveAccountOrder(data, reference);
 
-  if (!record) {
-    const authoritativeCount = authoritativeOrderCount(data.history);
-    // A complete discriminant plus count cannot prove a reference is absent
-    // when the visible projection itself is missing rows. Row length is used
-    // only as a consistency check here, never as the displayed total.
-    const historyComplete = authoritativeCount !== null
-      && authoritativeCount === data.research.length;
+  if (lookup.kind !== "record") {
     return (
       <section className="account-surface" aria-labelledby="commerce-record-unavailable">
         <p className="account-section-label">Member-scoped commerce history</p>
@@ -41,7 +32,11 @@ export function AccountOrderDetailView({
           Commerce record unavailable.
         </h2>
         <p className="body-s text-ink-2 mt-3 max-w-[64ch]" role="status">
-          {historyComplete
+          {lookup.kind === "ambiguous"
+            ? "This exact reference is ambiguous in the returned account history. No record was selected. Ask account support to reconcile it."
+            : lookup.kind === "unavailable"
+              ? "The account history could not be read safely. No record was selected. Refresh this page or ask account support."
+            : lookup.definitive
             ? "No commerce record with this exact reference is attached to this account."
             : "This reference is not currently visible in the available account history. Some commerce history is incomplete, so this is not a definitive not-found result."}
         </p>
@@ -53,7 +48,9 @@ export function AccountOrderDetailView({
     );
   }
 
-  const trackingUrl = safeExternalUrl(record.trackingUrl);
+  const record = lookup.record;
+  const guidance = accountOrderGuidance(record);
+  const trackingUrl = guidance.trackingUrl;
   const itemLabel = cleanAccountText(record.itemLabel);
   const variantLabel = cleanAccountText(record.variantLabel);
   const recordPresentation = commerceRecordPresentation(record.recordKind);
@@ -119,6 +116,14 @@ export function AccountOrderDetailView({
             </dd>
           </div>
         </dl>
+
+        <section className="account-surface account-surface-warm mt-6" aria-labelledby="commerce-next-step">
+          <h3 id="commerce-next-step" className="body-l font-700">{guidance.fulfillment.title}</h3>
+          <p className="body-s text-ink-2 mt-3">{guidance.fulfillment.detail}</p>
+          <p className="body-s text-ink-2 mt-3">{guidance.payment}</p>
+          {!trackingUrl && <p className="body-s text-ink-2 mt-3">A shipment tracking action is not available from this record.</p>}
+          <p className="body-s text-ink-2 mt-3">Support can review the record. Opening support does not create a payment, shipment, refund, or Care request.</p>
+        </section>
 
         <div className="mt-6 flex flex-wrap gap-3">
           {trackingUrl ? (
