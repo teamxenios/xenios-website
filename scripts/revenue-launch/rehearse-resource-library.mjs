@@ -38,6 +38,11 @@ for(const mode of ['minimal','broad']){
   await rejectGate('postcheck detects ACL regression',postcheck,/client privilege remains/);await db.exec('revoke truncate on public.research_resource_deliveries from authenticated');
   await db.exec('alter table public.research_resource_library disable row level security');
   await rejectGate('postcheck detects missing RLS',postcheck,/table\/RLS\/owner/);await db.exec('alter table public.research_resource_library enable row level security');
+  for(const table of ['research_resource_library','research_resource_versions','research_resource_deliveries']){
+   await db.exec(`alter table public.${table} no force row level security`);
+   await rejectGate('postcheck detects missing FORCE RLS '+table,postcheck,/table\/RLS\/owner/);
+   await db.exec(`alter table public.${table} force row level security`);
+  }
   await db.exec("update storage.buckets set public=true where id='research-resource-library'");
   await rejectGate('postcheck detects public bucket',postcheck,/private bucket mismatch/);await db.exec("update storage.buckets set public=false where id='research-resource-library'");
   await postcheck();
@@ -80,6 +85,20 @@ for(const mode of ['minimal','broad']){
   await db.exec('reset role; alter table public.research_resource_library drop constraint local_rehearsal_pointer_failure; set role service_role');
   await db.query("insert into public.research_resource_deliveries(resource_id,version_id,member_id,outcome) values($1,$2,'30000000-0000-4000-8000-000000000001','denied')",[r1,v2]);
   for(const sql of ['update public.research_resource_deliveries set reason=reason','delete from public.research_resource_deliveries','truncate public.research_resource_deliveries']) await reject('service evidence '+sql.split(' ')[0],sql,/permission denied/);
+  await db.exec('reset role');
+  await db.exec('create role local_resource_owner nologin nosuperuser nobypassrls; grant usage on schema public to local_resource_owner');
+  const seededTables=[['research_resource_library',2],['research_resource_versions',2],['research_resource_deliveries',1]];
+  for(const [table] of seededTables) await db.exec(`alter table public.${table} owner to local_resource_owner`);
+  await db.exec('set role local_resource_owner');
+  for(const [table] of seededTables){
+   assert.equal(Number((await db.query(`select count(*) count from public.${table}`)).rows[0].count),0);
+   record(mode+': FORCE RLS hides seeded rows from non-bypass owner '+table);
+  }
+  await db.exec('reset role; set role service_role');
+  for(const [table,count] of seededTables){
+   assert.equal(Number((await db.query(`select count(*) count from public.${table}`)).rows[0].count),count);
+   record(mode+': service still reads preserved seeded rows '+table);
+  }
   await db.exec('reset role');
   await rejectGate('postcheck refuses unexpected seeded rows',postcheck,/unexpected first-install rows/);
  }finally{await db.close();}

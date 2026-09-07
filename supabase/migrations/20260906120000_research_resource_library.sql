@@ -105,6 +105,9 @@ create index if not exists research_resource_deliveries_member_idx
 alter table public.research_resource_library enable row level security;
 alter table public.research_resource_versions enable row level security;
 alter table public.research_resource_deliveries enable row level security;
+alter table public.research_resource_library force row level security;
+alter table public.research_resource_versions force row level security;
+alter table public.research_resource_deliveries force row level security;
 
 -- Do not depend on project/creator default ACLs. RLS does not protect TRUNCATE,
 -- and a fresh project may grant the service role nothing by default. Only the

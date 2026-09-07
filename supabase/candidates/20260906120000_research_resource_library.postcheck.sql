@@ -37,7 +37,7 @@ begin
   ) as e(table_name,column_hash,constraint_hash) loop
     table_oid := to_regclass('public.'||expected.table_name);
     if table_oid is null or not exists(select 1 from pg_class c where c.oid=table_oid
-      and c.relkind='r' and c.relrowsecurity
+      and c.relkind='r' and c.relrowsecurity and c.relforcerowsecurity
       and pg_get_userbyid(c.relowner) not in ('anon','authenticated','service_role')) then
       raise exception 'Resource Hub table/RLS/owner mismatch: %',expected.table_name;
     end if;
