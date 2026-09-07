@@ -1493,6 +1493,18 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.370Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "5dfc4ddd-663e-4a13-bb51-9c7279ca3f86",
+      "task": "RESOURCE-HUB-ADMIN-DENIAL-20260907",
+      "session": "codex-resource-hub-admin-denial-20260907",
+      "paths": [
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/resource-hub/admin-principal-isolation.test.tsx"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-07T21:59:02.625Z",
+      "heartbeatAt": "2026-09-07T22:02:17.885Z"
     }
   ],
   "rules": [

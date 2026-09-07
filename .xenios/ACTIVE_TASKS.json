@@ -3,6 +3,27 @@
   "updatedAt": "2026-09-06T03:56:58.304Z",
   "tasks": [
     {
+      "id": "RESOURCE-HUB-ADMIN-DENIAL-20260907",
+      "title": "Prevent denied Resource Hub admin snapshots from reappearing during retries",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-resource-hub-admin-denial-20260907",
+      "paths": [
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/resource-hub/admin-principal-isolation.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "db0e5270afd0e943ae52bb0c84d5c786b92c78e7",
+      "scopeNote": "Astra B delegated isolated local page/test fix. Shared auth.ts, original Fable/A/B worktrees, integration and production are out of scope. A remains sole integrator/production executor. Local continuity records accompany the isolated branch only.",
+      "claimedAt": "2026-09-07T21:59:02.619Z",
+      "handoff": {
+        "session": "codex-resource-hub-admin-denial-20260907",
+        "sha": "4f0384103bc57db35f23e90ca9bd133dbad6ba79",
+        "file": ".xenios/handoffs/2026-09-07T22-03-25-208Z-RESOURCE-HUB-ADMIN-DENIAL-20260907-codex-resource-hub-admin-denial-20260907.md",
+        "at": "2026-09-07T22:03:25.211Z"
+      }
+    },
+    {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
       "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
       "priority": "P0",

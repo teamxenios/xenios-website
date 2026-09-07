@@ -1,0 +1,10 @@
+{
+  "id": "codex-resource-hub-admin-denial-20260907",
+  "tool": "Codex",
+  "lane": "resource-hub-admin-denial-worker",
+  "branch": "codex/resource-hub-admin-denial-20260907",
+  "state": "handoff_ready",
+  "startedAt": "2026-09-07T21:58:50.490Z",
+  "heartbeatAt": "2026-09-07T22:02:17.885Z",
+  "note": "10 new failing reproductions confirmed on unchanged db0 page. Local authorized-snapshot fix passes 41/41 across two focused admin files with pinned Node20.19.0. Preparing exact commit for independent review."
+}
