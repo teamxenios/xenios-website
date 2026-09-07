@@ -209,13 +209,21 @@ describe("RH-B28-3: the admin body belongs to the current principal", () => {
   it("a same-account token refresh keeps the account's work and reloads with the new token", async () => {
     await loadedAsA();
     await setValue(host.querySelector("#resource-hub-title"), "keep-me");
+    await click(byTestId("action-withdraw-v-published"));
+    await setValue(host.querySelector<HTMLInputElement>("#reason-v-published"), "Keep this reason too.");
+    const refreshed = deferred();
+    mocks.list.mockReturnValueOnce(refreshed.promise);
     await act(async () => {
       root.render(<ResourceHubAdminForPrincipal token={ADMIN_A_REFRESHED} />);
     });
-    await flush();
     expect((host.querySelector("#resource-hub-title") as HTMLInputElement).value).toBe("keep-me");
+    expect((host.querySelector("#reason-v-published") as HTMLInputElement).value).toBe("Keep this reason too.");
     expect(mocks.list).toHaveBeenLastCalledWith(ADMIN_A_REFRESHED);
     expect(text()).toContain("ACCOUNT-A-ONLY");
+    refreshed.resolve({ kind: "ok", data: libraryA() });
+    await flush();
+    expect((host.querySelector("#resource-hub-title") as HTMLInputElement).value).toBe("keep-me");
+    expect((host.querySelector("#reason-v-published") as HTMLInputElement).value).toBe("Keep this reason too.");
   });
 
   it("overlapping list loads on the same account: the older completion cannot replace the newer", async () => {
@@ -232,6 +240,102 @@ describe("RH-B28-3: the admin body belongs to the current principal", () => {
     await flush();
     expect(text()).toContain("ACCOUNT-B-ONLY");
     expect(text()).not.toContain("ACCOUNT-A-ONLY");
+  });
+});
+
+const failedLoads = [
+  { kind: "forbidden", message: "Access removed." },
+  { kind: "unauthorized" },
+  { kind: "unavailable" },
+  { kind: "denied", code: "resource_hub_unavailable", message: "Library access is closed." },
+  { kind: "error", message: "The connection failed." },
+] as const;
+
+function expectLibraryHidden() {
+  expect(text()).not.toContain("ACCOUNT-A-ONLY");
+  expect(text()).not.toContain("Account A's material");
+  expect(byTestId("resource-hub-upload")).toBeNull();
+  expect(byTestId("preview-v-published")).toBeNull();
+  expect(byTestId("action-withdraw-v-published")).toBeNull();
+  expect(byTestId("resource-hub-outcome")).toBeNull();
+}
+
+async function recordWithdrawal() {
+  mocks.review.mockResolvedValue({ kind: "ok", data: { ok: true, resource: resource({ versions: [version({ state: "withdrawn" })] }) } });
+  await click(byTestId("action-withdraw-v-published"));
+  await setValue(host.querySelector<HTMLInputElement>("#reason-v-published"), "Superseded pricing.");
+  await click(Array.from(host.querySelectorAll("button")).find((b) => b.textContent?.trim() === "Confirm withdrawal") ?? null);
+  await flush();
+}
+
+describe("admin list authorization cannot be restored by a retry", () => {
+  it.each(failedLoads)("ok -> $kind -> loading hides the old snapshot until a fresh ok", async (failure) => {
+    await loadedAsA();
+    await setValue(host.querySelector("#resource-hub-title"), "DISCARDED-DRAFT-TITLE");
+    await click(byTestId("action-withdraw-v-published"));
+    await setValue(host.querySelector<HTMLInputElement>("#reason-v-published"), "DISCARDED-REVIEW-REASON");
+    mocks.list.mockResolvedValueOnce(failure);
+    await mount(ADMIN_A_REFRESHED);
+    await flush();
+    expectLibraryHidden();
+
+    const retry = deferred();
+    mocks.list.mockReturnValueOnce(retry.promise);
+    if (failure.kind === "error") {
+      const retryButton = Array.from(host.querySelectorAll("button")).find((button) => /retry|try again/iu.test(button.textContent ?? ""));
+      expect(retryButton).toBeDefined();
+      await click(retryButton ?? null);
+    } else {
+      await mount(jwt("admin-a", "a3"));
+    }
+    expect(mocks.list).toHaveBeenCalledTimes(3);
+    expectLibraryHidden();
+
+    retry.resolve({ kind: "ok", data: { ok: true, resources: [resource({ title: "FRESH-A-AUTHORIZED resource" })] } });
+    await flush();
+    expect(text()).toContain("FRESH-A-AUTHORIZED resource");
+    expect(text()).not.toContain("ACCOUNT-A-ONLY");
+    expect((host.querySelector("#resource-hub-title") as HTMLInputElement).value).toBe("");
+    expect(host.querySelector("#reason-v-published")).toBeNull();
+    expect(byTestId("resource-hub-outcome")).toBeNull();
+  });
+
+  it.each(failedLoads)("a recorded action's outcome is cleared on $kind and stays cleared after recovery", async (failure) => {
+    await loadedAsA();
+    const refreshed = deferred();
+    mocks.list.mockReturnValueOnce(refreshed.promise);
+    await recordWithdrawal();
+    expect(byTestId("resource-hub-outcome")?.textContent).toContain("ACCOUNT-A-ONLY");
+    expect(text()).toContain("ACCOUNT-A-ONLY");
+
+    refreshed.resolve(failure);
+    await flush();
+    expectLibraryHidden();
+    const retry = deferred();
+    mocks.list.mockReturnValueOnce(retry.promise);
+    await mount(ADMIN_A_REFRESHED);
+    expectLibraryHidden();
+    retry.resolve({ kind: "ok", data: libraryA() });
+    await flush();
+    expect(text()).toContain("ACCOUNT-A-ONLY");
+    expect(byTestId("resource-hub-outcome")).toBeNull();
+  });
+
+  it("a review completing after the list denies this same admin cannot restore its outcome", async () => {
+    await loadedAsA();
+    const review = deferred();
+    mocks.review.mockReturnValueOnce(review.promise);
+    await click(byTestId("action-withdraw-v-published"));
+    await setValue(host.querySelector<HTMLInputElement>("#reason-v-published"), "Superseded pricing.");
+    await click(Array.from(host.querySelectorAll("button")).find((b) => b.textContent?.trim() === "Confirm withdrawal") ?? null);
+    mocks.list.mockResolvedValueOnce({ kind: "forbidden", message: "Access removed." });
+    await mount(ADMIN_A_REFRESHED);
+    await flush();
+    expectLibraryHidden();
+    review.resolve({ kind: "ok", data: { ok: true, resource: resource({ versions: [version({ state: "withdrawn" })] }) } });
+    await flush();
+    expectLibraryHidden();
+    expect(mocks.list).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -334,8 +334,8 @@ function UploadForm({
       resetForm();
       setErrors({});
       setStatus({ kind: "idle" });
-      // The outcome line lives above the boundary: the list reloads on
-      // success, which remounts this form, so a local message would vanish.
+      // The body retains the outcome through an authorized list refresh and
+      // clears it if that refresh fails or the principal changes.
       onUploaded(
         newest
           ? `Uploaded "${result.data.resource.title}" as version ${newest.versionNumber}. It is ${STATE_LABELS[newest.state].toLowerCase()}; send it for review, approve it, and publish it from the list below when it is ready.`
@@ -994,12 +994,10 @@ export function ResourceHubAdminForPrincipal({ token }: { token: string }) {
  */
 export function ResourceHubAdminBody({ token }: { token: string }) {
   const resource = useAdminResource(token, loadResourceHub);
-  // The one outcome line for the page. A recorded transition or upload
-  // reloads the list from the server (the boundary shows loading and remounts
-  // the hub), so the message is held here, above the boundary, where it
-  // survives the reload. It lives inside the principal-keyed body, so it
-  // never survives an account change.
+  // A recorded transition or upload reloads the list. Its outcome survives
+  // an authorized refresh, but not a failed load or an account change.
   const [outcome, setOutcome] = useState<string | null>(null);
+  const [authorizedData, setAuthorizedData] = useState<ResourceAdminListResponse | null>(null);
   const reload = resource.reload;
   const onChanged = useCallback(
     (message: string) => {
@@ -1009,21 +1007,20 @@ export function ResourceHubAdminBody({ token }: { token: string }) {
     [reload],
   );
 
-  // While THIS principal's list reloads (after a recorded transition, or a
-  // same-account token refresh), the library it already loaded stays on
-  // screen so unsaved form text and open reason fields are not thrown away.
-  // The body is keyed by principal, so data here can only be this account's.
-  const boundaryState = resource.state === "loading" && resource.data ? "ok" : resource.state;
+  // The shared hook retains data even after a failed load. Keep a separate
+  // snapshot only until the next settled result: loading can preserve this
+  // principal's forms, but cannot resurrect data invalidated by a denial or
+  // failure. Adjust local state during render so invalidation precedes child
+  // rendering and does not wait for an effect.
+  const visibleData = resource.state === "ok"
+    ? resource.data
+    : resource.state === "loading" ? authorizedData : null;
+  if (authorizedData !== visibleData) setAuthorizedData(visibleData);
+  if (resource.state !== "ok" && resource.state !== "loading" && outcome !== null) setOutcome(null);
+  const boundaryState = resource.state === "loading" && visibleData ? "ok" : resource.state;
 
   return (
     <div className="grid gap-5">
-      {outcome && (
-        <div className="ra-state" role="status" data-testid="resource-hub-outcome">
-          <p className="body-s text-ink-2" style={{ overflowWrap: "anywhere" }}>
-            {outcome}
-          </p>
-        </div>
-      )}
       <AdminBoundary
         state={boundaryState}
         message={resource.message}
@@ -1032,7 +1029,14 @@ export function ResourceHubAdminBody({ token }: { token: string }) {
         unavailableTitle="The Resource Hub is not reachable."
         unavailableBody="Its API is not mounted in this environment, or the resource library migration has not been applied. Nothing has been uploaded or published from this screen."
       >
-        {resource.data ? <Hub data={resource.data} token={token} onChanged={onChanged} /> : null}
+        {outcome && (
+          <div className="ra-state" role="status" data-testid="resource-hub-outcome">
+            <p className="body-s text-ink-2" style={{ overflowWrap: "anywhere" }}>
+              {outcome}
+            </p>
+          </div>
+        )}
+        {visibleData ? <Hub data={visibleData} token={token} onChanged={onChanged} /> : null}
       </AdminBoundary>
     </div>
   );
