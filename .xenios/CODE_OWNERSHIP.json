@@ -1493,6 +1493,18 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.370Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "fab28668-bac8-41e0-b7e4-91911615f3e3",
+      "task": "RESOURCE-HUB-SCANNER-LEXER-FIX-20260907",
+      "session": "codex-resource-hub-scanner-fix-20260907",
+      "paths": [
+        "server/research/resource-hub/service.ts",
+        "server/research/resource-hub/service.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-07T22:00:22.862Z",
+      "heartbeatAt": "2026-09-07T22:00:22.862Z"
     }
   ],
   "rules": [

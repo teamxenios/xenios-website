@@ -1594,6 +1594,22 @@
         "file": ".xenios/handoffs/2026-09-07T19-45-35-560Z-RECRUITER-RESOURCE-HUB-V1-20260906-fable-recruiter-resource-hub-20260906.md",
         "at": "2026-09-07T19:45:35.562Z"
       }
+    },
+    {
+      "id": "RESOURCE-HUB-SCANNER-LEXER-FIX-20260907",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-resource-hub-scanner-fix-20260907",
+      "title": "Root-delegated isolated scanner lexer correction; A informed of exclusive two-file scope. No production or shared-checkout writes.",
+      "paths": [
+        "server/research/resource-hub/service.ts",
+        "server/research/resource-hub/service.test.ts"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "Independent reviewer validates exact code SHA and bounded scanner regressions; author does not self-accept"
+      ],
+      "claimedAt": "2026-09-07T22:00:22.859Z"
     }
   ]
 }

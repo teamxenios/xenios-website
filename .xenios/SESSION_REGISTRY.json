@@ -402,6 +402,16 @@
       "startedAt": "2026-09-06T03:56:58.895Z",
       "heartbeatAt": "2026-09-06T03:56:58.896Z",
       "note": "Founder follow-on build 2026-09-06; base = integration head 096d70c after A released the browser lease; isolated branch; local only; no production, migration apply, grant, message or economics activation"
+    },
+    {
+      "id": "codex-resource-hub-scanner-fix-20260907",
+      "tool": "Codex",
+      "lane": "resource-hub-scanner-fix",
+      "branch": "codex/resource-hub-scanner-fix-20260907",
+      "state": "active",
+      "startedAt": "2026-09-07T22:00:22.758Z",
+      "heartbeatAt": "2026-09-07T22:00:22.764Z",
+      "note": "Root delegated exact scanner files; isolated db0e527 worktree; no production."
     }
   ]
 }
