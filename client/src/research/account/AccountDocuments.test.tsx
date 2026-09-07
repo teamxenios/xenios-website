@@ -34,8 +34,8 @@ let root: Root;
 let host: HTMLDivElement;
 let pending: Pending[];
 let fetchMock: ReturnType<typeof vi.fn>;
-let createObjectURL: ReturnType<typeof vi.fn>;
-let revokeObjectURL: ReturnType<typeof vi.fn>;
+let createObjectURL: ReturnType<typeof vi.fn<typeof URL.createObjectURL>>;
+let revokeObjectURL: ReturnType<typeof vi.fn<typeof URL.revokeObjectURL>>;
 let saved: string[];
 let beginDownload: ((path: string) => Promise<AccountDocumentDownloadResult>) | null;
 
@@ -67,8 +67,8 @@ beforeEach(() => {
   pending = [];
   saved = [];
   beginDownload = null;
-  createObjectURL = vi.fn(() => "blob:synthetic-account-document");
-  revokeObjectURL = vi.fn();
+  createObjectURL = vi.fn<typeof URL.createObjectURL>(() => "blob:synthetic-account-document");
+  revokeObjectURL = vi.fn<typeof URL.revokeObjectURL>();
   vi.stubGlobal("URL", class extends URL {
     static createObjectURL(object: Blob | MediaSource): string { return createObjectURL(object); }
     static revokeObjectURL(url: string): void { revokeObjectURL(url); }
