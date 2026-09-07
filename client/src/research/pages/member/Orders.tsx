@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import type { OrderSummaryDto } from "@shared/research/commerce-api";
 import { useResearch } from "../../core";
@@ -17,7 +17,8 @@ import {
   ResearchSecureNotice,
   ResearchStatusBadge,
 } from "../../ui/kit";
-import { SHIPMENT_OWNER_LABELS, formatCents, formatDate, orderStateMeta } from "./commerce-presentation";
+import { memberShipmentSummary, readMemberOrders } from "../../member-orders/read";
+import { formatCents, formatDate, orderStateMeta } from "./commerce-presentation";
 
 // ---------------------------------------------------------------------------
 // Member Orders (/research/member/orders), driven by the frozen
@@ -25,47 +26,52 @@ import { SHIPMENT_OWNER_LABELS, formatCents, formatDate, orderStateMeta } from "
 // OrderState machine from shared/research/commerce.ts.
 //
 // manual_review is presented as "Pending review", a calm informational state:
-// the order exists, a person is looking at it, and typical turnaround is
-// about two hours. It is never styled as an error.
+// the order exists and awaits review. It is never styled as an error.
 // ---------------------------------------------------------------------------
 
 type PageState =
   | { phase: "loading" }
   | { phase: "ok"; orders: OrderSummaryDto[] }
-  | { phase: "denied"; code: string; message?: string }
+  | { phase: "denied"; code: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
-  | { phase: "error"; message?: string };
+  | { phase: "error" };
 
 function orderHref(orderId: string): string {
   return MEMBER_ROUTES.order.replace(":id", encodeURIComponent(orderId));
 }
 
-function shipmentsSummary(order: OrderSummaryDto): string {
-  if (order.shipments.length === 0) return "No shipments yet";
-  return order.shipments
-    .map((s) => {
-      const owner = SHIPMENT_OWNER_LABELS[s.owner];
-      const tracking = s.trackingNumber ? `, tracking ${s.trackingNumber}` : "";
-      return `${owner}: ${s.status}${tracking}`;
-    })
-    .join(" · ");
+export default function Orders() {
+  const { memberToken, memberChecking } = useResearch();
+  return <ResearchMemberShell title="Orders"
+    lead="Order records returned for this signed-in account. Payment and shipment details reflect the available source records, not a delivery promise.">
+    {memberChecking || !memberToken
+      ? <ResearchRouteBoundary state={memberChecking ? "loading" : "unauthorized"}>{null}</ResearchRouteBoundary>
+      : <OwnedOrders key={memberToken} token={memberToken} />}
+  </ResearchMemberShell>;
 }
 
-export default function Orders() {
-  const { memberToken } = useResearch();
+function OwnedOrders({ token }: { token: string }) {
   const [state, setState] = useState<PageState>({ phase: "loading" });
   const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
+  const alive = useRef(false);
+  const generation = useRef(0);
 
   const load = useCallback(async () => {
+    if (!alive.current) return;
+    const request = ++generation.current;
     setState({ phase: "loading" });
-    const result = await listOrders(memberToken);
-    switch (result.kind) {
-      case "ok":
-        setState({ phase: "ok", orders: result.data.orders });
+    try {
+      const result = await listOrders(token);
+      if (!alive.current || generation.current !== request) return;
+      switch (result.kind) {
+      case "ok": {
+        const orders = readMemberOrders(result.data);
+        setState(orders === null ? { phase: "error" } : { phase: "ok", orders });
         return;
+      }
       case "denied":
-        setState({ phase: "denied", code: result.code, message: result.message });
+        setState({ phase: "denied", code: result.code });
         return;
       case "unauthorized":
         setState({ phase: "unauthorized" });
@@ -75,41 +81,50 @@ export default function Orders() {
         setState({ phase: "unavailable" });
         return;
       case "error":
-        setState({ phase: "error", message: result.message });
+        setState({ phase: "error" });
         return;
+      }
+    } catch {
+      if (alive.current && generation.current === request) setState({ phase: "error" });
     }
-  }, [memberToken]);
+  }, [token]);
 
   useEffect(() => {
+    alive.current = true;
     void load();
+    return () => { alive.current = false; ++generation.current; };
   }, [load]);
 
   // Capability statuses are fetched once per page; an absent registry degrades
   // to honest pending defaults (nothing is enabled by assumption).
   useEffect(() => {
     let cancelled = false;
-    void fetchCapabilities(memberToken).then((map) => {
+    void fetchCapabilities(token).then((map) => {
       if (!cancelled) setCapabilities(map);
-    });
+    }).catch(() => { if (!cancelled) setCapabilities(null); });
     return () => {
       cancelled = true;
     };
-  }, [memberToken]);
+  }, [token]);
 
   const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
   const orders = state.phase === "ok" ? state.orders : [];
-  const hasPendingReview = useMemo(() => orders.some((o) => o.state === "manual_review"), [orders]);
+  const hasPendingReview = orders.some((order) => order.state === "manual_review");
   const reviewCopy = denialPresentation("large_order_review_required");
 
   const columns = [
     {
       key: "order",
-      header: "Order",
+      header: "Record",
       render: (order: OrderSummaryDto) => (
-        <Link href={orderHref(order.orderId)} className="body-s font-700" aria-label={`View order ${order.orderId}`}>
-          {order.orderId}
-        </Link>
+        <div>
+          <Link href={orderHref(order.orderId)} className="body-s font-700" aria-label={`View ${order.recordKind ?? "record"} ${order.orderId}`}>
+            {order.orderId}
+          </Link>
+          <span className="body-xs text-ink-2 block">{order.recordKind === "request" ? "Request record"
+            : order.recordKind === "order" ? "Order record" : "Record type unavailable"}</span>
+        </div>
       ),
     },
     {
@@ -128,7 +143,7 @@ export default function Orders() {
     {
       key: "shipments",
       header: "Shipments",
-      render: (order: OrderSummaryDto) => <span className="text-ink-2">{shipmentsSummary(order)}</span>,
+      render: (order: OrderSummaryDto) => <span className="text-ink-2">{memberShipmentSummary(order)}</span>,
     },
     {
       key: "total",
@@ -149,19 +164,19 @@ export default function Orders() {
             : "ok";
 
   return (
-    <ResearchMemberShell
-      title="Orders"
-      lead="Every order you place, with its exact status from checkout through delivery. Split shipments stay grouped under one order."
-    >
+    <>
+      <div className="mb-4 flex justify-end">
+        <button type="button" className="btn btn-ghost" onClick={() => void load()}>Refresh order history</button>
+      </div>
       <ResearchRouteBoundary
         state={boundaryState}
-        errorMessage={state.phase === "error" ? state.message : undefined}
+        errorMessage="Order history could not be verified. Please try again."
         onRetry={() => void load()}
         unavailableTitle="Order history is unavailable."
         unavailableBody="Your order history could not be loaded. Account and product eligibility are checked separately; this does not establish whether an order exists."
       >
         {state.phase === "denied" ? (
-          <ResearchDenialNotice code={state.code} message={state.message} />
+          <ResearchDenialNotice code={state.code} />
         ) : orders.length === 0 ? (
           // While product_commerce is not enabled the member cannot place an
           // order, so "when you place your first order" would promise an
@@ -172,7 +187,7 @@ export default function Orders() {
           <ResearchCapabilityBoundary status={commerceStatus}>
             <ResearchEmptyState
               title="No orders yet."
-              body="When you place your first order it will appear here with its full status history."
+              body="No order records were returned by this source. This is not a confirmation of a complete history, payment, shipment, or purchasing eligibility."
             />
           </ResearchCapabilityBoundary>
         ) : (
@@ -197,12 +212,13 @@ export default function Orders() {
             <div className="mt-8">
               <ResearchSecureNotice>
                 Order statuses come directly from the order record. A pending review means a person is checking
-                your order before it processes, not that anything went wrong.
+                your order before it processes, not that anything went wrong. This source does not establish a complete
+                history; missing shipment details do not mean no shipment exists.
               </ResearchSecureNotice>
             </div>
           </>
         )}
       </ResearchRouteBoundary>
-    </ResearchMemberShell>
+    </>
   );
 }
