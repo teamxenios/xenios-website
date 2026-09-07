@@ -6,7 +6,9 @@ import { useResearch } from "../../core";
 import { PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { createRecommendationLink, listRecommendationLinks, recommendationError, revokeRecommendationLink } from "../../recommendation/api";
-import { copyRecommendation, safeRecommendationUrl, shareOutcomeMessage, shareRecommendation } from "../../recommendation/share";
+import { copyRecommendation, shareOutcomeMessage, shareRecommendation } from "../../recommendation/share";
+import { createRecommendationQr, safeExportRecommendation, saveRecommendationQr, type RecommendationQr } from "../../recommendation/qr-export";
+import RecommendationPrintCard from "../../recommendation/RecommendationPrintCard";
 
 const touch = { minHeight: 44 };
 const stateLabels = { ready: "Active", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", unavailable: "Unavailable" };
@@ -37,10 +39,25 @@ export function RecommendationLinksBody({ token }: { token: string }) {
   const alive = useRef(true);
   const generation = useRef(0);
   const mutation = useRef(false);
+  const [printCard, setPrintCard] = useState<{ link: RecommendationLink; qr: RecommendationQr } | null>(null);
+  const [exportBusy, setExportBusy] = useState(false);
+  const exportGeneration = useRef(0);
+  const exporting = useRef(false);
+
+  const clearExports = () => {
+    exportGeneration.current++;
+    exporting.current = false;
+    setExportBusy(false);
+    setPrintCard(null);
+  };
 
   const refresh = async () => {
+    if (!alive.current) return;
+    clearExports();
     const current = ++generation.current;
     setLoading(true);
+    setData(null);
+    setShareStatus({});
     setError("");
     const result = await listRecommendationLinks(token);
     if (!alive.current || current !== generation.current) return;
@@ -57,11 +74,11 @@ export function RecommendationLinksBody({ token }: { token: string }) {
   useEffect(() => {
     alive.current = true;
     void refresh();
-    return () => { alive.current = false; generation.current++; };
+    return () => { alive.current = false; generation.current++; exportGeneration.current++; };
   }, [token]);
 
   const mutate = async (id?: string) => {
-    if (mutation.current || loading || !data?.eligible) return;
+    if (!alive.current || mutation.current || exporting.current || loading || !data?.eligible) return;
     if (id && !data.links.some(link => link.id === id && link.state === "ready")) return;
     const intent = id ? `revoke:${id}` : `create:${destination}`;
     let key = keys.current.get(intent);
@@ -71,6 +88,7 @@ export function RecommendationLinksBody({ token }: { token: string }) {
       keys.current.set(intent, key);
     }
     mutation.current = true;
+    clearExports();
     setBusy(true);
     setError("");
     setNotice("");
@@ -91,8 +109,57 @@ export function RecommendationLinksBody({ token }: { token: string }) {
   };
 
   const share = async (link: RecommendationLink, native: boolean) => {
+    if (!alive.current || busy || loading || !data?.eligible || !safeExportRecommendation(link)) return;
     const outcome = native ? await shareRecommendation(link.url) : await copyRecommendation(link.url);
     if (alive.current) setShareStatus(previous => ({ ...previous, [link.id]: shareOutcomeMessage(outcome) }));
+  };
+
+  const exportLink = async (link: RecommendationLink, action: "download" | "preview" | "print") => {
+    if (!alive.current || exporting.current || mutation.current || loading || !data?.eligible
+      || !data.links.some(item => item.id === link.id && item.url === link.url && safeExportRecommendation(item))) return;
+    const operation = ++exportGeneration.current;
+    const current = () => alive.current && operation === exportGeneration.current;
+    exporting.current = true;
+    setExportBusy(true);
+    setError("");
+    try {
+      // Re-read the canonical server projection before every export, including
+      // print. A cached ready row does not authorize a current artifact.
+      const result = await listRecommendationLinks(token);
+      if (!current()) return;
+      if (result.kind === "error") {
+        setPrintCard(null); setData(null); setError(recommendationError(result)); return;
+      }
+      if (typeof result.data.eligible !== "boolean" || !Array.isArray(result.data.links)
+        || !result.data.links.every(isRecommendationLink)
+        || new Set(result.data.links.map(item => item.id)).size !== result.data.links.length) {
+        setPrintCard(null); setData(null); setError("Your links could not be read safely. Refresh or contact support."); return;
+      }
+      setData(result.data);
+      const verified = result.data.eligible ? result.data.links.find(item => item.id === link.id && item.url === link.url) : null;
+      const qr = verified ? createRecommendationQr(verified) : null;
+      if (!verified || !qr) {
+        setPrintCard(null); setError("This link is no longer available to export. No export was started."); return;
+      }
+      const canSave = () => current() && safeExportRecommendation(verified) === qr.url;
+      if (!canSave()) return;
+      if (action === "download") {
+        const saved = saveRecommendationQr(qr, canSave);
+        if (current()) setShareStatus(previous => ({ ...previous, [link.id]: saved
+          ? "QR download requested. Your browser controls whether the file was saved."
+          : "The QR download could not start. Refresh the link and try again." }));
+      } else {
+        setPrintCard({ link: verified, qr });
+        if (action === "print") {
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          if (canSave()) window.print();
+        }
+      }
+    } catch {
+      if (current()) { setPrintCard(null); setError("The export could not be confirmed. Refresh your links before trying again."); }
+    } finally {
+      if (current()) { exporting.current = false; setExportBusy(false); }
+    }
   };
 
   return <div className="grid gap-6" style={{ minWidth: 0 }}>
@@ -116,7 +183,7 @@ export function RecommendationLinksBody({ token }: { token: string }) {
         {data.links.length === 0 && <p className="body-s text-ink-2 mt-3">You have no recommendation links yet. Create one above when you are ready.</p>}
         <div className="grid gap-4 mt-4" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,280px),1fr))", minWidth: 0 }}>
           {data.links.map(link => {
-            const url = link.state === "ready" ? safeRecommendationUrl(link.url) : null;
+            const url = safeExportRecommendation(link);
             return <article key={link.id} className="card" style={{ minWidth: 0 }}>
               <p className="mono-label">{stateLabels[link.state]}</p>
               <h3 className="body-m mt-2">{REFERRAL_DESTINATIONS.find(item => item.path === link.destinationPath)?.label ?? "Research product"}</h3>
@@ -127,6 +194,8 @@ export function RecommendationLinksBody({ token }: { token: string }) {
                 <label className="body-s block mt-4" htmlFor={`recommendation-url-${link.id}`}>Shareable link</label>
                 <input id={`recommendation-url-${link.id}`} readOnly value={url} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
                 <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, false)}>Copy link</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, true)}>Share</button></div>
+                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
+                <p className="body-s text-ink-2 mt-2">Exports use this exact link and recheck its availability. Include your partner relationship disclosure wherever you use the QR. A saved or printed copy cannot be recalled; its destination still checks the link when opened.</p>
               </> : <p className="body-s mt-3">This link is not available to share.</p>}
               {shareStatus[link.id] && <p className="body-s mt-3" role="status" aria-live="polite">{shareStatus[link.id]}</p>}
               {link.state === "ready" && (revokeId === link.id ? <div className="mt-4"><p className="body-s">Revoke this link? New recipients will not be able to use it. Existing attribution is not removed.</p><div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void mutate(link.id)}>{busy ? "Revoking…" : "Confirm revoke"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy} onClick={() => setRevokeId(null)}>Keep link</button></div></div>
@@ -137,12 +206,14 @@ export function RecommendationLinksBody({ token }: { token: string }) {
       </section>
     </>}
     <section className="card" aria-labelledby="recommendation-rules-title"><h2 id="recommendation-rules-title" className="body-m">What a recommendation means</h2><p className="body-s text-ink-2 mt-2">These are aggregate referral records, not recipient identities. An open or linked account does not mean an order, payment, clinical relationship, or earned commission.</p><p className="body-s text-ink-2 mt-2">Share only approved content and disclose your partner relationship in the message itself. Do not make medical, income, or recruitment claims.</p><div className="flex flex-wrap gap-3 mt-3"><Link href={PARTNER_ROUTES.compliance} className="btn btn-ghost" style={touch}>Sharing rules</Link><Link href={PARTNER_ROUTES.support} className="btn btn-ghost" style={touch}>Get support</Link></div></section>
+    {printCard && <RecommendationPrintCard link={printCard.link} qr={printCard.qr} printing={exportBusy}
+      onClose={clearExports} onPrint={() => void exportLink(printCard.link, "print")} />}
   </div>;
 }
 
 export default function Links() {
-  const { memberToken } = useResearch();
+  const { memberToken, memberChecking } = useResearch();
   return <ResearchPartnerShell title="Referral links" lead="Make a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify.">
-    {memberToken ? <RecommendationLinksBody key={memberToken} token={memberToken} /> : <div className="card"><h2 className="body-l">Sign in to manage your links</h2><p className="body-s mt-2">Referral access is checked for your account. Signing in does not enroll you as an affiliate.</p><Link href={researchAuthPath("/research/sign-in", PARTNER_ROUTES.links)} className="btn btn-primary mt-3" style={touch}>Sign in</Link></div>}
+    {memberChecking ? <p role="status">Checking your account…</p> : memberToken ? <RecommendationLinksBody key={memberToken} token={memberToken} /> : <div className="card"><h2 className="body-l">Sign in to manage your links</h2><p className="body-s mt-2">Referral access is checked for your account. Signing in does not enroll you as an affiliate.</p><Link href={researchAuthPath("/research/sign-in", PARTNER_ROUTES.links)} className="btn btn-primary mt-3" style={touch}>Sign in</Link></div>}
   </ResearchPartnerShell>;
 }
