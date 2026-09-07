@@ -1,0 +1,30 @@
+diff --git a/server/research/index.ts b/server/research/index.ts
+index 748a2cc..09a9617 100644
+--- a/server/research/index.ts
++++ b/server/research/index.ts
+@@ -537,6 +537,11 @@ export function registerResearchApi(app: Express) {
+     // by the browser cannot select an account. Admit these two reads only.
+     "/partner/me",
+     "/partner/dashboard",
++    // Resource Hub library read (portal-routes.ts: injected requireMember,
++    // then withPartner, which resolves the partner from the authenticated
++    // member only). Admission, not authority: the hub re-reads publication,
++    // policy and audience on every request.
++    "/partner/resources",
+     // agreements.ts:337, requireResearchSubject. That guard is
+     // resolveResearchMember(..., allowClosed: true): it demands the same
+     // non-recovery Supabase JWT and the same member row as requireMember and
+@@ -627,6 +632,13 @@ export function registerResearchApi(app: Express) {
+       // canonical-UUID anchor is the correct admission shape.
+       const customerAccountDocument = /^\/customer-account\/documents\/([^/]+)$/.exec(path);
+       if (customerAccountDocument !== null) return canonicalUuid(customerAccountDocument[1]);
++      // GET /partner/resources/:resourceId/download (portal-routes.ts:
++      // injected requireMember + withPartner + the hub's entitlement re-read
++      // at use time). research_resource_library.id is a gen_random_uuid()
++      // primary key, so the canonical-UUID anchor is the correct admission
++      // shape; no prefix is opened and no write method is admitted.
++      const partnerResourceDownload = /^\/partner\/resources\/([^/]+)\/download$/.exec(path);
++      if (partnerResourceDownload !== null) return canonicalUuid(partnerResourceDownload[1]);
+       // Product detail is an Express one-segment route; reject literal or
+       // encoded separators so the bypass cannot grow into a namespace prefix.
+       if (isCanonicalProductPath(path)) return true;

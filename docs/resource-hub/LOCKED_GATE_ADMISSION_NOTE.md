@@ -78,3 +78,52 @@ the locked-gate probe on the combined tree, because that is where the wall and t
 No public-mode toggle, no `/api/research` prefix exemption, no admission of any write method,
 and no trust in a browser-declared role. If A prefers a different shape, the measurement above
 is the acceptance bar either way.
+
+---
+
+## Pre-verified patch for A (measured, then reverted; A's file is untouched here)
+
+Fable applied the shape above to a LOCAL working copy of `server/research/index.ts`, measured
+the full safety bar under `PREVIEW_LOCK_GATE=1`, then reverted. The branch contains **no**
+change to that file. The exact diff is `docs/resource-hub/locked-gate-admission.patch`
+(12 added lines, comments included) and the probe is
+`docs/resource-hub/locked-gate-safety-bar.mjs`.
+
+Run it against a locked-gate harness:
+
+```bash
+PORT=5232 NODE_ENV=development PREVIEW_LOCK_GATE=1 node node_modules/tsx/dist/cli.mjs scripts/preview-resource-hub.ts
+BASE_URL=http://127.0.0.1:5232 node docs/resource-hub/locked-gate-safety-bar.mjs
+```
+
+### Measured result
+
+| Run | Library | Delivery | Safety bar |
+| --- | --- | --- | --- |
+| Before the patch (this branch as pushed) | 401 | 401 | 6/6 rows that apply |
+| After the patch (local, reverted) | 200 | 200 with PDF bytes | **19/19, 0 fail** |
+
+Rows proven with the patch applied, gate locked:
+
+- eligible Research Rep sees exactly the published versions allowed to that role, and not the
+  draft-policy or withdrawn ones;
+- an affiliate cannot see rep-only metadata and cannot fetch its bytes (404 `not_found`, never 403);
+- a signed-in member with no partner record gets 404 `partner_not_found`;
+- a suspended partner gets an empty library and 404 on delivery;
+- withdrawn and draft-policy resources are denied;
+- an unknown uuid is denied 404 with no ledger row;
+- a malformed id is refused at the wall with 401 before the handler runs (stricter than the
+  handler's own 404; neither answer reveals whether a resource exists);
+- no bearer and an invalid bearer are refused;
+- no write method is admitted on either path, and no unrelated partner path becomes reachable;
+- no storage key, admin identity or review reason appears in any response.
+
+Artifacts: `locked-gate-safety-bar-before.json`, `locked-gate-safety-bar-after.json` in the
+evidence folder.
+
+### What A still owns
+
+Applying the patch, the `client/src/research/layout.tsx` exemption and the
+`shared/research/auth-return-to.ts` safe-return entry (all three are needed for the whole
+journey, per the founder's package), then re-running the gates on the combined tree. This
+measurement is author-reported evidence from Fable, not an independent acceptance.
