@@ -8,10 +8,9 @@ import { ACCOUNT_PORTAL_ROUTES } from "../lib/routes";
 import { useResearch } from "../core";
 
 export default function AccountOrderDetail() {
-  const { memberToken } = useResearch();
+  const { memberToken, memberChecking } = useResearch();
   const params = useParams<{ reference: string }>();
   const reference = decodeAccountOrderReference(params.reference ?? "");
-  const snapshot = useAccountResource(loadAccountOrders, memberToken);
 
   return (
     <AccountPortalShell
@@ -21,9 +20,16 @@ export default function AccountOrderDetail() {
       currentPath={ACCOUNT_PORTAL_ROUTES.orders}
       actions={<Link className="btn btn-ghost" href={ACCOUNT_PORTAL_ROUTES.orders}>All commerce history</Link>}
     >
-      <AccountResourceBoundary snapshot={snapshot}>
-        {(data) => <AccountOrderDetailView data={data} reference={reference} />}
-      </AccountResourceBoundary>
+      {memberChecking || !memberToken ? <AccountResourceBoundary snapshot={memberChecking
+        ? { state: "loading" } : { state: "denied", reason: "auth_required" }}>{() => null}</AccountResourceBoundary>
+        : <OwnedOrderDetail key={memberToken} token={memberToken} reference={reference} />}
     </AccountPortalShell>
   );
+}
+
+function OwnedOrderDetail({ token, reference }: { token: string; reference: string }) {
+  const snapshot = useAccountResource(loadAccountOrders, token);
+  return <AccountResourceBoundary snapshot={snapshot}>
+    {(data) => <AccountOrderDetailView data={data} reference={reference} />}
+  </AccountResourceBoundary>;
 }
