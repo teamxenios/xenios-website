@@ -56,3 +56,52 @@ Added (new files, no overlap possible):
 The combined tree needs its own qualification: typecheck, build, the focused suites listed
 in the handoff, core-site protection (re-pinned hash), the route census (re-measured), and a
 fresh browser pass. Evidence for this branch does not certify the combined build.
+
+---
+
+## Integration preflight measured against A's head (2026-09-07, 19:47 UTC)
+
+Computed read-only with `git merge-tree`; no branch was merged, rebased or pushed anywhere.
+
+- A's head: `3351eb344316ae93bf886c16dba513d84260e409` (`codex/xenios-seth-revenue-launch-20260905`)
+- Fable head: `db0e5270afd0e943ae52bb0c84d5c786b92c78e7`
+- Merge base: `096d70c17c823fa6ad3fefc7a7d72f91edd54a39`
+- **Resulting tree: `37f8561d17ebcadf954c4fc1e76e4779cd1858cf` — zero conflicts.**
+
+Reproduce:
+
+```bash
+git merge-tree --write-tree origin/codex/xenios-seth-revenue-launch-20260905 <fable-head>
+```
+
+### Delta: 32 code files (24 added, 8 modified)
+
+Added: the whole `server/research/resource-hub/**` service and its tests, `shared/research/resource-hub/contract.ts`,
+`client/src/research/resource-hub/**` (principal binding + its three suites), the admin page and adapter,
+`Resources.test.tsx`, `scripts/preview-resource-hub.ts`, and the candidate migration.
+
+Modified: `server/research/index.ts` (the Resource Hub admin registration and its three imports — **not** the
+locked-gate admission, which stays A's to apply), `server/research/partners/portal-routes.ts` + its test,
+`server/research/partners/portal-production.ts`, `server/release-control-plane.test.ts` (census pin),
+`client/src/research/{adapters/partner.ts,adminx-section.tsx,lib/routes.ts,ui/shells.tsx,ui/admin-shell.test.tsx}`
+and `pages/partners/Resources.tsx`.
+
+### Overlap with work A has done since the merge base: exactly one file
+
+`server/research/partners/portal-production.ts`. Measured, not assumed: the merged file differs from A's
+version by **11 lines, all inside one comment block** (the note that the Resources door is now served by the
+Resource Hub). Every hardening marker A added survives in the merged file — the returned-row `member_id`
+recheck (3 occurrences), the strict money guard (`Number.isFinite`), and the agreement (10) and training (6)
+handling. This is the file B's INT-1 flagged as an integration risk; the risk does not materialise on this
+merge, and A can drop the comment entirely without affecting the hub, which no longer reads that port.
+
+### Files the access slice needs, left untouched by this merge
+
+`client/src/research/layout.tsx` and `shared/research/auth-return-to.ts` are **unchanged** by the merge, as is
+the admission inside `server/research/index.ts`. Those three edits remain A's, with the pre-verified diff in
+`docs/resource-hub/locked-gate-admission.patch` and its 19/19 safety-bar measurement above.
+
+### Still required after integration
+
+The route census pin and the protected-seam hash must be recomputed on the combined tree; this preflight does
+not do that, and a clean merge is not a qualification.
