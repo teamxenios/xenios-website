@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useParams } from "wouter";
 import type { ClaimDto, ClaimReason, OrderDetailDto } from "@shared/research/commerce-api";
 import { useResearch } from "../../core";
@@ -6,6 +6,7 @@ import { getOrder, listClaims, submitClaim } from "../../adapters/commerce";
 import { denialPresentation } from "../../lib/denials";
 import { ACCESS_ROUTES, MEMBER_ROUTES } from "../../lib/routes";
 import { ResearchMemberShell } from "../../ui/shells";
+import { decodeMemberOrderId, readMemberClaims, readMemberOrderDetail, readSubmittedMemberClaim } from "../../member-orders/detail";
 import {
   ResearchDataTable,
   ResearchDenialNotice,
@@ -42,17 +43,17 @@ import {
 type PageState =
   | { phase: "loading" }
   | { phase: "ok"; order: OrderDetailDto }
-  | { phase: "denied"; code: string; message?: string }
+  | { phase: "denied"; code: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
-  | { phase: "error"; message?: string };
+  | { phase: "error" };
 
 type ClaimSubmitState =
   | { phase: "idle" }
   | { phase: "busy" }
-  | { phase: "sent" }
-  | { phase: "denied"; code: string; message?: string }
-  | { phase: "unavailable" }
+  | { phase: "sent"; claim: ClaimDto }
+  | { phase: "denied"; code: string }
+  | { phase: "uncertain" }
   | { phase: "error"; message: string };
 
 const CLAIM_REASONS = Object.keys(CLAIM_REASON_LABELS) as ClaimReason[];
@@ -66,56 +67,67 @@ function ClaimsSection({
   claims,
   claimsKnown,
   onSubmitted,
+  onHoldChange,
 }: {
   order: OrderDetailDto;
-  token: string | null;
+  token: string;
   claims: ClaimDto[];
   claimsKnown: boolean;
   onSubmitted: () => void;
+  onHoldChange: (held: boolean) => void;
 }) {
   const [sku, setSku] = useState(order.lines[0]?.sku ?? "");
   const [reason, setReason] = useState<ClaimReason>("damaged");
   const [detail, setDetail] = useState("");
   const [submit, setSubmit] = useState<ClaimSubmitState>({ phase: "idle" });
+  const alive = useRef(false);
+  const held = useRef(false);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const fieldsLocked = submit.phase === "busy" || submit.phase === "uncertain";
 
   const send = async (event: FormEvent) => {
     event.preventDefault();
+    if (!alive.current || held.current) return;
     const trimmed = detail.trim();
-    if (!sku) {
+    if (!order.lines.some((line) => line.sku === sku)) {
       setSubmit({ phase: "error", message: "Choose the item the issue is about." });
       return;
     }
-    if (!trimmed) {
+    if (!trimmed || trimmed.length > 2000 || !CLAIM_REASONS.includes(reason)) {
       setSubmit({ phase: "error", message: "Please describe what happened." });
       return;
     }
+    held.current = true;
+    onHoldChange(true);
     setSubmit({ phase: "busy" });
-    const result = await submitClaim(token, {
+    const request = {
       orderId: order.orderId,
       sku,
       reason,
       detail: trimmed,
       evidenceRefs: [],
-    });
-    switch (result.kind) {
-      case "ok":
-        setSubmit({ phase: "sent" });
-        setDetail("");
-        onSubmitted();
-        return;
-      case "denied":
-        setSubmit({ phase: "denied", code: result.code, message: result.message });
-        return;
-      case "unauthorized":
-        setSubmit({ phase: "error", message: "Your session has ended. Sign in again to report this issue." });
-        return;
-      case "forbidden":
-      case "unavailable":
-        setSubmit({ phase: "unavailable" });
-        return;
-      case "error":
-        setSubmit({ phase: "error", message: result.message });
-        return;
+    };
+    try {
+      const result = await submitClaim(token, request);
+      if (!alive.current) return;
+      if (result.kind === "ok") {
+        const claim = readSubmittedMemberClaim(result.data, request);
+        if (!claim) { setSubmit({ phase: "uncertain" }); return; }
+        held.current = false; onHoldChange(false);
+        setSubmit({ phase: "sent", claim }); setDetail(""); onSubmitted();
+      } else if (result.kind === "denied") {
+        held.current = false; onHoldChange(false);
+        setSubmit({ phase: "denied", code: result.code });
+      } else if (result.kind === "unauthorized" || result.kind === "forbidden") {
+        held.current = false; onHoldChange(false);
+        setSubmit({ phase: "error", message: "Access could not be verified. Sign in or contact support before sending a report." });
+      } else {
+        // Without server idempotency, an unavailable/failed reply cannot prove
+        // that no report was recorded. Do not automatically resubmit.
+        setSubmit({ phase: "uncertain" });
+      }
+    } catch {
+      if (alive.current) setSubmit({ phase: "uncertain" });
     }
   };
 
@@ -124,6 +136,7 @@ function ClaimsSection({
       <h2 id="order-claims" className="body-m font-700">
         Report an issue
       </h2>
+      <p className="body-s text-ink-mute">A report requests review. It does not by itself approve or execute a refund, replacement, or shipment.</p>
 
       {claims.length > 0 && (
         <div className="grid gap-3" data-testid="ra-order-claims">
@@ -159,9 +172,12 @@ function ClaimsSection({
         </div>
       )}
       {claims.length === 0 && claimsKnown && (
-        <p className="body-s text-ink-mute">No issues have been reported on this order.</p>
+        <p className="body-s text-ink-mute">No issue reports were returned for this record.</p>
       )}
+      {!claimsKnown && <p className="body-s text-ink-mute">Issue-report history is unavailable or still loading. This does not confirm whether a report exists.</p>}
 
+      {order.lines.length === 0 ? <ResearchEmptyState title="Item details are needed to report an issue."
+        body="Contact support to review this record. No item or claim eligibility can be inferred from missing line details." /> :
       <form className="card" onSubmit={(e) => void send(e)} aria-label="Report an issue with this order">
         <div className="grid gap-4" style={{ maxWidth: 560 }}>
           <div>
@@ -171,6 +187,7 @@ function ClaimsSection({
             <select
               id="ra-claim-sku"
               className="input-field"
+              disabled={fieldsLocked}
               value={sku}
               onChange={(e) => setSku(e.target.value)}
               data-testid="ra-claim-sku"
@@ -189,6 +206,7 @@ function ClaimsSection({
             <select
               id="ra-claim-reason"
               className="input-field"
+              disabled={fieldsLocked}
               value={reason}
               onChange={(e) => setReason(e.target.value as ClaimReason)}
               data-testid="ra-claim-reason"
@@ -207,6 +225,7 @@ function ClaimsSection({
             <textarea
               id="ra-claim-detail"
               className="input-field"
+              disabled={fieldsLocked}
               rows={4}
               value={detail}
               onChange={(e) => setDetail(e.target.value)}
@@ -216,22 +235,21 @@ function ClaimsSection({
             />
           </div>
           <div className="flex items-center gap-3">
-            <button type="submit" className="btn btn-secondary" disabled={submit.phase === "busy"} data-testid="ra-claim-submit">
+            <button type="submit" className="btn btn-secondary" disabled={fieldsLocked} data-testid="ra-claim-submit">
               {submit.phase === "busy" ? "Sending..." : "Send report"}
             </button>
           </div>
           <div aria-live="polite">
             {submit.phase === "sent" && (
               <p className="body-s text-ink-2" role="status" data-testid="ra-claim-sent">
-                Thank you. Your report is in and a person will review it. You can see its status above.
+                The server returned report {submit.claim.claimId} with status {CLAIM_STATE_META[submit.claim.state].label}. Check report history for updates.
               </p>
             )}
-            {submit.phase === "denied" && <ResearchDenialNotice code={submit.code} message={submit.message} />}
-            {submit.phase === "unavailable" && (
+            {submit.phase === "denied" && <ResearchDenialNotice code={submit.code} />}
+            {submit.phase === "uncertain" && (
               <p className="body-s text-ink-2" role="status">
-                Issue reports are not being collected automatically yet, so your report was not sent. Email{" "}
-                <a href="mailto:research@xeniostechnology.com">research@xeniostechnology.com</a> with your order id
-                and a person will handle it.
+                We could not confirm whether your report was recorded. Do not send it again or reload this page until support confirms the outcome. Contact{" "}
+                <a href="mailto:team@xeniostechnology.com">team@xeniostechnology.com</a>. Your draft is retained here; no automatic retry will be sent.
               </p>
             )}
             {submit.phase === "error" && (
@@ -241,46 +259,73 @@ function ClaimsSection({
             )}
           </div>
         </div>
-      </form>
+      </form>}
     </section>
   );
 }
 
 export default function OrderDetail() {
   const params = useParams<{ id: string }>();
-  const orderId = params?.id ? decodeURIComponent(params.id) : "";
-  const { memberToken } = useResearch();
+  const orderId = decodeMemberOrderId(params?.id);
+  const { memberToken, memberChecking } = useResearch();
+  if (memberChecking || !memberToken || !orderId) return (
+    <ResearchMemberShell eyebrow="Member · Orders" title="Order"
+      actions={<Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">All orders</Link>}>
+      <ResearchRouteBoundary state={memberChecking ? "loading" : !memberToken ? "unauthorized" : "ok"}>
+        <ResearchEmptyState title="This record address is not valid." body="Open your order history and choose a record to continue." />
+      </ResearchRouteBoundary>
+    </ResearchMemberShell>
+  );
+  return <OwnedOrderDetail key={`${memberToken}:${orderId}`} token={memberToken} orderId={orderId} />;
+}
+
+function OwnedOrderDetail({ token, orderId }: { token: string; orderId: string }) {
   const [state, setState] = useState<PageState>({ phase: "loading" });
   const [claims, setClaims] = useState<ClaimDto[]>([]);
   const [claimsKnown, setClaimsKnown] = useState(false);
+  const [claimHeld, setClaimHeld] = useState(false);
+  const claimHold = useRef(false);
+  const alive = useRef(false);
+  const generation = useRef(0);
+  const claimsGeneration = useRef(0);
+  const onHoldChange = useCallback((held: boolean) => { claimHold.current = held; setClaimHeld(held); }, []);
 
-  const loadClaims = useCallback(async () => {
-    const result = await listClaims(memberToken);
-    if (result.kind === "ok") {
-      setClaims(result.data.claims.filter((c) => c.orderId === orderId));
-      setClaimsKnown(true);
-    } else {
-      // Claims are supplementary: a missing claims surface never blocks the
-      // order page, it just means no history can be shown.
-      setClaims([]);
-      setClaimsKnown(false);
+  const loadClaims = useCallback(async (order: OrderDetailDto) => {
+    if (!alive.current) return;
+    const request = ++claimsGeneration.current;
+    const orderRequest = generation.current;
+    setClaims([]); setClaimsKnown(false);
+    try {
+      const result = await listClaims(token);
+      if (!alive.current || request !== claimsGeneration.current || orderRequest !== generation.current) return;
+      const rows = result.kind === "ok" ? readMemberClaims(result.data, order) : null;
+      setClaims(rows ?? []); setClaimsKnown(rows !== null);
+    } catch {
+      if (alive.current && request === claimsGeneration.current && orderRequest === generation.current) {
+        setClaims([]); setClaimsKnown(false);
+      }
     }
-  }, [memberToken, orderId]);
+  }, [token]);
 
   const load = useCallback(async () => {
-    if (!orderId) {
-      setState({ phase: "denied", code: "order_not_found" });
-      return;
-    }
+    if (!alive.current || claimHold.current) return;
+    const request = ++generation.current;
+    ++claimsGeneration.current;
+    setClaims([]); setClaimsKnown(false);
     setState({ phase: "loading" });
-    const result = await getOrder(memberToken, orderId);
-    switch (result.kind) {
-      case "ok":
-        setState({ phase: "ok", order: result.data.order });
-        void loadClaims();
+    try {
+      const result = await getOrder(token, orderId);
+      if (!alive.current || request !== generation.current) return;
+      switch (result.kind) {
+      case "ok": {
+        const order = readMemberOrderDetail(result.data, orderId);
+        if (!order) { setState({ phase: "error" }); return; }
+        setState({ phase: "ok", order });
+        void loadClaims(order);
         return;
+      }
       case "denied":
-        setState({ phase: "denied", code: result.code, message: result.message });
+        setState({ phase: "denied", code: result.code });
         return;
       case "unauthorized":
         setState({ phase: "unauthorized" });
@@ -290,13 +335,18 @@ export default function OrderDetail() {
         setState({ phase: "unavailable" });
         return;
       case "error":
-        setState({ phase: "error", message: result.message });
+        setState({ phase: "error" });
         return;
+      }
+    } catch {
+      if (alive.current && request === generation.current) setState({ phase: "error" });
     }
-  }, [orderId, memberToken, loadClaims]);
+  }, [orderId, token, loadClaims]);
 
   useEffect(() => {
+    alive.current = true;
     void load();
+    return () => { alive.current = false; ++generation.current; ++claimsGeneration.current; };
   }, [load]);
 
   const order = state.phase === "ok" ? state.order : null;
@@ -335,24 +385,25 @@ export default function OrderDetail() {
   return (
     <ResearchMemberShell
       eyebrow="Member · Orders"
-      title={order ? `Order ${order.orderId}` : "Order"}
+      title={order ? `${order.recordKind === "request" ? "Request" : order.recordKind === "order" ? "Order" : "Record"} ${order.orderId}` : "Order"}
       lead={order ? `Placed ${formatDate(order.placedAt) ?? order.placedAt}.` : undefined}
       actions={
-        <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
-          All orders
-        </Link>
+        <>
+          <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">All orders</Link>
+          <button type="button" className="btn btn-ghost" disabled={claimHeld} onClick={() => void load()}>Refresh record</button>
+        </>
       }
     >
       <ResearchRouteBoundary
         state={boundaryState}
-        errorMessage={state.phase === "error" ? state.message : undefined}
+        errorMessage="This record could not be verified. Please try again."
         onRetry={() => void load()}
         unavailableTitle="This order is not available."
-        unavailableBody="Either ordering has not opened yet, or this order id is not part of your account. Check the address, or open your orders list."
+        unavailableBody="This source could not provide the requested record. That does not establish whether it exists, belongs to your account, or is eligible for any action. Open your order history or contact support."
       >
         {state.phase === "denied" ? (
           <div className="grid gap-4" data-testid="ra-order-denied">
-            <ResearchDenialNotice code={state.code} message={state.message} />
+            <ResearchDenialNotice code={state.code} />
             <div>
               <Link href={MEMBER_ROUTES.orders} className="btn btn-primary">
                 Open your orders
@@ -364,7 +415,7 @@ export default function OrderDetail() {
             <div className="grid gap-6">
               {stateMeta && (
                 <div className="flex items-center gap-3">
-                  <span className="mono-label text-ink-mute">Order status</span>
+                  <span className="mono-label text-ink-mute">Recorded status</span>
                   <ResearchStatusBadge label={stateMeta.label} tone={stateMeta.tone} />
                 </div>
               )}
@@ -401,16 +452,19 @@ export default function OrderDetail() {
                 <h2 className="body-m font-700">Shipments</h2>
                 <p className="body-s text-ink-2 mt-1 max-w-[56ch]">
                   An order can ship in more than one package. Each shipment carries its own status and tracking;
-                  they all belong to this one order, and shipping is charged once for the whole order.
+                  shipping is shown once for the whole record.
                 </p>
                 <div className="grid gap-4 mt-3">
-                  {order.shipments.length > 0 ? (
+                  {order.shipmentsSource !== "connected" ? (
+                    <ResearchEmptyState title="Shipment details unavailable."
+                      body="This source does not establish shipment completeness. Missing details do not mean no shipment exists." />
+                  ) : order.shipments.length > 0 ? (
                     order.shipments.map((shipment, i) => (
                       <section key={i} className="card" aria-label={`Shipment ${i + 1} of ${order.shipments.length}`}>
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
                             <p className="mono-label text-ink-mute">
-                              Shipment {i + 1} of {order.shipments.length} · Fulfilled by {SHIPMENT_OWNER_LABELS[shipment.owner]}
+                              Shipment {i + 1} of {order.shipments.length} · Shipment owner: {SHIPMENT_OWNER_LABELS[shipment.owner]}
                             </p>
                             <p className="body-s text-ink-2 mt-2">
                               {shipment.trackingNumber ? (
@@ -422,18 +476,18 @@ export default function OrderDetail() {
                                   </span>
                                 </>
                               ) : (
-                                "Tracking appears here once the package is on its way."
+                                "No tracking number was returned for this shipment."
                               )}
                             </p>
                           </div>
-                          <ResearchStatusBadge label={orderStateMeta(shipment.status).label} tone={orderStateMeta(shipment.status).tone} />
+                          <ResearchStatusBadge label={shipment.status} tone="neutral" />
                         </div>
                       </section>
                     ))
                   ) : (
                     <ResearchEmptyState
-                      title="No shipments yet."
-                      body="Shipments appear here once fulfillment begins, each with its own status and tracking."
+                      title="No shipment records returned."
+                      body="The connected source returned no shipment records; no delivery or payment outcome is inferred."
                     />
                   )}
                 </div>
@@ -469,10 +523,11 @@ export default function OrderDetail() {
 
               <ClaimsSection
                 order={order}
-                token={memberToken}
+                token={token}
                 claims={claims}
                 claimsKnown={claimsKnown}
-                onSubmitted={() => void loadClaims()}
+                onSubmitted={() => void loadClaims(order)}
+                onHoldChange={onHoldChange}
               />
 
               <section aria-label="Support for this order" className="card">
@@ -483,7 +538,7 @@ export default function OrderDetail() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   <a
                     className="btn btn-secondary"
-                    href={`mailto:research@xeniostechnology.com?subject=${encodeURIComponent(`Order ${order.orderId}`)}`}
+                    href="mailto:team@xeniostechnology.com"
                   >
                     Email support
                   </a>
@@ -494,8 +549,8 @@ export default function OrderDetail() {
               </section>
 
               <ResearchSecureNotice>
-                Every fact on this page comes from the order record. Totals are computed by the server; shipping is
-                one charge per order even when it ships in several packages.
+                This page reflects the returned record, not a complete-history or purchasing-eligibility guarantee.
+                Totals are reported by the server; shipping is one charge per order even when it ships in several packages.
               </ResearchSecureNotice>
             </div>
           )
