@@ -292,7 +292,7 @@ export function buildResourceHubPreviewApp(port: number, previewEnv: NodeJS.Proc
   const here = path.dirname(fileURLToPath(import.meta.url));
   const clientDist = path.resolve(here, "..", "dist", "public");
   app.use(express.static(clientDist));
-  app.get(/.*/u, (_req, res) => res.sendFile(path.resolve(clientDist, "index.html")));
+  app.get(/.*/u, (_req, res) => res.sendFile("index.html", { root: clientDist }));
   return Object.freeze({ app, clientDist });
 }
 
