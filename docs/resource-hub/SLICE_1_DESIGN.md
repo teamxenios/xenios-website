@@ -118,12 +118,20 @@ and what changed:
   (bytes are written before the row on purpose: a row without bytes would be worse).
 - **Store parity (P3).** Both stores apply exactly `MUTABLE_VERSION_FIELDS` on a patch.
 - **Active-content scan (P2/P3).** The scan now decodes `#xx` name escapes, inflates every
-  FlateDecode stream (object streams included) within bounds and scans inside, refuses
-  encrypted files and streams it cannot inflate, and names the marker it found. Printed
-  text is not structure: string literals `(...)` are blanked before matching, and
-  `/OpenAction` is refused only when it carries an action dictionary or an indirect
-  reference (a bare destination array such as `[3 0 R /Fit]` is accepted). It remains a
-  first-line filter, not a sandbox; Slice 5 (reviewed intake) keeps human review.
+  FlateDecode OBJECT stream (`/Type /ObjStm`, the only stream kind a viewer parses as
+  object dictionaries) within bounds and scans inside, refuses encrypted files and object
+  streams it cannot inflate, and names the marker it found. Image, font, page-content,
+  XRef and metadata streams are data, not structure, and are left alone (an earlier cut
+  inflated them too and refused 226 of 494 real PDFs on this machine for hitting the
+  inflation caps). Printed text is not structure either: string literals `(...)` are
+  blanked before matching, and `/OpenAction` is refused only when it carries an action
+  dictionary or an indirect reference (a bare destination array such as
+  `[3 0 R /XYZ null null 0]`, the LibreOffice default, is accepted). Final measurement over
+  the 494 PDFs in the founder's Downloads folder: 483 accepted, 11 refused, every refusal
+  for a stated V1 policy reason (embedded files, JavaScript, encryption, an `/OpenAction`
+  indirect reference that cannot be judged without a full parse, or a filename outside
+  the allow-list); 12/12 synthetic controls (8 negative, 4 benign positive) hold. It remains
+  a first-line filter, not a sandbox; Slice 5 (reviewed intake) keeps human review.
 - **Idempotency key bound to one file (P3).** The same key with different bytes or a
   different filename is refused (409) instead of replaying the earlier version; the admin
   page also mints a new key whenever any form field or the chosen file changes, and keeps

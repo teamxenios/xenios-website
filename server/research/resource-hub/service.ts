@@ -112,11 +112,14 @@ export function decodePdfNameEscapes(text: string): string {
 }
 
 /**
- * The latin1 text of every FlateDecode stream the file carries, inflated within
- * bounds. Object streams (/ObjStm) and compressed dictionaries are streams too,
- * so a marker inside them is scanned the same way as one in plain text.
- * A stream that will not inflate is reported so the caller can refuse a file it
- * cannot judge.
+ * The latin1 text of every FlateDecode OBJECT stream (/Type /ObjStm) the file
+ * carries, inflated within bounds. Object streams are the only streams whose
+ * content a viewer parses as object dictionaries, so they are the only place a
+ * compressed action dictionary can hide; image, font, page-content, XRef and
+ * metadata streams are pixel, glyph, drawing or table data and are left alone
+ * (inflating a large image just to look for a dictionary key would be pure
+ * cost and false refusals). An object stream that will not inflate is reported
+ * so the caller can refuse a file it cannot judge.
  */
 export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStreams: number; truncated: boolean } {
   const raw = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -140,9 +143,12 @@ export function inflatedPdfStreams(bytes: Uint8Array): { text: string; opaqueStr
     if (raw[dataStart] === 0x0a) dataStart += 1;
     const end = raw.indexOf("endstream", dataStart, "latin1");
     if (end < 0) break;
-    const dictionary = raw.toString("latin1", Math.max(0, start - 600), start);
+    // The stream's own dictionary starts at the nearest preceding "obj".
+    const objAt = raw.lastIndexOf("obj", start, "latin1");
+    const dictionary = decodePdfNameEscapes(raw.toString("latin1", objAt >= 0 && start - objAt < 20000 ? objAt : Math.max(0, start - 2000), start));
     cursor = end + 9;
-    if (!/\/FlateDecode/u.test(decodePdfNameEscapes(dictionary))) continue;
+    if (!/\/ObjStm\b/u.test(dictionary)) continue;
+    if (!/\/FlateDecode\b/u.test(dictionary)) continue;
     if (total >= MAX_INFLATED_TOTAL_BYTES) {
       truncated = true;
       break;
@@ -204,8 +210,8 @@ export function validatePdfUpload(input: {
       const streams = inflatedPdfStreams(input.bytes);
       const inner = findActiveContentMarker(streams.text);
       if (inner) reasons.push(`PDF contains active content inside a compressed stream (${inner})`);
-      if (streams.opaqueStreams > 0) reasons.push(`PDF has ${streams.opaqueStreams} compressed stream(s) that could not be inspected`);
-      if (streams.truncated) reasons.push("PDF has more compressed content than can be inspected");
+      if (streams.opaqueStreams > 0) reasons.push(`PDF has ${streams.opaqueStreams} compressed object stream(s) that could not be inspected`);
+      if (streams.truncated) reasons.push("PDF has more compressed object-stream content than can be inspected");
     }
   }
   return { ok: reasons.length === 0, reasons };

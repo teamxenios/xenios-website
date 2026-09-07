@@ -435,9 +435,14 @@ describe("the active-content scan reads through spelling tricks and compression"
   it("refuses what it cannot read: encrypted files and streams that will not inflate", () => {
     const encrypted = Buffer.from("%PDF-1.4\ntrailer << /Encrypt 5 0 R /Root 1 0 R >>\n%%EOF\n", "latin1");
     expect(judge(encrypted).reasons).toContain("PDF is encrypted; upload an unencrypted file");
-    const opaque = Buffer.from("%PDF-1.4\n1 0 obj << /Filter /FlateDecode /Length 9 >>\nstream\nnot-zlib!\nendstream\nendobj\n%%EOF\n", "latin1");
-    expect(judge(opaque).reasons.join(" ")).toMatch(/could not be inspected/u);
+    const opaque = Buffer.from("%PDF-1.4\n1 0 obj << /Type /ObjStm /N 1 /First 4 /Filter /FlateDecode /Length 9 >>\nstream\nnot-zlib!\nendstream\nendobj\n%%EOF\n", "latin1");
+    expect(judge(opaque).reasons.join(" ")).toMatch(/object stream\(s\) that could not be inspected/u);
     expect(inflatedPdfStreams(opaque)).toMatchObject({ opaqueStreams: 1, truncated: false });
+    // A non-object stream that will not inflate (an image, say) is data, not
+    // structure: it is left alone rather than refused.
+    const image = Buffer.from("%PDF-1.4\n1 0 obj << /Type /XObject /Subtype /Image /Filter /FlateDecode /Length 9 >>\nstream\nnot-zlib!\nendstream\nendobj\n%%EOF\n", "latin1");
+    expect(judge(image)).toEqual({ ok: true, reasons: [] });
+    expect(inflatedPdfStreams(image)).toMatchObject({ opaqueStreams: 0, truncated: false });
   });
 
   it("names the marker it found so an operator can fix the file", () => {
