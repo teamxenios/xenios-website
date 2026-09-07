@@ -1483,7 +1483,21 @@
         "client/src/research/pages/partners/shared.ts",
         "client/src/research/pages/partners/shared.test.tsx",
         "server/research/resource-access-wall.test.ts",
-        "docs/revenue-launch/20260907/**"
+        "docs/revenue-launch/20260907/**",
+        "client/src/research/ui/kit.tsx",
+        "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
+        "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
+        "supabase/candidates/20260906120000_research_resource_library.rollback.md",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+        "docs/coordination/FILE_OWNERSHIP.json",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/migrations/20260906120000_research_resource_library.sql",
+        "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review.json",
+        "supabase/MIGRATIONS.md"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"

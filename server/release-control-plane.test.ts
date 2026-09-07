@@ -35,7 +35,7 @@ import {
 } from "../scripts/acceptance/verify-production-state.ts";
 
 const ROOT = process.cwd();
-const NOW = new Date("2026-09-04T00:05:00.000Z");
+const NOW = new Date("2026-09-07T23:05:00.000Z");
 
 function gitFilteredBlobSha(path: string): string {
   const repoPath = relative(ROOT, path).replaceAll("\\", "/");
@@ -44,7 +44,7 @@ function gitFilteredBlobSha(path: string): string {
     encoding: "utf8",
   }).trim();
 }
-const PRODUCTION_SHA = "db5a2d447114c1e8a14185a9865ded50ee3f1ac6";
+const PRODUCTION_SHA = "ff3c496245739233b71e46f9e5d6e26af9d57017";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
@@ -528,7 +528,7 @@ describe("release manifest validator", () => {
     expect(validateReleaseManifest(stale.manifest, stale.options).map((issue) => issue.code))
       .toContain("STALE_INTEGRATION_OWNERSHIP_REVIEW");
 
-    const future = compositeManifestFixture({ reviewedAt: "2026-09-04T00:15:01.000Z" });
+    const future = compositeManifestFixture({ reviewedAt: "2026-09-07T23:15:01.000Z" });
     expect(validateReleaseManifest(future.manifest, future.options).map((issue) => issue.code))
       .toContain("FUTURE_INTEGRATION_OWNERSHIP_REVIEW");
   });
@@ -1167,6 +1167,12 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(BULK_UNIT_FACTS_SOURCE_SHA);
           } else if (path === DECLARED_AFFILIATE_CODE_PATH) {
             expect(sourceSha).toBe(DECLARED_AFFILIATE_CODE_SOURCE_SHA);
+          } else if (path === "supabase/candidates/20260906120000_research_resource_library.sql") {
+            expect(sourceSha).toBe("9ed2203f152e522880707881acdbdc7d0902a752");
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
           } else if (LAUNCH_CART_MIGRATION_PATHS.has(path)) {
             expect(sourceSha).toBe(LAUNCH_CART_MIGRATIONS_SOURCE_SHA);
           } else {
@@ -2526,7 +2532,7 @@ describe("production state validator", () => {
       (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
     )).toBe(true);
     expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
-      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-db5a2d44" }),
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-ff3c4962" }),
     ]);
     for (const id of [
       "founder-decision-lock-20260730",
@@ -2546,9 +2552,9 @@ describe("production state validator", () => {
       "utf8",
     )) as MigrationDag;
     expect(checked.ownership.generatedAt).toBe("2026-08-03T16:00:00Z");
-    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-03T23:48:00Z");
+    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-07T22:58:23Z");
     expect(dag.generatedAt).toBe("2026-08-02T02:02:07Z");
-    expect(dag.productionBaselineReconciledAt).toBe("2026-09-03T23:48:00Z");
+    expect(dag.productionBaselineReconciledAt).toBe("2026-09-07T22:58:23Z");
   }, 30_000);
 
   it("accepts unavailable/null data posture without treating it as zero", () => {

@@ -5,6 +5,22 @@ migration, account action, notification or external delivery was performed by
 this worker. This is database qualification input for A's combined release;
 it is not production approval or complete platform qualification.
 
+**Additional PostgreSQL 17 qualification:** the identical 132 checks passed
+on PostgreSQL 17.5 / official PGlite 0.4.6 at 2026-09-07T23:05:39.336Z,
+exit 0, under the pinned Node runtime. All three SQL hashes and the existing
+postcheck fingerprints matched without edits. See
+[the complete receipt](resource-hub-pg17-rehearsal.json). This establishes the
+tested PostgreSQL 17 catalog/deparser compatibility; it does not establish
+exact production 17.6 execution, concurrent sessions or Storage HTTP behavior.
+
+A subsequently executed the complete first-install read-only precheck on
+production PostgreSQL 17.6. The single-result receipt at
+2026-09-07T23:00:01.215002Z returned PASS and zero Storage client policies:
+[production precheck](resource-hub-production-readonly-precheck.json).
+The migration remains unapplied and requires fresh checks after new exact
+authorization. The original worker's no-production-query statement above
+describes that worker; A performed these later read-only checks.
+
 ## Source and corrected permissions
 
 Reviewed candidate: `supabase/candidates/20260906120000_research_resource_library.sql`.

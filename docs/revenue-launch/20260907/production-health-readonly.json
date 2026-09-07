@@ -1,0 +1,19 @@
+{
+  "classification": "READ_ONLY_PUBLIC_HTTP",
+  "checkedAt": "2026-09-07T23:00:48.4522689Z",
+  "checks": [
+    {
+      "origin": "https://xeniostechnology.com",
+      "path": "/api/health",
+      "status": 200,
+      "commerceEnabled": false
+    },
+    {
+      "origin": "https://xenios-website.onrender.com",
+      "path": "/api/health",
+      "status": 200,
+      "commerceEnabled": false
+    }
+  ],
+  "deploymentBinding": "Separately attested Render deploy dep-dafcm567bikc7382rhng, ff3c496245739233b71e46f9e5d6e26af9d57017; HTTP health itself does not attest commit identity."
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-04T14:49:12Z",
+  "generatedAt": "2026-09-07T23:00:48.4522689Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -47,15 +47,14 @@
     }
   ],
   "production": {
-    "gitSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "gitSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-dad08h740ujc73aprfcg",
+    "renderDeploymentId": "dep-dafcm567bikc7382rhng",
     "status": "LIVE",
-    "verifiedAt": "2026-09-03T23:37:18Z",
-    "liveSince": "2026-09-03T23:36:32Z",
-    "deployedFromBranch": "claude/care-admin-reliability-20260903",
-    "deployTrigger": "commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03)",
+    "verifiedAt": "2026-09-07T22:58:23Z",
+    "liveSince": "2026-09-07T14:33:55.150237Z",
+    "deployTrigger": "commit-pinned Render API deploy of the exact founder-authorized account/partner access SHA (2026-09-07)",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -65,8 +64,8 @@
     "commerceEnabled": false,
     "publicHealthStatus": 200,
     "renderOriginHealthStatus": 200,
-    "checkedAt": "2026-09-03T23:37:18Z",
-    "limitation": "The health and runtime-config requests establish reachability and the disabled commerce flag for the separately attested Render deployment. They do not establish database row counts, Care state, migration-ledger state, or any other unobserved production fact."
+    "checkedAt": "2026-09-07T23:00:48.4522689Z",
+    "limitation": "Both origins returned GET /api/health 200 with config.commerceEnabled=false, recorded in docs/revenue-launch/20260907/production-health-readonly.json. HTTP health does not attest a commit; the deployment identity was separately read at 2026-09-07T22:58:23Z. These reads do not establish a critical-endpoint comparison, authenticated behavior, database counts, Care state or readiness for another release."
   },
   "dataPosture": {
     "availability": "unavailable",
@@ -76,7 +75,7 @@
     "seededInventoryCount": null,
     "seededOrderCount": null,
     "careEnabled": null,
-    "statement": "No current database aggregate evidence was collected during the 2026-08-28 read-only reconciliation. Null means unavailable, never zero or disabled."
+    "statement": "The 2026-09-07 read-only SQL result established PostgreSQL 17.6, the two account/partner migration history entries and absence of the three Resource Hub tables. It did not measure the aggregate counts represented here. Null means unavailable, never zero or disabled."
   },
   "releaseCandidates": [
     {
@@ -216,6 +215,16 @@
       "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "deployId": "dep-dad08h740ujc73aprfcg",
       "liveSince": "2026-09-03T23:36:32Z"
+    },
+    {
+      "lane": "Resource Hub source and corrected database candidate",
+      "headSha": "9ed2203f152e522880707881acdbdc7d0902a752",
+      "graphNodeId": "resource-library-source-9ed2203f",
+      "sourceBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "state": "UNDEPLOYED_SOURCE_PENDING_RELEASE_QUALIFICATION",
+      "releaseBlocking": true,
+      "deployed": false,
+      "reason": "Source registration only, not the final integrated release SHA or authorization. Exact migration hash 6859a8d3b156f99b2f3f205de12e6fe84e3f484e186950543895801352f48633; local qualification docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md. Complete final-source review, release gates, fresh production prechecks and separate exact-SHA founder authorization remain required."
     }
   ],
   "knownRisks": [
@@ -352,52 +361,77 @@
     }
   ],
   "evidenceLimitations": [
-    "Render service and deployment identity were read only; no service setting or deployment was changed.",
-    "HTTP GET evidence was limited to health and runtime configuration. No authenticated browser session or database query was used.",
-    "All current database-derived counts and Care state are unavailable/null; historical counts from older snapshots are not current evidence.",
-    "MIGRATION_DAG applied-state entries retain their own dated evidence and were not re-attested by this verification.",
-    "The 2d662a0d runtime, c015691 evidence freeze, historical db9 smoke and sealed retry3c evidence are candidate facts, not production observations, and do not change the trusted live baseline.",
-    "Historical efb/r10g/r10h, the failed first db9 smoke, the stopped db9 full run, externally interrupted retry1, lifecycle-flaky retry2, excluded e641 smoke, wrapper-stopped retry3/retry3b, wrapper-only 46-vs-13 stop, and excluded fixture-scan attempt provide no current final PASS.",
-    "Retry3c full evidence and the bounded review packet are sealed/validated. Records/evidence successor 8bd8df8f556d8e84bc9c8daef1871d6a59b58590 and continuity successor 0f3b3a334312273775ecf2efa4e3cda5bcf7a04d are pushed, origin-verified and non-skipped scanned at 0 secret/0 PII. The final records-only consistency successor/final RC SHA and detached-review verdict remain unassigned by self-reference. The copied automated packet evidence-manifest remains PENDING by design and is distinct from the canonical release-manifest verifier PASS.",
-    "The 2026-09-03 reconciliation was read-only against Render (service, deploy list, deploy detail), GitHub branch heads and public/origin HTTP health; it changed no service setting, environment variable, deployment, migration or application behaviour.",
-    "The 2026-09-03 Care admin deployment and smoke were read-only apart from the single authorized commit-pinned deploy: Render API reads, unauthenticated public HTTP reads and one unauthenticated PATCH against a nonexistent id (refused 401 by the guard). No authenticated request, database read, migration, environment change, customer message or Care status change was made."
+    "The 2026-09-07 reconciliation is read-only. Render identity and Supabase metadata were observed at 2026-09-07T22:58:23Z; the two public health reads were observed at 2026-09-07T23:00:48.4522689Z.",
+    "The account/partner deployment report retains the original migration postchecks, smoke and 60-second observation at deployment time; this reconciliation does not represent those as newly performed.",
+    "Current aggregate dataPosture fields remain unavailable/null. The fresh SQL metadata identifies only the two named applied migrations and the absence of the three Resource Hub tables; it does not refresh all other migration or business-data history.",
+    "Historical evidence and snapshots retain their original SHAs and observation times; none qualifies the pending Resource Hub candidate.",
+    "Resource Hub source 9ed2203f152e522880707881acdbdc7d0902a752 is not deployed or production-authorized. Its migration is registered PENDING and its local PGlite PostgreSQL 18.3 rehearsal does not prove managed PostgreSQL 17.6 or Storage HTTP parity.",
+    "Real-user account/partner verification remains pending; account approval/claim, partner activation and notification effects require separately named authorization."
   ],
   "evidence": [
+    {
+      "id": "render-deploy-identity-20260907-account-partner",
+      "kind": "render_service_and_deployment_read",
+      "observedSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "checkedAt": "2026-09-07T22:58:23Z",
+      "detail": "A fresh read-only Render receipt confirms workspace tea-d8nhh6a8qa3s73f4ocj0, service srv-d8s9vej7uimc7384dfcg, configured branch release/early-access-code-session-checkout, autoDeploy no/off, live deploy dep-dafcm567bikc7382rhng serving ff3c496245739233b71e46f9e5d6e26af9d57017 since 2026-09-07T14:33:55.150237Z; prior db5a2d44 deployment is deactivated. Deployment and earlier smoke receipt: docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md. This reconciliation made no service or deployment change."
+    },
+    {
+      "id": "supabase-migration-metadata-20260907-account-partner",
+      "kind": "database_read",
+      "observedSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "checkedAt": "2026-09-07T22:58:23Z",
+      "detail": "A actual read-only SELECT against project yvzeduaxbwgcwllhywff returned PostgreSQL 17.6 and managed history versions 20260907143147 / 20260905_research_approved_customer_access and 20260907143204 / 20260905_research_partner_lifecycle. All three Resource Hub tables are absent. Earlier exact apply and postchecks are documented in docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md. This metadata observation does not refresh historical row counts or re-run migration postchecks."
+    },
+    {
+      "id": "production-health-20260907-account-partner",
+      "kind": "public_http_health_and_runtime_config",
+      "observedSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "checkedAt": "2026-09-07T23:00:48.4522689Z",
+      "detail": "Read-only GET /api/health at https://xeniostechnology.com and https://xenios-website.onrender.com returned 200 and config.commerceEnabled=false. Receipt: docs/revenue-launch/20260907/production-health-readonly.json. Commit identity comes from the separate Render receipt. No authenticated request, account mutation, notification or commerce action was performed."
+    }
+  ],
+  "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+  "historicalEvidence": [
     {
       "id": "render-deploy-identity-20260903-care-admin",
       "kind": "render_service_and_deployment_read",
       "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "Read-only Render API reads before and after the deploy: service srv-d8s9vej7uimc7384dfcg branch release/early-access-code-session-checkout, autoDeploy no, autoDeployTrigger off, not suspended; pre-trigger top deploy dep-daatp715efls738v00dg live on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 with no deploy in progress. Commit-pinned POST /deploys {commitId: db5a2d447114c1e8a14185a9865ded50ee3f1ac6} returned 201 with deploy dep-dad08h740ujc73aprfcg and commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (exact match verified before polling); status build_in_progress -> update_in_progress -> live, finishedAt 2026-09-03T23:36:32Z. Post-deploy deploy list top = dep-dad08h740ujc73aprfcg status live commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6. No service setting, environment variable or migration was changed."
+      "detail": "Read-only Render API reads before and after the deploy: service srv-d8s9vej7uimc7384dfcg branch release/early-access-code-session-checkout, autoDeploy no, autoDeployTrigger off, not suspended; pre-trigger top deploy dep-daatp715efls738v00dg live on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 with no deploy in progress. Commit-pinned POST /deploys {commitId: db5a2d447114c1e8a14185a9865ded50ee3f1ac6} returned 201 with deploy dep-dad08h740ujc73aprfcg and commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (exact match verified before polling); status build_in_progress -> update_in_progress -> live, finishedAt 2026-09-03T23:36:32Z. Post-deploy deploy list top = dep-dad08h740ujc73aprfcg status live commit db5a2d447114c1e8a14185a9865ded50ee3f1ac6. No service setting, environment variable or migration was changed.",
+      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     },
     {
       "id": "critical-endpoint-diff-20260903-care-admin",
       "kind": "critical_endpoint_diff",
       "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "checkedAt": "2026-09-03T23:46:52Z",
-      "detail": "scripts/release/critical-endpoint-diff.mjs: live pre-deploy baseline of 30 endpoints captured on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 at 2026-09-03T23:23:10Z; post-deploy capture at 2026-09-03T23:37:18Z compared with scripts/release/critical-endpoint-expectations.json -> SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, verdict PASS, exit 0. Observation window: Eight one-minute ticks 2026-09-03T23:39:35Z to 23:46:46Z: /api/health 200, /api/admin/care/access-requests 401, /admin/research/care-requests 200, /care/schedule 200, /research 200 on every tick; second full capture at 23:46:5xZ vs the pre-deploy baseline: SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, PASS; live deploy still dep-dad08h740ujc73aprfcg on db5a2d44. Local production-shaped 50c2d35c-vs-db5a2d44 diff (pinned Node 20.19.0 LF clone): both SHAs built and booted with the production env shape (placeholder secrets) after a fresh npm ci; SAME 30 / 0 / 0 / 0 PASS (local-diff-50c2d35c-vs-db5a2d44.json). Evidence: CONTROL/EVIDENCE/deploy-db5a2d44-20260903/."
+      "detail": "scripts/release/critical-endpoint-diff.mjs: live pre-deploy baseline of 30 endpoints captured on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 at 2026-09-03T23:23:10Z; post-deploy capture at 2026-09-03T23:37:18Z compared with scripts/release/critical-endpoint-expectations.json -> SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, verdict PASS, exit 0. Observation window: Eight one-minute ticks 2026-09-03T23:39:35Z to 23:46:46Z: /api/health 200, /api/admin/care/access-requests 401, /admin/research/care-requests 200, /care/schedule 200, /research 200 on every tick; second full capture at 23:46:5xZ vs the pre-deploy baseline: SAME 30 / INTENTIONAL_CHANGE 0 / REGRESSION 0 / HUMAN_REVIEW_REQUIRED 0, PASS; live deploy still dep-dad08h740ujc73aprfcg on db5a2d44. Local production-shaped 50c2d35c-vs-db5a2d44 diff (pinned Node 20.19.0 LF clone): both SHAs built and booted with the production env shape (placeholder secrets) after a fresh npm ci; SAME 30 / 0 / 0 / 0 PASS (local-diff-50c2d35c-vs-db5a2d44.json). Evidence: CONTROL/EVIDENCE/deploy-db5a2d44-20260903/.",
+      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     },
     {
       "id": "care-admin-doors-and-boot-20260903",
       "kind": "public_http_negative_controls_and_boot_log_read",
       "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "Unauthenticated, read-only: GET /api/admin/care/access-requests -> 401 {success:false,message:Unauthorized}; GET /api/admin/care/access-requests/CARE-2A99C6F7 -> 401; PATCH /api/admin/care/access-requests/00000000-0000-4000-8000-000000000000/status (no token, no body, nonexistent id) -> 401 before any handler; GET /api/admin/care/definitely-missing-xr-smoke -> 404 JSON; GET /admin/research/care-requests -> 200 private shell (was 404 on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21); GET /care/schedule -> 200; GET /api/care/access-request/status -> 200 acceptingRequests true (unchanged). Render boot log for dep-dad08h740ujc73aprfcg: build successful, npm run start, affiliates partner portal mounted, research config password=set sessionSecret=set publicMode=false nodeEnv=production, outbox worker started, email provider=resend-env, assisted order bridge mounted (audit mode: log_line_nondurable), serving on port 10000, supabase service key check ok, service live. /api/health 200 x3 (config supabaseConfigured true, adminConfigured true, turnstileConfigured false, commerceEnabled false); Render origin health 200."
+      "detail": "Unauthenticated, read-only: GET /api/admin/care/access-requests -> 401 {success:false,message:Unauthorized}; GET /api/admin/care/access-requests/CARE-2A99C6F7 -> 401; PATCH /api/admin/care/access-requests/00000000-0000-4000-8000-000000000000/status (no token, no body, nonexistent id) -> 401 before any handler; GET /api/admin/care/definitely-missing-xr-smoke -> 404 JSON; GET /admin/research/care-requests -> 200 private shell (was 404 on 50c2d35cf543724fad17a61d9d5c36cf81fe5f21); GET /care/schedule -> 200; GET /api/care/access-request/status -> 200 acceptingRequests true (unchanged). Render boot log for dep-dad08h740ujc73aprfcg: build successful, npm run start, affiliates partner portal mounted, research config password=set sessionSecret=set publicMode=false nodeEnv=production, outbox worker started, email provider=resend-env, assisted order bridge mounted (audit mode: log_line_nondurable), serving on port 10000, supabase service key check ok, service live. /api/health 200 x3 (config supabaseConfigured true, adminConfigured true, turnstileConfigured false, commerceEnabled false); Render origin health 200.",
+      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     },
     {
       "id": "git-release-identity-20260903-care-admin",
       "kind": "git_branch_identity_read",
       "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "origin claude/care-admin-reliability-20260903 = db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (deployed SHA); release/early-access-code-session-checkout = 8cca3373047a2161f5360541a9b2fc5c71f8063f (ancestor of the live commit, three commits behind: 3b206fa5 feat, ace27886dd3b76a8e5dcc982111bb7062e9e451b tests = tested code SHA, db5a2d447114c1e8a14185a9865ded50ee3f1ac6 records). Tree hashes for client/, server/, shared/, script/, scripts/, supabase/ are identical between ace27886dd3b76a8e5dcc982111bb7062e9e451b and db5a2d447114c1e8a14185a9865ded50ee3f1ac6; package.json, package-lock.json, tsconfig.json, vite.config.ts, script/build.mjs and .npmrc are byte-identical between 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 and db5a2d447114c1e8a14185a9865ded50ee3f1ac6. PR #306 (claude/care-admin-reliability-20260903 -> release/early-access-code-session-checkout) is open; the release branch was not moved by this deployment."
+      "detail": "origin claude/care-admin-reliability-20260903 = db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (deployed SHA); release/early-access-code-session-checkout = 8cca3373047a2161f5360541a9b2fc5c71f8063f (ancestor of the live commit, three commits behind: 3b206fa5 feat, ace27886dd3b76a8e5dcc982111bb7062e9e451b tests = tested code SHA, db5a2d447114c1e8a14185a9865ded50ee3f1ac6 records). Tree hashes for client/, server/, shared/, script/, scripts/, supabase/ are identical between ace27886dd3b76a8e5dcc982111bb7062e9e451b and db5a2d447114c1e8a14185a9865ded50ee3f1ac6; package.json, package-lock.json, tsconfig.json, vite.config.ts, script/build.mjs and .npmrc are byte-identical between 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 and db5a2d447114c1e8a14185a9865ded50ee3f1ac6. PR #306 (claude/care-admin-reliability-20260903 -> release/early-access-code-session-checkout) is open; the release branch was not moved by this deployment.",
+      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     },
     {
       "id": "authenticated-care-queue-proof-20260903-pending",
       "kind": "pending_founder_read_only_smoke",
       "observedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
       "checkedAt": "2026-09-03T23:37:18Z",
-      "detail": "NOT YET OBSERVED: the authenticated read that GET /api/admin/care/access-requests returns CARE-2A99C6F7 exactly once and that /admin/research/care-requests renders it requires the founder admin session; the deploying session had no admin session or authorized database path and did not sign in. Recorded as pending, not as proven. Seth must not be asked to resubmit; no Care status may be changed during that smoke."
+      "detail": "NOT YET OBSERVED: the authenticated read that GET /api/admin/care/access-requests returns CARE-2A99C6F7 exactly once and that /admin/research/care-requests renders it requires the founder admin session; the deploying session had no admin session or authorized database path and did not sign in. Recorded as pending, not as proven. Seth must not be asked to resubmit; no Care status may be changed during that smoke.",
+      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     }
-  ],
-  "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md"
+  ]
 }

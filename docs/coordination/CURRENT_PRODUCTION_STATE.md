@@ -1,36 +1,48 @@
 # Current production state
 
-This document records a read-only production identity reconciliation. It does
-not authorize a deployment, migration, data write, account or invitation,
-product activation, payment, provider change, or external message.
+This records-only reconciliation describes the live Universal Account and Partner Access release. It does not authorize another deployment, migration, account action, notification or commerce action. This is not the full revenue launch.
 
 ## Current deployment identity
 
 | Fact | Read-only observation |
 | --- | --- |
-| Verified window | Deployed and smoke-verified read-only at `2026-09-03T23:37:18Z`; records reconciled at `2026-09-03T23:48:00Z` |
-| Render workspace | `tea-d8nhh6a8qa3s73f4ocj0` |
-| Render service | `srv-d8s9vej7uimc7384dfcg` (`xenios-website`) |
-| Current Render deployment | `dep-dad08h740ujc73aprfcg` (commit-pinned API deploy on the founder's exact-SHA GO, live since `2026-09-03T23:36:32Z`) |
-| Deployment status | `live` |
-| Exact deployed commit | `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` (records successor of the tested Care admin reliability code SHA `ace27886dd3b76a8e5dcc982111bb7062e9e451b`; runtime trees identical) |
-| Deployed from branch | `claude/care-admin-reliability-20260903` (head equals the live commit; PR #306 open against the release branch) |
-| Configured Render branch | `release/early-access-code-session-checkout` (head `8cca3373047a2161f5360541a9b2fc5c71f8063f`, an ancestor of the live commit three records/code commits behind; auto-deploy off, so the branch head cannot deploy itself) |
-| Auto-deploy | `false` (`autoDeployTrigger: off`) |
-| Public origin | `https://xeniostechnology.com` (health 200; 30/30 critical endpoints SAME against the pre-deploy baseline) |
-| Render origin | `https://xenios-website.onrender.com` (health 200) |
-| Superseded baselines | `50c2d35cf543724fad17a61d9d5c36cf81fe5f21` (`dep-daatp715efls738v00dg`, served 2026-08-31 to 2026-09-03) and `3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212` (`dep-da94g05g1s2s7396lkv0`); historical, not rollback targets |
-| Rollback target for the next release | `db5a2d447114c1e8a14185a9865ded50ee3f1ac6` |
+| Render / SQL verification | 2026-09-07T22:58:23Z, through A's supported connections |
+| Render workspace | tea-d8nhh6a8qa3s73f4ocj0 |
+| Render service | srv-d8s9vej7uimc7384dfcg |
+| Live deployment | dep-dafcm567bikc7382rhng |
+| Exact serving SHA | ff3c496245739233b71e46f9e5d6e26af9d57017 |
+| Application tree | 73734e113e8ef5f9e1f27ae4dae36bdf598abb25 |
+| Live since | 2026-09-07T14:33:55.150237Z |
+| Configured branch | release/early-access-code-session-checkout; no branch-head identity is inferred |
+| Auto-deploy | no/off; no service rebind or merge performed by this reconciliation |
+| Prior deployment | db5a2d447114c1e8a14185a9865ded50ee3f1ac6, now deactivated |
+| Supabase project | yvzeduaxbwgcwllhywff; actual SELECT returned PostgreSQL 17.6 |
+| Fresh public health | Both https://xeniostechnology.com/api/health and https://xenios-website.onrender.com/api/health returned 200 and config.commerceEnabled=false at 2026-09-07T23:00:48.4522689Z |
 
-The live deployment and the repository lineage agree on the exact commit above.
-The source controls therefore use `db5a2d44…` as the one trusted production
-baseline: `CURRENT_PRODUCTION_STATE.json`, `ACTIVE_RELEASE_GRAPH.json`,
-`FILE_OWNERSHIP.json` and `MIGRATION_DAG.json` were moved to it together with
-the control-plane test constants on 2026-09-03 after the deployment. The
-controls do not assume that production tracks `main`; the validator accepts a
-syntactically safe branch name
-and can require an exact externally supplied branch with
-`XENIOS_EXPECTED_PRODUCTION_BRANCH`.
+The four baseline records now agree on ff3c496245739233b71e46f9e5d6e26af9d57017: CURRENT_PRODUCTION_STATE.json, ACTIVE_RELEASE_GRAPH.json, FILE_OWNERSHIP.json and MIGRATION_DAG.json. This is the baseline for qualifying the next candidate. A later application rollback must be verified against the database state observed at that time.
+
+The [account/partner production report](../revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md) retains the original exact-SHA deploy, migration postchecks, public/unauthorized smoke and 60-second observation receipts. Rollback was not used. Those deployment-time smoke and postcheck observations were not repeated by this reconciliation. Fresh [public health evidence](../revenue-launch/20260907/production-health-readonly.json) establishes reachability and the disabled commerce flag; the separate Render read establishes commit identity.
+
+## Applied migrations and pending Resource Hub
+
+The 22:58:23Z read-only managed history result confirms:
+
+| Managed version | Name | Receipt scope |
+| --- | --- | --- |
+| 20260907143147 | 20260905_research_approved_customer_access | Applied; original exact-hash postcheck PASS in the deployment report |
+| 20260907143204 | 20260905_research_partner_lifecycle | Applied; original exact-hash postcheck PASS in the deployment report |
+
+The original candidate bytes remain unchanged. No retrospective managed copies, replay or migration-history repair are introduced. The canonical ledger is [supabase/MIGRATIONS.md](../../supabase/MIGRATIONS.md).
+
+Resource Hub source 9ed2203f152e522880707881acdbdc7d0902a752 is registered as undeployed and awaiting final release qualification. Its migration SHA-256 is 6859a8d3b156f99b2f3f205de12e6fe84e3f484e186950543895801352f48633; the new managed file is an exact copy of that committed candidate. The DAG and ledger mark it PENDING. All three Resource Hub tables were absent in A's fresh SQL metadata result.
+
+The [local database qualification](../revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md) records 132 passing assertions on PGlite PostgreSQL 18.3, including application twice and role-negative controls. It does not prove managed PostgreSQL 17.6 or Storage HTTP parity. Final-source review, exact release gates, fresh production prechecks and separate exact-SHA founder authorization remain required. No Resource Hub production action is authorized by these records.
+
+The current aggregate data-posture fields remain unavailable/null: the fresh SQL metadata did not measure those business-data counts. Real-user account/partner verification remains pending and requires separate approval naming the account and notification effects. No real account approval/claim, partner activation, email, payment or shipment was performed by this reconciliation.
+
+## Historical release context
+
+Everything below retains predecessor release history and its original dates. References to a current freeze, phase, pending review or rollout within those historical sections describe their dated predecessor context; they do not qualify the September Resource Hub source or override the live identity above.
 
 ## 2026-09-03 Care admin reliability deployment
 
