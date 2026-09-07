@@ -210,4 +210,31 @@ describe("account document availability", () => {
     expect(container.textContent).toContain("file was received");
     expect(container.querySelector(".ra-badge-success")).not.toBeNull();
   });
+
+  it("does not turn a cancelled download into success or failure and permits retry", async () => {
+    const document = { ...unsafeDocument, id: "doc-cancelled", downloadPath: "/api/research/customer-account/documents/doc-cancelled" };
+    const onDownload = vi.fn(async () => "cancelled" as const);
+    const container = await render(<AccountDocumentsView documents={[document]} onDownload={onDownload} />);
+    await act(async () => container.querySelector<HTMLButtonElement>("button")!.click());
+    expect(container.textContent).toContain("Authorized path recorded");
+    expect(container.textContent).not.toMatch(/Download requested|could not be opened|not granted/);
+    expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(false);
+    await act(async () => container.querySelector<HTMLButtonElement>("button")!.click());
+    expect(onDownload).toHaveBeenCalledTimes(2);
+  });
+
+  it("deduplicates two clicks before the loading render", async () => {
+    const document = { ...unsafeDocument, id: "doc-double", downloadPath: "/api/research/customer-account/documents/doc-double" };
+    let resolve!: (value: "ok") => void;
+    const onDownload = vi.fn(() => new Promise<"ok">((done) => { resolve = done; }));
+    const container = await render(<AccountDocumentsView documents={[document]} onDownload={onDownload} />);
+    await act(async () => {
+      const button = container.querySelector<HTMLButtonElement>("button")!;
+      button.click();
+      button.click();
+    });
+    expect(onDownload).toHaveBeenCalledTimes(1);
+    await act(async () => resolve("ok"));
+    expect(container.textContent).toContain("Download requested");
+  });
 });

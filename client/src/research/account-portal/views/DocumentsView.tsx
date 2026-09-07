@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DocumentSummaryDto } from "@shared/research/customer-account/contract";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
+import type { AccountDocumentDownloadResult } from "../api";
 import { formatAccountDate, safeAccountPath, sentenceCase } from "../format";
 
 export function AccountDocumentsView({
@@ -8,26 +9,49 @@ export function AccountDocumentsView({
   onDownload,
 }: {
   documents: readonly DocumentSummaryDto[];
-  onDownload: (path: string) => Promise<"ok" | "denied" | "error">;
+  onDownload: (path: string) => Promise<AccountDocumentDownloadResult>;
 }) {
   const [downloadState, setDownloadState] = useState<Record<string, "loading" | "ok" | "denied" | "error">>({});
+  const mounted = useRef(false);
+  const requests = useRef(new Map<string, object>());
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      requests.current.clear();
+    };
+  }, []);
 
   async function download(document: DocumentSummaryDto) {
     const authorizedPath = safeAccountPath(document.downloadPath);
-    if (!authorizedPath || downloadState[document.id] === "loading") return;
+    if (!authorizedPath || requests.current.has(document.id)) return;
+    const request = {};
+    requests.current.set(document.id, request);
+    const isCurrent = () => mounted.current && requests.current.get(document.id) === request;
     setDownloadState((current) => ({ ...current, [document.id]: "loading" }));
     try {
       const result = await onDownload(authorizedPath);
+      if (!isCurrent()) return;
+      if (result === "cancelled") {
+        setDownloadState((current) => {
+          const next = { ...current };
+          delete next[document.id];
+          return next;
+        });
+        return;
+      }
       setDownloadState((current) => ({ ...current, [document.id]: result }));
     } catch {
-      setDownloadState((current) => ({ ...current, [document.id]: "error" }));
+      if (isCurrent()) setDownloadState((current) => ({ ...current, [document.id]: "error" }));
+    } finally {
+      if (requests.current.get(document.id) === request) requests.current.delete(document.id);
     }
   }
 
   return (
     <div className="account-grid">
       <ResearchSecureNotice>
-        Document links are account-authorized paths. Only approved customer-facing receipts, COAs, order records, membership records, and Care administration documents appear here.
+        Document links are account-authorized paths. Only approved customer-facing receipts, COAs, order records, historical billing records, and Care administration documents appear here.
       </ResearchSecureNotice>
       <section className="account-surface" aria-labelledby="account-documents-heading">
         <div className="flex flex-wrap items-start justify-between gap-4">
