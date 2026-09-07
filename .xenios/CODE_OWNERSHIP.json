@@ -1493,6 +1493,19 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.370Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "70189c5b-3efd-47e4-a61f-78a0a786daa4",
+      "task": "RESOURCE-HUB-LOCKED-GATE-EVIDENCE-20260907",
+      "session": "codex-locked-gate-evidence-20260907",
+      "paths": [
+        "docs/resource-hub/locked-gate-safety-bar.mjs",
+        "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md",
+        "docs/resource-hub/locked-gate-safety-bar.test.mjs"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-07T22:01:13.879Z",
+      "heartbeatAt": "2026-09-07T22:07:54Z"
     }
   ],
   "rules": [

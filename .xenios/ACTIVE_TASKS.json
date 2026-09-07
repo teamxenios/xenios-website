@@ -1,7 +1,32 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-06T03:56:58.304Z",
+  "updatedAt": "2026-09-07T22:07:54Z",
   "tasks": [
+    {
+      "id": "RESOURCE-HUB-LOCKED-GATE-EVIDENCE-20260907",
+      "title": "Correct local locked-gate probe assertions and evidence limits under coordinator assignment",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-locked-gate-evidence-20260907",
+      "paths": [
+        "docs/resource-hub/locked-gate-safety-bar.mjs",
+        "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md",
+        "docs/resource-hub/locked-gate-safety-bar.test.mjs"
+      ],
+      "acceptance": [
+        "Real response-body leak checks without raw response persistence",
+        "Reachability and fixture transition failures produce nonzero exit",
+        "Explicit preview-only scope and corrected historical counts",
+        "Bounded node:test self-tests with injected fetch; no shared runtime"
+      ],
+      "claimedAt": "2026-09-07T22:01:13.875Z",
+      "handoff": {
+        "session": "codex-locked-gate-evidence-20260907",
+        "sha": "d95d2e4f0329881e4bbe25dbc48aab4a8eca029f",
+        "file": ".xenios/handoffs/2026-09-07-LOCKED-GATE-EVIDENCE-CORRECTION-d95d2e4.md",
+        "at": "2026-09-07T22:07:54Z"
+      }
+    },
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
       "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
