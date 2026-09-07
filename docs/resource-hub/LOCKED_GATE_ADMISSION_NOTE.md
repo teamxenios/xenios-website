@@ -41,11 +41,11 @@ It would never match that predicate.
 ## The shape that fits this codebase
 
 `memberSessionRoute` (`server/research/index.ts:617`) already admits both exact-set entries
-and anchored id shapes in its GET branch. The Resources doors belong there, alongside the
+and anchored id shapes in its GET/HEAD branch. The Resources doors belong there, alongside the
 existing `customer-account/documents/:documentId` precedent, which uses `canonicalUuid`:
 
 - library read: add `/partner/resources` to `MEMBER_SESSION_READ_PATHS` (exact string);
-- delivery: one anchored shape in the GET branch, `^/partner/resources/([^/]+)/download$`
+- delivery: one anchored shape in the GET/HEAD branch, `^/partner/resources/([^/]+)/download$`
   with `canonicalUuid(...)` on the captured id — no prefix opened, no write method admitted.
 
 Both sit behind `if (bearer && memberSessionRoute(...))`, so admission still requires a
@@ -61,10 +61,10 @@ them depends on the wall:
 
 | Case | Answer | Pinned in |
 | --- | --- | --- |
-| no bearer | 403 `forbidden` | `portal-routes.test.ts` |
+| no authenticated member attached | handler 403 `forbidden`; the locked wall refuses no bearer with 401 | `portal-routes.test.ts` (handler-only), historical preview probe (wall) |
 | member with no partner record | 404 `partner_not_found` | `portal-routes.test.ts` |
 | partner outside the audience | 404 `not_found` (never 403) | `portal-routes.test.ts`, `service.test.ts` |
-| suspended / terminated partner | empty library, 404 on delivery | `service.test.ts` |
+| suspended partner | empty library, 404 on delivery | `service.test.ts`, historical preview probe; terminated is also blocked in source, not exercised by this probe |
 | draft-policy, unpublished, withdrawn version | 404 `not_found` | `service.test.ts` |
 | unknown or non-canonical id | 404, no ledger row, no 503 oracle | `service.test.ts`, `supabase-store.test.ts` |
 | admin doors with a partner bearer | 403 | `api-proof-journal.json` (56/56) |
@@ -89,41 +89,92 @@ change to that file. The exact diff is `docs/resource-hub/locked-gate-admission.
 (12 added lines, comments included) and the probe is
 `docs/resource-hub/locked-gate-safety-bar.mjs`.
 
-Run it against a locked-gate harness:
+Run it against a **fresh, disposable local** locked-gate harness. The probe creates,
+reviews, publishes and withdraws synthetic resources through the preview admin API; it
+is not read-only. Reusing a seeded process fails the initial-draft assertions. The probe
+accepts loopback HTTP origins only and refuses an unlocked gate before seeding:
 
 ```bash
 PORT=5232 NODE_ENV=development PREVIEW_LOCK_GATE=1 node node_modules/tsx/dist/cli.mjs scripts/preview-resource-hub.ts
-BASE_URL=http://127.0.0.1:5232 node docs/resource-hub/locked-gate-safety-bar.mjs
+BASE_URL=http://127.0.0.1:5232 OUT_FILE=locked-gate-safety-bar.json node docs/resource-hub/locked-gate-safety-bar.mjs
 ```
 
-### Measured result
+### Historical measurement (original probe, not corrected-probe acceptance)
 
 | Run | Library | Delivery | Safety bar |
 | --- | --- | --- | --- |
-| Before the patch (this branch as pushed) | 401 | 401 | 6/6 rows that apply |
-| After the patch (local, reverted) | 200 | 200 with PDF bytes | **19/19, 0 fail** |
+| Before the patch (this branch as pushed) | 401 | 401 | **5 pass / 1 fail** in the saved artifact |
+| After the patch (local, reverted) | 200 | 200 with PDF bytes | **19 reported pass / 0 fail**, with the limitations below |
 
-Rows proven with the patch applied, gate locked:
+The before artifact's failure is the unrelated-path row: the preview boundary returned
+404 while that earlier assertion expected 401. The later script accepted the preview
+404. The earlier claim of 6/6 did not match the saved before artifact.
 
-- eligible Research Rep sees exactly the published versions allowed to that role, and not the
-  draft-policy or withdrawn ones;
-- an affiliate cannot see rep-only metadata and cannot fetch its bytes (404 `not_found`, never 403);
+Recorded response observations with the patch applied, gate locked:
+
+- the rep library assertion found the rep-only and shared fixture IDs, and excluded the
+  draft-policy and withdrawn fixture IDs; it did not assert the complete response shape;
+- the affiliate library assertion found no `REP-ONLY` title, and rep-only delivery returned
+  404 `not_found`; the title check alone does not establish absence of every metadata field;
 - a signed-in member with no partner record gets 404 `partner_not_found`;
 - a suspended partner gets an empty library and 404 on delivery;
 - withdrawn and draft-policy resources are denied;
-- an unknown uuid is denied 404 with no ledger row;
+- an unknown uuid is denied 404; the HTTP probe did not inspect the ledger;
 - a malformed id is refused at the wall with 401 before the handler runs (stricter than the
   handler's own 404; neither answer reveals whether a resource exists);
 - no bearer and an invalid bearer are refused;
-- no write method is admitted on either path, and no unrelated partner path becomes reachable;
-- no storage key, admin identity or review reason appears in any response.
+- POST on either Resources path and GET commissions receive the preview boundary's 404;
+  these requests never reach the research wall, so they do not prove its method/path policy.
+
+The original leak assertion inspected summary rows, not response bodies. Its reported
+pass is **not leak evidence**. The direct service and portal-route projection tests remain
+separate evidence; their results do not retroactively repair the historical HTTP artifact.
 
 Artifacts: `locked-gate-safety-bar-before.json`, `locked-gate-safety-bar-after.json` in the
 evidence folder.
 
+### Corrected probe and its limits
+
+The corrected script asserts library reachability and exact delivered fixture bytes,
+runs downstream denial checks even if admission fails, and exits nonzero on an assertion,
+transport, parse, setup or output failure. It checks every upload/review/publication/
+withdrawal transition, including the expected 409 refusal to publish draft-policy material.
+Library assertions require the exact permitted fixture versions. The response-body leak
+check examines decoded JSON and raw bytes in memory, retaining only a boolean; no raw
+response, arbitrary server error/code or matched private value is logged or persisted.
+The check covers named private fields and known fixture actor/token/review values, not arbitrary
+unknown secrets.
+
+Evidence carries `claimScope: LOCAL_PREVIEW_ONLY` and per-row scope. The three intercepted
+method/sibling-path rows explicitly assert the preview boundary's own error marker. They
+must be supplemented by tests without that boundary to prove selective wall admission.
+
+The harness injects `previewRequireMember`, which maps fixed preview tokens to personas.
+It does **not** invoke canonical `requireMember` for these partner requests. A combined-source
+test must separately exercise verified member identity, recovery-session refusal, closed
+accounts, and real partner lookup. The preview also mounts the portal unconditionally;
+production mount flags (`AFFILIATE_SYSTEM_ENABLED`, `AFFILIATE_PORTAL_ENABLED`) and Resource
+Hub enablement are separate checks. This GET probe does not establish HEAD behavior,
+browser sign-in/returnTo, terminated-partner behavior or delivery-ledger contents. In
+particular, draft-policy publication is refused during setup, so the HTTP denial observes
+an unpublished draft; the service test for an already-published draft-policy version is
+separate evidence.
+
+The original before/after JSON files are retained as historical measurements. Run the
+corrected probe on the combined tree to produce new evidence; no old 19/19 claim is
+carried forward as acceptance. Its network-free self-tests can be run independently:
+
+```bash
+node --test docs/resource-hub/locked-gate-safety-bar.test.mjs
+```
+
 ### What A still owns
 
 Applying the patch, the `client/src/research/layout.tsx` exemption and the
-`shared/research/auth-return-to.ts` safe-return entry (all three are needed for the whole
-journey, per the founder's package), then re-running the gates on the combined tree. This
-measurement is author-reported evidence from Fable, not an independent acceptance.
+`shared/research/auth-return-to.ts` safe-return entry, then re-running the gates on the
+combined tree. All three changes are necessary, but the sign-in journey also needs a
+Resources return destination at the unauthorized page action: `ResearchRouteBoundary`
+currently links to literal `/research/sign-in`. The safe-return entry cannot restore a
+destination that the action never supplied. Keep that focused UI correction with its
+owner; do not add a stronger active-member status requirement merely to obtain a redirect.
+Historical measurements are author-reported evidence from Fable, not independent acceptance.
