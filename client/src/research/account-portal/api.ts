@@ -129,31 +129,45 @@ export const createAccountSupportCase = (token: string | null, input: SupportReq
     body: JSON.stringify(input),
   });
 
+export type AccountDocumentDownloadResult = "ok" | "denied" | "error" | "cancelled";
+
 export async function downloadAccountDocument(
   token: string | null,
   downloadPath: string,
-): Promise<"ok" | "denied" | "error"> {
+  options: { signal?: AbortSignal; isCurrent?: () => boolean } = {},
+): Promise<AccountDocumentDownloadResult> {
   if (!token) return "denied";
   if (!safeAccountPath(downloadPath)) {
     return "error";
   }
+  const isCurrent = () => !options.signal?.aborted && (options.isCurrent?.() ?? true);
+  let objectUrl: string | null = null;
   try {
+    if (!isCurrent()) return "cancelled";
     const response = await fetch(downloadPath, {
       cache: "no-store",
       credentials: "same-origin",
+      redirect: "error",
       headers: { Authorization: `Bearer ${token}` },
+      ...(options.signal ? { signal: options.signal } : {}),
     });
+    if (!isCurrent()) return "cancelled";
     if (response.status === 401 || response.status === 403) return "denied";
     if (!response.ok) return "error";
     const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
+    // Cancellation is best effort. Even an already-resolved transport must
+    // not save bytes for a session or mounted document view that has ended.
+    if (!isCurrent()) return "cancelled";
+    objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
     anchor.download = "";
+    if (!isCurrent()) return "cancelled";
     anchor.click();
-    URL.revokeObjectURL(objectUrl);
     return "ok";
   } catch {
-    return "error";
+    return isCurrent() ? "error" : "cancelled";
+  } finally {
+    if (objectUrl !== null) URL.revokeObjectURL(objectUrl);
   }
 }

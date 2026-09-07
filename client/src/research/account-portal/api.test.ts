@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { accountPortalFetch, downloadAccountDocument, loadAccountSubscription } from "./api";
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe("customer account API adapter", () => {
   it("sends the verified member bearer token and disables private response caching", async () => {
@@ -60,6 +60,44 @@ describe("customer account API adapter", () => {
     await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/../private")).resolves.toBe("error");
     await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/doc-1?raw=1")).resolves.toBe("error");
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not fetch a cancelled document operation", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/doc-1", {
+      isCurrent: () => false,
+    })).resolves.toBe("cancelled");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([401, 403, 500])("does not consume file bytes for HTTP %i", async (status) => {
+    const blob = vi.fn();
+    vi.stubGlobal("fetch", vi.fn(async () => ({ status, ok: false, blob })));
+    await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/doc-1"))
+      .resolves.toBe(status === 500 ? "error" : "denied");
+    expect(blob).not.toHaveBeenCalled();
+  });
+
+  it("does not forward a document read through redirects", async () => {
+    const fetchMock = vi.fn(async () => { throw new TypeError("redirect refused"); });
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/doc-1"))
+      .resolves.toBe("error");
+    expect(fetchMock).toHaveBeenCalledWith("/api/research/customer-account/documents/doc-1", expect.objectContaining({ redirect: "error" }));
+  });
+
+  it("releases an object URL even when initiating a save throws", async () => {
+    const revoke = vi.fn();
+    vi.stubGlobal("URL", class extends URL {
+      static createObjectURL = vi.fn(() => "blob:synthetic");
+      static revokeObjectURL = revoke;
+    });
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { throw new Error("save unavailable"); });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("synthetic-file")));
+    await expect(downloadAccountDocument("member-token", "/api/research/customer-account/documents/doc-1"))
+      .resolves.toBe("error");
+    expect(revoke).toHaveBeenCalledWith("blob:synthetic");
   });
 
   it("preserves a typed 429 denial for the support UI", async () => {
