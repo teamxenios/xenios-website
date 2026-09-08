@@ -495,16 +495,50 @@ describe("activation blocker 1: a lost upload race is a replay only for the same
     });
   }
 
-  it("legitimate identical retry through the conflict path succeeds and adds nothing", async () => {
+  it("legitimate identical retry through the conflict path returns the winner's version and creates no second version; the loser's residual is accounted for", async () => {
     const h = harness();
     const first = await h.service.createVersion(ADMIN, upload(), file());
     if (!first.ok) throw new Error("fixture");
+    const winnerVersion = first.resource.versions[0]!;
+    const before = h.store.snapshot();
     const service = racing(h, () => h.store.findVersionByUploadKey("upload-key-0001"));
     const retry = await service.createVersion(ADMIN, upload(), file());
     expect(retry).toMatchObject({ ok: true, resource: { resourceId: first.resource.resourceId } });
     if (!retry.ok) return;
     expect(retry.resource.versions).toHaveLength(1);
-    expect((await h.service.getAdmin(first.resource.resourceId))?.versions).toHaveLength(1);
+    expect(retry.resource.versions[0]).toMatchObject({ versionId: winnerVersion.versionId, sha256: winnerVersion.sha256 });
+    // Not write-free: a losing NEW-resource upload has already stored its
+    // private object and an empty resource row before the version insert
+    // conflicts. Both are accounted for here and neither is publishable —
+    // the object is keyed by a version id that no row references, and the
+    // resource has no version to publish. Nothing about the winner changed.
+    const after = h.store.snapshot();
+    expect(after.versions).toEqual(before.versions);
+    expect(after.resources).toHaveLength(before.resources.length + 1);
+    const orphan = after.resources.find((r) => r.resourceId !== first.resource.resourceId)!;
+    expect(orphan).toMatchObject({ currentPublishedVersionId: null });
+    expect(after.versions.some((v) => v.resourceId === orphan.resourceId)).toBe(false);
+    expect(h.bytes.keys()).toHaveLength(2);
+    expect(h.bytes.keys().some((k) => k.startsWith(`resource-library/${orphan.resourceId}/`))).toBe(true);
+    expect(await h.service.libraryFor(REP)).toHaveLength(0);
+  });
+
+  it("the loser cannot overwrite or publish the winner's resource: the winner reviews and publishes exactly its own bytes", async () => {
+    const h = harness();
+    const first = await h.service.createVersion(ADMIN, upload(), file());
+    if (!first.ok) throw new Error("fixture");
+    const { resourceId } = first.resource;
+    const winnerVersion = first.resource.versions[0]!;
+    const otherBytes = Buffer.from(PDF.toString("latin1") + "% different payload\n", "latin1");
+    const lost = await racing(h, () => h.store.findVersionByUploadKey("upload-key-0001")).createVersion(ADMIN, upload(), file(otherBytes));
+    expect(lost).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    const stored = await h.store.getVersion(winnerVersion.versionId);
+    expect(stored).toMatchObject({ sha256: sha256Hex(PDF), originalFilename: "intro-one-pager.pdf", state: "draft" });
+    expect(await h.service.review(ADMIN, resourceId, winnerVersion.versionId, { action: "approve_content", reason: "Reviewed.", idempotencyKey: "w-1" })).toMatchObject({ ok: true });
+    expect(await h.service.review(ADMIN, resourceId, winnerVersion.versionId, { action: "publish", idempotencyKey: "w-2" })).toMatchObject({ ok: true, resource: { currentPublishedVersionId: winnerVersion.versionId } });
+    const delivered = await h.service.deliverToPartner(REP, resourceId);
+    expect(delivered.ok).toBe(true);
+    if (delivered.ok) expect(sha256Hex(delivered.bytes)).toBe(sha256Hex(PDF));
   });
 
   it("a different file under the key that lost the race never becomes success", async () => {
