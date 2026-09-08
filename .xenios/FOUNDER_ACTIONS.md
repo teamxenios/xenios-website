@@ -6,12 +6,13 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 - Any real-user verification needs separate approval naming the account and
   notification effects. No such action was performed for release smoke.
-- A will present any new Resource Hub release for exact-SHA authorization only
-  after its required gates close. The prior Universal Account and Partner
-  Access GO was already executed successfully; do not request it again or
-  delegate it to another production writer.
+- The standing conditional directive covers qualified in-scope staged releases. A must pin and independently qualify each source/configuration/migration plan. Do not request the same general GO again. The prior account/partner release is already live; do not replay it.
 
-- Approve or hold the prepared private V3 input for the unchanged strict local PII scan: SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`, 131 bytes, 13 exact entries, 6 scanner-eligible. V2 is unchanged and the three registered originals match their hashes. Seven entries are retained but ignored by the existing full-name rule; deleted history, uncertain handwritten/image-only names and ambiguous S01 filename identity remain outside established coverage. Preparation and independent file/provenance/ACL checks passed; no hash approval or PII scan is claimed. See `docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json`. This decision would authorize the scan only, with no production change.
+- Provide or confirm the exact content version and authorized audience when the managed Resource Hub activation plan is ready. Private source-review PDFs are not publication-approved resources. Any new real-user grant or communication still needs specific approval.
+
+## Closed on September 8
+
+The exact V3 input was approved with its bounded coverage and remained unchanged. The original c350 scan failed three attribution fields; corrected successor 3814 passed with zero unresolved secrets/PII and no skips. The original failed receipt and coverage limits remain retained. See `docs/revenue-launch/20260907/strict-scan-v3-3814c68.json` and `standing-conditional-authorization-20260908.json`.
 
 ## Earlier requests (retain context; reverify before acting)
 

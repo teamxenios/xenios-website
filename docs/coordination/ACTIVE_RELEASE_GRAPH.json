@@ -381,9 +381,17 @@
       "id": "resource-library-candidate-c350ab1",
       "type": "candidate",
       "owner": "ASTRA-A integration; Fable source; ASTRA-B independent review",
-      "state": "UNDEPLOYED_QUALIFICATION_PENDING_PRIVACY_HASH_APPROVAL",
+      "state": "HISTORICAL_SUPERSEDED_FAILED_V3_SCAN",
       "sha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
-      "label": "Frozen application c350ab1, tree314ef445a6e3be8420a77451ed182088419d59ec. Full suite15997pass/59skip/0fail, typecheck/build, bounded source review and endpoint environment controls complete. Resource Hub migration PENDING at LF SHA-256 e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722. Local checker rehearsal154/154 onPG17.5 and18.3. V3 prepared (13 entries, 6 eligible, 131 bytes); actual hash/coverage approval, strict PII and enabled-adapter/role scope remain open. No new production authority."
+      "label": "Historical c350 runtime/test source; strict approved V3 scan failed three metadata attributions. Superseded by3814 correction. Original application evidence retained under demonstrated source equivalence; never deployed."
+    },
+    {
+      "id": "resource-library-candidate-3814c68",
+      "type": "candidate",
+      "owner": "ASTRA-A executor; ASTRA-B independent review",
+      "state": "INSTALLATION_QUALIFIED_ACTIVATION_BLOCKED",
+      "sha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+      "label": "Pinned successor 3814c687ef9293f84f939c372fdbc01b278a9193 tree 62915f1f23e16610c74622723391e9692fe7c84e; strict boundedV3 PASS,224-path ownership accepted. Exact e55 migration pending. Standing conditional installation authority applies after fresh checks; Hub remains false until concurrency and managed delivery prerequisites qualify."
     }
   ],
   "edges": [
@@ -611,6 +619,11 @@
       "from": "resource-library-source-9ed2203f",
       "to": "resource-library-candidate-c350ab1",
       "relation": "superseded_by_review_candidate"
+    },
+    {
+      "from": "resource-library-candidate-c350ab1",
+      "to": "resource-library-candidate-3814c68",
+      "label": "Three attribution corrections; runtime source equivalent; new strict range passes"
     }
   ],
   "releaseOrder": [

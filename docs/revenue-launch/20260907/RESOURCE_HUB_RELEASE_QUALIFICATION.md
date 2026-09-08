@@ -1,8 +1,13 @@
-# Resource Hub and account/partner UI - qualification checkpoint
+# Resource Hub and account/partner UI — installation and activation qualification
 
-**IN PROGRESS - NOT READY FOR A NEW RELEASE GO.** The narrow Universal Account and Partner Access release is already live. The combined Resource Hub/UI candidate remains undeployed, its new migration unapplied, and its final gates incomplete. A is the sole integrator and production executor; B independently reviews.
+**Pinned installation successor: `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`. Activation remains blocked.** The narrow account/partner ff3 release is live. The standing founder directive authorizes qualified staged in-scope releases; A executes and B independently verifies. Installation is not enabled Hub delivery or full platform completion.
 
-The current frozen application candidate is `c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662`, tree `314ef445a6e3be8420a77451ed182088419d59ec`. Its complete full suite, typecheck, build, exact-range diff check and secret half of the scan pass. Bounded substantive peer review is complete. The original three Care endpoint differences were reproduced on the live baseline's code; under matching controlled settings, baseline and candidate each return 30 matching results with no waivers. Privacy V3 is prepared from retained V2 and three hash-verified historical originals: 13 entries, 6 scanner-eligible, 131 bytes. The actual hash/coverage awaits approval; no PII qualification has run. Later evidence commits do not replace this application candidate.
+The original c350 strict V3 scan failed three personal-name authorization attributions. A corrected only the role labels and preserved the private approval artifact. The actual ff3-to-3814 strict scan passes: 47,459 added lines/224 paths,102 raw/102 reviewed/zero unresolved secrets,zero PII,no skips,exit0. Approved V3 remains unchanged with its coverage limits. All 50 c350-to-3814 changes are records; application code, SQL, dependencies, runtime-read SOR and build inputs are unchanged. Original c350 suite/build/browser dates are retained under explicit equivalence, and affected record checks newly pass62/1skip. [Successor source and checks](source-equivalence-3814c68.json).
+
+B accepted the actual224-path ownership inventory,200unowned/24covered/zero conflicts. The [exact installation packet](RESOURCE_HUB_INSTALLATION_PACKET_3814.md) keeps the Hub false through schema/postcheck/deployment/smoke and a five-minute observation. B confirmed two admin activation blockers: concurrent upload-key winner identity binding and review expected-state updates. Those must be corrected alongside managed Auth/Storage/delivery proof and a reviewed identity/content/audience plan before activation. No new real-user grant or communication is implied.
+
+The following older gate/source details retain their actual run dates; current successor privacy, ownership and authority are governed by the linked receipts and packet.
+
 
 ## Source bindings
 
@@ -27,7 +32,7 @@ The bf7b5fe cleanup changes four historical documents and removes only the final
 
 A selectively integrated B's account/document/order and partner UI work with Fable's Resource Hub and the reviewed scanner/admin session-isolation corrections. Existing account identity, partner lifecycle, agreement/training, durable-state, and money protections remain part of the integration. A added Resources wall/layout admission, safe sign-in return, and terminal-failure cache clearing. Broader partner routes retain their existing wall restrictions; added reporting UI does not activate recruiting, referrals, payouts, commerce, or unavailable backend actions.
 
-## Current gate disposition
+## Historical c350 gate disposition (successor overrides above)
 
 | Gate | Evidence and remaining limit |
 | --- | --- |
@@ -65,7 +70,7 @@ Known broader gaps remain: QR export is SVG only, the partner dashboard has no r
 
 ## Database candidate
 
-The new Resource Hub migration remains **UNAPPLIED** and requires a new exact authorization.
+The exact Resource Hub migration remains **UNAPPLIED**. The verified standing directive now covers the qualified staged installation; fresh checks and the reviewed packet remain mandatory.
 
 | Companion file under `supabase/candidates/20260906120000_research_resource_library` | Current LF SHA-256 |
 | --- | --- |
@@ -95,16 +100,16 @@ The completed narrow **Universal Account and Partner Access** release remains:
 
 The [original production report](../20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md) records that release. Public health evidence alone does not attest a serving SHA; A separately checked Render identity. [Fresh A observations](account-partner-readonly-reverification-20260908.json) at 03:09/03:17 UTC again confirm live ff3c496, both migration-history rows, absent Hub tables, auto-deploy off and the unchanged release branch.
 
-There is **no new GO** for the combined candidate, Resource Hub migration, or Hub activation. `RESEARCH_RESOURCE_HUB_ENABLED` remains absent/false. No new deployment, rollback, Hub migration, or flag change occurred in this qualification work.
+The verified standing directive conditionally authorizes qualified staged installation and subsequent qualified activation. The pinned3814 installation packet keeps the Hub false; activation remains blocked by the recorded prerequisites. `RESEARCH_RESOURCE_HUB_ENABLED` remains absent/false. No new deployment, rollback, Hub migration, or flag change occurred in this qualification work.
 
 Production partner PDF GET/implicit HEAD can write delivery audit records, so they are not read-only smoke checks. Any production fixture or download needs authority covering those effects. Real-account verification still requires separate approval naming the account and notification effects. No real account approval/claim, partner activation, recruiting/referral rollout, price/commerce activation, smoke notification job, email, purchase, payment/refund, shipment, fulfillment, or clinical action is authorized. Preserve customer, approval, partner, agreement, audit, billing and outbox history; additional database recovery needs separate approval.
 
 ## Remaining release work
 
-The full suite, build/typecheck and bounded substantive review are complete; every failed/interrupted predecessor is retained. The private source register now identifies three historical originals. A retrieved only those registered Gmail attachments and verified their original bytes before extraction. V3 is prepared at SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`: 13 entries, 6 scanner-eligible, 131 bytes. It preserves all six V2 entries unchanged, adds seven exact recorded variants and retains scanner-ignored mononyms. The next privacy action is separate approval of this actual hash and disclosed coverage, followed by the unchanged strict scanner. No scan or privacy PASS is implied by preparation.
+The full suite, build/typecheck and bounded substantive review are complete; every failed/interrupted predecessor is retained. The private source register now identifies three historical originals. A retrieved only those registered Gmail attachments and verified their original bytes before extraction. V3 is prepared at SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`: 13 entries, 6 scanner-eligible, 131 bytes. It preserves all six V2 entries unchanged, adds seven exact recorded variants and retains scanner-ignored mononyms. The founder approved this exact hash/coverage. Original c350 scan failure is retained; corrected successor3814 passed the unchanged strict wrapper. See strict-scan-v3-3814c68.json.
 
 The earlier package-search/source-identification blocker is preserved historically in the [source gate](privacy-input-v3-source-gate.json). It was resolved by the new private register, SHA-256 `7c68180049e41deebe2aba2c21255d638f53fce6910f8cabac2166ce1a899a83`. All 15 original text pages were reviewed privately. Ten embedded-image occurrences reduce to two unique images; local OCR did not establish any additional exact name, so handwriting completeness remains unproved. Ambiguous S01 filename/addressee metadata was excluded from person selection; only two filename case variants matching evidenced person tokens were retained. New working forms remain excluded, and S02 remains an unaccepted commercial discussion proposal. Names, original filenames and raw source text remain outside Git in restricted private storage; the public [receipt](privacy-input-v3-preparation-receipt.json) contains counts/hashes/provenance and explicit coverage limits.
 
 Enabled Supabase Storage/API behavior and the required real-auth/account-switching scope are not proved by local memory/WASM tests. The deferred dashboard card/PNG and mobile findings remain separate. The [formal source manifest](../../coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json) records the passed source/test gates and all remaining release prerequisites. Its structural acceptance is not authorization or production readiness.
 
-Once required gates are complete, assemble the exact application SHA/tree plus separate evidence head, migration/check hashes, flags, authorized smoke, compatible rollback and observation packet. There is no new production authority. Overall status remains **NOT READY**; this is neither a full revenue launch nor a completed Xenios Health platform.
+Once required gates are complete, assemble the exact application SHA/tree plus separate evidence head, migration/check hashes, flags, authorized smoke, compatible rollback and observation packet. Standing conditional authority applies only after each stage qualifies. Activation/full-workflow status remains **NOT READY**; this is neither a full revenue launch nor a completed Xenios Health platform.

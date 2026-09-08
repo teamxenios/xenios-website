@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-09-08T14:20:42.710Z",
+  "authority": "Founder standing conditional authorization for defined staged Xenios Health releases",
+  "sourceArtifactPath": "C:/Users/sboad/.codex/attachments/71d0c8ea-b8a1-479b-aac2-82ad1c31deb1/pasted-text.txt",
+  "sourceArtifactSha256": "3b525ea83b308e30c64d55481b3210ae845a4074e95230813b3bbcf9b1a36b63",
+  "privatePreservedCopy": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/standing-conditional-directive.private.txt",
+  "identifiedOriginalCandidate": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "qualifiedCorrectedSuccessor": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "successorBasis": "Standing text covers qualified in-scope releases with pinned exact commit/manifest, independent review and required checks. Successor corrects metadata-only PII findings; original failed result remains retained.",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "serviceId": "srv-d8s9vej7uimc7384dfcg",
+  "expectedLiveSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "migrationLfSha256": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
+  "installation": "Conditionally authorized after required checks and independent review; exact reviewed migration/pre/postchecks; no account/partner replay.",
+  "activation": "Conditionally authorized only after managed DB/Storage/Auth/delivery qualification and independently reviewed identities/content/audiences/writes/recovery plan; current concurrency defects block activation.",
+  "conditions": [
+    "A sole production writer; B independently verifies",
+    "No arbitrary branch HEAD, blanket database push, self-issued acceptance or unresolved release-blocking failure",
+    "Preserve records/private objects and use reviewed non-destructive recovery",
+    "Specific approval for new real-user grants or communications",
+    "No private source agreements/registers/customer data publication",
+    "No unrelated spending, charges, refunds, shipments, bulk messaging, clinical actions or business commitments"
+  ],
+  "rawApprovalTextPublished": false,
+  "productionExecutionPerformed": false
+}

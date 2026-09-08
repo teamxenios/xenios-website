@@ -639,21 +639,21 @@
     }
   ],
   "resourceHubQualification": {
-    "status": "IN_PROGRESS_NOT_RELEASE_READY",
-    "candidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
-    "candidateTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+    "status": "INSTALLATION_QUALIFICATION_CLOSING_ACTIVATION_BLOCKED",
+    "candidateSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "candidateTree": "62915f1f23e16610c74622723391e9692fe7c84e",
     "runtimeBuildSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
     "browserSourceSha": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
     "migrationSourceSha": "6c77c5663071715f8fe47038f57100c16c430246",
     "migrationLfSha256": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
-    "productionAuthorized": false,
+    "productionAuthorized": "STANDING_CONDITIONAL_QUALIFIED_IN_SCOPE_RELEASES",
     "migrationApplied": false,
     "featureActivated": false,
     "fullSuite": "PASS_c350ab1_15997_PASSED_59_SKIPPED_ZERO_FAILURES",
     "browser": "PASS_14_JOURNEYS_45_CAPTURES_LOCAL_SYNTHETIC",
     "localDatabase": "PASS_154_EACH_PG17_5_AND_18_3",
     "secretScan": "102_RAW_102_INDEPENDENTLY_REVIEWED_0_UNRESOLVED_AT_c350ab1",
-    "piiScan": "NOT_RUN_V3_PREPARED_ACTUAL_HASH_COVERAGE_APPROVAL_PENDING",
+    "piiScan": "PASS_APPROVED_BOUNDED_V3_EXACT_ff3_TO_3814_NO_SKIPS",
     "endpointComparison": "CONTROLLED_ENVIRONMENT_MISMATCH_ACCEPTED_BASELINE_AND_CANDIDATE_30_SAME_ZERO_WAIVERS",
     "enabledSupabaseAdapter": "NOT_QUALIFIED_LIVE_STORAGE_HTTP_PENDING",
     "report": "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md",
@@ -665,9 +665,9 @@
     "privacyInputReceipt": "docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json",
     "privacyInputV3Sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
     "diffCheck": "PASS_EXACT_ff3c496_TO_c350ab1",
-    "independentOwnershipReview": "B_ACCEPTED_c350ab1_187_PATHS_164_UNOWNED_0_WRONG_0_CONFLICTS",
+    "independentOwnershipReview": "B_ACCEPTED_3814_224_PATHS_200_UNOWNED_24_COVERED_ZERO_WRONG_ZERO_CONFLICTS",
     "goalRuntimeStatus": "usageLimited observed on recovery; foreground authorized work continues, no unattended-operation claim",
-    "latestProductionReverification": "docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json",
+    "latestProductionReverification": "docs/revenue-launch/20260907/resource-hub-installation-preflight-3814c68.json",
     "knownScopeGaps": [
       "QR exports SVG only; requested PNG not implemented",
       "Partner dashboard share card not implemented",
@@ -686,10 +686,18 @@
     "independentSourceReviewStatus": "COMPLETE_BOUNDED_A_B_REVIEW_NO_NEW_BLOCKING_LOGIC_FINDING",
     "finalControlGates": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json",
     "followOnScope": "Dashboard share card/PNG and Training/Support mobile corrections remain separate; frozen source unchanged; complete affiliate experience not delivered",
-    "updatedAt": "2026-09-08T03:45:31.784Z",
+    "updatedAt": "2026-09-08T14:20:42.710Z",
     "manifest": "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
     "manifestStatus": "STRUCTURAL_PASS_QUALIFICATION_DRAFT_NOT_RELEASE_READY",
-    "manifestValidation": "docs/revenue-launch/20260907/final-manifest-record-validation-c350ab1.json"
+    "manifestValidation": "docs/revenue-launch/20260907/final-manifest-record-validation-c350ab1.json",
+    "previousCandidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "strictScanReceipt": "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json",
+    "sourceEquivalenceReceipt": "docs/revenue-launch/20260907/source-equivalence-3814c68.json",
+    "activationBlockers": [
+      "Concurrent upload winner must repeat SHA/filename binding",
+      "Admin review transitions need expected-state conditional writes",
+      "Managed Storage/Auth/delivery qualification and reviewed identity/content/audience plan"
+    ]
   },
   "reconciliationHistory": [
     {

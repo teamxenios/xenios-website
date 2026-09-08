@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "classification": "READ_ONLY_PREFLIGHT_PASS_INSTALLATION_QUALIFICATION_PENDING",
+  "candidateSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "candidateTree": "62915f1f23e16610c74622723391e9692fe7c84e",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "service": {
+    "id": "srv-d8s9vej7uimc7384dfcg",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "no",
+    "suspended": "not_suspended"
+  },
+  "liveDeploy": {
+    "id": "dep-dafcm567bikc7382rhng",
+    "sha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "status": "live",
+    "finishedAt": "2026-09-07T14:33:55.150237Z"
+  },
+  "readOnlyPrecheck": {
+    "lfSha256": "742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab",
+    "execution": "Reviewed transaction setup and DO assertions unchanged; informational projections combined for connector result; rollback",
+    "result": {
+      "observed_at": "2026-09-08 14:11:36.173286+00",
+      "database_name": "postgres",
+      "migration_executor": "postgres",
+      "server_version": "17.6",
+      "executor_superuser": false,
+      "executor_bypassrls": true,
+      "row_security_mode": "off",
+      "result": "PASS: first-install objects absent; roles and Storage policy compatibility checked",
+      "storage_policy_count": 0,
+      "hub_bucket_count": 0,
+      "resource_library": null,
+      "resource_versions": null,
+      "resource_deliveries": null
+    }
+  },
+  "productionMutation": false,
+  "repeatFreshImmediatelyBeforeApply": true,
+  "notes": [
+    "The preliminary identity query established PostgreSQL version and account/partner history only; its noncanonical Hub alias lookups were not used to assert Hub absence. The reviewed canonical full precheck above establishes the absent objects/bucket and compatible roles/policies.",
+    "No concurrent active or queued Render deploy appeared in the returned four most recent deploys. A remains designated sole production executor."
+  ]
+}

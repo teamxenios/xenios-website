@@ -1,6 +1,6 @@
 # Externally blocked work
 
-## Current account/partner and Resource Hub checkpoint — 2026-09-07
+## Current account/partner and Resource Hub checkpoint — 2026-09-08
 
 The exact Universal Account and Partner Access release is deployed at
 `ff3c496245739233b71e46f9e5d6e26af9d57017`, Render
@@ -10,9 +10,9 @@ no executor handoff or repeated GO is needed. See
 `docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json`
 and the original production deployment report.
 
-The separate Resource Hub candidate remains in local qualification, with no
-new production authorization. The original lost PII corpus remains unrecovered. A prepared V3 from unchanged V2 and three exact historical PDFs: 131 bytes, 13 entries, 6 scanner-eligible; SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`. Independent file/provenance/ACL checks passed. Actual hash/coverage approval is pending before the strict PII scan. Handwriting, ambiguous S01 filename identity and deleted-history coverage remain limited. Names and original text remain outside Git. Enabled Supabase Storage/API behavior is not proved by local memory/PGlite evidence. The final full suite, typecheck/build, bounded source review and endpoint environment-control checks are complete; see
-`docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md`.
+Resource Hub installation successor `3814c687ef9293f84f939c372fdbc01b278a9193` is pinned under the verified standing conditional directive. The approved V3 scan passed on that exact range after three role-attribution corrections; its historical/handwriting/name-format coverage remains limited. General GO, SQL access and V3 approval are not current blockers. The canonical production precheck passed again at 14:11:36 UTC on September 8; repeat it immediately before the exact e55 migration. No Hub migration/deploy/activation has occurred yet.
+
+Activation remains blocked by the concurrent upload-key identity check and review expected-state corrections, managed Auth/PostgREST/Storage delivery proof, and a reviewed exact content/audience/test-identity/expected-write/recovery plan. Local memory/WASM evidence does not prove those managed behaviors. See `docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md`. Disabled installation must not be represented as an operational Resource Hub or full platform completion.
 
 Real-account approval/claim, partner activation and notification effects still
 require separate account-specific authorization. This is distinct from the

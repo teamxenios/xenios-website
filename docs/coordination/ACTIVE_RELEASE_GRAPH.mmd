@@ -3,7 +3,8 @@ flowchart LR
   %% docs/coordination/history and are historical, not current attestations.
   PREVDB5["Superseded db5a2d44<br/>HISTORICAL; deactivated<br/>Care admin reliability"]
   PROD["Production ff3c4962<br/>AUDITED_BASELINE<br/>dep-dafcm567bikc7382rhng<br/>account/partner access; observed 2026-09-07 22:58Z"]
-  RESOURCE["Frozen Hub/UI c350ab1<br/>UNDEPLOYED / PRIVACY SOURCE BLOCKED<br/>migration e55f965f pending; no production authorization"]
+  RESOURCE_OLD["Historical c350ab1<br/>STRICT V3 FAILED; superseded<br/>original evidence retained"]
+  RESOURCE["Pinned Hub/UI 3814c68<br/>INSTALLATION QUALIFIED / ACTIVATION BLOCKED<br/>e55 migration pending; conditional authority; Hub=false"]
   PREV50["Superseded baseline 50c2d35c<br/>HISTORICAL<br/>dep-daatp715efls738v00dg (2026-08-31 to 2026-09-03)"]
   CAREADMIN["Care admin tested code ace27886<br/>DEPLOYED WITHIN db5a2d44<br/>suite 810/4 files; diff 30/0/0/0"]
   PREVPROD["Superseded baseline 3daa3f4a<br/>HISTORICAL<br/>dep-da94g05g1s2s7396lkv0"]
@@ -86,7 +87,8 @@ flowchart LR
   classDef authority fill:#eadcf8,stroke:#5b2c6f,color:#000;
   classDef candidate fill:#d9eaf7,stroke:#134f5c,color:#000;
   PREVDB5 -->|superseded by| PROD
-  PROD -->|source baseline| RESOURCE
+  PROD -->|source baseline| RESOURCE_OLD
+  RESOURCE_OLD -->|three attribution corrections and new qualification| RESOURCE
   class PROD baseline;
   class PREVDB5 gate;
   class RESOURCE candidate;

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "inputVersion": 3,
-  "status": "SOURCE_IDENTIFIED_ORIGINALS_VERIFIED_V3_PREPARED_PENDING_HASH_APPROVAL",
-  "updatedAt": "2026-09-08T04:52:01.765529+00:00",
+  "status": "V3_APPROVED_BOUNDED_STRICT_SUCCESSOR_SCAN_PASS",
+  "updatedAt": "2026-09-08T14:20:42.710Z",
   "operator": "ASTRA-A",
   "sourceResolution": {
     "sourceRegister": {
@@ -45,10 +45,10 @@
     "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
     "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/prepared-name-input-v3.txt"
   },
-  "currentRequiredAction": "Founder approval of this actual V3 hash and disclosed coverage before strict PII scan; preparation grants no production authority.",
+  "currentRequiredAction": "Privacy gate closed for approved bounded V3 and exact3814. Complete installation gates; activation remains separately blocked.",
   "preparationReceipt": "docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json",
-  "approvalReceived": false,
-  "piiScanPerformed": false,
+  "approvalReceived": true,
+  "piiScanPerformed": true,
   "productionReads": false,
   "productionWrites": false,
   "rawNamesPrinted": false,
@@ -206,5 +206,8 @@
         ]
       }
     }
-  }
+  },
+  "approvalReceipt": "docs/revenue-launch/20260907/privacy-input-v3-scan-authorization.json",
+  "failedOriginalScan": "docs/revenue-launch/20260907/strict-scan-v3-c350ab1.json",
+  "passingSuccessorScan": "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json"
 }

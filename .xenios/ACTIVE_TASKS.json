@@ -1506,7 +1506,8 @@
         "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
         "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
         "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
-        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json"
+        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
+        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1514,7 +1515,7 @@
       "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
       "createdAt": "2026-09-05T04:13:59.4380733Z",
       "scopeNote": "Founder goal: A selective integration of reviewed B/Fable deltas on existing feature branch, preserving deployed ff3c496. New exact-SHA approval required for production.",
-      "currentQualificationStatus": "V3_PREPARED_13_ENTRIES_6_ELIGIBLE_131_BYTES_HASH_APPROVAL_PENDING_NO_PII_SCAN_NO_NEW_PRODUCTION_AUTHORITY",
+      "currentQualificationStatus": "SUCCESSOR_3814_STRICT_V3_PASS_INSTALLATION_GATES_CLOSING_ACTIVATION_BLOCKED_CONCURRENCY_AND_MANAGED_PROOF",
       "claimedAt": "2026-09-05T17:49:32.208Z",
       "blockedAt": "2026-09-04T23:45:09.67476-05:00",
       "lastOwner": "codex-seth-revenue-launch-20260905",

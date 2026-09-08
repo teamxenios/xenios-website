@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "headSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "trustedBaseOwnershipPolicySha256": "67deb85b0a5eb3d48c58d7382502c7484674a620e41d1d8cd06995a417291fe3",
+    "gitDiffPathInventorySha256": "e4ff0ecf338f85d8a7c8dc3f4034ad19126f9b8b884469a0f4995028386efa2c",
+    "ownershipFindingInventorySha256": "9804076638a06b8f2db4baf18c25bd5d5765c29a67cc1b7f09f0e4d559ba44f9",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 200,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "ASTRA-B (Codex task 01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35)",
+    "reviewedAt": "2026-09-08T14:17:41.1754730Z",
+    "reviewArtifactPath": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json"
+  }
+}
