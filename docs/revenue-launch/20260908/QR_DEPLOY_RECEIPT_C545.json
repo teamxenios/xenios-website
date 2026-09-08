@@ -1,0 +1,39 @@
+{
+  "release": "XENIOS_QR_PNG_2026-09-08",
+  "status": "DEPLOYED_LIVE",
+  "applicationSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+  "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "renderService": "srv-d8s9vej7uimc7384dfcg",
+  "deployId": "dep-dag8l567bikc738a1nj0",
+  "deployStatus": "live",
+  "migrationResult": {"applied": [], "status": "NO_DATABASE_CHANGE"},
+  "qualification": {
+    "targetedTests": "90 passed, 0 failed across Dashboard, QR export and referral layout",
+    "fullTypecheck": "PASS",
+    "build": "PASS",
+    "guardedIntegration": "PASS",
+    "packageSourceCheck": "PASS"
+  },
+  "smoke": {
+    "endpointCount": 30,
+    "same": 30,
+    "intentionalChanges": 0,
+    "regressions": 0,
+    "humanReviewRequired": 0,
+    "comparison": "docs/revenue-launch/20260908/critical-endpoints-comparison-8be-to-qr-c545.json"
+  },
+  "observation": {
+    "checks": 10,
+    "durationSeconds": 325,
+    "healthStatus": "PASS",
+    "commerceEnabled": false,
+    "errorLogs": 0,
+    "receipt": "docs/revenue-launch/20260908/qr-observation-c545.log"
+  },
+  "effects": "No migration, flag, account, notification, payment, shipment or clinical effect.",
+  "remaining": [
+    "CRM and organization SQL require managed staging rehearsal and independent review.",
+    "Durable production payment/provider adapters, webhook verification and recovery remain incomplete.",
+    "Real affiliate account and recipient journey verification still requires an approved named account and effects plan."
+  ]
+}
