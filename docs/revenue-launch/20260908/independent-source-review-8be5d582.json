@@ -1,0 +1,215 @@
+{
+  "kind": "xenios.independent-exact-source-review",
+  "schemaVersion": 1,
+  "reviewer": "Claude Fable (session fable-recruiter-resource-hub-20260906)",
+  "reviewerRole": "independent non-author reviewer; not ASTRA-B; not the production executor",
+  "status": "ACCEPT_SOURCE_WITH_THREE_CONDITIONS_TWO_CLOSED_ONE_ESCALATED",
+  "startedAt": "2026-09-08T18:55:52Z",
+  "candidate": {
+    "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "baseTree": "62915f1f23e16610c74622723391e9692fe7c84e",
+    "reviewedApplicationSourceCommit": "62e6c63c788afe75553b7f6fb3e8f54e94d71767",
+    "applicationSourceUnchangedFromReviewedCommit": true,
+    "pathsChangedFromReviewedCommit": [
+      "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "server/research/e2e/managed-resource-hub-qa.test.ts"
+    ]
+  },
+  "inventory": {
+    "method": "git diff --name-only 3814c687 8be5d582 in a worktree checked out at 8be5d582",
+    "pathCount": 51,
+    "categories": {
+      "application_runtime": 3,
+      "tests": 6,
+      "qualification_harness": 2,
+      "records_documentation": 40
+    },
+    "applicationRuntimePaths": [
+      "server/research/resource-hub/service.ts",
+      "server/research/resource-hub/store.ts",
+      "server/research/resource-hub/supabase-store.ts"
+    ],
+    "testPaths": [
+      "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "server/release-control-plane.test.ts",
+      "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "server/research/resource-hub/activation-hardening.test.ts",
+      "server/research/resource-hub/service.test.ts",
+      "server/research/resource-hub/supabase-store.test.ts"
+    ],
+    "harnessPaths": [
+      "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "scripts/revenue-launch/managed-resource-hub-qa.ts"
+    ],
+    "acceptanceScriptsChanged": 0,
+    "newRoutes": 0,
+    "newMigrations": 0,
+    "releaseControlPlaneTestChange": "pins the audited production baseline to 3814c687 and the 2026-09-08T14:45:55.787734Z reconciliation; no validator logic changed",
+    "migrationsLedgerChange": "row 77 recorded APPLIED once as managed version 20260908143724 with the exact LF digest e55f965f...; Hub remains disabled"
+  },
+  "ownershipAttestationRecomputation": {
+    "method": "buildIntegrationOwnershipReview + trustedOwnershipPolicy from scripts/acceptance/verify-release-manifest.ts at 8be5d582, base policy read from 3814c687:docs/coordination/FILE_OWNERSHIP.json, lane release-manager",
+    "policySource": "trusted_base_commit",
+    "trustedBaseOwnershipPolicySha256": "8f84c67cefa29dab41194fd9e6c6f574ca65c55d40b141803b06139ee26b6cce",
+    "gitDiffPathInventorySha256": "a6b6c4687bad3b984694ba14765d06fef5f9e0436ce15386b8cf40d728b0fdf8",
+    "ownershipFindingInventorySha256": "69ecb7505f54e7486e456e5bc3f78ba14724b197d73465e15752b039b0d75fcd",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 37,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "matchesAstraADraft": true,
+    "draftReference": "docs/revenue-launch/20260907/hardening-manifest-draft-8be5d582.json#ownershipDraft at evidence head 594e32373301fce1986a03c89797e3f85ed4e4d0"
+  },
+  "evidenceBindingsVerified": {
+    "managedApiHarness": {
+      "sha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+      "tree": "c5f59f8d15b022bd822fc0e6cb71233d1fad6c48",
+      "treeVerified": true,
+      "differsFrom8be5OnlyIn": [
+        "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+        "scripts/revenue-launch/managed-resource-hub-qa.ts",
+        "server/research/e2e/managed-resource-hub-qa.test.ts"
+      ]
+    },
+    "browserHost": {
+      "sha": "2873a333255c015789594920493e10c6b82461b8",
+      "tree": "d93e1d3409d74a5ab61f83df65fc7676a7941471",
+      "treeVerified": true,
+      "fileSha256": "8edbab84599aa06ad7a60821d2b3754ebb92937aae20a36dcb5e71cee81eb3ad",
+      "fileSha256Verified": true,
+      "differsFrom8be5OnlyIn": [
+        "scripts/revenue-launch/managed-resource-hub-browser-host.test.ts",
+        "scripts/revenue-launch/managed-resource-hub-browser-host.ts"
+      ]
+    },
+    "browserDriver": {
+      "sha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
+      "tree": "b43359d97e326eda7aacd44c9b0f0e69e05e2252",
+      "treeVerified": true,
+      "fileSha256": "d7a98d298698929a1cc8a10385e5323211a5afb2ac4690e353852530ad3e7cfe",
+      "fileSha256Verified": true,
+      "differsFrom8be5OnlyIn": [
+        "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
+      ]
+    },
+    "supplementalOwnershipMapAtEvidenceHead": {
+      "commit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "sha256": "5ba0f1bb8cffb7267d9f51cef8711bc65db03f8f9188577fead44a42f8cda3c8",
+      "verified": true
+    },
+    "foundationHarnessAt8be5": {
+      "byteIdenticalTo01a479d": true,
+      "qaFileSha256": "f69d3e98a84d7bf4dbf58e1060c3bf23911904afee14fb82ecd020362d0d4baa",
+      "verified": true
+    }
+  },
+  "managedEvidenceRead": {
+    "api": {
+      "receipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
+      "status": "PASS_BOUNDED_MANAGED_API",
+      "runId": "hubqa-20260908-bdda04a633-api2",
+      "projectRef": "tetynodzrtmdbuzgboro",
+      "finishedAt": "2026-09-08T17:18:03.222Z",
+      "passedChecks": 41,
+      "attemptsVsHarnessExpectation": {
+        "objects": "4/4",
+        "resources": "4/4",
+        "versions": "4 attempts / 2 acknowledged",
+        "reviews": "7 attempts / 4 acknowledged",
+        "publications": "2/2",
+        "withdrawals": "2/2",
+        "deliveries": "6/6",
+        "expectedRefusals": "5/5"
+      },
+      "sqlReconciliationConsistentWithHarness": true,
+      "notProvenDisclosed": [
+        "full browser composition",
+        "real sign-in/logout/account switching",
+        "different-hash stored PDF upload race recovery",
+        "bucket-wide retained orphan inventory",
+        "unfiltered retained-library behavior",
+        "provisioning and browser write budgets",
+        "production activation"
+      ]
+    },
+    "browser": {
+      "receipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+      "status": "PASS_BOUNDED_BROWSER_AND_HOST_SQL_RECONCILIATION",
+      "runId": "hubbrowser-20260908-bdda04a633-b3",
+      "completedAt": "2026-09-08T18:01:01.026Z",
+      "stepsPassed": 15,
+      "widthMatrixCaptures": 45,
+      "renderedSignIns": 8,
+      "renderedSignOuts": 8,
+      "signOutMechanism": "application controls (button-adminx-signout, member Sign out) observed as /auth/v1/logout through the host proxy; no storage clearing",
+      "staleDownloadAfterLogoutDiscarded": true,
+      "byteExactDownloads": 2,
+      "sqlDelta": {
+        "resources": 1,
+        "versions": 1,
+        "objects": 1,
+        "reviewUpdates": 2,
+        "publications": 1,
+        "withdrawals": 1,
+        "deliveryAudits": 2,
+        "authUsers": 0
+      },
+      "limitationsDisclosed": true,
+      "browserDeniedDownloadProbes": "not in browser budget; denials proven at API level",
+      "visualFollowUps": [
+        "320px partner navigation clipped/scrollable",
+        "admin Resources count vs helper copy wording"
+      ]
+    }
+  },
+  "reviewFindings": {
+    "verdict": "ACCEPT application source 3814->8be5; ACCEPT evidence/packet with three pre-deploy conditions",
+    "conditions": [
+      {
+        "id": "C1",
+        "status": "CLOSED_BY_THIS_REVIEW",
+        "summary": "Independent review bound to the EXECUTED browser host 2873a333 (+37/-11, Express-5 wildcard fix) and driver 9d33ab5 (+77/-15, observer-serialization fix); packet receipts only covered pre-fix parents 5bc0efa9/6098a92f. Both diffs read from Git and found sound; outer host gate preserved."
+      },
+      {
+        "id": "C2",
+        "status": "CLOSED_BY_THIS_REVIEW",
+        "summary": "Arms-length evidence verdict provided from outside A's execution lane; packet's own evidence reviews were reciprocal among A's delegated helpers (managed_hub_harness/release_manifest/runtime_successor_review)."
+      },
+      {
+        "id": "C3",
+        "status": "OPEN_ESCALATED_TO_FOUNDER",
+        "summary": "standing-conditional-authorization-20260908.json names the c350->3814 installation lineage and ff3c live SHA, verifiedAt 14:20Z before the 8be gates, and calls its successor a metadata-only PII correction. 8be5 changes 3 application runtime files. A must cite the standing clause that generalizes to an application-code successor or obtain a one-line founder confirmation that deploying 8be5 with the Hub disabled is in scope. Activation remains separately gated."
+      }
+    ],
+    "nonBlockingDisclosures": [
+      "Browser denial evidence is presentation-only (adapter collapses 403/404/503 to one 'unavailable' UI state); authorization denials are proven at the API layer with exact status codes.",
+      "23 console-error events counted without retained text (adjudicated 3-0 refuted); zero page errors/boundary refusals/asset failures.",
+      "Minor packet arithmetic/labelling: 4,636 vs 4,639 added-line count; supplemental map hashed two ways without stated encoding; requestCounts not itemized per read.",
+      "Test-double fidelity is weak in isolation but the managed run exercises the real adapter against real PostgREST."
+    ],
+    "codeDefectsInCandidate": 0
+  },
+  "attestationArtifact": {
+    "path": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-8be5.json",
+    "sha256": "4877bd70c66ab1646b24a585d7773b9bf9bd0bdf1d49955d14dc2d9cbf4d12bd",
+    "reviewerIdentity": "Claude Fable (session fable-recruiter-resource-hub-20260906)",
+    "reviewedAt": "2026-09-08T18:57:00Z",
+    "recomputedMatchesAstraADraft": true,
+    "note": "Canonical xenios.integration-ownership-review artifact built with verify-release-manifest.ts functions. A may reference this path+sha256 in a schemaVersion-2 manifest integrationOwnershipReview block; the manifest block itself (with reviewArtifactSha256) is written to manifest-review-block-8be5.json alongside."
+  },
+  "limits": [
+    "Read-only review of Git objects and committed receipts; no managed, staging or production call was made by the reviewer; private result/journal files were not opened.",
+    "This is Claude Fable's independent verdict, not ASTRA-B's; whether it satisfies the release gate in B's absence is Samuel's and ASTRA-A's decision.",
+    "No deployment, activation, migration, configuration or customer action is authorized by this record."
+  ],
+  "finishedAt": "2026-09-08T18:59:00Z",
+  "adversarialCrossCheck": {
+    "run": "wf_fed9cb16-f83",
+    "firstPass": "runtime 3-0 refuted; tests 3-0 refuted; browser-driver console-errors 3-0 refuted; api-harness/browser-host/browser-driver/packet verify killed by session limit (0 votes)",
+    "reAdjudication": "wf_fed9cb16-f83 resumed from cache; results to be appended"
+  }
+}

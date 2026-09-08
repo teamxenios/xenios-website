@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "headSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "trustedBaseOwnershipPolicySha256": "8f84c67cefa29dab41194fd9e6c6f574ca65c55d40b141803b06139ee26b6cce",
+    "gitDiffPathInventorySha256": "a6b6c4687bad3b984694ba14765d06fef5f9e0436ce15386b8cf40d728b0fdf8",
+    "ownershipFindingInventorySha256": "69ecb7505f54e7486e456e5bc3f78ba14724b197d73465e15752b039b0d75fcd",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 37,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Claude Fable (session fable-recruiter-resource-hub-20260906)",
+    "reviewedAt": "2026-09-08T18:57:00Z",
+    "reviewArtifactPath": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-8be5.json"
+  }
+}
