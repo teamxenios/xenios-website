@@ -1,0 +1,1473 @@
+{
+  "observedAt": "2026-09-08T02:39:42.169Z",
+  "method": "Emulation.setDeviceMetricsOverride mobile:false; scrollWidth vs innerWidth; elements with right edge beyond the viewport",
+  "rows": [
+    {
+      "width": 320,
+      "page": "dashboard",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": []
+    },
+    {
+      "width": 320,
+      "page": "links",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "campaigns",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "events",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "leads",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "conversions",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "commissions",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "payouts",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "organizations",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "training",
+      "iw": 320,
+      "sw": 370,
+      "overflow": true,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "resources",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "compliance",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "support",
+      "iw": 320,
+      "sw": 329,
+      "overflow": true,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "page": "security",
+      "iw": 320,
+      "sw": 320,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "dashboard",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": []
+    },
+    {
+      "width": 360,
+      "page": "links",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "campaigns",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "events",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "leads",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "conversions",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "commissions",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "payouts",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "organizations",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "training",
+      "iw": 360,
+      "sw": 370,
+      "overflow": true,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "resources",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "compliance",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "support",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "page": "security",
+      "iw": 360,
+      "sw": 360,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 814,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Security"
+        },
+        {
+          "right": 756,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 698,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 640,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "dashboard",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": []
+    },
+    {
+      "width": 390,
+      "page": "links",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "campaigns",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "events",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "leads",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "conversions",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "commissions",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "payouts",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "organizations",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "training",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "resources",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "compliance",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "support",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "page": "security",
+      "iw": 390,
+      "sw": 390,
+      "overflow": false,
+      "wide": [
+        {
+          "right": 822,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.ra-subnav-active",
+          "text": "Security"
+        },
+        {
+          "right": 764,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Support"
+        },
+        {
+          "right": 706,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Compliance"
+        },
+        {
+          "right": 648,
+          "w": 44,
+          "tag": "a",
+          "cls": "ra-subnav-link.",
+          "text": "Resources"
+        }
+      ]
+    }
+  ]
+}

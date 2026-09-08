@@ -163,13 +163,15 @@ registry, release diff scan, pgcrypto guard, control-plane pins); the
 flag-gated Resource Hub migration (unapplied); records and evidence.
 
 Of these, B's rendered browser proof covers the Resource Hub journeys. The
-QR export and the Links page now have Claude's rendered walkthrough
-(`QR_LINKS_WALKTHROUGH.md`, not independently reviewed). The remaining
-partner-page repairs (Campaigns, Events, Leads, Conversions, Commissions,
-Payouts, Organizations, Training, Security, Compliance) are in the candidate
-as reviewed, tested code inside the green full suite but have **no rendered
-browser proof in this candidate**; nothing about QR or referral activation
-is claimed live.
+QR export and the Links page have Claude's rendered walkthrough
+(`QR_LINKS_WALKTHROUGH.md`); all fourteen partner pages have Claude's
+rendered empty-state sweep at 1440 and 320 px (`PARTNER_PAGES_SWEEP.md`),
+neither independently reviewed. That sweep surfaced **two small responsive
+defects** in reviewed code: at 320 px the Training page overflows by 50 px
+(module cards lay out at 354 px; still +10 px at 360) and the Support page
+by 9 px (the nowrap "Email team@…" button). Both fit at 390 px. Source is
+frozen, so they are recorded for the owner's disposition, not fixed. Nothing
+about QR or referral activation is claimed live.
 
 **Excluded**: `scripts/resource-hub/strip-embedded-attachments.mjs` and kit
 groundwork (outside the candidate); any activation of

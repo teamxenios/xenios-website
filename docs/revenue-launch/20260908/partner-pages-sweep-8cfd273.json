@@ -1,0 +1,1390 @@
+{
+  "schemaVersion": 1,
+  "claimScope": "UI_PRESENTATION_EMPTY_STATES_OVER_REAL_PARTNER_PORTAL_ROUTES_WITH_EMPTY_IN_MEMORY_PORT",
+  "status": "PASS",
+  "observedAt": "2026-09-08T02:36:24.433Z",
+  "origin": "http://127.0.0.1:5241",
+  "binding": {
+    "candidateHead": "8cfd273d039d79ec0ce4aa602af09eef2d515c4e",
+    "runtimeFreeze": "bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e",
+    "harnessSha256": "8ebc0688434714922c95887069b444b30eb86a48bb1911bcb47da59e96ef8c2d",
+    "node": "v20.19.0"
+  },
+  "browser": {
+    "chromePath": "C:\\Users\\sboad\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe",
+    "revision": "1228",
+    "version": "149.0.7827.55"
+  },
+  "persona": "affiliate@preview.invalid",
+  "steps": [
+    {
+      "step": "sign-in form rendered",
+      "passed": true,
+      "at": "2026-09-08T02:35:03.008Z"
+    },
+    {
+      "step": "sign-in returns to the partner dashboard",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/dashboard"
+      },
+      "at": "2026-09-08T02:35:03.180Z"
+    },
+    {
+      "step": "dashboard @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/dashboard",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Partner dashboard"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/config 200",
+          "GET /api/research/me 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/dashboard 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:06.158Z"
+    },
+    {
+      "step": "dashboard @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/dashboard",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Partner dashboard"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/dashboard 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:09.093Z"
+    },
+    {
+      "step": "links @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/links",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Referral links"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/links 404",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:11.926Z"
+    },
+    {
+      "step": "links @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/links",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Referral links"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/links 404"
+        ]
+      },
+      "at": "2026-09-08T02:35:14.741Z"
+    },
+    {
+      "step": "campaigns @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/campaigns",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Campaigns"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/campaigns 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:17.941Z"
+    },
+    {
+      "step": "campaigns @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/campaigns",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Campaigns"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/campaigns 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:20.812Z"
+    },
+    {
+      "step": "events @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/events",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Events"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/events 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:23.732Z"
+    },
+    {
+      "step": "events @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/events",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Events"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/events 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:26.592Z"
+    },
+    {
+      "step": "leads @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/leads",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Leads"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/leads 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:29.469Z"
+    },
+    {
+      "step": "leads @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/leads",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Leads"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/leads 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:32.617Z"
+    },
+    {
+      "step": "conversions @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/conversions",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Conversions"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/conversions 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:35.148Z"
+    },
+    {
+      "step": "conversions @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/conversions",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Conversions"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/conversions 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:37.649Z"
+    },
+    {
+      "step": "commissions @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/commissions",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Commissions"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/commissions 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:40.521Z"
+    },
+    {
+      "step": "commissions @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/commissions",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Commissions"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/commissions 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:43.369Z"
+    },
+    {
+      "step": "payouts @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/payouts",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Payouts"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/capabilities 404"
+        ]
+      },
+      "at": "2026-09-08T02:35:46.587Z"
+    },
+    {
+      "step": "payouts @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/payouts",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Payouts"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/capabilities 404"
+        ]
+      },
+      "at": "2026-09-08T02:35:49.763Z"
+    },
+    {
+      "step": "organizations @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/organizations",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Organizations"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/organizations 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:52.637Z"
+    },
+    {
+      "step": "organizations @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/organizations",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Organizations"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/organizations 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:55.509Z"
+    },
+    {
+      "step": "training @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/training",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Training and certification"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/training 200"
+        ]
+      },
+      "at": "2026-09-08T02:35:58.866Z"
+    },
+    {
+      "step": "training @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/training",
+        "sw": 370,
+        "iw": 370,
+        "main": 1,
+        "h1": [
+          "Training and certification"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/training 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:02.133Z"
+    },
+    {
+      "step": "resources @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/resources",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Resources"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/resources 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:04.972Z"
+    },
+    {
+      "step": "resources @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/resources",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Resources"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/resources 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:07.790Z"
+    },
+    {
+      "step": "compliance @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/compliance",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Compliance"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/compliance 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:10.709Z"
+    },
+    {
+      "step": "compliance @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/compliance",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Compliance"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/compliance 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:13.568Z"
+    },
+    {
+      "step": "support @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/support",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Support"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:16.462Z"
+    },
+    {
+      "step": "support @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/support",
+        "sw": 329,
+        "iw": 329,
+        "main": 1,
+        "h1": [
+          "Support"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:19.000Z"
+    },
+    {
+      "step": "security @1440: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/security",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Account security"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/security/sessions 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:21.890Z"
+    },
+    {
+      "step": "security @320: renders one main landmark, an h1, no overflow, no page errors, no API 5xx",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/security",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Account security"
+        ],
+        "errors": [],
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/security/sessions 200"
+        ]
+      },
+      "at": "2026-09-08T02:36:24.433Z"
+    }
+  ],
+  "pages": [
+    {
+      "320": {
+        "pathname": "/research/partners/dashboard",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Partner dashboard"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "PARTNERS\n\nPartner dashboard\n\nYour partner activity, without individual customer details.\n\nMy account\nBrowse catalog\nReferral links\nAccount support\n\nReferral eligibility is checked when you open the referral tools.\n\nAFFILIATE\nACTIVE\n\nLEADS\n\nNot reported\n\nLead counts are not reported by this dashboard. This is not a zero count.\n\nCOMMISSION-LINKED CONVERSIONS\n\n0\n\nCommission records with a positive ba",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/dashboard 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "dashboard-320.png",
+          "sha256": "9ea18bcb8c384926ee79b191a21386a1f5a6d64f6a3284ba13fbd8c9f5803a75"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/dashboard",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Partner dashboard"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "PARTNERS\n\nPartner dashboard\n\nYour partner activity, without individual customer details.\n\nMy account\nBrowse catalog\nReferral links\nAccount support\n\nReferral eligibility is checked when you open the referral tools.\n\nAFFILIATE\nACTIVE\n\nLEADS\n\nNot reported\n\nLead counts are not reported by this dashboard. This is not a zero count.\n\nCOMMISSION-LINKED CONVERSIONS\n\n0\n\nCommission records with a positive ba",
+        "api": [
+          "GET /api/config 200",
+          "GET /api/research/me 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/dashboard 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "dashboard-1440.png",
+          "sha256": "cff81cc23320619b9ee0f8e86a7dd58d2b61f74ef8a9b90b6f26734a99067aca"
+        }
+      },
+      "page": "dashboard",
+      "url": "http://127.0.0.1:5241/research/partners/dashboard"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/links",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Referral links"
+        ],
+        "alerts": [
+          "The recommendation service is not available right now. Please try again later.Refresh links"
+        ],
+        "status": [],
+        "text": "Dashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nReferral links\n\nMake a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify.\n\nThe recommendation service is not available right now. Please try again later.\n\nRefresh links\nWhat a recommendation means\n\nThes",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/links 404"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "links-320.png",
+          "sha256": "0046c45e8cd011b47ca8954a924f766c4596446797c12b7e38259fc7aa3952d2"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/links",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Referral links"
+        ],
+        "alerts": [
+          "The recommendation service is not available right now. Please try again later.Refresh links"
+        ],
+        "status": [],
+        "text": "Dashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nReferral links\n\nMake a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify.\n\nThe recommendation service is not available right now. Please try again later.\n\nRefresh links\nWhat a recommendation means\n\nThes",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/links 404",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "links-1440.png",
+          "sha256": "5d7ef77345f2383d4a92e215dd1c92501dd60bb3aef65114ab626cfe586a84f6"
+        }
+      },
+      "page": "links",
+      "url": "http://127.0.0.1:5241/research/partners/links"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/campaigns",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Campaigns"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCampaigns\n\nCampaign codes reported on your partner links. These records are not campaign registrations, approvals, or performance reports.\n\n🔒 A reported issued link does not establish current link eligibility,",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/campaigns 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "campaigns-320.png",
+          "sha256": "3a4c8319b55615c6c6163188b86a9e02be5a34285f4236eb470b5a08a5703e59"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/campaigns",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Campaigns"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCampaigns\n\nCampaign codes reported on your partner links. These records are not campaign registrations, approvals, or performance reports.",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/campaigns 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "campaigns-1440.png",
+          "sha256": "bde1206cc023b7437ffda884735bc250536856cdd91944728b89538d4b894c16"
+        }
+      },
+      "page": "campaigns",
+      "url": "http://127.0.0.1:5241/research/partners/campaigns"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/events",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Events"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nEvents\n\nEvent records returned for your server-verified organization relationships. A schedule marker is not event approval, registration, or attendance evidence.\n\n🔒 No medical claims, no income claims, no rec",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/events 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "events-320.png",
+          "sha256": "02d2c7b4e20b89b4f31d95b7f6da0a499cd70b409e9343bd02fec2009766a319"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/events",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Events"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nEvents\n\nEvent records returned for your server-verified organization relationships. A schedule marker is not event approval, registration,",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/events 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "events-1440.png",
+          "sha256": "1d191c6497a410191309fe69b89c6b47f65ec2d89323dd0b8d8f87e5f388b469"
+        }
+      },
+      "page": "events",
+      "url": "http://127.0.0.1:5241/research/partners/events"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/leads",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Leads"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nLeads\n\nRecorded attribution activity grouped by month and channel. Aggregate events, never identified people.\n\n🔒 Lead reporting is aggregate only. You will never see who a lead is: no names, no contact details",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/leads 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "leads-320.png",
+          "sha256": "7987a94ddfbedcae8fa90f5acafcfb6c5a63d12aec3d652ff12036e29ada06b2"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/leads",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Leads"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nLeads\n\nRecorded attribution activity grouped by month and channel. Aggregate events, never identified people.\n\n🔒 Lead reporting is aggreg",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/leads 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "leads-1440.png",
+          "sha256": "edf9e6cda6253f9d15af2d196bc035b8449711a3fef8b2d1720a5533c85bb22f"
+        }
+      },
+      "page": "leads",
+      "url": "http://127.0.0.1:5241/research/partners/leads"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/conversions",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Conversions"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nConversions\n\nAggregate referral conversion records by period. Legacy membership activations and renewals are historical reporting fields only; approved customer access does not require paid membership.\n\n🔒 Conv",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/conversions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "conversions-320.png",
+          "sha256": "2e397885ff739e308f97077f2b9a6c7642e9d2ea63a95e44e20ede0a1acd285c"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/conversions",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Conversions"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nConversions\n\nAggregate referral conversion records by period. Legacy membership activations and renewals are historical reporting fields o",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/conversions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "conversions-1440.png",
+          "sha256": "ec0e88305ece22edaaa6f51e5b9994fafc92b79be1a15a584bdd21fc90e618c6"
+        }
+      },
+      "page": "conversions",
+      "url": "http://127.0.0.1:5241/research/partners/conversions"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/commissions",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Commissions"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCommissions\n\nRecorded affiliate commission entries for this account. Ledger status is reported evidence, not a promise of income or payout.\n\n🔒 Affiliate commission and wholesale ledgers stay separate. This pag",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/commissions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "commissions-320.png",
+          "sha256": "29a4f994f74014fc8b61ed5ee676ea1a81e2f3863ca487bdc338787aa234b399"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/commissions",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Commissions"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCommissions\n\nRecorded affiliate commission entries for this account. Ledger status is reported evidence, not a promise of income or payout",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/commissions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "commissions-1440.png",
+          "sha256": "f1fbfe7ead14a04da43b72279814afe40a99212b255fa9d980b74bcd82e68817"
+        }
+      },
+      "page": "commissions",
+      "url": "http://127.0.0.1:5241/research/partners/commissions"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/payouts",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Payouts"
+        ],
+        "alerts": [],
+        "status": [
+          "Provider connection pendingConnectingPartner payouts are being configured."
+        ],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nPayouts\n\nRead-only payout batch records and reported setup status. This page does not schedule, submit, retry, or promise a payment.\n\n🔒 No bank details or tax documents are collected here. A reported status do",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/capabilities 404"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "payouts-320.png",
+          "sha256": "5305b58f342077ae338b2baf349367f91eaed2663062c57e18f1ab41e6f37c08"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/payouts",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Payouts"
+        ],
+        "alerts": [],
+        "status": [
+          "Provider connection pendingConnectingPartner payouts are being configured."
+        ],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nPayouts\n\nRead-only payout batch records and reported setup status. This page does not schedule, submit, retry, or promise a payment.\n\n🔒 N",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/capabilities 404"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "payouts-1440.png",
+          "sha256": "15d3f75617a80f41e640a945e9e503562c73b5b4620553bdc00596617447953d"
+        }
+      },
+      "page": "payouts",
+      "url": "http://127.0.0.1:5241/research/partners/payouts"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/organizations",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Organizations"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nOrganizations\n\nYour server-reported organization relationships. Membership, role, referral eligibility, and payment authority remain separate decisions.\n\nNot a tier, not a team, not a downline.\n\nOrganizations e",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/organizations 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "organizations-320.png",
+          "sha256": "b8654e5e3d7be87575acf3175b8e249c0e778ceb3d000eff3df670526f28094d"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/organizations",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Organizations"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nOrganizations\n\nYour server-reported organization relationships. Membership, role, referral eligibility, and payment authority remain separ",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/organizations 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "organizations-1440.png",
+          "sha256": "a1415eb3f32fbab307fd6df3905f861bc22258cdc283759ed312330b4dd14f82"
+        }
+      },
+      "page": "organizations",
+      "url": "http://127.0.0.1:5241/research/partners/organizations"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/training",
+        "sw": 370,
+        "iw": 370,
+        "main": 1,
+        "h1": [
+          "Training and certification"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nTraining and certification\n\nCertification comes before sharing. These modules cover the program, the compliance rules, and the approved content library.\n\nWHAT THE CURRICULUM COVERS\n\nThe program, honestly\n\nWhat ",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/training 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "training-320.png",
+          "sha256": "29ba4854088e7c6351bc95d6bc713b9b020b8e59ec737d718635e23b9f2fc282"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/training",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Training and certification"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nTraining and certification\n\nCertification comes before sharing. These modules cover the program, the compliance rules, and the approved co",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/training 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "training-1440.png",
+          "sha256": "10b3c2884e7af6f359e84f5595c6fd03415b96bfd402d3ee70e57dc10393d47d"
+        }
+      },
+      "page": "training",
+      "url": "http://127.0.0.1:5241/research/partners/training"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/resources",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Resources"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "Dashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nResources\n\nEach item Xenios publishes for your role carries one of four usage labels: Approved to share (use exactly as published), Private working material (yours to read, not to forward), Training or internal use (onboarding and internal reference), or Dr",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/resources 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "resources-320.png",
+          "sha256": "19565a261919582dcb3d341d2cac09d9753dfdcd7f20880b0b8a6232d4894edc"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/resources",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Resources"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "Dashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nResources\n\nEach item Xenios publishes for your role carries one of four usage labels: Approved to share (use exactly as published), Private working material (yours to read, not to forward), Training or internal use (onboarding and internal reference), or Dr",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/partner/resources 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "resources-1440.png",
+          "sha256": "25df2b5e914e47d52f49f744b8c73be677fcca327d5dbe229ccc53fbe191c102"
+        }
+      },
+      "page": "resources",
+      "url": "http://127.0.0.1:5241/research/partners/resources"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/compliance",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Compliance"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCompliance\n\nThe rules are short and hard. Everything shareable follows them; anything that does not is out of the program.\n\nWHAT YOU MAY SAY\nDescribe the program factually: approved customer access is education",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/compliance 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "compliance-320.png",
+          "sha256": "9c263ab00658553e8501514d59c1df36c729c5f6df1dcbb0193b062c6b2a274a"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/compliance",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Compliance"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nCompliance\n\nThe rules are short and hard. Everything shareable follows them; anything that does not is out of the program.\n\nWHAT YOU MAY S",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/compliance 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "compliance-1440.png",
+          "sha256": "70e17ccd1d88fd67a71a3fdef2a83a7ae54e9a59c8a63d554af307d8bd935ad0"
+        }
+      },
+      "page": "compliance",
+      "url": "http://127.0.0.1:5241/research/partners/compliance"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/support",
+        "sw": 329,
+        "iw": 329,
+        "main": 1,
+        "h1": [
+          "Support"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nSupport\n\nContact the Xenios team about your partner account or find the relevant account page. This page provides guidance, not a support inbox or ticket status.\n\nMy account\nSign in\n\nUse your ordinary Xenios si",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "support-320.png",
+          "sha256": "bd03e4dee84529e05191457534e67beb02151066754edc5e2f738d94d7b3c81a"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/support",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Support"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nSupport\n\nContact the Xenios team about your partner account or find the relevant account page. This page provides guidance, not a support ",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "support-1440.png",
+          "sha256": "520d4de945903a126a09ea05206b7ac89d15e0578a4adf4a321565ebe3be88e2"
+        }
+      },
+      "page": "support",
+      "url": "http://127.0.0.1:5241/research/partners/support"
+    },
+    {
+      "320": {
+        "pathname": "/research/partners/security",
+        "sw": 320,
+        "iw": 320,
+        "main": 1,
+        "h1": [
+          "Account security"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nExplore Xenios\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nAccount security\n\nThe basics that keep your rep account yours. Most of this is habits; the rest is knowing what the team will never ask for.\n\nTHE BASICS\n\nOne account, one person\n\nYour rep account is yours alone",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/security/sessions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "security-320.png",
+          "sha256": "f452a77450479923420b625952c0d2ae94e1f3a55e369dc2923897a81ef80851"
+        }
+      },
+      "1440": {
+        "pathname": "/research/partners/security",
+        "sw": 1440,
+        "iw": 1440,
+        "main": 1,
+        "h1": [
+          "Account security"
+        ],
+        "alerts": [],
+        "status": [],
+        "text": "xenios\nresearch\nBack to gateway\nCare\nResearch\nHow it works\nQuality\nFAQ\nAbout\nPartners\nPolicies\nContact\nSupport\nSign in\nDashboard\nLinks\nCampaigns\nEvents\nLeads\nConversions\nCommissions\nPayouts\nOrganizations\nTraining\nResources\nCompliance\nSupport\nSecurity\n\nPARTNERS\n\nAccount security\n\nThe basics that keep your rep account yours. Most of this is habits; the rest is knowing what the team will never ask fo",
+        "api": [
+          "GET /api/research/me 200",
+          "GET /api/config 200",
+          "GET /api/research/member/me 200",
+          "GET /api/research/catalog 200",
+          "GET /api/research/partner/security/sessions 200"
+        ],
+        "errors": [],
+        "screenshot": {
+          "file": "security-1440.png",
+          "sha256": "3dd7628f9c2a39d9dbab591b476cab073814e04f0e5f2be4523209f4795c47cc"
+        }
+      },
+      "page": "security",
+      "url": "http://127.0.0.1:5241/research/partners/security"
+    }
+  ],
+  "pendingAfterNavigate": [],
+  "limitations": [
+    "Every partner table is empty by construction; this proves the pages' empty and pending states render, not their populated states.",
+    "The preview's own fixtures answer /partner/me and /partner/dashboard; the other partner APIs are the real registrar over an empty in-memory port.",
+    "Synthetic persona, no real account, no database, no production system."
+  ]
+}

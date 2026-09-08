@@ -1,0 +1,109 @@
+{
+  "observedAt": "2026-09-08T02:40:25.354Z",
+  "out": [
+    {
+      "page": "training",
+      "iw": 320,
+      "sw": 370,
+      "offenders": [
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "The member hip, hone tlyWhat the re earch member hip i , wha"
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Privacy and  en itive dataWhat you will never  ee about a me"
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Product lane Which lane a product  it  in and what may be  a"
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Di clo ure Di clo ing the rep relation hip vi ibly, in the  "
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Claim  re triction The wording limit  that apply to everythi"
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "No diagno i  and no do ingWhy a rep never advi e  on a condi"
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Lead handlingWhat to do with an intere ted per on, and what "
+        },
+        {
+          "right": 370,
+          "w": 354,
+          "tag": "div",
+          "cls": "card.flex.flex-wrap.items-start",
+          "minW": "auto",
+          "ws": "normal",
+          "display": "flex",
+          "text": "Me aging boundarie Where a conver ation belong  and where it"
+        }
+      ]
+    },
+    {
+      "page": "support",
+      "iw": 320,
+      "sw": 329,
+      "offenders": [
+        {
+          "right": 329,
+          "w": 288,
+          "tag": "a",
+          "cls": "btn.btn-primary.mt-4",
+          "minW": "48px",
+          "ws": "nowrap",
+          "display": "inline-flex",
+          "text": "Email team@xenio technology.com"
+        }
+      ]
+    }
+  ]
+}
