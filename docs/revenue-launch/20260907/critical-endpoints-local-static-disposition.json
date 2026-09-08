@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "kind": "critical-endpoint-local-static-disposition",
+  "qualificationStatus": "NOT_QUALIFIED",
+  "strictVerdict": "REGRESSION",
+  "strictCounts": {
+    "SAME": 27,
+    "INTENTIONAL_CHANGE": 0,
+    "REGRESSION": 3,
+    "HUMAN_REVIEW_REQUIRED": 0
+  },
+  "intentionalChangeAllowances": [],
+  "observedAt": "2026-09-07T23:42:21.237Z",
+  "staticReviewAt": "2026-09-07T23:49:21.9376045Z",
+  "source": {
+    "distUnchanged": true,
+    "candidateSha": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+    "entrySha256": "c2b0fde79855c5fadaff552ecd5d9e8c832b50544248c0a8adf3b1568e2c171c",
+    "configurationUnchanged": true,
+    "candidateTree": "6e7965d91ba4a01e416bcc1a7485b0cde80acf27",
+    "baselineSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "checkoutIdentityIsNotNewBuildAttestation": true
+  },
+  "baseline": {
+    "path": "docs/revenue-launch/20260907/critical-endpoints-live-ff3c496.json",
+    "sha256": "8999379bbd5d2eb1124ffb265e36048880e66d8dd0f91154cbdff25627a7f81f",
+    "capturedAt": "2026-09-07T23:08:47.726Z"
+  },
+  "comparison": {
+    "endpoints": 30,
+    "differences": [
+      {
+        "method": "GET",
+        "path": "/api/care/status",
+        "classification": "REGRESSION",
+        "baselineStatus": 200,
+        "candidateStatus": 0,
+        "baselineState": [
+          "accessRequests.acceptingRequests=true",
+          "capability.enabled=false",
+          "capability.state=disabled"
+        ],
+        "candidateState": [
+          null
+        ],
+        "candidateElapsedMs": 10012,
+        "candidateError": "The operation was aborted due to timeout",
+        "diffs": [
+          "status 200 -> 0",
+          "content-type application/json -> -",
+          "header content-type: application/json; charset=utf-8 -> -",
+          "header x-robots-tag: noindex, nofollow -> -",
+          "header cache-control: no-store -> -",
+          "header referrer-policy: no-referrer -> -",
+          "feature-state accessRequests.acceptingRequests=true,capability.enabled=false,capability.state=disabled -> -",
+          "shape-kind json -> unreachable"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/care/access-request/status",
+        "classification": "REGRESSION",
+        "baselineStatus": 200,
+        "candidateStatus": 200,
+        "baselineState": [
+          "acceptingRequests=true"
+        ],
+        "candidateState": [
+          "acceptingRequests=false"
+        ],
+        "candidateElapsedMs": 6,
+        "candidateError": null,
+        "diffs": [
+          "feature-state acceptingRequests=true -> acceptingRequests=false"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/care/tebra/configuration",
+        "classification": "REGRESSION",
+        "baselineStatus": 200,
+        "candidateStatus": 0,
+        "baselineState": [
+          "careAvailable=false",
+          "portal.status=care_unavailable",
+          "scheduling.mode=disabled",
+          "scheduling.status=care_unavailable"
+        ],
+        "candidateState": [
+          null
+        ],
+        "candidateElapsedMs": 10002,
+        "candidateError": "The operation was aborted due to timeout",
+        "diffs": [
+          "status 200 -> 0",
+          "content-type application/json -> -",
+          "header content-type: application/json; charset=utf-8 -> -",
+          "header x-robots-tag: noindex, nofollow -> -",
+          "header cache-control: no-store -> -",
+          "header referrer-policy: no-referrer -> -",
+          "feature-state careAvailable=false,portal.status=care_unavailable,scheduling.mode=disabled,scheduling.status=care_unavailable -> -",
+          "shape-kind json -> unreachable"
+        ]
+      }
+    ],
+    "capturedAt": "2026-09-07T23:42:00.656Z"
+  },
+  "controls": {
+    "productionWrites": false,
+    "providerRequestsReachedOwnedRefusalFixture": 3,
+    "newLaunchDuringStaticFollowup": false,
+    "intervalRegistrationsSuppressed": 6,
+    "rejectedRequests": 0,
+    "exactUnauthenticatedGets": 30,
+    "productionQueries": false,
+    "realCredentialsUsed": false,
+    "deniedPostAttempts": 1,
+    "timerRegistrationsSuppressed": 9,
+    "allChildrenTerminated": true,
+    "actualBind": {
+      "address": "127.0.0.1",
+      "family": "IPv4",
+      "port": 59072
+    },
+    "timerCallbacksExecuted": 0,
+    "enforcementReceiptsReconciled": true
+  },
+  "localConfiguration": {
+    "liveEnvironmentInspectionPerformed": false,
+    "supabase": "synthetic keys; owned loopback URL only; Auth 401 and data 503",
+    "absentProviderInputs": [
+      "DATABASE_URL",
+      "RESEND_API_KEY",
+      "REPLIT_CONNECTORS_HOSTNAME",
+      "REPL_IDENTITY",
+      "WEB_REPL_RENEWAL"
+    ],
+    "booleanFlags": {
+      "RESEARCH_PUBLIC": "false",
+      "RESEARCH_INDEXABLE": "false",
+      "RESEARCH_RESOURCE_HUB_ENABLED": "false",
+      "RESEARCH_FOUNDING_ACTIVATION_ENABLED": "false",
+      "RESEARCH_MEMBERSHIP_BILLING_ENABLED": "false",
+      "RESEARCH_REFERRALS_ENABLED": "false",
+      "RESEARCH_REFERRAL_V1_ENABLED": "false",
+      "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED": "false",
+      "RESEARCH_EARLY_ACCESS_CART_ENABLED": "false",
+      "RESEARCH_EARLY_ACCESS_ENABLED": "true",
+      "RESEARCH_EARLY_ACCESS_OPEN_ACCESS": "true",
+      "RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED": "true",
+      "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED": "true",
+      "AFFILIATE_SYSTEM_ENABLED": "true",
+      "AFFILIATE_PORTAL_ENABLED": "true",
+      "AFFILIATE_CODES_ENABLED": "true"
+    },
+    "absentCareFlags": [
+      "CARE_ENABLED",
+      "CARE_ENABLE_APPROVED"
+    ],
+    "liveEnvironmentDifference": "Not independently enumerated. Production baseline directly records Care disabled, accessRequests.acceptingRequests=true and Tebra care_unavailable; it does not reveal exact live environment values.",
+    "email": "unavailable",
+    "absentTebraVariables": [
+      "TEBRA_SCHEDULING_ENABLED",
+      "TEBRA_SCHEDULING_MODE",
+      "TEBRA_SCHEDULING_URL",
+      "TEBRA_SCHEDULING_EMBED_SCRIPT_URL",
+      "TEBRA_PATIENT_PORTAL_URL",
+      "TEBRA_ALLOWED_ORIGINS",
+      "TEBRA_TELEHEALTH_ENABLED",
+      "TEBRA_PRACTICE_NAME",
+      "TEBRA_LOCATION_LABEL",
+      "TEBRA_PROVIDER_LABEL",
+      "TEBRA_ENVIRONMENT"
+    ]
+  },
+  "staticReview": {
+    "packageFileDifferences": "Only qrcode-generator 2.0.4 and jsqr 1.4.0 additions in the inspected package.json/package-lock.json diff.",
+    "sourceBlobs": [
+      {
+        "path": "server/index.ts",
+        "baselineBlob": "6e505453396f8a2491e159ed60f5de86976cd4ed",
+        "candidateBlob": "6e505453396f8a2491e159ed60f5de86976cd4ed",
+        "identical": true
+      },
+      {
+        "path": "server/care/index.ts",
+        "baselineBlob": "fb673481a4c6bbfa9e81e3f1bbcaf2808be58119",
+        "candidateBlob": "fb673481a4c6bbfa9e81e3f1bbcaf2808be58119",
+        "identical": true
+      },
+      {
+        "path": "server/care/manual-access.ts",
+        "baselineBlob": "f8d467ae6e2bbd3922ba34c4f2da43d531620b42",
+        "candidateBlob": "f8d467ae6e2bbd3922ba34c4f2da43d531620b42",
+        "identical": true
+      },
+      {
+        "path": "server/care/production-deps.ts",
+        "baselineBlob": "13c259d640c2d5f86e6a3aa35b2f5f6802f52491",
+        "candidateBlob": "13c259d640c2d5f86e6a3aa35b2f5f6802f52491",
+        "identical": true
+      },
+      {
+        "path": "server/care/capability.ts",
+        "baselineBlob": "de6d73404c2404deb0c494a74fb5bf388253542d",
+        "candidateBlob": "de6d73404c2404deb0c494a74fb5bf388253542d",
+        "identical": true
+      },
+      {
+        "path": "server/care/access.ts",
+        "baselineBlob": "a8e4bea90630ecde7998affeab5ab052ff7fad35",
+        "candidateBlob": "a8e4bea90630ecde7998affeab5ab052ff7fad35",
+        "identical": true
+      },
+      {
+        "path": "server/care/tebra-scheduling.ts",
+        "baselineBlob": "e7e39aab3300af67e8aec939e9a898aa296e00ea",
+        "candidateBlob": "e7e39aab3300af67e8aec939e9a898aa296e00ea",
+        "identical": true
+      },
+      {
+        "path": "server/care/tebra-public-authority.ts",
+        "baselineBlob": "81262aa27abcbfa2323cd7fcc935cf351b8e5843",
+        "candidateBlob": "81262aa27abcbfa2323cd7fcc935cf351b8e5843",
+        "identical": true
+      },
+      {
+        "path": "server/services/email-config.ts",
+        "baselineBlob": "91b3dfd13cd2313346dc2ce8d973df5638180b25",
+        "candidateBlob": "91b3dfd13cd2313346dc2ce8d973df5638180b25",
+        "identical": true
+      },
+      {
+        "path": "server/supabase.ts",
+        "baselineBlob": "23abbc867d21745c42ed2b5b581522aefb11deec",
+        "candidateBlob": "23abbc867d21745c42ed2b5b581522aefb11deec",
+        "identical": true
+      },
+      {
+        "path": "server/services/email.ts",
+        "baselineBlob": "0e0679875ff0ea336b49766caa4128abe2402c2e",
+        "candidateBlob": "0e0679875ff0ea336b49766caa4128abe2402c2e",
+        "identical": true
+      },
+      {
+        "path": "shared/care/contracts.ts",
+        "baselineBlob": "ac99623c3a795e9b00699a1347078861bd96b3bb",
+        "candidateBlob": "ac99623c3a795e9b00699a1347078861bd96b3bb",
+        "identical": true
+      },
+      {
+        "path": "shared/care/manual-access.ts",
+        "baselineBlob": "f3ce3422b8b050170ebd3d6d6831b6cfd1bcf310",
+        "candidateBlob": "f3ce3422b8b050170ebd3d6d6831b6cfd1bcf310",
+        "identical": true
+      },
+      {
+        "path": "shared/care/tebra-experience.ts",
+        "baselineBlob": "192b1e8a2ac6f03311f9423619edd8016f539dee",
+        "candidateBlob": "192b1e8a2ac6f03311f9423619edd8016f539dee",
+        "identical": true
+      },
+      {
+        "path": "shared/care/paths.ts",
+        "baselineBlob": "ef4839ccde7e87989196cd69d1040dd81e3e5df9",
+        "candidateBlob": "ef4839ccde7e87989196cd69d1040dd81e3e5df9",
+        "identical": true
+      },
+      {
+        "path": "server/care-document-csp.ts",
+        "baselineBlob": "72d203f4fd103b43f506578f619021a4b8839a77",
+        "candidateBlob": "72d203f4fd103b43f506578f619021a4b8839a77",
+        "identical": true
+      },
+      {
+        "path": "server/routes.ts",
+        "baselineBlob": "2d573f70418514bebaef7273f54ac9510c0bc40b",
+        "candidateBlob": "2d573f70418514bebaef7273f54ac9510c0bc40b",
+        "identical": true
+      },
+      {
+        "path": "server/research/member-auth.ts",
+        "baselineBlob": "7121e4c13138956cdbcbf627481de66dcae4dfe3",
+        "candidateBlob": "7121e4c13138956cdbcbf627481de66dcae4dfe3",
+        "identical": true
+      }
+    ],
+    "dependencyLocks": [
+      {
+        "package": "@supabase/supabase-js",
+        "baselineVersion": "2.108.2",
+        "candidateVersion": "2.108.2",
+        "installedVersion": "2.108.2",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "@supabase/postgrest-js",
+        "baselineVersion": "2.108.2",
+        "candidateVersion": "2.108.2",
+        "installedVersion": "2.108.2",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "@supabase/auth-js",
+        "baselineVersion": "2.108.2",
+        "candidateVersion": "2.108.2",
+        "installedVersion": "2.108.2",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "@supabase/realtime-js",
+        "baselineVersion": "2.108.2",
+        "candidateVersion": "2.108.2",
+        "installedVersion": "2.108.2",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "ws",
+        "baselineVersion": "8.21.0",
+        "candidateVersion": "8.21.0",
+        "installedVersion": "8.21.0",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "express",
+        "baselineVersion": "5.2.1",
+        "candidateVersion": "5.2.1",
+        "installedVersion": "5.2.1",
+        "lockEntryIdentical": true
+      },
+      {
+        "package": "resend",
+        "baselineVersion": "4.8.0",
+        "candidateVersion": "4.8.0",
+        "installedVersion": "4.8.0",
+        "lockEntryIdentical": true
+      }
+    ],
+    "conclusion": "No direct source change found in the inspected Care handlers, registration, provider configuration or relevant dependency lock entries. This bounded static result does not prove production parity or absence of every possible runtime regression."
+  },
+  "inference": {
+    "careTimeouts": "Both handlers await loadCapabilityStatus; fixture returns 503 to care_capabilities; installed PostgREST retries 503 using setTimeout; two 1000ms timers were suppressed; capture aborted at roughly 10 seconds. This explains the observed local condition without qualifying the live adapter.",
+    "requestReadiness": "Manual access readiness requires supabaseConfigured plus an available email API key. Local Supabase presence is synthetic and email inputs are absent, so acceptingRequests=false follows from the unchanged handler."
+  },
+  "deniedPost": {
+    "smokeJobInvoked": false,
+    "outboxStaticEvidence": {
+      "immediateTick": false,
+      "candidateBlob": "d966c3d7c51c34b2e840d13e13c95f0e18bd1f48",
+      "baselineBlob": "d966c3d7c51c34b2e840d13e13c95f0e18bd1f48",
+      "rootRegistration": "server/index.ts:1299",
+      "description": "Only interval registration, with no immediate tick; no timer callback executed.",
+      "worker": "server/research/outbox.ts:609-620"
+    },
+    "observedTarget": "owned loopback refusal-provider port",
+    "startupProvenance": null,
+    "reproductionPerformed": false,
+    "reason": "The retained trace omitted path, callsite and timestamp; exact attribution cannot be recovered without another run. Earlier startup-POST shorthand is withdrawn.",
+    "transmitted": false,
+    "path": null,
+    "purpose": null,
+    "observedMethod": "POST"
+  },
+  "limitations": [
+    "Known-application Node instrumentation, not OS containment for arbitrary hostile code.",
+    "Suppressing timers changes retry/timeout behavior.",
+    "An optional generated master-offering bindings read and native addon loading were denied.",
+    "No enabled Resource Hub provider/storage, authenticated journey, job, notification or production configuration was qualified.",
+    "Strict REGRESSION and all original artifacts remain unchanged; no expectations were edited."
+  ],
+  "externalArtifacts": {
+    "earlierFailureArtifactsPreserved": [
+      "receipts/",
+      "run-02/receipts/"
+    ],
+    "files": [
+      {
+        "externalRelativePath": "RESULT.md",
+        "sha256": "a04accd620858925ec03093892520dcf0574dc881b083a8ce9be45b3f84daa80"
+      },
+      {
+        "externalRelativePath": "compare-local.mjs",
+        "sha256": "f5fb11af6b4162b9e30cbaaad23d71fd8d42b7237d1b7724dd887b6e8b7f4c85"
+      },
+      {
+        "externalRelativePath": "isolated-child.cjs",
+        "sha256": "1898d04b04790a23059f62f293a2921b70c619b58274ed4bdada89425a516506"
+      },
+      {
+        "externalRelativePath": "allowed-paths.json",
+        "sha256": "ae618c8a2fd4e91119685d038752901e65584f50d18f746ad48e54f7b84abed8"
+      },
+      {
+        "externalRelativePath": "run-03/receipts/qualification.json",
+        "sha256": "e9b7ca96052c44d2d9eeafa6bfb95bca4077435aa60e6e4320ea6700ac283702"
+      },
+      {
+        "externalRelativePath": "run-03/receipts/candidate-30.json",
+        "sha256": "d887c01f3cb604120850a5a4cc751fb031b58f640111a8426db6085f3fcaec7d"
+      },
+      {
+        "externalRelativePath": "run-03/receipts/comparison-no-waivers.json",
+        "sha256": "c8fc7ae53af0351e45b69a662bb8ddafd0f92b0a511e19f2b6fa8f8b8be64794"
+      },
+      {
+        "externalRelativePath": "run-03/receipts/without-provider.instrumentation.json",
+        "sha256": "8fd7ffdb6220c4c93b6f0207b8b75dbbe37757ea04a6bf787a4e77c9f286aeb1"
+      },
+      {
+        "externalRelativePath": "run-03/receipts/unavailable-loopback-provider.instrumentation.json",
+        "sha256": "4007a8c9d4694ce176d426ed2980c32702ec4df618aa41c21981525a0b47db85"
+      }
+    ],
+    "directoryHint": "CODEX_HOME/tmp/xenios-resource-endpoint-comparison-20260907"
+  }
+}

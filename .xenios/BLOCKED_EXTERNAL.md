@@ -1,5 +1,29 @@
 # Externally blocked work
 
+## Current account/partner and Resource Hub checkpoint — 2026-09-07
+
+The exact Universal Account and Partner Access release is deployed at
+`ff3c496245739233b71e46f9e5d6e26af9d57017`, Render
+`dep-dafcm567bikc7382rhng`. Its two authorized migrations and original
+postchecks passed. A's supported SQL connection worked again at 03:09:13 UTC on September 8;
+no executor handoff or repeated GO is needed. See
+`docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json`
+and the original production deployment report.
+
+The separate Resource Hub candidate remains in local qualification, with no
+new production authorization. The original PII corpus remains unrecovered. A prepared a 67-byte version-2
+replacement from verified name fields; its exact hash approval and coverage
+decision are pending. The names remain outside Git; no PII scan is claimed. Enabled Supabase Storage/API
+behavior is not proved by the local memory and PGlite evidence. Exact-source
+review, final full-suite and endpoint checks continue; see
+`docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md`.
+
+Real-account approval/claim, partner activation and notification effects still
+require separate account-specific authorization. This is distinct from the
+completed account/partner deployment.
+
+## Earlier dated observations (preserved; superseded where stated above)
+
 - Seth universal launch (2026-09-05): the integrated access/partner closure is
   green (426/426 focused; release-control-plane 51 PASS + 1 intentional skip),
   and the corrected complete frozen-source suite is green (875 passed files,

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-07T14:36:00Z",
+  "updatedAt": "2026-09-07T23:34:35.856Z",
   "sethRevenueLaunch": {
     "status": "ACTIVE_ACCOUNT_PARTNER_ACCESS_DEPLOYED_PENDING_REAL_USER_VERIFICATION",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
-    "productionReverifiedAt": "2026-09-05T13:03:20.102167-05:00",
+    "productionReverifiedAt": "2026-09-07T23:28:22.250204Z",
     "productionSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
     "renderService": "srv-d8s9vej7uimc7384dfcg",
     "renderDeploy": "dep-dafcm567bikc7382rhng",
@@ -46,8 +46,8 @@
     "migrationVerificationScope": "Complete version-list coverage only; remote SQL bytes and object parity are unverified. Discrepancies dispositioned for later production preflight; no repair/apply authority.",
     "renderResumeRead": "2026-09-07 exact commit-pinned deploy live; autoDeploy off; 60s observation PASS",
     "currentPriority": "UNIVERSAL_APPROVED_USER_AND_PARTNER_VERTICAL_SLICE",
-    "scopeNote": "Universal approved-user and partner launch. Founder removed paid memberships as an access prerequisite; canonical identities, approval history and billing facts are preserved. No production mutation, live grant, invitation, notification, payment or shipment authorized.",
-    "latestEngineeringCheckpointSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "scopeNote": "Universal Account and Partner Access was deployed under exact founder authorization on 2026-09-07. Paid membership is not an access prerequisite. That authorization is completed; no new application SHA, Hub migration/activation, real account approval/claim, partner activation, notification, payment or shipment is authorized.",
+    "latestEngineeringCheckpointSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
     "latestEngineeringCheckpointPushed": true,
     "sourceLineageCheckpointSha": "1ebd3fdc043705095df09bd6e2707ac095c325c1",
     "quantityWriteCheckpointSha": "585c4a091d9058f6135ba1df9cfd9a5a71d4dd4f",
@@ -82,7 +82,7 @@
     "productionAccountPartnerSchemaRead": "docs/revenue-launch/20260905/backend/production-account-partner-schema.json",
     "productionAccountPartnerSchemaReadSha256": "9254b6d9b7e8717c42b23e9752cb2eaccf90d43d9f1812d77eac44990d21cf77",
     "productionAccountPartnerSchemaObservedAt": "2026-09-05T17:43:06.5168-05:00",
-    "productionAuthoritiesPresent": false,
+    "productionAuthoritiesPresent": true,
     "productionReferralV1AuthoritiesPresent": false,
     "integratedValidation": {
       "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
@@ -232,50 +232,27 @@
     "productionDeploymentReport": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
     "productionDeploymentHandoff": ".xenios/handoffs/2026-09-07T14-36-00Z-XENIOS-ACCOUNT-PARTNER-PRODUCTION-20260907.md",
     "rollbackUsed": false,
-    "productionRecordsReconciledAt": "2026-09-07T14:36:00Z"
+    "productionRecordsReconciledAt": "2026-09-07T23:34:35.856Z",
+    "productionAuthorityEvidence": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+    "productionAuthorityEvidenceScope": "Original passing migration postchecks; fresh history re-read recorded separately"
   },
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+  "observedHead": "ff3c496245739233b71e46f9e5d6e26af9d57017",
   "lastDocumentedProductionRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-    "rollback": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-    "deployId": "dep-dad08h740ujc73aprfcg",
-    "liveSince": "2026-09-03T23:36:32Z",
-    "deployedFromBranch": "claude/care-admin-reliability-20260903",
-    "branch": "release/early-access-code-session-checkout",
+    "sha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "tree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
     "status": "live",
-    "previousLiveDeploys": [
-      {
-        "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
-        "deployId": "dep-daatp715efls738v00dg",
-        "liveAt": "2026-08-31T19:58:17Z",
-        "note": "Open Xenios Care with manual access requests; pre-deploy rollback target of the Care admin deployment"
-      },
-      {
-        "sha": "72b6f1380e13f09dec67684035ed44a1d2740408",
-        "deployId": "dep-daarr3ajnfac73a93co0",
-        "liveAt": "2026-08-31T17:45:49Z"
-      },
-      {
-        "sha": "abe03ca3a836dffb10699c0c39883119e2a8f816",
-        "deployId": "dep-daaqncid0e5s739067tg",
-        "liveAt": "2026-08-31T16:29:36Z"
-      },
-      {
-        "sha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
-        "deployId": "dep-daabqagn74is73aejn80",
-        "liveAt": "2026-08-30T23:31:55Z",
-        "note": "final recut RC on Samuel's exact-SHA GO"
-      },
-      {
-        "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
-        "deployId": "dep-da94g05g1s2s7396lkv0",
-        "liveAt": "2026-08-29T02:47:15Z",
-        "note": "rollback deployment after eb659d81"
-      }
-    ],
-    "note": "Current live production is the commit-pinned Care admin reliability deployment dep-dad08h740ujc73aprfcg of db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (records successor of tested code ace27886dd3b76a8e5dcc982111bb7062e9e451b), deployed on the founder exact-SHA GO (2026-09-03). The release branch remains at 8cca3373047a2161f5360541a9b2fc5c71f8063f (an ancestor) until PR #306 is merged; auto-deploy is off."
+    "branch": "release/early-access-code-session-checkout",
+    "deployedFromBranch": "codex/xenios-seth-revenue-launch-20260905",
+    "rollback": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "deployId": "dep-dafcm567bikc7382rhng",
+    "liveSince": "2026-09-07T14:33:55.150237Z",
+    "observedAt": "2026-09-07T23:28:22.250204Z",
+    "autoDeploy": "off",
+    "scope": "Universal Account and Partner Access",
+    "receipt": "docs/revenue-launch/20260907/account-partner-readonly-reverification.json",
+    "note": "Exact authorized account/partner release is live. Original two migration postchecks, public/read-only smoke and 60-second observation passed; rollback unused. Fresh A SQL and Render identity reads confirm current state. Real-user verification remains separately authorized work. The release branch was not merged or rebound."
   },
   "nextRelease": {
     "name": "XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29",
@@ -584,18 +561,21 @@
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   },
-  "nextReleaseScanBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+  "nextReleaseScanBase": "ff3c496245739233b71e46f9e5d6e26af9d57017",
   "reconciliation": {
-    "at": "2026-09-03T23:48:00Z",
-    "liveBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-    "liveDeployId": "dep-dad08h740ujc73aprfcg",
-    "supersededBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+    "at": "2026-09-07T23:34:35.856Z",
+    "liveBase": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "liveDeployId": "dep-dafcm567bikc7382rhng",
+    "supersededBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
     "releaseBranchFastForwarded": false,
     "deployed": true,
-    "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-    "migrationsApplied": false,
+    "deployedSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "migrationsApplied": true,
+    "readOnlyReverification": true,
+    "productionWritesDuringReverification": false,
     "serviceSettingsChanged": false,
-    "environmentChanged": false
+    "environmentChanged": false,
+    "evidence": "docs/revenue-launch/20260907/account-partner-readonly-reverification.json"
   },
   "careAdminReliabilityCandidate": {
     "codeSha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
@@ -613,5 +593,98 @@
     "liveSince": "2026-09-03T23:36:32Z",
     "authenticatedProof": "PENDING_FOUNDER_READ_ONLY_SMOKE",
     "rollbackSha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21"
-  }
+  },
+  "productionReleaseHistory": [
+    {
+      "classification": "HISTORICAL_SUPERSEDED_PRODUCTION",
+      "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "rollback": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "deployId": "dep-dad08h740ujc73aprfcg",
+      "liveSince": "2026-09-03T23:36:32Z",
+      "deployedFromBranch": "claude/care-admin-reliability-20260903",
+      "branch": "release/early-access-code-session-checkout",
+      "status": "superseded",
+      "previousLiveDeploys": [
+        {
+          "sha": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+          "deployId": "dep-daatp715efls738v00dg",
+          "liveAt": "2026-08-31T19:58:17Z",
+          "note": "Open Xenios Care with manual access requests; pre-deploy rollback target of the Care admin deployment"
+        },
+        {
+          "sha": "72b6f1380e13f09dec67684035ed44a1d2740408",
+          "deployId": "dep-daarr3ajnfac73a93co0",
+          "liveAt": "2026-08-31T17:45:49Z"
+        },
+        {
+          "sha": "abe03ca3a836dffb10699c0c39883119e2a8f816",
+          "deployId": "dep-daaqncid0e5s739067tg",
+          "liveAt": "2026-08-31T16:29:36Z"
+        },
+        {
+          "sha": "1fd84ad2b3320dada4da7f58012d4311e5cd1639",
+          "deployId": "dep-daabqagn74is73aejn80",
+          "liveAt": "2026-08-30T23:31:55Z",
+          "note": "final recut RC on Samuel's exact-SHA GO"
+        },
+        {
+          "sha": "3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212",
+          "deployId": "dep-da94g05g1s2s7396lkv0",
+          "liveAt": "2026-08-29T02:47:15Z",
+          "note": "rollback deployment after eb659d81"
+        }
+      ],
+      "note": "Current live production is the commit-pinned Care admin reliability deployment dep-dad08h740ujc73aprfcg of db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (records successor of tested code ace27886dd3b76a8e5dcc982111bb7062e9e451b), deployed on the founder exact-SHA GO (2026-09-03). The release branch remains at 8cca3373047a2161f5360541a9b2fc5c71f8063f (an ancestor) until PR #306 is merged; auto-deploy is off.",
+      "supersededBy": "ff3c496245739233b71e46f9e5d6e26af9d57017"
+    }
+  ],
+  "resourceHubQualification": {
+    "status": "IN_PROGRESS_NOT_RELEASE_READY",
+    "candidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "candidateTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+    "runtimeBuildSha": "fa26224bf050d4bac62543d8f9e1ad7f80f2795c",
+    "browserSourceSha": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+    "migrationSourceSha": "6c77c5663071715f8fe47038f57100c16c430246",
+    "migrationLfSha256": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
+    "productionAuthorized": false,
+    "migrationApplied": false,
+    "featureActivated": false,
+    "fullSuite": "RUNNING_FROZEN_c350ab1_PREVIOUS_46782cd_FAILED_TIMEOUT",
+    "browser": "PASS_14_JOURNEYS_45_CAPTURES_LOCAL_SYNTHETIC",
+    "localDatabase": "PASS_154_EACH_PG17_5_AND_18_3",
+    "secretScan": "102_RAW_102_INDEPENDENTLY_REVIEWED_0_UNRESOLVED_AT_c350ab1",
+    "piiScan": "VERSION_2_PREPARED_67_BYTES_PENDING_EXPLICIT_HASH_APPROVAL",
+    "endpointComparison": "LOCAL_STRICT_27_SAME_3_REGRESSION_PROVIDER_LIMITATIONS",
+    "enabledSupabaseAdapter": "NOT_QUALIFIED_LIVE_STORAGE_HTTP_PENDING",
+    "report": "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md",
+    "fullSuiteStartedAt": "2026-09-08T03:12:11.7151115Z",
+    "checkProcedureReview": "B_ACCEPTED_46782cd",
+    "precheckLfSha256": "742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab",
+    "postcheckLfSha256": "7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550",
+    "productionPrecheck": "READ_ONLY_PASS_2026-09-07T23:40:28.257398Z",
+    "privacyInputReceipt": "docs/revenue-launch/20260907/privacy-input-v2-preparation-receipt.json",
+    "diffCheck": "PASS_EXACT_ff3c496_TO_c350ab1",
+    "independentOwnershipReview": "B_ACCEPTED_c350ab1_187_PATHS_164_UNOWNED_0_WRONG_0_CONFLICTS",
+    "goalRuntimeStatus": "usageLimited observed on recovery; foreground authorized work continues, no unattended-operation claim",
+    "latestProductionReverification": "docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json",
+    "knownScopeGaps": [
+      "QR exports SVG only; requested PNG not implemented",
+      "Partner dashboard share card not implemented",
+      "Fable reports Training overflow at320/360 and Support overflow; broader partner browser matrix is not qualified by Hub-only proof"
+    ]
+  },
+  "reconciliationHistory": [
+    {
+      "at": "2026-09-03T23:48:00Z",
+      "liveBase": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "liveDeployId": "dep-dad08h740ujc73aprfcg",
+      "supersededBase": "50c2d35cf543724fad17a61d9d5c36cf81fe5f21",
+      "releaseBranchFastForwarded": false,
+      "deployed": true,
+      "deployedSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "migrationsApplied": false,
+      "serviceSettingsChanged": false,
+      "environmentChanged": false
+    }
+  ]
 }

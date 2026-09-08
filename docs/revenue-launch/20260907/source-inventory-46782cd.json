@@ -1,0 +1,2378 @@
+{
+  "schemaVersion": 1,
+  "kind": "static-source-inventory-not-release-approval",
+  "observedAt": "2026-09-07T23:51:35.596Z",
+  "baseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "headSha": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+  "headTree": "6e7965d91ba4a01e416bcc1a7485b0cde80acf27",
+  "manifestLaneAssumption": "release-manager",
+  "trustedOwnership": {
+    "source": "trusted_base_commit",
+    "path": "docs/coordination/FILE_OWNERSHIP.json",
+    "sourceSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "sha256": "67deb85b0a5eb3d48c58d7382502c7484674a620e41d1d8cd06995a417291fe3",
+    "embeddedProductionBaseSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+    "ruleCount": 48,
+    "matchingSemantics": "mode write and state not retired; exact verifier glob semantics; multi-rule matches conflict even if owner is same"
+  },
+  "totalPaths": 184,
+  "categoryCounts": {
+    "record": 56,
+    "explicit_test": 54,
+    "application_runtime": 58,
+    "release_gate_config": 1,
+    "runtime_data_outside_roots": 1,
+    "acceptance_tool": 3,
+    "dependency": 2,
+    "preview_and_browser_qualification_tool": 3,
+    "sql_and_database_qualification": 6
+  },
+  "ownershipCounts": {
+    "UNOWNED_FILE": 161,
+    "WRONG_LANE_OWNER": 0,
+    "OWNERSHIP_CONFLICT": 0
+  },
+  "ownedWithoutFinding": 23,
+  "pathInventorySha256": "2712822f494863a6fca6c8c6def923038763558f56f57f378cb45561f148a7be",
+  "ownershipFindingInventorySha256": "ae026e416b187fe56856797d5aee36d011122542179d0560517ad38a02c3c26d",
+  "changedOutsideApplicationRoots": 74,
+  "entries": [
+    {
+      "status": "M",
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": ".xenios/PROJECT_STATE.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": ".xenios/RELEASE_STATE.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": ".xenios/handoffs/2026-09-05T23-22-37-714Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-readiness-matrix.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": ".xenios/handoffs/2026-09-05T23-29-30-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-focused-ux.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": ".xenios/handoffs/2026-09-06T13-55-00-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-selective-integration.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": ".xenios/handoffs/2026-09-06T15-33-57-231Z-XENIOS-SETH-ACCESS-QUALIFICATION-20260906.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": ".xenios/handoffs/2026-09-07T14-36-00Z-XENIOS-ACCOUNT-PARTNER-PRODUCTION-20260907.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account-portal/api.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account-portal/api.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account-portal/order-journey.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account-portal/order-journey.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account-portal/useDocumentDownload.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account-portal/views/DocumentsView.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account-portal/views/OrderDetailView.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account-portal/views/order-journey.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account-portal/views/support-documents.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account/AccountDocuments.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account/AccountDocuments.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/account/AccountOrderDetail.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/account/AccountOrderDetail.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/adapters/partner.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/adapters/partner.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/adapters/resourceHubAdmin.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/adminx-section.tsx",
+      "category": "application_runtime",
+      "owners": [
+        {
+          "id": "OWNER-W2-SHARED-INTEGRATION",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/layout.tsx",
+      "category": "application_runtime",
+      "owners": [
+        {
+          "id": "OWNER-W2-RESEARCH-PASSWORD-GATE-LANDMARK",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/lib/routes.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/member-orders/detail.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/member-orders/detail.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/member-orders/read.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/member-orders/read.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/member/OrderDetail.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/member/OrderDetail.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/member/Orders.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/member/Orders.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Campaigns.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Campaigns.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Commissions.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Commissions.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Compliance.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Compliance.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Conversions.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Conversions.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Events.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Events.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Leads.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Leads.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Links.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Links.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Onboarding.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Onboarding.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Organizations.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Organizations.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Payouts.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Payouts.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Resources.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Resources.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Security.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Security.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/pages/partners/Support.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Support.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Training.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/pages/partners/Training.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/campaign-records.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/campaign-records.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/commission-ledger.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/commission-ledger.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/compliance-review.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/compliance-review.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/conversion-aggregate.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/conversion-aggregate.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/event-records.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/event-records.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/lead-aggregate.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/lead-aggregate.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/onboarding-records.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/onboarding-records.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/payout-records.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/payout-records.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/security-sessions.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/security-sessions.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/training-records.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/partner-crm/training-records.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/recommendation/RecommendationPrintCard.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/recommendation/RecommendationPrintCard.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/recommendation/layout-referral.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/recommendation/qr-export.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/recommendation/qr-export.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/recommendation/recommendation-print.css",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/resource-hub/admin-principal-isolation.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/resource-hub/partner-download-principal.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/resource-hub/principal-bound.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "client/src/research/resource-hub/principal-bound.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/ui/admin-shell.test.tsx",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/ui/kit.tsx",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "client/src/research/ui/shells.tsx",
+      "category": "application_runtime",
+      "owners": [
+        {
+          "id": "OWNER-W2-RESEARCH-MEMBER-UI-CONTRACT-RECONSTRUCTION",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/FILE_OWNERSHIP.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/coordination/MIGRATION_DAG.json",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "category": "release_gate_config",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+      "category": "runtime_data_outside_roots",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/resource-hub/SELECTIVE_INTEGRATION_MANIFEST.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/resource-hub/SLICE_1_DESIGN.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/resource-hub/locked-gate-safety-bar.mjs",
+      "category": "acceptance_tool",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/resource-hub/locked-gate-safety-bar.test.mjs",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/production-account-partner-prechecks-20260906.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260905/production-refresh-20260906.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_HASHES.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_RECEIPT.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REVIEW_ACCEPTANCE.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/account-partner-readonly-reverification.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/critical-endpoints-live-ff3c496.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/production-health-readonly.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg18.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-force-rls-pg17-rehearsal.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-force-rls-pg18-rehearsal.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-pg17-rehearsal.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/resource-hub-production-readonly-precheck.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/20260907/synthetic-credential-context-review.json",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/astra-b/20260905/ASTRA_BRANCH_DELTA_RECONCILIATION_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "docs/revenue-launch/astra-b/20260905/FULL_SUITE_SERIAL_VERIFICATION_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/astra-b/20260905/PARTNER_LIFECYCLE_READINESS_SOURCE_AUDIT_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "docs/revenue-launch/astra-b/20260905/PRODUCT_CONTROL_RECONCILIATION_MOUNT_QA.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "docs/revenue-launch/astra-b/20260905/RECONCILIATION_ADAPTER_QA.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/astra-b/20260905/RELEASE_READINESS_MATRIX_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/revenue-launch/astra-b/20260905/RELEASE_STATE_BOUNDARY_AUDIT_20260905.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md",
+      "category": "record",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "package-lock.json",
+      "category": "dependency",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "package.json",
+      "category": "dependency",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": "scripts/acceptance/reviewed-credential-fixtures.mjs",
+      "category": "acceptance_tool",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": "scripts/acceptance/reviewed-credential-fixtures.node-test.mjs",
+      "category": "explicit_test",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "scripts/acceptance/scan-release-diff.mjs",
+      "category": "acceptance_tool",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": "scripts/preview-resource-hub.ts",
+      "category": "preview_and_browser_qualification_tool",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "scripts/revenue-launch/new-account-browser-qualification.mjs",
+      "category": "preview_and_browser_qualification_tool",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "scripts/revenue-launch/new-account-qa-harness.ts",
+      "category": "preview_and_browser_qualification_tool",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "scripts/revenue-launch/rehearse-resource-library.mjs",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "server/release-control-plane.test.ts",
+      "category": "explicit_test",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": "server/research/e2e/new-account-qa-harness.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "server/research/index.ts",
+      "category": "application_runtime",
+      "owners": [
+        {
+          "id": "OWNER-W2-PR86-SHARED-HOTFIX",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "M",
+      "path": "server/research/partners/portal-production.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "server/research/partners/portal-routes.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "server/research/partners/portal-routes.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-access-wall.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/admin-routes.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/admin-routes.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/bytes-store.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/production.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/production.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/service.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/service.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/store.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/supabase-store.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "server/research/resource-hub/supabase-store.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "shared/research/auth-return-to.test.ts",
+      "category": "explicit_test",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "shared/research/auth-return-to.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "shared/research/resource-hub/contract.ts",
+      "category": "application_runtime",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "M",
+      "path": "supabase/MIGRATIONS.md",
+      "category": "record",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ],
+      "ownershipFinding": null
+    },
+    {
+      "status": "A",
+      "path": "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "supabase/candidates/20260906120000_research_resource_library.rollback.md",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "supabase/candidates/20260906120000_research_resource_library.sql",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    },
+    {
+      "status": "A",
+      "path": "supabase/migrations/20260906120000_research_resource_library.sql",
+      "category": "sql_and_database_qualification",
+      "owners": [],
+      "ownershipFinding": "UNOWNED_FILE"
+    }
+  ],
+  "ownershipFindings": [
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-05T23-22-37-714Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-readiness-matrix.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-05T23-29-30-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-focused-ux.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-06T13-55-00-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-selective-integration.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-06T15-33-57-231Z-XENIOS-SETH-ACCESS-QUALIFICATION-20260906.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-07T14-36-00Z-XENIOS-ACCOUNT-PARTNER-PRODUCTION-20260907.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/api.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/api.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/order-journey.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/order-journey.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/useDocumentDownload.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/views/DocumentsView.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/views/OrderDetailView.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/views/order-journey.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account-portal/views/support-documents.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account/AccountDocuments.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account/AccountDocuments.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account/AccountOrderDetail.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/account/AccountOrderDetail.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/adapters/partner.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/adapters/partner.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/adapters/resourceHubAdmin.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/lib/routes.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/member-orders/detail.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/member-orders/detail.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/member-orders/read.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/member-orders/read.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/member/OrderDetail.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/member/OrderDetail.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/member/Orders.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/member/Orders.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Campaigns.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Campaigns.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Commissions.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Commissions.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Compliance.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Compliance.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Conversions.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Conversions.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Events.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Events.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Leads.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Leads.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Links.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Links.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Onboarding.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Onboarding.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Organizations.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Organizations.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Payouts.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Payouts.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Resources.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Resources.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Security.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Security.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Support.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Support.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Training.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Training.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/campaign-records.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/campaign-records.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/commission-ledger.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/commission-ledger.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/compliance-review.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/compliance-review.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/conversion-aggregate.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/conversion-aggregate.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/event-records.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/event-records.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/lead-aggregate.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/lead-aggregate.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/onboarding-records.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/onboarding-records.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/payout-records.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/payout-records.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/security-sessions.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/security-sessions.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/training-records.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/partner-crm/training-records.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/RecommendationPrintCard.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/RecommendationPrintCard.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/layout-referral.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/qr-export.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/qr-export.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/recommendation/recommendation-print.css",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/resource-hub/admin-principal-isolation.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/resource-hub/partner-download-principal.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/resource-hub/principal-bound.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/resource-hub/principal-bound.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/ui/admin-shell.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/ui/kit.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/resource-hub/SELECTIVE_INTEGRATION_MANIFEST.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/resource-hub/SLICE_1_DESIGN.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/resource-hub/locked-gate-safety-bar.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/resource-hub/locked-gate-safety-bar.test.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/production-account-partner-prechecks-20260906.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260905/production-refresh-20260906.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_HASHES.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_RECEIPT.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REVIEW_ACCEPTANCE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/account-partner-readonly-reverification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/critical-endpoints-live-ff3c496.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/production-health-readonly.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg18.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-force-rls-pg17-rehearsal.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-force-rls-pg18-rehearsal.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-pg17-rehearsal.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/resource-hub-production-readonly-precheck.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/20260907/synthetic-credential-context-review.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/ASTRA_BRANCH_DELTA_RECONCILIATION_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/FULL_SUITE_SERIAL_VERIFICATION_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/PARTNER_LIFECYCLE_READINESS_SOURCE_AUDIT_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/PRODUCT_CONTROL_RECONCILIATION_MOUNT_QA.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/RECONCILIATION_ADAPTER_QA.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/RELEASE_READINESS_MATRIX_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/revenue-launch/astra-b/20260905/RELEASE_STATE_BOUNDARY_AUDIT_20260905.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "scripts/preview-resource-hub.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "scripts/revenue-launch/new-account-browser-qualification.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "scripts/revenue-launch/new-account-qa-harness.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "scripts/revenue-launch/rehearse-resource-library.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/e2e/new-account-qa-harness.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/portal-production.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/portal-routes.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/portal-routes.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-access-wall.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/admin-routes.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/admin-routes.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/bytes-store.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/production.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/production.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/service.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/service.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/store.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/supabase-store.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/resource-hub/supabase-store.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "shared/research/auth-return-to.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "shared/research/auth-return-to.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "shared/research/resource-hub/contract.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "supabase/candidates/20260906120000_research_resource_library.rollback.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "supabase/candidates/20260906120000_research_resource_library.sql",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "supabase/migrations/20260906120000_research_resource_library.sql",
+      "owners": []
+    }
+  ],
+  "scopeLimits": [
+    "No tests, builds, application starts, database queries, production tools, source edits or release approval.",
+    "B owns final immutable browser/build/runtime binding; only preliminary limited git comparison was performed before coordination handoff.",
+    "Current working policy cannot replace the trusted policy read from ff3. Embedded db5 in that historical policy does not change the blob provenance.",
+    "Manifest lane assumed release-manager; finding inventory must be recomputed for any different lane."
+  ],
+  "statusCounts": {
+    "M": 65,
+    "A": 119
+  },
+  "externalInputAudit": "external-input-audit.json",
+  "runtimeAreas": [
+    {
+      "area": "Account documents/order journey and member order projections",
+      "paths": [
+        "client/src/research/account-portal/api.ts",
+        "client/src/research/account-portal/order-journey.ts",
+        "client/src/research/account-portal/useDocumentDownload.ts",
+        "client/src/research/account-portal/views/DocumentsView.tsx",
+        "client/src/research/account-portal/views/OrderDetailView.tsx",
+        "client/src/research/account/AccountDocuments.tsx",
+        "client/src/research/account/AccountOrderDetail.tsx",
+        "client/src/research/member-orders/detail.ts",
+        "client/src/research/member-orders/read.ts",
+        "client/src/research/pages/member/OrderDetail.tsx",
+        "client/src/research/pages/member/Orders.tsx"
+      ]
+    },
+    {
+      "area": "Partner views, adapter and CRM projections",
+      "paths": [
+        "client/src/research/adapters/partner.ts",
+        "client/src/research/pages/partners/Campaigns.tsx",
+        "client/src/research/pages/partners/Commissions.tsx",
+        "client/src/research/pages/partners/Compliance.tsx",
+        "client/src/research/pages/partners/Conversions.tsx",
+        "client/src/research/pages/partners/Events.tsx",
+        "client/src/research/pages/partners/Leads.tsx",
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Onboarding.tsx",
+        "client/src/research/pages/partners/Organizations.tsx",
+        "client/src/research/pages/partners/Payouts.tsx",
+        "client/src/research/pages/partners/Resources.tsx",
+        "client/src/research/pages/partners/Security.tsx",
+        "client/src/research/pages/partners/Support.tsx",
+        "client/src/research/pages/partners/Training.tsx",
+        "client/src/research/partner-crm/campaign-records.ts",
+        "client/src/research/partner-crm/commission-ledger.ts",
+        "client/src/research/partner-crm/compliance-review.ts",
+        "client/src/research/partner-crm/conversion-aggregate.ts",
+        "client/src/research/partner-crm/event-records.ts",
+        "client/src/research/partner-crm/lead-aggregate.ts",
+        "client/src/research/partner-crm/onboarding-records.ts",
+        "client/src/research/partner-crm/payout-records.ts",
+        "client/src/research/partner-crm/security-sessions.ts",
+        "client/src/research/partner-crm/training-records.ts"
+      ]
+    },
+    {
+      "area": "Resource Hub APIs/storage/service, admin UI and principal binding",
+      "paths": [
+        "client/src/research/adapters/resourceHubAdmin.ts",
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/resource-hub/principal-bound.ts",
+        "server/research/resource-hub/admin-routes.ts",
+        "server/research/resource-hub/bytes-store.ts",
+        "server/research/resource-hub/production.ts",
+        "server/research/resource-hub/service.ts",
+        "server/research/resource-hub/store.ts",
+        "server/research/resource-hub/supabase-store.ts",
+        "shared/research/resource-hub/contract.ts"
+      ]
+    },
+    {
+      "area": "Recommendation QR export and print card/style",
+      "paths": [
+        "client/src/research/recommendation/RecommendationPrintCard.tsx",
+        "client/src/research/recommendation/qr-export.ts",
+        "client/src/research/recommendation/recommendation-print.css"
+      ]
+    },
+    {
+      "area": "Composition, access-wall, auth-return and layout seams",
+      "paths": [
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/layout.tsx",
+        "client/src/research/lib/routes.ts",
+        "client/src/research/ui/kit.tsx",
+        "client/src/research/ui/shells.tsx",
+        "server/research/index.ts",
+        "server/research/partners/portal-production.ts",
+        "server/research/partners/portal-routes.ts",
+        "shared/research/auth-return-to.ts"
+      ]
+    }
+  ],
+  "reviewRequirements": {
+    "ownership": "Actual schemaVersion 2 integrationOwnershipReview needed for the 161 unowned files at release-manager lane. Zero conflicts is necessary but is not a manual ownership acceptance. Never substitute candidate FILE_OWNERSHIP for trusted ff3 blob.",
+    "binding": "Pin exact base/head, trusted policy SHA256, canonical diff-path inventory SHA256, canonical finding inventory SHA256/counts, reviewer identity/time, and safe repository artifact path/digest. Artifact must mirror attestation exactly and be present in Git index for CLI reading. Freshness check applies. Recompute for any changed head or lane.",
+    "coreGate": "CORE_SITE_PROTECTION_MANIFEST changes package.json and Research seam pins/narrative. Its presence in diff is a release-gate input; pass must come from actual check, not inventory.",
+    "applicationScope": "58 runtime files include account/member order/document UX, partner CRM pages, recommendation QR export and Hub composition. B Hub browser proof does not establish full behavior qualification of every changed page.",
+    "outsideRoots": "Generated site-system-of-record JSON is runtime data. Include it in immutable input binding and acknowledge its stale admin last-verified production metadata. Package/lock are installation inputs; qrcode-generator is runtime and jsqr test-only by inspected imports.",
+    "noApproval": "This static report neither clears release gates nor grants Resource Hub, referral, commerce or other production scope."
+  }
+}

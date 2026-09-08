@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_IDENTIFIED_OUTSIDE_ROOT_INPUT_BINDING",
+  "candidateSha": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+  "candidateTree": "6e7965d91ba4a01e416bcc1a7485b0cde80acf27",
+  "parentEvidence": "RUNTIME_EQUIVALENCE_46782cd.json",
+  "parentEvidenceSha256": "f4699d7b81fc8076910d5c4ebbef4e5ae665467091bfaf863da1e53bee0c11ba",
+  "reviewedReferences": [
+    "fa26224bf050d4bac62543d8f9e1ad7f80f2795c",
+    "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+    "46782cd4f0f73975c021c3a605492aa022c7d4dc"
+  ],
+  "inputs": [
+    {
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+      "reader": "server/research/founder-command-center-production.ts",
+      "readerLocations": [
+        201,
+        1003
+      ],
+      "gitBlobAtAllReferences": "3ca6c2bf486ca70b1037e4347601b06041825ade",
+      "byteSha256AtAllReferencesAndWorkingFile": "d8967822c9acf74b663dd040cb04d871cf5456d9f036967cedd97b8d11653e63",
+      "bytes": 124215,
+      "exactByteEquality": true,
+      "readerSourceUnchanged": true,
+      "inheritedMetadata": {
+        "generatedAt": "2026-09-06T09:30:01-05:00",
+        "productionObservedAt": "2026-09-04T20:00:00Z",
+        "productionSha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6"
+      },
+      "interpretation": "Inherited stale admin evidence, not a current serving-SHA attestation. No post-build/browser source drift. This review does not refresh the Founder Command Center or add features."
+    }
+  ],
+  "limitations": [
+    "Covers the explicitly identified runtime-read input, not a claim that every external/environment-dependent runtime input has been independently inventoried.",
+    "Application behavior equivalence does not make inherited stale metadata current or prove production configuration parity.",
+    "Original browser, database, privacy, endpoint and authorization limits remain in force."
+  ],
+  "productionMutated": false,
+  "sharedRepositoryFilesEdited": false,
+  "testsExecuted": false
+}

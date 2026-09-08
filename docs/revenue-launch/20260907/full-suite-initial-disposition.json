@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "runtime": "Node.js 20.19.0",
+  "command": "node node_modules/vitest/vitest.mjs run --pool=threads --maxWorkers=1 --no-file-parallelism",
+  "completedRun": {
+    "sourceSha": "33436c5fba078c8511dcc06749e5820995bee023",
+    "status": "FAILED",
+    "exitCode": 1,
+    "durationSeconds": 1276.31,
+    "files": {
+      "passed": 915,
+      "failed": 2,
+      "skipped": 5,
+      "total": 922
+    },
+    "tests": {
+      "passed": 15995,
+      "failed": 2,
+      "skipped": 59,
+      "total": 16056
+    },
+    "failures": [
+      {
+        "file": "server/pgcrypto-qualification.test.ts",
+        "reason": "Real repository audit exceeded the unchanged 5000ms test timeout"
+      },
+      {
+        "file": "server/rls-invariants.test.ts",
+        "reason": "New managed Resource Hub tables lacked FORCE ROW LEVEL SECURITY"
+      }
+    ],
+    "externalLog": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-33436c5-20260907.log"
+  },
+  "focusedFollowup": {
+    "files": [
+      "server/rls-invariants.test.ts",
+      "server/pgcrypto-qualification.test.ts"
+    ],
+    "passed": 23,
+    "failed": 0,
+    "durationSeconds": 1.11,
+    "change": "FORCE RLS correction only; original assertions and timeouts retained",
+    "qualifiesOriginalFullRunAsPassing": false
+  },
+  "interruptedRun": {
+    "sourceSha": "01ea702a62388970a14cdfa498a095dcf32007de",
+    "status": "INTERRUPTED_NOT_QUALIFIED",
+    "reason": "B identified a required pre/postcheck executor-visibility guard before final source freeze",
+    "externalLog": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-01ea702-20260907.log"
+  },
+  "completedReplacement": {
+    "sourceSha": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+    "status": "FAILED_COMPLETE_LOG",
+    "durationSeconds": 2707.77,
+    "files": {
+      "passed": 916,
+      "failed": 1,
+      "skipped": 5,
+      "total": 922
+    },
+    "tests": {
+      "passed": 15996,
+      "failed": 1,
+      "skipped": 59,
+      "total": 16056
+    },
+    "failure": {
+      "file": "server/rls-invariants.test.ts",
+      "test": "keeps care-access-foundation.sql the only source of policies",
+      "reason": "Test timed out in unchanged 5000ms limit"
+    },
+    "terminalExitCode": null,
+    "terminalReceiptUnavailable": "App goal became usageLimited and original terminal sessions were unavailable on recovery; complete Vitest summary recovered from saved log.",
+    "externalLog": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-46782cd-20260907.log"
+  },
+  "secondFocusedFollowup": {
+    "sourceSha": "37cd7bf4d12ac170ef8f474287989816ff64dbd7",
+    "files": [
+      "server/rls-invariants.test.ts",
+      "server/pgcrypto-qualification.test.ts"
+    ],
+    "passed": 23,
+    "failed": 0,
+    "durationSeconds": 4.44,
+    "exitCode": 0,
+    "assertionsAndTimeoutsChanged": false,
+    "qualifiesPriorFullRunAsPassing": false
+  },
+  "currentRun": {
+    "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "tree": "314ef445a6e3be8420a77451ed182088419d59ec",
+    "startedAt": "2026-09-08T03:12:11.7151115Z",
+    "status": "RUNNING",
+    "externalReceipt": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-c350ab1-20260908.exit.json"
+  }
+}

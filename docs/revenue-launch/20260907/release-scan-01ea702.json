@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "classification": "SECRET_HALF_COMPLETE_PII_INCOMPLETE",
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "candidateSha": "01ea702a62388970a14cdfa498a095dcf32007de",
+  "runtime": "Node.js 20.19.0",
+  "command": "node scripts/acceptance/scan-release-diff.mjs ff3c496245739233b71e46f9e5d6e26af9d57017 01ea702a62388970a14cdfa498a095dcf32007de",
+  "reviewedFixturesEnvironmentPath": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+  "addedLines": 41702,
+  "files": 182,
+  "rawSecretFindings": 102,
+  "reviewedFixtureFindings": 102,
+  "unresolvedSecretFindings": 0,
+  "reviewedRegistryLfSha256": "0d19ecfc0c0acf3c7dff113a79b6328198af30731b7871ef325a91b3f850379a",
+  "piiStatus": "SKIPPED_NO_APPROVED_EXTERNAL_NAMES_FILE",
+  "combinedReleaseGatePassed": false,
+  "independentReview": "SYNTHETIC_CREDENTIAL_REVIEW_ACCEPTANCE.md",
+  "limitations": [
+    "This is the actual partial scanner output at the named candidate, not a strict wrapper PASS.",
+    "The approved external PII source is mandatory; synthetic negative-control input cannot replace it.",
+    "Any later release candidate requires its own exact-range scan."
+  ]
+}

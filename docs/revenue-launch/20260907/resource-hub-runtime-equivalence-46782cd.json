@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_BOUNDED_BROWSER_RUNTIME_EQUIVALENCE",
+  "observedAt": "2026-09-07 23:50:04 UTC",
+  "reviewer": "ASTRA-B",
+  "sourceRoot": "C:/Users/sboad/.codex/worktrees/f36a/xenios-website",
+  "qualifiedBrowserSource": "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe",
+  "qualifiedBrowserTree": "56d76664caa94e0de11a60d6b34c3139ddb1048d",
+  "currentCandidate": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+  "currentTree": "6e7965d91ba4a01e416bcc1a7485b0cde80acf27",
+  "currentBuiltRuntimeSourceReference": "fa26224bf050d4bac62543d8f9e1ad7f80f2795c",
+  "method": [
+    "Compared immutable Git source and complete change inventory from qualified browser SHA to current candidate.",
+    "Ran existing browser driver --fingerprint only, with pinned Node 20.19.0; no browser or server was started.",
+    "Compared all 2184 tracked browser-source paths and checked absence of working or untracked source changes.",
+    "Reconstructed the exact original raw source fingerprint using current bytes for 2183 unchanged files and the old Git blob for the one changed test file, without writing any source file.",
+    "Compared existing client build, index, preview harness, driver and browser report hashes to their original acceptance values.",
+    "Inspected unchanged build entry points and the absence of runtime imports of the changed release-control test."
+  ],
+  "sourceBinding": {
+    "inspectedFiles": 2184,
+    "trackedPathSetsIdentical": true,
+    "workingSourceChanges": [],
+    "untrackedSourceFiles": [],
+    "sourcePaths": [
+      "client",
+      "server",
+      "shared",
+      "package.json",
+      "package-lock.json",
+      "vite.config.ts",
+      "tsconfig.json"
+    ],
+    "additionalUnchangedInputs": [
+      "script/build.mjs",
+      "scripts/preview-resource-hub.ts"
+    ],
+    "onlyChangedInspectedSource": "server/release-control-plane.test.ts",
+    "oldTestBlob": "de0e8ef923cb0c9e0142d1841c5922782a8aac5a",
+    "currentTestBlob": "2a29dcb218fb43eb74b03b76662cc147431571e6",
+    "oldSourceSha256": "bd7ac039e47a9b19de66b9cc88256c6907c8068424245e45abcf54b0db79f8a6",
+    "currentSourceSha256": "43a901c0f4c0481cfae49eaa81427eff3e9b475fea6501009f85a09ed2080591",
+    "reconstructedOldSourceSha256": "bd7ac039e47a9b19de66b9cc88256c6907c8068424245e45abcf54b0db79f8a6",
+    "originalFingerprintExactlyReconstructed": true,
+    "reconstructionOldTestBytes": "Exact Git blob (LF); other current working file bytes unchanged."
+  },
+  "unchangedArtifacts": {
+    "clientDistSha256": "906f174d504ac6d20f4494faa4ff7ea64108d8de5ff7c64c504e339e0afafb53",
+    "clientIndexSha256": "1242f67735e42263b7c0adaed8bfe240819aaa46c55b4b177bdbaa04cf5dfad3",
+    "previewHarnessSha256": "75388042fbe3684e9f827c741537e420407a78d329ad13b9eac64dfccf919729",
+    "browserDriverSha256": "1e18f6c75ebeff01de5cc2a44b1eeb0d4dd7c92c58763dd235e8a6097c11ccda",
+    "originalBrowserReportSha256": "f241886c7ef734594e4ceda52ba87c856775834d8d8f2729e963152bab31d2ad"
+  },
+  "currentServerBundle": {
+    "sha256": "c2b0fde79855c5fadaff552ecd5d9e8c832b50544248c0a8adf3b1568e2c171c",
+    "historicalServerBundleHashAvailableToThisReview": false,
+    "conclusion": "Server runtime source and declared build inputs are unchanged; no historical server-binary byte-identity claim."
+  },
+  "retainedBrowserResult": {
+    "journeySteps": 14,
+    "captures": 45,
+    "scope": "Original synthetic local Resource Hub journey only, reused by demonstrated equivalence; not rerun.",
+    "pageErrors": 0,
+    "externalRequests": 0,
+    "retainedHttpDenialConsoleMessages": 16,
+    "blanketZeroConsoleErrorsClaimed": false
+  },
+  "separatelyQualifiedChanges": [
+    "Resource Hub FORCE RLS migration and revised precheck/postcheck require their current independent database qualification.",
+    "Release secret-fixture scanner changes require their accepted scanner tests and actual final source-bound scan.",
+    "Changed release-control test, migration DAG and full suite require current-candidate evidence."
+  ],
+  "limitations": [
+    "This does not convert the whole old Git tree into the current tree, nor claim a fresh build, full-suite or browser run.",
+    "Synthetic auth and in-memory Storage do not establish production identity, persistence, enabled PostgREST or Storage byte delivery.",
+    "Original browser limitations, failed prior preview evidence, denied-console events and excluded QR/commerce/recruiter/real-user workflows remain unchanged.",
+    "No production precheck or serving identity was independently queried by B in this review.",
+    "The missing external PII source, final suite, endpoint differences and new exact-SHA production authorization remain separate gates."
+  ],
+  "productionMutated": false,
+  "databaseConnections": false,
+  "browserLaunched": false,
+  "testsExecuted": false,
+  "sharedRepositoryFilesEdited": false
+}

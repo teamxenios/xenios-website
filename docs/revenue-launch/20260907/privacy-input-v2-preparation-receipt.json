@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "inputVersion": 2,
+  "status": "PREPARED_NOT_APPROVED_NOT_USED_FOR_RELEASE",
+  "operator": "ASTRA-A / codex-seth-revenue-launch-20260905",
+  "project": "yvzeduaxbwgcwllhywff",
+  "observedAt": "2026-09-08T03:15:23.615138+00:00",
+  "executor": "postgres",
+  "postgresVersion": "17.6",
+  "sourceRowCounts": {
+    "outbox": 58,
+    "members": 3,
+    "partners": 0,
+    "applications": 3,
+    "supportQuestions": 0,
+    "supportQuestionsWithoutMember": 0
+  },
+  "sourceNameOccurrences": {
+    "research_applications.first_name+last_name": 3,
+    "research_members.first_name": 3,
+    "research_notification_outbox.payload.firstName": 12,
+    "research_notification_outbox.payload.customerName": 2
+  },
+  "nonEmptyOccurrences": 19,
+  "emptyOrNonStringOccurrences": 1,
+  "entryCount": 6,
+  "exactDuplicatesRemoved": 13,
+  "scannerEligibleEntries": 3,
+  "scannerIgnoredEntries": 3,
+  "scannerDistinctLowercaseEntries": 3,
+  "outerOrLineSeparatorAdjustedOccurrences": 0,
+  "deduplication": "Exact Unicode string deduplication after outer trim and replacing CR/LF/TAB with spaces; preserve spelling, case, diacritics, internal spacing and recorded variants. No synthetic-persona exclusion.",
+  "format": "UTF-8 without BOM, LF, one recorded name or documented application name combination per line",
+  "bytes": 67,
+  "sha256": "de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6",
+  "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v2-20260908/approved-name-input-v2.txt",
+  "restrictedDirectory": "Inheritance disabled; only current Windows user and SYSTEM have explicit FullControl",
+  "sourcePreparationAuthorization": "User-forwarded b569d888-7cc7-485a-bf74-02a15cb8a20e preparation directive relayed by coordinator; actual hash approval remains separate",
+  "exclusions": [
+    "No email, phone, address, identifiers, clinical data, support-message bodies or unrelated payload fields exported.",
+    "Applications combine documented first_name and last_name; members expose only first_name; partner legal_name remains as recorded.",
+    "Support uses research_member_questions with member_id; current member names are covered, question and answer text not read."
+  ],
+  "limitations": [
+    "New version-2 replacement, not recovery or equivalence to the missing original.",
+    "Only retained rows in the named live tables are covered; deleted historical records, backups and prior recipient documents are unavailable.",
+    "External team, advisor and business-contact source material has not been supplied; no completeness claim for those people.",
+    "Outbox coverage is limited to documented string firstName/customerName fields; recipient addresses and arbitrary payload/message text are excluded.",
+    "Current scanner ignores names without whitespace or with length at most three; those names are retained and counted, not silently discarded.",
+    "Not approved by founder hash and not used to qualify any release."
+  ]
+}

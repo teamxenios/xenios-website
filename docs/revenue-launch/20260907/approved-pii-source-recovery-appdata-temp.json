@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-07T23:55:27.2188707Z",
+  "root": "C:/Users/sboad/AppData/Local/Temp",
+  "expectedBytes": 6463,
+  "expectedSha256": "c7da9838a3a8236a1b94465f3bfe21121fcc0de9dc586f8c08e167cf7d9ac34b",
+  "directories": 22496,
+  "regularFiles": 113791,
+  "sizeMatchesHashed": 0,
+  "linksExcluded": 0,
+  "errors": 1,
+  "exactMatchingPaths": [],
+  "contentsPrinted": false,
+  "substituteCreated": false
+}

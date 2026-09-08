@@ -1497,7 +1497,15 @@
         "supabase/migrations/20260906120000_research_resource_library.sql",
         "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review.json",
-        "supabase/MIGRATIONS.md"
+        "supabase/MIGRATIONS.md",
+        "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md",
+        "scripts/acceptance/scan-release-diff.mjs",
+        "scripts/acceptance/reviewed-credential-fixtures.mjs",
+        "scripts/acceptance/reviewed-credential-fixtures.node-test.mjs",
+        ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
+        "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+        "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
+        "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"

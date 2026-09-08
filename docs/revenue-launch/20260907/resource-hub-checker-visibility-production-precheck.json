@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "classification": "ACTUAL_A_READ_ONLY_PRECHECK_NOT_MIGRATION_AUTHORIZATION",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "sourceSha": "46782cd4f0f73975c021c3a605492aa022c7d4dc",
+  "precheckLfSha256": "742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab",
+  "queryNote": "Executed the immutable precheck's complete transaction setup and DO assertions unchanged, followed by a single aggregate result SELECT and ROLLBACK so this connector returns the PASS and role evidence together. Only the informational result projections differ from the checked-in file.",
+  "receipt": {
+    "observedAt": "2026-09-07T23:40:28.257398Z",
+    "database": "postgres",
+    "migrationExecutor": "postgres",
+    "postgresVersion": "17.6",
+    "executorSuperuser": false,
+    "executorBypassRls": true,
+    "rowSecurityMode": "off",
+    "result": "PASS: complete first-install precheck with unfiltered executor visibility",
+    "storagePolicyCount": 0,
+    "resourceHubBucketCount": 0
+  },
+  "productionMutated": false,
+  "migrationApplied": false,
+  "requiresFreshRepeatBeforeNewlyAuthorizedApply": true,
+  "limitations": [
+    "This proves actual read-only precheck capability on A's authenticated project-bound connector; it is not a migration or production postcheck receipt.",
+    "SET LOCAL row_security=off makes filtered reads fail; it does not grant privileges or change persistent database RLS configuration.",
+    "The Resource Hub migration, app deployment and feature activation still require their own exact authorization after qualification."
+  ]
+}

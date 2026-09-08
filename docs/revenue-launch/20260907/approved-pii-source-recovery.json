@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-07T23:49:52.5051079Z",
+  "root": "C:\\Users\\sboad\\Downloads",
+  "expectedBytes": 6463,
+  "expectedSha256": "c7da9838a3a8236a1b94465f3bfe21121fcc0de9dc586f8c08e167cf7d9ac34b",
+  "directories": 64882,
+  "regularFiles": 657316,
+  "sizeMatchesHashed": 6,
+  "linksExcluded": 3830,
+  "errors": 0,
+  "exactMatchingPaths": [],
+  "contentsPrinted": false,
+  "substituteCreated": false
+}

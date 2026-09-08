@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "kind": "ACTUAL_A_READ_ONLY_REVERIFICATION",
+  "recordedAt": "2026-09-08T03:18:59.307Z",
+  "sql": {
+    "projectId": "yvzeduaxbwgcwllhywff",
+    "observedAt": "2026-09-08T03:09:13.982786Z",
+    "executor": "postgres",
+    "postgresVersion": "17.6",
+    "migrationHistory": [
+      {
+        "version": "20260907143147",
+        "name": "20260905_research_approved_customer_access"
+      },
+      {
+        "version": "20260907143204",
+        "name": "20260905_research_partner_lifecycle"
+      }
+    ]
+  },
+  "resourceObjects": {
+    "observedAt": "2026-09-08T03:17:19.359213Z",
+    "research_resource_library": null,
+    "research_resource_versions": null,
+    "research_resource_deliveries": null
+  },
+  "render": {
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "deployId": "dep-dafcm567bikc7382rhng",
+    "servingSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "status": "live",
+    "liveSince": "2026-09-07T14:33:55.150237Z",
+    "autoDeploy": "no",
+    "autoDeployTrigger": "off",
+    "branch": "release/early-access-code-session-checkout"
+  },
+  "productionMutated": false,
+  "postcheckAuthority": "Original PRODUCTION_DEPLOYMENT_REPORT_20260907.md; this fresh read confirms identity/history, not a new migration apply or postcheck."
+}
