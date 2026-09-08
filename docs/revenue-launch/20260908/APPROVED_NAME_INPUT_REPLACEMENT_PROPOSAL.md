@@ -56,6 +56,24 @@ approved separately by hash before it qualifies anything. **Claude has no
 authorized read-only connection in its current session (the configured
 Supabase connector is rejected) and is therefore not the operator.**
 
+## Confirmed source fields (Samuel's read-only schema query, 2026-09-08T03:14Z)
+
+`PRIVACY_INPUT_V2_SCHEMA_ONLY_RECEIPT.json` beside this file — metadata
+only, no personal rows selected, read-only transaction. It replaces the
+guessed columns in the table above:
+
+| Table | Name fields that exist | Consequence for the operator |
+| --- | --- | --- |
+| `research_applications` | `first_name`, `last_name` | Primary source of full names |
+| `research_members` | `first_name`, `application_id` (FK → applications) — **no `last_name`/`full_name`** | Resolve a member's full name only through its application; a member without one has no full name here |
+| `research_partners` | `legal_name`, `member_id` | Check whether `legal_name` is a person or an entity before treating it as a personal name |
+| `research_notification_outbox` | `application_id`, `member_id`, `recipient`, `payload` — **no name column** | Resolve through the documented relationships only; do not dump `payload`; do not infer a name from a `recipient` address |
+
+Only the member→application foreign key was returned among the referencing
+tables; other links must be validated before coverage is claimed. A must
+confirm this mapping through its own authorized connection; the receipt
+proves access in Samuel's host, not A's.
+
 ## Processing
 
 1. Owner exports the name fields above, trims, keeps each name as recorded

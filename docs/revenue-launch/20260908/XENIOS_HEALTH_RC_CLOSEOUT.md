@@ -97,6 +97,26 @@ is `ownership-findings-ff3c496-45f95dfe.json` (the 167 paths by area, and the
 23 already owned by the `release-manager` lane). On acceptance, one command
 regenerates and commits the manifest with the reviewer's identity and time.
 
+## Update 2026-09-08T03:2xZ — A is back; two items moved
+
+- **Fixture re-bind: ACCEPTED** by ASTRA-B on A's branch at
+  `c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662`, in place under
+  `docs/revenue-launch/20260907/` (digest `b82169d4…`, 35 scanner controls
+  passed). Claude verified `scan-release-diff.mjs ff3c496..c350ab1c` with that
+  registry → **102 reviewed, 0 unresolved**. The `20260908/` pending pair is
+  superseded. The strict wrapper still needs the names input.
+- **Privacy input version 2: preparation authorized** by Samuel through an
+  authorized read-only connection; hash approval separate. Samuel's
+  schema-only receipt (`PRIVACY_INPUT_V2_SCHEMA_ONLY_RECEIPT.json`, no names
+  read) fixes the source fields: applications `first_name`+`last_name`;
+  members `first_name`+`application_id` only; partners `legal_name` (meaning
+  to be checked); outbox has no name field.
+- **The integration head is now A's lineage** (`c350ab1c`, range
+  `ff3c496..c350ab1c`, 187 files). Claude's `45f95dfe` and its records remain
+  evidence; the ownership review must bind to A's actual final candidate
+  (`ownership-findings-ff3c496-c350ab1c.json`), not to the 190-path list.
+- Ownership handoff to A was issued and awaits A's acknowledgment.
+
 ## SECRET SCAN
 
 `scan-release-diff.mjs` over the exact range: 102 raw

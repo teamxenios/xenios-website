@@ -1,5 +1,14 @@
 # Reviewer packet 1 — synthetic-credential fixture registry re-bind
 
+**CLOSED.** ASTRA-B recorded the acceptance on A's branch at `c350ab1c…`,
+updating B's own registry under `docs/revenue-launch/20260907/` in place
+(status `ACCEPTED`, `reviewedSourceSha` `bf7b5fe`, digest `b82169d4…`). Claude
+verified the scan binds there: 102 reviewed, 0 unresolved. The release
+operator uses **that** pair; the `20260908/` proposal below is history. The
+remaining conditions B attached — the strict scan must bind the final
+candidate and print that digest; privacy qualification and the full-suite
+condition stay separate — are unchanged.
+
 For an independent reviewer who is **not** Claude (the author of the re-bind)
 and **not** the author of `bf7b5fe`. Narrow scope: decide whether B's accepted
 dispositions still apply to the candidate after one file changed by one

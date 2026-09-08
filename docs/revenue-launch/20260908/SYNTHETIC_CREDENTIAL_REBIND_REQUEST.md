@@ -1,7 +1,20 @@
 # Synthetic credential fixture review: re-bind request — 2026-09-08
 
-**Status: PENDING. Nothing in this directory is an accepted review.** B's accepted
-review at `docs/revenue-launch/20260907/` is preserved unchanged.
+**SUPERSEDED, 2026-09-08T03:2xZ.** ASTRA-B accepted the re-bind on A's branch
+at `c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662`, in place under
+`docs/revenue-launch/20260907/` (registry `reviewedSourceSha` `bf7b5fe`,
+status `ACCEPTED`, registry digest
+`b82169d4afa2bc1d2007680c0d984db9b6e0f0bdf4d8ca2b25c30cb937922aba`;
+`SYNTHETIC_CREDENTIAL_REBIND_ACCEPTANCE.md` and
+`scanner-rebind-test-receipt.json`, 35 controls passed). Claude verified:
+`scan-release-diff.mjs ff3c496..c350ab1c` with that registry → 102 reviewed,
+0 unresolved. **The pending pair in this `20260908/` directory is not the
+accepted record and must not be pointed at by the scanner.** It stays here
+only as the proposal history.
+
+**Original status when written: PENDING. Nothing in this directory is an
+accepted review.** B's accepted review at `docs/revenue-launch/20260907/` is
+preserved unchanged.
 
 ## What broke, exactly
 

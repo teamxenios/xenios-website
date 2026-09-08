@@ -1,0 +1,264 @@
+{
+  "base": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "head": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "manifestLane": "release-manager",
+  "trustedBaseOwnershipPolicySha256": "67deb85b0a5eb3d48c58d7382502c7484674a620e41d1d8cd06995a417291fe3",
+  "changedFiles": 187,
+  "counts": {
+    "UNOWNED_FILE": 164,
+    "WRONG_LANE_OWNER": 0,
+    "OWNERSHIP_CONFLICT": 0
+  },
+  "inventoryDeltaVsClaudeCandidate45f95dfe": {
+    "removedVs45f95dfe": [
+      "docs/revenue-launch/20260908/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+      "docs/revenue-launch/20260908/SYNTHETIC_CREDENTIAL_REBIND_REQUEST.md",
+      "docs/revenue-launch/20260908/ownership-findings-ff3c496-bf7b5fe.json",
+      "docs/revenue-launch/20260908/resource-hub-rehearsal-bf7b5fe.json",
+      "docs/revenue-launch/20260908/routes-bf7b5fe.json",
+      "docs/revenue-launch/20260908/synthetic-credential-context-review.json"
+    ],
+    "addedVs45f95dfe": [
+      "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REBIND_ACCEPTANCE.md",
+      "docs/revenue-launch/20260907/scanner-rebind-test-receipt.json",
+      "docs/revenue-launch/20260907/synthetic-credential-whitespace-rebind.json"
+    ]
+  },
+  "ownedByManifestLane": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_REGISTRY.json",
+    "client/src/research/adminx-section.tsx",
+    "client/src/research/layout.tsx",
+    "client/src/research/ui/shells.tsx",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+    "docs/coordination/FILE_OWNERSHIP.json",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "package-lock.json",
+    "package.json",
+    "scripts/acceptance/reviewed-credential-fixtures.mjs",
+    "scripts/acceptance/reviewed-credential-fixtures.node-test.mjs",
+    "scripts/acceptance/scan-release-diff.mjs",
+    "server/release-control-plane.test.ts",
+    "server/research/index.ts",
+    "supabase/MIGRATIONS.md"
+  ],
+  "unownedByArea": {
+    ".xenios/handoffs": [
+      ".xenios/handoffs/2026-09-05T23-22-37-714Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-readiness-matrix.md",
+      ".xenios/handoffs/2026-09-05T23-29-30-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-focused-ux.md",
+      ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
+      ".xenios/handoffs/2026-09-06T13-55-00-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-selective-integration.md",
+      ".xenios/handoffs/2026-09-06T15-33-57-231Z-XENIOS-SETH-ACCESS-QUALIFICATION-20260906.md",
+      ".xenios/handoffs/2026-09-07T14-36-00Z-XENIOS-ACCOUNT-PARTNER-PRODUCTION-20260907.md"
+    ],
+    ".xenios/sessions": [
+      ".xenios/sessions/codex-seth-revenue-launch-20260905.json"
+    ],
+    "client/src/research": [
+      "client/src/research/account-portal/api.test.ts",
+      "client/src/research/account-portal/api.ts",
+      "client/src/research/account-portal/order-journey.test.ts",
+      "client/src/research/account-portal/order-journey.ts",
+      "client/src/research/account-portal/useDocumentDownload.ts",
+      "client/src/research/account-portal/views/DocumentsView.tsx",
+      "client/src/research/account-portal/views/OrderDetailView.tsx",
+      "client/src/research/account-portal/views/order-journey.test.tsx",
+      "client/src/research/account-portal/views/support-documents.test.tsx",
+      "client/src/research/account/AccountDocuments.test.tsx",
+      "client/src/research/account/AccountDocuments.tsx",
+      "client/src/research/account/AccountOrderDetail.test.tsx",
+      "client/src/research/account/AccountOrderDetail.tsx",
+      "client/src/research/adapters/partner.test.ts",
+      "client/src/research/adapters/partner.ts",
+      "client/src/research/adapters/resourceHubAdmin.ts",
+      "client/src/research/lib/routes.ts",
+      "client/src/research/member-orders/detail.test.ts",
+      "client/src/research/member-orders/detail.ts",
+      "client/src/research/member-orders/read.test.ts",
+      "client/src/research/member-orders/read.ts",
+      "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+      "client/src/research/pages/member/OrderDetail.test.tsx",
+      "client/src/research/pages/member/OrderDetail.tsx",
+      "client/src/research/pages/member/Orders.test.tsx",
+      "client/src/research/pages/member/Orders.tsx",
+      "client/src/research/pages/partners/Campaigns.test.tsx",
+      "client/src/research/pages/partners/Campaigns.tsx",
+      "client/src/research/pages/partners/Commissions.test.tsx",
+      "client/src/research/pages/partners/Commissions.tsx",
+      "client/src/research/pages/partners/Compliance.test.tsx",
+      "client/src/research/pages/partners/Compliance.tsx",
+      "client/src/research/pages/partners/Conversions.test.tsx",
+      "client/src/research/pages/partners/Conversions.tsx",
+      "client/src/research/pages/partners/Events.test.tsx",
+      "client/src/research/pages/partners/Events.tsx",
+      "client/src/research/pages/partners/Leads.test.tsx",
+      "client/src/research/pages/partners/Leads.tsx",
+      "client/src/research/pages/partners/Links.test.tsx",
+      "client/src/research/pages/partners/Links.tsx",
+      "client/src/research/pages/partners/Onboarding.test.tsx",
+      "client/src/research/pages/partners/Onboarding.tsx",
+      "client/src/research/pages/partners/Organizations.test.tsx",
+      "client/src/research/pages/partners/Organizations.tsx",
+      "client/src/research/pages/partners/Payouts.test.tsx",
+      "client/src/research/pages/partners/Payouts.tsx",
+      "client/src/research/pages/partners/Resources.test.tsx",
+      "client/src/research/pages/partners/Resources.tsx",
+      "client/src/research/pages/partners/Security.test.tsx",
+      "client/src/research/pages/partners/Security.tsx",
+      "client/src/research/pages/partners/Support.test.tsx",
+      "client/src/research/pages/partners/Support.tsx",
+      "client/src/research/pages/partners/Training.test.tsx",
+      "client/src/research/pages/partners/Training.tsx",
+      "client/src/research/partner-crm/campaign-records.test.ts",
+      "client/src/research/partner-crm/campaign-records.ts",
+      "client/src/research/partner-crm/commission-ledger.test.ts",
+      "client/src/research/partner-crm/commission-ledger.ts",
+      "client/src/research/partner-crm/compliance-review.test.ts",
+      "client/src/research/partner-crm/compliance-review.ts",
+      "client/src/research/partner-crm/conversion-aggregate.test.ts",
+      "client/src/research/partner-crm/conversion-aggregate.ts",
+      "client/src/research/partner-crm/event-records.test.ts",
+      "client/src/research/partner-crm/event-records.ts",
+      "client/src/research/partner-crm/lead-aggregate.test.ts",
+      "client/src/research/partner-crm/lead-aggregate.ts",
+      "client/src/research/partner-crm/onboarding-records.test.ts",
+      "client/src/research/partner-crm/onboarding-records.ts",
+      "client/src/research/partner-crm/payout-records.test.ts",
+      "client/src/research/partner-crm/payout-records.ts",
+      "client/src/research/partner-crm/security-sessions.test.ts",
+      "client/src/research/partner-crm/security-sessions.ts",
+      "client/src/research/partner-crm/training-records.test.ts",
+      "client/src/research/partner-crm/training-records.ts",
+      "client/src/research/recommendation/RecommendationPrintCard.test.tsx",
+      "client/src/research/recommendation/RecommendationPrintCard.tsx",
+      "client/src/research/recommendation/layout-referral.test.tsx",
+      "client/src/research/recommendation/qr-export.test.ts",
+      "client/src/research/recommendation/qr-export.ts",
+      "client/src/research/recommendation/recommendation-print.css",
+      "client/src/research/resource-hub/admin-principal-isolation.test.tsx",
+      "client/src/research/resource-hub/partner-download-principal.test.tsx",
+      "client/src/research/resource-hub/principal-bound.test.tsx",
+      "client/src/research/resource-hub/principal-bound.ts",
+      "client/src/research/ui/admin-shell.test.tsx",
+      "client/src/research/ui/kit.tsx"
+    ],
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json": [
+      "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json"
+    ],
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md": [
+      "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md"
+    ],
+    "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md": [
+      "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md"
+    ],
+    "docs/resource-hub/SELECTIVE_INTEGRATION_MANIFEST.md": [
+      "docs/resource-hub/SELECTIVE_INTEGRATION_MANIFEST.md"
+    ],
+    "docs/resource-hub/SLICE_1_DESIGN.md": [
+      "docs/resource-hub/SLICE_1_DESIGN.md"
+    ],
+    "docs/resource-hub/locked-gate-safety-bar.mjs": [
+      "docs/resource-hub/locked-gate-safety-bar.mjs"
+    ],
+    "docs/resource-hub/locked-gate-safety-bar.test.mjs": [
+      "docs/resource-hub/locked-gate-safety-bar.test.mjs"
+    ],
+    "docs/revenue-launch/20260905": [
+      "docs/revenue-launch/20260905/ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md",
+      "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+      "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
+      "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
+      "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
+      "docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json",
+      "docs/revenue-launch/20260905/production-account-partner-prechecks-20260906.json",
+      "docs/revenue-launch/20260905/production-refresh-20260906.json"
+    ],
+    "docs/revenue-launch/20260907": [
+      "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY.md",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_HASHES.json",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_RECEIPT.json",
+      "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+      "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REBIND_ACCEPTANCE.md",
+      "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REVIEW_ACCEPTANCE.md",
+      "docs/revenue-launch/20260907/account-partner-readonly-reverification.json",
+      "docs/revenue-launch/20260907/critical-endpoints-live-ff3c496.json",
+      "docs/revenue-launch/20260907/production-health-readonly.json",
+      "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json",
+      "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg18.json",
+      "docs/revenue-launch/20260907/resource-hub-force-rls-pg17-rehearsal.json",
+      "docs/revenue-launch/20260907/resource-hub-force-rls-pg18-rehearsal.json",
+      "docs/revenue-launch/20260907/resource-hub-pg17-rehearsal.json",
+      "docs/revenue-launch/20260907/resource-hub-production-readonly-precheck.json",
+      "docs/revenue-launch/20260907/scanner-rebind-test-receipt.json",
+      "docs/revenue-launch/20260907/synthetic-credential-context-review.json",
+      "docs/revenue-launch/20260907/synthetic-credential-whitespace-rebind.json"
+    ],
+    "docs/revenue-launch/astra-b": [
+      "docs/revenue-launch/astra-b/20260905/ASTRA_BRANCH_DELTA_RECONCILIATION_20260905.md",
+      "docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md",
+      "docs/revenue-launch/astra-b/20260905/FULL_SUITE_SERIAL_VERIFICATION_20260905.md",
+      "docs/revenue-launch/astra-b/20260905/PARTNER_LIFECYCLE_READINESS_SOURCE_AUDIT_20260905.md",
+      "docs/revenue-launch/astra-b/20260905/PRODUCT_CONTROL_RECONCILIATION_MOUNT_QA.md",
+      "docs/revenue-launch/astra-b/20260905/RECONCILIATION_ADAPTER_QA.md",
+      "docs/revenue-launch/astra-b/20260905/RELEASE_READINESS_MATRIX_20260905.md",
+      "docs/revenue-launch/astra-b/20260905/RELEASE_STATE_BOUNDARY_AUDIT_20260905.md"
+    ],
+    "docs/reviews/astra-b": [
+      "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md"
+    ],
+    "scripts/preview-resource-hub.ts": [
+      "scripts/preview-resource-hub.ts"
+    ],
+    "scripts/revenue-launch": [
+      "scripts/revenue-launch/new-account-browser-qualification.mjs",
+      "scripts/revenue-launch/new-account-qa-harness.ts",
+      "scripts/revenue-launch/rehearse-resource-library.mjs"
+    ],
+    "server/research/e2e": [
+      "server/research/e2e/new-account-qa-harness.test.ts"
+    ],
+    "server/research/partners": [
+      "server/research/partners/portal-production.ts",
+      "server/research/partners/portal-routes.test.ts",
+      "server/research/partners/portal-routes.ts"
+    ],
+    "server/research/resource-access-wall.test.ts": [
+      "server/research/resource-access-wall.test.ts"
+    ],
+    "server/research/resource-hub": [
+      "server/research/resource-hub/admin-routes.test.ts",
+      "server/research/resource-hub/admin-routes.ts",
+      "server/research/resource-hub/bytes-store.ts",
+      "server/research/resource-hub/production.test.ts",
+      "server/research/resource-hub/production.ts",
+      "server/research/resource-hub/service.test.ts",
+      "server/research/resource-hub/service.ts",
+      "server/research/resource-hub/store.ts",
+      "server/research/resource-hub/supabase-store.test.ts",
+      "server/research/resource-hub/supabase-store.ts"
+    ],
+    "shared/research": [
+      "shared/research/auth-return-to.test.ts",
+      "shared/research/auth-return-to.ts",
+      "shared/research/resource-hub/contract.ts"
+    ],
+    "supabase/candidates": [
+      "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
+      "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
+      "supabase/candidates/20260906120000_research_resource_library.rollback.md",
+      "supabase/candidates/20260906120000_research_resource_library.sql"
+    ],
+    "supabase/migrations": [
+      "supabase/migrations/20260906120000_research_resource_library.sql"
+    ]
+  }
+}

@@ -7,6 +7,19 @@ that already exist for each area. The manifest mechanism records your
 identity and time and binds them to hashes of this inventory; it cannot be
 satisfied by a name alone, and Claude has not inserted one.
 
+## Bind to A's actual candidate, not to Claude's
+
+A is back and integrating on its own lineage. As of 2026-09-08T03:2xZ its
+head is `c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662`, range
+`ff3c496..c350ab1c`, **187 files: 164 `UNOWNED_FILE`, 0 `WRONG_LANE_OWNER`,
+0 `OWNERSHIP_CONFLICT`** (`ownership-findings-ff3c496-c350ab1c.json`). Versus
+Claude's `45f95dfe` inventory the only differences are six of Claude's
+`20260908/` records absent and A's three fixture-acceptance records present;
+every runtime path is identical. The review must be bound to whatever A's
+**final** candidate is — regenerate the inventory at that SHA with the same
+tooling and compare; do not carry a decision across by substituting a SHA.
+Everything below about the 190-path list applies to the same runtime paths.
+
 ## The numbers you start from
 
 Trusted base policy: `docs/coordination/FILE_OWNERSHIP.json` at `ff3c496`,

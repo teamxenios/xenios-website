@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "source": "Supabase.execute_sql; information_schema.columns and pg_catalog constraints",
+  "observation": {
+    "database": "postgres",
+    "observed_at": "2026-09-08T03:14:13.846541+00:00",
+    "query_scope": "schema_metadata_only",
+    "transaction_read_only": "on",
+    "personal_rows_selected": false,
+    "mutations_performed": false,
+    "foreign_keys": [
+      {
+        "table": "research_members",
+        "definition": "FOREIGN KEY (application_id) REFERENCES research_applications(id)"
+      }
+    ],
+    "source_columns": [
+      {
+        "table": "research_applications",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_applications",
+        "column": "first_name",
+        "type": "text"
+      },
+      {
+        "table": "research_applications",
+        "column": "last_name",
+        "type": "text"
+      },
+      {
+        "table": "research_members",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_members",
+        "column": "application_id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_members",
+        "column": "first_name",
+        "type": "text"
+      },
+      {
+        "table": "research_notification_outbox",
+        "column": "application_id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_notification_outbox",
+        "column": "member_id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_notification_outbox",
+        "column": "recipient",
+        "type": "text"
+      },
+      {
+        "table": "research_notification_outbox",
+        "column": "payload",
+        "type": "jsonb"
+      },
+      {
+        "table": "research_partners",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_partners",
+        "column": "member_id",
+        "type": "uuid"
+      },
+      {
+        "table": "research_partners",
+        "column": "role",
+        "type": "text"
+      },
+      {
+        "table": "research_partners",
+        "column": "legal_name",
+        "type": "text"
+      }
+    ]
+  },
+  "scope": {
+    "tables": [
+      "public.research_applications",
+      "public.research_members",
+      "public.research_partners",
+      "public.research_notification_outbox"
+    ],
+    "notPerformed": [
+      "personal-name queries",
+      "row or payload export",
+      "PII corpus generation",
+      "hash approval",
+      "independent review acceptance",
+      "PII scan",
+      "source or registry mutation",
+      "migration",
+      "deployment",
+      "activation"
+    ],
+    "limits": [
+      "Schema metadata does not establish data completeness, legal-name status, historical coverage or linkage validity.",
+      "research_members has first_name and application_id, but no last_name or full_name column in this observation.",
+      "Outbox has no dedicated first_name/last_name/full_name column. Its recipient and payload were not read.",
+      "Among the three queried referencing tables, only the member-to-application foreign key was returned. Validate other links before deriving coverage.",
+      "This receipt proves access in this ChatGPT host only, not Codex A's host."
+    ]
+  }
+}
