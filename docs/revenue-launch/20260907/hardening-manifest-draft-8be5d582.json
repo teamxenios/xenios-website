@@ -1,8 +1,8 @@
 {
-  "artifactKind": "PRIVATE_RELEASE_MANIFEST_DRAFT",
+  "artifactKind": "RELEASE_MANIFEST_DRAFT_WITH_EVIDENCE",
   "schemaVersion": 1,
   "createdAt": "2026-09-08T15:52:24.195Z",
-  "preparedBy": "release_manifest independent bounded receipt audit",
+  "preparedBy": "ASTRA-A delegated release_manifest evidence writer; independent helper review and formal ASTRA-B acceptance remain distinct",
   "overallQualified": false,
   "formalManifestValidated": false,
   "productionExecutionAuthorizedByThisArtifact": false,
@@ -82,8 +82,16 @@
     ],
     "tests": {
       "focused": {
-        "status": "PENDING_FINAL_CANDIDATE_RECEIPT",
-        "note": "Separate harness 56-case pass at source 01a479 is supported by byte-identical integrated files; this is not a blanket focused application or managed-service qualification."
+        "status": "PASS",
+        "runtime": {
+          "passed": 140,
+          "failed": 0,
+          "completedAt": "2026-09-08T15:22:35.053Z",
+          "receiptSha256": "a831084784b6b61fcabcb319a5f0cb8b17891f9b5a85728f793653c1cc01b7f8"
+        },
+        "note": "Actual 140 runtime cases and five files/hash/times are recorded in hardening-qualification-8be5d582.json; final runtime source is identical in 8be. Integrated harness 56 cases passed. B must assess the missing historical focused CLI string; no completed proof is rerun solely to recreate it.",
+        "command": "Historical focused invocation string not retained in the available receipt; no command is inferred as executed.",
+        "checkedAt": "2026-09-08T15:22:35.053Z"
       },
       "fullSuite": {
         "status": "PASS",
@@ -102,28 +110,37 @@
         "checkedAt": "2026-09-08T15:42:28.726Z"
       },
       "diffCheck": {
-        "status": "PENDING_RECEIPT_NOT_IN_ASSIGNED_AUDIT"
+        "status": "PASS",
+        "command": "git diff --check 3814c687ef9293f84f939c372fdbc01b278a9193 8be5d582586217e4cf531e718c65032b79152022",
+        "checkedAt": "2026-09-08T15:59:56.741888Z",
+        "evidence": "docs/revenue-launch/20260907/hardening-record-validation-8be5d582.json"
       }
     },
     "rollback": {
-      "strategy": "Draft application-only recovery to installed baseline 3814, conditional on fresh compatibility and authority checks; preserve existing database, Storage and all history.",
+      "strategy": "Application-only recovery to exact compatible installed baseline 3814; Hub remains disabled and all database/Storage/history is preserved.",
       "steps": [
-        "Retain installed Resource Hub schema/history; no migration replay, database repair or deletion.",
-        "If a future deployment requires rollback, use the reviewed flag sequencing and exact application recovery procedure, including explicit founding activation false before code reversion and membership billing absent/false."
+        "Stop further actions and reread uncertain remote state before retrying.",
+        "Before reverting code, explicitly set RESEARCH_RESOURCE_HUB_ENABLED=false and RESEARCH_FOUNDING_ACTIVATION_ENABLED=false; keep RESEARCH_MEMBERSHIP_BILLING_ENABLED absent or false. Verify stored values, then the required restart/deploy and effective running behavior.",
+        "Deploy commitId=3814c687ef9293f84f939c372fdbc01b278a9193 on srv-d8s9vej7uimc7384dfcg, clearCache=do_not_clear; retain auto-deploy off and the existing branch.",
+        "Do not replay/drop/repair migrations, alter ACLs, delete resources/versions/objects/deliveries or customer/approval/partner/agreement/audit/billing/outbox history."
       ],
       "verification": [
-        "Fresh observed baseline, effective flags and compatible database state are required before execution.",
-        "No rollback or production configuration action was performed or authorized by this draft."
+        "Reverify compatibility of observed database state with 3814 and the existing installed e55 schema.",
+        "Verify the actual serving SHA/process, effective disabled Hub/founding behavior and membership billing absent/false. Stored configuration alone is insufficient.",
+        "Require the same 30 public GET endpoints with empty allowances and five full minutes of health/log observation after live identity and initial smoke pass.",
+        "Preserve the failure, exact deploy/config receipts and all partial effects. Rollback has not been executed for this candidate."
       ]
     },
     "smoke": {
       "steps": [
-        "Pending a qualified deployment plan: capture and compare the existing public/read-only endpoint baseline using actual source and empty allowances.",
-        "Hub download GET/HEAD can append delivery audit and must not be represented as read-only smoke."
+        "Immediately before any qualified exact-8be deployment capture the existing 30 public unauthenticated GET endpoints; after live identity repeat the exact capture and compare with intentionalChanges:[].",
+        "Require 30 SAME, zero intentional/regression/human-review-required differences, plus public health and unauthenticated account/admin boundaries.",
+        "Observe five full minutes after live identity and initial smoke pass, check health at least every 30 seconds and inspect error logs for the full interval.",
+        "Hub download GET/implicit HEAD can append delivery audit; exclude those and notification jobs from read-only smoke."
       ],
       "expected": [
-        "No production deployment/configuration/activation is claimed.",
-        "Managed Auth/PostgREST/Storage and real browser coverage remain separate open gates."
+        "Production deployment/observation remains pending for 8be.",
+        "Actual staging managed API 41 checks and browser 15 steps/45 captures passed within the documented scoped proxy/fixture limits."
       ]
     },
     "evidence": [
@@ -156,6 +173,21 @@
         "kind": "PRIVATE_EXACT_SOURCE_BROAD_SUITE_AUDIT",
         "checkedAt": "2026-09-08T15:55:31.384Z",
         "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "MANAGED_API",
+        "reference": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
+        "checkedAt": "2026-09-08T17:18:03.222Z"
+      },
+      {
+        "kind": "MANAGED_BROWSER_HOST_SQL",
+        "reference": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+        "checkedAt": "2026-09-08T18:01:01.026Z"
+      },
+      {
+        "kind": "PRODUCTION_READONLY_COMPATIBILITY",
+        "reference": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json",
+        "checkedAt": "2026-09-08T18:08:57.663859+00:00"
       }
     ],
     "integrationOwnershipReview": null
@@ -181,8 +213,8 @@
   },
   "ownershipDraft": {
     "status": "PENDING_FORMAL_ASTRA_B_ATTESTATION",
-    "supplementalMapPath": "C:/Users/sboad/.codex/tmp/managed-resource-hub-harness-20260908/supplemental-source-ownership-review-8be5d582.json",
-    "supplementalMapSha256": "65aa2ef73da6937996b2d8b2b615ea1adc4a9375f89ea24f3c9e18358ae49eed",
+    "supplementalMapPath": "docs/revenue-launch/20260907/supplemental-source-ownership-review-8be5d582.json",
+    "supplementalMapSha256": "5ba0f1bb8cffb7267d9f51cef8711bc65db03f8f9188577fead44a42f8cda3c8",
     "supplementalMapIsFormalAcceptance": false,
     "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
     "headSha": "8be5d582586217e4cf531e718c65032b79152022",
@@ -200,7 +232,9 @@
     "reviewedAt": null,
     "reviewArtifactPath": null,
     "reviewArtifactSha256": null,
-    "leaseLimit": "Recorded single active lease per path does not independently prove process-level absence of another writer."
+    "leaseLimit": "Recorded single active lease per path does not independently prove process-level absence of another writer.",
+    "originalPrivateSupplementalMapSha256": "65aa2ef73da6937996b2d8b2b615ea1adc4a9375f89ea24f3c9e18358ae49eed",
+    "supplementalMapHashMeaning": "SHA-256 of the committed Git blob at evidence head 594e323; original private receipt hash is retained separately."
   },
   "auditedGates": {
     "build": {
@@ -334,9 +368,17 @@
     "The five receipts and actual private log bytes agree. Exit codes and source identifiers are verified; no tests or service calls were rerun.",
     "Current launcher enforces clean exact HEAD/tree, base ancestry and Node v20.19.0, and invokes each command through process.execPath. Tool-captured invocation is retained by A; tooling hashes here are retrospective.",
     "Expanded config inherits application include paths and explicitly adds both harness implementation files and its test. The expanded typecheck log is empty.",
-    "Build output inventory was not captured. No output-byte equivalence, browser equivalence or warning-free build is claimed; build stderr contains 5275 bytes.",
+    "Build output inventory was not captured. No output-byte equivalence, browser equivalence or warning-free build is claimed; build stderr contains 5275 bytes. This historical limit is preserved; the later actual browser run separately verified served assets against its retained 341-file build manifest SHA-256 7cca385f69df2506e7842b976bfd25e2417cb47660fa7de4eda156a48cfe948f.",
     "The generic assertionsOrTimeoutsWeakened:false field is overbroad for the suite. Preserve original receipt and use the specific interpretation below.",
-    "Strict V3 scan covers only the approved bounded names input; historical handwriting and name-format completeness limits remain."
+    "Strict V3 scan covers only the approved bounded names input; historical handwriting and name-format completeness limits remain.",
+    "Browser used real staging Auth/data through the bounded same-origin loopback proxy; direct production-origin Auth configuration is not proved.",
+    "HostB observed retained run-owned fixtures and could not read the new HostA resource.",
+    "Incidental non-Hub shell APIs deliberately return503; full production shell and other workflows are not qualified here.",
+    "23 console-error events were counted without retaining raw console text; this is not a zero-console-error claim. Zero page errors, boundary refusals and asset failures were observed.",
+    "Two delivered audit records represent server byte retrieval; only one partner download was saved, and the pending second response was discarded after logout.",
+    "The unchanged approved PDF metadata title contains the prior b2 plan suffix, retained after run2 stopped with zero writes.",
+    "Real production content, audience and named-account effects remain undecided; no production activation or real-user qualification.",
+    "Managed API used one PDF hash; different-hash stored upload-race recovery and unfiltered retained-library behavior remain unproved. Later helper/tool commits do not become application release SHA or extend the 3814..8be full-suite/strict-scan range."
   ],
   "suiteReceiptFieldDisposition": {
     "originalReceiptMustBePreserved": true,
@@ -349,25 +391,26 @@
     "earlierProcedureIncludes120000Override": true
   },
   "pendingGates": [
-    "Formal ASTRA-B source/ownership acceptance for all 51 paths against the trusted 3814 policy and final attestation artifact.",
-    "Final manifest validation and remaining release-control receipts.",
-    "Managed target readiness and approved exact private plan; actual Auth/PostgREST/Storage/immutable upload/delivery qualification.",
-    "Non-null microsecond review CAS, concurrent loser and upload-race recovery coverage.",
-    "Real browser sign-in/logout/account switching and required role/browser matrix.",
-    "Any production rollout needs its qualified exact-source packet, fresh remote prechecks and applicable authority; this draft makes no activation change."
+    "Formal ASTRA-B exact 3814..8be source/ownership and completed managed/browser evidence acceptance, with real reviewer identity/time and staged hash-bound artifact.",
+    "Finalize the actual schema-v2 manifest, including the explicit focused-command provenance limitation and the genuine B attestation; run trusted-base manifest, production-state and migration-DAG checks on the reconciled release records. The draft envelope is not a passing formal manifest.",
+    "Immediately-before-deploy confirm current production identity/configuration/single writer, exact source/tree and unchanged installed SQL; capture fresh 30-endpoint baseline. Stop on drift or failed checks.",
+    "After qualified exact-8be deployment: verify actual live identity/effective disabled flags, strict 30-endpoint comparison and five-full-minute observation; reconcile actual receipts.",
+    "Activation is a separate decision requiring reviewed production document bytes/version/hash/metadata/usage policy, authorized audience, named account and permitted verification/write/notification effects. These inputs remain missing."
   ],
   "boundaries": {
     "newMigrations": [],
-    "productionConfigurationChanges": [],
+    "productionConfigurationChangesForForwardDeploy": [],
     "productionActivation": false,
     "productionDeployPerformed": false,
-    "managedExecutionPerformed": false,
-    "credentialReads": false,
+    "managedStagingExecutionPerformed": true,
+    "browserStagingExecutionPerformed": true,
+    "evidenceWriterServiceCalls": false,
+    "evidenceWriterCredentialReads": false,
     "realAccountApproval": false,
     "partnerActivation": false,
     "notifications": false,
     "commerceOrFulfillment": false,
-    "repositoryEdits": false
+    "scope": "Evidence-only draft for the exact 8be hardening application release; no new platform or revenue launch claim"
   },
   "findings": [
     {
@@ -519,5 +562,392 @@
       "assertionsOrTimeoutsWeakened": false,
       "disposition": "Original preserved. Superseded by the existing suiteReceiptFieldDisposition and specific timing metadata; no default/c350 timeout equivalence."
     }
-  }
+  },
+  "updatedAt": "2026-09-08T18:11:44.713Z",
+  "evidenceHead": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+  "packetPath": "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_RELEASE_PACKET_8be.md",
+  "receiptCatalogue": [
+    {
+      "path": "docs/revenue-launch/20260907/hardening-qualification-8be5d582.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "b31d6993f9f0f76d422e42c916ce3644c8e02389e73e5483333f22a35f083bbf",
+      "sizeBytes": 18680
+    },
+    {
+      "path": "docs/revenue-launch/20260907/hardening-record-validation-8be5d582.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "f26bb9dc1c632253249493592a86ccce5525119d510857a0f0f3754b5d7e0691",
+      "sizeBytes": 1409
+    },
+    {
+      "path": "docs/revenue-launch/20260907/supplemental-source-ownership-review-8be5d582.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "5ba0f1bb8cffb7267d9f51cef8711bc65db03f8f9188577fead44a42f8cda3c8",
+      "sizeBytes": 38557
+    },
+    {
+      "path": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "bb5357bc20d467b32d3f90ce74223a470b02785eec1af90b2f1af71590d007a5",
+      "sizeBytes": 6482
+    },
+    {
+      "path": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "e1105bb3df85bd464bd9f3b406c97d1e02628e1064a4414362c6ed26dffea092",
+      "sizeBytes": 24356
+    },
+    {
+      "path": "docs/revenue-launch/20260907/managed-harness-review-711bd411.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "615cd3fb6807a0dbb085facf8e6a18c12fac2bee0f3571387b2754cfd2f10cdd",
+      "sizeBytes": 2519
+    },
+    {
+      "path": "docs/revenue-launch/20260907/standing-conditional-authorization-20260908.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "3d9df6fad59d9d389726ad32aea12589dbecaefc42e2c3089bbe4f8d5305b1a5",
+      "sizeBytes": 2142
+    },
+    {
+      "path": "docs/revenue-launch/20260907/critical-endpoint-no-allowances-3814.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "55e18bf27da40a13d2dacb2b010ab5297e4a06cc850da5f9dd75f597cca89a09",
+      "sizeBytes": 187
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-production-migration-3814.json",
+      "gitCommit": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+      "gitBlobSha256": "085d829d73c0745c7408c979b29f0d239f4791dfe0ad56e4681762bc21a71eb2",
+      "sizeBytes": 5202
+    },
+    {
+      "path": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json",
+      "sizeBytes": 3228,
+      "gitCommit": "75467fb5f65b559cec5234bd7190b50a1094c364",
+      "gitBlobSha256": "bd59226e483d2473b173860e398126d4abf9cff27d7487d15dd34ac3a500d9f6"
+    }
+  ],
+  "productionCompatibility": {
+    "schemaVersion": 1,
+    "observedAt": "2026-09-08T18:08:57.663859+00:00",
+    "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "evidenceHead": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+    "status": "READONLY_COMPATIBILITY_PASS_RELEASE_ACCEPTANCE_PENDING",
+    "candidateRuntimeEqualsEvidenceHead": true,
+    "candidateIsPushedAncestor": true,
+    "render": {
+      "serviceId": "srv-d8s9vej7uimc7384dfcg",
+      "workspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
+      "servingSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+      "deployId": "dep-dag1reu7bikc73e16ie0",
+      "activeOrQueuedDeployObserved": false,
+      "configuration": {
+        "observedAt": "2026-09-08T18:08:08.270Z",
+        "serviceId": "srv-d8s9vej7uimc7384dfcg",
+        "workspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
+        "autoDeploy": "no",
+        "branch": "release/early-access-code-session-checkout",
+        "startCommand": "npm run start",
+        "flags": [
+          {
+            "name": "RESEARCH_RESOURCE_HUB_ENABLED",
+            "value": "false"
+          },
+          {
+            "name": "RESEARCH_MEMBERSHIP_BILLING_ENABLED",
+            "value": "absent"
+          },
+          {
+            "name": "RESEARCH_FOUNDING_ACTIVATION_ENABLED",
+            "value": "true"
+          }
+        ],
+        "environmentGroupCount": 0,
+        "productionMutated": false,
+        "effectiveRunningFlagsVerified": false
+      }
+    },
+    "supabase": {
+      "projectRef": "yvzeduaxbwgcwllhywff",
+      "observedAt": "2026-09-08T18:04:55.384597Z",
+      "database": "postgres",
+      "user": "postgres",
+      "version": "17.6",
+      "hubResources": 0,
+      "hubVersions": 0,
+      "hubDeliveries": 0,
+      "hubStorageObjects": 0,
+      "installedMigrations": [
+        "20260907143147",
+        "20260907143204",
+        "20260908143724"
+      ],
+      "exactPostcheckLfSha256": "7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550",
+      "postcheckResult": "PASS_UNCHANGED_EXACT_READONLY_ASSERTIONS"
+    },
+    "rawReceipts": [
+      {
+        "name": "production-postcheck-7c7-1807.private.json",
+        "sha256": "12048c63d7c268d58942d083947ac4a4cca871c89970479ece042fcb4efce4dc"
+      },
+      {
+        "name": "production-sql-180455.private.json",
+        "sha256": "a07f6957123cff9ab0321c1b44286544dad2f20bcf8a9b4cb6bed7637324a11c"
+      },
+      {
+        "name": "production-render-service-1804.private.json",
+        "sha256": "481b45ad3c0715112d5640a2a8a51f37a746048118b2f24c076c8641ad8aedcf"
+      },
+      {
+        "name": "production-render-deploys-1804.private.json",
+        "sha256": "d9511ab9d4a457ccf5a1c077caf9f84056c4d16e1ec00f6ea42b217b4cfcbbf3"
+      },
+      {
+        "name": "production-configuration-8be-precheck.private.json",
+        "sha256": "290104d22230ed5305d7e8cc89947deacc0ed2579311cf4e454c6413cd91ace4"
+      }
+    ],
+    "pending": [
+      "Formal ASTRA-B exact-source/ownership and managed-browser acceptance",
+      "Final release manifest acceptance and packet review",
+      "Immediately-before-deploy public critical endpoint baseline",
+      "Production content/version/hash, audience, named account and exact activation/verification effects"
+    ],
+    "productionMutated": false,
+    "migrationsReplayed": false,
+    "deployTriggered": false,
+    "featureEnabled": false
+  },
+  "authority": {
+    "sourceArtifactSha256": "3b525ea83b308e30c64d55481b3210ae845a4074e95230813b3bbcf9b1a36b63",
+    "record": "docs/revenue-launch/20260907/standing-conditional-authorization-20260908.json",
+    "scope": "Qualified in-scope staged successors may execute under the existing standing conditions. This draft is not qualified and does not grant or renew authority.",
+    "executor": "ASTRA-A only",
+    "observer": "ASTRA-B independently",
+    "activation": "Pending exact reviewed production content/audience/named-account/effects inputs; Hub remains false."
+  },
+  "managedQualification": {
+    "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "api": {
+      "status": "PASS_BOUNDED_MANAGED_API",
+      "harnessSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+      "harnessTree": "c5f59f8d15b022bd822fc0e6cb71233d1fad6c48",
+      "finishedAt": "2026-09-08T17:18:03.222Z",
+      "passedChecks": 41,
+      "privateResultSha256": "30be375950e78b69c44ef639d6fd4dcf788a5baa15ddd2252b761d66eb7d82b0",
+      "privateJournalSha256": "a7e164918c069359a47146d3dd3704c1dacc03567a3303a638b270d7ebf3aec8",
+      "sql": {
+        "precheckAt": "2026-09-08T17:17:26.157439Z",
+        "precheck": {
+          "resources": 0,
+          "versions": 0,
+          "deliveries": 0,
+          "hubStorageObjects": 0,
+          "outbox": 2
+        },
+        "postcheckAt": "2026-09-08T17:18:15.528720Z",
+        "postcheck": {
+          "resources": 4,
+          "versions": 2,
+          "deliveries": 6,
+          "hubStorageObjects": 4,
+          "outbox": 2,
+          "authUsers": 6,
+          "members": 3,
+          "partners": 2
+        },
+        "detailCheckAt": "2026-09-08T17:18:24.131053Z",
+        "versionStates": {
+          "withdrawn": 2
+        },
+        "deliveryOutcomes": {
+          "denied": 5,
+          "delivered": 1
+        },
+        "publishedPointers": 0,
+        "emptyResources": 2,
+        "matchingPdfVersions": 2,
+        "privateHubBucket": true
+      },
+      "limits": [
+        "full browser composition",
+        "real sign-in/logout/account switching",
+        "different-hash stored PDF upload race recovery",
+        "bucket-wide retained orphan inventory",
+        "unfiltered retained-library behavior",
+        "provisioning and browser write budgets",
+        "production activation"
+      ]
+    },
+    "browser": {
+      "status": "PASS_BOUNDED_BROWSER_AND_HOST_SQL_RECONCILIATION",
+      "driver": {
+        "sha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
+        "tree": "b43359d97e326eda7aacd44c9b0f0e69e05e2252",
+        "fileSha256": "d7a98d298698929a1cc8a10385e5323211a5afb2ac4690e353852530ad3e7cfe",
+        "independentSourceReview": "ACCEPT_BY_MANAGED_HUB_HARNESS",
+        "offlineProofExitCode": 0,
+        "typecheckExitCode": 0
+      },
+      "host": {
+        "sha": "2873a333255c015789594920493e10c6b82461b8",
+        "tree": "d93e1d3409d74a5ab61f83df65fc7676a7941471",
+        "fileSha256": "8edbab84599aa06ad7a60821d2b3754ebb92937aae20a36dcb5e71cee81eb3ad"
+      },
+      "completedAt": "2026-09-08T18:01:01.026Z",
+      "passedSteps": 15,
+      "captures": 45,
+      "buildManifestSha256": "7cca385f69df2506e7842b976bfd25e2417cb47660fa7de4eda156a48cfe948f",
+      "driverPlanSha256": "e2393bda371f1f1397cdf4a01a3a063d53fa17226b34528305d8e78b50eadbaf",
+      "driverResultSha256": "d33399f93ed987bfe8b3a8b3aa4a7133110f25ff1c8fe20b640305497236d833",
+      "driverJournalSha256": "fd176cba002c32e202de1c2e29c1ade68316d29f2fbb749da4cef76f23f145f9",
+      "hostReceipts": {
+        "adminA": {
+          "receiptSha256": "bbe6fa3f390437fc3a2fc03a9c75367aeaa7564463176be744ef1f1e8c41b408",
+          "status": "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE",
+          "finishedAt": "2026-09-08T18:01:10.787Z",
+          "requestCounts": {
+            "remote_all": 176,
+            "service_key_self_check": 1,
+            "bucket_precheck": 1,
+            "auth_fixture_precheck": 5,
+            "database_reads": 110,
+            "password_adminA": 2,
+            "auth_user": 32,
+            "objects": 1,
+            "resources": 1,
+            "versions": 1,
+            "reviews": 2,
+            "request_review": 1,
+            "content_approval": 1,
+            "publications": 1,
+            "object_read": 4,
+            "password_eligible": 2,
+            "deliveries": 2,
+            "logout_eligible": 2,
+            "password_nonPartner": 1,
+            "logout_nonPartner": 1,
+            "password_suspended": 1,
+            "logout_suspended": 1,
+            "logout_adminA": 2,
+            "password_adminB": 1,
+            "logout_adminB": 1,
+            "withdrawals": 1
+          },
+          "apiRequests": 94,
+          "assetRequests": 364,
+          "delayedDownloads": [
+            {
+              "kind": "admin",
+              "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+              "status": "sent"
+            },
+            {
+              "kind": "partner",
+              "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+              "status": "sent"
+            },
+            {
+              "kind": "partner",
+              "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+              "status": "client_disconnected"
+            },
+            {
+              "kind": "admin",
+              "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+              "status": "client_disconnected"
+            }
+          ],
+          "failureCode": null,
+          "firstRefusal": null,
+          "gracefulStopExitCode": 0
+        },
+        "adminB": {
+          "receiptSha256": "aadf8c9af75480e2cf9dd2ace83b2d5b531a860dd2799920360eb334982b51e1",
+          "status": "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE",
+          "finishedAt": "2026-09-08T18:01:10.979Z",
+          "requestCounts": {
+            "remote_all": 27,
+            "service_key_self_check": 1,
+            "bucket_precheck": 1,
+            "auth_fixture_precheck": 5,
+            "database_reads": 16,
+            "password_adminB": 1,
+            "auth_user": 2,
+            "logout_adminB": 1
+          },
+          "apiRequests": 6,
+          "assetRequests": 23,
+          "delayedDownloads": [],
+          "failureCode": null,
+          "firstRefusal": null,
+          "gracefulStopExitCode": 0
+        }
+      },
+      "sql": {
+        "observedAt": "2026-09-08T18:01:23.657536Z",
+        "projectRef": "tetynodzrtmdbuzgboro",
+        "resources": 5,
+        "versions": 3,
+        "withdrawnVersions": 3,
+        "publishedPointers": 0,
+        "deliveryAudits": 8,
+        "privateObjects": 5,
+        "outbox": 2,
+        "authUsers": 6,
+        "authSessions": 4,
+        "explanation": "Eight normal browser password sign-ins and eight UI sign-outs. The observed four remaining sessions are consistent with global admin logout revoking two earlier admin sessions; individual retained/revoked session attribution was not independently queried. No fixture identities were recreated.",
+        "boundedDelta": {
+          "resources": 1,
+          "versions": 1,
+          "objects": 1,
+          "reviewUpdates": 2,
+          "publications": 1,
+          "withdrawals": 1,
+          "deliveryAudits": 2,
+          "outbox": 0,
+          "authUsers": 0
+        },
+        "rawReceiptSha256": "e9b64f49e51236df73fa58a08420bcdceb5ae360cefe0b8e37d3e6ba12dceca1"
+      },
+      "versionDetails": {
+        "observedAt": "2026-09-08T18:01:52.403248Z",
+        "state": "withdrawn",
+        "usagePolicy": "private",
+        "audience": [
+          "research_rep"
+        ],
+        "sizeBytes": 2333,
+        "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+        "validationOk": true,
+        "validationReasonCount": 0,
+        "lifecycleTimestampsPresent": true,
+        "sameBoundAdmin": true,
+        "publicationCleared": true,
+        "deliveredAudits": 2,
+        "otherAudits": 0,
+        "matchingPrivateObjects": 1,
+        "bucketPublic": false,
+        "rawReceiptSha256": "dee4520ae1d41b8b58840844df96b5bb66f39ec62dddbe2836b15f8ea8d9e1e8"
+      },
+      "consoleErrors": 23,
+      "pageErrors": 0,
+      "boundaryFailures": 0,
+      "assetFailures": 0,
+      "independentEvidenceReview": {
+        "reviewer": "managed_hub_harness",
+        "verdict": "ACCEPT_BOUNDED_BROWSER_HOST_SQL_RECONCILIATION",
+        "all203ProviderAttemptsHaveMatching2xxResponses": true,
+        "unresolvedProviderAttempts": 0,
+        "all45PngHashesSizesDimensionsVerified": true,
+        "allServedAssetsMatch341FileManifest": true,
+        "formalBAcceptance": false
+      },
+      "formalBAcceptance": false
+    }
+  },
+  "historicalReceiptDisposition": "Original exact-8be gate receipts, broadSuiteAudit, scanner binding, prior failed managed/browser runs and prior 3814 installation records remain unchanged. Later actual managed/browser evidence supersedes only their former pending status, not their source/timing/coverage."
 }
