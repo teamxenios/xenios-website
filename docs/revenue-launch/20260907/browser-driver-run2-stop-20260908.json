@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "status": "STOP_BEFORE_AUTH_BROWSER_INIT_FAILURE",
+  "observedAt": "2026-09-08T17:55:29.189134+00:00",
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "hostSha": "2873a333255c015789594920493e10c6b82461b8",
+  "hostTree": "d93e1d3409d74a5ab61f83df65fc7676a7941471",
+  "hostFileSha256": "8edbab84599aa06ad7a60821d2b3754ebb92937aae20a36dcb5e71cee81eb3ad",
+  "driverSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366",
+  "driverTree": "c6df384acd9916ca26ae45b6af136a16937f81bf",
+  "driverFileSha256": "43a90234c7de04f3c1b752aac24a25963d12aea2a4b154c63e8337afcdbb82cd",
+  "driverPlanSha256": "0c45e3745c03d069c056d1437b3a83f24999f13415a6fac9a18264e7dfb315f6",
+  "privateResultSha256": "8cbb74f875fdda13a61f26a5491629163d0c5ac10fd79434834738b16723432e",
+  "failure": {
+    "stage": "admin_real_password_login",
+    "code": "observed_runtime_or_boundary_failure"
+  },
+  "steps": [
+    {
+      "name": "preflight_serving_binding",
+      "passed": true
+    },
+    {
+      "name": "admin_real_password_login",
+      "passed": false
+    }
+  ],
+  "pageErrors": 3,
+  "authCounts": {},
+  "downloads": 0,
+  "matrixCaptures": 0,
+  "browserClosed": true,
+  "boundaryFailures": 0,
+  "assetFailures": 0,
+  "hostReadiness": {
+    "adminA": "Actual loopback status and observed PID/listener; stdout capture was empty; minimal READY file derived with private provenance.",
+    "adminB": "Actual stdout READY and independently verified loopback status.",
+    "eachHostRemoteReads": 18,
+    "authOrHubWrites": 0
+  },
+  "processStop": {
+    "method": "Exact PID identity verified; saved actual status then stopped local processes17544 and17112 because plain-pipe exec stdin was closed.",
+    "gracefulShutdownReceipt": false,
+    "bothExecExitCodes": 1,
+    "nextLaunch": "Use tty=true so stdin stop command remains available."
+  },
+  "sqlReconciliation": {
+    "observedAt": "2026-09-08T17:53:50.252135Z",
+    "projectRef": "tetynodzrtmdbuzgboro",
+    "resources": 4,
+    "versions": 2,
+    "deliveries": 6,
+    "objects": 4,
+    "outbox": 2,
+    "authUsers": 6,
+    "authSessions": 6,
+    "unchanged": true,
+    "priorReadOnlyQueryError": "42P01 incorrect notification_outbox name; corrected to research_notification_outbox; no SQL mutation."
+  },
+  "diagnosis": "Owner reproduced tsx keepNames adding an outer __name reference inside serialized init callback. Consistent with three page errors, but original run did not record exception details. Narrow correction and independent review underway.",
+  "productionChanged": false,
+  "retainedDataPreserved": true,
+  "completedManagedApiProofRetained": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+  "browserQualificationPassed": false,
+  "independentBApplicationVerdict": "PENDING"
+}

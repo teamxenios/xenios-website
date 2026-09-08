@@ -1652,11 +1652,11 @@
       "delegatedManagedBrowserDriver": {
         "agent": "release_manifest",
         "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
-        "status": "RETURNED_QUALIFIED_SOURCE_BROWSER_NOT_RUN",
+        "status": "ACTIVE_NARROW_SERIALIZATION_CORRECTION",
         "paths": [
           "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
         ],
-        "parentMayNotEditDelegatedPathsUntilReturned": false,
+        "parentMayNotEditDelegatedPathsUntilReturned": true,
         "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation.",
         "returnedSourceSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366"
       },
@@ -1669,12 +1669,14 @@
       },
       "delegatedNextPolicyCopy": {
         "agent": "release_manifest",
-        "status": "ACTIVE_SEPARATE_FUTURE_SLICE",
+        "status": "RETURNED_A_REVIEW_ACCEPT_FUTURE_CANDIDATE",
         "paths": [
           "server/research/partners/portal.ts"
         ],
         "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
-        "scope": "Correct obsolete paid-membership display copy in canonical training module, preserving stable module key/history; isolated future source, no changes to current qualified application."
+        "scope": "Correct obsolete paid-membership display copy in canonical training module, preserving stable module key/history; isolated future source, no changes to current qualified application.",
+        "sourceSha": "f539daac1ff73ecf439d26e4000e19f1fd352652",
+        "reviewReceipt": "docs/revenue-launch/20260907/partner-training-copy-review-f539daac.json"
       }
     },
     {

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-08T17:55:29.189134+00:00",
+  "sourceSha": "f539daac1ff73ecf439d26e4000e19f1fd352652",
+  "sourceTree": "3d1fc417236f7cce789cbf7757ba19b80a409781",
+  "parentApplicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "reviewer": "ASTRA-A independent review of release_manifest change",
+  "verdict": "ACCEPT_NARROW_DISPLAY_COPY_CHANGE",
+  "files": [
+    "server/research/partners/portal.ts"
+  ],
+  "change": "Two display strings describe approved customer access instead of paid membership; stable module key and completion records unchanged.",
+  "validation": {
+    "existingPortalTestsPassed": 29,
+    "failed": 0,
+    "durationSeconds": 1.246
+  },
+  "integratedIntoCurrentBrowserCandidate": false,
+  "productionDeployed": false,
+  "liveTrainingVerified": false
+}
