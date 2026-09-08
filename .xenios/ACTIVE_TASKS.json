@@ -646,7 +646,7 @@
       "id": "BROWSER-PERF-PROOF",
       "title": "P0-3/P0-4: seeded local browser proof, mobile smoke 430-320, and catalog performance measurement for the manual-order launch",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
@@ -654,7 +654,13 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-09-08T18:28:01.046Z",
-      "releasedAt": "2026-09-06T03:52:00.347Z"
+      "releasedAt": "2026-09-06T03:52:00.347Z",
+      "handoff": {
+        "session": "codex-seth-revenue-launch-20260905",
+        "sha": "a7dede1952297f07fd10f13589e073fff6f2862f",
+        "file": ".xenios/handoffs/2026-09-08T18-28-37-139Z-BROWSER-PERF-PROOF-codex-seth-revenue-launch-20260905.md",
+        "at": "2026-09-08T18:28:37.141Z"
+      }
     },
     {
       "id": "STEP1-LIVE-UX-PERFORMANCE-HOTFIX-20260825",

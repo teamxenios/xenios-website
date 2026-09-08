@@ -1688,7 +1688,7 @@
         "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
         "e2e/browser-perf/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-08T18:28:01.047Z",
       "heartbeatAt": "2026-09-08T18:28:01.047Z"
     }
