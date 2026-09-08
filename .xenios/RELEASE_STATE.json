@@ -743,7 +743,7 @@
     "successorQualification": {
       "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
       "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
-      "status": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
+      "status": "LOCAL_MANAGED_BROWSER_GATES_PASS_B_ACCEPTANCE_PENDING",
       "productionDeployed": false,
       "featureActivated": false,
       "report": "docs/revenue-launch/20260907/HARDENING_QUALIFICATION_20260908.md",
@@ -767,7 +767,7 @@
       "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
       "independentBReview": "PENDING",
       "managedExecution": "PASS_41_API_CHECKS_15_BROWSER_STEPS_45_CAPTURES_HOST_SQL_RECONCILED_B_ACCEPTANCE_PENDING",
-      "updatedAt": "2026-09-08T18:03:18.899976+00:00",
+      "updatedAt": "2026-09-08T18:11:58.280593+00:00",
       "managedStaging": {
         "projectId": "tetynodzrtmdbuzgboro",
         "status": "ACTIVE_HEALTHY",
@@ -782,12 +782,16 @@
         "fixtureCoreInserts": 8,
         "passwordSignIns": 5,
         "notificationOutboxCount": 2,
-        "resourceRows": 4,
-        "storageObjects": 4,
+        "resourceRows": 5,
+        "storageObjects": 5,
         "productionChanged": false,
-        "resourceVersions": 2,
-        "deliveryAudits": 6,
-        "withdrawnVersions": 2
+        "resourceVersions": 3,
+        "deliveryAudits": 8,
+        "withdrawnVersions": 3,
+        "publishedPointers": 0,
+        "authSessions": 4,
+        "latestBrowserRunId": "hubbrowser-20260908-bdda04a633-b3",
+        "latestSqlObservedAt": "2026-09-08T18:01:52.403248Z"
       },
       "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json",
       "managedApiReceipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
@@ -795,7 +799,8 @@
       "browserHostRun1Receipt": "docs/revenue-launch/20260907/browser-host-run1-stop-20260908.json",
       "browserDriverSha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
       "browserRun2Receipt": "docs/revenue-launch/20260907/browser-driver-run2-stop-20260908.json",
-      "browserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json"
+      "browserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+      "readOnlyCompatibilityReceipt": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json"
     }
   },
   "reconciliationHistory": [

@@ -369,8 +369,8 @@
       "branch": "codex/xenios-seth-revenue-launch-20260905",
       "state": "active",
       "startedAt": "2026-09-05T17:49:32.118Z",
-      "heartbeatAt": "2026-09-08T17:51:01.496Z",
-      "note": "Managed API 41 checks passed; existing browser host run2 listening on loopback, diagnosing READY stdout capture; no browser login or writes. Full platform goal remains active."
+      "heartbeatAt": "2026-09-08T18:11:58.375Z",
+      "note": "Actual 41 API checks and15 browser steps/45 captures passed; hosts gracefully stopped and SQL reconciled. App8be frozen, prod3814 unchanged. Fresh read-only production compatibility passed. Closing release packet; formal B acceptance and production content/audience/account decision pending."
     },
     {
       "id": "codex-seth-astra-b-20260905",

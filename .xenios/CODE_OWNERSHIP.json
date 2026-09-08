@@ -1504,7 +1504,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-08T17:51:01.496Z",
+      "heartbeatAt": "2026-09-08T18:11:58.375Z",
       "delegatedPaths": {
         "scripts/preview-resource-hub.ts": "ASTRA-B exclusive fixture flag parity correction; isolated xenios-resource-hub-browser-fixture-20260907; A integrates exact reviewed commit only",
         "scripts/revenue-launch/managed-resource-hub-qa.ts": "managed_hub_harness exclusive isolated extension based on8be; A retains lease and integrates narrow reviewed paths only",
@@ -1534,6 +1534,16 @@
         "scope": "Correct obsolete paid-membership display copy in canonical training module, preserving stable module key/history; isolated future source, no changes to current qualified application.",
         "sourceSha": "f539daac1ff73ecf439d26e4000e19f1fd352652",
         "reviewReceipt": "docs/revenue-launch/20260907/partner-training-copy-review-f539daac.json"
+      },
+      "delegatedCurrentReleasePacket": {
+        "agent": "release_manifest",
+        "state": "ACTIVE_EXACT_8BE_RELEASE_DOCS_ONLY",
+        "paths": [
+          "docs/revenue-launch/20260907/hardening-manifest-draft-8be5d582.json",
+          "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_RELEASE_PACKET_8be.md"
+        ],
+        "baseEvidenceSha": "594e32373301fce1986a03c89797e3f85ed4e4d0",
+        "productionWrites": false
       }
     },
     {
