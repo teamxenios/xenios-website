@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-09-08T04:33:55.209Z",
+  "observedAt": "2026-09-08T04:40:49.569Z",
   "kind": "v3-source-crosscheck",
   "recoveredRegister": {
     "file": "SOURCE_REGISTER_PRIVATE.json (founder package XENIOS_OPERATING_FORMS, 13/13 manifest hashes verified)",
@@ -29,13 +29,15 @@
       "sha256": "09318a530d989ce3b1da2b0c24827b604d4e7958f716d6c9f368149f4382d911",
       "bytes": 214862,
       "category": "advisor-agreement (returned, labelled signed)",
-      "localExactHashMatches": 0,
+      "localExactHashMatches": 1,
       "filesOfThatSizeUnderDownloads": 0,
       "inTier1": false,
-      "note": "Tier 1 holds 18 local versions of the same agreement (unsigned drafts, e.g. 214,990 and 205,8xx bytes); the exact signed bytes are only in the founder-held XENIOS_RECOVERED_ORIGINALS.zip, which is not on this machine."
+      "note": "Samuel supplied the exact original on 2026-09-08; verified 214,862 bytes and sha256 09318a53... on the Downloads copy and again on the restricted-directory copy; original preserved unchanged; ACL current user + SYSTEM.",
+      "inRestrictedRegisterDir": true,
+      "placedAt": "2026-09-08T04:40:49.569Z"
     }
   ],
-  "preciseSourceRequest": "Place XENIOS_RECOVERED_ORIGINALS.zip (or the S03 file, sha256 09318a53..., 214,862 bytes) into the ACL-restricted register directory on this machine, OR confirm the operator can retrieve Gmail message 1a064cd6e39e81fa's attachment directly. Otherwise the operator may take S03 name coverage from the local unsigned drafts in tier 1 with their hashes recorded as the provenance and this gap stated.",
+  "preciseSourceRequest": "CLOSED: S03 original placed in the restricted register directory by Claude after byte/hash verification. All three recovered sources (S01, S02, S03) are now locally available by exact hash for the authorized V3 preparation.",
   "newFormsScannerCheck": {
     "scannerBlob": "8a66a45ea0872e8b67bcba3f56cd2d5665ecff8e (== c350ab1c)",
     "result": "all 6 new PDFs (3 fillable, 3 print) ACCEPTED",
