@@ -510,6 +510,21 @@ describe("Resource Hub admin page", () => {
     expect(byTestId("resource-hub-upload")).not.toBeNull();
   });
 
+  it("renders a retained zero-version resource without version actions or writes", async () => {
+    mocks.list.mockResolvedValue({ kind: "ok", data: { ok: true, resources: [resource({
+      versions: [], currentPublishedVersionId: null,
+    })] } });
+    await renderPage();
+    const card = byTestId(`resource-${RESOURCE_A}`);
+    expect(card).not.toBeNull();
+    expect(card?.textContent).toContain("No versions recorded.");
+    expect(card?.textContent).toContain("No published version");
+    expect(card?.querySelectorAll("button")).toHaveLength(0);
+    expect(mocks.upload).not.toHaveBeenCalled();
+    expect(mocks.review).not.toHaveBeenCalled();
+    expect(mocks.download).not.toHaveBeenCalled();
+  });
+
   it("shows an honest unavailable state that names what is missing", async () => {
     mocks.list.mockResolvedValue({ kind: "unavailable" });
     await renderPage();
