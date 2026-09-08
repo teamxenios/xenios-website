@@ -38,6 +38,16 @@ Use the records below.
 | `docs/*`, `.xenios/*` (≈60) | many | records, handoffs, evidence | non-runtime; confirm none carries a secret or a real name (secret scan: 102 raw, all in test/preview files) |
 
 Areas marked **no independent review on file** are where your time goes.
+What each one actually requires (Samuel, 2026-09-08):
+
+| Uncovered area | Examine |
+| --- | --- |
+| Locked-gate admission (`9b5e61b`, `6bef2a6`: `server/research/index.ts`, `server/research/partners`, `shared/research`) | The permission boundary itself — `MEMBER_SESSION_READ_PATHS`, the `memberSessionRoute` shape with `canonicalUuid`, the `if (bearer && memberSessionRoute(...))` composition — and the downstream guards (`requireMember`, `withPartner`, audience checks) that the admitted path relies on. Claude's probe (`docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md`, 19 rows) measures outcomes; you judge the boundary. |
+| Partner / member / account-portal changes (17 + 3 + 2 commits) | The changed behaviour and the tests that changed with it (`git diff ff3c496..45f95dfe -- client/src/research/pages client/src/research/account-portal`), not the empty-state screenshots. `PARTNER_PAGES_SWEEP.md` proves rendering, nothing more. |
+| QR export (`client/src/research/recommendation/qr-export.ts`, `Links.tsx`, `RecommendationPrintCard.tsx`; deps `qrcode-generator`, `jsqr`) | The implemented export and its account/lifecycle handling — `safeExportRecommendation` refusing revoked/expired links, the re-check before save and print, the principal-bound cancellation path — not only that the code decodes. |
+
+Zero ownership conflicts does not substitute for reading these; nobody
+approves their own implementation.
 
 ## What to do
 

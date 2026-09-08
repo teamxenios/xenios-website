@@ -31,12 +31,16 @@ the bytes at `bf7b5fe` (equal to the candidate `45f95dfe`). Status is
    diff of the two context reviews (`candidateSha`, placeholder `reviewedAt`,
    one appended limitation; 102 findings byte-identical), and the recount
    showing every match occurrence is still present in the candidate's diff.
-2. Run the check yourself from the repository root on the pinned Node:
+2. Run the check yourself from a checkout of the repository on the pinned
+   Node, naming the evidence commit you are reviewing:
    ```
-   node docs/revenue-launch/20260908/verify-rebind-packet.mjs
+   node docs/revenue-launch/20260908/verify-rebind-packet.mjs --at <evidence commit>
    ```
-   It recomputes all of the above from Git objects and prints one PASS/FAIL
-   per claim. It does not accept anything.
+   It reads the four record files **from Git at that commit** and the source
+   files from their pinned commits — never from the working directory — so
+   local edits cannot influence the verdict; it prints the commit it used,
+   then one PASS/FAIL per claim. It does not accept anything. Without
+   `--at` it uses `HEAD`, so make sure `HEAD` is the commit you mean.
 3. Open both context reviews and confirm the dispositions you are carrying
    forward are the ones B wrote; the script proves they are byte-identical,
    you confirm they are the right ones.

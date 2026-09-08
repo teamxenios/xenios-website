@@ -37,22 +37,41 @@ context. Claude must not see the names.
 | Team, advisors and named business contacts | Founder, staff, advisors and counterparties named in internal agreements and proposals | Names that appear in internal document titles and could leak into records |
 | Support and outbox recipients | Names attached to `research_notification_outbox` and support threads | Appear in fixtures and logs most easily |
 
-Explicit exclusions: no emails, phone numbers, addresses or identifiers (the
-scanner only matches names); no minors' names beyond what the sources hold;
-no names invented or padded; no synthetic personas (`Ada`, `Riley`, `Avery`,
-`Sam`, `Morgan` from the preview) — those are deliberate fixtures.
+Explicit exclusions: no emails, phone numbers, addresses, clinical details or
+identifiers (the scanner only matches names); no names invented or padded.
+**Do not exclude a real person because their name resembles a synthetic
+preview persona** — the personas are fixtures, the people are not; if a real
+name collides, keep it and let the scan flag the fixture for review.
+
+## Samuel's conditions on preparation (2026-09-08)
+
+Preparation of version 2 is authorized **through an existing authorized
+read-only connection only**, as a replacement input, not recovery. The
+operator must first identify themselves and confirm the exact documented
+source systems and available name fields — no guessed columns, no unrelated
+data. Recorded spellings and relevant variants are preserved as recorded.
+Unavailable historical sources and coverage limits are documented; no
+equivalence to the unrecovered original is claimed. The resulting file is
+approved separately by hash before it qualifies anything. **Claude has no
+authorized read-only connection in its current session (the configured
+Supabase connector is rejected) and is therefore not the operator.**
 
 ## Processing
 
-1. Owner exports the columns above, concatenates, trims, normalises to
-   `First Last` (Unicode kept), removes duplicates case-insensitively, one
-   per line, UTF-8, LF.
+1. Owner exports the name fields above, trims, keeps each name as recorded
+   (Unicode and recorded variants kept; no forced `First Last` restructuring),
+   removes exact duplicates case-insensitively, one per line, UTF-8, LF.
+   Names without whitespace will not match the scanner's full-name rule; the
+   owner records how many entries fall outside it.
 2. Owner stores it **outside every Git worktree** at a location they record
    privately (recommended: the same secure folder that holds the Supabase
    service credentials), records byte size and SHA-256, and gives Claude
    only the path (or sets `XENIOS_RELEASE_PII_NAMES_FILE`).
-3. Coverage statement written by the owner: which tables, which date, how
-   many names, what was excluded and why.
+3. The operator returns, without the names: source systems and observation
+   time; coverage and exclusions; entry count and deduplication method; byte
+   count and SHA-256; confirmation of secure storage; and the limitations of
+   the resulting scan (full names containing whitespace, this list, this
+   diff).
 
 ## Approval as a new version
 

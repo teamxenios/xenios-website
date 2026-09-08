@@ -3,10 +3,14 @@
 // repository root with the pinned Node; prints one verdict per claim and exits
 // 1 if any claim fails. It reads only Git objects and the two record pairs.
 //
-//   node docs/revenue-launch/20260908/verify-rebind-packet.mjs
+//   node docs/revenue-launch/20260908/verify-rebind-packet.mjs [--at <commit>]
+//
+// The four record files (both registries, both context reviews) are read from
+// Git at --at (default HEAD), never from the working directory, so the verdict
+// binds to a commit a reviewer can name rather than to whatever local edits
+// happen to be on disk. Source files are read from their pinned commits.
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 
 const REVIEWED = "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe"; // B's accepted reviewedSourceSha
 const REBOUND = "bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e";  // proposed reviewedSourceSha
@@ -14,10 +18,14 @@ const CANDIDATE = "45f95dfe51ef0aa226b39413c1fbd02fc121ece8";
 const BASE = "ff3c496245739233b71e46f9e5d6e26af9d57017";
 const OLD_DIR = "docs/revenue-launch/20260907";
 const NEW_DIR = "docs/revenue-launch/20260908";
+const atIndex = process.argv.indexOf("--at");
+const AT = execFileSync("git", ["rev-parse", "--verify", `${atIndex === -1 ? "HEAD" : process.argv[atIndex + 1]}^{commit}`], { encoding: "utf8" }).trim();
+console.log(`records read from Git at ${AT}; sources from their pinned commits\n`);
 
 const lf = (bytes) => createHash("sha256").update(Buffer.from(bytes).toString("utf8").replace(/\r\n/g, "\n"), "utf8").digest("hex");
 const blob = (sha, path) => execFileSync("git", ["cat-file", "blob", `${sha}:${path}`], { maxBuffer: 64 * 1024 * 1024 });
-const json = (path) => JSON.parse(readFileSync(path, "utf8"));
+const json = (path) => JSON.parse(blob(AT, path).toString("utf8"));
+const readFileSync = (path) => blob(AT, path);
 let failures = 0;
 const claim = (text, ok, detail = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${text}${detail ? "  — " + detail : ""}`); if (!ok) failures++; };
 
