@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent-manifest-validation",
+  "runBy": "Claude (optional assistance)",
+  "observedAt": "2026-09-08T14:35:52Z",
+  "evidenceCommit": "05b2ff13565bd8dc757f683c9ea0f052b49b37dd",
+  "applicationSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "applicationTree": "62915f1f23e16610c74622723391e9692fe7c84e",
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "evidenceCommitRuntimeFilesChanged": 0,
+  "manifest": {
+    "path": "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+    "baseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "headSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "files": 224,
+    "migrations": [
+      "research_resource_library e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722"
+    ]
+  },
+  "ownershipArtifact": {
+    "path": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
+    "sha256": "647d6507ea708b3476289a3422d96a0bf800758d72fd8b12d740c59bce6ae38a",
+    "reviewer": "ASTRA-B (Codex task 01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35)",
+    "reviewedAt": "2026-09-08T14:17:41.1754730Z",
+    "counts": {
+      "UNOWNED_FILE": 200,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "recomputedAttestationFieldsMatch": true
+  },
+  "verifier": {
+    "command": "XENIOS_EXPECTED_PRODUCTION_SHA=<base> XENIOS_EXPECTED_HEAD_SHA=<3814> tsx scripts/acceptance/verify-release-manifest.ts <manifest> with the manifest and artifact from the evidence commit staged in the index",
+    "result": "Release manifest accepted",
+    "exitCode": 0
+  },
+  "aScanReceipt": {
+    "path": "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json",
+    "exitCode": 0,
+    "candidateSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "piiFindings": 0,
+    "unresolvedSecretFindings": 0
+  },
+  "limits": [
+    "Confirms A's binding independently; execution, authorization scope and production actions remain A's and Samuel's."
+  ]
+}
