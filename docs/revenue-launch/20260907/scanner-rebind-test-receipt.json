@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_SCANNER_TESTS_ONLY",
+  "sourceSha": "37cd7bf4d12ac170ef8f474287989816ff64dbd7",
+  "observedAt": "2026-09-08T03:11:53.709Z",
+  "command": "node --test scripts/acceptance/reviewed-credential-fixtures.node-test.mjs scripts/acceptance/verify-release-diff-scan.node-test.mjs",
+  "runtime": "Node.js 20.19.0",
+  "tests": 35,
+  "passed": 35,
+  "failed": 0,
+  "skipped": 0,
+  "durationMs": 5506.3995,
+  "policyChanged": false,
+  "piiCorpusQualified": false,
+  "fullSuitePassed": false,
+  "independentReview": {
+    "sourceSha": "37cd7bf4d12ac170ef8f474287989816ff64dbd7",
+    "artifact": "SYNTHETIC_CREDENTIAL_REBIND_ACCEPTANCE.md",
+    "sha256": "650ce8836623a009412e410e09c8162ddca5a7fbaced47318a8b87677af959cd"
+  },
+  "note": "B accepted the unchanged 102 fixture contexts; the full-suite condition remains a separate mandatory gate and no release qualification is inferred."
+}
