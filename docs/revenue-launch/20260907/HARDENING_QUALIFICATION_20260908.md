@@ -10,14 +10,19 @@ Focused proof: 140 runtime cases, 56 harness cases, and 21 tool-captured UI case
 
 The supplemental source review found 14 covered paths, 37 formal unowned paths, no wrong-lane findings or conflicts, and exactly one active A lease for all 51 paths. **ASTRA-B exact-source and formal integration ownership acceptance remain pending.** Helper reviews are separately attributed.
 
+## Managed qualification update at 17:18 UTC
+
+The existing staging project `tetynodzrtmdbuzgboro` was restored once under bounded staging authorization. Exact e55 was installed once as20260908164502. Five synthetic Auth identities, three member rows, two partner rows and five initial password sessions were created; existing staging data and outbox2 remain preserved. The one approved benign PDF is private. See `STAGING_MANAGED_TEST_PLAN_20260908.md` and the installation/fixture receipts.
+
+The first managed run stopped in preflight before writes because the harness incorrectly rejected the canonical sha256 projection. Its receipt and actual zero-effect SQL reconciliation remain preserved. Corrected harness `711bd4113b9a2458f7c9b46b50a088c8db728677`, tree `c5f59f8d15b022bd822fc0e6cb71233d1fad6c48`, passed88 focused tests, explicit TypeScript and independent helper review. Only three harness files differ from the unchanged8be application.
+
+The fresh actual managed run passed41 checks at17:18:03Z. Fresh SQL reconciles four resources, two withdrawn versions, four private objects, two empty orphans, six delivery audits (one delivered/five denied), zero published pointers and unchanged outbox2. The proof covers full-precision timestamp round trips, controlled competing uploads/reviews, role refusals, approved-byte delivery, private orphan retention and withdrawal. It does not prove different-hash stored upload races or unfiltered retained-library behavior. See `managed-api-qualification-711bd411.json`; do not rerun the completed plan or recreate fixtures.
+
 ## Remaining qualification
 
-- Designate an authorized active managed environment and provide its private project-bound credentials and existing role sessions through the approved secret channel.
-- Bind exact benign content/version/hash, audience, principal states, expected writes and recovery to a reviewed private plan. No production fixture, new account grant or communication is implied.
-- Execute managed Auth/PostgREST/Storage/delivery proof. Add and execute the missing managed precision/concurrency/upload-race probes; the current foundation alone does not cover them.
-- Complete the final browser role matrix, real logout/account switching and source-bound independent acceptance.
-
-The discovered staging and retired rehearsal projects are inactive; neither was restored or reused. Managed harness execution, upload, review, publication, download and withdrawal have not occurred. Private review PDFs are not publication-approved resources.
+- Complete the separately reviewed real Auth browser host/driver and bounded browser role matrix, logout and account switching against the preserved8be build. No browser acceptance is inferred from the41 API checks.
+- Obtain actual ASTRA-B exact-source/ownership and managed/browser acceptance; helper reviews remain separately attributed.
+- Before production activation, name the actual reviewed documents, audience and permitted verification effects. Private source-review documents and the synthetic staging PDF are not approved production content.
 
 A's supported SQL connection returned PostgreSQL 17.6 and the three recorded migrations at `2026-09-08T15:47:12.09261Z`. Render confirms serving `3814`, auto-deploy off and the unchanged branch. The original account/partner release `ff3` was deployed on September 7; it must not be replayed. Existing installation postchecks, 30 unchanged critical endpoints and the 300,232 ms observation passed; rollback was unused. These are historical execution receipts, not new postchecks or real-user qualification.
 
