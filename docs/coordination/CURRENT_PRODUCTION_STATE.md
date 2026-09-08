@@ -1,5 +1,13 @@
 # Current production state
 
+Current application `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`, is live as Render `dep-dag1reu7bikc73e16ie0` since 2026-09-08T14:38:44.68489Z. Exact e55 migration applied once as managed version `20260908143724`; full production pre/postchecks passed. Critical endpoints: 30 SAME with zero allowances. Five-minute observation: 300,232ms, 26 healthy responses, zero matching errors/5xx. Rollback unused. Hub=false, billing absent, auto-deploy off, branch unchanged. Activation and real-user journeys remain unverified.
+
+[Actual production report and receipts](../revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md). The two admin corrections are assigned to a separate builder, followed by independent source and managed-service qualification. Do not replay this installation or call the disabled Hub operational.
+
+## Historical pre-installation qualification and observations
+
+The dated material below retains its original context. Pending/unapplied/undeployed language in this historical section was superseded by the actual installation receipt above.
+
 This records-only reconciliation describes the live Universal Account and Partner Access release. It does not authorize another deployment, migration, account action, notification or commerce action. This is not the full revenue launch.
 
 ## Current deployment identity

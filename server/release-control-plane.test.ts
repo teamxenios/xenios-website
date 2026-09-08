@@ -44,7 +44,7 @@ function gitFilteredBlobSha(path: string): string {
     encoding: "utf8",
   }).trim();
 }
-const PRODUCTION_SHA = "ff3c496245739233b71e46f9e5d6e26af9d57017";
+const PRODUCTION_SHA = "3814c687ef9293f84f939c372fdbc01b278a9193";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
@@ -2532,7 +2532,7 @@ describe("production state validator", () => {
       (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
     )).toBe(true);
     expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
-      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-ff3c4962" }),
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-3814c68" }),
     ]);
     for (const id of [
       "founder-decision-lock-20260730",
@@ -2552,9 +2552,9 @@ describe("production state validator", () => {
       "utf8",
     )) as MigrationDag;
     expect(checked.ownership.generatedAt).toBe("2026-08-03T16:00:00Z");
-    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-07T22:58:23Z");
+    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-08T14:45:55.787734Z");
     expect(dag.generatedAt).toBe("2026-08-02T02:02:07Z");
-    expect(dag.productionBaselineReconciledAt).toBe("2026-09-07T22:58:23Z");
+    expect(dag.productionBaselineReconciledAt).toBe("2026-09-08T14:45:55.787734Z");
   }, 30_000);
 
   it("accepts unavailable/null data posture without treating it as zero", () => {

@@ -1,22 +1,12 @@
 # Externally blocked work
 
-## Current account/partner and Resource Hub checkpoint — 2026-09-08
+## Current checkpoint — 2026-09-08
 
-The exact Universal Account and Partner Access release is deployed at
-`ff3c496245739233b71e46f9e5d6e26af9d57017`, Render
-`dep-dafcm567bikc7382rhng`. Its two authorized migrations and original
-postchecks passed. A's supported SQL connection worked again at 03:09:13 UTC on September 8;
-no executor handoff or repeated GO is needed. See
-`docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json`
-and the original production deployment report.
+Current application `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`, is live as Render `dep-dag1reu7bikc73e16ie0` since 2026-09-08T14:38:44.68489Z. Exact e55 migration applied once as managed version `20260908143724`; full production pre/postchecks passed. Critical endpoints: 30 SAME with zero allowances. Five-minute observation: 300,232ms, 26 healthy responses, zero matching errors/5xx. Rollback unused. Hub=false, billing absent, auto-deploy off, branch unchanged. Activation and real-user journeys remain unverified.
 
-Resource Hub installation successor `3814c687ef9293f84f939c372fdbc01b278a9193` is pinned under the verified standing conditional directive. The approved V3 scan passed on that exact range after three role-attribution corrections; its historical/handwriting/name-format coverage remains limited. General GO, SQL access and V3 approval are not current blockers. The canonical production precheck passed again at 14:11:36 UTC on September 8; repeat it immediately before the exact e55 migration. No Hub migration/deploy/activation has occurred yet.
+SQL access, V3 approval, source binding and installation authorization are closed. Current blockers are the two admin hardening corrections, managed Auth/PostgREST/Storage proof, and the reviewed exact content/audience/identity/effects/recovery plan. Existing approved V3 coverage remains bounded; do not request general GO again. Any new real-user grant or communication requires specific approval.
 
-Activation remains blocked by the concurrent upload-key identity check and review expected-state corrections, managed Auth/PostgREST/Storage delivery proof, and a reviewed exact content/audience/test-identity/expected-write/recovery plan. Local memory/WASM evidence does not prove those managed behaviors. See `docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md`. Disabled installation must not be represented as an operational Resource Hub or full platform completion.
-
-Real-account approval/claim, partner activation and notification effects still
-require separate account-specific authorization. This is distinct from the
-completed account/partner deployment.
+See `docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md`.
 
 ## Earlier dated observations (preserved; superseded where stated above)
 

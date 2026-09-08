@@ -2,8 +2,8 @@
  "schemaVersion": 1,
  "identitySemantics": "TRUSTED_RELEASE_BASELINE",
  "generatedAt": "2026-08-02T02:02:07Z",
- "productionBaselineReconciledAt": "2026-09-07T22:58:23Z",
- "productionSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+ "productionBaselineReconciledAt": "2026-09-08T14:45:55.787734Z",
+ "productionSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
  "checksumScope": "canonical Git blob bytes at each release-ancestor sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; upstreamReviewedSourceSha preserves archival review attribution without making the gate depend on an unreachable object; managed copies must byte-match the pinned source",
  "migrations": [
   {
@@ -736,13 +736,13 @@
     "algorithm": "sha256",
     "value": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722"
    },
-   "appliedToProduction": false,
-   "managedMigrationId": "PENDING",
+   "appliedToProduction": true,
+   "managedMigrationId": "20260908143724 20260906120000_research_resource_library",
    "applyTwiceVerified": true,
    "rollback": {
     "strategy": "retain_additive_schema_and_history",
     "procedure": "supabase/candidates/20260906120000_research_resource_library.rollback.md",
-    "evidence": "Current checker rehearsal: docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json and resource-hub-checker-visibility-pg18.json,154/154 each onPG17.5/18.3 at2026-09-07T23:38:59.858Z/23:39:06.242Z; exact e55f965f migration and742bce57/7c7ef33b pre/postchecks. Includes original150 cases and4 checker-visibility negative controls. Earlier132-assertion evidence remains historical. Managed17.6 post-install and Storage HTTP parity remain unproven. Fresh precheck and separate exact authorization required."
+    "evidence": "Exact e55 applied once to managed PG17.6; exact 7c7 postcheck passed before any content with zero rows/objects, private bucket, FORCE RLS and expected ACL/RPC fingerprints. Receipt: docs/revenue-launch/20260907/resource-hub-production-migration-3814.json. Existing applyTwiceVerified reflects local154/154 PG17.5/18.3 rehearsals only; never a second production apply. Preserve additive data; Storage HTTP/live role qualification remains pending."
    }
   }
  ],
@@ -757,6 +757,6 @@
   "The two nodes without sourceSha were byte-verified at productionSha 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 before this baseline changed. No current database aggregate or managed-ledger observation was refreshed on 2026-08-28; per-node applied-state claims retain only their own dated historical evidence and must not be generalized into current counts.",
   "The protected order requires both reservation commands and the variant strength write gate before persistent cart, followed by fulfillment supplier operations -> affiliate professional operations -> pricing lineage -> RLS retro hardening.",
   "No pending migration may be marked applied until the authenticated managed ledger shows its exact version and the post-apply security, privilege, row-count, and dependency invariants pass.",
-  "Account/partner candidates applied as managed history versions 20260907143147 and 20260907143204 are recorded separately in supabase/MIGRATIONS.md and the account/partner deployment report. Their exact candidate bytes are preserved; no retrospective managed file copy or migration-history repair is introduced. Resource Hub remains PENDING, with Storage role/schema compatibility enforced by its dedicated fresh precheck."
+  "Account/partner candidates applied as managed history versions 20260907143147 and 20260907143204 are recorded separately in supabase/MIGRATIONS.md and the account/partner deployment report. Their exact candidate bytes are preserved; no retrospective managed file copy or migration-history repair is introduced. Resource Hub applied once as20260908143724 on2026-09-08 with exact full pre/postchecks PASS; do not replay either copy. Enabled managed delivery remains unqualified."
  ]
 }

@@ -1497,11 +1497,12 @@
         "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
         "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
-        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json"
+        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
+        "server/research/resource-hub/activation-hardening.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-08T14:30:25.276Z",
+      "heartbeatAt": "2026-09-08T15:05:56.045Z",
       "delegatedPaths": {
         "scripts/preview-resource-hub.ts": "ASTRA-B exclusive fixture flag parity correction; isolated xenios-resource-hub-browser-fixture-20260907; A integrates exact reviewed commit only"
       }

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "kind": "READ_ONLY_RESUME_REVERIFICATION",
+  "sqlConnection": "ASTRA-A supported Supabase connector",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "sql": [
+    {
+      "observed_at": "2026-09-08 15:04:40.011753+00",
+      "database_name": "postgres",
+      "executor": "postgres",
+      "server_version": "17.6",
+      "release_migrations": [
+        {
+          "name": "20260905_research_approved_customer_access",
+          "version": "20260907143147"
+        },
+        {
+          "name": "20260905_research_partner_lifecycle",
+          "version": "20260907143204"
+        },
+        {
+          "name": "20260906120000_research_resource_library",
+          "version": "20260908143724"
+        }
+      ]
+    }
+  ],
+  "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
+  "renderDeploys": [
+    {
+      "id": "dep-dag1reu7bikc73e16ie0",
+      "sha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+      "status": "live",
+      "finishedAt": "2026-09-08T14:38:44.68489Z"
+    },
+    {
+      "id": "dep-dafcm567bikc7382rhng",
+      "sha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "status": "deactivated",
+      "finishedAt": "2026-09-07T14:33:55.150237Z"
+    },
+    {
+      "id": "dep-dad08h740ujc73aprfcg",
+      "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
+      "status": "deactivated",
+      "finishedAt": "2026-09-03T23:36:32.75103Z"
+    }
+  ],
+  "scope": "Actual SQL and Render reads after completed installation observation; no mutations, migration replay, deployment, activation or real-user test.",
+  "installationReceipt": "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json"
+}

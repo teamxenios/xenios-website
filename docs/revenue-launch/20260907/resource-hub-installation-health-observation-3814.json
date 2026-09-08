@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "applicationSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "deployId": "dep-dag1reu7bikc73e16ie0",
+  "startedAt": "2026-09-08T14:39:32.233Z",
+  "requiredDurationMs": 300000,
+  "intervalMs": 25000,
+  "checks": [
+    {
+      "observedAt": "2026-09-08T14:39:32.482Z",
+      "elapsedMs": 0,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:39:34 GMT",
+          "durationMs": 181,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:39:34 GMT",
+          "durationMs": 183,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:39:57.442Z",
+      "elapsedMs": 25000,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:39:59 GMT",
+          "durationMs": 208,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:39:59 GMT",
+          "durationMs": 156,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:40:22.353Z",
+      "elapsedMs": 50011,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:40:24 GMT",
+          "durationMs": 105,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:40:24 GMT",
+          "durationMs": 106,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:40:47.365Z",
+      "elapsedMs": 75008,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:40:49 GMT",
+          "durationMs": 124,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:40:49 GMT",
+          "durationMs": 121,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:41:12.451Z",
+      "elapsedMs": 100004,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:41:14 GMT",
+          "durationMs": 212,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:41:14 GMT",
+          "durationMs": 211,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:41:37.424Z",
+      "elapsedMs": 125001,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:41:39 GMT",
+          "durationMs": 117,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:41:39 GMT",
+          "durationMs": 187,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:42:02.421Z",
+      "elapsedMs": 150003,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:04 GMT",
+          "durationMs": 118,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:04 GMT",
+          "durationMs": 182,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:42:27.457Z",
+      "elapsedMs": 175012,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:29 GMT",
+          "durationMs": 209,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:29 GMT",
+          "durationMs": 207,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:42:52.373Z",
+      "elapsedMs": 200001,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:54 GMT",
+          "durationMs": 115,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:42:54 GMT",
+          "durationMs": 136,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:43:17.455Z",
+      "elapsedMs": 225010,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:43:19 GMT",
+          "durationMs": 211,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:43:19 GMT",
+          "durationMs": 144,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:43:42.443Z",
+      "elapsedMs": 250013,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:43:44 GMT",
+          "durationMs": 167,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:43:44 GMT",
+          "durationMs": 194,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:44:07.485Z",
+      "elapsedMs": 275013,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:44:09 GMT",
+          "durationMs": 238,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:44:09 GMT",
+          "durationMs": 235,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "observedAt": "2026-09-08T14:44:32.465Z",
+      "elapsedMs": 300004,
+      "samples": [
+        {
+          "url": "https://xeniostechnology.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:44:34 GMT",
+          "durationMs": 104,
+          "pass": true
+        },
+        {
+          "url": "https://xenios-website.onrender.com/api/health",
+          "status": 200,
+          "commerceEnabled": false,
+          "serverDate": "Tue, 08 Sep 2026 14:44:34 GMT",
+          "durationMs": 226,
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "status": "PASS",
+  "elapsedMs": 300232,
+  "completedAt": "2026-09-08T14:44:32.465Z"
+}

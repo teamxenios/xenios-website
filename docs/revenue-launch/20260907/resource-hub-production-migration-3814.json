@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "applicationSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "applicationTree": "62915f1f23e16610c74622723391e9692fe7c84e",
+  "evidenceCommit": "3f51ed4af75e47ef5c94ab18a46a9f2d4fc27b9e",
+  "projectId": "yvzeduaxbwgcwllhywff",
+  "migrationName": "20260906120000_research_resource_library",
+  "migrationHistoryVersion": "20260908143724",
+  "precheck": {
+    "startedAt": "2026-09-08T14:36:55.255Z",
+    "completedAt": "2026-09-08T14:36:57.427Z",
+    "lfSha256": "742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab",
+    "exactSourceExecuted": true,
+    "isError": false,
+    "returnedInformationalRows": [
+      {
+        "schema_name": "public",
+        "creator": "postgres",
+        "defaclobjtype": "r",
+        "defaclacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+      },
+      {
+        "schema_name": "public",
+        "creator": "postgres",
+        "defaclobjtype": "f",
+        "defaclacl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+      },
+      {
+        "schema_name": "public",
+        "creator": "postgres",
+        "defaclobjtype": "S",
+        "defaclacl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+      },
+      {
+        "schema_name": "public",
+        "creator": "supabase_admin",
+        "defaclobjtype": "S",
+        "defaclacl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}"
+      },
+      {
+        "schema_name": "public",
+        "creator": "supabase_admin",
+        "defaclobjtype": "r",
+        "defaclacl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}"
+      },
+      {
+        "schema_name": "public",
+        "creator": "supabase_admin",
+        "defaclobjtype": "f",
+        "defaclacl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}"
+      }
+    ],
+    "note": "Full exact transaction and DO assertions succeeded. Connector returned default-ACL projection; subsequent metadata confirms absence."
+  },
+  "immediatePreApply": [
+    {
+      "observed_at": "2026-09-08 14:37:12.302125+00",
+      "executor": "postgres",
+      "server_version": "17.6",
+      "bypassrls": true,
+      "hub_table_count": 0,
+      "hub_bucket_count": 0,
+      "release_history": [
+        {
+          "name": "20260905_research_approved_customer_access",
+          "version": "20260907143147"
+        },
+        {
+          "name": "20260905_research_partner_lifecycle",
+          "version": "20260907143204"
+        }
+      ]
+    }
+  ],
+  "apply": {
+    "startedAt": "2026-09-08T14:37:20.931Z",
+    "completedAt": "2026-09-08T14:37:23.228Z",
+    "lfSha256": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
+    "response": {
+      "success": true
+    },
+    "isError": false
+  },
+  "postcheck": {
+    "startedAt": "2026-09-08T14:37:28.357Z",
+    "completedAt": "2026-09-08T14:37:29.953Z",
+    "lfSha256": "7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550",
+    "exactSourceExecuted": true,
+    "isError": false,
+    "zeroRows": [
+      {
+        "relation": "research_resource_library",
+        "rows": 0
+      },
+      {
+        "relation": "research_resource_versions",
+        "rows": 0
+      },
+      {
+        "relation": "research_resource_deliveries",
+        "rows": 0
+      },
+      {
+        "relation": "research-resource-library storage objects",
+        "rows": 0
+      }
+    ],
+    "scope": "Entire exact schema, constraints, indexes, function bodies, trigger, role/ACL, FORCE RLS, Storage compatibility and first-install zero rows/objects DO assertions completed without error."
+  },
+  "actualHistoryAndObjectMetadata": [
+    {
+      "observed_at": "2026-09-08 14:37:45.704977+00",
+      "executor": "postgres",
+      "server_version": "17.6",
+      "applied_release_history": [
+        {
+          "name": "20260905_research_approved_customer_access",
+          "version": "20260907143147"
+        },
+        {
+          "name": "20260905_research_partner_lifecycle",
+          "version": "20260907143204"
+        },
+        {
+          "name": "20260906120000_research_resource_library",
+          "version": "20260908143724"
+        }
+      ],
+      "hub_relations": [
+        {
+          "rls": true,
+          "relation": "research_resource_deliveries",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "relation": "research_resource_library",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "relation": "research_resource_versions",
+          "force_rls": true
+        }
+      ],
+      "bucket": {
+        "id": "research-resource-library",
+        "name": "research-resource-library",
+        "public": false
+      }
+    }
+  ],
+  "noAccountPartnerMigrationReplay": true,
+  "noHistoryRepair": true,
+  "noContentOrAccountWrites": true,
+  "applicationDeployment": "Requested; verify serving state separately"
+}
