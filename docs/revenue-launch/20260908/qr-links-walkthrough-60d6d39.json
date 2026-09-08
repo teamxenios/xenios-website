@@ -1,0 +1,484 @@
+{
+  "schemaVersion": 1,
+  "claimScope": "UI_PRESENTATION_AND_QR_EXPORT_OVER_REAL_REFERRAL_ROUTE_WITH_FAKE_RPC",
+  "status": "PASS",
+  "observedAt": "2026-09-08T02:31:34.251Z",
+  "origin": "http://127.0.0.1:5239",
+  "binding": {
+    "candidateHead": "60d6d39301076456ce24b723d2b270d7d7d89b0a",
+    "runtimeFreeze": "bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e",
+    "builtClient": {
+      "files": 341,
+      "sha256": "e088a13025f8fe67e0378ed5c16f8a1f7cfcc4d0fb6e23ba9159510f11ab69fd"
+    },
+    "harnessSha256": "a0dd6fe265263898c84f775ce43da96b7de6e04b8fdd8967decf791113ca5581",
+    "linksRouteSha256": "51f865c39d30facc7d0a9366d3ae74d9124f6f9e1337745bd67a9d89f39966a4",
+    "qrExportSha256": "cc519e87c7c79f7ccd09be59a7d73293b00325689522d65053e3278a6cb5a43d",
+    "node": "v20.19.0"
+  },
+  "browser": {
+    "chromePath": "C:\\Users\\sboad\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe",
+    "revision": "1228",
+    "version": "149.0.7827.55",
+    "protocol": "1.3"
+  },
+  "fixture": {
+    "affiliatePersona": "affiliate@preview.invalid",
+    "plainPersona": "member@preview.invalid",
+    "destinationPath": "/health",
+    "expectedUrlSha256": "7619a030051dc3b842b2574ca6c77165ab5c920989ebf7a852752da1d5e0ce6f",
+    "qrModules": 37
+  },
+  "steps": [
+    {
+      "step": "signed-out Links page offers Sign in with exact return and the non-enrollment notice",
+      "passed": true,
+      "detail": {
+        "loginHref": "/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks",
+        "signedOutCopy": true
+      },
+      "at": "2026-09-08T02:31:19.327Z"
+    },
+    {
+      "step": "sign-in form rendered",
+      "passed": true,
+      "at": "2026-09-08T02:31:20.356Z"
+    },
+    {
+      "step": "sign-in returns to Links and lists recommendation links",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/links"
+      },
+      "at": "2026-09-08T02:31:21.673Z"
+    },
+    {
+      "step": "rendered shareable link equals the server-derived public URL",
+      "passed": true,
+      "detail": {
+        "shown": "http://127.0.0.1:5239/r/r1_Oli3-0tjMnty8X2dFnB4f20ghF7A0DDhFP5NO01iZhY",
+        "expected": "http://127.0.0.1:5239/r/r1_Oli3-0tjMnty8X2dFnB4f20ghF7A0DDhFP5NO01iZhY"
+      },
+      "at": "2026-09-08T02:31:21.673Z"
+    },
+    {
+      "step": "the fake RPC was driven through the real store: authority then listOwn",
+      "passed": true,
+      "detail": {
+        "rpcCalls": [
+          {
+            "name": "research_referral_v1_authority",
+            "operation": null
+          },
+          {
+            "name": "research_referral_v1_authority",
+            "operation": null
+          },
+          {
+            "name": "research_referral_v1_execute",
+            "operation": "listOwn"
+          }
+        ]
+      },
+      "at": "2026-09-08T02:31:21.673Z"
+    },
+    {
+      "step": "print card dialog opens",
+      "passed": true,
+      "at": "2026-09-08T02:31:21.899Z"
+    },
+    {
+      "step": "rendered QR modules equal an independently generated QR of the exact URL",
+      "passed": true,
+      "detail": {
+        "modules": 37,
+        "viewBox": "0 0 45 45",
+        "pathLength": 9329,
+        "expectedPathLength": 9329
+      },
+      "at": "2026-09-08T02:31:22.763Z"
+    },
+    {
+      "step": "print card shows the exact URL as text",
+      "passed": true,
+      "at": "2026-09-08T02:31:22.764Z"
+    },
+    {
+      "step": "jsQR decodes the rendered QR to the exact URL",
+      "passed": true,
+      "detail": {
+        "decoded": "http://127.0.0.1:5239/r/r1_Oli3-0tjMnty8X2dFnB4f20ghF7A0DDhFP5NO01iZhY"
+      },
+      "at": "2026-09-08T02:31:22.874Z"
+    },
+    {
+      "step": "print card closes",
+      "passed": true,
+      "at": "2026-09-08T02:31:22.990Z"
+    },
+    {
+      "step": "Download QR saves an SVG whose bytes equal the expected QR SVG",
+      "passed": true,
+      "detail": {
+        "file": "xenios-recommendation-qr.svg",
+        "bytes": 9571,
+        "expectedBytes": 9571
+      },
+      "at": "2026-09-08T02:31:23.472Z"
+    },
+    {
+      "step": "download status message is the honest one",
+      "passed": true,
+      "detail": {
+        "status": [
+          "QR download requested. Your browser controls whether the file was saved."
+        ]
+      },
+      "at": "2026-09-08T02:31:23.473Z"
+    },
+    {
+      "step": "no horizontal overflow at 320px (links page and print card)",
+      "passed": true,
+      "detail": {
+        "links": {
+          "sw": 320,
+          "iw": 320
+        },
+        "card": {
+          "sw": 320,
+          "iw": 320
+        }
+      },
+      "at": "2026-09-08T02:31:23.959Z"
+    },
+    {
+      "step": "no horizontal overflow at 390px (links page and print card)",
+      "passed": true,
+      "detail": {
+        "links": {
+          "sw": 390,
+          "iw": 390
+        },
+        "card": {
+          "sw": 390,
+          "iw": 390
+        }
+      },
+      "at": "2026-09-08T02:31:24.444Z"
+    },
+    {
+      "step": "no horizontal overflow at 768px (links page and print card)",
+      "passed": true,
+      "detail": {
+        "links": {
+          "sw": 768,
+          "iw": 768
+        },
+        "card": {
+          "sw": 768,
+          "iw": 768
+        }
+      },
+      "at": "2026-09-08T02:31:24.929Z"
+    },
+    {
+      "step": "no horizontal overflow at 1024px (links page and print card)",
+      "passed": true,
+      "detail": {
+        "links": {
+          "sw": 1024,
+          "iw": 1024
+        },
+        "card": {
+          "sw": 1024,
+          "iw": 1024
+        }
+      },
+      "at": "2026-09-08T02:31:25.450Z"
+    },
+    {
+      "step": "no horizontal overflow at 1440px (links page and print card)",
+      "passed": true,
+      "detail": {
+        "links": {
+          "sw": 1440,
+          "iw": 1440
+        },
+        "card": {
+          "sw": 1440,
+          "iw": 1440
+        }
+      },
+      "at": "2026-09-08T02:31:26.002Z"
+    },
+    {
+      "step": "account page offers a rendered Sign out",
+      "passed": true,
+      "at": "2026-09-08T02:31:27.625Z"
+    },
+    {
+      "step": "after Sign out the Links page is signed out again and shows no links",
+      "passed": true,
+      "at": "2026-09-08T02:31:30.491Z"
+    },
+    {
+      "step": "member without a partner is told referral access is not active, with no export controls",
+      "passed": true,
+      "detail": {
+        "pathname": "/research/partners/links",
+        "noExport": true
+      },
+      "at": "2026-09-08T02:31:34.197Z"
+    },
+    {
+      "step": "GET /api/research/partner/links without a session is 401",
+      "passed": true,
+      "detail": {
+        "status": 401
+      },
+      "at": "2026-09-08T02:31:34.251Z"
+    }
+  ],
+  "sweep": [
+    {
+      "width": 320,
+      "links": {
+        "sw": 320,
+        "iw": 320,
+        "file": "04-links-320.png",
+        "sha256": "dbd84370120c91dfa0e7f1ef4c48f0d1ee283d888532ae1b12332e5ad641f339",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 320,
+          "contentHeightCssPx": 2034,
+          "postContentWidthCssPx": 320,
+          "postContentHeightCssPx": 2034,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 2034
+        }
+      },
+      "card": {
+        "sw": 320,
+        "iw": 320,
+        "file": "05-print-card-320.png",
+        "sha256": "1fe6fcdc8586c8fca4b3f960c7276bfe477a785effe6f623558b0220ca0fcb17",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 320,
+          "contentHeightCssPx": 2034,
+          "postContentWidthCssPx": 320,
+          "postContentHeightCssPx": 2034,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 2034
+        }
+      }
+    },
+    {
+      "width": 390,
+      "links": {
+        "sw": 390,
+        "iw": 390,
+        "file": "04-links-390.png",
+        "sha256": "49df61485b69c40d35e3bf0487dd185cf4b42742847ea6f8e7a9abb3f5219869",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 1918,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 1918,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 1918
+        }
+      },
+      "card": {
+        "sw": 390,
+        "iw": 390,
+        "file": "05-print-card-390.png",
+        "sha256": "10c5355e1b6910e42252efd9f3b54a1a7d6ea9aaebf7e0bf6dd01c763e5c0b70",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 1918,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 1918,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 1918
+        }
+      }
+    },
+    {
+      "width": 768,
+      "links": {
+        "sw": 768,
+        "iw": 768,
+        "file": "04-links-768.png",
+        "sha256": "157f4d583ce31fb59d2f9b87dcd6b22e2f64050770479fe1cc098983ced175b1",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 768,
+          "contentHeightCssPx": 1737,
+          "postContentWidthCssPx": 768,
+          "postContentHeightCssPx": 1737,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 768,
+          "capturedHeightPx": 1737
+        }
+      },
+      "card": {
+        "sw": 768,
+        "iw": 768,
+        "file": "05-print-card-768.png",
+        "sha256": "746831ed3ad88325d89e62540bfa3424061e399698c79a02387a8e373015ec8a",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 768,
+          "contentHeightCssPx": 1737,
+          "postContentWidthCssPx": 768,
+          "postContentHeightCssPx": 1737,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 768,
+          "capturedHeightPx": 1737
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "links": {
+        "sw": 1024,
+        "iw": 1024,
+        "file": "04-links-1024.png",
+        "sha256": "4ea42d2f33b63c94b8a2c319f1a84d08af1297e4453ef61e2bbcc0f28576b9de",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1024,
+          "contentHeightCssPx": 1793,
+          "postContentWidthCssPx": 1024,
+          "postContentHeightCssPx": 1793,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1024,
+          "capturedHeightPx": 1793
+        }
+      },
+      "card": {
+        "sw": 1024,
+        "iw": 1024,
+        "file": "05-print-card-1024.png",
+        "sha256": "8654f22c6c510a1b3800ef00f7f32228dffc9aaf61b0c3c46de12042180c5e08",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1024,
+          "contentHeightCssPx": 1793,
+          "postContentWidthCssPx": 1024,
+          "postContentHeightCssPx": 1793,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1024,
+          "capturedHeightPx": 1793
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "links": {
+        "sw": 1440,
+        "iw": 1440,
+        "file": "04-links-1440.png",
+        "sha256": "430dd6dec5c2a2072050f2c4da45560fa7e5bc5db9dbd8a474c63af4ed0ced16",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 1749,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 1749,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1749
+        }
+      },
+      "card": {
+        "sw": 1440,
+        "iw": 1440,
+        "file": "05-print-card-1440.png",
+        "sha256": "48ae06ae2f9ddbdf0360ea6f2b47fc06d8285a13cd5db805da0b17b2357af8c5",
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 1749,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 1749,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1749
+        }
+      }
+    }
+  ],
+  "downloads": [
+    {
+      "file": "xenios-recommendation-qr.svg",
+      "sha256": "d5dcf14836a41593d1149df7c1a6fe4a130ce6ec4f52db3db71b70fb3937f8af",
+      "bytes": 9571
+    }
+  ],
+  "console": {
+    "journeyA": [
+      {
+        "level": "log:warning",
+        "text": "<meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\">",
+        "url": "http://127.0.0.1:5239/research/partners/links"
+      },
+      {
+        "level": "log:warning",
+        "text": "<meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\">",
+        "url": "http://127.0.0.1:5239/research/partners/links"
+      }
+    ],
+    "journeyB": [
+      {
+        "level": "log:warning",
+        "text": "<meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\">",
+        "url": "http://127.0.0.1:5239/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks"
+      }
+    ]
+  },
+  "networkBoundaryViolations": [],
+  "pendingAfterNavigate": [],
+  "limitations": [
+    "The referral store is the real Supabase adapter over a fake RPC that answers listOwn for one persona; SQL eligibility, issuance and revocation are not exercised here (they have their own 2026-09-04 rehearsal evidence).",
+    "Auth is the preview GoTrue stub with synthetic personas; no real account, database, network or production system was touched.",
+    "QR download was captured by Chromium's download behaviour on loopback; the save-dialog UX of a real user's browser is not represented."
+  ]
+}
