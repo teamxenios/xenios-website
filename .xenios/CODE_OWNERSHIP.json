@@ -1503,7 +1503,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-08T15:05:56.045Z",
+      "heartbeatAt": "2026-09-08T15:17:58.888Z",
       "delegatedPaths": {
         "scripts/preview-resource-hub.ts": "ASTRA-B exclusive fixture flag parity correction; isolated xenios-resource-hub-browser-fixture-20260907; A integrates exact reviewed commit only"
       }

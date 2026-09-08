@@ -369,8 +369,8 @@
       "branch": "codex/xenios-seth-revenue-launch-20260905",
       "state": "active",
       "startedAt": "2026-09-05T17:49:32.118Z",
-      "heartbeatAt": "2026-09-08T15:05:56.045Z",
-      "note": "3814 installation complete; closing verified records. Actual SQL from A and Render resume reads passed at 15:04Z. d974 fix pushed, B review pending; managed qualification inputs pending."
+      "heartbeatAt": "2026-09-08T15:17:58.888Z",
+      "note": "3814 production closeout pushed ad2a6b7; owner/capability records pushed9e4c983. Precision regression reproduced; builder final focused tests then A integration/typecheck/build/suite. Managed API harness isolated3paths; no managed target/role/content inputs yet."
     },
     {
       "id": "codex-seth-astra-b-20260905",
