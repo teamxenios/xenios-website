@@ -1750,7 +1750,7 @@
         "server/research/partners/**",
         "shared/research/affiliate-system.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-08T18:32:31.792Z",
       "heartbeatAt": "2026-09-08T18:32:31.792Z"
     }
