@@ -77,7 +77,21 @@ function conditionalProvider(seed: Row | null, providerError = false) {
   const client: SupabaseQueryLike = {
     from(table) {
       return {
-        select: unsupported, insert: unsupported,
+        select(_columns) {
+          const filters: Array<[string, unknown]> = [];
+          const current = () => row && filters.every(([column, value]) => row![column] === value) ? structuredClone(row) : null;
+          const builder = {
+            eq(column: string, value: unknown) { filters.push([column, value]); return builder; },
+            order() { return builder; },
+            async maybeSingle() { return { data: current(), error: null }; },
+            then<T>(onfulfilled: (value: { data: Row[] | null; error: null }) => T) {
+              const found = current();
+              return Promise.resolve(onfulfilled({ data: found ? [found] : [], error: null }));
+            },
+          };
+          return builder;
+        },
+        insert: unsupported,
         update(patch) {
           const call = { table, patch, filters: [] as Filter[], columns: undefined as string | undefined, statements: 0 };
           calls.push(call);
@@ -107,7 +121,7 @@ function conditionalProvider(seed: Row | null, providerError = false) {
     },
     rpc: unsupported,
   };
-  return { client, calls, snapshot: () => structuredClone(row) };
+  return { client, calls, snapshot: () => structuredClone(row), replace: (next: Row) => { row = structuredClone(next); } };
 }
 const VERSION_ID = "22222222-2222-4222-8222-111111111111";
 function dbRow(expected: ResourceVersionExpectation): Row {
@@ -150,6 +164,45 @@ describe("activation hardening: conditional provider patches", () => {
   });
 });
 
+describe("activation hardening: provider read to conditional patch", () => {
+  it.each([
+    ["null", null],
+    ["milliseconds", "2026-09-08T00:00:00.123Z"],
+    ["PostgreSQL microseconds", "2026-09-08T00:00:00.123456+00:00"],
+  ] as const)("preserves %s review timestamp through getVersion and updateVersion", async (_label, timestamp) => {
+    const provider = conditionalProvider({ ...dbRow({ ...REVIEWED, reviewedAt: timestamp }), uploaded_at: "2026-09-08T00:00:00+00:00" });
+    const store = createSupabaseResourceHubStore(() => provider.client);
+    const observed = (await store.getVersion(VERSION_ID))!;
+    // Use the actual adapter read as the expected snapshot, never a hand-built expectation.
+    await store.updateVersion(VERSION_ID, { usagePolicy: "training" }, observed);
+    expect(observed.reviewedAt).toBe(timestamp);
+    expect(observed.uploadedAt).toBe("2026-09-08T00:00:00.000Z");
+    expect(provider.calls[0]!.filters).toContainEqual([timestamp === null ? "is" : "eq", "reviewed_at", timestamp]);
+    expect(provider.snapshot()).toMatchObject({ reviewed_at: timestamp, usage_policy: "training" });
+  });
+
+  it("refuses a stale read differing by one microsecond and preserves the current row", async () => {
+    const provider = conditionalProvider(dbRow({ ...REVIEWED, reviewedAt: "2026-09-08T00:00:00.123456+00:00" }));
+    const store = createSupabaseResourceHubStore(() => provider.client);
+    const observed = (await store.getVersion(VERSION_ID))!;
+    provider.replace({ ...provider.snapshot()!, reviewed_at: "2026-09-08T00:00:00.123457+00:00" });
+    const current = provider.snapshot();
+    await expect(store.updateVersion(VERSION_ID, { usagePolicy: "training" }, observed)).rejects.toBeInstanceOf(ResourceHubConflict);
+    expect(provider.snapshot()).toEqual(current);
+  });
+
+  it("preserves an operational update error after a successful provider read", async () => {
+    const provider = conditionalProvider(dbRow({ ...REVIEWED, reviewedAt: "2026-09-08T00:00:00.123456+00:00" }), true);
+    const store = createSupabaseResourceHubStore(() => provider.client);
+    const observed = (await store.getVersion(VERSION_ID))!;
+    const current = provider.snapshot();
+    const result = await store.updateVersion(VERSION_ID, { usagePolicy: "training" }, observed).catch((error: unknown) => error);
+    expect(isResourceHubConflict(result)).toBe(false);
+    expect(String(result)).toContain("version update failed");
+    expect(provider.snapshot()).toEqual(current);
+  });
+});
+
 describe("activation hardening: service outcomes", () => {
   it.each([["request_review", "draft"], ["approve_content", "draft"], ["approve_content", "in_review"]] as const)("maps a conditional %s conflict from %s to the existing denial", async (action, state) => {
     const h = await fixture();
@@ -184,6 +237,7 @@ describe("activation hardening: service outcomes", () => {
     });
     const result = await service.createVersion("fixture-admin", { ...INPUT, resourceId: h.resourceId }, { bytes: PDF, contentType: "application/pdf" });
     expect(result.ok).toBe(accepted);
+    if (result.ok) expect(result.resource.resourceId).toBe(winner.resourceId);
     if (!accepted) expect(result).toMatchObject({ ok: false, code: "resource_state_conflict" });
     expect(h.store.snapshot().versions).toHaveLength(1);
     expect(h.store.snapshot().versions[0]!.sha256).toBe(sha256Hex(PDF));
@@ -196,6 +250,9 @@ describe("activation hardening: service outcomes", () => {
     expect(h.bytes.keys()).toHaveLength(1);
     expect(await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "request_review", idempotencyKey: "fixture-request-review" })).toMatchObject({ ok: true });
     expect(await h.store.getVersion(h.versionId)).toMatchObject({ ...INITIAL, state: "in_review" });
+    const requested = h.store.snapshot();
+    expect(await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "request_review", idempotencyKey: "fixture-request-review" })).toMatchObject({ ok: true });
+    expect(h.store.snapshot()).toEqual(requested);
     const review = { action: "approve_content" as const, reason: "Fixture reviewed.", idempotencyKey: "fixture-review-3" };
     expect(await h.service.review("fixture-reviewer", h.resourceId, h.versionId, review)).toMatchObject({ ok: true });
     const approved = await h.store.getVersion(h.versionId);
@@ -207,5 +264,103 @@ describe("activation hardening: service outcomes", () => {
     expect(await h.store.getResource(h.resourceId)).toMatchObject({ currentPublishedVersionId: null });
     expect(await h.store.getVersion(h.versionId)).toMatchObject({ state: "withdrawn", reviewedAt: approved!.reviewedAt, reviewReason: approved!.reviewReason });
     expect(h.bytes.keys()).toHaveLength(1);
+  });
+
+  it("returns the matching winner while accounting for a private object and zero-version resource", async () => {
+    const h = await fixture();
+    const winner = (await h.store.getVersion(h.versionId))!;
+    const before = h.store.snapshot();
+    let lookups = 0;
+    const service = h.serviceFor({
+      ...h.store,
+      findVersionByUploadKey: async () => ++lookups === 1 ? null : winner,
+      insertVersion: async () => { throw new ResourceHubConflict("fixture duplicate upload key"); },
+    });
+    const result = await service.createVersion("fixture-admin", INPUT, { bytes: PDF, contentType: "application/pdf" });
+    expect(result).toMatchObject({ ok: true, resource: { resourceId: h.resourceId } });
+    if (!result.ok) throw new Error("expected matching fixture replay");
+    expect(result.resource.versions).toHaveLength(1);
+    expect(result.resource.versions[0]).toMatchObject({ versionId: h.versionId, sha256: winner.sha256 });
+
+    // Preserve-only behavior: the object and new resource precede the version insert.
+    const after = h.store.snapshot();
+    expect(after.versions).toEqual(before.versions);
+    expect(await h.store.getResource(h.resourceId)).toEqual(before.resources[0]);
+    expect(after.resources).toHaveLength(before.resources.length + 1);
+    const residual = after.resources.find((resource) => resource.resourceId !== h.resourceId)!;
+    expect(residual.currentPublishedVersionId).toBeNull();
+    expect(after.versions.some((version) => version.resourceId === residual.resourceId)).toBe(false);
+    const keys = h.bytes.keys();
+    expect(keys).toHaveLength(2);
+    const residualKey = keys.find((key) => key.startsWith(`resource-library/${residual.resourceId}/`))!;
+    expect(residualKey).toBeDefined();
+    expect(after.versions.some((version) => version.storageKey === residualKey)).toBe(false);
+    const emptyAdminResource = await h.service.getAdmin(residual.resourceId);
+    expect(emptyAdminResource).toMatchObject({ resourceId: residual.resourceId, currentPublishedVersionId: null, versions: [] });
+    expect(await h.service.listAdmin()).toContainEqual(emptyAdminResource);
+    expect(await h.service.libraryFor({ role: "research_rep", state: "active" })).toEqual([]);
+  });
+
+  it("preserves winner bytes through normal publication after a rejected different-file conflict", async () => {
+    const h = await fixture();
+    const winner = (await h.store.getVersion(h.versionId))!;
+    const before = h.store.snapshot();
+    const otherPdf = Buffer.from(PDF.toString("latin1").replace("trailer", "% harmless fixture variant\ntrailer"), "latin1");
+    expect(sha256Hex(otherPdf)).not.toBe(winner.sha256);
+    let lookups = 0;
+    const service = h.serviceFor({
+      ...h.store,
+      findVersionByUploadKey: async () => ++lookups === 1 ? null : winner,
+      insertVersion: async () => { throw new ResourceHubConflict("fixture duplicate upload key"); },
+    });
+    expect(await service.createVersion("fixture-admin", INPUT, { bytes: otherPdf, contentType: "application/pdf" }))
+      .toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(h.store.snapshot().versions).toEqual(before.versions);
+    expect(await h.store.getResource(h.resourceId)).toEqual(before.resources[0]);
+    const residual = h.store.snapshot().resources.find((resource) => resource.resourceId !== h.resourceId)!;
+    expect(residual).toMatchObject({ currentPublishedVersionId: null });
+    expect(h.bytes.keys()).toHaveLength(2);
+
+    expect(await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "approve_content", reason: "Fixture reviewed.", idempotencyKey: "fixture-preserved-approval" }))
+      .toMatchObject({ ok: true });
+    expect(await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "publish", idempotencyKey: "fixture-preserved-publication" }))
+      .toMatchObject({ ok: true, resource: { currentPublishedVersionId: h.versionId } });
+    const delivery = await h.service.deliverToPartner({ memberId: "fixture-partner", role: "research_rep", state: "active" }, h.resourceId);
+    expect(delivery.ok).toBe(true);
+    if (!delivery.ok) throw new Error("expected original fixture delivery");
+    expect(sha256Hex(delivery.bytes)).toBe(sha256Hex(PDF));
+    expect(await h.store.getVersion(h.versionId)).toMatchObject({ sha256: winner.sha256, originalFilename: winner.originalFilename, state: "published" });
+    expect(await h.service.getAdmin(residual.resourceId)).toMatchObject({ currentPublishedVersionId: null, versions: [] });
+    expect(h.bytes.keys()).toHaveLength(2);
+  });
+
+  it("preserves the first review decision when service approval uses an older snapshot", async () => {
+    const h = await fixture();
+    await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "request_review", idempotencyKey: "fixture-first-request" });
+    const older = (await h.store.getVersion(h.versionId))!;
+    await h.service.review("fixture-first-reviewer", h.resourceId, h.versionId, { action: "approve_content", reason: "First fixture decision.", idempotencyKey: "fixture-first-approval" });
+    const current = h.store.snapshot();
+    const staleReader = h.serviceFor({ ...h.store, getVersion: async () => older });
+    expect(await staleReader.review("fixture-later-reviewer", h.resourceId, h.versionId, { action: "approve_content", reason: "Later fixture decision.", idempotencyKey: "fixture-later-approval" }))
+      .toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(h.store.snapshot()).toEqual(current);
+    expect(await h.store.getVersion(h.versionId)).toMatchObject({ reviewedByAdmin: "fixture-first-reviewer", reviewReason: "First fixture decision." });
+  });
+
+  it("keeps a published resource visible when service review uses an older draft snapshot", async () => {
+    const h = await fixture();
+    const older = (await h.store.getVersion(h.versionId))!;
+    await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "approve_content", reason: "Fixture reviewed.", idempotencyKey: "fixture-review-before-publish" });
+    await h.service.review("fixture-reviewer", h.resourceId, h.versionId, { action: "publish", idempotencyKey: "fixture-current-publish" });
+    const current = h.store.snapshot();
+    const audience = { role: "research_rep" as const, state: "active" as const };
+    const library = await h.service.libraryFor(audience);
+    const staleReader = h.serviceFor({ ...h.store, getVersion: async () => older });
+    expect(await staleReader.review("fixture-reviewer", h.resourceId, h.versionId, { action: "request_review", idempotencyKey: "fixture-late-request" }))
+      .toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(h.store.snapshot()).toEqual(current);
+    expect(await h.service.libraryFor(audience)).toEqual(library);
+    expect(library).toHaveLength(1);
+    expect(library[0]!.resourceId).toBe(h.resourceId);
   });
 });
