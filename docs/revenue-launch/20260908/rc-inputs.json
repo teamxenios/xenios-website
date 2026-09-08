@@ -1,0 +1,42 @@
+{
+  "releaseId": "XENIOS_HEALTH_RC_2026-09-08",
+  "headSha": "45f95dfe51ef0aa226b39413c1fbd02fc121ece8",
+  "headTree": "29684232649d66de9b56316753aa2879c53ec93d",
+  "createdAt": "2026-09-08T02:05:00.000Z",
+  "routesFile": "C:/Users/sboad/projects/fable-verify-a-20260907/docs/revenue-launch/20260908/routes-bf7b5fe.json",
+  "migration": {
+    "sqlSha256": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722"
+  },
+  "build": { "serverBytes": 1674425 },
+  "times": {
+    "focused": "2026-09-08T01:24:25.000Z",
+    "fullSuite": "2026-09-08T00:33:22.000Z",
+    "typecheck": "2026-09-08T01:56:22.000Z",
+    "build": "2026-09-08T01:57:23.000Z",
+    "diffCheck": "2026-09-08T02:00:49.000Z"
+  },
+  "focused": {
+    "command": "node-v20.19.0 vitest run server/pgcrypto-qualification.test.ts -> 17/17; tsx scripts/acceptance/verify-pgcrypto-qualification.ts -> accepted, 200 SQL files, 2 pinned exemptions; verify:migration-dag -> 36 nodes accepted; verify:route-uniqueness -> 433 registrations across 424 call sites; test:release-diff-scan -> 8/8; vitest run server/release-control-plane.test.ts -> 51 passed / 1 skipped; scripts/revenue-launch/rehearse-resource-library.mjs on PGlite -> 154 checks PASS (docs/revenue-launch/20260908/resource-hub-rehearsal-bf7b5fe.json)"
+  },
+  "fullSuite": {
+    "command": "node-v20.19.0 ./node_modules/vitest/vitest.mjs run --reporter=dot at 46782cd4f0f73975c021c3a605492aa022c7d4dc (tree 6e7965d91ba4a01e416bcc1a7485b0cde80acf27) -> 917 files passed / 5 skipped (922); 15997 tests passed / 59 skipped (16056); 0 failures; 0 unhandled errors; 314.21s; idle host; clean tree. Bound to this candidate by documented equivalence in sharedWiring: no executable source, migration or configuration differs."
+  },
+  "sharedWiring": [
+    "Full-suite basis 46782cd4f0f73975c021c3a605492aa022c7d4dc differs from bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e only in five files: four documentation/handoff records and one trailing blank line removed from scripts/revenue-launch/new-account-browser-qualification.mjs (git diff --stat: 5 files, 5 insertions, 8 deletions); 45f95dfe51ef0aa226b39413c1fbd02fc121ece8 adds only docs/revenue-launch/20260908 records on top of bf7b5fe.",
+    "Browser acceptance basis 8e125ca7cbd300a7e96e4dbca8f5eca654558bfe tree 56d76664caa94e0de11a60d6b34c3139ddb1048d (B: 14 journey steps, 45 captures, exit 0; report SHA-256 f241886c7ef734594e4ceda52ba87c856775834d8d8f2729e963152bab31d2ad); the only runtime-adjacent files changed since are server/release-control-plane.test.ts and the Resource Hub SQL candidate/migration files, none of which the loopback preview serves or executes.",
+    "Deployed application at ff3c496245739233b71e46f9e5d6e26af9d57017 (Render deploy dep-dafcm567bikc7382rhng) is the exact base of this range; the account/partner hardening it carries is preserved unchanged.",
+    "Secret half of the release diff scan: 102 raw generic-assigned-secret matches, all in test/preview/harness files; 102 reviewed and 0 unresolved when B's registry binds (measured at 46782cd); the registry is refused at bf7b5fe and 45f95dfe because bf7b5fe changed one pinned fixture file by a trailing blank line. A pending re-bind is recorded at docs/revenue-launch/20260908/SYNTHETIC_CREDENTIAL_REBIND_REQUEST.md and is NOT accepted.",
+    "Approved-name PII scan NOT RUN: the approved corpus (6,463 bytes, SHA-256 c7da9838a3a8236a1b94465f3bfe21121fcc0de9dc586f8c08e167cf7d9ac34b) is not present on this machine; recovery is a founder action.",
+    "Auxiliary document-cleanup tooling (scripts/resource-hub/strip-embedded-attachments.mjs) and unfinished kit groundwork are outside this candidate."
+  ],
+  "evidence": [
+    { "kind": "full_suite_pinned_node", "checkedAt": "2026-09-08T00:33:22.000Z", "reference": "vitest at 46782cd4f0f73975c021c3a605492aa022c7d4dc, Node 20.19.0: 917 files / 15997 tests / 0 failures / 314.21s; docs/resource-hub/INDEPENDENT_QUALIFICATION_46782cd.md on fable/recruiter-resource-hub-20260906 at 85c20e5aed43b7e4b60a9ec67eb65a980717fc50" },
+    { "kind": "resource_hub_migration_rehearsal", "checkedAt": "2026-09-08T01:19:52.597Z", "reference": "docs/revenue-launch/20260908/resource-hub-rehearsal-bf7b5fe.json: 154 checks PASS; candidate .sql e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722, precheck 742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab, postcheck 7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550" },
+    { "kind": "browser_acceptance_independent", "checkedAt": "2026-09-07T23:12:45.025Z", "reference": "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md; C:/Users/sboad/projects/xenios-qa-evidence-astra-b-health-20260907/resource-browser-8e125ca-run1/resource-hub-browser-proof.json SHA-256 f241886c7ef734594e4ceda52ba87c856775834d8d8f2729e963152bab31d2ad; 14 steps / 45 captures PASS at 8e125ca7" },
+    { "kind": "route_census", "checkedAt": "2026-09-08T01:52:00.000Z", "reference": "docs/revenue-launch/20260908/routes-bf7b5fe.json: 433 unique static Express registrations across 424 call sites at bf7b5fe; server/release-control-plane.test.ts pin 51 passed / 1 skipped" },
+    { "kind": "ownership_findings_trusted_base", "checkedAt": "2026-09-08T01:53:00.000Z", "reference": "docs/revenue-launch/20260908/ownership-findings-ff3c496-bf7b5fe.json: policy 67deb85b0a5eb3d48c58d7382502c7484674a620e41d1d8cd06995a417291fe3 from ff3c496; 184 files; 161 UNOWNED_FILE, 0 WRONG_LANE_OWNER, 0 OWNERSHIP_CONFLICT" },
+    { "kind": "secret_scan_registry_bound", "checkedAt": "2026-09-08T01:57:40.000Z", "reference": "docs/revenue-launch/20260908/secret-scan-ff3c496-46782cd.log: 102 raw / 102 reviewed / 0 unresolved, registry sha256 0d19ecfc0c0acf3c7dff113a79b6328198af30731b7871ef325a91b3f850379a; docs/revenue-launch/20260908/secret-scan-ff3c496-bf7b5fe.log: registry refused (drift), 102 unresolved" },
+    { "kind": "database_qualification_records", "checkedAt": "2026-09-07T23:05:39.336Z", "reference": "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md; resource-hub-pg17-rehearsal.json; resource-hub-force-rls-pg17/pg18-rehearsal.json; resource-hub-production-readonly-precheck.json (PASS 2026-09-07T23:00:01Z, migration unapplied)" },
+    { "kind": "production_baseline_readonly", "checkedAt": "2026-09-07T23:00:48.452Z", "reference": "docs/revenue-launch/20260907/production-health-readonly.json; critical-endpoints-live-ff3c496.json; account-partner-readonly-reverification.json; serving ff3c496245739233b71e46f9e5d6e26af9d57017 on Render deploy dep-dafcm567bikc7382rhng" }
+  ]
+}
