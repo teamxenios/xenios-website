@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-08T04:03:02.139Z",
+  "note": "Filenames withheld; exact paths in the ACL-restricted register.",
+  "uniqueDocuments": 29,
+  "byCategory": {
+    "internal-team-document": 9,
+    "advisor-agreement": 18,
+    "agreement": 1,
+    "counterparty-proposal": 1
+  },
+  "documents": [
+    {
+      "sha256": "d8fdbe8fac08571b7416a616c0fa6376fd19d8fc038c36f6594e9d7ae99427aa",
+      "bytes": 24271,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:42.847Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "678cecc0ded880fbad5c40c65af7501ee247497baa4b1be4350818baa1512535",
+      "bytes": 25181,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:49.363Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "68b63e732958b895214bcae2f27fbc6b3fd2e3f2bb7aebcec7c11a38e856e1c4",
+      "bytes": 367913,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:43.420Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "fcddb8109d92a7834664d6af78856a246faa51b811cf98a4eb1e7dea125c4d13",
+      "bytes": 317252,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:43.741Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "475b9f45a8ad785401978dbad6e9c41cc1ff4ebb9705f12f742e03b6310a6d4e",
+      "bytes": 25890,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:47.897Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "7e9d3b81c06446383ba407a5794f81eb287ba52ee1b8804a304ea340726ad009",
+      "bytes": 23786,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:40.651Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "5ed7406f203427fa69b94c79a3f6166d45e3501f1bf6ee001480410600947264",
+      "bytes": 26621,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:42.846Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "61d93185b13ee30f837d381ed050055c71c6e72e193fbc432550db32d05eec11",
+      "bytes": 471593,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:38.058Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "67f57d547e0f67e9af11d502cd475999b80e948191144a5ce58958a53f1c09f7",
+      "bytes": 254617,
+      "ext": ".pdf",
+      "category": "internal-team-document",
+      "mtime": "2026-08-24T17:38:37.288Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "74e3e8f4c7a0e24c1ad0b9092414757de380d81e7ff3ea0ba8e86b496a0a2a14",
+      "bytes": 100061,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T03:43:28.713Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "5978cfe95e9c1e0a03e787a97ca11676e1f1ff56defcfcb83457f4499dadc76b",
+      "bytes": 11076,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T02:39:43.532Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "c08134fefce9d75bfc4da7c8ba1903d97f9318da1ed166077b05d1ff20c57f8b",
+      "bytes": 11482,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T02:58:21.454Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "7efd068abd1a2a838e51204ac8ea5b9e778ccc7a91ce10af67dff4e9ebc5fee4",
+      "bytes": 12903,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T03:12:10.965Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "a49306aa7ae105b91f124aff112e4f91bcd4604b09a496b03fba1555bc57d952",
+      "bytes": 12905,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T03:22:13.887Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "a909d7326ae1f44438ad96d96f113b80a9c26909499e0624bb1a65aaa22ec168",
+      "bytes": 71195,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T03:28:57.019Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "80eea39b475a7aa8e98d89cb6a578a8654c21996e4b3f8c4c154d71e4846eaa0",
+      "bytes": 17732,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-01-30T03:11:21.408Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "1d3a330a08a48cb46af6a896d2248fc4cbf22e76bdce068d5b88fbacd6841574",
+      "bytes": 205883,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-01-30T03:12:43.339Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "c4f487316ec36eba778ef3942d267cc335dd9aba1cfffffcca554bbb741c6283",
+      "bytes": 214990,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-02-07T22:15:22.238Z",
+      "duplicatePaths": 4
+    },
+    {
+      "sha256": "ea3054254c175a0537e914ff8b8ef11a77f8e8123c86aa8f844eee2f1c6ecb4a",
+      "bytes": 205870,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-02-07T22:06:45.152Z",
+      "duplicatePaths": 2
+    },
+    {
+      "sha256": "3b81824ee842d55fa660e16593a56aa9a618b96cd377dc7f788df17852c27884",
+      "bytes": 12177,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2025-12-30T18:38:09.417Z",
+      "duplicatePaths": 4
+    },
+    {
+      "sha256": "c9cc4d67044cff4e69b0720aaf9d77e2e6982de04837f3f2951f4f0d4b2b6f33",
+      "bytes": 11624,
+      "ext": ".pdf",
+      "category": "agreement",
+      "mtime": "2026-03-25T21:13:07.566Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "14132bc4e8c834f5a26ca7a38daa932c8442b2947b8106c0b5f7c817e5c9789c",
+      "bytes": 37266,
+      "ext": ".pdf",
+      "category": "counterparty-proposal",
+      "mtime": "2026-08-20T19:22:51.740Z",
+      "duplicatePaths": 3
+    },
+    {
+      "sha256": "ef4d2f77d51f1239b66fffc33f48c70ef71e52af09b5fb7b4d9a817546ed7cf6",
+      "bytes": 11142,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-04-06T02:32:01.443Z",
+      "duplicatePaths": 2
+    },
+    {
+      "sha256": "9bc4d673369c8c4bcc54c5a0bde9f624ff753ff58f70fbd64ccd9e9455dc448c",
+      "bytes": 12111,
+      "ext": ".docx",
+      "category": "advisor-agreement",
+      "mtime": "2026-03-17T14:53:48.393Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "00dfe896e92d16caa05c032dd21222e6a28fbe1fc12473d125ae00cad35d732f",
+      "bytes": 292470,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-09-02T15:51:12.752Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "8d4fccba348083557f387175d5fc723a3876e940cf90138567c8e5327f16ab4c",
+      "bytes": 35356,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-09-02T16:50:32.723Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "ee558a7fe101aba38bd30c737eb3912281f2d0be6686ceb0a09a6d120c00c11a",
+      "bytes": 43076,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-09-02T16:05:15.201Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "725350da06a2d472a4510dcd7467f6f7e0ce105cd842fd0c3e21ed85e36d5771",
+      "bytes": 234017,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-09-02T16:30:41.886Z",
+      "duplicatePaths": 1
+    },
+    {
+      "sha256": "d5a8080f9a993aebe5afb5f061472f1d1a9d696e274d7eb39da03ca708cec787",
+      "bytes": 236257,
+      "ext": ".pdf",
+      "category": "advisor-agreement",
+      "mtime": "2026-09-02T16:30:49.457Z",
+      "duplicatePaths": 1
+    }
+  ]
+}
