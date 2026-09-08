@@ -8,6 +8,7 @@ import { ResearchPartnerShell } from "../../ui/shells";
 import { createRecommendationLink, listRecommendationLinks, recommendationError, revokeRecommendationLink } from "../../recommendation/api";
 import { copyRecommendation, shareOutcomeMessage, shareRecommendation } from "../../recommendation/share";
 import { createRecommendationQr, safeExportRecommendation, saveRecommendationQr, type RecommendationQr } from "../../recommendation/qr-export";
+import { saveRecommendationPng } from "./recommendation-png";
 import RecommendationPrintCard from "../../recommendation/RecommendationPrintCard";
 
 const touch = { minHeight: 44 };
@@ -114,7 +115,7 @@ export function RecommendationLinksBody({ token }: { token: string }) {
     if (alive.current) setShareStatus(previous => ({ ...previous, [link.id]: shareOutcomeMessage(outcome) }));
   };
 
-  const exportLink = async (link: RecommendationLink, action: "download" | "preview" | "print") => {
+  const exportLink = async (link: RecommendationLink, action: "download" | "png" | "preview" | "print") => {
     if (!alive.current || exporting.current || mutation.current || loading || !data?.eligible
       || !data.links.some(item => item.id === link.id && item.url === link.url && safeExportRecommendation(item))) return;
     const operation = ++exportGeneration.current;
@@ -143,11 +144,11 @@ export function RecommendationLinksBody({ token }: { token: string }) {
       }
       const canSave = () => current() && safeExportRecommendation(verified) === qr.url;
       if (!canSave()) return;
-      if (action === "download") {
-        const saved = saveRecommendationQr(qr, canSave);
+      if (action === "download" || action === "png") {
+        const saved = action === "download" ? saveRecommendationQr(qr, canSave) : await saveRecommendationPng(qr, canSave);
         if (current()) setShareStatus(previous => ({ ...previous, [link.id]: saved
-          ? "QR download requested. Your browser controls whether the file was saved."
-          : "The QR download could not start. Refresh the link and try again." }));
+          ? action === "download" ? "QR download requested. Your browser controls whether the file was saved." : "PNG download requested. Your browser controls whether the file was saved."
+          : action === "download" ? "The QR download could not start. Refresh the link and try again." : "The PNG download could not start. Refresh the link and try again." }));
       } else {
         setPrintCard({ link: verified, qr });
         if (action === "print") {
@@ -194,7 +195,7 @@ export function RecommendationLinksBody({ token }: { token: string }) {
                 <label className="body-s block mt-4" htmlFor={`recommendation-url-${link.id}`}>Shareable link</label>
                 <input id={`recommendation-url-${link.id}`} readOnly value={url} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
                 <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, false)}>Copy link</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, true)}>Share</button></div>
-                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
+                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "png")}>Download QR (PNG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
                 <p className="body-s text-ink-2 mt-2">Exports use this exact link and recheck its availability. Include your partner relationship disclosure wherever you use the QR. A saved or printed copy cannot be recalled; its destination still checks the link when opened.</p>
               </> : <p className="body-s mt-3">This link is not available to share.</p>}
               {shareStatus[link.id] && <p className="body-s mt-3" role="status" aria-live="polite">{shareStatus[link.id]}</p>}
