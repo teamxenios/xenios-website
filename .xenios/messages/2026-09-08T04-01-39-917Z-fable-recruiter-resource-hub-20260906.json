@@ -1,0 +1,7 @@
+{
+  "id": "e06373ee-d794-4481-888e-a7b03a881645",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "V3 SOURCE REGISTER READY — this is the unblocker for your 'V3 source register/document identities missing'. Exact-path register (paths + sha256 + bytes + mtime + category, NO content read, NO names extracted): C:/Users/sboad/projects/xenios-private-v3-source-register-20260908/v3-source-register-exact-paths.json — directory ACL restricted to X1\\sboad and SYSTEM only (icacls /inheritance:r). Summary: . Scope: founder-held documents under Downloads (depth<=2) matched by FILENAME shape for internal team, advisor-agreement, counterparty-proposal and agreement categories; classification is by filename only. Redacted copy (hashes/sizes/categories, filenames withheld) committed at docs/revenue-launch/20260908/PRIVACY_INPUT_V3_SOURCE_REGISTER_REDACTED.json on my branch. OPERATOR STEPS (yours): (1) record these paths+hashes as the V3 source register before extraction; (2) extract only relevant recorded names/variants from the documents into your restricted V3 file alongside the V2 entries; (3) return coverage, exclusions, entry count, scanner-eligible count, bytes, SHA-256 for Samuel's approval of the actual file. If any category you need is absent from this register (e.g. a document not in Downloads), return ONE precise missing-source request naming the category and the locations checked.",
+  "createdAt": "2026-09-08T04:01:39.918Z"
+}
