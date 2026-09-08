@@ -165,7 +165,7 @@ describe("ids that cannot name a row never reach the database", () => {
 });
 
 describe("reads map database rows to the store's camel-case rows", () => {
-  it("getVersion selects by id from the versions table and normalizes timestamps", async () => {
+  it("getVersion selects by id, normalizes display dates and preserves the review timestamp", async () => {
     const { client, calls } = fakeClient(() => ({ data: VERSION_DB }));
     const store = createSupabaseResourceHubStore(() => client);
     const version = await store.getVersion(V1);
@@ -178,6 +178,7 @@ describe("reads map database rows to the store's camel-case rows", () => {
       audience: ["research_rep"],
       storageKey: `resource-library/${R1}/v1-${V1}.pdf`,
       uploadedAt: "2026-09-06T12:00:00.000Z",
+      reviewedAt: VERSION_DB.reviewed_at,
       publishedAt: "2026-09-06T12:02:00.000Z",
       withdrawnAt: null,
       uploadIdempotencyKey: "k1",

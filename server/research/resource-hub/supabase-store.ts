@@ -107,7 +107,9 @@ function toVersion(row: Row): ResourceVersionRow {
     validationReasons: strings(row.validation_reasons),
     uploadedAt: iso(row.uploaded_at),
     uploadedByAdmin: text(row.uploaded_by_admin),
-    reviewedAt: nullableIso(row.reviewed_at),
+    // Review updates compare this exact provider value. Date would truncate
+    // PostgreSQL microseconds and turn an unchanged snapshot into a conflict.
+    reviewedAt: nullableText(row.reviewed_at),
     reviewedByAdmin: nullableText(row.reviewed_by_admin),
     reviewReason: nullableText(row.review_reason),
     publishedAt: nullableIso(row.published_at),
