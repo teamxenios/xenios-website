@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T15:56:01.182962Z",
+  "status": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
+  "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/BLOCKED_EXTERNAL.md",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/FOUNDER_ACTIONS.md",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/2026-09-08T15-20-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-INSTALLATION-CLOSED.md",
+    ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+    "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+    "docs/coordination/FILE_OWNERSHIP.json",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
+    "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_COMPARISON_20260908.md",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md",
+    "docs/revenue-launch/20260907/critical-endpoint-no-allowances-3814.json",
+    "docs/revenue-launch/20260907/critical-endpoints-installation-baseline-3814.json",
+    "docs/revenue-launch/20260907/critical-endpoints-installation-comparison-3814.json",
+    "docs/revenue-launch/20260907/critical-endpoints-installation-live-3814.json",
+    "docs/revenue-launch/20260907/final-installation-record-validation-3814.json",
+    "docs/revenue-launch/20260907/installation-final-preflight-configuration-3814.json",
+    "docs/revenue-launch/20260907/installation-packet-independent-review-3814.json",
+    "docs/revenue-launch/20260907/installation-record-reconciliation-validation-3814.json",
+    "docs/revenue-launch/20260907/installation-resume-readonly-3814.json",
+    "docs/revenue-launch/20260907/privacy-input-v3-source-gate.json",
+    "docs/revenue-launch/20260907/resource-hub-installation-health-observation-3814.json",
+    "docs/revenue-launch/20260907/resource-hub-installation-preflight-3814c68.json",
+    "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json",
+    "docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json",
+    "docs/revenue-launch/20260907/resource-hub-production-migration-3814.json",
+    "docs/revenue-launch/20260907/source-equivalence-3814c68.json",
+    "docs/revenue-launch/20260907/standing-conditional-authorization-20260908.json",
+    "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json",
+    "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+    "scripts/revenue-launch/managed-resource-hub-qa.ts",
+    "server/release-control-plane.test.ts",
+    "server/research/e2e/managed-resource-hub-qa.test.ts",
+    "server/research/resource-hub/activation-hardening.test.ts",
+    "server/research/resource-hub/service.test.ts",
+    "server/research/resource-hub/service.ts",
+    "server/research/resource-hub/store.ts",
+    "server/research/resource-hub/supabase-store.test.ts",
+    "server/research/resource-hub/supabase-store.ts",
+    "supabase/MIGRATIONS.md"
+  ],
+  "candidateDeployed": false,
+  "featureActivated": false,
+  "productionWrites": false,
+  "migrations": [],
+  "runtimeIntegration": "Six Hub files from 7093add92dee39cd9b5f685237ab3c36b2fcbdd7 selectively integrated through 62e6c63c788afe75553b7f6fb3e8f54e94d71767; only three new harness files changed after that runtime.",
+  "runtimeSourceFiles": [
+    {
+      "path": "server/research/resource-hub/store.ts",
+      "lfSha256": "36e7373b0d35180e1413cbca208748f1476d4ffcd12c52fe46c66f62abe6f3a8",
+      "changedFromD974": false
+    },
+    {
+      "path": "server/research/resource-hub/supabase-store.ts",
+      "lfSha256": "92573a8325f3ba0f7de591fda236d629be0bf2ccdafeab223ee5d4cdf66501e3",
+      "changedFromD974": true
+    },
+    {
+      "path": "server/research/resource-hub/service.ts",
+      "lfSha256": "1d21e0f213525d0ac2ba2f9682d6fbaf448785c3d92bf890e196650dfcad274e",
+      "changedFromD974": false
+    },
+    {
+      "path": "server/research/resource-hub/service.test.ts",
+      "lfSha256": "981d3c4dccd7afa526628ccae6b4e274fc4e59d24e88e1dd8f1eefdc927d3f6c",
+      "changedFromD974": false
+    },
+    {
+      "path": "server/research/resource-hub/supabase-store.test.ts",
+      "lfSha256": "2a2a0ddcc14c6b4214f9abdfca0507987ac431ce37400a358c21da91d196b698",
+      "changedFromD974": true
+    },
+    {
+      "path": "server/research/resource-hub/activation-hardening.test.ts",
+      "lfSha256": "2d9e4c09dba6c92ba6b90faceb2580d3ab5ffec18719e1c7df7656ceb1bd7ff7",
+      "changedFromD974": true
+    }
+  ],
+  "harnessSourceFiles": [
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "lfSha256": "f69d3e98a84d7bf4dbf58e1060c3bf23911904afee14fb82ecd020362d0d4baa",
+      "bytes": 22489
+    },
+    {
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "lfSha256": "739741a3c619c6cd06217c8aecb6581d8337a5d83a791bee5ed45053fd026a57",
+      "bytes": 16887
+    },
+    {
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "lfSha256": "79c364726a656c7f9c97249fe07b3ac5e9916114ed73fd3c446e1b7ba7b9476b",
+      "bytes": 17431
+    }
+  ],
+  "gates": {
+    "typecheck-managed": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "typecheck-managed",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:41:00.536Z",
+        "completedAt": "2026-09-08T15:41:40.318Z",
+        "durationMs": 39782,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-typecheck-managed-2026-09-08T15-41-00-533Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false
+      },
+      "rawReceiptSha256": "87d4e6808e1bc6067a9e641a3c0d8a6113a7d88298a14c044e71402593d4eaeb"
+    },
+    "build": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "build",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:42:20.672Z",
+        "completedAt": "2026-09-08T15:42:28.726Z",
+        "durationMs": 8054,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 29675,
+        "stderrBytes": 5275,
+        "stdoutSha256": "a6418ddefea57295d5dc7d6cd6d34fb7bad098d999e7bed2ff2b6076bb6a29bf",
+        "stderrSha256": "ec6902e47ff4b9349c0da6752686009d6a8259750c222cd88c00b25570155083",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-build-2026-09-08T15-42-20-670Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false
+      },
+      "rawReceiptSha256": "5cfcd8f28d4804a8d46f352b54dc50a97b4f49c057098fff661763548ebf5782"
+    },
+    "routes": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "routes",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:41:01.487Z",
+        "completedAt": "2026-09-08T15:41:31.094Z",
+        "durationMs": 29607,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 131,
+        "stderrBytes": 0,
+        "stdoutSha256": "a4dc9feed3b253ab289c593a90cd6957df0a5a41c663eb3031f733b38a37f127",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-routes-2026-09-08T15-41-01-484Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false
+      },
+      "rawReceiptSha256": "e2bfac865074112697eccec14483a0247cd5083dddc7a0d226a8d8e9139ac0a5"
+    },
+    "core": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "core",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:41:00.811Z",
+        "completedAt": "2026-09-08T15:41:01.045Z",
+        "durationMs": 234,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 885,
+        "stderrBytes": 0,
+        "stdoutSha256": "4115cd9c99ef8c80a21b272bfea17fe18f0f4eccf7202a287b00a9fa6d0642e2",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-core-2026-09-08T15-41-00-808Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false
+      },
+      "rawReceiptSha256": "8e6635ecdba9508b0ce80cd2a99aaf3d0da888f48dceaacff01946b19ac12775"
+    },
+    "scan": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "scan",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:41:01.108Z",
+        "completedAt": "2026-09-08T15:41:01.571Z",
+        "durationMs": 463,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 243,
+        "stderrBytes": 0,
+        "stdoutSha256": "678af20e1b32248abea74ddaf845c7b8239ec8ee3edb49745fa3a8e822553a5f",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-scan-2026-09-08T15-41-01-104Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false,
+        "scan": {
+          "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+          "inputBytes": 131,
+          "inputUnchanged": true,
+          "addedLines": 4636,
+          "files": 51,
+          "rawSecretFindings": 0,
+          "reviewedFixtureFindings": 0,
+          "unresolvedSecretFindings": 0,
+          "piiFindings": 0,
+          "piiSkipped": false,
+          "allowanceRegistry": "NONE; new production-to-successor range must pass without allowances",
+          "coverage": "Approved bounded V3 only; retained historical/handwriting/name-format limitations"
+        }
+      },
+      "rawReceiptSha256": "2ec2f9151cf37dc29b3012fe98892257ccfb004d39fd3f6ae391edce4b087e83"
+    },
+    "suite": {
+      "receipt": {
+        "schemaVersion": 1,
+        "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+        "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+        "phase": "suite",
+        "node": "v20.19.0",
+        "startedAt": "2026-09-08T15:42:29.147Z",
+        "completedAt": "2026-09-08T15:55:31.384Z",
+        "durationMs": 782237,
+        "exitCode": 0,
+        "signal": null,
+        "errorCode": null,
+        "stdoutBytes": 156,
+        "stderrBytes": 1016,
+        "stdoutSha256": "e908b1f367364f92f587944dd8115467087f9f57b7929299c546326b36c82004",
+        "stderrSha256": "55560271bcc142ab3e6837d136093079aafba07d2eb5ab4463c99966aeff543a",
+        "privateLogDirectory": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z",
+        "productionReads": false,
+        "productionWrites": false,
+        "assertionsOrTimeoutsWeakened": false,
+        "tests": {
+          "passed": 16086,
+          "failed": 0,
+          "pending": 59,
+          "total": 16145,
+          "filesPassed": 924,
+          "filesFailed": 0,
+          "files": 924,
+          "success": true
+        }
+      },
+      "rawReceiptSha256": "961a93be485f20ca5e1f68947f91e0c634ae12eb207ddfb417ebae1d74d35603"
+    }
+  },
+  "executionClarification": {
+    "assertionContentChangedForBroadRun": false,
+    "cliTestTimeoutMs": 120000,
+    "maxWorkers": 1,
+    "fileParallelism": false,
+    "defaultTimeoutEquivalenceClaimed": false,
+    "earlierProcedure": "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md:5",
+    "originalGenericReceiptField": "assertionsOrTimeoutsWeakened:false retained but too broad; this explicit configuration statement supersedes its timeout implication"
+  },
+  "focusedRuntime": {
+    "path": "precision-final-focused-tests.json",
+    "sha256": "a831084784b6b61fcabcb319a5f0cb8b17891f9b5a85728f793653c1cc01b7f8",
+    "success": true,
+    "passed": 140,
+    "failed": 0,
+    "skippedOrNotSelected": 0,
+    "startedAt": "2026-09-08T15:22:32.853Z",
+    "completedAt": "2026-09-08T15:22:35.053Z",
+    "files": 5,
+    "commandExitCode": 0,
+    "filesDetail": [
+      "activation-hardening.test.ts",
+      "admin-routes.test.ts",
+      "production.test.ts",
+      "service.test.ts",
+      "supabase-store.test.ts"
+    ]
+  },
+  "precisionPreFixFailureRetained": {
+    "path": "precision-pre-fix-tests.json",
+    "sha256": "17fd2d6d38124fab2fa87685cdff6a18507db4889c89fb9b41baf9a924f28d20",
+    "success": false,
+    "passed": 4,
+    "failed": 1,
+    "skippedOrNotSelected": 25,
+    "startedAt": "2026-09-08T15:16:24.246Z",
+    "completedAt": "2026-09-08T15:16:24.752Z",
+    "files": 1,
+    "scope": "Five isolated read-to-conditional-update cases against the pre-fix adapter. Only the six-digit timestamp case failed with ResourceHubConflict.",
+    "commandExitCode": 1,
+    "fixtureLimit": "Local deterministic provider double, not managed PostgreSQL/PostgREST proof."
+  },
+  "focusedHarness": {
+    "passed": 56,
+    "exitCode": 0,
+    "logSha256": "678f2e521e8e830b4523d45e1f6abeb127f8b8dad3692173b9ba185874521660",
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 503
+  },
+  "adminEmptyVersionUi": {
+    "passed": 21,
+    "classification": "TOOL_CAPTURED_PARENT_REPORTED",
+    "source": "1c527d0 plus sole 15-line test committed 801fbb6; unchanged through final8be",
+    "managedOrBrowserProof": false
+  },
+  "supplementalOwnership": {
+    "artifact": "supplemental-source-ownership-review-8be5d582.json",
+    "artifactSha256": "65aa2ef73da6937996b2d8b2b615ea1adc4a9375f89ea24f3c9e18358ae49eed",
+    "covered": 14,
+    "unowned": 37,
+    "wrongLane": 0,
+    "conflicts": 0,
+    "activeLeaseMatches": 51,
+    "bAcceptance": false
+  },
+  "retainedFailedGates": [
+    "91c9 external config type-root resolution failure",
+    "91c9 expanded compiler failures corrected by narrow declaration-form never functions and await/discard canonical requireMember return; no guard decision changed",
+    "precision pre-fix microsecond regression reproduced before correction"
+  ],
+  "managedHarnessExecuted": false,
+  "independentBReview": "PENDING_EXACT_8be_SOURCE",
+  "limitations": [
+    "ASTRA-B exact-source acceptance and formal source-bound integration ownership review remain pending; supplemental helper reviews are not ASTRA-B acceptance.",
+    "Managed Auth/PostgREST/Storage/delivery and real browser logout/account switching are not yet executed on this source.",
+    "No designated active managed qualification project, private role sessions or reviewed exact content/audience/effects/recovery plan is available. Discovered staging and retired rehearsal projects are inactive; neither was restored or reused.",
+    "The managed harness foundation does not yet prove managed high-precision non-NULL review CAS, concurrent/stale review, upload race/orphan accounting or the full browser matrix.",
+    "Private source-review PDFs are not publication-approved resources. No new real-user grant or notification is authorized by this checkpoint.",
+    "Build exit is verified; no output artifact equivalence or new browser-source binding is claimed.",
+    "Broad suite uses explicit CLI testTimeout=120000, single worker and no file parallelism. It does not claim equivalence to default or c350 timeout settings; original generic receipt wording is corrected by the execution clarification here."
+  ],
+  "productionReport": "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
+  "fullSuiteInterpretation": {
+    "passed": 16086,
+    "failed": 0,
+    "skipped": 59,
+    "todo": 0,
+    "total": 16145,
+    "filesPassed": 919,
+    "filesSkipped": 5,
+    "filesFailed": 0,
+    "files": 924,
+    "success": true,
+    "durationMs": 782237,
+    "cliTestTimeoutMs": 120000,
+    "rawFileStatusLimit": "Vitest reports all924 file entries as passed, including5 fully skipped files. Original saved gate receipt is retained unchanged.",
+    "skipReview": "The skipped pg16It case in changed control-plane source and its CI/environment predicate are byte-identical to3814; the other7 files containing skips are unchanged. No new or changed skip logic was found.",
+    "timingReview": "The two passed cases exceeding5s have unchanged explicit per-test allowances (300000ms control-plane,120000ms production-boot). All other passed cases were at most3426.95ms. This observation does not claim a separate default-timeout run."
+  }
+}

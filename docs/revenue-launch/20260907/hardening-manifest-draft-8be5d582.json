@@ -1,0 +1,523 @@
+{
+  "artifactKind": "PRIVATE_RELEASE_MANIFEST_DRAFT",
+  "schemaVersion": 1,
+  "createdAt": "2026-09-08T15:52:24.195Z",
+  "preparedBy": "release_manifest independent bounded receipt audit",
+  "overallQualified": false,
+  "formalManifestValidated": false,
+  "productionExecutionAuthorizedByThisArtifact": false,
+  "manifestDraft": {
+    "schemaVersion": 2,
+    "releaseId": "XENIOS_RESOURCE_HUB_HARDENING_2026-09-08",
+    "domain": "research-resource-hub",
+    "lane": "release-manager",
+    "owner": "ASTRA-A; formal ASTRA-B integration ownership review pending",
+    "createdAt": "2026-09-08T15:52:24.195Z",
+    "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "headSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "currentProductionSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "files": [
+      ".xenios/ACTIVE_TASKS.json",
+      ".xenios/BLOCKED_EXTERNAL.md",
+      ".xenios/CODE_OWNERSHIP.json",
+      ".xenios/FOUNDER_ACTIONS.md",
+      ".xenios/PROJECT_STATE.json",
+      ".xenios/RELEASE_STATE.json",
+      ".xenios/SESSION_REGISTRY.json",
+      ".xenios/handoffs/2026-09-08T15-20-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-INSTALLATION-CLOSED.md",
+      ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+      "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+      "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+      "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+      "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+      "docs/coordination/FILE_OWNERSHIP.json",
+      "docs/coordination/MIGRATION_DAG.json",
+      "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
+      "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_COMPARISON_20260908.md",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
+      "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md",
+      "docs/revenue-launch/20260907/critical-endpoint-no-allowances-3814.json",
+      "docs/revenue-launch/20260907/critical-endpoints-installation-baseline-3814.json",
+      "docs/revenue-launch/20260907/critical-endpoints-installation-comparison-3814.json",
+      "docs/revenue-launch/20260907/critical-endpoints-installation-live-3814.json",
+      "docs/revenue-launch/20260907/final-installation-record-validation-3814.json",
+      "docs/revenue-launch/20260907/installation-final-preflight-configuration-3814.json",
+      "docs/revenue-launch/20260907/installation-packet-independent-review-3814.json",
+      "docs/revenue-launch/20260907/installation-record-reconciliation-validation-3814.json",
+      "docs/revenue-launch/20260907/installation-resume-readonly-3814.json",
+      "docs/revenue-launch/20260907/privacy-input-v3-source-gate.json",
+      "docs/revenue-launch/20260907/resource-hub-installation-health-observation-3814.json",
+      "docs/revenue-launch/20260907/resource-hub-installation-preflight-3814c68.json",
+      "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json",
+      "docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json",
+      "docs/revenue-launch/20260907/resource-hub-production-migration-3814.json",
+      "docs/revenue-launch/20260907/source-equivalence-3814c68.json",
+      "docs/revenue-launch/20260907/standing-conditional-authorization-20260908.json",
+      "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json",
+      "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "server/release-control-plane.test.ts",
+      "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "server/research/resource-hub/activation-hardening.test.ts",
+      "server/research/resource-hub/service.test.ts",
+      "server/research/resource-hub/service.ts",
+      "server/research/resource-hub/store.ts",
+      "server/research/resource-hub/supabase-store.test.ts",
+      "server/research/resource-hub/supabase-store.ts",
+      "supabase/MIGRATIONS.md"
+    ],
+    "routes": [],
+    "migrations": [],
+    "tables": [],
+    "functions": [],
+    "rls": [],
+    "privileges": [],
+    "environmentNames": [],
+    "sharedWiring": [
+      "Existing Resource Hub service/store/PostgREST adapter: recovered-upload winner SHA and filename binding, expected-state/review-provenance compare-and-swap, precision-preserving reviewed_at mapping.",
+      "Managed qualification runner uses existing canonical Auth/member/admin guards and existing Hub/partner provider composition; it is not the production startup entry point."
+    ],
+    "tests": {
+      "focused": {
+        "status": "PENDING_FINAL_CANDIDATE_RECEIPT",
+        "note": "Separate harness 56-case pass at source 01a479 is supported by byte-identical integrated files; this is not a blanket focused application or managed-service qualification."
+      },
+      "fullSuite": {
+        "status": "PASS",
+        "command": "node node_modules/vitest/vitest.mjs run --reporter=json --outputFile=PRIVATE/vitest.private.json --testTimeout=120000 --no-file-parallelism --maxWorkers=1",
+        "checkedAt": "2026-09-08T15:55:31.384Z",
+        "scope": "Exact8be full suite; 16086 passed,59 existing skipped,0 failed,0 todo;919 executed passing files plus5 fully skipped. Explicit120s global override; no default/c350-equivalence claim."
+      },
+      "typecheck": {
+        "status": "PASS",
+        "command": "node node_modules/typescript/bin/tsc --project PRIVATE/tsconfig.hub-managed.json --noEmit --incremental false --pretty false",
+        "checkedAt": "2026-09-08T15:41:40.318Z"
+      },
+      "build": {
+        "status": "PASS",
+        "command": "node script/build.mjs",
+        "checkedAt": "2026-09-08T15:42:28.726Z"
+      },
+      "diffCheck": {
+        "status": "PENDING_RECEIPT_NOT_IN_ASSIGNED_AUDIT"
+      }
+    },
+    "rollback": {
+      "strategy": "Draft application-only recovery to installed baseline 3814, conditional on fresh compatibility and authority checks; preserve existing database, Storage and all history.",
+      "steps": [
+        "Retain installed Resource Hub schema/history; no migration replay, database repair or deletion.",
+        "If a future deployment requires rollback, use the reviewed flag sequencing and exact application recovery procedure, including explicit founding activation false before code reversion and membership billing absent/false."
+      ],
+      "verification": [
+        "Fresh observed baseline, effective flags and compatible database state are required before execution.",
+        "No rollback or production configuration action was performed or authorized by this draft."
+      ]
+    },
+    "smoke": {
+      "steps": [
+        "Pending a qualified deployment plan: capture and compare the existing public/read-only endpoint baseline using actual source and empty allowances.",
+        "Hub download GET/HEAD can append delivery audit and must not be represented as read-only smoke."
+      ],
+      "expected": [
+        "No production deployment/configuration/activation is claimed.",
+        "Managed Auth/PostgREST/Storage and real browser coverage remain separate open gates."
+      ]
+    },
+    "evidence": [
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_RECEIPT",
+        "checkedAt": "2026-09-08T15:42:28.726Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-build-2026-09-08T15-42-20-670Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_RECEIPT",
+        "checkedAt": "2026-09-08T15:41:01.045Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-core-2026-09-08T15-41-00-808Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_RECEIPT",
+        "checkedAt": "2026-09-08T15:41:31.094Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-routes-2026-09-08T15-41-01-484Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_RECEIPT",
+        "checkedAt": "2026-09-08T15:41:01.571Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-scan-2026-09-08T15-41-01-104Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_RECEIPT",
+        "checkedAt": "2026-09-08T15:41:40.318Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-typecheck-managed-2026-09-08T15-41-00-533Z\\sanitized-receipt.json"
+      },
+      {
+        "kind": "PRIVATE_EXACT_SOURCE_BROAD_SUITE_AUDIT",
+        "checkedAt": "2026-09-08T15:55:31.384Z",
+        "reference": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z\\sanitized-receipt.json"
+      }
+    ],
+    "integrationOwnershipReview": null
+  },
+  "sourceBinding": {
+    "headTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "pathCount": 51,
+    "pathCategories": {
+      "records_documentation": 40,
+      "tests": 6,
+      "qualification_harness": 2,
+      "application_runtime": 3
+    },
+    "all51MapBlobHashesVerified": true,
+    "productionRuntimePaths": [
+      "server/research/resource-hub/service.ts",
+      "server/research/resource-hub/store.ts",
+      "server/research/resource-hub/supabase-store.ts"
+    ],
+    "databaseAndProductionConfigDelta": [],
+    "newRoutes": [],
+    "historicalInstalledHubMigration": "20260908143724 retained; no new migration, replay or history repair"
+  },
+  "ownershipDraft": {
+    "status": "PENDING_FORMAL_ASTRA_B_ATTESTATION",
+    "supplementalMapPath": "C:/Users/sboad/.codex/tmp/managed-resource-hub-harness-20260908/supplemental-source-ownership-review-8be5d582.json",
+    "supplementalMapSha256": "65aa2ef73da6937996b2d8b2b615ea1adc4a9375f89ea24f3c9e18358ae49eed",
+    "supplementalMapIsFormalAcceptance": false,
+    "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "headSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "trustedBaseOwnershipPolicySha256": "8f84c67cefa29dab41194fd9e6c6f574ca65c55d40b141803b06139ee26b6cce",
+    "gitDiffPathInventorySha256": "a6b6c4687bad3b984694ba14765d06fef5f9e0436ce15386b8cf40d728b0fdf8",
+    "ownershipFindingInventorySha256": "69ecb7505f54e7486e456e5bc3f78ba14724b197d73465e15752b039b0d75fcd",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 37,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "coveredPaths": 14,
+    "rulesUnchangedFromBase": true,
+    "reviewerIdentity": null,
+    "reviewedAt": null,
+    "reviewArtifactPath": null,
+    "reviewArtifactSha256": null,
+    "leaseLimit": "Recorded single active lease per path does not independently prove process-level absence of another writer."
+  },
+  "auditedGates": {
+    "build": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:42:20.672Z",
+      "completedAt": "2026-09-08T15:42:28.726Z",
+      "durationMs": 8054,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-build-2026-09-08T15-42-20-670Z\\sanitized-receipt.json",
+      "receiptSha256": "5cfcd8f28d4804a8d46f352b54dc50a97b4f49c057098fff661763548ebf5782",
+      "stdoutSha256": "a6418ddefea57295d5dc7d6cd6d34fb7bad098d999e7bed2ff2b6076bb6a29bf",
+      "stderrSha256": "ec6902e47ff4b9349c0da6752686009d6a8259750c222cd88c00b25570155083",
+      "stdoutBytes": 29675,
+      "stderrBytes": 5275,
+      "logsHashAndLengthVerified": true
+    },
+    "core": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:41:00.811Z",
+      "completedAt": "2026-09-08T15:41:01.045Z",
+      "durationMs": 234,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-core-2026-09-08T15-41-00-808Z\\sanitized-receipt.json",
+      "receiptSha256": "8e6635ecdba9508b0ce80cd2a99aaf3d0da888f48dceaacff01946b19ac12775",
+      "stdoutSha256": "4115cd9c99ef8c80a21b272bfea17fe18f0f4eccf7202a287b00a9fa6d0642e2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 885,
+      "stderrBytes": 0,
+      "logsHashAndLengthVerified": true
+    },
+    "routes": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:41:01.487Z",
+      "completedAt": "2026-09-08T15:41:31.094Z",
+      "durationMs": 29607,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-routes-2026-09-08T15-41-01-484Z\\sanitized-receipt.json",
+      "receiptSha256": "e2bfac865074112697eccec14483a0247cd5083dddc7a0d226a8d8e9139ac0a5",
+      "stdoutSha256": "a4dc9feed3b253ab289c593a90cd6957df0a5a41c663eb3031f733b38a37f127",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 131,
+      "stderrBytes": 0,
+      "logsHashAndLengthVerified": true
+    },
+    "scan": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:41:01.108Z",
+      "completedAt": "2026-09-08T15:41:01.571Z",
+      "durationMs": 463,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-scan-2026-09-08T15-41-01-104Z\\sanitized-receipt.json",
+      "receiptSha256": "2ec2f9151cf37dc29b3012fe98892257ccfb004d39fd3f6ae391edce4b087e83",
+      "stdoutSha256": "678af20e1b32248abea74ddaf845c7b8239ec8ee3edb49745fa3a8e822553a5f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 243,
+      "stderrBytes": 0,
+      "logsHashAndLengthVerified": true,
+      "scan": {
+        "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+        "inputBytes": 131,
+        "inputUnchanged": true,
+        "addedLines": 4636,
+        "files": 51,
+        "rawSecretFindings": 0,
+        "reviewedFixtureFindings": 0,
+        "unresolvedSecretFindings": 0,
+        "piiFindings": 0,
+        "piiSkipped": false,
+        "allowanceRegistry": "NONE; new production-to-successor range must pass without allowances",
+        "coverage": "Approved bounded V3 only; retained historical/handwriting/name-format limitations"
+      }
+    },
+    "typecheck-managed": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:41:00.536Z",
+      "completedAt": "2026-09-08T15:41:40.318Z",
+      "durationMs": 39782,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-typecheck-managed-2026-09-08T15-41-00-533Z\\sanitized-receipt.json",
+      "receiptSha256": "87d4e6808e1bc6067a9e641a3c0d8a6113a7d88298a14c044e71402593d4eaeb",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 0,
+      "stderrBytes": 0,
+      "logsHashAndLengthVerified": true
+    },
+    "suite": {
+      "status": "PASS",
+      "startedAt": "2026-09-08T15:42:29.147Z",
+      "completedAt": "2026-09-08T15:55:31.384Z",
+      "durationMs": 782237,
+      "exitCode": 0,
+      "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z\\sanitized-receipt.json",
+      "receiptSha256": "961a93be485f20ca5e1f68947f91e0c634ae12eb207ddfb417ebae1d74d35603",
+      "stdoutSha256": "e908b1f367364f92f587944dd8115467087f9f57b7929299c546326b36c82004",
+      "stderrSha256": "55560271bcc142ab3e6837d136093079aafba07d2eb5ab4463c99966aeff543a",
+      "stdoutBytes": 156,
+      "stderrBytes": 1016,
+      "logsHashAndLengthVerified": true,
+      "reportSha256": "635afbf4df59b447e587b6739858024a17d0c155ed5224887012f6176eae62cc",
+      "reportBytes": 5797095
+    }
+  },
+  "toolingBinding": [
+    {
+      "path": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\qualify-hub-successor.mjs",
+      "sha256": "89b77ce9fb70306eec558c16e03959dd2eed4da0ef688d5bc3226a70dc104bb7",
+      "capturedAt": "2026-09-08T15:52:24.195Z",
+      "binding": "RETROSPECTIVE_CURRENT_BYTES; no historical pre-run hash recorded"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\tsconfig.hub-managed.json",
+      "sha256": "63cc5c08ffe5417b5d7159ebe87c4e5d29ca6b711172fc16b468ff5e19d420ea",
+      "capturedAt": "2026-09-08T15:52:24.195Z",
+      "binding": "RETROSPECTIVE_CURRENT_BYTES; no historical pre-run hash recorded"
+    }
+  ],
+  "scannerBinding": [
+    {
+      "path": "scripts/acceptance/verify-release-diff-scan.mjs",
+      "lfSha256": "3e9e808fb48a482173384e5ad19cb95df2a75139d21cd9bd6329c306e1ec332f",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "scripts/acceptance/scan-release-diff.mjs",
+      "lfSha256": "ee64fe06000d8384feab4eafd48dbc1f488e52bdb68df35592304c190e003907",
+      "unchangedFromBase": true
+    }
+  ],
+  "evidenceLimits": [
+    "The five receipts and actual private log bytes agree. Exit codes and source identifiers are verified; no tests or service calls were rerun.",
+    "Current launcher enforces clean exact HEAD/tree, base ancestry and Node v20.19.0, and invokes each command through process.execPath. Tool-captured invocation is retained by A; tooling hashes here are retrospective.",
+    "Expanded config inherits application include paths and explicitly adds both harness implementation files and its test. The expanded typecheck log is empty.",
+    "Build output inventory was not captured. No output-byte equivalence, browser equivalence or warning-free build is claimed; build stderr contains 5275 bytes.",
+    "The generic assertionsOrTimeoutsWeakened:false field is overbroad for the suite. Preserve original receipt and use the specific interpretation below.",
+    "Strict V3 scan covers only the approved bounded names input; historical handwriting and name-format completeness limits remain."
+  ],
+  "suiteReceiptFieldDisposition": {
+    "originalReceiptMustBePreserved": true,
+    "supersedesField": "assertionsOrTimeoutsWeakened",
+    "assertionContentChanged": false,
+    "cliTestTimeoutMs": 120000,
+    "defaultTimeoutEquivalenceClaimed": false,
+    "c350TimeoutEquivalenceClaimed": false,
+    "earlierProcedureReference": "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md:5",
+    "earlierProcedureIncludes120000Override": true
+  },
+  "pendingGates": [
+    "Formal ASTRA-B source/ownership acceptance for all 51 paths against the trusted 3814 policy and final attestation artifact.",
+    "Final manifest validation and remaining release-control receipts.",
+    "Managed target readiness and approved exact private plan; actual Auth/PostgREST/Storage/immutable upload/delivery qualification.",
+    "Non-null microsecond review CAS, concurrent loser and upload-race recovery coverage.",
+    "Real browser sign-in/logout/account switching and required role/browser matrix.",
+    "Any production rollout needs its qualified exact-source packet, fresh remote prechecks and applicable authority; this draft makes no activation change."
+  ],
+  "boundaries": {
+    "newMigrations": [],
+    "productionConfigurationChanges": [],
+    "productionActivation": false,
+    "productionDeployPerformed": false,
+    "managedExecutionPerformed": false,
+    "credentialReads": false,
+    "realAccountApproval": false,
+    "partnerActivation": false,
+    "notifications": false,
+    "commerceOrFulfillment": false,
+    "repositoryEdits": false
+  },
+  "findings": [
+    {
+      "severity": "evidence-wording",
+      "code": "SUITE_TIMEOUT_OVERRIDE_MUST_BE_EXPLICIT",
+      "disposition": "Record actual 120000 ms CLI override and prior procedure; do not claim default or c350 timeout equivalence. No rerun requested."
+    }
+  ],
+  "broadSuiteAudit": {
+    "status": "PASS_WITH_RECORDED_SKIPS_AND_TIMING_LIMITS",
+    "auditedAt": "2026-09-08T15:59:43.054Z",
+    "priorDraftSha256": "97679a45519acf3dff1edd661952cfa352b4c98e9b9ab877f1ddbf5a327275f8",
+    "sourceSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "sourceTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "receiptPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z\\sanitized-receipt.json",
+    "receiptSha256": "961a93be485f20ca5e1f68947f91e0c634ae12eb207ddfb417ebae1d74d35603",
+    "vitestReportPath": "C:\\Users\\sboad\\.codex\\private\\xenios-privacy-input-v3-20260908\\successor-8be5d582-suite-2026-09-08T15-42-29-144Z\\vitest.private.json",
+    "vitestReportSha256": "635afbf4df59b447e587b6739858024a17d0c155ed5224887012f6176eae62cc",
+    "vitestReportBytes": 5797095,
+    "logHashesAndLengthsVerified": true,
+    "startedAt": "2026-09-08T15:42:29.147Z",
+    "completedAt": "2026-09-08T15:55:31.384Z",
+    "durationMs": 782237,
+    "exitCode": 0,
+    "tests": {
+      "passed": 16086,
+      "failed": 0,
+      "skipped": 59,
+      "todo": 0,
+      "total": 16145,
+      "actualAssertionStatusCounts": {
+        "passed": 16086,
+        "skipped": 59
+      },
+      "snapshotFailures": false
+    },
+    "files": {
+      "reportEntries": 924,
+      "helperReportsPassed": 924,
+      "executedPassing": 919,
+      "fullySkipped": 5,
+      "failed": 0,
+      "fullySkippedInventory": [
+        {
+          "path": "server/research/early-access/durable-restart.pg.test.ts",
+          "skippedTests": 4
+        },
+        {
+          "path": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+          "skippedTests": 12
+        },
+        {
+          "path": "server/research/partners/referral-v1-database.test.ts",
+          "skippedTests": 16
+        },
+        {
+          "path": "server/research/commerce/persistence/subscription-transition-migration.test.ts",
+          "skippedTests": 3
+        },
+        {
+          "path": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+          "skippedTests": 21
+        }
+      ],
+      "semantics": "Vitest marks every testResult entry passed, including five files with only skipped cases. Correct human summary: 919 files executed passing tests, 5 files fully skipped; 924 report entries. Top-level3397 suites include describe groups and are not file count."
+    },
+    "changedTestFileResults": [
+      {
+        "path": "server/release-control-plane.test.ts",
+        "passed": 51,
+        "skipped": 1
+      },
+      {
+        "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+        "passed": 56,
+        "skipped": 0
+      },
+      {
+        "path": "server/research/resource-hub/activation-hardening.test.ts",
+        "passed": 32,
+        "skipped": 0
+      },
+      {
+        "path": "server/research/resource-hub/service.test.ts",
+        "passed": 80,
+        "skipped": 0
+      },
+      {
+        "path": "server/research/resource-hub/supabase-store.test.ts",
+        "passed": 12,
+        "skipped": 0
+      },
+      {
+        "path": "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+        "passed": 21,
+        "skipped": 0
+      }
+    ],
+    "skipAssessment": {
+      "totalSkipped": 59,
+      "filesContainingSkips": 8,
+      "whollyUnchangedSkipFiles": 7,
+      "changedFileContainingOneExistingSkip": "server/release-control-plane.test.ts",
+      "existingSkippedCaseLine": 1588,
+      "skipPredicateLine": 203,
+      "predicate": "CI or XENIOS_RUN_PG16_VERIFIER=1 runs pg16It; otherwise skips",
+      "completeSkippedTestCallUnchangedFrom3814": true,
+      "skipPredicateUnchangedFrom3814": true,
+      "newOrChangedSkipLogicFound": false,
+      "limit": "A changed test file contains one pre-existing skip. This does not claim zero skipped tests in changed files or execution of real-PG16 coverage."
+    },
+    "unhandledErrorAssessment": {
+      "nonemptyFileMessages": 0,
+      "failureMessageCount": 0,
+      "unhandledErrorMarkersInStdoutAndStderr": 0,
+      "vitestJsonUnhandledErrorFieldPresent": false,
+      "vitestSuccess": true,
+      "limit": "No unhandled-error markers or failure messages reported; JSON reporter has no standalone unhandled-error count field."
+    },
+    "timing": {
+      "receiptWallDurationMs": 782237,
+      "installedNodeDefaultTestTimeoutMs": 5000,
+      "defaultSource": "node_modules/vitest/dist/chunks/coverage.DM_a_rWm.js:538",
+      "globalCliTestTimeoutMs": 120000,
+      "defaultTimeoutEquivalenceClaimed": false,
+      "c350TimeoutEquivalenceClaimed": false,
+      "sourceAssertionsChangedByInvocation": false,
+      "casesAbove5000": [
+        {
+          "path": "server/release-control-plane.test.ts",
+          "testDeclarationLine": 2108,
+          "durationMs": 23186.769500000002,
+          "explicitTestTimeoutMs": 300000,
+          "completeTestCallUnchangedFrom3814": true
+        },
+        {
+          "path": "server/research/assisted-order/production-boot.test.ts",
+          "testDeclarationLine": 255,
+          "durationMs": 10964.0502,
+          "explicitTestTimeoutMs": 120000,
+          "timeoutConstantLine": 82,
+          "entireSourceUnchangedFrom3814": true
+        }
+      ],
+      "otherPassedCaseMaximumMs": 3426.9464,
+      "noCaseOutsideExistingExplicitAllowanceExceeded5000": true
+    },
+    "originalOverbroadReceiptField": {
+      "assertionsOrTimeoutsWeakened": false,
+      "disposition": "Original preserved. Superseded by the existing suiteReceiptFieldDisposition and specific timing metadata; no default/c350 timeout equivalence."
+    }
+  }
+}

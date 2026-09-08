@@ -4,7 +4,7 @@
 
 Current application `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`, is live as Render `dep-dag1reu7bikc73e16ie0` since 2026-09-08T14:38:44.68489Z. Exact e55 migration applied once as managed version `20260908143724`; full production pre/postchecks passed. Critical endpoints: 30 SAME with zero allowances. Five-minute observation: 300,232ms, 26 healthy responses, zero matching errors/5xx. Rollback unused. Hub=false, billing absent, auto-deploy off, branch unchanged. Activation and real-user journeys remain unverified.
 
-SQL access, V3 approval, source binding and installation authorization are closed. Current blockers are the two admin hardening corrections, managed Auth/PostgREST/Storage proof, and the reviewed exact content/audience/identity/effects/recovery plan. Existing approved V3 coverage remains bounded; do not request general GO again. Any new real-user grant or communication requires specific approval.
+SQL access, V3 approval, source binding and installation authorization are closed. The two admin hardening corrections and timestamp-precision regression are fixed in exact8be5d582 with fresh local gates passed. Current blockers are ASTRA-B final source/ownership acceptance, managed Auth/PostgREST/Storage and browser proof, and a designated environment with the reviewed exact content/audience/identity/effects/recovery plan. See HARDENING_QUALIFICATION_20260908.md in the same evidence directory. Existing approved V3 coverage remains bounded; do not request general GO again. Any new real-user grant or communication requires specific approval.
 
 See `docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md`.
 

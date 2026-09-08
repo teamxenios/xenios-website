@@ -10,7 +10,7 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 - Provide or confirm the exact content version and authorized audience when the managed Resource Hub activation plan is ready. Private source-review PDFs are not publication-approved resources. Any new real-user grant or communication still needs specific approval.
 
-- Identify the authorized isolated managed qualification target and existing role sessions. Discovered `xenios-research-staging` (`tetynodzrtmdbuzgboro`) is inactive with no confirmed current reuse purpose; retired M75 rehearsal is also inactive and is not automatically reusable. A is preparing the bounded harness; no project was restored, no schema was changed there and no test identity/content was created. See `docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json`. This is a missing environment/ownership input, not a request to repeat production GO.
+- Identify the authorized isolated managed qualification target and existing role sessions. Discovered `xenios-research-staging` (`tetynodzrtmdbuzgboro`) is inactive with no confirmed current reuse purpose; retired M75 rehearsal is also inactive and is not automatically reusable. The bounded harness is integrated and locally tested at8be5d582; no project was restored, no schema was changed there and no test identity/content was created. See `docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json`. This is a missing environment/ownership input, not a request to repeat production GO.
 
 ## Closed on September 8
 

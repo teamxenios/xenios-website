@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-05T12:49:32.056944-05:00",
+  "updatedAt": "2026-09-08T15:56:01.182962Z",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -315,7 +315,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-08-21T15:46:37.875Z",
       "releasedAt": "2026-08-21T15:51:29.849Z"
     },
@@ -360,7 +360,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -1516,8 +1516,8 @@
       ],
       "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
       "createdAt": "2026-09-05T04:13:59.4380733Z",
-      "scopeNote": "Founder goal: A selective integration of reviewed B/Fable deltas on existing feature branch, preserving deployed ff3c496. New exact-SHA approval required for production.",
-      "currentQualificationStatus": "SUCCESSOR_3814_STRICT_V3_PASS_INSTALLATION_GATES_CLOSING_ACTIVATION_BLOCKED_CONCURRENCY_AND_MANAGED_PROOF",
+      "scopeNote": "A continues selective integration and qualification on the existing feature branch. Account/partner release completed; installed3814 stays disabled for Hub. New exact source/configuration gates and standing scope boundaries apply.",
+      "currentQualificationStatus": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
       "claimedAt": "2026-09-05T17:49:32.208Z",
       "blockedAt": "2026-09-04T23:45:09.67476-05:00",
       "lastOwner": "codex-seth-revenue-launch-20260905",
@@ -1546,7 +1546,36 @@
         "status": "INSTALLED_DEPLOYED_HUB_DISABLED",
         "observation": "PASS_300232_MS",
         "report": "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
-        "activation": "PENDING_HARDENING_MANAGED_PROOF_AND_REVIEWED_INPUTS"
+        "activation": "PENDING_HARDENING_MANAGED_PROOF_AND_REVIEWED_INPUTS",
+        "successorQualification": {
+          "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+          "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+          "status": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
+          "productionDeployed": false,
+          "featureActivated": false,
+          "report": "docs/revenue-launch/20260907/HARDENING_QUALIFICATION_20260908.md",
+          "receipt": "docs/revenue-launch/20260907/hardening-qualification-8be5d582.json",
+          "fullSuite": {
+            "passed": 16086,
+            "failed": 0,
+            "skipped": 59,
+            "todo": 0,
+            "total": 16145,
+            "filesPassed": 919,
+            "filesSkipped": 5,
+            "filesFailed": 0,
+            "files": 924,
+            "success": true,
+            "durationMs": 782237,
+            "cliTestTimeoutMs": 120000
+          },
+          "typecheck": "PASS_APPLICATION_PLUS_THREE_EXPLICIT_HARNESS_FILES",
+          "build": "PASS_EXIT_ZERO",
+          "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
+          "independentBReview": "PENDING",
+          "managedExecution": "NOT_RUN_MISSING_DESIGNATED_TARGET_AND_PRIVATE_REVIEWED_PLAN",
+          "updatedAt": "2026-09-08T15:56:01.182962Z"
+        }
       },
       "delegatedBuilder": {
         "agent": "resource_integration_map",
@@ -1561,7 +1590,10 @@
           "server/research/resource-hub/activation-hardening.test.ts"
         ],
         "owner": "A retains lease; B independently reviews final pushed source",
-        "parentMayNotEditDelegatedPathsUntilReturned": true
+        "parentMayNotEditDelegatedPathsUntilReturned": false,
+        "returnedSourceSha": "7093add92dee39cd9b5f685237ab3c36b2fcbdd7",
+        "status": "RETURNED_SELECTIVELY_INTEGRATED",
+        "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022"
       },
       "delegatedManagedHarness": {
         "agent": "managed_hub_harness",
@@ -1573,8 +1605,11 @@
           "server/research/e2e/managed-resource-hub-qa.test.ts"
         ],
         "owner": "A retains exact path lease; helper works in its isolated worktree",
-        "parentMayNotEditDelegatedPathsUntilReturned": true,
-        "managedExecution": "Pending designated active staging target and private identity/content plan; production project hard-refused"
+        "parentMayNotEditDelegatedPathsUntilReturned": false,
+        "managedExecution": "Pending designated active staging target and private identity/content plan; production project hard-refused",
+        "returnedSourceSha": "01a479d612fcef4337a4d9e3878c127c256cbcbe",
+        "status": "RETURNED_SELECTIVELY_INTEGRATED",
+        "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022"
       }
     },
     {

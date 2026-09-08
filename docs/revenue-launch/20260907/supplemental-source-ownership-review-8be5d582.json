@@ -1,0 +1,1052 @@
+{
+  "kind": "supplemental-private-source-ownership-map",
+  "reviewer": "runtime_successor_review",
+  "reviewedAt": "2026-09-08T15:45:17.122595+00:00",
+  "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "sourceSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "sourceTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "status": "NO_BLOCKING_SOURCE_OR_LEASE_CONFLICT_FOUND_FORMAL_REVIEW_PENDING",
+  "counts": {
+    "paths": 51,
+    "policy": {
+      "COVERED": 14,
+      "UNOWNED_FILE": 37
+    },
+    "categories": {
+      "records_documentation": 40,
+      "tests": 6,
+      "qualification_harness": 2,
+      "application_runtime": 3
+    },
+    "activeLeaseCountPerPath": {
+      "1": 51
+    },
+    "parentTaskCovered": 51
+  },
+  "policy": {
+    "rulesUnchangedFromBase": true,
+    "matchingMethod": "Canonical verify-release-manifest.ts glob semantics: ** any path chars, * excludes slash, ? one non-slash; non-retired write rules; release-manager lane.",
+    "gate": "37 UNOWNED_FILE findings require exact-source integration ownership review; corpus lease coverage does not waive the formal gate."
+  },
+  "metadataBinding": [
+    {
+      "path": "docs/coordination/FILE_OWNERSHIP.json",
+      "pinnedLfSha256": "31a96bfe68450c533acd6ef923d0f7f6d848813b2a73a5a5070ff642aba6e7ab",
+      "workingLfMatchesPinned": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "pinnedLfSha256": "a8c685fd0c941c1cfaa29fae8bb0e1a709922656707b67964f0725c8739003fc",
+      "workingLfMatchesPinned": true
+    },
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "pinnedLfSha256": "174e74d4fabf4226aad1b5423fde80fd3141453458cc1c5dcb49b1d965c2b150",
+      "workingLfMatchesPinned": true
+    }
+  ],
+  "deltaFromReviewed62e": [
+    {
+      "status": "A",
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts"
+    },
+    {
+      "status": "A",
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts"
+    },
+    {
+      "status": "A",
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts"
+    }
+  ],
+  "harnessBinding": [
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "lfSha256": "f69d3e98a84d7bf4dbf58e1060c3bf23911904afee14fb82ecd020362d0d4baa",
+      "expectedLfSha256": "f69d3e98a84d7bf4dbf58e1060c3bf23911904afee14fb82ecd020362d0d4baa",
+      "hashMatches": true,
+      "byteIdenticalToOriginal01a479": true,
+      "bytes": 22489
+    },
+    {
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "lfSha256": "739741a3c619c6cd06217c8aecb6581d8337a5d83a791bee5ed45053fd026a57",
+      "expectedLfSha256": "739741a3c619c6cd06217c8aecb6581d8337a5d83a791bee5ed45053fd026a57",
+      "hashMatches": true,
+      "byteIdenticalToOriginal01a479": true,
+      "bytes": 16887
+    },
+    {
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "lfSha256": "79c364726a656c7f9c97249fe07b3ac5e9916114ed73fd3c446e1b7ba7b9476b",
+      "expectedLfSha256": "79c364726a656c7f9c97249fe07b3ac5e9916114ed73fd3c446e1b7ba7b9476b",
+      "hashMatches": true,
+      "byteIdenticalToOriginal01a479": true,
+      "bytes": 17431
+    }
+  ],
+  "productionApplicationSourceByteIdenticalTo62e": true,
+  "changedSqlConfigDependenciesOrProductionComposition": [],
+  "knownSourceScope": "Only three application runtime files changed from installed3814: Hub service.ts/store.ts/supabase-store.ts, already bounded-reviewed on62e. Six test files, two managed qualification harness files and forty records/docs complete the51-path inventory.",
+  "delegation": "ACTIVE_TASKS records six backend paths delegated to resource_integration_map and three harness paths delegated to managed_hub_harness under A retained lease. This review verifies returned-source identity; it does not claim process-level writer absence.",
+  "limits": [
+    "Supplemental independent map, not ASTRA-B acceptance.",
+    "No production or managed service calls, credential reads, heavy tests or repo edits.",
+    "No managed PostgREST/Auth/Storage/browser evidence is supplied here.",
+    "No rollout, activation, migration replay or config write is authorized by this artifact.",
+    "Application source unchanged from62e does not substitute for final8be qualification receipts."
+  ],
+  "files": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "category": "records_documentation",
+      "lfSha256": "174e74d4fabf4226aad1b5423fde80fd3141453458cc1c5dcb49b1d965c2b150",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/BLOCKED_EXTERNAL.md",
+      "category": "records_documentation",
+      "lfSha256": "009d43e898cc3543521ccc63cf78bd335a6af784645c06cefce869fafb32384d",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "category": "records_documentation",
+      "lfSha256": "a8c685fd0c941c1cfaa29fae8bb0e1a709922656707b67964f0725c8739003fc",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/FOUNDER_ACTIONS.md",
+      "category": "records_documentation",
+      "lfSha256": "12ad2279700eb6601018b05a2b36c7d977ea6e571a52fde044051d40e7f7327f",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/PROJECT_STATE.json",
+      "category": "records_documentation",
+      "lfSha256": "3bfb1837f6f9eb58252ea7d0a4a6e01ffe199a7b2ab9729694481b2442c85c36",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/RELEASE_STATE.json",
+      "category": "records_documentation",
+      "lfSha256": "09cceb30a46eb705379735a4944b6587a1bdc30217c81ee13b5a3aefae0caca6",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "category": "records_documentation",
+      "lfSha256": "be9eef7df907f062fc2add286a10435831189362975ed00619358d8758d9e0f8",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/handoffs/2026-09-08T15-20-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-INSTALLATION-CLOSED.md",
+      "category": "records_documentation",
+      "lfSha256": "72e6b62c4d1396b6862683ab92664c295130a19b2395ebec38780c29fbc7882a",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+      "category": "records_documentation",
+      "lfSha256": "14271268e6765d1e0d0bf0d2df9426e22f89f31846e2dd0542e999cf8045baa5",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+      "category": "tests",
+      "lfSha256": "55b18edb6551676ff0f175372829d9492d4332b86fcc93cfad2eb94969bebed4",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+      "category": "records_documentation",
+      "lfSha256": "efb6e0ec0339f56685aec2d8f96e7a1834c18e0cb8c0df27821f0bf714a0af94",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+      "category": "records_documentation",
+      "lfSha256": "3883f4eb0a369882e23d187e6dd918221404136b7a417f87ba224b951cb8c5ff",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+      "category": "records_documentation",
+      "lfSha256": "5ff2a8a32951e1bf0580c09afa720f9beaeafadbc4ac7e956bc63fc02915d9f6",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+      "category": "records_documentation",
+      "lfSha256": "a391e42f8c03bb41bd3750a70e9bdd349d11640b1638b6ddd19c446f4bea552c",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/FILE_OWNERSHIP.json",
+      "category": "records_documentation",
+      "lfSha256": "31a96bfe68450c533acd6ef923d0f7f6d848813b2a73a5a5070ff642aba6e7ab",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/MIGRATION_DAG.json",
+      "category": "records_documentation",
+      "lfSha256": "c8032cc4157c071dae0c04e8d8d1861d639c8e96f398969bf4c47d2ac2b377cf",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "647d6507ea708b3476289a3422d96a0bf800758d72fd8b12d740c59bce6ae38a",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+      "category": "records_documentation",
+      "lfSha256": "4e33543e74864c86f324211e6478cc4ca2531c53deafe3d609c5f5800601756f",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_COMPARISON_20260908.md",
+      "category": "records_documentation",
+      "lfSha256": "63051e47da401811ec52b782c79f0cac3b915f4b36beba2a91b2bf8a10782764",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md",
+      "category": "records_documentation",
+      "lfSha256": "3e4ff811564363857b4c1a1099ba068788e011d6a45476b56853cc96c6d8762a",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
+      "category": "records_documentation",
+      "lfSha256": "6639d83904ab50b3c92170c53f9d276bcfde37fcc3c72cf896c1337e689a2b53",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md",
+      "category": "records_documentation",
+      "lfSha256": "6aee019a49c17e7527085ca6a4ebdedca1bad89de5387964f3cf022f83076487",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/critical-endpoint-no-allowances-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "55e18bf27da40a13d2dacb2b010ab5297e4a06cc850da5f9dd75f597cca89a09",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/critical-endpoints-installation-baseline-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "f0566da4094ee2c0c84f5fa81487c0dc5a49e158518cd7862a9e956d92368fe8",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/critical-endpoints-installation-comparison-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "a9fe9e4b59f26dd95218717520538d6f9fa303350205a70505989236f52e5e14",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/critical-endpoints-installation-live-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "5146e27712bd2bbef87e9f3ef6ad0afa050132ffb05f1a5b22766fd2457f7c4f",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/final-installation-record-validation-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "4ad2813306cdbac7c8dc4dfddea19209e647dbb9ba9a50d6739ea77819f017f0",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/installation-final-preflight-configuration-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "31f836be7346349863360133b7df2cf7a1eba6c9c8b850595df5300cb82760d2",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/installation-packet-independent-review-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "045a9748ad62e6ea362805accb7edae4486d34bd43c03e67c201dc93f9ee1c4a",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/installation-record-reconciliation-validation-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "0004821695a7baa4be6067aeb73f1a625b6dc3b308c0a4c69a4b3e77b5b78b1c",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/installation-resume-readonly-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "deb06a143341d0a9d9a50cf823e2817d19d4e6209bedaa0b81cb17f4b1c6b843",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/privacy-input-v3-source-gate.json",
+      "category": "records_documentation",
+      "lfSha256": "92bc7bb6cdaa20c325b9b9646fb72aa94341eaa727f90dcb441dc13293c158b4",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-installation-health-observation-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "90d8a188bf00f82c2a398d673e5c94ee9a0a2626aa6ce4c7efeb90752c444252",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-installation-preflight-3814c68.json",
+      "category": "records_documentation",
+      "lfSha256": "8f89b8ee4d0874aedc1b9b16f912fbb4dd14f59d6ac7f07aea685580c7db5cb0",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "51d2203ef5dba2a09254406004695d24b8d89f1ddaa1a6b18943c4291a6c3097",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json",
+      "category": "records_documentation",
+      "lfSha256": "d1dd9db99671e9afaa3f16051c51fbdd568dbe649ad98e9940c4c815dacdd3c0",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/resource-hub-production-migration-3814.json",
+      "category": "records_documentation",
+      "lfSha256": "085d829d73c0745c7408c979b29f0d239f4791dfe0ad56e4681762bc21a71eb2",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/source-equivalence-3814c68.json",
+      "category": "records_documentation",
+      "lfSha256": "92d20c8d8b5f0fcc114fa7a2e630dbb59fc01ac6871ac44355ebdea7ea0e732b",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/standing-conditional-authorization-20260908.json",
+      "category": "records_documentation",
+      "lfSha256": "3d9df6fad59d9d389726ad32aea12589dbecaefc42e2c3089bbe4f8d5305b1a5",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "docs/revenue-launch/20260907/strict-scan-v3-3814c68.json",
+      "category": "records_documentation",
+      "lfSha256": "99cef645b355b70d272d0c7be22f34e6bf266d9b2fc0502708f738907eed2d81",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "category": "qualification_harness",
+      "lfSha256": "739741a3c619c6cd06217c8aecb6581d8337a5d83a791bee5ed45053fd026a57",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "category": "qualification_harness",
+      "lfSha256": "f69d3e98a84d7bf4dbf58e1060c3bf23911904afee14fb82ecd020362d0d4baa",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/release-control-plane.test.ts",
+      "category": "tests",
+      "lfSha256": "5be7bf29339b041c85f20d321b43a0a9819eb35e8583e428fef020019cf8f774",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "category": "tests",
+      "lfSha256": "79c364726a656c7f9c97249fe07b3ac5e9916114ed73fd3c446e1b7ba7b9476b",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/activation-hardening.test.ts",
+      "category": "tests",
+      "lfSha256": "2d9e4c09dba6c92ba6b90faceb2580d3ab5ffec18719e1c7df7656ceb1bd7ff7",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/service.test.ts",
+      "category": "tests",
+      "lfSha256": "981d3c4dccd7afa526628ccae6b4e274fc4e59d24e88e1dd8f1eefdc927d3f6c",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/service.ts",
+      "category": "application_runtime",
+      "lfSha256": "1d21e0f213525d0ac2ba2f9682d6fbaf448785c3d92bf890e196650dfcad274e",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/store.ts",
+      "category": "application_runtime",
+      "lfSha256": "36e7373b0d35180e1413cbca208748f1476d4ffcd12c52fe46c66f62abe6f3a8",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/supabase-store.test.ts",
+      "category": "tests",
+      "lfSha256": "2a2a0ddcc14c6b4214f9abdfca0507987ac431ce37400a358c21da91d196b698",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "server/research/resource-hub/supabase-store.ts",
+      "category": "application_runtime",
+      "lfSha256": "92573a8325f3ba0f7de591fda236d629be0bf2ccdafeab223ee5d4cdf66501e3",
+      "policyClassification": "UNOWNED_FILE",
+      "rules": [],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    },
+    {
+      "path": "supabase/MIGRATIONS.md",
+      "category": "records_documentation",
+      "lfSha256": "cf9504f1331b1177775e4ca3b527030f64d604ed3a43b550ab26337f9a92ee4e",
+      "policyClassification": "COVERED",
+      "rules": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "lane": "release-manager",
+          "state": "active"
+        }
+      ],
+      "activeLeases": [
+        {
+          "id": "1dd45dd9-0abc-485c-8330-e90c4066eb30",
+          "session": "codex-seth-revenue-launch-20260905",
+          "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
+          "state": "active",
+          "heartbeatAt": "2026-09-08T15:17:58.888Z"
+        }
+      ],
+      "parentTaskCoverage": true
+    }
+  ]
+}
