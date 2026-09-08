@@ -4,6 +4,7 @@ flowchart LR
   PREVDB5["Superseded db5a2d44<br/>HISTORICAL; deactivated<br/>Care admin reliability"]
   PROD["Historical ff3c4962<br/>SUPERSEDED / COMPATIBLE ROLLBACK<br/>dep-dafcm567bikc7382rhng"]
   LIVE3814["Production 3814c68<br/>AUDITED_BASELINE<br/>dep-dag1reu7bikc73e16ie0<br/>Hub installed / disabled; observation PASS"]
+  HARDENING8BE["Corrected candidate 8be5d582<br/>Local + API41 + browser15/45 PASS<br/>B attestation pending; not deployed"]
   RESOURCE_OLD["Historical c350ab1<br/>STRICT V3 FAILED; superseded<br/>original evidence retained"]
   RESOURCE["Pinned Hub/UI 3814c68<br/>DEPLOYED / ACTIVATION BLOCKED<br/>e55 applied20260908143724; Hub=false"]
   PREV50["Superseded baseline 50c2d35c<br/>HISTORICAL<br/>dep-daatp715efls738v00dg (2026-08-31 to 2026-09-03)"]
@@ -91,6 +92,8 @@ flowchart LR
   PROD -->|source baseline| RESOURCE_OLD
   RESOURCE_OLD -->|three attribution corrections and new qualification| RESOURCE
   RESOURCE -->|exact deployment| LIVE3814
+  LIVE3814 -->|unchanged installed schema; source baseline| HARDENING8BE
+  class HARDENING8BE gate;
   class LIVE3814 baseline;
   class PROD gate;
   class PREVDB5 gate;

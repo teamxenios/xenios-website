@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08T16:02:50.489072Z",
+  "updatedAt": "2026-09-08T18:21:57.005137Z",
   "sethRevenueLaunch": {
     "status": "ACTIVE_RESOURCE_HUB_INSTALLED_ACTIVATION_PENDING",
     "branch": "codex/xenios-seth-revenue-launch-20260905",
@@ -720,7 +720,7 @@
     "independentSourceReviewStatus": "COMPLETE_BOUNDED_A_B_REVIEW_NO_NEW_BLOCKING_LOGIC_FINDING",
     "finalControlGates": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json",
     "followOnScope": "Dashboard share card/PNG and Training/Support mobile corrections remain separate; frozen source unchanged; complete affiliate experience not delivered",
-    "updatedAt": "2026-09-08T14:45:55.787734Z",
+    "updatedAt": "2026-09-08T18:21:57.005137Z",
     "manifest": "docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
     "manifestStatus": "ACCEPTED_INSTALLATION_EXECUTED_ACTIVATION_NOT_QUALIFIED",
     "manifestValidation": "docs/revenue-launch/20260907/final-installation-record-validation-3814.json",
@@ -739,7 +739,7 @@
     "productionPostcheck": "PASS_EXACT_7c7_PROCEDURE_ZERO_INITIAL_ROWS_OBJECTS",
     "productionMigrationReceipt": "docs/revenue-launch/20260907/resource-hub-production-migration-3814.json",
     "observation": "PASS_FIVE_FULL_MINUTES_HEALTH_AND_LOGS",
-    "hardeningProposal": "Integrated and locally gated exact8be5d582; upload identity and precision-preserving four-field review CAS corrected. Installed3814 remains disabled; managed and B qualification pending.",
+    "hardeningProposal": "Exact 8be corrections passed local, managed API and actual browser gates; formal ASTRA-B source/ownership/evidence acceptance remains pending. Production3814 stays disabled for Hub.",
     "successorQualification": {
       "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
       "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
@@ -765,9 +765,9 @@
       "typecheck": "PASS_APPLICATION_PLUS_THREE_EXPLICIT_HARNESS_FILES",
       "build": "PASS_EXIT_ZERO",
       "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
-      "independentBReview": "PENDING",
+      "independentBReview": "PENDING_ACTUAL_VERDICT_NOT_RECEIVED",
       "managedExecution": "PASS_41_API_CHECKS_15_BROWSER_STEPS_45_CAPTURES_HOST_SQL_RECONCILED_B_ACCEPTANCE_PENDING",
-      "updatedAt": "2026-09-08T18:11:58.280593+00:00",
+      "updatedAt": "2026-09-08T18:21:57.005137Z",
       "managedStaging": {
         "projectId": "tetynodzrtmdbuzgboro",
         "status": "ACTIVE_HEALTHY",
@@ -780,7 +780,6 @@
         "runId": "hubqa-20260908-bdda04a633",
         "fixtureAuthCreates": 5,
         "fixtureCoreInserts": 8,
-        "passwordSignIns": 5,
         "notificationOutboxCount": 2,
         "resourceRows": 5,
         "storageObjects": 5,
@@ -791,7 +790,11 @@
         "publishedPointers": 0,
         "authSessions": 4,
         "latestBrowserRunId": "hubbrowser-20260908-bdda04a633-b3",
-        "latestSqlObservedAt": "2026-09-08T18:01:52.403248Z"
+        "latestSqlObservedAt": "2026-09-08T18:01:52.403248Z",
+        "fixturePasswordSignIns": 5,
+        "browserPasswordSignIns": 8,
+        "browserUiSignOuts": 8,
+        "authCountScope": "Fixture provisioning sign-ins and completed browser-run sign-ins are separate phases; no claim of global historical totals."
       },
       "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json",
       "managedApiReceipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
@@ -800,7 +803,12 @@
       "browserDriverSha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
       "browserRun2Receipt": "docs/revenue-launch/20260907/browser-driver-run2-stop-20260908.json",
       "browserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
-      "readOnlyCompatibilityReceipt": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json"
+      "readOnlyCompatibilityReceipt": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json",
+      "managedBrowserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+      "preparedManifest": "docs/revenue-launch/20260907/hardening-release-manifest-unqualified-8be.json",
+      "releaseRecordChecks": "docs/revenue-launch/20260907/hardening-record-preparation-8be.json",
+      "releasePacketEvidenceSha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
+      "manifestValidationStatus": "NOT_ACCEPTED_MISSING_ACTUAL_B_ATTESTATION_37_UNOWNED_BASELINE_PATHS"
     }
   },
   "reconciliationHistory": [

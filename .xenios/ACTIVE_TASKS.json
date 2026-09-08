@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08T17:14:54.099560Z",
+  "updatedAt": "2026-09-08T18:21:57.005137Z",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -315,7 +315,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-08-21T15:46:37.875Z",
       "releasedAt": "2026-08-21T15:51:29.849Z"
     },
@@ -360,7 +360,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -1518,17 +1518,17 @@
       "baseSha": "ba3ea05bec38efe6eda94a9eb6b6f37f728baa1c",
       "createdAt": "2026-09-05T04:13:59.4380733Z",
       "scopeNote": "A continues selective integration and qualification on the existing feature branch. Account/partner release completed; installed3814 stays disabled for Hub. New exact source/configuration gates and standing scope boundaries apply.",
-      "currentQualificationStatus": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
+      "currentQualificationStatus": "LOCAL_MANAGED_BROWSER_GATES_PASS_B_ACCEPTANCE_PENDING",
       "claimedAt": "2026-09-05T17:49:32.208Z",
       "blockedAt": "2026-09-04T23:45:09.67476-05:00",
       "lastOwner": "codex-seth-revenue-launch-20260905",
       "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
-        "sha": "990c77ee9dd70b1cc0d207f936a9a09624658b7b",
-        "file": ".xenios/handoffs/2026-09-08T17-22-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-MANAGED-API-PASS.md",
-        "at": "2026-09-08T17:22:31.366263Z",
-        "status": "continuing_same_executor_managed_api_pass_browser_and_independent_acceptance_pending"
+        "sha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
+        "file": ".xenios/handoffs/2026-09-08T18-25-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-BROWSER-PASS.md",
+        "at": "2026-09-08T18:24:45.822985Z",
+        "status": "continuing_same_executor_browser_pass_actual_B_attestation_required"
       },
       "previousBlockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent.",
       "pairing": {
@@ -1547,11 +1547,11 @@
         "status": "INSTALLED_DEPLOYED_HUB_DISABLED",
         "observation": "PASS_300232_MS",
         "report": "docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md",
-        "activation": "PENDING_HARDENING_MANAGED_PROOF_AND_REVIEWED_INPUTS",
+        "activation": "PENDING_CORRECTED_DEPLOYMENT_AND_REVIEWED_PRODUCTION_INPUTS",
         "successorQualification": {
           "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
           "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
-          "status": "LOCAL_GATES_PASS_MANAGED_AND_B_REVIEW_PENDING",
+          "status": "LOCAL_MANAGED_BROWSER_GATES_PASS_B_ACCEPTANCE_PENDING",
           "productionDeployed": false,
           "featureActivated": false,
           "report": "docs/revenue-launch/20260907/HARDENING_QUALIFICATION_20260908.md",
@@ -1573,9 +1573,9 @@
           "typecheck": "PASS_APPLICATION_PLUS_THREE_EXPLICIT_HARNESS_FILES",
           "build": "PASS_EXIT_ZERO",
           "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
-          "independentBReview": "PENDING",
-          "managedExecution": "BOUNDED_MANAGED_API_PASS_41_BROWSER_AND_B_ACCEPTANCE_PENDING",
-          "updatedAt": "2026-09-08T17:19:13.160866Z",
+          "independentBReview": "PENDING_ACTUAL_VERDICT_NOT_RECEIVED",
+          "managedExecution": "PASS_41_API_CHECKS_15_BROWSER_STEPS_45_CAPTURES_HOST_SQL_RECONCILED_B_ACCEPTANCE_PENDING",
+          "updatedAt": "2026-09-08T18:21:57.005137Z",
           "managedStaging": {
             "projectId": "tetynodzrtmdbuzgboro",
             "status": "ACTIVE_HEALTHY",
@@ -1588,18 +1588,35 @@
             "runId": "hubqa-20260908-bdda04a633",
             "fixtureAuthCreates": 5,
             "fixtureCoreInserts": 8,
-            "passwordSignIns": 5,
             "notificationOutboxCount": 2,
-            "resourceRows": 4,
-            "storageObjects": 4,
+            "resourceRows": 5,
+            "storageObjects": 5,
             "productionChanged": false,
-            "resourceVersions": 2,
-            "deliveryAudits": 6,
-            "withdrawnVersions": 2
+            "resourceVersions": 3,
+            "deliveryAudits": 8,
+            "withdrawnVersions": 3,
+            "publishedPointers": 0,
+            "authSessions": 4,
+            "latestBrowserRunId": "hubbrowser-20260908-bdda04a633-b3",
+            "latestSqlObservedAt": "2026-09-08T18:01:52.403248Z",
+            "fixturePasswordSignIns": 5,
+            "browserPasswordSignIns": 8,
+            "browserUiSignOuts": 8,
+            "authCountScope": "Fixture provisioning sign-ins and completed browser-run sign-ins are separate phases; no claim of global historical totals."
           },
           "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json",
           "managedApiReceipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
-          "managedHarnessSha": "711bd4113b9a2458f7c9b46b50a088c8db728677"
+          "managedHarnessSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+          "browserHostRun1Receipt": "docs/revenue-launch/20260907/browser-host-run1-stop-20260908.json",
+          "browserDriverSha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
+          "browserRun2Receipt": "docs/revenue-launch/20260907/browser-driver-run2-stop-20260908.json",
+          "browserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+          "readOnlyCompatibilityReceipt": "docs/revenue-launch/20260907/hardening-readonly-compatibility-8be-1808.json",
+          "managedBrowserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json",
+          "preparedManifest": "docs/revenue-launch/20260907/hardening-release-manifest-unqualified-8be.json",
+          "releaseRecordChecks": "docs/revenue-launch/20260907/hardening-record-preparation-8be.json",
+          "releasePacketEvidenceSha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
+          "manifestValidationStatus": "NOT_ACCEPTED_MISSING_ACTUAL_B_ATTESTATION_37_UNOWNED_BASELINE_PATHS"
         }
       },
       "delegatedBuilder": {
@@ -1681,13 +1698,16 @@
       },
       "delegatedCurrentReleasePacket": {
         "agent": "release_manifest",
-        "state": "ACTIVE_EXACT_8BE_RELEASE_DOCS_ONLY",
+        "state": "RETURNED_REVIEWED_INTEGRATED",
         "paths": [
           "docs/revenue-launch/20260907/hardening-manifest-draft-8be5d582.json",
           "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_RELEASE_PACKET_8be.md"
         ],
         "baseEvidenceSha": "594e32373301fce1986a03c89797e3f85ed4e4d0",
-        "productionWrites": false
+        "productionWrites": false,
+        "sourceSha": "16e7042455cc957d540840a6b8f1be6a13ca8465",
+        "integratedSha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
+        "reviewReceipt": "docs/revenue-launch/20260907/hardening-record-preparation-8be.json"
       }
     },
     {
