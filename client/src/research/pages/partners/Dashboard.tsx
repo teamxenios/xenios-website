@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { useResearch, formatMoney } from "../../core";
 import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
@@ -18,6 +19,7 @@ import { usePartnerResource, type BoundaryState } from "./shared";
 import type { PartnerDashboardDto } from "@shared/research/commerce-api";
 import type { CommissionState } from "@shared/research/distribution";
 import { researchAuthPath } from "@shared/research/auth-return-to";
+import { DashboardShareCard } from "../../recommendation/DashboardShareCard";
 
 // ---------------------------------------------------------------------------
 // Partner dashboard (/research/partners/dashboard). Aggregates only, straight
@@ -112,6 +114,7 @@ export default function Dashboard() {
 }
 
 function DashboardActivity({ token }: { token: string }) {
+  const [shareOpen, setShareOpen] = useState(false);
   const { state, errorMessage, denied, data, reload } = usePartnerResource<{ partner: PartnerDashboardDto }>(
     getPartnerDashboard,
     token,
@@ -179,6 +182,15 @@ function DashboardActivity({ token }: { token: string }) {
               tone={partner.state === "active" ? "success" : "pending"}
             />
           </div>
+        )}
+
+        {state === "ok" && partner?.state === "active" && !shareOpen && (
+          <button type="button" className="btn btn-secondary mb-4" style={{ minHeight: 44 }} onClick={() => setShareOpen(true)}>
+            Open referral tools
+          </button>
+        )}
+        {state === "ok" && partner?.state === "active" && shareOpen && (
+          <DashboardShareCard token={token} />
         )}
 
         <div className="grid gap-4 min-w-0" data-testid="pd-metrics" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))", overflowWrap: "anywhere" }}>
