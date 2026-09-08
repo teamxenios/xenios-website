@@ -1,0 +1,1734 @@
+[
+  {
+    "method": "DELETE",
+    "path": "/api/admin/research/prelaunch/roles/:assignmentId"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/research/cart/lines/:sku"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/research/media/:mediaId"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/research/member/product-requests/:reference/files/:fileId"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/research/telegram/link"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/analytics"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/bookings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/care/access-requests"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/care/access-requests/:requestId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/export"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/loi"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/me"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/notes"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/bridge/checklist"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/bridge/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/esign/member/:memberId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/esign/member/:memberId/packet.zip"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/esign/request/:requestId/download"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/identity/:caseId/view"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/identity/queue"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/methods"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/queue"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/queue/:obligationId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/readiness"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/activation/reconciliation"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/applications"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/applications/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/assisted-orders"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/assisted-orders/:requestId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/blueprints"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/blueprints/:blueprintId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/capabilities"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/cart/:cartCheckoutNumber/confirm-payment"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/claims"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/client-imports"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/client-imports/:batchId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/command-center"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/commerce/queues"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/crm-supplier-operations"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/early-access/exceptions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/early-access/fulfillment-queue"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/early-access/releases"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/early-access/releases/history"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/early-access/verification-requests"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/inventory/lots"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/inventory/movements"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/lot-quality-documents"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/metabolic-pathways"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/outbox"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/payments"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/payments/:orderNumber"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/prelaunch/roles"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/product-requests"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/product-requests/:requestId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/product-requests/:requestId/files/:fileId/access"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/product-requests/analytics"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/products"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/products/:productId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/products/revenue-launch/reconciliation"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/queues/:queue"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/queues/:queue/items/:itemId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/readiness/:domain"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/referral-fraud"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/referral-lifecycle"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/required-inputs"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/resource-hub/resources"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/resource-hub/resources/:resourceId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/resource-hub/resources/:resourceId/versions/:versionId/download"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/superpower-offer"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/supplement-placeholders"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/supplier-orders/:orderNumber"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/research/system-status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/waitlist"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/access-request/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/appointments"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/appointments/admin/readiness"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/audit/access"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/eligibility"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/intake"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/pharmacy/admin/readiness"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/pharmacy/orders"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/prescriptions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/reviews"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/reviews/:reviewId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/reviews/queue"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/care/tebra/configuration"
+  },
+  {
+    "method": "GET",
+    "path": "/api/concepts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/config"
+  },
+  {
+    "method": "GET",
+    "path": "/api/counter"
+  },
+  {
+    "method": "GET",
+    "path": "/api/health"
+  },
+  {
+    "method": "GET",
+    "path": "/api/internal/prelaunch/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/internal/research/assessment/required-input-plan"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/account/context"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/account/organizations/:organizationId/dashboard"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/agreements"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/agreements/signed"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/esign/documents"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/esign/documents/:requestId/download"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/identity/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/payment/methods"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/payment/obligation"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/activation/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/agreements"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/applications/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/assessment"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/blueprint"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/capabilities"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/cart"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog-display/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog-display/products/:lane/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog-display/v2/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog-display/v2/price-list"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/catalog-display/v2/products/:family/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/claims"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/claims/:claimId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/care"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/catalog-priority"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/documents"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/documents/:documentId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/orders"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/overview"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/subscription"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/customer-account/support"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/diagnostics/biomarker"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/diagnostics/superpower"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/documents"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/documents/:documentId/download"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/agreements"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/assisted-orders/:publicReference"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/assisted-orders/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/assisted-orders/config"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/cart/:cartCheckoutNumber"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/cart/:cartCheckoutNumber/payment-instructions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/cart/:cartCheckoutNumber/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/cart/capability"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/orders/:orderNumber"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/orders/:orderNumber/invoice"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/early-access/session"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/fulfillment/admin/assignments"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/fulfillment/orders/:orderReference/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/fulfillment/supplier/assignments"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/goals"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/guides"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/guides/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/invite/:code"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/kris-launch-a/v1/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/kris-launch-a/v1/products/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/me"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/media"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/catalog"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/me"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/overview"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/product-requests"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/product-requests/:reference"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/product-requests/:reference/files/:fileId/access"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/products"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/products/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/member/referrals"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/metabolic-pathways"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/orders"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/orders/:orderId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/campaigns"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/commissions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/compliance"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/conversions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/dashboard"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/events"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/leads"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/links"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/me"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/onboarding"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/organizations"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/payouts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/resources"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/resources/:resourceId/download"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/security/sessions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/partner/training"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/plans/xenios30"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/plans/xenios90"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/policies"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/pricing/products/:productId/variants/:variantId/card-price"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/pricing/products/:productId/variants/:variantId/price"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/product-platform"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/products"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/products/:slug"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/profile"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/profile/sensitive"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/quality/lots/:lotCode"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/quality/lots/:lotCode/documents/:documentId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/questions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/store-credit"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/subscriptions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/telegram"
+  },
+  {
+    "method": "GET",
+    "path": "/api/research/tracker"
+  },
+  {
+    "method": "GET",
+    "path": "/api/waitlist"
+  },
+  {
+    "method": "GET",
+    "path": "/api/waitlist/count"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/catalog-display/catalog"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/catalog-display/products/:lane/:slug"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/catalog-display/v2/catalog"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/catalog-display/v2/price-list"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/catalog-display/v2/products/:family/:slug"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/kris-launch-a/v1/catalog"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/kris-launch-a/v1/products/:slug"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/pricing/products/:productId/variants/:variantId/card-price"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/api/research/pricing/products/:productId/variants/:variantId/price"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/admin/care/access-requests/:requestId/status"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/admin/loi/:id/status"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/admin/research/assisted-orders/:requestId/status"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/admin/research/product-requests/:requestId"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/admin/waitlist/:id/status"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/care/intake/:intakeId/autosave"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/research/account/organizations/:organizationId/profile"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/research/cart/lines/:sku"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/notes"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/access/approve-customer"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/access/inspect"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/esign/request/:requestId/resend"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/identity/:caseId/emergency-delete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/identity/:caseId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/methods"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/methods/:methodId/approve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/methods/:methodId/disable"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/cancel"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/duplicate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/migrate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/mismatch"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/refunded"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/reject"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/request-info"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/reversed"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/activation/queue/:obligationId/verify"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/activate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/approve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/begin-activation"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/decline"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/request-info"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/applications/:id/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/blueprints/:blueprintId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/blueprints/generate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/cart/:cartCheckoutNumber/confirm-payment"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/cart/:cartCheckoutNumber/external-proof"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/cart/:cartCheckoutNumber/fulfilment-event"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/cart/shipping-sla/sweep"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/claims/:claimId/refund"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/claims/:claimId/replacement"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/claims/:claimId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/client-imports/dry-run"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/crm-supplier-operations/actions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/documents"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/early-access/customers"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/early-access/holds"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/early-access/holds/withdraw"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/early-access/releases"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/early-access/supplier-confirmations"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/inventory/lots"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/inventory/lots/:lotId/disposition"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/inventory/lots/:lotId/movements"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/lot-quality-documents/:documentId/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/lot-quality-documents/:documentId/file-access"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/lot-quality-documents/:documentId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/lot-quality-documents/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/lot-quality-documents/upload/cancel"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/orders/:orderId/approve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/orders/:orderId/cancel"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/orders/:orderId/capture"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/outbox/:id/retry"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/outbox/run"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/partners/:partnerId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/partners/operations"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/payments/:orderNumber/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/payments/:orderNumber/external-proof"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/payments/:orderNumber/overpayment-exception"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/payments/:orderNumber/refund"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/payments/:orderNumber/reject"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/plans/xenios30"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/plans/xenios30/:planId/publish"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/plans/xenios90"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/plans/xenios90/:planId/publish"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/prelaunch/roles"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/archive"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/duplicate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/media/:mediaId/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/media/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/prices"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/prices/:priceId/approve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/publish"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/restore"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/unpublish"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/products/:productId/variants"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/questions/:questionId/answer"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/readiness/:domain/transition"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/recruiting-mail"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/referral-fraud/:id/action"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/referral-fraud/report"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/required-inputs"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/required-inputs/:id/transition"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/resource-hub/resources"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/resource-hub/resources/:resourceId/versions/:versionId/review"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/sla/sweep"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber/acknowledgement"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber/notification"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber/packing"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber/shipped"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/supplier-orders/:orderNumber/tracking"
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/research/test-email"
+  },
+  {
+    "method": "POST",
+    "path": "/api/calendly/webhook"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/access-request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments/:appointmentId/action"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments/:appointmentId/assign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments/:appointmentId/complete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments/:appointmentId/no-show"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/appointments/:appointmentId/schedule"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/consents"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/contact"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/eligibility/location"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/eligibility/waitlist"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/intake"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/intake/:intakeId/submit"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/pharmacy/admin/orders/:orderId/clarification/resolve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/pharmacy/admin/prescriptions/:prescriptionId/assign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/pharmacy/orders/:orderId/action"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/prescriptions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/prescriptions/:prescriptionId/sign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/prescriptions/pharmacy-orders/:orderId/clarification/resolve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/care/reviews/:reviewId/action"
+  },
+  {
+    "method": "POST",
+    "path": "/api/contact"
+  },
+  {
+    "method": "POST",
+    "path": "/api/early-interest"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/access"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/claims/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/claims/request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/organization-invitations/accept"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/organizations/:organizationId/orders/request-again"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/organizations/:organizationId/users/invitations"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/account/security/password-change-complete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/agreements/sign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/esign/native/sign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/esign/session"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/identity/consent"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/identity/mark-uploaded"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/identity/upload-url"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/payment/evidence-upload-url"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/payment/report"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/activation/payment/select-method"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/agreements"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/agreements/XR-MEM-012/withdraw"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/applications"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/applications/resend-link"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/applications/resubmit"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/assessment/responses"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/assessment/submit"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/blueprint/acknowledge"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/buyer/order-requests"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/cart/lines"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/checkout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/claims"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/customer-account/support"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/diagnostics/biomarker/report-upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/diagnostics/biomarker/report-upload/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/documents/:documentId/access"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/documents/:documentId/acknowledge"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/agreements/accept"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/assisted-orders"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/assisted-orders/:requestId/documents/:documentId/complete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/assisted-orders/:requestId/documents/upload-url"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/cart/:cartCheckoutNumber/payment-proof"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/cart/checkout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/cart/quote"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/logout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/orders"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/orders/:orderNumber/payment-proof"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/unlock"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/verification/request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/early-access/verify"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/fulfillment/admin/assignments"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/fulfillment/admin/assignments/:assignmentId/transition"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/fulfillment/supplier/assignments/:assignmentId/transition"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/logout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/media/:mediaId/access"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/media/intent"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/claim"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/forgot-password"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/product-requests"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/product-requests/:reference/files/:fileId/confirm"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/product-requests/:reference/files/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/product-requests/:reference/messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/member/product-requests/:reference/withdraw"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/metabolic-interest"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/orders"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/apply"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/campaigns/request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/compliance/submissions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/events/request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/links"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/links/:linkId/revoke"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/partner/organizations/request"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/plans/early-change"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/plans/xenios30/:planId/acknowledge"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/products/:sku/certificates/access"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/questions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/questions/:questionId/rate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/referral/bind"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/referral/bootstrap"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/referral/capture"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/referral/resolve"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/shipping/quote"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/subscriptions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/subscriptions/:subscriptionId"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/telegram/link"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/telegram/webhook"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/tracker"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/webhooks/esign"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/webhooks/fulfillment"
+  },
+  {
+    "method": "POST",
+    "path": "/api/research/webhooks/payment"
+  },
+  {
+    "method": "POST",
+    "path": "/api/waitlist"
+  },
+  {
+    "method": "POST",
+    "path": "/api/waitlist/quick"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/activation/bridge/checklist"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/activation/bridge/settings"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/metabolic-pathways/:pathwayId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/products/:productId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/products/:productId/media/:mediaId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/products/:productId/variants/:variantId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/readiness/:domain/manifest"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/superpower-offer"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/research/supplement-placeholders/:category"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/research/media/retention-election"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/research/profile"
+  }
+]
