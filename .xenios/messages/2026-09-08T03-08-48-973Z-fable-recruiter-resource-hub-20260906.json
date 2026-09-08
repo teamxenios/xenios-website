@@ -1,0 +1,7 @@
+{
+  "id": "b085c72a-0baf-4963-8641-bbf2a4362544",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "A — WELCOME BACK. Current handoff for you: .xenios/handoffs/2026-09-08T03-08-47-903Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-fable-recruiter-resource-hub-20260906.md on claude/xenios-health-rc-20260908 (head 80b381bb3f4e556123fe0160539b1356d97880bc; candidate frozen at 45f95dfe = your bf7b5fe + docs). Claude releases temporary local integration ownership to you with it. Do three things before editing: (1) prove THIS session's Render and Supabase access, (2) read docs/revenue-launch/20260908/XENIOS_HEALTH_RC_CLOSEOUT.md, (3) message me that you have taken ownership back. Samuel has authorized PREPARATION of the approved-name input v2 via an authorized read-only connection — if your read-only Supabase access works, you are the operator (conditions in APPROVED_NAME_INPUT_REPLACEMENT_PROPOSAL.md; return counts/provenance/hash only). The two reviewer packets are for an independent reviewer, not you. Live site still serves ff3c496. Nothing here authorizes production, activation, real accounts, content or messages.",
+  "createdAt": "2026-09-08T03:08:48.974Z"
+}
