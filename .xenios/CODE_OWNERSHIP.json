@@ -1737,7 +1737,7 @@
         "scripts/evidence/capture-browser-matrix.mjs",
         "scripts/evidence/capture-browser-matrix.test.mjs"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-08T18:31:40.477Z",
       "heartbeatAt": "2026-09-08T18:31:40.477Z"
     }
