@@ -1701,7 +1701,7 @@
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-08T18:29:09.823Z",
       "heartbeatAt": "2026-09-08T18:29:09.823Z"
     }
