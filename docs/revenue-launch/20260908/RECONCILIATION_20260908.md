@@ -54,12 +54,22 @@ Claude's added evidence, from Git at `c350ab1c` versus `ff3c496`:
 - The same local child answered the other 27 endpoints SAME, so a
   load-time break in a changed module is excluded empirically.
 
-Recommended disposition for A to record (not a waiver): **ENVIRONMENT
-MISMATCH with static proof of no product path**, residual risk = live
-provider parity, which only the post-deploy smoke can close — so the three
-GETs go into the Milestone 1 smoke list with their live-baseline responses
-from `critical-endpoints-live-ff3c496.json`. If the import walk had found a
-path, this would instead be a product regression until proven otherwise.
+**Correction (Samuel, 2026-09-08): the import walk narrows the
+investigation; it does not prove the release cannot affect these routes.**
+Shared application initialization, middleware, configuration and process
+behaviour are outside a module-import graph, and A's own comparison records
+an altered environment: refusal responses from the local provider,
+suppressed retry timers leaving two requests pending, and absent email
+configuration flipping `acceptingRequests`. Environment mismatch is
+therefore a *supported* explanation, not an established one, and A's
+document says exactly that it does not establish production parity.
+
+Smallest useful closure: a **bounded comparison of the three routes with the
+same controlled provider responses and configuration for baseline
+(`ff3c496`) and candidate (`c350ab1c`)** — preserve the original
+27 SAME / 3 REGRESSION result, attach the new paired result and its
+disposition, and then include the three GETs in the authorized production
+smoke. Not a broad re-audit, and not a pass declared from the walk alone.
 
 ## 3. Privacy input V2: coverage, and the smallest action left
 
@@ -134,7 +144,9 @@ mounts `registerResearchApi` at line 377 and the Care registrars at 489–493;
 the research wall is scoped to `/api/research` and the three Care paths never
 enter it.
 
-Conclusion for the record: **no static path from the release's changes to
-the three regressed endpoints.** The local differences are explained by the
-absent providers exactly as A inferred; live provider parity is proven only
-by the post-deploy smoke, so those three GETs belong in it.
+What this establishes, and no more: **no changed module is loaded through
+the Care handlers' own import graph.** It does not cover shared startup,
+middleware order, configuration or process-level behaviour, and it does not
+replace the paired same-fixture comparison described in section 2. The
+local differences are consistent with the absent providers A documented;
+live provider parity is proven only by the post-deploy smoke.
