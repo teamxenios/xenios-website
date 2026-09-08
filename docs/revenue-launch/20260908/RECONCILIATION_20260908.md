@@ -71,6 +71,30 @@ same controlled provider responses and configuration for baseline
 disposition, and then include the three GETs in the authorized production
 smoke. Not a broad re-audit, and not a pass declared from the walk alone.
 
+### A's bounded control runs (read from A's local receipts, not yet committed by A, 03:37–03:38Z)
+
+`~/.codex/tmp/xenios-resource-endpoint-control-20260908/` — same unchanged
+instrumentation for both source roots (owned loopback provider GET/HEAD only,
+timers suppressed, POST and outside network refused), all three runs
+classified against the **same live capture** `critical-endpoints-live-ff3c496.json`
+(`8999379b…`):
+
+| Run | Built source | Provider scenario | Result vs live |
+| --- | --- | --- | --- |
+| 01 | **`ff3c496` — the live baseline's own code**, built locally (`baseline-build.exit.json`, exit 0) | refusal (Auth 401 / data 503, as in the original comparison) | **27 SAME / 3 REGRESSION** — the identical three Care differences |
+| 02 | `ff3c496` | matched-disabled (explicitly synthetic empty care-capability projection + synthetic email-configuration marker) | **30 SAME / 0** |
+| 03 | `1704387b` (tree `8175d2ee…`; runtime identical to `c350ab1c`; entry `c2b0fde7…`) | matched-disabled | **30 SAME / 0** |
+
+Reading: the unchanged live code reproduces the same three "regressions"
+under the refusal scenario, and under matched provider responses both the
+baseline and the candidate match the live captures on all thirty endpoints.
+That is the paired evidence for **environment mismatch** — with A's own
+scope note that it does not qualify real email, Auth, Storage, clinical
+actions or production adapter behaviour, which is why the three GETs still
+belong in the post-deploy smoke. The disposition, and committing these
+receipts, are A's; Claude ran nothing against the routes and removed its own
+duplicate baseline worktree unbuilt.
+
 ## 3. Privacy input V2: coverage, and the smallest action left
 
 A's receipt (`docs/revenue-launch/20260907/privacy-input-v2-preparation-receipt.json`,
