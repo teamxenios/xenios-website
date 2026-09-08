@@ -3,7 +3,7 @@
   "releaseId": "XENIOS_RESOURCE_HUB_HARDENING_2026-09-08",
   "domain": "research-resource-hub",
   "lane": "release-manager",
-  "owner": "ASTRA-A; formal ASTRA-B integration ownership review pending",
+  "owner": "ASTRA-A; independent replacement reviewer acceptance with explicit scope",
   "createdAt": "2026-09-08T15:52:24.195Z",
   "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
   "headSha": "8be5d582586217e4cf531e718c65032b79152022",
@@ -173,5 +173,20 @@
       "checkedAt": "2026-09-08T18:08:57.663859+00:00"
     }
   ],
-  "integrationOwnershipReview": null
+  "integrationOwnershipReview": {
+    "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "headSha": "8be5d582586217e4cf531e718c65032b79152022",
+    "trustedBaseOwnershipPolicySha256": "8f84c67cefa29dab41194fd9e6c6f574ca65c55d40b141803b06139ee26b6cce",
+    "gitDiffPathInventorySha256": "a6b6c4687bad3b984694ba14765d06fef5f9e0436ce15386b8cf40d728b0fdf8",
+    "ownershipFindingInventorySha256": "69ecb7505f54e7486e456e5bc3f78ba14724b197d73465e15752b039b0d75fcd",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 37,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Independent replacement reviewer / replacement-review-8be5",
+    "reviewedAt": "2026-09-08T19:50:47.7386599Z",
+    "reviewArtifactPath": "docs/revenue-launch/20260907/REPLACEMENT_REVIEW_8BE5_ATTESTATION.json",
+    "reviewArtifactSha256": "6c9a9b6ac7466694b808edcf58898da6b790262b219a16bfde2b3fbfa03e0e6e"
+  }
 }
