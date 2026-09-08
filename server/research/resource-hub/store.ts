@@ -119,6 +119,18 @@ export interface WithdrawVersionInput extends PublishVersionInput {
   reason: string;
 }
 
+/**
+ * What the caller saw when it decided to write. A transition is applied only
+ * if the row still looks like this at the moment of the write; otherwise the
+ * store throws ResourceHubConflict and changes nothing. `reviewedAt` is part
+ * of the identity of a review decision: approving "the version as reviewed"
+ * must not silently replace a review that landed in between.
+ */
+export interface ExpectedVersionState {
+  state: ResourceVersionRow["state"];
+  reviewedAt: string | null;
+}
+
 export interface ResourceHubStore {
   getResource(resourceId: string): Promise<ResourceRow | null>;
   listResources(): Promise<readonly ResourceRow[]>;
@@ -128,7 +140,12 @@ export interface ResourceHubStore {
   findVersionByUploadKey(idempotencyKey: string): Promise<ResourceVersionRow | null>;
   /** Throws ResourceHubConflict when a unique constraint (version number, upload key) is hit. */
   insertVersion(row: ResourceVersionRow): Promise<void>;
-  updateVersion(versionId: string, patch: ResourceVersionPatch): Promise<void>;
+  /**
+   * Conditional write: the patch lands only if the row still matches
+   * `expected` (state and reviewedAt) in the store itself, never by a separate
+   * read. A row that moved on throws ResourceHubConflict; nothing is written.
+   */
+  updateVersion(versionId: string, patch: ResourceVersionPatch, expected: ExpectedVersionState): Promise<void>;
   /**
    * ONE atomic transition: the version becomes published and current, and the
    * previously current version (if any other) becomes superseded. A store must
@@ -187,9 +204,14 @@ export function createInMemoryResourceHubStore(): ResourceHubStore & {
       }
       versions.set(row.versionId, clone(row));
     },
-    async updateVersion(versionId, patch) {
+    async updateVersion(versionId, patch, expected) {
       const row = versions.get(versionId);
       if (!row) throw new Error("unknown version");
+      // Compare-and-swap on the fields a reviewer decided against. A competing
+      // transition that landed first wins; this write becomes a typed conflict.
+      if (row.state !== expected.state || row.reviewedAt !== expected.reviewedAt) {
+        throw new ResourceHubConflict(`version ${versionId} is ${row.state}${row.reviewedAt ? " (reviewed)" : ""}, not ${expected.state}${expected.reviewedAt ? " (reviewed)" : ""}`);
+      }
       // Bytes and identity are immutable: only the shared mutable field list applies.
       versions.set(versionId, clone({ ...row, ...restrictVersionPatch(patch) }));
     },

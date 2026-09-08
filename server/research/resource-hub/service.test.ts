@@ -302,7 +302,8 @@ describe("delivery re-reads entitlement at use time and records every attempt", 
     // delivery door re-reads the policy anyway (defense in depth via the store).
     const h = harness();
     const { resourceId, versionId } = await publishOne(h, { audience: ["all_partners"] });
-    await h.store.updateVersion(versionId, { usagePolicy: "draft" });
+    const asStored = await h.store.getVersion(versionId);
+    await h.store.updateVersion(versionId, { usagePolicy: "draft" }, { state: asStored!.state, reviewedAt: asStored!.reviewedAt });
     expect(await h.service.deliverToPartner(REP, resourceId)).toEqual({ ok: false, code: "not_found" });
     expect((await h.store.listDeliveries(resourceId)).map((d) => d.reason)).toEqual(["policy"]);
     expect(await h.service.libraryFor(REP)).toEqual([]);
@@ -377,7 +378,8 @@ describe("store failures cannot become oracles or dead ends", () => {
     const vid = second.resource.versions[0]!.versionId;
     await h.service.review(ADMIN, rid, vid, { action: "approve_content", reason: "ok", idempotencyKey: "review-rep-a1" });
     // Publish the version WITHOUT the pointer (state only), as a half-applied transition would leave it.
-    await h.store.updateVersion(vid, { state: "published", publishedAt: "2026-09-06T12:00:00.000Z", publishedByAdmin: ADMIN });
+    const asReviewed = await h.store.getVersion(vid);
+    await h.store.updateVersion(vid, { state: "published", publishedAt: "2026-09-06T12:00:00.000Z", publishedByAdmin: ADMIN }, { state: asReviewed!.state, reviewedAt: asReviewed!.reviewedAt });
     expect((await h.service.getAdmin(rid))?.currentPublishedVersionId).toBeNull();
     expect(await h.service.libraryFor(REP)).toHaveLength(1); // only the first resource
     const repaired = await h.service.review(ADMIN, rid, vid, { action: "publish", idempotencyKey: "review-rep-p1" });
@@ -464,6 +466,140 @@ describe("an idempotency key is bound to one file", () => {
     expect(await h.service.createVersion(ADMIN, upload({ originalFilename: "renamed.pdf" }), file())).toMatchObject({ ok: false, code: "resource_state_conflict" });
     expect((await h.service.listAdmin())[0]!.versions).toHaveLength(1);
     expect(h.bytes.keys()).toHaveLength(1);
+  });
+});
+
+describe("activation blocker 1: a lost upload race is a replay only for the same file", () => {
+  // The pre-check found no version under this key; between that read and our
+  // insert, a concurrent request won the key. The store double below makes the
+  // insert lose exactly as Postgres would (unique upload key), while the
+  // winner it then reports is controlled by the test.
+  let losers = 0;
+  function racing(h: ReturnType<typeof harness>, winner: () => Promise<Awaited<ReturnType<typeof h.store.findVersionByUploadKey>>>) {
+    let preCheck = true;
+    const loser = `id-loser-${++losers}`;
+    return createResourceHubService({
+      store: {
+        ...h.store,
+        async findVersionByUploadKey(key) {
+          if (preCheck) { preCheck = false; return null; }
+          return winner();
+        },
+        async insertVersion() {
+          throw new ResourceHubConflict("upload key already used");
+        },
+      },
+      bytes: h.bytes,
+      now: () => new Date(0),
+      newId: () => loser,
+    });
+  }
+
+  it("legitimate identical retry through the conflict path succeeds and adds nothing", async () => {
+    const h = harness();
+    const first = await h.service.createVersion(ADMIN, upload(), file());
+    if (!first.ok) throw new Error("fixture");
+    const service = racing(h, () => h.store.findVersionByUploadKey("upload-key-0001"));
+    const retry = await service.createVersion(ADMIN, upload(), file());
+    expect(retry).toMatchObject({ ok: true, resource: { resourceId: first.resource.resourceId } });
+    if (!retry.ok) return;
+    expect(retry.resource.versions).toHaveLength(1);
+    expect((await h.service.getAdmin(first.resource.resourceId))?.versions).toHaveLength(1);
+  });
+
+  it("a different file under the key that lost the race never becomes success", async () => {
+    const h = harness();
+    const first = await h.service.createVersion(ADMIN, upload(), file());
+    if (!first.ok) throw new Error("fixture");
+    const otherBytes = Buffer.from(PDF.toString("latin1") + "% different payload\n", "latin1");
+    const service = racing(h, () => h.store.findVersionByUploadKey("upload-key-0001"));
+    const differentBytes = await service.createVersion(ADMIN, upload(), file(otherBytes));
+    expect(differentBytes).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(!differentBytes.ok && differentBytes.message).toMatch(/different file/u);
+    const differentName = await racing(h, () => h.store.findVersionByUploadKey("upload-key-0001")).createVersion(ADMIN, upload({ originalFilename: "renamed.pdf" }), file());
+    expect(differentName).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect((await h.service.getAdmin(first.resource.resourceId))?.versions).toHaveLength(1);
+  });
+
+  it("a version-number race with no key winner is still the plain conflict", async () => {
+    const h = harness();
+    const first = await h.service.createVersion(ADMIN, upload(), file());
+    if (!first.ok) throw new Error("fixture");
+    const service = racing(h, async () => null);
+    const result = await service.createVersion(ADMIN, upload({ resourceId: first.resource.resourceId, idempotencyKey: "upload-key-0002" }), file());
+    expect(result).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(!result.ok && result.message).toMatch(/same time/u);
+  });
+});
+
+describe("activation blocker 2: review transitions are conditional on the reviewed state", () => {
+  // Two admins read the same draft; the second one's write must not overwrite
+  // the first one's decision. The store double returns the stale snapshot the
+  // second admin read, while the real store has already moved on.
+  function stale(h: ReturnType<typeof harness>, snapshot: NonNullable<Awaited<ReturnType<typeof h.store.getVersion>>>) {
+    return createResourceHubService({
+      store: { ...h.store, async getVersion() { return { ...snapshot }; } },
+      bytes: h.bytes,
+      now: () => new Date(Date.UTC(2026, 8, 6, 13)),
+      newId: () => "id-stale",
+    });
+  }
+
+  it("competing approvals cannot overwrite one another: the second reviewer gets a conflict and the first decision stands", async () => {
+    const h = harness();
+    const created = await h.service.createVersion(ADMIN, upload(), file());
+    if (!created.ok) throw new Error("fixture");
+    const { resourceId } = created.resource;
+    const versionId = created.resource.versions[0]!.versionId;
+    const draftAsRead = await h.store.getVersion(versionId);
+    if (!draftAsRead) throw new Error("fixture");
+    const first = await h.service.review("first@xenios.test", resourceId, versionId, { action: "approve_content", reason: "Reviewed by the first admin.", idempotencyKey: "review-a" });
+    expect(first.ok).toBe(true);
+    const second = await stale(h, draftAsRead).review("second@xenios.test", resourceId, versionId, { action: "approve_content", reason: "A different decision from a stale read.", idempotencyKey: "review-b" });
+    expect(second).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect(!second.ok && second.message).toMatch(/changed while you were reviewing/u);
+    const stored = await h.store.getVersion(versionId);
+    expect(stored).toMatchObject({ state: "in_review", reviewedByAdmin: "first@xenios.test", reviewReason: "Reviewed by the first admin." });
+  });
+
+  it("a stale request_review against a version that already moved is rejected, not applied", async () => {
+    const h = harness();
+    const { resourceId, versionId } = await publishOne(h);
+    const publishedAsRead = await h.store.getVersion(versionId);
+    if (!publishedAsRead) throw new Error("fixture");
+    // Someone holding a draft-era snapshot tries to send the now-published version for review.
+    const draftSnapshot = { ...publishedAsRead, state: "draft" as const, reviewedAt: null, reviewedByAdmin: null, reviewReason: null };
+    const result = await stale(h, draftSnapshot).review(ADMIN, resourceId, versionId, { action: "request_review", idempotencyKey: "review-c" });
+    expect(result).toMatchObject({ ok: false, code: "resource_state_conflict" });
+    expect((await h.store.getVersion(versionId))?.state).toBe("published");
+    expect(await h.service.libraryFor(REP)).toHaveLength(1);
+  });
+
+  it("the store itself refuses a write whose expected state or reviewedAt no longer holds", async () => {
+    const h = harness();
+    const created = await h.service.createVersion(ADMIN, upload(), file());
+    if (!created.ok) throw new Error("fixture");
+    const versionId = created.resource.versions[0]!.versionId;
+    await expect(h.store.updateVersion(versionId, { state: "in_review" }, { state: "in_review", reviewedAt: null })).rejects.toBeInstanceOf(ResourceHubConflict);
+    await h.store.updateVersion(versionId, { state: "in_review", reviewedAt: "2026-09-06T12:00:00.000Z", reviewedByAdmin: ADMIN, reviewReason: "ok" }, { state: "draft", reviewedAt: null });
+    await expect(h.store.updateVersion(versionId, { reviewReason: "overwrite" }, { state: "in_review", reviewedAt: null })).rejects.toBeInstanceOf(ResourceHubConflict);
+    expect((await h.store.getVersion(versionId))?.reviewReason).toBe("ok");
+  });
+
+  it("the normal authorized workflow is unchanged: draft, review, approve, publish, withdraw", async () => {
+    const h = harness();
+    const created = await h.service.createVersion(ADMIN, upload(), file());
+    if (!created.ok) throw new Error("fixture");
+    const { resourceId } = created.resource;
+    const versionId = created.resource.versions[0]!.versionId;
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "request_review", idempotencyKey: "r1" })).toMatchObject({ ok: true });
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "request_review", idempotencyKey: "r1" })).toMatchObject({ ok: true });
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "approve_content", reason: "Reviewed.", idempotencyKey: "r2" })).toMatchObject({ ok: true });
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "approve_content", reason: "Reviewed again.", idempotencyKey: "r2" })).toMatchObject({ ok: true });
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "publish", idempotencyKey: "r3" })).toMatchObject({ ok: true, resource: { currentPublishedVersionId: versionId } });
+    expect(await h.service.libraryFor(REP)).toHaveLength(1);
+    expect(await h.service.review(ADMIN, resourceId, versionId, { action: "withdraw", reason: "Superseded by policy.", idempotencyKey: "r4" })).toMatchObject({ ok: true });
+    expect(await h.service.libraryFor(REP)).toHaveLength(0);
   });
 });
 

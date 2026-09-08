@@ -35,9 +35,19 @@ export interface SupabaseQueryLike {
   from(table: string): {
     select(columns: string): SelectBuilder;
     insert(row: Row): Promise<{ error: ProviderError }>;
-    update(patch: Row): { eq(column: string, value: unknown): Promise<{ error: ProviderError }> };
+    update(patch: Row): UpdateBuilder;
   };
   rpc(fn: string, args: Row): Promise<{ error: ProviderError }>;
+}
+/**
+ * A conditional update: filters narrow the rows, and `select` returns the rows
+ * that were actually written, so "zero rows" is observable as a lost race
+ * rather than a silent no-op.
+ */
+interface UpdateBuilder {
+  eq(column: string, value: unknown): UpdateBuilder;
+  is(column: string, value: null): UpdateBuilder;
+  select(columns: string): Promise<{ data: Row[] | null; error: ProviderError }>;
 }
 
 /**
@@ -209,9 +219,17 @@ export function createSupabaseResourceHubStore(client: () => SupabaseQueryLike):
         throw fail("version insert", result.error);
       }
     },
-    async updateVersion(versionId, patch) {
-      const result = await client().from(RESOURCE_VERSIONS_TABLE).update(fromVersionPatch(patch)).eq("id", versionId);
+    async updateVersion(versionId, patch, expected) {
+      // The condition lives in the UPDATE's WHERE clause, so it is evaluated
+      // by Postgres against the current row under its own row lock — not by a
+      // read here that another admin's write could invalidate in between.
+      let query = client().from(RESOURCE_VERSIONS_TABLE).update(fromVersionPatch(patch)).eq("id", versionId).eq("state", expected.state);
+      query = expected.reviewedAt === null ? query.is("reviewed_at", null) : query.eq("reviewed_at", expected.reviewedAt);
+      const result = await query.select("id");
       if (result.error) throw fail("version update", result.error);
+      if ((result.data ?? []).length === 0) {
+        throw new ResourceHubConflict(`version ${versionId} no longer matches the reviewed state (${expected.state}${expected.reviewedAt ? ", reviewed" : ""})`);
+      }
     },
     async publishVersion({ resourceId, versionId, actorAdmin, at }) {
       const result = await client().rpc(RESOURCE_PUBLISH_FUNCTION, {
