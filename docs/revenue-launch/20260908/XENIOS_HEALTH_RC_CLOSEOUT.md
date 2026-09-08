@@ -126,14 +126,16 @@ Read from A's records, not rerun by Claude:
   care-access-foundation.sql the only source of policies" timed out at the
   unchanged 5,000 ms; A's `33436c5` run had also timed out on the pgcrypto
   repository audit. Claude's `46782cd` run (parallel workers, idle host,
-  00:28–00:33Z) passed both. A's `c350ab1c` run started 03:12:11Z and was
-  still **RUNNING** when checked. Nothing was relabeled; the gate is the
-  `c350ab1c` result. Reconciliation: `RECONCILIATION_20260908.md`.
-- **Endpoint comparison:** 27 SAME / **3 REGRESSION** / 0 waivers, all three
-  Care GETs; A's static review found the 18 inspected sources byte-identical
-  and attributes the local failures to absent providers. NOT QUALIFIED
-  until dispositioned; Claude's transitive-import evidence is in the
-  reconciliation note.
+  00:28–00:33Z) passed both. A's `c350ab1c` run started 03:12:11Z and **completed 03:28:12Z: PASS, exit 0,
+  917 files / 15,997 tests / 59 skipped, 960 s** (receipt read from disk;
+  A's committed record at `1704387b` still said RUNNING — A to commit).
+  Nothing was relabeled. Reconciliation: `RECONCILIATION_20260908.md`.
+- **Endpoint comparison:** original 27 SAME / **3 REGRESSION** preserved; A's
+  paired control runs (uncommitted at last check) show the built `ff3c496`
+  baseline itself reproduces the three under the refusal provider, and both
+  baseline and candidate are **30 SAME** under matched provider responses —
+  environment mismatch at that demonstrated scope; real email, Auth, Storage
+  and adapters remain for the post-deploy smoke. A commits the disposition.
 - **Privacy input V2:** prepared by A (67 bytes, 6 entries, 3
   scanner-eligible, SHA-256 `de85b8ff…`), restricted directory, **not
   approved**; coverage explicitly excludes deleted history and the external

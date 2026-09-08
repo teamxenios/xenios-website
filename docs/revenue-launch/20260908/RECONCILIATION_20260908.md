@@ -13,7 +13,7 @@ candidate remains `c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662`.
 | A | `46782cd` | 2026-09-07, 2,707.77 s | threads, 1 worker, serial files | **FAILED_COMPLETE_LOG** 15,996 / 1 fail / 59 skip; terminal exit code unavailable (usage limit), summary recovered from the saved log | `rls-invariants` "keeps care-access-foundation.sql the only source of policies" > 5,000 ms | `…46782cd-20260907.log` |
 | Claude | `46782cd` | 2026-09-08T00:28:08Z, 314.21 s | forks, parallel workers, idle host | **PASS** 917 files / 15,997 / 0 fail / 59 skip, exit 0 | none | `docs/resource-hub/INDEPENDENT_QUALIFICATION_46782cd.md` (branch `fable/recruiter-resource-hub-20260906`) |
 | A | `37cd7bf4` focused | 2026-09-08, 4.44 s | — | 23/23, unchanged timeouts | — | `full-suite-initial-disposition.json` |
-| A | **`c350ab1c`** | 2026-09-08T03:12:11Z, in progress | threads, 1 worker, serial files | **RUNNING** at 03:40Z | — | `~/.codex/tmp/xenios-resource-hub-fullsuite-c350ab1-20260908.exit.json` (+ `.log`) |
+| A | **`c350ab1c`** | 2026-09-08T03:12:11Z → 03:28:12Z, 960.11 s | threads, 1 worker, serial files | **PASS**, exit 0 — 917 files / 15,997 pass / 59 skip (16,056); no failures. (History: observed RUNNING at Claude's 03:40Z check because the receipt was read before the earlier note was written; A's committed disposition still said RUNNING at `1704387b`.) | none | `~/.codex/tmp/xenios-resource-hub-fullsuite-c350ab1-20260908.exit.json` (+ `.log`); A to commit the sanitized receipt |
 
 Honest reading. The two runs at the same source disagree on one test, and
 the only differences between them are host load and pool configuration.
@@ -22,12 +22,11 @@ the unchanged 5,000 ms; it passes in isolation (A: 23/23 twice) and in the
 parallel idle run. That makes it a **capacity-sensitive repository-walk
 test**, not a product failure — and it is still a failing gate on the run
 where it failed. Nobody relabeled anything; A's records say FAILED where they
-failed. **The gate for this candidate is the `c350ab1c` result when it
-lands**, read from its exit receipt and log. If it times out again on the
-same test under the serial configuration, the disposition belongs to A and
-the reviewer: either accept the parallel idle run as the qualifying run with
-this table attached, or raise the timeout as a **scoped, reviewed test
-change with a stated reason** — never silently.
+failed. **The gate for this candidate is the `c350ab1c` result — and it has
+landed: PASS, exit 0, no failures, on the exact candidate under the serial
+single-worker configuration.** The contingency that previously stood here
+(what to do if the repository-walk test timed out again) did not arise and
+is withdrawn; the earlier failed runs remain on record as history.
 
 Also worth knowing: the `33436c5` FORCE RLS failure was a genuine defect
 that the suite caught and A fixed; that is the suite doing its job.
