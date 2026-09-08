@@ -1652,13 +1652,13 @@
       "delegatedManagedBrowserDriver": {
         "agent": "release_manifest",
         "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
-        "status": "ACTIVE_NARROW_SERIALIZATION_CORRECTION",
+        "status": "RETURNED_QUALIFIED_SOURCE_ACTUAL_BROWSER_PASS",
         "paths": [
           "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
         ],
-        "parentMayNotEditDelegatedPathsUntilReturned": true,
+        "parentMayNotEditDelegatedPathsUntilReturned": false,
         "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation.",
-        "returnedSourceSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366"
+        "returnedSourceSha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c"
       },
       "nextSliceReadOnlyReview": {
         "agent": "release_manifest",

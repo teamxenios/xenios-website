@@ -1,0 +1,835 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_BOUNDED_BROWSER_AND_HOST_SQL_RECONCILIATION",
+  "recordedAt": "2026-09-08T18:03:18.899976+00:00",
+  "application": {
+    "sha": "8be5d582586217e4cf531e718c65032b79152022",
+    "tree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+    "preservedBuildManifestSha256": "7cca385f69df2506e7842b976bfd25e2417cb47660fa7de4eda156a48cfe948f"
+  },
+  "managedApiHarness": {
+    "sha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+    "passedChecks": 41,
+    "rerun": false
+  },
+  "browserHost": {
+    "sha": "2873a333255c015789594920493e10c6b82461b8",
+    "tree": "d93e1d3409d74a5ab61f83df65fc7676a7941471",
+    "fileSha256": "8edbab84599aa06ad7a60821d2b3754ebb92937aae20a36dcb5e71cee81eb3ad"
+  },
+  "browserDriver": {
+    "sha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
+    "tree": "b43359d97e326eda7aacd44c9b0f0e69e05e2252",
+    "fileSha256": "d7a98d298698929a1cc8a10385e5323211a5afb2ac4690e353852530ad3e7cfe",
+    "independentSourceReview": "ACCEPT_BY_MANAGED_HUB_HARNESS",
+    "offlineProofExitCode": 0,
+    "typecheckExitCode": 0
+  },
+  "runId": "hubbrowser-20260908-bdda04a633-b3",
+  "driverPlanSha256": "e2393bda371f1f1397cdf4a01a3a063d53fa17226b34528305d8e78b50eadbaf",
+  "driverResultSha256": "d33399f93ed987bfe8b3a8b3aa4a7133110f25ff1c8fe20b640305497236d833",
+  "driverJournalSha256": "fd176cba002c32e202de1c2e29c1ade68316d29f2fbb749da4cef76f23f145f9",
+  "completedAt": "2026-09-08T18:01:01.026Z",
+  "browserVersion": "149.0.7827.55",
+  "steps": [
+    {
+      "name": "preflight_serving_binding",
+      "passed": true
+    },
+    {
+      "name": "admin_real_password_login",
+      "passed": true
+    },
+    {
+      "name": "one_private_pdf_upload_review_publish",
+      "passed": true
+    },
+    {
+      "name": "admin_nine_width_matrix",
+      "passed": true
+    },
+    {
+      "name": "admin_exact_preview",
+      "passed": true
+    },
+    {
+      "name": "independent_admin_b_scoped_observer",
+      "passed": true
+    },
+    {
+      "name": "eligible_return_login_and_nine_width_matrix",
+      "passed": true
+    },
+    {
+      "name": "eligible_exact_download",
+      "passed": true
+    },
+    {
+      "name": "mounted_member_logout_discards_pending_bytes",
+      "passed": true
+    },
+    {
+      "name": "same_context_nonpartner_switch_and_nine_width_matrix",
+      "passed": true
+    },
+    {
+      "name": "same_context_suspended_switch_and_nine_width_matrix",
+      "passed": true
+    },
+    {
+      "name": "mounted_admin_logout_discards_pending_preview",
+      "passed": true
+    },
+    {
+      "name": "same_context_admin_switch_forbidden_nine_width_matrix",
+      "passed": true
+    },
+    {
+      "name": "withdrawal_and_fresh_eligible_visibility",
+      "passed": true
+    },
+    {
+      "name": "final_scope_counts_and_source_binding",
+      "passed": true
+    }
+  ],
+  "matrix": [
+    {
+      "state": "admin",
+      "width": 320,
+      "metrics": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 8130
+      },
+      "path": "screens/admin-320.png",
+      "sha256": "10cc6f820e111922bbef21dc2149ae37b9c48ec6618a0d78c347670c336c3412",
+      "sizeBytes": 392576
+    },
+    {
+      "state": "admin",
+      "width": 360,
+      "metrics": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 7874
+      },
+      "path": "screens/admin-360.png",
+      "sha256": "cec55ecca50755a58cc639bdf85ecbcfc4dc85978430fff5a404d38a74da0eda",
+      "sizeBytes": 396228
+    },
+    {
+      "state": "admin",
+      "width": 390,
+      "metrics": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 7885
+      },
+      "path": "screens/admin-390.png",
+      "sha256": "6d94111f4572200fd1080d16d2afc8768e32c2f9c461887d71f128e8dd16fbcd",
+      "sizeBytes": 397373
+    },
+    {
+      "state": "admin",
+      "width": 414,
+      "metrics": {
+        "width": 414,
+        "scrollWidth": 414,
+        "height": 7747
+      },
+      "path": "screens/admin-414.png",
+      "sha256": "573efd01a4337e3c32a5d6bbb684693102f60a9ffca967b2b226a086d05b1335",
+      "sizeBytes": 394717
+    },
+    {
+      "state": "admin",
+      "width": 768,
+      "metrics": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 5611
+      },
+      "path": "screens/admin-768.png",
+      "sha256": "8d59fb813109f966d2e5df6603f5c99b54932fff4d849e59e8bf2884880d65e6",
+      "sizeBytes": 398291
+    },
+    {
+      "state": "admin",
+      "width": 1024,
+      "metrics": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 5013
+      },
+      "path": "screens/admin-1024.png",
+      "sha256": "8d7845df5dba5c1947e340a9bc276510b131aab075d18d02e84d2248fb08bd8f",
+      "sizeBytes": 398661
+    },
+    {
+      "state": "admin",
+      "width": 1280,
+      "metrics": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 4725
+      },
+      "path": "screens/admin-1280.png",
+      "sha256": "7c8601fdcbad835a55594807af42ca0cca3a39138a4ecb0fa9ce3f76f1b3119f",
+      "sizeBytes": 390559
+    },
+    {
+      "state": "admin",
+      "width": 1440,
+      "metrics": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 4542
+      },
+      "path": "screens/admin-1440.png",
+      "sha256": "918bab1d750268f787e4567de51923d95a27ce0b72c9d9a2e6e1aa17d36497e6",
+      "sizeBytes": 396981
+    },
+    {
+      "state": "admin",
+      "width": 1920,
+      "metrics": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "height": 4538
+      },
+      "path": "screens/admin-1920.png",
+      "sha256": "f168a6407843589db5de92c7f59fd2250f8af94d211d50c5343299f8aeb9e300",
+      "sizeBytes": 405857
+    },
+    {
+      "state": "eligible",
+      "width": 320,
+      "metrics": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 1476
+      },
+      "path": "screens/eligible-320.png",
+      "sha256": "843215f5ed5ffaf734c75ae5be5d0912be6aebae5e6935bce7e84116f22c3038",
+      "sizeBytes": 80930
+    },
+    {
+      "state": "eligible",
+      "width": 360,
+      "metrics": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 1436
+      },
+      "path": "screens/eligible-360.png",
+      "sha256": "9d588cbb1affc6e946994a3367f1eaa6c661eb8ec39335221ed4ac0f998b1ce8",
+      "sizeBytes": 82558
+    },
+    {
+      "state": "eligible",
+      "width": 390,
+      "metrics": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 1394
+      },
+      "path": "screens/eligible-390.png",
+      "sha256": "c9d76856afd1d166629b5bd1f17849116e69f106f6b08d7c0234d0afa78bc78b",
+      "sizeBytes": 82122
+    },
+    {
+      "state": "eligible",
+      "width": 414,
+      "metrics": {
+        "width": 414,
+        "scrollWidth": 414,
+        "height": 1371
+      },
+      "path": "screens/eligible-414.png",
+      "sha256": "1a4372087d607d54a1b9e697e245ffba163a6222631718b8a35861fe0b78053e",
+      "sizeBytes": 80892
+    },
+    {
+      "state": "eligible",
+      "width": 768,
+      "metrics": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 1108
+      },
+      "path": "screens/eligible-768.png",
+      "sha256": "bbffc94123a240f3280422415d8b04daee65a5598fff149e051a5cd53b4215fb",
+      "sizeBytes": 95847
+    },
+    {
+      "state": "eligible",
+      "width": 1024,
+      "metrics": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 1132
+      },
+      "path": "screens/eligible-1024.png",
+      "sha256": "b6f8e4254ef31590c075c7c5b605d44d801dd0eb0ce1f1b9bd06b530695cb0d1",
+      "sizeBytes": 96622
+    },
+    {
+      "state": "eligible",
+      "width": 1280,
+      "metrics": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 1082
+      },
+      "path": "screens/eligible-1280.png",
+      "sha256": "24d7bc8dbaeacb5cb8585d01fceb493cd543e10c634c21a38d03d5a75fced104",
+      "sizeBytes": 96699
+    },
+    {
+      "state": "eligible",
+      "width": 1440,
+      "metrics": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 1092
+      },
+      "path": "screens/eligible-1440.png",
+      "sha256": "8d4934f40bfffcc6a9b953c742c3625c018a2ff26dcd938b70c46695d68c5af1",
+      "sizeBytes": 102968
+    },
+    {
+      "state": "eligible",
+      "width": 1920,
+      "metrics": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "height": 1117
+      },
+      "path": "screens/eligible-1920.png",
+      "sha256": "78f89e7aa419a605ad9aec001bfc79a1ce3af2c69eb39f02d4566f1b215e873e",
+      "sizeBytes": 107135
+    },
+    {
+      "state": "nonPartner",
+      "width": 320,
+      "metrics": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 1013
+      },
+      "path": "screens/nonPartner-320.png",
+      "sha256": "111a8701f75b911e17d34bb2219a47a69d842bd3e96a07112dd7878085b3d6b6",
+      "sizeBytes": 63033
+    },
+    {
+      "state": "nonPartner",
+      "width": 360,
+      "metrics": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 989
+      },
+      "path": "screens/nonPartner-360.png",
+      "sha256": "a6a19d279d808318c868a341e6fce36b398148bf30ed762b919cb39716c5aab8",
+      "sizeBytes": 63551
+    },
+    {
+      "state": "nonPartner",
+      "width": 390,
+      "metrics": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 944
+      },
+      "path": "screens/nonPartner-390.png",
+      "sha256": "a8a92cca1ce882ca30c64c718ae9c8fd161d49f5b564ac989beaaa05ce4a8d92",
+      "sizeBytes": 63163
+    },
+    {
+      "state": "nonPartner",
+      "width": 414,
+      "metrics": {
+        "width": 414,
+        "scrollWidth": 414,
+        "height": 898
+      },
+      "path": "screens/nonPartner-414.png",
+      "sha256": "6eb9242011d40578dc4c9ce092aefbdbfcf851cab3c1c05f9bd506b883cbf9aa",
+      "sizeBytes": 60859
+    },
+    {
+      "state": "nonPartner",
+      "width": 768,
+      "metrics": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 846
+      },
+      "path": "screens/nonPartner-768.png",
+      "sha256": "77fa7428f5a242a9fcc7a29871135d7d9ecee3f7fe41cce85bca5b62d5369dc0",
+      "sizeBytes": 78208
+    },
+    {
+      "state": "nonPartner",
+      "width": 1024,
+      "metrics": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 900
+      },
+      "path": "screens/nonPartner-1024.png",
+      "sha256": "f0b6371c19e6fc529cd16c53851c3b6696c902f45fc48b140bb013b112f87def",
+      "sizeBytes": 78915
+    },
+    {
+      "state": "nonPartner",
+      "width": 1280,
+      "metrics": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 900
+      },
+      "path": "screens/nonPartner-1280.png",
+      "sha256": "be30b66102604c3d2308f449e43b830aa81e1511c4fbe8f1779772952a243c2b",
+      "sizeBytes": 79552
+    },
+    {
+      "state": "nonPartner",
+      "width": 1440,
+      "metrics": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 900
+      },
+      "path": "screens/nonPartner-1440.png",
+      "sha256": "e0d000b5e11e660f0828cf1657e9e697a51c45e01c508ea0c74583999f2ddd21",
+      "sizeBytes": 83470
+    },
+    {
+      "state": "nonPartner",
+      "width": 1920,
+      "metrics": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "height": 901
+      },
+      "path": "screens/nonPartner-1920.png",
+      "sha256": "9e051e51973aa286771182d4892885ed63e3015e3a10fed5a29602d56b47e3c1",
+      "sizeBytes": 87578
+    },
+    {
+      "state": "suspended",
+      "width": 320,
+      "metrics": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 1013
+      },
+      "path": "screens/suspended-320.png",
+      "sha256": "363f8d23ee82240a04ea6b3a75550cbbbb5203fd27bc1d48553be74fecababe1",
+      "sizeBytes": 63733
+    },
+    {
+      "state": "suspended",
+      "width": 360,
+      "metrics": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 989
+      },
+      "path": "screens/suspended-360.png",
+      "sha256": "5de929c6d095752b0ac43784d4e7c0f676b82ba3b402272843403be9009a0c92",
+      "sizeBytes": 64814
+    },
+    {
+      "state": "suspended",
+      "width": 390,
+      "metrics": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 944
+      },
+      "path": "screens/suspended-390.png",
+      "sha256": "0bda2952a0febf28fea4a1956829ca9f4e9b0057c25f6e34f470f40a331a0273",
+      "sizeBytes": 64097
+    },
+    {
+      "state": "suspended",
+      "width": 414,
+      "metrics": {
+        "width": 414,
+        "scrollWidth": 414,
+        "height": 920
+      },
+      "path": "screens/suspended-414.png",
+      "sha256": "df8c3a5dde4bb2a894e7ae853bba72568fbb9d379eb519741b3eadd7351320e7",
+      "sizeBytes": 61958
+    },
+    {
+      "state": "suspended",
+      "width": 768,
+      "metrics": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 846
+      },
+      "path": "screens/suspended-768.png",
+      "sha256": "7cbcfc44fd60f4ca0f20b2a5de557ddcbbf77974dde5c2f3bc47385d03c86354",
+      "sizeBytes": 79572
+    },
+    {
+      "state": "suspended",
+      "width": 1024,
+      "metrics": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 900
+      },
+      "path": "screens/suspended-1024.png",
+      "sha256": "ce800a0f5a4a060c5c3ed9b4da6e5b8f34ebb005cccade037172f94e47b00cfd",
+      "sizeBytes": 79798
+    },
+    {
+      "state": "suspended",
+      "width": 1280,
+      "metrics": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 900
+      },
+      "path": "screens/suspended-1280.png",
+      "sha256": "12557fbdf42489a3090ac54c2c42c9caba0ff2d7b7bc6d1e81606f754c39c790",
+      "sizeBytes": 80442
+    },
+    {
+      "state": "suspended",
+      "width": 1440,
+      "metrics": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 900
+      },
+      "path": "screens/suspended-1440.png",
+      "sha256": "ec15e09665195d4f3193a7288b757a00a636434a8d8597d27fcd45b866c0367e",
+      "sizeBytes": 85102
+    },
+    {
+      "state": "suspended",
+      "width": 1920,
+      "metrics": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "height": 901
+      },
+      "path": "screens/suspended-1920.png",
+      "sha256": "fa6b382a25a747d61ee21fd2f1ccd6a0c5002b8cc2510cb9a75092e94b177518",
+      "sizeBytes": 88923
+    },
+    {
+      "state": "adminForbidden",
+      "width": 320,
+      "metrics": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 1201
+      },
+      "path": "screens/adminForbidden-320.png",
+      "sha256": "cd8caf9d1f8bae66d96a0dac8adc7216f3c2ebc53849082a3855db31891f048e",
+      "sizeBytes": 46995
+    },
+    {
+      "state": "adminForbidden",
+      "width": 360,
+      "metrics": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 1177
+      },
+      "path": "screens/adminForbidden-360.png",
+      "sha256": "35b44b8aff019dac49a1a1fc5feb67de20d4088fbc79ff0b13d7ab8345ca0b4f",
+      "sizeBytes": 46523
+    },
+    {
+      "state": "adminForbidden",
+      "width": 390,
+      "metrics": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 1177
+      },
+      "path": "screens/adminForbidden-390.png",
+      "sha256": "15b41eb17e839f6041ca280f9d38cb81af13966e327a621fd060701e5c4885f7",
+      "sizeBytes": 47068
+    },
+    {
+      "state": "adminForbidden",
+      "width": 414,
+      "metrics": {
+        "width": 414,
+        "scrollWidth": 414,
+        "height": 1153
+      },
+      "path": "screens/adminForbidden-414.png",
+      "sha256": "0d860c7c526cf4bbf19c5a7c96e32ff96fa4512edb360e7c230dc78fa3855c97",
+      "sizeBytes": 45873
+    },
+    {
+      "state": "adminForbidden",
+      "width": 768,
+      "metrics": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 888
+      },
+      "path": "screens/adminForbidden-768.png",
+      "sha256": "a73446e01b2bda795ee28ba1b34dc46f9521f69c5d880298888c484a7ac8aef9",
+      "sizeBytes": 50441
+    },
+    {
+      "state": "adminForbidden",
+      "width": 1024,
+      "metrics": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 900
+      },
+      "path": "screens/adminForbidden-1024.png",
+      "sha256": "a222f8b62091fa8f2a82d638baec240d857b09b4e62d8306a0965ea66ef623e5",
+      "sizeBytes": 50946
+    },
+    {
+      "state": "adminForbidden",
+      "width": 1280,
+      "metrics": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 900
+      },
+      "path": "screens/adminForbidden-1280.png",
+      "sha256": "de7a317651135de3f9a72c0c5479290d4ea4e0281800ddac34eefe094b4e1232",
+      "sizeBytes": 52580
+    },
+    {
+      "state": "adminForbidden",
+      "width": 1440,
+      "metrics": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 900
+      },
+      "path": "screens/adminForbidden-1440.png",
+      "sha256": "f8111f5d26a9cb2f2cc83963242c910a83d3e27f67df4aec72be7be5873873b9",
+      "sizeBytes": 53702
+    },
+    {
+      "state": "adminForbidden",
+      "width": 1920,
+      "metrics": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "height": 900
+      },
+      "path": "screens/adminForbidden-1920.png",
+      "sha256": "7f9c613b4c23d8b366e21051775c27c77cd2f7dde74549facc563c3b9c48bc7a",
+      "sizeBytes": 57088
+    }
+  ],
+  "authCounts": {
+    "adminA.password.adminA": 2,
+    "adminB.password.adminB": 1,
+    "adminB.logout.adminB": 1,
+    "adminA.password.eligible": 2,
+    "adminA.logout.eligible": 2,
+    "adminA.password.nonPartner": 1,
+    "adminA.logout.nonPartner": 1,
+    "adminA.password.suspended": 1,
+    "adminA.logout.suspended": 1,
+    "adminA.logout.adminA": 2,
+    "adminA.password.adminB": 1,
+    "adminA.logout.adminB": 1
+  },
+  "completedDownloads": 2,
+  "saveObserverEvents": 4,
+  "pageErrors": 0,
+  "consoleErrorCount": 23,
+  "boundaryFailures": 0,
+  "assetFailures": 0,
+  "browserClosed": true,
+  "hostReceipts": {
+    "adminA": {
+      "receiptSha256": "bbe6fa3f390437fc3a2fc03a9c75367aeaa7564463176be744ef1f1e8c41b408",
+      "status": "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE",
+      "finishedAt": "2026-09-08T18:01:10.787Z",
+      "requestCounts": {
+        "remote_all": 176,
+        "service_key_self_check": 1,
+        "bucket_precheck": 1,
+        "auth_fixture_precheck": 5,
+        "database_reads": 110,
+        "password_adminA": 2,
+        "auth_user": 32,
+        "objects": 1,
+        "resources": 1,
+        "versions": 1,
+        "reviews": 2,
+        "request_review": 1,
+        "content_approval": 1,
+        "publications": 1,
+        "object_read": 4,
+        "password_eligible": 2,
+        "deliveries": 2,
+        "logout_eligible": 2,
+        "password_nonPartner": 1,
+        "logout_nonPartner": 1,
+        "password_suspended": 1,
+        "logout_suspended": 1,
+        "logout_adminA": 2,
+        "password_adminB": 1,
+        "logout_adminB": 1,
+        "withdrawals": 1
+      },
+      "apiRequests": 94,
+      "assetRequests": 364,
+      "delayedDownloads": [
+        {
+          "kind": "admin",
+          "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+          "status": "sent"
+        },
+        {
+          "kind": "partner",
+          "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+          "status": "sent"
+        },
+        {
+          "kind": "partner",
+          "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+          "status": "client_disconnected"
+        },
+        {
+          "kind": "admin",
+          "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+          "status": "client_disconnected"
+        }
+      ],
+      "failureCode": null,
+      "firstRefusal": null,
+      "gracefulStopExitCode": 0
+    },
+    "adminB": {
+      "receiptSha256": "aadf8c9af75480e2cf9dd2ace83b2d5b531a860dd2799920360eb334982b51e1",
+      "status": "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE",
+      "finishedAt": "2026-09-08T18:01:10.979Z",
+      "requestCounts": {
+        "remote_all": 27,
+        "service_key_self_check": 1,
+        "bucket_precheck": 1,
+        "auth_fixture_precheck": 5,
+        "database_reads": 16,
+        "password_adminB": 1,
+        "auth_user": 2,
+        "logout_adminB": 1
+      },
+      "apiRequests": 6,
+      "assetRequests": 23,
+      "delayedDownloads": [],
+      "failureCode": null,
+      "firstRefusal": null,
+      "gracefulStopExitCode": 0
+    }
+  },
+  "sqlReconciliation": {
+    "observedAt": "2026-09-08T18:01:23.657536Z",
+    "projectRef": "tetynodzrtmdbuzgboro",
+    "resources": 5,
+    "versions": 3,
+    "withdrawnVersions": 3,
+    "publishedPointers": 0,
+    "deliveryAudits": 8,
+    "privateObjects": 5,
+    "outbox": 2,
+    "authUsers": 6,
+    "authSessions": 4,
+    "explanation": "Eight normal browser password sign-ins and eight UI sign-outs. The observed four remaining sessions are consistent with global admin logout revoking two earlier admin sessions; individual retained/revoked session attribution was not independently queried. No fixture identities were recreated.",
+    "boundedDelta": {
+      "resources": 1,
+      "versions": 1,
+      "objects": 1,
+      "reviewUpdates": 2,
+      "publications": 1,
+      "withdrawals": 1,
+      "deliveryAudits": 2,
+      "outbox": 0,
+      "authUsers": 0
+    },
+    "rawReceiptSha256": "e9b64f49e51236df73fa58a08420bcdceb5ae360cefe0b8e37d3e6ba12dceca1"
+  },
+  "sqlNewVersionDetails": {
+    "observedAt": "2026-09-08T18:01:52.403248Z",
+    "state": "withdrawn",
+    "usagePolicy": "private",
+    "audience": [
+      "research_rep"
+    ],
+    "sizeBytes": 2333,
+    "sha256": "9bf66f0c5ed7ce28d90cb0dca3a3402067a0b8df61a00a0ab8f833fc5f03a198",
+    "validationOk": true,
+    "validationReasonCount": 0,
+    "lifecycleTimestampsPresent": true,
+    "sameBoundAdmin": true,
+    "publicationCleared": true,
+    "deliveredAudits": 2,
+    "otherAudits": 0,
+    "matchingPrivateObjects": 1,
+    "bucketPublic": false,
+    "rawReceiptSha256": "dee4520ae1d41b8b58840844df96b5bb66f39ec62dddbe2836b15f8ea8d9e1e8"
+  },
+  "visualReview": {
+    "reviewer": "ASTRA-A",
+    "viewed": [
+      "admin-320.png",
+      "eligible-320.png",
+      "nonPartner-320.png",
+      "suspended-320.png",
+      "adminForbidden-320.png",
+      "admin-1440.png",
+      "eligible-1440.png",
+      "nonPartner-1440.png",
+      "suspended-1440.png",
+      "adminForbidden-1440.png"
+    ],
+    "all45CaptureHashesAndDimensionsVerified": true,
+    "notes": [
+      "Responsive controls and role states render; no page-level horizontal overflow in45 automated checks.",
+      "At320px partner navigation is horizontally clipped/scrollable; broader mobile navigation review belongs to the next partner slice.",
+      "Admin Resources count includes the two retained empty resources while its helper copy says at least one uploaded version; wording needs a follow-up correction."
+    ]
+  },
+  "limitations": [
+    "Browser used real staging Auth/data through the bounded same-origin loopback proxy; direct production-origin Auth configuration is not proved.",
+    "HostB observed retained run-owned fixtures and could not read the new HostA resource.",
+    "Incidental non-Hub shell APIs deliberately return503; full production shell and other workflows are not qualified here.",
+    "23 console-error events were counted without retaining raw console text; this is not a zero-console-error claim. Zero page errors, boundary refusals and asset failures were observed.",
+    "Two delivered audit records represent server byte retrieval; only one partner download was saved, and the pending second response was discarded after logout.",
+    "The unchanged approved PDF metadata title contains the prior b2 plan suffix, retained after run2 stopped with zero writes.",
+    "Formal ASTRA-B source/ownership/evidence acceptance remains pending.",
+    "Real production content, audience and named-account effects remain undecided; no production activation or real-user qualification."
+  ],
+  "productionChanged": false,
+  "migrationsReplayed": false,
+  "retainedDataPreserved": true,
+  "failedRunEvidencePreserved": [
+    "browser-host-run1-stop-20260908.json",
+    "browser-driver-run2-stop-20260908.json"
+  ],
+  "independentEvidenceReview": {
+    "reviewer": "managed_hub_harness",
+    "verdict": "ACCEPT_BOUNDED_BROWSER_HOST_SQL_RECONCILIATION",
+    "all203ProviderAttemptsHaveMatching2xxResponses": true,
+    "unresolvedProviderAttempts": 0,
+    "all45PngHashesSizesDimensionsVerified": true,
+    "allServedAssetsMatch341FileManifest": true,
+    "formalBAcceptance": false
+  }
+}

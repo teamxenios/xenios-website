@@ -766,8 +766,8 @@
       "build": "PASS_EXIT_ZERO",
       "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
       "independentBReview": "PENDING",
-      "managedExecution": "BOUNDED_API_PASS_BROWSER_RUN2_STOP_BEFORE_AUTH_DRIVER_SERIALIZATION_CORRECTION",
-      "updatedAt": "2026-09-08T17:55:29.189134+00:00",
+      "managedExecution": "PASS_41_API_CHECKS_15_BROWSER_STEPS_45_CAPTURES_HOST_SQL_RECONCILED_B_ACCEPTANCE_PENDING",
+      "updatedAt": "2026-09-08T18:03:18.899976+00:00",
       "managedStaging": {
         "projectId": "tetynodzrtmdbuzgboro",
         "status": "ACTIVE_HEALTHY",
@@ -793,8 +793,9 @@
       "managedApiReceipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
       "managedHarnessSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
       "browserHostRun1Receipt": "docs/revenue-launch/20260907/browser-host-run1-stop-20260908.json",
-      "browserDriverSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366",
-      "browserRun2Receipt": "docs/revenue-launch/20260907/browser-driver-run2-stop-20260908.json"
+      "browserDriverSha": "9d33ab5370b39cb6400e22db2e3026dbb3276d2c",
+      "browserRun2Receipt": "docs/revenue-launch/20260907/browser-driver-run2-stop-20260908.json",
+      "browserReceipt": "docs/revenue-launch/20260907/managed-browser-qualification-9d33ab53.json"
     }
   },
   "reconciliationHistory": [
