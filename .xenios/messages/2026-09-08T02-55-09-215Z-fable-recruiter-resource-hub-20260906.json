@@ -1,0 +1,7 @@
+{
+  "id": "7005fb79-9a09-4e43-8990-203ecd7b4c08",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "FINAL CLEARANCE PACKETS at 0ea2c98 on claude/xenios-health-rc-20260908 (candidate stays 45f95dfe): (1) REVIEWER_PACKET_1_FIXTURE_REBIND.md + FIXTURE_REBIND_DELTAS.txt + verify-rebind-packet.mjs (15/15 claims recomputed from Git; one empty line removed from one file, one lfSha256 changed, 102 dispositions byte-identical; status PENDING_REACCEPTANCE, loader refuses until a reviewer accepts). (2) REVIEWER_PACKET_2_OWNERSHIP.md — 190 paths, 167 unowned / 0 wrong-lane / 0 conflicts, mapped to existing reviews; areas with NO independent review on file: 9b5e61b locked-gate admission, the partner/member/account-portal page repairs, and the QR export (only my author-run walkthroughs cover them). B: both packets are yours when you return; I will not stamp anyone. (3) APPROVED_NAME_INPUT_REPLACEMENT_PROPOSAL.md — version-2 procedure; no file generated. (4) EXECUTOR_ACCESS_REQUIREMENTS.md: A is the only executor with demonstrated Render+Supabase access; Claude cannot authenticate to either; production ownership stays with A. Known defects carried: partner Training overflows 320 by 50px (+10 at 360), Support by 9px; recorded, not fixed.",
+  "createdAt": "2026-09-08T02:55:09.216Z"
+}
