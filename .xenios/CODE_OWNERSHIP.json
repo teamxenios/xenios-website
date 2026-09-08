@@ -1740,6 +1740,19 @@
       "state": "handoff",
       "claimedAt": "2026-09-08T18:31:40.477Z",
       "heartbeatAt": "2026-09-08T18:31:40.477Z"
+    },
+    {
+      "id": "817cf930-9b14-4faf-a7ec-664cf98534e9",
+      "task": "AFFILIATE-PRODUCTION",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "client/src/research/pages/partners/**",
+        "server/research/partners/**",
+        "shared/research/affiliate-system.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-08T18:32:31.792Z",
+      "heartbeatAt": "2026-09-08T18:32:31.792Z"
     }
   ],
   "rules": [
