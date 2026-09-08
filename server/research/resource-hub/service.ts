@@ -15,7 +15,7 @@ import {
   type ResourceVersionReviewInput,
 } from "@shared/research/resource-hub/contract";
 import { isResourceStoreNotConfigured, type ResourceBytesStore } from "./bytes-store";
-import { isResourceHubConflict, type ResourceHubStore, type ResourceRow, type ResourceVersionRow } from "./store";
+import { isResourceHubConflict, type ResourceHubStore, type ResourceRow, type ResourceVersionPatch, type ResourceVersionRow } from "./store";
 
 // ---------------------------------------------------------------------------
 // The Resource Hub service. Every decision that matters is made here, once:
@@ -647,6 +647,9 @@ export function createResourceHubService(deps: ResourceHubServiceDeps) {
             // never be served; it is orphaned, not published.
             const winner = await deps.store.findVersionByUploadKey(input.idempotencyKey);
             if (winner) {
+              if (winner.sha256 !== sha256Hex(bytes) || winner.originalFilename !== input.originalFilename) {
+                return denial("resource_state_conflict", "This upload key was already used for a different file. Start a new upload.");
+              }
               const view = await projection(winner.resourceId);
               if (view) return { ok: true as const, resource: view };
             }
@@ -675,12 +678,22 @@ export function createResourceHubService(deps: ResourceHubServiceDeps) {
           const view = await projection(resourceId);
           return view ? { ok: true as const, resource: view } : denial("not_found", "Resource not found.");
         };
+        const updateReview = async (patch: ResourceVersionPatch) => {
+          try {
+            await deps.store.updateVersion(versionId, patch, version);
+          } catch (error) {
+            if (isResourceHubConflict(error)) {
+              return denial("resource_state_conflict", "This version changed during review. Reload and try again.");
+            }
+            throw error;
+          }
+          return done();
+        };
         switch (input.action) {
           case "request_review": {
             if (version.state === "in_review") return done();
             if (version.state !== "draft") return denial("resource_state_conflict", `A ${version.state} version cannot be sent for review.`);
-            await deps.store.updateVersion(versionId, { state: "in_review" });
-            return done();
+            return updateReview({ state: "in_review" });
           }
           case "approve_content": {
             if (!input.reason) return denial("invalid_resource_metadata", "A review reason is required.", { reason: ["required"] });
@@ -688,13 +701,12 @@ export function createResourceHubService(deps: ResourceHubServiceDeps) {
             if (version.state !== "draft" && version.state !== "in_review") {
               return denial("resource_state_conflict", `A ${version.state} version cannot be approved.`);
             }
-            await deps.store.updateVersion(versionId, {
+            return updateReview({
               state: "in_review",
               reviewedAt: at,
               reviewedByAdmin: actorAdmin,
               reviewReason: input.reason,
             });
-            return done();
           }
           case "publish": {
             if (version.state === "published" && resource.currentPublishedVersionId === versionId) return done();

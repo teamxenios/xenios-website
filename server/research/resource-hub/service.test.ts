@@ -302,7 +302,7 @@ describe("delivery re-reads entitlement at use time and records every attempt", 
     // delivery door re-reads the policy anyway (defense in depth via the store).
     const h = harness();
     const { resourceId, versionId } = await publishOne(h, { audience: ["all_partners"] });
-    await h.store.updateVersion(versionId, { usagePolicy: "draft" });
+    await h.store.updateVersion(versionId, { usagePolicy: "draft" }, (await h.store.getVersion(versionId))!);
     expect(await h.service.deliverToPartner(REP, resourceId)).toEqual({ ok: false, code: "not_found" });
     expect((await h.store.listDeliveries(resourceId)).map((d) => d.reason)).toEqual(["policy"]);
     expect(await h.service.libraryFor(REP)).toEqual([]);
@@ -377,7 +377,7 @@ describe("store failures cannot become oracles or dead ends", () => {
     const vid = second.resource.versions[0]!.versionId;
     await h.service.review(ADMIN, rid, vid, { action: "approve_content", reason: "ok", idempotencyKey: "review-rep-a1" });
     // Publish the version WITHOUT the pointer (state only), as a half-applied transition would leave it.
-    await h.store.updateVersion(vid, { state: "published", publishedAt: "2026-09-06T12:00:00.000Z", publishedByAdmin: ADMIN });
+    await h.store.updateVersion(vid, { state: "published", publishedAt: "2026-09-06T12:00:00.000Z", publishedByAdmin: ADMIN }, (await h.store.getVersion(vid))!);
     expect((await h.service.getAdmin(rid))?.currentPublishedVersionId).toBeNull();
     expect(await h.service.libraryFor(REP)).toHaveLength(1); // only the first resource
     const repaired = await h.service.review(ADMIN, rid, vid, { action: "publish", idempotencyKey: "review-rep-p1" });

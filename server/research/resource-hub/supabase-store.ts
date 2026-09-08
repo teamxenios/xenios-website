@@ -35,7 +35,7 @@ export interface SupabaseQueryLike {
   from(table: string): {
     select(columns: string): SelectBuilder;
     insert(row: Row): Promise<{ error: ProviderError }>;
-    update(patch: Row): { eq(column: string, value: unknown): Promise<{ error: ProviderError }> };
+    update(patch: Row): UpdateBuilder;
   };
   rpc(fn: string, args: Row): Promise<{ error: ProviderError }>;
 }
@@ -55,6 +55,11 @@ interface SelectBuilder {
   order(column: string, options: { ascending: boolean }): SelectBuilder;
   maybeSingle(): Promise<{ data: Row | null; error: ProviderError }>;
   then<T>(onfulfilled: (value: { data: Row[] | null; error: ProviderError }) => T): Promise<T>;
+}
+interface UpdateBuilder {
+  eq(column: string, value: unknown): UpdateBuilder;
+  is(column: string, value: null): UpdateBuilder;
+  select(columns: string): { maybeSingle(): Promise<{ data: Row | null; error: ProviderError }> };
 }
 
 function text(value: unknown): string {
@@ -209,9 +214,21 @@ export function createSupabaseResourceHubStore(client: () => SupabaseQueryLike):
         throw fail("version insert", result.error);
       }
     },
-    async updateVersion(versionId, patch) {
-      const result = await client().from(RESOURCE_VERSIONS_TABLE).update(fromVersionPatch(patch)).eq("id", versionId);
+    async updateVersion(versionId, patch, expected) {
+      let query = client().from(RESOURCE_VERSIONS_TABLE).update(fromVersionPatch(patch))
+        .eq("id", versionId).eq("state", expected.state);
+      // All predicates and the patch execute in one statement. SQL NULL requires
+      // IS NULL; equality would silently match no row even for a fresh draft.
+      for (const [column, value] of [
+        ["reviewed_at", expected.reviewedAt],
+        ["reviewed_by_admin", expected.reviewedByAdmin],
+        ["review_reason", expected.reviewReason],
+      ] as const) {
+        query = value === null ? query.is(column, null) : query.eq(column, value);
+      }
+      const result = await query.select("id").maybeSingle();
       if (result.error) throw fail("version update", result.error);
+      if (!result.data) throw new ResourceHubConflict("version changed before update");
     },
     async publishVersion({ resourceId, versionId, actorAdmin, at }) {
       const result = await client().rpc(RESOURCE_PUBLISH_FUNCTION, {
