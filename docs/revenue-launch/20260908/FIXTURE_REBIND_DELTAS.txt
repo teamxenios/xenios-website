@@ -1,0 +1,39 @@
+# Fixture re-bind: exact deltas (generated 2026-09-08T02:52:21Z)
+
+## 1. The only source delta among the 20 pinned files: 8e125ca7..bf7b5fe -- scripts/revenue-launch/new-account-browser-qualification.mjs
+diff --git a/scripts/revenue-launch/new-account-browser-qualification.mjs b/scripts/revenue-launch/new-account-browser-qualification.mjs
+index 759b9e1..a28bb99 100644
+--- a/scripts/revenue-launch/new-account-browser-qualification.mjs
++++ b/scripts/revenue-launch/new-account-browser-qualification.mjs
+@@ -27,4 +27,3 @@ try {
+  const state2=await (await fetch(base+'/__qualification/state',{headers:{'X-Qualification-Controller':'local-qualification-controller'}})).json(); record('final-account-outbox',state2.claimed===true&&state2.outbox.length===2&&state2.account.email===email&&state2.account.billing===false&&state2.account.partner===false&&state2.account.admin===false);
+  const artifact={schemaVersion:1,observedAt:new Date().toISOString(),candidateSha:'ff3c496245739233b71e46f9e5d6e26af9d57017',candidateTree:'73734e113e8ef5f9e1f27ae4dae36bdf598abb25',harness:'scripts/revenue-launch/new-account-qa-harness.ts',runner:'scripts/revenue-launch/new-account-browser-qualification.mjs',runCommand:'node scripts/revenue-launch/new-account-browser-qualification.mjs',environment:'local loopback disposable preview on 127.0.0.1:5237',browserProfiles:{admin:'ephemeral Chromium profile A',customer:'ephemeral Chromium profile B'},networkAssertions:['all browser pages used http://127.0.0.1:5237','no external communication'],productionMutated:false,externalCommunication:false,simulatedBoundaries:['local GoTrue-shaped Auth provider','in-memory approval/member/outbox state (not production persistence or adapter)','local notification capture exposed only to controller header (not external delivery)','partner/admin absence asserted from the local account projection (not a production role store)'],journey:{status:steps.every(step=>step.passed)?'PASS':'FAIL',scope:'real inspection/approval/claim functions and SPA UI over isolated admin/customer Chromium profiles'},steps}; mkdirSync('docs/revenue-launch/20260905',{recursive:true}); writeFileSync('docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json',JSON.stringify(artifact,null,2)+'\n'); console.log(JSON.stringify({status:'PASS',steps},null,2));
+ } catch(e) { console.error('FAIL',e); process.exitCode=1; } finally { await adminConn.close(); await customerConn.close(); await adminBrowser.close(); await customerBrowser.close(); if (harnessProcess.pid) { if (process.platform === 'win32') { const { execFileSync } = await import('node:child_process'); try { execFileSync('taskkill',['/PID',String(harnessProcess.pid),'/T','/F']); } catch {} } else harnessProcess.kill('SIGTERM'); } }
+-
+
+## 2. Registry: B's accepted (20260907) -> proposed re-bind (20260908), field-level
+same     schemaVersion
+same     rule
+same     productionBaseSha
+CHANGED  reviewedSourceSha: "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe" -> "bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e"
+CHANGED  independentReviewStatus: "ACCEPTED" -> "PENDING_REACCEPTANCE"
+CHANGED  contextReview: {"path":"docs/revenue-launch/20260907/synthetic-credential-context-review.json","lfSha256":"45155077171437fa59fd2ffb92a28b19fb484390cb5c930de899115d3bbe69d0"} -> {"path":"docs/revenue-launch/20260908/synthetic-credential-context-review.json","lfSha256":"9943debe0f115e1924d93ad42c177e85da745fa987c66c7c4a217e3ee0ad461e"}
+CHANGED  files[18].lfSha256 scripts/revenue-launch/new-account-browser-qualification.mjs: fa3f47de752093ecaad545d46272fcfe23c55e2749f8be96e3bf984dabda4012 -> 4a11081bce04bb326aea9b82e94c51f614c5e6d04063e971644e51f2639682f5
+files: 20 -> 20; lfSha256 changed: 1; match lists changed: 0
+
+## 3. Context review: B's accepted -> proposed, field-level
+same     schemaVersion
+same     reviewType
+CHANGED  reviewedAt: "2026-09-07T23:17:50.940Z" -> "1970-01-01T00:00:00.000Z"
+same     productionBaseSha
+CHANGED  candidateSha: "8e125ca7cbd300a7e96e4dbca8f5eca654558bfe" -> "bf7b5fee78102289bcc6c68e9e336bb0ea0c9d5e"
+same     repositoryRoot
+same     matchScope
+same     strictGateStatus
+same     piiStatus
+same     summary
+CHANGED  limitations: 3 -> 4 (one appended, text: "RE-BIND PENDING: this file re-pins the identical 102 findings to candidate bytes at bf7b5fee78102289bcc6c68e9e336bb0ea0...)
+findings identical (byte-for-byte JSON): true; count 102 -> 102
+
+## 4. Every registry match hash is present among the candidate's added lines (recomputed)
+match entries present with expected occurrences: 98; missing: 0

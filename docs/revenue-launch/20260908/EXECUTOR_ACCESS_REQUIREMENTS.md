@@ -40,6 +40,18 @@ cannot be the executor** and should not be named as one. The alternative
 named executor is Codex A on return, using the same Render API and Supabase
 path it used for `ff3c496`.
 
+## Current answer — who can actually authenticate (2026-09-08T02:55Z)
+
+| Executor | Render (deploy + read serving commit) | Supabase (apply migration + postcheck) | Verdict |
+| --- | --- | --- | --- |
+| **Codex A** | Demonstrated 2026-09-07: commit-pinned deploy `dep-dafcm567bikc7382rhng`, serving commit re-read | Demonstrated 2026-09-07: two migrations applied and recorded in managed history with postchecks | **The only executor with demonstrated access.** |
+| **Claude (this session)** | Cannot — connector unauthenticated, OAuth impossible in a non-interactive session | Cannot — configured token rejected (401) | **Not an executor** until Samuel grants both in the executing environment |
+| Codex B | Not demonstrated | Not demonstrated | Not proposed |
+
+Production ownership stays singular: the approval request should name Codex
+A unless Samuel deliberately re-points it and the access above is proven
+first. Claude will not attempt production actions.
+
 ## What the executor must be handed
 
 Exact SHA and tree; the three SQL files with their canonical hashes

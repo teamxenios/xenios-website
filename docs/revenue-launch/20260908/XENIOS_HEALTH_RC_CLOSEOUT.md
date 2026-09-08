@@ -129,6 +129,28 @@ a founder action; no substitute was created.
 **Not run.** Nothing about the release's personal-information exposure is
 claimed.
 
+## Known defects carried by the candidate
+
+Recorded, not fixed; source is frozen. Any fix is a scoped correction with
+its own requalification, not a silent edit. Complete responsive acceptance is
+**not** claimed.
+
+| Page | 320 px | 360 px | 390 px+ | Cause |
+| --- | --- | --- | --- | --- |
+| Partner Training | overflow **+50 px** | **+10 px** | fits | module cards (`div.card.flex.flex-wrap.items-start`) lay out at 354 px |
+| Partner Support | overflow **+9 px** | fits | fits | `white-space: nowrap` on the "Email team@…" primary button |
+
+## Reviewer packets and the replacement input
+
+- `REVIEWER_PACKET_1_FIXTURE_REBIND.md` + `FIXTURE_REBIND_DELTAS.txt` +
+  `verify-rebind-packet.mjs` — the narrow re-acceptance.
+- `REVIEWER_PACKET_2_OWNERSHIP.md` + `ownership-findings-ff3c496-45f95dfe.json`
+  — the inventory with existing reviews mapped, and the areas that have none.
+- `APPROVED_NAME_INPUT_REPLACEMENT_PROPOSAL.md` — how version 2 would be
+  produced and approved; no file has been generated.
+- `EXECUTOR_ACCESS_REQUIREMENTS.md` — only Codex A has demonstrated Render and
+  Supabase access; Claude cannot be the executor today.
+
 ## REMAINING EXTERNAL ACTION
 
 1. Supply the original approved-name corpus (hash-verified) or approve a
