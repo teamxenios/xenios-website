@@ -67,7 +67,9 @@ export function validateManagedHubPlan(raw: unknown): ManagedHubPlan {
   return p;
 }
 export interface OwnedHubScope { fixture: FixtureName; worker: WorkerName; resourceId: string; versionId: string; objectKey: string; objectAcknowledged: boolean; resourceAcknowledged: boolean; versionAcknowledged: boolean }
-export interface BoundaryEvent { sequence: number; operation: string; phase: "attempt" | "response"; runPhase: Phase; worker: WorkerName; write: boolean; status?: number; expectedRefusal?: string; acknowledged?: boolean; runScopedProjection?: boolean; resourceId?: string; versionId?: string; objectKey?: string }
+type BoundaryStage = "request_validation" | "journal_attempt" | "provider_request" | "provider_response" | "journal_response" | "barrier";
+export interface BoundaryFailure { code: string; runPhase: Phase; worker: WorkerName; operation: string; stage: BoundaryStage; requestNumber: number }
+export interface BoundaryEvent { sequence: number; operation: string; phase: "attempt" | "response" | "refusal"; runPhase: Phase; worker: WorkerName; write: boolean; status?: number; expectedRefusal?: string; failureCode?: string; failureStage?: BoundaryStage; acknowledged?: boolean; runScopedProjection?: boolean; resourceId?: string; versionId?: string; objectKey?: string }
 type Json = Record<string, unknown>;
 export interface ReviewSnapshot { state: string; reviewedAt: string | null; reviewedByAdmin: string | null; reviewReason: string | null }
 const uuid = "[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}";
@@ -88,6 +90,7 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
   const owned: OwnedHubScope[] = [];
   const counts: Record<string, number> = {}, acknowledged: Record<string, number> = {};
   let phase: Phase = "preflight", sequence = 0, stopped = false, inflight = 0, refusals = 0;
+  let firstFailure: BoundaryFailure | null = null;
   let snapshot: ReviewSnapshot | null = null;
   const phaseCounts: Record<string, number> = {};
   const deliveryKeys = new Set<string>();
@@ -119,6 +122,7 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
     const req = new Request(input, init), url = new URL(req.url), method = req.method;
     const write = method !== "GET" && method !== "HEAD";
     let operation = "", scope: OwnedHubScope | undefined, projection = false, barrierRead = false;
+    let stage: BoundaryStage = "request_validation";
     let controller: AbortController | undefined, transportTimeout: ReturnType<typeof setTimeout> | undefined;
     if (inflight === 0) idleBarrier = latch();
     inflight++;
@@ -147,7 +151,9 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
         let row: Json = {};
         if (write) { const bytes = new Uint8Array(await req.clone().arrayBuffer()); if (bytes.length > 16384) refuse("json_size"); row = rowValue(jsonValue(bytes)) ?? refuse("single_row_only"); if (Array.isArray(jsonValue(bytes))) refuse("single_row_only"); }
         const email = plan.actors[worker].email.toLowerCase();
-        if (url.searchParams.has("select") && !/^[a-z_*, ]+$/.test(url.searchParams.get("select") ?? "")) refuse("projection_scope");
+        // Plain column identifiers may contain digits after the first character (sha256).
+        // Relationship embeds, aliases, casts, JSON paths and functions remain forbidden.
+        if (url.searchParams.has("select") && !/^(?:\*|[a-z_][a-z0-9_]*(?: *, *[a-z_][a-z0-9_]*)*)$/.test(url.searchParams.get("select") ?? "")) refuse("projection_scope");
         if (url.searchParams.has("order") && !["created_at.asc", "version_number.asc", "published_at.desc", "requested_at.desc"].includes(url.searchParams.get("order") ?? "")) refuse("order_scope");
         if ([...url.searchParams.keys()].some(k => url.searchParams.getAll(k).length !== 1)) refuse("duplicate_query_key");
         if (method === "GET" && ["research_members", "research_partners"].includes(table)) {
@@ -217,12 +223,16 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
         } else refuse("table_or_rpc");
       } else refuse("endpoint");
       const event: BoundaryEvent = { sequence: ++sequence, operation, phase: "attempt", runPhase: phase, worker, write, ...(projection ? { runScopedProjection: true } : {}), ...(write && scope ? { resourceId: scope.resourceId, versionId: scope.versionId, objectKey: scope.objectKey } : {}) };
+      stage = "journal_attempt";
       record(event); // Durable before any provider request or barrier-dependent write.
+      stage = "barrier";
       if (worker === "adminB" && (operation === "versions" || operation === "reviews" && phase === "review_race")) await boundedWait(winnerBarrier.promise);
       if (stopped) refuse("run_stopped");
       controller = new AbortController(); transports.add(controller);
       transportTimeout = setTimeout(() => controller?.abort(), 15_000);
+      stage = "provider_request";
       const response = await upstream(url, { method, headers: req.headers, body: write ? await req.arrayBuffer() : undefined, redirect: "error", signal: controller.signal });
+      stage = "provider_response";
       if (response.redirected || response.status >= 300 && response.status < 400) refuse("redirect");
       const chunks: Uint8Array[] = []; let size = 0; const reader = response.body?.getReader();
       if (reader) while (true) { const next = await reader.read(); if (next.done) break; size += next.value.length; if (size > 2 * 1024 * 1024) { await reader.cancel(); refuse("response_cap"); } chunks.push(next.value); }
@@ -244,18 +254,29 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
       }
       if ((phase === "precision_stale" || phase === "precision_provider") && operation === "reviews" && !expectedRefusal || worker === "adminB" && (operation === "versions" || phase === "review_race" && operation === "reviews") && !expectedRefusal) refuse("expected_refusal_missing");
       const ack = write && response.ok && !expectedRefusal;
+      stage = "journal_response";
       record({ ...event, phase: "response", status: response.status, ...(expectedRefusal ? { expectedRefusal } : {}), ...(write ? { acknowledged: ack } : {}) });
+      stage = "provider_response";
       if (response.status >= 500 || !response.ok && !expectedRefusal) refuse("provider_or_uncertain_write");
       if (expectedRefusal) { refusals++; bump("refusals", phaseSpec(phase).refusals ?? 0, phaseCounts); }
       if (ack) { acknowledged[operation] = (acknowledged[operation] ?? 0) + 1; if (scope && operation === "objects") scope.objectAcknowledged = true; if (scope && operation === "resources") scope.resourceAcknowledged = true; if (scope && operation === "versions") scope.versionAcknowledged = true; }
       if (worker === "adminA" && ack && (operation === "versions" || phase === "review_race" && operation === "reviews")) winnerBarrier.release();
       if (barrierRead) {
+        stage = "barrier";
         const value = jsonValue(bytes), row = rowValue(value);
         if (phase === "review_race" ? !row || row.state !== "in_review" || row.reviewed_at !== null || row.reviewed_by_admin !== null || row.review_reason !== null : !(value === null || Array.isArray(value) && value.length === 0)) refuse("barrier_snapshot_mismatch");
         readParticipants.add(worker); if (readParticipants.size === 2) readBarrier.release(); await boundedWait(readBarrier.promise);
       }
       return new Response(bytes.length ? bytes : null, { status: response.status, statusText: response.statusText, headers: response.headers });
-    } catch (error) { stopped = true; if (error instanceof ManagedHubBoundaryError) throw error; refuse("transport_or_receipt_failure"); }
+    } catch (error) {
+      stopped = true;
+      const code = error instanceof ManagedHubBoundaryError ? error.code : "transport_or_receipt_failure";
+      // Retain typed metadata independently of SDK retry/wrapping; never parse provider text.
+      firstFailure ??= Object.freeze({ code, runPhase: phase, worker, operation: operation || "not_classified", stage, requestNumber: counts.all ?? 0 });
+      try { record({ sequence: ++sequence, operation: operation || "not_classified", phase: "refusal", runPhase: phase, worker, write, failureCode: code, failureStage: stage }); } catch { /* The original diagnostic survives a failed disk receipt. */ }
+      if (error instanceof ManagedHubBoundaryError) throw error;
+      refuse(code);
+    }
     finally { if (transportTimeout) clearTimeout(transportTimeout); if (controller) { controller.abort(); transports.delete(controller); } inflight--; if (inflight === 0) idleBarrier.release(); }
   };
   return {
@@ -275,5 +296,6 @@ export function createManagedHubFetchBoundary(plan: ManagedHubPlan, upstream: ty
     async waitUntilIdle() { await boundedWait(idleBarrier.promise); if (inflight) refuse("broker_not_idle"); },
     assertComplete() { if (stopped || inflight || phase !== "postchecks") refuse("run_incomplete"); assertPhaseComplete(); for (const [k, n] of Object.entries(EXPECTED_ATTEMPTS)) if (counts[k] !== n) refuse("write_accounting"); for (const [k, n] of Object.entries(EXPECTED_WRITES)) if (acknowledged[k] !== n) refuse("acknowledgement_accounting"); if (refusals !== 5) refuse("refusal_accounting"); },
     get phase() { return phase; }, get expectedRefusals() { return refusals; },
+    get failure(): Readonly<BoundaryFailure> | null { return firstFailure; },
   };
 }

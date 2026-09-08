@@ -165,7 +165,7 @@ async function runWorker() {
 }
 
 /** Promise adapter only; preserves the production store and real SDK's predicates/results. */
-function storeClient(client: import("@supabase/supabase-js").SupabaseClient): import("../../server/research/resource-hub/supabase-store").SupabaseQueryLike {
+export function createManagedHubStoreClient(client: Pick<import("@supabase/supabase-js").SupabaseClient, "from" | "rpc">): import("../../server/research/resource-hub/supabase-store").SupabaseQueryLike {
   type Port = import("../../server/research/resource-hub/supabase-store").SupabaseQueryLike;
   type From = ReturnType<Port["from"]>;
   const select = (query: ReturnType<ReturnType<typeof client.from>["select"]>): ReturnType<From["select"]> => ({
@@ -209,7 +209,7 @@ async function execute(local: ReturnType<typeof verifyLocalManagedHubPlan>, appr
     configureProduction(plan, credentials, "adminA"); globalThis.fetch = boundary.fetch;
     const [{ getSupabaseAdmin, getSupabaseAnon }, { resolvePartnerPortalPort }, { createSupabaseResourceHubStore }, { ResourceHubConflict }] = await Promise.all([import("../../server/supabase"), import("../../server/research/partners/portal-production"), import("../../server/research/resource-hub/supabase-store"), import("../../server/research/resource-hub/store")]);
     const admin = getSupabaseAdmin(), anon = getSupabaseAnon(), portal = resolvePartnerPortalPort();
-    const store = createSupabaseResourceHubStore(() => storeClient(admin));
+    const store = createSupabaseResourceHubStore(() => createManagedHubStoreClient(admin));
     const serviceCheck = await admin.auth.admin.listUsers({ page: 1, perPage: 1 });
     if (serviceCheck.error) fail("authenticated_service_key_check");
     const bucket = await admin.storage.getBucket(HUB_BUCKET);
@@ -361,7 +361,7 @@ async function execute(local: ReturnType<typeof verifyLocalManagedHubPlan>, appr
     await countRows(true); boundary.assertComplete();
     outcomes.push({ check: "two withdrawn winners, two empty resource/object orphans, exact retained bytes and six delivery audits", status: "PASS" });
     success = true;
-  } catch (error) { failureCode = error instanceof ManagedHubBoundaryError ? error.code : "unclassified_failure_private_review_required"; }
+  } catch (error) { failureCode = boundary.failure?.code ?? (error instanceof ManagedHubBoundaryError ? error.code : "unclassified_failure_private_review_required"); }
   finally {
     boundary.stop();
     const workersStopped = await stopManagedHubWorkers(children);
@@ -369,8 +369,8 @@ async function execute(local: ReturnType<typeof verifyLocalManagedHubPlan>, appr
     if (!workersStopped) { success = false; failureCode ??= "worker_exit_not_observed"; }
     globalThis.fetch = networkFetch; for (const key of Object.keys(process.env)) delete process.env[key]; Object.assign(process.env, oldEnv); Object.assign(console, oldConsole);
     const receipt = { schemaVersion: 2, runId: plan.runId, sourceSha: plan.sourceSha, sourceTree: plan.sourceTree, applicationSha: plan.applicationSha, applicationTree: plan.applicationTree, planSha256, projectRef: plan.target.projectRef, finishedAt: new Date().toISOString(), status: success ? "PASS_BOUNDED_MANAGED_API" : "STOP_REVIEW_ACTUAL_STATE", failureCode, outcomes, requestCounts: boundary.counts, acknowledgedWrites: boundary.acknowledged, expectedRefusals: boundary.expectedRefusals, stoppedPhase: boundary.phase, ownedScope: boundary.owned, preservedPartialWrites: true, cleanupPerformed: false, productionContacted: false, runScopedProjection: true, notProven: ["full browser composition", "real sign-in/logout/account switching", "different-hash stored PDF upload race recovery", "bucket-wide retained orphan inventory", "unfiltered retained-library behavior", "provisioning and browser write budgets", "production activation"], recovery: plan.recovery };
-    append({ type: "finish", workersStopped, ...receipt }); closeSync(journal);
-    writeFileSync(path.join(plan.receiptDirectory, "managed-api-result.json"), `${JSON.stringify({ ...receipt, workersStopped }, null, 2)}\n`, { flag: "wx", mode: 0o600 });
+    append({ type: "finish", workersStopped, boundaryFailure: boundary.failure, ...receipt }); closeSync(journal);
+    writeFileSync(path.join(plan.receiptDirectory, "managed-api-result.json"), `${JSON.stringify({ ...receipt, workersStopped, boundaryFailure: boundary.failure }, null, 2)}\n`, { flag: "wx", mode: 0o600 });
     process.stdout.write(`${JSON.stringify({ status: receipt.status, failureCode, checksPassed: outcomes.length, productionContacted: false })}\n`);
   }
   if (!success) process.exitCode = 1;

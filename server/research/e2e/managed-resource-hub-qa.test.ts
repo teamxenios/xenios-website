@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { describe, expect, it, vi } from "vitest";
+import { PostgrestClient } from "@supabase/postgrest-js";
+import { createSupabaseResourceHubStore } from "../resource-hub/supabase-store";
 import { ACTOR_NAMES, APPLICATION_SHA, APPLICATION_TREE, EXPECTED_ATTEMPTS, EXPECTED_WRITES, HUB_BUCKET, HUB_TABLES, PRODUCTION_PROJECT, STAGING_PROJECT, assertStagingTarget, createManagedHubFetchBoundary, sha256, validateManagedHubPlan, type BoundaryEvent, type ManagedHubPlan, type WorkerName, type FixtureName, type ReviewSnapshot } from "../../../scripts/revenue-launch/lib/managed-resource-hub-boundary";
-import { appendManagedHubJournal, parseManagedHubPlanBytes, validateManagedHubCredentials, stopManagedHubWorkers } from "../../../scripts/revenue-launch/managed-resource-hub-qa";
+import { appendManagedHubJournal, parseManagedHubPlanBytes, validateManagedHubCredentials, stopManagedHubWorkers, createManagedHubStoreClient } from "../../../scripts/revenue-launch/managed-resource-hub-qa";
 
 const projectRef = STAGING_PROJECT, origin = `https://${projectRef}.supabase.co`;
 const uid = (number: number) => `00000000-0000-4000-8000-${number.toString().padStart(12, "0")}`;
@@ -157,6 +159,37 @@ describe("precision/concurrency deterministic local boundary sequence", () => {
 });
 
 describe("managed CLI composition boundary", () => {
+  it("permits the actual store's canonical version projection through the real Supabase query SDK during preflight", async () => {
+    const d = setup();
+    // No retries in this offline reproducer: inspect the first real SDK request directly.
+    const sdk = new PostgrestClient(`${origin}/rest/v1`, { fetch: d.boundary.fetch, retry: false });
+    const store = createSupabaseResourceHubStore(() => createManagedHubStoreClient(sdk));
+    await expect(store.findVersionByUploadKey(plan().fixtures.control.idempotencyKey)).resolves.toBeNull();
+    expect(d.upstream).toHaveBeenCalledOnce();
+    const url = new URL(String(d.upstream.mock.calls[0]?.[0]));
+    expect(url.searchParams.get("select")?.split(",")).toContain("sha256");
+    expect(url.searchParams.get("upload_idempotency_key")).toBe(`eq.${plan().fixtures.control.idempotencyKey}`);
+    await expect(store.listResources()).resolves.toEqual([]);
+    await expect(store.listPublished()).resolves.toEqual([]);
+    expect(d.upstream).toHaveBeenCalledTimes(3);
+    const resourceList = new URL(String(d.upstream.mock.calls[1]?.[0]));
+    const publishedList = new URL(String(d.upstream.mock.calls[2]?.[0]));
+    expect(resourceList.searchParams.get("id")).toBe("is.null");
+    expect(publishedList.searchParams.get("id")).toBe("is.null");
+    expect(publishedList.searchParams.get("state")).toBe("eq.published");
+    expect(d.events.every(event => !event.write)).toBe(true);
+  });
+  it.each(["hash:sha256", "sha256::text", "sha256->>value", "count()", "research_members(*)", "256sha"])("refuses projection syntax beyond ordinary column identifiers: %s", async projection => {
+    const d = setup();
+    const sdk = new PostgrestClient(`${origin}/rest/v1`, { fetch: d.boundary.fetch, retry: false });
+    const result = await sdk.from(HUB_TABLES[1]).select(projection).eq("upload_idempotency_key", plan().fixtures.control.idempotencyKey);
+    expect(result.error).not.toBeNull(); expect(d.upstream).not.toHaveBeenCalled();
+    expect(d.boundary.failure).toMatchObject({ code: "projection_scope", stage: "request_validation", runPhase: "preflight", worker: "adminA", requestNumber: 1 });
+    await expect(d.boundary.fetch(`${origin}/auth/v1/user`)).rejects.toThrow("run_stopped");
+    expect(d.boundary.failure?.code).toBe("projection_scope");
+    expect(d.events[0]).toMatchObject({ phase: "refusal", failureCode: "projection_scope", failureStage: "request_validation", write: false });
+    expect(JSON.stringify(d.boundary.failure)).not.toContain(projection);
+  });
   it("observes local benign child exit before reporting shutdown complete", async () => {
     const child = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore", windowsHide: true });
     expect(await stopManagedHubWorkers([child])).toBe(true);
