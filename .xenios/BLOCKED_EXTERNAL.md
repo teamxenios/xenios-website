@@ -1,12 +1,14 @@
 # Externally blocked work
 
-## Current checkpoint — 2026-09-08
+## Current checkpoint â€” 2026-09-08
 
 Current application `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`, is live as Render `dep-dag1reu7bikc73e16ie0` since 2026-09-08T14:38:44.68489Z. Exact e55 migration applied once as managed version `20260908143724`; full production pre/postchecks passed. Critical endpoints: 30 SAME with zero allowances. Five-minute observation: 300,232ms, 26 healthy responses, zero matching errors/5xx. Rollback unused. Hub=false, billing absent, auto-deploy off, branch unchanged. Activation and real-user journeys remain unverified.
 
 SQL access, V3 approval, source binding and installation authorization are closed. The two admin hardening corrections and timestamp-precision regression are fixed in exact8be5d582 with fresh local gates passed. Staging tetynodzrtmdbuzgboro was restored once and is ACTIVE_HEALTHY. Exact e55 installed once as20260908164502 with complete pre/postchecks; five synthetic identities, three members, two partners and five real password sessions are ready. Outbox remains2; no Hub resource/object exists yet. The first managed run stopped in preflight before writes because its projection validator rejected the canonical sha256 column. Actual SQL at17:07:44Z confirms zero Hub resources/versions/deliveries/objects and outbox2. Preserve this failure; qualify the bounded harness correction before a fresh run with existing fixtures. Remaining work is ASTRA-B final source/ownership acceptance, managed workflow and real-browser qualification, and production content/audience/effects decisions. See STAGING_MANAGED_TEST_PLAN_20260908.md and staging-synthetic-fixtures-20260908.json. Existing approved V3 coverage remains bounded; do not request general GO again. Any new real-user grant or communication requires specific approval.
 
 See `docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md`.
+
+Managed API correction `711bd4113b9a2458f7c9b46b50a088c8db728677` passed41 actual staging checks at17:18:03Z against unchanged application8be. Fresh SQL confirms4resources,2withdrawnversions,4privateobjects,6audits(1delivered/5denied),2empty orphans and outbox2 unchanged. The earlier preflight failure remains retained. Browser composition/logout/account switching, B acceptance and production content decisions remain open. See `docs/revenue-launch/20260907/managed-api-qualification-711bd411.json`.
 
 ## Earlier dated observations (preserved; superseded where stated above)
 

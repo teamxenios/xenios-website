@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "pushedSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+  "tree": "c5f59f8d15b022bd822fc0e6cb71233d1fad6c48",
+  "branch": "codex/managed-hub-concurrency-8be-20260908",
+  "parent": "9cb3a907d15a56e4a8a7221d136e3bf48402510e",
+  "worktree": "C:/Users/sboad/.codex/worktrees/managed-hub-concurrency-8be-20260908",
+  "cleanWorktree": true,
+  "remoteLsRemoteEqualsSha": true,
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "applicationRuntimeChanged": false,
+  "inventory": [
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "lfSha256": "2aa053d0244a23de2de0cc589aa83cf616a97ec5409785d2608fc9c1280a06e5"
+    },
+    {
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "lfSha256": "b674facf9a0d2b462bad07fdaf270939bbc9905c9691bc72c4f883fe2222426c"
+    },
+    {
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "lfSha256": "57da4761897c9af2117dd85384c4baccfc358d92acbc4210e04b89f1150cc21e"
+    }
+  ],
+  "focused": {
+    "failed": 0,
+    "durationMs": 916,
+    "skipped": 0,
+    "passed": 88,
+    "log": "query-projection-final-focused.log",
+    "status": "PASS"
+  },
+  "typecheck": {
+    "command": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe node_modules/typescript/bin/tsc --noEmit --project C:/Users/sboad/.codex/tmp/managed-resource-hub-harness-20260908/tsconfig-extension-explicit.json",
+    "startedUtc": "2026-09-08T17:13:13.5919134Z",
+    "finishedUtc": "2026-09-08T17:14:04.8639694Z",
+    "elapsedSeconds": 51.2765641,
+    "exitCode": 0,
+    "worktree": "C:/Users/sboad/.codex/worktrees/managed-hub-concurrency-8be-20260908"
+  },
+  "independentReview": "ACCEPT by release_manifest; exact three hashes; no remaining blocking finding",
+  "diffCheck": "PASS",
+  "builderManagedRequests": 0,
+  "builderCredentialReads": 0,
+  "builderManagedWrites": 0,
+  "managedRetryPerformed": false,
+  "diagnosis": "QUERY_PROJECTION_DIAGNOSIS.md",
+  "preservedFailures": [
+    "query-projection-red.log",
+    "query-projection-red-no-retry.log",
+    "A managed-api-9cb3a907-run1 original receipt and journal"
+  ],
+  "expectedWriteBudgetChanged": false,
+  "productionScopeChanged": false,
+  "formalAstraBAcceptance": false,
+  "reviewer": "release_manifest independent helper",
+  "reviewedCommittedGitBlobs": true,
+  "reviewStatus": "ACCEPT_BOUNDED_HARNESS_CORRECTION",
+  "managedQualification": "NOT_RUN_AT_REVIEW"
+}

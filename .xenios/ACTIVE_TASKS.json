@@ -1573,8 +1573,8 @@
           "build": "PASS_EXIT_ZERO",
           "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
           "independentBReview": "PENDING",
-          "managedExecution": "FIRST_MANAGED_RUN_STOPPED_PREFLIGHT_ZERO_WRITES_HARNESS_CORRECTION_IN_REVIEW",
-          "updatedAt": "2026-09-08T16:59:18.079Z",
+          "managedExecution": "BOUNDED_MANAGED_API_PASS_41_BROWSER_AND_B_ACCEPTANCE_PENDING",
+          "updatedAt": "2026-09-08T17:19:13.160866Z",
           "managedStaging": {
             "projectId": "tetynodzrtmdbuzgboro",
             "status": "ACTIVE_HEALTHY",
@@ -1589,11 +1589,16 @@
             "fixtureCoreInserts": 8,
             "passwordSignIns": 5,
             "notificationOutboxCount": 2,
-            "resourceRows": 0,
-            "storageObjects": 0,
-            "productionChanged": false
+            "resourceRows": 4,
+            "storageObjects": 4,
+            "productionChanged": false,
+            "resourceVersions": 2,
+            "deliveryAudits": 6,
+            "withdrawnVersions": 2
           },
-          "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json"
+          "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json",
+          "managedApiReceipt": "docs/revenue-launch/20260907/managed-api-qualification-711bd411.json",
+          "managedHarnessSha": "711bd4113b9a2458f7c9b46b50a088c8db728677"
         }
       },
       "delegatedBuilder": {
@@ -1624,10 +1629,10 @@
           "server/research/e2e/managed-resource-hub-qa.test.ts"
         ],
         "owner": "A retains exact path lease; helper works in its isolated worktree",
-        "parentMayNotEditDelegatedPathsUntilReturned": true,
-        "managedExecution": "Staging schema and5syntheticAuth sessions ready; extendedAPIharness finalreview/typecheck pending",
-        "returnedSourceSha": "01a479d612fcef4337a4d9e3878c127c256cbcbe",
-        "status": "OFFLINE_CORRECTION_REVIEW_AFTER_SAFE_PREFLIGHT_STOP",
+        "parentMayNotEditDelegatedPathsUntilReturned": false,
+        "managedExecution": "PASS_41_CHECKS_REAL_STAGING_API",
+        "returnedSourceSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+        "status": "RETURNED_QUALIFIED_BOUNDED_MANAGED_API_PASS",
         "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022",
         "assignmentUpdatedAt": "2026-09-08T16:42:10.689Z"
       },

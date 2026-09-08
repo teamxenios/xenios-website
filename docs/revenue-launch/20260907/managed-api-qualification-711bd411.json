@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 2,
+  "runId": "hubqa-20260908-bdda04a633-api2",
+  "sourceSha": "711bd4113b9a2458f7c9b46b50a088c8db728677",
+  "sourceTree": "c5f59f8d15b022bd822fc0e6cb71233d1fad6c48",
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "planSha256": "5a234b7c0dd38fad8b5890f6cf2d9ec69c2fc17ef7c26fbb8fbb1b025b29a7b4",
+  "projectRef": "tetynodzrtmdbuzgboro",
+  "finishedAt": "2026-09-08T17:18:03.222Z",
+  "status": "PASS_BOUNDED_MANAGED_API",
+  "failureCode": null,
+  "outcomes": [
+    {
+      "check": "managed Auth, exact five roles, retained baseline counts, unused run keys, private bucket",
+      "status": "PASS"
+    },
+    {
+      "check": "signed-out admin refusal",
+      "status": "PASS"
+    },
+    {
+      "check": "ordinary member admin refusal",
+      "status": "PASS"
+    },
+    {
+      "check": "non-partner library refusal",
+      "status": "PASS"
+    },
+    {
+      "check": "adminB cannot use adminA composition",
+      "status": "PASS"
+    },
+    {
+      "check": "adminA cannot use adminB composition",
+      "status": "PASS"
+    },
+    {
+      "check": "adminA initial scoped library",
+      "status": "PASS"
+    },
+    {
+      "check": "adminB initial scoped library",
+      "status": "PASS"
+    },
+    {
+      "check": "control winning upload",
+      "status": "PASS"
+    },
+    {
+      "check": "control losing upload recovery",
+      "status": "PASS"
+    },
+    {
+      "check": "journey losing upload recovery",
+      "status": "PASS"
+    },
+    {
+      "check": "journey winning upload",
+      "status": "PASS"
+    },
+    {
+      "check": "control identical retry",
+      "status": "PASS"
+    },
+    {
+      "check": "journey identical retry",
+      "status": "PASS"
+    },
+    {
+      "check": "same bytes different filename retry refusal",
+      "status": "PASS"
+    },
+    {
+      "check": "different bytes retry refused before storage",
+      "status": "PASS"
+    },
+    {
+      "check": "actual managed adapter preserves six timestamp digits; matching CAS, stale CAS and provider errors distinguished",
+      "status": "PASS"
+    },
+    {
+      "check": "journey adminA request_review",
+      "status": "PASS"
+    },
+    {
+      "check": "journey adminB approve_content",
+      "status": "PASS"
+    },
+    {
+      "check": "journey adminA approve_content",
+      "status": "PASS"
+    },
+    {
+      "check": "control adminA publish",
+      "status": "PASS"
+    },
+    {
+      "check": "journey adminA publish",
+      "status": "PASS"
+    },
+    {
+      "check": "authorized admin private preview",
+      "status": "PASS"
+    },
+    {
+      "check": "authorized admin private preview",
+      "status": "PASS"
+    },
+    {
+      "check": "eligible sees only journey",
+      "status": "PASS"
+    },
+    {
+      "check": "suspended library empty",
+      "status": "PASS"
+    },
+    {
+      "check": "eligible outside-audience denied",
+      "status": "PASS"
+    },
+    {
+      "check": "suspended direct download denied",
+      "status": "PASS"
+    },
+    {
+      "check": "eligible private bytes delivered",
+      "status": "PASS"
+    },
+    {
+      "check": "retained empty orphan resource",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan admin preview refused",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan admin review refused",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan delivery denied and audited",
+      "status": "PASS"
+    },
+    {
+      "check": "retained empty orphan resource",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan admin preview refused",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan admin review refused",
+      "status": "PASS"
+    },
+    {
+      "check": "orphan delivery denied and audited",
+      "status": "PASS"
+    },
+    {
+      "check": "control adminA withdraw",
+      "status": "PASS"
+    },
+    {
+      "check": "journey adminA withdraw",
+      "status": "PASS"
+    },
+    {
+      "check": "withdrawn journey denied and audited",
+      "status": "PASS"
+    },
+    {
+      "check": "two withdrawn winners, two empty resource/object orphans, exact retained bytes and six delivery audits",
+      "status": "PASS"
+    }
+  ],
+  "requestCounts": {
+    "all": 212,
+    "service_key_check": 4,
+    "private_bucket_read": 1,
+    "auth_user_read": 42,
+    "baseline_count": 6,
+    "objects": 4,
+    "resources": 4,
+    "versions": 4,
+    "reviews": 7,
+    "publications": 2,
+    "object_read": 7,
+    "deliveries": 6,
+    "withdrawals": 2
+  },
+  "acknowledgedWrites": {
+    "objects": 4,
+    "resources": 4,
+    "versions": 2,
+    "reviews": 4,
+    "publications": 2,
+    "deliveries": 6,
+    "withdrawals": 2
+  },
+  "expectedRefusals": 5,
+  "stoppedPhase": "postchecks",
+  "preservedPartialWrites": true,
+  "cleanupPerformed": false,
+  "productionContacted": false,
+  "runScopedProjection": true,
+  "notProven": [
+    "full browser composition",
+    "real sign-in/logout/account switching",
+    "different-hash stored PDF upload race recovery",
+    "bucket-wide retained orphan inventory",
+    "unfiltered retained-library behavior",
+    "provisioning and browser write budgets",
+    "production activation"
+  ],
+  "recovery": "preserve-all-stop-and-review-actual-state-before-retry",
+  "workersStopped": true,
+  "boundaryFailure": null,
+  "ownedScopeCount": 4,
+  "privateResultSha256": "30be375950e78b69c44ef639d6fd4dcf788a5baa15ddd2252b761d66eb7d82b0",
+  "privateJournalSha256": "a7e164918c069359a47146d3dd3704c1dacc03567a3303a638b270d7ebf3aec8",
+  "identityValuesPublished": false,
+  "earlierRunReceipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json",
+  "formalAstraBAcceptance": false,
+  "actualSqlReconciliation": {
+    "precheckAt": "2026-09-08T17:17:26.157439Z",
+    "precheck": {
+      "resources": 0,
+      "versions": 0,
+      "deliveries": 0,
+      "hubStorageObjects": 0,
+      "outbox": 2
+    },
+    "postcheckAt": "2026-09-08T17:18:15.528720Z",
+    "postcheck": {
+      "resources": 4,
+      "versions": 2,
+      "deliveries": 6,
+      "hubStorageObjects": 4,
+      "outbox": 2,
+      "authUsers": 6,
+      "members": 3,
+      "partners": 2
+    },
+    "detailCheckAt": "2026-09-08T17:18:24.131053Z",
+    "versionStates": {
+      "withdrawn": 2
+    },
+    "deliveryOutcomes": {
+      "denied": 5,
+      "delivered": 1
+    },
+    "publishedPointers": 0,
+    "emptyResources": 2,
+    "matchingPdfVersions": 2,
+    "privateHubBucket": true
+  }
+}
