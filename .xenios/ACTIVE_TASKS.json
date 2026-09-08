@@ -1524,10 +1524,10 @@
       "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
-        "sha": "14c2c2ca27156652106b96ee72744e34737fa452",
-        "file": ".xenios/handoffs/2026-09-08T16-04-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-HARDENING-QUALIFIED-LOCAL.md",
-        "at": "2026-09-08T16:02:50.489072Z",
-        "status": "local_gates_complete_managed_environment_and_independent_review_pending_no_executor_transfer"
+        "sha": "990c77ee9dd70b1cc0d207f936a9a09624658b7b",
+        "file": ".xenios/handoffs/2026-09-08T17-22-00Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-MANAGED-API-PASS.md",
+        "at": "2026-09-08T17:22:31.366263Z",
+        "status": "continuing_same_executor_managed_api_pass_browser_and_independent_acceptance_pending"
       },
       "previousBlockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent.",
       "pairing": {

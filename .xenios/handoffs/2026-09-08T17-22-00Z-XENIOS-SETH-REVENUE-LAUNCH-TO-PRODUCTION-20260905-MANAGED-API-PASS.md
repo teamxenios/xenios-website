@@ -1,0 +1,24 @@
+# Managed API qualification passed; browser qualification continues
+
+ASTRA-A remains the same active integrator and sole production executor. No executor handoff or lease release. Worktree: `C:/Users/sboad/.codex/worktrees/f36a/xenios-website`; branch: `codex/xenios-seth-revenue-launch-20260905`.
+
+Pushed evidence: `990c77ee9dd70b1cc0d207f936a9a09624658b7b`, tree `1e587b1142c7cb11c7c9e051ec04f9b2f4e0d04c`. Read `docs/revenue-launch/20260907/managed-api-qualification-711bd411.json` and the preserved first-run stop receipt. This checkpoint supersedes the September 8 16:04 handoff's inactive-staging and unexecuted-managed-API status.
+
+Application remains `8be5d582586217e4cf531e718c65032b79152022`, tree `6fc71d0a896d31d0843dd1eb63fa6265a3da9d28`. Its recorded local qualification remains unchanged: 16,086 passing tests, zero failures, 59 skips; 919 files with passing tests plus five fully skipped files; explicit 120-second test timeout. Typecheck, build and strict scan passed. No newer application source is implied by a harness or evidence commit.
+
+Managed API harness: pushed `711bd4113b9a2458f7c9b46b50a088c8db728677`, tree `c5f59f8d15b022bd822fc0e6cb71233d1fad6c48`, isolated worktree `C:/Users/sboad/.codex/worktrees/managed-hub-concurrency-8be-20260908`. Only its three harness paths differ from application8be. The first real run on9cb stopped in preflight before writes because a harness projection validator rejected the canonical sha256 column. Fresh SQL confirmed zero effects. The corrected source reproduced the defect using the actual SDK and unchanged store, then passed88 focused tests, explicit TypeScript and independent helper review. Original failure evidence remains intact.
+
+Actual managed run2 passed41 checks at `2026-09-08T17:18:03.222Z`, with212 requests, five expected refusals and observed worker exits. Fresh staging SQL at17:18:15/24Z confirms four resources, two withdrawn versions, four private objects, two empty resource/object orphans, zero published pointers, six delivery audits (one delivered/five denied), and unchanged outbox2. All stored objects use the one approved benign PDF hash. Precision, controlled competing uploads/reviews, role denials, private-byte delivery, orphan safety and withdrawal passed. Different-hash stored upload races, unfiltered retained libraries and browser composition are expressly not proved.
+
+Staging `tetynodzrtmdbuzgboro` is restored and active. Exact e55 migration was installed once as20260908164502. Five synthetic Auth identities, three members, two partners and their initial password sessions already exist. Preserve all of them; do not restore, migrate or provision again. Private inputs, passwords, sessions, PDF and raw run receipts are outside Git under `C:/Users/sboad/.codex/private/xenios-managed-staging-20260908/`. Never print private credentials or identity values. Do not rerun the completed API plan; inspect actual state before any uncertain operation.
+
+Current production remains `3814c687ef9293f84f939c372fdbc01b278a9193`, deploy `dep-dag1reu7bikc73e16ie0`. A's own SQL returned PostgreSQL17.6 at17:13:22Z. The original account/partner ff3 release completed September7 asdep-dafcm567bikc7382rhng with both approved migrations/postchecks; the later disabled-Hub installation superseded it. Auto-deploy remains off under the recorded installation configuration, Hub remains disabled, and no production operation was replayed. Read the original two production reports for exact smoke/observation receipts. Rollback was unused.
+
+Remaining work:
+
+1. The browser host is exclusively delegated to `runtime_successor_review` in two new files under scripts/revenue-launch: managed-resource-hub-browser-host.ts and its test. The browser driver is exclusively delegated to `release_manifest` in run-managed-resource-hub-browser-qa.ts. Both use isolated8be worktrees. Do not duplicate or overwrite their active implementation. The returned API helper is available for independent review. Coordinate heavy tests.
+2. Qualify the final real Auth browser host and driver, finalize a bounded private plan, and execute the actual role/width matrix plus logout/account switching. Use the existing five identities and one PDF; no jobs or external notifications. The browser effects proposal remains separately bound and must be recorded before execution.
+3. Obtain B's actual source/ownership and managed/browser verdict. B was sent the real managed result once. An old task snapshot or helper review is not B acceptance.
+4. Before production activation, consolidate the actual reviewed content, intended audience and permitted verification effects. No real-user account grant, notification, payment, shipment or clinical action is implied. No full revenue-launch claim.
+
+Continue existing work from these receipts and active owners; do not restart solved work or request the same general GO.
