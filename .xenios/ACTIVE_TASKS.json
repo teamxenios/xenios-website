@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08T16:02:50.489072Z",
+  "updatedAt": "2026-09-08T17:14:54.099560Z",
   "tasks": [
     {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
@@ -315,7 +315,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u2014 server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-08-21T15:46:37.875Z",
       "releasedAt": "2026-08-21T15:51:29.849Z"
     },
@@ -360,7 +360,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u2014 so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -1573,7 +1573,7 @@
           "build": "PASS_EXIT_ZERO",
           "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
           "independentBReview": "PENDING",
-          "managedExecution": "STAGING_SCHEMA_FIXTURES_AND_AUTH_READY_MANAGED_WORKFLOW_AND_BROWSER_PENDING",
+          "managedExecution": "FIRST_MANAGED_RUN_STOPPED_PREFLIGHT_ZERO_WRITES_HARNESS_CORRECTION_IN_REVIEW",
           "updatedAt": "2026-09-08T16:59:18.079Z",
           "managedStaging": {
             "projectId": "tetynodzrtmdbuzgboro",
@@ -1592,7 +1592,8 @@
             "resourceRows": 0,
             "storageObjects": 0,
             "productionChanged": false
-          }
+          },
+          "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json"
         }
       },
       "delegatedBuilder": {
@@ -1626,7 +1627,7 @@
         "parentMayNotEditDelegatedPathsUntilReturned": true,
         "managedExecution": "Staging schema and5syntheticAuth sessions ready; extendedAPIharness finalreview/typecheck pending",
         "returnedSourceSha": "01a479d612fcef4337a4d9e3878c127c256cbcbe",
-        "status": "ACTIVE_BOUNDED_FIVE_ROLE_PRECISION_CONCURRENCY_EXTENSION",
+        "status": "OFFLINE_CORRECTION_REVIEW_AFTER_SAFE_PREFLIGHT_STOP",
         "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022",
         "assignmentUpdatedAt": "2026-09-08T16:42:10.689Z"
       },
@@ -1640,6 +1641,16 @@
         ],
         "parentMayNotEditDelegatedPathsUntilReturned": true,
         "scope": "Nojobs canonicalResourceHub/browserAuth host only; sourceimplementation no services orcredentials; A executesunderreviewedprivateplan"
+      },
+      "delegatedManagedBrowserDriver": {
+        "agent": "release_manifest",
+        "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "status": "ACTIVE_BOUNDED_BROWSER_DRIVER",
+        "paths": [
+          "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
+        ],
+        "parentMayNotEditDelegatedPathsUntilReturned": true,
+        "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation."
       }
     },
     {

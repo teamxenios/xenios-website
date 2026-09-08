@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-08T17:06:49.351Z",
+  "sourceSha": "9cb3a907d15a56e4a8a7221d136e3bf48402510e",
+  "sourceTree": "89e773fc24be4346d53822f5ba781fea5c1c3775",
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "reviewer": "release_manifest helper",
+  "status": "ACCEPT_BOUNDED_SOURCE_REVIEW",
+  "formalAstraBAcceptance": false,
+  "paths": [
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-qa.ts",
+      "lfSha256": "35e01ea6162ace2e32bbdf7b92a3e2a3e1bcc144df5b3662e19d974cea20d81e"
+    },
+    {
+      "path": "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+      "lfSha256": "833808e8fc9855f17f6c85f1ddda9bf6126d13b0bb10920c0a09712ad7910d17"
+    },
+    {
+      "path": "server/research/e2e/managed-resource-hub-qa.test.ts",
+      "lfSha256": "ac56e01d3a626c6a6dda6fb4a03e9929d61dd8d176613eeded6a6ce0ca0b70be"
+    }
+  ],
+  "verifiedCorrections": [
+    "Impossible null predicate for empty run-owned reads",
+    "Exact principal/version/outcome and unique audit insertion",
+    "Only null or empty array is a zero-row CAS; nonempty result must be the owned id",
+    "Shared IPC request and write limits with durable pre-transport journal",
+    "Broker abort/idle and observed worker exits before final receipt"
+  ],
+  "expectedRefusals": [
+    "Two actual 23505 version unique conflicts",
+    "Two actual zero-row review CAS conflicts",
+    "One actual 22007 invalid timestamp refusal"
+  ],
+  "limits": [
+    "Controlled ordering after both actual snapshots; adminA designated winner",
+    "All four stored PDFs have the same approved hash",
+    "Different-byte retry is refused before storage; different-byte managed race not proved",
+    "Run-owned projections do not qualify unfiltered retained libraries",
+    "No browser or production qualification from this review"
+  ],
+  "localGates": {
+    "focusedPassed": 81,
+    "focusedDurationMs": 936,
+    "typecheck": "PASS_APPLICATION_PLUS_THREE_EXPLICIT_FILES",
+    "diffCheck": "PASS",
+    "broadSuiteRerun": false,
+    "earlierFailuresPreserved": true
+  }
+}

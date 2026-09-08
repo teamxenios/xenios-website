@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "runId": "hubqa-20260908-bdda04a633",
+  "sourceSha": "9cb3a907d15a56e4a8a7221d136e3bf48402510e",
+  "sourceTree": "89e773fc24be4346d53822f5ba781fea5c1c3775",
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "planSha256": "46508bf64810ff10bd4eb342cc4fcf5f657b88d29bfad2d01e9c81a6541293c0",
+  "projectRef": "tetynodzrtmdbuzgboro",
+  "finishedAt": "2026-09-08T17:07:11.423Z",
+  "status": "STOP_REVIEW_ACTUAL_STATE",
+  "failureCode": "unclassified_failure_private_review_required",
+  "outcomes": [],
+  "requestCounts": {
+    "all": 20,
+    "service_key_check": 2,
+    "private_bucket_read": 1,
+    "auth_user_read": 5,
+    "baseline_count": 3
+  },
+  "acknowledgedWrites": {},
+  "expectedRefusals": 0,
+  "stoppedPhase": "preflight",
+  "ownedScope": [],
+  "preservedPartialWrites": true,
+  "cleanupPerformed": false,
+  "productionContacted": false,
+  "runScopedProjection": true,
+  "notProven": [
+    "full browser composition",
+    "real sign-in/logout/account switching",
+    "different-hash stored PDF upload race recovery",
+    "bucket-wide retained orphan inventory",
+    "unfiltered retained-library behavior",
+    "provisioning and browser write budgets",
+    "production activation"
+  ],
+  "recovery": "preserve-all-stop-and-review-actual-state-before-retry",
+  "workersStopped": true,
+  "privateResultSha256": "1aa97abf09355089336eef73514c7309dd650dfd1fdd5dad1afbfa460223bdef",
+  "actualSqlReconciliation": {
+    "observedAt": "2026-09-08T17:07:44.972745Z",
+    "projectId": "tetynodzrtmdbuzgboro",
+    "resources": 0,
+    "versions": 0,
+    "deliveries": 0,
+    "hubStorageObjects": 0,
+    "outbox": 2
+  },
+  "diagnosis": {
+    "component": "qualification harness projection boundary",
+    "code": "projection_scope",
+    "cause": "The canonical VERSION_COLUMNS includes sha256; the harness projection regular expression incorrectly refused digits. The SDK wrapped that refusal before the original receipt was finalized.",
+    "regression": "Actual SDK and unchanged production store reproduce the refusal offline.",
+    "applicationChanged": false,
+    "nextAction": "Qualify corrected harness and use a fresh run ID after checking actual state. Preserve existing fixtures and failed receipt."
+  }
+}

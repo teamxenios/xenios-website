@@ -766,8 +766,8 @@
       "build": "PASS_EXIT_ZERO",
       "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
       "independentBReview": "PENDING",
-      "managedExecution": "STAGING_SCHEMA_FIXTURES_AND_AUTH_READY_MANAGED_WORKFLOW_AND_BROWSER_PENDING",
-      "updatedAt": "2026-09-08T16:59:18.079Z",
+      "managedExecution": "FIRST_MANAGED_RUN_STOPPED_PREFLIGHT_ZERO_WRITES_HARNESS_CORRECTION_IN_REVIEW",
+      "updatedAt": "2026-09-08T17:14:54.099560Z",
       "managedStaging": {
         "projectId": "tetynodzrtmdbuzgboro",
         "status": "ACTIVE_HEALTHY",
@@ -785,7 +785,8 @@
         "resourceRows": 0,
         "storageObjects": 0,
         "productionChanged": false
-      }
+      },
+      "managedRun1Receipt": "docs/revenue-launch/20260907/managed-api-run1-stop-20260908.json"
     }
   },
   "reconciliationHistory": [

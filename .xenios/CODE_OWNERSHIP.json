@@ -1503,7 +1503,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",
-      "heartbeatAt": "2026-09-08T16:59:18.079Z",
+      "heartbeatAt": "2026-09-08T17:14:54.168Z",
       "delegatedPaths": {
         "scripts/preview-resource-hub.ts": "ASTRA-B exclusive fixture flag parity correction; isolated xenios-resource-hub-browser-fixture-20260907; A integrates exact reviewed commit only",
         "scripts/revenue-launch/managed-resource-hub-qa.ts": "managed_hub_harness exclusive isolated extension based on8be; A retains lease and integrates narrow reviewed paths only",
@@ -1511,6 +1511,16 @@
         "server/research/e2e/managed-resource-hub-qa.test.ts": "managed_hub_harness exclusive isolated extension based on8be; A retains lease and integrates narrow reviewed paths only",
         "scripts/revenue-launch/managed-resource-hub-browser-host.ts": "runtime_successor_review exclusive isolatedbrowserhost; A retainslease andexecutesafterreview",
         "scripts/revenue-launch/managed-resource-hub-browser-host.test.ts": "runtime_successor_review exclusive isolatedbrowserhost; A retainslease andexecutesafterreview"
+      },
+      "delegatedManagedBrowserDriver": {
+        "agent": "release_manifest",
+        "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "status": "ACTIVE_BOUNDED_BROWSER_DRIVER",
+        "paths": [
+          "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
+        ],
+        "parentMayNotEditDelegatedPathsUntilReturned": true,
+        "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation."
       }
     },
     {
