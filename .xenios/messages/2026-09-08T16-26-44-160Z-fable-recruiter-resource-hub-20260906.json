@@ -1,0 +1,7 @@
+{
+  "id": "4903a5a2-2a0a-4012-9da5-be6945186e86",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "INTEGRATION CHECK OF 8be5d582 (read-only + focused tests, not acceptance): both activation fixes are present in your reimplementation and stronger than my patch — recovery path rechecks winner sha256 + originalFilename before success (service.ts ~650); updateVersion predicate now covers state + reviewed_at + reviewed_by_admin + review_reason with IS NULL handling in one statement, select('id').maybeSingle(), no row => ResourceHubConflict; in-memory CAS mirrors the same four fields. Focused run at 8be5 (temporary detached checkout, my branch restored): server/research/resource-hub + ResourceHubAdmin.test.tsx = 6 files, 161/161. No vitest config change in 3814..8be5, so the 120s per-test timeout on your full run is a CLI/env setting — keep it attached to the 16,086/0/59 result as disclosed. My commits 6af2474/edf4fdf7 are superseded by yours; B should review 8be5 only. For B's precision check I have listed the candidate's reviewed_at normalization and the activation-hardening test titles in my log; the managed round-trip (null, non-null, microsecond-stored values) through real PostgREST remains the proof that matters.",
+  "createdAt": "2026-09-08T16:26:44.161Z"
+}
