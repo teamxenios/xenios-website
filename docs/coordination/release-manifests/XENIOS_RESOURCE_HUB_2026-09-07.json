@@ -271,12 +271,12 @@
       "checksum": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
       "dependsOn": [],
       "rollback": {
-        "strategy": "Retain additive schema, private objects and all history; disable the Hub under separately granted recovery authority. No destructive database rollback.",
+        "strategy": "Retain additive schema, private objects and all history; use the reviewed compatible application recovery under standing conditional authority. No destructive database rollback.",
         "steps": [
-          "DRAFT NOT AUTHORIZED: follow supabase/candidates/20260906120000_research_resource_library.rollback.md only under a new applicable release/recovery approval. No operation is authorized by this manifest.",
+          "Follow the exact reviewed rollback document and RESOURCE_HUB_INSTALLATION_PACKET_3814.md under the verified standing conditional directive. This manifest is evidence, not a substitute for fresh remote checks.",
           "For any failed or uncertain apply, stop and read actual managed history/object/ACL/bucket state before retrying. Do not drop, recreate, rename or repair migration history.",
           "After a committed apply, preserve all three Hub tables, immutable versions, private Storage objects and delivery audits; retain all customer, approval, partner, agreement, billing and outbox records.",
-          "If separately authorized recovery requires disabling the feature, set RESEARCH_RESOURCE_HUB_ENABLED=false and verify effective restarted process state; keep RESEARCH_MEMBERSHIP_BILLING_ENABLED absent/false.",
+          "For compatible recovery set RESEARCH_RESOURCE_HUB_ENABLED=false and verify effective restarted production process state; keep RESEARCH_MEMBERSHIP_BILLING_ENABLED absent/false.",
           "Before reverting application code, explicitly set RESEARCH_FOUNDING_ACTIVATION_ENABLED=false; use only the recorded compatible ff3c496245739233b71e46f9e5d6e26af9d57017 predecessor after rechecking actual database compatibility.",
           "Additional database recovery, Storage deletion, pointer repair or restoration requires separate approval. Never apply a second copy of this migration or alter the already applied account/partner migrations."
         ],
@@ -284,7 +284,7 @@
           "Exact recovery procedure LF SHA-256 1c8261fbb1723c7ef0d47fdd6a8f65d150ff7931ee8d3b2f896b134a8dea4153 at frozen c350ab1; preserve the source file.",
           "Verify actual serving SHA and effective disabled flags after restart/deploy, plus authorized public/read-only smoke and critical endpoints.",
           "Confirm no customer or Hub history was deleted/truncated and the bucket remains private with intended ACLs.",
-          "The final observation duration and permitted recovery smoke effects must be named in the later execution packet; this draft leaves them conditional."
+          "Observe for five full minutes after serving identity and initial smoke pass, health at least every 30 seconds, error logs for the full interval, and 30 SAME endpoint comparisons with no allowances."
         ]
       }
     }
@@ -339,7 +339,7 @@
     "server/research/index.ts adds the canonical-admin Hub registrar and admits only exact authenticated resource library GET/HEAD and canonical-UUID download paths through the research wall. Downstream account/partner/audience guards remain; no broad write or prefix admission.",
     "The seven manifest routes are actual explicit registrations: five new admin registrations, one existing partner library behavior change and one new partner delivery registration. Express implicit HEAD handling is not a separate registration. Partner delivery GET and implicit HEAD can record audit outcomes and are not read-only smoke.",
     "Production composition uses existing Supabase server adapters only when NODE_ENV=production, RESEARCH_RESOURCE_HUB_ENABLED=true and Supabase is configured. Keep the Hub absent/false under current authority; nonproduction memory storage does not qualify enabled managed adapters.",
-    "Single pending migration represented by byte-identical candidate supabase/candidates/20260906120000_research_resource_library.sql and managed supabase/migrations/20260906120000_research_resource_library.sql. Apply once only after new exact authority; never apply both file copies.",
+    "Single pending migration represented by byte-identical candidate supabase/candidates/20260906120000_research_resource_library.sql and managed supabase/migrations/20260906120000_research_resource_library.sql. Apply once only after all qualified installation checks under standing conditional authority; never apply both file copies.",
     "Required fresh first-install precheck supabase/candidates/20260906120000_research_resource_library.precheck.sql LF SHA-256 742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab; required exact postcheck supabase/candidates/20260906120000_research_resource_library.postcheck.sql LF SHA-256 7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550. Stop on any identity, hash, role, existing-object, Storage-policy, schema, ACL, trigger, RPC, row-count or bucket mismatch.",
     "The migration has no Hub SQL-node dependencies in the audited DAG; Supabase Storage/roles and UUID capability are mandatory runtime prerequisites. Preserve applied account/partner managed history versions 20260907143147 and 20260907143204 and their original candidate bytes. Do not repair history or apply unrelated pending DAG nodes.",
     "Current private bucket name is research-resource-library. Upload database and Storage writes are not one cross-service transaction; preserve orphaned objects/history for separately authorized recovery.",
@@ -349,7 +349,8 @@
     "Approved bounded V3 strict scan PASS on exact ff3..3814: 47,459 added lines/224paths,102 raw/102 reviewed/0 unresolved secrets/0 PII, no skips,exit0. Input SHA27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb unchanged; historical/handwriting/ignored-mononym limits retained. Original c350 failed result preserved.",
     "Matched-disabled baseline/candidate endpoint controls both returned 30 SAME, zero regression and zero waiver. Original refusal result 27 SAME/3 REGRESSION is retained and reproduced on baseline; this supports bounded environment-mismatch disposition, not production or enabled-adapter parity.",
     "B source/ownership review and local Hub browser proof do not waive broader role/mobile findings: Training overflow at 320/360, Support overflow, SVG-only export and absent dashboard card remain recorded. Real Auth/account switching and enabled PostgREST/Storage delivery are not proven by memory/WASM tests.",
-    "Render target srv-d8s9vej7uimc7384dfcg; Supabase yvzeduaxbwgcwllhywff; A sole production executor/B independent verifier. Verified standing conditional authority applies to qualified in-scope releases. Keep auto-deploy off and release branch unchanged. Exact installation/config/recovery/smoke/five-minute observation packet: docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md."
+    "Render target srv-d8s9vej7uimc7384dfcg; Supabase yvzeduaxbwgcwllhywff; A sole production executor/B independent verifier. Verified standing conditional authority applies to qualified in-scope releases. Keep auto-deploy off and release branch unchanged. Exact installation/config/recovery/smoke/five-minute observation packet: docs/revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PACKET_3814.md.",
+    "Fresh Render configuration read: npm run start; exact candidate package start sets NODE_ENV=production. Workspace has zero environment groups. Set direct Hub=false and require new-process deploy plus effective disabled-route proof. Existing startup/outbox/schedulers are unchanged from ff3; no smoke-triggered jobs or zero-runtime-effect claim."
   ],
   "tests": {
     "focused": {

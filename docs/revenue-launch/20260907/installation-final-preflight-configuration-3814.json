@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "candidateSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "packetRawSha256": "3e4ff811564363857b4c1a1099ba068788e011d6a45476b56853cc96c6d8762a",
+  "priorPacketBReview": "installation-packet-independent-review-3814.json",
+  "independentStaticReview": {
+    "reviewer": "release_manifest independent agent",
+    "result": "Installation coherent; verify production start and use zero endpoint allowances",
+    "scope": "Exact 3814 source, all four SQL/check/recovery hashes, Hub false isolation, unchanged startup/outbox, compatible ff3 rollback, observation requirements",
+    "resultingTightenings": ["Require actual production start and effective new-process disabled state", "Require 30 SAME with an explicit empty expectations list", "Align active manifest authority/observation wording with current packet"],
+    "noSourceSqlOrApplicationTargetChanged": true
+  },
+  "actualRenderConfiguration": {
+    "observedAt": "2026-09-08T14:33:36.334Z",
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "ownerId": "tea-d8nhh6a8qa3s73f4ocj0",
+    "autoDeploy": "no",
+    "branch": "release/early-access-code-session-checkout",
+    "startCommand": "npm run start",
+    "exactCandidatePackageStart": "NODE_ENV=production node dist/index.cjs",
+    "resourceHubDirectFlag": "absent before authorized explicit false setting",
+    "membershipBillingDirectFlag": "absent",
+    "foundingActivationDirectFlag": "true; unchanged for installation",
+    "workspaceEnvironmentGroupCount": 0,
+    "environmentGroupObservedAt": "2026-09-08T14:32:07.230Z"
+  },
+  "manifestAfterTextTightenings": {"exitCode": 0, "output": "Release manifest accepted: docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json"},
+  "comparisonExpectations": "critical-endpoint-no-allowances-3814.json",
+  "publicBaseline": "critical-endpoints-installation-baseline-3814.json",
+  "productionMutationAtThisRecord": false,
+  "limitations": ["Stored variables alone do not prove an already running process", "Existing unchanged startup jobs may perform ordinary due work; no jobs are triggered for smoke", "This does not qualify enabled managed Auth/Storage/delivery"]
+}
