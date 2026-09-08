@@ -4,8 +4,6 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
-- Resource Hub release qualification needs the local path of the approved
-  repository. Engineering continues on the remaining qualification checks.
 - Any real-user verification needs separate approval naming the account and
   notification effects. No such action was performed for release smoke.
 - A will present any new Resource Hub release for exact-SHA authorization only
@@ -13,7 +11,7 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   Access GO was already executed successfully; do not request it again or
   delegate it to another production writer.
 
-- Decide whether to approve the limited version-2 privacy input (67 bytes; SHA-256 `de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6`) or supply broader historical/team/advisor/contact sources. Six entries are retained; the current scanner matches only three. The prepared file is restricted outside Git and has not qualified a release. See the metadata-only preparation receipt.
+- Approve or hold the prepared private V3 input for the unchanged strict local PII scan: SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`, 131 bytes, 13 exact entries, 6 scanner-eligible. V2 is unchanged and the three registered originals match their hashes. Seven entries are retained but ignored by the existing full-name rule; deleted history, uncertain handwritten/image-only names and ambiguous S01 filename identity remain outside established coverage. Preparation and independent file/provenance/ACL checks passed; no hash approval or PII scan is claimed. See `docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json`. This decision would authorize the scan only, with no production change.
 
 ## Earlier requests (retain context; reverify before acting)
 

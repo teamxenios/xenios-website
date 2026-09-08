@@ -309,7 +309,7 @@
     "New dependency qrcode-generator 2.0.4 is runtime QR code generation; jsqr 1.4.0 is test tooling. No existing build/start script or dependency entry changed. QR SVG does not satisfy requested PNG export; the prominent partner dashboard share card remains absent.",
     "Runtime-read docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json retains inherited September 4/db5 last-verified admin evidence. It is part of source binding and is not current serving-SHA proof.",
     "Focused scanner receipt is actual 35/35 at 37cd7bf (same scanner implementation); c350 changes only acceptance/registry evidence. It is not a real PII scan. Full-suite/typecheck/build receipts are newly bound to c350 with predecessor failures retained.",
-    "Current privacy blocker is V3 source identification: exact already-held team/advisor/counterparty register/documents are missing. No V3 extraction, hash or counts exist. After authorized source identification/preparation, actual resulting hash/coverage approval and strict PII scan remain required. V2 remains partial and unapproved.",
+    "V3 is prepared at SHA-256 27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb: 13 entries, 6 scanner-eligible, 131 bytes. V2 is unchanged. Actual hash/coverage approval and strict PII scan remain pending; handwriting and ambiguous original metadata completeness are not proved.",
     "Matched-disabled baseline/candidate endpoint controls both returned 30 SAME, zero regression and zero waiver. Original refusal result 27 SAME/3 REGRESSION is retained and reproduced on baseline; this supports bounded environment-mismatch disposition, not production or enabled-adapter parity.",
     "B source/ownership review and local Hub browser proof do not waive broader role/mobile findings: Training overflow at 320/360, Support overflow, SVG-only export and absent dashboard card remain recorded. Real Auth/account switching and enabled PostgREST/Storage delivery are not proven by memory/WASM tests.",
     "Render target srv-d8s9vej7uimc7384dfcg; Supabase target yvzeduaxbwgcwllhywff. A is sole production executor; keep auto-deploy off and do not merge or rebind the release branch. New production scope, activation/rollback authority, observation duration and side-effect-aware smoke must be finalized separately."
@@ -369,7 +369,7 @@
       "Define the actual observation duration and permitted smoke identities/effects in the later execution packet; verify logs, serving identity, flags and expected runtime behavior for that full named window. No observation window has run for this undeployed candidate."
     ],
     "expected": [
-      "Overall NOT_RELEASE_READY until V3 source identification/preparation and approved actual hash/coverage enable the required strict PII scan, and remaining scope/adapter/browser gates are resolved.",
+      "Overall NOT_RELEASE_READY until the prepared V3 actual hash/coverage is approved and the required strict PII scan and remaining scope/adapter/browser gates are resolved.",
       "Current live account/partner ff3 deployment and its applied history remain intact. Hub migration remains unapplied and RESEARCH_RESOURCE_HUB_ENABLED remains absent/false under current authority.",
       "After any future authorized installation, exact postcheck proves FORCE RLS, intended ACL/RPC/trigger/index definitions, private bucket, zero seed rows/objects and unfiltered checker visibility.",
       "Keep historical failures and new bounded 30-SAME endpoint evidence separate; no changed expected response or waiver. Production parity and enabled managed adapter behavior still require applicable qualification.",
@@ -383,9 +383,9 @@
       "reference": "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md; schema-v2 qualification draft only. Five schema test fields PASS does not clear privacy, enabled adapter, full-role/mobile, scope/activation or execution-authorization gates. Application tree 314ef445a6e3be8420a77451ed182088419d59ec."
     },
     {
-      "kind": "PRIVACY_V3_SOURCE_IDENTIFICATION_BLOCKED",
-      "checkedAt": "2026-09-08T03:43:20.917Z",
-      "reference": "docs/revenue-launch/20260907/privacy-input-v3-source-gate.json; exact release-review source register/internal team/advisor/counterparty document identities unavailable. No extraction, output, V3 counts or V3 hash. Next: identify authorized exact sources, prepare V3, obtain actual resulting hash/coverage approval, then strict PII scan."
+      "kind": "PRIVACY_V3_PREPARED_HASH_APPROVAL_PENDING",
+      "checkedAt": "2026-09-08T04:50:19.921205+00:00",
+      "reference": "docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json; V3 is prepared at SHA-256 27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb: 13 entries, 6 scanner-eligible, 131 bytes. V2 is unchanged. Actual hash/coverage approval and strict PII scan remain pending; handwriting and ambiguous original metadata completeness are not proved."
     },
     {
       "kind": "PII_V2_PARTIAL_UNAPPROVED_RETAINED",

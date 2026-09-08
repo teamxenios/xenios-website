@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T04:54:19.807307+00:00",
+  "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "applicationTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "scope": "Metadata and preparation records only; no application/migration/scanner changes or repeated qualification suite. Strict PII remains unrun pending actual hash approval.",
+  "results": [
+    {
+      "name": "workingDiffWhitespace",
+      "command": "git -c core.safecrlf=false diff --check",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "manifestInitialInvocation",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-release-manifest.ts docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+      "exitCode": 1,
+      "status": "INVOCATION_ERROR_MISSING_REQUIRED_EXTERNAL_SHA_BINDINGS",
+      "reason": "Required XENIOS_EXPECTED_PRODUCTION_SHA and XENIOS_EXPECTED_HEAD_SHA were omitted; dependent identity/ownership checks refused unresolved bindings. No gate rule or attestation changed."
+    },
+    {
+      "name": "manifestWithExplicitBindings",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-release-manifest.ts docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+      "environment": {
+        "XENIOS_EXPECTED_PRODUCTION_SHA": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+        "XENIOS_EXPECTED_HEAD_SHA": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662"
+      },
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "Release manifest accepted: docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json"
+    }
+  ]
+}

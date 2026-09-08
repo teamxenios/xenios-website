@@ -1,146 +1,210 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "inputVersion": 3,
-  "status": "SOURCE_IDENTIFICATION_BLOCKED_NOT_EXTRACTED_NOT_APPROVED",
-  "recordedAt": "2026-09-08T03:43:20.917Z",
+  "status": "SOURCE_IDENTIFIED_ORIGINALS_VERIFIED_V3_PREPARED_PENDING_HASH_APPROVAL",
+  "updatedAt": "2026-09-08T04:52:01.765529+00:00",
   "operator": "ASTRA-A",
-  "directive": {
-    "path": "C:/Users/sboad/.codex/attachments/f6da6d07-a1fe-4b16-827e-a9638a4b869f/pasted-text.txt",
-    "sha256": "0085ebeebc70c399109840c62bd7420837e4d19a95a3ff36db7b17fc550b3f09"
-  },
-  "neededSource": "The release-review register or exact authorized file paths for internal team identity/roster/bio documents, advisor documents and counterparty documents. The inspected package source register does not identify these V3 inputs; do not guess among other similarly named Downloads files.",
-  "independentConfirmation": "Coordinator task01a04650-defe-7a50-8b5a-a5d0d7a967b7 independently reported the register absent.",
-  "boundedSearch": {
-    "roots": [
-      "docs/revenue-launch/20260907",
-      "docs/reviews",
-      ".xenios"
-    ],
-    "terms": [
-      "source register",
-      "source-register",
-      "release-review",
-      "Privacy Input V3",
-      "PrivacyV3",
-      "privacy.*v3"
-    ],
-    "matchingSourceRegister": false
-  },
-  "requiredAction": "Samuel/privacy source owner provides the exact register or approved source-document paths. A records their hashes before extraction; no new V3 corpus is claimed now.",
-  "retainedV2": {
-    "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v2-20260908/approved-name-input-v2.txt",
-    "entryCount": 6,
-    "scannerEligibleEntries": 3,
-    "bytes": 67,
-    "sha256": "de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6",
-    "hashReverified": true,
-    "status": "PARTIAL_UNAPPROVED_NOT_COMPREHENSIVE"
-  },
-  "v3Output": {
-    "entryCount": null,
-    "scannerEligibleEntries": null,
-    "bytes": null,
-    "sha256": null,
-    "reason": "No V3 extraction/output has occurred; zero would misstate an empty completed corpus."
-  },
-  "coverageMissing": [
-    "Already-held internal team documents not identified",
-    "Already-held advisor documents not identified",
-    "Already-held counterparty documents not identified",
-    "Deleted history/backups/prior recipient material remains outside V2 coverage"
-  ],
-  "productionReads": false,
-  "productionWrites": false,
-  "newExtractionPerformed": false,
-  "piiScanPerformed": false,
-  "rawNamesPrinted": false,
-  "limitations": [
-    "V3 preparation only; separate approval of resulting hash remains required.",
-    "V2 pending question is not approval; the latest recommendation is to supplement its partial coverage."
-  ],
-  "namedPackageFollowup": {
-    "checkedAt": "2026-09-08T04:00:47.564Z",
-    "documents": [
+  "sourceResolution": {
+    "sourceRegister": {
+      "bytes": 3478,
+      "sha256": "7c68180049e41deebe2aba2c21255d638f53fce6910f8cabac2166ce1a899a83"
+    },
+    "sourceAccess": "A authenticated Gmail connector; only three exact registered historical attachments; original bytes/hash/size verified before extraction",
+    "exactHistoricalOriginals": [
       {
-        "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/SOURCE_REGISTER.md",
-        "bytes": 1839,
-        "sha256": "919666431b0858184597c776ca4395dd934e0e2d298280c7edb6adbb199a37a0"
+        "sourceId": "S01",
+        "bytes": 24271,
+        "sha256": "d8fdbe8fac08571b7416a616c0fa6376fd19d8fc038c36f6594e9d7ae99427aa",
+        "pages": 1,
+        "hashAndSizeMatch": true
       },
       {
-        "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/PACKAGE_MANIFEST.json",
-        "bytes": 1584,
-        "sha256": "a4262f9259b78fba8baff71fce48f7c50419b1dba12bc51f4e5059d06ac50a57"
+        "sourceId": "S02",
+        "bytes": 37266,
+        "sha256": "14132bc4e8c834f5a26ca7a38daa932c8442b2947b8106c0b5f7c817e5c9789c",
+        "pages": 4,
+        "hashAndSizeMatch": true
       },
       {
-        "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/RESOURCE_INTAKE_CANDIDATES.json",
-        "bytes": 16943,
-        "sha256": "adaa4f992210557832c1f77d47b1a667b459b13eb881732b00176ef2a0115be5"
-      },
-      {
-        "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/PACKAGE_MANIFEST.json",
-        "bytes": 4807,
-        "sha256": "99d08b3077e1864c838d95f4f5f7b514c08f2801659b42b5e94bc1389d619e4f"
-      },
-      {
-        "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/PATCH_MANIFEST.json",
-        "bytes": 849,
-        "sha256": "b92e7619fb27ef7ade2d97709fa1d95e8bc3c896d5f80d8bcc45f3b42211cde0"
-      },
-      {
-        "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/report/SOURCE_AUDIT_AND_REMAINING_BUILD.md",
-        "bytes": 21046,
-        "sha256": "321c9e0a46abb62e9182f496b4ff0f91a9019fd3701da04cb756d14f062973bf"
+        "sourceId": "S03",
+        "bytes": 214862,
+        "sha256": "09318a530d989ce3b1da2b0c24827b604d4e7958f716d6c9f368149f4382d911",
+        "pages": 10,
+        "hashAndSizeMatch": true
       }
     ],
-    "result": "Named Resource Hub package contains SOURCE_REGISTER.md. Bounded inspection found no PDF/Office references or team/advisor/counterparty/roster/bio identifiers for the required V3 source set. It does not identify the needed name-source documents; no document was selected by filename resemblance. The named code-repair package supplies technical manifests, with no separately identified V3 source document.",
-    "rawSourceTextPrinted": false,
-    "namesExtracted": false,
-    "unrelatedLocationsSearched": false,
-    "sourceRegisterMetadata": {
-      "urlCount": 10,
-      "windowsAbsolutePathCount": 0,
-      "urlCategories": [
+    "originalPrivateProvenance": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/source-provenance.private.json",
+    "newWorkingFormsExcluded": true,
+    "proposalAcceptanceImplied": false
+  },
+  "v3Output": {
+    "entryCount": 13,
+    "scannerEligibleEntries": 6,
+    "scannerIgnoredEntries": 7,
+    "bytes": 131,
+    "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/prepared-name-input-v3.txt"
+  },
+  "currentRequiredAction": "Founder approval of this actual V3 hash and disclosed coverage before strict PII scan; preparation grants no production authority.",
+  "preparationReceipt": "docs/revenue-launch/20260907/privacy-input-v3-preparation-receipt.json",
+  "approvalReceived": false,
+  "piiScanPerformed": false,
+  "productionReads": false,
+  "productionWrites": false,
+  "rawNamesPrinted": false,
+  "limitations": [
+    "V2 covers only retained rows in its named tables and fields, plus these three exact historical PDFs; no deleted history, backups, complete team directory or original lost corpus equivalence.",
+    "All 15 text pages were reviewed. Original filename case variants were included only where they match an already-evidenced person token; ambiguous S01 filename/addressee metadata was not promoted to a person identity.",
+    "Two unique embedded images were processed locally with moderate OCR confidence; no additional exact name established. Image-only/handwritten-name completeness is not proved.",
+    "The unchanged scanner ignores mononyms and entries without whitespace or of length at most three. Those entries remain in the input and counts.",
+    "S02 is an unaccepted commercial discussion proposal. Source extraction does not imply acceptance or binding contract status.",
+    "New operational/working forms, organization-only labels, roles/titles without an identified person, contact details and unrelated registry facts were excluded.",
+    "Separate approval of this actual hash and disclosed coverage is required before the strict PII scan. No release readiness or production authority follows from preparation."
+  ],
+  "historicalSourceIdentificationGate": {
+    "schemaVersion": 1,
+    "inputVersion": 3,
+    "status": "SOURCE_IDENTIFICATION_BLOCKED_NOT_EXTRACTED_NOT_APPROVED",
+    "recordedAt": "2026-09-08T03:43:20.917Z",
+    "operator": "ASTRA-A",
+    "directive": {
+      "path": "C:/Users/sboad/.codex/attachments/f6da6d07-a1fe-4b16-827e-a9638a4b869f/pasted-text.txt",
+      "sha256": "0085ebeebc70c399109840c62bd7420837e4d19a95a3ff36db7b17fc550b3f09"
+    },
+    "neededSource": "The release-review register or exact authorized file paths for internal team identity/roster/bio documents, advisor documents and counterparty documents. The inspected package source register does not identify these V3 inputs; do not guess among other similarly named Downloads files.",
+    "independentConfirmation": "Coordinator task01a04650-defe-7a50-8b5a-a5d0d7a967b7 independently reported the register absent.",
+    "boundedSearch": {
+      "roots": [
+        "docs/revenue-launch/20260907",
+        "docs/reviews",
+        ".xenios"
+      ],
+      "terms": [
+        "source register",
+        "source-register",
+        "release-review",
+        "Privacy Input V3",
+        "PrivacyV3",
+        "privacy.*v3"
+      ],
+      "matchingSourceRegister": false
+    },
+    "requiredAction": "Samuel/privacy source owner provides the exact register or approved source-document paths. A records their hashes before extraction; no new V3 corpus is claimed now.",
+    "retainedV2": {
+      "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v2-20260908/approved-name-input-v2.txt",
+      "entryCount": 6,
+      "scannerEligibleEntries": 3,
+      "bytes": 67,
+      "sha256": "de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6",
+      "hashReverified": true,
+      "status": "PARTIAL_UNAPPROVED_NOT_COMPREHENSIVE"
+    },
+    "v3Output": {
+      "entryCount": null,
+      "scannerEligibleEntries": null,
+      "bytes": null,
+      "sha256": null,
+      "reason": "No V3 extraction/output has occurred; zero would misstate an empty completed corpus."
+    },
+    "coverageMissing": [
+      "Already-held internal team documents not identified",
+      "Already-held advisor documents not identified",
+      "Already-held counterparty documents not identified",
+      "Deleted history/backups/prior recipient material remains outside V2 coverage"
+    ],
+    "productionReads": false,
+    "productionWrites": false,
+    "newExtractionPerformed": false,
+    "piiScanPerformed": false,
+    "rawNamesPrinted": false,
+    "limitations": [
+      "V3 preparation only; separate approval of resulting hash remains required.",
+      "V2 pending question is not approval; the latest recommendation is to supplement its partial coverage."
+    ],
+    "namedPackageFollowup": {
+      "checkedAt": "2026-09-08T04:00:47.564Z",
+      "documents": [
         {
-          "isCanonicalGitHubRepo": true,
-          "extension": "tsx"
+          "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/SOURCE_REGISTER.md",
+          "bytes": 1839,
+          "sha256": "919666431b0858184597c776ca4395dd934e0e2d298280c7edb6adbb199a37a0"
         },
         {
-          "isCanonicalGitHubRepo": true,
-          "extension": "ts"
+          "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/PACKAGE_MANIFEST.json",
+          "bytes": 1584,
+          "sha256": "a4262f9259b78fba8baff71fce48f7c50419b1dba12bc51f4e5059d06ac50a57"
         },
         {
-          "isCanonicalGitHubRepo": true,
-          "extension": "ts"
+          "path": "C:/Users/sboad/Downloads/XENIOS_RECRUITER_RESOURCE_HUB_FABLE_PACKAGE/XENIOS_RECRUITER_AND_RESOURCE_HUB/RESOURCE_INTAKE_CANDIDATES.json",
+          "bytes": 16943,
+          "sha256": "adaa4f992210557832c1f77d47b1a667b459b13eb881732b00176ef2a0115be5"
         },
         {
-          "isCanonicalGitHubRepo": true,
-          "extension": "ts"
+          "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/PACKAGE_MANIFEST.json",
+          "bytes": 4807,
+          "sha256": "99d08b3077e1864c838d95f4f5f7b514c08f2801659b42b5e94bc1389d619e4f"
         },
         {
-          "isCanonicalGitHubRepo": false,
-          "extension": null
+          "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/PATCH_MANIFEST.json",
+          "bytes": 849,
+          "sha256": "b92e7619fb27ef7ade2d97709fa1d95e8bc3c896d5f80d8bcc45f3b42211cde0"
         },
         {
-          "isCanonicalGitHubRepo": false,
-          "extension": null
-        },
-        {
-          "isCanonicalGitHubRepo": false,
-          "extension": null
-        },
-        {
-          "isCanonicalGitHubRepo": false,
-          "extension": null
-        },
-        {
-          "isCanonicalGitHubRepo": false,
-          "extension": null
-        },
-        {
-          "isCanonicalGitHubRepo": false,
-          "extension": "html"
+          "path": "C:/Users/sboad/Downloads/XENIOS_TESTED_CODE_REPAIRS_AND_CODEX_HANDOFF_2026-09-06/XENIOS_CODE_REPAIR_2026-09-06/report/SOURCE_AUDIT_AND_REMAINING_BUILD.md",
+          "bytes": 21046,
+          "sha256": "321c9e0a46abb62e9182f496b4ff0f91a9019fd3701da04cb756d14f062973bf"
         }
-      ]
+      ],
+      "result": "Named Resource Hub package contains SOURCE_REGISTER.md. Bounded inspection found no PDF/Office references or team/advisor/counterparty/roster/bio identifiers for the required V3 source set. It does not identify the needed name-source documents; no document was selected by filename resemblance. The named code-repair package supplies technical manifests, with no separately identified V3 source document.",
+      "rawSourceTextPrinted": false,
+      "namesExtracted": false,
+      "unrelatedLocationsSearched": false,
+      "sourceRegisterMetadata": {
+        "urlCount": 10,
+        "windowsAbsolutePathCount": 0,
+        "urlCategories": [
+          {
+            "isCanonicalGitHubRepo": true,
+            "extension": "tsx"
+          },
+          {
+            "isCanonicalGitHubRepo": true,
+            "extension": "ts"
+          },
+          {
+            "isCanonicalGitHubRepo": true,
+            "extension": "ts"
+          },
+          {
+            "isCanonicalGitHubRepo": true,
+            "extension": "ts"
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": null
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": null
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": null
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": null
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": null
+          },
+          {
+            "isCanonicalGitHubRepo": false,
+            "extension": "html"
+          }
+        ]
+      }
     }
   }
 }

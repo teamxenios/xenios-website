@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "inputVersion": 3,
+  "status": "PREPARED_NOT_APPROVED_NOT_SCANNED",
+  "preparedAt": "2026-09-08T04:50:19.921205+00:00",
+  "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/prepared-name-input-v3.txt",
+  "entryCount": 13,
+  "retainedV2Entries": 6,
+  "newExactEntries": 7,
+  "scannerEligibleEntries": 6,
+  "scannerIgnoredEntries": 7,
+  "scannerDistinctLowercaseEntries": 6,
+  "bytes": 131,
+  "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+  "newSourceSelectedOccurrences": 39,
+  "newSourceSelectedOccurrencesBySource": {
+    "S01": 2,
+    "S02": 32,
+    "S03": 5
+  },
+  "duplicateSelectedOccurrencesRemoved": 32,
+  "format": "UTF-8 without BOM, LF with trailing newline, one recorded name form per line",
+  "deduplication": "Exact Unicode strings after outer trim and CR/LF/TAB replacement with spaces; preserve all V2 entries, case, spelling and recorded possessive/honorific variants. No synthetic-persona exclusion. Overlapping full-name/honorific selections count as separate selected occurrences.",
+  "retainedV2": {
+    "bytes": 67,
+    "sha256": "de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6",
+    "unchanged": true
+  },
+  "sourceRegister": {
+    "bytes": 3478,
+    "sha256": "7c68180049e41deebe2aba2c21255d638f53fce6910f8cabac2166ce1a899a83"
+  },
+  "originalSources": [
+    {
+      "sourceId": "S01",
+      "bytes": 24271,
+      "sha256": "d8fdbe8fac08571b7416a616c0fa6376fd19d8fc038c36f6594e9d7ae99427aa",
+      "pages": 1,
+      "hashAndSizeMatch": true
+    },
+    {
+      "sourceId": "S02",
+      "bytes": 37266,
+      "sha256": "14132bc4e8c834f5a26ca7a38daa932c8442b2947b8106c0b5f7c817e5c9789c",
+      "pages": 4,
+      "hashAndSizeMatch": true
+    },
+    {
+      "sourceId": "S03",
+      "bytes": 214862,
+      "sha256": "09318a530d989ce3b1da2b0c24827b604d4e7958f716d6c9f368149f4382d911",
+      "pages": 10,
+      "hashAndSizeMatch": true
+    }
+  ],
+  "textPagesReviewed": 15,
+  "originalFilenameVariantsIncluded": 2,
+  "embeddedImages": {
+    "occurrences": 10,
+    "uniqueImages": 2,
+    "localOcrPerformed": true,
+    "confidence": [
+      63,
+      68
+    ],
+    "newOcrNameEntries": 0,
+    "handwritingCompletenessVerified": false
+  },
+  "approvalReceived": false,
+  "piiScanPerformed": false,
+  "productionReads": false,
+  "productionWrites": false,
+  "rawNamesPrinted": false,
+  "limitations": [
+    "V2 covers only retained rows in its named tables and fields, plus these three exact historical PDFs; no deleted history, backups, complete team directory or original lost corpus equivalence.",
+    "All 15 text pages were reviewed. Original filename case variants were included only where they match an already-evidenced person token; ambiguous S01 filename/addressee metadata was not promoted to a person identity.",
+    "Two unique embedded images were processed locally with moderate OCR confidence; no additional exact name established. Image-only/handwritten-name completeness is not proved.",
+    "The unchanged scanner ignores mononyms and entries without whitespace or of length at most three. Those entries remain in the input and counts.",
+    "S02 is an unaccepted commercial discussion proposal. Source extraction does not imply acceptance or binding contract status.",
+    "New operational/working forms, organization-only labels, roles/titles without an identified person, contact details and unrelated registry facts were excluded.",
+    "Separate approval of this actual hash and disclosed coverage is required before the strict PII scan. No release readiness or production authority follows from preparation."
+  ],
+  "operator": "ASTRA-A / codex-seth-revenue-launch-20260905",
+  "restrictedDirectory": "Protected parent directory: inheritance disabled, two explicit FullControl grants for current Windows user and SYSTEM only. V3 file inherits only those two grants and has zero explicit grants.",
+  "provenance": {
+    "sourceAccess": "A authenticated Gmail connector; only three exact registered historical attachments; original bytes/hash/size verified before extraction",
+    "sourceRegisterPath": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/SOURCE_REGISTER_PRIVATE.json",
+    "originalSourceProvenancePath": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/source-provenance.private.json",
+    "nameSelectionProvenancePath": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/name-selection-provenance.private.json",
+    "sourceNamesAndRawTextRemainPrivate": true
+  },
+  "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "applicationTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "scanBase": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "independentVerification": {
+    "status": "PASS_BOUNDED_FILE_PROVENANCE_ACL",
+    "reviewer": "release_manifest independent agent",
+    "recordedAt": "2026-09-08T04:54:19.807307+00:00",
+    "fileUnchangedDuringReview": true,
+    "allOriginalHashSizePageCountsMatch": true,
+    "retainedV2ExactPrefixAndEntries": true,
+    "selectedPdfOccurrences": 37,
+    "selectedFilenameOccurrences": 2,
+    "selectedOccurrences": 39,
+    "allSelectedOccurrencesGrounded": true,
+    "exactEntries": 13,
+    "scannerEligibleEntries": 6,
+    "scannerIgnoredEntries": 7,
+    "bytes": 131,
+    "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "fileInheritedGrants": 2,
+    "fileExplicitGrants": 0,
+    "directoryExplicitGrants": 2,
+    "directoryInheritedGrants": 0,
+    "handwritingCompletenessVerified": false,
+    "piiScanPerformed": false
+  },
+  "recordValidation": "docs/revenue-launch/20260907/privacy-input-v3-record-validation.json"
+}

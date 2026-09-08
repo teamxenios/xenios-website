@@ -11,11 +11,7 @@ no executor handoff or repeated GO is needed. See
 and the original production deployment report.
 
 The separate Resource Hub candidate remains in local qualification, with no
-new production authorization. The original PII corpus remains unrecovered. A prepared a 67-byte version-2
-replacement from verified name fields; its exact hash approval and coverage
-decision are pending. The names remain outside Git; no PII scan is claimed. Enabled Supabase Storage/API
-behavior is not proved by the local memory and PGlite evidence. Exact-source
-review, final full-suite and endpoint checks continue; see
+new production authorization. The original lost PII corpus remains unrecovered. A prepared V3 from unchanged V2 and three exact historical PDFs: 131 bytes, 13 entries, 6 scanner-eligible; SHA-256 `27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb`. Independent file/provenance/ACL checks passed. Actual hash/coverage approval is pending before the strict PII scan. Handwriting, ambiguous S01 filename identity and deleted-history coverage remain limited. Names and original text remain outside Git. Enabled Supabase Storage/API behavior is not proved by local memory/PGlite evidence. The final full suite, typecheck/build, bounded source review and endpoint environment-control checks are complete; see
 `docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md`.
 
 Real-account approval/claim, partner activation and notification effects still
