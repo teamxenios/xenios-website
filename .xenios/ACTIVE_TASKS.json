@@ -307,7 +307,7 @@
       "id": "REQUEST-CENTER",
       "title": "Unify durable requests and admin conversion",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         "client/src/research/adapters/productRequests.ts",
@@ -323,7 +323,13 @@
       "dependsOn": [],
       "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
-      "releasedAt": "2026-08-21T15:51:29.849Z"
+      "releasedAt": "2026-08-21T15:51:29.849Z",
+      "handoff": {
+        "session": "codex-seth-revenue-launch-20260905",
+        "sha": "8244223f284269bd9c4b141b13e6b065b26db274",
+        "file": ".xenios/handoffs/2026-09-08T18-31-18-499Z-REQUEST-CENTER-codex-seth-revenue-launch-20260905.md",
+        "at": "2026-09-08T18:31:18.505Z"
+      }
     },
     {
       "id": "GENERAL-COMMERCE",
