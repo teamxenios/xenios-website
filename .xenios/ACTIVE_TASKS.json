@@ -1511,9 +1511,9 @@
       "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "handoff": {
         "session": "fable-recruiter-resource-hub-20260906",
-        "sha": "8097a77537c4dfaf1b35354f4f99e2962736f3a0",
-        "file": ".xenios/handoffs/2026-09-08T02-07-02-589Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-fable-recruiter-resource-hub-20260906.md",
-        "at": "2026-09-08T02:07:02.594Z"
+        "sha": "ceebe203fcde89a88aa1a6c7d7573726a269337d",
+        "file": ".xenios/handoffs/2026-09-08T02-42-04-593Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-fable-recruiter-resource-hub-20260906.md",
+        "at": "2026-09-08T02:42:04.596Z"
       },
       "previousBlockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent.",
       "pairing": {
