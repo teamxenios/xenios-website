@@ -117,6 +117,34 @@ regenerates and commits the manifest with the reviewer's identity and time.
   (`ownership-findings-ff3c496-c350ab1c.json`), not to the 190-path list.
 - Ownership handoff to A was issued and awaits A's acknowledgment.
 
+## Update 2026-09-08T03:4xZ — A's checkpoint `1704387b` (candidate still `c350ab1c`)
+
+Read from A's records, not rerun by Claude:
+
+- **Full suite:** A's `46782cd` run (single worker, 2,707 s) ended 15,996
+  pass / 1 fail — `server/rls-invariants.test.ts` "keeps
+  care-access-foundation.sql the only source of policies" timed out at the
+  unchanged 5,000 ms; A's `33436c5` run had also timed out on the pgcrypto
+  repository audit. Claude's `46782cd` run (parallel workers, idle host,
+  00:28–00:33Z) passed both. A's `c350ab1c` run started 03:12:11Z and was
+  still **RUNNING** when checked. Nothing was relabeled; the gate is the
+  `c350ab1c` result. Reconciliation: `RECONCILIATION_20260908.md`.
+- **Endpoint comparison:** 27 SAME / **3 REGRESSION** / 0 waivers, all three
+  Care GETs; A's static review found the 18 inspected sources byte-identical
+  and attributes the local failures to absent providers. NOT QUALIFIED
+  until dispositioned; Claude's transitive-import evidence is in the
+  reconciliation note.
+- **Privacy input V2:** prepared by A (67 bytes, 6 entries, 3
+  scanner-eligible, SHA-256 `de85b8ff…`), restricted directory, **not
+  approved**; coverage explicitly excludes deleted history and the external
+  team/advisor/business-contact material named in the proposal.
+- **Affiliate requirement:** confirmed from source at `c350ab1c` — the partner
+  dashboard has only a "Referral links" button (no share/code/link/QR card)
+  and the QR export is SVG-only (no PNG). Exclusion and next task in the
+  reconciliation note. Training/Support 320 px overflows remain open.
+- **Deployment ≠ activation**, and a production resource download **writes
+  an audit/delivery row**; the eventual approval must list that effect.
+
 ## SECRET SCAN
 
 `scan-release-diff.mjs` over the exact range: 102 raw
