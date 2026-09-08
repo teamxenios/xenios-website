@@ -147,6 +147,25 @@ Read from A's records, not rerun by Claude:
 - **Deployment ≠ activation**, and a production resource download **writes
   an audit/delivery row**; the eventual approval must list that effect.
 
+## Standing founder authorization - 2026-09-08 (recorded, not interpreted)
+
+Samuel issued a standing, conditional authorization for the agreed Xenios
+Health scope, relayed verbatim to A and B: V3 privacy input approved by hash
+(`27fb9d70...`, 131 B, 13 entries, 6 eligible, 7 ignored; limits retained);
+after remaining required checks pass, A may execute the reviewed
+installation of `c350ab1c` (tree `314ef445...`) including migration
+`e55f965f...` with its pre/postchecks; activation of
+`RESEARCH_RESOURCE_HUB_ENABLED` is part of the work under a reviewed plan
+naming test identities, content, expected writes (download audit rows) and
+recovery; the affiliate dashboard share/link/QR card, PNG download,
+referral continuity and mobile corrections are in scope for B on a
+controlled follow-on branch; each release still pins, reviews, passes and
+verifies; commercial and clinical boundaries unchanged; A sole production
+writer, B verifies. Samuel's live check: `ff3c496` still serving. The next
+report is per-workflow "implemented / deployed / enabled / live journey
+verified" plus task-level estimates from A and B; no same-day full-platform
+finish is established by the evidence.
+
 ## SECRET SCAN
 
 `scan-release-diff.mjs` over the exact range: 102 raw
