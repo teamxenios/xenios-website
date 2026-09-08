@@ -13,7 +13,7 @@ import { z } from "zod";
 import { ACTOR_NAMES, EXPECTED_WRITES, HUB_BUCKET, HUB_TABLES, ManagedHubBoundaryError, assertStagingTarget, createManagedHubFetchBoundary, sha256, validateManagedHubPlan, type ActorName, type ManagedHubPlan } from "./lib/managed-resource-hub-boundary";
 import { encodeResourceUploadMetadata, type ResourceAdminDto } from "../../shared/research/resource-hub/contract";
 
-const fail = (code: string): never => { throw new ManagedHubBoundaryError(code); };
+function fail(code: string): never { throw new ManagedHubBoundaryError(code); }
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const git = (...args: string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 function externalFile(filename: string): string {
@@ -177,7 +177,9 @@ async function execute(local: ReturnType<typeof verifyLocalManagedHubPlan>, appr
     app.use(express.json({ limit: "2mb" }));
     const hub = resolveResourceHubService();
     registerResourceHubAdminApi(app, requireSupabaseAdmin, { service: hub });
-    registerPartnerPortalApi(app, { port: portal, submissionsEnabled: false, resourceHub: hub }, { requireMember });
+    registerPartnerPortalApi(app, { port: portal, submissionsEnabled: false, resourceHub: hub }, {
+      requireMember: async (req, res, next) => { await requireMember(req, res, next); },
+    });
     server = await new Promise<import("node:http").Server>((resolve, reject) => {
       const listening = app.listen(0, "127.0.0.1", () => resolve(listening));
       listening.on("error", reject);

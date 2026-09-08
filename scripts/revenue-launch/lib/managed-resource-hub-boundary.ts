@@ -29,7 +29,7 @@ export const sha256 = (value: Uint8Array | string): string => createHash("sha256
 export class ManagedHubBoundaryError extends Error {
   constructor(readonly code: string) { super(`Managed Hub boundary refused: ${code}`); }
 }
-const refuse = (code: string): never => { throw new ManagedHubBoundaryError(code); };
+function refuse(code: string): never { throw new ManagedHubBoundaryError(code); }
 
 export function assertStagingTarget(projectRef: string, origin: string): void {
   if (!/^[a-z]{20}$/.test(projectRef) || projectRef === PRODUCTION_PROJECT) refuse("project_binding");
