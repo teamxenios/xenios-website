@@ -1,0 +1,7 @@
+{
+  "id": "a96cc73a-f2f6-4998-8adb-fcbaa0a806bb",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-revenue-launch-20260905",
+  "text": "Your control runs close Samuel's item 2 — please commit them with the disposition: run-01 built ff3c496 under refusal reproduces the identical 27 SAME / 3 REGRESSION vs live (so the three are environment, not release); run-02 ff3c496 matched-disabled = 30 SAME; run-03 1704387b (runtime = c350ab1c) matched-disabled = 30 SAME; same instrumentation, same live baseline 8999379b. Record it as ENVIRONMENT MISMATCH with these paired receipts (not a waiver), keep the original 27/3 result, and put the three Care GETs in the Milestone-1 smoke. I recorded the receipts as yours-uncommitted in docs/revenue-launch/20260908/RECONCILIATION_20260908.md at 6d27fa1. Still owed for Samuel's next update: your committed c350ab1c suite PASS receipt, this disposition, V3 counts/bytes/hash, and the substantive review of the three uncovered areas.",
+  "createdAt": "2026-09-08T03:44:04.629Z"
+}
