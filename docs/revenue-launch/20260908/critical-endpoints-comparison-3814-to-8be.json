@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "kind": "critical-endpoint-diff",
+  "baseline": {
+    "baseUrl": "https://xeniostechnology.com",
+    "capturedAt": "2026-09-08T19:52:40.121Z"
+  },
+  "candidate": {
+    "baseUrl": "https://xeniostechnology.com",
+    "capturedAt": "2026-09-08T19:54:47.872Z"
+  },
+  "counts": {
+    "SAME": 30,
+    "INTENTIONAL_CHANGE": 0,
+    "REGRESSION": 0,
+    "HUMAN_REVIEW_REQUIRED": 0
+  },
+  "results": [
+    {
+      "key": "GET /api/health",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /health",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/early-access",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/early-access/order-request",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/access-hub",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/policies/accessibility",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/early-access/assisted-orders/config",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/early-access/assisted-orders/catalog",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/early-access/assisted-orders/XRR-20260829-A1B2C3D4E5",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/admin/research/assisted-orders",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/admin/research/assisted-orders/11111111-1111-4111-8111-111111111111",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/early-access/session",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/early-access/catalog",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/sign-in",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/account",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/research/customer-account/overview",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/care/status",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/care/access-request/status",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/care/tebra/configuration",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /care",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /care/schedule",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /hino",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /hino/",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /hino/story/",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /robots.txt",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /sitemap.xml",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /research/this-route-does-not-exist-xr-critical-diff",
+      "classification": "SAME",
+      "diffs": []
+    },
+    {
+      "key": "GET /api/this-route-does-not-exist-xr-critical-diff",
+      "classification": "SAME",
+      "diffs": []
+    }
+  ],
+  "verdict": "PASS"
+}

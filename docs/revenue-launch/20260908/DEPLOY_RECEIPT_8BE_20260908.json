@@ -1,0 +1,55 @@
+{
+  "release": "XENIOS_RESOURCE_HUB_HARDENING_2026-09-08",
+  "status": "DEPLOYED_HUB_DISABLED",
+  "applicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "applicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "baseSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "renderService": "srv-d8s9vej7uimc7384dfcg",
+  "deployId": "dep-dag6fch594qs73es4hf0",
+  "deployStatus": "live",
+  "deployStartedAt": "2026-09-08T19:53:22.741591Z",
+  "deployFinishedAt": "2026-09-08T19:54:21.219543Z",
+  "migrationResult": {
+    "applied": [],
+    "status": "UNCHANGED_INSTALLED_SCHEMA",
+    "note": "No migration was replayed; the additive Resource Hub schema was already installed and the candidate contains no migration delta."
+  },
+  "smoke": {
+    "endpointCount": 30,
+    "same": 30,
+    "intentionalChanges": 0,
+    "regressions": 0,
+    "humanReviewRequired": 0,
+    "status": "PASS",
+    "baseline": "docs/revenue-launch/20260908/critical-endpoints-predeploy-3814.json",
+    "candidate": "docs/revenue-launch/20260908/critical-endpoints-postdeploy-8be.json",
+    "comparison": "docs/revenue-launch/20260908/critical-endpoints-comparison-3814-to-8be.json",
+    "unauthenticatedBoundaries": "account context 401; partner dashboard 401; admin assisted-orders 401"
+  },
+  "observation": {
+    "durationSeconds": 315,
+    "healthChecks": "continuous 30-second cadence plus direct checks",
+    "healthStatus": "PASS",
+    "errorLogs": 0,
+    "lastObservedAt": "2026-09-08T19:59:30.8115232Z"
+  },
+  "effectiveScope": {
+    "resourceHubEnabled": false,
+    "membershipBilling": "absent_or_false",
+    "commerceEnabled": false,
+    "realUserEffects": "none",
+    "rollback": "not executed"
+  },
+  "qualification": {
+    "manifest": "docs/revenue-launch/20260907/hardening-release-manifest-unqualified-8be.json",
+    "manifestValidation": "PASS",
+    "replacementReview": "ACCEPT WITH EXPLICIT SCOPE",
+    "replacementReviewCommit": "a00198dd135ca8a6f01ead5e3befc44145171ffd",
+    "evidenceCommit": "0e299d3"
+  },
+  "remainingVerification": [
+    "Production content/document bytes, audience, named account/partner and permitted effects still require a separate reviewed activation decision.",
+    "Resource Hub real-user journey and direct production-origin Auth/Storage qualification remain pending.",
+    "This is not the full revenue launch."
+  ]
+}
