@@ -24,7 +24,7 @@ import { execFileSync } from "node:child_process";
 import { closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, realpathSync, writeFileSync, writeSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Express, Request, Response } from "express";
+import type { Express, Request, RequestHandler, Response } from "express";
 import { z } from "zod";
 import { decodeResourceUploadMetadata, resourceUploadSchema, resourceVersionReviewSchema, type ResourceUploadInput } from "../../shared/research/resource-hub/contract";
 
@@ -317,6 +317,26 @@ export function createStdinStopHandler(stop: () => void, invalid: () => void) {
   };
 }
 
+export type BrowserHostStage = "environment" | "canonical_modules" | "readonly_prechecks" | "browser_routes" | "member_routes" | "hub_routes" | "partner_routes" | "static_fallback" | "listen" | "ready";
+export function sanitizeBrowserHostError(error: unknown, stage: BrowserHostStage) {
+  const name = error instanceof Error ? error.name : "UnknownError";
+  return { stage, errorName: ["Error", "TypeError", "RangeError", "SyntaxError", "ReferenceError", "EvalError", "URIError", "AggregateError", "BrowserBoundaryError"].includes(name) ? name : "UnknownError" };
+}
+
+/** Shared by the actual host and its offline Express boot regression. No test adapters. */
+export async function mountCanonicalBrowserRoutes(app: Express, staticHandler: RequestHandler, stage: (value: BrowserHostStage) => void = () => {}) {
+  const [{ requireSupabaseAdmin }, { requireMember }, { registerMemberApi }, { resolveResourceHubService }, { registerResourceHubAdminApi }, { registerPartnerPortalApi }, { resolvePartnerPortalPort }] = await Promise.all([
+    import("../../server/routes"), import("../../server/research/member-auth"), import("../../server/research/members"), import("../../server/research/resource-hub/production"), import("../../server/research/resource-hub/admin-routes"), import("../../server/research/partners/portal-routes"), import("../../server/research/partners/portal-production"),
+  ]);
+  stage("member_routes"); registerMemberApi(app);
+  stage("hub_routes"); const hub = resolveResourceHubService(); registerResourceHubAdminApi(app, requireSupabaseAdmin, { service: hub });
+  stage("partner_routes"); registerPartnerPortalApi(app, { port: resolvePartnerPortalPort(), submissionsEnabled: false, resourceHub: hub }, { requireMember: async (req, res, next) => { await requireMember(req, res, next); } });
+  stage("static_fallback");
+  // Express 5 rejects an unnamed '*' path at registration. Pathless middleware
+  // avoids path-pattern interpretation; the original outer gate still restricts URLs.
+  app.use((req, res, next) => { if (req.method !== "GET") { next(); return; } return staticHandler(req, res, next); });
+}
+
 export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal>, approvedHash: string) {
   if (approvedHash !== local.planSha256) fail("approved_plan_hash"); const { plan, build } = local;
   const keys = validateBrowserCredentials(json(readFileSync(privatePath(plan.credentialsFile))));
@@ -324,6 +344,7 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
   const append = (value: unknown) => appendBrowserJournal(journal, value);
   const originalFetch = globalThis.fetch.bind(globalThis);
   const boundary = createBrowserBoundary(plan, originalFetch, append); let server: import("node:http").Server | undefined; let failureCode: string | null = null; let timer: ReturnType<typeof setTimeout> | undefined;
+  let stage: BrowserHostStage = "environment"; let firstHostError: ReturnType<typeof sanitizeBrowserHostError> | null = null;
   let origin = ""; let apiRequests = 0, assetRequests = 0; let closing = false; const servedAssets: Record<string, string> = {};
   const delayedTimers = new Set<ReturnType<typeof setTimeout>>();
   const delayedDownloads: { kind: "admin" | "partner"; sha256: string; status: "waiting" | "sent" | "client_disconnected" | "host_stopped" }[] = [];
@@ -340,9 +361,11 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
     for (const key of Object.keys(process.env)) if (!/^(PATH|SYSTEMROOT|WINDIR|TEMP|TMP|HOME|USERPROFILE)$/i.test(key)) delete process.env[key];
     Object.assign(process.env, { NODE_ENV: "production", SUPABASE_URL: STAGING_ORIGIN, SUPABASE_SERVICE_ROLE_KEY: keys.serviceKey, SUPABASE_ANON_KEY: keys.anonKey, ADMIN_EMAIL: plan.actors[plan.host].email, RESEARCH_RESOURCE_HUB_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true", AFFILIATE_PORTAL_ENABLED: "true", RESEARCH_REFERRAL_V1_ENABLED: "false", RESEARCH_FOUNDING_ACTIVATION_ENABLED: "false", RESEARCH_MEMBERSHIP_BILLING_ENABLED: "false" });
     globalThis.fetch = boundary.fetch; console.log = console.warn = console.error = () => {};
-    const [{ default: express }, { requireSupabaseAdmin }, { requireMember }, { getSupabaseAdmin }, { registerMemberApi }, { resolveResourceHubService }, { registerResourceHubAdminApi }, { registerPartnerPortalApi }, { resolvePartnerPortalPort }] = await Promise.all([
-      import("express"), import("../../server/routes"), import("../../server/research/member-auth"), import("../../server/supabase"), import("../../server/research/members"), import("../../server/research/resource-hub/production"), import("../../server/research/resource-hub/admin-routes"), import("../../server/research/partners/portal-routes"), import("../../server/research/partners/portal-production"),
+    stage = "canonical_modules";
+    const [{ default: express }, { requireSupabaseAdmin }, { getSupabaseAdmin }, { resolvePartnerPortalPort }] = await Promise.all([
+      import("express"), import("../../server/routes"), import("../../server/supabase"), import("../../server/research/partners/portal-production"),
     ]);
+    stage = "readonly_prechecks";
     const admin = getSupabaseAdmin(), portal = resolvePartnerPortalPort();
     const bucket = await admin.storage.getBucket(BUCKET); if (bucket.error || bucket.data?.id !== BUCKET || bucket.data.public !== false) fail("private_bucket_precheck");
     for (const name of ACTORS) {
@@ -353,6 +376,8 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
       if (expected.partner ? partner?.partnerId !== expected.partner.id || partner.role !== expected.partner.role || partner.state !== expected.partner.state : partner !== null) fail("partner_precheck");
     }
     for (const table of TABLES) { const rows = await admin.from(table).select(table === TABLES[0] ? "id" : "id,resource_id"); if (rows.error) fail("hub_precheck"); }
+    await boundary.drain(); boundary.assertHealthy(); // Includes the canonical asynchronous service-key self-check.
+    stage = "browser_routes";
     const app: Express = express(); app.disable("x-powered-by");
     app.use((req, res, next) => {
       try {
@@ -409,10 +434,7 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
         next();
       } catch (error) { failureCode = error instanceof BrowserBoundaryError ? error.code : "browser_scope"; boundary.stop(); res.sendStatus(503); finish(); }
     });
-    registerMemberApi(app);
-    const hub = resolveResourceHubService(); registerResourceHubAdminApi(app, requireSupabaseAdmin, { service: hub });
-    registerPartnerPortalApi(app, { port: portal, submissionsEnabled: false, resourceHub: hub }, { requireMember: async (req, res, next) => { await requireMember(req, res, next); } });
-    app.get("*", (req, res) => {
+    await mountCanonicalBrowserRoutes(app, (req, res) => {
       try {
         if (++assetRequests > 2000) fail("asset_request_cap");
         const route = req.path.slice(1); const name = build.files.has(route) ? route : ["/", "/research", "/research/sign-in", "/research/account", "/research/partners/resources", "/admin/research/resource-hub"].includes(req.path) ? "index.html" : null;
@@ -420,15 +442,19 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
         if (lstatSync(filename).isSymbolicLink()) fail("asset_symlink"); const bytes = readFileSync(filename); if (bytes.length !== entry.sizeBytes || sha256(bytes) !== entry.sha256) fail("served_asset_hash");
         servedAssets[name] = entry.sha256; append({ type: "served_asset", path: name, sha256: entry.sha256, sizeBytes: bytes.length }); res.type(path.extname(name)).send(bytes);
       } catch (error) { failureCode = error instanceof BrowserBoundaryError ? error.code : "static_asset"; boundary.stop(); res.sendStatus(503); finish(); }
-    });
+    }, (value) => { stage = value; });
+    stage = "listen";
     server = await new Promise<import("node:http").Server>((resolve, reject) => { const listening = app.listen(0, "127.0.0.1", () => resolve(listening)); listening.on("error", reject); });
     const address = server.address(); if (!address || typeof address === "string" || address.address !== "127.0.0.1") fail("loopback_binding"); origin = `http://127.0.0.1:${address.port}`;
-    boundary.enableWrites(); process.stdout.write(`${JSON.stringify({ status: "BROWSER_HOST_READY", origin, host: plan.host, sourceSha: SOURCE_SHA, sourceTree: SOURCE_TREE, planSha256: local.planSha256 })}\n`);
+    boundary.enableWrites(); stage = "ready"; process.stdout.write(`${JSON.stringify({ status: "BROWSER_HOST_READY", origin, host: plan.host, sourceSha: SOURCE_SHA, sourceTree: SOURCE_TREE, planSha256: local.planSha256 })}\n`);
     timer = setTimeout(() => { failureCode = "observation_time_cap"; finish(); }, 30 * 60 * 1000);
     process.stdin.on("data", stdinStop); process.stdin.resume();
     process.once("SIGINT", finish); process.once("SIGTERM", finish);
     await new Promise<void>((resolve) => server!.once("close", resolve));
-  } catch (error) { failureCode = error instanceof BrowserBoundaryError ? error.code : "host_failure_private_review_required"; }
+  } catch (error) {
+    firstHostError ??= sanitizeBrowserHostError(error, stage);
+    failureCode = error instanceof BrowserBoundaryError ? error.code : `host_${stage}_failure`;
+  }
   finally {
     if (timer) clearTimeout(timer); finish(); await boundary.drain(); finish();
     process.stdin.removeListener("data", stdinStop); process.stdin.pause();
@@ -436,7 +462,7 @@ export async function runBrowserHost(local: ReturnType<typeof verifyBrowserLocal
     // CLI-only process: retain the stopped transport and suppressed provider logging until exit.
     // Canonical async continuations must never regain an unbounded native network outlet.
     if (boundary.hasFailed()) failureCode = boundary.firstRefusal()?.code ?? failureCode ?? "boundary_stopped_review_actual_state";
-    const receipt = { status: failureCode ? "STOP_REVIEW_ACTUAL_STATE" : "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE", failureCode, firstRefusal: boundary.firstRefusal(), sourceSha: SOURCE_SHA, sourceTree: SOURCE_TREE, host: plan.host, hostFileSha256: plan.hostFileSha256, planSha256: local.planSha256, buildManifestSha256: plan.buildManifestSha256, finishedAt: new Date().toISOString(), requestCounts: boundary.counts, apiRequests, assetRequests, servedAssets, delayedDownloads, ownedScope: boundary.owned(), extraScope: boundary.extra(), cleanupPerformed: false, allRetainedDataPreserved: true, productionContacted: false, notProven: ["direct-origin Auth browser configuration", "unscoped full Hub library", "full production shell", "ASTRA-B acceptance", "browser assertions without independent driver evidence", "managed concurrency", "production activation"] };
+    const receipt = { status: failureCode ? "STOP_REVIEW_ACTUAL_STATE" : "HOST_STOPPED_BROWSER_VERIFICATION_SEPARATE", failureCode, firstHostError, firstRefusal: boundary.firstRefusal(), sourceSha: SOURCE_SHA, sourceTree: SOURCE_TREE, host: plan.host, hostFileSha256: plan.hostFileSha256, planSha256: local.planSha256, buildManifestSha256: plan.buildManifestSha256, finishedAt: new Date().toISOString(), requestCounts: boundary.counts, apiRequests, assetRequests, servedAssets, delayedDownloads, ownedScope: boundary.owned(), extraScope: boundary.extra(), cleanupPerformed: false, allRetainedDataPreserved: true, productionContacted: false, notProven: ["direct-origin Auth browser configuration", "unscoped full Hub library", "full production shell", "ASTRA-B acceptance", "browser assertions without independent driver evidence", "managed concurrency", "production activation"] };
     append({ type: "finish", ...receipt }); closeSync(journal); writeFileSync(path.join(plan.receiptDirectory, "browser-host-result.json"), `${JSON.stringify(receipt, null, 2)}\n`, { flag: "wx", mode: 0o600 });
     if (failureCode) process.exitCode = 1;
   }

@@ -4,9 +4,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import ws from "ws";
+import express from "express";
+import request from "supertest";
 import {
   ACTORS, ADMIN_BASE, AUTH_CAPS, BUCKET, PDF_SHA, SOURCE_SHA, SOURCE_TREE, STAGING_ORIGIN, STAGING_PROJECT, TABLES,
-  allowedBrowserRoute, appendBrowserJournal, assertBrowserCasResult, createBrowserBoundary, createStdinStopHandler, sha256, validateBrowserCredentials, validateBrowserPlan, verifyBuildFiles,
+  allowedBrowserRoute, appendBrowserJournal, assertBrowserCasResult, createBrowserBoundary, createStdinStopHandler, mountCanonicalBrowserRoutes, sanitizeBrowserHostError, sha256, validateBrowserCredentials, validateBrowserPlan, verifyBuildFiles,
   type Actor, type BrowserEvent, type BrowserPlan,
 } from "./managed-resource-hub-browser-host";
 
@@ -29,6 +31,12 @@ function login(boundary: ReturnType<typeof createBrowserBoundary>, p: BrowserPla
 }
 
 describe("private browser host plan and source boundary", () => {
+  it("records only a fixed startup stage and an allowlisted Error name", () => {
+    expect(sanitizeBrowserHostError(new TypeError("untrusted provider diagnostic"), "static_fallback")).toEqual({ stage: "static_fallback", errorName: "TypeError" });
+    const error = new Error("untrusted diagnostic"); error.name = "untrusted custom name";
+    expect(sanitizeBrowserHostError(error, "canonical_modules")).toEqual({ stage: "canonical_modules", errorName: "UnknownError" });
+    expect(JSON.stringify(sanitizeBrowserHostError(error, "listen"))).not.toContain("untrusted");
+  });
   it("pins the two-host combined eight-password/eight-logout ceiling and refuses scope changes", () => {
     expect(Object.values(AUTH_CAPS).flatMap(Object.values).reduce((a, b) => a + b, 0)).toBe(8);
     for (const patch of [{ target: { projectRef: "yvzeduaxbwgcwllhywff", origin: "https://yvzeduaxbwgcwllhywff.supabase.co" } }, { sourceSha: "a".repeat(40) }, { pdf: { ...plan().pdf, sha256: "4".repeat(64) } }]) expect(() => validateBrowserPlan({ ...plan(), ...patch })).toThrow();
@@ -59,6 +67,32 @@ describe("private browser host plan and source boundary", () => {
     expect(allowedBrowserRoute("HEAD", `${ADMIN_BASE}/${id(50)}/versions/${id(51)}/download`, false)).toBe(false);
     expect(allowedBrowserRoute("POST", ADMIN_BASE, true)).toBe(false);
   });
+});
+
+describe("actual Express and canonical registrar boot without managed services", () => {
+  it("mounts the actual member, Hub and partner routes before the Express5-compatible GET fallback", async () => {
+    const oldEnv = { ...process.env }, originalFetch = globalThis.fetch; vi.resetModules();
+    const upstream = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(String(input));
+      if (url.origin !== STAGING_ORIGIN || url.pathname !== "/auth/v1/admin/users" || url.searchParams.get("page") !== "1" || url.searchParams.get("per_page") !== "1") throw new Error("unexpected offline transport");
+      return response({ users: [], aud: "authenticated", next_page: null, last_page: 0, total: 0 });
+    });
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      for (const key of Object.keys(process.env)) if (!/^(PATH|SYSTEMROOT|WINDIR|TEMP|TMP|HOME|USERPROFILE)$/i.test(key)) delete process.env[key];
+      Object.assign(process.env, { NODE_ENV: "production", SUPABASE_URL: STAGING_ORIGIN, SUPABASE_SERVICE_ROLE_KEY: "sb_secret_offline_0123456789", SUPABASE_ANON_KEY: "sb_publishable_offline_0123456789", ADMIN_EMAIL: "admina@qualification.invalid", RESEARCH_RESOURCE_HUB_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true", AFFILIATE_PORTAL_ENABLED: "true", RESEARCH_REFERRAL_V1_ENABLED: "false" });
+      globalThis.fetch = upstream as typeof fetch;
+      const app = express(); const stages: string[] = [];
+      app.use((req, res, next) => { if (req.path.startsWith("/api/") && !allowedBrowserRoute(req.method, req.path, false)) { res.sendStatus(503); return; } next(); });
+      await mountCanonicalBrowserRoutes(app, (_req, res) => { res.type("html").send("<html>offline boot regression</html>"); }, (stage) => stages.push(stage));
+      expect(stages).toEqual(["member_routes", "hub_routes", "partner_routes", "static_fallback"]);
+      for (const route of ["/", "/research/account", "/research/partners/resources", "/admin/research/resource-hub"]) expect((await request(app).get(route)).status).toBe(200);
+      for (const route of ["/api/research/member/me", ADMIN_BASE, "/api/research/partner/resources"]) expect((await request(app).get(route)).status).toBe(401);
+      expect((await request(app).post("/api/research/member/claim").send({})).status).toBe(503);
+      expect((await request(app).head("/research/account")).status).toBe(404);
+      await vi.waitFor(() => expect(upstream).toHaveBeenCalledTimes(1)); // Canonical key-grade self-check only, fulfilled offline.
+    } finally { globalThis.fetch = originalFetch; for (const key of Object.keys(process.env)) delete process.env[key]; Object.assign(process.env, oldEnv); log.mockRestore(); }
+  }, 15000);
 });
 
 describe("managed Auth effects are real-provider, capped and write-ahead", () => {
