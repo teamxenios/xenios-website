@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "kind": "BOUNDED_BASELINE_CANDIDATE_ENVIRONMENT_CONTROL",
+  "recordedAt": "2026-09-08T03:43:20.904Z",
+  "disposition": "ENVIRONMENT_MISMATCH_SUPPORTED_FOR_ORIGINAL_THREE_CARE_DIFFERENCES",
+  "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "applicationTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "baselineSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "originalFailureRetained": true,
+  "originalReceipt": "critical-endpoints-local-static-disposition.json",
+  "originalRefusalReproducedExactly": true,
+  "buildBinding": "build-typecheck-c350ab1.json",
+  "instrumentationSha256": "1898d04b04790a23059f62f293a2921b70c619b58274ed4bdada89425a516506",
+  "scenarios": {
+    "refusal": "Original owned loopback Auth401/data503; no email readiness configuration; retries suppressed.",
+    "matched-disabled": "Identical baseline/candidate owned loopback fixture: Auth401 remains; GET care_capabilities returns an explicitly synthetic empty projection; synthetic nonfunctional email key marks configuration present; other data returns503; outbound writes and scheduled callbacks remain refused."
+  },
+  "runs": [
+    {
+      "label": "run-01",
+      "providerScenario": "refusal",
+      "applicationSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "observedEvidenceHead": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "observedTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
+      "observedAt": "2026-09-08T03:38:04.135Z",
+      "entrySha256": "794d4b88e774198e58212445eb811d0333e691c35ab2ce0ae6454474925f29f7",
+      "distFileCount": 336,
+      "distUnchanged": true,
+      "configurationUnchanged": true,
+      "counts": {
+        "SAME": 27,
+        "INTENTIONAL_CHANGE": 0,
+        "REGRESSION": 3,
+        "HUMAN_REVIEW_REQUIRED": 0
+      },
+      "verdict": "REGRESSION",
+      "nonMatchingEndpoints": [
+        {
+          "key": "GET /api/care/status",
+          "classification": "REGRESSION",
+          "reason": "a currently-live critical endpoint disappeared (status 200 -> 0; content-type application/json -> -; header content-type: application/json; charset=utf-8 -> -; header x-robots-tag: noindex, nofollow -> -; header cache-control: no-store -> -; header referrer-policy: no-referrer -> -; feature-state accessRequests.acceptingRequests=true,capability.enabled=false,capability.state=disabled -> -; shape-kind json -> unreachable)",
+          "diffs": [
+            "status 200 -> 0",
+            "content-type application/json -> -",
+            "header content-type: application/json; charset=utf-8 -> -",
+            "header x-robots-tag: noindex, nofollow -> -",
+            "header cache-control: no-store -> -",
+            "header referrer-policy: no-referrer -> -",
+            "feature-state accessRequests.acceptingRequests=true,capability.enabled=false,capability.state=disabled -> -",
+            "shape-kind json -> unreachable"
+          ]
+        },
+        {
+          "key": "GET /api/care/access-request/status",
+          "classification": "REGRESSION",
+          "reason": "feature-state acceptingRequests=true -> acceptingRequests=false",
+          "diffs": [
+            "feature-state acceptingRequests=true -> acceptingRequests=false"
+          ]
+        },
+        {
+          "key": "GET /api/care/tebra/configuration",
+          "classification": "REGRESSION",
+          "reason": "a currently-live critical endpoint disappeared (status 200 -> 0; content-type application/json -> -; header content-type: application/json; charset=utf-8 -> -; header x-robots-tag: noindex, nofollow -> -; header cache-control: no-store -> -; header referrer-policy: no-referrer -> -; feature-state careAvailable=false,portal.status=care_unavailable,scheduling.mode=disabled,scheduling.status=care_unavailable -> -; shape-kind json -> unreachable)",
+          "diffs": [
+            "status 200 -> 0",
+            "content-type application/json -> -",
+            "header content-type: application/json; charset=utf-8 -> -",
+            "header x-robots-tag: noindex, nofollow -> -",
+            "header cache-control: no-store -> -",
+            "header referrer-policy: no-referrer -> -",
+            "feature-state careAvailable=false,portal.status=care_unavailable,scheduling.mode=disabled,scheduling.status=care_unavailable -> -",
+            "shape-kind json -> unreachable"
+          ]
+        }
+      ],
+      "intentionalChangeAllowances": [],
+      "controls": {
+        "admittedUnauthenticatedGets": 30,
+        "rejectedRequests": 0,
+        "timerCallbacksExecuted": 0,
+        "childrenTerminated": true,
+        "ownedLoopbackProviderGets": 3,
+        "deniedPostAttempts": 1,
+        "productionQueries": false,
+        "productionWrites": false,
+        "realCredentialsUsed": false,
+        "enforcementReceiptsReconciled": true
+      }
+    },
+    {
+      "label": "run-02",
+      "providerScenario": "matched-disabled",
+      "applicationSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "observedEvidenceHead": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "observedTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",
+      "observedAt": "2026-09-08T03:38:19.722Z",
+      "entrySha256": "794d4b88e774198e58212445eb811d0333e691c35ab2ce0ae6454474925f29f7",
+      "distFileCount": 336,
+      "distUnchanged": true,
+      "configurationUnchanged": true,
+      "counts": {
+        "SAME": 30,
+        "INTENTIONAL_CHANGE": 0,
+        "REGRESSION": 0,
+        "HUMAN_REVIEW_REQUIRED": 0
+      },
+      "verdict": "PASS",
+      "nonMatchingEndpoints": [],
+      "intentionalChangeAllowances": [],
+      "controls": {
+        "admittedUnauthenticatedGets": 30,
+        "rejectedRequests": 0,
+        "timerCallbacksExecuted": 0,
+        "childrenTerminated": true,
+        "ownedLoopbackProviderGets": 3,
+        "deniedPostAttempts": 1,
+        "productionQueries": false,
+        "productionWrites": false,
+        "realCredentialsUsed": false,
+        "enforcementReceiptsReconciled": true
+      }
+    },
+    {
+      "label": "run-03",
+      "providerScenario": "matched-disabled",
+      "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "observedEvidenceHead": "1704387beffca6b86dd8c36afc161f2b1439be51",
+      "observedTree": "8175d2eea22274ced9667d8afc1f62cc27cf48f5",
+      "observedAt": "2026-09-08T03:38:25.534Z",
+      "entrySha256": "c2b0fde79855c5fadaff552ecd5d9e8c832b50544248c0a8adf3b1568e2c171c",
+      "distFileCount": 342,
+      "distUnchanged": true,
+      "configurationUnchanged": true,
+      "counts": {
+        "SAME": 30,
+        "INTENTIONAL_CHANGE": 0,
+        "REGRESSION": 0,
+        "HUMAN_REVIEW_REQUIRED": 0
+      },
+      "verdict": "PASS",
+      "nonMatchingEndpoints": [],
+      "intentionalChangeAllowances": [],
+      "controls": {
+        "admittedUnauthenticatedGets": 30,
+        "rejectedRequests": 0,
+        "timerCallbacksExecuted": 0,
+        "childrenTerminated": true,
+        "ownedLoopbackProviderGets": 3,
+        "deniedPostAttempts": 1,
+        "productionQueries": false,
+        "productionWrites": false,
+        "realCredentialsUsed": false,
+        "enforcementReceiptsReconciled": true
+      }
+    }
+  ],
+  "independentReview": {
+    "reviewer": "/root/release_manifest",
+    "status": "ACCEPT_BOUNDED_ENVIRONMENT_MISMATCH_DISPOSITION",
+    "method": "Read-only audit of all receipts, original failure details, unchanged instrumentation, source bindings and all336baseline/342candidate distribution hashes. No rerun or production operation.",
+    "findings": [
+      "All original three difference details reproduce on actualff3; matched records are identical across30endpoints.",
+      "Raw qualification.json retains generic unavailable-provider wording and omits providerScenario; this explicit companion supplies actual run scenario without modifying original receipts."
+    ]
+  },
+  "requiredFutureSmoke": [
+    "GET /api/care/status",
+    "GET /api/care/access-request/status",
+    "GET /api/care/tebra/configuration"
+  ],
+  "limits": [
+    "Local response signatures only; no current production parity, enabled Hub adapter, real Auth/Storage/email or notification qualification.",
+    "Node instrumentation of known source is not an operating-system sandbox; timer suppression changes retry behavior.",
+    "Each unattributed POST was blocked before transmission; path/purpose/provenance unknown. No job was triggered for smoke.",
+    "No waiver or changed response expectation; original failed evidence retained.",
+    "Run03 checkout identity1704387 is separate from rebuiltc350application;342outputs byte-identical and only documentation/continuity commits intervened."
+  ],
+  "externalArtifacts": [
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-01/receipts/candidate-30.json",
+      "bytes": 20465,
+      "sha256": "1f64e255a40d51ee2c198ed3829a6d25950456238ae792dfec60f070b5652b82"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-01/receipts/comparison-no-waivers.json",
+      "bytes": 5795,
+      "sha256": "cef2d5b13e762ca1bf54a8820cd69b078428855911103acbb06af9f9ebb223cd"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-01/receipts/qualification.json",
+      "bytes": 73153,
+      "sha256": "af970fbe9ca0b05e4d0922d03a36c60f4a1b5c0116f0626c943186a7d3f9680f"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-01/receipts/unavailable-loopback-provider.instrumentation.json",
+      "bytes": 68929,
+      "sha256": "f985f7020bc668593c56bb4369492698f0c16aae029a273a3c65e417071ae5d5"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-01/receipts/without-provider.instrumentation.json",
+      "bytes": 62678,
+      "sha256": "3478e8d65f8723fdafe76cd0c16390db7f6401d25af88a74c54d55ada0caf204"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-02/receipts/candidate-30.json",
+      "bytes": 21166,
+      "sha256": "bb6d8e5f245658cac27f2f2d803048674e1bce30b20e50445f361492a1a409d6"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-02/receipts/comparison-no-waivers.json",
+      "bytes": 3749,
+      "sha256": "2e4a528afa42f04b5e966ce4f854ef34174aed0d2000bac3132c07bd1305bbd4"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-02/receipts/qualification.json",
+      "bytes": 73543,
+      "sha256": "165bebb33888420b4001a603abff6bf0ff91844b0be36ba60b087ed1e0a7f53f"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-02/receipts/unavailable-loopback-provider.instrumentation.json",
+      "bytes": 68803,
+      "sha256": "f2b7a69b6958ae0ab28a5748d8f942ea0cbdcbc2d5e5e55e1886c8362c1f89b6"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-02/receipts/without-provider.instrumentation.json",
+      "bytes": 62678,
+      "sha256": "9253b3074898780595279bdde8fd81a72e857f78362e462dd48caea40811d109"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-03/receipts/candidate-30.json",
+      "bytes": 21167,
+      "sha256": "b82df95b328f67ff4fc18f1dd8d8aab583ba9a6198f121ea866c0f7afce11808"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-03/receipts/comparison-no-waivers.json",
+      "bytes": 3749,
+      "sha256": "5fb8286dcce887e9211ece00d4b1a999ce3d94d7fbfcc33ca57c0b3e0af5b71e"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-03/receipts/qualification.json",
+      "bytes": 74536,
+      "sha256": "f0628dedcc809ea38ab99ced51ddfe0145993e8751cb7f9cf9c9894352ab53a9"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-03/receipts/unavailable-loopback-provider.instrumentation.json",
+      "bytes": 68523,
+      "sha256": "37118755d302d11cdab8fc92c06b18906ef8ad9c7bf4c7a63876e7c25b323564"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/tmp/xenios-resource-endpoint-control-20260908/run-03/receipts/without-provider.instrumentation.json",
+      "bytes": 62638,
+      "sha256": "aaa2f873591fbf4f00e345b4b8cc3917cb644375c6a8d48456dd422a8c10c7a9"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\compare-local.mjs",
+      "bytes": 14833,
+      "sha256": "34068af9c8cc39c5c3a8dce7d6f88a9cebcf2248227e3461ce07edf38d559b93"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\isolated-child.cjs",
+      "bytes": 13030,
+      "sha256": "1898d04b04790a23059f62f293a2921b70c619b58274ed4bdada89425a516506"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\allowed-paths.json",
+      "bytes": 974,
+      "sha256": "ae618c8a2fd4e91119685d038752901e65584f50d18f746ad48e54f7b84abed8"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\CONTROL_SCOPE.md",
+      "bytes": 681,
+      "sha256": "c18f2690bbe34fdb491611252bd34c6017a2daabb28b105e5804439c87d078b6"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\baseline-build.exit.json",
+      "bytes": 318,
+      "sha256": "afb3627473d317024da1473415a16e7745832b69d19b32c35fd9426aee087818"
+    },
+    {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\xenios-resource-endpoint-control-20260908\\baseline-build.log",
+      "bytes": 35433,
+      "sha256": "3eeaa7144dcbb4e2445a3f3e57ce16b3b0be94f3f9a9e75511bd4221acda562d"
+    }
+  ]
+}

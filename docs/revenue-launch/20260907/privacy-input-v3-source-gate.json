@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "inputVersion": 3,
+  "status": "SOURCE_IDENTIFICATION_BLOCKED_NOT_EXTRACTED_NOT_APPROVED",
+  "recordedAt": "2026-09-08T03:43:20.917Z",
+  "operator": "ASTRA-A",
+  "directive": {
+    "path": "C:/Users/sboad/.codex/attachments/f6da6d07-a1fe-4b16-827e-a9638a4b869f/pasted-text.txt",
+    "sha256": "0085ebeebc70c399109840c62bd7420837e4d19a95a3ff36db7b17fc550b3f09"
+  },
+  "neededSource": "Release-review source register identifying the already-held internal team, advisor and counterparty documents, including exact file identities/locations. No such register/document identities were supplied in the directive or found in the bounded current release/review/corpus records.",
+  "independentConfirmation": "Coordinator task01a04650-defe-7a50-8b5a-a5d0d7a967b7 independently reported the register absent.",
+  "boundedSearch": {
+    "roots": [
+      "docs/revenue-launch/20260907",
+      "docs/reviews",
+      ".xenios"
+    ],
+    "terms": [
+      "source register",
+      "source-register",
+      "release-review",
+      "Privacy Input V3",
+      "PrivacyV3",
+      "privacy.*v3"
+    ],
+    "matchingSourceRegister": false
+  },
+  "requiredAction": "Samuel/privacy source owner identifies the specific register or authorized exact source documents. A records each hash before extraction and reports a missing identified file individually; no broad account or document search.",
+  "retainedV2": {
+    "path": "C:/Users/sboad/.codex/private/xenios-privacy-input-v2-20260908/approved-name-input-v2.txt",
+    "entryCount": 6,
+    "scannerEligibleEntries": 3,
+    "bytes": 67,
+    "sha256": "de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6",
+    "hashReverified": true,
+    "status": "PARTIAL_UNAPPROVED_NOT_COMPREHENSIVE"
+  },
+  "v3Output": {
+    "entryCount": null,
+    "scannerEligibleEntries": null,
+    "bytes": null,
+    "sha256": null,
+    "reason": "No V3 extraction/output has occurred; zero would misstate an empty completed corpus."
+  },
+  "coverageMissing": [
+    "Already-held internal team documents not identified",
+    "Already-held advisor documents not identified",
+    "Already-held counterparty documents not identified",
+    "Deleted history/backups/prior recipient material remains outside V2 coverage"
+  ],
+  "productionReads": false,
+  "productionWrites": false,
+  "newExtractionPerformed": false,
+  "piiScanPerformed": false,
+  "rawNamesPrinted": false,
+  "limitations": [
+    "V3 preparation only; separate approval of resulting hash remains required.",
+    "V2 pending question is not approval; the latest recommendation is to supplement its partial coverage."
+  ]
+}

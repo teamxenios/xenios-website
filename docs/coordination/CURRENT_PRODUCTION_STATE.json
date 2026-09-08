@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-07T23:00:48.4522689Z",
+  "generatedAt": "2026-09-08T03:50:58.191Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -221,10 +221,20 @@
       "headSha": "9ed2203f152e522880707881acdbdc7d0902a752",
       "graphNodeId": "resource-library-source-9ed2203f",
       "sourceBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
-      "state": "UNDEPLOYED_SOURCE_PENDING_RELEASE_QUALIFICATION",
+      "state": "SUPERSEDED_UNDEPLOYED_SOURCE_REGISTRATION",
+      "releaseBlocking": false,
+      "deployed": false,
+      "reason": "Historical source registration at9ed2203f with earlier6859a8d3 SQL. Superseded by frozen c350ab1 application and corrected e55f965f migration. Never deployed or authorized; prior bytes/evidence remain historical."
+    },
+    {
+      "lane": "Resource Hub and account/partner UI frozen candidate",
+      "headSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "graphNodeId": "resource-library-candidate-c350ab1",
+      "sourceBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "state": "UNDEPLOYED_QUALIFICATION_BLOCKED_PRIVACY_SOURCE",
       "releaseBlocking": true,
       "deployed": false,
-      "reason": "Source registration only, not the final integrated release SHA or authorization. Exact migration hash 6859a8d3b156f99b2f3f205de12e6fe84e3f484e186950543895801352f48633; local qualification docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md. Complete final-source review, release gates, fresh production prechecks and separate exact-SHA founder authorization remain required."
+      "reason": "Frozen application c350ab1, tree314ef445a6e3be8420a77451ed182088419d59ec. Full suite15997pass/59skip/0fail, typecheck/build, bounded source review and endpoint environment controls complete. Resource Hub migration PENDING at LF SHA-256 e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722. Local checker rehearsal154/154 onPG17.5 and18.3. V3 source register missing; strict PII and enabled-adapter/role scope remain open. No new production authority."
     }
   ],
   "knownRisks": [
@@ -365,7 +375,7 @@
     "The account/partner deployment report retains the original migration postchecks, smoke and 60-second observation at deployment time; this reconciliation does not represent those as newly performed.",
     "Current aggregate dataPosture fields remain unavailable/null. The fresh SQL metadata identifies only the two named applied migrations and the absence of the three Resource Hub tables; it does not refresh all other migration or business-data history.",
     "Historical evidence and snapshots retain their original SHAs and observation times; none qualifies the pending Resource Hub candidate.",
-    "Resource Hub source 9ed2203f152e522880707881acdbdc7d0902a752 is not deployed or production-authorized. Its migration is registered PENDING and its local PGlite PostgreSQL 18.3 rehearsal does not prove managed PostgreSQL 17.6 or Storage HTTP parity.",
+    "Historical 9ed2203f source registration is superseded by frozen c350ab1; neither is deployed. Current e55f965f Hub migration remains PENDING. Current154/154 localPG17.5 and18.3 rehearsals do not prove managed17.6 postinstall or Storage HTTP delivery.",
     "Real-user account/partner verification remains pending; account approval/claim, partner activation and notification effects require separately named authorization."
   ],
   "evidence": [

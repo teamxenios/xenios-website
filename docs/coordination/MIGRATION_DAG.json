@@ -742,7 +742,7 @@
    "rollback": {
     "strategy": "retain_additive_schema_and_history",
     "procedure": "supabase/candidates/20260906120000_research_resource_library.rollback.md",
-    "evidence": "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md; reproducible local rehearsal passed 132 assertions at 2026-09-07T22:51:29.026Z on PGlite PostgreSQL 18.3, including two applications, exact postchecks and role-negative controls. Managed PostgreSQL 17.6 and Storage HTTP parity remain unproven. Fresh production prechecks and separate exact authorization are required."
+    "evidence": "Current checker rehearsal: docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json and resource-hub-checker-visibility-pg18.json,154/154 each onPG17.5/18.3 at2026-09-07T23:38:59.858Z/23:39:06.242Z; exact e55f965f migration and742bce57/7c7ef33b pre/postchecks. Includes original150 cases and4 checker-visibility negative controls. Earlier132-assertion evidence remains historical. Managed17.6 post-install and Storage HTTP parity remain unproven. Fresh precheck and separate exact authorization required."
    }
   }
  ],

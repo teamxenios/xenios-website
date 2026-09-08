@@ -1,0 +1,31 @@
+{
+  "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "startedAt": "2026-09-08T03:12:11.7151115Z",
+  "completedAt": "2026-09-08T03:28:12.7269412Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "command": "node node_modules/vitest/vitest.mjs run --pool=threads --maxWorkers=1 --no-file-parallelism",
+  "runtime": "Node.js 20.19.0",
+  "logPath": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-c350ab1-20260908.log",
+  "schemaVersion": 1,
+  "sourceTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "testFiles": {
+    "passed": 917,
+    "skipped": 5,
+    "failed": 0,
+    "total": 922
+  },
+  "tests": {
+    "passed": 15997,
+    "skipped": 59,
+    "failed": 0,
+    "total": 16056
+  },
+  "durationSeconds": 960.11,
+  "logSha256": "2df6bbbcea32176fc900744eb134f77c324573214780fe8050bdb1a4943cb509",
+  "assertionsChanged": false,
+  "timeoutsChanged": false,
+  "negativeControlsRetained": true,
+  "priorRuns": "full-suite-initial-disposition.json",
+  "sourceBinding": "Application/test/SQL inputs remained c350; concurrent changes were separate continuity/evidence files. No current reviewed app input changed."
+}

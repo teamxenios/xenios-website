@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "observedAt": "2026-09-08T03:32:07.728Z",
+  "beforeFiles": 342,
+  "afterFiles": 342,
+  "differences": [],
+  "removed": [],
+  "allBytesIdentical": true,
+  "typecheck": {
+    "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "startedAt": "2026-09-08T03:29:16.9837441Z",
+    "completedAt": "2026-09-08T03:29:39.8684344Z",
+    "exitCode": 0,
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "runtime": "Node.js 20.19.0"
+  },
+  "build": {
+    "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "startedAt": "2026-09-08T03:30:31.0383798Z",
+    "completedAt": "2026-09-08T03:30:48.0887373Z",
+    "exitCode": 0,
+    "command": "node script/build.mjs",
+    "runtime": "Node.js 20.19.0",
+    "sourceDeltaEmpty": true,
+    "verifiedOutput": "C:\\Users\\sboad\\.codex\\worktrees\\f36a\\xenios-website\\dist"
+  }
+}

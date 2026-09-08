@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "applicationTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "observedEvidenceHead": "1704387beffca6b86dd8c36afc161f2b1439be51",
+  "runtime": "Node.js 20.19.0",
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "results": [
+    {
+      "name": "diffCheck",
+      "command": "git diff --check ff3c496245739233b71e46f9e5d6e26af9d57017..c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "startedAt": "2026-09-08T03:41:23.953Z",
+      "completedAt": "2026-09-08T03:41:24.050Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "routes",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts --sha c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "startedAt": "2026-09-08T03:41:24.051Z",
+      "completedAt": "2026-09-08T03:41:52.274Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "Route uniqueness accepted: 433 static Express API registrations across 424 call sites at c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662.\n",
+      "stderr": ""
+    },
+    {
+      "name": "coreSite",
+      "command": "node scripts/acceptance/verify-core-site-protection.mjs ff3c496245739233b71e46f9e5d6e26af9d57017 c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "startedAt": "2026-09-08T03:41:52.275Z",
+      "completedAt": "2026-09-08T03:41:52.467Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "core-site protection gate\n  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8\n  comparing         : ff3c496245739233b71e46f9e5d6e26af9d57017..c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662\n  changed files     : 187\n  allowed (research/care) : 63\n  infrastructure          : 68\n  protected file hashes   : 28 verified\n\nTEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.\nReview must still confirm each one was STRENGTHENED, not weakened. Lowering\nan existing safety or regression gate to make a build pass is forbidden):\n  - client/src/research/account-portal/api.test.ts\n  - client/src/research/account-portal/order-journey.test.ts\n  - client/src/research/account-portal/views/order-journey.test.tsx\n  - client/src/research/account-portal/views/support-documents.test.tsx\n  - client/src/research/account/AccountDocuments.test.tsx\n  - client/src/research/account/AccountOrderDetail.test.tsx\n  - client/src/research/adapters/partner.test.ts\n  - client/src/research/member-orders/detail.test.ts\n  - client/src/research/member-orders/read.test.ts\n  - client/src/research/pages/adminx/ResourceHubAdmin.test.tsx\n  - client/src/research/pages/member/OrderDetail.test.tsx\n  - client/src/research/pages/member/Orders.test.tsx\n  - client/src/research/pages/partners/Campaigns.test.tsx\n  - client/src/research/pages/partners/Commissions.test.tsx\n  - client/src/research/pages/partners/Compliance.test.tsx\n  - client/src/research/pages/partners/Conversions.test.tsx\n  - client/src/research/pages/partners/Events.test.tsx\n  - client/src/research/pages/partners/Leads.test.tsx\n  - client/src/research/pages/partners/Links.test.tsx\n  - client/src/research/pages/partners/Onboarding.test.tsx\n  - client/src/research/pages/partners/Organizations.test.tsx\n  - client/src/research/pages/partners/Payouts.test.tsx\n  - client/src/research/pages/partners/Resources.test.tsx\n  - client/src/research/pages/partners/Security.test.tsx\n  - client/src/research/pages/partners/Support.test.tsx\n  - client/src/research/pages/partners/Training.test.tsx\n  - client/src/research/partner-crm/campaign-records.test.ts\n  - client/src/research/partner-crm/commission-ledger.test.ts\n  - client/src/research/partner-crm/compliance-review.test.ts\n  - client/src/research/partner-crm/conversion-aggregate.test.ts\n  - client/src/research/partner-crm/event-records.test.ts\n  - client/src/research/partner-crm/lead-aggregate.test.ts\n  - client/src/research/partner-crm/onboarding-records.test.ts\n  - client/src/research/partner-crm/payout-records.test.ts\n  - client/src/research/partner-crm/security-sessions.test.ts\n  - client/src/research/partner-crm/training-records.test.ts\n  - client/src/research/recommendation/RecommendationPrintCard.test.tsx\n  - client/src/research/recommendation/layout-referral.test.tsx\n  - client/src/research/recommendation/qr-export.test.ts\n  - client/src/research/resource-hub/admin-principal-isolation.test.tsx\n  - client/src/research/resource-hub/partner-download-principal.test.tsx\n  - client/src/research/resource-hub/principal-bound.test.tsx\n  - client/src/research/ui/admin-shell.test.tsx\n  - docs/resource-hub/locked-gate-safety-bar.test.mjs\n  - server/release-control-plane.test.ts\n  - server/research/e2e/new-account-qa-harness.test.ts\n  - server/research/partners/portal-routes.test.ts\n  - server/research/resource-access-wall.test.ts\n  - server/research/resource-hub/admin-routes.test.ts\n  - server/research/resource-hub/production.test.ts\n  - server/research/resource-hub/service.test.ts\n  - server/research/resource-hub/supabase-store.test.ts\n  - shared/research/auth-return-to.test.ts\n\nSEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the\nminimum diff, a focused regression test, and QA confirmation of no\nunrelated change before this branch is approved):\n  - package-lock.json\n  - package.json\n  - server/research/index.ts\n\nRESULT: PASS\n",
+      "stderr": ""
+    },
+    {
+      "name": "migrationDag",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts",
+      "startedAt": "2026-09-08T03:41:52.467Z",
+      "completedAt": "2026-09-08T03:41:56.891Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "Migration DAG accepted: 36 nodes, canonical checksums verified.\n",
+      "stderr": ""
+    },
+    {
+      "name": "productionRecord",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-production-state.ts",
+      "startedAt": "2026-09-08T03:41:56.891Z",
+      "completedAt": "2026-09-08T03:42:23.252Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdout": "Trusted release baseline accepted: ff3c496245739233b71e46f9e5d6e26af9d57017 / dep-dafcm567bikc7382rhng.\n",
+      "stderr": ""
+    }
+  ],
+  "limits": [
+    "These gates check source and records; the production-state command is not a new remote observation.",
+    "PII, enabled adapters and full role/mobile qualification are separate gates."
+  ]
+}

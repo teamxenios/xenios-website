@@ -1,0 +1,507 @@
+{
+  "schemaVersion": 2,
+  "releaseId": "XENIOS_RESOURCE_HUB_2026-09-07",
+  "domain": "xeniostechnology.com",
+  "lane": "release-manager",
+  "owner": "ASTRA-A; ASTRA-B independently reviews; no production authority granted by this draft",
+  "createdAt": "2026-09-08T03:48:36.398Z",
+  "baseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "headSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "currentProductionSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/2026-09-05T23-22-37-714Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-readiness-matrix.md",
+    ".xenios/handoffs/2026-09-05T23-29-30-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-focused-ux.md",
+    ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
+    ".xenios/handoffs/2026-09-06T13-55-00-000Z-XENIOS-SETH-ASTRA-B-REVIEW-20260905-selective-integration.md",
+    ".xenios/handoffs/2026-09-06T15-33-57-231Z-XENIOS-SETH-ACCESS-QUALIFICATION-20260906.md",
+    ".xenios/handoffs/2026-09-07T14-36-00Z-XENIOS-ACCOUNT-PARTNER-PRODUCTION-20260907.md",
+    ".xenios/sessions/codex-seth-revenue-launch-20260905.json",
+    "client/src/research/account-portal/api.test.ts",
+    "client/src/research/account-portal/api.ts",
+    "client/src/research/account-portal/order-journey.test.ts",
+    "client/src/research/account-portal/order-journey.ts",
+    "client/src/research/account-portal/useDocumentDownload.ts",
+    "client/src/research/account-portal/views/DocumentsView.tsx",
+    "client/src/research/account-portal/views/OrderDetailView.tsx",
+    "client/src/research/account-portal/views/order-journey.test.tsx",
+    "client/src/research/account-portal/views/support-documents.test.tsx",
+    "client/src/research/account/AccountDocuments.test.tsx",
+    "client/src/research/account/AccountDocuments.tsx",
+    "client/src/research/account/AccountOrderDetail.test.tsx",
+    "client/src/research/account/AccountOrderDetail.tsx",
+    "client/src/research/adapters/partner.test.ts",
+    "client/src/research/adapters/partner.ts",
+    "client/src/research/adapters/resourceHubAdmin.ts",
+    "client/src/research/adminx-section.tsx",
+    "client/src/research/layout.tsx",
+    "client/src/research/lib/routes.ts",
+    "client/src/research/member-orders/detail.test.ts",
+    "client/src/research/member-orders/detail.ts",
+    "client/src/research/member-orders/read.test.ts",
+    "client/src/research/member-orders/read.ts",
+    "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx",
+    "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+    "client/src/research/pages/member/OrderDetail.test.tsx",
+    "client/src/research/pages/member/OrderDetail.tsx",
+    "client/src/research/pages/member/Orders.test.tsx",
+    "client/src/research/pages/member/Orders.tsx",
+    "client/src/research/pages/partners/Campaigns.test.tsx",
+    "client/src/research/pages/partners/Campaigns.tsx",
+    "client/src/research/pages/partners/Commissions.test.tsx",
+    "client/src/research/pages/partners/Commissions.tsx",
+    "client/src/research/pages/partners/Compliance.test.tsx",
+    "client/src/research/pages/partners/Compliance.tsx",
+    "client/src/research/pages/partners/Conversions.test.tsx",
+    "client/src/research/pages/partners/Conversions.tsx",
+    "client/src/research/pages/partners/Events.test.tsx",
+    "client/src/research/pages/partners/Events.tsx",
+    "client/src/research/pages/partners/Leads.test.tsx",
+    "client/src/research/pages/partners/Leads.tsx",
+    "client/src/research/pages/partners/Links.test.tsx",
+    "client/src/research/pages/partners/Links.tsx",
+    "client/src/research/pages/partners/Onboarding.test.tsx",
+    "client/src/research/pages/partners/Onboarding.tsx",
+    "client/src/research/pages/partners/Organizations.test.tsx",
+    "client/src/research/pages/partners/Organizations.tsx",
+    "client/src/research/pages/partners/Payouts.test.tsx",
+    "client/src/research/pages/partners/Payouts.tsx",
+    "client/src/research/pages/partners/Resources.test.tsx",
+    "client/src/research/pages/partners/Resources.tsx",
+    "client/src/research/pages/partners/Security.test.tsx",
+    "client/src/research/pages/partners/Security.tsx",
+    "client/src/research/pages/partners/Support.test.tsx",
+    "client/src/research/pages/partners/Support.tsx",
+    "client/src/research/pages/partners/Training.test.tsx",
+    "client/src/research/pages/partners/Training.tsx",
+    "client/src/research/partner-crm/campaign-records.test.ts",
+    "client/src/research/partner-crm/campaign-records.ts",
+    "client/src/research/partner-crm/commission-ledger.test.ts",
+    "client/src/research/partner-crm/commission-ledger.ts",
+    "client/src/research/partner-crm/compliance-review.test.ts",
+    "client/src/research/partner-crm/compliance-review.ts",
+    "client/src/research/partner-crm/conversion-aggregate.test.ts",
+    "client/src/research/partner-crm/conversion-aggregate.ts",
+    "client/src/research/partner-crm/event-records.test.ts",
+    "client/src/research/partner-crm/event-records.ts",
+    "client/src/research/partner-crm/lead-aggregate.test.ts",
+    "client/src/research/partner-crm/lead-aggregate.ts",
+    "client/src/research/partner-crm/onboarding-records.test.ts",
+    "client/src/research/partner-crm/onboarding-records.ts",
+    "client/src/research/partner-crm/payout-records.test.ts",
+    "client/src/research/partner-crm/payout-records.ts",
+    "client/src/research/partner-crm/security-sessions.test.ts",
+    "client/src/research/partner-crm/security-sessions.ts",
+    "client/src/research/partner-crm/training-records.test.ts",
+    "client/src/research/partner-crm/training-records.ts",
+    "client/src/research/recommendation/RecommendationPrintCard.test.tsx",
+    "client/src/research/recommendation/RecommendationPrintCard.tsx",
+    "client/src/research/recommendation/layout-referral.test.tsx",
+    "client/src/research/recommendation/qr-export.test.ts",
+    "client/src/research/recommendation/qr-export.ts",
+    "client/src/research/recommendation/recommendation-print.css",
+    "client/src/research/resource-hub/admin-principal-isolation.test.tsx",
+    "client/src/research/resource-hub/partner-download-principal.test.tsx",
+    "client/src/research/resource-hub/principal-bound.test.tsx",
+    "client/src/research/resource-hub/principal-bound.ts",
+    "client/src/research/ui/admin-shell.test.tsx",
+    "client/src/research/ui/kit.tsx",
+    "client/src/research/ui/shells.tsx",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.md",
+    "docs/coordination/FILE_OWNERSHIP.json",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+    "docs/resource-hub/LOCKED_GATE_ADMISSION_NOTE.md",
+    "docs/resource-hub/SELECTIVE_INTEGRATION_MANIFEST.md",
+    "docs/resource-hub/SLICE_1_DESIGN.md",
+    "docs/resource-hub/locked-gate-safety-bar.mjs",
+    "docs/resource-hub/locked-gate-safety-bar.test.mjs",
+    "docs/revenue-launch/20260905/ACCESS_RELEASE_QUALIFICATION_ADDENDUM_20260906.md",
+    "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+    "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
+    "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
+    "docs/revenue-launch/20260905/account-journey-browser-20260906.json",
+    "docs/revenue-launch/20260905/new-account-browser-qualification-20260906.json",
+    "docs/revenue-launch/20260905/production-account-partner-prechecks-20260906.json",
+    "docs/revenue-launch/20260905/production-refresh-20260906.json",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY.md",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_HASHES.json",
+    "docs/revenue-launch/20260907/RESOURCE_HUB_PDF_COMPATIBILITY_RECEIPT.json",
+    "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+    "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REBIND_ACCEPTANCE.md",
+    "docs/revenue-launch/20260907/SYNTHETIC_CREDENTIAL_REVIEW_ACCEPTANCE.md",
+    "docs/revenue-launch/20260907/account-partner-readonly-reverification.json",
+    "docs/revenue-launch/20260907/critical-endpoints-live-ff3c496.json",
+    "docs/revenue-launch/20260907/production-health-readonly.json",
+    "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json",
+    "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg18.json",
+    "docs/revenue-launch/20260907/resource-hub-force-rls-pg17-rehearsal.json",
+    "docs/revenue-launch/20260907/resource-hub-force-rls-pg18-rehearsal.json",
+    "docs/revenue-launch/20260907/resource-hub-pg17-rehearsal.json",
+    "docs/revenue-launch/20260907/resource-hub-production-readonly-precheck.json",
+    "docs/revenue-launch/20260907/scanner-rebind-test-receipt.json",
+    "docs/revenue-launch/20260907/synthetic-credential-context-review.json",
+    "docs/revenue-launch/20260907/synthetic-credential-whitespace-rebind.json",
+    "docs/revenue-launch/astra-b/20260905/ASTRA_BRANCH_DELTA_RECONCILIATION_20260905.md",
+    "docs/revenue-launch/astra-b/20260905/FOCUSED_UX_PRODUCT_GUARD_VERIFICATION_20260905.md",
+    "docs/revenue-launch/astra-b/20260905/FULL_SUITE_SERIAL_VERIFICATION_20260905.md",
+    "docs/revenue-launch/astra-b/20260905/PARTNER_LIFECYCLE_READINESS_SOURCE_AUDIT_20260905.md",
+    "docs/revenue-launch/astra-b/20260905/PRODUCT_CONTROL_RECONCILIATION_MOUNT_QA.md",
+    "docs/revenue-launch/astra-b/20260905/RECONCILIATION_ADAPTER_QA.md",
+    "docs/revenue-launch/astra-b/20260905/RELEASE_READINESS_MATRIX_20260905.md",
+    "docs/revenue-launch/astra-b/20260905/RELEASE_STATE_BOUNDARY_AUDIT_20260905.md",
+    "docs/reviews/astra-b/20260907/RESOURCE_HUB_RELEASE_CORRECTION_ACCEPTANCE.md",
+    "package-lock.json",
+    "package.json",
+    "scripts/acceptance/reviewed-credential-fixtures.mjs",
+    "scripts/acceptance/reviewed-credential-fixtures.node-test.mjs",
+    "scripts/acceptance/scan-release-diff.mjs",
+    "scripts/preview-resource-hub.ts",
+    "scripts/revenue-launch/new-account-browser-qualification.mjs",
+    "scripts/revenue-launch/new-account-qa-harness.ts",
+    "scripts/revenue-launch/rehearse-resource-library.mjs",
+    "server/release-control-plane.test.ts",
+    "server/research/e2e/new-account-qa-harness.test.ts",
+    "server/research/index.ts",
+    "server/research/partners/portal-production.ts",
+    "server/research/partners/portal-routes.test.ts",
+    "server/research/partners/portal-routes.ts",
+    "server/research/resource-access-wall.test.ts",
+    "server/research/resource-hub/admin-routes.test.ts",
+    "server/research/resource-hub/admin-routes.ts",
+    "server/research/resource-hub/bytes-store.ts",
+    "server/research/resource-hub/production.test.ts",
+    "server/research/resource-hub/production.ts",
+    "server/research/resource-hub/service.test.ts",
+    "server/research/resource-hub/service.ts",
+    "server/research/resource-hub/store.ts",
+    "server/research/resource-hub/supabase-store.test.ts",
+    "server/research/resource-hub/supabase-store.ts",
+    "shared/research/auth-return-to.test.ts",
+    "shared/research/auth-return-to.ts",
+    "shared/research/resource-hub/contract.ts",
+    "supabase/MIGRATIONS.md",
+    "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
+    "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
+    "supabase/candidates/20260906120000_research_resource_library.rollback.md",
+    "supabase/candidates/20260906120000_research_resource_library.sql",
+    "supabase/migrations/20260906120000_research_resource_library.sql"
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/admin/research/resource-hub/resources"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/research/resource-hub/resources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/resource-hub/resources/:resourceId"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/research/resource-hub/resources/:resourceId/versions/:versionId/review"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/research/resource-hub/resources/:resourceId/versions/:versionId/download"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/partner/resources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/research/partner/resources/:resourceId/download"
+    }
+  ],
+  "migrations": [
+    {
+      "id": "research_resource_library",
+      "path": "supabase/migrations/20260906120000_research_resource_library.sql",
+      "checksum": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
+      "dependsOn": [],
+      "rollback": {
+        "strategy": "Retain additive schema, private objects and all history; disable the Hub under separately granted recovery authority. No destructive database rollback.",
+        "steps": [
+          "DRAFT NOT AUTHORIZED: follow supabase/candidates/20260906120000_research_resource_library.rollback.md only under a new applicable release/recovery approval. No operation is authorized by this manifest.",
+          "For any failed or uncertain apply, stop and read actual managed history/object/ACL/bucket state before retrying. Do not drop, recreate, rename or repair migration history.",
+          "After a committed apply, preserve all three Hub tables, immutable versions, private Storage objects and delivery audits; retain all customer, approval, partner, agreement, billing and outbox records.",
+          "If separately authorized recovery requires disabling the feature, set RESEARCH_RESOURCE_HUB_ENABLED=false and verify effective restarted process state; keep RESEARCH_MEMBERSHIP_BILLING_ENABLED absent/false.",
+          "Before reverting application code, explicitly set RESEARCH_FOUNDING_ACTIVATION_ENABLED=false; use only the recorded compatible ff3c496245739233b71e46f9e5d6e26af9d57017 predecessor after rechecking actual database compatibility.",
+          "Additional database recovery, Storage deletion, pointer repair or restoration requires separate approval. Never apply a second copy of this migration or alter the already applied account/partner migrations."
+        ],
+        "verification": [
+          "Exact recovery procedure LF SHA-256 1c8261fbb1723c7ef0d47fdd6a8f65d150ff7931ee8d3b2f896b134a8dea4153 at frozen c350ab1; preserve the source file.",
+          "Verify actual serving SHA and effective disabled flags after restart/deploy, plus authorized public/read-only smoke and critical endpoints.",
+          "Confirm no customer or Hub history was deleted/truncated and the bucket remains private with intended ACLs.",
+          "The final observation duration and permitted recovery smoke effects must be named in the later execution packet; this draft leaves them conditional."
+        ]
+      }
+    }
+  ],
+  "tables": [
+    "public.research_resource_library: new Xenios-published resource metadata/current-version pointer; no seeded rows.",
+    "public.research_resource_versions: new immutable bytes identity, review/publication lifecycle and idempotent upload records; no seeded rows.",
+    "public.research_resource_deliveries: new append-preserving delivery-attempt outcomes; no seeded rows.",
+    "storage.buckets: create only research-resource-library with public=false; no public bucket is permitted.",
+    "storage.objects: no objects seeded and no table/schema alteration; existing Storage policies are checked for compatibility."
+  ],
+  "functions": [
+    "public.research_resource_versions_immutable(): BEFORE UPDATE trigger helper; rejects changes to storage_key, sha256, size_bytes, resource_id or version_number.",
+    "public.research_resource_hub_publish(uuid,uuid,text,timestamptz): SECURITY INVOKER; locks library/version rows, validates transition, switches current pointer and supersedes previous published version atomically.",
+    "public.research_resource_hub_withdraw(uuid,uuid,text,timestamptz,text): SECURITY INVOKER; locks library/version rows, validates transition, withdraws version and clears matching current pointer atomically."
+  ],
+  "rls": [
+    "ENABLE and FORCE ROW LEVEL SECURITY on public.research_resource_library, public.research_resource_versions and public.research_resource_deliveries; no client RLS policies are created.",
+    "Server uses existing BYPASSRLS service_role; anon/authenticated must not have SUPERUSER/BYPASSRLS or service_role membership.",
+    "Private research-resource-library Storage bucket; no new public, anon or authenticated Storage access policy or grant. Fresh pre/postchecks fail on incompatible existing permissive Storage policies.",
+    "Checker transactions use SET LOCAL row_security=off plus explicit SUPERUSER-or-BYPASSRLS executor guard. This refuses filtered visibility; it grants no bypass and changes no persistent RLS setting."
+  ],
+  "privileges": [
+    "REVOKE ALL table privileges from PUBLIC, anon, authenticated and service_role on all three new Hub tables; this includes DELETE and TRUNCATE.",
+    "GRANT SELECT, INSERT, UPDATE on public.research_resource_library and public.research_resource_versions to service_role only.",
+    "GRANT SELECT, INSERT on public.research_resource_deliveries to service_role only; no UPDATE, DELETE or TRUNCATE grant.",
+    "REVOKE ALL on research_resource_versions_immutable() from PUBLIC, anon, authenticated and service_role; trigger invocation remains through the table.",
+    "REVOKE EXECUTE on both publication/withdrawal RPCs from PUBLIC, anon and authenticated; GRANT EXECUTE to service_role only.",
+    "Existing Storage schema/roles and migration executor SELECT/INSERT/UPDATE bucket privileges are required by fresh precheck; no new client Storage grants or policies are introduced.",
+    "Canonical requireSupabaseAdmin guards all five admin registrations. Existing member identity, partner entitlement, audience and lifecycle checks protect library/delivery; client session data is not an authorization authority."
+  ],
+  "environmentNames": [
+    "NODE_ENV",
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_ANON_KEY",
+    "RESEARCH_RESOURCE_HUB_ENABLED",
+    "RESEARCH_FOUNDING_ACTIVATION_ENABLED",
+    "RESEARCH_MEMBERSHIP_BILLING_ENABLED",
+    "RESEARCH_REFERRALS_ENABLED",
+    "NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED",
+    "RESEARCH_QUANTUM_COMMERCE_ENABLED",
+    "RESEARCH_AFFILIATE_PAYOUTS_ENABLED",
+    "RESEARCH_AFFILIATE_COMMISSIONS_ENABLED",
+    "RESEARCH_LIVE_SHIPPING_ENABLED",
+    "RESEARCH_MITCH_FULFILLMENT_ENABLED",
+    "XENIOS_RELEASE_REVIEWED_FIXTURES_FILE"
+  ],
+  "sharedWiring": [
+    "NOT_RELEASE_READY. Frozen application c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662 has tree 314ef445a6e3be8420a77451ed182088419d59ec. Evidence commits and this draft do not replace the application SHA or grant deployment/activation authority.",
+    "The exact ff3-to-c350 application diff contains 187 paths. It includes Resource Hub, account/order/document UX, partner CRM/reporting, recommendation QR/print exports, and access-wall/auth-return/layout seams; this is not only a new Hub route set.",
+    "server/research/index.ts adds the canonical-admin Hub registrar and admits only exact authenticated resource library GET/HEAD and canonical-UUID download paths through the research wall. Downstream account/partner/audience guards remain; no broad write or prefix admission.",
+    "The seven manifest routes are actual explicit registrations: five new admin registrations, one existing partner library behavior change and one new partner delivery registration. Express implicit HEAD handling is not a separate registration. Partner delivery GET and implicit HEAD can record audit outcomes and are not read-only smoke.",
+    "Production composition uses existing Supabase server adapters only when NODE_ENV=production, RESEARCH_RESOURCE_HUB_ENABLED=true and Supabase is configured. Keep the Hub absent/false under current authority; nonproduction memory storage does not qualify enabled managed adapters.",
+    "Single pending migration represented by byte-identical candidate supabase/candidates/20260906120000_research_resource_library.sql and managed supabase/migrations/20260906120000_research_resource_library.sql. Apply once only after new exact authority; never apply both file copies.",
+    "Required fresh first-install precheck supabase/candidates/20260906120000_research_resource_library.precheck.sql LF SHA-256 742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab; required exact postcheck supabase/candidates/20260906120000_research_resource_library.postcheck.sql LF SHA-256 7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550. Stop on any identity, hash, role, existing-object, Storage-policy, schema, ACL, trigger, RPC, row-count or bucket mismatch.",
+    "The migration has no Hub SQL-node dependencies in the audited DAG; Supabase Storage/roles and UUID capability are mandatory runtime prerequisites. Preserve applied account/partner managed history versions 20260907143147 and 20260907143204 and their original candidate bytes. Do not repair history or apply unrelated pending DAG nodes.",
+    "Current private bucket name is research-resource-library. Upload database and Storage writes are not one cross-service transaction; preserve orphaned objects/history for separately authorized recovery.",
+    "New dependency qrcode-generator 2.0.4 is runtime QR code generation; jsqr 1.4.0 is test tooling. No existing build/start script or dependency entry changed. QR SVG does not satisfy requested PNG export; the prominent partner dashboard share card remains absent.",
+    "Runtime-read docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json retains inherited September 4/db5 last-verified admin evidence. It is part of source binding and is not current serving-SHA proof.",
+    "Focused scanner receipt is actual 35/35 at 37cd7bf (same scanner implementation); c350 changes only acceptance/registry evidence. It is not a real PII scan. Full-suite/typecheck/build receipts are newly bound to c350 with predecessor failures retained.",
+    "Current privacy blocker is V3 source identification: exact already-held team/advisor/counterparty register/documents are missing. No V3 extraction, hash or counts exist. After authorized source identification/preparation, actual resulting hash/coverage approval and strict PII scan remain required. V2 remains partial and unapproved.",
+    "Matched-disabled baseline/candidate endpoint controls both returned 30 SAME, zero regression and zero waiver. Original refusal result 27 SAME/3 REGRESSION is retained and reproduced on baseline; this supports bounded environment-mismatch disposition, not production or enabled-adapter parity.",
+    "B source/ownership review and local Hub browser proof do not waive broader role/mobile findings: Training overflow at 320/360, Support overflow, SVG-only export and absent dashboard card remain recorded. Real Auth/account switching and enabled PostgREST/Storage delivery are not proven by memory/WASM tests.",
+    "Render target srv-d8s9vej7uimc7384dfcg; Supabase target yvzeduaxbwgcwllhywff. A is sole production executor; keep auto-deploy off and do not merge or rebind the release branch. New production scope, activation/rollback authority, observation duration and side-effect-aware smoke must be finalized separately."
+  ],
+  "tests": {
+    "focused": {
+      "status": "PASS",
+      "command": "node --test scripts/acceptance/reviewed-credential-fixtures.node-test.mjs scripts/acceptance/verify-release-diff-scan.node-test.mjs",
+      "checkedAt": "2026-09-08T03:11:53.709Z"
+    },
+    "fullSuite": {
+      "status": "PASS",
+      "command": "node node_modules/vitest/vitest.mjs run --pool=threads --maxWorkers=1 --no-file-parallelism",
+      "checkedAt": "2026-09-08T03:28:12.7269412Z"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "checkedAt": "2026-09-08T03:29:39.8684344Z"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "node script/build.mjs",
+      "checkedAt": "2026-09-08T03:30:48.0887373Z"
+    },
+    "diffCheck": {
+      "status": "PASS",
+      "command": "git diff --check ff3c496245739233b71e46f9e5d6e26af9d57017..c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "checkedAt": "2026-09-08T03:41:24.050Z"
+    }
+  },
+  "rollback": {
+    "strategy": "Conditional compatible exact-SHA application rollback to ff3c496; preserve additive database/Storage/history. This draft grants no rollback authority.",
+    "steps": [
+      "DRAFT NOT AUTHORIZED: follow supabase/candidates/20260906120000_research_resource_library.rollback.md only under a new applicable release/recovery approval. No operation is authorized by this manifest.",
+      "For any failed or uncertain apply, stop and read actual managed history/object/ACL/bucket state before retrying. Do not drop, recreate, rename or repair migration history.",
+      "After a committed apply, preserve all three Hub tables, immutable versions, private Storage objects and delivery audits; retain all customer, approval, partner, agreement, billing and outbox records.",
+      "If separately authorized recovery requires disabling the feature, set RESEARCH_RESOURCE_HUB_ENABLED=false and verify effective restarted process state; keep RESEARCH_MEMBERSHIP_BILLING_ENABLED absent/false.",
+      "Before reverting application code, explicitly set RESEARCH_FOUNDING_ACTIVATION_ENABLED=false; use only the recorded compatible ff3c496245739233b71e46f9e5d6e26af9d57017 predecessor after rechecking actual database compatibility.",
+      "Additional database recovery, Storage deletion, pointer repair or restoration requires separate approval. Never apply a second copy of this migration or alter the already applied account/partner migrations."
+    ],
+    "verification": [
+      "Exact recovery procedure LF SHA-256 1c8261fbb1723c7ef0d47fdd6a8f65d150ff7931ee8d3b2f896b134a8dea4153 at frozen c350ab1; preserve the source file.",
+      "Verify actual serving SHA and effective disabled flags after restart/deploy, plus authorized public/read-only smoke and critical endpoints.",
+      "Confirm no customer or Hub history was deleted/truncated and the bucket remains private with intended ACLs.",
+      "The final observation duration and permitted recovery smoke effects must be named in the later execution packet; this draft leaves them conditional."
+    ]
+  },
+  "smoke": {
+    "steps": [
+      "DRAFT ONLY: do not deploy, apply, activate or perform production smoke until required qualification and new applicable exact-SHA authority exist.",
+      "Before any later authorized apply, reverify project/service identity, actual live ff3 baseline, exact source/tree and migration/check hashes, one writer, auto-deploy off and unchanged release branch; then run the exact fresh read-only precheck with stop-on-error.",
+      "If newly authorized and the precheck passes, apply only the e55f965f Resource Hub migration in one stop-on-error transaction; run its exact postcheck before any further step or flag activation. On uncertainty, stop and reconcile actual remote state before retry.",
+      "Any later separately authorized application deployment must name c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662, not evidence/branch HEAD. Verify the actual serving commit after deploy.",
+      "Use public health and explicitly authorized read-only route/denial checks plus the established 30-endpoint comparison. Preserve special checks for GET /api/care/status, GET /api/care/access-request/status and GET /api/care/tebra/configuration.",
+      "Exclude partner PDF GET/implicit HEAD from read-only smoke because delivery attempts can append audits. No real account, publication, partner activation, notification job, email, purchase, payment, refund, shipment or clinical action is granted.",
+      "Define the actual observation duration and permitted smoke identities/effects in the later execution packet; verify logs, serving identity, flags and expected runtime behavior for that full named window. No observation window has run for this undeployed candidate."
+    ],
+    "expected": [
+      "Overall NOT_RELEASE_READY until V3 source identification/preparation and approved actual hash/coverage enable the required strict PII scan, and remaining scope/adapter/browser gates are resolved.",
+      "Current live account/partner ff3 deployment and its applied history remain intact. Hub migration remains unapplied and RESEARCH_RESOURCE_HUB_ENABLED remains absent/false under current authority.",
+      "After any future authorized installation, exact postcheck proves FORCE RLS, intended ACL/RPC/trigger/index definitions, private bucket, zero seed rows/objects and unfiltered checker visibility.",
+      "Keep historical failures and new bounded 30-SAME endpoint evidence separate; no changed expected response or waiver. Production parity and enabled managed adapter behavior still require applicable qualification.",
+      "Preserve all customer, approval, partner, agreement, billing, outbox, audit and Hub resource/version/delivery/Storage records; no additional database recovery without separate approval."
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "NOT_RELEASE_READY",
+      "checkedAt": "2026-09-08T03:48:36.398Z",
+      "reference": "docs/revenue-launch/20260907/RESOURCE_HUB_RELEASE_QUALIFICATION.md; schema-v2 qualification draft only. Five schema test fields PASS does not clear privacy, enabled adapter, full-role/mobile, scope/activation or execution-authorization gates. Application tree 314ef445a6e3be8420a77451ed182088419d59ec."
+    },
+    {
+      "kind": "PRIVACY_V3_SOURCE_IDENTIFICATION_BLOCKED",
+      "checkedAt": "2026-09-08T03:43:20.917Z",
+      "reference": "docs/revenue-launch/20260907/privacy-input-v3-source-gate.json; exact release-review source register/internal team/advisor/counterparty document identities unavailable. No extraction, output, V3 counts or V3 hash. Next: identify authorized exact sources, prepare V3, obtain actual resulting hash/coverage approval, then strict PII scan."
+    },
+    {
+      "kind": "PII_V2_PARTIAL_UNAPPROVED_RETAINED",
+      "checkedAt": "2026-09-08T03:43:20.917Z",
+      "reference": "docs/revenue-launch/20260907/privacy-input-v2-preparation-receipt.json; retained input LF SHA-256 de85b8ffeec3bff836046618ef39fde9c9b1403206997f59c555011570f022b6, 67 bytes, 6 entries, 3 eligible. This is not V3, comprehensive coverage, founder hash approval or release scan input approval."
+    },
+    {
+      "kind": "FOCUSED_SCANNER_35_PASS_ONLY",
+      "checkedAt": "2026-09-08T03:11:53.709Z",
+      "reference": "docs/revenue-launch/20260907/scanner-rebind-test-receipt.json; actual source 37cd7bf4d12ac170ef8f474287989816ff64dbd7; 35 passed, zero failed/skipped; 5506.3995 ms. Unchanged scanner implementation at c350; source-sensitive fixture contexts separately reaccepted. No real PII qualification."
+    },
+    {
+      "kind": "FULL_SUITE_C350_PASS",
+      "checkedAt": "2026-09-08T03:28:12.7269412Z",
+      "reference": "docs/revenue-launch/20260907/full-suite-c350ab1.json; 917 passed files/5 skipped; 15997 passed tests/59 skipped; zero failed, 960.11 seconds. Actual log SHA-256 2df6bbbcea32176fc900744eb134f77c324573214780fe8050bdb1a4943cb509. Older 33436c5/46782 failures and 01ea interruption remain in full-suite-initial-disposition.json."
+    },
+    {
+      "kind": "TYPECHECK_C350_PASS",
+      "checkedAt": "2026-09-08T03:29:39.8684344Z",
+      "reference": "docs/revenue-launch/20260907/build-typecheck-c350ab1.json; Node 20.19.0 tsc --noEmit exit 0 at exact c350."
+    },
+    {
+      "kind": "BUILD_C350_PASS",
+      "checkedAt": "2026-09-08T03:30:48.0887373Z",
+      "reference": "docs/revenue-launch/20260907/build-typecheck-c350ab1.json; actual c350 rebuild exit 0; before/after 342 distribution files, all bytes identical, no differences/removals. No later evidence head is substituted as built source."
+    },
+    {
+      "kind": "CONTROL_DIFFCHECK_PASS",
+      "checkedAt": "2026-09-08T03:41:24.050Z",
+      "reference": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json; git diff --check ff3c496245739233b71e46f9e5d6e26af9d57017..c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662; exit 0. Source/record check, not a new remote observation."
+    },
+    {
+      "kind": "CONTROL_ROUTES_PASS",
+      "checkedAt": "2026-09-08T03:41:52.274Z",
+      "reference": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json; node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts --sha c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662; exit 0. Source/record check, not a new remote observation."
+    },
+    {
+      "kind": "CONTROL_CORESITE_PASS",
+      "checkedAt": "2026-09-08T03:41:52.467Z",
+      "reference": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json; node scripts/acceptance/verify-core-site-protection.mjs ff3c496245739233b71e46f9e5d6e26af9d57017 c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662; exit 0. Source/record check, not a new remote observation."
+    },
+    {
+      "kind": "CONTROL_MIGRATIONDAG_PASS",
+      "checkedAt": "2026-09-08T03:41:56.891Z",
+      "reference": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json; node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts; exit 0. Source/record check, not a new remote observation."
+    },
+    {
+      "kind": "CONTROL_PRODUCTIONRECORD_PASS",
+      "checkedAt": "2026-09-08T03:42:23.252Z",
+      "reference": "docs/revenue-launch/20260907/final-control-gates-c350ab1.json; node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-production-state.ts; exit 0. Source/record check, not a new remote observation."
+    },
+    {
+      "kind": "SECRET_HALF_PASS_PII_INCOMPLETE",
+      "checkedAt": "2026-09-08T03:18:59.307Z",
+      "reference": "docs/revenue-launch/20260907/release-scan-c350ab1.json; ff3..c350 42121 added lines/187 paths, 102 raw/102 exact reviewed fixture/0 unresolved secret findings; registry LF SHA-256 b82169d4afa2bc1d2007680c0d984db9b6e0f0bdf4d8ca2b25c30cb937922aba. PII skipped; strict combined gate is not PASS."
+    },
+    {
+      "kind": "INDEPENDENT_SOURCE_REVIEW_BOUNDED_COMPLETE",
+      "checkedAt": "2026-09-08T03:27:15.065Z",
+      "reference": "docs/revenue-launch/20260907/INDEPENDENT_SOURCE_REVIEW_C350.md; A reviewed B-authored behavior, B accepted A-authored corrections. No new blocking logic finding in the bounded areas. Review does not waive SVG/PNG, missing dashboard card, Training/Support mobile or real-adapter limitations."
+    },
+    {
+      "kind": "INDEPENDENT_OWNERSHIP_REVIEW",
+      "checkedAt": "2026-09-08T03:20:00Z",
+      "reference": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json; raw SHA-256 9a127c6c19ada8514b0c530e8c2476d7a20b6e95cb7da8931488bd85462af7bf; exact 187 paths, 164 unowned, 23 covered, zero wrong-lane/conflicts against trusted ff3 policy. Functional and production authority are separate."
+    },
+    {
+      "kind": "BOUNDED_ENDPOINT_ENVIRONMENT_DISPOSITION",
+      "checkedAt": "2026-09-08T03:43:20.904Z",
+      "reference": "docs/revenue-launch/20260907/critical-endpoints-environment-control-c350ab1.json; baseline ff3 and rebuilt c350 matched-disabled runs each 30 SAME/0 REGRESSION/0 waivers; independent review accepted bounded environment-mismatch disposition. Original 27 SAME/3 REGRESSION refusal result retained and reproduced on ff3. No production/real-provider or enabled Hub adapter parity claim."
+    },
+    {
+      "kind": "LOCAL_BROWSER_BINDING_LIMITED",
+      "checkedAt": "2026-09-07T23:50:04Z",
+      "reference": "docs/revenue-launch/20260907/resource-hub-runtime-equivalence-46782cd.json and resource-hub-runtime-equivalence-46782cd-outside-inputs.json; accepted 8e125ca local synthetic Hub browser proof (14 journeys/45 captures) bound forward to 46782cd. Later c350 application runtime unchanged and rebuilt output identical; no new full-role/mobile or managed Auth/Storage journey asserted."
+    },
+    {
+      "kind": "DATABASE_LOCAL_PG17_REHEARSAL_PASS",
+      "checkedAt": "2026-09-07T23:38:59.858Z",
+      "reference": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg17.json; 154/154 on PostgreSQL 17.5, exact e55f965f migration and current pre/post hashes. Preserved original 150 cases plus 4 checker-visibility controls. Not managed 17.6 HTTP adapter proof."
+    },
+    {
+      "kind": "DATABASE_LOCAL_PG18_REHEARSAL_PASS",
+      "checkedAt": "2026-09-07T23:39:06.242Z",
+      "reference": "docs/revenue-launch/20260907/resource-hub-checker-visibility-pg18.json; 154/154 on PostgreSQL 18.3; same migration and companion procedure hashes; no production installation."
+    },
+    {
+      "kind": "ACTUAL_A_PRECHECK_READ_ONLY",
+      "checkedAt": "2026-09-07T23:40:28.257398Z",
+      "reference": "docs/revenue-launch/20260907/resource-hub-checker-visibility-production-precheck.json; A authenticated project yvzeduaxbwgcwllhywff, PostgreSQL 17.6, postgres BYPASSRLS true/SUPERUSER false, row_security off, PASS; zero Hub bucket/Storage policies. Historical read-only precheck, not apply/postcheck; repeat immediately before newly authorized installation."
+    },
+    {
+      "kind": "ACTUAL_A_PRODUCTION_IDENTITY_READ_ONLY",
+      "checkedAt": "2026-09-08T03:18:59.307Z",
+      "reference": "docs/revenue-launch/20260907/account-partner-readonly-reverification-20260908.json; live ff3 / dep-dafcm567bikc7382rhng, auto-deploy off, branch unchanged; both original account/partner history rows present and all 3 Hub tables absent. No production mutation."
+    },
+    {
+      "kind": "CONDITIONAL_EXECUTION_PACKET_UNFINISHED",
+      "checkedAt": "2026-09-08T03:48:36.398Z",
+      "reference": "No new GO, no Hub migration apply/activation, no serving c350 deployment and no post-deploy observation. Final execution authority, activation scope, side-effect-aware smoke, observation duration and evidence head still require completion after qualification. supabase/candidates/20260906120000_research_resource_library.rollback.md; LF SHA-256 1c8261fbb1723c7ef0d47fdd6a8f65d150ff7931ee8d3b2f896b134a8dea4153."
+    }
+  ],
+  "integrationOwnershipReview": {
+    "baseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "headSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "trustedBaseOwnershipPolicySha256": "67deb85b0a5eb3d48c58d7382502c7484674a620e41d1d8cd06995a417291fe3",
+    "gitDiffPathInventorySha256": "aff2e4cbfeb738dee4b4260ef58783ee5b731604892f7a889930ce899a1f2a59",
+    "ownershipFindingInventorySha256": "44261728107d3e659691e323e6e1d712eaaeb47ad6a5200d8bbe3cbc69e08a89",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 164,
+      "WRONG_LANE_OWNER": 0,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "ASTRA-B (Codex task 01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35)",
+    "reviewedAt": "2026-09-08T03:20:00Z",
+    "reviewArtifactPath": "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
+    "reviewArtifactSha256": "9a127c6c19ada8514b0c530e8c2476d7a20b6e95cb7da8931488bd85462af7bf"
+  }
+}

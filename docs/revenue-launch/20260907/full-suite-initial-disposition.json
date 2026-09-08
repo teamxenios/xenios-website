@@ -90,7 +90,8 @@
     "sourceSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
     "tree": "314ef445a6e3be8420a77451ed182088419d59ec",
     "startedAt": "2026-09-08T03:12:11.7151115Z",
-    "status": "RUNNING",
-    "externalReceipt": "C:/Users/sboad/.codex/tmp/xenios-resource-hub-fullsuite-c350ab1-20260908.exit.json"
+    "completedAt": "2026-09-08T03:28:12.7269412Z",
+    "status": "PASS",
+    "receipt": "full-suite-c350ab1.json"
   }
 }

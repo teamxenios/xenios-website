@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "applicationSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "scope": "Validation after current graph/DAG evidence reconciliation; application source and migration bytes unchanged. Structural manifest acceptance does not clear blocked privacy or grant production authority.",
+  "results": [
+    {
+      "name": "manifest",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-release-manifest.ts docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json",
+      "startedAt": "2026-09-08T03:51:19.482Z",
+      "completedAt": "2026-09-08T03:51:22.494Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": "Release manifest accepted: docs/coordination/release-manifests/XENIOS_RESOURCE_HUB_2026-09-07.json\n",
+      "stderr": ""
+    },
+    {
+      "name": "migrationDag",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts",
+      "startedAt": "2026-09-08T03:51:22.496Z",
+      "completedAt": "2026-09-08T03:51:26.110Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": "Migration DAG accepted: 36 nodes, canonical checksums verified.\n",
+      "stderr": ""
+    },
+    {
+      "name": "productionRecord",
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-production-state.ts",
+      "startedAt": "2026-09-08T03:51:26.110Z",
+      "completedAt": "2026-09-08T03:51:44.305Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": "Trusted release baseline accepted: ff3c496245739233b71e46f9e5d6e26af9d57017 / dep-dafcm567bikc7382rhng.\n",
+      "stderr": ""
+    }
+  ]
+}

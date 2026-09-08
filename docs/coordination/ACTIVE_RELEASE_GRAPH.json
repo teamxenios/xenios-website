@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-07T23:00:48.4522689Z",
+  "generatedAt": "2026-09-08T03:50:58.191Z",
   "productionSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
   "runtimeFreezeSha": "2d662a0d31bb1de9332fb5c591f01cab76b991b1",
   "runtimeTree": "c1b1c5d64c317b4a26bdbe89735be97fb1b22ca5",
@@ -373,9 +373,17 @@
       "id": "resource-library-source-9ed2203f",
       "type": "candidate",
       "owner": "ASTRA-A integration; Fable source; ASTRA-B independent review",
-      "state": "UNDEPLOYED_SOURCE_PENDING_RELEASE_QUALIFICATION",
+      "state": "SUPERSEDED_UNDEPLOYED_SOURCE_REGISTRATION",
       "sha": "9ed2203f152e522880707881acdbdc7d0902a752",
-      "label": "Resource Hub source and corrected candidate SQL, registered for review only. Migration PENDING with canonical SHA-256 6859a8d3b156f99b2f3f205de12e6fe84e3f484e186950543895801352f48633. Local PGlite qualification docs/revenue-launch/20260907/RESOURCE_HUB_DATABASE_QUALIFICATION.md; no production apply or release authorization."
+      "label": "Historical source registration at9ed2203f with earlier6859a8d3 SQL. Superseded by frozen c350ab1 application and corrected e55f965f migration. Never deployed or authorized; prior bytes/evidence remain historical."
+    },
+    {
+      "id": "resource-library-candidate-c350ab1",
+      "type": "candidate",
+      "owner": "ASTRA-A integration; Fable source; ASTRA-B independent review",
+      "state": "UNDEPLOYED_QUALIFICATION_BLOCKED_PRIVACY_SOURCE",
+      "sha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+      "label": "Frozen application c350ab1, tree314ef445a6e3be8420a77451ed182088419d59ec. Full suite15997pass/59skip/0fail, typecheck/build, bounded source review and endpoint environment controls complete. Resource Hub migration PENDING at LF SHA-256 e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722. Local checker rehearsal154/154 onPG17.5 and18.3. V3 source register missing; strict PII and enabled-adapter/role scope remain open. No new production authority."
     }
   ],
   "edges": [
@@ -598,6 +606,11 @@
       "from": "production-ff3c4962",
       "to": "resource-library-source-9ed2203f",
       "relation": "source_baseline_of_undeployed_candidate"
+    },
+    {
+      "from": "resource-library-source-9ed2203f",
+      "to": "resource-library-candidate-c350ab1",
+      "relation": "superseded_by_review_candidate"
     }
   ],
   "releaseOrder": [

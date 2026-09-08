@@ -1505,7 +1505,8 @@
         ".xenios/handoffs/2026-09-06T00-10-00-000Z-XENIOS-SETH-REVENUE-LAUNCH-RECONCILIATION-INTEGRATED-20260905.md",
         "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
         "docs/revenue-launch/20260905/RELEASE_QUALIFICATION_DEPLOYMENT_PACKET_20260906.md",
-        "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md"
+        "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
+        "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
