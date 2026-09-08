@@ -10,6 +10,8 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 - Provide or confirm the exact content version and authorized audience when the managed Resource Hub activation plan is ready. Private source-review PDFs are not publication-approved resources. Any new real-user grant or communication still needs specific approval.
 
+- Identify the authorized isolated managed qualification target and existing role sessions. Discovered `xenios-research-staging` (`tetynodzrtmdbuzgboro`) is inactive with no confirmed current reuse purpose; retired M75 rehearsal is also inactive and is not automatically reusable. A is preparing the bounded harness; no project was restored, no schema was changed there and no test identity/content was created. See `docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json`. This is a missing environment/ownership input, not a request to repeat production GO.
+
 ## Closed on September 8
 
 The exact V3 input was approved with its bounded coverage and remained unchanged. The original c350 scan failed three attribution fields; corrected successor 3814 passed with zero unresolved secrets/PII and no skips. The original failed receipt and coverage limits remain retained. See `docs/revenue-launch/20260907/strict-scan-v3-3814c68.json` and `standing-conditional-authorization-20260908.json`.

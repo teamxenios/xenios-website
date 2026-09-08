@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "kind": "MANAGED_QUALIFICATION_CAPABILITY_DISCOVERY",
+  "scope": "Read-only project/branch discovery during September 8 installation closeout. Precise provider observation time was not separately captured; no fresh timestamp is inferred.",
+  "projects": [
+    {
+      "id": "bqwcvdkubxrlhecsuegk",
+      "name": "xenios-m75-rehearsal-disposable",
+      "status": "INACTIVE",
+      "region": "us-east-1"
+    },
+    {
+      "id": "yvzeduaxbwgcwllhywff",
+      "name": "production",
+      "status": "ACTIVE_HEALTHY",
+      "region": "us-east-2"
+    },
+    {
+      "id": "tetynodzrtmdbuzgboro",
+      "name": "xenios-research-staging",
+      "status": "INACTIVE",
+      "region": "us-west-2"
+    }
+  ],
+  "productionBranches": [
+    {
+      "projectRef": "yvzeduaxbwgcwllhywff",
+      "isDefault": true,
+      "name": "main"
+    }
+  ],
+  "decision": "No authorized active isolated managed qualification target established.",
+  "limitations": [
+    "Production SQL capability is proven on A's connector; that does not prove Auth/PostgREST/private Storage adapter delivery.",
+    "Staging tetynodzrtmdbuzgboro is inactive; repository review found no current owner/purpose or safe-reuse agreement.",
+    "M75 rehearsal bqwcvdkubxrlhecsuegk is inactive and an August 20 handoff recorded awaiting founder deletion; do not repurpose or delete automatically.",
+    "No project-bound service credentials and designated existing role sessions established for a managed Hub runner.",
+    "Exact production content and audience approval remain pending."
+  ],
+  "mutations": false,
+  "restoredProject": false,
+  "createdAccounts": false,
+  "uploadedContent": false,
+  "requestedResolution": "Identify the existing authorized managed staging target and its owner/role sessions, or approve a bounded isolated setup after its exact plan is reviewed. No repeat general production GO is needed."
+}

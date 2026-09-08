@@ -1498,7 +1498,8 @@
         "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
-        "server/research/resource-hub/activation-hardening.test.ts"
+        "server/research/resource-hub/activation-hardening.test.ts",
+        "server/research/e2e/managed-resource-hub-qa.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-05T17:49:32.211Z",

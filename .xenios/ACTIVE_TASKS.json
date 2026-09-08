@@ -1508,7 +1508,8 @@
         "docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
-        "server/research/resource-hub/activation-hardening.test.ts"
+        "server/research/resource-hub/activation-hardening.test.ts",
+        "server/research/e2e/managed-resource-hub-qa.test.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1561,6 +1562,19 @@
         ],
         "owner": "A retains lease; B independently reviews final pushed source",
         "parentMayNotEditDelegatedPathsUntilReturned": true
+      },
+      "delegatedManagedHarness": {
+        "agent": "managed_hub_harness",
+        "baseSha": "ad2a6b7ccd1339fa7ba5224e926a6be0b80a8a77",
+        "scope": "Isolated managed API qualification harness only; no production target, credentials, service writes or user grants during implementation",
+        "paths": [
+          "scripts/revenue-launch/managed-resource-hub-qa.ts",
+          "scripts/revenue-launch/lib/managed-resource-hub-boundary.ts",
+          "server/research/e2e/managed-resource-hub-qa.test.ts"
+        ],
+        "owner": "A retains exact path lease; helper works in its isolated worktree",
+        "parentMayNotEditDelegatedPathsUntilReturned": true,
+        "managedExecution": "Pending designated active staging target and private identity/content plan; production project hard-refused"
       }
     },
     {
