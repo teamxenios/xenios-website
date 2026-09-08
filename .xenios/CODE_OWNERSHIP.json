@@ -1723,6 +1723,23 @@
       "state": "handoff",
       "claimedAt": "2026-09-08T18:30:44.926Z",
       "heartbeatAt": "2026-09-08T18:30:44.926Z"
+    },
+    {
+      "id": "074a5fe3-c1ca-41a8-b259-b1d2cd4505c4",
+      "task": "XENIOS-SETH-FABLE-BROWSER-UNBLOCK-20260905",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "scripts/evidence/lib/cdp.mjs",
+        "scripts/evidence/lib/cdp-import-order.test.mjs",
+        "scripts/evidence/capture-synthetic-journeys.mjs",
+        "scripts/evidence/capture-synthetic-journeys.test.mjs",
+        "scripts/evidence/build-candidate-preview.mjs",
+        "scripts/evidence/capture-browser-matrix.mjs",
+        "scripts/evidence/capture-browser-matrix.test.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-08T18:31:40.477Z",
+      "heartbeatAt": "2026-09-08T18:31:40.477Z"
     }
   ],
   "rules": [
