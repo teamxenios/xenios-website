@@ -17,6 +17,7 @@ import { execFileSync } from "node:child_process";
 import { closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, realpathSync, writeSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { runInNewContext } from "node:vm";
 import { z } from "zod";
 
 export const SOURCE_SHA = "8be5d582586217e4cf531e718c65032b79152022";
@@ -32,6 +33,31 @@ const LIBRARY = "/research/partners/resources", ADMIN = "/admin/research/resourc
 const API_ADMIN = "/api/admin/research/resource-hub/resources", API_LIBRARY = "/api/research/partner/resources";
 const STATUS = "/__managed_host/status", AUTH = "/__managed_supabase/auth/v1/";
 const SOURCE_PATHS = ["client", "server", "shared", "package.json", "package-lock.json", "vite.config.ts", "tsconfig.json", "script/build.mjs"];
+// Playwright serializes functions without their Node lexical scope. tsx's
+// keepNames transform can insert an outer __name helper into nested functions.
+// These fixed script strings cross that boundary verbatim; no shim is installed
+// in the app, and no credential or fixture value is interpolated into them.
+export const BROWSER_SCRIPTS = Object.freeze({
+  saveObserver: `(function () {
+    function observe(type) { void window.__managedHubSaveObserved(type); }
+    const originalCreate = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = function (blob) { observe("object-url"); return originalCreate(blob); };
+    const originalClick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () {
+      if (this.hasAttribute("download")) observe("anchor-download");
+      return originalClick.call(this);
+    };
+  })();`,
+  timeOrigin: "performance.timeOrigin",
+  layoutReady: `(async function () {
+    await document.fonts.ready;
+    await new Promise(function (resolve) {
+      requestAnimationFrame(function () { requestAnimationFrame(resolve); });
+    });
+  })()`,
+  layoutMetrics: "({ width: innerWidth, scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth), height: document.documentElement.scrollHeight })",
+  documentHeight: "document.documentElement.scrollHeight",
+});
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const abs = z.string().refine(path.isAbsolute);
 const filePin = z.object({ path: abs, sha256: hash }).strict();
@@ -64,6 +90,10 @@ function fail(code: string): never { throw new DriverFailure(code); }
 function check(value: unknown, code: string): asserts value { if (!value) fail(code); }
 const sha256 = (value: Uint8Array | string) => createHash("sha256").update(value).digest("hex");
 const equal = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+export function pageErrorDiagnostic(error: { name?: unknown; message?: unknown }) {
+  const name = typeof error.name === "string" && ["Error", "ReferenceError", "TypeError", "SyntaxError", "RangeError", "EvalError", "URIError"].includes(error.name) ? error.name : "UnknownError";
+  return { name, code: name === "ReferenceError" && error.message === "__name is not defined" ? "serialized_name_helper_missing" : "page_runtime_error" };
+}
 function object(value: unknown): Row { check(value && typeof value === "object" && !Array.isArray(value), "response_shape"); return value as Row; }
 function decode<T>(schema: z.ZodType<T>, bytes: Buffer): T {
   let raw: unknown; try { raw = JSON.parse(bytes.toString("utf8")); } catch { return fail("json_parse"); }
@@ -143,8 +173,8 @@ interface Locator { fill(value: string): Promise<void>; click(): Promise<void>; 
 interface BrowserRequest { url(): string; method(): string; }
 interface BrowserResponse { url(): string; status(): number; request(): BrowserRequest; body(): Promise<Buffer>; json(): Promise<unknown>; }
 interface Download { createReadStream(): Promise<NodeJS.ReadableStream | null>; failure(): Promise<string | null>; }
-interface Page { goto(url: string): Promise<unknown>; url(): string; locator(selector: string): Locator; getByRole(role: string, options: { name: string | RegExp; exact?: boolean }): Locator; getByTestId(id: string): Locator; getByText(text: string, options?: { exact?: boolean }): Locator; setDefaultTimeout(ms: number): void; setViewportSize(size: { width: number; height: number }): Promise<void>; evaluate<T>(fn: () => T | Promise<T>): Promise<T>; screenshot(options: { path: string; fullPage: boolean; animations: "disabled" }): Promise<Buffer>; waitForURL(url: string): Promise<void>; waitForRequest(predicate: (r: BrowserRequest) => boolean): Promise<BrowserRequest>; waitForResponse(predicate: (r: BrowserResponse) => boolean): Promise<BrowserResponse>; waitForEvent(event: "download", options: { timeout: number }): Promise<Download>; on(event: "requestfinished" | "requestfailed", fn: (r: BrowserRequest) => void): void; on(event: "response", fn: (r: BrowserResponse) => void): void; on(event: "download", fn: () => void): void; on(event: "pageerror", fn: () => void): void; on(event: "console", fn: (message: { type(): string }) => void): void; close(): Promise<void>; }
-interface BrowserContext { newPage(): Promise<Page>; close(): Promise<void>; route(pattern: string, fn: (route: { request(): BrowserRequest; continue(): Promise<void>; abort(code: string): Promise<void> }) => Promise<void>): Promise<void>; routeWebSocket(pattern: string, fn: (socket: { close(): void }) => void): Promise<void>; exposeBinding(name: string, fn: (source: unknown, type: unknown) => void): Promise<void>; addInitScript(fn: () => void): Promise<void>; on(event: "page", fn: (page: Page) => void): void; }
+interface Page { goto(url: string): Promise<unknown>; url(): string; locator(selector: string): Locator; getByRole(role: string, options: { name: string | RegExp; exact?: boolean }): Locator; getByTestId(id: string): Locator; getByText(text: string, options?: { exact?: boolean }): Locator; setDefaultTimeout(ms: number): void; setViewportSize(size: { width: number; height: number }): Promise<void>; evaluate<T>(expression: string): Promise<T>; screenshot(options: { path: string; fullPage: boolean; animations: "disabled" }): Promise<Buffer>; waitForURL(url: string): Promise<void>; waitForRequest(predicate: (r: BrowserRequest) => boolean): Promise<BrowserRequest>; waitForResponse(predicate: (r: BrowserResponse) => boolean): Promise<BrowserResponse>; waitForEvent(event: "download", options: { timeout: number }): Promise<Download>; on(event: "requestfinished" | "requestfailed", fn: (r: BrowserRequest) => void): void; on(event: "response", fn: (r: BrowserResponse) => void): void; on(event: "download", fn: () => void): void; on(event: "pageerror", fn: (error: { name: string; message: string }) => void): void; on(event: "console", fn: (message: { type(): string }) => void): void; close(): Promise<void>; }
+interface BrowserContext { newPage(): Promise<Page>; close(): Promise<void>; route(pattern: string, fn: (route: { request(): BrowserRequest; continue(): Promise<void>; abort(code: string): Promise<void> }) => Promise<void>): Promise<void>; routeWebSocket(pattern: string, fn: (socket: { close(): void }) => void): Promise<void>; exposeBinding(name: string, fn: (source: unknown, type: unknown) => void): Promise<void>; addInitScript(script: { content: string }): Promise<void>; on(event: "page", fn: (page: Page) => void): void; }
 interface Browser { newContext(options: { viewport: { width: number; height: number }; acceptDownloads: boolean; serviceWorkers: "block" }): Promise<BrowserContext>; close(): Promise<void>; version(): string; }
 interface BrowserModule { chromium: { launch(options: { executablePath: string; headless: boolean; env: Record<string, string>; args: string[] }): Promise<Browser> }; }
 
@@ -232,16 +262,13 @@ export async function executeDriver(local: ReturnType<typeof verifyLocalDriver>,
     });
     await context.routeWebSocket("**/*", socket => { boundaryFailures++; event("browser_websocket_refused", { context: label }); socket.close(); });
     await context.exposeBinding("__managedHubSaveObserved", (_source, type) => { if (type === "object-url" || type === "anchor-download") { saves++; event("save_observed", { context: label, type }); } });
-    await context.addInitScript(() => {
-      const observe = (type: string) => { void (window as unknown as { __managedHubSaveObserved(type: string): Promise<void> }).__managedHubSaveObserved(type); };
-      const originalCreate = URL.createObjectURL.bind(URL); URL.createObjectURL = blob => { observe("object-url"); return originalCreate(blob); };
-      const originalClick = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () { if (this.hasAttribute("download")) observe("anchor-download"); return originalClick.call(this); };
-    });
+    await context.addInitScript({ content: BROWSER_SCRIPTS.saveObserver });
     context.on("page", page => {
       page.setDefaultTimeout(15000);
       page.on("requestfinished", req => settled.add(req)); page.on("requestfailed", req => settled.add(req));
       page.on("download", () => { downloads++; event("download_observed", { context: label }); });
-      page.on("pageerror", () => { pageErrors++; }); page.on("console", message => { if (message.type() === "error") consoleErrors++; });
+      page.on("pageerror", error => { pageErrors++; event("page_error", { context: label, stage, ...pageErrorDiagnostic(error) }); });
+      page.on("console", message => { if (message.type() === "error") consoleErrors++; });
       page.on("response", response => {
         const url = new URL(response.url()); if (url.origin !== origin || response.status() !== 200) return;
         const entry = hosts[hostName].entries.get(url.pathname.slice(1)); if (!entry) return;
@@ -271,19 +298,19 @@ export async function executeDriver(local: ReturnType<typeof verifyLocalDriver>,
     await tab.getByRole("button", { name: "Sign out", exact: true }).waitFor({ state: "visible" }); return tab;
   }
   async function memberSignOut(view: View, preparedTab?: Page) {
-    const beforeOrigin = await view.page.evaluate(() => performance.timeOrigin); const tab = preparedTab ?? await prepareAccountTab(view);
+    const beforeOrigin = await view.page.evaluate<number>(BROWSER_SCRIPTS.timeOrigin); const tab = preparedTab ?? await prepareAccountTab(view);
     event("ui_logout_attempt", { host: view.host, role: view.session.role, separateAccountTab: true }); await tab.getByRole("button", { name: "Sign out", exact: true }).click();
     await tab.waitForURL(view.origin + "/research"); await signInState(view.page);
-    check(view.page.url() === view.origin + LIBRARY && await view.page.evaluate(() => performance.timeOrigin) === beforeOrigin, "mounted_resources_navigation_changed"); await tab.close();
+    check(view.page.url() === view.origin + LIBRARY && await view.page.evaluate<number>(BROWSER_SCRIPTS.timeOrigin) === beforeOrigin, "mounted_resources_navigation_changed"); await tab.close();
   }
   async function matrix(view: View, state: string) {
     for (const width of WIDTHS) {
       safe(); await view.page.setViewportSize({ width, height: width <= 768 ? 844 : 900 });
-      await view.page.evaluate(async () => { await document.fonts.ready; await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))); });
-      const metrics = await view.page.evaluate(() => ({ width: innerWidth, scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth), height: document.documentElement.scrollHeight }));
+      await view.page.evaluate<void>(BROWSER_SCRIPTS.layoutReady);
+      const metrics = await view.page.evaluate<{ width: number; scrollWidth: number; height: number }>(BROWSER_SCRIPTS.layoutMetrics);
       check(metrics.width === width && metrics.scrollWidth <= width + 1, "horizontal_overflow");
       const name = `screens/${state}-${width}.png`; const image = await view.page.screenshot({ path: path.join(plan.evidenceDirectory, name), fullPage: true, animations: "disabled" });
-      check(await view.page.evaluate(() => document.documentElement.scrollHeight) === metrics.height, "screenshot_layout_changed");
+      check(await view.page.evaluate<number>(BROWSER_SCRIPTS.documentHeight) === metrics.height, "screenshot_layout_changed");
       report.matrix.push({ state, width, metrics, path: name, sha256: sha256(image), sizeBytes: image.length });
     }
     await view.page.setViewportSize({ width: 1440, height: 900 });
@@ -398,7 +425,7 @@ export async function executeDriver(local: ReturnType<typeof verifyLocalDriver>,
   process.stdout.write(`${JSON.stringify({ status: report.status, passedSteps: report.steps.filter(s => s.passed).length, matrixCaptures: report.matrix.length })}\n`);
 }
 
-export function selfTest() {
+export async function selfTest() {
   check(localOrigin("http://127.0.0.1:5233") === "http://127.0.0.1:5233", "self_local_origin");
   for (const value of ["https://127.0.0.1:5233", "http://localhost:5233", `https://${PROJECT}.supabase.co`, "http://127.0.0.1:5233/x", "http://127.0.0.1:5233?x=y", "http://x@127.0.0.1:5233"]) { let refused = false; try { localOrigin(value); } catch { refused = true; } check(refused, "self_origin_refusal"); }
   check(WIDTHS.length === 9 && new Set(WIDTHS).size === 9, "self_matrix");
@@ -408,10 +435,45 @@ export function selfTest() {
   for (const key of ["DEBUG", "debug", "DEBUG_FILE", "DEBUG_FD", "PWDEBUG", "NODE_DEBUG", "NODE_DEBUG_NATIVE", "PW_TEST_TRACE_DIR", "PLAYWRIGHT_TRACE_DIR", "NODE_OPTIONS", "NODE_PATH"]) {
     let refused = false; try { assertControllerEnvironment({ [key]: "enabled" }); } catch { refused = true; } check(refused, "self_controller_diagnostics_refusal");
   }
+  // This callback keeps the old nested-function shape. Under the actual pinned
+  // tsx runner its serialized text contains an outer __name helper. Prove that
+  // unsupported serialization is refused in an otherwise empty local realm;
+  // this is an offline negative control, not a claim about run 2's lost message.
+  const legacyObserver = () => { const observe = (type: string) => type; return observe("object-url"); };
+  const legacySerialized = `(${legacyObserver.toString()})()`;
+  check(legacySerialized.includes("__name"), "self_actual_tsx_keep_names_transform");
+  let legacyRejected = false;
+  try { runInNewContext(legacySerialized, {}, { timeout: 1000 }); } catch (error) { legacyRejected = pageErrorDiagnostic(error as Error).code === "serialized_name_helper_missing"; }
+  check(legacyRejected, "self_missing_helper_negative_control");
+  const observed: string[] = []; let originalUrls = 0, originalClicks = 0, frames = 0;
+  class TestAnchor {
+    constructor(readonly download: boolean) {}
+    hasAttribute(name: string) { return this.download && name === "download"; }
+    click() { originalClicks++; }
+  }
+  const dom = {
+    window: { __managedHubSaveObserved(type: string) { observed.push(type); return Promise.resolve(); } },
+    URL: { createObjectURL(_blob: unknown) { originalUrls++; return "blob:offline-fixture"; } }, HTMLAnchorElement: TestAnchor,
+    performance: { timeOrigin: 12345 }, innerWidth: 320,
+    document: { fonts: { ready: Promise.resolve() }, documentElement: { scrollWidth: 320, scrollHeight: 700 }, body: { scrollWidth: 319 } },
+    requestAnimationFrame(callback: (at: number) => void) { frames++; callback(0); return frames; },
+  };
+  for (const script of Object.values(BROWSER_SCRIPTS)) check(!script.includes("__name"), "self_script_lexical_helper");
+  runInNewContext(BROWSER_SCRIPTS.saveObserver, dom, { timeout: 1000 });
+  check(dom.URL.createObjectURL({}) === "blob:offline-fixture", "self_original_url_result");
+  new TestAnchor(true).click(); new TestAnchor(false).click();
+  check(equal(observed, ["object-url", "anchor-download"]) && originalUrls === 1 && originalClicks === 2, "self_save_observer_semantics");
+  check(runInNewContext(BROWSER_SCRIPTS.timeOrigin, dom, { timeout: 1000 }) === 12345, "self_serialized_time_origin");
+  await runInNewContext(BROWSER_SCRIPTS.layoutReady, dom, { timeout: 1000 }); check(frames === 2, "self_two_frame_layout_wait");
+  check(equal(runInNewContext(BROWSER_SCRIPTS.layoutMetrics, dom, { timeout: 1000 }), { width: 320, scrollWidth: 320, height: 700 }), "self_serialized_metrics");
+  check(runInNewContext(BROWSER_SCRIPTS.documentHeight, dom, { timeout: 1000 }) === 700, "self_serialized_height");
+  check(equal(pageErrorDiagnostic({ name: "private-value", message: "private-value" }), { name: "UnknownError", code: "page_runtime_error" }), "self_diagnostic_redaction");
+  check(equal(pageErrorDiagnostic({ name: "ReferenceError", message: "other-private-value" }), { name: "ReferenceError", code: "page_runtime_error" }), "self_unknown_message_redaction");
+  process.stdout.write(`${JSON.stringify({ offlineSerializedScripts: Object.entries(BROWSER_SCRIPTS).map(([name, script]) => ({ name, sha256: sha256(script), bytes: Buffer.byteLength(script) })), legacyMissingHelperNegativeControl: "PASS_ACTUAL_TSX_SERIALIZATION", browserStarted: false, privateInputsRead: false })}\n`);
   process.stdout.write("PASS bounded offline driver checks; no browser, private inputs or service calls.\n");
 }
 async function main(argv: string[]) {
-  if (argv.length === 1 && argv[0] === "--self-test") { selfTest(); return; }
+  if (argv.length === 1 && argv[0] === "--self-test") { await selfTest(); return; }
   const args: Record<string, string | boolean> = {};
   for (let i = 0; i < argv.length; i++) { const key = argv[i]; check(["--plan", "--execute", "--approved-plan-sha256"].includes(key) && args[key] === undefined, "cli_arguments"); if (key === "--execute") args[key] = true; else { check(argv[i + 1] && !argv[i + 1].startsWith("--"), "cli_value"); args[key] = argv[++i]; } }
   check(typeof args["--plan"] === "string", "private_plan_required");
