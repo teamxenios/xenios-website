@@ -174,4 +174,3 @@ The resulting records tip is `1bab7c9`; Site System of Record write/check passes
 ## Post-repair full-suite qualification — 2026-09-06
 
 The complete pinned serial repository suite was rerun after patch 01 and selective Astra-B evidence integration at source SHA `372142dca45525445a40145244e46f69fc464ca5`: **876 files passed, 5 skipped; 13,507 tests passed, 59 skipped; 0 failures** in 708.02 seconds. The detailed record is `docs/revenue-launch/20260905/REPAIR_BATCH_FULL_SUITE_20260906.md`.
-

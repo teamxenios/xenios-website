@@ -8,4 +8,3 @@
 - Duration: 708.02 seconds
 
 This run is the complete repository suite after patch 01 and the selective Astra-B evidence integration. Existing test-environment warnings and expected in-memory-storage diagnostics were non-failing. No production endpoint, migration, price activation, grant, communication, payment, shipment, or provider/database mutation was invoked.
-

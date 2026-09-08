@@ -34,9 +34,9 @@ The candidate contains the reviewed partner production-port hardening and the pr
 
 Apply only after fresh prechecks, disposable rehearsal, exact approval, and a maintenance/rollback decision:
 
-1. `supabase/candidates/20260905_research_approved_customer_access.sql`  
+1. `supabase/candidates/20260905_research_approved_customer_access.sql`<br>
    LF SHA-256 `026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5`
-2. `supabase/candidates/20260905_research_partner_lifecycle.sql`  
+2. `supabase/candidates/20260905_research_partner_lifecycle.sql`<br>
    LF SHA-256 `4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb`
 
 Required prechecks/postchecks and rollback notes:
