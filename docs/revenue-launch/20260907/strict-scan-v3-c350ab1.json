@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "classification": "STRICT_SCAN_FINDINGS",
+  "startedAt": "2026-09-08T14:00:13.040Z",
+  "completedAt": "2026-09-08T14:00:15.361Z",
+  "runtime": "v20.19.0",
+  "exitCode": 1,
+  "signal": null,
+  "spawnErrorCode": null,
+  "command": "node scripts/acceptance/verify-release-diff-scan.mjs --production-base-sha ff3c496245739233b71e46f9e5d6e26af9d57017 --candidate-sha c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662 --pii-names-file <restricted-private-V3>",
+  "checkedAt": "2026-09-08T14:00:13.038Z",
+  "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+  "inputBytes": 131,
+  "entryCount": 13,
+  "scannerEligibleEntries": 6,
+  "scannerIgnoredEntries": 7,
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "candidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "candidateTree": "314ef445a6e3be8420a77451ed182088419d59ec",
+  "registryPath": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+  "registryLfSha256": "b82169d4afa2bc1d2007680c0d984db9b6e0f0bdf4d8ca2b25c30cb937922aba",
+  "contextPath": "docs/revenue-launch/20260907/synthetic-credential-context-review.json",
+  "contextLfSha256": "069df252ebfe2370ff2e346e9e5a003b2e3a5e31a0978c649c837f53de562801",
+  "independentRegistryReview": "ACCEPTED",
+  "verifiedSources": [
+    {
+      "path": "scripts/acceptance/verify-release-diff-scan.mjs",
+      "lfSha256": "3e9e808fb48a482173384e5ad19cb95df2a75139d21cd9bd6329c306e1ec332f",
+      "matchesFrozenCandidate": true
+    },
+    {
+      "path": "scripts/acceptance/scan-release-diff.mjs",
+      "lfSha256": "ee64fe06000d8384feab4eafd48dbc1f488e52bdb68df35592304c190e003907",
+      "matchesFrozenCandidate": true
+    },
+    {
+      "path": "scripts/acceptance/reviewed-credential-fixtures.mjs",
+      "lfSha256": "c386efc31e0703ebd67ac7b3c9bb765c3c675823e31f49b2f6f37ede219fdd47",
+      "matchesFrozenCandidate": true
+    }
+  ],
+  "addedLines": 42121,
+  "files": 187,
+  "rawSecretFindings": 102,
+  "reviewedFixtureFindings": 102,
+  "unresolvedSecretFindings": 0,
+  "piiFindings": 3,
+  "piiSkipped": false,
+  "inputUnchanged": true,
+  "postInputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+  "stdoutBytes": 559,
+  "stderrBytes": 0,
+  "stdoutSha256": "9b5184279cea18ff4f23b38009b9983bbdf1a76aa0d16d359d88b6bec89c0198",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "privateLogDirectory": "C:/Users/sboad/.codex/private/xenios-privacy-input-v3-20260908/strict-scan-2026-09-08T14-00-12-726Z",
+  "approval": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-09-08T14:00:13.039Z",
+    "scope": "Founder-approved exact private input use for unchanged bounded local strict release-diff scan only",
+    "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "inputBytes": 131,
+    "entryCount": 13,
+    "scannerEligibleEntries": 6,
+    "scannerIgnoredEntries": 7,
+    "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+    "candidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "approvalEvidence": {
+      "type": "EXACT_FOUNDER_APPROVAL_RELAYED_BY_COORDINATOR_AND_B",
+      "coordinatorThreadId": "01a04650-defe-7a50-8b5a-a5d0d7a967b7",
+      "independentObserverThreadId": "01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35",
+      "receivedDate": "2026-09-08"
+    },
+    "coverageAccepted": [
+      "Retained V2 plus three hash-verified historical PDFs",
+      "Deleted-history and complete-team coverage incomplete",
+      "Image-only and handwritten completeness unverified",
+      "Ambiguous S01 filename identity not invented",
+      "Seven entries retained but ignored by existing scanner full-name rule",
+      "S02 remains a discussion proposal; no corpus-equivalence or comprehensive-privacy claim"
+    ],
+    "productionActionsAuthorized": false,
+    "policyChangesAuthorized": false
+  },
+  "rawNamesOrFindingsPrinted": false,
+  "productionReads": false,
+  "productionWrites": false,
+  "policyModified": false,
+  "locations": [
+    {
+      "findingId": "F001",
+      "file": ".xenios/PROJECT_STATE.json",
+      "candidateLine": 207,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    },
+    {
+      "findingId": "F002",
+      "file": ".xenios/RELEASE_STATE.json",
+      "candidateLine": 195,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    },
+    {
+      "findingId": "F003",
+      "file": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+      "candidateLine": 5,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    }
+  ],
+  "disposition": "FAILED_RESULT_RETAINED; source attribution corrections require a new exact candidate and fresh strict scan. No policy/name-input change."
+}

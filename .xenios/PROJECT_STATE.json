@@ -204,7 +204,7 @@
     "productionServingSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
     "productionLiveAt": "2026-09-07T14:33:55.150237Z",
     "productionDeployment": {
-      "authorization": "Samuel Boadu explicit exact-SHA authorization",
+      "authorization": "Founder explicit exact-SHA authorization",
       "scope": "Universal Account and Partner Access (narrow release; not full revenue launch)",
       "candidateSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
       "candidateTree": "73734e113e8ef5f9e1f27ae4dae36bdf598abb25",

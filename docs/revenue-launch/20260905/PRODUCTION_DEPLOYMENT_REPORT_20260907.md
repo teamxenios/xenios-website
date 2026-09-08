@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-07 14:35 UTC<br>
 **Release lane:** Account/partner access only (not the full revenue launch)<br>
-**Authorization:** Samuel Boadu's explicit exact-SHA production authorization<br>
+**Authorization:** Founder's explicit exact-SHA production authorization<br>
 **Evidence head:** `42153e2793df77ab3ae3c7313bea4ff6863c5af6`
 
 ## Exact release identity

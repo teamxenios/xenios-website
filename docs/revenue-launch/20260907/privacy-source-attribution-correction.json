@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T14:02:43.977Z",
+  "failedCandidateSha": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+  "failedReceipt": "docs/revenue-launch/20260907/strict-scan-v3-c350ab1.json",
+  "inputSha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+  "inputUnchanged": true,
+  "scannerUnchanged": true,
+  "corrections": [
+    {
+      "findingId": "F001",
+      "file": ".xenios/PROJECT_STATE.json",
+      "candidateLine": 207,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    },
+    {
+      "findingId": "F002",
+      "file": ".xenios/RELEASE_STATE.json",
+      "candidateLine": 195,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    },
+    {
+      "findingId": "F003",
+      "file": "docs/revenue-launch/20260905/PRODUCTION_DEPLOYMENT_REPORT_20260907.md",
+      "candidateLine": 5,
+      "change": "Replace personal-name attribution with Founder role; preserve exact authorization details"
+    }
+  ],
+  "applicationCodeChanged": false,
+  "sqlChanged": false,
+  "productionWrites": false,
+  "qualificationStatus": "CORRECTED_WORKING_TREE_AWAITING_NEW_EXACT_COMMIT_AND_RESCAN"
+}
