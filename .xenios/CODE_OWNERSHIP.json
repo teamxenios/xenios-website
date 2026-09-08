@@ -1679,6 +1679,18 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.37Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "afe6080d-7d8f-43ff-a440-3d7a0a69d9a5",
+      "task": "BROWSER-PERF-PROOF",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
+        "e2e/browser-perf/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-08T18:28:01.047Z",
+      "heartbeatAt": "2026-09-08T18:28:01.047Z"
     }
   ],
   "rules": [

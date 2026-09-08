@@ -646,14 +646,14 @@
       "id": "BROWSER-PERF-PROOF",
       "title": "P0-3/P0-4: seeded local browser proof, mobile smoke 430-320, and catalog performance measurement for the manual-order launch",
       "priority": "P0",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         "docs/research-launch/BROWSER_PERF_PROOF_2026-08-21.md",
         "e2e/browser-perf/**"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-21T16:38:03.054Z",
+      "claimedAt": "2026-09-08T18:28:01.046Z",
       "releasedAt": "2026-09-06T03:52:00.347Z"
     },
     {
