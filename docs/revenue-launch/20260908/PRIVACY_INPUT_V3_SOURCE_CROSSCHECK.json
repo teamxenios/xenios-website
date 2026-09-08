@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-08T04:33:55.209Z",
+  "kind": "v3-source-crosscheck",
+  "recoveredRegister": {
+    "file": "SOURCE_REGISTER_PRIVATE.json (founder package XENIOS_OPERATING_FORMS, 13/13 manifest hashes verified)",
+    "status": "HISTORICAL_SOURCES_RECOVERED_NOT_A_PRIVACY_APPROVAL",
+    "storedAt": "ACL-restricted register directory (current user + SYSTEM)"
+  },
+  "sources": [
+    {
+      "id": "S01",
+      "sha256": "d8fdbe8fac08571b7416a616c0fa6376fd19d8fc038c36f6594e9d7ae99427aa",
+      "bytes": 24271,
+      "category": "internal-team-document",
+      "localExactHashMatches": 1,
+      "inTier1": true
+    },
+    {
+      "id": "S02",
+      "sha256": "14132bc4e8c834f5a26ca7a38daa932c8442b2947b8106c0b5f7c817e5c9789c",
+      "bytes": 37266,
+      "category": "counterparty-proposal",
+      "localExactHashMatches": 3,
+      "inTier1": true
+    },
+    {
+      "id": "S03",
+      "sha256": "09318a530d989ce3b1da2b0c24827b604d4e7958f716d6c9f368149f4382d911",
+      "bytes": 214862,
+      "category": "advisor-agreement (returned, labelled signed)",
+      "localExactHashMatches": 0,
+      "filesOfThatSizeUnderDownloads": 0,
+      "inTier1": false,
+      "note": "Tier 1 holds 18 local versions of the same agreement (unsigned drafts, e.g. 214,990 and 205,8xx bytes); the exact signed bytes are only in the founder-held XENIOS_RECOVERED_ORIGINALS.zip, which is not on this machine."
+    }
+  ],
+  "preciseSourceRequest": "Place XENIOS_RECOVERED_ORIGINALS.zip (or the S03 file, sha256 09318a53..., 214,862 bytes) into the ACL-restricted register directory on this machine, OR confirm the operator can retrieve Gmail message 1a064cd6e39e81fa's attachment directly. Otherwise the operator may take S03 name coverage from the local unsigned drafts in tier 1 with their hashes recorded as the provenance and this gap stated.",
+  "newFormsScannerCheck": {
+    "scannerBlob": "8a66a45ea0872e8b67bcba3f56cd2d5665ecff8e (== c350ab1c)",
+    "result": "all 6 new PDFs (3 fillable, 3 print) ACCEPTED",
+    "meaning": "scanner acceptance only; not review, publication or Resource Hub approval; the forms are new working drafts and are NOT V3 sources"
+  },
+  "namesPrinted": false
+}
