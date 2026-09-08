@@ -65,12 +65,27 @@ function fakeClient(answer: (call: Call) => Answer) {
         update(patch) {
           const call: Call = { table, op: "update", payload: patch, filters: [] };
           calls.push(call);
-          return {
-            async eq(column: string, value: unknown) {
+          const builder = {
+            eq(column: string, value: unknown) {
               call.filters.push([column, value]);
-              return { error: answer(call).error ?? null };
+              return builder;
+            },
+            is(column: string, value: null) {
+              call.filters.push([column, value]);
+              return builder;
+            },
+            select(columns: string) {
+              call.columns = columns;
+              return {
+                async maybeSingle() {
+                  call.single = true;
+                  const out = answer(call);
+                  return { data: (out.data as Record<string, unknown> | null) ?? null, error: out.error ?? null };
+                },
+              };
             },
           };
+          return builder;
         },
       };
     },
@@ -257,7 +272,7 @@ describe("writes address the right table with the right columns", () => {
   });
 
   it("updateVersion never sends bytes identity, even when a patch carries it", async () => {
-    const { client, calls } = fakeClient(() => ({}));
+    const { client, calls } = fakeClient(() => ({ data: { id: V9 } }));
     await createSupabaseResourceHubStore(() => client).updateVersion(V9, {
       state: "in_review",
       reviewedAt: "2026-09-06T14:00:00.000Z",
@@ -265,8 +280,9 @@ describe("writes address the right table with the right columns", () => {
       reviewReason: "ok",
       // Not mutable: silently ignored by BOTH stores (shared allow-list).
       ...({ storageKey: "somewhere/else.pdf", sha256: "c".repeat(64), sizeBytes: 99, resourceId: R2, versionNumber: 7, validationOk: false } as Record<string, unknown>),
-    });
-    expect(calls[0]).toMatchObject({ table: RESOURCE_VERSIONS_TABLE, op: "update", filters: [["id", V9]] });
+    }, { state: "draft", reviewedAt: null, reviewedByAdmin: null, reviewReason: null });
+    expect(calls[0]).toMatchObject({ table: RESOURCE_VERSIONS_TABLE, op: "update", columns: "id", single: true,
+      filters: [["id", V9], ["state", "draft"], ["reviewed_at", null], ["reviewed_by_admin", null], ["review_reason", null]] });
     expect(calls[0]!.payload).toEqual({ state: "in_review", reviewed_at: "2026-09-06T14:00:00.000Z", reviewed_by_admin: ADMIN, review_reason: "ok" });
   });
 

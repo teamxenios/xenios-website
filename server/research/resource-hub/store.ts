@@ -92,13 +92,18 @@ export const MUTABLE_VERSION_FIELDS = [
 export type MutableVersionField = (typeof MUTABLE_VERSION_FIELDS)[number];
 export type ResourceVersionPatch = Partial<Pick<ResourceVersionRow, MutableVersionField>>;
 
+/** Snapshot required for an atomic conditional patch; review provenance must not be overwritten. */
+export type ResourceVersionExpectation = Pick<ResourceVersionRow,
+  "state" | "reviewedAt" | "reviewedByAdmin" | "reviewReason"
+>;
+
 export function restrictVersionPatch(patch: Partial<ResourceVersionRow>): ResourceVersionPatch {
   const out: Record<string, unknown> = {};
   for (const field of MUTABLE_VERSION_FIELDS) if (patch[field] !== undefined) out[field] = patch[field];
   return out as ResourceVersionPatch;
 }
 
-/** A write that lost a race (duplicate version number, duplicate upload key). Never a 503. */
+/** A write that lost a race (unique constraint or stale version snapshot). Never a 503. */
 export class ResourceHubConflict extends Error {
   constructor(message: string) {
     super(message);
@@ -128,7 +133,8 @@ export interface ResourceHubStore {
   findVersionByUploadKey(idempotencyKey: string): Promise<ResourceVersionRow | null>;
   /** Throws ResourceHubConflict when a unique constraint (version number, upload key) is hit. */
   insertVersion(row: ResourceVersionRow): Promise<void>;
-  updateVersion(versionId: string, patch: ResourceVersionPatch): Promise<void>;
+  /** Atomically match the expected snapshot and patch, or throw ResourceHubConflict without changing the row. */
+  updateVersion(versionId: string, patch: ResourceVersionPatch, expected: ResourceVersionExpectation): Promise<void>;
   /**
    * ONE atomic transition: the version becomes published and current, and the
    * previously current version (if any other) becomes superseded. A store must
@@ -187,9 +193,12 @@ export function createInMemoryResourceHubStore(): ResourceHubStore & {
       }
       versions.set(row.versionId, clone(row));
     },
-    async updateVersion(versionId, patch) {
+    async updateVersion(versionId, patch, expected) {
       const row = versions.get(versionId);
-      if (!row) throw new Error("unknown version");
+      if (!row || row.state !== expected.state || row.reviewedAt !== expected.reviewedAt
+        || row.reviewedByAdmin !== expected.reviewedByAdmin || row.reviewReason !== expected.reviewReason) {
+        throw new ResourceHubConflict("version changed before update");
+      }
       // Bytes and identity are immutable: only the shared mutable field list applies.
       versions.set(versionId, clone({ ...row, ...restrictVersionPatch(patch) }));
     },
