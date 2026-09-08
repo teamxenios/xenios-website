@@ -1272,7 +1272,7 @@
       "id": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
       "title": "Universal approved-user and partner launch with first real acceptance journey",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         ".xenios/ACTIVE_TASKS.json",
@@ -1521,11 +1521,10 @@
       "lastOwner": "codex-seth-revenue-launch-20260905",
       "releasedAt": "2026-09-04T23:49:58.516244-05:00",
       "handoff": {
-        "session": "codex-seth-revenue-launch-20260905",
-        "sha": "bf12a306fe73a400c2c4aad34d0df8afb8190c0e",
-        "file": ".xenios/handoffs/2026-09-08T04-55-51-000Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-PRIVACY-V3.md",
-        "at": "2026-09-08T04:55:51.646057+00:00",
-        "status": "privacy_v3_prepared_awaiting_actual_hash_coverage_approval_no_executor_transfer"
+        "session": "fable-recruiter-resource-hub-20260906",
+        "sha": "6af2474357f31861200efd6be02624a4a8e8986b",
+        "file": ".xenios/handoffs/2026-09-08T14-58-54-725Z-XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905-fable-recruiter-resource-hub-20260906.md",
+        "at": "2026-09-08T14:58:54.729Z"
       },
       "previousBlockedReason": "Refreshed founder startup gate requires current production migration history before further implementation. Authorized GET returned 403; no complete current ledger retained by parent.",
       "pairing": {
