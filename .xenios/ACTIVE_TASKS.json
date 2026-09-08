@@ -221,15 +221,15 @@
       "id": "F7-PACK02-RENAME",
       "title": "Rename account organization table and certify migration",
       "priority": "P0",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-seth-revenue-launch-20260905",
       "paths": [
         "supabase/pack02-candidates/20260812_research_account_organizations.sql",
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-09-05T23:32:27.159Z",
+      "claimedAt": "2026-09-08T18:29:09.821Z",
       "releasedAt": "2026-09-05T23:41:19.004Z"
     },
     {

@@ -1691,6 +1691,19 @@
       "state": "handoff",
       "claimedAt": "2026-09-08T18:28:01.047Z",
       "heartbeatAt": "2026-09-08T18:28:01.047Z"
+    },
+    {
+      "id": "3740cea8-5fe8-49b2-908e-99a70cb61fe0",
+      "task": "F7-PACK02-RENAME",
+      "session": "codex-seth-revenue-launch-20260905",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-08T18:29:09.823Z",
+      "heartbeatAt": "2026-09-08T18:29:09.823Z"
     }
   ],
   "rules": [
