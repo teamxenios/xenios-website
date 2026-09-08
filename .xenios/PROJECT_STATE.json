@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08T15:56:01.182962Z",
+  "updatedAt": "2026-09-08T16:02:50.489072Z",
   "sethRevenueLaunch": {
     "state": "ACTIVE_RESOURCE_HUB_INSTALLED_ACTIVATION_PENDING",
     "task": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
@@ -266,7 +266,7 @@
   },
   "repository": "teamxenios/xenios-website",
   "canonicalBranch": "release/early-access-code-session-checkout",
-  "observedHead": "3f51ed4af75e47ef5c94ab18a46a9f2d4fc27b9e",
+  "observedHead": "14c2c2ca27156652106b96ee72744e34737fa452",
   "majorSequenceThreeSliceCheckpoint": {
     "state": "LOCAL_THREE_SLICE_ACCEPTED_NOT_DEPLOYED",
     "fullMajorSequenceProgramComplete": false,
