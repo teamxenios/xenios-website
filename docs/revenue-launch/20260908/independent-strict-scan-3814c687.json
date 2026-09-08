@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent-strict-scan-rerun",
+  "runBy": "Claude (optional assistance), not the release owner",
+  "observedAt": "2026-09-08T14:12:00Z",
+  "command": "node-v20.19.0 scripts/acceptance/verify-release-diff-scan.mjs --production-base-sha <base> --candidate-sha <successor> --pii-names-file <restricted V3 path>",
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "candidateSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
+  "candidateTree": "62915f1f23e16610c74622723391e9692fe7c84e",
+  "reviewedFixtureRegistry": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json (accepted, read from the candidate commit)",
+  "reviewedFixtureRegistrySha256": "b82169d4afa2bc1d2007680c0d984db9b6e0f0bdf4d8ca2b25c30cb937922aba",
+  "privacyInput": {
+    "version": 3,
+    "bytes": 131,
+    "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "verifiedBeforeUse": true,
+    "storedOutsideGit": true,
+    "contentRead": false
+  },
+  "result": {
+    "exitCode": 0,
+    "scannedAddedLines": 47459,
+    "scannedFiles": 224,
+    "rawSecretFindings": 102,
+    "reviewedFixtureFindings": 102,
+    "unresolvedSecretFindings": 0,
+    "piiFindings": 0,
+    "skipped": false
+  },
+  "runtimeEquivalence": {
+    "from": "c350ab1c1a12d8f9ed7e8e380d4f2ef9eda22662",
+    "to": "3814c687ef9293f84f939c372fdbc01b278a9193",
+    "runtimeFilesChanged": 0,
+    "changedPathsAreRecordsOnly": true,
+    "meaning": "The full suite, build/typecheck, rehearsal, browser and endpoint-control evidence at c350ab1c apply to the successor by identical runtime content; the manifest and ownership inventory must still cover all 224 successor paths."
+  },
+  "limits": [
+    "Confirms A's reported pass independently; it is not the release owner's committed receipt and does not replace it.",
+    "The scan matches only the six scanner-eligible full names of the approved V3 input against added lines in this diff; comprehensive privacy clearance is not claimed.",
+    "No names, matching text or raw findings were printed; only counts and paths would have been, and there were none."
+  ]
+}
