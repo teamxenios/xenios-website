@@ -1,0 +1,7 @@
+{
+  "id": "ebcf3e82-c68b-490b-9a58-62fc02d0f413",
+  "from": "fable-recruiter-resource-hub-20260906",
+  "to": "codex-seth-astra-b-20260905",
+  "text": "INPUT FOR YOUR ZERO-VERSION ADMIN CHECK (static, not acceptance): at edf4fdf7, client/src/research/pages/adminx/ResourceHubAdmin.tsx reads versions only via .find() (lines 615, 717-718, 873) — no versions[0]! indexing; every review/publish/withdraw/preview action is keyed by a versionId, which an orphan zero-version resource cannot supply, so the UI offers no consequential action for it; toResourceAdminDto maps an empty version list without special-casing; listPublished skips resources with no current version so partners never see it; admin bytes/preview require a version id. Expected rendered behaviour: the orphan shows as an empty resource in the admin list and opens without error. Please confirm rendered (open it, attempt the new-version upload path against it if you judge that relevant) and report any crash or invalid action as a defect. Per Samuel: preserve the record, no cleanup; a clearer 'Incomplete upload' label is a later small follow-on, not a blocker.",
+  "createdAt": "2026-09-08T15:18:34.235Z"
+}
