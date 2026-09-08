@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "commit": "5bc0efa90f44fb83cecca6e74a8c6fd8620b5303",
+  "tree": "3d994cdedb8fe0c950495dd7c8bf5da7f493b5e4",
+  "branch": "codex/resource-hub-browser-host-20260908",
+  "files": [
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-browser-host.ts",
+      "bytes": 47427,
+      "sha256": "4fbe5ec04a6e403d917f8e870ce98e6cb19c5c17ab3012a81df8a07a0e6cbcba"
+    },
+    {
+      "path": "scripts/revenue-launch/managed-resource-hub-browser-host.test.ts",
+      "bytes": 15913,
+      "sha256": "2d485a9f5a9f6adc84a115c626d25bc9a6c1a23154c02d706181afdc24d8f112"
+    }
+  ],
+  "tests": {
+    "toolReceipt": "0ed378",
+    "files": 1,
+    "passed": 22,
+    "exitCode": 0,
+    "failed": 0,
+    "initialResultPreserved": {
+      "failed": 3,
+      "passed": 16,
+      "cause": "Offline SDK tests initially omitted Node20 ws transport",
+      "finalCorrection": "Canonical ws transport and real getSupabaseAdmin boot regression"
+    },
+    "startedAt": "2026-09-08T12:33:33.171-05:00"
+  },
+  "typecheck": {
+    "toolReceipt": "1f4173",
+    "initialConfigurationFailurePreserved": true,
+    "status": "PASS",
+    "scope": "Application tsconfig include plus two explicit host files; incremental false",
+    "exitCode": 0
+  },
+  "staticReview": {
+    "status": "No remaining blocker in bounded static scope",
+    "hostSha256": "4fbe5ec04a6e403d917f8e870ce98e6cb19c5c17ab3012a81df8a07a0e6cbcba",
+    "reviewer": "runtime sibling managed_hub_harness",
+    "notAstraBAcceptance": true
+  },
+  "budgets": {
+    "deliveredAudits": 2,
+    "additionalVersions": 1,
+    "maxMinutesPerHost": 30,
+    "reviews": 2,
+    "refresh": 0,
+    "publications": 1,
+    "additionalResources": 1,
+    "additionalObjects": 1,
+    "hostBHubWrites": 0,
+    "combinedPasswordSignIns": 8,
+    "withdrawals": 1,
+    "combinedLogouts": 8,
+    "coreAndHubReadsPerHost": 500,
+    "remoteRequestsPerHost": 800
+  },
+  "limits": [
+    "Loopback Auth reverse proxy; direct-origin browser Auth not proved",
+    "Run-owned Hub row projection; unscoped production library not proved",
+    "Actual rendered UI sign-in/logout/switching is pending independent driver",
+    "Fixed ADMIN_EMAIL per process; adminB is forbidden on adminA host",
+    "Member signout is local; admin signout is global for the approved synthetic admin",
+    "The pending-delivery UI may abort after a durable delivered audit",
+    "No live Hub activation, real-user account action, commerce or notification"
+  ],
+  "baseApplicationSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "baseApplicationTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "canonicalApplicationChanged": false,
+  "execution": {
+    "browserSessionsStarted": 0,
+    "privateCredentialsRead": 0,
+    "productionWrites": 0,
+    "stagingWrites": 0,
+    "managedServiceCalls": 0
+  },
+  "pushed": true,
+  "clean": true,
+  "status": "SOURCE_QUALIFIED_NO_MANAGED_EXECUTION"
+}

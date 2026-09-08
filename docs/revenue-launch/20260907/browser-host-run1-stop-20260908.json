@@ -1,0 +1,59 @@
+{
+  "status": "STOP_REVIEW_ACTUAL_STATE",
+  "failureCode": "host_failure_private_review_required",
+  "firstRefusal": null,
+  "sourceSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "sourceTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "host": "adminA",
+  "hostFileSha256": "4fbe5ec04a6e403d917f8e870ce98e6cb19c5c17ab3012a81df8a07a0e6cbcba",
+  "planSha256": "aecc5c90edb47cfd701b81ff23113eb444e0584ac659c2ce40a51c7626c63ed7",
+  "buildManifestSha256": "7cca385f69df2506e7842b976bfd25e2417cb47660fa7de4eda156a48cfe948f",
+  "finishedAt": "2026-09-08T17:39:29.004Z",
+  "requestCounts": {
+    "remote_all": 18,
+    "service_key_self_check": 1,
+    "bucket_precheck": 1,
+    "auth_fixture_precheck": 5,
+    "database_reads": 11
+  },
+  "apiRequests": 0,
+  "assetRequests": 0,
+  "servedAssets": {},
+  "delayedDownloads": [],
+  "extraScope": null,
+  "cleanupPerformed": false,
+  "allRetainedDataPreserved": true,
+  "productionContacted": false,
+  "notProven": [
+    "direct-origin Auth browser configuration",
+    "unscoped full Hub library",
+    "full production shell",
+    "ASTRA-B acceptance",
+    "browser assertions without independent driver evidence",
+    "managed concurrency",
+    "production activation"
+  ],
+  "ownedScopeCount": 4,
+  "privateResultSha256": "ea63c6859403f5cb014c54844795cd6bc78a248a3293113091e45b55b9343fe2",
+  "hostCommit": "5bc0efa90f44fb83cecca6e74a8c6fd8620b5303",
+  "hostTree": "3d994cdedb8fe0c950495dd7c8bf5da7f493b5e4",
+  "browserStarted": false,
+  "hostBStarted": false,
+  "diagnosis": {
+    "method": "Offline reproduction using the installed Express5.2.1 after the captured18 successful read-only prechecks",
+    "cause": "Express5 rejects app.get wildcard without a named parameter; the final host fallback used that syntax.",
+    "originalReceiptLimitation": "Original receipt retained a generic host failure with no first boundary refusal.",
+    "correctionPending": "Pathless final middleware and actual canonical router startup regression; no application runtime change."
+  },
+  "actualSqlReconciliation": {
+    "observedAt": "2026-09-08T17:40:42.254326Z",
+    "resources": 4,
+    "versions": 2,
+    "deliveries": 6,
+    "hubStorageObjects": 4,
+    "outbox": 2,
+    "authUsers": 6,
+    "authSessions": 6,
+    "unchanged": true
+  }
+}

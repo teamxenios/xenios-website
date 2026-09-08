@@ -1509,7 +1509,8 @@
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-c350.json",
         "docs/coordination/evidence/XENIOS_RESOURCE_HUB_2026-09-07.integration-ownership-review-3814.json",
         "server/research/resource-hub/activation-hardening.test.ts",
-        "server/research/e2e/managed-resource-hub-qa.test.ts"
+        "server/research/e2e/managed-resource-hub-qa.test.ts",
+        "server/research/partners/portal.ts"
       ],
       "dependsOn": [
         "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904"
@@ -1639,23 +1640,41 @@
       "delegatedManagedBrowser": {
         "agent": "runtime_successor_review",
         "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
-        "status": "ACTIVE_BOUNDED_REAL_AUTH_BROWSER_HOST",
+        "status": "ACTIVE_BOUNDED_EXPRESS_STARTUP_CORRECTION",
         "paths": [
           "scripts/revenue-launch/managed-resource-hub-browser-host.ts",
           "scripts/revenue-launch/managed-resource-hub-browser-host.test.ts"
         ],
         "parentMayNotEditDelegatedPathsUntilReturned": true,
-        "scope": "Nojobs canonicalResourceHub/browserAuth host only; sourceimplementation no services orcredentials; A executesunderreviewedprivateplan"
+        "scope": "Nojobs canonicalResourceHub/browserAuth host only; sourceimplementation no services orcredentials; A executesunderreviewedprivateplan",
+        "failedSourceSha": "5bc0efa90f44fb83cecca6e74a8c6fd8620b5303"
       },
       "delegatedManagedBrowserDriver": {
         "agent": "release_manifest",
         "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
-        "status": "ACTIVE_BOUNDED_BROWSER_DRIVER",
+        "status": "RETURNED_QUALIFIED_SOURCE_BROWSER_NOT_RUN",
         "paths": [
           "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
         ],
-        "parentMayNotEditDelegatedPathsUntilReturned": true,
-        "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation."
+        "parentMayNotEditDelegatedPathsUntilReturned": false,
+        "scope": "Isolated browser driver with normal Auth/UI and private-file credential use at execution. No service calls or private fixture reads during implementation.",
+        "returnedSourceSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366"
+      },
+      "nextSliceReadOnlyReview": {
+        "agent": "release_manifest",
+        "sourceWorktree": "C:/Users/sboad/projects/xenios-seth-astra-b-20260905",
+        "sourceSha": "8139e0a021615305aee73854df34d18e544d2ec5",
+        "scope": "Review unintegrated partner training/onboarding commits and dependencies for a separate future candidate; no edits, merge, services or heavy tests.",
+        "result": "ALREADY_INTEGRATED_NO_FEATURE_REPLAY; obsolete training membership-cost copy remains"
+      },
+      "delegatedNextPolicyCopy": {
+        "agent": "release_manifest",
+        "status": "ACTIVE_SEPARATE_FUTURE_SLICE",
+        "paths": [
+          "server/research/partners/portal.ts"
+        ],
+        "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "scope": "Correct obsolete paid-membership display copy in canonical training module, preserving stable module key/history; isolated future source, no changes to current qualified application."
       }
     },
     {

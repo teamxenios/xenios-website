@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "status": "PUSHED_CODE_REVIEW_ACCEPTED_BROWSER_EXECUTION_PENDING",
+  "recordedAt": "2026-09-08T17:39:46.047Z",
+  "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "head": "6098a92f7ca3cd5fbb1859190d214b4713fad366",
+  "tree": "c6df384acd9916ca26ae45b6af136a16937f81bf",
+  "branch": "codex/managed-resource-hub-browser-driver-20260908",
+  "pushedRemoteSha": "6098a92f7ca3cd5fbb1859190d214b4713fad366",
+  "remoteEqualityObservedInPrecedingToolReceipt": true,
+  "clean": true,
+  "paths": [
+    {
+      "path": "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts",
+      "sha256": "43a90234c7de04f3c1b752aac24a25963d12aea2a4b154c63e8337afcdbb82cd",
+      "sizeBytes": 46657
+    }
+  ],
+  "typecheck": {
+    "phase": "explicit-driver-only-typecheck",
+    "startedAt": "2026-09-08T17:38:00.3392818Z",
+    "finishedAt": "2026-09-08T17:38:01.7903653Z",
+    "exitCode": 0,
+    "sourceSha256": "43a90234c7de04f3c1b752aac24a25963d12aea2a4b154c63e8337afcdbb82cd",
+    "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logFile": "C:\\Users\\sboad\\.codex\\tmp\\managed-resource-hub-browser-driver-20260908\\typecheck-final-02.log",
+    "command": [
+      "node-v20.19.0",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--strict",
+      "--skipLibCheck",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "bundler",
+      "--esModuleInterop",
+      "--lib",
+      "ESNext,DOM,DOM.Iterable",
+      "--types",
+      "node",
+      "scripts/revenue-launch/run-managed-resource-hub-browser-qa.ts"
+    ]
+  },
+  "selfTest": {
+    "phase": "offline-self-test",
+    "startedAt": "2026-09-08T17:38:01.8248369Z",
+    "finishedAt": "2026-09-08T17:38:02.3235972Z",
+    "exitCode": 0,
+    "sourceSha256": "43a90234c7de04f3c1b752aac24a25963d12aea2a4b154c63e8337afcdbb82cd",
+    "logSha256": "27107de7f9fa50a19a302e99dafb816ed523c034ddde9a0f97989e7095d17584",
+    "logFile": "C:\\Users\\sboad\\.codex\\tmp\\managed-resource-hub-browser-driver-20260908\\self-test-final.log",
+    "browserStarted": false,
+    "privateInputsRead": false,
+    "servicesCalled": false
+  },
+  "diffCheck": "PASS_EXIT_ZERO",
+  "independentReview": {
+    "reviewer": "managed_hub_harness",
+    "status": "ACCEPT_BOUNDED_SOURCE_REVIEW",
+    "sourceSha256": "43a90234c7de04f3c1b752aac24a25963d12aea2a4b154c63e8337afcdbb82cd",
+    "formalAstraBAcceptance": false
+  },
+  "parentReview": "ACCEPT_BOUNDED_SOURCE_REVIEW",
+  "preservedFailure": "typecheck-final-01.json / typecheck-final-01.log; original ReadableStream string conversion typing error, corrected without casts",
+  "execution": {
+    "privateInputsRead": false,
+    "browserStarted": false,
+    "managedServicesCalled": false,
+    "productionCalled": false,
+    "applicationRebuilt": false
+  },
+  "limitations": [
+    "Driver only; executable host, approved private plans, served-client binding and actual browser result remain executor gates.",
+    "8be runtime source is frozen. This commit adds only one tooling file; no application/runtime/host/API implementation change.",
+    "Two hosts deliberately project their own retained run-owned data; no unfiltered global-library claim.",
+    "45 captures are planned, not performed. Eight sign-ins/eight logouts, two eligible deliveries/two previews, one private PDF resource/version/object, two review transitions, one publication and withdrawal.",
+    "No denied-download HTTP probe in the browser budget; corresponding coverage stays in separate managed API receipts.",
+    "No integration, deployment or formal B acceptance implied."
+  ],
+  "ownership": "A retains lease and integration responsibility; exact delegated driver path returned.",
+  "formalAstraBAcceptance": false,
+  "browserExecuted": false
+}
