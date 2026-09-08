@@ -1573,7 +1573,7 @@
           "build": "PASS_EXIT_ZERO",
           "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
           "independentBReview": "PENDING",
-          "managedExecution": "NOT_RUN_MISSING_DESIGNATED_TARGET_AND_PRIVATE_REVIEWED_PLAN",
+          "managedExecution": "STAGING_RESTORED_PREFLIGHT_IN_PROGRESS_NO_WORKFLOW_EXECUTION",
           "updatedAt": "2026-09-08T15:56:01.182962Z"
         }
       },
@@ -1597,7 +1597,7 @@
       },
       "delegatedManagedHarness": {
         "agent": "managed_hub_harness",
-        "baseSha": "ad2a6b7ccd1339fa7ba5224e926a6be0b80a8a77",
+        "baseSha": "8be5d582586217e4cf531e718c65032b79152022",
         "scope": "Isolated managed API qualification harness only; no production target, credentials, service writes or user grants during implementation",
         "paths": [
           "scripts/revenue-launch/managed-resource-hub-qa.ts",
@@ -1605,11 +1605,12 @@
           "server/research/e2e/managed-resource-hub-qa.test.ts"
         ],
         "owner": "A retains exact path lease; helper works in its isolated worktree",
-        "parentMayNotEditDelegatedPathsUntilReturned": false,
-        "managedExecution": "Pending designated active staging target and private identity/content plan; production project hard-refused",
+        "parentMayNotEditDelegatedPathsUntilReturned": true,
+        "managedExecution": "Staging restored; no managed workflow executed yet; private fixture plan and exact harness pending",
         "returnedSourceSha": "01a479d612fcef4337a4d9e3878c127c256cbcbe",
-        "status": "RETURNED_SELECTIVELY_INTEGRATED",
-        "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022"
+        "status": "ACTIVE_BOUNDED_FIVE_ROLE_PRECISION_CONCURRENCY_EXTENSION",
+        "integratedCandidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+        "assignmentUpdatedAt": "2026-09-08T16:42:10.689Z"
       }
     },
     {

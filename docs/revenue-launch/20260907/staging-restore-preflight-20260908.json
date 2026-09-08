@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T16:29:15.187Z",
+  "status": "RESTORE_PREFLIGHT_COMPLETE_DATABASE_INSPECTION_AFTER_RESUME",
+  "executor": "ASTRA-A",
+  "authorization": {
+    "sourcePath": "C:/Users/sboad/.codex/attachments/dfd6ac73-14d8-4fb2-b78c-4f824cc41786/pasted-text.txt",
+    "sourceSha256": "0d0a7aa3dfafc367c6333ad1917d1f3063ddfdc9d9c7bb2f6d3031ae0473b1d0",
+    "coordinatorDuplicatePath": "C:/Users/sboad/.codex/attachments/a4dc7304-4669-4a82-80b8-a3ccf5301428/pasted-text.txt",
+    "scope": "Restore/use this existing staging project; at most five synthetic identities and one benign private PDF; no paid upgrade/new charge, external communications or production fallback"
+  },
+  "candidateSha": "8be5d582586217e4cf531e718c65032b79152022",
+  "candidateTree": "6fc71d0a896d31d0843dd1eb63fa6265a3da9d28",
+  "target": {
+    "id": "tetynodzrtmdbuzgboro",
+    "ref": "tetynodzrtmdbuzgboro",
+    "organization_id": "ifthgtkazldsfuybihfy",
+    "organization_slug": "ifthgtkazldsfuybihfy",
+    "name": "xenios-research-staging",
+    "region": "us-west-2",
+    "status": "INACTIVE",
+    "database": {
+      "host": "db.tetynodzrtmdbuzgboro.supabase.co",
+      "version": "17.6.1.147",
+      "postgres_engine": "17",
+      "release_channel": "ga"
+    },
+    "created_at": "2026-07-23T00:41:47.668485Z"
+  },
+  "organization": {
+    "id": "ifthgtkazldsfuybihfy",
+    "name": "Xenios",
+    "plan": "free",
+    "opt_in_tags": [],
+    "allowed_release_channels": [
+      "ga",
+      "preview"
+    ]
+  },
+  "inventory": [
+    {
+      "id": "bqwcvdkubxrlhecsuegk",
+      "name": "xenios-m75-rehearsal-disposable",
+      "status": "INACTIVE",
+      "organizationId": "ifthgtkazldsfuybihfy"
+    },
+    {
+      "id": "yvzeduaxbwgcwllhywff",
+      "name": "teamxenios's Project",
+      "status": "ACTIVE_HEALTHY",
+      "organizationId": "ifthgtkazldsfuybihfy"
+    },
+    {
+      "id": "tetynodzrtmdbuzgboro",
+      "name": "xenios-research-staging",
+      "status": "INACTIVE",
+      "organizationId": "ifthgtkazldsfuybihfy"
+    }
+  ],
+  "cost": {
+    "expectedNewChargeUsd": 0,
+    "paidUpgradeRequested": false,
+    "newProjectRequested": false,
+    "basis": "Observed Free organization and one active project; resuming staging uses second active Free project. No paid action permitted.",
+    "source": "https://supabase.com/docs/guides/platform/billing-on-supabase"
+  },
+  "retainedState": {
+    "dashboardProject": "xenios-research-staging",
+    "dashboardOrganization": "Xenios FREE",
+    "dashboardPaused": true,
+    "dataBackupsStorageSafeNotice": true,
+    "resumeDeadline": "2027-09-04",
+    "edgeFunctions": 0,
+    "sqlReadBeforeResume": {
+      "status": "UNAVAILABLE_CONNECTION_TIMEOUT",
+      "query": "SELECT timestamp, database, executor and server_version only"
+    },
+    "limitation": "SQL/table/Auth/Storage row-level metadata cannot be inspected while paused. Dashboard retention notice and control-plane identity are verified; inspect metadata/counts immediately after resume, before synthetic data or schema writes. No existing customer data exported."
+  },
+  "restore": {
+    "tool": "supabase_restore_project",
+    "projectId": "tetynodzrtmdbuzgboro",
+    "replayForbiddenAfterUncertainResponse": true,
+    "postconditions": [
+      "Read project status until ACTIVE_HEALTHY",
+      "Read actual DB version and retained schema/counts, bucket exposure, migration history and active schedulers",
+      "Stop before test writes if incompatible retained state, active external automation or cost change is found"
+    ]
+  },
+  "recovery": {
+    "preserveExistingData": true,
+    "reset": false,
+    "cloneProduction": false,
+    "delete": false,
+    "unexpectedRestoreResult": "Inspect actual remote status before any retry; stop on refusal or paid-plan requirement",
+    "testData": "Retain run-owned private rows/objects/audits; no automatic cleanup. Test write plan must be pinned before fixture creation."
+  },
+  "productionWrites": false,
+  "stagingRestoreAttempted": false
+}

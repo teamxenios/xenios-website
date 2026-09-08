@@ -766,8 +766,16 @@
       "build": "PASS_EXIT_ZERO",
       "strictScan": "PASS_4636_LINES_51_FILES_ZERO_RAW_ZERO_UNRESOLVED_ZERO_PII_NO_ALLOWANCES",
       "independentBReview": "PENDING",
-      "managedExecution": "NOT_RUN_MISSING_DESIGNATED_TARGET_AND_PRIVATE_REVIEWED_PLAN",
-      "updatedAt": "2026-09-08T15:56:01.182962Z"
+      "managedExecution": "STAGING_RESTORED_PREFLIGHT_IN_PROGRESS_NO_WORKFLOW_EXECUTION",
+      "updatedAt": "2026-09-08T16:42:10.689Z",
+      "managedStaging": {
+        "projectId": "tetynodzrtmdbuzgboro",
+        "status": "ACTIVE_HEALTHY",
+        "authorizationSha256": "0d0a7aa3dfafc367c6333ad1917d1f3063ddfdc9d9c7bb2f6d3031ae0473b1d0",
+        "restoreReceipt": "docs/revenue-launch/20260907/staging-restore-execution-20260908.json",
+        "inspectionReceipt": "docs/revenue-launch/20260907/staging-postrestore-inspection-20260908.json",
+        "fixtureAndSchemaWrites": 0
+      }
     }
   },
   "reconciliationHistory": [

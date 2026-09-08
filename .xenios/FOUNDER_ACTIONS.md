@@ -10,9 +10,10 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 - Provide or confirm the exact content version and authorized audience when the managed Resource Hub activation plan is ready. Private source-review PDFs are not publication-approved resources. Any new real-user grant or communication still needs specific approval.
 
-- Identify the authorized isolated managed qualification target and existing role sessions. Discovered `xenios-research-staging` (`tetynodzrtmdbuzgboro`) is inactive with no confirmed current reuse purpose; retired M75 rehearsal is also inactive and is not automatically reusable. The bounded harness is integrated and locally tested at8be5d582; no project was restored, no schema was changed there and no test identity/content was created. See `docs/revenue-launch/20260907/resource-hub-managed-capability-20260908.json`. This is a missing environment/ownership input, not a request to repeat production GO.
 
 ## Closed on September 8
+
+The bounded staging directive designates `tetynodzrtmdbuzgboro`, permits restoration and up to five synthetic identities with one benign private test PDF, and prohibits new charges or external effects. A restored the existing Free project once and observed ACTIVE_HEALTHY, actual PostgreSQL 17.6 results, no Auth hooks, seven security-email switches off, and retained data counts. No fixture or schema writes have occurred at this checkpoint. See `docs/revenue-launch/20260907/staging-restore-execution-20260908.json` and `staging-postrestore-inspection-20260908.json`. Exact prerequisite, private fixture plan, managed workflow and B/browser acceptance remain engineering work; no repeated environment approval is needed.
 
 The exact V3 input was approved with its bounded coverage and remained unchanged. The original c350 scan failed three attribution fields; corrected successor 3814 passed with zero unresolved secrets/PII and no skips. The original failed receipt and coverage limits remain retained. See `docs/revenue-launch/20260907/strict-scan-v3-3814c68.json` and `standing-conditional-authorization-20260908.json`.
 

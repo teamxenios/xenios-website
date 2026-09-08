@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T16:34:44.248Z",
+  "projectId": "tetynodzrtmdbuzgboro",
+  "authorizationSha256": "0d0a7aa3dfafc367c6333ad1917d1f3063ddfdc9d9c7bb2f6d3031ae0473b1d0",
+  "preconditions": {
+    "at": "2026-09-08T16:29:40.383Z",
+    "project": {
+      "id": "tetynodzrtmdbuzgboro",
+      "ref": "tetynodzrtmdbuzgboro",
+      "organization_id": "ifthgtkazldsfuybihfy",
+      "organization_slug": "ifthgtkazldsfuybihfy",
+      "name": "xenios-research-staging",
+      "region": "us-west-2",
+      "status": "INACTIVE",
+      "database": {
+        "host": "db.tetynodzrtmdbuzgboro.supabase.co",
+        "version": "17.6.1.147",
+        "postgres_engine": "17",
+        "release_channel": "ga"
+      },
+      "created_at": "2026-07-23T00:41:47.668485Z"
+    },
+    "organization": {
+      "id": "ifthgtkazldsfuybihfy",
+      "name": "Xenios",
+      "plan": "free",
+      "opt_in_tags": [],
+      "allowed_release_channels": [
+        "ga",
+        "preview"
+      ]
+    }
+  },
+  "restoreAttemptCount": 1,
+  "restoreResponse": {
+    "receivedAt": "2026-09-08T16:29:42.647Z",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"success\":true}"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "lastProjectObservation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"id\":\"tetynodzrtmdbuzgboro\",\"ref\":\"tetynodzrtmdbuzgboro\",\"organization_id\":\"ifthgtkazldsfuybihfy\",\"organization_slug\":\"ifthgtkazldsfuybihfy\",\"name\":\"xenios-research-staging\",\"region\":\"us-west-2\",\"status\":\"ACTIVE_HEALTHY\",\"database\":{\"host\":\"db.tetynodzrtmdbuzgboro.supabase.co\",\"version\":\"17.6.1.147\",\"postgres_engine\":\"17\",\"release_channel\":\"ga\"},\"created_at\":\"2026-07-23T00:41:47.668485Z\"}"
+      }
+    ],
+    "isError": false
+  },
+  "stagingChanged": true,
+  "productionChanged": false,
+  "fixtureWrites": 0,
+  "schemaWrites": 0,
+  "activation": false,
+  "credentialCapability": "Existing CLI authenticated; project-scoped keys captured to private file with no values printed; no new credential created",
+  "next": "Inspect database metadata and scheduler state after ACTIVE_HEALTHY; do not repeat restore."
+}
