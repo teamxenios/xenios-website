@@ -133,7 +133,9 @@ claimed.
    and the live verification steps.
 5. Render and Supabase execution access for whoever is named executor; this
    session's Render connector is unauthenticated and its Supabase connector
-   rejected its token.
+   rejected its token. Exact requirements, the pattern `ff3c496` used, and
+   what unblocks each connector: `EXECUTOR_ACCESS_REQUIREMENTS.md`. Until
+   both are green, Claude cannot be the executor.
 
 ## EXACT RELEASE SCOPE
 
@@ -163,7 +165,16 @@ groundwork (outside the candidate); any activation of
 prices, payments, supplier facts, fulfilment, tracking, recruiter or
 organization workflows — none is represented as live by this candidate.
 
-## Proposed approval request (not yet requestable)
+## Two milestones, not one
+
+This candidate deploys the Resource Hub **dark**. `RESEARCH_RESOURCE_HUB_ENABLED`
+stays absent, so after deployment affiliates see an empty library and admins
+cannot upload. Activation — flag, approved content, intended users, live
+access and download checks — is a **second approval**, specified in
+`DEPLOYMENT_VS_ACTIVATION.md` beside this file. Neither milestone delivers
+prices, payments, fulfilment, recruiter, sales-AE or organization workflows.
+
+## Proposed approval request for Milestone 1 (not yet requestable)
 
 When items 1–3 above are closed and the strict scan and manifest are green at
 the final SHA, the single request will read:
