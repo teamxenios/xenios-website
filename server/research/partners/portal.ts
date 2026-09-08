@@ -303,8 +303,8 @@ const AGREEMENT_TITLES: Record<AgreementKey, string> = {
 
 const TRAINING_TITLES: Record<TrainingModuleKey, { title: string; summary: string }> = {
   xenios_membership: {
-    title: "The membership, honestly",
-    summary: "What the research membership is, what it costs, and what it does not include.",
+    title: "Approved customer access",
+    summary: "How customer approval works, what approved access includes, and which partner permissions remain separate.",
   },
   privacy_and_sensitive_data: {
     title: "Privacy and sensitive data",
