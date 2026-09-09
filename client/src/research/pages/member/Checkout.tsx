@@ -1,10 +1,15 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { getCart, getStoreCredit, quoteShipping, submitCheckout } from "../../adapters/commerce";
+import { loadPaymentClientConfig, submitDurableCheckout, type DurableCheckoutResult, type DurableCheckoutState, type PaymentClientConfig } from "../../adapters/durableCheckout";
+import type { CheckoutContinuationView } from "../../adapters/checkoutContinuation";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
+import { PaymentAuthenticationStep, stripeAuthenticator, type PaymentAuthenticator } from "../../payments/PaymentAuthenticationStep";
+import { PaymentMethodCollector, type CollectPaymentMethod, type PaymentMethodCollectorClient } from "../../payments/PaymentMethodCollector";
+import { clearCheckoutResume, readCheckoutResume, writeCheckoutResume } from "../../payments/checkout-resume";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
   capabilityStatusOrPending,
@@ -21,21 +26,38 @@ import type { CartDto, CheckoutRequest, OrderSummaryDto, StoreCreditDto } from "
 import type { ShippingQuote } from "@shared/research/commerce";
 
 // ---------------------------------------------------------------------------
-// Member Checkout (/research/member/checkout). The FULL flow, built now:
-// shipping address, service selection, on-demand shipping quote, required
-// agreements plus the research attestation, optional store credit bounded by
-// spendable credit, and a server-computed order summary. The submit routes on
-// the machine code, never on message text:
-//   ok                          confirmation with the order id and state
-//   commerce_disabled           the canonical calm pending state; the form
-//                               keeps every value, and the same flow works
-//                               unchanged the day commerce switches on
-//   large_order_review_required success-adjacent: the order EXISTS and is
-//                               held for a personal review (about two hours)
-//   anything else               the designed denial copy, form still editable
+// Member Checkout (/research/member/checkout). The FULL flow: shipping
+// address, service selection, on-demand shipping quote, required agreements
+// plus the research attestation, optional store credit bounded by spendable
+// credit, a server-computed order summary, and ONE of two doors:
+//
+//   The durable card door (POST /api/research/checkout/durable), used when the
+//   server publishes a payment configuration. The card is collected inside the
+//   provider's own element (a pm_ reference; never card data), the request is
+//   FROZEN at first submit and resent verbatim on any retry, the same request
+//   key continues the same execution, and the page shows the execution's
+//   truthful state: bank authentication mounts the continuation step; an
+//   uncertain answer says so and never invites a second payment; completed
+//   shows the order reference; cancelled says nothing was charged. A checkout
+//   that stops for authentication or loses its answer is resumed after a
+//   refresh through an owner-checked server lookup (only the request key is
+//   kept in this tab; no secret, no payload).
+//
+//   The ordering door (POST /api/research/checkout), exactly as before, when no
+//   payment configuration is published (production today), for a fully
+//   credit-covered order (no provider effect), and for an order the durable
+//   door refers to review. The submit routes on the machine code, never on
+//   message text:
+//     ok                          confirmation with the order id and state
+//     commerce_disabled           the canonical calm pending state; the form
+//                                 keeps every value
+//     large_order_review_required success-adjacent: the order EXISTS and is
+//                                 held for a personal review
+//     anything else               the designed denial copy, form still editable
+//
 // The idempotency key is generated once on mount and stays stable across
 // retries so a retried submit cannot create two orders; it regenerates only
-// after a success.
+// after an order is placed or a durable checkout ends in cancelled.
 // ---------------------------------------------------------------------------
 
 // Sourced from the one canonical declaration so the wording cannot drift
@@ -73,7 +95,31 @@ type BoundaryState = "loading" | "ok" | "error" | "unavailable" | "unauthorized"
 type SubmitPhase =
   | { kind: "form" }
   | { kind: "placed"; order: OrderSummaryDto }
-  | { kind: "held_for_review" };
+  | { kind: "held_for_review" }
+  /** The durable door verified the payment with the provider and recorded the order. */
+  | { kind: "paid"; orderId: string };
+
+type PaymentConfigState = { kind: "loading" } | { kind: "ok"; config: PaymentClientConfig } | { kind: "off" };
+
+/**
+ * The durable submission's lifecycle on this page. `frozen` holds the exact
+ * request already sent (or being sent) so a retry can only repeat it;
+ * `execution` mirrors the server's truthful state for the request key.
+ */
+type DurableState =
+  | { kind: "idle" }
+  | { kind: "frozen"; request: CheckoutRequest }
+  | { kind: "execution"; requestKey: string; orderId: string | null; state: DurableCheckoutState; note: string | null }
+  | { kind: "cancelled"; orderId: string | null };
+
+const NOT_SETTLED: readonly DurableCheckoutState[] = ["pending", "authentication_required", "processing", "reconciliation_required"];
+
+export interface CheckoutProps {
+  /** Test seam: the provider client for card collection. Defaults to Stripe Elements. */
+  paymentMethodClient?: PaymentMethodCollectorClient;
+  /** Test seam: the provider client for bank authentication. Defaults to Stripe.js. */
+  authenticator?: PaymentAuthenticator;
+}
 
 function Field({
   id,
@@ -97,14 +143,15 @@ function Field({
   );
 }
 
-export default function Checkout() {
-  const { memberToken } = useResearch();
+export default function Checkout({ paymentMethodClient, authenticator }: CheckoutProps = {}) {
+  const { memberToken, member } = useResearch();
   const [state, setState] = useState<BoundaryState>("loading");
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [loadDenial, setLoadDenial] = useState<{ code: string; message?: string } | null>(null);
   const [cart, setCart] = useState<CartDto | null>(null);
   const [storeCredit, setStoreCredit] = useState<StoreCreditDto | null>(null);
   const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
+  const [paymentConfig, setPaymentConfig] = useState<PaymentConfigState>({ kind: "loading" });
 
   // Shipping address (country is fixed to US by the contract).
   const [line1, setLine1] = useState("");
@@ -127,8 +174,9 @@ export default function Checkout() {
   // Store credit input, entered in dollars, bounded by spendable credit.
   const [creditInput, setCreditInput] = useState("");
 
-  // Generated once on mount; stable across retries; regenerated only after a
-  // success so a retried submit can never create two orders.
+  // Generated once on mount; stable across retries; regenerated only after an
+  // order is placed (or a durable checkout ends cancelled) so a retried submit
+  // can never create two orders.
   const [idempotencyKey, setIdempotencyKey] = useState<string>(() => newIdempotencyKey());
 
   const [phase, setPhase] = useState<SubmitPhase>({ kind: "form" });
@@ -138,14 +186,49 @@ export default function Checkout() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [validation, setValidation] = useState<string | null>(null);
 
+  // The durable door's lifecycle and the provider-hosted card collector.
+  const [durable, setDurable] = useState<DurableState>({ kind: "idle" });
+  const collectRef = useRef<CollectPaymentMethod | null>(null);
+  const [cardComplete, setCardComplete] = useState(false);
+
+  // Principal fence: every asynchronous answer is applied only if the token
+  // that requested it is still the page's token. Unmount or an account switch
+  // retires the token, so a late answer never renders under another account.
+  const principal = useRef<string | null>(memberToken);
+  principal.current = memberToken;
+  const stillCurrent = useCallback((token: string | null) => principal.current === token, []);
+  useEffect(() => {
+    return () => {
+      principal.current = null;
+    };
+  }, []);
+  // An account or organization switch clears every private answer this page
+  // holds: the execution in progress, the frozen request and the collector.
+  useEffect(() => {
+    setDurable({ kind: "idle" });
+    setPhase({ kind: "form" });
+    setSubmitDenial(null);
+    setSubmitError(null);
+    collectRef.current = null;
+    setCardComplete(false);
+  }, [memberToken]);
+
+  const cartScope = member?.cartScope ?? null;
+
   const load = useCallback(async () => {
+    const token = memberToken;
     setState("loading");
     setErrorMessage(undefined);
     setLoadDenial(null);
-    const [cartResult, creditResult] = await Promise.all([getCart(memberToken), getStoreCredit(memberToken)]);
+    setPaymentConfig({ kind: "loading" });
+    const [cartResult, creditResult, configResult] = await Promise.all([getCart(token), getStoreCredit(token), loadPaymentClientConfig(token)]);
+    if (!stillCurrent(token)) return;
     // Store credit is optional context: when its endpoint is not available the
     // checkout still works, with no credit input shown.
     if (creditResult.kind === "ok") setStoreCredit(creditResult.data.storeCredit);
+    // The payment configuration decides the door. Anything but an explicit
+    // answer keeps the ordering door: the page never guesses a provider.
+    setPaymentConfig(configResult.kind === "ok" ? { kind: "ok", config: configResult.data.config } : { kind: "off" });
     if (cartResult.kind === "ok") {
       setCart(cartResult.data.cart);
       setState("ok");
@@ -166,7 +249,7 @@ export default function Checkout() {
     }
     setErrorMessage(cartResult.message);
     setState("error");
-  }, [memberToken]);
+  }, [memberToken, stillCurrent]);
 
   useEffect(() => {
     void load();
@@ -183,6 +266,17 @@ export default function Checkout() {
       cancelled = true;
     };
   }, [memberToken]);
+
+  // Resume: a checkout that stopped (bank authentication, a lost answer) is
+  // looked up again through the owner-checked continuation door. The record
+  // is only a reference bound to this account's scope; the server decides.
+  useEffect(() => {
+    if (paymentConfig.kind !== "ok" || durable.kind !== "idle" || phase.kind !== "form") return;
+    const record = readCheckoutResume(cartScope);
+    if (!record) return;
+    setIdempotencyKey(record.requestKey);
+    setDurable({ kind: "execution", requestKey: record.requestKey, orderId: record.orderId, state: "pending", note: "Picking up the checkout you started." });
+  }, [paymentConfig, cartScope, durable.kind, phase.kind]);
 
   const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
 
@@ -214,12 +308,27 @@ export default function Checkout() {
     return Math.min(Math.round(parsed * 100), spendableCents);
   }, [creditInput, spendableCents]);
 
+  // The door for THIS request. A fully credit-covered order has no provider
+  // effect and stays on the ordering door; the server re-checks all of it.
+  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + (quote?.amountCents ?? cart.shippingCents) - creditCents) : 0;
+  const cardDoor = paymentConfig.kind === "ok" && estimatedChargeCents > 0;
+  const activeConfig = paymentConfig.kind === "ok" ? paymentConfig.config : null;
+
+  const authenticate = useMemo<PaymentAuthenticator>(() => {
+    if (authenticator) return authenticator;
+    if (activeConfig?.provider === "stripe" && activeConfig.publishableKey) return stripeAuthenticator(activeConfig.publishableKey);
+    // The test provider completes its customer action server-side; the browser has nothing to run.
+    return async () => "authenticated";
+  }, [authenticator, activeConfig]);
+
   const requestQuote = async () => {
+    const token = memberToken;
     setQuoteBusy(true);
     setQuoteDenial(null);
     setQuoteError(null);
     setQuote(null);
-    const result = await quoteShipping(memberToken, { destination, service });
+    const result = await quoteShipping(token, { destination, service });
+    if (!stillCurrent(token)) return;
     setQuoteBusy(false);
     if (result.kind === "ok") {
       setQuote(result.data.quote);
@@ -240,43 +349,39 @@ export default function Checkout() {
     setQuoteError(result.kind === "error" ? result.message : "The quote did not come back. Please try again.");
   };
 
-  const submit = async () => {
-    setValidation(null);
-    setSubmitDenial(null);
-    setSubmitUnavailable(false);
-    setSubmitError(null);
-    if (!addressComplete) {
-      setValidation("Fill in the shipping address (street, city, state, and ZIP) before placing the order.");
-      return;
-    }
-    if (!allAgreed || !attestation) {
-      setValidation("Accept the required agreements and the research attestation before placing the order.");
-      return;
-    }
-    const request: CheckoutRequest = {
-      shippingAddress: destination,
-      shippingService: service,
-      ...(creditCents > 0 ? { applyStoreCreditCents: creditCents } : {}),
-      acceptedAgreementKeys: requiredAgreements.filter((key) => accepted[key]),
-      researchAttestation: attestation,
-      idempotencyKey,
-    };
+  const baseRequest = (): CheckoutRequest => ({
+    shippingAddress: destination,
+    shippingService: service,
+    ...(creditCents > 0 ? { applyStoreCreditCents: creditCents } : {}),
+    acceptedAgreementKeys: requiredAgreements.filter((key) => accepted[key]),
+    researchAttestation: attestation,
+    idempotencyKey,
+  });
+
+  // ------------------------- the ordering door ------------------------------
+
+  const submitLegacy = async (request: CheckoutRequest) => {
+    const token = memberToken;
     setSubmitBusy(true);
-    const result = await submitCheckout(memberToken, request);
+    const result = await submitCheckout(token, request);
+    if (!stillCurrent(token)) return;
     setSubmitBusy(false);
     if (result.kind === "ok") {
       setPhase({ kind: "placed", order: result.data.order });
       // Only now does the key rotate: the next order is a new intent.
       setIdempotencyKey(newIdempotencyKey());
+      setDurable({ kind: "idle" });
       return;
     }
     if (result.kind === "denied") {
       if (result.code === "large_order_review_required") {
         // Not an error: the order exists and is held for a personal review.
         setPhase({ kind: "held_for_review" });
+        setDurable({ kind: "idle" });
         return;
       }
       setSubmitDenial({ code: result.code, message: result.message });
+      setDurable({ kind: "idle" });
       return;
     }
     if (result.kind === "unauthorized") {
@@ -285,12 +390,160 @@ export default function Checkout() {
     }
     if (result.kind === "unavailable") {
       setSubmitUnavailable(true);
+      setDurable({ kind: "idle" });
       return;
     }
     setSubmitError(result.kind === "error" ? result.message : "The order was not placed. Please try again.");
+    setDurable({ kind: "idle" });
+  };
+
+  // -------------------------- the durable door ------------------------------
+
+  const applyOutcome = (checkout: DurableCheckoutResult) => {
+    if (checkout.state === "completed") {
+      clearCheckoutResume();
+      setPhase({ kind: "paid", orderId: checkout.orderId });
+      setIdempotencyKey(newIdempotencyKey());
+      setDurable({ kind: "idle" });
+      return;
+    }
+    if (checkout.state === "cancelled") {
+      clearCheckoutResume();
+      setDurable({ kind: "cancelled", orderId: checkout.orderId });
+      return;
+    }
+    if (cartScope) writeCheckoutResume({ scope: cartScope, requestKey: checkout.requestKey, orderId: checkout.orderId, startedAt: new Date().toISOString() });
+    setDurable({
+      kind: "execution",
+      requestKey: checkout.requestKey,
+      orderId: checkout.orderId,
+      state: checkout.state,
+      note: checkout.idempotent ? "This is the checkout you already started; nothing was submitted twice." : null,
+    });
+  };
+
+  const sendDurable = async (request: CheckoutRequest) => {
+    const token = memberToken;
+    setSubmitBusy(true);
+    const result = await submitDurableCheckout(token, request);
+    if (!stillCurrent(token)) return;
+    setSubmitBusy(false);
+    if (result.kind === "ok") {
+      applyOutcome(result.data.checkout);
+      return;
+    }
+    if (result.kind === "unauthorized") {
+      setState("unauthorized");
+      return;
+    }
+    if (result.kind === "denied") {
+      if (result.code === "idempotency_conflict") {
+        // The key already names an execution with different details. Its truth
+        // is shown through the owner-checked lookup; nothing new was created.
+        setDurable({ kind: "execution", requestKey: request.idempotencyKey, orderId: null, state: "pending", note: "A checkout with these details is already in progress under this request. Showing its current state." });
+        return;
+      }
+      if (result.code === "large_order_review_required") {
+        // The durable door created nothing; a held order for a personal review
+        // is the ordering door's path, with the same request.
+        await submitLegacy(request);
+        return;
+      }
+      // Any other denial persisted nothing: the form is editable again and the
+      // same key may carry the corrected request.
+      setSubmitDenial({ code: result.code, message: result.message });
+      setDurable({ kind: "idle" });
+      return;
+    }
+    // Unavailable or a failed connection AFTER the request left the page: the
+    // outcome is unknown, so the request stays frozen and a retry can only
+    // repeat it. The server continues the same execution or answers that
+    // nothing exists; either way nothing is charged twice.
+    setDurable({ kind: "frozen", request });
+    setSubmitError(
+      result.kind === "error"
+        ? "We could not confirm whether your order was placed. Retry sends the same request, so nothing can be charged twice."
+        : "Checkout is not available right now. Nothing you entered was lost. Retry sends the same request, so nothing can be charged twice.",
+    );
+  };
+
+  const submit = async () => {
+    setValidation(null);
+    setSubmitDenial(null);
+    setSubmitUnavailable(false);
+    setSubmitError(null);
+    if (durable.kind === "frozen") {
+      // A retry of a request whose answer was lost: byte-for-byte the same.
+      await sendDurable(durable.request);
+      return;
+    }
+    if (!addressComplete) {
+      setValidation("Fill in the shipping address (street, city, state, and ZIP) before placing the order.");
+      return;
+    }
+    if (!allAgreed || !attestation) {
+      setValidation("Accept the required agreements and the research attestation before placing the order.");
+      return;
+    }
+    const request = baseRequest();
+    if (!cardDoor) {
+      await submitLegacy(request);
+      return;
+    }
+    const collect = collectRef.current;
+    if (!collect) {
+      setValidation("Enter your card details in the secure card field before paying.");
+      return;
+    }
+    const token = memberToken;
+    setSubmitBusy(true);
+    const collected = await collect();
+    if (!stillCurrent(token)) return;
+    if (!collected.ok) {
+      setSubmitBusy(false);
+      setValidation(collected.message);
+      return;
+    }
+    const frozen: CheckoutRequest = { ...request, paymentMethodReference: collected.reference };
+    setDurable({ kind: "frozen", request: frozen });
+    await sendDurable(frozen);
+  };
+
+  const startNewRequest = () => {
+    clearCheckoutResume();
+    setIdempotencyKey(newIdempotencyKey());
+    setDurable({ kind: "idle" });
+    setSubmitError(null);
+    setSubmitDenial(null);
   };
 
   // ------------------------------ render -----------------------------------
+
+  if (phase.kind === "paid") {
+    return (
+      <ResearchMemberShell title="Checkout" lead="Your payment is confirmed and your order is recorded.">
+        <section role="status" className="card" data-testid="checkout-paid">
+          <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+            <p className="mono-label text-ink-mute">Order placed</p>
+            <ResearchStatusBadge label="Payment received" tone="success" />
+          </div>
+          <p className="body-m font-700 mt-2">Order {phase.orderId} is recorded.</p>
+          <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+            The payment was verified with the payment provider before this page said so. Payment received is not shipment:
+            every order is personally reviewed before it ships, and you can follow it from your orders.
+          </p>
+          <div className="mt-4 flex gap-3" style={{ flexWrap: "wrap" }}>
+            <Link href={MEMBER_ROUTES.order.replace(":id", encodeURIComponent(phase.orderId))} className="btn btn-primary" data-testid="checkout-paid-order">
+              View this order
+            </Link>
+            <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
+              View your orders
+            </Link>
+          </div>
+        </section>
+      </ResearchMemberShell>
+    );
+  }
 
   if (phase.kind === "placed") {
     return (
@@ -334,6 +587,61 @@ export default function Checkout() {
               View your orders
             </Link>
           </div>
+        </section>
+      </ResearchMemberShell>
+    );
+  }
+
+  // A durable checkout in progress: the continuation step owns the screen
+  // until the server reports a settled state. No form, no second submit.
+  if (durable.kind === "execution" && memberToken) {
+    const execution = durable;
+    return (
+      <ResearchMemberShell title="Checkout" lead="Finishing your payment.">
+        <section className="card" data-testid="checkout-execution" data-state={execution.state}>
+          {execution.note && (
+            <p className="body-s text-ink-2 mb-3" data-testid="checkout-execution-note">
+              {execution.note}
+            </p>
+          )}
+          {execution.orderId && (
+            <p className="body-s text-ink-mute mb-3">
+              Order reference <span className="tabular">{execution.orderId}</span>
+            </p>
+          )}
+          <PaymentAuthenticationStep
+            memberToken={memberToken}
+            requestKey={execution.requestKey}
+            authenticate={authenticate}
+            onView={(view: CheckoutContinuationView) => {
+              if (!stillCurrent(memberToken)) return;
+              if (NOT_SETTLED.includes(view.state)) {
+                if (cartScope) writeCheckoutResume({ scope: cartScope, requestKey: view.requestKey, orderId: view.orderId, startedAt: new Date().toISOString() });
+                setDurable((current) =>
+                  current.kind === "execution" && (current.orderId !== view.orderId || current.state !== view.state)
+                    ? { ...current, orderId: view.orderId, state: view.state }
+                    : current,
+                );
+              }
+            }}
+            onCompleted={(orderId) => {
+              if (!stillCurrent(memberToken)) return;
+              applyOutcome({ requestKey: execution.requestKey, orderId, state: "completed", idempotent: true });
+            }}
+            onCancelled={(orderId) => {
+              if (!stillCurrent(memberToken)) return;
+              applyOutcome({ requestKey: execution.requestKey, orderId, state: "cancelled", idempotent: true });
+            }}
+            onMissing={() => {
+              if (!stillCurrent(memberToken)) return;
+              // The server does not know this reference for this account: it is not ours to resume.
+              startNewRequest();
+            }}
+          />
+          <ResearchSecureNotice>
+            Payment results come from the payment provider, verified by the server. If this page is closed, the same
+            checkout is picked up again when you return; it is never submitted twice.
+          </ResearchSecureNotice>
         </section>
       </ResearchMemberShell>
     );
@@ -413,9 +721,25 @@ export default function Checkout() {
               />
             )}
             {submitError && (
-              <p role="alert" className="body-s text-ink-2">
+              <p role="alert" className="body-s text-ink-2" data-testid="co-submit-error">
                 {submitError}
               </p>
+            )}
+            {durable.kind === "cancelled" && (
+              <section role="status" className="card" data-testid="checkout-cancelled">
+                <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+                  <p className="mono-label text-ink-mute">Payment cancelled</p>
+                  <ResearchStatusBadge label="Nothing charged" tone="neutral" />
+                </div>
+                <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+                  That checkout was cancelled and nothing was charged. Your cart and details are kept; start a new order request when you are ready.
+                </p>
+                <div className="mt-3">
+                  <button type="button" className="btn btn-secondary" onClick={startNewRequest} data-testid="co-new-request">
+                    Start a new order request
+                  </button>
+                </div>
+              </section>
             )}
 
             {/* Shipping address */}
@@ -601,6 +925,38 @@ export default function Checkout() {
               </div>
             </section>
 
+            {/* Payment: provider-hosted card collection when the card door is open. */}
+            {activeConfig && cardDoor && durable.kind !== "frozen" && (
+              <section className="card" aria-label="Payment" data-testid="co-payment">
+                <p className="mono-label text-ink-mute">Payment</p>
+                <div className="mt-3">
+                  <PaymentMethodCollector
+                    config={activeConfig}
+                    client={paymentMethodClient}
+                    disabled={submitBusy}
+                    onCollector={(collect) => {
+                      collectRef.current = collect;
+                      setCardComplete(collect !== null);
+                    }}
+                  />
+                </div>
+              </section>
+            )}
+            {durable.kind === "frozen" && (
+              <section className="card" aria-label="Payment" data-testid="co-payment-frozen">
+                <p className="mono-label text-ink-mute">Payment</p>
+                <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+                  Your card details were handed to the payment provider for this request. Retry repeats the same request;
+                  to change anything, start a new order request.
+                </p>
+                <div className="mt-3">
+                  <button type="button" className="btn btn-ghost" onClick={startNewRequest} disabled={submitBusy} data-testid="co-new-request">
+                    Start a new order request
+                  </button>
+                </div>
+              </section>
+            )}
+
             {/* Order summary: server-computed figures only. */}
             <section className="card" aria-label="Order summary">
               <p className="mono-label text-ink-mute">Order summary</p>
@@ -652,11 +1008,11 @@ export default function Checkout() {
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={submitBusy}
+                disabled={submitBusy || (cardDoor && durable.kind !== "frozen" && !cardComplete)}
                 onClick={() => void submit()}
                 data-testid="co-submit"
               >
-                {submitBusy ? "Placing order..." : "Place order"}
+                {submitBusy ? (cardDoor ? "Paying..." : "Placing order...") : durable.kind === "frozen" ? "Retry the same request" : cardDoor ? "Pay and place order" : "Place order"}
               </button>
             </div>
 

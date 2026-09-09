@@ -22,8 +22,8 @@ export async function apiGet<T>(path: string, token?: string | null, knownNotFou
   return request<T>("GET", path, undefined, token, knownNotFoundDenials);
 }
 
-export async function apiPost<T>(path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {
-  return request<T>("POST", path, body, token);
+export async function apiPost<T>(path: string, body: unknown, token?: string | null, knownNotFoundDenials: readonly string[] = []): Promise<ApiResult<T>> {
+  return request<T>("POST", path, body, token, knownNotFoundDenials);
 }
 
 export async function apiPatch<T>(path: string, body: unknown, token?: string | null): Promise<ApiResult<T>> {

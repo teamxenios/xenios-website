@@ -69,6 +69,16 @@ const CAPABILITIES_ENABLED: StubRoute = {
   body: { ok: true, capabilities: { product_commerce: { enabled: true } } },
 };
 
+// The checkout page asks for the payment configuration once per load. The
+// legacy-path tests here answer the way production answers today (no durable
+// provider composed): 503 payment_disabled, so the ordering door is used.
+const PAYMENT_CONFIG_OFF: StubRoute = {
+  method: "GET",
+  path: "/api/research/checkout/payment-config",
+  status: 503,
+  body: { ok: false, code: "payment_disabled" },
+};
+
 const CAPABILITIES_OFF: StubRoute = {
   method: "GET",
   path: "/api/research/capabilities",
@@ -78,7 +88,7 @@ const CAPABILITIES_OFF: StubRoute = {
 
 function stubFetch(routes: StubRoute[]): RecordedCall[] {
   const calls: RecordedCall[] = [];
-  const all = [...routes, CAPABILITIES_ENABLED];
+  const all = [...routes, CAPABILITIES_ENABLED, PAYMENT_CONFIG_OFF];
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: RequestInit) => {
