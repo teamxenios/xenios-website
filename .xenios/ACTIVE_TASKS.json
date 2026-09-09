@@ -1716,6 +1716,22 @@
       "baseSha": "5c52abb97889e7594cf26b7f459e552f0b6e8834",
       "scopeNote": "Fable-owned disjoint client + owned server seams. server/index.ts and production-deps.ts composition remain A (patch proposal supplied). No production provider resolver change.",
       "claimedAt": "2026-09-09T15:40:59.420Z"
+    },
+    {
+      "id": "DURABLE-CHECKOUT-COMPOSITION-MOUNT-20260909",
+      "title": "Mount the fail-closed durable checkout surface in the production composition root (config route, durable door, continuation doors, webhook execution processor) with the Disabled provider keeping every door refused",
+      "priority": "P0",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/research/commerce/production-deps.ts",
+        "server/research/commerce/production-deps.test.ts",
+        "server/research/commerce/production-wiring.test.ts",
+        "server/index.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "70ab791b9bfacff41f8387b8ee9d2b11ab9a0c8d",
+      "scopeNote": "Composition-root paths (server/research/commerce/production-deps.ts, server/index.ts) are inside codex-seth-revenue-launch-20260905 active lease: A applies the exact patch proposal in docs/research-commerce/DURABLE_CHECKOUT_COMPOSITION_PATCH_20260909.md (Fable-authored, not applied). No provider resolver change; no flag flip; production answers 503 on every durable door until a durable provider is composed under the standing authorization."
     }
   ]
 }

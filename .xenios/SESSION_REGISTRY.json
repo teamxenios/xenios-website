@@ -400,8 +400,8 @@
       "branch": "claude/durable-payment-port-20260909",
       "state": "active",
       "startedAt": "2026-09-09T15:40:59.285Z",
-      "heartbeatAt": "2026-09-09T15:40:59.292Z",
-      "note": "Checkout page wiring: durable door + provider-hosted card collection + continuation/cancel; composition proposal for A; no resolver change"
+      "heartbeatAt": "2026-09-09T18:10:18.598Z",
+      "note": "Checkpoint 70ab791: checkout page wired + composition builder; now mounting the fail-closed surface in production-deps/index.ts; adversarial review running"
     }
   ]
 }
