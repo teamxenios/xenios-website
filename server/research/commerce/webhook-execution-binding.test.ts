@@ -20,6 +20,8 @@ const execution: CheckoutExecutionRecord = {
   cancelKey: "xr-cancel-key-0001",
   reservationIds: ["res-1"],
   createdAt: "2026-09-09T00:00:00Z",
+  authorizationAttemptedAt: null,
+  settledAt: null,
 };
 
 function event(overrides: Partial<WebhookVerification> = {}): WebhookVerification {

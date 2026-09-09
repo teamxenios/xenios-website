@@ -40,13 +40,23 @@ export interface CheckoutExecutionRecord extends CheckoutMoneyBinding {
   cancelKey: string;
   reservationIds: string[];
   createdAt: string;
+  /**
+   * When the FIRST authorization attempt was claimed. A creation replay with
+   * the same key is only retrieval of the original payment while the
+   * provider's idempotency guarantee still holds (Stripe: 24 hours); after
+   * that an attempt with no reference is uncertain and must not be replayed.
+   */
+  authorizationAttemptedAt: string | null;
+  /** When the local settlement of a cancelled execution completed (order cancelled, holds released). */
+  settledAt: string | null;
 }
 
 export type ProviderExecutionResult =
   | { kind: "authorized"; providerReference: string; amountCents: number; currency: "usd"; memberId: string; orderId: string }
   | { kind: "captured"; providerReference: string; amountCents: number; currency: "usd"; memberId: string; orderId: string }
   | { kind: "action_required"; providerReference: string }
-  | { kind: "cancelled"; providerReference: string; capturedAmountCents: 0 }
+  /** providerReference is null only when no provider payment ever existed for the execution. */
+  | { kind: "cancelled"; providerReference: string | null; capturedAmountCents: 0 }
   | { kind: "refused"; definitiveNoEffect: boolean }
   | { kind: "unknown" };
 

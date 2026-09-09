@@ -45,10 +45,12 @@ export interface CheckoutExecutionRow {
   cancel_key: string;
   reservation_ids: string[];
   last_provider_result: unknown;
+  authorization_first_attempted_at: string | null;
+  local_commit_failure?: string | null;
   created_at: string;
   updated_at?: string;
   committed_at?: string | null;
-  settled_at?: string | null;
+  settled_at: string | null;
 }
 
 export const CHECKOUT_EXECUTION_PHASES: readonly CheckoutExecutionPhase[] = [
@@ -94,10 +96,12 @@ export function rowToExecution(row: CheckoutExecutionRow): CheckoutExecutionReco
     cancelKey: row.cancel_key,
     reservationIds: [...(row.reservation_ids ?? [])],
     createdAt: row.created_at,
+    authorizationAttemptedAt: row.authorization_first_attempted_at ?? null,
+    settledAt: row.settled_at ?? null,
   };
 }
 
-export function executionToInsertRow(record: CheckoutExecutionCreate): Omit<CheckoutExecutionRow, "updated_at" | "committed_at" | "settled_at" | "last_provider_result"> {
+export function executionToInsertRow(record: CheckoutExecutionCreate): Omit<CheckoutExecutionRow, "updated_at" | "committed_at" | "last_provider_result" | "local_commit_failure"> {
   return {
     id: record.executionId,
     member_id: record.memberId,
@@ -116,6 +120,8 @@ export function executionToInsertRow(record: CheckoutExecutionCreate): Omit<Chec
     capture_key: record.captureKey,
     cancel_key: record.cancelKey,
     reservation_ids: [...record.reservationIds],
+    authorization_first_attempted_at: record.authorizationAttemptedAt,
+    settled_at: record.settledAt,
     created_at: record.createdAt,
   };
 }
@@ -151,8 +157,9 @@ const PHASE_FOR_RESULT: Record<ProviderExecutionResult["kind"], CheckoutExecutio
 // the canonical order/reservation/credit effects, which the SQL commit owns.
 // ---------------------------------------------------------------------------
 
-export function createInMemoryCheckoutExecutionStore(): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
+export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date } = {}): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
   const rows = new Map<string, CheckoutExecutionCreate>();
+  const now = options.now ?? (() => new Date());
   const clone = (r: CheckoutExecutionCreate): CheckoutExecutionRecord => {
     const { requestBodySha256: _digest, priceVersion: _price, ...record } = r;
     return { ...record, reservationIds: [...record.reservationIds] };
@@ -195,7 +202,11 @@ export function createInMemoryCheckoutExecutionStore(): CheckoutExecutionReposit
     },
     async claim(executionId, expected, phase) {
       if (!["authorizing", "capturing", "cancelling"].includes(phase)) throw new Error(`${phase} is not a claimable phase`);
-      return cas(executionId, expected, () => ({ phase }));
+      return cas(executionId, expected, (current) => ({
+        phase,
+        // The first authorizing claim is the first attempt; later claims never move it.
+        authorizationAttemptedAt: phase === "authorizing" ? (current.authorizationAttemptedAt ?? now().toISOString()) : current.authorizationAttemptedAt,
+      }));
     },
     async recordProvider(executionId, expected, result) {
       return cas(executionId, expected, (current) => {
@@ -213,9 +224,11 @@ export function createInMemoryCheckoutExecutionStore(): CheckoutExecutionReposit
       });
     },
     async commitCancelled(executionId, expected) {
+      const current = rows.get(executionId);
+      if (current?.phase === "cancelled" && current.settledAt !== null && current.version === expected) return clone(current);
       return cas(executionId, expected, (record) => {
         if (record.phase !== "cancelled") throw new Error(`execution ${executionId} is ${record.phase}, not cancelled`);
-        return {};
+        return { settledAt: now().toISOString() };
       });
     },
     snapshot: () => [...rows.values()].map(clone),

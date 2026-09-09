@@ -36,12 +36,15 @@ const base: CheckoutExecutionCreate = {
   cancelKey: "xr-cancel-key-0001",
   reservationIds: ["res-1"],
   createdAt: "2026-09-09T00:00:00Z",
+  authorizationAttemptedAt: null,
+  settledAt: null,
 };
 
 describe("row mapping", () => {
   it("round-trips the coordinator record through the insert row and back, binding body digest and price version", () => {
     const row = executionToInsertRow(base);
-    expect(row).toMatchObject({ id: base.executionId, member_id: base.memberId, request_key: base.requestKey, request_body_sha256: base.requestBodySha256, price_version: "price-2026-09", authorization_key: base.authorizationKey, reservation_ids: ["res-1"] });
+    expect(row).toMatchObject({ id: base.executionId, member_id: base.memberId, request_key: base.requestKey, request_body_sha256: base.requestBodySha256, price_version: "price-2026-09", authorization_key: base.authorizationKey, reservation_ids: ["res-1"], authorization_first_attempted_at: null, settled_at: null });
+    expect(rowToExecution({ ...row, last_provider_result: null, authorization_first_attempted_at: "2026-09-09T12:00:00+00:00", settled_at: "2026-09-09T13:00:00+00:00" } as CheckoutExecutionRow)).toMatchObject({ authorizationAttemptedAt: "2026-09-09T12:00:00+00:00", settledAt: "2026-09-09T13:00:00+00:00" });
     const back = rowToExecution({ ...row, last_provider_result: null } as CheckoutExecutionRow);
     const { requestBodySha256: _d, priceVersion: _p, ...record } = base;
     expect(back).toEqual(record);
@@ -82,6 +85,24 @@ describe("in-memory execution store", () => {
     expect(await store.findByOrder(base.orderId)).toMatchObject({ executionId: base.executionId });
     expect(await store.getForMember("33333333-3333-4333-8333-333333333333", base.requestKey)).toBeNull();
   });
+  it("stamps the first authorizing claim once and settles a cancellation exactly once", async () => {
+    let clock = Date.parse("2026-09-09T12:00:00Z");
+    const store = createInMemoryCheckoutExecutionStore({ now: () => new Date(clock) });
+    const created = await store.create(base);
+    const first = (await store.claim(created.executionId, created.version, "authorizing"))!;
+    expect(first.authorizationAttemptedAt).toBe("2026-09-09T12:00:00.000Z");
+    clock += 60_000;
+    const back = (await store.recordProvider(first.executionId, first.version, { kind: "unknown" }))!;
+    const again = (await store.claim(back.executionId, back.version, "authorizing"))!;
+    expect(again.authorizationAttemptedAt).toBe("2026-09-09T12:00:00.000Z");
+    const cancelled = (await store.recordProvider(again.executionId, again.version, { kind: "cancelled", providerReference: null, capturedAmountCents: 0 }))!;
+    expect(cancelled).toMatchObject({ phase: "cancelled", providerReference: null, settledAt: null });
+    await expect(store.commitCaptured(cancelled.executionId, cancelled.version)).rejects.toThrow(/without capture evidence/);
+    const settled = (await store.commitCancelled(cancelled.executionId, cancelled.version))!;
+    expect(settled.settledAt).toBe("2026-09-09T12:01:00.000Z");
+    expect(await store.commitCancelled(settled.executionId, settled.version)).toMatchObject({ settledAt: "2026-09-09T12:01:00.000Z", version: settled.version });
+    expect(await store.commitCancelled(settled.executionId, settled.version - 1)).toBeNull();
+  });
   it("commits only from captured with a reference, idempotently", async () => {
     const store = createInMemoryCheckoutExecutionStore();
     const created = await store.create(base);
@@ -120,6 +141,57 @@ describe("in-memory store with the real coordinator, port, adapter and webhook p
     expect(await executor.run(base.memberId, base.requestKey)).toMatchObject({ kind: "committed" });
     expect(model.creates()).toHaveLength(1);
     expect(model.captures()).toHaveLength(1);
+  });
+  it("cancels before capture through the provider, settles locally once, and resumes settlement after a crash", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
+    // Authorize, then stop before capture by driving only the first claim through a one-step run.
+    const claimed = (await store.claim(base.executionId, 1, "authorizing"))!;
+    const port = createProviderVerifiedPaymentPort(model.adapter);
+    const proof = await port.authorize(claimed);
+    await store.recordProvider(claimed.executionId, claimed.version, proof);
+    expect((await store.getForMember(base.memberId, base.requestKey))!.phase).toBe("authorized");
+    // Crash between provider cancellation and local settlement: emulate by settling through a store whose commitCancelled fails once.
+    let failOnce = true;
+    const flaky = { ...store, commitCancelled: async (id: string, v: number) => { if (failOnce) { failOnce = false; throw new Error("db down"); } return store.commitCancelled(id, v); } };
+    const flakyExecutor = createDurableCheckoutExecutor(flaky, port);
+    await expect(flakyExecutor.cancel(base.memberId, base.requestKey)).rejects.toThrow(/db down/);
+    expect(model.intents.get("pi_0001")!.status).toBe("canceled");
+    expect((await store.getForMember(base.memberId, base.requestKey))!).toMatchObject({ phase: "cancelled", settledAt: null });
+    // The next run settles exactly once and reports cancelled.
+    expect(await executor.run(base.memberId, base.requestKey)).toEqual({ kind: "cancelled", orderId: base.orderId, executionId: base.executionId });
+    const settled = (await store.getForMember(base.memberId, base.requestKey))!;
+    expect(settled.settledAt).not.toBeNull();
+    expect(await executor.run(base.memberId, base.requestKey)).toMatchObject({ kind: "cancelled" });
+    expect((await store.getForMember(base.memberId, base.requestKey))!.version).toBe(settled.version);
+    expect(model.captures()).toHaveLength(0);
+  });
+  it("cancels an execution that never reached the provider without any provider call", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
+    expect(await executor.cancel(base.memberId, base.requestKey)).toEqual({ kind: "cancelled", orderId: base.orderId, executionId: base.executionId });
+    expect(model.requests).toHaveLength(0);
+    expect((await store.getForMember(base.memberId, base.requestKey))!).toMatchObject({ phase: "cancelled", providerReference: null });
+    expect((await store.getForMember(base.memberId, base.requestKey))!.settledAt).not.toBeNull();
+  });
+  it("a cancel request after the provider already captured records the capture and commits instead", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const port = createProviderVerifiedPaymentPort(model.adapter);
+    const claimed = (await store.claim(base.executionId, 1, "authorizing"))!;
+    await store.recordProvider(claimed.executionId, claimed.version, await port.authorize(claimed));
+    // Money moved at the provider (for example a capture whose response was lost).
+    model.intents.get("pi_0001")!.status = "succeeded";
+    model.intents.get("pi_0001")!.amount_received = base.amountCents;
+    model.intents.get("pi_0001")!.amount_capturable = 0;
+    const executor = createDurableCheckoutExecutor(store, port);
+    expect(await executor.cancel(base.memberId, base.requestKey)).toEqual({ kind: "committed", orderId: base.orderId, executionId: base.executionId });
+    expect((await store.getForMember(base.memberId, base.requestKey))!.phase).toBe("committed");
   });
   it("never authorizes twice under concurrent runs over the shared store", async () => {
     const model = stripeModel();

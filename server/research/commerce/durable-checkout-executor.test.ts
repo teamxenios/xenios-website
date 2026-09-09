@@ -22,6 +22,8 @@ const base: CheckoutExecutionRecord = {
   cancelKey: "cancel-fixture",
   reservationIds: ["reservation-fixture"],
   createdAt: "2026-09-08T00:00:00Z",
+  authorizationAttemptedAt: null,
+  settledAt: null,
 };
 
 function harness({ unknown = false, badAmount = false, contended = false, initial = "reserved" as CheckoutExecutionRecord["phase"] } = {}) {

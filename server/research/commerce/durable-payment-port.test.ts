@@ -35,6 +35,8 @@ const record: CheckoutExecutionRecord = {
   cancelKey: "xr-cancel-key-0001",
   reservationIds: ["res-1"],
   createdAt: "2026-09-09T00:00:00Z",
+  authorizationAttemptedAt: null,
+  settledAt: null,
 };
 
 type Intent = {
@@ -343,6 +345,64 @@ describe("provider-verified payment port over the real Stripe adapter", () => {
     const boundElsewhere = { ...record, providerReference: "pi_9999" };
     expect(await port.authorize(boundElsewhere)).toEqual({ kind: "unknown" });
     expect(model.creates()).toHaveLength(1);
+  });
+});
+
+describe("provider-verified payment port: creation-key retention", () => {
+  const T0 = Date.parse("2026-09-09T12:00:00Z");
+  const HOUR = 60 * 60 * 1000;
+  const attempted = (hoursAgo: number, phase: CheckoutExecutionRecord["phase"] = "authorizing") => ({
+    ...record,
+    phase,
+    authorizationAttemptedAt: new Date(T0 - hoursAgo * HOUR).toISOString(),
+  });
+  it("replays the creation key inside the provider's retention window and recovers the same payment", async () => {
+    const model = stripeModel();
+    const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => T0 });
+    model.faults.lostResponses = 1;
+    expect(await port.authorize(attempted(0))).toEqual({ kind: "unknown" });
+    expect(await port.reconcile(attempted(1))).toMatchObject({ kind: "authorized", providerReference: "pi_0001" });
+    expect(await port.reconcile(attempted(19.9))).toMatchObject({ kind: "authorized", providerReference: "pi_0001" });
+    expect(model.intents.size).toBe(1);
+    expect(model.creates()).toHaveLength(3);
+    expect(new Set(model.creates().map((r) => r.idempotencyKey)).size).toBe(1);
+  });
+  it("never replays creation once the first attempt is older than the retention window: uncertainty is preserved", async () => {
+    const model = stripeModel();
+    const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => T0 });
+    model.faults.lostResponses = 1;
+    expect(await port.authorize(attempted(0))).toEqual({ kind: "unknown" });
+    expect(await port.reconcile(attempted(20.1))).toEqual({ kind: "unknown" });
+    expect(await port.reconcile(attempted(25))).toEqual({ kind: "unknown" });
+    expect(await port.authorize(attempted(25))).toEqual({ kind: "unknown" });
+    expect(model.creates()).toHaveLength(1);
+    expect(model.intents.size).toBe(1);
+  });
+  it("honours an injected retention and refuses a malformed or future first-attempt stamp", async () => {
+    const model = stripeModel();
+    const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => T0, creationKeyRetentionMs: HOUR });
+    expect(await port.reconcile(attempted(0.5))).toMatchObject({ kind: "authorized" });
+    expect(await port.reconcile(attempted(2))).toEqual({ kind: "unknown" });
+    expect(await port.reconcile({ ...record, phase: "authorizing", authorizationAttemptedAt: "not-a-date" })).toEqual({ kind: "unknown" });
+    expect(await port.reconcile(attempted(-1))).toEqual({ kind: "unknown" });
+    expect(model.creates()).toHaveLength(1);
+  });
+  it("recovers by reference regardless of age once the reference is known", async () => {
+    const model = stripeModel();
+    const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => T0 });
+    expect((await port.authorize(attempted(0))).kind).toBe("authorized");
+    const old = { ...attempted(48), providerReference: "pi_0001" };
+    expect(await port.reconcile(old)).toMatchObject({ kind: "authorized", providerReference: "pi_0001" });
+    expect(model.creates()).toHaveLength(1);
+  });
+  it("concurrent reconciliations inside the window resolve to the same single payment", async () => {
+    const model = stripeModel();
+    const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => T0 });
+    model.faults.lostResponses = 1;
+    await port.authorize(attempted(0));
+    const results = await Promise.all([port.reconcile(attempted(1)), port.reconcile(attempted(1)), port.reconcile(attempted(1))]);
+    expect(results.every((r) => r.kind === "authorized" && r.providerReference === "pi_0001")).toBe(true);
+    expect(model.intents.size).toBe(1);
   });
 });
 

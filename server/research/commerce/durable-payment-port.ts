@@ -38,9 +38,21 @@ import type { IdempotentCheckoutPaymentPort } from "./durable-checkout-executor"
 export interface ProviderVerifiedPaymentPortOptions {
   /** Accepted provider-hosted payment method reference shape. Defaults to Stripe's `pm_...`. */
   paymentMethodReferencePattern?: RegExp;
+  /** Injected clock (milliseconds since epoch). */
+  now?: () => number;
+  /**
+   * How long after the FIRST authorization attempt a creation replay with the
+   * same key is still guaranteed to return the original payment. Stripe keeps
+   * idempotency keys for at least 24 hours and may prune them afterwards, so
+   * the default keeps a margin. Beyond it, an attempt with no reference is
+   * uncertain and is never replayed.
+   */
+  creationKeyRetentionMs?: number;
 }
 
 const DEFAULT_PAYMENT_METHOD_PATTERN = /^pm_[A-Za-z0-9_]+$/;
+/** 20 hours: inside Stripe's documented 24-hour idempotency retention, with margin. */
+export const DEFAULT_CREATION_KEY_RETENTION_MS = 20 * 60 * 60 * 1000;
 
 function refused(definitiveNoEffect: boolean): ProviderExecutionResult {
   return { kind: "refused", definitiveNoEffect };
@@ -73,6 +85,21 @@ export function createProviderVerifiedPaymentPort(
   }
   const durable: DurablePaymentProvider = provider;
   const pattern = options.paymentMethodReferencePattern ?? DEFAULT_PAYMENT_METHOD_PATTERN;
+  const now = options.now ?? Date.now;
+  const retentionMs = options.creationKeyRetentionMs ?? DEFAULT_CREATION_KEY_RETENTION_MS;
+
+  /**
+   * Whether replaying the creation key still retrieves the original payment.
+   * Unknown first-attempt time or a time outside the retention window means a
+   * replay could create a second payment: refuse to replay.
+   */
+  function creationReplayGuaranteed(record: CheckoutExecutionRecord): boolean {
+    if (record.authorizationAttemptedAt === null) return true; // no attempt was ever claimed: the first attempt
+    const attempted = Date.parse(record.authorizationAttemptedAt);
+    if (!Number.isFinite(attempted)) return false;
+    const age = now() - attempted;
+    return age >= 0 && age <= retentionMs;
+  }
 
   /** A failure result mapped for an operation that may already have had an effect. */
   function failureOf(result: Extract<ProviderResult<unknown>, { ok: false }>, beforeAnyEffect: boolean): ProviderExecutionResult {
@@ -190,6 +217,9 @@ export function createProviderVerifiedPaymentPort(
       if (!validExecutionBinding(record, pattern)) return refused(true);
       // A record that already names a payment must never create another one.
       if (record.providerReference !== null) return readBack(record, record.providerReference);
+      // A stale first attempt may have created a payment the key no longer
+      // protects; only reconciliation with a reference can resolve it.
+      if (!creationReplayGuaranteed(record)) return UNKNOWN;
       return createWithRecordKey(record);
     },
 
@@ -226,9 +256,12 @@ export function createProviderVerifiedPaymentPort(
     async reconcile(record) {
       if (!validExecutionBinding(record, pattern)) return refused(true);
       if (record.providerReference === null) {
-        // The creation response was lost. Replaying the same key retrieves the
-        // original payment from an idempotent provider; it creates one only if
-        // the original request never arrived, which is the same logical effect.
+        // The creation response was lost. Inside the provider's idempotency
+        // retention, replaying the same key retrieves the original payment (it
+        // creates one only if the original request never arrived, the same
+        // logical effect). Outside it the key may have been pruned and a
+        // replay could charge twice: stay uncertain for operator reconciliation.
+        if (!creationReplayGuaranteed(record)) return UNKNOWN;
         return createWithRecordKey(record);
       }
       return readBack(record, record.providerReference);

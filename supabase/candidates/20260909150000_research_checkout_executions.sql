@@ -40,6 +40,14 @@ create table if not exists public.research_checkout_executions (
   cancel_key                 text not null unique check (char_length(cancel_key) between 8 and 200),
   reservation_ids            text[] not null default '{}',
   last_provider_result       jsonb null,
+  -- Stamped by the FIRST claim of the authorizing phase and never moved: a
+  -- creation replay with the stable key is only safe inside the provider's
+  -- idempotency retention measured from this moment.
+  authorization_first_attempted_at timestamptz null,
+  -- Set when capture evidence exists but the local commit could not complete
+  -- (for example an incomplete reservation set). The external charge stands;
+  -- the execution waits in reconciliation_required and is never fulfilled.
+  local_commit_failure       text null,
   created_at                 timestamptz not null default now(),
   updated_at                 timestamptz not null default now(),
   committed_at               timestamptz null,
@@ -85,7 +93,11 @@ begin
      or new.authorization_key is distinct from old.authorization_key
      or new.capture_key is distinct from old.capture_key
      or new.cancel_key is distinct from old.cancel_key
-     or (old.provider_reference is not null and new.provider_reference is distinct from old.provider_reference) then
+     or new.price_version is distinct from old.price_version
+     or new.reservation_ids is distinct from old.reservation_ids
+     or (old.provider_reference is not null and new.provider_reference is distinct from old.provider_reference)
+     or (old.authorization_first_attempted_at is not null
+         and new.authorization_first_attempted_at is distinct from old.authorization_first_attempted_at) then
     raise exception 'research_checkout_executions: execution identity is immutable';
   end if;
   new.updated_at := now();
@@ -122,7 +134,11 @@ begin
   end if;
   return query
     update public.research_checkout_executions
-       set phase = p_phase, version = version + 1
+       set phase = p_phase,
+           version = version + 1,
+           authorization_first_attempted_at = case
+             when p_phase = 'authorizing' then coalesce(authorization_first_attempted_at, now())
+             else authorization_first_attempted_at end
      where id = p_execution_id and version = p_expected_version
      returning *;
 end $$;
@@ -204,6 +220,60 @@ begin
     raise exception 'research_checkout_execution_commit_captured: order % cannot be captured from %', v_exec.order_id, v_order.state;
   end if;
 
+  -- The complete expected reservation set, validated BEFORE any local effect:
+  -- every recorded id must exist for this member and still hold or already be
+  -- finalized (an interrupted earlier commit); the held quantities per SKU
+  -- must equal the order lines. Anything else is a local-commit failure that
+  -- keeps the capture evidence, marks the execution for reconciliation and
+  -- touches nothing else. The external charge is never pretended away.
+  declare
+    v_expected_ids text[] := (select coalesce(array_agg(distinct x), '{}') from unnest(v_exec.reservation_ids) as x);
+    v_missing text[];
+    v_bad_status text[];
+    v_quantity_mismatch boolean;
+    v_failure text := null;
+  begin
+    select coalesce(array_agg(x), '{}') into v_missing
+      from unnest(v_expected_ids) as x
+     where not exists (select 1 from public.research_lot_reservations r
+                        where r.reservation_id = x and r.member_id = v_exec.member_id);
+    select coalesce(array_agg(r.reservation_id), '{}') into v_bad_status
+      from public.research_lot_reservations r
+     where r.reservation_id = any (v_expected_ids)
+       and r.member_id = v_exec.member_id
+       and r.status not in ('held','finalized');
+    select exists (
+      select 1 from (
+        select l.sku, sum(l.quantity) as line_quantity,
+               (select coalesce(sum(r.quantity), 0) from public.research_lot_reservations r
+                 where r.reservation_id = any (v_expected_ids) and r.member_id = v_exec.member_id and r.sku = l.sku) as held_quantity
+          from public.research_order_lines l where l.order_id = v_order.id group by l.sku
+      ) q where q.line_quantity <> q.held_quantity
+      union all
+      select 1 from public.research_lot_reservations r
+       where r.reservation_id = any (v_expected_ids) and r.member_id = v_exec.member_id
+         and not exists (select 1 from public.research_order_lines l where l.order_id = v_order.id and l.sku = r.sku)
+    ) into v_quantity_mismatch;
+    if array_length(v_missing, 1) is not null then
+      v_failure := 'reservations_missing:' || array_to_string(v_missing, ',');
+    elsif array_length(v_bad_status, 1) is not null then
+      v_failure := 'reservations_not_held:' || array_to_string(v_bad_status, ',');
+    elsif v_quantity_mismatch then
+      v_failure := 'reservation_quantities_differ_from_order_lines';
+    elsif array_length(v_expected_ids, 1) is null
+      and exists (select 1 from public.research_order_lines l where l.order_id = v_order.id) then
+      v_failure := 'no_reservations_for_order_lines';
+    end if;
+    if v_failure is not null then
+      return query
+        update public.research_checkout_executions
+           set phase = 'reconciliation_required', version = version + 1, local_commit_failure = v_failure
+         where id = p_execution_id and version = p_expected_version
+         returning *;
+      return;
+    end if;
+  end;
+
   if v_order.state <> 'payment_captured' then
     update public.research_orders
        set state = 'payment_captured',
@@ -225,6 +295,11 @@ begin
    where reservation_id = any (v_exec.reservation_ids)
      and member_id = v_exec.member_id
      and status = 'held';
+  if exists (select 1 from public.research_lot_reservations
+              where reservation_id = any (v_exec.reservation_ids) and member_id = v_exec.member_id
+                and status <> 'finalized') then
+    raise exception 'research_checkout_execution_commit_captured: reservation set changed during commit';
+  end if;
 
   -- Mirrors the application's spend row (store-credit-store.ts buildSpendRow):
   -- negative approved amount, adjustment-shaped reason, the order as actor_id.
@@ -240,7 +315,7 @@ begin
 
   return query
     update public.research_checkout_executions
-       set phase = 'committed', version = version + 1, committed_at = coalesce(committed_at, p_at)
+       set phase = 'committed', version = version + 1, committed_at = coalesce(committed_at, p_at), local_commit_failure = null
      where id = p_execution_id and version = p_expected_version
      returning *;
 end $$;
