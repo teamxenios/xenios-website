@@ -30,7 +30,22 @@ ledger row for the order, one state event, execution `committed`. Repeat
 nothing. Race two `claim` calls with the same expected version: exactly one
 returns a row. Record a conflicting provider reference: zero rows. Verify
 `commit_cancelled` releases the hold and cancels the order only with
-`capturedAmountCents` = 0 evidence.
+`capturedAmountCents` = 0 evidence, and that a second call after settlement
+returns the row unchanged.
+
+Reservation completeness (each case is a separate synthetic execution in the
+`captured` phase): a missing reservation id, a `released` reservation, a
+duplicate id in `reservation_ids`, held quantities that differ from the order
+lines, an order with lines but no reservations, and an already-`finalized`
+reservation from an interrupted earlier commit. Every case except the last must
+leave the order, reservations and ledger untouched and return the execution in
+`reconciliation_required` with `local_commit_failure` set and the capture
+evidence retained; the last must commit normally.
+
+Identity: an UPDATE of `price_version`, `reservation_ids`, the operation keys,
+the request digest or a set `authorization_first_attempted_at` must be refused
+by the trigger. The first `claim` to `authorizing` stamps
+`authorization_first_attempted_at`; later claims never move it.
 
 ## Failed or uncertain migration
 

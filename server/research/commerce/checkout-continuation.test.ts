@@ -24,6 +24,8 @@ const record: CheckoutExecutionRecord = {
   cancelKey: "xr-cancel-key-0001",
   reservationIds: ["res-1"],
   createdAt: "2026-09-09T00:00:00Z",
+  authorizationAttemptedAt: null,
+  settledAt: null,
 };
 const OTHER_MEMBER = "33333333-3333-4333-8333-333333333333";
 

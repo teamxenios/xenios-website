@@ -55,6 +55,12 @@ begin
   if not exists (select 1 from pg_trigger where tgname = 'research_checkout_executions_immutable' and not tgisinternal) then
     raise exception 'immutability trigger missing';
   end if;
+  foreach object_name in array array['authorization_first_attempted_at','local_commit_failure','price_version','reservation_ids','request_body_sha256','settled_at'] loop
+    if not exists (select 1 from information_schema.columns
+      where table_schema = 'public' and table_name = 'research_checkout_executions' and column_name = object_name) then
+      raise exception 'research_checkout_executions lacks column %', object_name;
+    end if;
+  end loop;
   if not exists (select 1 from pg_indexes where schemaname = 'public'
     and indexname = 'research_checkout_executions_provider_reference_idx') then
     raise exception 'provider reference unique index missing';
