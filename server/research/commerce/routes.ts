@@ -723,7 +723,9 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
         }
         // A capability that is not ready is retryable later; everything else is a
         // rejection of this delivery and must not be retried into success.
-        const status = result.code === "capability_disabled" ? 503 : 400;
+        // 503 asks the provider to redeliver: the capability is not ready, or the
+        // durable receipt is open behind a contended execution write.
+        const status = result.code === "capability_disabled" || result.code === "execution_contention" ? 503 : 400;
         secure(res).status(status).json({ ok: false, code: result.code });
       } catch {
         // A store or provider failure is retryable. The error detail (which could

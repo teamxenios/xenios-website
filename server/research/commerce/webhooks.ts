@@ -28,6 +28,7 @@ import crypto from "crypto";
 import { transitionOrder, type OrderState } from "@shared/research/commerce";
 import type { PaymentProvider, WebhookVerification } from "../providers/payment";
 import type { FulfillmentProvider } from "../providers/fulfillment";
+import type { WebhookExecutionProcessor } from "./webhook-execution-processor";
 
 /**
  * The shipment fields a VERIFIED fulfillment event carries. Glue only: the
@@ -141,6 +142,14 @@ export interface WebhookDeps {
   orders: WebhookOrderStore;
   /** Absent until a real inbox+order transaction is wired; absence fails closed. */
   atomic?: WebhookAtomicApplyStore;
+  /**
+   * Durable checkout executions. When present, a verified payment event is
+   * first offered to the execution it names (by payment reference, or by
+   * server-authored order metadata for an execution that never learned its
+   * reference). An event that binds to no execution falls through to the
+   * legacy order projection unchanged. Absent means executions are not wired.
+   */
+  executions?: WebhookExecutionProcessor;
   commerceEnabled: boolean;
 }
 
@@ -151,7 +160,9 @@ export type WebhookDenialCode =
   | "event_conflict"
   | "unknown_order"
   | "payment_evidence_mismatch"
-  | "capability_disabled";
+  | "capability_disabled"
+  /** The execution moved under the event twice; the durable receipt stays open for the provider's redelivery. */
+  | "execution_contention";
 
 export type WebhookResult =
   | { ok: true; applied: boolean; eventId: string }
@@ -370,6 +381,28 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // enablement therefore remains eligible for its first atomic application.
     if (!deps.commerceEnabled) {
       return { ok: true, applied: false, eventId };
+    }
+
+    // Durable executions take the event first when they own its payment. The
+    // processor claims a durable receipt before any effect and acknowledges
+    // only from a terminal inbox state; "unbound" means no execution names
+    // this payment and the legacy order projection keeps owning the event.
+    if (deps.executions) {
+      const bound = await deps.executions.process(verified.value, payloadSha256(rawBody), asOf);
+      switch (bound.outcome) {
+        case "applied":
+          return { ok: true, applied: true, eventId };
+        case "acknowledged":
+        case "duplicate":
+        case "isolated":
+          return { ok: true, applied: false, eventId };
+        case "conflict":
+          return { ok: false, code: "event_conflict" };
+        case "retry":
+          return { ok: false, code: "execution_contention" };
+        case "unbound":
+          break;
+      }
     }
 
     const target = PAYMENT_EVENT_STATES[eventType];
