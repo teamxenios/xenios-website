@@ -18,7 +18,9 @@
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CheckoutExecutionPhase, CheckoutExecutionRecord, ProviderExecutionResult } from "@shared/research/durable-checkout-execution";
+import type { ReservationSeam } from "../checkout";
 import type { CanonicalCheckoutExecutionStore } from "../durable-checkout-executor";
+import type { OrderRepository } from "../orders";
 import type { WebhookExecutionInbox, WebhookExecutionInboxEvent, WebhookExecutionLookup } from "../webhook-execution-processor";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
@@ -159,9 +161,54 @@ const PHASE_FOR_RESULT: Record<ProviderExecutionResult["kind"], CheckoutExecutio
 // the canonical order/reservation/credit effects, which the SQL commit owns.
 // ---------------------------------------------------------------------------
 
-export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date } = {}): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
+/**
+ * The canonical effects the SQL commit functions perform in the same
+ * transaction as the execution transition. The in-memory reference applies
+ * them through these seams (not atomically: a test double, never production)
+ * so a connected local journey shows the customer-visible order outcome and
+ * the hold settlement exactly as the database will.
+ */
+export interface InMemoryCheckoutExecutionEffects {
+  orders?: Pick<OrderRepository, "get" | "save">;
+  inventory?: Pick<ReservationSeam, "release" | "finalize">;
+}
+
+export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date; effects?: InMemoryCheckoutExecutionEffects } = {}): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
   const rows = new Map<string, CheckoutExecutionCreate>();
   const now = options.now ?? (() => new Date());
+  const effects = options.effects ?? {};
+  // Mirrors research_checkout_execution_commit_captured's order and reservation writes.
+  const applyCaptured = async (record: CheckoutExecutionCreate) => {
+    if (effects.orders) {
+      const order = await effects.orders.get(record.orderId);
+      if (!order || order.memberId !== record.memberId) throw new Error(`execution ${record.executionId} names an order that is not the member's`);
+      if (order.state !== "payment_captured") {
+        await effects.orders.save({
+          ...order,
+          state: "payment_captured",
+          providerReference: record.providerReference,
+          authorizedAmountCents: order.authorizedAmountCents ?? record.amountCents,
+          capturedAmountCents: record.amountCents,
+          lastIdempotencyKey: record.captureKey,
+          updatedAt: now().toISOString(),
+        });
+      }
+    }
+    if (effects.inventory && record.reservationIds.length > 0) await effects.inventory.finalize(record.reservationIds);
+  };
+  // Mirrors research_checkout_execution_commit_cancelled's order and reservation writes.
+  const applyCancelled = async (record: CheckoutExecutionCreate) => {
+    if (effects.orders) {
+      const order = await effects.orders.get(record.orderId);
+      if (!order || order.memberId !== record.memberId) throw new Error(`execution ${record.executionId} names an order that is not the member's`);
+      if (["checkout_pending", "payment_authorized", "manual_review", "approved"].includes(order.state)) {
+        await effects.orders.save({ ...order, state: "cancelled", lastIdempotencyKey: record.cancelKey, updatedAt: now().toISOString() });
+      } else if (order.state !== "cancelled") {
+        throw new Error(`order ${record.orderId} cannot be cancelled from ${order.state}`);
+      }
+    }
+    if (effects.inventory && record.reservationIds.length > 0) await effects.inventory.release(record.reservationIds);
+  };
   const clone = (r: CheckoutExecutionCreate): CheckoutExecutionRecord => {
     const { requestBodySha256: _digest, priceVersion: _price, ...record } = r;
     return { ...record, reservationIds: [...record.reservationIds] };
@@ -230,18 +277,25 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
     async commitCaptured(executionId, expected) {
       const current = rows.get(executionId);
       if (current?.phase === "committed" && current.version === expected) return clone(current);
-      return cas(executionId, expected, (record) => {
-        if (record.phase !== "captured" || record.providerReference === null) throw new Error(`execution ${executionId} is ${record.phase} without capture evidence`);
-        return { phase: "committed" };
-      });
+      if (!current || current.version !== expected) return null;
+      if (current.phase !== "captured" || current.providerReference === null) throw new Error(`execution ${executionId} is ${current.phase} without capture evidence`);
+      // The SQL commit records a failed local commit as reconciliation_required
+      // while keeping the capture evidence; the reference does the same.
+      try {
+        await applyCaptured(current);
+      } catch {
+        // The capture evidence stays on the record; only the local commit failed.
+        return cas(executionId, expected, () => ({ phase: "reconciliation_required" }));
+      }
+      return cas(executionId, expected, () => ({ phase: "committed" }));
     },
     async commitCancelled(executionId, expected) {
       const current = rows.get(executionId);
       if (current?.phase === "cancelled" && current.settledAt !== null && current.version === expected) return clone(current);
-      return cas(executionId, expected, (record) => {
-        if (record.phase !== "cancelled") throw new Error(`execution ${executionId} is ${record.phase}, not cancelled`);
-        return { settledAt: now().toISOString() };
-      });
+      if (!current || current.version !== expected) return null;
+      if (current.phase !== "cancelled") throw new Error(`execution ${executionId} is ${current.phase}, not cancelled`);
+      await applyCancelled(current);
+      return cas(executionId, expected, () => ({ settledAt: now().toISOString() }));
     },
     snapshot: () => [...rows.values()].map(clone),
   };

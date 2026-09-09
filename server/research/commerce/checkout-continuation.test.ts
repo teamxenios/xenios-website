@@ -40,14 +40,14 @@ function executionStore(initial: CheckoutExecutionRecord) {
   const store: CanonicalCheckoutExecutionStore = {
     authority: "canonical_checkout_transaction_v1",
     getForMember: async (memberId, requestKey) => (current.memberId === memberId && current.requestKey === requestKey ? structuredClone(current) : null),
-    claim: async (_id, expected, phase) => cas(expected, { phase }),
+    claim: async (_id, expected, phase) => cas(expected, { phase, authorizationAttemptedAt: phase === "authorizing" ? (current.authorizationAttemptedAt ?? "2026-09-09T00:00:01Z") : current.authorizationAttemptedAt }),
     recordProvider: async (_id, expected, result) =>
       cas(expected, {
         phase: result.kind === "unknown" || result.kind === "refused" ? "reconciliation_required" : result.kind,
         providerReference: "providerReference" in result ? result.providerReference : current.providerReference,
       }),
     commitCaptured: async (_id, expected) => cas(expected, { phase: "committed" }),
-    commitCancelled: async (_id, expected) => cas(expected, { phase: "cancelled" }),
+    commitCancelled: async (_id, expected) => cas(expected, { phase: "cancelled", settledAt: "2026-09-09T00:00:02Z" }),
   };
   return { store, snapshot: () => structuredClone(current) };
 }
@@ -153,6 +153,62 @@ describe("checkout continuation service", () => {
     expect(final.ok && final.continuation.state).toBe("completed");
   });
 
+  it("cancel releases an authentication-pending payment at the provider and settles locally; the answer is cancelled with no secret", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    expect(c.snapshot().phase).toBe("action_required");
+    const result = await c.service.cancel(record.memberId, record.requestKey);
+    expect(result).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd" } });
+    expect(c.model.intents.get("pi_0001")!.status).toBe("canceled");
+    expect(c.snapshot().phase).toBe("cancelled");
+    expect(c.model.captures()).toHaveLength(0);
+    expect(await c.service.cancel(OTHER_MEMBER, record.requestKey)).toEqual({ ok: false, code: "not_found" });
+    // A second cancel is a no-op answer, not a second provider effect.
+    const again = await c.service.cancel(record.memberId, record.requestKey);
+    expect(again.ok && again.continuation.state).toBe("cancelled");
+  });
+
+  it("cancel cannot undo a payment the provider already captured: the order completes instead", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    c.model.completeAction("pi_0001");
+    // The customer finished with the bank and the provider captured on its side before the execution learned it.
+    const intent = c.model.intents.get("pi_0001")!;
+    intent.status = "succeeded";
+    intent.amount_received = intent.amount;
+    intent.amount_capturable = 0;
+    const result = await c.service.cancel(record.memberId, record.requestKey);
+    expect(result.ok && result.continuation.state).toBe("completed");
+    expect(c.snapshot().phase).toBe("committed");
+  });
+
+  it("cancel of an execution whose creation response was lost learns the payment first and cancels THAT payment", async () => {
+    const c = composition({ requiresAction: false });
+    // The creation reached the provider but the response never came back.
+    c.model.faults.lostResponses = 1;
+    expect((await c.executor.run(record.memberId, record.requestKey)).kind).toBe("reconciliation_required");
+    expect(c.snapshot().providerReference).toBeNull();
+    expect(c.model.creates()).toHaveLength(1);
+    const result = await c.service.cancel(record.memberId, record.requestKey);
+    expect(result.ok && result.continuation.state).toBe("cancelled");
+    expect(c.model.intents.get("pi_0001")!.status).toBe("canceled");
+    expect(c.snapshot()).toMatchObject({ phase: "cancelled", providerReference: "pi_0001" });
+    // The creation key was replayed to learn the payment; the provider answered with the ORIGINAL intent.
+    expect(c.model.intents.size).toBe(1);
+    expect(c.model.captures()).toHaveLength(0);
+  });
+
+  it("check-status on a parked execution performs one bounded reconciliation: a captured payment whose commit was interrupted completes", async () => {
+    const c = composition({ requiresAction: false });
+    c.model.faults.lostResponses = 1;
+    expect((await c.executor.run(record.memberId, record.requestKey)).kind).toBe("reconciliation_required");
+    expect((await c.service.status(record.memberId, record.requestKey)).ok && (await c.service.status(record.memberId, record.requestKey))).toMatchObject({ continuation: { state: "reconciliation_required" } });
+    const result = await c.service.continue(record.memberId, record.requestKey);
+    expect(result.ok && result.continuation.state).toBe("completed");
+    expect(c.model.intents.size).toBe(1);
+    expect(c.model.captures()).toHaveLength(1);
+  });
+
   it("reports the plain phases for executions that never needed authentication", async () => {
     const c = composition({ requiresAction: false });
     expect((await c.service.status(record.memberId, record.requestKey)).ok && (await c.service.status(record.memberId, record.requestKey))).toMatchObject({ continuation: { state: "pending" } });
@@ -219,6 +275,21 @@ describe("checkout continuation routes", () => {
     expect(continued.status).toBe(200);
     expect(continued.body).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "completed", amountCents: 33_999, currency: "usd" } });
     expect(JSON.stringify(continued.body)).not.toContain("secret");
+  });
+
+  it("cancel is a door for the owner only, with the same headers", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    const { call } = await serve(c.service);
+    const path = CHECKOUT_CONTINUATION_PATHS.cancel.replace(":requestKey", record.requestKey);
+    expect(await call("POST", path, "token-other")).toMatchObject({ status: 404, body: { ok: false, code: "not_found" } });
+    expect((await call("POST", path)).status).toBe(401);
+    expect(c.snapshot().phase).toBe("action_required");
+    const cancelled = await call("POST", path, "token-owner");
+    expect(cancelled.status).toBe(200);
+    expect(cancelled.headers.get("cache-control")).toBe("private, no-store");
+    expect(cancelled.body).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd" } });
+    expect(c.snapshot().phase).toBe("cancelled");
   });
 
   it("never echoes a provider or store failure", async () => {

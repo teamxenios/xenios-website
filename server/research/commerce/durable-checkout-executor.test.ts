@@ -26,8 +26,17 @@ const base: CheckoutExecutionRecord = {
   settledAt: null,
 };
 
-function harness({ unknown = false, badAmount = false, contended = false, initial = "reserved" as CheckoutExecutionRecord["phase"] } = {}) {
-  let r: CheckoutExecutionRecord = { ...base, phase: initial };
+function harness({
+  unknown = false,
+  badAmount = false,
+  contended = false,
+  initial = "reserved" as CheckoutExecutionRecord["phase"],
+  reconcileAnswer = undefined as ProviderExecutionResult | undefined,
+  cancelAnswer = undefined as ProviderExecutionResult | undefined,
+  reference = null as string | null,
+  attempted = false,
+} = {}) {
+  let r: CheckoutExecutionRecord = { ...base, phase: initial, providerReference: reference, authorizationAttemptedAt: attempted ? "2026-09-08T00:00:01Z" : null };
   const calls: string[] = [];
   const store: CanonicalCheckoutExecutionStore = {
     authority: "canonical_checkout_transaction_v1",
@@ -53,7 +62,11 @@ function harness({ unknown = false, badAmount = false, contended = false, initia
       r = { ...r, phase: "committed", version: r.version + 1 };
       return r;
     },
-    commitCancelled: async () => null,
+    commitCancelled: async (_id, version) => {
+      calls.push("settle");
+      r = { ...r, settledAt: "2026-09-08T00:00:02Z", version: version + 1 };
+      return structuredClone(r);
+    },
   };
   const proof = (kind: "authorized" | "captured"): ProviderExecutionResult => ({
     kind,
@@ -75,11 +88,15 @@ function harness({ unknown = false, badAmount = false, contended = false, initia
     },
     reconcile: async () => {
       calls.push("reconcile");
-      return { kind: "unknown" };
+      return reconcileAnswer ?? { kind: "unknown" };
     },
-    cancel: async () => ({ kind: "unknown" }),
+    cancel: async (record) => {
+      calls.push(`cancel:${record.providerReference ?? "none"}`);
+      return cancelAnswer ?? { kind: "unknown" };
+    },
   };
-  return { run: createDurableCheckoutExecutor(store, payment).run, calls };
+  const executor = createDurableCheckoutExecutor(store, payment);
+  return { run: executor.run, cancel: executor.cancel, recover: executor.recover, calls, snapshot: () => structuredClone(r) };
 }
 
 describe("durable checkout coordinator", () => {
@@ -130,5 +147,48 @@ describe("durable checkout coordinator", () => {
     for (const x of [{ amountCents: 101 }, { memberId: "other" }, { orderId: "other" }, { currency: "eur" as never }, { providerReference: "test_auth_1" }]) {
       expect(exactPaymentEvidence(record, { ...proof, ...x })).toBe(false);
     }
+  });
+
+  it("cancel with no provider reference asks the provider first: a definitive no-payment answer settles as cancelled", async () => {
+    const h = harness({ attempted: true, reconcileAnswer: { kind: "refused", definitiveNoEffect: true } });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:cancelled", "settle"]);
+    expect(h.calls.some((c) => c.startsWith("cancel:"))).toBe(false);
+  });
+  it("cancel with no provider reference cancels the payment the provider reveals, never a guess", async () => {
+    const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
+    const h = harness({ attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "cancelled", providerReference: "pi_learned", capturedAmountCents: 0 } });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "cancel:pi_learned", "record:cancelled", "settle"]);
+    expect(h.snapshot().providerReference).toBe("pi_learned");
+  });
+  it("cancel with no provider reference and an uncertain provider answer stays in reconciliation: neither cancelled nor charged is claimed", async () => {
+    const h = harness({ attempted: true, reconcileAnswer: { kind: "unknown" } });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:unknown"]);
+    // Never attempted: nothing to ask the provider about.
+    const fresh = harness({ reconcileAnswer: { kind: "unknown" } });
+    expect((await fresh.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(fresh.calls).toEqual(["claim:cancelling", "record:cancelled", "settle"]);
+  });
+  it("recover claims a parked execution back into a read-only reconciliation and commits on captured evidence", async () => {
+    const h = harness({ initial: "reconciliation_required", reference: "pi_fixture", attempted: true, reconcileAnswer: { kind: "captured", providerReference: "pi_fixture", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" } });
+    expect((await h.recover(base.memberId, base.requestKey)).kind).toBe("committed");
+    expect(h.calls).toEqual(["claim:authorizing", "reconcile", "record:captured", "commit"]);
+    expect(h.calls).not.toContain("authorize");
+    // A parked execution the provider still cannot account for stays parked, after exactly one read.
+    const stuck = harness({ initial: "reconciliation_required", reference: "pi_fixture", attempted: true, reconcileAnswer: { kind: "unknown" } });
+    expect((await stuck.recover(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
+    expect(stuck.calls).toEqual(["claim:authorizing", "reconcile", "record:unknown"]);
+    // Any other phase simply runs.
+    const fresh = harness();
+    expect((await fresh.recover(base.memberId, base.requestKey)).kind).toBe("committed");
+  });
+  it("cancel of a payment the provider reports captured commits it instead of pretending it was released", async () => {
+    // The record already knows its reference, so no reconcile precedes the cancel.
+    const h = harness({ initial: "authorized", reference: "pi_fixture", cancelAnswer: { kind: "captured", providerReference: "pi_fixture", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" } });
+    const outcome = await h.cancel(base.memberId, base.requestKey);
+    expect(outcome.kind).toBe("committed");
+    expect(h.calls).toEqual(["claim:cancelling", "cancel:pi_fixture", "record:captured", "commit"]);
   });
 });

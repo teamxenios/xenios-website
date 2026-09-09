@@ -45,7 +45,13 @@ export type CheckoutContinuationResult =
 export interface CheckoutContinuationDeps {
   store: Pick<CanonicalCheckoutExecutionStore, "getForMember" | "claim">;
   provider: DurablePaymentProvider;
-  executor: { run(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> };
+  executor: {
+    run(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
+    /** The coordinator's crash-resumable cancellation (provider outcome, then local settlement). */
+    cancel(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
+    /** One bounded reconciliation for a parked execution; runs any other phase. */
+    recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
+  };
 }
 
 function stateOf(record: CheckoutExecutionRecord): CheckoutContinuationState {
@@ -158,7 +164,9 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
         const claimed = await deps.store.claim(record.executionId, record.version, "authorizing");
         if (!claimed) return { ok: true, continuation: view(record, "pending") };
       }
-      const outcome = await deps.executor.run(memberId, requestKey);
+      // "Check payment status" on a parked execution is the buyer asking for
+      // one bounded reconciliation: a read-back, never a new authorization.
+      const outcome = record.phase === "reconciliation_required" ? await deps.executor.recover(memberId, requestKey) : await deps.executor.run(memberId, requestKey);
       if (outcome.kind === "action_required") {
         const again = await owned(memberId, requestKey);
         if (again) {
@@ -169,6 +177,25 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
       const after = (await owned(memberId, requestKey)) ?? record;
       return { ok: true, continuation: view(after, fromOutcome(after, outcome)) };
     },
+
+    /**
+     * The buyer abandons a checkout that has not been paid: the provider's
+     * authorization (if one exists) is released and the local holds settle.
+     * A payment the provider already captured cannot be cancelled here; the
+     * coordinator commits it instead and the answer says so. An uncertain
+     * payment is never declared cancelled.
+     */
+    async cancel(memberId: string, requestKey: string): Promise<CheckoutContinuationResult> {
+      const record = await owned(memberId, requestKey);
+      if (!record) return { ok: false, code: "not_found" };
+      const outcome = await deps.executor.cancel(memberId, requestKey);
+      const after = (await owned(memberId, requestKey)) ?? record;
+      if (outcome.kind === "action_required") {
+        const current = await authentication(after);
+        return { ok: true, continuation: view(after, current.state, current.authentication) };
+      }
+      return { ok: true, continuation: view(after, fromOutcome(after, outcome)) };
+    },
   };
 }
 
@@ -177,6 +204,7 @@ export type CheckoutContinuationService = ReturnType<typeof createCheckoutContin
 export const CHECKOUT_CONTINUATION_PATHS = {
   status: "/api/research/checkout/executions/:requestKey/continuation",
   continue: "/api/research/checkout/executions/:requestKey/continue",
+  cancel: "/api/research/checkout/executions/:requestKey/cancel",
 } as const;
 
 /** The checkout request key shape the member client mints; anything else is not looked up. */
@@ -194,7 +222,7 @@ function privateNoStore(res: Response): void {
 }
 
 /**
- * Registers the two continuation doors behind the canonical active-member guard.
+ * Registers the three continuation doors (status, continue, cancel) behind the canonical active-member guard.
  * The subject is resolved the same way every other commerce route resolves it;
  * nothing in the body or the URL can name another buyer.
  */
@@ -203,7 +231,7 @@ export function registerCheckoutContinuationApi(
   guards: CheckoutContinuationGuards,
   deps: { service: CheckoutContinuationService },
 ): void {
-  const handle = (operation: "status" | "continue") => async (req: Request, res: Response): Promise<void> => {
+  const handle = (operation: "status" | "continue" | "cancel") => async (req: Request, res: Response): Promise<void> => {
     privateNoStore(res);
     const memberId = subjectOf(req);
     if (!memberId) {
@@ -216,7 +244,10 @@ export function registerCheckoutContinuationApi(
       return;
     }
     try {
-      const result = operation === "status" ? await deps.service.status(memberId, requestKey) : await deps.service.continue(memberId, requestKey);
+      const result =
+        operation === "status" ? await deps.service.status(memberId, requestKey)
+        : operation === "continue" ? await deps.service.continue(memberId, requestKey)
+        : await deps.service.cancel(memberId, requestKey);
       if (!result.ok) {
         res.status(result.code === "not_found" ? 404 : 503).json({ ok: false, code: result.code, message: result.code === "not_found" ? "No checkout in progress matches that reference." : "Payment continuation is not available right now." });
         return;
@@ -229,4 +260,5 @@ export function registerCheckoutContinuationApi(
   };
   app.get(CHECKOUT_CONTINUATION_PATHS.status, guards.requireActiveMember, handle("status"));
   app.post(CHECKOUT_CONTINUATION_PATHS.continue, guards.requireActiveMember, handle("continue"));
+  app.post(CHECKOUT_CONTINUATION_PATHS.cancel, guards.requireActiveMember, handle("cancel"));
 }

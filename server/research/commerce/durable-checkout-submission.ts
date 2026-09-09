@@ -39,7 +39,11 @@ export interface DurableCheckoutSubmissionDeps {
   evaluate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutEvaluationResult>;
   orders: OrderRepository;
   executions: CheckoutExecutionRepository;
-  executor: { run(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> };
+  executor: {
+    run(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
+    /** A retry of the same request is the buyer asking again: a parked execution gets one bounded reconciliation. */
+    recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
+  };
   inventory?: ReservationSeam;
   reservationAudit?: { record(event: ReservationAuditEvent): Promise<void> | void };
   isFraudFlagged?: (memberId: string) => boolean;
@@ -94,7 +98,7 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
   });
 
   async function continueExisting(memberId: string, requestKey: string, orderId: string, idempotent: boolean): Promise<DurableCheckoutOutcome> {
-    const outcome = await deps.executor.run(memberId, requestKey);
+    const outcome = idempotent ? await deps.executor.recover(memberId, requestKey) : await deps.executor.run(memberId, requestKey);
     if (outcome.kind === "committed" && deps.onCommitted) {
       const order = await deps.orders.get(orderId);
       if (order && order.memberId === memberId) await deps.onCommitted(order);
@@ -266,7 +270,10 @@ export function registerDurableCheckoutApi(
     try {
       const outcome = await deps.submission.submit(memberId, req.body as CheckoutRequest, (deps.now ?? (() => new Date()))());
       if (!outcome.ok) {
-        res.status(outcome.code === "commerce_disabled" || outcome.code === "payment_disabled" ? 503 : 400).json({ ok: false, code: outcome.code, codes: outcome.codes, ...(outcome.reservationRefusals ? { reservationRefusals: outcome.reservationRefusals } : {}) });
+        // The same status contract as the legacy door: only commerce_disabled is
+        // an unpublished capability; every other denial (payment_disabled for a
+        // credit-covered order included) is a routable 400 with its code.
+        res.status(outcome.code === "commerce_disabled" ? 503 : 400).json({ ok: false, code: outcome.code, codes: outcome.codes, ...(outcome.reservationRefusals ? { reservationRefusals: outcome.reservationRefusals } : {}) });
         return;
       }
       const { ok: _ok, ...checkout } = outcome;
