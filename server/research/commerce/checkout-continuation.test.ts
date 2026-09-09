@@ -1,0 +1,235 @@
+import express, { type Request, type Response } from "express";
+import type { Server } from "node:http";
+import { afterEach, describe, expect, it } from "vitest";
+import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
+import { createCheckoutContinuationService, registerCheckoutContinuationApi, CHECKOUT_CONTINUATION_PATHS } from "./checkout-continuation";
+import { createDurableCheckoutExecutor, type CanonicalCheckoutExecutionStore } from "./durable-checkout-executor";
+import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
+import { stripeModel } from "./stripe-model.test-helper";
+
+const record: CheckoutExecutionRecord = {
+  executionId: "exe-1",
+  requestKey: "req_continuation_0001",
+  phase: "reserved",
+  version: 1,
+  providerReference: null,
+  orderId: "11111111-1111-4111-8111-111111111111",
+  memberId: "22222222-2222-4222-8222-222222222222",
+  amountCents: 33_999,
+  currency: "usd",
+  paymentMethodReference: "pm_fixture_card",
+  quoteFingerprint: "quote-1",
+  authorizationKey: "xr-auth-key-0001",
+  captureKey: "xr-capture-key-0001",
+  cancelKey: "xr-cancel-key-0001",
+  reservationIds: ["res-1"],
+  createdAt: "2026-09-09T00:00:00Z",
+};
+const OTHER_MEMBER = "33333333-3333-4333-8333-333333333333";
+
+/** Version-CAS execution store double. Test only. */
+function executionStore(initial: CheckoutExecutionRecord) {
+  let current = structuredClone(initial);
+  const cas = (expected: number, next: Partial<CheckoutExecutionRecord>) => {
+    if (current.version !== expected) return null;
+    current = { ...current, ...next, version: expected + 1 };
+    return structuredClone(current);
+  };
+  const store: CanonicalCheckoutExecutionStore = {
+    authority: "canonical_checkout_transaction_v1",
+    getForMember: async (memberId, requestKey) => (current.memberId === memberId && current.requestKey === requestKey ? structuredClone(current) : null),
+    claim: async (_id, expected, phase) => cas(expected, { phase }),
+    recordProvider: async (_id, expected, result) =>
+      cas(expected, {
+        phase: result.kind === "unknown" || result.kind === "refused" ? "reconciliation_required" : result.kind,
+        providerReference: "providerReference" in result ? result.providerReference : current.providerReference,
+      }),
+    commitCaptured: async (_id, expected) => cas(expected, { phase: "committed" }),
+    commitCancelled: async (_id, expected) => cas(expected, { phase: "cancelled" }),
+  };
+  return { store, snapshot: () => structuredClone(current) };
+}
+
+function composition(options: { requiresAction?: boolean } = {}) {
+  const model = stripeModel({ requiresAction: options.requiresAction ?? true });
+  const { store, snapshot } = executionStore(record);
+  const port = createProviderVerifiedPaymentPort(model.adapter);
+  const executor = createDurableCheckoutExecutor(store, port);
+  const service = createCheckoutContinuationService({ store, provider: model.adapter, executor });
+  return { model, store, snapshot, executor, service };
+}
+
+describe("checkout continuation service", () => {
+  it("stops at authentication with the provider's client secret, and only for the owner", async () => {
+    const c = composition();
+    expect((await c.executor.run(record.memberId, record.requestKey)).kind).toBe("action_required");
+    const status = await c.service.status(record.memberId, record.requestKey);
+    expect(status).toEqual({
+      ok: true,
+      continuation: {
+        requestKey: record.requestKey,
+        orderId: record.orderId,
+        state: "authentication_required",
+        amountCents: 33_999,
+        currency: "usd",
+        authentication: { providerReference: "pi_0001", clientSecret: "pi_0001_secret_fixture" },
+      },
+    });
+    expect(await c.service.status(OTHER_MEMBER, record.requestKey)).toEqual({ ok: false, code: "not_found" });
+    expect(await c.service.continue(OTHER_MEMBER, record.requestKey)).toEqual({ ok: false, code: "not_found" });
+    expect(c.model.creates()).toHaveLength(1);
+  });
+
+  it("continue while the customer has not finished changes nothing and never creates a second payment", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    const before = c.snapshot();
+    const result = await c.service.continue(record.memberId, record.requestKey);
+    expect(result.ok && result.continuation.state).toBe("authentication_required");
+    expect(result.ok && result.continuation.authentication?.clientSecret).toBe("pi_0001_secret_fixture");
+    expect(c.snapshot()).toEqual(before);
+    expect(c.model.creates()).toHaveLength(1);
+    expect(c.model.captures()).toHaveLength(0);
+  });
+
+  it("after the customer completes authentication, continue reconciles the provider truth and completes the order", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    c.model.completeAction("pi_0001");
+    const result = await c.service.continue(record.memberId, record.requestKey);
+    expect(result).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "completed", amountCents: 33_999, currency: "usd" } });
+    expect(c.snapshot().phase).toBe("committed");
+    expect(c.model.creates()).toHaveLength(1);
+    expect(c.model.captures()).toHaveLength(1);
+    // The secret is never offered again after completion.
+    const status = await c.service.status(record.memberId, record.requestKey);
+    expect(status.ok && status.continuation).toEqual({ requestKey: record.requestKey, orderId: record.orderId, state: "completed", amountCents: 33_999, currency: "usd" });
+  });
+
+  it("a redirect-style claim of success is not trusted: an abandoned or failed authentication stays pending", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    // The customer "returns" but the provider still says requires_action.
+    for (let i = 0; i < 3; i++) {
+      const result = await c.service.continue(record.memberId, record.requestKey);
+      expect(result.ok && result.continuation.state).toBe("authentication_required");
+    }
+    expect(c.snapshot().phase).toBe("action_required");
+    expect(c.model.captures()).toHaveLength(0);
+  });
+
+  it("a cancelled payment reports cancelled and offers no secret", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    c.model.intents.get("pi_0001")!.status = "canceled";
+    const status = await c.service.status(record.memberId, record.requestKey);
+    expect(status.ok && status.continuation).toMatchObject({ state: "cancelled" });
+    expect(status.ok && status.continuation.authentication).toBeUndefined();
+  });
+
+  it("provider evidence that names another buyer's money is reported as needing reconciliation, never authenticated", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    c.model.intents.get("pi_0001")!.metadata.memberId = OTHER_MEMBER;
+    const status = await c.service.status(record.memberId, record.requestKey);
+    expect(status.ok && status.continuation).toMatchObject({ state: "reconciliation_required" });
+    expect(status.ok && status.continuation.authentication).toBeUndefined();
+    const result = await c.service.continue(record.memberId, record.requestKey);
+    expect(result.ok && result.continuation.state).toBe("reconciliation_required");
+    expect(c.snapshot().phase).toBe("action_required");
+  });
+
+  it("concurrent continues after completion advance the execution once", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    c.model.completeAction("pi_0001");
+    const results = await Promise.all([c.service.continue(record.memberId, record.requestKey), c.service.continue(record.memberId, record.requestKey)]);
+    expect(results.every((r) => r.ok)).toBe(true);
+    expect(c.snapshot().phase).toBe("committed");
+    expect(c.model.captures()).toHaveLength(1);
+    const final = await c.service.status(record.memberId, record.requestKey);
+    expect(final.ok && final.continuation.state).toBe("completed");
+  });
+
+  it("reports the plain phases for executions that never needed authentication", async () => {
+    const c = composition({ requiresAction: false });
+    expect((await c.service.status(record.memberId, record.requestKey)).ok && (await c.service.status(record.memberId, record.requestKey))).toMatchObject({ continuation: { state: "pending" } });
+    expect((await c.executor.run(record.memberId, record.requestKey)).kind).toBe("committed");
+    const status = await c.service.status(record.memberId, record.requestKey);
+    expect(status.ok && status.continuation.state).toBe("completed");
+  });
+});
+
+describe("checkout continuation routes", () => {
+  let server: Server | undefined;
+  afterEach(async () => {
+    if (server) await new Promise<void>((resolve) => server!.close(() => resolve()));
+    server = undefined;
+  });
+
+  async function serve(service: ReturnType<typeof createCheckoutContinuationService>) {
+    const app = express();
+    // The canonical active-member guard is injected; this double resolves the subject from a bearer token only.
+    const members: Record<string, string> = { "token-owner": record.memberId, "token-other": OTHER_MEMBER };
+    registerCheckoutContinuationApi(
+      app,
+      {
+        requireActiveMember: (req: Request, res: Response, next) => {
+          const token = (req.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+          const memberId = members[token];
+          if (!memberId) {
+            res.status(401).json({ ok: false, code: "unauthorized" });
+            return;
+          }
+          (req as Request & { researchMember?: { id: string } }).researchMember = { id: memberId };
+          next();
+        },
+      },
+      { service },
+    );
+    server = await new Promise<Server>((resolve) => {
+      const listening = app.listen(0, "127.0.0.1", () => resolve(listening));
+    });
+    const address = server.address();
+    const origin = `http://127.0.0.1:${typeof address === "object" && address ? address.port : 0}`;
+    const call = async (method: "GET" | "POST", path: string, token?: string) => {
+      const response = await fetch(`${origin}${path}`, { method, headers: token ? { authorization: `Bearer ${token}` } : {} });
+      return { status: response.status, headers: response.headers, body: (await response.json()) as Record<string, unknown> };
+    };
+    return { call };
+  }
+
+  it("answers only the authenticated owner, with private no-store headers and no secret outside authentication", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    const { call } = await serve(c.service);
+    const path = CHECKOUT_CONTINUATION_PATHS.status.replace(":requestKey", record.requestKey);
+    const owner = await call("GET", path, "token-owner");
+    expect(owner.status).toBe(200);
+    expect(owner.headers.get("cache-control")).toBe("private, no-store");
+    expect(owner.body).toMatchObject({ ok: true, continuation: { state: "authentication_required", authentication: { providerReference: "pi_0001" } } });
+    expect(await call("GET", path, "token-other")).toMatchObject({ status: 404, body: { ok: false, code: "not_found" } });
+    expect((await call("GET", path)).status).toBe(401);
+    expect((await call("GET", CHECKOUT_CONTINUATION_PATHS.status.replace(":requestKey", "bad%20key"), "token-owner")).status).toBe(400);
+
+    c.model.completeAction("pi_0001");
+    const continued = await call("POST", CHECKOUT_CONTINUATION_PATHS.continue.replace(":requestKey", record.requestKey), "token-owner");
+    expect(continued.status).toBe(200);
+    expect(continued.body).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "completed", amountCents: 33_999, currency: "usd" } });
+    expect(JSON.stringify(continued.body)).not.toContain("secret");
+  });
+
+  it("never echoes a provider or store failure", async () => {
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    const broken = createCheckoutContinuationService({
+      store: { ...c.store, getForMember: async () => { throw new Error("pi_0001_secret_fixture leaked in an error"); } },
+      provider: c.model.adapter,
+      executor: c.executor,
+    });
+    const { call } = await serve(broken);
+    const result = await call("GET", CHECKOUT_CONTINUATION_PATHS.status.replace(":requestKey", record.requestKey), "token-owner");
+    expect(result.status).toBe(503);
+    expect(JSON.stringify(result.body)).not.toContain("secret_fixture");
+  });
+});
