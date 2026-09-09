@@ -1,0 +1,10 @@
+{
+  "id": "codex-astra-a-payment-takeover-20260909",
+  "tool": "codex",
+  "lane": "durable-payment-recovery",
+  "branch": "codex/xenios-seth-revenue-launch-20260905",
+  "state": "active",
+  "startedAt": "2026-09-09T19:55:16.550Z",
+  "heartbeatAt": "2026-09-09T19:55:16.551Z",
+  "note": "Recovered Fable durable checkout units; payment remains disabled pending staging/provider qualification"
+}

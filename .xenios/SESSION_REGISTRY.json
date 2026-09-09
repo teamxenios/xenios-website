@@ -412,6 +412,16 @@
       "startedAt": "2026-09-09T13:17:43.545Z",
       "heartbeatAt": "2026-09-09T13:17:43.545Z",
       "note": "Provider-verified idempotent payment port + additive DurablePaymentProvider extension; new files only under server/research/commerce (durable-*), shared/research/durable-checkout-execution.ts, additive change to server/research/providers/payment.ts; no composition, route, flag or schema change"
+    },
+    {
+      "id": "codex-astra-a-payment-takeover-20260909",
+      "tool": "codex",
+      "lane": "durable-payment-recovery",
+      "branch": "codex/xenios-seth-revenue-launch-20260905",
+      "state": "active",
+      "startedAt": "2026-09-09T19:55:16.550Z",
+      "heartbeatAt": "2026-09-09T19:55:16.551Z",
+      "note": "Recovered Fable durable checkout units; payment remains disabled pending staging/provider qualification"
     }
   ],
   "updatedAt": "2026-09-08T16:02:50.489072Z"
