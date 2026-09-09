@@ -1636,6 +1636,30 @@
       "state": "released",
       "claimedAt": "2026-09-06T03:38:54.37Z",
       "heartbeatAt": "2026-09-06T03:48:05.627Z"
+    },
+    {
+      "id": "0f6ca00f-dbe6-464c-bad7-1778ce77ca6a",
+      "task": "DURABLE-CHECKOUT-PAGE-WIRING-20260909",
+      "session": "fable-durable-payment-20260909",
+      "paths": [
+        "client/src/research/pages/member/Checkout.tsx",
+        "client/src/research/pages/member/cart-checkout.test.tsx",
+        "client/src/research/pages/member/checkout-durable.test.tsx",
+        "client/src/research/adapters/checkoutContinuation.ts",
+        "client/src/research/adapters/durableCheckout.ts",
+        "client/src/research/payments/**",
+        "server/research/commerce/checkout-continuation.ts",
+        "server/research/commerce/checkout-continuation.test.ts",
+        "server/research/commerce/durable-checkout-submission.ts",
+        "server/research/commerce/durable-checkout-submission.test.ts",
+        "server/research/commerce/payment-client-config.ts",
+        "server/research/commerce/payment-client-config.test.ts",
+        "server/research/commerce/durable-checkout-composition.ts",
+        "server/research/commerce/durable-checkout-composition.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-09T15:40:59.423Z",
+      "heartbeatAt": "2026-09-09T15:40:59.423Z"
     }
   ],
   "rules": [

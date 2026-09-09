@@ -1689,6 +1689,33 @@
       "acceptedSha": "e79324a0b0fb54010533716c45c8d5c46cfaa5de",
       "acceptedBy": "codex-seth-revenue-launch-20260905",
       "acceptedAt": "2026-09-06T03:50:13.667Z"
+    },
+    {
+      "id": "DURABLE-CHECKOUT-PAGE-WIRING-20260909",
+      "title": "Connect the canonical member checkout page to the durable submission door, provider-hosted card collection, payment-authentication continuation and cancellation; payment-config route; composition proposal for A",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "fable-durable-payment-20260909",
+      "paths": [
+        "client/src/research/pages/member/Checkout.tsx",
+        "client/src/research/pages/member/cart-checkout.test.tsx",
+        "client/src/research/pages/member/checkout-durable.test.tsx",
+        "client/src/research/adapters/checkoutContinuation.ts",
+        "client/src/research/adapters/durableCheckout.ts",
+        "client/src/research/payments/**",
+        "server/research/commerce/checkout-continuation.ts",
+        "server/research/commerce/checkout-continuation.test.ts",
+        "server/research/commerce/durable-checkout-submission.ts",
+        "server/research/commerce/durable-checkout-submission.test.ts",
+        "server/research/commerce/payment-client-config.ts",
+        "server/research/commerce/payment-client-config.test.ts",
+        "server/research/commerce/durable-checkout-composition.ts",
+        "server/research/commerce/durable-checkout-composition.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "5c52abb97889e7594cf26b7f459e552f0b6e8834",
+      "scopeNote": "Fable-owned disjoint client + owned server seams. server/index.ts and production-deps.ts composition remain A (patch proposal supplied). No production provider resolver change.",
+      "claimedAt": "2026-09-09T15:40:59.420Z"
     }
   ]
 }
