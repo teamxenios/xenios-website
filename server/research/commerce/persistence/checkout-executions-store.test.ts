@@ -1,0 +1,258 @@
+import { describe, expect, it } from "vitest";
+import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
+import { createDurableCheckoutExecutor, type IdempotentCheckoutPaymentPort } from "../durable-checkout-executor";
+import { createProviderVerifiedPaymentPort } from "../durable-payment-port";
+import { stripeModel } from "../stripe-model.test-helper";
+import { createInMemoryWebhookExecutionInbox, createWebhookExecutionProcessor } from "../webhook-execution-processor";
+import {
+  CheckoutExecutionConflict,
+  createInMemoryCheckoutExecutionStore,
+  createSupabaseCheckoutExecutionStore,
+  createSupabaseWebhookExecutionInbox,
+  executionToInsertRow,
+  requestBodySha256,
+  rowToExecution,
+  type CheckoutExecutionClient,
+  type CheckoutExecutionCreate,
+  type CheckoutExecutionRow,
+} from "./checkout-executions-store";
+
+const base: CheckoutExecutionCreate = {
+  executionId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  requestKey: "req_store_0001",
+  requestBodySha256: requestBodySha256({ lines: [{ sku: "SKU-1", quantity: 2 }], total: 33_999 }),
+  priceVersion: "price-2026-09",
+  phase: "reserved",
+  version: 1,
+  providerReference: null,
+  orderId: "11111111-1111-4111-8111-111111111111",
+  memberId: "22222222-2222-4222-8222-222222222222",
+  amountCents: 33_999,
+  currency: "usd",
+  paymentMethodReference: "pm_fixture_card",
+  quoteFingerprint: "quote-1",
+  authorizationKey: "xr-auth-key-0001",
+  captureKey: "xr-capture-key-0001",
+  cancelKey: "xr-cancel-key-0001",
+  reservationIds: ["res-1"],
+  createdAt: "2026-09-09T00:00:00Z",
+};
+
+describe("row mapping", () => {
+  it("round-trips the coordinator record through the insert row and back, binding body digest and price version", () => {
+    const row = executionToInsertRow(base);
+    expect(row).toMatchObject({ id: base.executionId, member_id: base.memberId, request_key: base.requestKey, request_body_sha256: base.requestBodySha256, price_version: "price-2026-09", authorization_key: base.authorizationKey, reservation_ids: ["res-1"] });
+    const back = rowToExecution({ ...row, last_provider_result: null } as CheckoutExecutionRow);
+    const { requestBodySha256: _d, priceVersion: _p, ...record } = base;
+    expect(back).toEqual(record);
+  });
+  it("refuses a row with an unknown phase or currency", () => {
+    const row = { ...executionToInsertRow(base), last_provider_result: null } as CheckoutExecutionRow;
+    expect(rowToExecution({ ...row, phase: "paid" })).toBeNull();
+    expect(rowToExecution({ ...row, currency: "eur" })).toBeNull();
+  });
+  it("digests the exact request body deterministically", () => {
+    expect(requestBodySha256({ a: 1, b: [1, 2] })).toBe(requestBodySha256({ a: 1, b: [1, 2] }));
+    expect(requestBodySha256({ a: 1, b: [1, 2] })).not.toBe(requestBodySha256({ a: 1, b: [2, 1] }));
+  });
+});
+
+describe("in-memory execution store", () => {
+  it("creates once per (member, request key), replays the identical request, and conflicts on a changed body", async () => {
+    const store = createInMemoryCheckoutExecutionStore();
+    const created = await store.create(base);
+    expect(created.phase).toBe("reserved");
+    expect(await store.create(base)).toEqual(created);
+    await expect(store.create({ ...base, executionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", requestBodySha256: requestBodySha256({ total: 1 }) })).rejects.toBeInstanceOf(CheckoutExecutionConflict);
+    await expect(store.create({ ...base, executionId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", amountCents: 1 })).rejects.toMatchObject({ code: "request_key_reused" });
+    expect(store.snapshot()).toHaveLength(1);
+  });
+  it("compare-and-swaps every transition and learns a provider reference exactly once", async () => {
+    const store = createInMemoryCheckoutExecutionStore();
+    const created = await store.create(base);
+    const [a, b] = await Promise.all([store.claim(created.executionId, created.version, "authorizing"), store.claim(created.executionId, created.version, "authorizing")]);
+    expect([a, b].filter(Boolean)).toHaveLength(1);
+    const claimed = (a ?? b)!;
+    const proof = { kind: "authorized" as const, providerReference: "pi_0001", amountCents: 33_999, currency: "usd" as const, memberId: base.memberId, orderId: base.orderId };
+    const authorized = await store.recordProvider(claimed.executionId, claimed.version, proof);
+    expect(authorized).toMatchObject({ phase: "authorized", providerReference: "pi_0001", version: 3 });
+    expect(await store.recordProvider(claimed.executionId, claimed.version, proof)).toBeNull(); // stale version
+    expect(await store.recordProvider(authorized!.executionId, authorized!.version, { ...proof, providerReference: "pi_0002" })).toBeNull(); // reference can never change
+    expect(await store.findByProviderReference("pi_0001")).toMatchObject({ executionId: base.executionId });
+    expect(await store.findByOrder(base.orderId)).toMatchObject({ executionId: base.executionId });
+    expect(await store.getForMember("33333333-3333-4333-8333-333333333333", base.requestKey)).toBeNull();
+  });
+  it("commits only from captured with a reference, idempotently", async () => {
+    const store = createInMemoryCheckoutExecutionStore();
+    const created = await store.create(base);
+    await expect(store.commitCaptured(created.executionId, created.version)).rejects.toThrow(/without capture evidence/);
+    const claimed = (await store.claim(created.executionId, created.version, "capturing"))!;
+    const captured = (await store.recordProvider(claimed.executionId, claimed.version, { kind: "captured", providerReference: "pi_0001", amountCents: 33_999, currency: "usd", memberId: base.memberId, orderId: base.orderId }))!;
+    const committed = (await store.commitCaptured(captured.executionId, captured.version))!;
+    expect(committed.phase).toBe("committed");
+    expect(await store.commitCaptured(committed.executionId, committed.version)).toMatchObject({ phase: "committed" });
+    expect(await store.commitCaptured(committed.executionId, committed.version - 1)).toBeNull();
+  });
+});
+
+describe("in-memory store with the real coordinator, port, adapter and webhook processor", () => {
+  it("runs the connected path end to end: create -> authorize -> capture -> commit, one intent, one capture", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
+    expect(await executor.run(base.memberId, base.requestKey)).toEqual({ kind: "committed", orderId: base.orderId, executionId: base.executionId });
+    expect(model.creates()).toHaveLength(1);
+    expect(model.captures()).toHaveLength(1);
+    expect(store.snapshot()[0]).toMatchObject({ phase: "committed", providerReference: "pi_0001" });
+  });
+  it("lets a bound webhook resolve an execution that lost its create response, then the coordinator commits without re-authorizing", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    model.faults.lostResponses = 1;
+    const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
+    expect((await executor.run(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
+    const inbox = createInMemoryWebhookExecutionInbox();
+    const processor = createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: store, expectedProviderAccountId: null });
+    const evidence = await processor.process({ eventId: "evt_1", eventType: "payment.authorized", providerReference: "pi_0001", orderId: base.orderId, memberId: base.memberId, amountCents: 33_999, currency: "usd", verified: true }, "a".repeat(64), new Date());
+    expect(evidence).toMatchObject({ outcome: "applied", reason: "authorized" });
+    expect(await executor.run(base.memberId, base.requestKey)).toMatchObject({ kind: "committed" });
+    expect(model.creates()).toHaveLength(1);
+    expect(model.captures()).toHaveLength(1);
+  });
+  it("never authorizes twice under concurrent runs over the shared store", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const port: IdempotentCheckoutPaymentPort = createProviderVerifiedPaymentPort(model.adapter);
+    const executor = createDurableCheckoutExecutor(store, port);
+    const outcomes = await Promise.all([executor.run(base.memberId, base.requestKey), executor.run(base.memberId, base.requestKey), executor.run(base.memberId, base.requestKey)]);
+    expect(outcomes.filter((o) => o.kind === "committed")).toHaveLength(1);
+    expect(model.creates()).toHaveLength(1);
+    expect(model.captures()).toHaveLength(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Supabase adapter over a fake client: the exact RPC names and arguments, the
+// create conflict path, and the inbox claim semantics. No network.
+// ---------------------------------------------------------------------------
+function fakeClient(options: { existing?: CheckoutExecutionRow | null; rpc?: (fn: string, args: Record<string, unknown>) => Record<string, unknown>[] | null; inboxExisting?: { payload_sha256: string; state: string; outcome: string | null } | null } = {}) {
+  const calls: { kind: string; table?: string; fn?: string; args?: Record<string, unknown>; row?: Record<string, unknown>; filters?: [string, unknown][] }[] = [];
+  const client: CheckoutExecutionClient = {
+    from(table) {
+      return {
+        select(_columns) {
+          const filters: [string, unknown][] = [];
+          const answer = async () => {
+            calls.push({ kind: "select", table, filters: [...filters] });
+            if (table === "research_payment_webhook_inbox") return { data: (options.inboxExisting ?? null) as unknown as Record<string, unknown> | null, error: null };
+            return { data: (options.existing ?? null) as unknown as Record<string, unknown> | null, error: null };
+          };
+          const chain = {
+            eq(column: string, value: unknown) {
+              filters.push([column, value]);
+              return chain;
+            },
+            maybeSingle: answer,
+            order() {
+              return { limit: async () => { const one = await answer(); return { data: one.data ? [one.data] : [], error: null }; } };
+            },
+          };
+          return chain as never;
+        },
+        async insert(row) {
+          calls.push({ kind: "insert", table, row });
+          const duplicate = table === "research_payment_webhook_inbox" ? options.inboxExisting : options.existing;
+          return { error: duplicate ? { message: "duplicate key value violates unique constraint", code: "23505" } : null };
+        },
+        update(patch) {
+          const filters: [string, unknown][] = [];
+          const chain = {
+            eq(column: string, value: unknown) {
+              filters.push([column, value]);
+              if (filters.length === 2) {
+                calls.push({ kind: "update", table, row: patch, filters: [...filters] });
+                return Promise.resolve({ error: null }) as never;
+              }
+              return chain as never;
+            },
+          };
+          return chain as never;
+        },
+      };
+    },
+    async rpc(fn, args) {
+      calls.push({ kind: "rpc", fn, args });
+      return { data: options.rpc ? options.rpc(fn, args) : null, error: null };
+    },
+  };
+  return { client, calls };
+}
+
+describe("Supabase execution store adapter", () => {
+  const insertedRow = (): CheckoutExecutionRow => ({ ...executionToInsertRow(base), last_provider_result: null });
+  it("creates by insert and returns the record; a duplicate of the identical request replays", async () => {
+    const fresh = fakeClient();
+    expect(await createSupabaseCheckoutExecutionStore(() => fresh.client).create(base)).toMatchObject({ executionId: base.executionId, phase: "reserved" });
+    expect(fresh.calls[0]).toMatchObject({ kind: "insert", table: "research_checkout_executions", row: { request_body_sha256: base.requestBodySha256 } });
+    const replay = fakeClient({ existing: insertedRow() });
+    expect(await createSupabaseCheckoutExecutionStore(() => replay.client).create(base)).toMatchObject({ executionId: base.executionId });
+    const reused = fakeClient({ existing: { ...insertedRow(), request_body_sha256: "b".repeat(64) } });
+    await expect(createSupabaseCheckoutExecutionStore(() => reused.client).create(base)).rejects.toMatchObject({ code: "request_key_reused" });
+  });
+  it("delegates every transition to the database function with the expected version, and maps zero rows to null", async () => {
+    const answered = fakeClient({ rpc: (fn, args) => (fn.endsWith("claim") ? [{ ...insertedRow(), phase: args.p_phase, version: 2 }] : null) });
+    const store = createSupabaseCheckoutExecutionStore(() => answered.client);
+    const claimed = await store.claim(base.executionId, 1, "authorizing");
+    expect(claimed).toMatchObject({ phase: "authorizing", version: 2 });
+    expect(await store.recordProvider(base.executionId, 2, { kind: "unknown" })).toBeNull();
+    expect(await store.commitCaptured(base.executionId, 3)).toBeNull();
+    expect(await store.commitCancelled(base.executionId, 3)).toBeNull();
+    expect(answered.calls.filter((c) => c.kind === "rpc").map((c) => [c.fn, c.args?.p_expected_version])).toEqual([
+      ["research_checkout_execution_claim", 1],
+      ["research_checkout_execution_record_provider", 2],
+      ["research_checkout_execution_commit_captured", 3],
+      ["research_checkout_execution_commit_cancelled", 3],
+    ]);
+    const recorded = answered.calls.find((c) => c.fn === "research_checkout_execution_record_provider");
+    expect(recorded?.args?.p_result).toEqual({ kind: "unknown" });
+  });
+  it("looks executions up by member+key, provider reference and order", async () => {
+    const found = fakeClient({ existing: { ...insertedRow(), provider_reference: "pi_0001", phase: "authorized" } });
+    const store = createSupabaseCheckoutExecutionStore(() => found.client);
+    expect(await store.getForMember(base.memberId, base.requestKey)).toMatchObject({ providerReference: "pi_0001" });
+    expect(await store.findByProviderReference("pi_0001")).toMatchObject({ phase: "authorized" });
+    expect(await store.findByOrder(base.orderId)).toMatchObject({ orderId: base.orderId });
+    expect(found.calls.map((c) => c.filters)).toEqual([
+      [["member_id", base.memberId], ["request_key", base.requestKey]],
+      [["provider_reference", "pi_0001"]],
+      [["order_id", base.orderId]],
+    ]);
+  });
+});
+
+describe("Supabase webhook inbox adapter", () => {
+  const event = { providerName: "stripe", eventId: "evt_1", eventType: "payment.authorized", payloadSha256: "a".repeat(64), receivedAt: new Date("2026-09-09T12:00:00Z") };
+  it("claims by primary-key insert in processing state, then completes or isolates by terminal update", async () => {
+    const fresh = fakeClient();
+    const inbox = createSupabaseWebhookExecutionInbox(() => fresh.client);
+    expect(await inbox.claim(event)).toEqual({ state: "new" });
+    expect(fresh.calls[0]).toMatchObject({ kind: "insert", table: "research_payment_webhook_inbox", row: { state: "processing", payload_sha256: event.payloadSha256 } });
+    await inbox.complete("stripe", "evt_1", "applied", base.executionId);
+    await inbox.isolate("stripe", "evt_2", "amount_mismatch", null);
+    expect(fresh.calls.filter((c) => c.kind === "update").map((c) => [c.row?.state, c.row?.outcome, c.row?.reason ?? null])).toEqual([
+      ["processed", "applied", null],
+      ["isolated", "isolated", "amount_mismatch"],
+    ]);
+  });
+  it("reports an existing claim as processing, processed or conflict by the signed-bytes digest", async () => {
+    const processing = fakeClient({ inboxExisting: { payload_sha256: event.payloadSha256, state: "processing", outcome: null } });
+    expect(await createSupabaseWebhookExecutionInbox(() => processing.client).claim(event)).toEqual({ state: "processing" });
+    const processed = fakeClient({ inboxExisting: { payload_sha256: event.payloadSha256, state: "processed", outcome: "applied" } });
+    expect(await createSupabaseWebhookExecutionInbox(() => processed.client).claim(event)).toEqual({ state: "processed", outcome: "applied" });
+    const conflict = fakeClient({ inboxExisting: { payload_sha256: "b".repeat(64), state: "processed", outcome: "applied" } });
+    expect(await createSupabaseWebhookExecutionInbox(() => conflict.client).claim(event)).toEqual({ state: "conflict" });
+  });
+});
