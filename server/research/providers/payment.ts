@@ -105,6 +105,12 @@ export interface PaymentSnapshot {
   /** Server-authored metadata echoed by the provider; null when the provider carries none. */
   orderId: string | null;
   memberId: string | null;
+  /**
+   * The provider's client continuation secret while the customer must act
+   * (3DS). Returned only through the owner-guarded continuation route; never
+   * logged, journaled or placed in a URL by xenios.
+   */
+  clientSecret: string | null;
 }
 
 export interface PaymentProvider {
@@ -350,6 +356,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
         currency: "usd",
         orderId: auth.orderId,
         memberId: auth.memberId,
+        clientSecret: status === "pending" ? this.pendingFor(ref).clientSecret : null,
       },
       ref,
     );
@@ -1214,6 +1221,7 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
         currency: "usd",
         orderId: readString(metadata, "orderId") ?? null,
         memberId: readString(metadata, "memberId") ?? null,
+        clientSecret: mapped === "pending" ? (readString(intent, "client_secret") ?? null) : null,
       },
       ref,
     );
