@@ -1,0 +1,418 @@
+// @vitest-environment jsdom
+// The checkout page over the DURABLE card door: the page is the real
+// component; the server is a scripted fetch that answers the real route
+// contracts (payment-config, durable submit, continuation status/continue/
+// cancel); the provider's browser surfaces are injected doubles. Nothing here
+// touches a real provider or the SQL: it proves the page's behaviour against
+// the contracts the composition tests prove server-side.
+
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import type { ReactNode } from "react";
+
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+
+import { ResearchContext, type ResearchContextValue } from "../../core";
+import { __resetCapabilitiesCache } from "../../lib/capabilities";
+import type { PaymentMethodCollectorClient } from "../../payments/PaymentMethodCollector";
+import type { PaymentAuthenticator } from "../../payments/PaymentAuthenticationStep";
+import Checkout from "./Checkout";
+import type { CartDto, StoreCreditDto } from "@shared/research/commerce-api";
+
+let root: Root | null = null;
+let container: HTMLDivElement | null = null;
+
+afterEach(() => {
+  if (root) act(() => root!.unmount());
+  container?.remove();
+  root = null;
+  container = null;
+  vi.unstubAllGlobals();
+  __resetCapabilitiesCache();
+  window.sessionStorage.clear();
+});
+
+const SCOPE = "a".repeat(64);
+const OTHER_SCOPE = "b".repeat(64);
+const ORDER = "00000001-0000-4000-8000-000000000000";
+const SECRET = "pi_0001_secret_fixture";
+
+function fixtureContext(token = "member-jwt", scope = SCOPE): ResearchContextValue {
+  return {
+    gate: "open",
+    member: { firstName: "Sam", status: "active", applicationStatus: null, cartScope: scope },
+    memberToken: token,
+    memberChecking: false,
+    recovery: "none",
+  } as ResearchContextValue;
+}
+
+const readyCart: CartDto = {
+  lines: [{ sku: "XN-01", displayName: "Peptide A", quantity: 2, purchaseMode: "one_time", unitPriceCents: 6900, lineTotalCents: 13800, blockedReason: null }],
+  shipmentGroups: [{ owner: "mitch", skus: ["XN-01"] }],
+  subtotalCents: 13800,
+  shippingCents: 1295,
+  storeCreditAppliedCents: 0,
+  estimatedTotalCents: 15095,
+  checkoutReady: true,
+  blockingReasons: [],
+  requiredAgreements: ["research_terms_v1"],
+};
+const storeCredit: StoreCreditDto = { spendableCents: 20000, pendingCents: 0, entries: [] } as unknown as StoreCreditDto;
+
+type Recorded = { method: string; url: string; token: string | null; body: Record<string, unknown> | null };
+type Reply = { status: number; body: unknown };
+type Answer = Reply | ((call: Recorded) => Reply | Promise<Reply>);
+
+/**
+ * A scripted server keyed by "METHOD url". A route may be a function so a test
+ * can sequence answers (first submit: authentication required; continue:
+ * completed). Unknown routes are reported loudly.
+ */
+function server(routes: Record<string, Answer>, options: { config?: Answer; delayMs?: number; dynamic?: (method: string, url: string) => Answer | undefined } = {}) {
+  const calls: Recorded[] = [];
+  const all: Record<string, Answer> = {
+    "GET /api/research/capabilities": { status: 200, body: { ok: true, capabilities: { product_commerce: { enabled: true } } } },
+    "GET /api/research/cart": { status: 200, body: { ok: true, cart: readyCart } },
+    "GET /api/research/store-credit": { status: 200, body: { ok: true, storeCredit } },
+    "GET /api/research/checkout/payment-config": options.config ?? { status: 200, body: { ok: true, config: { provider: "stripe", publishableKey: "pk_test_abcdefgh12345678", mode: "test" } } },
+    ...routes,
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const method = (init?.method ?? "GET").toUpperCase();
+      const headers = new Headers(init?.headers);
+      const call: Recorded = { method, url, token: headers.get("Authorization")?.replace("Bearer ", "") ?? null, body: init?.body ? (JSON.parse(String(init.body)) as Record<string, unknown>) : null };
+      calls.push(call);
+      if (options.delayMs) await new Promise((resolve) => setTimeout(resolve, options.delayMs));
+      const route = all[`${method} ${url}`] ?? options.dynamic?.(method, url);
+      if (!route) throw new TypeError(`unstubbed fetch: ${method} ${url}`);
+      const answer = typeof route === "function" ? await route(call) : route;
+      return { status: answer.status, ok: answer.status >= 200 && answer.status < 300, headers: new Headers({ "content-type": "application/json" }), json: async () => answer.body };
+    }),
+  );
+  return { calls };
+}
+
+/** The provider-hosted card element double: complete at once; tokenizes to a fixed pm_ reference. */
+function cardClient(reference = "pm_fixture_card"): PaymentMethodCollectorClient & { collects: number } {
+  const client = {
+    collects: 0,
+    async mount(_container: HTMLElement, onChange: (state: { complete: boolean; error: string | null }) => void) {
+      setTimeout(() => onChange({ complete: true, error: null }), 0);
+      return {
+        collect: async () => {
+          client.collects += 1;
+          return { ok: true as const, reference };
+        },
+        unmount() {},
+      };
+    },
+  };
+  return client;
+}
+
+async function render(node: ReactNode, context: ResearchContextValue = fixtureContext()) {
+  container = document.createElement("div");
+  document.body.appendChild(container);
+  root = createRoot(container);
+  await act(async () => {
+    root!.render(<ResearchContext.Provider value={context}>{node}</ResearchContext.Provider>);
+  });
+  await flush();
+  return container!;
+}
+async function rerender(node: ReactNode, context: ResearchContextValue) {
+  await act(async () => {
+    root!.render(<ResearchContext.Provider value={context}>{node}</ResearchContext.Provider>);
+  });
+  await flush();
+}
+const flush = async () => {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  });
+};
+
+function setValue(el: HTMLInputElement | HTMLSelectElement, value: string) {
+  const proto = el instanceof HTMLSelectElement ? window.HTMLSelectElement.prototype : window.HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, "value")!.set!;
+  setter.call(el, value);
+  el.dispatchEvent(new Event(el instanceof HTMLSelectElement ? "change" : "input", { bubbles: true }));
+}
+function byTestId<T extends HTMLElement>(view: HTMLElement, id: string): T {
+  const el = view.querySelector(`[data-testid="${id}"]`);
+  if (!el) throw new Error(`missing [data-testid="${id}"]`);
+  return el as T;
+}
+const has = (view: HTMLElement, id: string) => view.querySelector(`[data-testid="${id}"]`) !== null;
+
+async function fillForm(view: HTMLElement) {
+  await act(async () => {
+    setValue(byTestId<HTMLInputElement>(view, "co-line1"), "1 Research Way");
+    setValue(byTestId<HTMLInputElement>(view, "co-city"), "Austin");
+    setValue(byTestId<HTMLInputElement>(view, "co-state"), "TX");
+    setValue(byTestId<HTMLInputElement>(view, "co-postal"), "78701");
+  });
+  await act(async () => {
+    byTestId<HTMLInputElement>(view, "co-agree-research_terms_v1").click();
+  });
+  await act(async () => {
+    byTestId<HTMLInputElement>(view, "co-attest").click();
+  });
+}
+async function click(view: HTMLElement, id: string) {
+  await act(async () => {
+    byTestId<HTMLButtonElement>(view, id).click();
+  });
+  await flush();
+}
+
+const submitted = (calls: Recorded[]) => calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout/durable");
+/** The durable door echoes the request key the page minted, as the real door does. */
+const durableAnswer = (state: string, idempotent = false) => (call: Recorded): Reply => ({
+  status: 200,
+  body: { ok: true, checkout: { requestKey: String(call.body?.idempotencyKey), orderId: ORDER, state, idempotent } },
+});
+const settle = async (ms: number) => {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  });
+};
+const continuation = (state: string, withSecret = false) => ({
+  ok: true,
+  continuation: { requestKey: "", orderId: ORDER, state, amountCents: 15095, currency: "usd", ...(withSecret ? { authentication: { providerReference: "pi_0001", clientSecret: SECRET } } : {}) },
+});
+const keyOf = (calls: Recorded[]) => String(submitted(calls)[0]!.body!.idempotencyKey);
+const continuationPaths = (key: string) => ({
+  status: `GET /api/research/checkout/executions/${encodeURIComponent(key)}/continuation`,
+  continue: `POST /api/research/checkout/executions/${encodeURIComponent(key)}/continue`,
+  cancel: `POST /api/research/checkout/executions/${encodeURIComponent(key)}/cancel`,
+});
+
+describe("checkout page over the durable card door", () => {
+  it("keeps the ordering door, with no payment section, when no payment configuration is published", async () => {
+    const { calls } = server({ "POST /api/research/checkout": { status: 403, body: { ok: false, code: "commerce_disabled" } } }, { config: { status: 503, body: { ok: false, code: "payment_disabled" } } });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(view, "co-payment")).toBe(false);
+    expect(byTestId(view, "co-submit").textContent).toBe("Place order");
+    await fillForm(view);
+    await click(view, "co-submit");
+    expect(calls.some((c) => c.url === "/api/research/checkout" && c.method === "POST")).toBe(true);
+    expect(submitted(calls)).toHaveLength(0);
+  });
+
+  it("collects the card with the provider, submits ONE frozen request, mounts the bank step, and shows the order only after the server says completed", async () => {
+    // The scripted server does not know the request key until the page mints it; the continuation doors answer by suffix.
+    const { calls } = server(
+      { "POST /api/research/checkout/durable": durableAnswer("authentication_required") },
+      {
+        dynamic: (method, url) => {
+          if (!url.startsWith("/api/research/checkout/executions/")) return undefined;
+          if (method === "POST" && url.endsWith("/continue")) return { status: 200, body: continuation("completed") };
+          if (method === "GET" && url.endsWith("/continuation")) return { status: 200, body: continuation("authentication_required", true) };
+          return undefined;
+        },
+      },
+    );
+    const card = cardClient();
+    const authenticate = vi.fn<PaymentAuthenticator>(async () => "authenticated");
+    const view = await render(<Checkout paymentMethodClient={card} authenticator={authenticate} />);
+    expect(has(view, "co-payment")).toBe(true);
+    expect(byTestId(view, "pm-test-mode").textContent).toContain("Test mode");
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay and place order");
+    await fillForm(view);
+    await click(view, "co-submit");
+    const key = keyOf(calls);
+    expect(card.collects).toBe(1);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(submitted(calls)[0]!.body).toMatchObject({ paymentMethodReference: "pm_fixture_card", idempotencyKey: key, acceptedAgreementKeys: ["research_terms_v1"], researchAttestation: true });
+    // No card data, no secret anywhere in the DOM or the request.
+    expect(JSON.stringify(submitted(calls)[0]!.body)).not.toMatch(/4242|cvc/i);
+    // The bank step is mounted for THIS request key; the form is gone.
+    expect(has(view, "checkout-execution")).toBe(true);
+    expect(has(view, "co-submit")).toBe(false);
+    expect(byTestId(view, "checkout-execution").getAttribute("data-state")).toBe("authentication_required");
+    expect(view.innerHTML).not.toContain(SECRET);
+    expect(calls.some((c) => c.method === "GET" && c.url === `/api/research/checkout/executions/${encodeURIComponent(key)}/continuation` && c.token === "member-jwt")).toBe(true);
+    // Confirm with the bank: the provider flow runs with the server's secret, then the server continues and completes.
+    await click(view, "payment-continue");
+    expect(authenticate).toHaveBeenCalledWith({ clientSecret: SECRET });
+    expect(has(view, "checkout-paid")).toBe(true);
+    expect(byTestId(view, "checkout-paid").textContent).toContain(`Order ${ORDER} is recorded.`);
+    expect(byTestId(view, "checkout-paid").textContent).toContain("Payment received is not shipment");
+    expect(byTestId<HTMLAnchorElement>(view, "checkout-paid-order").getAttribute("href")).toBe(`/research/member/orders/${ORDER}`);
+    expect(view.innerHTML).not.toContain(SECRET);
+    // The resume pointer is cleared once the order is settled.
+    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+  });
+
+  it("a lost answer keeps the request frozen: retry resends the identical body under the identical key and never collects a second card", async () => {
+    let attempts = 0;
+    const { calls } = server({
+      "POST /api/research/checkout/durable": (call) => {
+        attempts += 1;
+        if (attempts === 1) throw new TypeError("socket hang up");
+        return durableAnswer("completed", true)(call);
+      },
+    });
+    const card = cardClient();
+    const view = await render(<Checkout paymentMethodClient={card} />);
+    await fillForm(view);
+    await click(view, "co-submit");
+    expect(byTestId(view, "co-submit-error").textContent).toContain("Retry sends the same request");
+    expect(has(view, "co-payment-frozen")).toBe(true);
+    expect(has(view, "co-payment")).toBe(false);
+    expect(byTestId(view, "co-submit").textContent).toBe("Retry the same request");
+    await click(view, "co-submit");
+    const bodies = submitted(calls).map((c) => c.body);
+    expect(bodies).toHaveLength(2);
+    expect(bodies[1]).toEqual(bodies[0]);
+    expect(card.collects).toBe(1);
+    expect(has(view, "checkout-paid")).toBe(true);
+  });
+
+  it("a cancelled checkout says nothing was charged and only an explicit new request mints a new key", async () => {
+    const { calls } = server({ "POST /api/research/checkout/durable": durableAnswer("cancelled") });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillForm(view);
+    await click(view, "co-submit");
+    expect(has(view, "checkout-cancelled")).toBe(true);
+    expect(byTestId(view, "checkout-cancelled").textContent).toContain("nothing was charged");
+    const first = keyOf(calls);
+    await click(view, "co-new-request");
+    expect(has(view, "checkout-cancelled")).toBe(false);
+    await click(view, "co-submit");
+    const keys = submitted(calls).map((c) => String(c.body!.idempotencyKey));
+    expect(keys).toHaveLength(2);
+    expect(keys[1]).not.toBe(first);
+  });
+
+  it("denials that persisted nothing reopen the form on the same key; large-order review goes to the ordering door with the same request", async () => {
+    const { calls } = server({
+      "POST /api/research/checkout/durable": { status: 400, body: { ok: false, code: "payment_method_required", codes: ["payment_method_required"] } },
+    });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillForm(view);
+    await click(view, "co-submit");
+    expect(view.textContent).toContain("Add a payment method to continue.");
+    expect(has(view, "co-payment")).toBe(true);
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay and place order");
+    const first = keyOf(calls);
+    await click(view, "co-submit");
+    expect(keyOf(calls)).toBe(first);
+    expect(submitted(calls)[1]!.body!.idempotencyKey).toBe(first);
+
+    const held = server({
+      "POST /api/research/checkout/durable": { status: 400, body: { ok: false, code: "large_order_review_required", codes: ["large_order_review_required"] } },
+      "POST /api/research/checkout": { status: 403, body: { ok: false, code: "large_order_review_required" } },
+    });
+    act(() => root!.unmount());
+    const review = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillForm(review);
+    await click(review, "co-submit");
+    expect(has(review, "checkout-held")).toBe(true);
+    const legacy = held.calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout");
+    expect(legacy).toHaveLength(1);
+    expect(legacy[0]!.body).toEqual(submitted(held.calls)[0]!.body);
+  });
+
+  it("a fully credit-covered order takes the ordering door and asks for no card", async () => {
+    const { calls } = server({
+      "POST /api/research/checkout": { status: 200, body: { ok: true, order: { orderId: ORDER, state: "checkout_pending", placedAt: "2026-09-09T00:00:00Z", totalCents: 0, shipments: [] } } },
+    });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillForm(view);
+    await act(async () => {
+      setValue(byTestId<HTMLInputElement>(view, "co-credit"), "200");
+    });
+    expect(has(view, "co-payment")).toBe(false);
+    expect(byTestId(view, "co-submit").textContent).toBe("Place order");
+    await click(view, "co-submit");
+    expect(submitted(calls)).toHaveLength(0);
+    expect(calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout")).toHaveLength(1);
+    expect(has(view, "checkout-confirmation")).toBe(true);
+  });
+
+  it("resumes an unfinished checkout after a refresh through the owner-checked lookup, and discards a pointer the server does not own", async () => {
+    window.sessionStorage.setItem("xenios.research.checkoutResume.v1", JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
+    const paths = continuationPaths("req_resume_0001");
+    const { calls } = server({ [paths.status]: { status: 200, body: continuation("reconciliation_required") } });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(view, "checkout-execution")).toBe(true);
+    expect(byTestId(view, "checkout-execution").getAttribute("data-state")).toBe("reconciliation_required");
+    expect(byTestId(view, "payment-uncertain").textContent).toContain("do not pay again");
+    expect(calls.filter((c) => c.method === "GET" && c.url.endsWith("/continuation")).map((c) => c.url)).toEqual([`/api/research/checkout/executions/req_resume_0001/continuation`]);
+    expect(submitted(calls)).toHaveLength(0);
+
+    // Another account on the same browser never sees it: the scope differs, so the pointer is ignored.
+    act(() => root!.unmount());
+    server({ [paths.status]: { status: 200, body: continuation("reconciliation_required") } });
+    const other = await render(<Checkout paymentMethodClient={cardClient()} />, fixtureContext("other-jwt", OTHER_SCOPE));
+    expect(has(other, "checkout-execution")).toBe(false);
+    expect(has(other, "co-submit")).toBe(true);
+
+    // The server disowns the reference: the pointer is dropped and the form returns.
+    act(() => root!.unmount());
+    window.sessionStorage.setItem("xenios.research.checkoutResume.v1", JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
+    server({ [paths.status]: { status: 404, body: { ok: false, code: "not_found" } } });
+    const dropped = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(dropped, "co-submit")).toBe(true);
+    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+  });
+
+  it("abandonment: the buyer cancels from the bank step; the page shows cancelled and nothing charged", async () => {
+    const { calls } = server(
+      { "POST /api/research/checkout/durable": durableAnswer("authentication_required") },
+      {
+        dynamic: (method, url) => {
+          if (!url.startsWith("/api/research/checkout/executions/")) return undefined;
+          if (method === "POST" && url.endsWith("/cancel")) return { status: 200, body: continuation("cancelled") };
+          if (method === "GET" && url.endsWith("/continuation")) return { status: 200, body: continuation("authentication_required", true) };
+          return undefined;
+        },
+      },
+    );
+    const view = await render(<Checkout paymentMethodClient={cardClient()} authenticator={async () => "cancelled"} />);
+    await fillForm(view);
+    await click(view, "co-submit");
+    expect(has(view, "payment-cancel")).toBe(true);
+    await click(view, "payment-cancel");
+    expect(calls.some((c) => c.method === "POST" && c.url.endsWith("/cancel"))).toBe(true);
+    expect(has(view, "checkout-cancelled")).toBe(true);
+    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+  });
+
+  it("an account switch discards the execution in progress and a late answer never renders under the new account", async () => {
+    // The durable door holds its answer until the test releases it, so the
+    // account switch deterministically happens while the submit is in flight.
+    let release: () => void = () => {};
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const { calls } = server({
+      "POST /api/research/checkout/durable": async (call) => {
+        await held;
+        return durableAnswer("authentication_required")(call);
+      },
+    });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillForm(view);
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "co-submit").click();
+    });
+    await settle(10);
+    expect(submitted(calls)).toHaveLength(1);
+    // The submit is in flight; the account changes before the answer arrives.
+    await rerender(<Checkout paymentMethodClient={cardClient()} />, fixtureContext("other-jwt", OTHER_SCOPE));
+    release();
+    await settle(20);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(submitted(calls)[0]!.token).toBe("member-jwt");
+    expect(has(view, "checkout-execution")).toBe(false);
+    expect(has(view, "checkout-paid")).toBe(false);
+    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+  });
+});
