@@ -1,0 +1,10 @@
+{
+  "id": "fable-durable-payment-20260909",
+  "tool": "Claude Fable 5.1",
+  "lane": "durable-payment-unit",
+  "branch": "claude/durable-payment-port-20260909",
+  "state": "active",
+  "startedAt": "2026-09-09T13:17:43.545Z",
+  "heartbeatAt": "2026-09-09T13:17:43.545Z",
+  "note": "Provider-verified idempotent payment port + additive DurablePaymentProvider extension; new files only under server/research/commerce (durable-*), shared/research/durable-checkout-execution.ts, additive change to server/research/providers/payment.ts; no composition, route, flag or schema change"
+}

@@ -402,6 +402,16 @@
       "startedAt": "2026-09-09T13:05:13.337Z",
       "heartbeatAt": "2026-09-09T13:06:45.865Z",
       "note": "Pack02 collision-free mapping recorded and pushed; bridge/account focused tests 25/25 pass; no production mutation. B contract sent."
+    },
+    {
+      "id": "fable-durable-payment-20260909",
+      "tool": "Claude Fable 5.1",
+      "lane": "durable-payment-unit",
+      "branch": "claude/durable-payment-port-20260909",
+      "state": "active",
+      "startedAt": "2026-09-09T13:17:43.545Z",
+      "heartbeatAt": "2026-09-09T13:17:43.545Z",
+      "note": "Provider-verified idempotent payment port + additive DurablePaymentProvider extension; new files only under server/research/commerce (durable-*), shared/research/durable-checkout-execution.ts, additive change to server/research/providers/payment.ts; no composition, route, flag or schema change"
     }
   ],
   "updatedAt": "2026-09-08T16:02:50.489072Z"

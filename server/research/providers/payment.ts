@@ -76,6 +76,35 @@ export interface WebhookVerification {
   verified: true;
 }
 
+/**
+ * Provider evidence that a payment EXISTS but no money is authorized yet: the
+ * customer must complete an action (3DS), confirm, supply another payment
+ * method, or the bank is still processing. Only createAuthorizationOrPending
+ * returns this, so a durable execution port can record the provider reference
+ * for later reconciliation without ever mistaking it for an authorization.
+ */
+export interface PaymentPending {
+  providerReference: string;
+  status: "pending";
+  providerStatus: "requires_action" | "requires_confirmation" | "requires_payment_method" | "processing";
+  /** Present when the customer's client must finish the action. Never logged or persisted by xenios. */
+  clientSecret: string | null;
+}
+
+/** The provider's current, verified truth about one payment reference. */
+export interface PaymentSnapshot {
+  providerReference: string;
+  /** Domain vocabulary: pending, processing, authorized, captured, cancelled. */
+  status: string;
+  amountCents: number;
+  amountCapturableCents: number;
+  amountReceivedCents: number;
+  currency: "usd";
+  /** Server-authored metadata echoed by the provider; null when the provider carries none. */
+  orderId: string | null;
+  memberId: string | null;
+}
+
 export interface PaymentProvider {
   readonly name: string;
   /** True when the provider supports authorize-now, capture-later. */
@@ -89,16 +118,54 @@ export interface PaymentProvider {
   verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>>;
 }
 
+/**
+ * The richer boundary a durable execution port needs. createAuthorization keeps
+ * its contract (ok ONLY on a provider-proven authorization); these two calls
+ * add the evidence recovery needs: a created-but-unauthorized payment keeps its
+ * reference instead of being flattened into a bare refusal, and an existing
+ * reference can be read back with exact amounts and server-authored metadata.
+ */
+export interface DurablePaymentProvider extends PaymentProvider {
+  createAuthorizationOrPending(
+    input: CreateAuthorizationInput,
+  ): Promise<ProviderResult<PaymentAuthorization | PaymentPending>>;
+  retrievePayment(providerReference: string): Promise<ProviderResult<PaymentSnapshot>>;
+}
+
+export function supportsDurableExecution(provider: PaymentProvider): provider is DurablePaymentProvider {
+  const candidate = provider as Partial<DurablePaymentProvider>;
+  return (
+    typeof candidate.createAuthorizationOrPending === "function" &&
+    typeof candidate.retrievePayment === "function"
+  );
+}
+
+/** The refusal createAuthorization reports for a payment that exists but is not authorized. */
+function pendingAsRefusal<T>(pending: PaymentPending): ProviderResult<T> {
+  return {
+    ok: false,
+    code: "REJECTED",
+    message: `The payment was created (${pending.providerReference}) but is not authorized yet (status ${pending.providerStatus}).`,
+    retryable: false,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Disabled (the production default)
 // ---------------------------------------------------------------------------
 
-export class DisabledPaymentProvider implements PaymentProvider {
+export class DisabledPaymentProvider implements DurablePaymentProvider {
   readonly name = "disabled";
   readonly supportsDeferredCapture = false;
 
   async createAuthorization() {
     return providerDisabled<PaymentAuthorization>("product_commerce");
+  }
+  async createAuthorizationOrPending() {
+    return providerDisabled<PaymentAuthorization | PaymentPending>("product_commerce");
+  }
+  async retrievePayment() {
+    return providerDisabled<PaymentSnapshot>("product_commerce");
   }
   async captureAuthorization() {
     return providerDisabled<PaymentCapture>("product_commerce");
@@ -129,7 +196,7 @@ export class DisabledPaymentProvider implements PaymentProvider {
  * amount. It refuses to construct in production so it cannot become a live payment
  * path by a configuration mistake.
  */
-export class TestPaymentProvider implements PaymentProvider {
+export class TestPaymentProvider implements DurablePaymentProvider {
   readonly name = "test";
   readonly supportsDeferredCapture = true;
 
@@ -154,6 +221,10 @@ export class TestPaymentProvider implements PaymentProvider {
     { reference: string; amountCents: number; result: PaymentRefund }
   >();
   private counter = 0;
+  /** Test hook: payment methods that need a customer action before they authorize (models 3DS). */
+  private readonly actionRequiredMethods = new Set<string>();
+  /** References created against an action-required method and not yet completed. */
+  private readonly pendingReferences = new Set<string>();
 
   constructor() {
     if (process.env.NODE_ENV === "production") {
@@ -161,9 +232,34 @@ export class TestPaymentProvider implements PaymentProvider {
     }
   }
 
+  /** Model a payment method whose authorization waits on the customer (3DS). */
+  requireCustomerAction(paymentMethodReference: string): void {
+    this.actionRequiredMethods.add(paymentMethodReference);
+  }
+
+  /** The customer completed the action: the pending payment becomes authorized. */
+  completeCustomerAction(providerReference: string): boolean {
+    if (!this.pendingReferences.has(providerReference)) return false;
+    this.pendingReferences.delete(providerReference);
+    return true;
+  }
+
+  private pendingFor(ref: string): PaymentPending {
+    return { providerReference: ref, status: "pending", providerStatus: "requires_action", clientSecret: `${ref}_secret_test` };
+  }
+
   async createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>> {
+    const result = await this.createAuthorizationOrPending(input);
+    if (!result.ok) return result;
+    if (result.value.status === "pending") return pendingAsRefusal<PaymentAuthorization>(result.value);
+    return providerOk(result.value, result.providerReference);
+  }
+
+  async createAuthorizationOrPending(
+    input: CreateAuthorizationInput,
+  ): Promise<ProviderResult<PaymentAuthorization | PaymentPending>> {
     if (!Number.isSafeInteger(input.amountCents) || input.amountCents <= 0 || input.currency !== "usd") {
-      return providerMisconfigured<PaymentAuthorization>(
+      return providerMisconfigured<PaymentAuthorization | PaymentPending>(
         "Authorization requires a positive integer amount of USD cents.",
       );
     }
@@ -187,6 +283,7 @@ export class TestPaymentProvider implements PaymentProvider {
           retryable: false,
         };
       }
+      if (this.pendingReferences.has(existingRef)) return providerOk(this.pendingFor(existingRef), existingRef);
       return providerOk(
         {
           providerReference: existingRef,
@@ -212,6 +309,10 @@ export class TestPaymentProvider implements PaymentProvider {
       description: input.description,
     });
     this.byIdempotencyKey.set(input.idempotencyKey, ref);
+    if (input.paymentMethodReference && this.actionRequiredMethods.has(input.paymentMethodReference)) {
+      this.pendingReferences.add(ref);
+      return providerOk(this.pendingFor(ref), ref);
+    }
 
     return providerOk(
       {
@@ -225,10 +326,40 @@ export class TestPaymentProvider implements PaymentProvider {
     );
   }
 
+  async retrievePayment(ref: string): Promise<ProviderResult<PaymentSnapshot>> {
+    const auth = this.authorizations.get(ref);
+    if (!auth) {
+      return { ok: false, code: "REJECTED", message: "Unknown authorization.", retryable: false };
+    }
+    const status = auth.cancelled
+      ? "cancelled"
+      : auth.captured > 0
+        ? "captured"
+        : this.pendingReferences.has(ref)
+          ? "pending"
+          : "authorized";
+    return providerOk<PaymentSnapshot>(
+      {
+        providerReference: ref,
+        status,
+        amountCents: auth.amountCents,
+        amountCapturableCents: status === "authorized" ? auth.amountCents : 0,
+        amountReceivedCents: auth.captured,
+        currency: "usd",
+        orderId: auth.orderId,
+        memberId: auth.memberId,
+      },
+      ref,
+    );
+  }
+
   async captureAuthorization(ref: string, amountCents?: number): Promise<ProviderResult<PaymentCapture>> {
     const auth = this.authorizations.get(ref);
     if (!auth) {
       return { ok: false, code: "REJECTED", message: "Unknown authorization.", retryable: false };
+    }
+    if (this.pendingReferences.has(ref)) {
+      return { ok: false, code: "REJECTED", message: "The payment is not in a capturable state (status requires_action).", retryable: false };
     }
     if (auth.cancelled) {
       return { ok: false, code: "REJECTED", message: "Authorization was cancelled.", retryable: false };
@@ -637,7 +768,7 @@ const STRIPE_PAYMENT_EVENT_TYPES: Record<string, string> = {
  * refused above captured-minus-already-refunded, and no response status
  * outside the explicit tables is ever treated as success.
  */
-export class StripePaymentAdapter implements PaymentProvider {
+export class StripePaymentAdapter implements DurablePaymentProvider {
   readonly name = "stripe";
   readonly supportsDeferredCapture = true;
 
@@ -704,8 +835,17 @@ export class StripePaymentAdapter implements PaymentProvider {
   }
 
   async createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>> {
+    const result = await this.createAuthorizationOrPending(input);
+    if (!result.ok) return result;
+    if (result.value.status === "pending") return pendingAsRefusal<PaymentAuthorization>(result.value);
+    return providerOk(result.value, result.providerReference);
+  }
+
+  async createAuthorizationOrPending(
+    input: CreateAuthorizationInput,
+  ): Promise<ProviderResult<PaymentAuthorization | PaymentPending>> {
     if (!Number.isSafeInteger(input.amountCents) || input.amountCents <= 0 || input.currency !== "usd") {
-      return providerMisconfigured<PaymentAuthorization>(
+      return providerMisconfigured<PaymentAuthorization | PaymentPending>(
         "Authorization requires a positive integer amount of USD cents.",
       );
     }
@@ -786,13 +926,19 @@ export class StripePaymentAdapter implements PaymentProvider {
     ) {
       // The intent exists but the money is not authorized. Authorization is
       // asserted only by the provider (a requires_capture response here, or a
-      // signed payment.authorized webhook later), never assumed by xenios.
-      return {
-        ok: false,
-        code: "REJECTED",
-        message: `The payment was created (${reference}) but is not authorized yet (status ${String(status)}).`,
-        retryable: false,
-      };
+      // signed payment.authorized webhook later), never assumed by xenios. The
+      // reference and client secret are evidence for continuation and
+      // reconciliation; createAuthorization flattens this into a refusal.
+      const clientSecret = readString(intent, "client_secret");
+      return providerOk<PaymentAuthorization | PaymentPending>(
+        {
+          providerReference: reference,
+          status: "pending",
+          providerStatus: status,
+          clientSecret: clientSecret ?? null,
+        },
+        reference,
+      );
     }
     if (status === "canceled") {
       return { ok: false, code: "REJECTED", message: "The payment was cancelled before authorization.", retryable: false };
@@ -1026,6 +1172,47 @@ export class StripePaymentAdapter implements PaymentProvider {
     const mapped = INTENT_STATUS_DOMAIN[String(current.value.status)];
     if (!mapped) return unrecognizedProviderStatus("status retrieval", current.value.status);
     return providerOk({ status: mapped }, ref);
+  }
+
+  async retrievePayment(ref: string): Promise<ProviderResult<PaymentSnapshot>> {
+    const current = await this.retrieveIntent(ref);
+    if (!current.ok) return current;
+    const intent = current.value;
+    const mapped = INTENT_STATUS_DOMAIN[String(intent.status)];
+    if (!mapped) return unrecognizedProviderStatus("payment retrieval", intent.status);
+    const amount = readNumber(intent, "amount");
+    // Stripe omits amount_capturable/amount_received on some intents; absent means 0.
+    const capturable = readNumber(intent, "amount_capturable") ?? 0;
+    const received = readNumber(intent, "amount_received") ?? 0;
+    if (
+      !Number.isSafeInteger(amount) ||
+      (amount as number) <= 0 ||
+      !Number.isSafeInteger(capturable) ||
+      capturable < 0 ||
+      !Number.isSafeInteger(received) ||
+      received < 0
+    ) {
+      return {
+        ok: false,
+        code: "PERMANENT_FAILURE",
+        message: "Stripe payment retrieval evidence carried malformed amounts.",
+        retryable: false,
+      };
+    }
+    const metadata = asJsonObject(intent.metadata);
+    return providerOk<PaymentSnapshot>(
+      {
+        providerReference: ref,
+        status: mapped,
+        amountCents: amount as number,
+        amountCapturableCents: capturable,
+        amountReceivedCents: received,
+        currency: "usd",
+        orderId: readString(metadata, "orderId") ?? null,
+        memberId: readString(metadata, "memberId") ?? null,
+      },
+      ref,
+    );
   }
 
   async verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>> {
