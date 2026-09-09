@@ -400,8 +400,8 @@
       "branch": "claude/durable-payment-port-20260909",
       "state": "active",
       "startedAt": "2026-09-09T15:40:59.285Z",
-      "heartbeatAt": "2026-09-09T18:10:18.598Z",
-      "note": "Checkpoint 70ab791: checkout page wired + composition builder; now mounting the fail-closed surface in production-deps/index.ts; adversarial review running"
+      "heartbeatAt": "2026-09-09T18:18:44.753Z",
+      "note": "Rehearsal package handed to A; adversarial review of 5c52abb..7dbcd15 running; next: review fixes + handoff update"
     }
   ]
 }
