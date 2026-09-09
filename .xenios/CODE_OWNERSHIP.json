@@ -1753,6 +1753,19 @@
       "state": "handoff",
       "claimedAt": "2026-09-08T18:32:31.792Z",
       "heartbeatAt": "2026-09-08T18:32:31.792Z"
+    },
+    {
+      "id": "ef002eed-0a6f-44de-840d-4f52bf467a55",
+      "task": "F7-PACK02-RENAME",
+      "session": "codex-astra-a-pack02-20260909",
+      "paths": [
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/**",
+        "shared/research/account-identity.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-09T13:05:13.405Z",
+      "heartbeatAt": "2026-09-09T13:06:45.865Z"
     }
   ],
   "rules": [
