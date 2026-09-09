@@ -11,7 +11,7 @@ import type { CartDto, CheckoutRequest } from "@shared/research/commerce-api";
 import type { ShippingQuote } from "@shared/research/commerce";
 import { DisabledPaymentProvider } from "../providers/payment";
 import type { ReservationSeam } from "./checkout";
-import { composeDurableCheckout, registerDurableCheckoutSurface, resolveDurableCheckoutStores, DURABLE_CHECKOUT_SURFACE_PATHS } from "./durable-checkout-composition";
+import { composeDurableCheckout, registerDurableCheckoutSurface, resolveDurableCheckoutStores, unavailableDurableCheckout, DURABLE_CHECKOUT_SURFACE_PATHS } from "./durable-checkout-composition";
 import type { OrderRecord } from "./orders";
 import { createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
@@ -92,6 +92,11 @@ describe("durable checkout composition readiness", () => {
     const { composition } = build({ provider: "disabled" });
     expect(composition).toMatchObject({ ready: false, reason: "provider_not_durable" });
     expect(composition.clientConfig()).toEqual({ ok: false, code: "payment_disabled" });
+  });
+  it("offers the flag-off and unprovisioned states a composition that refuses everything without constructing anything", () => {
+    const off = unavailableDurableCheckout("provider_not_durable");
+    expect(off).toMatchObject({ ready: false, reason: "provider_not_durable" });
+    expect(off.clientConfig()).toEqual({ ok: false, code: "payment_disabled" });
   });
   it("never runs the money path over in-memory stores outside NODE_ENV=test, even when asked", () => {
     for (const NODE_ENV of ["production", "development", undefined]) {
