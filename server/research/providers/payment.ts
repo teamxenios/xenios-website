@@ -66,6 +66,8 @@ export interface WebhookVerification {
   providerReference?: string;
   /** Server-authored order metadata carried inside the signed provider object. */
   orderId?: string;
+  /** Server-authored member metadata carried inside the signed provider object. */
+  memberId?: string;
   /** Exact provider-reported minor units for the translated money event. */
   amountCents?: number;
   /** Provider-reported ISO currency, normalized by the provider (Stripe uses lowercase). */
@@ -464,6 +466,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       type?: string;
       providerReference?: string;
       orderId?: string;
+      memberId?: string;
       amountCents?: number;
       currency?: string;
       providerAccountId?: string;
@@ -481,6 +484,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       eventType: parsed.type,
       providerReference: parsed.providerReference,
       orderId: parsed.orderId,
+      memberId: parsed.memberId,
       amountCents: parsed.amountCents,
       currency: parsed.currency,
       providerAccountId: parsed.providerAccountId,
@@ -1282,12 +1286,14 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
     const amountCents = amountField === null ? undefined : readNumber(dataObject, amountField);
     const currency = readString(dataObject, "currency");
     const orderId = readString(metadata, "orderId");
+    const memberId = readString(metadata, "memberId");
 
     return providerOk<WebhookVerification>({
       eventId,
       eventType,
       providerReference,
       orderId,
+      memberId,
       amountCents,
       currency,
       ...(eventProviderAccountId === null ? {} : { providerAccountId: eventProviderAccountId }),
