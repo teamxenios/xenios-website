@@ -133,26 +133,70 @@ export function createDurableCheckoutExecutor(
     const owned = await store.claim(r.executionId, r.version, "cancelling");
     if (!owned) return { kind: "pending", orderId: r.orderId };
     let proof: ProviderExecutionResult;
-    if (owned.providerReference === null) {
+    let reference = owned.providerReference;
+    if (reference === null && owned.authorizationAttemptedAt === null) {
+      // No authorization was ever attempted: no payment can exist. Cancelled
+      // without a provider call.
       proof = { kind: "cancelled", providerReference: null, capturedAmountCents: 0 };
-    } else {
+    } else if (reference === null) {
+      // An attempt was made but no reference was learned: the creation response
+      // may have been lost. Inside the provider's retention the port retrieves
+      // the original payment by its key; a definitive "nothing was created" is
+      // the only answer that lets the cancellation stand without a provider
+      // effect.
+      let learned: ProviderExecutionResult;
       try {
-        proof = await payment.cancel(owned);
+        learned = await payment.reconcile(owned);
+      } catch {
+        learned = { kind: "unknown" };
+      }
+      if (learned.kind === "authorized" || learned.kind === "captured" || learned.kind === "action_required") {
+        reference = learned.providerReference;
+      } else if (learned.kind === "cancelled" || (learned.kind === "refused" && learned.definitiveNoEffect)) {
+        proof = { kind: "cancelled", providerReference: null, capturedAmountCents: 0 };
+      } else {
+        // Uncertain: neither cancelled nor charged can be claimed. The execution
+        // stays in reconciliation until the provider's truth is known.
+        proof = { kind: "unknown" };
+      }
+    }
+    if (reference !== null) {
+      const bound = { ...owned, providerReference: reference };
+      try {
+        proof = await payment.cancel(bound);
       } catch {
         proof = { kind: "unknown" };
       }
       if (
         (proof.kind === "authorized" || proof.kind === "captured") &&
-        (!exactPaymentEvidence(owned, proof) || proof.providerReference !== owned.providerReference)
+        (!exactPaymentEvidence(bound, proof) || proof.providerReference !== reference)
       ) {
         proof = { kind: "unknown" };
       }
-      if (proof.kind === "cancelled" && proof.providerReference !== owned.providerReference) proof = { kind: "unknown" };
+      if (proof.kind === "cancelled" && proof.providerReference !== reference) proof = { kind: "unknown" };
+      if (proof.kind === "action_required" && proof.providerReference !== reference) proof = { kind: "unknown" };
     }
-    const saved = await store.recordProvider(owned.executionId, owned.version, proof);
+    const saved = await store.recordProvider(owned.executionId, owned.version, proof!);
     if (!saved) return { kind: "pending", orderId: r.orderId };
     return run(memberId, requestKey);
   }
 
-  return { run, cancel };
+  /**
+   * One bounded reconciliation attempt for an execution parked in
+   * reconciliation_required (a lost response, a refused read, a failed local
+   * commit after capture). The record is claimed back into `authorizing`, the
+   * phase whose only provider action is a read-back or a creation replay
+   * inside the retention window, and run again: never a new authorization,
+   * one provider read per call. Any other phase simply runs.
+   */
+  async function recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> {
+    const r = await store.getForMember(memberId, requestKey);
+    if (!r || r.memberId !== memberId) return { kind: "missing" };
+    if (r.phase !== "reconciliation_required") return run(memberId, requestKey);
+    const owned = await store.claim(r.executionId, r.version, "authorizing");
+    if (!owned) return { kind: "pending", orderId: r.orderId };
+    return run(memberId, requestKey);
+  }
+
+  return { run, cancel, recover };
 }

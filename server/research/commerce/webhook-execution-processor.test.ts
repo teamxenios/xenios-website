@@ -223,6 +223,34 @@ describe("canonical webhook handler with executions wired", () => {
     expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: false, code: "execution_contention" });
     expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: true, applied: true, eventId: "evt_1" });
   });
+  it("applies an execution-owned event through the durable inbox even when no legacy atomic store is wired; an unbound event still fails closed", async () => {
+    const exec = executions(base);
+    const inbox = createInMemoryWebhookExecutionInbox();
+    const h = createWebhookHandler({
+      store: createInMemoryWebhookEventStore(),
+      payment: new TestPaymentProvider(),
+      // The legacy projection over plain (non-atomic) order reads: production's shape today.
+      orders: { get: async () => undefined, save: async () => undefined } as never,
+      executions: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: exec.store, expectedProviderAccountId: null }),
+      commerceEnabled: true,
+    });
+    expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: true, applied: true, eventId: "evt_1" });
+    expect(exec.snapshot()?.phase).toBe("authorized");
+    expect(inbox.snapshot()).toHaveLength(1);
+    // No execution names this payment: the legacy path has no atomic authority, so the event stays unclaimed for redelivery.
+    const unbound = executions(null);
+    const h2 = createWebhookHandler({
+      store: createInMemoryWebhookEventStore(),
+      payment: new TestPaymentProvider(),
+      orders: { get: async () => undefined, save: async () => undefined } as never,
+      executions: createWebhookExecutionProcessor({ providerName: "test", inbox: createInMemoryWebhookExecutionInbox(), executions: unbound.store, expectedProviderAccountId: null }),
+      commerceEnabled: true,
+    });
+    expect(await h2.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: false, code: "capability_disabled" });
+    // Without either authority nothing is verified or claimed at all.
+    const h3 = createWebhookHandler({ store: createInMemoryWebhookEventStore(), payment: new TestPaymentProvider(), orders: { get: async () => undefined, save: async () => undefined } as never, commerceEnabled: true });
+    expect(await h3.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: false, code: "capability_disabled" });
+  });
   it("claims nothing while commerce is disabled so the first enabled delivery still applies", async () => {
     const exec = executions(base);
     const { handler: h, inbox } = handler(exec.store, { commerceEnabled: false });

@@ -367,7 +367,10 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // Without atomic inbox+effect authority even verification must not run: a
     // provider double or SDK may consume replay state while verifying. Refuse
     // before that side effect so redelivery remains eligible after activation.
-    if (!atomic) return { ok: false, code: "capability_disabled" };
+    // The durable execution processor is its own atomic authority (a durable
+    // receipt is claimed before any effect), so with it wired verification may
+    // run; an event no execution owns still needs the legacy atomic store.
+    if (!atomic && !deps.executions) return { ok: false, code: "capability_disabled" };
 
     const verified = await deps.payment.verifyWebhook(rawBody, signature);
     if (!verified.ok) {
@@ -404,6 +407,9 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
           break;
       }
     }
+    // The legacy order projection below applies effects only through the
+    // atomic store. Without one the event stays unclaimed for redelivery.
+    if (!atomic) return { ok: false, code: "capability_disabled" };
 
     const target = PAYMENT_EVENT_STATES[eventType];
     if (!target) {

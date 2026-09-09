@@ -65,8 +65,9 @@ function reservationSeam() {
 function composition(options: { requiresAction?: boolean; denials?: CheckoutRequest["acceptedAgreementKeys"]; fraud?: boolean; storeCredit?: number } = {}) {
   const model = stripeModel({ requiresAction: options.requiresAction ?? false });
   const orders = createInMemoryOrderStore();
-  const executions = createInMemoryCheckoutExecutionStore({ now: () => NOW });
-  const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => NOW.getTime() });
+  const clock = { now: NOW };
+  const executions = createInMemoryCheckoutExecutionStore({ now: () => clock.now });
+  const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => clock.now.getTime() });
   const executor = createDurableCheckoutExecutor(executions, port);
   const holds = reservationSeam();
   const committed: string[] = [];
@@ -89,7 +90,7 @@ function composition(options: { requiresAction?: boolean; denials?: CheckoutRequ
     },
   });
   const continuation = createCheckoutContinuationService({ store: executions, provider: model.adapter, executor });
-  return { model, orders, executions, submission, holds, committed, continuation };
+  return { model, orders, executions, submission, holds, committed, continuation, clock };
 }
 
 describe("durable checkout submission", () => {
@@ -185,6 +186,28 @@ describe("durable checkout submission", () => {
     expect(c.model.intents.size).toBe(1);
     expect(c.committed).toEqual([]);
     expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
+    // The buyer retries the identical request inside the retention window: the
+    // creation key is replayed (the provider returns the ORIGINAL payment), the
+    // execution completes, and there is still exactly one payment.
+    const retry = await c.submission.submit(MEMBER, request(), NOW);
+    expect(retry).toMatchObject({ ok: true, state: "completed", idempotent: true });
+    expect(c.model.intents.size).toBe(1);
+    expect(c.model.captures()).toHaveLength(1);
+    expect(c.committed).toEqual(["00000001-0000-4000-8000-000000000000"]);
+  });
+
+  it("outside the retention window a retry of a lost-response execution stays parked: no replay, no second payment, no false failure", async () => {
+    const c = composition();
+    c.model.faults.lostResponses = 1;
+    expect(await c.submission.submit(MEMBER, request(), NOW)).toMatchObject({ ok: true, state: "reconciliation_required" });
+    // Later than the port's replay window: the record's first-attempt stamp is NOW.
+    const later = new Date(NOW.getTime() + 21 * 60 * 60 * 1000);
+    c.clock.now = later;
+    const retry = await c.submission.submit(MEMBER, request(), later);
+    expect(retry).toMatchObject({ ok: true, state: "reconciliation_required", idempotent: true });
+    expect(c.model.creates()).toHaveLength(1);
+    expect(c.model.captures()).toHaveLength(0);
+    expect(c.committed).toEqual([]);
   });
 
   it("concurrent duplicate submissions leave one live order and one payment", async () => {
