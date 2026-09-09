@@ -185,9 +185,22 @@ export type CheckoutOutcome =
       reservationRefusals?: ReservationRefusalCode[];
     };
 
+/** The canonical gate result plus the revalidated cart and quote a submission is priced from. */
+export interface CheckoutEvaluationResult {
+  denials: CommerceDenialCode[];
+  cart: CartDto;
+  quote: ShippingQuote | null;
+}
+
 export interface CheckoutService {
   validate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutValidation>;
   submit(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutOutcome>;
+  /**
+   * The same gates submit runs, exposed so the durable submission path prices
+   * and denies from ONE evaluation instead of a second opinion. Side-effect
+   * free: nothing is reserved, created or charged.
+   */
+  evaluate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutEvaluationResult>;
 }
 
 // ---------------------------------------------------------------------------
@@ -671,7 +684,14 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     return { ok: true, order, idempotent: false };
   }
 
-  return { validate, submit };
+  return {
+    validate,
+    submit,
+    evaluate: async (memberId, req, asOf) => {
+      const { denials, cart, quote } = await evaluate(memberId, req, asOf);
+      return { denials: denials.list, cart, quote };
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------

@@ -141,6 +141,8 @@ export interface CheckoutExecutionRepository extends CanonicalCheckoutExecutionS
    * key with a different body digest, order or money is a conflict.
    */
   create(record: CheckoutExecutionCreate): Promise<CheckoutExecutionRecord>;
+  /** Whether a retry carries the exact request the execution was created for. */
+  verifyRequest(memberId: string, requestKey: string, requestBodySha256: string): Promise<"match" | "conflict" | "missing">;
 }
 
 const PHASE_FOR_RESULT: Record<ProviderExecutionResult["kind"], CheckoutExecutionPhase> = {
@@ -178,9 +180,13 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
     async create(record) {
       for (const existing of rows.values()) {
         if (existing.memberId === record.memberId && existing.requestKey === record.requestKey) {
-          if (existing.requestBodySha256 !== record.requestBodySha256 || existing.orderId !== record.orderId || existing.amountCents !== record.amountCents) {
+          // Changed details under the same key are a reuse; the same request
+          // bound to another freshly minted order is a duplicate submission
+          // that must fold into the existing execution.
+          if (existing.requestBodySha256 !== record.requestBodySha256 || existing.amountCents !== record.amountCents) {
             throw new CheckoutExecutionConflict("request_key_reused");
           }
+          if (existing.orderId !== record.orderId || existing.executionId !== record.executionId) throw new CheckoutExecutionConflict("duplicate_execution");
           return clone(existing);
         }
         if (existing.executionId === record.executionId) throw new CheckoutExecutionConflict("duplicate_execution");
@@ -191,6 +197,12 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
     async getForMember(memberId, requestKey) {
       for (const r of rows.values()) if (r.memberId === memberId && r.requestKey === requestKey) return clone(r);
       return null;
+    },
+    async verifyRequest(memberId, requestKey, digest) {
+      for (const r of rows.values()) {
+        if (r.memberId === memberId && r.requestKey === requestKey) return r.requestBodySha256 === digest ? "match" : "conflict";
+      }
+      return "missing";
     },
     async findByProviderReference(reference) {
       for (const r of rows.values()) if (r.providerReference === reference) return clone(r);
@@ -294,15 +306,22 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
       if (existing.error) throw fail("create read-back", existing.error);
       const row = existing.data as unknown as CheckoutExecutionRow | null;
       if (!row) throw new CheckoutExecutionConflict("duplicate_execution");
-      if (row.request_body_sha256 !== record.requestBodySha256 || row.order_id !== record.orderId || Number(row.amount_cents) !== record.amountCents) {
+      if (row.request_body_sha256 !== record.requestBodySha256 || Number(row.amount_cents) !== record.amountCents) {
         throw new CheckoutExecutionConflict("request_key_reused");
       }
+      if (row.order_id !== record.orderId || row.id !== record.executionId) throw new CheckoutExecutionConflict("duplicate_execution");
       return mapped("create", row as unknown as Row)!;
     },
     async getForMember(memberId, requestKey) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
       if (result.error) throw fail("read", result.error);
       return mapped("read", result.data);
+    },
+    async verifyRequest(memberId, requestKey, digest) {
+      const result = await client().from(EXECUTIONS).select("request_body_sha256").eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
+      if (result.error) throw fail("request verification", result.error);
+      if (!result.data) return "missing";
+      return (result.data as { request_body_sha256?: unknown }).request_body_sha256 === digest ? "match" : "conflict";
     },
     async findByProviderReference(reference) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("provider_reference", reference).maybeSingle();
