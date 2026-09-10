@@ -163,12 +163,18 @@ function withCommitNotification(
   };
 }
 
+/**
+ * The NOT READY composition for a deployment state that composes no commerce
+ * repositories at all (flag off, database not provisioned). Every door refuses
+ * and the browser is told payment_disabled; nothing is constructed. The
+ * composition root uses this directly for those states.
+ */
+export function unavailableDurableCheckout(reason: DurableCheckoutUnavailableReason): DurableCheckoutComposition {
+  return { ready: false, reason, clientConfig: () => ({ ok: false, code: "payment_disabled" }) };
+}
+
 export function composeDurableCheckout(input: DurableCheckoutCompositionInput): DurableCheckoutComposition {
-  const disabled = (reason: DurableCheckoutUnavailableReason): DurableCheckoutComposition => ({
-    ready: false,
-    reason,
-    clientConfig: () => ({ ok: false, code: "payment_disabled" }),
-  });
+  const disabled = unavailableDurableCheckout;
   const { provider, env } = input;
   // The Disabled provider implements the durable interface structurally (it
   // refuses every call); readiness is about a provider that can actually pay.
