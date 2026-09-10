@@ -64,7 +64,11 @@ export function stripeModel(options: { requiresAction?: boolean; now?: () => num
       // Stripe's documented test method for a decline: the intent is created
       // and confirmation answers 402 card_error with the intent in the error.
       const declined = confirmed && form.payment_method === "pm_card_chargeDeclined";
-      const status = !confirmed ? "requires_confirmation" : declined ? "requires_payment_method" : options.requiresAction ? "requires_action" : "requires_capture";
+      // Per-method behaviour mirrors the provider's documented test methods, so
+      // one model can serve a journey that needs a declining card AND a card
+      // that asks for customer action in the same run.
+      const needsAction = confirmed && (options.requiresAction === true || form.payment_method === "pm_card_authenticationRequired");
+      const status = !confirmed ? "requires_confirmation" : declined ? "requires_payment_method" : needsAction ? "requires_action" : "requires_capture";
       const intent: ModelIntent = {
         id,
         status,
