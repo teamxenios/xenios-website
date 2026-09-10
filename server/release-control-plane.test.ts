@@ -2066,10 +2066,24 @@ describe("route uniqueness validator", () => {
     // canonical requireSupabaseAdmin guard, mounted from the Research seam,
     // and one member-guarded partner delivery door
     // (GET /api/research/partner/resources/:resourceId/download) inside the
-    // existing partner portal registrar. The current scanner measurement is
-    // therefore 433 registrations across 424 call sites.
-    expect(result.callSites).toBe(424);
-    expect(result.routes).toHaveLength(433);
+    // existing partner portal registrar. That scanner measurement was 433
+    // registrations across 424 call sites.
+    // Durable card checkout (branch claude/durable-payment-port-20260909) adds
+    // six literal doors and no others: POST /api/research/checkout/durable,
+    // GET /api/research/checkout/executions/:requestKey/continuation, POST
+    // .../continue and POST .../cancel behind the canonical active-member
+    // guard, GET /api/research/checkout/payment-config behind the same guard,
+    // and GET /api/admin/research/orders/:orderId/payment-execution behind
+    // requireSupabaseAdmin. 433 + 6 = 439 registrations across 430 call sites.
+    // The unavailable surface mounts those same paths as refusals through the
+    // SAME registrars rather than declaring its own, so each path is registered
+    // exactly once wherever it is mounted from. It was briefly registered twice
+    // (434 call sites, four DUPLICATE_ROUTE findings) and that is a real defect
+    // rather than a counting one: Express lets the first registration win, so a
+    // refusal beside a live door silently shadows it. This census is the gate
+    // that caught it.
+    expect(result.callSites).toBe(430);
+    expect(result.routes).toHaveLength(439);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

@@ -36,7 +36,7 @@ begin
   end loop;
 
   -- First install: the function must not already exist under another definition.
-  if to_regprocedure('public.research_checkout_executions_list_recoverable(timestamptz,integer)') is not null then
+  if to_regprocedure('public.research_checkout_executions_list_recoverable(timestamptz,integer,timestamptz,uuid)') is not null then
     raise exception 'STOP: the discovery function already exists; inspect migration history and run the postcheck instead';
   end if;
 

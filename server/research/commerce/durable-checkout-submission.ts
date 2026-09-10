@@ -267,13 +267,37 @@ function privateNoStore(res: Response): void {
   res.set("Referrer-Policy", "no-referrer");
 }
 
-/** One door behind the canonical active-member guard. Body is the frozen CheckoutRequest. */
+/**
+ * What the submit door does. `unavailable` is not an absent dependency: a
+ * surface that cannot take a card says so explicitly, and the type makes
+ * "neither" impossible to express, so a wiring mistake cannot quietly turn the
+ * live door into a refusal.
+ */
+export type DurableCheckoutApiDeps =
+  | { submission: DurableCheckoutSubmission; now?: () => Date }
+  | { unavailable: true };
+
+/**
+ * One door behind the canonical active-member guard. Body is the frozen
+ * CheckoutRequest.
+ *
+ * There is exactly ONE registration of this path in the repository, and the
+ * surface chooses what it does rather than whether a second one exists.
+ * Registering a path twice does not fail loudly: Express lets the first
+ * registration win, so a refusal mounted beside the real door could shadow
+ * checkout, or be shadowed by it, with nothing to see at startup.
+ */
 export function registerDurableCheckoutApi(
   app: Express,
   guards: { requireActiveMember: (req: Request, res: Response, next: () => void) => void | Promise<void> },
-  deps: { submission: DurableCheckoutSubmission; now?: () => Date },
+  deps: DurableCheckoutApiDeps,
 ): void {
-  app.post(DURABLE_CHECKOUT_PATH, guards.requireActiveMember, async (req: Request, res: Response) => {
+  const live = "unavailable" in deps ? null : deps;
+  const refuse = (_req: Request, res: Response): void => {
+    privateNoStore(res);
+    res.status(503).json({ ok: false, code: "capability_disabled", message: "Card checkout is not available right now. Nothing was charged; your cart is kept." });
+  };
+  const accept = async (req: Request, res: Response): Promise<void> => {
     privateNoStore(res);
     const memberId = subjectOf(req);
     if (!memberId) {
@@ -281,7 +305,7 @@ export function registerDurableCheckoutApi(
       return;
     }
     try {
-      const outcome = await deps.submission.submit(memberId, req.body as CheckoutRequest, (deps.now ?? (() => new Date()))());
+      const outcome = await live!.submission.submit(memberId, req.body as CheckoutRequest, (live!.now ?? (() => new Date()))());
       if (!outcome.ok) {
         // The same status contract as the legacy door: only commerce_disabled is
         // an unpublished capability; every other denial (payment_disabled for a
@@ -294,5 +318,6 @@ export function registerDurableCheckoutApi(
     } catch {
       if (!res.headersSent) res.status(503).json({ ok: false, code: "capability_disabled", message: "Checkout is not available right now. Nothing has been charged twice; check your orders before retrying." });
     }
-  });
+  };
+  app.post(DURABLE_CHECKOUT_PATH, guards.requireActiveMember, live ? accept : refuse);
 }

@@ -239,12 +239,21 @@ function privateNoStore(res: Response): void {
  * The subject is resolved the same way every other commerce route resolves it;
  * nothing in the body or the URL can name another buyer.
  */
+export type CheckoutContinuationApiDeps =
+  | { service: CheckoutContinuationService }
+  | { unavailable: true };
+
 export function registerCheckoutContinuationApi(
   app: Express,
   guards: CheckoutContinuationGuards,
-  deps: { service: CheckoutContinuationService },
+  deps: CheckoutContinuationApiDeps,
 ): void {
-  const handle = (operation: "status" | "continue" | "cancel") => async (req: Request, res: Response): Promise<void> => {
+  const live = "unavailable" in deps ? null : deps;
+  const refuse = (_req: Request, res: Response): void => {
+    privateNoStore(res);
+    res.status(503).json({ ok: false, code: "capability_disabled", message: "Payment continuation is not available right now." });
+  };
+  const accept = (operation: "status" | "continue" | "cancel") => async (req: Request, res: Response): Promise<void> => {
     privateNoStore(res);
     const memberId = subjectOf(req);
     if (!memberId) {
@@ -258,9 +267,9 @@ export function registerCheckoutContinuationApi(
     }
     try {
       const result =
-        operation === "status" ? await deps.service.status(memberId, requestKey)
-        : operation === "continue" ? await deps.service.continue(memberId, requestKey)
-        : await deps.service.cancel(memberId, requestKey);
+        operation === "status" ? await live!.service.status(memberId, requestKey)
+        : operation === "continue" ? await live!.service.continue(memberId, requestKey)
+        : await live!.service.cancel(memberId, requestKey);
       if (!result.ok) {
         res.status(result.code === "not_found" ? 404 : 503).json({ ok: false, code: result.code, message: result.code === "not_found" ? "No checkout in progress matches that reference." : "Payment continuation is not available right now." });
         return;
@@ -271,6 +280,9 @@ export function registerCheckoutContinuationApi(
       if (!res.headersSent) res.status(503).json({ ok: false, code: "capability_disabled", message: "Payment continuation is not available right now." });
     }
   };
+  // One registration per path in the whole repository. See the note on the
+  // submit door: a second registration of the same path is silently shadowed.
+  const handle = (operation: "status" | "continue" | "cancel") => (live ? accept(operation) : refuse);
   app.get(CHECKOUT_CONTINUATION_PATHS.status, guards.requireActiveMember, handle("status"));
   app.post(CHECKOUT_CONTINUATION_PATHS.continue, guards.requireActiveMember, handle("continue"));
   app.post(CHECKOUT_CONTINUATION_PATHS.cancel, guards.requireActiveMember, handle("cancel"));

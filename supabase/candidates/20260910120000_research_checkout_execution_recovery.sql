@@ -20,7 +20,12 @@
 
 create or replace function public.research_checkout_executions_list_recoverable(
   p_before timestamptz,
-  p_limit integer default 25
+  p_limit integer default 25,
+  -- The cursor. Without it a pass reads the same oldest batch every time, so a
+  -- handful of escalated rows at the head of the queue hide everything behind
+  -- them. Both parts are required together or the cursor is ignored.
+  p_after_updated_at timestamptz default null,
+  p_after_id uuid default null
 ) returns setof public.research_checkout_executions
 language sql
 stable
@@ -36,22 +41,32 @@ as $$
                  'captured','cancelling','reconciliation_required')
        or (phase = 'cancelled' and settled_at is null)
      )
-   -- Oldest first, so a backlog drains in the order it accumulated and no row
-   -- can be starved by newer ones.
-   order by updated_at asc
+     -- Strictly after the caller's position, in the same total order the index
+     -- and the in-memory reference use. Row-value comparison so equal
+     -- timestamps still page deterministically.
+     and (
+       p_after_updated_at is null
+       or p_after_id is null
+       or (updated_at, id) > (p_after_updated_at, p_after_id)
+     )
+   -- Oldest first, then by id, so the order is total: a backlog drains in the
+   -- order it accumulated and no row can be starved by newer ones.
+   order by updated_at asc, id asc
    -- Bounded here as well as in the caller: a sweep can never ask the database
    -- for an unbounded scan, whatever it passes.
    limit greatest(1, least(coalesce(p_limit, 25), 200));
 $$;
 
-revoke all on function public.research_checkout_executions_list_recoverable(timestamptz, integer)
+revoke all on function public.research_checkout_executions_list_recoverable(timestamptz, integer, timestamptz, uuid)
   from public, anon, authenticated;
-grant execute on function public.research_checkout_executions_list_recoverable(timestamptz, integer)
+grant execute on function public.research_checkout_executions_list_recoverable(timestamptz, integer, timestamptz, uuid)
   to service_role;
 
 -- The sweep's discovery order is (updated_at) over a phase subset. Without this
 -- the read is a sequential scan that grows with every completed order, which is
 -- the shape that turns a small recurring job into a production incident.
+-- (updated_at, id) matches the ORDER BY and the cursor comparison exactly, so
+-- paging stays an index scan rather than a sort over a growing table.
 create index if not exists research_checkout_executions_recoverable_idx
-  on public.research_checkout_executions (updated_at)
+  on public.research_checkout_executions (updated_at, id)
   where phase <> 'committed';

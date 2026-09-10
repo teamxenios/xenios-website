@@ -290,6 +290,17 @@ export function createProviderVerifiedPaymentPort(
       return readBack(record, record.providerReference);
     },
 
+    /**
+     * A pure read of a payment the record already names. It NEVER replays the
+     * creation key: a record with no reference is refused outright, so an
+     * unattended caller cannot bring a payment into existence through this.
+     */
+    async inspect(record) {
+      if (!validExecutionBinding(record, pattern)) return refused(true);
+      if (record.providerReference === null) return refused(true);
+      return readBack(record, record.providerReference);
+    },
+
     async cancel(record) {
       if (!validExecutionBinding(record, pattern)) return refused(true);
       if (record.providerReference === null) return refused(true);

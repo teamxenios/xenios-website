@@ -44,7 +44,12 @@ On the rehearsal database, with synthetic executions only:
   still pending after the provider released.
 - `p_limit` is honoured, clamped to at most 200 and at least 1, and a null limit
   falls back to the default rather than scanning.
-- Results are ordered oldest first, so a backlog cannot starve its oldest row.
+- Results are ordered by (updated_at, id), a TOTAL order, so paging is
+  deterministic even when several rows share a timestamp.
+- The cursor pages forward: given the last row of one call, the next call
+  returns only rows strictly after it, and a row whose head of queue is
+  permanently escalated does not hide the rows behind it.
+- Passing only one half of the cursor ignores it rather than returning nothing.
 - `anon` and `authenticated` cannot execute it.
 - The query uses the index rather than a sequential scan (check the plan on a
   table with enough rows for the planner to choose).
@@ -55,7 +60,7 @@ Drop the function and the index. Nothing depends on them except the recovery
 sweep, which is not mounted by default:
 
 ```sql
-drop function if exists public.research_checkout_executions_list_recoverable(timestamptz, integer);
+drop function if exists public.research_checkout_executions_list_recoverable(timestamptz, integer, timestamptz, uuid);
 drop index if exists public.research_checkout_executions_recoverable_idx;
 ```
 

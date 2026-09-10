@@ -31,7 +31,29 @@ export interface IdempotentCheckoutPaymentPort {
   /** Must retrieve existing intent, not create a replacement with another key. */
   reconcile(record: CheckoutExecutionRecord): Promise<ProviderExecutionResult>;
   cancel(record: CheckoutExecutionRecord): Promise<ProviderExecutionResult>;
+  /**
+   * Read the provider's truth for a payment this execution ALREADY names.
+   *
+   * Unlike `reconcile`, this can never replay a creation key: it refuses a
+   * record with no reference rather than falling back to one. That is what
+   * makes it safe for an unattended worker, which must never cause a payment to
+   * exist on behalf of a customer who is not there.
+   */
+  inspect(record: CheckoutExecutionRecord): Promise<ProviderExecutionResult>;
 }
+
+/**
+ * What an unattended pass did. Deliberately a different type from
+ * DurableExecutionOutcome: this worker has fewer outcomes available to it, and
+ * `escalated` is one of them.
+ */
+export type UnattendedOutcome =
+  | { kind: "committed"; orderId: string }
+  | { kind: "cancelled"; orderId: string }
+  | { kind: "pending"; orderId: string }
+  | { kind: "contended"; orderId: string }
+  | { kind: "escalated"; orderId: string; reason: string }
+  | { kind: "missing" };
 
 export type DurableExecutionOutcome = {
   kind: "committed" | "pending" | "action_required" | "reconciliation_required" | "cancelled" | "missing";
@@ -247,5 +269,149 @@ export function createDurableCheckoutExecutor(
     return run(memberId, requestKey);
   }
 
-  return { run, cancel, recover };
+  /**
+   * The ONLY operation an unattended worker may perform.
+   *
+   * `run` and `recover` exist for a customer who is present and asking. They
+   * enter the normal payment progression, which captures an authorization the
+   * moment reconciliation finds one — correct when a buyer pressed retry, wrong
+   * when nobody is there. This operation is deliberately smaller. It can:
+   *
+   *   - read the provider's truth for a payment the record already names;
+   *   - finish the local settlement of a capture the provider already made;
+   *   - release an authorization under the documented policy;
+   *   - resume a cancellation that was claimed and never finished;
+   *   - escalate when the answer is not conclusive.
+   *
+   * It can NOT create a payment, confirm one, or initiate a capture, and there
+   * is no path from here into `run`.
+   *
+   * Every decision is taken against the CURRENT record read here and re-checked
+   * under the claim, never against a discovery snapshot: a customer or a
+   * webhook may have moved the execution since a sweep listed it.
+   */
+  async function settleUnattended(memberId: string, requestKey: string): Promise<UnattendedOutcome> {
+    const r = await store.getForMember(memberId, requestKey);
+    if (!r || r.memberId !== memberId) return { kind: "missing" };
+    if (r.phase === "committed") return { kind: "committed", orderId: r.orderId };
+    if (r.phase === "cancelled" && r.settledAt !== null) return { kind: "cancelled", orderId: r.orderId };
+
+    // An attempt was made and no reference was ever learned. Every route from
+    // here would replay the creation key, which CREATES a payment when the
+    // original request never reached the provider. A person checks this one.
+    if (r.providerReference === null && r.authorizationAttemptedAt !== null) {
+      return {
+        kind: "escalated",
+        orderId: r.orderId,
+        reason: "an authorization was attempted and no provider reference was ever learned; only a person may resolve it against the provider",
+      };
+    }
+
+    // Nothing ever reached the provider: a purely local release.
+    if (r.providerReference === null) {
+      const owned = await store.claim(r.executionId, r.version, "cancelling");
+      if (!owned) return { kind: "contended", orderId: r.orderId };
+      // Re-checked under the claim: the authoritative record may have moved
+      // between the read above and this write.
+      if (owned.providerReference !== null || owned.authorizationAttemptedAt !== null) {
+        return { kind: "contended", orderId: r.orderId };
+      }
+      const saved = await store.recordProvider(owned.executionId, owned.version, {
+        kind: "cancelled",
+        providerReference: null,
+        capturedAmountCents: 0,
+        reason: "abandoned",
+      });
+      if (!saved) return { kind: "contended", orderId: r.orderId };
+      return settleCancellation(saved);
+    }
+
+    // A payment exists. Read it. `inspect` refuses a record with no reference,
+    // so no creation key can be replayed from this branch either.
+    let truth: ProviderExecutionResult;
+    try {
+      truth = await payment.inspect(r);
+    } catch {
+      truth = { kind: "unknown" };
+    }
+
+    if (truth.kind === "captured") {
+      if (!exactPaymentEvidence(r, truth) || truth.providerReference !== r.providerReference) {
+        return { kind: "escalated", orderId: r.orderId, reason: "the provider reports a capture whose money does not match this execution" };
+      }
+      return finishCapture(r, truth);
+    }
+    if (truth.kind === "cancelled") {
+      if (truth.providerReference !== r.providerReference) {
+        return { kind: "escalated", orderId: r.orderId, reason: "the provider reports a cancellation for another payment" };
+      }
+      return finishCancellationFrom(r, truth);
+    }
+    if (truth.kind === "authorized" || truth.kind === "action_required") {
+      // Money is held and nobody came back for it. Release it. This is the only
+      // change this worker ever asks the provider to make, and it is "let go".
+      return releaseAtProvider(r);
+    }
+    return { kind: "escalated", orderId: r.orderId, reason: "the provider's answer was not conclusive" };
+  }
+
+  async function settleCancellation(record: CheckoutExecutionRecord): Promise<UnattendedOutcome> {
+    if (record.settledAt !== null) return { kind: "cancelled", orderId: record.orderId };
+    const settled = await store.commitCancelled(record.executionId, record.version);
+    if (!settled || settled.settledAt === null) return { kind: "contended", orderId: record.orderId };
+    return { kind: "cancelled", orderId: record.orderId };
+  }
+
+  async function finishCancellationFrom(record: CheckoutExecutionRecord, truth: ProviderExecutionResult): Promise<UnattendedOutcome> {
+    let current = record;
+    if (current.phase !== "cancelled") {
+      const saved = await store.recordProvider(current.executionId, current.version, truth);
+      if (!saved) return { kind: "contended", orderId: record.orderId };
+      current = saved;
+    }
+    return settleCancellation(current);
+  }
+
+  async function finishCapture(record: CheckoutExecutionRecord, truth: ProviderExecutionResult): Promise<UnattendedOutcome> {
+    let current = record;
+    if (current.phase !== "captured") {
+      const saved = await store.recordProvider(current.executionId, current.version, truth);
+      if (!saved) return { kind: "contended", orderId: record.orderId };
+      current = saved;
+    }
+    const committed = await store.commitCaptured(current.executionId, current.version);
+    if (!committed) return { kind: "contended", orderId: record.orderId };
+    if (committed.phase === "committed") return { kind: "committed", orderId: record.orderId };
+    // The local transaction refused (an incomplete reservation set, say). The
+    // capture evidence stands and a person decides.
+    return { kind: "escalated", orderId: record.orderId, reason: "the payment is captured but the local transaction could not complete" };
+  }
+
+  async function releaseAtProvider(record: CheckoutExecutionRecord): Promise<UnattendedOutcome> {
+    const owned = await store.claim(record.executionId, record.version, "cancelling");
+    if (!owned) return { kind: "contended", orderId: record.orderId };
+    // Re-checked under the claim, against the authoritative row.
+    if (owned.providerReference === null) return { kind: "contended", orderId: record.orderId };
+    let proof: ProviderExecutionResult;
+    try {
+      proof = await payment.cancel(owned);
+    } catch {
+      proof = { kind: "unknown" };
+    }
+    if (proof.kind === "cancelled" && proof.providerReference === owned.providerReference) {
+      const saved = await store.recordProvider(owned.executionId, owned.version, { ...proof, reason: proof.reason ?? "abandoned" });
+      if (!saved) return { kind: "contended", orderId: record.orderId };
+      return settleCancellation(saved);
+    }
+    if (proof.kind === "captured" && exactPaymentEvidence(owned, proof) && proof.providerReference === owned.providerReference) {
+      // The provider took the money between the read and the release. That is a
+      // fact, and the records must catch up with it.
+      return finishCapture(owned, proof);
+    }
+    // Anything else leaves the execution in `cancelling`, which nothing
+    // advances to a capture, and a later pass tries the release again.
+    return { kind: "pending", orderId: record.orderId };
+  }
+
+  return { run, cancel, recover, settleUnattended };
 }
