@@ -112,6 +112,22 @@ function localBinding() {
     return composition;
   };
 
+  /**
+   * The continuation view, including WHY it was cancelled. A decline and a
+   * buyer's cancellation both end in `cancelled`, so the reason is the only
+   * thing that tells the two apart.
+   */
+  const continuationOf = (result: Awaited<ReturnType<DurableCheckoutComposition["continuation"]["status"]>>) =>
+    result.ok
+      ? {
+          ok: true as const,
+          state: result.continuation.state,
+          orderId: result.continuation.orderId,
+          hasAuthenticationSecret: result.continuation.authentication !== undefined,
+          ...(result.continuation.cancellation ? { cancellation: { reason: String(result.continuation.cancellation.reason) } } : {}),
+        }
+      : { ok: false as const, code: result.code };
+
   const surface: JourneySurface = {
     capabilities: {
       // This binding has no browser and drives no hosted challenge.
@@ -129,22 +145,13 @@ function localBinding() {
         : { ok: false, code: outcome.code };
     },
     async status(memberId, requestKey) {
-      const result = await live().continuation.status(memberId, requestKey);
-      return result.ok
-        ? { ok: true, state: result.continuation.state, orderId: result.continuation.orderId, hasAuthenticationSecret: result.continuation.authentication !== undefined }
-        : { ok: false, code: result.code };
+      return continuationOf(await live().continuation.status(memberId, requestKey));
     },
     async continue(memberId, requestKey) {
-      const result = await live().continuation.continue(memberId, requestKey);
-      return result.ok
-        ? { ok: true, state: result.continuation.state, orderId: result.continuation.orderId, hasAuthenticationSecret: result.continuation.authentication !== undefined }
-        : { ok: false, code: result.code };
+      return continuationOf(await live().continuation.continue(memberId, requestKey));
     },
     async cancel(memberId, requestKey) {
-      const result = await live().continuation.cancel(memberId, requestKey);
-      return result.ok
-        ? { ok: true, state: result.continuation.state, orderId: result.continuation.orderId, hasAuthenticationSecret: result.continuation.authentication !== undefined }
-        : { ok: false, code: result.code };
+      return continuationOf(await live().continuation.cancel(memberId, requestKey));
     },
     async completeCustomerAction(providerReference) {
       model.completeAction(providerReference);

@@ -168,7 +168,7 @@ function harness(options: { intents?: Array<Record<string, unknown>>; row?: Reco
         return {
           status: 200,
           headers: {},
-          body: { ok: true, checkout: { requestKey: "rk-1", orderId: "order-1", state: "authorized", idempotent: false } },
+          body: { ok: true, checkout: { requestKey: "rk-1", orderId: "order-1", state: "completed", idempotent: false } },
         };
       }
       if (input.url.includes("/continuation")) {
@@ -178,7 +178,7 @@ function harness(options: { intents?: Array<Record<string, unknown>>; row?: Reco
           body: {
             ok: true,
             continuation: {
-              state: "action_required",
+              state: "authentication_required",
               orderId: "order-1",
               // The route really does return this. It must not travel further.
               authentication: { clientSecret: "pi_123_secret_THISMUSTNOTLEAK" },
@@ -211,6 +211,34 @@ function harness(options: { intents?: Array<Record<string, unknown>>; row?: Reco
 }
 
 describe("it drives the mounted routes, as the member", () => {
+  it.each([undefined, {}, [], { requestKey: "rk-1", orderId: "order-1", state: "authorized" }])("refuses missing or invalid success payloads %s", async payload => {
+    const h = harness({ ports: { http: { request: async () => ({ status: 200, headers: {}, body: { ok: true, checkout: payload, continuation: payload } }) } } });
+    const member = h.config.members[0]!;
+    expect(await h.binding.surface.submit(member, { idempotencyKey: "rk-1" } as never)).toEqual({ ok: false, code: "invalid_checkout_http_200" });
+    expect(await h.binding.surface.status(member, "rk-1")).toEqual({ ok: false, code: "invalid_continuation_http_200" });
+  });
+
+  it("never turns an HTTP failure into success even with a success-shaped body", async () => {
+    const payload = { orderId: "order-1", requestKey: "rk-1", state: "completed" };
+    const h = harness({ ports: { http: { request: async () => ({ status: 503, headers: {}, body: { ok: true, checkout: payload, continuation: payload } }) } } });
+    expect(await h.binding.surface.submit(h.config.members[0]!, { idempotencyKey: "rk-1" } as never)).toEqual({ ok: false, code: "http_503" });
+    expect(await h.binding.surface.status(h.config.members[0]!, "rk-1")).toEqual({ ok: false, code: "http_503" });
+  });
+
+  it("retains the customer cancellation reason without leaking adjacent secret fields", async () => {
+    const h = harness({ ports: { http: { request: async () => ({ status: 200, headers: {}, body: { ok: true, continuation: {
+      orderId: "order-1", state: "cancelled", cancellation: { reason: "customer", privateDetail: "DO_NOT_COPY" },
+    } } }) } } });
+    const result = await h.binding.surface.cancel(h.config.members[0]!, "rk-1");
+    expect(result.cancellation).toEqual({ reason: "customer" });
+    expect(JSON.stringify(result)).not.toContain("DO_NOT_COPY");
+  });
+
+  it("refuses an uninterpretable execution row rather than reporting absence", async () => {
+    const h = harness({ row: { phase: "not_a_phase", currency: "usd" } });
+    await expect(h.binding.surface.readExecution(h.config.members[0]!, "rk-1")).rejects.toThrow("execution_row_uninterpretable");
+  });
+
   it("posts a checkout to the mounted durable path with the member's own token", async () => {
     const h = harness();
     const memberId = h.config.members[0]!;

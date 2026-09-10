@@ -153,17 +153,25 @@ function num(record: Record<string, unknown> | null, key: string): number {
  * must never reach a receipt, an observation or a log, so only the fact that
  * one was offered crosses this boundary.
  */
-function continuationOf(body: unknown): JourneyContinuation {
-  const envelope = asRecord(body);
+const OBSERVED_CHECKOUT_STATES = new Set(["pending", "authentication_required", "processing", "completed", "cancelled", "reconciliation_required"]);
+
+function continuationOf(response: HttpResponse): JourneyContinuation {
+  const envelope = asRecord(response.body);
+  if (response.status < 200 || response.status >= 300) return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
   if (envelope?.ok !== true) {
-    return { ok: false, code: str(envelope, "code") ?? "unreadable_response" };
+    return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
   }
   const continuation = asRecord(envelope.continuation);
+  if (!continuation || !str(continuation, "orderId") || !OBSERVED_CHECKOUT_STATES.has(str(continuation, "state") ?? "")) {
+    return { ok: false, code: `invalid_continuation_http_${response.status}` };
+  }
+  const reason = str(asRecord(continuation.cancellation), "reason");
   return {
     ok: true,
     state: (str(continuation, "state") ?? undefined) as JourneyContinuation["state"],
     orderId: str(continuation, "orderId") ?? undefined,
     hasAuthenticationSecret: asRecord(continuation?.authentication) !== null,
+    ...(reason ? { cancellation: { reason } } : {}),
   };
 }
 
@@ -245,10 +253,15 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         body: request,
       });
       const envelope = asRecord(response.body);
+      if (response.status < 200 || response.status >= 300) return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
       if (envelope?.ok !== true) {
         return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
       }
       const checkout = asRecord(envelope.checkout);
+      if (!checkout || !str(checkout, "requestKey") || !str(checkout, "orderId")
+        || !OBSERVED_CHECKOUT_STATES.has(str(checkout, "state") ?? "")) {
+        return { ok: false, code: `invalid_checkout_http_${response.status}` };
+      }
       const result: JourneySubmitResult = {
         ok: true,
         requestKey: str(checkout, "requestKey") ?? undefined,
@@ -267,7 +280,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         url: `${config.baseUrl}${CONTINUATION_BASE}/${encodeURIComponent(requestKey)}/continuation`,
         headers: asMember(memberId),
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     async continue(memberId, requestKey) {
@@ -277,7 +290,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         headers: asMember(memberId),
         body: {},
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     async cancel(memberId, requestKey) {
@@ -287,7 +300,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         headers: asMember(memberId),
         body: {},
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     // Frictionless authentication still requires Stripe.js to finish the
@@ -346,7 +359,8 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       });
       if (!row) return null;
       const record = rowToExecution(row as unknown as CheckoutExecutionRow);
-      remember(record?.providerReference);
+      if (!record) fail("execution_row_uninterpretable");
+      remember(record.providerReference);
       return record;
     },
 
