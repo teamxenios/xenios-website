@@ -51,7 +51,7 @@ and says plainly that payment received is not shipment.
 
 ## What is proven, and by what
 
-Local only, on Node 20.19.0: 2362 tests across commerce, providers, payments,
+Local only, on Node 20.19.0: 2376 tests across commerce, providers, payments,
 member pages, adapters and lib; full `tsc --noEmit` exit 0. The provider in
 every test is the REAL `StripePaymentAdapter` driven over an in-test model of
 Stripe request idempotency, with deliberate faults (lost responses, 5xx, rate
@@ -76,7 +76,7 @@ touched a managed project.
 2. **Composition mounting** (integration owner; `production-deps.ts` and
    `server/index.ts` are inside their lease). Exact patch in
    `docs/research-commerce/DURABLE_CHECKOUT_COMPOSITION_PATCH_20260909.md`,
-   with one change at `316a67c`: drop `expectedProviderAccountId` from the
+   with one change since it was written: drop `expectedProviderAccountId` from the
    `composeDurableCheckout` call, it now comes from the provider itself.
    Mounting changes nothing in production behaviour: with the Disabled provider
    every durable door answers a precise 503 and the browser is told
@@ -89,7 +89,7 @@ touched a managed project.
    local commit, webhook redelivery and out-of-order events, cancellation and
    settlement, owner-only reads, account-switch isolation.
 4. **Independent acceptance** (a non-author reviewer). Scope
-   `5c52abb..316a67c`. Nothing here is self-accepted.
+   `5c52abb..b7f91ad`. Nothing here is self-accepted.
 5. **Recovery sweep and downstream outbox** (open). A scheduler that calls
    `executor.recover` for old parked executions needs a member-agnostic list
    function the SQL does not yet have. `onCommitted` now fires on the commit
