@@ -389,7 +389,7 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
       0,
       cart.subtotalCents +
         (quote === null ? 0 : orderShippingTotalCents([quote])) -
-        (req.applyStoreCreditCents ?? 0),
+        cart.storeCreditAppliedCents,
     );
     if (!req.paymentMethodReference && payableCents > 0) {
       denials.add("payment_method_required");

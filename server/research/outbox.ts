@@ -1,3 +1,4 @@
+import { renderCommerceReceiptOutboxEmail } from "./commerce/receipt-repair";
 import type { Express } from "express";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
@@ -381,6 +382,13 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             text: productDiagnostic.text,
             idempotencyKey: String(job.event_key),
           });
+        }
+        // Registration is explicit; enabling a dispatcher is a separately approved communication effect.
+        if (job.template_key === "commerce_payment_received") {
+          if (process.env.RESEARCH_COMMERCE_RECEIPTS_ENABLED !== "true") return { ok: false, providerId: null, error: "commerce receipt delivery disabled" };
+          const receipt = renderCommerceReceiptOutboxEmail(job.template_key, payload);
+          if (!receipt) return { ok: false, providerId: null, error: "commerce receipt invalid" };
+          return await sendFoundingEmail({ to: job.recipient, subject: receipt.subject, text: receipt.text, idempotencyKey: String(job.event_key) });
         }
         const buyerCommerce = renderBuyerCommerceOutboxEmail(job.template_key, payload);
         if (buyerCommerce) {

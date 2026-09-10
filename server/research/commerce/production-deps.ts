@@ -1,3 +1,4 @@
+import { composeDurableCheckout, resolveDurableCheckoutStores, unavailableDurableCheckout, type DurableCheckoutComposition } from "./durable-checkout-composition";
 import { randomUUID } from "node:crypto";
 import type {
   CommerceDependencies,
@@ -201,6 +202,9 @@ function serviceableStatesFrom(env: NodeJS.ProcessEnv): string[] {
 // ---------------------------------------------------------------------------
 
 export interface CommerceWiring {
+  /** Optional owned qualification wiring; default remains the canonical managed stores. */
+  resolveDurableCheckoutStores?(): ReturnType<typeof resolveDurableCheckoutStores>;
+
   /** Catalog records to serve. Default: the provenance-adapted legacy catalog. */
   catalogProducts?: CatalogProduct[];
   /**
@@ -433,8 +437,9 @@ function disabledDependencies(
   catalogService: CatalogService,
   guides: CommerceDependencies["guides"],
   now: () => Date,
-): CommerceDependencies {
+): CommerceDependencies & { durableCheckout: DurableCheckoutComposition } {
   return {
+    durableCheckout: unavailableDurableCheckout("provider_not_durable"),
     catalog: catalogDependency(catalogService),
     guides,
     cart: {
@@ -497,7 +502,7 @@ function unprovisionedDependencies(
   catalogService: CatalogService,
   guides: CommerceDependencies["guides"],
   now: () => Date,
-): CommerceDependencies {
+): CommerceDependencies & { durableCheckout: DurableCheckoutComposition } {
   // Storage-dependent writes refuse as a capability that is not ready, which
   // is exactly what capability_disabled means in this lane's vocabulary
   // (orders.ts uses it for the same distinction). It is deliberately NOT
@@ -516,6 +521,7 @@ function unprovisionedDependencies(
     message: "Checkout is not available: the payment and storage capabilities are not provisioned.",
   };
   return {
+    durableCheckout: unavailableDurableCheckout("provider_not_durable"),
     catalog: catalogDependency(catalogService),
     guides,
     cart: {
@@ -911,7 +917,7 @@ function liveDependencies(
   catalogService: CatalogService,
   guides: CommerceDependencies["guides"],
   quantumEnabled: boolean,
-): CommerceDependencies {
+): CommerceDependencies & { durableCheckout: DurableCheckoutComposition } {
   const serviceableStates = serviceableStatesFrom(env);
   const testOnlyAllowNonAtomicCommerceMutations =
     env.NODE_ENV === "test" && wiring.testOnlyAllowNonAtomicCommerceMutations === true;
@@ -1133,7 +1139,21 @@ function liveDependencies(
   // absorbed by the database, not by process memory. The fulfillment provider
   // rides the same handler, so a partner status webhook is signature-gated and
   // replay-guarded identically to a payment event.
-  const webhookHandler = createWebhookHandler({
+    // The same guarded evaluator and persistent order/inventory authorities as the existing checkout.
+  const durableCheckout = composeDurableCheckout({
+    env, provider: payment, orders: orderRepository, inventory: inventoryReservations, now,
+    ...(wiring.resolveDurableCheckoutStores?.() ?? resolveDurableCheckoutStores()),
+    checkout: { evaluate: async (memberId, request, at) => {
+      const evaluated = await checkoutService.evaluate(memberId, request, at);
+      if (!(await everyStoredCartLineIsCurrentlyLive(memberId, at))) {
+        return { ...evaluated, denials: ["product_not_purchasable" as const, ...evaluated.denials] };
+      }
+      return evaluated;
+    } },
+  });
+
+const webhookHandler = createWebhookHandler({
+    executions: durableCheckout.ready ? durableCheckout.webhookProcessor : undefined,
     store: webhookEventStore,
     payment,
     fulfillment,
@@ -1329,6 +1349,7 @@ function liveDependencies(
   });
 
   return {
+    durableCheckout,
     catalog: catalogDependency(catalogService),
     guides,
     cart: {
@@ -1548,7 +1569,7 @@ function liveDependencies(
         // are composed, production must not advertise either commerce lane as
         // enabled. The explicit test-only harness gate remains separately true
         // only for executable in-memory acceptance coverage.
-        product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations },
+        product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations || (durableCheckout.ready && durableCheckout.clientConfig().ok) },
         quantum_commerce: {
           enabled: testOnlyAllowNonAtomicCommerceMutations && quantumEnabled,
         },
@@ -1579,7 +1600,7 @@ export function buildCommerceDependencies(
   now: () => Date = () => new Date(),
   env: NodeJS.ProcessEnv = process.env,
   wiring?: Partial<CommerceWiring>,
-): CommerceDependencies {
+): CommerceDependencies & { durableCheckout: DurableCheckoutComposition } {
   const commerceEnabled = env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true";
   const quantumEnabled = commerceEnabled && env.RESEARCH_QUANTUM_COMMERCE_ENABLED === "true";
   const dbConfigured = databaseConfigured(env);

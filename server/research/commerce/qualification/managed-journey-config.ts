@@ -265,7 +265,7 @@ export function readManagedJourneyConfig(env: Record<string, string | undefined>
       // false skips its scenario with the exact reason, and the receipt then
       // reports the run as not qualified.
       browserDrivenChallenge: chromePath !== null,
-      nonChallengeAuthentication: true,
+      nonChallengeAuthentication: chromePath !== null,
       transportFaultInjection: faultControlUrl !== null,
       processRestart: restartCommand !== null,
       localCommitFault: faultControlUrl !== null,

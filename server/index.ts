@@ -1,3 +1,4 @@
+import { registerDurableCheckoutSurface } from "./research/commerce/durable-checkout-composition";
 import express, { type Request, type RequestHandler, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -538,6 +539,8 @@ registerCommerceApi(app, commerceDependencies, {
   requireMember: adaptGuard(requireMember),
   requireAdmin: adaptGuard(requireSupabaseAdmin),
 });
+registerDurableCheckoutSurface(app, { requireActiveMember: adaptGuard(requireActiveMember), requireAdmin: adaptGuard(requireSupabaseAdmin) }, commerceDependencies.durableCheckout, { now: commerceDependencies.now });
+
 
 // Legacy attribution remains validation-only inside separately guarded
 // commerce flows. The inherited GET capture door remains unmounted; the new

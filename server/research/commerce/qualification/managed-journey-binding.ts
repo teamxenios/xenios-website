@@ -1,3 +1,6 @@
+import { FaultBarrier, createScenarioWebhookSigner, fail, requiredString } from "./managed-runtime";
+import { mapObservedOrder, mapObservedPayment, QUALIFICATION_ORDER_COLUMNS } from "./managed-observation";
+import { EXECUTION_COLUMNS } from "../persistence/checkout-executions-store";
 // The managed JourneySurface: the connected checkout journey against a real
 // mounted application, a real database and the provider's test mode.
 //
@@ -86,6 +89,8 @@ export interface ProviderPort {
 /** Drives the provider's own hosted challenge in a real browser. */
 export interface BrowserPort {
   completeHostedChallenge(input: { redirectUrl: string; reference: string }): Promise<void>;
+  /** Supports Stripe.js use_stripe_sdk as well as redirect-based test challenges. */
+  completePaymentAuthentication?(input: { clientSecret: string; reference: string; expectation: "challenge" | "no_challenge" }): Promise<void>;
 }
 
 /** Restarts a real isolated process over the same persisted records. */
@@ -184,6 +189,8 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
   const runStartedAtSeconds = Math.floor(now().getTime() / 1000);
   const runMembers = new Set(config.members);
   const seenReferences = new Set<string>();
+  const barrier = new FaultBarrier();
+  const signScenarioWebhook = createScenarioWebhookSigner(config.secrets.webhookSecret(), `run-${now().getTime()}-${globalThis.crypto.randomUUID()}`, () => now().getTime());
 
   if (config.capabilities.browserDrivenChallenge && !ports.browser) {
     throw new ManagedJourneyNotRun("browser_port_missing", "a browser path is configured but no browser port was supplied");
@@ -198,6 +205,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
   const capabilities: JourneyCapabilities = {
     ...config.capabilities,
     browserDrivenChallenge: config.capabilities.browserDrivenChallenge && Boolean(ports.browser),
+    nonChallengeAuthentication: config.capabilities.nonChallengeAuthentication && Boolean(ports.browser?.completePaymentAuthentication),
     processRestart: config.capabilities.processRestart && Boolean(ports.process),
     transportFaultInjection: config.capabilities.transportFaultInjection && Boolean(ports.fault),
     localCommitFault: config.capabilities.localCommitFault && Boolean(ports.fault),
@@ -282,17 +290,16 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       return continuationOf(response.body);
     },
 
-    // A test method that authenticates straight through needs no browser: the
-    // provider settles it on confirmation. This exists so the runner can
-    // distinguish the easy path from the challenge, and it is NOT challenge
-    // evidence.
+    // Frictionless authentication still requires Stripe.js to finish the
+    // provider's next action. A provider GET alone does not authenticate it.
+    // The owned browser must refuse an observed challenge in this scenario.
     async completeCustomerAction(providerReference) {
       remember(providerReference);
+      if (!capabilities.nonChallengeAuthentication || !ports.browser?.completePaymentAuthentication) fail("non_challenge_browser_unavailable");
       const intent = await ports.provider.retrieveIntent(providerReference);
-      const status = str(intent, "status");
-      if (status === "requires_action") {
-        throw new Error("this payment presents a customer challenge; the non-challenge path cannot complete it");
-      }
+      if (!intent || intent.id !== providerReference || intent.livemode !== false || intent.status !== "requires_action") fail("non_challenge_identity_mode_or_state_mismatch");
+      await ports.browser.completePaymentAuthentication({ reference: providerReference,
+        clientSecret: requiredString(intent.client_secret, "non_challenge_client_secret_missing"), expectation: "no_challenge" });
     },
 
     ...(ports.browser
@@ -300,6 +307,11 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
           async completeCustomerChallenge(providerReference: string) {
             remember(providerReference);
             const intent = await ports.provider.retrieveIntent(providerReference);
+            if (!intent || intent.id !== providerReference || intent.livemode !== false) fail("challenge_identity_or_mode_mismatch");
+            if (ports.browser!.completePaymentAuthentication) {
+              await ports.browser!.completePaymentAuthentication({ reference: providerReference, clientSecret: requiredString(intent.client_secret, "challenge_client_secret_missing"), expectation: "challenge" });
+              return;
+            }
             const action = asRecord(intent?.next_action);
             const redirect = asRecord(action?.redirect_to_url);
             const url = str(redirect, "url");
@@ -315,75 +327,20 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
 
     async deliverWebhook(input) {
       remember(input.providerReference);
-      // A real provider event body, signed with the endpoint's own secret, in
-      // the provider's own signature scheme, posted to the mounted route. The
-      // route verifies it exactly as it verifies a delivered one.
-      const payload = JSON.stringify({
-        id: input.eventId,
-        type: input.eventType,
-        created: Math.floor(now().getTime() / 1000),
-        data: {
-          object: {
-            id: input.providerReference,
-            object: "payment_intent",
-            currency: "usd",
-            amount: input.amountCents,
-            amount_received: input.eventType === "payment_intent.succeeded" ? input.amountCents : 0,
-            metadata: { orderId: input.orderId, memberId: input.memberId },
-          },
-        },
-      });
-      const timestamp = Math.floor(now().getTime() / 1000);
-      const signature = createHmac("sha256", config.secrets.webhookSecret()).update(`${timestamp}.${payload}`).digest("hex");
-      const response = await ports.http.request({
-        method: "POST",
-        url: `${config.baseUrl}${WEBHOOK_PATH}`,
-        headers: { "Content-Type": "application/json", "stripe-signature": `t=${timestamp},v1=${signature}` },
-        raw: payload,
-      });
+      const event = signScenarioWebhook(input);
+      const response = await ports.http.request({ method: "POST", url: config.baseUrl + WEBHOOK_PATH, headers: { "Content-Type": "application/json", "stripe-signature": event.signature }, raw: event.raw });
       const envelope = asRecord(response.body);
-      if (response.status >= 500) return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
-      if (envelope?.ok !== true) return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
-      return { ok: true, applied: envelope.applied === true || envelope.outcome === "applied" };
+      if (response.status !== 200 || envelope?.ok !== true) return { ok: false, code: str(envelope, "code") ?? "webhook_route_refused" };
+      return { ok: true, applied: envelope.applied === true };
     },
 
     async readOrder(orderId) {
-      const row = await ports.database.selectOne("research_orders", "*", { id: orderId });
-      if (!row) return null;
-      // Only the fields the journey reconciles. A customer row never travels
-      // further than this function.
-      // A state the domain does not know is refused rather than passed
-      // through: the journey reconciles against this word, so an unrecognised
-      // one must not be able to satisfy an expectation by accident.
-      const state = String(row.state ?? "");
-      if (!(ORDER_STATES as readonly string[]).includes(state)) {
-        throw new Error(`the order carries a state this build does not know: ${JSON.stringify(state)}`);
-      }
-      return {
-        orderId: String(row.id ?? orderId),
-        memberId: String(row.member_id ?? ""),
-        state: state as OrderState,
-        lines: [],
-        totals: {
-          subtotalCents: Number(row.subtotal_cents ?? 0),
-          shippingCents: Number(row.shipping_cents ?? 0),
-          storeCreditAppliedCents: Number(row.store_credit_applied_cents ?? 0),
-          totalCents: Number(row.total_cents ?? 0),
-        },
-        providerReference: (row.provider_reference as string | null) ?? null,
-        authorizedAmountCents: row.authorized_amount_cents === null ? undefined : Number(row.authorized_amount_cents ?? 0),
-        capturedAmountCents: row.captured_amount_cents === null ? undefined : Number(row.captured_amount_cents ?? 0),
-        refundedCents: Number(row.refunded_cents ?? 0),
-        checkoutIdempotencyKey: (row.checkout_idempotency_key as string | null) ?? null,
-        lastIdempotencyKey: (row.last_idempotency_key as string | null) ?? null,
-        reviewTriggers: Array.isArray(row.review_triggers) ? (row.review_triggers as string[]) : [],
-        createdAt: String(row.created_at ?? ""),
-        updatedAt: String(row.updated_at ?? ""),
-      } satisfies OrderRecord;
+      const row = await ports.database.selectOne("research_orders", QUALIFICATION_ORDER_COLUMNS, { id: orderId });
+      return row ? mapObservedOrder(row, ORDER_STATES) : null;
     },
 
     async readExecution(memberId, requestKey): Promise<CheckoutExecutionRecord | null> {
-      const row = await ports.database.selectOne("research_checkout_executions", "*", {
+      const row = await ports.database.selectOne("research_checkout_executions", EXECUTION_COLUMNS, {
         member_id: memberId,
         request_key: requestKey,
       });
@@ -393,16 +350,10 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       return record;
     },
 
-    async readProviderPayment(providerReference): Promise<JourneyPayment | null> {
+    async readProviderPayment(providerReference) {
       remember(providerReference);
       const intent = await ports.provider.retrieveIntent(providerReference);
-      if (!intent) return null;
-      const status = str(intent, "status") ?? "";
-      return {
-        status: INTENT_STATUS[status] ?? "processing",
-        amountCapturableCents: num(intent, "amount_capturable"),
-        amountReceivedCents: num(intent, "amount_received"),
-      };
+      return intent ? mapObservedPayment(intent, providerReference) : null;
     },
 
     /**
@@ -433,20 +384,8 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
 
     ...(ports.fault
       ? {
-          injectFault(fault: "lost_response" | "server_error") {
-            // The runner's seam is synchronous; the control channel is not.
-            // A failure here must not be swallowed into a false pass, so it is
-            // surfaced on the next await through a rejected promise the
-            // scenario will observe.
-            void ports.fault!.injectTransportFault(fault).catch((error: unknown) => {
-              pendingFault = error instanceof Error ? error : new Error("fault injection failed");
-            });
-          },
-          failNextLocalCommit() {
-            void ports.fault!.failNextLocalCommit().catch((error: unknown) => {
-              pendingFault = error instanceof Error ? error : new Error("local commit fault failed");
-            });
-          },
+          injectFault(fault: "lost_response" | "server_error") { barrier.arm(() => ports.fault!.injectTransportFault(fault)); },
+          failNextLocalCommit() { barrier.arm(() => ports.fault!.failNextLocalCommit()); },
         }
       : {}),
 
@@ -459,19 +398,13 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       : {}),
   };
 
-  let pendingFault: Error | null = null;
-  // Any fault-channel failure becomes a real failure at the next surface call
-  // rather than a scenario that quietly proved nothing.
+  // Arming is async: every subsequent operation waits for the control acknowledgement.
   const guarded = new Proxy(surface, {
     get(target, property, receiver) {
       const value = Reflect.get(target, property, receiver);
       if (typeof value !== "function" || property === "injectFault" || property === "failNextLocalCommit") return value;
-      return (...args: unknown[]) => {
-        if (pendingFault) {
-          const error = pendingFault;
-          pendingFault = null;
-          throw error;
-        }
+      return async (...args: unknown[]) => {
+        await barrier.ready();
         return (value as (...a: unknown[]) => unknown).apply(target, args);
       };
     },
@@ -490,6 +423,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       runStartedAtSeconds,
       syntheticMemberCount: config.members.length,
       referencesSeen: seenReferences.size,
+      captureCountKind: "intents_with_positive_amount_received_not_transport_operation_count",
       webhookEvidence: "harness_signed_through_mounted_route",
     }),
   };

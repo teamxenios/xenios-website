@@ -17,6 +17,7 @@ import {
   type HttpPort,
   type HttpResponse,
   type ProviderPort,
+  type ManagedJourneyPorts,
 } from "./managed-journey-binding";
 import {
   describeConfig,
@@ -157,8 +158,8 @@ describe("no secret crosses a boundary", () => {
 
 // ---------------------------------------------------------------------------
 
-function harness(options: { intents?: Array<Record<string, unknown>>; row?: Record<string, unknown> | null; ports?: Partial<{ browser: unknown; process: unknown; fault: unknown }> } = {}) {
-  const config = readManagedJourneyConfig(env());
+function harness(options: { intents?: Array<Record<string, unknown>>; row?: Record<string, unknown> | null; ports?: Partial<ManagedJourneyPorts>; environment?: Record<string, string> } = {}) {
+  const config = readManagedJourneyConfig(env(options.environment));
   const calls: Array<{ method: string; url: string; headers: Record<string, string>; body?: unknown; raw?: string }> = [];
   const http: HttpPort = {
     async request(input): Promise<HttpResponse> {
@@ -248,7 +249,7 @@ describe("it drives the mounted routes, as the member", () => {
     const h = harness();
     await h.binding.surface.deliverWebhook({
       eventId: "evt_1",
-      eventType: "payment_intent.succeeded",
+      eventType: "payment.captured",
       providerReference: "pi_1",
       orderId: "order-1",
       memberId: h.config.members[0]!,
@@ -302,7 +303,7 @@ describe("it reports what it cannot do", () => {
     const h = harness();
     expect(h.binding.surface.capabilities).toEqual({
       browserDrivenChallenge: false,
-      nonChallengeAuthentication: true,
+      nonChallengeAuthentication: false,
       transportFaultInjection: false,
       processRestart: false,
       localCommitFault: false,
@@ -357,7 +358,7 @@ describe("it reports what it cannot do", () => {
 describe("it refuses a record it cannot understand", () => {
   it("will not map an order state this build does not know", async () => {
     const h = harness({ row: { id: "order-1", member_id: "m", state: "teleported", total_cents: 1 } });
-    await expect(h.binding.surface.readOrder("order-1")).rejects.toThrow(/state this build does not know/);
+    await expect(h.binding.surface.readOrder("order-1")).rejects.toThrow("order_state_unknown");
   });
 
   it("returns null for an order that is not there, rather than inventing one", async () => {
