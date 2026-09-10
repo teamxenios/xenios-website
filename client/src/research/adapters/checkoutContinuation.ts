@@ -12,7 +12,7 @@ export type CheckoutContinuationState =
   | "cancelled"
   | "reconciliation_required";
 
-export type CheckoutCancellationReason = "declined" | "customer" | "provider";
+export type CheckoutCancellationReason = "declined" | "customer" | "provider" | "abandoned";
 
 export interface CheckoutContinuationView {
   requestKey: string;

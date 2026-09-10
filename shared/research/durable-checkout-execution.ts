@@ -67,7 +67,14 @@ export interface CheckoutExecutionRecord extends CheckoutMoneyBinding {
   lastProviderResult?: ProviderExecutionResult | null;
 }
 
-export type CancellationReason = "declined" | "customer" | "provider";
+export type CancellationReason =
+  | "declined"
+  /** The buyer asked. */
+  | "customer"
+  /** The provider ended it. */
+  | "provider"
+  /** Nobody came back to it and the unattended recovery released it. */
+  | "abandoned";
 
 export type ProviderExecutionResult =
   | { kind: "authorized"; providerReference: string; amountCents: number; currency: "usd"; memberId: string; orderId: string }

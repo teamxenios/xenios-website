@@ -2,67 +2,74 @@
 //
 // A durable execution can stop anywhere: a worker dies mid-authorize, a
 // provider response is lost, a customer abandons a bank challenge, a
-// cancellation is claimed and never finished. Until now nothing found those
-// rows. The customer's own return resolved them, and if the customer never
-// returned the order stayed pending, the inventory holds stayed held, and an
-// authorization could stand at the provider until it expired.
+// cancellation is claimed and never finished. Until this existed nothing found
+// those rows. The customer's own return resolved them, and if the customer
+// never returned the order stayed pending, the inventory holds stayed held, and
+// an authorization could stand at the provider until it expired.
 //
-// TWO RULES GOVERN EVERYTHING HERE.
+// THIS MODULE HAS NO PAYMENT AUTHORITY OF ITS OWN. It cannot call `run`,
+// `recover` or `cancel`: it is given exactly one operation,
+// `settleUnattended`, which the coordinator defines and deliberately limits so
+// it can never create, confirm or capture a payment. The "never complete an
+// abandoned purchase" rule is therefore enforced below this file, under the
+// claim, against the authoritative record — not by the scheduling decision
+// here, which is only about WHEN to try a row.
 //
-// 1. THE SWEEP NEVER COMPLETES A PURCHASE THE CUSTOMER ABANDONED. It finishes
-//    what the provider already did, or it releases. `cancel()` still commits
-//    when the provider turns out to have captured, because money that was taken
-//    is a fact; but the sweep never drives an authorization forward into a
-//    capture on its own.
-//
-// 2. THE SWEEP NEVER CAUSES A PAYMENT TO BE CREATED. Both the coordinator's
-//    recover and cancel paths may replay the provider's creation key when an
-//    execution has no reference yet. Inside the retention window that replay
-//    RETURNS the original payment when the original request reached the
-//    provider — but if that request never arrived, the replay CREATES one. For
-//    a customer pressing retry that is what they asked for. For a sweep acting
-//    on someone's behalf it is not. So an execution that attempted an
-//    authorization and never learned a reference is ESCALATED, never acted on.
-//
-// Everything else follows from those: one action per execution per run, a
-// bounded batch, a per-phase grace period so nothing in flight is disturbed,
-// and version compare-and-swap underneath, so two sweeps racing each other
-// leave exactly one winner and the loser reports pending.
+// Discovery pages forward through a stable ordering. An earlier version
+// returned the oldest bounded batch every pass, so a handful of escalated rows
+// at the head of the queue could hide everything behind them indefinitely. The
+// cursor makes the queue advance without touching any business timestamp.
 //
 // The sweep sends nothing. Downstream notification belongs to the canonical
 // outbox and its owner; this module's job is money and inventory truth.
 
 import type { CheckoutExecutionPhase, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
-import type { DurableExecutionOutcome } from "./durable-checkout-executor";
+import type { UnattendedOutcome } from "./durable-checkout-executor";
 
-/** What the sweep decided to do about one execution, and why. */
-export type RecoveryDecision =
-  | { action: "resolve"; reason: string }
-  | { action: "release"; reason: string }
-  | { action: "escalate"; reason: string }
-  | { action: "skip"; reason: string };
+/** Where a pass stopped, so the next one resumes after it. */
+export interface RecoveryCursor {
+  updatedAt: string;
+  executionId: string;
+}
+
+export interface RecoveryListRequest {
+  /** Only rows untouched since this moment are eligible. */
+  before: Date;
+  limit: number;
+  /** Resume strictly after this position in the (updatedAt, executionId) order. */
+  after?: RecoveryCursor | null;
+}
 
 export interface RecoverySweepEntry {
   executionId: string;
   orderId: string;
   phase: CheckoutExecutionPhase;
-  decision: RecoveryDecision;
-  /** The coordinator's answer, when an action was taken. */
-  outcome?: DurableExecutionOutcome["kind"];
-  /** Present when the action threw; the message is never a provider payload. */
-  error?: string;
+  /** The payment an operator can open at the provider. Not a secret. */
+  providerReference: string | null;
+  /** What the pass did, or why it did nothing. */
+  outcome: UnattendedOutcome["kind"] | "skipped";
+  /** Always present for a skip or an escalation; the sentence an operator acts on. */
+  reason?: string;
 }
 
 export interface RecoverySweepReport {
-  /** How many rows discovery returned. */
+  /** Rows discovery returned across every page of this pass. */
   considered: number;
-  /** Rows the sweep acted on. */
-  acted: number;
-  /** Rows left for a person, with the reason. Never silently dropped. */
+  /** Rows the pass actually operated on. */
+  attempted: number;
+  /** Rows that reached a terminal, settled state. */
+  settled: number;
+  /** Rows a person must look at. Never dropped, never silent. */
   escalated: RecoverySweepEntry[];
+  /** Rows left for a later pass (contended, or a release that did not conclude). */
+  deferred: number;
   entries: RecoverySweepEntry[];
-  /** True when discovery returned a full batch, so there is more to do. */
-  more: boolean;
+  /** How many discovery pages this pass read. */
+  pages: number;
+  /** Where the next pass should resume. Null when the queue was read to the end. */
+  cursor: RecoveryCursor | null;
+  /** True when discovery ran out of eligible rows. */
+  exhausted: boolean;
 }
 
 /**
@@ -85,109 +92,136 @@ export const DEFAULT_GRACE_MS: Readonly<Record<CheckoutExecutionPhase, number>> 
 
 export interface CheckoutRecoveryDeps {
   /**
-   * Executions in a non-terminal state, oldest first, bounded. Discovery is the
+   * Non-terminal executions untouched since `before`, ordered by
+   * (updatedAt, executionId) ascending, resuming after `after`. Discovery is the
    * one thing the per-member store cannot do; the managed implementation is a
    * service-role function over the executions table.
    */
-  listRecoverable(before: Date, limit: number): Promise<CheckoutExecutionRecord[]>;
-  executor: {
-    run(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
-    cancel(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
-    recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
-  };
+  listRecoverable(request: RecoveryListRequest): Promise<CheckoutExecutionRecord[]>;
+  /**
+   * The coordinator's LIMITED unattended operation. Nothing else is given to
+   * this module, so no path here can enter normal payment progression.
+   */
+  settleUnattended(memberId: string, requestKey: string): Promise<UnattendedOutcome>;
   now(): Date;
   grace?: Partial<Record<CheckoutExecutionPhase, number>>;
 }
 
+export type AttemptDecision = { attempt: true } | { attempt: false; reason: string };
+
 /**
- * The decision for one execution, as a pure function of the record and the
- * clock. Exported because this is the part worth reading and testing on its
- * own: everything the sweep does to money follows from it.
+ * WHEN to try a row. Deliberately not what to do with it: every safety decision
+ * belongs under the claim, against the authoritative record, because a customer
+ * or a webhook may move an execution between discovery and the attempt.
  */
-export function decideRecovery(
+export function shouldAttempt(
   record: CheckoutExecutionRecord,
   now: Date,
   grace: Partial<Record<CheckoutExecutionPhase, number>> = {},
-): RecoveryDecision {
-  if (record.phase === "committed") return { action: "skip", reason: "already committed" };
-  if (record.phase === "cancelled" && record.settledAt !== null) return { action: "skip", reason: "already settled" };
-
+): AttemptDecision {
+  if (record.phase === "committed") return { attempt: false, reason: "already committed" };
+  if (record.phase === "cancelled" && record.settledAt !== null) return { attempt: false, reason: "already settled" };
   const window = grace[record.phase] ?? DEFAULT_GRACE_MS[record.phase];
-  const age = now.getTime() - Date.parse(record.updatedAt ?? record.createdAt);
-  if (!Number.isFinite(age) || age < window) {
-    return { action: "skip", reason: `within the grace period for ${record.phase}` };
-  }
+  const touched = Date.parse(record.updatedAt ?? record.createdAt);
+  if (!Number.isFinite(touched)) return { attempt: false, reason: "the record carries no usable timestamp" };
+  const age = now.getTime() - touched;
+  if (age < window) return { attempt: false, reason: `within the ${Math.round(window / 60_000)} minute grace period for ${record.phase}` };
+  return { attempt: true };
+}
 
-  // Rule 2: an attempt was made and no reference was ever learned. Any action
-  // here can replay the creation key, and a replay creates a payment when the
-  // original request never reached the provider. A person decides this one.
-  if (record.providerReference === null && record.authorizationAttemptedAt !== null) {
-    return {
-      action: "escalate",
-      reason: "an authorization was attempted but no provider reference was ever learned; resolving it could create a payment, so it needs a person to check the provider",
-    };
-  }
-
-  // A cancellation the provider already confirmed, whose local settlement never
-  // finished. Finishing it releases the holds and cancels the order.
-  if (record.phase === "cancelled") return { action: "resolve", reason: "cancelled at the provider but not settled locally" };
-
-  // The money is taken, or may have been. Read the provider's truth and let the
-  // coordinator commit what it finds. This is finishing what the provider did.
-  if (record.phase === "captured" || record.phase === "reconciliation_required") {
-    return { action: "resolve", reason: `provider truth must settle a ${record.phase} execution` };
-  }
-
-  // Everything else is an unfinished attempt nobody came back for. Release it.
-  // If the provider turns out to have taken the money, the release path reads
-  // that back and commits instead, which is why this is safe.
-  return { action: "release", reason: `no one returned to an execution left in ${record.phase}` };
+export interface SweepOptions {
+  /** Most rows this pass will operate on. */
+  maxAttempts?: number;
+  /** Most discovery pages this pass will read. */
+  maxPages?: number;
+  /** Rows per discovery page. */
+  pageSize?: number;
+  /** Resume a previous pass. */
+  cursor?: RecoveryCursor | null;
 }
 
 export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
+  const shortestGrace = () => {
+    const windows = Object.values({ ...DEFAULT_GRACE_MS, ...deps.grace }).filter((ms): ms is number => Number.isFinite(ms));
+    return windows.length > 0 ? Math.min(...windows) : 0;
+  };
+
   return {
     /**
-     * One bounded pass. Returns what it did and what it left for a person.
-     * Safe to call on a schedule and safe to call concurrently: every action
-     * underneath is a version compare-and-swap.
+     * One bounded pass. Safe on a schedule and safe to run concurrently: every
+     * write underneath is a version compare-and-swap, so a losing worker
+     * reports `contended` and changes nothing.
      */
-    async sweep(limit = 25): Promise<RecoverySweepReport> {
-      const bounded = Math.max(1, Math.min(limit, 200));
+    async sweep(options: SweepOptions = {}): Promise<RecoverySweepReport> {
+      const maxAttempts = Math.max(1, Math.min(options.maxAttempts ?? 25, 200));
+      const maxPages = Math.max(1, Math.min(options.maxPages ?? 10, 50));
+      const pageSize = Math.max(1, Math.min(options.pageSize ?? 25, 200));
       const now = deps.now();
-      // Discovery asks for anything older than the LONGEST grace period; each
-      // record is then judged against its own phase's window.
-      const windows = Object.values({ ...DEFAULT_GRACE_MS, ...deps.grace }).filter((ms) => Number.isFinite(ms)) as number[];
-      const shortest = windows.length > 0 ? Math.min(...windows) : 0;
-      const candidates = await deps.listRecoverable(new Date(now.getTime() - shortest), bounded);
+      const before = new Date(now.getTime() - shortestGrace());
 
       const entries: RecoverySweepEntry[] = [];
-      for (const record of candidates) {
-        const decision = decideRecovery(record, now, deps.grace);
-        const entry: RecoverySweepEntry = { executionId: record.executionId, orderId: record.orderId, phase: record.phase, decision };
-        if (decision.action === "skip" || decision.action === "escalate") {
-          entries.push(entry);
-          continue;
+      const seen = new Set<string>();
+      let cursor: RecoveryCursor | null = options.cursor ?? null;
+      let considered = 0;
+      let attempted = 0;
+      let pages = 0;
+      let exhausted = false;
+
+      while (pages < maxPages && attempted < maxAttempts) {
+        const batch = await deps.listRecoverable({ before, limit: pageSize, after: cursor });
+        pages += 1;
+        if (batch.length === 0) {
+          exhausted = true;
+          cursor = null;
+          break;
         }
-        try {
-          const outcome =
-            decision.action === "resolve"
-              ? await deps.executor.recover(record.memberId, record.requestKey)
-              : await deps.executor.cancel(record.memberId, record.requestKey);
-          entry.outcome = outcome.kind;
-        } catch (error) {
-          // Never echo a provider or store message: they carry references and secrets.
-          entry.error = error instanceof Error ? error.name : "unknown";
+        for (const record of batch) {
+          considered += 1;
+          // Acting on a row moves it later in the ordering, so a defensive
+          // guard keeps a single pass from revisiting one it already handled.
+          if (seen.has(record.executionId)) continue;
+          seen.add(record.executionId);
+
+          const base = {
+            executionId: record.executionId,
+            orderId: record.orderId,
+            phase: record.phase,
+            providerReference: record.providerReference,
+          };
+          const decision = shouldAttempt(record, now, deps.grace);
+          if (!decision.attempt) {
+            entries.push({ ...base, outcome: "skipped", reason: decision.reason });
+            continue;
+          }
+          if (attempted >= maxAttempts) break;
+          attempted += 1;
+          const outcome = await deps.settleUnattended(record.memberId, record.requestKey);
+          entries.push({
+            ...base,
+            outcome: outcome.kind,
+            ...(outcome.kind === "escalated" ? { reason: outcome.reason } : {}),
+          });
         }
-        entries.push(entry);
+        const last = batch[batch.length - 1]!;
+        cursor = { updatedAt: last.updatedAt ?? last.createdAt, executionId: last.executionId };
+        if (batch.length < pageSize) {
+          exhausted = true;
+          cursor = null;
+          break;
+        }
       }
 
-      const acted = entries.filter((e) => e.decision.action === "resolve" || e.decision.action === "release").length;
+      const escalated = entries.filter((e) => e.outcome === "escalated");
       return {
-        considered: candidates.length,
-        acted,
-        escalated: entries.filter((e) => e.decision.action === "escalate"),
+        considered,
+        attempted,
+        settled: entries.filter((e) => e.outcome === "committed" || e.outcome === "cancelled").length,
+        escalated,
+        deferred: entries.filter((e) => e.outcome === "pending" || e.outcome === "contended").length,
         entries,
-        more: candidates.length >= bounded,
+        pages,
+        cursor,
+        exhausted,
       };
     },
   };

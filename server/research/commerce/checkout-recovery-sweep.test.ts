@@ -1,32 +1,42 @@
+// What the unattended recovery pass is allowed to do, stated decisively.
+//
+// These tests exist because of one rule: a worker running on a schedule, with
+// no customer present, must never complete a purchase the customer abandoned,
+// and must never bring a payment into existence. An assertion that accepts
+// "either cancelled or committed" proves neither, so every outcome below is
+// asserted exactly, against the real store, the real port, the real
+// coordinator, and a model of the provider's own API.
 import { describe, expect, it } from "vitest";
-import type { CheckoutExecutionPhase, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
-import { createCheckoutRecoverySweep, decideRecovery, DEFAULT_GRACE_MS } from "./checkout-recovery-sweep";
+import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
+import { createCheckoutRecoverySweep, shouldAttempt, DEFAULT_GRACE_MS } from "./checkout-recovery-sweep";
 import { createDurableCheckoutExecutor } from "./durable-checkout-executor";
 import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
-import { createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
+import {
+  createInMemoryCheckoutExecutionStore,
+  type CheckoutExecutionCreate,
+} from "./persistence/checkout-executions-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
 import { stripeModel } from "./stripe-model.test-helper";
 import type { OrderRecord } from "./orders";
+import type { OrderState } from "@shared/research/commerce";
 
 const NOW = new Date("2026-09-10T12:00:00Z");
-/**
- * The sweep runs well after the store last stamped a row, so every phase's
- * grace period has genuinely elapsed. The store stamps `updatedAt` on each
- * transition exactly as the SQL trigger does, which is what makes a freshly
- * claimed row look busy rather than abandoned.
- */
+/** The pass runs long after the store last stamped a row, so every grace window has elapsed. */
 const SWEEP_NOW = new Date(NOW.getTime() + 8 * 60 * 60_000);
+const HOUR = 60 * 60_000;
 const ago = (ms: number) => new Date(NOW.getTime() - ms).toISOString();
 
-const base: CheckoutExecutionRecord = {
-  executionId: "exe-1",
+const base: CheckoutExecutionCreate = {
+  executionId: "00000000-0000-4000-8000-0000000000e1",
   requestKey: "req_sweep_0001",
+  requestBodySha256: "a".repeat(64),
+  priceVersion: null,
   phase: "reserved",
   version: 1,
   providerReference: null,
   orderId: "11111111-1111-4111-8111-111111111111",
   memberId: "22222222-2222-4222-8222-222222222222",
-  amountCents: 21_000,
+  amountCents: 33_999,
   currency: "usd",
   paymentMethodReference: "pm_fixture_card",
   quoteFingerprint: "quote-1",
@@ -34,61 +44,33 @@ const base: CheckoutExecutionRecord = {
   captureKey: "xr-capture-0001",
   cancelKey: "xr-cancel-0001",
   reservationIds: ["res-1"],
-  createdAt: ago(48 * 60 * 60_000),
-  updatedAt: ago(48 * 60 * 60_000),
+  createdAt: ago(48 * HOUR),
+  updatedAt: ago(48 * HOUR),
   authorizationAttemptedAt: null,
   settledAt: null,
-} as CheckoutExecutionRecord & { updatedAt: string };
+};
+const at = (overrides: Partial<CheckoutExecutionCreate>): CheckoutExecutionCreate => ({ ...base, ...overrides });
 
-const at = (overrides: Partial<CheckoutExecutionRecord>): CheckoutExecutionRecord => ({ ...base, ...overrides });
-
-describe("what the sweep decides, and what it refuses to decide", () => {
-  it("NEVER acts on an attempt that never learned a reference, because resolving it could create a payment", () => {
-    // Both the recover and cancel paths may replay the provider's creation key.
-    // Inside retention that returns the original payment IF the original request
-    // arrived; if it never arrived, the replay creates one. A sweep acting for
-    // an absent customer must not take that chance.
-    for (const phase of ["authorizing", "capturing", "reconciliation_required", "authorized", "action_required"] as CheckoutExecutionPhase[]) {
-      const decision = decideRecovery(at({ phase, providerReference: null, authorizationAttemptedAt: ago(47 * 60 * 60_000) }), NOW);
-      expect(decision.action, `${phase} must escalate`).toBe("escalate");
-      expect(decision.reason).toContain("could create a payment");
-    }
-  });
-
-  it("releases an attempt that never reached the provider at all, with no provider call needed", () => {
-    const decision = decideRecovery(at({ phase: "reserved", providerReference: null, authorizationAttemptedAt: null }), NOW);
-    expect(decision.action).toBe("release");
-  });
-
-  it("finishes what the provider already did rather than completing an abandoned purchase", () => {
-    // Money taken, or possibly taken: read the provider's truth and settle.
-    expect(decideRecovery(at({ phase: "captured", providerReference: "pi_1" }), NOW).action).toBe("resolve");
-    expect(decideRecovery(at({ phase: "reconciliation_required", providerReference: "pi_1" }), NOW).action).toBe("resolve");
-    // Cancelled at the provider but never settled locally: finish the settlement.
-    expect(decideRecovery(at({ phase: "cancelled", providerReference: "pi_1", settledAt: null }), NOW).action).toBe("resolve");
-    // An authorization nobody returned to is RELEASED, never captured.
-    for (const phase of ["reserved", "authorizing", "authorized", "capturing", "action_required", "cancelling"] as CheckoutExecutionPhase[]) {
-      expect(decideRecovery(at({ phase, providerReference: "pi_1" }), NOW).action, `${phase} must be released`).toBe("release");
-    }
-  });
-
-  it("leaves settled work alone", () => {
-    expect(decideRecovery(at({ phase: "committed", providerReference: "pi_1" }), NOW).action).toBe("skip");
-    expect(decideRecovery(at({ phase: "cancelled", providerReference: "pi_1", settledAt: ago(60_000) }), NOW).action).toBe("skip");
-  });
-
-  it("does not disturb an execution that is still in its grace period", () => {
+describe("when the pass will try a row, and when it leaves it alone", () => {
+  it("leaves settled work and anything still inside its grace window", () => {
+    expect(shouldAttempt(at({ phase: "committed" }), NOW)).toMatchObject({ attempt: false });
+    expect(shouldAttempt(at({ phase: "cancelled", settledAt: ago(60_000) }), NOW)).toMatchObject({ attempt: false });
     // A customer part-way through a bank challenge is not stuck.
-    const fresh = at({ phase: "action_required", providerReference: "pi_1", updatedAt: ago(60_000) } as Partial<CheckoutExecutionRecord>);
-    expect(decideRecovery(fresh, NOW).action).toBe("skip");
+    const midChallenge = shouldAttempt(at({ phase: "action_required", updatedAt: ago(60_000) }), NOW);
+    expect(midChallenge).toMatchObject({ attempt: false });
+    expect(midChallenge.attempt === false && midChallenge.reason).toContain("grace period");
     expect(DEFAULT_GRACE_MS.action_required).toBeGreaterThan(DEFAULT_GRACE_MS.authorizing);
-    // And the window is per phase: a worker that died mid-authorize waits less.
-    const stuck = at({ phase: "authorizing", providerReference: "pi_1", updatedAt: ago(30 * 60_000) } as Partial<CheckoutExecutionRecord>);
-    expect(decideRecovery(stuck, NOW).action).toBe("release");
+  });
+
+  it("tries a row whose own phase window has elapsed", () => {
+    expect(shouldAttempt(at({ phase: "authorizing", updatedAt: ago(30 * 60_000) }), NOW)).toEqual({ attempt: true });
+    // A provider-side cancellation whose local settlement never ran: the order
+    // is still pending and the inventory holds are still held.
+    expect(shouldAttempt(at({ phase: "cancelled", settledAt: null, updatedAt: ago(HOUR) }), NOW)).toEqual({ attempt: true });
   });
 });
 
-/** The sweep over the real store, port, coordinator and provider model. */
+/** The real store, the real port, the real coordinator, and a model of the provider. */
 function harness() {
   const model = stripeModel();
   const orders = createInMemoryOrderStore();
@@ -108,19 +90,21 @@ function harness() {
       },
     },
   });
-  const executor = createDurableCheckoutExecutor(executions, createProviderVerifiedPaymentPort(model.adapter, { now: () => NOW.getTime() }));
+  const port = createProviderVerifiedPaymentPort(model.adapter, { now: () => NOW.getTime() });
+  const executor = createDurableCheckoutExecutor(executions, port);
   const sweep = createCheckoutRecoverySweep({
-    listRecoverable: async () => executions.snapshot().filter((r) => r.phase !== "committed"),
-    executor,
+    listRecoverable: (request) => executions.listRecoverable!(request),
+    settleUnattended: executor.settleUnattended,
     now: () => SWEEP_NOW,
   });
-  const order = async (orderId: string, state: OrderRecord["state"]): Promise<void> => {
-    await orders.save({
+
+  const seedOrder = async (orderId: string, state: OrderState = "checkout_pending") => {
+    const order: OrderRecord = {
       orderId,
       memberId: base.memberId,
       state,
       lines: [],
-      totals: { subtotalCents: 20_000, shippingCents: 1_000, storeCreditAppliedCents: 0, totalCents: 21_000 },
+      totals: { subtotalCents: 32_999, shippingCents: 1_000, storeCreditAppliedCents: 0, totalCents: 33_999 },
       providerReference: null,
       checkoutIdempotencyKey: base.requestKey,
       lastIdempotencyKey: base.requestKey,
@@ -129,100 +113,286 @@ function harness() {
       updatedAt: base.createdAt,
       refundedCents: 0,
       shipments: [],
-    } as OrderRecord);
+    };
+    await orders.save(order);
   };
-  return { model, orders, executions, executor, sweep, released, finalized, order };
+  const seed = async (overrides: Partial<CheckoutExecutionCreate> = {}) => {
+    const record = at(overrides);
+    await seedOrder(record.orderId);
+    await executions.create(record);
+    return record;
+  };
+  /**
+   * Put a real authorization at the provider, the way a customer's own request
+   * would, and hand back the reference it minted.
+   */
+  const authorizeAtProvider = async (record: CheckoutExecutionRecord) => {
+    const result = await port.authorize({ ...record, providerReference: null, authorizationAttemptedAt: null });
+    if (result.kind !== "authorized") throw new Error(`expected an authorization, got ${result.kind}`);
+    return result.providerReference;
+  };
+  return { model, orders, executions, port, executor, sweep, released, finalized, seed, seedOrder, authorizeAtProvider };
 }
 
-describe("the sweep over the real coordinator", () => {
-  it("releases an abandoned authorization and its inventory holds, and never captures", async () => {
+describe("the unattended operation, outcome by outcome", () => {
+  it("RELEASES an authorization nobody came back for, and captures nothing", async () => {
     const h = harness();
-    await h.order(base.orderId, "checkout_pending");
-    await h.executions.create({ ...base, requestBodySha256: "a".repeat(64), priceVersion: null } as never);
-    // Drive it to a real authorization at the provider, then walk away.
-    await h.executor.run(base.memberId, base.requestKey).catch(() => undefined);
-    const authorized = h.executions.snapshot()[0]!;
-    expect(authorized.providerReference).not.toBeNull();
+    const record = at({ phase: "reconciliation_required", authorizationAttemptedAt: ago(47 * HOUR) });
+    const reference = await h.authorizeAtProvider(record);
+    await h.seedOrder(record.orderId);
+    await h.executions.create({ ...record, providerReference: reference });
+    // The provider is holding the money and has taken none of it.
+    expect(h.model.intents.get(reference)).toMatchObject({ status: "requires_capture", amount_capturable: 33_999 });
 
-    const report = await h.sweep.sweep();
-    expect(report.escalated).toEqual([]);
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey);
+
+    expect(outcome).toEqual({ kind: "cancelled", orderId: record.orderId });
+    expect(h.model.captures()).toHaveLength(0);
+    expect(h.model.intents.get(reference)).toMatchObject({ status: "canceled", amount_received: 0, amount_capturable: 0 });
     const settled = h.executions.snapshot()[0]!;
-    // The coordinator either released it or, if the provider had taken the
-    // money, committed it. Never a capture driven by the sweep itself.
-    if (settled.phase === "cancelled") {
-      expect(h.model.captures()).toHaveLength(0);
-      expect(h.released).toContain("res-1");
-      expect((await h.orders.get(base.orderId))?.state).toBe("cancelled");
-    } else {
-      expect(settled.phase).toBe("committed");
-    }
+    expect(settled.phase).toBe("cancelled");
+    expect(settled.settledAt).not.toBeNull();
+    expect((await h.orders.get(record.orderId))?.state).toBe("cancelled");
+    expect(h.released).toEqual(["res-1"]);
+    expect(h.finalized).toEqual([]);
   });
 
-  it("escalates rather than touching an attempt with no reference, and says why", async () => {
+  it("COMMITS a payment the provider already took, because money taken is a fact", async () => {
     const h = harness();
-    await h.order(base.orderId, "checkout_pending");
-    await h.executions.create({
-      ...base,
+    const record = at({ phase: "reconciliation_required", authorizationAttemptedAt: ago(47 * HOUR) });
+    const reference = await h.authorizeAtProvider(record);
+    // The customer's own worker captured, then died before writing anything down.
+    const captured = await h.port.capture({ ...record, providerReference: reference });
+    expect(captured.kind).toBe("captured");
+    await h.seedOrder(record.orderId);
+    await h.executions.create({ ...record, providerReference: reference });
+
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey);
+
+    expect(outcome).toEqual({ kind: "committed", orderId: record.orderId });
+    // Exactly the one capture that already happened. The pass added none.
+    expect(h.model.captures()).toHaveLength(1);
+    expect(h.executions.snapshot()[0]!.phase).toBe("committed");
+    const order = await h.orders.get(record.orderId);
+    expect(order?.state).toBe("payment_captured");
+    expect(order?.capturedAmountCents).toBe(record.amountCents);
+    expect(order?.providerReference).toBe(reference);
+    expect(h.finalized).toEqual(["res-1"]);
+    expect(h.released).toEqual([]);
+  });
+
+  it("ESCALATES an attempt that never learned a reference, and asks the provider NOTHING", async () => {
+    const h = harness();
+    const record = await h.seed({
       phase: "reconciliation_required",
       providerReference: null,
-      authorizationAttemptedAt: ago(47 * 60 * 60_000),
-      requestBodySha256: "a".repeat(64),
-      priceVersion: null,
-    } as never);
-    const report = await h.sweep.sweep();
-    expect(report.acted).toBe(0);
-    expect(report.escalated).toHaveLength(1);
-    expect(report.escalated[0]!.decision.reason).toContain("needs a person");
-    // Nothing was asked of the provider and nothing local moved.
+      authorizationAttemptedAt: ago(47 * HOUR),
+    });
+
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey);
+
+    expect(outcome.kind).toBe("escalated");
+    expect(outcome.kind === "escalated" && outcome.reason).toContain("only a person");
+    // The whole point of the escalation: no request is sent, so the creation
+    // key cannot be replayed into a second payment.
     expect(h.model.requests).toHaveLength(0);
     expect(h.executions.snapshot()[0]!.phase).toBe("reconciliation_required");
-    expect((await h.orders.get(base.orderId))?.state).toBe("checkout_pending");
+    expect((await h.orders.get(record.orderId))?.state).toBe("checkout_pending");
+    expect(h.released).toEqual([]);
   });
 
-  it("finishes a cancellation whose worker died, exactly once", async () => {
+  it("releases an execution that never reached the provider without calling it at all", async () => {
     const h = harness();
-    await h.order(base.orderId, "checkout_pending");
-    await h.executions.create({ ...base, requestBodySha256: "a".repeat(64), priceVersion: null } as never);
-    await h.executor.run(base.memberId, base.requestKey).catch(() => undefined);
-    // Claim the cancellation and abandon it, as a dying worker would.
-    const current = h.executions.snapshot()[0]!;
-    await h.executions.claim(current.executionId, current.version, "cancelling");
+    const record = await h.seed({ phase: "reserved", providerReference: null, authorizationAttemptedAt: null });
 
-    const first = await h.sweep.sweep();
-    expect(first.escalated).toEqual([]);
-    const after = h.executions.snapshot()[0]!;
-    expect(["cancelled", "committed"]).toContain(after.phase);
-    if (after.phase === "cancelled") expect(after.settledAt).not.toBeNull();
-    const releasesAfterFirst = h.released.length;
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey);
 
-    // A second pass changes nothing: settled work is skipped.
-    const second = await h.sweep.sweep();
-    expect(second.acted === 0 || h.released.length === releasesAfterFirst).toBe(true);
-    expect(h.released.length).toBe(releasesAfterFirst);
+    expect(outcome).toEqual({ kind: "cancelled", orderId: record.orderId });
+    expect(h.model.requests).toHaveLength(0);
+    expect(h.executions.snapshot()[0]!).toMatchObject({ phase: "cancelled", providerReference: null });
+    expect((await h.orders.get(record.orderId))?.state).toBe("cancelled");
+    expect(h.released).toEqual(["res-1"]);
   });
 
-  it("is bounded, reports that there is more to do, and never echoes a provider message", async () => {
+  it("finishes a cancellation the provider already made but nobody settled locally", async () => {
+    const h = harness();
+    const record = at({ phase: "cancelled", authorizationAttemptedAt: ago(47 * HOUR) });
+    const reference = await h.authorizeAtProvider(record);
+    await h.port.cancel({ ...record, providerReference: reference });
+    expect(h.model.intents.get(reference)!.status).toBe("canceled");
+    await h.seedOrder(record.orderId);
+    // The provider's answer was written down; the local transaction never ran.
+    await h.executions.create({
+      ...record,
+      providerReference: reference,
+      settledAt: null,
+      lastProviderResult: { kind: "cancelled", providerReference: reference, capturedAmountCents: 0, reason: "customer" },
+    });
+
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey);
+
+    expect(outcome).toEqual({ kind: "cancelled", orderId: record.orderId });
+    expect(h.executions.snapshot()[0]!.settledAt).not.toBeNull();
+    expect((await h.orders.get(record.orderId))?.state).toBe("cancelled");
+    expect(h.released).toEqual(["res-1"]);
+    expect(h.model.captures()).toHaveLength(0);
+  });
+
+  it("is idempotent: a second pass over the same row changes nothing", async () => {
+    const h = harness();
+    const record = at({ phase: "reconciliation_required", authorizationAttemptedAt: ago(47 * HOUR) });
+    const reference = await h.authorizeAtProvider(record);
+    await h.seedOrder(record.orderId);
+    await h.executions.create({ ...record, providerReference: reference });
+    expect(await h.executor.settleUnattended(record.memberId, record.requestKey)).toEqual({
+      kind: "cancelled",
+      orderId: record.orderId,
+    });
+    const releasedOnce = [...h.released];
+    const version = h.executions.snapshot()[0]!.version;
+
+    expect(await h.executor.settleUnattended(record.memberId, record.requestKey)).toEqual({
+      kind: "cancelled",
+      orderId: record.orderId,
+    });
+    expect(h.released).toEqual(releasedOnce);
+    expect(h.executions.snapshot()[0]!.version).toBe(version);
+    expect(h.model.captures()).toHaveLength(0);
+  });
+
+  it("has no way to reach the payment progression that captures", () => {
+    // Structural, not behavioural. The sweep is handed ONE operation; if this
+    // ever widens back to the whole coordinator, the capture path returns with
+    // it and the rule above stops being enforceable by construction.
+    const h = harness();
+    const given = createCheckoutRecoverySweep({
+      listRecoverable: async () => [],
+      settleUnattended: h.executor.settleUnattended,
+      now: () => SWEEP_NOW,
+    });
+    expect(Object.keys(given)).toEqual(["sweep"]);
+  });
+});
+
+describe("the queue advances", () => {
+  /** A row that can only ever escalate: an attempt was made, no reference was learned. */
+  const stuck = (index: number): CheckoutExecutionCreate =>
+    at({
+      executionId: `00000000-0000-4000-8000-00000000000${index}`,
+      requestKey: `req_stuck_000${index}`,
+      orderId: `1111111${index}-1111-4111-8111-111111111111`,
+      phase: "reconciliation_required",
+      providerReference: null,
+      authorizationAttemptedAt: ago(47 * HOUR),
+      updatedAt: ago((48 - index) * HOUR),
+    });
+
+  it("pages past rows it cannot resolve, so an escalated head does not hide the work behind it", async () => {
     const h = harness();
     for (let i = 1; i <= 3; i++) {
-      await h.order(`order-${i}`, "checkout_pending");
-      await h.executions.create({
-        ...base,
-        executionId: `exe-${i}`,
-        requestKey: `req_sweep_000${i}`,
-        orderId: `order-${i}`,
-        authorizationKey: `xr-auth-000${i}`,
-        captureKey: `xr-capture-000${i}`,
-        cancelKey: `xr-cancel-000${i}`,
-        requestBodySha256: "a".repeat(64),
-        priceVersion: null,
-      } as never);
+      const record = stuck(i);
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
     }
-    const report = await h.sweep.sweep(2);
-    expect(report.considered).toBeLessThanOrEqual(3);
+    const reachable = at({
+      executionId: "00000000-0000-4000-8000-0000000000ff",
+      requestKey: "req_reachable_0001",
+      orderId: "99999999-1111-4111-8111-111111111111",
+      phase: "reserved",
+      providerReference: null,
+      authorizationAttemptedAt: null,
+      updatedAt: ago(40 * HOUR),
+    });
+    await h.seedOrder(reachable.orderId);
+    await h.executions.create(reachable);
+
+    // Two rows per page: without a cursor this pass would read the same three
+    // stuck rows for ever and never reach the fourth.
+    const report = await h.sweep.sweep({ pageSize: 2, maxPages: 5, maxAttempts: 10 });
+
+    expect(report.pages).toBeGreaterThan(1);
+    expect(report.escalated).toHaveLength(3);
+    expect(report.settled).toBe(1);
+    expect(report.entries.find((e) => e.orderId === reachable.orderId)?.outcome).toBe("cancelled");
+    expect((await h.orders.get(reachable.orderId))?.state).toBe("cancelled");
+    // The three stuck rows were left exactly as they were, and reported.
+    for (const entry of report.escalated) {
+      expect(entry.reason).toContain("only a person");
+      expect(entry.providerReference).toBeNull();
+      expect(entry.phase).toBe("reconciliation_required");
+    }
+    expect(h.model.requests).toHaveLength(0);
+  });
+
+  it("resumes where the previous pass stopped rather than re-reading the head", async () => {
+    const h = harness();
+    for (let i = 1; i <= 4; i++) {
+      const record = stuck(i);
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const first = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10 });
+    expect(first.considered).toBe(2);
+    expect(first.exhausted).toBe(false);
+    expect(first.cursor).not.toBeNull();
+
+    const second = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10, cursor: first.cursor });
+
+    const firstIds = first.entries.map((e) => e.executionId);
+    const secondIds = second.entries.map((e) => e.executionId);
+    expect(secondIds).toHaveLength(2);
+    expect(secondIds.some((id) => firstIds.includes(id))).toBe(false);
+    // All four rows seen across the two passes, none of them twice.
+    expect(new Set([...firstIds, ...secondIds]).size).toBe(4);
+  });
+
+  it("reports what an operator needs, and nothing an operator must not see", async () => {
+    const h = harness();
+    const record = await h.seed({
+      phase: "reconciliation_required",
+      providerReference: null,
+      authorizationAttemptedAt: ago(47 * HOUR),
+    });
+
+    const report = await h.sweep.sweep();
+
+    expect(report.escalated).toHaveLength(1);
+    const entry = report.escalated[0]!;
+    expect(entry).toMatchObject({
+      executionId: record.executionId,
+      orderId: record.orderId,
+      phase: "reconciliation_required",
+      providerReference: null,
+    });
+    expect(entry.reason).toBeTruthy();
     const serialized = JSON.stringify(report);
-    expect(serialized).not.toContain("secret");
-    expect(serialized).not.toContain("pm_fixture_card");
-    // Every entry carries a reason a person can act on.
-    for (const entry of report.entries) expect(entry.decision.reason.length).toBeGreaterThan(0);
+    for (const withheld of ["pm_fixture_card", "secret", "xr-auth-0001", "xr-capture-0001", "a".repeat(64)]) {
+      expect(serialized).not.toContain(withheld);
+    }
+  });
+
+  it("stops at its own limits rather than draining the whole queue in one pass", async () => {
+    const h = harness();
+    for (let i = 1; i <= 5; i++) {
+      const record = at({
+        executionId: `00000000-0000-4000-8000-0000000001${i}0`,
+        requestKey: `req_limit_000${i}`,
+        orderId: `3333333${i}-1111-4111-8111-111111111111`,
+        phase: "reserved",
+        providerReference: null,
+        authorizationAttemptedAt: null,
+        updatedAt: ago((48 - i) * HOUR),
+      });
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const report = await h.sweep.sweep({ maxAttempts: 2, pageSize: 10, maxPages: 5 });
+
+    expect(report.attempted).toBe(2);
+    expect(report.settled).toBe(2);
+    // The rest are untouched and still there for the next pass.
+    expect(h.executions.snapshot().filter((r) => r.phase === "reserved")).toHaveLength(3);
   });
 });

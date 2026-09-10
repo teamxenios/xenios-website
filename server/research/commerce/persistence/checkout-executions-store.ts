@@ -151,11 +151,13 @@ export interface CheckoutExecutionRepository extends CanonicalCheckoutExecutionS
   verifyRequest(memberId: string, requestKey: string, requestBodySha256: string): Promise<"match" | "conflict" | "missing">;
   /**
    * Discovery for the bounded recovery sweep: non-terminal executions untouched
-   * since `before`, oldest first. Optional because it needs a separate migration
+   * since `before`, ordered by (updated_at, id) ascending and resuming strictly
+   * after `after`. The cursor is what lets a queue whose head is escalated
+   * still advance. Optional because it needs a separate migration
    * (20260910120000_research_checkout_execution_recovery); a store without it
    * simply cannot be swept, which is reported rather than worked around.
    */
-  listRecoverable?(before: Date, limit: number): Promise<CheckoutExecutionRecord[]>;
+  listRecoverable?(request: { before: Date; limit: number; after?: { updatedAt: string; executionId: string } | null }): Promise<CheckoutExecutionRecord[]>;
 }
 
 const PHASE_FOR_RESULT: Record<ProviderExecutionResult["kind"], CheckoutExecutionPhase> = {
@@ -341,17 +343,23 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
       await applyCancelled(current);
       return cas(executionId, expected, () => ({ settledAt: now().toISOString() }));
     },
-    async listRecoverable(before, limit) {
+    async listRecoverable({ before, limit, after }) {
       const bounded = Math.max(1, Math.min(limit, 200));
+      const at = (r: CheckoutExecutionRecord) => Date.parse(r.updatedAt ?? r.createdAt);
+      // The same (updated_at, id) ordering and strict cursor comparison the SQL
+      // uses, so the reference and the database page identically.
+      const afterAt = after ? Date.parse(after.updatedAt) : null;
       return [...rows.values()]
         .map(clone)
         .filter((r) => {
           if (r.phase === "committed") return false;
           if (r.phase === "cancelled" && r.settledAt !== null) return false;
-          const touched = Date.parse(r.updatedAt ?? r.createdAt);
-          return Number.isFinite(touched) && touched < before.getTime();
+          const touched = at(r);
+          if (!Number.isFinite(touched) || touched >= before.getTime()) return false;
+          if (afterAt === null || after === null || after === undefined) return true;
+          return touched > afterAt || (touched === afterAt && r.executionId > after.executionId);
         })
-        .sort((a, b) => Date.parse(a.updatedAt ?? a.createdAt) - Date.parse(b.updatedAt ?? b.createdAt))
+        .sort((a, b) => at(a) - at(b) || a.executionId.localeCompare(b.executionId))
         .slice(0, bounded);
     },
     snapshot: () => [...rows.values()].map(clone),
@@ -438,10 +446,12 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
      * only and clamps its own limit, so a caller cannot ask for an unbounded
      * scan. It needs 20260910120000_research_checkout_execution_recovery.
      */
-    async listRecoverable(before, limit) {
+    async listRecoverable({ before, limit, after }) {
       const response = await client().rpc("research_checkout_executions_list_recoverable", {
         p_before: before.toISOString(),
         p_limit: Math.max(1, Math.min(limit, 200)),
+        p_after_updated_at: after?.updatedAt ?? null,
+        p_after_id: after?.executionId ?? null,
       });
       if (response.error) throw fail("list recoverable executions", response.error);
       const rows = Array.isArray(response.data) ? response.data : response.data ? [response.data] : [];

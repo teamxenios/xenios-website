@@ -273,13 +273,9 @@ export function registerDurableCheckoutSurface(app: Express, guards: DurableChec
     }
     return;
   }
-  const refuse = (_req: Request, res: Response) => {
-    res.set("Cache-Control", "private, no-store");
-    res.set("Pragma", "no-cache");
-    res.status(503).json({ ok: false, code: "capability_disabled", message: "Card checkout is not available right now. Nothing was charged; your cart is kept." });
-  };
-  app.post(DURABLE_CHECKOUT_PATH, guards.requireActiveMember, refuse);
-  app.get(CHECKOUT_CONTINUATION_PATHS.status, guards.requireActiveMember, refuse);
-  app.post(CHECKOUT_CONTINUATION_PATHS.continue, guards.requireActiveMember, refuse);
-  app.post(CHECKOUT_CONTINUATION_PATHS.cancel, guards.requireActiveMember, refuse);
+  // The same registrars mount the same paths, refusing. The surface never
+  // declares a door of its own: one path, one registration, wherever it is
+  // mounted from, so nothing can shadow the real checkout.
+  registerDurableCheckoutApi(app, guards, { unavailable: true });
+  registerCheckoutContinuationApi(app, guards, { unavailable: true });
 }

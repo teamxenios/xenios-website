@@ -6,7 +6,7 @@ set local row_security = off;
 
 do $postcheck$
 declare
-  signature text := 'public.research_checkout_executions_list_recoverable(timestamptz,integer)';
+  signature text := 'public.research_checkout_executions_list_recoverable(timestamptz,integer,timestamptz,uuid)';
 begin
   if to_regprocedure(signature) is null then
     raise exception 'missing function %', signature;
