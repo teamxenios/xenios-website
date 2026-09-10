@@ -12,7 +12,7 @@ set local row_security = off;
 
 do $precheck$
 declare
-  column_name text;
+  v_column_name text;
 begin
   if not exists(select 1 from pg_catalog.pg_roles
     where rolname = current_user and (rolsuper or rolbypassrls)) then
@@ -28,10 +28,11 @@ begin
   end if;
 
   -- Every column the discovery read filters or orders on.
-  foreach column_name in array array['updated_at','phase','settled_at'] loop
-    if not exists (select 1 from information_schema.columns
-      where table_schema = 'public' and table_name = 'research_checkout_executions' and column_name = column_name) then
-      raise exception 'research_checkout_executions lacks column %', column_name;
+  foreach v_column_name in array array['updated_at','phase','settled_at'] loop
+    if not exists (select 1 from information_schema.columns c
+      where c.table_schema = 'public' and c.table_name = 'research_checkout_executions'
+        and c.column_name = v_column_name) then
+      raise exception 'research_checkout_executions lacks column %', v_column_name;
     end if;
   end loop;
 

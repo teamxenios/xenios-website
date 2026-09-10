@@ -93,7 +93,7 @@ async function main(message: unknown) {
   commerceRoutes.registerCommerceApi(app, dependencies, guards);
   durableRoutes.registerDurableCheckoutSurface(app, guards, dependencies.durableCheckout, { now: dependencies.now });
   // This page carries no account, secret or payment information. Stripe inputs arrive later via private CDP.
-  app.get("/__qualification/auth", (_req, res) => {
+  app.get("/api/__qualification/auth", (_req, res) => {
     res.set("Cache-Control", "no-store"); res.set("Referrer-Policy", "no-referrer");
     res.type("html").send('<!doctype html><html><head><meta charset="utf-8"><title>Isolated payment authentication</title><script src="https://js.stripe.com/v3/"></script></head><body><main>Provider sandbox authentication</main></body></html>');
   });

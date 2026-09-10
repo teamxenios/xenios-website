@@ -126,8 +126,12 @@ begin
   perform pg_temp.expect(v_err ilike '%immutable%', 'case 4: price_version immutable');
   v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set reservation_ids = array['res-reh-a'] where id = %L$q$, v_exec));
   perform pg_temp.expect(v_err ilike '%immutable%', 'case 4: reservation_ids immutable');
-  v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set authorization_first_attempted_at = now() where id = %L$q$, v_exec));
+  -- now() is transaction-stable and equals the earlier claim stamp in this
+  -- rehearsal. Change the stored value by exactly one microsecond instead.
+  v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set authorization_first_attempted_at = authorization_first_attempted_at + interval '1 microsecond' where id = %L$q$, v_exec));
   perform pg_temp.expect(v_err ilike '%immutable%', 'case 4: first-attempt stamp immutable once set');
+  v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set authorization_first_attempted_at = null where id = %L$q$, v_exec));
+  perform pg_temp.expect(v_err ilike '%immutable%', 'case 4: first-attempt stamp cannot be cleared');
   v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set provider_reference = 'pi_other' where id = %L$q$, v_exec));
   perform pg_temp.expect(v_err ilike '%immutable%', 'case 4: provider reference immutable once learned');
   v_err := pg_temp.error_of(format($q$update public.research_checkout_executions set request_body_sha256 = %L where id = %L$q$, repeat('b', 64), v_exec));

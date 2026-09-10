@@ -143,7 +143,7 @@ async function driveStripeAuthentication(input: ChallengeInput, expectation: Aut
     }
     if (!pageSession) fail("browser_page_not_ready");
     await pipe.send("Page.bringToFront", {}, pageSession!);
-    const navigation = await pipe.send("Page.navigate", { url: `${app}/__qualification/auth` }, pageSession!);
+    const navigation = await pipe.send("Page.navigate", { url: `${app}/api/__qualification/auth` }, pageSession!);
     if (navigation.errorText) fail(navigation.errorText === "net::ERR_BLOCKED_BY_ADMINISTRATOR" ? "browser_navigation_blocked_by_policy" : "browser_navigation_failed");
     let started = false, challengeObserved = false, trustedInputEvents = 0;
     const clicked = new Set<string>();

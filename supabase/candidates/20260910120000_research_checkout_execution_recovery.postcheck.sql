@@ -40,9 +40,22 @@ begin
   end if;
   -- The index must exclude settled cancellations too, or it grows with lifetime
   -- volume rather than with the live backlog.
-  if not exists (select 1 from pg_indexes where schemaname = 'public'
-    and indexname = 'research_checkout_executions_recoverable_idx'
-    and indexdef like '%settled_at is null%') then
+  -- A substring match also accepts incorrectly grouped OR predicates that
+  -- retain settled or committed history. Verify the canonical grouping and
+  -- key order, normalizing only the deparser's case/whitespace.
+  if not exists (
+    select 1 from pg_index i
+    join pg_class idx on idx.oid = i.indexrelid
+    join pg_am am on am.oid = idx.relam
+    where i.indexrelid = to_regclass('public.research_checkout_executions_recoverable_idx')
+      and i.indrelid = to_regclass('public.research_checkout_executions')
+      and i.indisvalid and i.indisready and am.amname = 'btree'
+      and i.indnkeyatts = 2 and i.indnatts = 2
+      and pg_get_indexdef(i.indexrelid, 1, true) = 'updated_at'
+      and pg_get_indexdef(i.indexrelid, 2, true) = 'id'
+      and lower(regexp_replace(pg_get_expr(i.indpred, i.indrelid), '\s+', ' ', 'g')) =
+        '((phase <> ''committed''::text) and ((phase <> ''cancelled''::text) or (settled_at is null)))'
+  ) then
     raise exception 'discovery index still carries settled rows; its predicate must match the function filter';
   end if;
   -- This candidate creates no table and no row.

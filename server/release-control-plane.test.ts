@@ -2082,8 +2082,11 @@ describe("route uniqueness validator", () => {
     // rather than a counting one: Express lets the first registration win, so a
     // refusal beside a live door silently shadows it. This census is the gate
     // that caught it.
-    expect(result.callSites).toBe(430);
-    expect(result.routes).toHaveLength(439);
+    // The owned loopback qualification child adds one source-visible page,
+    // GET /api/__qualification/auth. It is not imported by production startup.
+    // Count it explicitly rather than hiding qualification source from this gate.
+    expect(result.callSites).toBe(431);
+    expect(result.routes).toHaveLength(440);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
