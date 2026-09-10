@@ -50,5 +50,25 @@ stopped the exact synthetic local cluster. `/root/product_review_filters` then
 owned only the external evidence artifact `credit-concurrency/pg17-credit-proof.mjs`;
 main reviewed and executed it, and `/root/native_finish_review` independently
 accepted the final local result. Both write assignments are now returned to main.
-Receipt operational integration discovery is read-only; it grants no new file
-ownership, notification effects or production authority.
+Receipt discovery completed without changes. The next bounded write assignment
+to `/root/product_review_filters` owns only
+`server/research/commerce/receipt-repair-production.ts` and its adjacent
+`receipt-repair-production.test.ts`. It adds an injected, read-only durable
+adapter and bounded preview; queue mode must refuse before any read. No singleton
+construction, worker start, provider call, notification enqueue, remote query or
+production authority is delegated. Main reviews and controls the test slot.
+
+This assignment is now returned to main. Main read the final implementation and
+SDK contact test, and the independent reviewer accepted the runtime. Focused
+tests, broader commerce tests and corrected typecheck have passed; no worker
+retains a write assignment or production authority.
+
+Main concurrently owns `shared/research/checkout-credit-policy.ts` and its test
+for the unsafe gross-sum regression. No credit business policy is selected and
+no caller is activated by this arithmetic correction.
+
+Main also owns the narrow supplied-consent validation correction in
+`server/research/commerce/durable-checkout-submission.ts` and its adjacent test:
+reject malformed supplied expected totals before any reservation/provider write.
+This does not change the existing optional-field compatibility or claim that
+complete policy/credit-consent integration is finished.

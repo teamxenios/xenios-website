@@ -128,6 +128,43 @@ describe("the gate and the charge come from one result", () => {
   });
 });
 
+describe.each(["requested", "all_available"] as const)("%s safe combined totals", (mode) => {
+  it.each([false, true])("refuses an unsafe gross even when credit covers part of it (shipping=%s)", (coversShipping) => {
+    const result = evaluateCreditQuote({ ...ALL, mode, coversShipping }, {
+      subtotalCents: Number.MAX_SAFE_INTEGER,
+      shippingCents: 1,
+      spendableCents: Number.MAX_SAFE_INTEGER,
+      requestedCents: Number.MAX_SAFE_INTEGER,
+    });
+    expect(result).toMatchObject({ ok: false, code: "amounts_invalid" });
+    expect(result).not.toHaveProperty("grossCents");
+    expect(result).not.toHaveProperty("payableCents");
+  });
+
+  it.each([false, true])("refuses independently safe inputs whose sum rounds (shipping=%s)", (coversShipping) => {
+    const result = evaluateCreditQuote({ ...ALL, mode, coversShipping }, {
+      subtotalCents: Number.MAX_SAFE_INTEGER,
+      shippingCents: 2,
+      spendableCents: 0,
+      requestedCents: 0,
+    });
+    expect(result).toMatchObject({ ok: false, code: "amounts_invalid" });
+    expect(result).not.toHaveProperty("appliedCents");
+  });
+
+  it.each([false, true])("preserves the exact largest safe gross (shipping=%s)", (coversShipping) => {
+    const result = ok(evaluateCreditQuote({ ...ALL, mode, coversShipping }, {
+      subtotalCents: Number.MAX_SAFE_INTEGER - 2_000,
+      shippingCents: 2_000,
+      spendableCents: 0,
+      requestedCents: 0,
+    }));
+    expect(result.grossCents).toBe(Number.MAX_SAFE_INTEGER);
+    expect(result.payableCents).toBe(Number.MAX_SAFE_INTEGER);
+    expect(result.appliedCents).toBe(0);
+  });
+});
+
 describe("the policy itself is checked, not trusted", () => {
   it("refuses a mode this build does not understand instead of falling back to one", () => {
     // Without this, any unknown mode string becomes "requested", which is the

@@ -143,7 +143,9 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       // The buyer approved a specific amount. If this fresh revalidation prices
       // the order differently, the approval does not cover it: refuse before
       // anything is reserved or charged and let them approve the new figure.
-      if (typeof req.expectedTotalCents === "number" && req.expectedTotalCents !== totalCents) {
+      if (req.expectedTotalCents !== undefined && (
+        !Number.isSafeInteger(req.expectedTotalCents) || req.expectedTotalCents < 0 || req.expectedTotalCents !== totalCents
+      )) {
         return deny(["cart_revalidation_failed"]);
       }
       if (totalCents === 0) {

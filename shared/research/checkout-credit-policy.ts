@@ -119,6 +119,11 @@ export function evaluateCreditQuote(policy: CreditPolicy, input: CreditQuoteInpu
   }
 
   const grossCents = input.subtotalCents + input.shippingCents;
+  // Individually safe inputs can still overflow when added. Credit must not
+  // conceal an unsafe gross by reducing the resulting payable to a safe value.
+  if (!wholeNonNegative(grossCents)) {
+    return refuse("amounts_invalid", "The combined order total was not a safe whole number of cents.");
+  }
   const creditableCents = policy.coversShipping ? grossCents : input.subtotalCents;
   const perOrderCents = policy.maxPerOrderCents ?? Number.MAX_SAFE_INTEGER;
   const ceilingCents = Math.min(input.spendableCents, creditableCents, perOrderCents);

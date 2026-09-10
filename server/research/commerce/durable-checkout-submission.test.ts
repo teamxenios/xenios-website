@@ -229,6 +229,18 @@ describe("durable checkout submission", () => {
     expect(await c.submission.submit(MEMBER, request({ idempotencyKey: "req_durable_0002" }), NOW)).toMatchObject({ ok: true, state: "completed" });
   });
 
+  it.each([null, "33999", "30000", true, false, {}, [], [33999], -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    "refuses a malformed supplied consent total without side effects: %j", async expectedTotalCents => {
+      const c = composition();
+      const result = await c.submission.submit(MEMBER, request({ expectedTotalCents: expectedTotalCents as never }), NOW);
+      expect(result).toMatchObject({ ok: false, code: "cart_revalidation_failed" });
+      expect(await c.orders.listByMember(MEMBER)).toEqual([]);
+      expect(c.executions.snapshot()).toEqual([]);
+      expect(c.model.requests).toEqual([]);
+      expect(c.holds.events).toEqual([]);
+      expect(c.committed).toEqual([]);
+    });
+
   it("denies before anything is held, created or charged", async () => {
     const denied = composition({ denials: ["agreement_required", "address_invalid"] });
     expect(await denied.submission.submit(MEMBER, request(), NOW)).toEqual({ ok: false, code: "agreement_required", codes: ["agreement_required", "address_invalid"] });
