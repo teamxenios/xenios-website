@@ -42,6 +42,18 @@ const base: CheckoutExecutionCreate = {
   settledAt: null,
 };
 
+/** Complete SQL projection, not the deliberately partial legacy insert shape. */
+function managedRow(overrides: Record<string, unknown> = {}): CheckoutExecutionRow {
+  return {
+    ...executionToInsertRow(base),
+    last_provider_result: null,
+    local_commit_failure: null,
+    updated_at: "2026-09-09T00:00:00.123456+00:00",
+    committed_at: null,
+    ...overrides,
+  } as CheckoutExecutionRow;
+}
+
 describe("row mapping", () => {
   it("round-trips the coordinator record through the insert row and back, binding body digest and price version", () => {
     const row = executionToInsertRow(base);
@@ -347,7 +359,7 @@ describe("Supabase execution store adapter", () => {
     const result = createSupabaseCheckoutExecutionStore(() => client).create(base);
     await expect(result).rejects.not.toBeInstanceOf(CheckoutCreditReservationRefused);
   });
-  const insertedRow = (): CheckoutExecutionRow => ({ ...executionToInsertRow(base), last_provider_result: null });
+  const insertedRow = (): CheckoutExecutionRow => managedRow();
   it("creates by insert and returns the record; a duplicate of the identical request replays", async () => {
     const fresh = fakeClient();
     expect(await createSupabaseCheckoutExecutionStore(() => fresh.client).create(base)).toMatchObject({ executionId: base.executionId, phase: "reserved" });
@@ -385,6 +397,310 @@ describe("Supabase execution store adapter", () => {
       [["provider_reference", "pi_0001"]],
       [["order_id", base.orderId]],
     ]);
+  });
+});
+
+describe("strict managed execution projections", () => {
+  it.each([[null], [undefined], [managedRow(), managedRow()], [managedRow({ id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" })]])(
+    "refuses invalid, ambiguous or foreign transition rows (%#)", async (...rows) => {
+      const fake = fakeClient({ rpc: () => rows as Record<string, unknown>[] });
+      await expect(createSupabaseCheckoutExecutionStore(() => fake.client).claim(base.executionId, 1, "authorizing"))
+        .rejects.toThrow();
+    });
+  type Store = ReturnType<typeof createSupabaseCheckoutExecutionStore>;
+  const readBoundaries: Array<[string, (store: Store) => Promise<unknown>]> = [
+    ["member lookup", store => store.getForMember(base.memberId, base.requestKey)],
+    ["order lookup", store => store.findByOrder(base.orderId)],
+    ["claim transition", store => store.claim(base.executionId, 1, "authorizing")],
+    ["creation replay", store => store.create(base)],
+  ];
+  const projectedColumns = EXECUTION_COLUMNS.split(",").map(column => column.trim());
+
+  function withRow(row: CheckoutExecutionRow) {
+    const fake = fakeClient({ existing: row, rpc: () => [row as unknown as Record<string, unknown>] });
+    return { ...fake, store: createSupabaseCheckoutExecutionStore(() => fake.client) };
+  }
+
+  for (const [name, read] of readBoundaries) {
+    it.each(projectedColumns)(`${name} refuses a missing projected column: %s`, async column => {
+      const row = managedRow();
+      delete (row as unknown as Record<string, unknown>)[column];
+      await expect(read(withRow(row).store)).rejects.toThrow();
+    });
+    it(`${name} accepts a complete row without weakening the legacy mapper`, async () => {
+      expect(await read(withRow(managedRow()).store)).toMatchObject({
+        executionId: base.executionId, memberId: base.memberId, orderId: base.orderId,
+        amountCents: base.amountCents, updatedAt: "2026-09-09T00:00:00.123456+00:00",
+      });
+    });
+  }
+
+  const invalidFields: Array<[string, unknown]> = [
+    ["id", "not-a-uuid"], ["id", null], ["member_id", "member-fixture"], ["order_id", "order-fixture"],
+    ["request_key", "short"], ["request_key", "x".repeat(121)], ["request_key", null],
+    ["request_body_sha256", "A".repeat(64)], ["request_body_sha256", "a".repeat(63)], ["request_body_sha256", null],
+    ["version", 0], ["version", -1], ["version", 1.2], ["version", "1"], ["version", null],
+    ["version", Number.MAX_SAFE_INTEGER + 1], ["version", NaN], ["version", Infinity],
+    ["amount_cents", 0], ["amount_cents", -1], ["amount_cents", 0.5], ["amount_cents", null],
+    ["amount_cents", Number.MAX_SAFE_INTEGER + 1], ["amount_cents", NaN], ["amount_cents", Infinity],
+    ["amount_cents", "0"], ["amount_cents", "-1"], ["amount_cents", "+1"], ["amount_cents", "01"],
+    ["amount_cents", " 1"], ["amount_cents", "1 "], ["amount_cents", "1e3"], ["amount_cents", "1.0"],
+    ["amount_cents", "9007199254740992"], ["amount_cents", ""],
+    ["currency", "eur"], ["currency", "USD"], ["phase", "paid"],
+    ["authorization_key", "short"], ["capture_key", "short"], ["cancel_key", "short"],
+    ["authorization_key", "x".repeat(201)], ["capture_key", null], ["cancel_key", 1],
+    ["payment_method_reference", "card-fixture"], ["payment_method_reference", "pm_"],
+    ["payment_method_reference", "pm_with space"], ["payment_method_reference", null],
+    ["quote_fingerprint", ""], ["quote_fingerprint", "x".repeat(201)], ["quote_fingerprint", null],
+    ["provider_reference", 1], ["provider_reference", {}], ["provider_reference", ""],
+    ["price_version", 1], ["local_commit_failure", false],
+    ["reservation_ids", null], ["reservation_ids", "res-1"], ["reservation_ids", [""]],
+    ["reservation_ids", [null]], ["reservation_ids", [1]],
+  ];
+  it.each(invalidFields)("refuses invalid %s (%#) without numeric coercion or invented defaults", async (column, value) => {
+    await expect(withRow(managedRow({ [column]: value })).store.getForMember(base.memberId, base.requestKey))
+      .rejects.toThrow();
+  });
+
+  it.each([
+    ["positive numeric bigint", 1, 1],
+    ["positive decimal bigint", "33999", 33999],
+    ["largest safe numeric bigint", Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER],
+    ["largest safe decimal bigint", "9007199254740991", Number.MAX_SAFE_INTEGER],
+  ])("maps %s to a safe number", async (_label, amount, expected) => {
+    expect(await withRow(managedRow({ amount_cents: amount })).store.getForMember(base.memberId, base.requestKey))
+      .toMatchObject({ amountCents: expected });
+  });
+  it("accepts SQL-compatible boundary lengths, non-UUID reservations and additive RPC fields", async () => {
+    const row = managedRow({
+      request_key: "x".repeat(120), authorization_key: "a".repeat(8), capture_key: "c".repeat(200),
+      cancel_key: "d".repeat(200), quote_fingerprint: "q".repeat(200), payment_method_reference: "pm_fixture_1",
+      price_version: "", local_commit_failure: "", reservation_ids: ["res-1"],
+      credit_reserved_cents: 0,
+    });
+    expect(await withRow(row).store.getForMember(base.memberId, row.request_key)).toMatchObject({
+      requestKey: row.request_key, reservationIds: ["res-1"], localCommitFailure: "",
+    });
+  });
+  it("accepts an empty reservation set when the canonical execution has none", async () => {
+    expect(await withRow(managedRow({ reservation_ids: [] })).store.getForMember(base.memberId, base.requestKey))
+      .toMatchObject({ reservationIds: [] });
+  });
+
+  const timestampColumns = ["created_at", "updated_at", "authorization_first_attempted_at", "committed_at", "settled_at"];
+  const invalidTimestamps: unknown[] = [
+    "2026-09-09", "2026-09-09T00:00:00", "2026-09-09T00:00:00.1234567Z", "2026-02-30T00:00:00Z",
+    "2026-02-29T00:00:00Z", "2026-13-01T00:00:00Z", "2026-09-09T24:00:00Z", "2026-09-09T00:00:00+25:00",
+    "2026-09-09T00:00:60Z", "not-a-date", "", 0, undefined,
+  ];
+  for (const column of timestampColumns) {
+    it.each(invalidTimestamps)(`refuses malformed ${column} (%#)`, async value => {
+      await expect(withRow(managedRow({ [column]: value })).store.getForMember(base.memberId, base.requestKey))
+        .rejects.toThrow();
+    });
+  }
+  it.each(["created_at", "updated_at"])("refuses null required timestamp %s", async column => {
+    await expect(withRow(managedRow({ [column]: null })).store.getForMember(base.memberId, base.requestKey)).rejects.toThrow();
+  });
+  it("preserves offset timestamps and all six fractional digits without Date round-trip", async () => {
+    const time = "2026-09-09T01:00:00.123456+01:00";
+    expect(await withRow(managedRow({
+      created_at: time, updated_at: time, authorization_first_attempted_at: time, committed_at: time, settled_at: time,
+    })).store.getForMember(base.memberId, base.requestKey)).toMatchObject({
+      createdAt: time, updatedAt: time, authorizationAttemptedAt: time, committedAt: time, settledAt: time,
+    });
+  });
+  it.each([
+    { member_id: "33333333-3333-4333-8333-333333333333" },
+    { request_key: "another_request_key" },
+  ])("binds member lookup to the exact requested principal and request (%#)", async mismatch => {
+    await expect(withRow(managedRow(mismatch)).store.getForMember(base.memberId, base.requestKey)).rejects.toThrow();
+  });
+  it("retains legitimate missing-member semantics", async () => {
+    const fake = fakeClient();
+    expect(await createSupabaseCheckoutExecutionStore(() => fake.client).getForMember(base.memberId, base.requestKey)).toBeNull();
+  });
+
+  const otherMappedBoundaries: Array<[string, (store: Store) => Promise<unknown>]> = [
+    ["provider lookup", store => store.findByProviderReference("provider-fixture")],
+    ["record provider", store => store.recordProvider(base.executionId, 1, { kind: "unknown" })],
+    ["commit captured", store => store.commitCaptured(base.executionId, 1)],
+    ["commit cancelled", store => store.commitCancelled(base.executionId, 1)],
+  ];
+  it.each(otherMappedBoundaries)("%s applies the same managed validation", async (_name, read) => {
+    const row = managedRow();
+    delete (row as unknown as Record<string, unknown>).authorization_first_attempted_at;
+    await expect(read(withRow(row).store)).rejects.toThrow();
+  });
+
+  const moneyProof = { providerReference: "provider-fixture", amountCents: base.amountCents, currency: "usd", memberId: base.memberId, orderId: base.orderId };
+  const validProofs: unknown[] = [
+    null, { kind: "authorized", ...moneyProof }, { kind: "captured", ...moneyProof },
+    { kind: "action_required", providerReference: "provider-fixture" },
+    { kind: "cancelled", providerReference: null, capturedAmountCents: 0 },
+    ...["declined", "customer", "provider", "abandoned"].map(reason => ({ kind: "cancelled", providerReference: "provider-fixture", capturedAmountCents: 0, reason })),
+    { kind: "refused", definitiveNoEffect: false }, { kind: "refused", definitiveNoEffect: true },
+    { kind: "unknown" }, { kind: "unknown", providerReference: "provider-fixture" },
+  ];
+  it.each(validProofs)("preserves a valid provider union without assuming a provider prefix (%#)", async proof => {
+    expect(await withRow(managedRow({ last_provider_result: proof })).store.getForMember(base.memberId, base.requestKey))
+      .toMatchObject({ lastProviderResult: proof });
+  });
+  const invalidProofs: unknown[] = [
+    undefined, {}, [], "captured", { kind: "unexpected" },
+    { kind: "authorized", ...moneyProof, amountCents: 0 },
+    { kind: "captured", ...moneyProof, amountCents: Number.MAX_SAFE_INTEGER + 1 },
+    { kind: "captured", ...moneyProof, amountCents: "33999" },
+    { kind: "captured", ...moneyProof, amountCents: 1.5 },
+    { kind: "authorized", ...moneyProof, amountCents: NaN },
+    { kind: "authorized", ...moneyProof, currency: "eur" },
+    { kind: "captured", ...moneyProof, memberId: "member-fixture" },
+    { kind: "captured", ...moneyProof, orderId: "order-fixture" },
+    { kind: "authorized", ...moneyProof, providerReference: "" },
+    { kind: "authorized", providerReference: "provider-fixture" },
+    { kind: "action_required" }, { kind: "action_required", providerReference: "" },
+    { kind: "action_required", providerReference: 1 },
+    { kind: "cancelled", capturedAmountCents: 0 },
+    { kind: "cancelled", providerReference: null, capturedAmountCents: 1 },
+    { kind: "cancelled", providerReference: null, capturedAmountCents: "0" },
+    { kind: "cancelled", providerReference: 1, capturedAmountCents: 0 },
+    { kind: "cancelled", providerReference: null, capturedAmountCents: 0, reason: "arbitrary" },
+    { kind: "refused" }, { kind: "refused", definitiveNoEffect: "false" },
+    { kind: "unknown", providerReference: null }, { kind: "unknown", providerReference: "" },
+  ];
+  it.each(invalidProofs)("refuses malformed provider evidence (%#)", async proof => {
+    await expect(withRow(managedRow({ last_provider_result: proof })).store.getForMember(base.memberId, base.requestKey))
+      .rejects.toThrow();
+  });
+});
+
+describe("strict managed recovery discovery", () => {
+  const before = new Date("2026-09-10T00:00:00.000Z");
+  const firstId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1";
+  const secondId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2";
+  const firstTime = "2026-09-09T00:00:00.123456+00:00";
+  const secondTime = "2026-09-09T00:00:00.123457+00:00";
+  const first = () => managedRow({ id: firstId, updated_at: firstTime });
+  const second = () => managedRow({ id: secondId, updated_at: secondTime });
+
+  function discovery(data: unknown) {
+    // Deliberately permits a malformed response at the untrusted wire boundary.
+    const fake = fakeClient({ rpc: () => data as Record<string, unknown>[] | null });
+    const store = createSupabaseCheckoutExecutionStore(() => fake.client);
+    return { ...fake, list: store.listRecoverable! };
+  }
+  it.each([null, undefined, {}, false, 0, "", first(), [null], [undefined]])(
+    "refuses unavailable/non-array discovery; only [] means empty (%#)", async data => {
+      await expect(discovery(data).list({ before, limit: 2 })).rejects.toThrow();
+    },
+  );
+  it("accepts an explicit empty successful page", async () => {
+    expect(await discovery([]).list({ before, limit: 2 })).toEqual([]);
+  });
+  it("preserves exact RPC vocabulary, microsecond cursor and returned timestamps", async () => {
+    const after = { updatedAt: firstTime, executionId: firstId };
+    const fake = discovery([second()]);
+    expect(await fake.list({ before, limit: 2, after })).toMatchObject([
+      { executionId: secondId, updatedAt: secondTime },
+    ]);
+    expect(fake.calls).toEqual([{ kind: "rpc", fn: "research_checkout_executions_list_recoverable", args: {
+      p_before: "2026-09-10T00:00:00.000Z", p_limit: 2,
+      p_after_updated_at: firstTime, p_after_id: firstId,
+    } }]);
+  });
+  it.each([[0, 1], [-2, 1], [201, 200], [Number.MAX_SAFE_INTEGER, 200]])(
+    "preserves finite integer limit clamp %s -> %s", async (limit, expected) => {
+      const fake = discovery([]);
+      await fake.list({ before, limit });
+      expect(fake.calls[0].args?.p_limit).toBe(expected);
+    },
+  );
+  it.each([NaN, Infinity, -Infinity, 1.5, "2", null, undefined])(
+    "refuses malformed numeric limit before the RPC (%#)", async limit => {
+      const fake = discovery([]);
+      await expect(fake.list({ before, limit: limit as number })).rejects.toThrow();
+      expect(fake.calls).toHaveLength(0);
+    },
+  );
+  it.each([new Date(NaN), "2026-09-10T00:00:00Z", null, undefined])(
+    "refuses invalid horizon before the RPC (%#)", async horizon => {
+      const fake = discovery([]);
+      await expect(fake.list({ before: horizon as Date, limit: 2 })).rejects.toThrow();
+      expect(fake.calls).toHaveLength(0);
+    },
+  );
+  const badCursors: unknown[] = [
+    {}, { updatedAt: firstTime }, { executionId: firstId },
+    { updatedAt: "not-a-date", executionId: firstId },
+    { updatedAt: "2026-09-09T00:00:00", executionId: firstId },
+    { updatedAt: "2026-09-09T00:00:00.1234567Z", executionId: firstId },
+    { updatedAt: firstTime, executionId: "bad-id" },
+    { updatedAt: firstTime, executionId: "" },
+    { updatedAt: before.toISOString(), executionId: firstId },
+    { updatedAt: "2026-09-11T00:00:00Z", executionId: firstId },
+    "cursor", [], false,
+  ];
+  it.each(badCursors)("refuses malformed/out-of-horizon cursor before RPC (%#)", async after => {
+    const fake = discovery([]);
+    await expect(fake.list({ before, limit: 2, after: after as { updatedAt: string; executionId: string } })).rejects.toThrow();
+    expect(fake.calls).toHaveLength(0);
+  });
+  it.each([
+    { phase: "unknown" }, { currency: "eur" }, { amount_cents: NaN }, { id: "invalid" },
+    { updated_at: null }, { authorization_first_attempted_at: undefined },
+    { last_provider_result: { kind: "captured" } },
+  ])("rejects the entire mixed page instead of dropping malformed row (%#)", async invalid => {
+    await expect(discovery([first(), managedRow({ id: secondId, updated_at: secondTime, ...invalid })])
+      .list({ before, limit: 2 })).rejects.toThrow();
+  });
+  it.each([
+    { phase: "committed", committed_at: firstTime },
+    { phase: "cancelled", settled_at: firstTime },
+  ])("refuses terminal discovery rows (%#)", async terminal => {
+    await expect(discovery([managedRow(terminal)]).list({ before, limit: 2 })).rejects.toThrow();
+  });
+  it("keeps an unsettled cancellation discoverable", async () => {
+    expect(await discovery([managedRow({ phase: "cancelled", settled_at: null })]).list({ before, limit: 2 }))
+      .toMatchObject([{ phase: "cancelled", settledAt: null }]);
+  });
+  it.each([
+    [second(), first()],
+    [first(), first()],
+    [first(), managedRow({ id: firstId, updated_at: secondTime })],
+    [managedRow({ id: secondId, updated_at: firstTime }), first()],
+    [managedRow({ updated_at: before.toISOString() })],
+    [managedRow({ updated_at: "2026-09-11T00:00:00Z" })],
+  ])("refuses unordered, duplicate or beyond-horizon page (%#)", async (...rows) => {
+    await expect(discovery(rows).list({ before, limit: 2 })).rejects.toThrow();
+  });
+  it("refuses more returned rows than the requested bounded page", async () => {
+    await expect(discovery([first(), second()]).list({ before, limit: 1 })).rejects.toThrow();
+  });
+  it("refuses a row equal to or earlier than the exact cursor", async () => {
+    for (const updatedAt of [firstTime, secondTime]) {
+      await expect(discovery([first()]).list({ before, limit: 2, after: { updatedAt, executionId: firstId } }))
+        .rejects.toThrow();
+    }
+  });
+  it("orders by real microseconds and UUID rather than raw timestamp spelling", async () => {
+    const earlier = "2026-09-09T01:00:00.123456+01:00";
+    const later = "2026-09-09T00:00:00.123457Z";
+    expect(await discovery([
+      managedRow({ id: firstId, updated_at: earlier }),
+      managedRow({ id: secondId, updated_at: later }),
+    ]).list({ before, limit: 2 })).toMatchObject([{ updatedAt: earlier }, { updatedAt: later }]);
+    // Equal instants use the UUID tie-breaker, even with different offset text.
+    expect(await discovery([managedRow({ id: secondId, updated_at: earlier })]).list({
+      before, limit: 2, after: { updatedAt: firstTime, executionId: firstId },
+    })).toMatchObject([{ executionId: secondId, updatedAt: earlier }]);
+    await expect(discovery([managedRow({ id: firstId, updated_at: earlier })]).list({
+      before, limit: 2, after: { updatedAt: firstTime, executionId: secondId },
+    })).rejects.toThrow();
+  });
+  it("propagates RPC errors instead of reporting an empty exhausted page", async () => {
+    const fake = discovery([]);
+    fake.client.rpc = async () => ({ data: [], error: { message: "fixture read unavailable" } });
+    await expect(fake.list({ before, limit: 2 })).rejects.toThrow();
   });
 });
 

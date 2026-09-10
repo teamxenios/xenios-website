@@ -72,3 +72,19 @@ Main also owns the narrow supplied-consent validation correction in
 reject malformed supplied expected totals before any reservation/provider write.
 This does not change the existing optional-field compatibility or claim that
 complete policy/credit-consent integration is finished.
+
+## Managed recovery projection prerequisite (after 545c39e)
+
+Main owns `server/research/commerce/persistence/checkout-executions-store.ts`
+for strict managed row/read validation and all-or-nothing discovery pages.
+`/root/product_review_filters` owns only its adjacent existing test file for
+matching regression cases and SQL-shaped positive fixtures. Preserve old tests.
+No new schema, timer, worker, provider call, remote query or production action.
+Main controls the test slot; `/root/native_finish_review` independently reviews
+the final delta. This prerequisite does not complete operational recovery.
+
+Both two-file write assignments are now returned to main. The independent
+reviewer accepted runtime LF f7830e67 and test LF 67ad3c7d; final broader commerce
+run passed 1,905 tests with three skipped and no failures. No worker retains a
+write lease. The next operational recovery slice remains main-owned and must
+not reuse an unproven checkpoint authority or start provider effects.

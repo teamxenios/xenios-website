@@ -472,15 +472,78 @@ export interface CheckoutExecutionClient {
   rpc(fn: string, args: Row): Promise<{ data: Row[] | Row | null; error: ProviderError }>;
 }
 
-function firstRow(data: Row[] | Row | null): Row | null {
-  if (Array.isArray(data)) return data[0] ?? null;
-  return data ?? null;
+const MANAGED_UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const managedObject = (value: unknown): value is Row => value !== null && typeof value === "object" && !Array.isArray(value);
+const managedString = (value: unknown, min = 1, max = Number.MAX_SAFE_INTEGER): value is string =>
+  typeof value === "string" && value.length >= min && value.length <= max;
+const managedUuid = (value: unknown): value is string => typeof value === "string" && MANAGED_UUID.test(value);
+const positiveInteger = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+
+// A bigint may arrive as a canonical decimal string. No other coercion can
+// invent monetary truth; the eventual coordinator number must remain exact.
+function managedAmount(value: unknown): boolean {
+  return positiveInteger(value) || (typeof value === "string" && /^[1-9][0-9]*$/.test(value) && positiveInteger(Number(value)));
+}
+
+function managedTimestamp(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const match = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(?:Z|z|[+-]\d{2}(?::?\d{2})?)$/.exec(value);
+  if (!match) return false;
+  const [year, month, day, hour, minute, second] = match.slice(1).map(Number);
+  const leap = year! % 4 === 0 && (year! % 100 !== 0 || year! % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return year! >= 1 && month! >= 1 && month! <= 12 && day! >= 1 && day! <= days[month! - 1]!
+    && hour! <= 23 && minute! <= 59 && second! <= 59 && microsSinceEpoch(value) !== null;
+}
+
+function managedProviderResult(value: unknown): boolean {
+  if (value === null) return true;
+  if (!managedObject(value)) return false;
+  const keys = (required: string[], optional: string[] = []) => required.every(key => Object.hasOwn(value, key))
+    && Object.keys(value).every(key => required.includes(key) || optional.includes(key));
+  switch (value.kind) {
+    case "authorized": case "captured":
+      return keys(["kind", "providerReference", "amountCents", "currency", "memberId", "orderId"])
+        && managedString(value.providerReference) && positiveInteger(value.amountCents) && value.currency === "usd"
+        && managedUuid(value.memberId) && managedUuid(value.orderId);
+    case "action_required": return keys(["kind", "providerReference"]) && managedString(value.providerReference);
+    case "cancelled": return keys(["kind", "providerReference", "capturedAmountCents"], ["reason"])
+      && (value.providerReference === null || managedString(value.providerReference)) && value.capturedAmountCents === 0
+      && (!Object.hasOwn(value, "reason") || ["declined", "customer", "provider", "abandoned"].includes(value.reason as string));
+    case "refused": return keys(["kind", "definitiveNoEffect"]) && typeof value.definitiveNoEffect === "boolean";
+    case "unknown": return keys(["kind"], ["providerReference"])
+      && (!Object.hasOwn(value, "providerReference") || managedString(value.providerReference));
+    default: return false;
+  }
+}
+
+// Only the managed boundary is strict. The legacy pure mapper and in-memory
+// references are unchanged. Missing selected columns are unavailable evidence,
+// especially a missing first-attempt stamp: never turn it into "never tried".
+function managedExecutionRow(value: unknown): value is Row {
+  if (!managedObject(value) || !EXECUTION_COLUMNS.split(",").every(key => Object.hasOwn(value, key.trim()))) return false;
+  return [value.id, value.member_id, value.order_id].every(managedUuid)
+    && managedString(value.request_key, 8, 120) && typeof value.request_body_sha256 === "string"
+    && /^[a-f0-9]{64}$/.test(value.request_body_sha256)
+    && positiveInteger(value.version) && managedAmount(value.amount_cents) && value.currency === "usd"
+    && CHECKOUT_EXECUTION_PHASES.includes(value.phase as CheckoutExecutionPhase)
+    && managedString(value.payment_method_reference) && /^pm_[A-Za-z0-9_]+$/.test(value.payment_method_reference)
+    && managedString(value.quote_fingerprint, 1, 200)
+    && [value.authorization_key, value.capture_key, value.cancel_key].every(key => managedString(key, 8, 200))
+    && (value.provider_reference === null || managedString(value.provider_reference))
+    && (!["authorized", "capturing", "captured", "committed"].includes(value.phase as string) || value.provider_reference !== null)
+    && [value.price_version, value.local_commit_failure].every(text => text === null || typeof text === "string")
+    && Array.isArray(value.reservation_ids) && value.reservation_ids.every(id => managedString(id))
+    && managedTimestamp(value.created_at) && managedTimestamp(value.updated_at)
+    && [value.authorization_first_attempted_at, value.committed_at, value.settled_at].every(at => at === null || managedTimestamp(at))
+    && managedProviderResult(value.last_provider_result);
 }
 
 export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecutionClient = () => getSupabaseAdmin() as unknown as CheckoutExecutionClient): CheckoutExecutionRepository {
   const fail = (what: string, error: ProviderError) => new Error(`checkout execution ${what} failed: ${error?.message ?? "unknown"}`);
   const mapped = (what: string, row: Row | null): CheckoutExecutionRecord | null => {
-    if (!row) return null;
+    if (row === null) return null;
+    if (!managedExecutionRow(row)) throw new Error(`checkout execution ${what} returned an unavailable projection`);
     const record = rowToExecution(row as unknown as CheckoutExecutionRow);
     if (!record) throw new Error(`checkout execution ${what} returned an uninterpretable row`);
     return record;
@@ -488,7 +551,12 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
   async function transition(fn: string, args: Row): Promise<CheckoutExecutionRecord | null> {
     const result = await client().rpc(fn, args);
     if (result.error) throw fail(fn, result.error);
-    return mapped(fn, firstRow(result.data));
+    if (Array.isArray(result.data) && (result.data.length > 1 || (result.data.length === 1 && !managedExecutionRow(result.data[0])))) {
+      throw new Error("checkout execution transition returned ambiguous or unavailable rows");
+    }
+    const record = mapped(fn, Array.isArray(result.data) ? result.data.length === 0 ? null : result.data[0]! : result.data);
+    if (record && record.executionId !== args.p_execution_id) throw new Error("checkout execution transition returned another execution");
+    return record;
   }
   return {
     authority: "canonical_checkout_transaction_v1",
@@ -504,17 +572,21 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
       const existing = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("member_id", record.memberId).eq("request_key", record.requestKey).maybeSingle();
       if (existing.error) throw fail("create read-back", existing.error);
       const row = existing.data as unknown as CheckoutExecutionRow | null;
-      if (!row) throw new CheckoutExecutionConflict("duplicate_execution");
+      const replay = mapped("create read-back", existing.data);
+      if (!row || !replay) throw new CheckoutExecutionConflict("duplicate_execution");
+      if (replay.memberId !== record.memberId || replay.requestKey !== record.requestKey) throw new Error("checkout execution create read-back identity disagrees");
       if (row.request_body_sha256 !== record.requestBodySha256 || Number(row.amount_cents) !== record.amountCents) {
         throw new CheckoutExecutionConflict("request_key_reused");
       }
       if (row.order_id !== record.orderId || row.id !== record.executionId) throw new CheckoutExecutionConflict("duplicate_execution");
-      return mapped("create", row as unknown as Row)!;
+      return replay;
     },
     async getForMember(memberId, requestKey) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
       if (result.error) throw fail("read", result.error);
-      return mapped("read", result.data);
+      const record = mapped("read", result.data);
+      if (record && (record.memberId !== memberId || record.requestKey !== requestKey)) throw new Error("checkout execution member lookup identity disagrees");
+      return record;
     },
     /**
      * Discovery for the bounded recovery sweep. The function is service-role
@@ -522,17 +594,39 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
      * scan. It needs 20260910120000_research_checkout_execution_recovery.
      */
     async listRecoverable({ before, limit, after }) {
+      if (!(before instanceof Date) || !Number.isFinite(before.getTime()) || !Number.isSafeInteger(limit)) {
+        throw new Error("checkout recovery discovery horizon or limit is invalid");
+      }
+      const horizon = BigInt(before.getTime()) * 1000n;
+      const bound = Math.max(1, Math.min(limit, 200));
+      if (after !== undefined && after !== null && (!managedObject(after) || !managedTimestamp(after.updatedAt)
+          || !managedUuid(after.executionId) || microsSinceEpoch(after.updatedAt)! >= horizon)) {
+        throw new Error("checkout recovery discovery cursor is invalid");
+      }
       const response = await client().rpc("research_checkout_executions_list_recoverable", {
         p_before: before.toISOString(),
-        p_limit: Math.max(1, Math.min(limit, 200)),
+        p_limit: bound,
         p_after_updated_at: after?.updatedAt ?? null,
         p_after_id: after?.executionId ?? null,
       });
-      if (response.error) throw fail("list recoverable executions", response.error);
-      const rows = Array.isArray(response.data) ? response.data : response.data ? [response.data] : [];
-      return rows
-        .map((row) => rowToExecution(row as unknown as CheckoutExecutionRow))
-        .filter((record): record is CheckoutExecutionRecord => record !== null);
+      if (response.error) throw new Error("checkout recovery discovery read failed");
+      if (!Array.isArray(response.data) || response.data.length > bound) throw new Error("checkout recovery discovery returned an unavailable page");
+      let previous = after ? { at: microsSinceEpoch(after.updatedAt)!, id: after.executionId } : null;
+      const seen = new Set<string>();
+      // Validate the entire page before the sweep can act or advance its cursor.
+      return response.data.map(row => {
+        const record = mapped("recovery discovery", row);
+        if (!record) throw new Error("checkout recovery discovery returned an unavailable row");
+        const at = microsSinceEpoch(record.updatedAt)!;
+        if (record.phase === "committed" || (record.phase === "cancelled" && record.settledAt !== null)
+            || at >= horizon || seen.has(record.executionId)
+            || (previous && (at < previous.at || (at === previous.at && record.executionId <= previous.id)))) {
+          throw new Error("checkout recovery discovery page violates its ordering or eligibility");
+        }
+        seen.add(record.executionId);
+        previous = { at, id: record.executionId };
+        return record;
+      });
     },
     async verifyRequest(memberId, requestKey, digest) {
       const result = await client().from(EXECUTIONS).select("request_body_sha256").eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
@@ -543,7 +637,9 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
     async findByProviderReference(reference) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("provider_reference", reference).maybeSingle();
       if (result.error) throw fail("reference lookup", result.error);
-      return mapped("reference lookup", result.data);
+      const record = mapped("reference lookup", result.data);
+      if (record && record.providerReference !== reference) throw new Error("checkout execution provider lookup identity disagrees");
+      return record;
     },
     async findByOrder(orderId) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("order_id", orderId).order("created_at", { ascending: false }).limit(1);
