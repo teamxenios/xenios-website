@@ -4,7 +4,7 @@ Session `fable-durable-payment-20260909` (Claude, optional capacity, not the
 production executor). Branch `claude/durable-payment-port-20260909`, worktree
 `C:/Users/sboad/projects/fable-probes-20260908`, pinned Node 20.19.0.
 
-**Take `fbe513cbe0f114c4f8fba5389ec8cd59747d85c4` or later.** The integration
+**Take `0819c7d`, the branch tip on origin.** The integration
 owner cherry-picked this lane at `df5396b11b863322fd513c3691e5b3fd5279bdb0`.
 Three adversarial rounds have run since, and each found real money defects,
 including two rounds where a fix introduced a narrower version of the defect it
@@ -29,7 +29,9 @@ was closing. Do not qualify `df5396b`, `316a67c`, `7fb98d8` or `b7f91ad`.
 | `7fb98d8` | Two self-introduced regressions closed; connected-journey runner |
 | `af0743f` | The journey skips a customer challenge it cannot complete |
 | `b7f91ad` | Second review round: fifteen defects closed |
-| `fbe513c` | Third review round: nine defects closed (read this one) |
+| `fbe513c` | Third review round: nine defects closed |
+| `32796ba` | Operations read; merge restoring two dropped documentation commits |
+| `0819c7d` | Composition patch records the operations read (read this one) |
 
 ## What a buyer actually gets
 
@@ -52,8 +54,8 @@ and says plainly that payment received is not shipment.
 
 ## What is proven, and by what
 
-Local only, on Node 20.19.0: 2376 tests across commerce, providers, payments,
-member pages, adapters and lib; full `tsc --noEmit` exit 0. The provider in
+Local only, on Node 20.19.0: the full research surface, 14342 tests across 801
+files, with full `tsc --noEmit` exit 0. The provider in
 every test is the REAL `StripePaymentAdapter` driven over an in-test model of
 Stripe request idempotency, with deliberate faults (lost responses, 5xx, rate
 limits, declines). The browser provider surfaces are injected doubles.
@@ -90,7 +92,7 @@ touched a managed project.
    local commit, webhook redelivery and out-of-order events, cancellation and
    settlement, owner-only reads, account-switch isolation.
 4. **Independent acceptance** (a non-author reviewer). Scope
-   `5c52abb..fbe513c`. Nothing here is self-accepted.
+   `5c52abb..0819c7d`. Nothing here is self-accepted.
 5. **Recovery sweep and downstream outbox** (open). A scheduler that calls
    `executor.recover` for old parked executions needs a member-agnostic list
    function the SQL does not yet have. `onCommitted` now fires on the commit
@@ -180,6 +182,29 @@ are not formalities: this lane can hold a defect that no local test can reach.
 Consent is also now bound to the charge. `CheckoutRequest` gained an optional
 `expectedTotalCents`; when present the durable door refuses rather than charging
 an amount the page never showed.
+
+## What operations sees
+
+`GET /api/admin/research/orders/:orderId/payment-execution` answers, for the
+order an admin is already looking at: which execution owns its payment, the
+phase, the provider reference, when the first authorization was attempted,
+whether a local commit failed and why, whether money is known to have been
+taken, and one machine-readable next action. It is a read, it returns no secret
+and no payment-method reference, and it mounts through the same call as the
+customer doors when a `requireAdmin` guard is supplied. A recovery sweep for
+parked executions still needs a list-by-phase the SQL does not have; this closes
+the case where an operator is already looking at the order.
+
+## A process failure worth recording
+
+This worktree spent several hours on a DETACHED HEAD, most likely from a
+concurrent review agent's git operation, which also dropped two documentation
+commits off the branch tip. Every `git push` during that period updated the
+stale branch ref and reported success while pushing nothing, and the output was
+not checked. Three review rounds' worth of fixes existed only locally while
+being announced as pushed. The recovery merged origin back in first, so nothing
+was force-pushed and both documentation commits are intact. When an agent is
+working in the same tree, read the push output, not just its exit code.
 
 ## Three rounds, and what that means
 
