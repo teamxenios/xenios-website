@@ -4,11 +4,11 @@ Session `fable-durable-payment-20260909` (Claude, optional capacity, not the
 production executor). Branch `claude/durable-payment-port-20260909`, worktree
 `C:/Users/sboad/projects/fable-probes-20260908`, pinned Node 20.19.0.
 
-**Take `316a67c0393880ff963795ae9b45723073db666c` or later.** The integration
-owner cherry-picked this lane at `df5396b11b863322fd513c3691e5b3fd5279bdb0`;
-that tree contains three money defects an adversarial review found afterwards
-(capture-on-cancel, false cancellation, second-charge-on-refresh). They are
-fixed in `316a67c`, which applies on the same chain.
+**Take `b7f91ad3e8be085c1eca7a7490fb0ff9d5217d92` or later.** The integration
+owner cherry-picked this lane at `df5396b11b863322fd513c3691e5b3fd5279bdb0`.
+Three adversarial rounds have run since, and each found real money defects,
+including two rounds where a fix introduced a narrower version of the defect it
+was closing. Do not qualify `df5396b`, `316a67c` or `7fb98d8`.
 
 ## The chain
 
@@ -24,7 +24,11 @@ fixed in `316a67c`, which applies on the same chain.
 | `70ab791` | The member checkout page connected to the durable card door |
 | `1372969` | Composition patch proposal for the integration owner |
 | `df5396b` | Executable rehearsal package for the SQL candidate |
-| `316a67c` | Nine adversarial-review defects closed (read this one) |
+| `316a67c` | First review round: nine defects closed |
+| `fbdd08f` | SQL-faithful zero-capture evidence check |
+| `7fb98d8` | Two self-introduced regressions closed; connected-journey runner |
+| `af0743f` | The journey skips a customer challenge it cannot complete |
+| `b7f91ad` | Second review round: fifteen defects closed (read this one) |
 
 ## What a buyer actually gets
 
@@ -92,7 +96,39 @@ touched a managed project.
    transition for every door, but no commerce-lane order notifier exists to
    attach; that decision is the integration owner's.
 
-## The review that produced `316a67c`
+## The connected-journey runner
+
+`server/research/commerce/qualification/` is one runner with two bindings:
+LOCAL (in-memory stores and the scripted provider model) and MANAGED (the
+composed managed surface and the provider's test mode). The scenarios and their
+reconciliation are identical; only the binding changes, so the qualification run
+is a call rather than a hand-written journey. `assertQualificationTarget`
+refuses a live publishable or secret key, the production project, a malformed
+project ref, a missing webhook secret, absent or duplicate or non-uuid synthetic
+identities, and a missing owner approval, before any surface is constructed and
+with no override. A local receipt always reports `qualified: false` and
+`evidenceClass: local_scripted_transport`, and a scenario the binding cannot
+exercise is SKIPPED naming the missing capability rather than passed. Two are
+skipped by default: the local-commit-failure case, and the customer challenge,
+because the provider has no server-side API that finishes a 3DS challenge, so a
+managed binding needs a browser driver or a non-challenge test method.
+
+## Known and deliberate, for the integration owner to decide
+
+An order-level precondition violation at commit (order not capturable, total
+mismatch, a different payment reference) RAISES rather than parking, in both the
+SQL and the in-memory reference. A captured payment then waits in `captured` and
+the door answers 503 until an operator looks. A reviewer argued it should park
+with `local_commit_failure`. That is a change to the migration now frozen for
+rehearsal, so it is recorded here rather than diverged on one side.
+
+The cart applies ALL spendable store credit up to the subtotal regardless of the
+amount the buyer types, and `checkout.ts` uses the typed amount for the
+payment-method gate while the charge uses the cart's. The page now displays the
+server's figure so consent matches the charge, but the underlying inconsistency
+is a server contract question, not a display one.
+
+## The three review rounds
 
 Five independent lenses raised eighteen findings on the checkpoint; every
 finding that reached a verifier came back real, none refuted. All were fixed.
@@ -111,8 +147,20 @@ The three that moved money:
   while the answer was in flight minted a new key and let one cart be paid
   twice. The pointer is now written before the request leaves.
 
-A second adversarial pass over the fixes themselves is running; anything it
-confirms will land as a further commit on this branch.
+A second pass over those fixes found fifteen more, including that the first
+round's headline fix did not close its own defect: `cancel()` still ended with
+`run()`, so an "it is still authorized" answer from a failed provider cancel was
+recorded and immediately captured. The rule is now absolute: a claimed
+cancellation records exactly two truths, cancelled or captured, and every other
+answer leaves the row in `cancelling`, which nothing advances to a capture. The
+same pass found that a downstream notifier failure could answer 503 for a
+captured, recorded purchase; that the amount shown at consent deducted the
+credit the buyer typed while the server deducts the cart's; and that two paths
+minted a new idempotency key on a continuation 404, which is not proof nothing
+was created because the durable door persists the execution last.
+
+A third pass over `b7f91ad` is running. Anything it confirms lands on this
+branch, and the pattern so far says to expect something.
 
 ## Next command
 
