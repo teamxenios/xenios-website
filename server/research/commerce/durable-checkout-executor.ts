@@ -199,11 +199,22 @@ export function createDurableCheckoutExecutor(
       }
       if (proof.kind === "cancelled" && proof.providerReference !== reference) proof = { kind: "unknown" };
       if (proof.kind === "action_required" && proof.providerReference !== reference) proof = { kind: "unknown" };
-      // Whatever happened, the row must end up naming the payment we found, so
-      // a later attempt reads it back by reference rather than replaying a
-      // creation key that the provider may already have pruned.
-      if (proof.kind === "unknown") proof = { kind: "unknown", providerReference: reference };
-      if (proof.kind === "refused") proof = { kind: "unknown", providerReference: reference };
+    }
+    // A claimed cancellation may end in exactly two truths: the provider
+    // released the payment, or it had already taken the money. ANY other answer
+    // (still authorized, still awaiting the customer, uncertain, refused) leaves
+    // the execution in `cancelling`, and nothing advances that phase to a
+    // capture: not run(), which stops there, and not recover(), which resumes it
+    // as a cancellation. So a buyer who asked to cancel can never be charged by
+    // a later retry, status check or sweep. The next cancel() tries again.
+    //
+    // The cost is that a reference learned in THIS call is not persisted when
+    // the cancel did not conclude. That is the right trade: recording it would
+    // publish a phase an automatic path captures from. The next attempt
+    // re-learns it by replay inside the provider's retention, or reads it back
+    // when the row already carried it.
+    if (proof!.kind !== "cancelled" && proof!.kind !== "captured") {
+      return { kind: "pending", orderId: r.orderId, executionId: owned.executionId };
     }
     if (proof!.kind === "cancelled" && proof!.reason === undefined) proof = { ...proof!, reason: "customer" };
     const saved = await store.recordProvider(owned.executionId, owned.version, proof!);

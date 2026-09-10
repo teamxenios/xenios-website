@@ -156,16 +156,17 @@ describe("durable checkout coordinator", () => {
     }
   });
 
-  it("cancel after an attempt NEVER settles on a refused replay: a refusal of the replay is not evidence about the original payment", async () => {
+  it("cancel after an attempt NEVER settles on a refused replay, and never leaves a capturable phase", async () => {
     // definitiveNoEffect means "this replay call had no effect", not "no payment
     // was ever created". Rotated credentials or a disabled provider answer this
     // way, and settling would release the holds while an authorization stands.
     for (const definitiveNoEffect of [true, false]) {
       const h = harness({ attempted: true, reconcileAnswer: { kind: "refused", definitiveNoEffect } });
-      expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
-      // Recorded as UNKNOWN, not cancelled: the truth about the original payment is still unknown.
-      expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:unknown"]);
-      expect(h.calls.some((c) => c === "settle")).toBe(false);
+      // Nothing is settled and nothing is recorded: the execution waits in
+      // `cancelling`, which no automatic path advances to a capture.
+      expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("pending");
+      expect(h.calls).toEqual(["claim:cancelling", "reconcile"]);
+      expect(h.snapshot().phase).toBe("cancelling");
       expect(h.snapshot().settledAt).toBeNull();
     }
     // Only the provider's own cancelled read-back settles it.
@@ -216,6 +217,30 @@ describe("durable checkout coordinator", () => {
     expect(phases).not.toContain("authorized");
   });
 
+  it("a cancel the provider did not honour NEVER captures: the execution waits in cancelling and the next attempt retries", async () => {
+    // The provider refuses the cancel and reports the payment still authorized.
+    const stillAuthorized: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_live", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
+    const h = harness({ initial: "authorized", attempted: true, reference: "pi_live", cancelAnswer: stillAuthorized });
+    const outcome = await h.cancel(base.memberId, base.requestKey);
+    expect(outcome.kind).toBe("pending");
+    expect(h.calls).not.toContain("capture");
+    expect(h.calls).not.toContain("commit");
+    expect(h.snapshot().phase).toBe("cancelling");
+    // And no automatic path may capture it from there: neither a status check
+    // (recover) nor an identical retry (run) turns a cancellation into a charge.
+    const recovered = await h.recover(base.memberId, base.requestKey);
+    expect(recovered.kind).toBe("pending");
+    expect(h.calls).not.toContain("capture");
+    const rerun = await h.run(base.memberId, base.requestKey);
+    expect(rerun.kind).toBe("pending");
+    expect(h.calls).not.toContain("capture");
+    // An uncertain cancel behaves the same way.
+    const uncertain = harness({ initial: "authorized", attempted: true, reference: "pi_live", cancelAnswer: { kind: "unknown" } });
+    expect((await uncertain.cancel(base.memberId, base.requestKey)).kind).toBe("pending");
+    expect(uncertain.snapshot().phase).toBe("cancelling");
+    expect(uncertain.calls).not.toContain("capture");
+  });
+
   it("resumes a cancellation whose worker died instead of stranding the order, the holds and the money", async () => {
     // The record was claimed into `cancelling` and the worker never came back.
     const h = harness({
@@ -237,18 +262,25 @@ describe("durable checkout coordinator", () => {
     expect(viaRecover.calls).not.toContain("capture");
   });
 
-  it("a cancel that fails after learning the reference still leaves the reference on the record, so later attempts read back instead of replaying", async () => {
+  it("a cancel that does not conclude records NOTHING, so no automatic path can capture from it", async () => {
     const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
     const h = harness({ attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "unknown" } });
-    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
-    expect(h.snapshot().providerReference).toBe("pi_learned");
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("pending");
+    // Recording the learned reference would publish a capturable phase, which is
+    // exactly how a cancellation used to end in a charge. The row waits in
+    // `cancelling` instead, and the next attempt reconciles again.
+    expect(h.snapshot().phase).toBe("cancelling");
     expect(h.snapshot().settledAt).toBeNull();
+    expect(h.calls).not.toContain("capture");
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("pending");
+    expect(h.calls.filter((c) => c === "reconcile").length).toBe(2);
   });
-  it("cancel with no provider reference and an uncertain provider answer stays in reconciliation: neither cancelled nor charged is claimed", async () => {
+  it("cancel with no provider reference and an uncertain provider answer claims neither cancellation nor charge", async () => {
     const h = harness({ attempted: true, reconcileAnswer: { kind: "unknown" } });
-    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
-    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:unknown"]);
-    // Never attempted: nothing to ask the provider about.
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("pending");
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile"]);
+    expect(h.snapshot().phase).toBe("cancelling");
+    // Never attempted: nothing to ask the provider about, so it cancels outright.
     const fresh = harness({ reconcileAnswer: { kind: "unknown" } });
     expect((await fresh.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
     expect(fresh.calls).toEqual(["claim:cancelling", "record:cancelled", "settle"]);

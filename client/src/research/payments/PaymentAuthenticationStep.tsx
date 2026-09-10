@@ -111,6 +111,12 @@ export function PaymentAuthenticationStep({ memberToken, requestKey, authenticat
     [stillCurrent],
   );
 
+  const reload = useCallback(() => {
+    const token = memberToken;
+    setState({ kind: "loading" });
+    void loadCheckoutContinuation(token, requestKey).then((result) => apply(token, result, null));
+  }, [memberToken, requestKey, apply]);
+
   useEffect(() => {
     const token = memberToken;
     setState({ kind: "loading" });
@@ -171,7 +177,9 @@ export function PaymentAuthenticationStep({ memberToken, requestKey, authenticat
 
   if (state.kind === "loading") return <ResearchLoadingState label="Checking your payment" />;
   if (state.kind === "unauthorized") return <ResearchErrorState message="Please sign in again to finish this payment." />;
-  if (state.kind === "error") return <ResearchErrorState message={state.message} />;
+  // A dead end here is a buyer stuck on a payment screen with nothing to do, so
+  // the error state always offers another look.
+  if (state.kind === "error") return <ResearchErrorState message={state.message} onRetry={reload} />;
 
   const { view, busy, note } = state;
   const presentation = STATE_LABELS[view.state];
