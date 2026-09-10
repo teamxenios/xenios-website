@@ -11,6 +11,7 @@ import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { verifyStripeSignature } from "../../providers/payment";
 import { assertQualificationTarget, QualificationRefusal, REQUIRED_SCENARIOS } from "./connected-checkout-journey";
+import { assertDurableSurfaceMounted, requestFactory } from "./managed-journey-run";
 import {
   createManagedJourneySurface,
   type DatabasePort,
@@ -157,17 +158,20 @@ describe("no secret crosses a boundary", () => {
 
 // ---------------------------------------------------------------------------
 
-function harness(options: { intents?: Array<Record<string, unknown>>; row?: Record<string, unknown> | null; ports?: Partial<{ browser: unknown; process: unknown; fault: unknown }> } = {}) {
+function harness(options: { intents?: Array<Record<string, unknown>>; row?: Record<string, unknown> | null; answer?: (input: { method: string; url: string }) => HttpResponse; ports?: Partial<{ browser: unknown; process: unknown; fault: unknown }> } = {}) {
   const config = readManagedJourneyConfig(env());
   const calls: Array<{ method: string; url: string; headers: Record<string, string>; body?: unknown; raw?: string }> = [];
   const http: HttpPort = {
     async request(input): Promise<HttpResponse> {
       calls.push(input);
+      if (options.answer) return options.answer(input);
       if (input.url.endsWith("/durable")) {
         return {
           status: 200,
           headers: {},
-          body: { ok: true, checkout: { requestKey: "rk-1", orderId: "order-1", state: "authorized", idempotent: false } },
+          // "completed" is a state the submit door can actually emit.
+          // "authorized" is an execution PHASE and never appears on the wire.
+          body: { ok: true, checkout: { requestKey: "rk-1", orderId: "order-1", state: "completed", idempotent: false } },
         };
       }
       if (input.url.includes("/continuation")) {
@@ -177,10 +181,13 @@ function harness(options: { intents?: Array<Record<string, unknown>>; row?: Reco
           body: {
             ok: true,
             continuation: {
-              state: "action_required",
+              // The continuation door maps the action_required PHASE to this
+              // state word. There is no "action_required" state on the wire.
+              state: "authentication_required",
               orderId: "order-1",
-              // The route really does return this. It must not travel further.
-              authentication: { clientSecret: "pi_123_secret_THISMUSTNOTLEAK" },
+              // The route really does return this, with both fields. It must
+              // not travel further than the binding.
+              authentication: { providerReference: "pi_123", clientSecret: "pi_123_secret_THISMUSTNOTLEAK" },
             },
           },
         };
@@ -363,6 +370,210 @@ describe("it refuses a record it cannot understand", () => {
   it("returns null for an order that is not there, rather than inventing one", async () => {
     const h = harness({ row: null });
     expect(await h.binding.surface.readOrder("order-1")).toBeNull();
+  });
+});
+
+describe("it will not read a refusal as an answer", () => {
+  it("treats ok:true with no payload as unreadable, on both doors", async () => {
+    // Every commerce route wraps success as {ok:true, ...}. A path collision or
+    // a shadowing registration therefore answers ok:true with nothing in it,
+    // and several scenarios assert only .ok === true.
+    const h = harness({ answer: () => ({ status: 200, headers: {}, body: { ok: true } }) });
+    const submitted = await h.binding.surface.submit(h.config.members[0]!, { idempotencyKey: "k" } as never);
+    expect(submitted.ok).toBe(false);
+    expect(submitted.code).toContain("ok_without_checkout");
+    const read = await h.binding.surface.status(h.config.members[0]!, "rk-1");
+    expect(read.ok).toBe(false);
+    expect(read.code).toContain("ok_without_continuation");
+  });
+
+  it("distinguishes a guard refusal from a missing route, instead of calling both unreadable", async () => {
+    const guard = harness({ answer: () => ({ status: 401, headers: {}, body: { ok: false, message: "Sign in required." } }) });
+    expect((await guard.binding.surface.status(guard.config.members[0]!, "rk-1")).code).toBe("http_401");
+    const missing = harness({ answer: () => ({ status: 404, headers: {}, body: { message: "Not Found" } }) });
+    expect((await missing.binding.surface.cancel(missing.config.members[0]!, "rk-1")).code).toBe("http_404");
+  });
+
+  it("carries the cancellation reason, so a decline cannot satisfy a buyer cancellation", async () => {
+    const h = harness({
+      answer: () => ({
+        status: 200,
+        headers: {},
+        body: { ok: true, continuation: { state: "cancelled", orderId: "order-1", cancellation: { reason: "declined" } } },
+      }),
+    });
+    const result = await h.binding.surface.cancel(h.config.members[0]!, "rk-1");
+    expect(result).toMatchObject({ ok: true, state: "cancelled", cancellation: { reason: "declined" } });
+  });
+});
+
+describe("the webhook envelope carries the field the provider actually reads", () => {
+  const bodyOf = (calls: Array<{ url: string; raw?: string }>) =>
+    JSON.parse(calls.find((c) => c.url.endsWith("/webhooks/payment"))!.raw!) as {
+      id: string;
+      created: number;
+      account?: string;
+      data: { object: Record<string, unknown> };
+    };
+
+  it("puts an authorization amount in amount_capturable, not in amount", async () => {
+    const h = harness();
+    await h.binding.surface.deliverWebhook({
+      eventId: "evt_a",
+      eventType: "payment.authorized",
+      providerReference: "pi_1",
+      orderId: "order-1",
+      memberId: h.config.members[0]!,
+      amountCents: 21_000,
+    });
+    expect(bodyOf(h.calls).data.object.amount_capturable).toBe(21_000);
+  });
+
+  it("puts a capture amount in amount_received", async () => {
+    const h = harness();
+    await h.binding.surface.deliverWebhook({
+      eventId: "evt_c",
+      eventType: "payment.captured",
+      providerReference: "pi_1",
+      orderId: "order-1",
+      memberId: h.config.members[0]!,
+      amountCents: 21_000,
+    });
+    // The old code tested for a Stripe event-type string the journey never
+    // sends, so this was always zero and every capture event was isolated.
+    expect(bodyOf(h.calls).data.object.amount_received).toBe(21_000);
+  });
+
+  it("redelivers the SAME bytes, so the replay digest matches", async () => {
+    const h = harness();
+    const event = {
+      eventId: "evt_ooo_2",
+      eventType: "payment.captured",
+      providerReference: "pi_1",
+      orderId: "order-1",
+      memberId: h.config.members[0]!,
+      amountCents: 21_000,
+    };
+    await h.binding.surface.deliverWebhook(event);
+    await h.binding.surface.deliverWebhook(event);
+    const bodies = h.calls.filter((c) => c.url.endsWith("/webhooks/payment")).map((c) => c.raw);
+    expect(bodies).toHaveLength(2);
+    // Replay identity is a digest of the body. A fresh `created` would make the
+    // same event id arrive with a different digest and be refused as a conflict.
+    expect(bodies[0]).toBe(bodies[1]);
+  });
+
+  it("omits the account key entirely for a platform-account target", async () => {
+    const h = harness();
+    await h.binding.surface.deliverWebhook({
+      eventId: "evt_p",
+      eventType: "payment.captured",
+      providerReference: "pi_1",
+      orderId: "order-1",
+      memberId: h.config.members[0]!,
+      amountCents: 1,
+    });
+    // The adapter compares the event's account with the one it is bound to. A
+    // null binding must be matched by an ABSENT key, not a null one.
+    expect("account" in bodyOf(h.calls)).toBe(false);
+  });
+});
+
+describe("canonical reads name the columns that exist", () => {
+  it("reads the order's payment reference from payment_reference", async () => {
+    const h = harness({
+      row: {
+        id: "order-1",
+        member_id: "m",
+        state: "payment_captured",
+        total_cents: 21_000,
+        payment_reference: "pi_real",
+        provider_reference: "pi_wrong_table",
+        refunded_cents: 0,
+      },
+    });
+    const order = await h.binding.surface.readOrder("order-1");
+    // research_orders names it payment_reference. provider_reference is a real
+    // column name on two OTHER tables.
+    expect(order?.providerReference).toBe("pi_real");
+  });
+
+  it("asks for named columns rather than everything, so a wrong name is loud", async () => {
+    const asked: string[] = [];
+    const config = readManagedJourneyConfig(env());
+    const binding = createManagedJourneySurface(config, {
+      http: { async request() { return { status: 200, headers: {}, body: { ok: true } }; } },
+      database: {
+        origin: () => config.databaseUrl,
+        overHttp: () => true,
+        async selectOne(_table, columns) {
+          asked.push(columns);
+          return null;
+        },
+      },
+      provider: { mode: () => "test", accountId: () => null, async retrieveIntent() { return null; }, async listIntentsSince() { return []; } },
+    });
+    await binding.surface.readOrder("order-1");
+    await binding.surface.readExecution(config.members[0]!, "rk-1");
+    expect(asked).toHaveLength(2);
+    for (const list of asked) {
+      expect(list).not.toBe("*");
+      expect(list).toContain("member_id");
+    }
+    expect(asked[0]).toContain("payment_reference");
+  });
+
+  it("throws on an execution row it cannot interpret instead of calling it absent", async () => {
+    const h = harness({ row: { id: "e1", phase: "teleported", currency: "usd", member_id: "m" } });
+    // Returning null there would make the scenarios that guard on
+    // execution?.providerReference quietly stop consulting the provider.
+    await expect(h.binding.surface.readExecution(h.config.members[0]!, "rk-1")).rejects.toThrow(/cannot interpret/);
+  });
+});
+
+describe("the request the journey submits is a complete one", () => {
+  it("carries every field the submit path requires", () => {
+    const config = readManagedJourneyConfig(env());
+    const request = requestFactory(config)();
+    expect(request.shippingAddress).toMatchObject({ country: "US" });
+    expect(typeof request.shippingService).toBe("string");
+    expect(request.acceptedAgreementKeys).toEqual(["XR-COM-001", "XR-COM-007", "XR-COM-018"]);
+    expect(request.paymentMethodReference).toBe("pm_card_visa");
+    expect(typeof request.idempotencyKey).toBe("string");
+  });
+
+  it("varies the idempotency key per call, because the runner holds one request to prove convergence", () => {
+    const factory = requestFactory(readManagedJourneyConfig(env()));
+    const keys = [factory().idempotencyKey, factory().idempotencyKey, factory().idempotencyKey];
+    expect(new Set(keys).size).toBe(3);
+  });
+
+  it("lets a scenario override the card without losing the rest of the request", () => {
+    const request = requestFactory(readManagedJourneyConfig(env()))({ paymentMethodReference: "pm_card_chargeDeclined" });
+    expect(request.paymentMethodReference).toBe("pm_card_chargeDeclined");
+    expect(request.shippingAddress).toBeDefined();
+    expect(request.acceptedAgreementKeys).toHaveLength(3);
+  });
+});
+
+describe("it refuses to start against an application with no durable surface", () => {
+  it("names the missing mount rather than failing thirteen scenarios", async () => {
+    const config = readManagedJourneyConfig(env());
+    const http: HttpPort = { async request() { return { status: 404, headers: {}, body: { message: "Not Found" } }; } };
+    await expect(assertDurableSurfaceMounted(http, config)).rejects.toThrow(ManagedJourneyNotRun);
+    await expect(assertDurableSurfaceMounted(http, config)).rejects.toThrow(/not wired into the composition root/);
+  });
+
+  it("accepts a mounted door that merely refuses the request", async () => {
+    const config = readManagedJourneyConfig(env());
+    const http: HttpPort = { async request() { return { status: 401, headers: {}, body: { ok: false } }; } };
+    await expect(assertDurableSurfaceMounted(http, config)).resolves.toBeUndefined();
+  });
+
+  it("says the application is unreachable when it is", async () => {
+    const config = readManagedJourneyConfig(env());
+    const http: HttpPort = { async request() { throw new Error("ECONNREFUSED"); } };
+    await expect(assertDurableSurfaceMounted(http, config)).rejects.toThrow(/did not answer/);
   });
 });
 

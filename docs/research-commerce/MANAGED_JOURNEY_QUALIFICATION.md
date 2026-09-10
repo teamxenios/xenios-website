@@ -55,7 +55,11 @@ shape.
 | `XENIOS_QUALIFY_CHROME_PATH` | no | `browserDrivenChallenge: false`; the challenge scenario SKIPS |
 | `XENIOS_QUALIFY_RESTART_COMMAND` | no | `processRestart: false`; the restart scenario SKIPS |
 | `XENIOS_QUALIFY_FAULT_CONTROL_URL` | no | the two fault scenarios SKIP. Must be loopback. |
-| `XENIOS_QUALIFY_PM_DECLINE` / `_NON_CHALLENGE` / `_CHALLENGE` | no | the provider's documented test methods are used |
+| `XENIOS_QUALIFY_PM_ORDINARY` / `_DECLINE` / `_NON_CHALLENGE` / `_CHALLENGE` | no | the provider's documented test methods are used |
+
+The ordinary card matters. The other three all decline or demand
+authentication, so a run without one proves an authentication-required payment
+everywhere it meant to prove an ordinary successful one.
 
 Names and modes only. Never write a real value into a document, a commit, a
 chat message or a ticket.
@@ -91,6 +95,15 @@ Two consequences worth knowing before planning a run:
   scenarios depend on the browser, because `process_restart_recovery` prefers
   the challenge method whenever one is declared.
 
+## Before it starts
+
+One unauthenticated request to the durable door, to tell an unmounted surface
+from a refused request. A mounted door answers 401 through its guard; an
+unmounted path answers the application's own 404, which carries neither `ok`
+nor `code`. Only the second is a NOT_RUN, and it is named as
+`durable_checkout_not_mounted` rather than surfacing as thirteen different
+symptoms of one missing mount.
+
 ## The browser, and the network boundary
 
 The repository's evidence harness deliberately seals its browser to loopback: a
@@ -99,12 +112,34 @@ hosts. A hosted challenge lives at the provider, so driving one requires opening
 that boundary for the provider's domains.
 
 That is a decision to make explicitly, not a default. It is why the browser port
-exists only when a path is configured, and why nothing in the harness opens the
-boundary on its own.
+exists only when a path is configured.
+
+The driver lifts exactly one thing and says so: the shared launcher passes an
+unconditional `--proxy-server=http://127.0.0.1:9`, a discard port that kills
+every request including the top-level navigation, and the driver appends a
+later `--proxy-server=direct://` which overrides it. It does NOT call
+`enforceNetworkBoundary`, because that pins one origin policy for the life of
+the page and a challenge is inherently multi-origin: the provider's page hands
+off to the issuing bank. A boundary that cannot express the journey would only
+fail it for the wrong reason.
+
+If the provider's hosted page offers no control the driver recognises, it
+throws. A challenge nobody completed is a failed scenario, never a quiet pass.
 
 The challenge URL is never logged: it carries the payment's client secret.
 
 ## The fault seam
+
+`qualification-fault-seam.ts` is the application side. It wraps the provider
+transport and the canonical order save, and it serves a loopback control
+channel. The lost-response fault drops the response of the next write only
+AFTER the provider processed it, which is the dangerous case: the effect exists
+and the caller does not know. Every fault is one-shot, so an armed fault cannot
+leak into the scenario after it.
+
+It refuses to construct when `NODE_ENV` is production, its control server binds
+to 127.0.0.1 and checks the socket rather than a header, and the harness refuses
+a non-loopback control URL. Nothing in the application imports it.
 
 `lost_response_recovery` and `local_commit_failure_then_reconciliation` need the
 application to fail on purpose. The harness will not reach into a running

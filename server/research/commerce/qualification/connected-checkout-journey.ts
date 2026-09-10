@@ -176,6 +176,12 @@ export interface JourneyContinuation {
   orderId?: string;
   /** Whether the provider offered a customer-action secret. The secret itself never leaves the surface. */
   hasAuthenticationSecret?: boolean;
+  /**
+   * Why it was cancelled, when it was. A buyer's cancellation and a provider
+   * decline both end in `cancelled`, so without this the buyer-cancellation
+   * scenario cannot tell which one it proved.
+   */
+  cancellation?: { reason: string };
 }
 
 /** The provider's own truth about one payment. */
@@ -595,6 +601,12 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
       expect(placed.state === "authentication_required" || placed.state === "pending", "an unpaid checkout is waiting");
       const cancelled = await surface.cancel(member, req.idempotencyKey);
       expect(cancelled.state === "cancelled", "the buyer's cancellation is honoured");
+      // A decline also ends in `cancelled`. This scenario is about the BUYER
+      // cancelling, so the recorded reason has to say so.
+      expect(
+        cancelled.cancellation?.reason === "customer",
+        `the cancellation is recorded as the customer's (saw ${cancelled.cancellation?.reason ?? "no reason"})`,
+      );
       const execution = await surface.readExecution(member, req.idempotencyKey);
       expect(execution?.settledAt != null, "the local settlement completed");
       const order = await surface.readOrder(placed.orderId!);
@@ -654,7 +666,12 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
       const owner = inputs.memberFor("owner_only_reads");
       const other = inputs.memberFor("account_switch_isolation");
       const req = request({ paymentMethodReference: inputs.nonChallengePaymentMethod });
-      await surface.submit(owner, req);
+      const placed = await surface.submit(owner, req);
+      // Without this the three refusals below hold for a checkout that was
+      // never created: an unknown request key answers `not_found` to everyone,
+      // so a refused submit would let this scenario pass having proven no
+      // isolation at all.
+      expect(placed.ok === true && placed.orderId != null, "the owner's checkout exists to be isolated");
       const stranger = await surface.status(other, req.idempotencyKey);
       expect(stranger.ok === false && stranger.code === "not_found", "another account cannot read this checkout");
       const strangerContinue = await surface.continue(other, req.idempotencyKey);

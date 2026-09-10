@@ -28,7 +28,7 @@ import type { CheckoutRequest } from "@shared/research/commerce-api";
 import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
 import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type { OrderRecord } from "../orders";
-import { rowToExecution, type CheckoutExecutionRow } from "../persistence/checkout-executions-store";
+import { EXECUTION_COLUMNS, rowToExecution, type CheckoutExecutionRow } from "../persistence/checkout-executions-store";
 import type {
   JourneyCapabilities,
   JourneyContinuation,
@@ -118,6 +118,38 @@ const DURABLE_CHECKOUT_PATH = "/api/research/checkout/durable";
 const CONTINUATION_BASE = "/api/research/checkout/executions";
 const WEBHOOK_PATH = "/api/research/webhooks/payment";
 
+/**
+ * Exactly the columns readOrder maps. Selecting "*" instead is what makes a
+ * wrong column name silent: PostgREST answers 400 for an unknown column in a
+ * select list, but returns the row without the key when the list is "*", and
+ * `?? null` then turns a typo into a plausible-looking null.
+ */
+const ORDER_COLUMNS = [
+  "id",
+  "member_id",
+  "state",
+  "subtotal_cents",
+  "shipping_cents",
+  "store_credit_applied_cents",
+  "total_cents",
+  "authorized_amount_cents",
+  "captured_amount_cents",
+  "refunded_cents",
+  "payment_reference",
+  "checkout_idempotency_key",
+  "last_idempotency_key",
+  "review_triggers",
+  "created_at",
+  "updated_at",
+].join(", ");
+
+/** Which amount field the provider's own translation reads, per event type. */
+const WEBHOOK_AMOUNT_FIELD: Readonly<Record<string, string>> = Object.freeze({
+  "payment.authorized": "amount_capturable",
+  "payment.captured": "amount_received",
+  "payment.refunded": "amount_refunded",
+});
+
 /** The provider's status words in the domain vocabulary the runner expects. */
 const INTENT_STATUS: Readonly<Record<string, string>> = Object.freeze({
   requires_payment_method: "pending",
@@ -148,17 +180,29 @@ function num(record: Record<string, unknown> | null, key: string): number {
  * must never reach a receipt, an observation or a log, so only the fact that
  * one was offered crosses this boundary.
  */
-function continuationOf(body: unknown): JourneyContinuation {
-  const envelope = asRecord(body);
+function continuationOf(response: HttpResponse): JourneyContinuation {
+  const envelope = asRecord(response.body);
   if (envelope?.ok !== true) {
-    return { ok: false, code: str(envelope, "code") ?? "unreadable_response" };
+    // A refusal that carries no code is still distinguishable by its status. A
+    // guard's 401 and an unmounted path's 404 must not read as the same word.
+    return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
   }
   const continuation = asRecord(envelope.continuation);
+  if (continuation === null) {
+    // `{ok:true}` with no payload is not this door answering. Every commerce
+    // route wraps success the same way, so a path collision or a shadowing
+    // registration answers ok:true with nothing in it, and a scenario that
+    // asserts only `.ok === true` would pass on it.
+    return { ok: false, code: `ok_without_continuation_http_${response.status}` };
+  }
+  const cancellation = asRecord(continuation.cancellation);
+  const reason = str(cancellation, "reason");
   return {
     ok: true,
     state: (str(continuation, "state") ?? undefined) as JourneyContinuation["state"],
     orderId: str(continuation, "orderId") ?? undefined,
-    hasAuthenticationSecret: asRecord(continuation?.authentication) !== null,
+    hasAuthenticationSecret: asRecord(continuation.authentication) !== null,
+    ...(reason ? { cancellation: { reason } } : {}),
   };
 }
 
@@ -184,6 +228,8 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
   const runStartedAtSeconds = Math.floor(now().getTime() / 1000);
   const runMembers = new Set(config.members);
   const seenReferences = new Set<string>();
+  /** The exact bytes delivered per event id, so a redelivery is a REdelivery. */
+  const deliveredBodies = new Map<string, string>();
 
   if (config.capabilities.browserDrivenChallenge && !ports.browser) {
     throw new ManagedJourneyNotRun("browser_port_missing", "a browser path is configured but no browser port was supplied");
@@ -241,6 +287,9 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         return { ok: false, code: str(envelope, "code") ?? `http_${response.status}` };
       }
       const checkout = asRecord(envelope.checkout);
+      if (checkout === null) {
+        return { ok: false, code: `ok_without_checkout_http_${response.status}` };
+      }
       const result: JourneySubmitResult = {
         ok: true,
         requestKey: str(checkout, "requestKey") ?? undefined,
@@ -259,7 +308,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         url: `${config.baseUrl}${CONTINUATION_BASE}/${encodeURIComponent(requestKey)}/continuation`,
         headers: asMember(memberId),
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     async continue(memberId, requestKey) {
@@ -269,7 +318,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         headers: asMember(memberId),
         body: {},
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     async cancel(memberId, requestKey) {
@@ -279,7 +328,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
         headers: asMember(memberId),
         body: {},
       });
-      return continuationOf(response.body);
+      return continuationOf(response);
     },
 
     // A test method that authenticates straight through needs no browser: the
@@ -318,21 +367,41 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
       // A real provider event body, signed with the endpoint's own secret, in
       // the provider's own signature scheme, posted to the mounted route. The
       // route verifies it exactly as it verifies a delivered one.
-      const payload = JSON.stringify({
-        id: input.eventId,
-        type: input.eventType,
-        created: Math.floor(now().getTime() / 1000),
-        data: {
-          object: {
-            id: input.providerReference,
-            object: "payment_intent",
-            currency: "usd",
-            amount: input.amountCents,
-            amount_received: input.eventType === "payment_intent.succeeded" ? input.amountCents : 0,
-            metadata: { orderId: input.orderId, memberId: input.memberId },
+      // A REDELIVERY must be the same bytes. Replay identity is a digest of the
+      // body, so re-synthesising it with a fresh `created` makes the same event
+      // id arrive with a different digest, which the inbox correctly refuses as
+      // a conflict; the redelivery scenario would then fail for the wrong
+      // reason.
+      let payload = deliveredBodies.get(input.eventId);
+      if (payload === undefined) {
+        const account = ports.provider.accountId();
+        const amountField = WEBHOOK_AMOUNT_FIELD[input.eventType] ?? "amount_received";
+        payload = JSON.stringify({
+          id: input.eventId,
+          type: input.eventType,
+          created: Math.floor(now().getTime() / 1000),
+          // Present only for a connected account. The adapter refuses a delivery
+          // whose account does not equal the one it is bound to, and a null
+          // binding must be matched by an ABSENT key, not by a null one.
+          ...(account === null ? {} : { account }),
+          data: {
+            object: {
+              id: input.providerReference,
+              object: "payment_intent",
+              currency: "usd",
+              amount: input.amountCents,
+              // The provider's translation reads ONE field per event type, and
+              // it is not `amount`. Sending the wrong one makes the amount read
+              // as zero or undefined, the binding isolate the event, and the
+              // route still answer 200, so the scenario passes having applied
+              // nothing.
+              [amountField]: input.amountCents,
+              metadata: { orderId: input.orderId, memberId: input.memberId },
+            },
           },
-        },
-      });
+        });
+        deliveredBodies.set(input.eventId, payload);
+      }
       const timestamp = Math.floor(now().getTime() / 1000);
       const signature = createHmac("sha256", config.secrets.webhookSecret()).update(`${timestamp}.${payload}`).digest("hex");
       const response = await ports.http.request({
@@ -348,7 +417,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
     },
 
     async readOrder(orderId) {
-      const row = await ports.database.selectOne("research_orders", "*", { id: orderId });
+      const row = await ports.database.selectOne("research_orders", ORDER_COLUMNS, { id: orderId });
       if (!row) return null;
       // Only the fields the journey reconciles. A customer row never travels
       // further than this function.
@@ -370,7 +439,9 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
           storeCreditAppliedCents: Number(row.store_credit_applied_cents ?? 0),
           totalCents: Number(row.total_cents ?? 0),
         },
-        providerReference: (row.provider_reference as string | null) ?? null,
+        // research_orders names this column `payment_reference`. There IS a
+        // `provider_reference` column, on two OTHER tables.
+        providerReference: (row.payment_reference as string | null) ?? null,
         authorizedAmountCents: row.authorized_amount_cents === null ? undefined : Number(row.authorized_amount_cents ?? 0),
         capturedAmountCents: row.captured_amount_cents === null ? undefined : Number(row.captured_amount_cents ?? 0),
         refundedCents: Number(row.refunded_cents ?? 0),
@@ -383,13 +454,19 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
     },
 
     async readExecution(memberId, requestKey): Promise<CheckoutExecutionRecord | null> {
-      const row = await ports.database.selectOne("research_checkout_executions", "*", {
+      const row = await ports.database.selectOne("research_checkout_executions", EXECUTION_COLUMNS, {
         member_id: memberId,
         request_key: requestKey,
       });
       if (!row) return null;
       const record = rowToExecution(row as unknown as CheckoutExecutionRow);
-      remember(record?.providerReference);
+      if (record === null) {
+        // A row that exists but this build cannot interpret is NOT absence.
+        // Returning null there makes the scenarios that guard on
+        // `execution?.providerReference` quietly stop checking the provider.
+        throw new Error("a checkout execution row exists but this build cannot interpret it");
+      }
+      remember(record.providerReference);
       return record;
     },
 

@@ -32,6 +32,7 @@ export const MANAGED_JOURNEY_ENV = Object.freeze({
   /** The owner's recorded approval digest for this exact target. */
   ownerApproval: "XENIOS_QUALIFY_OWNER_APPROVAL_SHA256",
   /** Provider test payment methods. Defaults are the provider's documented ones. */
+  ordinaryPaymentMethod: "XENIOS_QUALIFY_PM_ORDINARY",
   decliningPaymentMethod: "XENIOS_QUALIFY_PM_DECLINE",
   nonChallengePaymentMethod: "XENIOS_QUALIFY_PM_NON_CHALLENGE",
   challengePaymentMethod: "XENIOS_QUALIFY_PM_CHALLENGE",
@@ -48,9 +49,32 @@ export const MANAGED_JOURNEY_ENV = Object.freeze({
 } as const);
 
 export const DEFAULT_PAYMENT_METHODS = Object.freeze({
+  /**
+   * A card that simply authorizes. The other three all decline or demand
+   * authentication, so without this every scenario that wants an ordinary
+   * successful payment gets an authentication-required one instead and proves
+   * something other than what it claims.
+   */
+  ordinary: "pm_card_visa",
   decline: "pm_card_chargeDeclined",
   nonChallenge: "pm_card_authenticationRequired",
   challenge: "pm_card_authenticationRequiredChallenge",
+});
+
+/**
+ * The agreement keys a checkout must present. These are the deployment's, not
+ * an invention: the cart declares them and the gate refuses a submit that does
+ * not carry every one.
+ */
+export const DEFAULT_AGREEMENT_KEYS: readonly string[] = Object.freeze(["XR-COM-001", "XR-COM-007", "XR-COM-018"]);
+
+/** A synthetic, deliverable US address. Never a real customer's. */
+export const DEFAULT_SHIPPING_ADDRESS = Object.freeze({
+  line1: "1 Qualification Way",
+  city: "Austin",
+  state: "TX",
+  postalCode: "78701",
+  country: "US" as const,
 });
 
 /** Never construct one of these by hand; use `readManagedJourneyConfig`. */
@@ -68,7 +92,13 @@ export interface ManagedJourneyConfig {
   publishableKeyMode: "test";
   members: readonly string[];
   memberFor(scenario: ScenarioName): string;
-  paymentMethods: { decline: string; nonChallenge: string; challenge: string };
+  paymentMethods: { ordinary: string; decline: string; nonChallenge: string; challenge: string };
+  /** What every request in the run carries. */
+  requestDefaults: {
+    acceptedAgreementKeys: readonly string[];
+    shippingAddress: { line1: string; line2?: string; city: string; state: string; postalCode: string; country: "US" };
+    shippingService: string;
+  };
   capabilities: JourneyCapabilities;
   chromePath: string | null;
   restartCommand: string | null;
@@ -256,9 +286,15 @@ export function readManagedJourneyConfig(env: Record<string, string | undefined>
       return ids[slot % ids.length]!;
     },
     paymentMethods: {
+      ordinary: (env[E.ordinaryPaymentMethod] ?? "").trim() || DEFAULT_PAYMENT_METHODS.ordinary,
       decline: (env[E.decliningPaymentMethod] ?? "").trim() || DEFAULT_PAYMENT_METHODS.decline,
       nonChallenge: (env[E.nonChallengePaymentMethod] ?? "").trim() || DEFAULT_PAYMENT_METHODS.nonChallenge,
       challenge: (env[E.challengePaymentMethod] ?? "").trim() || DEFAULT_PAYMENT_METHODS.challenge,
+    },
+    requestDefaults: {
+      acceptedAgreementKeys: [...DEFAULT_AGREEMENT_KEYS],
+      shippingAddress: { ...DEFAULT_SHIPPING_ADDRESS },
+      shippingService: "standard",
     },
     capabilities: {
       // Declared from what is CONFIGURED, never assumed. A capability that is
@@ -293,6 +329,7 @@ export function describeConfig(config: ManagedJourneyConfig): Record<string, unk
     databaseUrl: config.databaseUrl,
     syntheticMemberCount: config.members.length,
     paymentMethods: config.paymentMethods,
+    requestDefaults: config.requestDefaults,
     capabilities: config.capabilities,
     browser: config.chromePath === null ? "not configured" : "configured",
     restart: config.restartCommand === null ? "not configured" : "configured",

@@ -20,6 +20,7 @@ import {
 import {
   createManagedJourneySurface,
   type BrowserPort,
+  type HttpResponse,
   type DatabasePort,
   type FaultPort,
   type HttpPort,
@@ -184,59 +185,159 @@ export function createFaultPort(config: ManagedJourneyConfig): FaultPort | undef
  * computed path so the qualification harness stays out of the application's
  * compiled program.
  *
- * IMPORTANT: the repository's evidence harness deliberately seals its browser
- * to loopback (a closed proxy, a null host-resolver rule, and request blocking
- * for off-origin hosts). A hosted challenge lives at the provider, so this
- * launcher must be run with that boundary opened for the provider's domains
- * only. That is a decision to make explicitly, not a default, which is why
- * this port exists only when a browser path is configured.
+ * THE NETWORK BOUNDARY. The shared launcher passes an unconditional
+ * `--proxy-server=http://127.0.0.1:9`, which is a discard port: every request,
+ * including the top-level navigation, dies there. A hosted challenge is
+ * off-host, so a run that needs one must lift that. `extraArgs` is appended
+ * after the built-in flags, so a later `--proxy-server=direct://` overrides it.
+ * That is a deliberate, narrow relaxation for this one purpose, and this
+ * function is the only place in the repository that does it.
+ *
+ * `enforceNetworkBoundary` is NOT called here. It pins one origin policy for
+ * the life of the page, and a challenge is inherently multi-origin: the
+ * provider's page hands off to the issuing bank. A boundary that cannot express
+ * the journey would only fail it for the wrong reason.
  */
 export function createBrowserPort(config: ManagedJourneyConfig): BrowserPort | undefined {
   const chromePath = config.chromePath;
   if (chromePath === null) return undefined;
   return {
     async completeHostedChallenge({ redirectUrl }) {
-      // Loaded by computed path: the CDP library is harness tooling and is not
-      // part of the application's type program.
-      const modulePath = new URL("../../../../scripts/evidence/lib/cdp.mjs", import.meta.url).href;
-      const cdp = (await import(modulePath)) as unknown as {
-        openPage(options: { chromePath: string; url: string }): Promise<{
-          click(selector: string): Promise<void>;
-          settle(): Promise<void>;
-          close(): Promise<void>;
+      // Harness tooling, not part of the application's type program.
+      const here = import.meta.url;
+      const cdp = (await import(new URL("../../../../scripts/evidence/lib/cdp.mjs", here).href)) as unknown as {
+        CdpConnection: new (wsUrl: string) => { open(): Promise<unknown>; close(): Promise<void> };
+        PageSession: {
+          create(conn: unknown): Promise<{
+            navigate(url: string, options?: Record<string, unknown>): Promise<unknown>;
+            settle(options?: Record<string, unknown>): Promise<unknown>;
+            evaluate(expression: string, options?: Record<string, unknown>): Promise<unknown>;
+            send(method: string, params?: Record<string, unknown>): Promise<unknown>;
+            close(): Promise<void>;
+          }>;
+        };
+      };
+      const chrome = (await import(new URL("../../../../scripts/evidence/lib/chrome.mjs", here).href)) as unknown as {
+        launchChromium(options: { chromePath?: string; timeoutMs?: number; extraArgs?: string[] }): Promise<{
+          wsUrl: string;
+          close(): Promise<void> | void;
         }>;
       };
-      if (typeof cdp.openPage !== "function") {
-        throw new Error("the CDP harness does not expose openPage; the challenge driver needs a page session");
-      }
-      // The URL is never logged: a hosted challenge URL carries the payment's
-      // client secret.
-      const page = await cdp.openPage({ chromePath, url: redirectUrl });
+
+      const browser = await chrome.launchChromium({
+        chromePath,
+        // Appended after the built-in flags, so this wins over the discard proxy.
+        extraArgs: ["--proxy-server=direct://", "--proxy-bypass-list=<-loopback>"],
+      });
+      const connection = new cdp.CdpConnection(browser.wsUrl);
+      let page: Awaited<ReturnType<typeof cdp.PageSession.create>> | null = null;
       try {
-        await page.settle();
-        // The provider's own test challenge page. Its complete control is the
-        // only thing that finishes the authentication.
-        await page.click("#test-source-authorize-3ds");
-        await page.settle();
+        await connection.open();
+        page = await cdp.PageSession.create(connection);
+        // The URL is never logged: a hosted challenge URL carries the payment's
+        // client secret.
+        await page.navigate(redirectUrl, { loadTimeoutMs: 30_000, maxSettleMs: 20_000 });
+        await page.settle({ maxSettleMs: 20_000 });
+        await clickFirstAvailable(page, CHALLENGE_COMPLETE_SELECTORS);
+        await page.settle({ maxSettleMs: 20_000 });
       } finally {
-        await page.close();
+        // Three closes, not one: the target, the connection, the process.
+        if (page) await page.close().catch(() => undefined);
+        await connection.close().catch(() => undefined);
+        await Promise.resolve(browser.close()).catch(() => undefined);
       }
     },
   };
+}
+
+/**
+ * The provider's own test challenge page offers a complete control. Its id has
+ * changed across provider revisions, so the driver tries the known ones in
+ * order and fails loudly rather than reporting a challenge it never completed.
+ */
+const CHALLENGE_COMPLETE_SELECTORS: readonly string[] = [
+  "#test-source-authorize-3ds",
+  "button#test-source-authorize-3ds",
+  "[data-testid='3ds-authorize']",
+];
+
+async function clickFirstAvailable(
+  page: { evaluate(expression: string, options?: Record<string, unknown>): Promise<unknown>; send(method: string, params?: Record<string, unknown>): Promise<unknown> },
+  selectors: readonly string[],
+): Promise<void> {
+  for (const selector of selectors) {
+    const point = (await page
+      .evaluate(
+        `(() => { const e = document.querySelector(${JSON.stringify(selector)}); if (!e || e.disabled) return null; e.scrollIntoView({block:'center'}); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`,
+      )
+      .catch(() => null)) as { x: number; y: number } | null;
+    if (point === null || typeof point.x !== "number") continue;
+    await page.send("Input.dispatchMouseEvent", { type: "mousePressed", x: point.x, y: point.y, button: "left", clickCount: 1 });
+    await page.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: point.x, y: point.y, button: "left", clickCount: 1 });
+    return;
+  }
+  // Never a silent pass: a challenge nobody completed is a failed scenario.
+  throw new Error("the provider's hosted challenge page offered no control this driver recognises");
 }
 
 // ---------------------------------------------------------------------------
 // The run
 // ---------------------------------------------------------------------------
 
-/** A request the journey can vary per call. Amounts stay small and synthetic. */
-function requestFactory(): (overrides?: Partial<CheckoutRequest>) => CheckoutRequest {
+/**
+ * A complete checkout request.
+ *
+ * Every field the submit path requires is present. Four are not optional, and
+ * the shipping address is dereferenced without a guard the moment evaluation
+ * starts, so a partial body does not produce a clean refusal: it throws inside
+ * the application, the route's own catch turns it into a 503
+ * `capability_disabled`, and the run then reads exactly like a deployment where
+ * card checkout was never wired.
+ *
+ * The idempotency key varies per call. The runner relies on that: it holds one
+ * request object to prove that three concurrent identical submissions converge,
+ * and calls the factory again whenever it wants a distinct checkout.
+ */
+export function requestFactory(config: ManagedJourneyConfig): (overrides?: Partial<CheckoutRequest>) => CheckoutRequest {
   let counter = 0;
   return (overrides = {}) => ({
     idempotencyKey: `qualify-${Date.now().toString(36)}-${++counter}`,
-    acceptedAgreementKeys: ["research-use"],
+    acceptedAgreementKeys: [...config.requestDefaults.acceptedAgreementKeys],
+    shippingAddress: { ...config.requestDefaults.shippingAddress },
+    shippingService: config.requestDefaults.shippingService as CheckoutRequest["shippingService"],
+    // An ordinary card by default. The scenarios that want a decline or a
+    // challenge override it; the ones that do not want an ordinary success.
+    paymentMethodReference: config.paymentMethods.ordinary,
+    researchAttestation: true,
     ...overrides,
-  }) as CheckoutRequest;
+  });
+}
+
+/**
+ * Whether the durable checkout surface is mounted at all.
+ *
+ * An unauthenticated request is enough: a mounted door answers 401 through its
+ * guard, an unmounted path answers the application's own 404. Only the second
+ * is a NOT_RUN, and telling them apart costs one request.
+ */
+export async function assertDurableSurfaceMounted(http: HttpPort, config: ManagedJourneyConfig): Promise<void> {
+  let response: HttpResponse;
+  try {
+    response = await http.request({
+      method: "POST",
+      url: `${config.baseUrl}/api/research/checkout/durable`,
+      headers: { "Content-Type": "application/json" },
+      body: {},
+    });
+  } catch {
+    throw new ManagedJourneyNotRun("application_unreachable", `${config.baseUrl} did not answer; the application must be running before a qualification run`);
+  }
+  if (response.status === 404) {
+    throw new ManagedJourneyNotRun(
+      "durable_checkout_not_mounted",
+      "POST /api/research/checkout/durable answered 404: the durable checkout surface is not wired into the composition root, so there is nothing to qualify",
+    );
+  }
 }
 
 export interface ManagedRunResult {
@@ -251,8 +352,15 @@ export async function runManagedJourney(env: Record<string, string | undefined> 
   // journey against what the constructed clients report about themselves.
   const target = assertQualificationTarget(config.target);
 
+  const http = createFetchHttpPort();
+  // One probe before thirteen scenarios fail one at a time. An application that
+  // has not wired the durable surface answers the app's own 404 body, which has
+  // neither `ok` nor `code`, and every scenario would report a different
+  // symptom of the same missing mount.
+  await assertDurableSurfaceMounted(http, config);
+
   const binding = createManagedJourneySurface(config, {
-    http: createFetchHttpPort(),
+    http,
     database: createPostgrestDatabasePort(config),
     provider: createStripeProviderPort(config),
     browser: createBrowserPort(config),
@@ -264,7 +372,7 @@ export async function runManagedJourney(env: Record<string, string | undefined> 
     surface: binding.surface,
     target,
     memberFor: (scenario: ScenarioName) => config.memberFor(scenario),
-    request: requestFactory(),
+    request: requestFactory(config),
     decliningPaymentMethod: config.paymentMethods.decline,
     nonChallengePaymentMethod: config.paymentMethods.nonChallenge,
     challengePaymentMethod: config.paymentMethods.challenge,
