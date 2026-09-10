@@ -233,6 +233,36 @@ describe("durable checkout surface over HTTP", () => {
     expect(status.text).not.toContain("secret");
   });
 
+  it("a downstream notification failure cannot fail, hide or undo a settled purchase", async () => {
+    const model = stripeModel({ requiresAction: false });
+    const orders = createInMemoryOrderStore();
+    const inventory = holds();
+    const executions = createInMemoryCheckoutExecutionStore({ now: () => NOW, effects: { orders, inventory: inventory.seam } });
+    let ids = 0;
+    const composition = composeDurableCheckout({
+      env: { NODE_ENV: "test", STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678", STRIPE_SECRET_KEY: "sk_test_fake_unit_test_only" },
+      provider: model.adapter,
+      checkout: { evaluate: async () => ({ denials: [], cart, quote }) },
+      orders,
+      executions: { store: executions, durable: false },
+      webhookInbox: { store: createInMemoryWebhookExecutionInbox(), durable: false },
+      inventory: inventory.seam,
+      onCommitted: () => {
+        throw new Error("the outbox is down");
+      },
+      now: () => NOW,
+      newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
+      allowInMemoryStores: true,
+    });
+    const call = await serve(composition);
+    const submitted = await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request());
+    // The buyer is told the truth about their money, not about our outbox.
+    expect(submitted.status).toBe(200);
+    expect(submitted.body).toMatchObject({ ok: true, checkout: { state: "completed" } });
+    expect((await orders.get("00000001-0000-4000-8000-000000000000"))?.state).toBe("payment_captured");
+    expect(executions.snapshot()[0]!.phase).toBe("committed");
+  });
+
   it("cancels an unpaid checkout: the provider authorization is released, the order is cancelled and the hold settles once", async () => {
     const c = build({ requiresAction: true });
     const call = await serve(c.composition);

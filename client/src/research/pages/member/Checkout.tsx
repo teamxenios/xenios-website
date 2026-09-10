@@ -116,7 +116,14 @@ type DurableState =
   | { kind: "idle" }
   | { kind: "frozen"; request: CheckoutRequest }
   | { kind: "execution"; requestKey: string; orderId: string | null; state: DurableCheckoutState; note: string | null; source: "durable" | "resume" }
-  | { kind: "cancelled"; orderId: string | null; reason: CheckoutCancellationReason };
+  | { kind: "cancelled"; orderId: string | null; reason: CheckoutCancellationReason }
+  /**
+   * A resumed reference the server does not (yet) know. It is NOT proof that
+   * nothing was created: the durable door persists the execution last, so a
+   * request that dropped mid-flight can have produced an order without an
+   * execution row. The buyer decides what to do, told the truth.
+   */
+  | { kind: "unresolved"; requestKey: string };
 
 const NOT_SETTLED: readonly DurableCheckoutState[] = ["pending", "authentication_required", "processing", "reconciliation_required"];
 
@@ -172,6 +179,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   const [quoteBusy, setQuoteBusy] = useState(false);
   const [quoteDenial, setQuoteDenial] = useState<{ code: string; message?: string } | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteUnavailable, setQuoteUnavailable] = useState(false);
 
   // Agreements and attestation.
   const [accepted, setAccepted] = useState<Record<string, boolean>>({});
@@ -323,12 +331,24 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   // The door for THIS request. A fully credit-covered order has no provider
   // effect and stays on the ordering door; the server re-checks all of it.
   const shippingForRequestCents = quote?.amountCents ?? cart?.shippingCents ?? 0;
-  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + shippingForRequestCents - creditCents) : 0;
+  // The server charges subtotal + shipping - THE CART'S applied credit. The
+  // amount typed into the credit box is advisory: the durable door does not
+  // read it (durable-checkout-submission.ts computes from
+  // cart.storeCreditAppliedCents). Naming the typed figure here would take
+  // consent for one amount and charge another.
+  const appliedCreditCents = cart?.storeCreditAppliedCents ?? 0;
+  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + shippingForRequestCents - appliedCreditCents) : 0;
   const cardDoor = paymentConfig.kind === "ok" && estimatedChargeCents > 0;
   // On the card door the buyer consents to a specific amount, so the shipping
   // figure in that amount must be a quote for the service being ordered, not
-  // the cart's standing estimate.
-  const quoteRequired = cardDoor && quote === null;
+  // the cart's standing estimate. When the quote door itself is unavailable the
+  // server prices the order and answers its own denial: blocking here would
+  // leave the buyer with a disabled button and no way to complete anything.
+  const quoteRequired = cardDoor && quote === null && !quoteUnavailable;
+  // While a request is frozen the button resends it byte for byte, so every
+  // input that would change it is withheld. Otherwise the page would show
+  // figures computed from edits the retry will not carry.
+  const frozen = durable.kind === "frozen";
   const activeConfig = paymentConfig.kind === "ok" ? paymentConfig.config : null;
 
   const authenticate = useMemo<PaymentAuthenticator>(() => {
@@ -351,12 +371,17 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
 
   const requestQuote = async () => {
     const token = memberToken;
+    // A quote answers for the destination and service it was ASKED for. Binding
+    // the answer the same way the token binds it to the account stops a late
+    // reply being installed as the quote for an address it never priced.
+    const binding = quoteBinding.current;
     setQuoteBusy(true);
     setQuoteDenial(null);
     setQuoteError(null);
+    setQuoteUnavailable(false);
     setQuote(null);
     const result = await quoteShipping(token, { destination, service });
-    if (!stillCurrent(token)) return;
+    if (!stillCurrent(token) || quoteBinding.current !== binding) return;
     setQuoteBusy(false);
     if (result.kind === "ok") {
       setQuote(result.data.quote);
@@ -371,6 +396,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       return;
     }
     if (result.kind === "unavailable") {
+      setQuoteUnavailable(true);
       setQuoteError("Shipping quotes are not available yet. The order can still be reviewed with the standard figure.");
       return;
     }
@@ -477,6 +503,9 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
         return;
       }
       if (result.code === "large_order_review_required" || result.code === "payment_disabled") {
+        // The ordering door creates no execution, so a pointer naming this key
+        // could never be resolved by the continuation door.
+        clearCheckoutResume(cartScope);
         // Both persisted nothing and both belong to the ordering door with the
         // SAME request: a held order for a personal review, and an order the
         // server priced as fully covered by store credit (no provider effect).
@@ -560,12 +589,15 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   };
 
   /**
-   * "Start a new order request" from the FROZEN state, where the outcome of the
-   * request already sent is unknown. Minting a new key here is how a buyer pays
-   * twice, so the server is asked about the key first: anything it knows is
-   * shown instead, and only an owner-checked not_found mints a new one.
+   * Ask the server what it knows about the key this page is holding.
+   *
+   * A `not_found` is deliberately NOT treated as proof that nothing was
+   * created: the durable door persists the execution LAST, after the order, so
+   * a request that dropped mid-flight can leave an order with no execution row.
+   * Minting a new key on that answer is how a buyer ends up with two orders.
+   * The buyer is told what is known and decides.
    */
-  const startNewRequestAfterFrozen = async () => {
+  const resolveCurrentKey = async () => {
     const token = memberToken;
     const key = idempotencyKey;
     setSubmitBusy(true);
@@ -589,8 +621,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       return;
     }
     if (result.kind === "denied" && result.code === "not_found") {
-      // The server has no execution for this key: nothing was created.
-      startNewRequest();
+      setDurable({ kind: "unresolved", requestKey: key });
       return;
     }
     setSubmitError("We could not check that request just now. Nothing was charged twice; please try again in a moment.");
@@ -748,8 +779,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                 setDurable({ kind: "idle" });
                 return;
               }
-              // A stale pointer: the server knows no execution for this account.
-              startNewRequest();
+              // The server knows no execution for this reference. That is not
+              // proof that nothing was created, so the key is kept and the
+              // buyer is told the truth instead of being handed a fresh one.
+              setDurable({ kind: "unresolved", requestKey: execution.requestKey });
             }}
           />
           <ResearchSecureNotice>
@@ -839,6 +872,29 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                 {submitError}
               </p>
             )}
+            {durable.kind === "unresolved" && (
+              <section role="status" className="card" data-testid="checkout-unresolved">
+                <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+                  <p className="mono-label text-ink-mute">We could not confirm this attempt</p>
+                  <ResearchStatusBadge label="Unconfirmed" tone="warning" />
+                </div>
+                <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+                  We have no payment in progress for your last attempt. That does not prove an order was not created, so
+                  please do not pay again yet. Check your orders first; if nothing is there, you can start a new request.
+                </p>
+                <div className="mt-3 flex gap-3" style={{ flexWrap: "wrap" }}>
+                  <Link href={MEMBER_ROUTES.orders} className="btn btn-primary" data-testid="co-unresolved-orders">
+                    Check your orders
+                  </Link>
+                  <button type="button" className="btn btn-secondary" onClick={() => void resolveCurrentKey()} disabled={submitBusy} data-testid="co-unresolved-recheck">
+                    {submitBusy ? "Checking..." : "Check again"}
+                  </button>
+                  <button type="button" className="btn btn-ghost" onClick={startNewRequest} disabled={submitBusy} data-testid="co-new-request">
+                    Start a new order request
+                  </button>
+                </div>
+              </section>
+            )}
             {durable.kind === "cancelled" && (
               <section role="status" className="card" data-testid="checkout-cancelled" data-reason={durable.reason}>
                 <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
@@ -869,6 +925,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     autoComplete="address-line1"
                     value={line1}
                     onChange={(e) => setLine1(e.target.value)}
+                    disabled={frozen}
                     data-testid="co-line1"
                   />
                 </Field>
@@ -879,6 +936,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     autoComplete="address-line2"
                     value={line2}
                     onChange={(e) => setLine2(e.target.value)}
+                    disabled={frozen}
                     data-testid="co-line2"
                   />
                 </Field>
@@ -893,6 +951,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                       autoComplete="address-level2"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
+                      disabled={frozen}
                       data-testid="co-city"
                     />
                   </Field>
@@ -903,6 +962,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                       autoComplete="address-level1"
                       value={stateCode}
                       onChange={(e) => setStateCode(e.target.value)}
+                      disabled={frozen}
                       data-testid="co-state"
                     />
                   </Field>
@@ -913,6 +973,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                       autoComplete="postal-code"
                       value={postalCode}
                       onChange={(e) => setPostalCode(e.target.value)}
+                      disabled={frozen}
                       data-testid="co-postal"
                     />
                   </Field>
@@ -931,6 +992,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     className="input-field"
                     value={service}
                     onChange={(e) => setService(e.target.value as ShippingQuote["service"])}
+                    disabled={frozen}
                     data-testid="co-service"
                   >
                     {SHIPPING_SERVICES.map((s) => (
@@ -944,7 +1006,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    disabled={quoteBusy || !addressComplete}
+                    disabled={quoteBusy || !addressComplete || frozen}
                     onClick={() => void requestQuote()}
                     data-testid="co-quote"
                   >
@@ -998,6 +1060,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                         max={spendableCents / 100}
                         value={creditInput}
                         onChange={(e) => setCreditInput(e.target.value)}
+                        disabled={frozen}
                         data-testid="co-credit"
                       />
                     </Field>
@@ -1061,14 +1124,18 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
             {durable.kind === "frozen" && (
               <section className="card" aria-label="Payment" data-testid="co-payment-frozen">
                 <p className="mono-label text-ink-mute">Payment</p>
-                <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-                  Your card details were handed to the payment provider for this request. Retry repeats the same request;
-                  to change anything, start a new order request.
+                <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+                  Your card details were handed to the payment provider for this request, and we do not yet know how it
+                  ended. Retrying repeats the exact same request, so it cannot charge you twice. Until we know, the
+                  details below are locked: an order may already exist for this attempt.
                 </p>
-                <div className="mt-3">
-                  <button type="button" className="btn btn-ghost" onClick={() => void startNewRequestAfterFrozen()} disabled={submitBusy} data-testid="co-new-request">
-                    {submitBusy ? "Checking..." : "Start a new order request"}
+                <div className="mt-3 flex gap-3" style={{ flexWrap: "wrap" }}>
+                  <button type="button" className="btn btn-secondary" onClick={() => void resolveCurrentKey()} disabled={submitBusy} data-testid="co-check-request">
+                    {submitBusy ? "Checking..." : "Check what happened"}
                   </button>
+                  <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost" data-testid="co-frozen-orders">
+                    Check your orders
+                  </Link>
                 </div>
               </section>
             )}
@@ -1095,10 +1162,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   <dt className="body-s text-ink-2">Shipping (once per order)</dt>
                   <dd className="body-s tabular">{cardDoor ? (quote ? money(quote.amountCents) : PRICE_PENDING_COPY) : money(cart.shippingCents)}</dd>
                 </div>
-                {(cardDoor ? creditCents : cart.storeCreditAppliedCents) > 0 && (
+                {cart.storeCreditAppliedCents > 0 && (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="body-s text-ink-2">Store credit applied</dt>
-                    <dd className="body-s tabular">-{money(cardDoor ? creditCents : cart.storeCreditAppliedCents)}</dd>
+                    <dd className="body-s tabular">-{money(cart.storeCreditAppliedCents)}</dd>
                   </div>
                 )}
                 {/* On the card door the figure below is the amount the card is
@@ -1106,9 +1173,15 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     Anything else would take consent for one number and charge
                     another. */}
                 <div className="flex items-center justify-between gap-4">
-                  <dt className="body-m font-700">{cardDoor ? "Charged to your card" : "Estimated total"}</dt>
+                  <dt className="body-m font-700">{frozen ? "Amount already submitted" : cardDoor ? "Charged to your card" : "Estimated total"}</dt>
                   <dd className="body-m font-700 tabular" data-testid="co-total">
-                    {cardDoor ? (quote ? money(estimatedChargeCents) : PRICE_PENDING_COPY) : money(cart.estimatedTotalCents)}
+                    {frozen
+                      ? "Awaiting the result"
+                      : cardDoor
+                        ? quote
+                          ? money(estimatedChargeCents)
+                          : PRICE_PENDING_COPY
+                        : money(cart.estimatedTotalCents)}
                   </dd>
                 </div>
               </dl>
@@ -1130,7 +1203,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={submitBusy || (cardDoor && durable.kind !== "frozen" && (!cardComplete || quoteRequired))}
+                disabled={submitBusy || (cardDoor && !frozen && (!cardComplete || quoteRequired))}
                 onClick={() => void submit()}
                 data-testid="co-submit"
               >
@@ -1138,13 +1211,15 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   ? cardDoor
                     ? "Paying..."
                     : "Placing order..."
-                  : durable.kind === "frozen"
+                  : frozen
                     ? "Retry the same request"
                     : cardDoor
-                      ? `Pay ${money(estimatedChargeCents)} and place order`
+                      ? quote
+                        ? `Pay ${money(estimatedChargeCents)} and place order`
+                        : "Pay and place order"
                       : "Place order"}
               </button>
-              {quoteRequired && durable.kind !== "frozen" && (
+              {quoteRequired && !frozen && (
                 <p className="body-s text-ink-mute mt-2" data-testid="co-quote-required">
                   Get a shipping quote for the service you chose so you can see the exact amount before paying.
                 </p>

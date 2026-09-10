@@ -76,11 +76,11 @@ type Answer = Reply | ((call: Recorded) => Reply | Promise<Reply>);
  * can sequence answers (first submit: authentication required; continue:
  * completed). Unknown routes are reported loudly.
  */
-function server(routes: Record<string, Answer>, options: { config?: Answer; delayMs?: number; dynamic?: (method: string, url: string) => Answer | undefined } = {}) {
+function server(routes: Record<string, Answer>, options: { config?: Answer; delayMs?: number; cart?: CartDto; dynamic?: (method: string, url: string) => Answer | undefined } = {}) {
   const calls: Recorded[] = [];
   const all: Record<string, Answer> = {
     "GET /api/research/capabilities": { status: 200, body: { ok: true, capabilities: { product_commerce: { enabled: true } } } },
-    "GET /api/research/cart": { status: 200, body: { ok: true, cart: readyCart } },
+    "GET /api/research/cart": { status: 200, body: { ok: true, cart: options.cart ?? readyCart } },
     "GET /api/research/store-credit": { status: 200, body: { ok: true, storeCredit } },
     "GET /api/research/checkout/payment-config": options.config ?? { status: 200, body: { ok: true, config: { provider: "stripe", publishableKey: "pk_test_abcdefgh12345678", mode: "test" } } },
     // The card door will not let a buyer pay before the exact amount is quoted.
@@ -365,24 +365,45 @@ describe("checkout page over the durable card door", () => {
     expect(legacy[0]!.body).toEqual(submitted(held.calls)[0]!.body);
   });
 
-  it("a fully credit-covered order takes the ordering door and asks for no card", async () => {
-    const { calls } = server({
-      "POST /api/research/checkout": { status: 200, body: { ok: true, order: { orderId: ORDER, state: "checkout_pending", placedAt: "2026-09-09T00:00:00Z", totalCents: 0, shipments: [] } } },
-    });
+  it("an order the server prices as fully credit-covered takes the ordering door and asks for no card", async () => {
+    // The client reads the SERVER's applied credit, never the advisory amount
+    // typed into the box: the durable door charges subtotal + shipping minus
+    // cart.storeCreditAppliedCents, so that is the only figure the page may use
+    // to decide the door or to name an amount.
+    const covered: CartDto = { ...readyCart, storeCreditAppliedCents: 15095, estimatedTotalCents: 0 };
+    const { calls } = server(
+      { "POST /api/research/checkout": { status: 200, body: { ok: true, order: { orderId: ORDER, state: "checkout_pending", placedAt: "2026-09-09T00:00:00Z", totalCents: 0, shipments: [] } } } },
+      { cart: covered },
+    );
     const view = await render(<Checkout paymentMethodClient={cardClient()} />);
-    await fillForm(view);
-    await act(async () => {
-      setValue(byTestId<HTMLInputElement>(view, "co-credit"), "200");
-    });
     expect(has(view, "co-payment")).toBe(false);
     expect(byTestId(view, "co-submit").textContent).toBe("Place order");
+    await fillForm(view);
     await click(view, "co-submit");
     expect(submitted(calls)).toHaveLength(0);
     expect(calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout")).toHaveLength(1);
     expect(has(view, "checkout-confirmation")).toBe(true);
   });
 
-  it("resumes an unfinished checkout after a refresh through the owner-checked lookup, and discards a pointer the server does not own", async () => {
+  it("a server payment_disabled hands the same request to the ordering door instead of dead-ending under a live card field", async () => {
+    const { calls } = server({
+      "POST /api/research/checkout/durable": { status: 400, body: { ok: false, code: "payment_disabled", codes: ["payment_disabled"] } },
+      "POST /api/research/checkout": { status: 200, body: { ok: true, order: { orderId: ORDER, state: "checkout_pending", placedAt: "2026-09-09T00:00:00Z", totalCents: 0, shipments: [] } } },
+    });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillFormAndQuote(view);
+    await click(view, "co-submit");
+    // The buyer is not told "payments are not switched on" beneath a card field.
+    expect(view.textContent).not.toContain("Payments are not switched on yet");
+    expect(has(view, "checkout-confirmation")).toBe(true);
+    const legacy = calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout");
+    expect(legacy).toHaveLength(1);
+    expect(legacy[0]!.body).toEqual(submitted(calls)[0]!.body);
+    // Nothing is left pointing at a key the continuation door can never own.
+    expect(resumePointer()).toBeNull();
+  });
+
+  it("resumes an unfinished checkout after a refresh, and treats a reference the server does not know as UNCERTAIN rather than stale", async () => {
     window.sessionStorage.setItem(RESUME_SLOT(SCOPE), JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
     const paths = continuationPaths("req_resume_0001");
     const { calls } = server({ [paths.status]: { status: 200, body: continuation("reconciliation_required") } });
@@ -390,23 +411,32 @@ describe("checkout page over the durable card door", () => {
     expect(has(view, "checkout-execution")).toBe(true);
     expect(byTestId(view, "checkout-execution").getAttribute("data-state")).toBe("reconciliation_required");
     expect(byTestId(view, "payment-uncertain").textContent).toContain("do not pay again");
-    expect(calls.filter((c) => c.method === "GET" && c.url.endsWith("/continuation")).map((c) => c.url)).toEqual([`/api/research/checkout/executions/req_resume_0001/continuation`]);
+    expect(calls.filter((c) => c.method === "GET" && c.url.endsWith("/continuation")).map((c) => c.url)).toEqual(["/api/research/checkout/executions/req_resume_0001/continuation"]);
     expect(submitted(calls)).toHaveLength(0);
 
-    // Another account on the same browser never sees it: the scope differs, so the pointer is ignored.
+    // Another account on the same browser never sees it: each scope has its own slot.
     act(() => root!.unmount());
     server({ [paths.status]: { status: 200, body: continuation("reconciliation_required") } });
     const other = await render(<Checkout paymentMethodClient={cardClient()} />, fixtureContext("other-jwt", OTHER_SCOPE));
     expect(has(other, "checkout-execution")).toBe(false);
     expect(has(other, "co-submit")).toBe(true);
+    // And the first account's pointer is still there for its owner.
+    expect(resumePointer(SCOPE)?.requestKey).toBe("req_resume_0001");
 
-    // The server disowns the reference: the pointer is dropped and the form returns.
+    // The server does not know the reference. That is NOT proof nothing was
+    // created (the durable door persists the execution last), so the page keeps
+    // the key, says so, and points the buyer at their orders.
     act(() => root!.unmount());
-    window.sessionStorage.setItem(RESUME_SLOT(SCOPE), JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: null, startedAt: "2026-09-09T00:00:00Z" }));
     server({ [paths.status]: { status: 404, body: { ok: false, code: "not_found" } } });
-    const dropped = await render(<Checkout paymentMethodClient={cardClient()} />);
-    expect(has(dropped, "co-submit")).toBe(true);
-    expect(resumePointer()).toBeNull();
+    const unresolved = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(unresolved, "checkout-unresolved")).toBe(true);
+    expect(byTestId(unresolved, "checkout-unresolved").textContent).toContain("do not pay again yet");
+    expect(byTestId<HTMLAnchorElement>(unresolved, "co-unresolved-orders").getAttribute("href")).toBe("/research/member/orders");
+    expect(resumePointer(SCOPE)?.requestKey).toBe("req_resume_0001");
+    // Only the buyer's explicit choice mints a new key.
+    await click(unresolved, "co-new-request");
+    expect(has(unresolved, "checkout-unresolved")).toBe(false);
+    expect(resumePointer(SCOPE)).toBeNull();
   });
 
   it("abandonment: the buyer cancels from the bank step; the page shows cancelled and nothing charged", async () => {
@@ -501,7 +531,7 @@ describe("checkout page over the durable card door", () => {
     expect(second.calls.some((c) => c.method === "GET" && c.url === `/api/research/checkout/executions/${encodeURIComponent(key)}/continuation`)).toBe(true);
   });
 
-  it("from the frozen state, starting over asks the server about the key first and never mints a new one over a live execution", async () => {
+  it("the frozen state offers no way to mint a new key, only to find out what happened", async () => {
     const { calls } = server(
       {
         "POST /api/research/checkout/durable": () => {
@@ -509,7 +539,6 @@ describe("checkout page over the durable card door", () => {
         },
       },
       {
-        // The server DOES know this key: the execution is live.
         dynamic: (method, url) =>
           method === "GET" && url.endsWith("/continuation") ? { status: 200, body: continuation("authentication_required", true) } : undefined,
       },
@@ -519,7 +548,18 @@ describe("checkout page over the durable card door", () => {
     await click(view, "co-submit");
     expect(has(view, "co-payment-frozen")).toBe(true);
     const key = keyOf(calls);
-    await click(view, "co-new-request");
+    // No new-request control exists here: minting a key while the outcome is
+    // unknown is how a buyer ends up with two orders.
+    expect(has(view, "co-new-request")).toBe(false);
+    // Every input that would change the frozen request is locked, and the page
+    // does not name an amount the retry may not charge.
+    expect(byTestId<HTMLInputElement>(view, "co-line1").disabled).toBe(true);
+    expect(byTestId<HTMLSelectElement>(view, "co-service").disabled).toBe(true);
+    expect(byTestId<HTMLButtonElement>(view, "co-quote").disabled).toBe(true);
+    expect(byTestId(view, "co-total").textContent).toBe("Awaiting the result");
+    expect(byTestId(view, "co-submit").textContent).toBe("Retry the same request");
+
+    await click(view, "co-check-request");
     expect(has(view, "checkout-execution")).toBe(true);
     expect(has(view, "co-submit")).toBe(false);
     expect(submitted(calls)).toHaveLength(1);

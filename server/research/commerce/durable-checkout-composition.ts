@@ -145,8 +145,18 @@ function withCommitNotification(
       // SQL function and the in-memory reference. That difference is what makes
       // this fire exactly once.
       if (after && after.phase === "committed" && after.version === expected + 1) {
-        const order = await orders.get(after.orderId);
-        if (order && order.memberId === after.memberId) await onCommitted(order);
+        // The purchase is COMMITTED. A downstream failure (a notifier, an
+        // outbox) may not undo that, and may not turn a captured, recorded
+        // order into a 503 for the buyer. It is swallowed here; the committed
+        // execution row is the durable record a sweeper or an operator works
+        // from. This hook is at-most-once by design and is NOT a substitute for
+        // a durable outbox written inside the commit transaction.
+        try {
+          const order = await orders.get(after.orderId);
+          if (order && order.memberId === after.memberId) await onCommitted(order);
+        } catch {
+          // Deliberately ignored: nothing downstream may fail a settled purchase.
+        }
       }
       return after;
     },
