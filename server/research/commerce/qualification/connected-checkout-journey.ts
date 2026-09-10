@@ -123,8 +123,17 @@ export interface JourneySurface {
   status(memberId: string, requestKey: string): Promise<JourneyContinuation>;
   continue(memberId: string, requestKey: string): Promise<JourneyContinuation>;
   cancel(memberId: string, requestKey: string): Promise<JourneyContinuation>;
-  /** Complete the customer action at the provider (test-mode helper or the model). */
-  completeCustomerAction(providerReference: string): Promise<void>;
+  /**
+   * Complete the customer's action at the provider.
+   *
+   * The local model does this directly. A MANAGED binding usually cannot: the
+   * provider has no server-side API that finishes a 3DS challenge, so this
+   * step needs a browser driver against the provider's hosted page, or a test
+   * method that authenticates without a challenge. A binding that has neither
+   * omits this and the scenarios that need it are SKIPPED, naming the missing
+   * capability. They are never reported as passed.
+   */
+  completeCustomerAction?(providerReference: string): Promise<void>;
   /** Deliver a signed provider event for this execution; returns the handler's answer. */
   deliverWebhook(input: { eventId: string; eventType: string; providerReference: string; orderId: string; memberId: string; amountCents: number }): Promise<{ ok: boolean; applied?: boolean; code?: string }>;
   readOrder(orderId: string): Promise<OrderRecord | null>;
@@ -255,7 +264,9 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
 
   // ---- authentication required, then return -----------------------------
   scenarios.push(
-    await runScenario("authentication_required_and_return", async (expect) => {
+    !surface.completeCustomerAction
+      ? skipped("authentication_required_and_return", "surface.completeCustomerAction (the provider has no server-side 3DS completion; drive its hosted page or use a non-challenge test method)")
+      : await runScenario("authentication_required_and_return", async (expect) => {
       const member = inputs.memberFor("authentication_required_and_return");
       const req = request({ paymentMethodReference: inputs.authenticationPaymentMethod });
       const first = await surface.submit(member, req);
@@ -267,7 +278,7 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
       expect(early.state === "authentication_required", "returning early changes nothing and starts no second payment");
       const execution = await surface.readExecution(member, req.idempotencyKey);
       expect(execution?.providerReference != null, "the execution names the payment awaiting the customer");
-      await surface.completeCustomerAction(execution!.providerReference!);
+      await surface.completeCustomerAction!(execution!.providerReference!);
       const done = await surface.continue(member, req.idempotencyKey);
       expect(done.state === "completed", "after the customer finishes, the server verifies and completes");
       const order = await surface.readOrder(first.orderId!);
@@ -342,7 +353,7 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
 
   // ---- restart ----------------------------------------------------------
   scenarios.push(
-    surface.restart
+    surface.restart && surface.completeCustomerAction
       ? await runScenario("restart_recovery", async (expect) => {
           const member = inputs.memberFor("restart_recovery");
           const req = request({ paymentMethodReference: inputs.authenticationPaymentMethod });
@@ -355,12 +366,12 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
           const afterRestart = await surface.readExecution(member, req.idempotencyKey);
           expect(afterRestart?.providerReference === reference, "the reference survives the restart");
           expect(afterRestart?.authorizationAttemptedAt != null, "the first-attempt stamp survives the restart");
-          await surface.completeCustomerAction(reference!);
+          await surface.completeCustomerAction!(reference!);
           const done = await surface.continue(member, req.idempotencyKey);
           expect(done.state === "completed", "a new process finishes the payment the old one started");
           return [];
         })
-      : skipped("restart_recovery", "surface.restart"),
+      : skipped("restart_recovery", surface.restart ? "surface.completeCustomerAction" : "surface.restart"),
   );
 
   // ---- webhook redelivery and out-of-order ------------------------------
