@@ -88,3 +88,30 @@ reviewer accepted runtime LF f7830e67 and test LF 67ad3c7d; final broader commer
 run passed 1,905 tests with three skipped and no failures. No worker retains a
 write lease. The next operational recovery slice remains main-owned and must
 not reuse an unproven checkpoint authority or start provider effects.
+
+## Bounded durable recovery operation
+
+Main owns candidate 20260910220129_research_checkout_recovery_operation*,
+checkout-recovery-operation-contract.ts, the persistence adapter, operation
+entry-point composition and all integration. Worker product_review_filters owns
+only checkout-recovery-operation.ts and its adjacent test under commerce.
+Follow RECOVERY_OPERATION_CONTRACT_20260910.md. No provider or database effects,
+timer, schema edits or competing heavy tests are delegated.
+
+The two operation files are frozen and returned to main after the worker's
+88-test synthetic-port run; SQL/adapter qualification remains open. The next
+bounded worker assignment owns only
+`server/research/commerce/persistence/checkout-recovery-operation-store.ts` and
+its adjacent test. Implement the injected strict RPC adapter against the existing
+contract, including actual installed-SDK serialization with a recording transport.
+No credentials, singleton, live query, SQL source or runtime-operation edits.
+Main retains all other ownership and controls the test slot.
+
+The operation/adapter and SQL rehearsal assignments are now returned to main.
+Main reviewed all three artifacts and the independent reviewer accepted exact
+application 55b9a504. The worker additionally authored only the external
+`recovery-concurrency/pg17-recovery-proof.mjs`; main reviewed and executed it.
+No worker retains a write lease. Local PostgreSQL is stopped with its committed
+synthetic recovery and older credit QA data preserved. No remote or production
+authority was delegated. Main owns the next one-pass composition and real
+executor contact; no timer or provider effect has been enabled.
