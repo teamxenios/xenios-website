@@ -125,6 +125,11 @@ there is no wildcard under `/checkout` in `routes.ts`.
 
 ## 3. Tests to add (A's files)
 
+Treat this section as a proposal against the CURRENT code, not a patch that is
+still accurate in every detail. Read the files at the branch tip before
+applying: the composition, its tests and the qualification runner have all moved
+since this was first written.
+
 `server/research/commerce/production-wiring.test.ts`:
 
 - state 1 and state 2: `deps.durableCheckout` is `{ ready: false, reason: "provider_not_durable" }`
@@ -133,13 +138,17 @@ there is no wildcard under `/checkout` in `routes.ts`.
 - state 3 with the `TestPaymentProvider` and sandbox stores under
   `NODE_ENV=test`: `ready` is `false` with `execution_store_not_durable` unless the
   test injects durable-labelled stores; with `allowInMemoryStores: true` the
-  surface runs the connected journey (the composition test file already proves
-  it over HTTP; the wiring test only needs to prove the readiness decision).
+  surface runs (the composition test file proves the doors over HTTP; the wiring
+  test only needs to prove the readiness decision).
+- `deps.durableCheckout.adminExecutions` exists when ready, and the admin route
+  is absent when no `requireAdmin` guard is supplied.
 - with `env.NODE_ENV = "production"` and the Disabled provider: `ready` is `false`
   and `reason` is `provider_not_durable`.
 
 `server/index.ts` route registration: the existing release-control-plane
-route inventory (if it enumerates paths) gains the five paths above.
+route inventory (if it enumerates paths) gains the six paths above: five
+customer doors plus the admin read, which mounts only when `requireAdmin` is
+supplied.
 
 ## 4. Environment the ready composition needs (staging first)
 

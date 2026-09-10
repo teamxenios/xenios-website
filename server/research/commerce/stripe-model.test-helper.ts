@@ -67,7 +67,11 @@ export function stripeModel(options: { requiresAction?: boolean; now?: () => num
       // Per-method behaviour mirrors the provider's documented test methods, so
       // one model can serve a journey that needs a declining card AND a card
       // that asks for customer action in the same run.
-      const needsAction = confirmed && (options.requiresAction === true || form.payment_method === "pm_card_authenticationRequired");
+      const needsAction =
+        confirmed &&
+        (options.requiresAction === true ||
+          form.payment_method === "pm_card_authenticationRequired" ||
+          form.payment_method === "pm_card_authenticationRequiredChallenge");
       const status = !confirmed ? "requires_confirmation" : declined ? "requires_payment_method" : needsAction ? "requires_action" : "requires_capture";
       const intent: ModelIntent = {
         id,
