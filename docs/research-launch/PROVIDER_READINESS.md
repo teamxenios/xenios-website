@@ -34,7 +34,7 @@ diagnostics endpoint reports missing variable NAMES only.
 | Capability | Impl | Disabled | Test | Real | Env var names | Creds | Flag | Ready |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Membership billing | domain | yes | yes | shell | PAYMENTS_PROVIDER, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_RESEARCH_ACTIVATION, STRIPE_PRICE_RESEARCH_MEMBERSHIP | absent | RESEARCH_MEMBERSHIP_BILLING_ENABLED | disabled |
-| Product commerce (payment) | domain | yes | yes | shell (Stripe) | PAYMENTS_PROVIDER, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET | absent | NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED | disabled + purchase-eligibility 0/15 |
+| Product commerce (payment) | domain | yes | yes | shell (Stripe) | PAYMENTS_PROVIDER, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PUBLISHABLE_KEY | absent | NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED | disabled + purchase-eligibility 0/15 |
 | Shipping / carrier rates | domain | yes | yes | shell | SHIPPING_PROVIDER, SHIPPING_API_KEY, SHIP_FROM_ADDRESS_ID | absent | (commerce flag) | disabled |
 | Mitch fulfillment | domain | yes | yes | shell | MITCH_FULFILLMENT_MODE, MITCH_FULFILLMENT_API_URL, MITCH_FULFILLMENT_API_KEY, MITCH_FULFILLMENT_WEBHOOK_SECRET | absent | (commerce flag) | disabled |
 | Affiliate payouts | domain | yes | yes | shell | PAYOUT_PROVIDER, PAYOUT_API_KEY, PAYOUT_WEBHOOK_SECRET, PAYOUT_HOLD_DAYS | absent | RESEARCH_AFFILIATE_PAYOUTS_ENABLED | disabled |

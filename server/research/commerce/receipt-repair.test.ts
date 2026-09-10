@@ -10,6 +10,7 @@ import {
   receiptPayload,
   renderCommittedReceipt,
   renderCommerceReceiptOutboxEmail,
+  safeOrderUrl,
   ReceiptRepairMisconfigured,
   RECEIPT_EVENT_TYPE,
   RECEIPT_TEMPLATE_KEY,
@@ -218,6 +219,143 @@ describe("what it refuses, one reason at a time", () => {
   });
 });
 
+describe("what it adopted from the reference implementation", () => {
+  it("VERIFIES a row that was already there rather than trusting the key", async () => {
+    // The exact wrong row the writing pass refuses must not be counted as done
+    // by the next pass simply because the key exists.
+    const wrong = new Map<string, QueuedEventFacts>([
+      [
+        receiptEventKey(ORDER_ID),
+        {
+          eventKey: receiptEventKey(ORDER_ID),
+          eventType: RECEIPT_EVENT_TYPE,
+          templateKey: RECEIPT_TEMPLATE_KEY,
+          recipient: "somebody.else@example.invalid",
+          payload: { orderReference: ORDER_ID, totalCents: 41_250, orderUrl: "https://x.invalid/o/1" },
+        },
+      ],
+    ]);
+    const h = harness({ queued: wrong });
+    const report = await h.repair.repair();
+    expect(report.alreadyPresent).toBe(0);
+    expect(report.refused[0]!.code).toBe("queued_event_disagrees");
+    expect(report.refused[0]!.reason).toContain("addressed to somebody else");
+    expect(h.attempts).toEqual([]);
+  });
+
+  it("counts an existing row that IS right as present, without queueing again", async () => {
+    const h = harness();
+    await h.repair.repair();
+    const second = await h.repair.repair();
+    expect(second).toMatchObject({ queued: 0, alreadyPresent: 1, refused: [] });
+    expect(h.attempts).toHaveLength(1);
+  });
+
+  it("catches a stored row that states a different amount", async () => {
+    const wrong = new Map<string, QueuedEventFacts>([
+      [
+        receiptEventKey(ORDER_ID),
+        {
+          eventKey: receiptEventKey(ORDER_ID),
+          eventType: RECEIPT_EVENT_TYPE,
+          templateKey: RECEIPT_TEMPLATE_KEY,
+          recipient: "member@example.invalid",
+          payload: { orderReference: ORDER_ID, totalCents: 100, orderUrl: "https://x.invalid/o/1" },
+        },
+      ],
+    ]);
+    const report = await harness({ queued: wrong }).repair.repair();
+    expect(report.refused[0]!.reason).toContain("another amount");
+  });
+
+  it("still owes a receipt to an order that moved on to fulfilment", async () => {
+    // A captured order does not stay `payment_captured`. Treating a later state
+    // as proof that no payment happened denies a receipt to exactly the
+    // customers whose enqueue was lost longest ago.
+    for (const state of ["processing", "partially_fulfilled", "fulfilled", "delivered"]) {
+      const h = harness({ order: { ...order, state } });
+      const report = await h.repair.repair();
+      expect(report.queued).toBe(1);
+    }
+  });
+
+  it("sends a person to look at an order that was cancelled or replaced", async () => {
+    for (const state of ["cancelled", "replaced", "exception"]) {
+      const h = harness({ order: { ...order, state } });
+      const report = await h.repair.repair();
+      expect(report.queued).toBe(0);
+      expect(report.refused[0]!.code).toBe("order_state_needs_a_person");
+      expect(report.refused[0]!.reason).toContain(state);
+    }
+  });
+
+  it("still refuses the states that mean no payment was taken", async () => {
+    for (const state of ["draft", "checkout_pending", "payment_authorized", "manual_review", "approved"]) {
+      const report = await harness({ order: { ...order, state } }).repair.repair();
+      expect(report.refused[0]!.code).toBe("order_not_captured");
+    }
+  });
+
+  it("refuses an address that is not one", async () => {
+    for (const recipient of ["not-an-address", "@example.invalid", "a b@example.invalid", "member@"]) {
+      const h = harness({ recipient });
+      const report = await h.repair.repair();
+      expect(report.refused[0]!.code).toBe("recipient_not_an_address");
+      expect(h.attempts).toEqual([]);
+    }
+  });
+
+  it("keeps going when one order throws anywhere in the pass", async () => {
+    const second = { ...execution, executionId: "exec-2", orderId: "order-9002" };
+    const queued = new Map<string, QueuedEventFacts>();
+    const repair = createReceiptRepair({
+      listCommitted: async () => [execution, second],
+      readOrder: async () => order,
+      async recipientFor(memberId) {
+        void memberId;
+        if (queued.size > 0) throw new Error("identity lookup went away");
+        return "member@example.invalid";
+      },
+      findQueuedEvent: async (key) => queued.get(key) ?? null,
+      async enqueueOnce(input) {
+        queued.set(input.eventKey, { ...input });
+        return "inserted";
+      },
+      eligibleAfter: CUTOFF,
+      orderUrl: (id) => `https://x.invalid/o/${id}`,
+      mode: "queue",
+    });
+    const report = await repair.repair();
+    expect(report.queued).toBe(1);
+    expect(report.refused.map((r) => r.code)).toEqual(["read_failed"]);
+  });
+});
+
+describe("the receipt states the money from the money, not from a label", () => {
+  it("derives the amount from the cents on the same row", () => {
+    // A row whose formatted total disagrees with its cents must not be able to
+    // tell a customer the wrong number.
+    const rendered = renderCommittedReceipt({ orderReference: ORDER_ID, totalCents: 41_250, totalFormatted: "$1.00" })!;
+    expect(rendered.text).toContain("$412.50");
+    expect(rendered.text).not.toContain("$1.00");
+  });
+
+  it("refuses to render without a usable amount", () => {
+    for (const totalCents of [undefined, -1, 12.5, "412.50", Number.NaN]) {
+      expect(renderCommittedReceipt({ orderReference: ORDER_ID, totalCents })).toBeNull();
+    }
+  });
+
+  it("drops a link it cannot vouch for rather than putting it in an email", () => {
+    expect(safeOrderUrl("https://xenios.example.invalid/research/member/orders/1")).toContain("https://");
+    for (const bad of ["http://insecure.invalid/o/1", "javascript:alert(1)", "https://x.invalid/o/1?secret=pi_1_secret_x", "https://x.invalid/o/1#tok", "", null]) {
+      expect(safeOrderUrl(bad)).toBe("");
+    }
+    const rendered = renderCommittedReceipt({ orderReference: ORDER_ID, totalCents: 100, orderUrl: "javascript:alert(1)" })!;
+    expect(rendered.text).not.toContain("javascript");
+  });
+});
+
 describe("the renderer the dispatch chain will call", () => {
   it("claims its own template key and no other", () => {
     const payload = receiptPayload({ orderId: ORDER_ID, amountCents: 41_250 }, "https://x.invalid/o/1");
@@ -340,9 +478,9 @@ describe("it fails closed on the things that would cause a mass email", () => {
       recipientFor: async () => "member@example.invalid",
       findQueuedEvent: async (key) => queued.get(key) ?? null,
       async enqueueOnce(input) {
-        // The right number, the wrong words: a template that renders the
-        // formatted total would show the customer something else.
-        queued.set(input.eventKey, { ...input, payload: { ...input.payload, totalFormatted: "$1.00" } });
+        // The row that was stored names another order, so it would reach this
+        // customer with somebody else's reference in the subject line.
+        queued.set(input.eventKey, { ...input, payload: { ...input.payload, orderReference: "order-8888" } });
         return "inserted";
       },
       eligibleAfter: CUTOFF,
@@ -354,6 +492,59 @@ describe("it fails closed on the things that would cause a mass email", () => {
 
     expect(report.queued).toBe(0);
     expect(report.refused[0]!.code).toBe("queued_event_disagrees");
+    expect(report.refused[0]!.reason).toContain("read differently");
+  });
+});
+
+describe("the pass reaches the orders behind the ones it cannot act on", () => {
+  const page = (count: number, offset = 0) =>
+    Array.from({ length: count }, (_, i) => ({
+      ...execution,
+      executionId: `exec-${offset + i + 1}`,
+      orderId: `order-${offset + i + 1}`,
+      committedAt: `2026-09-09T10:0${offset + i}:00Z`,
+    }));
+
+  it("hands back a cursor pointing at the last row it looked at", async () => {
+    const seen: Array<{ limit: number; after?: unknown }> = [];
+    const queued = new Map<string, QueuedEventFacts>();
+    const repair = createReceiptRepair({
+      async listCommitted(request) {
+        seen.push(request);
+        return page(3);
+      },
+      // Every order refuses, which is the case that used to trap a pass.
+      readOrder: async () => ({ ...order, state: "checkout_pending" }),
+      recipientFor: async () => "member@example.invalid",
+      findQueuedEvent: async (key) => queued.get(key) ?? null,
+      enqueueOnce: async () => "inserted",
+      eligibleAfter: CUTOFF,
+      orderUrl: (id) => `https://x.invalid/o/${id}`,
+      mode: "queue",
+    });
+
+    const first = await repair.repair({ limit: 3 });
+    expect(first.refused).toHaveLength(3);
+    expect(first.cursor).toEqual({ committedAt: "2026-09-09T10:02:00Z", executionId: "exec-3" });
+
+    await repair.repair({ limit: 3, cursor: first.cursor });
+    // The reader was asked to resume, not to re-read the head.
+    expect(seen[1]).toMatchObject({ limit: 3, after: first.cursor });
+  });
+
+  it("drops the cursor when the queue was read to the end", async () => {
+    const repair = createReceiptRepair({
+      listCommitted: async () => page(2),
+      readOrder: async () => ({ ...order, state: "checkout_pending" }),
+      recipientFor: async () => "member@example.invalid",
+      findQueuedEvent: async () => null,
+      enqueueOnce: async () => "inserted",
+      eligibleAfter: CUTOFF,
+      orderUrl: (id) => `https://x.invalid/o/${id}`,
+      mode: "queue",
+    });
+    // A short page means the end; the next cycle starts fresh and reconsiders.
+    expect((await repair.repair({ limit: 50 })).cursor).toBeNull();
   });
 });
 

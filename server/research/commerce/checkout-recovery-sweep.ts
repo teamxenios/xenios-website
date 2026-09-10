@@ -71,7 +71,8 @@ export type RecoveryEntryCode =
   | "contended"
   | "needs_person"
   | "vanished"
-  | "skipped";
+  | "skipped"
+  | "attempt_failed";
 
 export interface RecoverySweepEntry {
   executionId: string;
@@ -144,7 +145,11 @@ export interface CheckoutRecoveryDeps {
    * The coordinator's LIMITED unattended operation. Nothing else is given to
    * this module, so no path here can enter normal payment progression.
    */
-  settleUnattended(memberId: string, requestKey: string): Promise<UnattendedOutcome>;
+  settleUnattended(
+    memberId: string,
+    requestKey: string,
+    expected?: { updatedAt: string | null },
+  ): Promise<UnattendedOutcome>;
   /**
    * Durably record what happened to a row, called immediately after that row is
    * decided and always BEFORE the cursor moves past it. If it throws, the pass
@@ -233,7 +238,7 @@ function report(
     attempted,
     settled: entries.filter((e) => e.outcome === "committed" || e.outcome === "cancelled").length,
     escalated: entries.filter((e) => e.outcome === "escalated"),
-    deferred: entries.filter((e) => e.outcome === "pending" || e.outcome === "contended").length,
+    deferred: entries.filter((e) => e.outcome === "pending" || e.outcome === "contended" || e.code === "attempt_failed").length,
     entries,
     pages,
     checkpoint,
@@ -318,13 +323,29 @@ export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
           const entry: RecoverySweepEntry = decision.attempt
             ? await (async () => {
                 attempted += 1;
-                const outcome = await deps.settleUnattended(record.memberId, record.requestKey);
-                return {
-                  ...base,
-                  outcome: outcome.kind,
-                  code: CODE_FOR_OUTCOME[outcome.kind],
-                  ...(outcome.kind === "escalated" ? { reason: outcome.reason } : {}),
-                };
+                try {
+                  // The discovery snapshot travels with the request, so the
+                  // operation can tell "still idle" from "someone came back".
+                  const outcome = await deps.settleUnattended(record.memberId, record.requestKey, {
+                    updatedAt: record.updatedAt ?? null,
+                  });
+                  return {
+                    ...base,
+                    outcome: outcome.kind,
+                    code: CODE_FOR_OUTCOME[outcome.kind],
+                    ...(outcome.kind === "escalated" ? { reason: outcome.reason } : {}),
+                  };
+                } catch {
+                  // One row that always throws must not starve every row behind
+                  // it. It is reported and the pass keeps going; the provider
+                  // error text never travels, only the fact of the failure.
+                  return {
+                    ...base,
+                    outcome: "skipped" as const,
+                    code: "attempt_failed" as const,
+                    reason: "this execution could not be settled on this pass and was left for the next one",
+                  };
+                }
               })()
             : { ...base, outcome: "skipped", code: "skipped", reason: decision.reason };
           entries.push(entry);

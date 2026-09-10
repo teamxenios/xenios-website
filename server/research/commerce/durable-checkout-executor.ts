@@ -290,11 +290,29 @@ export function createDurableCheckoutExecutor(
    * under the claim, never against a discovery snapshot: a customer or a
    * webhook may have moved the execution since a sweep listed it.
    */
-  async function settleUnattended(memberId: string, requestKey: string): Promise<UnattendedOutcome> {
+  async function settleUnattended(
+    memberId: string,
+    requestKey: string,
+    /**
+     * What the caller saw when it decided this row was idle. When supplied, a
+     * row that has been touched since is left alone.
+     *
+     * Re-reading is not enough on its own. The caller decided this execution was
+     * abandoned from a snapshot; if a customer returned in between, the fresh
+     * read shows a busy row and every check below would still pass on it. That
+     * is how an unattended worker releases a payment somebody is in the middle
+     * of authenticating.
+     */
+    expected?: { updatedAt: string | null },
+  ): Promise<UnattendedOutcome> {
     const r = await store.getForMember(memberId, requestKey);
     if (!r || r.memberId !== memberId) return { kind: "missing" };
     if (r.phase === "committed") return { kind: "committed", orderId: r.orderId };
     if (r.phase === "cancelled" && r.settledAt !== null) return { kind: "cancelled", orderId: r.orderId };
+    if (expected !== undefined && (r.updatedAt ?? null) !== (expected.updatedAt ?? null)) {
+      // Somebody moved it after it was listed. Not this pass's row.
+      return { kind: "contended", orderId: r.orderId };
+    }
 
     // An attempt was made and no reference was ever learned. Every route from
     // here would replay the creation key, which CREATES a payment when the

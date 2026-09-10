@@ -49,6 +49,7 @@ export interface CreditQuoteInput {
 }
 
 export type CreditRefusalCode =
+  | "policy_invalid"
   | "amounts_invalid"
   | "credit_amount_invalid"
   | "credit_exceeds_balance"
@@ -97,6 +98,19 @@ const refuse = (code: CreditRefusalCode, message: string): CreditRefusal => ({ o
  * contradicting typed amount rather than ignoring it, for the same reason.
  */
 export function evaluateCreditQuote(policy: CreditPolicy, input: CreditQuoteInput): CreditQuoteResult {
+  // The policy arrives from configuration, so it is checked rather than
+  // trusted. Without this, any mode string other than the exact
+  // "all_available" falls through to "requested", which is the mode that lets
+  // a caller choose the amount.
+  if (policy.mode !== "requested" && policy.mode !== "all_available") {
+    return refuse("policy_invalid", "The store credit policy does not name a mode this build understands.");
+  }
+  if (typeof policy.coversShipping !== "boolean") {
+    return refuse("policy_invalid", "The store credit policy does not say whether credit pays for shipping.");
+  }
+  if (typeof policy.version !== "string" || policy.version.length === 0) {
+    return refuse("policy_invalid", "The store credit policy has no version, so consent could not be bound to it.");
+  }
   if (!wholeNonNegative(input.subtotalCents) || !wholeNonNegative(input.shippingCents) || !wholeNonNegative(input.spendableCents)) {
     return refuse("amounts_invalid", "An order total or balance was not a whole number of cents.");
   }
