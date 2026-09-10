@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createInMemoryStoreCreditLedgerStore,
@@ -52,7 +52,7 @@ describe("append-only surface", () => {
     const store = createInMemoryStoreCreditLedgerStore();
     const methods = Object.keys(store);
     expect(methods.sort()).toEqual(
-      ["append", "approve", "getEntry", "listForMember", "pendingCents", "reverse", "spend", "spendableCents"].sort(),
+      ["append", "approve", "balanceSnapshot", "getEntry", "listForMember", "pendingCents", "reverse", "spend", "spendableCents"].sort(),
     );
     for (const name of methods) {
       expect(name).not.toMatch(/update|delete|remove|set|clear/i);
@@ -175,6 +175,30 @@ describe("reversal writes a new negative row", () => {
 // ---------------------------------------------------------------------------
 
 describe("spend decrements the spendable balance", () => {
+  it("replays the exact same order debit without a second row or a second balance charge", async () => {
+    const store = createInMemoryStoreCreditLedgerStore();
+    await store.append(record({ amountCents: 1000 }));
+    const first = await store.spend("mem_a", 1000, "ord_repeat", NOW);
+    const replay = await store.spend("mem_a", 1000, "ord_repeat", new Date("2026-07-23T00:00:00.000Z"));
+    expect(replay).toEqual(first);
+    expect(await store.listForMember("mem_a")).toHaveLength(2);
+    await expect(store.spend("mem_a", 999, "ord_repeat", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    expect(await store.listForMember("mem_a")).toHaveLength(2);
+  });
+
+  it("does not replay another member's order row or an ambiguous/noncanonical local debit", async () => {
+    const store = createInMemoryStoreCreditLedgerStore();
+    await store.append(record({ amountCents: 1000 }));
+    await store.append(record({ memberId: "mem_b", amountCents: -100, actorId: "ord_repeat", reason: "manual_adjustment" }));
+    await expect(store.spend("mem_a", 100, "ord_repeat", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    expect(await store.spendableCents("mem_a", NOW)).toBe(1000);
+    await store.append(record({ amountCents: 100, actorId: "ord_bad" }));
+    await expect(store.spend("mem_a", 100, "ord_bad", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await store.append(record({ amountCents: -100, actorId: "ord_duplicate", reason: "manual_adjustment" }));
+    await store.append(record({ amountCents: -100, actorId: "ord_duplicate", reason: "manual_adjustment" }));
+    await expect(store.spend("mem_a", 100, "ord_duplicate", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+
   it("appends a negative approved row naming the consuming order, so credit is not reusable", async () => {
     const store = createInMemoryStoreCreditLedgerStore();
     await store.append(record({ id: "a", state: "approved", amountCents: 2500 }));
@@ -284,12 +308,13 @@ describe("gross order value for review", () => {
 
 describe("storeCreditDtoOf", () => {
   it.each([null, undefined, "1000", Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
-    "refuses an uninterpretable ledger amount before balance or spend: %s", async amount => {
+    "refuses an uninterpretable ledger amount in raw projections and local arithmetic: %s", async amount => {
       const { client, rows } = fakeSupabase();
       rows.push({ ...storeCreditRecordToRow(record()), amount_cents: amount } as StoreCreditRow);
       const store = createSupabaseStoreCreditLedgerStore(client);
-      await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
-      await expect(store.spend("mem_a", 1, "order-with-invalid-ledger", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+      await expect(store.listForMember("mem_a")).rejects.toThrow(StoreCreditInvalidTransition);
+      await expect(store.getEntry("mem_a", rows[0].id)).rejects.toThrow(StoreCreditInvalidTransition);
+      expect(() => storeCreditDtoOf([record({ amountCents: amount as number })], NOW)).toThrow(StoreCreditInvalidTransition);
       expect(rows).toHaveLength(1);
     },
   );
@@ -360,9 +385,11 @@ describe("storeCreditDtoOf", () => {
 /**
  * A minimal fake of the supabase-js fluent client covering exactly the calls
  * the store-credit store makes: insert, and select with eq filters, order, and
- * maybeSingle. Rows live in a plain array so behavior round-trips.
+ * maybeSingle, plus the two RPCs. The RPC simulation below is deliberately
+ * local-only: it proves adapter vocabulary/results, not PostgreSQL serialization.
+ * Rows live in a plain array so behavior round-trips.
  */
-function fakeSupabase(): { client: SupabaseClient; rows: StoreCreditRow[] } {
+function fakeSupabase() {
   const rows: StoreCreditRow[] = [];
 
   function builder(table: string) {
@@ -405,15 +432,37 @@ function fakeSupabase(): { client: SupabaseClient; rows: StoreCreditRow[] } {
     return api;
   }
 
-  const client = { from: (table: string) => builder(table) } as unknown as SupabaseClient;
-  return { client, rows };
+  const rpc = vi.fn(async (name: string, args: Record<string, unknown>): Promise<{ data: unknown; error: { message: string } | null }> => {
+    try {
+      const scoped = rows.filter(row => row.member_id === args.p_member_id).map(storeCreditRowToRecord);
+      if (name === "research_store_credit_balance") {
+        return { data: [{ spendable_cents: spendableCentsOf(scoped, new Date(args.p_as_of as string)),
+          pending_cents: pendingCentsOf(scoped), reserved_cents: 0 }], error: null };
+      }
+      if (name === "research_store_credit_spend") {
+        const memory = createInMemoryStoreCreditLedgerStore();
+        for (const row of scoped) await memory.append(row);
+        const debit = await memory.spend(args.p_member_id as string, args.p_amount_cents as number,
+          args.p_order_id as string, new Date(args.p_at as string));
+        const row = storeCreditRecordToRow(debit);
+        if (!rows.some(existing => existing.id === row.id)) rows.push(row);
+        return { data: [{ ...row, spend_order_id: args.p_order_id }], error: null };
+      }
+      return { data: null, error: { message: "unknown RPC" } };
+    } catch {
+      return { data: null, error: { message: "synthetic RPC refusal" } };
+    }
+  });
+  const from = vi.fn((table: string) => builder(table));
+  const client = { from, rpc } as unknown as SupabaseClient;
+  return { client, rows, rpc, from };
 }
 
 describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
-  it("does not interpret a payload-less ledger read as a zero balance", async () => {
+  it("does not interpret a payload-less history read as an empty history", async () => {
     const query = { select() { return this; }, eq() { return this; }, order() { return Promise.resolve({ data: null, error: null }); } };
     const store = createSupabaseStoreCreditLedgerStore({ from: () => query } as unknown as SupabaseClient);
-    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.listForMember("mem_a")).rejects.toThrow(StoreCreditInvalidTransition);
   });
 
   it("refuses a wrong-member row even if the persistence transport ignored the member filter", async () => {
@@ -426,7 +475,7 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     await expect(store.getEntry("mem_a", row.id)).rejects.toThrow(StoreCreditInvalidTransition);
   });
 
-  it("appends, lists, and computes balances through the real query wiring", async () => {
+  it("appends/lists through table queries and obtains balances through the RPC wiring", async () => {
     const { client } = fakeSupabase();
     const store: StoreCreditLedgerRepository = createSupabaseStoreCreditLedgerStore(client);
     await store.append(record({ id: "a", state: "approved", amountCents: 1000 }));
@@ -468,7 +517,7 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     expect(await store.spendableCents("mem_a", NOW)).toBe(1000); // never doubled
   });
 
-  it("records a spend durably and refuses an overdraw", async () => {
+  it("accepts the synthetic RPC debit and propagates its overdraw refusal", async () => {
     const { client, rows } = fakeSupabase();
     const store = createSupabaseStoreCreditLedgerStore(client);
     await store.append(record({ id: "a", state: "approved", amountCents: 1500 }));
@@ -476,7 +525,7 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     expect(spent.amountCents).toBe(-1000);
     expect(rows.find((r) => r.id === spent.id)).toMatchObject({ amount_cents: -1000, actor_id: "ord_9" });
     expect(await store.spendableCents("mem_a", NOW)).toBe(500);
-    await expect(store.spend("mem_a", 501, "ord_10", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.spend("mem_a", 501, "ord_10", NOW)).rejects.toThrow("store credit spend failed");
   });
 
   it("reads an existing durable expiry without silently making the grant non-expiring", async () => {
@@ -503,7 +552,7 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     const { client, rows } = fakeSupabase();
     rows.push({ ...storeCreditRecordToRow(record({ state: "approved" })), expires_at: value } as StoreCreditRow);
     const store = createSupabaseStoreCreditLedgerStore(client);
-    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.listForMember("mem_a")).rejects.toThrow(StoreCreditInvalidTransition);
     await expect(store.getEntry("mem_a", rows[0].id)).rejects.toThrow(StoreCreditInvalidTransition);
   });
 
@@ -520,7 +569,7 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     const query = { select(value: string) { columns.push(value); return this; }, eq() { return this; },
       order() { return Promise.resolve(result); } };
     const store = createSupabaseStoreCreditLedgerStore({ from: () => query } as unknown as SupabaseClient);
-    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow("store credit load failed");
+    await expect(store.listForMember("mem_a")).rejects.toThrow("store credit load failed");
     expect(columns).toHaveLength(1);
     expect(columns[0]).toContain("expires_at");
   });
@@ -536,4 +585,207 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
       entries: [{ amountCents: 1000, state: "approved", reason: "referral_referrer", availableAt: null }],
     });
   });
+});
+
+describe("authoritative complete-balance RPC boundary", () => {
+  const balanceRow = { spendable_cents: 123, pending_cents: -25, reserved_cents: 77 };
+  const memberId = "10000000-0000-4000-8000-000000000001";
+
+  it("uses exact RPC vocabulary and no history query for either monetary read", async () => {
+    const { client, rpc, from } = fakeSupabase();
+    rpc.mockResolvedValue({ data: [balanceRow], error: null });
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    expect(await store.spendableCents(memberId, NOW)).toBe(123);
+    expect(await store.pendingCents(memberId)).toBe(-25);
+    expect(rpc.mock.calls[0]).toEqual(["research_store_credit_balance", { p_member_id: memberId, p_as_of: NOW.toISOString() }]);
+    expect(rpc.mock.calls[1][0]).toBe("research_store_credit_balance");
+    expect(Object.keys(rpc.mock.calls[1][1]).sort()).toEqual(["p_as_of", "p_member_id"]);
+    expect(rpc.mock.calls[1][1].p_member_id).toBe(memberId);
+    expect(Number.isFinite(Date.parse(rpc.mock.calls[1][1].p_as_of as string))).toBe(true);
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("uses one balance snapshot even when history is incomplete and contradicts the authoritative totals", async () => {
+    const { client, rows, rpc, from } = fakeSupabase();
+    rows.push(storeCreditRecordToRow(record({ amountCents: 9000 })));
+    rpc.mockResolvedValue({ data: [balanceRow], error: null });
+    const dto = await storeCreditViewFor(createSupabaseStoreCreditLedgerStore(client), "mem_a", NOW);
+    expect(dto).toEqual({ spendableCents: 123, pendingCents: -25,
+      entries: [{ amountCents: 9000, state: "approved", reason: "referral_referrer", availableAt: null }] });
+    expect(rpc).toHaveBeenCalledExactlyOnceWith("research_store_credit_balance", { p_member_id: "mem_a", p_as_of: NOW.toISOString() });
+    expect(from).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps signed safe-integer boundaries and clamps only the display's negative spendable total", async () => {
+    const { client, rpc } = fakeSupabase();
+    rpc.mockResolvedValue({ data: [{ spendable_cents: Number.MIN_SAFE_INTEGER,
+      pending_cents: Number.MAX_SAFE_INTEGER, reserved_cents: Number.MAX_SAFE_INTEGER }], error: null });
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    expect(await store.balanceSnapshot!(memberId, NOW)).toEqual({ spendableCents: Number.MIN_SAFE_INTEGER,
+      pendingCents: Number.MAX_SAFE_INTEGER, reservedCents: Number.MAX_SAFE_INTEGER });
+    expect(await storeCreditViewFor(store, memberId, NOW)).toEqual({ spendableCents: 0, pendingCents: Number.MAX_SAFE_INTEGER, entries: [] });
+  });
+
+  it.each([
+    null, undefined, {}, [], [null], [[balanceRow]], [balanceRow, balanceRow], balanceRow,
+    [{ spendable_cents: 0, pending_cents: 0 }], [{ ...balanceRow, unexpected: true }],
+  ])("refuses unavailable, duplicate or differently shaped balance responses (%#)", async data => {
+    const { client, rpc, from } = fakeSupabase();
+    rpc.mockResolvedValue({ data, error: null });
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    await expect(store.spendableCents(memberId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.pendingCents(memberId)).rejects.toThrow(StoreCreditInvalidTransition);
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it.each(["spendable_cents", "pending_cents", "reserved_cents"] as const)(
+    "refuses nonnumeric, missing, fractional and unsafe %s without coercion", async field => {
+      const { client, rpc, from } = fakeSupabase();
+      const store = createSupabaseStoreCreditLedgerStore(client);
+      for (const value of [null, undefined, "123", 123n, true, Number.NaN, Number.POSITIVE_INFINITY,
+        Number.NEGATIVE_INFINITY, 0.5, Number.MAX_SAFE_INTEGER + 1, Number.MIN_SAFE_INTEGER - 1]) {
+        rpc.mockResolvedValue({ data: [{ ...balanceRow, [field]: value }], error: null });
+        await expect(store.balanceSnapshot!(memberId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+      }
+      expect(from).not.toHaveBeenCalled();
+    },
+  );
+
+  it("refuses negative reservations and an invalid evaluation clock", async () => {
+    const { client, rpc, from } = fakeSupabase();
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    rpc.mockResolvedValue({ data: [{ ...balanceRow, reserved_cents: -1 }], error: null });
+    await expect(store.spendableCents(memberId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    rpc.mockClear();
+    await expect(store.spendableCents(memberId, new Date("invalid"))).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.spendableCents(" ", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    expect(rpc).not.toHaveBeenCalled();
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("never falls back to history or individual balance methods after a snapshot failure", async () => {
+    const { client, rows, rpc } = fakeSupabase();
+    rows.push(storeCreditRecordToRow(record({ amountCents: 9000 })));
+    rpc.mockResolvedValue({ data: null, error: { message: "function not available" } });
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    const spendable = vi.spyOn(store, "spendableCents");
+    const pending = vi.spyOn(store, "pendingCents");
+    await expect(storeCreditViewFor(store, "mem_a", NOW)).rejects.toThrow("store credit balance failed");
+    expect(rpc).toHaveBeenCalledTimes(1);
+    expect(spendable).not.toHaveBeenCalled();
+    expect(pending).not.toHaveBeenCalled();
+  });
+
+  it("preserves a legacy repository port through its monetary methods, never the history sum", async () => {
+    const store = createInMemoryStoreCreditLedgerStore();
+    delete store.balanceSnapshot;
+    await store.append(record({ amountCents: 9000 }));
+    const spendable = vi.spyOn(store, "spendableCents").mockResolvedValue(150);
+    const pending = vi.spyOn(store, "pendingCents").mockResolvedValue(-10);
+    expect(await storeCreditViewFor(store, "mem_a", NOW)).toMatchObject({ spendableCents: 150, pendingCents: -10 });
+    expect(spendable).toHaveBeenCalledExactlyOnceWith("mem_a", NOW);
+    expect(pending).toHaveBeenCalledExactlyOnceWith("mem_a");
+    spendable.mockResolvedValue(Number.NaN);
+    await expect(storeCreditViewFor(store, "mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+
+  it("still rejects wrong-owner display entries even alongside a valid monetary snapshot", async () => {
+    const store = createInMemoryStoreCreditLedgerStore();
+    vi.spyOn(store, "listForMember").mockResolvedValue([record({ memberId: "mem_b" })]);
+    await expect(storeCreditViewFor(store, "mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+});
+
+describe("serialized spend RPC boundary", () => {
+  const memberId = "10000000-0000-4000-8000-000000000001";
+  const orderId = "20000000-0000-4000-8000-000000000001";
+  const debit = () => ({ ...storeCreditRecordToRow(record({ id: "30000000-0000-4000-8000-000000000001",
+    memberId, amountCents: -100, actorId: orderId, reason: "manual_adjustment" })), spend_order_id: orderId });
+
+  it("sends only the exact RPC arguments and accepts original identity/time on an idempotent replay", async () => {
+    const { client, rpc, from } = fakeSupabase();
+    const row = debit();
+    rpc.mockResolvedValue({ data: [row], error: null });
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    const first = await store.spend(memberId, 100, orderId, NOW);
+    const later = new Date("2026-07-23T00:00:00.000Z");
+    expect(await store.spend(memberId, 100, orderId, later)).toEqual(first);
+    expect(first).toEqual(storeCreditRowToRecord(row));
+    expect(rpc.mock.calls).toEqual([
+      ["research_store_credit_spend", { p_member_id: memberId, p_amount_cents: 100, p_order_id: orderId, p_at: NOW.toISOString() }],
+      ["research_store_credit_spend", { p_member_id: memberId, p_amount_cents: 100, p_order_id: orderId, p_at: later.toISOString() }],
+    ]);
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it.each([null, undefined, {}, [], [null], [[]], [debit(), debit()], debit()])(
+    "refuses missing, duplicate or incorrectly shaped spend results (%#)", async data => {
+      const { client, rpc, from } = fakeSupabase();
+      rpc.mockResolvedValue({ data, error: null });
+      await expect(createSupabaseStoreCreditLedgerStore(client).spend(memberId, 100, orderId, NOW))
+        .rejects.toThrow(StoreCreditInvalidTransition);
+      expect(rpc).toHaveBeenCalledTimes(1);
+      expect(from).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    { member_id: "other-member" }, { amount_cents: -99 }, { amount_cents: 100 }, { amount_cents: 0 },
+    { amount_cents: "-100" }, { amount_cents: null }, { amount_cents: undefined }, { amount_cents: Number.NaN },
+    { amount_cents: Number.MAX_SAFE_INTEGER + 1 }, { amount_cents: Number.MIN_SAFE_INTEGER - 1 },
+    { state: "pending" }, { state: "held" }, { state: "fraud_flagged" }, { state: "reversed" }, { state: "unknown" },
+    { reason: "service_recovery" }, { reason: "unknown" }, { actor_type: "admin" }, { actor_type: "unknown" },
+    { actor_id: "other-order" }, { actor_id: null }, { actor_id: undefined },
+    { spend_order_id: "other-order" }, { spend_order_id: null }, { spend_order_id: undefined },
+    { expires_at: NOW.toISOString() }, { expires_at: "invalid" }, { expires_at: undefined },
+    { reverses_id: "other-row" }, { reverses_id: undefined }, { available_at: NOW.toISOString() }, { available_at: undefined },
+    { id: "" }, { id: undefined }, { created_at: "invalid" }, { created_at: undefined }, { unexpected: true },
+  ])("rejects a noncanonical or mismatched debit projection (%#)", async override => {
+    const { client, rpc, from } = fakeSupabase();
+    rpc.mockResolvedValue({ data: [{ ...debit(), ...override }], error: null });
+    await expect(createSupabaseStoreCreditLedgerStore(client).spend(memberId, 100, orderId, NOW))
+      .rejects.toThrow(StoreCreditInvalidTransition);
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("refuses every omitted field from the full canonical ledger response", async () => {
+    const { client, rpc, from } = fakeSupabase();
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    for (const key of Object.keys(debit())) {
+      const row = { ...debit() } as unknown as Record<string, unknown>;
+      delete row[key];
+      rpc.mockResolvedValue({ data: [row], error: null });
+      await expect(store.spend(memberId, 100, orderId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    }
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("refuses invalid spending input before any RPC or table call", async () => {
+    const { client, rpc, from } = fakeSupabase();
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    for (const amount of [0, -1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1]) {
+      await expect(store.spend(memberId, amount, orderId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    }
+    await expect(store.spend(" ", 100, orderId, NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.spend(memberId, 100, " ", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.spend(memberId, 100, orderId, new Date("invalid"))).rejects.toThrow(StoreCreditInvalidTransition);
+    expect(rpc).not.toHaveBeenCalled();
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it.each(["research_store_credit_balance", "research_store_credit_spend"])(
+    "propagates database/transport uncertainty without table fallback or an automatic retry: %s", async name => {
+      const { client, rpc, from } = fakeSupabase();
+      const store = createSupabaseStoreCreditLedgerStore(client);
+      const invoke = () => name === "research_store_credit_spend"
+        ? store.spend(memberId, 100, orderId, NOW) : store.spendableCents(memberId, NOW);
+      rpc.mockResolvedValueOnce({ data: [debit()], error: { message: "request outcome unknown" } });
+      await expect(invoke()).rejects.toThrow(/store credit (balance|spend) failed/);
+      expect(rpc).toHaveBeenCalledTimes(1);
+      rpc.mockRejectedValueOnce(new Error("connection lost"));
+      await expect(invoke()).rejects.toThrow("connection lost");
+      expect(rpc).toHaveBeenCalledTimes(2);
+      expect(from).not.toHaveBeenCalled();
+    },
+  );
 });

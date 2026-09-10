@@ -250,6 +250,24 @@ describe("revalidation", () => {
 });
 
 describe("store credit", () => {
+  it("uses the member-bound available balance without manufacturing ledger entries", async () => {
+    const service = createCartService(deps({
+      storeCredit: [credit({ amountCents: 9000 })],
+      storeCreditBalance: { memberId: MEMBER, spendableCents: 250 },
+    }));
+    const added = await service.addLine(MEMBER, { sku: "P001", quantity: 1, purchaseMode: "one_time" }, NOW);
+    expect(added.ok && added.cart.storeCreditAppliedCents).toBe(250);
+  });
+
+  it.each([
+    { memberId: "another-member", spendableCents: 100 },
+    { memberId: MEMBER, spendableCents: Number.NaN },
+    { memberId: MEMBER, spendableCents: Number.MAX_SAFE_INTEGER + 1 },
+  ])("refuses an invalid authoritative balance instead of falling back to ledger history", async balance => {
+    const service = createCartService(deps({ storeCredit: [credit({ amountCents: 9000 })], storeCreditBalance: balance }));
+    await expect(service.getCart(MEMBER, NOW)).rejects.toThrow("Cart credit balance identity or amount is invalid");
+  });
+
   it("never applies more credit than the subtotal", async () => {
     const service = createCartService(
       deps({ storeCredit: [credit({ amountCents: 500_000 })] }),

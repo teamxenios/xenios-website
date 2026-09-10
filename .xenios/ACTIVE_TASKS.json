@@ -17,6 +17,7 @@
         "shared/research/checkout-credit-policy*",
         "supabase/candidates/20260909150000_research_checkout_executions*",
         "supabase/candidates/20260910120000_research_checkout_execution_recovery*",
+        "supabase/candidates/20260910201400_research_checkout_credit_reservations*",
         ".env.example",
         "docs/research-launch/PROVIDER_READINESS.md",
         "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",

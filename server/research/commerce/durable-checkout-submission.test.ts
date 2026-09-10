@@ -9,7 +9,7 @@ import { createDurableCheckoutExecutor } from "./durable-checkout-executor";
 import { createDurableCheckoutSubmission, quoteFingerprint, registerDurableCheckoutApi, DURABLE_CHECKOUT_PATH } from "./durable-checkout-submission";
 import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
 import type { OrderRecord } from "./orders";
-import { createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
+import { CheckoutCreditReservationRefused, createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
 import { stripeModel } from "./stripe-model.test-helper";
 
@@ -144,6 +144,28 @@ describe("durable checkout submission", () => {
     expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
     expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
     expect(c.model.requests).toEqual([]);
+  });
+
+  it.each(["credit_reservation_insufficient", "credit_expiry_allocation_not_qualified"] as const)(
+    "compensates only a confirmed rejected credit intent without contacting the provider: %s", async reason => {
+      const c = composition({ storeCredit: 400 });
+      c.executions.create = async () => { throw new CheckoutCreditReservationRefused(reason); };
+      const result = await c.submission.submit(MEMBER, request(), NOW);
+      expect(result).toMatchObject({ ok: false, code: reason === "credit_reservation_insufficient" ? "cart_revalidation_failed" : "capability_disabled" });
+      expect(c.executions.snapshot()).toEqual([]);
+      expect(c.model.requests).toEqual([]);
+      expect(c.holds.events).toEqual(["reserve:res-1+res-2", "release:res-1+res-2"]);
+      expect((await c.orders.listByMember(MEMBER))[0]).toMatchObject({ state: "cancelled", cancellationReason: "credit_reservation_refused" });
+    });
+
+  it("does not compensate a credit refusal when its order read-back is unavailable", async () => {
+    const c = composition({ storeCredit: 400 });
+    c.executions.create = async () => { throw new CheckoutCreditReservationRefused("credit_reservation_insufficient"); };
+    c.executions.findByOrder = async () => { throw new Error("order_intent_lookup_unavailable"); };
+    await expect(c.submission.submit(MEMBER, request(), NOW)).rejects.toThrow("order_intent_lookup_unavailable");
+    expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
+    expect(c.model.requests).toEqual([]);
+    expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
   });
 
   it("does not compensate or contact the provider if the creation read-back itself fails", async () => {

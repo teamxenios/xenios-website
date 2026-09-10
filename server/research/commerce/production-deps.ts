@@ -46,8 +46,7 @@ import { resolveClaimOrderRepository, resolveClaimRepository } from "./persisten
 import { resolveInventoryLotStore, type InventoryLotRepository } from "./persistence/inventory-store";
 import {
   resolveStoreCreditLedgerStore,
-  storeCreditDtoOf,
-  type StoreCreditLedgerRecord,
+  storeCreditViewFor,
   type StoreCreditLedgerRepository,
 } from "./persistence/store-credit-store";
 import { resolveSubscriptionRepository } from "./persistence/subscriptions-store";
@@ -790,13 +789,6 @@ function adminOrderResult(result: OrderResult):
   return { ok: true as const, order: toAdminOrderView(result.order) };
 }
 
-/** Mirrors the ledger's own expiry rule (store-credit-store spendableCentsOf). */
-function ledgerRecordExpired(record: StoreCreditLedgerRecord, asOf: Date): boolean {
-  if (record.expiresAt === null) return false;
-  const ms = Date.parse(record.expiresAt);
-  return Number.isFinite(ms) && ms <= asOf.getTime();
-}
-
 /**
  * Projects a settled checkout into the durable OrderRecord the order service
  * reads, so a placed order appears in the member's order history and in the
@@ -1028,7 +1020,8 @@ function liveDependencies(
    * A per-request cart composition. The cart service evaluates against a
    * snapshot of lots and store credit, so both are loaded fresh for the SKUs
    * involved (the stored cart's lines, plus the line being added) and the
-   * member's unexpired ledger rows. The repository is the durable store, so
+   * member's complete available balance, net of outstanding checkout holds.
+   * Ledger history is not used to price a cart. The repository is durable, so
    * every mutation persists through the same seam it loaded from.
    */
   async function cartServiceFor(memberId: string, asOf: Date, extraSku?: string): Promise<CartService> {
@@ -1037,13 +1030,13 @@ function liveDependencies(
     if (extraSku) skus.add(extraSku);
     const lotLists = await Promise.all(Array.from(skus).map((sku) => lotStore.listBySku(sku)));
     const lots: InventoryLot[] = lotLists.flat();
-    const ledgerRecords = await creditLedger.listForMember(memberId);
-    const storeCredit = ledgerRecords.filter((record) => !ledgerRecordExpired(record, asOf));
+    const spendableCents = await creditLedger.spendableCents(memberId, asOf);
     return createCartService({
       repository: cartStore,
       catalog: catalogBySku,
       lots,
-      storeCredit,
+      storeCredit: [],
+      storeCreditBalance: { memberId, spendableCents },
       commerceEnabled: true,
       quantumCommerceEnabled: quantumEnabled,
       requiredAgreementKeys: [...CHECKOUT_REQUIRED_AGREEMENT_KEYS],
@@ -1510,8 +1503,7 @@ const webhookHandler = createWebhookHandler({
       // The wire DTO (spendableCents, pendingCents, entries) plus the legacy
       // stub keys (owner, balanceCents) so both consumers keep working.
       forMember: async (memberId) => {
-        const records = await creditLedger.listForMember(memberId);
-        const dto = storeCreditDtoOf(records, now());
+        const dto = await storeCreditViewFor(creditLedger, memberId, now());
         return { owner: memberId, balanceCents: dto.spendableCents, ...dto };
       },
     },

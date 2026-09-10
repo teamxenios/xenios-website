@@ -133,6 +133,15 @@ export function executionToInsertRow(record: CheckoutExecutionCreate): Omit<Chec
 }
 
 /** A creation that lost a race on (member, request key), or reused a request key with other details. */
+/** Only an exact transactional PostgreSQL refusal is definitive. A timeout,
+ * unavailable function or malformed response remains an uncertain creation. */
+export class CheckoutCreditReservationRefused extends Error {
+  constructor(readonly reason: "credit_reservation_insufficient" | "credit_expiry_allocation_not_qualified") {
+    super(reason);
+    this.name = "CheckoutCreditReservationRefused";
+  }
+}
+
 export class CheckoutExecutionConflict extends Error {
   constructor(readonly code: "request_key_reused" | "duplicate_execution") {
     super(`checkout execution conflict: ${code}`);
@@ -486,6 +495,10 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
     async create(record) {
       const insert = await client().from(EXECUTIONS).insert(executionToInsertRow(record));
       if (!insert.error) return { ...record, reservationIds: [...record.reservationIds] };
+      if (insert.error.code === "P0001"
+        && (insert.error.message === "credit_reservation_insufficient" || insert.error.message === "credit_expiry_allocation_not_qualified")) {
+        throw new CheckoutCreditReservationRefused(insert.error.message);
+      }
       if (insert.error.code !== UNIQUE_VIOLATION) throw fail("create", insert.error);
       // The (member, request key) row exists: the same exact request replays it; anything else conflicts.
       const existing = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("member_id", record.memberId).eq("request_key", record.requestKey).maybeSingle();
@@ -535,7 +548,15 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
     async findByOrder(orderId) {
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("order_id", orderId).order("created_at", { ascending: false }).limit(1);
       if (result.error) throw fail("order lookup", result.error);
-      return mapped("order lookup", (result.data ?? [])[0] ?? null);
+      if (!Array.isArray(result.data) || result.data.length > 1) {
+        throw new Error("checkout execution order lookup returned an unavailable projection");
+      }
+      if (result.data.length === 0) return null;
+      const record = mapped("order lookup", result.data[0]);
+      if (!record || record.orderId !== orderId) {
+        throw new Error("checkout execution order lookup returned a mismatched projection");
+      }
+      return record;
     },
     claim: (executionId, expectedVersion, phase) =>
       transition("research_checkout_execution_claim", { p_execution_id: executionId, p_expected_version: expectedVersion, p_phase: phase }),

@@ -74,6 +74,9 @@ export interface CartServiceDeps {
   catalog: Map<string, CatalogProduct>;
   lots: InventoryLot[];
   storeCredit: StoreCreditEntry[];
+  /** Complete server-side available balance, already net of checkout holds.
+   * Bound to its member; never synthesize ledger rows to carry this amount. */
+  storeCreditBalance?: { memberId: string; spendableCents: number };
   commerceEnabled: boolean;
   quantumCommerceEnabled: boolean;
   requiredAgreementKeys: string[];
@@ -293,7 +296,11 @@ function buildCart(memberId: string, stored: StoredCart, deps: CartServiceDeps, 
   const shippingCents = orderShippingTotalCents(groups.map(() => configuredStandardQuote()));
 
   const memberEntries = deps.storeCredit.filter((entry) => entry.memberId === memberId);
-  const spendableCents = spendableStoreCreditCents(memberEntries);
+  const balance = deps.storeCreditBalance;
+  if (balance !== undefined && (balance.memberId !== memberId || !Number.isSafeInteger(balance.spendableCents))) {
+    throw new Error("Cart credit balance identity or amount is invalid.");
+  }
+  const spendableCents = balance?.spendableCents ?? spendableStoreCreditCents(memberEntries);
   const storeCreditAppliedCents = Math.max(0, Math.min(spendableCents, subtotalCents));
 
   const estimatedTotalCents = Math.max(0, subtotalCents + shippingCents - storeCreditAppliedCents);

@@ -19,7 +19,7 @@ import { evaluateLargeOrderReview, orderShippingTotalCents, transitionOrder, typ
 import type { CheckoutEvaluationResult, ReservationAuditEvent, ReservationRefusalCode, ReservationSeam } from "./checkout";
 import type { DurableExecutionOutcome } from "./durable-checkout-executor";
 import type { OrderRecord, OrderRepository } from "./orders";
-import { CheckoutExecutionConflict, requestBodySha256, type CheckoutExecutionRepository } from "./persistence/checkout-executions-store";
+import { CheckoutCreditReservationRefused, CheckoutExecutionConflict, requestBodySha256, type CheckoutExecutionRepository } from "./persistence/checkout-executions-store";
 import { subjectOf } from "./routes";
 import { cancellationOf } from "./checkout-continuation";
 import type { CancellationReason, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
@@ -249,6 +249,18 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
           // its durable intent confirmed. The executor retains provider CAS and
           // idempotency. Unattended recovery behavior is not changed.
           return continueExisting(memberId, requestKey, orderId, false);
+        }
+        if (error instanceof CheckoutCreditReservationRefused && !winner
+          && !(await deps.executions.findByOrder(orderId))) {
+          // Exact PostgreSQL trigger refusal means this INSERT transaction
+          // rolled back. Read-back confirms no other intent owns this order.
+          // Unlike transport uncertainty, its own inventory can be released.
+          await release();
+          const cancelled = transitionOrder({ from: order.state, to: "cancelled", actor: "system" });
+          if (!cancelled.ok) throw error;
+          await deps.orders.save({ ...order, state: cancelled.state,
+            cancellationReason: "credit_reservation_refused", updatedAt: deps.now().toISOString() });
+          return deny([error.reason === "credit_reservation_insufficient" ? "cart_revalidation_failed" : "capability_disabled"]);
         }
         if (!(error instanceof CheckoutExecutionConflict) || !winner
           || winner.executionId === executionId || winner.orderId === orderId

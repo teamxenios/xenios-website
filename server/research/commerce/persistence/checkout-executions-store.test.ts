@@ -6,6 +6,7 @@ import { stripeModel } from "../stripe-model.test-helper";
 import { createInMemoryWebhookExecutionInbox, createWebhookExecutionProcessor } from "../webhook-execution-processor";
 import {
   CheckoutExecutionConflict,
+  CheckoutCreditReservationRefused,
   createInMemoryCheckoutExecutionStore,
   createSupabaseCheckoutExecutionStore,
   createSupabaseWebhookExecutionInbox,
@@ -317,6 +318,35 @@ function fakeClient(options: { existing?: CheckoutExecutionRow | null; rpc?: (fn
 }
 
 describe("Supabase execution store adapter", () => {
+  it.each([null, undefined, {}, [null], [undefined], [{ order_id: "wrong" }]])(
+    "does not use an unavailable order projection as proof of absence (%#)", async data => {
+      const client = { from: () => ({ select: () => ({ eq: () => ({ order: () => ({
+        limit: async () => ({ data, error: null }),
+      }) }) }) }) } as unknown as CheckoutExecutionClient;
+      await expect(createSupabaseCheckoutExecutionStore(() => client).findByOrder(base.orderId)).rejects.toThrow();
+    });
+
+  it("uses only an explicit empty order result as proof of absence", async () => {
+    const client = { from: () => ({ select: () => ({ eq: () => ({ order: () => ({
+      limit: async () => ({ data: [], error: null }),
+    }) }) }) }) } as unknown as CheckoutExecutionClient;
+    expect(await createSupabaseCheckoutExecutionStore(() => client).findByOrder(base.orderId)).toBeNull();
+  });
+  it.each(["credit_reservation_insufficient", "credit_expiry_allocation_not_qualified"] as const)(
+    "classifies only the exact transactional credit refusal: %s", async message => {
+      const client = { from: () => ({ insert: async () => ({ error: { code: "P0001", message } }) }) } as unknown as CheckoutExecutionClient;
+      await expect(createSupabaseCheckoutExecutionStore(() => client).create(base))
+        .rejects.toBeInstanceOf(CheckoutCreditReservationRefused);
+    });
+  it.each([
+    { code: "57014", message: "credit_reservation_insufficient" },
+    { code: "P0001", message: "credit_reservation_insufficient extra" },
+    { code: "P0001", message: "connection outcome unknown" },
+  ])("retains an unrecognized create error as uncertain", async error => {
+    const client = { from: () => ({ insert: async () => ({ error }) }) } as unknown as CheckoutExecutionClient;
+    const result = createSupabaseCheckoutExecutionStore(() => client).create(base);
+    await expect(result).rejects.not.toBeInstanceOf(CheckoutCreditReservationRefused);
+  });
   const insertedRow = (): CheckoutExecutionRow => ({ ...executionToInsertRow(base), last_provider_result: null });
   it("creates by insert and returns the record; a duplicate of the identical request replays", async () => {
     const fresh = fakeClient();

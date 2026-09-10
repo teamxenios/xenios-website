@@ -26,10 +26,10 @@
 //                 credit that never approved writes state reversed, which no
 //                 balance ever counts.
 //
-// SPENDABLE VERSUS PENDING. spendableCents delegates to the canonical
-// spendableStoreCreditCents (shared/research/distribution.ts), so approved
-// rows are the only rows that ever count, and expired rows are excluded first.
-// pendingCents counts pending and held rows that no later row references.
+// SPENDABLE VERSUS PENDING. The in-memory reference uses the canonical shared
+// approved/unexpired rule. Durable balances come from the complete-ledger RPC,
+// including active checkout reservations; a history page is NOT money authority.
+// Pending counts pending and held rows that no later row references.
 // A pending, held, reversed, or fraud_flagged row is NEVER spendable.
 //
 // REVIEW CAN NEVER BE BOUGHT. Large-order review evaluates the GROSS order
@@ -58,7 +58,8 @@
 // SPENDING. Applied credit must decrement the balance or the same credit is
 // reusable on every order. spend() appends a NEGATIVE approved row (the only
 // state the shared balance function counts), bounded by the current spendable
-// balance, with the consuming order carried in actor_id for audit. The shared
+// balance, with the consuming order carried in actor_id for audit. Durable
+// spending is one serialized, order-idempotent RPC, never read-then-insert. The shared
 // reason vocabulary has no "spend" member yet, so the row carries
 // manual_adjustment (the adjustment-shaped reason) until the shared type grows
 // one; the negative amount plus the order reference keep the audit readable.
@@ -75,6 +76,8 @@ import type { StoreCreditDto } from "@shared/research/commerce-api";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
 const STORE_CREDIT_TABLE = "research_store_credit_ledger";
+const STORE_CREDIT_BALANCE_RPC = "research_store_credit_balance";
+const STORE_CREDIT_SPEND_RPC = "research_store_credit_spend";
 const PG_UNIQUE_VIOLATION = "23505";
 
 export const STORE_CREDIT_STATES: readonly LedgerEntryState[] = [
@@ -140,6 +143,13 @@ export class StoreCreditInvalidTransition extends Error {
   }
 }
 
+export interface StoreCreditBalanceSnapshot {
+  /** Signed approved/unexpired balance after active checkout reservations. */
+  spendableCents: number;
+  pendingCents: number;
+  reservedCents: number;
+}
+
 /**
  * The append-only store-credit ledger port. Insert and read only: there is no
  * update, no delete, and no method that mutates a stored row. approve and
@@ -160,14 +170,16 @@ export interface StoreCreditLedgerRepository {
    * carried in actor_id so the audit trail names the consuming order.
    */
   spend(memberId: string, amountCents: number, orderRef: string, at: Date): Promise<StoreCreditLedgerRecord>;
-  /** Every row for one member, oldest first. Strictly scoped to that member. */
+  /** Member-scoped history, oldest first; durable history may be transport-capped. Never balance authority. */
   listForMember(memberId: string): Promise<readonly StoreCreditLedgerRecord[]>;
   /** One row, only if it belongs to the given member. */
   getEntry(memberId: string, entryId: string): Promise<StoreCreditLedgerRecord | null>;
-  /** Approved and unexpired only, via the canonical shared function. */
+  /** Authoritative approved/unexpired balance, net of active durable reservations. */
   spendableCents(memberId: string, asOf: Date): Promise<number>;
   /** Pending and held rows no later row has settled. Never spendable. */
   pendingCents(memberId: string): Promise<number>;
+  /** One authoritative monetary snapshot. Optional for existing repository implementations. */
+  balanceSnapshot?(memberId: string, asOf: Date): Promise<StoreCreditBalanceSnapshot>;
 }
 
 // ---------------------------------------------------------------------------
@@ -273,7 +285,61 @@ export async function storeCreditViewFor(
   memberId: string,
   asOf: Date,
 ): Promise<StoreCreditDto> {
-  return storeCreditDtoOf(await repo.listForMember(memberId), asOf);
+  validClock(asOf);
+  const [records, balance] = await Promise.all([
+    repo.listForMember(memberId),
+    repo.balanceSnapshot
+      ? repo.balanceSnapshot(memberId, asOf)
+      : Promise.all([repo.spendableCents(memberId, asOf), repo.pendingCents(memberId)])
+        .then(([spendableCents, pendingCents]) => ({ spendableCents, pendingCents, reservedCents: 0 })),
+  ]);
+  validateBalance(balance);
+  records.forEach(record => {
+    validateRecord(record);
+    if (record.memberId !== memberId) throw new StoreCreditInvalidTransition("Store credit member projection disagrees.");
+  });
+  return {
+    spendableCents: Math.max(0, balance.spendableCents),
+    pendingCents: balance.pendingCents,
+    entries: records.map(({ amountCents, state, reason, availableAt }) => ({ amountCents, state, reason, availableAt })),
+  };
+}
+
+function validClock(at: Date): string {
+  if (!(at instanceof Date) || !Number.isFinite(at.getTime())) {
+    throw new StoreCreditInvalidTransition("Store credit evaluation requires a valid clock.");
+  }
+  return at.toISOString();
+}
+
+function validateBalance(balance: StoreCreditBalanceSnapshot): void {
+  if (!balance || !Number.isSafeInteger(balance.spendableCents)
+    || !Number.isSafeInteger(balance.pendingCents) || !Number.isSafeInteger(balance.reservedCents)
+    || balance.reservedCents < 0) {
+    throw new StoreCreditInvalidTransition("Store credit balance projection is unavailable or unsafe.");
+  }
+}
+
+function validateSpendInput(memberId: string, amountCents: number, orderRef: string, at: Date): string {
+  if (typeof memberId !== "string" || !memberId.trim()) {
+    throw new StoreCreditInvalidTransition("A spend must name the owning member.");
+  }
+  if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
+    throw new StoreCreditInvalidTransition("A spend must be a positive integer number of cents.");
+  }
+  if (typeof orderRef !== "string" || !orderRef.trim()) {
+    throw new StoreCreditInvalidTransition("A spend must name the consuming order.");
+  }
+  return validClock(at);
+}
+
+function validateSpendResult(record: StoreCreditLedgerRecord, memberId: string, amountCents: number, orderRef: string): void {
+  validateRecord(record);
+  if (record.memberId !== memberId || record.amountCents !== -amountCents || record.state !== "approved"
+    || record.reason !== "manual_adjustment" || record.actorType !== "system" || record.actorId !== orderRef
+    || record.reversesId !== null || record.availableAt !== null || record.expiresAt !== null) {
+    throw new StoreCreditInvalidTransition("Store credit spend projection disagrees with the requested order debit.");
+  }
 }
 
 function validateRecord(record: StoreCreditLedgerRecord): void {
@@ -381,11 +447,12 @@ function buildSpendRow(
   orderRef: string,
   at: Date,
 ): StoreCreditLedgerRecord {
-  if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
-    throw new StoreCreditInvalidTransition("A spend must be a positive integer number of cents.");
-  }
-  if (!orderRef) {
-    throw new StoreCreditInvalidTransition("A spend must name the consuming order.");
+  validateSpendInput(memberId, amountCents, orderRef, at);
+  const prior = records.filter(record => record.actorId === orderRef);
+  if (prior.length > 0) {
+    if (prior.length !== 1) throw new StoreCreditInvalidTransition("Store credit order debit is ambiguous.");
+    validateSpendResult(prior[0], memberId, amountCents, orderRef);
+    return prior[0];
   }
   const spendable = spendableCentsOf(records, at);
   if (amountCents > spendable) {
@@ -432,6 +499,17 @@ export interface StoreCreditRow {
 
 const STORE_CREDIT_COLUMNS =
   "id, member_id, amount_cents, state, reason, available_at, reverses_id, actor_type, actor_id, created_at, expires_at";
+
+function singleRpcRow(data: unknown, keys: readonly string[]): Record<string, unknown> {
+  if (!Array.isArray(data) || data.length !== 1 || !data[0] || typeof data[0] !== "object" || Array.isArray(data[0])) {
+    throw new StoreCreditInvalidTransition("Store credit RPC requires exactly one canonical row.");
+  }
+  const row = data[0] as Record<string, unknown>;
+  if (Object.keys(row).length !== keys.length || keys.some(key => !Object.prototype.hasOwnProperty.call(row, key))) {
+    throw new StoreCreditInvalidTransition("Store credit RPC row projection disagrees.");
+  }
+  return row;
+}
 
 export function storeCreditRecordToRow(record: StoreCreditLedgerRecord): StoreCreditRow {
   expiryMillis(record.expiresAt);
@@ -503,8 +581,11 @@ export function createInMemoryStoreCreditLedgerStore(): StoreCreditLedgerReposit
       return clone(row);
     },
     async spend(memberId, amountCents, orderRef, at) {
+      if (rows.some(row => row.actorId === orderRef && row.memberId !== memberId)) {
+        throw new StoreCreditInvalidTransition("Store credit order debit belongs to a different member.");
+      }
       const row = buildSpendRow(forMember(memberId), memberId, amountCents, orderRef, at);
-      rows.push(clone(row));
+      if (!rows.some(existing => existing.id === row.id)) rows.push(clone(row));
       return clone(row);
     },
     async listForMember(memberId) {
@@ -520,6 +601,10 @@ export function createInMemoryStoreCreditLedgerStore(): StoreCreditLedgerReposit
     async pendingCents(memberId) {
       return pendingCentsOf(forMember(memberId));
     },
+    async balanceSnapshot(memberId, asOf) {
+      const records = forMember(memberId);
+      return { spendableCents: spendableCentsOf(records, asOf), pendingCents: pendingCentsOf(records), reservedCents: 0 };
+    },
   };
 }
 
@@ -531,7 +616,26 @@ export function createInMemoryStoreCreditLedgerStore(): StoreCreditLedgerReposit
 export function createSupabaseStoreCreditLedgerStore(
   client: SupabaseClient = getSupabaseAdmin(),
 ): StoreCreditLedgerRepository {
+  async function balanceSnapshot(memberId: string, asOf: Date): Promise<StoreCreditBalanceSnapshot> {
+    const at = validClock(asOf);
+    if (typeof memberId !== "string" || !memberId.trim()) {
+      throw new StoreCreditInvalidTransition("A balance requires the owning member.");
+    }
+    const result = await client.rpc(STORE_CREDIT_BALANCE_RPC, { p_member_id: memberId, p_as_of: at });
+    if (result.error) throw new Error(`store credit balance failed: ${result.error.message}`);
+    const row = singleRpcRow(result.data, ["spendable_cents", "pending_cents", "reserved_cents"]);
+    const balance = {
+      spendableCents: row.spendable_cents,
+      pendingCents: row.pending_cents,
+      reservedCents: row.reserved_cents,
+    } as StoreCreditBalanceSnapshot;
+    validateBalance(balance);
+    return balance;
+  }
+
   async function memberRows(memberId: string): Promise<StoreCreditLedgerRecord[]> {
+    // This display/lifecycle history may be limited by the provider's row cap.
+    // Never use it to authorize spend or compute the member's monetary totals.
     const res = await client
       .from(STORE_CREDIT_TABLE)
       .select(STORE_CREDIT_COLUMNS)
@@ -584,9 +688,20 @@ export function createSupabaseStoreCreditLedgerStore(
       return row;
     },
     async spend(memberId, amountCents, orderRef, at) {
-      const row = buildSpendRow(await memberRows(memberId), memberId, amountCents, orderRef, at);
-      await insertRecord(row);
-      return row;
+      const timestamp = validateSpendInput(memberId, amountCents, orderRef, at);
+      const result = await client.rpc(STORE_CREDIT_SPEND_RPC, {
+        p_member_id: memberId, p_amount_cents: amountCents, p_order_id: orderRef, p_at: timestamp,
+      });
+      if (result.error) throw new Error(`store credit spend failed: ${result.error.message}`);
+      const row = singleRpcRow(result.data, [...STORE_CREDIT_COLUMNS.split(", "), "spend_order_id"]);
+      if (row.spend_order_id !== orderRef) {
+        throw new StoreCreditInvalidTransition("Store credit spend order binding disagrees.");
+      }
+      const record = storeCreditRowToRecord(row as unknown as StoreCreditRow);
+      validateSpendResult(record, memberId, amountCents, orderRef);
+      // A replay may return the original timestamp/id. A transport failure or
+      // invalid result is uncertain, never permission for an insert fallback.
+      return record;
     },
     async listForMember(memberId) {
       return memberRows(memberId);
@@ -609,11 +724,12 @@ export function createSupabaseStoreCreditLedgerStore(
       return record;
     },
     async spendableCents(memberId, asOf) {
-      return spendableCentsOf(await memberRows(memberId), asOf);
+      return (await balanceSnapshot(memberId, asOf)).spendableCents;
     },
     async pendingCents(memberId) {
-      return pendingCentsOf(await memberRows(memberId));
+      return (await balanceSnapshot(memberId, new Date())).pendingCents;
     },
+    balanceSnapshot,
   };
 }
 
