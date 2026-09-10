@@ -240,6 +240,7 @@ describe("connected checkout journey over the local binding", () => {
     expect(receipt.passed).toBe(10);
 
     // The receipt cannot be mistaken for provider evidence, however green.
+    expect(receipt.scenarios.find((s) => s.scenario === "local_commit_failure_then_reconciliation")?.missingCapability).toContain("local commit");
     expect(receipt.qualified).toBe(false);
     expect(receipt.evidenceClass).toBe("local_scripted_transport");
     expect(receipt.binding).toBe("local");
@@ -250,6 +251,40 @@ describe("connected checkout journey over the local binding", () => {
     expect(serialized).not.toContain("secret");
     expect(serialized).not.toContain("sk_test");
     expect(serialized).not.toContain("whsec");
+  });
+
+  it("skips, never passes, the scenarios a binding cannot exercise, and names what is missing", async () => {
+    // A binding with no way to finish a customer challenge (the usual managed
+    // case: the provider has no server-side 3DS completion) must not report the
+    // authentication scenarios as passed.
+    const binding = localBinding();
+    const limited = { ...binding.surface, completeCustomerAction: undefined, restart: undefined, injectFault: undefined };
+    let keys = 0;
+    const receipt = await runConnectedCheckoutJourney({
+      surface: limited,
+      target: assertQualificationTarget({ binding: "local" }),
+      memberFor: (scenario) => MEMBERS[scenario],
+      request: (overrides = {}): CheckoutRequest => ({
+        shippingAddress: { line1: "1 Fixture St", city: "Austin", state: "TX", postalCode: "78701", country: "US" },
+        shippingService: "standard",
+        acceptedAgreementKeys: ["research-use"],
+        researchAttestation: true,
+        idempotencyKey: `req_limited_${String(++keys).padStart(4, "0")}`,
+        paymentMethodReference: "pm_fixture_card",
+        ...overrides,
+      }),
+      decliningPaymentMethod: DECLINE_PM,
+      authenticationPaymentMethod: AUTH_PM,
+    });
+    const skippedNames = receipt.scenarios.filter((s) => s.status === "skipped").map((s) => s.scenario);
+    expect(skippedNames).toContain("authentication_required_and_return");
+    expect(skippedNames).toContain("restart_recovery");
+    expect(skippedNames).toContain("lost_response_recovery");
+    expect(receipt.failed).toBe(0);
+    expect(receipt.qualified).toBe(false);
+    for (const scenario of receipt.scenarios.filter((s) => s.status === "skipped")) {
+      expect(scenario.missingCapability, `${scenario.scenario} must name what it needs`).toBeTruthy();
+    }
   });
 
   it("counts one payment per logical purchase across the whole journey", async () => {
