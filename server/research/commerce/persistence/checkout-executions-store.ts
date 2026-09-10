@@ -386,6 +386,12 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
       // timestamps carry six fractional digits, so a millisecond comparison
       // makes this reference disagree with the SQL for any two rows inside the
       // same millisecond and can skip one of them for ever.
+      // The SQL raises on half a cursor rather than treating it as "no cursor",
+      // because ignoring it silently returns page one for ever. The reference
+      // must refuse it the same way.
+      if (after && (typeof after.updatedAt !== "string" || typeof after.executionId !== "string" || after.executionId.length === 0)) {
+        throw new Error("the page cursor is incomplete; supply both updatedAt and executionId, or neither");
+      }
       const afterAt = after ? microsSinceEpoch(after.updatedAt) : null;
       // The SQL compares `(updated_at, id) > (p_after_updated_at, p_after_id)`
       // against a timestamptz column, so a cursor Postgres cannot parse raises

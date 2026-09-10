@@ -172,6 +172,56 @@ describe("5. the record decides, not the snapshot the worker was handed", () => 
   });
 });
 
+describe("5b. a row that moved since it was listed is left alone", () => {
+  it("refuses to act when the record was touched after the caller saw it", async () => {
+    const h = harness();
+    const { record, reference } = await h.withLiveAuthorization();
+    const listed = (await h.executions.getForMember(record.memberId, record.requestKey))!;
+
+    // The customer returns and their own path claims the execution. Re-reading
+    // is not enough on its own: the fresh row is a busy row, and every check
+    // below it would still pass. The snapshot is what says "not mine".
+    await h.executions.claim(listed.executionId, listed.version, "capturing");
+
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey, {
+      updatedAt: listed.updatedAt ?? null,
+    });
+
+    expect(outcome).toEqual({ kind: "contended", orderId: record.orderId });
+    // Nothing was asked of the provider and nothing was released.
+    expect(h.cancelPosts()).toHaveLength(0);
+    expect(h.model.intents.get(reference)!.status).toBe("requires_capture");
+    expect(h.released).toEqual([]);
+    expect((await h.orders.get(record.orderId))?.state).toBe("checkout_pending");
+  });
+
+  it("acts when the record is exactly as it was listed", async () => {
+    const h = harness();
+    const { record } = await h.withLiveAuthorization();
+    const listed = (await h.executions.getForMember(record.memberId, record.requestKey))!;
+
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey, {
+      updatedAt: listed.updatedAt ?? null,
+    });
+
+    expect(outcome).toEqual({ kind: "cancelled", orderId: record.orderId });
+    expect(h.released).toEqual(["res-1"]);
+  });
+
+  it("still reports a terminal row as terminal, whatever the snapshot said", async () => {
+    const h = harness();
+    const record = at({ phase: "reserved", providerReference: null, authorizationAttemptedAt: null });
+    await h.seedOrder(record.orderId);
+    await h.executions.create(record);
+    // Settle it, then ask again with the ORIGINAL snapshot.
+    await h.executor.settleUnattended(record.memberId, record.requestKey);
+    const outcome = await h.executor.settleUnattended(record.memberId, record.requestKey, {
+      updatedAt: record.updatedAt ?? null,
+    });
+    expect(outcome).toEqual({ kind: "cancelled", orderId: record.orderId });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // 6. A cancellation is terminal only when the provider says so.
 // ---------------------------------------------------------------------------

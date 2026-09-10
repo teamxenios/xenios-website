@@ -348,6 +348,58 @@ describe("the queue advances", () => {
     expect(new Set([...firstIds, ...secondIds]).size).toBe(4);
   });
 
+  it("keeps going when one row cannot be settled, instead of starving the rest", async () => {
+    const h = harness();
+    for (let i = 1; i <= 3; i++) {
+      const record = at({
+        executionId: `00000000-0000-4000-8000-0000000004${i}0`,
+        requestKey: `req_throw_000${i}`,
+        orderId: `8888888${i}-1111-4111-8111-111111111111`,
+        phase: "reserved",
+        providerReference: null,
+        authorizationAttemptedAt: null,
+        updatedAt: ago((48 - i) * HOUR),
+      });
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+    const sweep = createCheckoutRecoverySweep({
+      listRecoverable: (request) => h.executions.listRecoverable!(request),
+      async settleUnattended(memberId, requestKey, expected) {
+        // The first row fails every time. It must not block the two behind it.
+        if (requestKey === "req_throw_0001") throw new Error("the store went away");
+        return h.executor.settleUnattended(memberId, requestKey, expected);
+      },
+      now: () => SWEEP_NOW,
+    });
+
+    const report = await sweep.sweep({ pageSize: 10, maxPages: 2, maxAttempts: 10 });
+
+    expect(report.entries[0]!.code).toBe("attempt_failed");
+    expect(report.settled).toBe(2);
+    expect(report.deferred).toBe(1);
+    // The failure is reported for a person, and carries no provider text.
+    expect(report.entries[0]!.reason).toContain("left for the next one");
+    expect(h.executions.snapshot().filter((r) => r.phase === "cancelled")).toHaveLength(2);
+  });
+
+  it("hands the discovery snapshot to the settle, so a row that moved is left alone", async () => {
+    const h = harness();
+    await h.seed({ phase: "reserved", providerReference: null, authorizationAttemptedAt: null });
+    const seen: Array<{ updatedAt: string | null } | undefined> = [];
+    const sweep = createCheckoutRecoverySweep({
+      listRecoverable: (request) => h.executions.listRecoverable!(request),
+      async settleUnattended(memberId, requestKey, expected) {
+        seen.push(expected);
+        return h.executor.settleUnattended(memberId, requestKey, expected);
+      },
+      now: () => SWEEP_NOW,
+    });
+    await sweep.sweep();
+    expect(seen).toHaveLength(1);
+    expect(typeof seen[0]!.updatedAt).toBe("string");
+  });
+
   it("reports what an operator needs, and nothing an operator must not see", async () => {
     const h = harness();
     const record = await h.seed({
@@ -560,6 +612,19 @@ describe("the cursor keeps the precision the database keeps", () => {
         after: { updatedAt: "yesterday afternoon", executionId: record.executionId },
       }),
     ).rejects.toThrow(/unusable timestamp/);
+  });
+
+  it("refuses half a cursor, exactly as the SQL does", async () => {
+    const h = harness();
+    await h.seed({ phase: "reserved" });
+    // Ignoring an incomplete cursor returns page one for ever: the caller
+    // advances its own position and is handed page one again.
+    await expect(
+      h.executions.listRecoverable!({ before: SWEEP_NOW, limit: 10, after: { updatedAt: "2026-09-08T00:00:00Z", executionId: "" } }),
+    ).rejects.toThrow(/cursor is incomplete/);
+    await expect(
+      h.executions.listRecoverable!({ before: SWEEP_NOW, limit: 10, after: { executionId: "e" } as never }),
+    ).rejects.toThrow(/cursor is incomplete/);
   });
 
   it("orders ids the same way it filters them", async () => {

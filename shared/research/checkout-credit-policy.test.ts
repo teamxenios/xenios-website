@@ -128,6 +128,25 @@ describe("the gate and the charge come from one result", () => {
   });
 });
 
+describe("the policy itself is checked, not trusted", () => {
+  it("refuses a mode this build does not understand instead of falling back to one", () => {
+    // Without this, any unknown mode string becomes "requested", which is the
+    // mode that lets a caller choose the amount.
+    const result = evaluateCreditQuote({ ...ALL, mode: "whatever" as never }, { ...order, spendableCents: 10_000 });
+    expect(result).toMatchObject({ ok: false, code: "policy_invalid" });
+  });
+
+  it("refuses a policy that does not say whether credit pays for shipping", () => {
+    const result = evaluateCreditQuote({ ...ALL, coversShipping: undefined as never }, { ...order, spendableCents: 10_000 });
+    expect(result).toMatchObject({ ok: false, code: "policy_invalid" });
+  });
+
+  it("refuses a policy with no version, because consent could not be bound to it", () => {
+    const result = evaluateCreditQuote({ ...ALL, version: "" }, { ...order, spendableCents: 10_000 });
+    expect(result).toMatchObject({ ok: false, code: "policy_invalid" });
+  });
+});
+
 describe("consent is checked against the same numbers that would be charged", () => {
   const agreed = ok(quote(ALL, { spendableCents: 10_000 }));
 

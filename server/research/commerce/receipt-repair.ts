@@ -82,7 +82,9 @@ export type ReceiptCode =
   | "currency_not_supported"
   | "refund_state_unknown"
   | "commit_time_unusable"
-  | "read_failed";
+  | "read_failed"
+  | "recipient_not_an_address"
+  | "order_state_needs_a_person";
 
 export interface ReceiptRepairEntry {
   executionId: string;
@@ -92,6 +94,19 @@ export interface ReceiptRepairEntry {
   reason?: string;
 }
 
+/**
+ * Where a reconciliation pass stopped, so the next one resumes after it.
+ *
+ * Without this a pass reads the same first batch every time. Most of that batch
+ * is `before_cutoff`, `already_present` or refused, so the orders behind it are
+ * never reached, and the customers whose enqueue was lost longest ago are
+ * exactly the ones never repaired.
+ */
+export interface CommittedCursor {
+  committedAt: string;
+  executionId: string;
+}
+
 export interface ReceiptRepairReport {
   considered: number;
   queued: number;
@@ -99,11 +114,18 @@ export interface ReceiptRepairReport {
   previewed: number;
   refused: ReceiptRepairEntry[];
   entries: ReceiptRepairEntry[];
+  /** Hand this back to the next pass. Null when the queue was read to the end. */
+  cursor: CommittedCursor | null;
 }
 
 export interface ReceiptRepairDeps {
-  /** Committed executions, oldest first. The reader is A's, not this module's. */
-  listCommitted(request: { limit: number }): Promise<readonly CommittedExecutionFacts[]>;
+  /**
+   * Committed executions, oldest first by (committedAt, executionId), resuming
+   * strictly after `after`. The reader is the integration owner's; this module
+   * only requires that it be bounded, totally ordered and resumable, because a
+   * reader that cannot page cannot reach the orders that need repair most.
+   */
+  listCommitted(request: { limit: number; after?: CommittedCursor | null }): Promise<readonly CommittedExecutionFacts[]>;
   readOrder(orderId: string): Promise<ReceiptOrderFacts | null>;
   /**
    * The member's address from canonical identity. Never an operator-edited
@@ -142,9 +164,14 @@ export interface ReceiptRepairDeps {
 export function renderCommittedReceipt(payload: Record<string, unknown>): { subject: string; text: string } | null {
   assertEmailPayloadSafe(payload);
   const reference = typeof payload.orderReference === "string" ? payload.orderReference : "";
-  const total = typeof payload.totalFormatted === "string" ? payload.totalFormatted : "";
-  const url = typeof payload.orderUrl === "string" ? payload.orderUrl : "";
-  if (!reference || !total) return null;
+  // The money the customer reads is DERIVED from the cents on the same row,
+  // never taken from a free-text field beside them. A row whose formatted total
+  // disagreed with its cents would otherwise state the wrong amount.
+  const cents = payload.totalCents;
+  if (!Number.isSafeInteger(cents) || (cents as number) < 0) return null;
+  const total = formatUsdCents(cents as number);
+  const url = safeOrderUrl(payload.orderUrl);
+  if (!reference) return null;
   return {
     subject: `Payment received for order ${reference}`,
     text: [
@@ -184,6 +211,23 @@ export function renderCommerceReceiptOutboxEmail(
   return renderCommittedReceipt(payload);
 }
 
+/**
+ * An order link, or nothing. A payload field is not a place a link may come
+ * from unchecked: an email that carries an arbitrary URL is a phishing vector,
+ * and one that carries a provider URL can leak a payment's client secret.
+ */
+export function safeOrderUrl(value: unknown): string {
+  if (typeof value !== "string" || value.length === 0) return "";
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:") return "";
+    if (url.search !== "" || url.hash !== "") return "";
+    return url.toString();
+  } catch {
+    return "";
+  }
+}
+
 export function formatUsdCents(cents: number): string {
   const sign = cents < 0 ? "-" : "";
   const abs = Math.abs(Math.trunc(cents));
@@ -209,6 +253,42 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
   // way means a typo in a configuration value emails every customer.
   const willWrite = deps.mode === "queue";
 
+  /**
+   * Order states in which a payment HAS been taken. A captured order does not
+   * stay `payment_captured`: it moves on through fulfilment, and treating any
+   * later state as proof that no payment happened would deny a receipt to
+   * exactly the customers whose enqueue was lost longest ago.
+   */
+  const PAID_STATES: readonly string[] = ["payment_captured", "processing", "partially_fulfilled", "fulfilled", "delivered"];
+  /** States before any capture. A receipt here would be false. */
+  const UNPAID_STATES: readonly string[] = ["draft", "checkout_pending", "payment_authorized", "manual_review", "approved"];
+
+  /**
+   * Whether a queued row IS the receipt this order needs, or the reason it is
+   * not. Used on the row that was just inserted AND on a row that was already
+   * there: a key that merely exists is not proof that the right thing was
+   * queued to the right person, and the pass that finds it later must be as
+   * strict as the pass that wrote it.
+   */
+  function verifyStored(
+    stored: QueuedEventFacts,
+    recipient: string,
+    payload: Record<string, unknown>,
+    amountCents: number,
+  ): string | null {
+    if (stored.eventType !== RECEIPT_EVENT_TYPE) return "the queued event is of another type";
+    if (stored.templateKey !== RECEIPT_TEMPLATE_KEY) return "the queued event names another template";
+    if (stored.recipient !== recipient) return "the queued event is addressed to somebody else";
+    if (Number((stored.payload ?? {}).totalCents) !== amountCents) return "the queued event states another amount";
+    const storedRendering = renderCommittedReceipt({ ...(stored.payload ?? {}) });
+    const intended = renderCommittedReceipt(payload);
+    if (storedRendering === null || intended === null) return "the queued event cannot be rendered into a receipt";
+    if (storedRendering.subject !== intended.subject || storedRendering.text !== intended.text) {
+      return "the queued event would read differently from the receipt this order needs";
+    }
+    return null;
+  }
+
   /** Every reason this execution must not produce a receipt, in order. */
   async function refuseFor(
     execution: CommittedExecutionFacts,
@@ -218,8 +298,13 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
     if (order.memberId !== execution.memberId) {
       return { code: "order_not_the_members", reason: "the order belongs to a different member than the execution" };
     }
-    if (order.state !== "payment_captured") {
+    if (UNPAID_STATES.includes(order.state)) {
       return { code: "order_not_captured", reason: `the order is ${order.state}, so no payment has been recorded against it` };
+    }
+    if (!PAID_STATES.includes(order.state)) {
+      // cancelled, refunded, replaced, exception: something happened to this
+      // order that a plain payment receipt would misdescribe.
+      return { code: "order_state_needs_a_person", reason: `the order is ${order.state}; a person decides what this customer should be told` };
     }
     if (execution.providerReference === null || order.providerReference !== execution.providerReference) {
       return { code: "payment_reference_disagrees", reason: "the order and the execution name different payments" };
@@ -245,20 +330,27 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
      * One bounded reconciliation pass. Safe to run repeatedly: an order that
      * already has its event is reported as present, never queued again.
      */
-    async repair(options: { limit?: number } = {}): Promise<ReceiptRepairReport> {
+    async repair(options: { limit?: number; cursor?: CommittedCursor | null } = {}): Promise<ReceiptRepairReport> {
       // An unusable cutoff would compare false against every timestamp and mail
       // the entire history. Refuse the pass rather than discover that afterwards.
       if (!(deps.eligibleAfter instanceof Date) || !Number.isFinite(deps.eligibleAfter.getTime())) {
         throw new ReceiptRepairMisconfigured("eligibleAfter must be a valid date; refusing to run without a cutoff.");
       }
       const limit = Math.max(1, Math.min(options.limit ?? 50, 200));
-      const executions = await deps.listCommitted({ limit });
+      const executions = await deps.listCommitted({ limit, after: options.cursor ?? null });
       const entries: ReceiptRepairEntry[] = [];
+      let cursor: CommittedCursor | null = null;
 
       for (const execution of executions) {
         const push = (code: ReceiptCode, reason?: string) =>
           entries.push({ executionId: execution.executionId, orderId: execution.orderId, code, ...(reason ? { reason } : {}) });
 
+        // The position advances for every row this pass looked at, whatever it
+        // decided, so a row it can never act on cannot block the ones behind it.
+        if (typeof execution.committedAt === "string" && execution.committedAt.length > 0) {
+          cursor = { committedAt: execution.committedAt, executionId: execution.executionId };
+        }
+        try {
         const committedAt = execution.committedAt === null ? Number.NaN : Date.parse(execution.committedAt);
         if (!Number.isFinite(committedAt)) {
           // Not "before the cutoff": an execution recorded as committed with no
@@ -294,7 +386,9 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
 
         // Another lane may already have told this customer. The outbox
         // deduplicates on the key string alone, so this check, not the unique
-        // index, is what prevents a second receipt under a new name.
+        // index, is what prevents a second receipt under a new name. A prior
+        // lane's row is a different template with a different payload, so its
+        // existence is all that can be checked about it.
         const priors = deps.priorEventKeys?.(execution.orderId) ?? [];
         let alreadyTold = false;
         for (const key of priors) {
@@ -308,21 +402,33 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
           continue;
         }
 
-        const eventKey = receiptEventKey(execution.orderId);
-        if (await deps.findQueuedEvent(eventKey)) {
-          push("already_present");
-          continue;
-        }
-
         const recipient = await deps.recipientFor(execution.memberId);
         if (!recipient) {
           push("recipient_unknown", "no canonical address is on file for this member");
+          continue;
+        }
+        // A truthy string is not an address. A queue row with a malformed
+        // recipient fails at send time, after the row exists.
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
+          push("recipient_not_an_address", "the address on file for this member is not a usable email address");
           continue;
         }
 
         const payload = receiptPayload({ orderId: execution.orderId, amountCents: execution.amountCents }, deps.orderUrl(execution.orderId));
         if (renderCommittedReceipt(payload) === null) {
           push("queued_event_disagrees", "the receipt could not be rendered from the order's own facts");
+          continue;
+        }
+
+        // A row already under this key is VERIFIED, not assumed. The pass that
+        // wrote it refuses a row that disagrees; a later pass that merely saw
+        // the key would otherwise count that same wrong row as done.
+        const eventKey = receiptEventKey(execution.orderId);
+        const existing = await deps.findQueuedEvent(eventKey);
+        if (existing) {
+          const problem = verifyStored(existing, recipient, payload, execution.amountCents);
+          if (problem) push("queued_event_disagrees", problem);
+          else push("already_present");
           continue;
         }
 
@@ -349,25 +455,19 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
         // template, another recipient or another payload has not produced the
         // receipt anybody intended.
         const stored = await deps.findQueuedEvent(eventKey);
-        // Verify the row against the words the customer will actually read, not
-        // only against a number the template never renders.
-        const storedRendering = stored ? renderCommittedReceipt({ ...(stored.payload ?? {}) }) : null;
-        const intended = renderCommittedReceipt(payload)!;
-        if (
-          !stored ||
-          stored.eventType !== RECEIPT_EVENT_TYPE ||
-          stored.templateKey !== RECEIPT_TEMPLATE_KEY ||
-          stored.recipient !== recipient ||
-          Number((stored.payload ?? {}).totalCents) !== execution.amountCents ||
-          storedRendering === null ||
-          storedRendering.subject !== intended.subject ||
-          storedRendering.text !== intended.text
-        ) {
-          push("queued_event_disagrees", "the queued event does not match the receipt this order needs");
+        const problem = stored ? verifyStored(stored, recipient, payload, execution.amountCents) : "the queued event could not be read back";
+        if (problem) {
+          push("queued_event_disagrees", problem);
           continue;
         }
 
         push(outcome === "inserted" ? "queued" : "already_present");
+        } catch {
+          // One row that cannot be processed must not discard the record of
+          // every receipt this pass already queued. The error text never
+          // travels: it can carry a recipient or a filter value.
+          push("read_failed", "this order could not be processed on this pass");
+        }
       }
 
       const count = (code: ReceiptCode) => entries.filter((e) => e.code === code).length;
@@ -383,10 +483,15 @@ export function createReceiptRepair(deps: ReceiptRepairDeps) {
         "amount_disagrees",
         "order_refunded",
         "recipient_unknown",
+        "recipient_not_an_address",
+        "order_state_needs_a_person",
         "queue_unavailable",
         "queued_event_disagrees",
       ];
       return {
+        // A short page means the queue was read to the end; the next cycle
+        // starts fresh so temporarily refused rows are reconsidered.
+        cursor: executions.length < limit ? null : cursor,
         considered: executions.length,
         queued: count("queued"),
         alreadyPresent: count("already_present"),

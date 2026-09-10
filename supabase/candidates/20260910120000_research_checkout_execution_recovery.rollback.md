@@ -44,6 +44,12 @@ On the rehearsal database, with synthetic executions only:
   still pending after the provider released.
 - `p_limit` is honoured, clamped to at most 200 and at least 1, and a null limit
   falls back to the default rather than scanning.
+- Half a cursor RAISES. Supplying `p_after_updated_at` without `p_after_id`, or
+  the reverse, must not quietly return the first page: a caller that advances
+  its own position against a repeating first page never progresses.
+- The partial index excludes settled cancellations as well as committed rows, so
+  its size tracks the live backlog rather than lifetime order volume. Check the
+  plan on a table with enough settled rows that the difference is visible.
 - Results are ordered by (updated_at, id), a TOTAL order, so paging is
   deterministic even when several rows share a timestamp.
 - The cursor pages forward: given the last row of one call, the next call
