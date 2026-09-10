@@ -103,6 +103,7 @@ export function rowToExecution(row: CheckoutExecutionRow): CheckoutExecutionReco
     lastProviderResult: ((row as { last_provider_result?: unknown }).last_provider_result as ProviderExecutionResult | null | undefined) ?? null,
     localCommitFailure: row.local_commit_failure ?? null,
     committedAt: row.committed_at ?? null,
+    updatedAt: row.updated_at ?? null,
   };
 }
 
@@ -148,6 +149,13 @@ export interface CheckoutExecutionRepository extends CanonicalCheckoutExecutionS
   create(record: CheckoutExecutionCreate): Promise<CheckoutExecutionRecord>;
   /** Whether a retry carries the exact request the execution was created for. */
   verifyRequest(memberId: string, requestKey: string, requestBodySha256: string): Promise<"match" | "conflict" | "missing">;
+  /**
+   * Discovery for the bounded recovery sweep: non-terminal executions untouched
+   * since `before`, oldest first. Optional because it needs a separate migration
+   * (20260910120000_research_checkout_execution_recovery); a store without it
+   * simply cannot be swept, which is reported rather than worked around.
+   */
+  listRecoverable?(before: Date, limit: number): Promise<CheckoutExecutionRecord[]>;
 }
 
 const PHASE_FOR_RESULT: Record<ProviderExecutionResult["kind"], CheckoutExecutionPhase> = {
@@ -249,7 +257,9 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
     if (!current || current.version !== expected) return null;
     const patch = next(current);
     if (patch === null) return null;
-    const updated = { ...current, ...patch, version: expected + 1 };
+    // Mirrors the SQL trigger, which stamps updated_at on every UPDATE. The
+    // recovery sweep reads this to tell an abandoned row from a busy one.
+    const updated = { ...current, ...patch, version: expected + 1, updatedAt: now().toISOString() };
     rows.set(executionId, updated);
     return clone(updated);
   };
@@ -331,6 +341,19 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
       await applyCancelled(current);
       return cas(executionId, expected, () => ({ settledAt: now().toISOString() }));
     },
+    async listRecoverable(before, limit) {
+      const bounded = Math.max(1, Math.min(limit, 200));
+      return [...rows.values()]
+        .map(clone)
+        .filter((r) => {
+          if (r.phase === "committed") return false;
+          if (r.phase === "cancelled" && r.settledAt !== null) return false;
+          const touched = Date.parse(r.updatedAt ?? r.createdAt);
+          return Number.isFinite(touched) && touched < before.getTime();
+        })
+        .sort((a, b) => Date.parse(a.updatedAt ?? a.createdAt) - Date.parse(b.updatedAt ?? b.createdAt))
+        .slice(0, bounded);
+    },
     snapshot: () => [...rows.values()].map(clone),
   };
 }
@@ -409,6 +432,22 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
       const result = await client().from(EXECUTIONS).select(EXECUTION_COLUMNS).eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
       if (result.error) throw fail("read", result.error);
       return mapped("read", result.data);
+    },
+    /**
+     * Discovery for the bounded recovery sweep. The function is service-role
+     * only and clamps its own limit, so a caller cannot ask for an unbounded
+     * scan. It needs 20260910120000_research_checkout_execution_recovery.
+     */
+    async listRecoverable(before, limit) {
+      const response = await client().rpc("research_checkout_executions_list_recoverable", {
+        p_before: before.toISOString(),
+        p_limit: Math.max(1, Math.min(limit, 200)),
+      });
+      if (response.error) throw fail("list recoverable executions", response.error);
+      const rows = Array.isArray(response.data) ? response.data : response.data ? [response.data] : [];
+      return rows
+        .map((row) => rowToExecution(row as unknown as CheckoutExecutionRow))
+        .filter((record): record is CheckoutExecutionRecord => record !== null);
     },
     async verifyRequest(memberId, requestKey, digest) {
       const result = await client().from(EXECUTIONS).select("request_body_sha256").eq("member_id", memberId).eq("request_key", requestKey).maybeSingle();
