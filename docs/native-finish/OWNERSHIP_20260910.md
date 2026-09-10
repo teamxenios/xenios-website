@@ -44,3 +44,11 @@ Both code assignments are now returned to main after artifact review and local
 execution. The worker's current optional runtime-download assignment is confined
 to `C:/Users/sboad/projects/xenios-native-finish-evidence-20260910/postgres17-runtime/`;
 no service installation, repository dependency change or database start is delegated.
+
+The portable runtime assignment is complete and returned. Main initialized and
+stopped the exact synthetic local cluster. `/root/product_review_filters` then
+owned only the external evidence artifact `credit-concurrency/pg17-credit-proof.mjs`;
+main reviewed and executed it, and `/root/native_finish_review` independently
+accepted the final local result. Both write assignments are now returned to main.
+Receipt operational integration discovery is read-only; it grants no new file
+ownership, notification effects or production authority.
