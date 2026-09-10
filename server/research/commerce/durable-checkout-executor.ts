@@ -135,7 +135,11 @@ export function createDurableCheckoutExecutor(
     // compare-and-swap, so a still-live authorize worker simply loses its write
     // and answers pending. `capturing` deliberately stays on run(): the capture
     // was already decided and the provider's answer is the only truth left.
-    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorizing", "authorized", "action_required", "reconciliation_required"];
+    // `cancelling` is included so a cancellation whose worker died is RESUMABLE:
+    // claiming it again is a version compare-and-swap that takes it over. Without
+    // that, run(), cancel() and recover() all answered "pending" forever and the
+    // order, the holds and any provider authorization were stranded.
+    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorizing", "authorized", "action_required", "reconciliation_required", "cancelling"];
     if (!cancellable.includes(r.phase)) return run(memberId, requestKey);
     let owned = await store.claim(r.executionId, r.version, "cancelling");
     if (!owned) return { kind: "pending", orderId: r.orderId };
@@ -163,15 +167,12 @@ export function createDurableCheckoutExecutor(
         return run(memberId, requestKey);
       }
       if (learned.kind === "authorized" || learned.kind === "action_required") {
-        // Persist the reference BEFORE attempting the cancel. A cancel that then
-        // fails leaves a row that names the payment, so every later attempt is a
-        // read-back by reference instead of a replay bounded by the retention
-        // window.
-        const recorded = await store.recordProvider(owned.executionId, owned.version, learned);
-        if (!recorded) return { kind: "pending", orderId: r.orderId };
-        const reclaimed = await store.claim(recorded.executionId, recorded.version, "cancelling");
-        if (!reclaimed) return { kind: "pending", orderId: r.orderId };
-        owned = reclaimed;
+        // Learn the reference but do NOT write an intermediate phase: recording
+        // `authorized` here would leave the execution capturable for as long as
+        // it took to re-claim, and a concurrent run() would capture the very
+        // payment this call is releasing. The record stays in `cancelling`,
+        // which run() will not advance, and the reference is carried on the
+        // final proof instead (including an uncertain one).
         reference = learned.providerReference;
       } else if (learned.kind === "cancelled") {
         proof = { kind: "cancelled", providerReference: learned.providerReference, capturedAmountCents: 0 };
@@ -198,6 +199,11 @@ export function createDurableCheckoutExecutor(
       }
       if (proof.kind === "cancelled" && proof.providerReference !== reference) proof = { kind: "unknown" };
       if (proof.kind === "action_required" && proof.providerReference !== reference) proof = { kind: "unknown" };
+      // Whatever happened, the row must end up naming the payment we found, so
+      // a later attempt reads it back by reference rather than replaying a
+      // creation key that the provider may already have pruned.
+      if (proof.kind === "unknown") proof = { kind: "unknown", providerReference: reference };
+      if (proof.kind === "refused") proof = { kind: "unknown", providerReference: reference };
     }
     if (proof!.kind === "cancelled" && proof!.reason === undefined) proof = { ...proof!, reason: "customer" };
     const saved = await store.recordProvider(owned.executionId, owned.version, proof!);
@@ -216,6 +222,9 @@ export function createDurableCheckoutExecutor(
   async function recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> {
     const r = await store.getForMember(memberId, requestKey);
     if (!r || r.memberId !== memberId) return { kind: "missing" };
+    // A cancellation whose worker died is resumed as a cancellation, not as a
+    // payment: run() would leave it pending forever.
+    if (r.phase === "cancelling") return cancel(memberId, requestKey);
     if (r.phase !== "reconciliation_required") return run(memberId, requestKey);
     const owned = await store.claim(r.executionId, r.version, "authorizing");
     if (!owned) return { kind: "pending", orderId: r.orderId };

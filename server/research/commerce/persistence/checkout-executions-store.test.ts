@@ -172,6 +172,31 @@ describe("in-memory store with the real coordinator, port, adapter and webhook p
     expect((await store.getForMember(base.memberId, base.requestKey))!.version).toBe(settled.version);
     expect(model.captures()).toHaveLength(0);
   });
+  it("a cancel racing a concurrent run over the real store never captures the payment being released", async () => {
+    const model = stripeModel();
+    const store = createInMemoryCheckoutExecutionStore();
+    await store.create(base);
+    const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
+    // Authorize first so a live payment exists, then race a cancel against a run.
+    const port = createProviderVerifiedPaymentPort(model.adapter);
+    const authorized = await port.authorize((await store.getForMember(base.memberId, base.requestKey))!);
+    await store.recordProvider(base.executionId, 1, authorized);
+    const [cancelled, ran] = await Promise.all([
+      executor.cancel(base.memberId, base.requestKey),
+      executor.run(base.memberId, base.requestKey),
+    ]);
+    const final = (await store.getForMember(base.memberId, base.requestKey))!;
+    // Exactly one of them owned the execution; whichever did, the money is
+    // consistent with the phase and nothing was captured behind a cancellation.
+    if (final.phase === "cancelled") {
+      expect(model.captures()).toHaveLength(0);
+      expect(model.intents.get("pi_0001")!.amount_received).toBe(0);
+    } else {
+      expect(final.phase === "committed" || final.phase === "reconciliation_required").toBe(true);
+    }
+    expect([cancelled.kind, ran.kind].every((k) => k !== "missing")).toBe(true);
+    expect(model.creates()).toHaveLength(1);
+  });
   it("cancels an execution that never reached the provider without any provider call", async () => {
     const model = stripeModel();
     const store = createInMemoryCheckoutExecutionStore();

@@ -66,7 +66,12 @@ export type ProviderExecutionResult =
    */
   | { kind: "cancelled"; providerReference: string | null; capturedAmountCents: 0; reason?: CancellationReason }
   | { kind: "refused"; definitiveNoEffect: boolean }
-  | { kind: "unknown" };
+  /**
+   * The outcome is not known. It may still carry a reference the caller LEARNED
+   * during the attempt: recording it lets every later attempt read the payment
+   * back by reference instead of replaying a creation key that expires.
+   */
+  | { kind: "unknown"; providerReference?: string };
 
 /** Provider proof counts only when it names exactly this record's money, member and order. */
 export function exactPaymentEvidence(

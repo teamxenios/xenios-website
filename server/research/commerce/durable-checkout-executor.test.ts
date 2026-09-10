@@ -35,6 +35,7 @@ function harness({
   cancelAnswer = undefined as ProviderExecutionResult | undefined,
   reference = null as string | null,
   attempted = false,
+  observePhase = undefined as ((phase: string) => void) | undefined,
 } = {}) {
   let r: CheckoutExecutionRecord = { ...base, phase: initial, providerReference: reference, authorizationAttemptedAt: attempted ? "2026-09-08T00:00:01Z" : null };
   const calls: string[] = [];
@@ -44,17 +45,23 @@ function harness({
     claim: async (_id, version, phase) => {
       calls.push(`claim:${phase}`);
       if (contended) return null;
+      if (r.version !== version) return null;
       r = { ...r, phase, version: version + 1 };
+      observePhase?.(phase);
       return structuredClone(r);
     },
     recordProvider: async (_id, version, p) => {
       calls.push(`record:${p.kind}`);
+      if (r.version !== version) return null;
+      const phase = p.kind === "unknown" || p.kind === "refused" ? "reconciliation_required" : (p.kind as CheckoutExecutionRecord["phase"]);
       r = {
         ...r,
         version: version + 1,
-        phase: p.kind === "unknown" ? "reconciliation_required" : (p.kind as CheckoutExecutionRecord["phase"]),
-        providerReference: "providerReference" in p ? p.providerReference : r.providerReference,
+        phase,
+        // The reference is learned once and never replaced, as the SQL does.
+        providerReference: r.providerReference ?? ("providerReference" in p ? (p.providerReference ?? null) : null),
       };
+      observePhase?.(phase);
       return structuredClone(r);
     },
     commitCaptured: async () => {
@@ -188,10 +195,46 @@ describe("durable checkout coordinator", () => {
     const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
     const h = harness({ attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "cancelled", providerReference: "pi_learned", capturedAmountCents: 0 } });
     expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
-    // The learned reference is PERSISTED before the cancel is attempted, so a
-    // failed cancel still leaves a row that names the payment.
-    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:authorized", "claim:cancelling", "cancel:pi_learned", "record:cancelled", "settle"]);
+    // The execution stays in `cancelling` throughout: no intermediate phase a
+    // concurrent run() could capture from.
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "cancel:pi_learned", "record:cancelled", "settle"]);
     expect(h.snapshot().providerReference).toBe("pi_learned");
+  });
+
+  it("never leaves a capturable phase behind while it cancels", async () => {
+    const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
+    const phases: string[] = [];
+    const h = harness({
+      attempted: true,
+      reconcileAnswer: learned,
+      cancelAnswer: { kind: "cancelled", providerReference: "pi_learned", capturedAmountCents: 0 },
+      observePhase: (phase) => phases.push(phase),
+    });
+    await h.cancel(base.memberId, base.requestKey);
+    // `authorized` is the one phase run() advances to capture; it must never
+    // appear between the claim and the settlement.
+    expect(phases).not.toContain("authorized");
+  });
+
+  it("resumes a cancellation whose worker died instead of stranding the order, the holds and the money", async () => {
+    // The record was claimed into `cancelling` and the worker never came back.
+    const h = harness({
+      initial: "cancelling",
+      attempted: true,
+      reference: "pi_stranded",
+      cancelAnswer: { kind: "cancelled", providerReference: "pi_stranded", capturedAmountCents: 0 },
+    });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(h.snapshot().settledAt).not.toBeNull();
+    // The generic recovery path resumes it as a cancellation too, not as a payment.
+    const viaRecover = harness({
+      initial: "cancelling",
+      attempted: true,
+      reference: "pi_stranded2",
+      cancelAnswer: { kind: "cancelled", providerReference: "pi_stranded2", capturedAmountCents: 0 },
+    });
+    expect((await viaRecover.recover(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(viaRecover.calls).not.toContain("capture");
   });
 
   it("a cancel that fails after learning the reference still leaves the reference on the record, so later attempts read back instead of replaying", async () => {
