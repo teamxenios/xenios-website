@@ -124,6 +124,43 @@ describe("durable checkout submission", () => {
     expect(c.model.creates()).toHaveLength(1);
   });
 
+  it("re-reads a committed execution after a lost create response without cancelling its order or holds", async () => {
+    const c = composition();
+    const create = c.executions.create.bind(c.executions);
+    c.executions.create = async record => { await create(record); throw new Error("create_response_lost"); };
+    const outcome = await c.submission.submit(MEMBER, request(), NOW);
+    expect(outcome).toMatchObject({ ok: true, state: "completed", idempotent: false });
+    expect(c.executions.snapshot()).toHaveLength(1);
+    expect(c.model.creates()).toHaveLength(1);
+    expect(c.model.captures()).toHaveLength(1);
+    expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
+    expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
+  });
+
+  it("preserves unresolved order and holds when create fails and its outcome is not yet visible", async () => {
+    const c = composition();
+    c.executions.create = async () => { throw new Error("create_outcome_unknown"); };
+    await expect(c.submission.submit(MEMBER, request(), NOW)).rejects.toThrow("create_outcome_unknown");
+    expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
+    expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
+    expect(c.model.requests).toEqual([]);
+  });
+
+  it("does not compensate or contact the provider if the creation read-back itself fails", async () => {
+    const c = composition();
+    const create = c.executions.create.bind(c.executions);
+    c.executions.create = async record => {
+      await create(record);
+      c.executions.getForMember = async () => { throw new Error("creation_read_back_unavailable"); };
+      throw new Error("create_response_lost");
+    };
+    await expect(c.submission.submit(MEMBER, request(), NOW)).rejects.toThrow("creation_read_back_unavailable");
+    expect(c.executions.snapshot()[0].phase).toBe("reserved");
+    expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
+    expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
+    expect(c.model.requests).toEqual([]);
+  });
+
   it("stops at authentication with a truthful state, and the continuation completes the same order without a second payment", async () => {
     const c = composition({ requiresAction: true });
     const first = await c.submission.submit(MEMBER, request(), NOW);

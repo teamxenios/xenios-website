@@ -237,18 +237,34 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
           settledAt: null,
         });
       } catch (error) {
-        // A concurrent submission of the same key won the intent: this attempt's
-        // order and holds are compensated and the buyer continues the winner.
+        // A transport failure may follow a committed INSERT. Establish canonical
+        // identity before any compensation; absence after an uncertain response
+        // is not proof that the write cannot still finish.
+        const winner = await deps.executions.getForMember(memberId, requestKey);
+        if (winner?.executionId === executionId && winner.orderId === orderId
+          && winner.memberId === memberId && winner.requestKey === requestKey
+          && winner.amountCents === totalCents
+          && (await deps.executions.verifyRequest(memberId, requestKey, requestDigest)) === "match") {
+          // This is still the explicit original customer submission, now with
+          // its durable intent confirmed. The executor retains provider CAS and
+          // idempotency. Unattended recovery behavior is not changed.
+          return continueExisting(memberId, requestKey, orderId, false);
+        }
+        if (!(error instanceof CheckoutExecutionConflict) || !winner
+          || winner.executionId === executionId || winner.orderId === orderId
+          || winner.memberId !== memberId || winner.requestKey !== requestKey) {
+          // Preserve the order/holds for reconciliation. Do not manufacture a
+          // cancellation or risk releasing resources owned by a committed intent.
+          throw error;
+        }
+        const same = (await deps.executions.verifyRequest(memberId, requestKey, requestDigest)) === "match";
+        // Only a definitive conflict with a different canonical execution AND
+        // order proves this attempt lost. Its own holds may now be compensated.
         await release();
         const cancelled = transitionOrder({ from: order.state, to: "cancelled", actor: "system" });
         if (cancelled.ok) await deps.orders.save({ ...order, state: cancelled.state, cancellationReason: "duplicate_submission", updatedAt: deps.now().toISOString() });
-        if (error instanceof CheckoutExecutionConflict) {
-          const winner = await deps.executions.getForMember(memberId, requestKey);
-          const same = winner && (await deps.executions.verifyRequest(memberId, requestKey, requestDigest)) === "match";
-          if (winner && same) return continueExisting(memberId, requestKey, winner.orderId, true);
-          return deny(["idempotency_conflict"]);
-        }
-        throw error;
+        if (same) return continueExisting(memberId, requestKey, winner.orderId, true);
+        return deny(["idempotency_conflict"]);
       }
 
       // 6. Only now the provider, through the recovery-aware coordinator.
