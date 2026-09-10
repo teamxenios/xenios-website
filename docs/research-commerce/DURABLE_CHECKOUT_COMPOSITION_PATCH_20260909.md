@@ -63,7 +63,9 @@ State 3 (`liveDependencies`): after `checkoutService` is created and BEFORE
     // Same fraud gate the legacy checkout uses, when one is wired; absent means "not flagged".
     // isFraudFlagged: ...,
     // Stripe Connect account id when events must be scoped; null = platform events only.
-    expectedProviderAccountId: env.STRIPE_ACCOUNT_ID ?? null,
+    // NOTE: removed since this was written. The webhook account expectation now
+  // comes from the provider itself, and supplying a disagreeing value refuses
+  // readiness rather than silently isolating every genuine event.
     // Downstream after a committed order. No commerce-lane order notifier
     // exists today (only the Early Access outbox notifier); leave absent until
     // the canonical outbox mechanism is decided, or pass the notifier here.
@@ -97,7 +99,12 @@ import { registerDurableCheckoutSurface } from "./research/commerce/durable-chec
 // answers 503 and the page keeps the ordering door. Same merged guard.
 registerDurableCheckoutSurface(
   app,
-  { requireActiveMember: adaptGuard(requireActiveMember) },
+  {
+    requireActiveMember: adaptGuard(requireActiveMember),
+    // Supplying this also mounts the operations read, so the person who can act
+    // on a parked payment can see it. Omit it and only the customer doors mount.
+    requireAdmin: adaptGuard(requireSupabaseAdmin),
+  },
   commerceDependencies.durableCheckout,
   { now: commerceDependencies.now },
 );
@@ -110,6 +117,7 @@ Paths registered (none collide with `registerCommerceApi`):
 - `GET  /api/research/checkout/executions/:requestKey/continuation`
 - `POST /api/research/checkout/executions/:requestKey/continue`
 - `POST /api/research/checkout/executions/:requestKey/cancel`
+- `GET  /api/admin/research/orders/:orderId/payment-execution` (admin read; mounted only when `requireAdmin` is supplied)
 
 Express matches `/api/research/checkout/durable` before any `/checkout`
 handler only because the legacy door is an exact-path `POST /api/research/checkout`;
@@ -155,5 +163,6 @@ route inventory (if it enumerates paths) gains the five paths above.
   member-agnostic list function on the store (an additive SQL function on a
   later candidate) and a scheduler slot; not in this patch.
 - Canonical downstream outbox for `onCommitted`: A's decision.
-- Operations visibility of executions (admin read of a member's execution by
-  order id): the store has `findByOrder`; no admin route yet.
+- A recovery sweep for parked executions still needs a list-by-phase the SQL
+  does not have. The per-order operations read above closes the case where an
+  operator is already looking at the order.
