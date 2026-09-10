@@ -40,6 +40,39 @@ export interface RecoveryListRequest {
   after?: RecoveryCursor | null;
 }
 
+/**
+ * A checkpoint is a whole cycle's position: the horizon it started with, and
+ * where in that horizon it stopped.
+ *
+ * The horizon is fixed for the life of a cycle. Recomputing it on every pass
+ * lets the eligible set grow underneath a cursor that only moves forward, so a
+ * busy platform never reaches the end of its own queue.
+ *
+ * `after: null` means the cycle finished. The next scheduled cycle then starts
+ * a fresh horizon and reconsiders everything, which is how a row that was
+ * escalated or temporarily failed gets tried again rather than being skipped
+ * for ever.
+ */
+export interface RecoveryCheckpoint {
+  /** The cycle's fixed horizon, as an ISO timestamp. */
+  before: string;
+  /** Where the cycle stopped, or null when it completed. */
+  after: RecoveryCursor | null;
+}
+
+/**
+ * A stable code for an operator store to index on, so nothing has to parse
+ * prose. Deliberately a small closed set.
+ */
+export type RecoveryEntryCode =
+  | "settled_committed"
+  | "settled_cancelled"
+  | "left_pending"
+  | "contended"
+  | "needs_person"
+  | "vanished"
+  | "skipped";
+
 export interface RecoverySweepEntry {
   executionId: string;
   orderId: string;
@@ -48,7 +81,13 @@ export interface RecoverySweepEntry {
   providerReference: string | null;
   /** What the pass did, or why it did nothing. */
   outcome: UnattendedOutcome["kind"] | "skipped";
-  /** Always present for a skip or an escalation; the sentence an operator acts on. */
+  /** The same fact as `outcome`, as a fixed code an operator store can index. */
+  code: RecoveryEntryCode;
+  /**
+   * Always present for a skip or an escalation; the sentence an operator acts
+   * on. Written here, never taken from a provider: provider error text can
+   * carry references and secrets.
+   */
   reason?: string;
 }
 
@@ -66,8 +105,11 @@ export interface RecoverySweepReport {
   entries: RecoverySweepEntry[];
   /** How many discovery pages this pass read. */
   pages: number;
-  /** Where the next pass should resume. Null when the queue was read to the end. */
-  cursor: RecoveryCursor | null;
+  /**
+   * What to persist and hand back to the next pass. Null when the cycle
+   * completed, so the next one starts a fresh horizon.
+   */
+  checkpoint: RecoveryCheckpoint | null;
   /** True when discovery ran out of eligible rows. */
   exhausted: boolean;
 }
@@ -103,6 +145,24 @@ export interface CheckoutRecoveryDeps {
    * this module, so no path here can enter normal payment progression.
    */
   settleUnattended(memberId: string, requestKey: string): Promise<UnattendedOutcome>;
+  /**
+   * Durably record what happened to a row, called immediately after that row is
+   * decided and always BEFORE the cursor moves past it. If it throws, the pass
+   * stops and hands back the last position it did record, so the remaining rows
+   * replay. That is safe because the unattended operation is idempotent and
+   * re-reads the authoritative record.
+   *
+   * The residual, stated plainly: an external effect and a local write cannot be
+   * made atomic. A row settled in the instant before this store failed keeps its
+   * outcome in the execution row, which is the authoritative record of what
+   * happened to that payment; the operator event is a convenience that can be
+   * one row behind. This is why the sweep reports what it did as well as
+   * recording it.
+   *
+   * The platform's existing job/audit state owns this. The sweep deliberately
+   * does not choose a store.
+   */
+  record?(entries: readonly RecoverySweepEntry[]): Promise<void>;
   now(): Date;
   grace?: Partial<Record<CheckoutExecutionPhase, number>>;
 }
@@ -136,8 +196,49 @@ export interface SweepOptions {
   maxPages?: number;
   /** Rows per discovery page. */
   pageSize?: number;
-  /** Resume a previous pass. */
-  cursor?: RecoveryCursor | null;
+  /**
+   * Resume a cycle. Pass back exactly what the previous pass returned; null or
+   * omitted starts a new cycle with a fresh horizon.
+   */
+  checkpoint?: RecoveryCheckpoint | null;
+}
+
+const CODE_FOR_OUTCOME: Readonly<Record<UnattendedOutcome["kind"], RecoveryEntryCode>> = Object.freeze({
+  committed: "settled_committed",
+  cancelled: "settled_cancelled",
+  pending: "left_pending",
+  contended: "contended",
+  escalated: "needs_person",
+  missing: "vanished",
+});
+
+/**
+ * A cycle position. Null means "this cycle is done, start a fresh one", which
+ * is also the honest answer when a pass stopped before recording anything.
+ */
+function checkpointOf(before: Date, cursor: RecoveryCursor | null): RecoveryCheckpoint | null {
+  return cursor === null ? null : { before: before.toISOString(), after: cursor };
+}
+
+function report(
+  entries: RecoverySweepEntry[],
+  considered: number,
+  attempted: number,
+  pages: number,
+  checkpoint: RecoveryCheckpoint | null,
+  exhausted: boolean,
+): RecoverySweepReport {
+  return {
+    considered,
+    attempted,
+    settled: entries.filter((e) => e.outcome === "committed" || e.outcome === "cancelled").length,
+    escalated: entries.filter((e) => e.outcome === "escalated"),
+    deferred: entries.filter((e) => e.outcome === "pending" || e.outcome === "contended").length,
+    entries,
+    pages,
+    checkpoint,
+    exhausted,
+  };
 }
 
 export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
@@ -157,11 +258,16 @@ export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
       const maxPages = Math.max(1, Math.min(options.maxPages ?? 10, 50));
       const pageSize = Math.max(1, Math.min(options.pageSize ?? 25, 200));
       const now = deps.now();
-      const before = new Date(now.getTime() - shortestGrace());
+      // A resumed cycle keeps the horizon it started with. A new cycle takes a
+      // fresh one. Without that, the eligible set grows under a cursor that
+      // only moves forward and the cycle never ends.
+      const resumed = options.checkpoint ?? null;
+      const horizon = resumed && resumed.after !== null ? new Date(resumed.before) : new Date(now.getTime() - shortestGrace());
+      const before = Number.isFinite(horizon.getTime()) ? horizon : new Date(now.getTime() - shortestGrace());
 
       const entries: RecoverySweepEntry[] = [];
       const seen = new Set<string>();
-      let cursor: RecoveryCursor | null = options.cursor ?? null;
+      let cursor: RecoveryCursor | null = resumed?.after ?? null;
       let considered = 0;
       let attempted = 0;
       let pages = 0;
@@ -175,11 +281,31 @@ export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
           cursor = null;
           break;
         }
+        // The cursor may only ever pass a row this pass actually LOOKED at.
+        // Advancing it to the end of a batch that was cut short by a limit
+        // steps over rows nobody examined, and because the cursor only moves
+        // forward inside a cycle, those rows are then skipped for the whole
+        // cycle. That is the exact starvation the cursor exists to prevent.
+        let examined = 0;
+        let stoppedShort = false;
+        let recordFailed = false;
         for (const record of batch) {
+          if (attempted >= maxAttempts) {
+            stoppedShort = true;
+            break;
+          }
           considered += 1;
+          examined += 1;
+          const position: RecoveryCursor = {
+            updatedAt: record.updatedAt ?? record.createdAt,
+            executionId: record.executionId,
+          };
           // Acting on a row moves it later in the ordering, so a defensive
           // guard keeps a single pass from revisiting one it already handled.
-          if (seen.has(record.executionId)) continue;
+          if (seen.has(record.executionId)) {
+            cursor = position;
+            continue;
+          }
           seen.add(record.executionId);
 
           const base = {
@@ -189,40 +315,49 @@ export function createCheckoutRecoverySweep(deps: CheckoutRecoveryDeps) {
             providerReference: record.providerReference,
           };
           const decision = shouldAttempt(record, now, deps.grace);
-          if (!decision.attempt) {
-            entries.push({ ...base, outcome: "skipped", reason: decision.reason });
-            continue;
+          const entry: RecoverySweepEntry = decision.attempt
+            ? await (async () => {
+                attempted += 1;
+                const outcome = await deps.settleUnattended(record.memberId, record.requestKey);
+                return {
+                  ...base,
+                  outcome: outcome.kind,
+                  code: CODE_FOR_OUTCOME[outcome.kind],
+                  ...(outcome.kind === "escalated" ? { reason: outcome.reason } : {}),
+                };
+              })()
+            : { ...base, outcome: "skipped", code: "skipped", reason: decision.reason };
+          entries.push(entry);
+
+          // Recorded before the cursor passes this row.
+          if (deps.record) {
+            try {
+              await deps.record([entry]);
+            } catch {
+              recordFailed = true;
+              break;
+            }
           }
-          if (attempted >= maxAttempts) break;
-          attempted += 1;
-          const outcome = await deps.settleUnattended(record.memberId, record.requestKey);
-          entries.push({
-            ...base,
-            outcome: outcome.kind,
-            ...(outcome.kind === "escalated" ? { reason: outcome.reason } : {}),
-          });
+          cursor = position;
         }
-        const last = batch[batch.length - 1]!;
-        cursor = { updatedAt: last.updatedAt ?? last.createdAt, executionId: last.executionId };
-        if (batch.length < pageSize) {
+
+        if (recordFailed) {
+          // Hand back the last position that WAS recorded. On the first page of
+          // a fresh cycle that is still null, which resumes from the head: the
+          // rows replay, and replaying is safe.
+          return report(entries, considered, attempted, pages, checkpointOf(before, cursor), false);
+        }
+        if (stoppedShort) break;
+        if (examined === batch.length && batch.length < pageSize) {
           exhausted = true;
           cursor = null;
           break;
         }
       }
 
-      const escalated = entries.filter((e) => e.outcome === "escalated");
-      return {
-        considered,
-        attempted,
-        settled: entries.filter((e) => e.outcome === "committed" || e.outcome === "cancelled").length,
-        escalated,
-        deferred: entries.filter((e) => e.outcome === "pending" || e.outcome === "contended").length,
-        entries,
-        pages,
-        cursor,
-        exhausted,
-      };
+      // A finished cycle persists null, so the next scheduled cycle takes a
+      // fresh horizon and reconsiders rows this one escalated or deferred.
+      return report(entries, considered, attempted, pages, checkpointOf(before, cursor), exhausted);
     },
   };
 }

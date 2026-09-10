@@ -13,6 +13,7 @@ import { createDurableCheckoutExecutor } from "./durable-checkout-executor";
 import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
 import {
   createInMemoryCheckoutExecutionStore,
+  microsSinceEpoch,
   type CheckoutExecutionCreate,
 } from "./persistence/checkout-executions-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
@@ -335,9 +336,9 @@ describe("the queue advances", () => {
     const first = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10 });
     expect(first.considered).toBe(2);
     expect(first.exhausted).toBe(false);
-    expect(first.cursor).not.toBeNull();
+    expect(first.checkpoint).not.toBeNull();
 
-    const second = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10, cursor: first.cursor });
+    const second = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10, checkpoint: first.checkpoint });
 
     const firstIds = first.entries.map((e) => e.executionId);
     const secondIds = second.entries.map((e) => e.executionId);
@@ -394,5 +395,260 @@ describe("the queue advances", () => {
     expect(report.settled).toBe(2);
     // The rest are untouched and still there for the next pass.
     expect(h.executions.snapshot().filter((r) => r.phase === "reserved")).toHaveLength(3);
+  });
+
+  it("keeps one horizon for a whole cycle, and drops it when the cycle finishes", async () => {
+    const h = harness();
+    for (let i = 1; i <= 4; i++) {
+      const record = stuck(i);
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const first = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10 });
+    const second = await h.sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10, checkpoint: first.checkpoint });
+    // Same horizon carried forward, not recomputed. A recomputed horizon lets
+    // the eligible set grow under a cursor that only moves forward.
+    expect(second.checkpoint?.before).toBe(first.checkpoint?.before);
+
+    const third = await h.sweep.sweep({ pageSize: 2, maxPages: 2, maxAttempts: 10, checkpoint: second.checkpoint });
+    expect(third.exhausted).toBe(true);
+    // Null, so the next scheduled cycle takes a fresh horizon and reconsiders
+    // everything this one escalated.
+    expect(third.checkpoint).toBeNull();
+  });
+
+  it("never lets the cursor pass a row it did not examine", async () => {
+    const h = harness();
+    // Five eligible rows, and a pass allowed to act on only two of them.
+    for (let i = 1; i <= 5; i++) {
+      const record = at({
+        executionId: `00000000-0000-4000-8000-0000000002${i}0`,
+        requestKey: `req_starve_000${i}`,
+        orderId: `5555555${i}-1111-4111-8111-111111111111`,
+        phase: "reserved",
+        providerReference: null,
+        authorizationAttemptedAt: null,
+        updatedAt: ago((48 - i) * HOUR),
+      });
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const first = await h.sweep.sweep({ pageSize: 5, maxPages: 1, maxAttempts: 2 });
+    expect(first.attempted).toBe(2);
+    // The checkpoint sits on the SECOND row, not the fifth. Advancing to the end
+    // of the page would step over three rows nobody looked at, and the cursor
+    // only moves forward, so they would starve for the whole cycle.
+    expect(first.checkpoint?.after?.executionId).toBe(first.entries[1]!.executionId);
+    expect(first.exhausted).toBe(false);
+
+    // The rest are reachable, and the cycle drains.
+    const second = await h.sweep.sweep({ pageSize: 5, maxPages: 3, maxAttempts: 10, checkpoint: first.checkpoint });
+    expect(second.attempted).toBe(3);
+    expect(h.executions.snapshot().filter((r) => r.phase === "reserved")).toHaveLength(0);
+  });
+
+  it("does not report a queue as exhausted when a limit is what stopped it", async () => {
+    const h = harness();
+    for (let i = 1; i <= 3; i++) {
+      const record = at({
+        executionId: `00000000-0000-4000-8000-0000000003${i}0`,
+        requestKey: `req_short_000${i}`,
+        orderId: `6666666${i}-1111-4111-8111-111111111111`,
+        phase: "reserved",
+        providerReference: null,
+        authorizationAttemptedAt: null,
+        updatedAt: ago((48 - i) * HOUR),
+      });
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+    // A short page (3 rows against a page size of 10) cut off after one row.
+    const report = await h.sweep.sweep({ pageSize: 10, maxPages: 1, maxAttempts: 1 });
+    expect(report.attempted).toBe(1);
+    expect(report.exhausted).toBe(false);
+    expect(report.checkpoint).not.toBeNull();
+  });
+
+  it("records a page durably BEFORE it moves past it, and replays the page when recording fails", async () => {
+    const h = harness();
+    for (let i = 1; i <= 4; i++) {
+      const record = stuck(i);
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+    const recorded: string[][] = [];
+    let failNext = false;
+    const sweep = createCheckoutRecoverySweep({
+      listRecoverable: (request) => h.executions.listRecoverable!(request),
+      settleUnattended: h.executor.settleUnattended,
+      now: () => SWEEP_NOW,
+      async record(entries) {
+        if (failNext) throw new Error("the operator store is unavailable");
+        recorded.push(entries.map((e) => e.executionId));
+      },
+    });
+
+    const first = await sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10 });
+    // One call per row, so a failure loses at most the row in hand.
+    expect(recorded.flat()).toHaveLength(2);
+    expect(first.checkpoint?.after?.executionId).toBe(recorded.flat()[1]);
+
+    // The store fails on the next row: the pass stops and hands back the last
+    // position it did record, so the rest replay rather than being passed over.
+    failNext = true;
+    const failed = await sweep.sweep({ pageSize: 2, maxPages: 3, maxAttempts: 10, checkpoint: first.checkpoint });
+    expect(failed.checkpoint?.after?.executionId).toBe(first.checkpoint?.after?.executionId);
+    expect(recorded.flat()).toHaveLength(2);
+
+    failNext = false;
+    const retried = await sweep.sweep({ pageSize: 2, maxPages: 1, maxAttempts: 10, checkpoint: failed.checkpoint });
+    expect(recorded.flat()).toHaveLength(4);
+    // The replayed rows are the ones that were never recorded, not the first two.
+    const before = recorded.flat().slice(0, 2);
+    expect(recorded.flat().slice(2).some((id) => before.includes(id))).toBe(false);
+    expect(retried.checkpoint?.after).not.toBeNull();
+  });
+
+  it("carries a fixed code beside every outcome, so an operator store need not read prose", async () => {
+    const h = harness();
+    await h.seed({ phase: "reserved", providerReference: null, authorizationAttemptedAt: null });
+    const other = at({
+      executionId: "00000000-0000-4000-8000-0000000000c1",
+      requestKey: "req_code_0002",
+      orderId: "44444444-1111-4111-8111-111111111111",
+      phase: "reconciliation_required",
+      providerReference: null,
+      authorizationAttemptedAt: ago(47 * HOUR),
+      updatedAt: ago(41 * HOUR),
+    });
+    await h.seedOrder(other.orderId);
+    await h.executions.create(other);
+
+    const report = await h.sweep.sweep();
+
+    expect(report.entries.map((e) => e.code).sort()).toEqual(["needs_person", "settled_cancelled"]);
+    for (const entry of report.entries) expect(typeof entry.code).toBe("string");
+  });
+});
+
+describe("the cursor keeps the precision the database keeps", () => {
+  it("converts a Postgres timestamp to whole microseconds", () => {
+    expect(microsSinceEpoch("2026-09-10T12:00:00.123456Z")).toBe(1789041600123456n);
+    // Six digits kept exactly, not rounded through milliseconds.
+    expect(microsSinceEpoch("2026-09-10T12:00:00.123999Z")! - microsSinceEpoch("2026-09-10T12:00:00.123456Z")!).toBe(543n);
+    // PostgREST's own shapes.
+    expect(microsSinceEpoch("2026-09-10T12:00:00.123456+00:00")).toBe(1789041600123456n);
+    expect(microsSinceEpoch("2026-09-10 12:00:00.123456+00")).toBe(1789041600123456n);
+    // Fewer digits are padded, not misread as microseconds.
+    expect(microsSinceEpoch("2026-09-10T12:00:00.5Z")).toBe(1789041600500000n);
+    expect(microsSinceEpoch("2026-09-10T12:00:00Z")).toBe(1789041600000000n);
+    expect(microsSinceEpoch("not a timestamp")).toBeNull();
+    expect(microsSinceEpoch(null)).toBeNull();
+  });
+
+  it("refuses a cursor it cannot read rather than silently rewinding to the head", async () => {
+    const h = harness();
+    const record = await h.seed({ phase: "reserved" });
+    // The SQL compares against a timestamptz and would raise. Treating this as
+    // "no cursor" would quietly re-read the whole queue and hide the corruption.
+    await expect(
+      h.executions.listRecoverable!({
+        before: SWEEP_NOW,
+        limit: 10,
+        after: { updatedAt: "yesterday afternoon", executionId: record.executionId },
+      }),
+    ).rejects.toThrow(/unusable timestamp/);
+  });
+
+  it("orders ids the same way it filters them", async () => {
+    const h = harness();
+    // "exec-1" and "exec_1" sort one way under localeCompare and the other way
+    // under a plain comparison. A filter and a sort that disagree drop rows.
+    const ids = ["exec-1", "exec_1"];
+    for (const [index, id] of ids.entries()) {
+      const record = at({
+        executionId: id,
+        requestKey: `req_ord_${index}`,
+        orderId: `7777777${index}-1111-4111-8111-111111111111`,
+        phase: "reserved",
+        updatedAt: "2026-09-08T00:00:00.000000Z",
+      });
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+    const page = await h.executions.listRecoverable!({ before: SWEEP_NOW, limit: 10 });
+    const sorted = page.map((r) => r.executionId);
+    expect(sorted).toEqual([...ids].sort((a, b) => (a === b ? 0 : a > b ? 1 : -1)));
+
+    // And paging from the first returns exactly the second, never nothing.
+    const rest = await h.executions.listRecoverable!({
+      before: SWEEP_NOW,
+      limit: 10,
+      after: { updatedAt: "2026-09-08T00:00:00.000000Z", executionId: sorted[0]! },
+    });
+    expect(rest.map((r) => r.executionId)).toEqual([sorted[1]!]);
+  });
+
+  it("does not lose a row whose timestamp differs from the cursor only in microseconds", async () => {
+    const h = harness();
+    // Two rows inside the SAME millisecond. Ordered by (updated_at, id) the
+    // earlier one is "zzz", so a cursor at "zzz" must still return "aaa".
+    // Compared in milliseconds they look simultaneous, the id tie-break takes
+    // over, "aaa" sorts before "zzz", and "aaa" is never returned again.
+    const earlier = at({
+      executionId: "00000000-0000-4000-8000-00000000zzzz".replace(/z/g, "9"),
+      requestKey: "req_micro_zzz",
+      orderId: "55555555-1111-4111-8111-111111111111",
+      phase: "reserved",
+      updatedAt: "2026-09-08T00:00:00.123456Z",
+    });
+    const later = at({
+      executionId: "00000000-0000-4000-8000-00000000aaaa",
+      requestKey: "req_micro_aaa",
+      orderId: "66666666-1111-4111-8111-111111111111",
+      phase: "reserved",
+      updatedAt: "2026-09-08T00:00:00.123999Z",
+    });
+    for (const record of [earlier, later]) {
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const page = await h.executions.listRecoverable!({
+      before: SWEEP_NOW,
+      limit: 10,
+      after: { updatedAt: earlier.updatedAt!, executionId: earlier.executionId },
+    });
+
+    expect(page.map((r) => r.executionId)).toEqual([later.executionId]);
+  });
+
+  it("orders two rows in the same millisecond by their microseconds, not by their ids", async () => {
+    const h = harness();
+    const first = at({
+      executionId: "00000000-0000-4000-8000-0000000000bb",
+      requestKey: "req_order_bb",
+      orderId: "77777777-1111-4111-8111-111111111111",
+      phase: "reserved",
+      updatedAt: "2026-09-08T00:00:00.100100Z",
+    });
+    const second = at({
+      executionId: "00000000-0000-4000-8000-0000000000aa",
+      requestKey: "req_order_aa",
+      orderId: "88888888-1111-4111-8111-111111111111",
+      phase: "reserved",
+      updatedAt: "2026-09-08T00:00:00.100900Z",
+    });
+    for (const record of [second, first]) {
+      await h.seedOrder(record.orderId);
+      await h.executions.create(record);
+    }
+
+    const page = await h.executions.listRecoverable!({ before: SWEEP_NOW, limit: 10 });
+
+    // "bb" is later in the alphabet but earlier in time, and time wins.
+    expect(page.map((r) => r.executionId)).toEqual([first.executionId, second.executionId]);
   });
 });

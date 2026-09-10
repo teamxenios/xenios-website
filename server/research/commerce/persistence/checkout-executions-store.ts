@@ -194,6 +194,40 @@ export interface InMemoryCheckoutExecutionEffects {
  */
 export class CheckoutCommitPrecondition extends Error {}
 
+/**
+ * A timestamp as whole microseconds since the epoch, or null if it is not a
+ * timestamp at all.
+ *
+ * Postgres `timestamptz` keeps six fractional digits. `Date.parse` keeps three
+ * and silently discards the rest, so two rows written 40 microseconds apart
+ * compare EQUAL through it. The recovery cursor is a strict `(updated_at, id)`
+ * comparison, so that equality is not cosmetic: with a cursor at
+ * (…:00.123456Z, "zzz…") the SQL returns a row at (…:00.123999Z, "aaa…") and a
+ * millisecond comparison does not, because it falls through to the id
+ * tie-break and "aaa…" sorts before "zzz…". That row is then never returned
+ * again, because the cursor only moves forward.
+ */
+export function microsSinceEpoch(value: string | null | undefined): bigint | null {
+  if (typeof value !== "string") return null;
+  // Postgres writes an offset as +00, +0530 or +05:30 depending on the client,
+  // and PostgREST may send a space rather than a T. All of them are the same
+  // instant; normalise before parsing rather than trusting Date.parse with a
+  // shape it may or may not accept.
+  const match = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.(\d+))?\s*(Z|z|[+-]\d{2}(?::?\d{2})?)?$/.exec(value.trim());
+  if (!match) return null;
+  const [, date, time, digits, rawZone] = match;
+  let zone = "Z";
+  if (rawZone && rawZone !== "Z" && rawZone !== "z") {
+    const sign = rawZone[0]!;
+    const rest = rawZone.slice(1).replace(":", "");
+    zone = `${sign}${rest.slice(0, 2)}:${(rest.slice(2) || "00").padEnd(2, "0")}`;
+  }
+  const whole = Date.parse(`${date}T${time}${zone}`);
+  if (!Number.isFinite(whole)) return null;
+  const fraction = (digits ?? "").padEnd(6, "0").slice(0, 6);
+  return BigInt(whole) * 1000n + BigInt(fraction);
+}
+
 const CAPTURABLE_ORDER_STATES = ["checkout_pending", "payment_authorized", "manual_review", "approved", "payment_captured"];
 
 export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date; effects?: InMemoryCheckoutExecutionEffects } = {}): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
@@ -345,21 +379,43 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
     },
     async listRecoverable({ before, limit, after }) {
       const bounded = Math.max(1, Math.min(limit, 200));
-      const at = (r: CheckoutExecutionRecord) => Date.parse(r.updatedAt ?? r.createdAt);
+      const at = (r: CheckoutExecutionRecord) => microsSinceEpoch(r.updatedAt ?? r.createdAt);
       // The same (updated_at, id) ordering and strict cursor comparison the SQL
-      // uses, so the reference and the database page identically.
-      const afterAt = after ? Date.parse(after.updatedAt) : null;
+      // uses, so the reference and the database page identically. Comparison is
+      // in MICROSECONDS: Date.parse truncates to milliseconds, and Postgres
+      // timestamps carry six fractional digits, so a millisecond comparison
+      // makes this reference disagree with the SQL for any two rows inside the
+      // same millisecond and can skip one of them for ever.
+      const afterAt = after ? microsSinceEpoch(after.updatedAt) : null;
+      // The SQL compares `(updated_at, id) > (p_after_updated_at, p_after_id)`
+      // against a timestamptz column, so a cursor Postgres cannot parse raises
+      // there. Quietly treating it as "no cursor" here would rewind a cycle to
+      // the head of the queue and hide a corrupt checkpoint.
+      if (after && afterAt === null) {
+        throw new Error(`recovery cursor carries an unusable timestamp: ${JSON.stringify(after.updatedAt)}`);
+      }
+      const beforeAt = BigInt(before.getTime()) * 1000n;
       return [...rows.values()]
         .map(clone)
         .filter((r) => {
           if (r.phase === "committed") return false;
           if (r.phase === "cancelled" && r.settledAt !== null) return false;
           const touched = at(r);
-          if (!Number.isFinite(touched) || touched >= before.getTime()) return false;
+          if (touched === null || touched >= beforeAt) return false;
           if (afterAt === null || after === null || after === undefined) return true;
           return touched > afterAt || (touched === afterAt && r.executionId > after.executionId);
         })
-        .sort((a, b) => at(a) - at(b) || a.executionId.localeCompare(b.executionId))
+        .sort((a, b) => {
+          const left = at(a);
+          const right = at(b);
+          if (left !== null && right !== null && left !== right) return left < right ? -1 : 1;
+          // The SAME comparison the filter above uses. localeCompare orders
+          // some strings differently from `>` (it reads "exec-1" as after
+          // "exec_1", where `>` reads it as before), and a filter and a sort
+          // that disagree can drop a row between them.
+          if (a.executionId === b.executionId) return 0;
+          return a.executionId > b.executionId ? 1 : -1;
+        })
         .slice(0, bounded);
     },
     snapshot: () => [...rows.values()].map(clone),
