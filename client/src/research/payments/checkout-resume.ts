@@ -31,6 +31,13 @@ export interface CheckoutResumeRecord {
   /** Null until the server has answered: the pointer is written BEFORE the request leaves. */
   orderId: string | null;
   startedAt: string;
+  /**
+   * The purchase completed. The pointer then exists so a remount (a token
+   * refresh re-verifies the session and unmounts the member area) still shows
+   * the buyer what they paid for, instead of an empty checkout page with their
+   * cart still in it and a live card field.
+   */
+  settled?: boolean;
 }
 
 function storage(): Storage | null {
@@ -56,7 +63,7 @@ export function readCheckoutResume(scope: string | null | undefined): CheckoutRe
     const orderId = record.orderId ?? null;
     if (orderId !== null && (typeof orderId !== "string" || orderId.length === 0 || orderId.length > 120)) return null;
     if (typeof record.startedAt !== "string") return null;
-    return { scope, requestKey: record.requestKey, orderId, startedAt: record.startedAt };
+    return { scope, requestKey: record.requestKey, orderId, startedAt: record.startedAt, settled: record.settled === true };
   } catch {
     return null;
   }

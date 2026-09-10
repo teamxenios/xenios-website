@@ -140,6 +140,12 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       const shippingCents = orderShippingTotalCents([quote]);
       const orderValueCents = cart.subtotalCents + shippingCents;
       const totalCents = Math.max(0, orderValueCents - cart.storeCreditAppliedCents);
+      // The buyer approved a specific amount. If this fresh revalidation prices
+      // the order differently, the approval does not cover it: refuse before
+      // anything is reserved or charged and let them approve the new figure.
+      if (typeof req.expectedTotalCents === "number" && req.expectedTotalCents !== totalCents) {
+        return deny(["cart_revalidation_failed"]);
+      }
       if (totalCents === 0) {
         // A fully credit-covered order has no provider effect and no capture
         // evidence to commit on; it stays on the assisted path for now.
