@@ -39,11 +39,14 @@
 // review satisfied; a fraud_flagged credit can only be reversed here, never
 // promoted.
 //
-// KNOWN SCHEMA GAPS (documented, fail closed):
-//   1. Migration 26 has no expires_at column. The in-memory store supports an
-//      expiry written at issue time; the Supabase store REFUSES to persist a
-//      record carrying one, because silently dropping an expiry would make
-//      credit immortal. A follow-up migration adding expires_at closes this.
+// REQUIRED SCHEMA FIDELITY (fail closed):
+//   1. The canonical Track B production bundle adds expires_at. Both stores
+//      preserve that value in read projections and row mappings. A missing column,
+//      missing projection or invalid timestamp must fail, not create immortal
+//      credit. This adapter does not install the required schema.
+//      New durable expiring-credit writes still refuse until expiry-allocated
+//      spending is implemented: a non-expiring debit must not outlive its grant
+//      and consume a later unrelated grant. Mapping fidelity is not activation.
 //   2. CLOSED by the Track B fidelity migration
 //      (supabase/research-track-b-fidelity.sql): a partial unique index on
 //      (reverses_id) where reverses_id is not null makes the one-settlement-
@@ -96,7 +99,7 @@ export type StoreCreditActor = "admin" | "system";
 /**
  * One ledger row in domain shape. Extends the shared StoreCreditEntry with the
  * audit fields migration 26 carries (reverses_id, actor_type, actor_id) plus
- * the expiry that only exists at issue time (see schema gap 1).
+ * the expiry fixed at issue time in the canonical Track B schema.
  */
 export interface StoreCreditLedgerRecord extends StoreCreditEntry {
   reversesId: string | null;
@@ -181,10 +184,18 @@ export function grossOrderValueForReviewCents(subtotalCents: number, shippingCen
   return subtotalCents + shippingCents;
 }
 
+function expiryMillis(value: string | null): number | null {
+  if (value === null) return null;
+  const ms = typeof value === "string" ? Date.parse(value) : Number.NaN;
+  if (!Number.isFinite(ms)) {
+    throw new StoreCreditInvalidTransition("Store credit expiry must be a valid timestamp or explicit null.");
+  }
+  return ms;
+}
+
 function isExpired(record: StoreCreditLedgerRecord, asOf: Date): boolean {
-  if (record.expiresAt === null) return false;
-  const ms = Date.parse(record.expiresAt);
-  return Number.isFinite(ms) && ms <= asOf.getTime();
+  const ms = expiryMillis(record.expiresAt);
+  return ms !== null && ms <= asOf.getTime();
 }
 
 /** Strip the audit fields down to the shared entry shape. */
@@ -248,6 +259,7 @@ export async function storeCreditViewFor(
 }
 
 function validateRecord(record: StoreCreditLedgerRecord): void {
+  expiryMillis(record.expiresAt);
   if (!record.id) throw new StoreCreditInvalidTransition("A ledger row needs an id.");
   if (!record.memberId) throw new StoreCreditInvalidTransition("A ledger row needs a member id.");
   if (!Number.isSafeInteger(record.amountCents) || record.amountCents === 0) {
@@ -370,10 +382,10 @@ function buildSpendRow(
 }
 
 // ---------------------------------------------------------------------------
-// Row mapping (migration 26 columns exactly; expires_at has no column yet)
+// Row mapping (migration 26 plus the canonical Track B expires_at addition)
 // ---------------------------------------------------------------------------
 
-/** A research_store_credit_ledger row, exactly the columns migration 26 defines. */
+/** A research_store_credit_ledger row from the canonical Track B schema. */
 export interface StoreCreditRow {
   id: string;
   member_id: string;
@@ -385,12 +397,14 @@ export interface StoreCreditRow {
   actor_type: string;
   actor_id: string | null;
   created_at: string;
+  expires_at: string | null;
 }
 
 const STORE_CREDIT_COLUMNS =
-  "id, member_id, amount_cents, state, reason, available_at, reverses_id, actor_type, actor_id, created_at";
+  "id, member_id, amount_cents, state, reason, available_at, reverses_id, actor_type, actor_id, created_at, expires_at";
 
 export function storeCreditRecordToRow(record: StoreCreditLedgerRecord): StoreCreditRow {
+  expiryMillis(record.expiresAt);
   return {
     id: record.id,
     member_id: record.memberId,
@@ -402,10 +416,12 @@ export function storeCreditRecordToRow(record: StoreCreditLedgerRecord): StoreCr
     actor_type: record.actorType,
     actor_id: record.actorId,
     created_at: record.createdAt,
+    expires_at: record.expiresAt,
   };
 }
 
 export function storeCreditRowToRecord(row: StoreCreditRow): StoreCreditLedgerRecord {
+  expiryMillis(row.expires_at);
   return {
     id: row.id,
     memberId: row.member_id,
@@ -417,8 +433,7 @@ export function storeCreditRowToRecord(row: StoreCreditRow): StoreCreditLedgerRe
     reversesId: row.reverses_id,
     actorType: (row.actor_type === "admin" ? "admin" : "system") as StoreCreditActor,
     actorId: row.actor_id,
-    // No column exists (schema gap 1), so a durable row never carries one.
-    expiresAt: null,
+    expiresAt: row.expires_at,
   };
 }
 
@@ -494,10 +509,8 @@ export function createSupabaseStoreCreditLedgerStore(
 
   async function insertRecord(record: StoreCreditLedgerRecord): Promise<void> {
     if (record.expiresAt !== null) {
-      // Schema gap 1: refusing beats silently dropping the expiry, which would
-      // make the credit immortal in the durable ledger.
       throw new StoreCreditInvalidTransition(
-        "Migration 26 has no expires_at column; an expiring credit cannot be persisted durably yet.",
+        "Expiring credit writes require expiry-allocated spending qualification; no ledger row was written.",
       );
     }
     const ins = await client.from(STORE_CREDIT_TABLE).insert(storeCreditRecordToRow(record));

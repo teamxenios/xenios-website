@@ -298,7 +298,7 @@ describe("storeCreditDtoOf", () => {
     });
   });
 
-  it("round-trips a record through the migration 26 row mapping", () => {
+  it("round-trips a record through the canonical Track B row mapping", () => {
     const original = record({
       id: "rt",
       state: "held",
@@ -310,7 +310,7 @@ describe("storeCreditDtoOf", () => {
     });
     const row = storeCreditRecordToRow(original);
     expect(row).toMatchObject({ member_id: "mem_a", amount_cents: 1500, reverses_id: "prior" });
-    expect("expires_at" in row).toBe(false); // schema gap 1: no such column
+    expect(row.expires_at).toBeNull();
     expect(storeCreditRowToRecord(row)).toEqual(original);
   });
 
@@ -434,13 +434,50 @@ describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
     await expect(store.spend("mem_a", 501, "ord_10", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
   });
 
-  it("refuses to persist an expiring credit the schema cannot hold (fail closed)", async () => {
+  it("reads an existing durable expiry without silently making the grant non-expiring", async () => {
     const { client, rows } = fakeSupabase();
     const store = createSupabaseStoreCreditLedgerStore(client);
-    await expect(
-      store.append(record({ id: "e", expiresAt: "2026-12-01T00:00:00.000Z" })),
-    ).rejects.toThrow(StoreCreditInvalidTransition);
-    expect(rows).toEqual([]); // nothing was written
+    const expiry = "2026-12-01T00:00:00.000Z";
+    const original = record({ id: "e", state: "approved", expiresAt: expiry });
+    rows.push(storeCreditRecordToRow(original));
+    expect(await store.getEntry("mem_a", "e")).toEqual(original);
+    expect(await store.spendableCents("mem_a", new Date(expiry))).toBe(0);
+    expect(await store.spendableCents("mem_a", NOW)).toBe(1000);
+    expect(storeCreditRowToRecord(storeCreditRecordToRow(original))).toEqual(original);
+  });
+
+  it("retains refusal of new durable expiring credits until allocated spending is qualified", async () => {
+    const { client, rows } = fakeSupabase();
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    await expect(store.append(record({ id: "new-expiring", expiresAt: "2026-12-01T00:00:00.000Z" })))
+      .rejects.toThrow("expiry-allocated spending qualification");
+    expect(rows).toEqual([]);
+  });
+
+  it.each([undefined, "not-a-date", "infinity", 123])("rejects missing or invalid durable expiry %s", async value => {
+    const { client, rows } = fakeSupabase();
+    rows.push({ ...storeCreditRecordToRow(record({ state: "approved" })), expires_at: value } as StoreCreditRow);
+    const store = createSupabaseStoreCreditLedgerStore(client);
+    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.getEntry("mem_a", rows[0].id)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+
+  it("refuses invalid expiry before making an insert", async () => {
+    const { client, rows } = fakeSupabase();
+    await expect(createSupabaseStoreCreditLedgerStore(client).append(record({ expiresAt: "invalid" })))
+      .rejects.toThrow(StoreCreditInvalidTransition);
+    expect(rows).toEqual([]);
+  });
+
+  it("propagates a missing expiry-column failure instead of falling back to an incomplete projection", async () => {
+    const columns: string[] = [];
+    const result = { data: null, error: { code: "42703", message: "column expires_at does not exist" } };
+    const query = { select(value: string) { columns.push(value); return this; }, eq() { return this; },
+      order() { return Promise.resolve(result); } };
+    const store = createSupabaseStoreCreditLedgerStore({ from: () => query } as unknown as SupabaseClient);
+    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow("store credit load failed");
+    expect(columns).toHaveLength(1);
+    expect(columns[0]).toContain("expires_at");
   });
 
   it("serves the routes view shape through storeCreditViewFor", async () => {
