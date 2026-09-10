@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "strict-scan-original-failure",
+  "productionBaseSha": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+  "applicationSha": "2578d9c31b1521d43d7fb96ef261e0d05b39716d",
+  "applicationTree": "20c155693b1fe069eba4cbfd6637ff69854a7c0a",
+  "exitCode": 1,
+  "addedLines": 78902,
+  "changedFiles": 436,
+  "rawSecretPatternMatches": 105,
+  "reviewedSyntheticMatches": 102,
+  "unresolvedSecretMatches": 3,
+  "piiNameMatches": 0,
+  "registryPath": "docs/revenue-launch/20260907/REVIEWED_SYNTHETIC_CREDENTIALS.json",
+  "registryLfSha256": "b82169d4afa2bc1d2007680c0d984db9b6e0f0bdf4d8ca2b25c30cb937922aba",
+  "privateInput": {
+    "sha256": "27fb9d7052867808f8cee5f3147fa34855fad0d893a6a14508b9212198ce4fbb",
+    "bytes": 131,
+    "entries": 13,
+    "scannerEligibleEntries": 6,
+    "ignoredEntries": 7
+  },
+  "limitations": [
+    "Original actual failure retained; subsequent independent fixture classification does not relabel this run.",
+    "The approved private input stayed byte-identical and outside Git. Existing incomplete historical/team coverage and unverified handwritten-name completeness remain.",
+    "This bounded scan is not comprehensive privacy clearance or production authorization. No remote or customer effects were performed."
+  ]
+}
