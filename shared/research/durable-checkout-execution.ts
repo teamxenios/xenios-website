@@ -58,6 +58,11 @@ export interface CheckoutExecutionRecord extends CheckoutMoneyBinding {
   localCommitFailure?: string | null;
   /** When the local commit completed. */
   committedAt?: string | null;
+  /**
+   * When the row last changed. The recovery sweep judges staleness by this, so
+   * an execution a worker is actively moving is never mistaken for abandoned.
+   */
+  updatedAt?: string | null;
   /** The last provider evidence recorded, when the store keeps it (the SQL row does). */
   lastProviderResult?: ProviderExecutionResult | null;
 }

@@ -52,7 +52,7 @@ describe("row mapping", () => {
     // settlement reads to know WHY nothing was charged.
     // The record also carries the two fields an operations view needs: why a
     // local commit failed, and when the commit completed.
-    expect(back).toEqual({ ...record, lastProviderResult: null, localCommitFailure: null, committedAt: null });
+    expect(back).toEqual({ ...record, lastProviderResult: null, localCommitFailure: null, committedAt: null, updatedAt: null });
     const cancelled = rowToExecution({ ...row, last_provider_result: { kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" } } as unknown as CheckoutExecutionRow);
     expect(cancelled?.lastProviderResult).toEqual({ kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" });
   });
