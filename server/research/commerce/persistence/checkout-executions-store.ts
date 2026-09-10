@@ -219,9 +219,12 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
   };
   // Mirrors research_checkout_execution_commit_cancelled's order and reservation writes.
   const applyCancelled = async (record: CheckoutExecutionCreate) => {
-    // The SQL requires zero-capture evidence before any local settlement.
+    // The SQL requires POSITIVE zero-capture evidence before any local
+    // settlement: absent evidence raises there, so it raises here too. A
+    // cancellation that cannot point at a provider answer saying nothing was
+    // taken is not a cancellation anyone may act on.
     const evidence = record.lastProviderResult;
-    if (evidence && evidence.kind === "cancelled" && evidence.capturedAmountCents !== 0) {
+    if (!evidence || evidence.kind !== "cancelled" || evidence.capturedAmountCents !== 0) {
       throw new CheckoutCommitPrecondition(`execution ${record.executionId} lacks zero-capture evidence`);
     }
     if (effects.orders) {
