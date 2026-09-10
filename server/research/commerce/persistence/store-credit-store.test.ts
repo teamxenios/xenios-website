@@ -283,6 +283,35 @@ describe("gross order value for review", () => {
 // ---------------------------------------------------------------------------
 
 describe("storeCreditDtoOf", () => {
+  it.each([null, undefined, "1000", Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    "refuses an uninterpretable ledger amount before balance or spend: %s", async amount => {
+      const { client, rows } = fakeSupabase();
+      rows.push({ ...storeCreditRecordToRow(record()), amount_cents: amount } as StoreCreditRow);
+      const store = createSupabaseStoreCreditLedgerStore(client);
+      await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+      await expect(store.spend("mem_a", 1, "order-with-invalid-ledger", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+      expect(rows).toHaveLength(1);
+    },
+  );
+
+  it.each(["approved", "pending", "held"] as const)("refuses an overflowing %s aggregate", state => {
+    const records = [record({ state, amountCents: Number.MAX_SAFE_INTEGER }), record({ state, amountCents: 1 })];
+    expect(() => storeCreditDtoOf(records, NOW)).toThrow(StoreCreditInvalidTransition);
+  });
+
+  it("does not make an expired credit usable when the evaluation clock is invalid", () => {
+    const records = [record({ expiresAt: "2026-07-01T00:00:00.000Z" })];
+    expect(() => spendableCentsOf(records, new Date("invalid"))).toThrow(StoreCreditInvalidTransition);
+  });
+
+  it.each([
+    { state: "unknown" }, { reason: "unknown" }, { actor_type: "unknown" },
+    { reverses_id: undefined }, { actor_id: undefined }, { available_at: undefined }, { created_at: "invalid" },
+  ])("refuses an incomplete or unknown durable projection %j", override => {
+    const row = { ...storeCreditRecordToRow(record()), ...override } as StoreCreditRow;
+    expect(() => storeCreditRowToRecord(row)).toThrow(StoreCreditInvalidTransition);
+  });
+
   it("builds the member DTO with clamped spendable, pending, and allowlisted entry fields", () => {
     const records = [
       record({ id: "a", state: "approved", amountCents: 700 }),
@@ -381,6 +410,22 @@ function fakeSupabase(): { client: SupabaseClient; rows: StoreCreditRow[] } {
 }
 
 describe("createSupabaseStoreCreditLedgerStore (fake client)", () => {
+  it("does not interpret a payload-less ledger read as a zero balance", async () => {
+    const query = { select() { return this; }, eq() { return this; }, order() { return Promise.resolve({ data: null, error: null }); } };
+    const store = createSupabaseStoreCreditLedgerStore({ from: () => query } as unknown as SupabaseClient);
+    await expect(store.spendableCents("mem_a", NOW)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+
+  it("refuses a wrong-member row even if the persistence transport ignored the member filter", async () => {
+    const row = storeCreditRecordToRow(record({ memberId: "mem_b" }));
+    const query = { select() { return this; }, eq() { return this; },
+      order() { return Promise.resolve({ data: [row], error: null }); },
+      maybeSingle() { return Promise.resolve({ data: row, error: null }); } };
+    const store = createSupabaseStoreCreditLedgerStore({ from: () => query } as unknown as SupabaseClient);
+    await expect(store.listForMember("mem_a")).rejects.toThrow(StoreCreditInvalidTransition);
+    await expect(store.getEntry("mem_a", row.id)).rejects.toThrow(StoreCreditInvalidTransition);
+  });
+
   it("appends, lists, and computes balances through the real query wiring", async () => {
     const { client } = fakeSupabase();
     const store: StoreCreditLedgerRepository = createSupabaseStoreCreditLedgerStore(client);

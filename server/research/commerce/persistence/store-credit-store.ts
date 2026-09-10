@@ -217,7 +217,25 @@ export function toStoreCreditEntry(record: StoreCreditLedgerRecord): StoreCredit
  * the original's expiry, so a credit and its offset always expire together.
  */
 export function spendableCentsOf(records: readonly StoreCreditLedgerRecord[], asOf: Date): number {
-  return spendableStoreCreditCents(records.filter((r) => !isExpired(r, asOf)).map(toStoreCreditEntry));
+  if (!(asOf instanceof Date) || !Number.isFinite(asOf.getTime())) {
+    throw new StoreCreditInvalidTransition("Store credit evaluation requires a valid clock.");
+  }
+  records.forEach(validateRecord);
+  const eligible = records.filter((r) => !isExpired(r, asOf));
+  // Keep the canonical shared state rule. Refuse a lossy intermediate sum
+  // before calling it; a rounded balance cannot authorize a monetary effect.
+  checkedCreditSum(eligible.filter((r) => r.state === "approved"));
+  return spendableStoreCreditCents(eligible.map(toStoreCreditEntry));
+}
+
+function checkedCreditSum(records: readonly StoreCreditLedgerRecord[]): number {
+  return records.reduce((sum, record) => {
+    const next = sum + record.amountCents;
+    if (!Number.isSafeInteger(next)) {
+      throw new StoreCreditInvalidTransition("Store credit aggregate exceeds exact integer capacity.");
+    }
+    return next;
+  }, 0);
 }
 
 /**
@@ -226,13 +244,13 @@ export function spendableCentsOf(records: readonly StoreCreditLedgerRecord[], as
  * edited, so this walks the references rather than trusting any state flip.
  */
 export function pendingCentsOf(records: readonly StoreCreditLedgerRecord[]): number {
+  records.forEach(validateRecord);
   const referenced = new Set<string>();
   for (const record of records) {
     if (record.reversesId !== null) referenced.add(record.reversesId);
   }
-  return records
-    .filter((r) => (r.state === "pending" || r.state === "held") && !referenced.has(r.id))
-    .reduce((sum, r) => sum + r.amountCents, 0);
+  return checkedCreditSum(records
+    .filter((r) => (r.state === "pending" || r.state === "held") && !referenced.has(r.id)));
 }
 
 /** The member-facing DTO the routes surface serves. Spendable is clamped at zero. */
@@ -260,8 +278,8 @@ export async function storeCreditViewFor(
 
 function validateRecord(record: StoreCreditLedgerRecord): void {
   expiryMillis(record.expiresAt);
-  if (!record.id) throw new StoreCreditInvalidTransition("A ledger row needs an id.");
-  if (!record.memberId) throw new StoreCreditInvalidTransition("A ledger row needs a member id.");
+  if (typeof record.id !== "string" || !record.id.trim()) throw new StoreCreditInvalidTransition("A ledger row needs an id.");
+  if (typeof record.memberId !== "string" || !record.memberId.trim()) throw new StoreCreditInvalidTransition("A ledger row needs a member id.");
   if (!Number.isSafeInteger(record.amountCents) || record.amountCents === 0) {
     throw new StoreCreditInvalidTransition("amountCents must be a nonzero safe integer of cents.");
   }
@@ -270,6 +288,18 @@ function validateRecord(record: StoreCreditLedgerRecord): void {
   }
   if (!STORE_CREDIT_REASONS.includes(record.reason)) {
     throw new StoreCreditInvalidTransition(`Unknown ledger reason: ${record.reason}.`);
+  }
+  if (record.actorType !== "admin" && record.actorType !== "system") {
+    throw new StoreCreditInvalidTransition("Store credit actor type is not supported.");
+  }
+  for (const value of [record.reversesId, record.actorId]) {
+    if (value !== null && (typeof value !== "string" || !value.trim())) {
+      throw new StoreCreditInvalidTransition("Store credit reference must be text or explicit null.");
+    }
+  }
+  if (typeof record.createdAt !== "string" || !Number.isFinite(Date.parse(record.createdAt))
+    || (record.availableAt !== null && (typeof record.availableAt !== "string" || !Number.isFinite(Date.parse(record.availableAt))))) {
+    throw new StoreCreditInvalidTransition("Store credit timestamps are missing or invalid.");
   }
 }
 
@@ -421,8 +451,10 @@ export function storeCreditRecordToRow(record: StoreCreditLedgerRecord): StoreCr
 }
 
 export function storeCreditRowToRecord(row: StoreCreditRow): StoreCreditLedgerRecord {
-  expiryMillis(row.expires_at);
-  return {
+  if (!row || typeof row !== "object" || Array.isArray(row)) {
+    throw new StoreCreditInvalidTransition("Store credit row projection is unavailable.");
+  }
+  const record: StoreCreditLedgerRecord = {
     id: row.id,
     memberId: row.member_id,
     amountCents: row.amount_cents,
@@ -431,10 +463,12 @@ export function storeCreditRowToRecord(row: StoreCreditRow): StoreCreditLedgerRe
     createdAt: row.created_at,
     availableAt: row.available_at,
     reversesId: row.reverses_id,
-    actorType: (row.actor_type === "admin" ? "admin" : "system") as StoreCreditActor,
+    actorType: row.actor_type as StoreCreditActor,
     actorId: row.actor_id,
     expiresAt: row.expires_at,
   };
+  validateRecord(record);
+  return record;
 }
 
 function compareRecords(a: StoreCreditLedgerRecord, b: StoreCreditLedgerRecord): number {
@@ -504,7 +538,14 @@ export function createSupabaseStoreCreditLedgerStore(
       .eq("member_id", memberId)
       .order("created_at", { ascending: true });
     if (res.error) throw new Error(`store credit load failed: ${res.error.message}`);
-    return ((res.data ?? []) as StoreCreditRow[]).map(storeCreditRowToRecord).sort(compareRecords);
+    if (!Array.isArray(res.data)) {
+      throw new StoreCreditInvalidTransition("Store credit list projection is unavailable.");
+    }
+    const records = (res.data as StoreCreditRow[]).map(storeCreditRowToRecord);
+    if (records.some((record) => record.memberId !== memberId)) {
+      throw new StoreCreditInvalidTransition("Store credit member projection disagrees.");
+    }
+    return records.sort(compareRecords);
   }
 
   async function insertRecord(record: StoreCreditLedgerRecord): Promise<void> {
@@ -560,8 +601,12 @@ export function createSupabaseStoreCreditLedgerStore(
         .eq("member_id", memberId)
         .maybeSingle();
       if (found.error) throw new Error(`store credit entry load failed: ${found.error.message}`);
-      const row = found.data as StoreCreditRow | null;
-      return row ? storeCreditRowToRecord(row) : null;
+      if (found.data === null) return null;
+      const record = storeCreditRowToRecord(found.data as StoreCreditRow);
+      if (record.memberId !== memberId || record.id !== entryId) {
+        throw new StoreCreditInvalidTransition("Store credit entry projection disagrees.");
+      }
+      return record;
     },
     async spendableCents(memberId, asOf) {
       return spendableCentsOf(await memberRows(memberId), asOf);
