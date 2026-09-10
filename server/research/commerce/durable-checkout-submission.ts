@@ -21,6 +21,8 @@ import type { DurableExecutionOutcome } from "./durable-checkout-executor";
 import type { OrderRecord, OrderRepository } from "./orders";
 import { CheckoutExecutionConflict, requestBodySha256, type CheckoutExecutionRepository } from "./persistence/checkout-executions-store";
 import { subjectOf } from "./routes";
+import { cancellationOf } from "./checkout-continuation";
+import type { CancellationReason, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
 
 export type DurableCheckoutState =
   | "pending"
@@ -31,7 +33,7 @@ export type DurableCheckoutState =
   | "reconciliation_required";
 
 export type DurableCheckoutOutcome =
-  | { ok: true; requestKey: string; orderId: string; state: DurableCheckoutState; idempotent: boolean }
+  | { ok: true; requestKey: string; orderId: string; state: DurableCheckoutState; idempotent: boolean; cancellation?: { reason: CancellationReason } }
   | { ok: false; code: CommerceDenialCode; codes: CommerceDenialCode[]; reservationRefusals?: ReservationRefusalCode[] };
 
 export interface DurableCheckoutSubmissionDeps {
@@ -103,7 +105,12 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       const order = await deps.orders.get(orderId);
       if (order && order.memberId === memberId) await deps.onCommitted(order);
     }
-    return { ok: true, requestKey, orderId, state: stateOf(outcome), idempotent };
+    const state = stateOf(outcome);
+    if (state === "cancelled") {
+      const record = await deps.executions.getForMember(memberId, requestKey);
+      return { ok: true, requestKey, orderId, state, idempotent, cancellation: cancellationOf(record ?? { lastProviderResult: null } as CheckoutExecutionRecord) };
+    }
+    return { ok: true, requestKey, orderId, state, idempotent };
   }
 
   return {

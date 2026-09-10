@@ -15,13 +15,21 @@
 // scope changes.
 
 const KEY = "xenios.research.checkoutResume.v1";
+/**
+ * One slot per account scope. A shared slot let a second account's checkout on
+ * the same tab overwrite (or clear) the first account's pointer, after which
+ * the first account was offered a fresh card form while its execution was still
+ * unsettled on the server.
+ */
+const slot = (scope: string) => `${KEY}.${scope}`;
 const SCOPE = /^[a-f0-9]{64}$/;
 const REQUEST_KEY = /^[A-Za-z0-9_-]{8,120}$/;
 
 export interface CheckoutResumeRecord {
   scope: string;
   requestKey: string;
-  orderId: string;
+  /** Null until the server has answered: the pointer is written BEFORE the request leaves. */
+  orderId: string | null;
   startedAt: string;
 }
 
@@ -38,16 +46,17 @@ export function readCheckoutResume(scope: string | null | undefined): CheckoutRe
   const store = storage();
   if (!store) return null;
   try {
-    const raw = store.getItem(KEY);
+    const raw = store.getItem(slot(scope)) ?? store.getItem(KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as unknown;
     if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) return null;
     const record = parsed as Record<string, unknown>;
     if (record.scope !== scope) return null;
     if (typeof record.requestKey !== "string" || !REQUEST_KEY.test(record.requestKey)) return null;
-    if (typeof record.orderId !== "string" || record.orderId.length === 0 || record.orderId.length > 120) return null;
+    const orderId = record.orderId ?? null;
+    if (orderId !== null && (typeof orderId !== "string" || orderId.length === 0 || orderId.length > 120)) return null;
     if (typeof record.startedAt !== "string") return null;
-    return { scope, requestKey: record.requestKey, orderId: record.orderId, startedAt: record.startedAt };
+    return { scope, requestKey: record.requestKey, orderId, startedAt: record.startedAt };
   } catch {
     return null;
   }
@@ -58,16 +67,19 @@ export function writeCheckoutResume(record: CheckoutResumeRecord): void {
   const store = storage();
   if (!store) return;
   try {
-    store.setItem(KEY, JSON.stringify(record));
+    store.setItem(slot(record.scope), JSON.stringify(record));
   } catch {
     // A blocked store is equivalent to no persistence; the server still owns the truth.
   }
 }
 
-export function clearCheckoutResume(): void {
+/** Clears only this scope's pointer; another account's pointer is left for its owner. */
+export function clearCheckoutResume(scope: string | null | undefined): void {
   const store = storage();
   if (!store) return;
   try {
+    if (scope && SCOPE.test(scope)) store.removeItem(slot(scope));
+    // The pre-scoped slot, if this browser still holds one.
     store.removeItem(KEY);
   } catch {
     // Nothing to clear.

@@ -5,7 +5,7 @@
 // no card data can travel through it.
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
 import type { CheckoutRequest } from "@shared/research/commerce-api";
-import type { CheckoutContinuationState } from "./checkoutContinuation";
+import type { CheckoutCancellationReason, CheckoutContinuationState } from "./checkoutContinuation";
 
 export type DurableCheckoutState = CheckoutContinuationState;
 
@@ -16,6 +16,8 @@ export interface DurableCheckoutResult {
   state: DurableCheckoutState;
   /** True when this request continued an execution that already existed. */
   idempotent: boolean;
+  /** Present only when state is cancelled: why nothing was charged. */
+  cancellation?: { reason: CheckoutCancellationReason };
 }
 
 export interface PaymentClientConfig {

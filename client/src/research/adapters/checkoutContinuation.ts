@@ -12,6 +12,8 @@ export type CheckoutContinuationState =
   | "cancelled"
   | "reconciliation_required";
 
+export type CheckoutCancellationReason = "declined" | "customer" | "provider";
+
 export interface CheckoutContinuationView {
   requestKey: string;
   orderId: string;
@@ -19,6 +21,8 @@ export interface CheckoutContinuationView {
   amountCents: number;
   currency: "usd";
   authentication?: { providerReference: string; clientSecret: string };
+  /** Present only in cancelled: why nothing was charged. */
+  cancellation?: { reason: CheckoutCancellationReason };
 }
 
 const enc = encodeURIComponent;

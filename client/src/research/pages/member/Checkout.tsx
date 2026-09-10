@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useResearch } from "../../core";
 import { getCart, getStoreCredit, quoteShipping, submitCheckout } from "../../adapters/commerce";
 import { loadPaymentClientConfig, submitDurableCheckout, type DurableCheckoutResult, type DurableCheckoutState, type PaymentClientConfig } from "../../adapters/durableCheckout";
-import type { CheckoutContinuationView } from "../../adapters/checkoutContinuation";
+import { loadCheckoutContinuation, type CheckoutCancellationReason, type CheckoutContinuationView } from "../../adapters/checkoutContinuation";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
 import { denialPresentation } from "../../lib/denials";
 import { MEMBER_ROUTES } from "../../lib/routes";
@@ -97,7 +97,13 @@ type SubmitPhase =
   | { kind: "placed"; order: OrderSummaryDto }
   | { kind: "held_for_review" }
   /** The durable door verified the payment with the provider and recorded the order. */
-  | { kind: "paid"; orderId: string };
+  | { kind: "paid"; orderId: string }
+  /**
+   * The durable door named an order the continuation door does not know (an
+   * order placed through the ordering door under this key). The order EXISTS;
+   * this page must not mint a new request and invite a second one.
+   */
+  | { kind: "order_exists"; orderId: string };
 
 type PaymentConfigState = { kind: "loading" } | { kind: "ok"; config: PaymentClientConfig } | { kind: "off" };
 
@@ -109,8 +115,8 @@ type PaymentConfigState = { kind: "loading" } | { kind: "ok"; config: PaymentCli
 type DurableState =
   | { kind: "idle" }
   | { kind: "frozen"; request: CheckoutRequest }
-  | { kind: "execution"; requestKey: string; orderId: string | null; state: DurableCheckoutState; note: string | null }
-  | { kind: "cancelled"; orderId: string | null };
+  | { kind: "execution"; requestKey: string; orderId: string | null; state: DurableCheckoutState; note: string | null; source: "durable" | "resume" }
+  | { kind: "cancelled"; orderId: string | null; reason: CheckoutCancellationReason };
 
 const NOT_SETTLED: readonly DurableCheckoutState[] = ["pending", "authentication_required", "processing", "reconciliation_required"];
 
@@ -209,6 +215,12 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     setPhase({ kind: "form" });
     setSubmitDenial(null);
     setSubmitError(null);
+    // These belong to the page, not to the retired token: leaving them set left
+    // the next account's checkout disabled and labelled "Paying...".
+    setSubmitBusy(false);
+    setQuoteBusy(false);
+    setSubmitUnavailable(false);
+    setValidation(null);
     collectRef.current = null;
     setCardComplete(false);
   }, [memberToken]);
@@ -275,7 +287,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     const record = readCheckoutResume(cartScope);
     if (!record) return;
     setIdempotencyKey(record.requestKey);
-    setDurable({ kind: "execution", requestKey: record.requestKey, orderId: record.orderId, state: "pending", note: "Picking up the checkout you started." });
+    setDurable({ kind: "execution", requestKey: record.requestKey, orderId: record.orderId, state: "pending", note: "Picking up the checkout you started.", source: "resume" });
   }, [paymentConfig, cartScope, durable.kind, phase.kind]);
 
   const commerceStatus = capabilityStatusOrPending(capabilities, "product_commerce");
@@ -310,8 +322,13 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
 
   // The door for THIS request. A fully credit-covered order has no provider
   // effect and stays on the ordering door; the server re-checks all of it.
-  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + (quote?.amountCents ?? cart.shippingCents) - creditCents) : 0;
+  const shippingForRequestCents = quote?.amountCents ?? cart?.shippingCents ?? 0;
+  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + shippingForRequestCents - creditCents) : 0;
   const cardDoor = paymentConfig.kind === "ok" && estimatedChargeCents > 0;
+  // On the card door the buyer consents to a specific amount, so the shipping
+  // figure in that amount must be a quote for the service being ordered, not
+  // the cart's standing estimate.
+  const quoteRequired = cardDoor && quote === null;
   const activeConfig = paymentConfig.kind === "ok" ? paymentConfig.config : null;
 
   const authenticate = useMemo<PaymentAuthenticator>(() => {
@@ -320,6 +337,17 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     // The test provider completes its customer action server-side; the browser has nothing to run.
     return async () => "authenticated";
   }, [authenticator, activeConfig]);
+
+  // A quote is only true for the destination and service it was asked for.
+  // Keeping a stale one made the page charge (or decide the door) on a figure
+  // the server would not compute.
+  const quoteBinding = useRef<string>("");
+  useEffect(() => {
+    const binding = JSON.stringify([destination, service]);
+    if (quoteBinding.current === binding) return;
+    quoteBinding.current = binding;
+    setQuote(null);
+  }, [destination, service]);
 
   const requestQuote = async () => {
     const token = memberToken;
@@ -401,15 +429,19 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
 
   const applyOutcome = (checkout: DurableCheckoutResult) => {
     if (checkout.state === "completed") {
-      clearCheckoutResume();
+      clearCheckoutResume(cartScope);
       setPhase({ kind: "paid", orderId: checkout.orderId });
       setIdempotencyKey(newIdempotencyKey());
       setDurable({ kind: "idle" });
       return;
     }
     if (checkout.state === "cancelled") {
-      clearCheckoutResume();
-      setDurable({ kind: "cancelled", orderId: checkout.orderId });
+      clearCheckoutResume(cartScope);
+      // Settled and terminal: the key can never bind another effect, so the next
+      // order is a new intent. Without this the form below stayed live under a
+      // spent key and every further attempt answered idempotency_conflict.
+      setIdempotencyKey(newIdempotencyKey());
+      setDurable({ kind: "cancelled", orderId: checkout.orderId, reason: checkout.cancellation?.reason ?? "provider" });
       return;
     }
     if (cartScope) writeCheckoutResume({ scope: cartScope, requestKey: checkout.requestKey, orderId: checkout.orderId, startedAt: new Date().toISOString() });
@@ -419,6 +451,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       orderId: checkout.orderId,
       state: checkout.state,
       note: checkout.idempotent ? "This is the checkout you already started; nothing was submitted twice." : null,
+      source: "durable",
     });
   };
 
@@ -440,17 +473,21 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       if (result.code === "idempotency_conflict") {
         // The key already names an execution with different details. Its truth
         // is shown through the owner-checked lookup; nothing new was created.
-        setDurable({ kind: "execution", requestKey: request.idempotencyKey, orderId: null, state: "pending", note: "A checkout with these details is already in progress under this request. Showing its current state." });
+        setDurable({ kind: "execution", requestKey: request.idempotencyKey, orderId: null, state: "pending", note: "A checkout with these details is already in progress under this request. Showing its current state.", source: "durable" });
         return;
       }
-      if (result.code === "large_order_review_required") {
-        // The durable door created nothing; a held order for a personal review
-        // is the ordering door's path, with the same request.
+      if (result.code === "large_order_review_required" || result.code === "payment_disabled") {
+        // Both persisted nothing and both belong to the ordering door with the
+        // SAME request: a held order for a personal review, and an order the
+        // server priced as fully covered by store credit (no provider effect).
+        // Showing "payments are not switched on" under a live card field would
+        // dead-end a buyer the ordering door would serve.
         await submitLegacy(request);
         return;
       }
       // Any other denial persisted nothing: the form is editable again and the
-      // same key may carry the corrected request.
+      // same key may carry the corrected request. Nothing exists to resume.
+      clearCheckoutResume(cartScope);
       setSubmitDenial({ code: result.code, message: result.message });
       setDurable({ kind: "idle" });
       return;
@@ -506,15 +543,57 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     }
     const frozen: CheckoutRequest = { ...request, paymentMethodReference: collected.reference };
     setDurable({ kind: "frozen", request: frozen });
+    // The pointer is written BEFORE the request leaves. If the answer is lost
+    // and the buyer refreshes, the next mount resumes THIS key through the
+    // owner-checked door instead of minting a new one and paying twice. It
+    // carries no secret and no payload: only the key, which authorizes nothing.
+    if (cartScope) writeCheckoutResume({ scope: cartScope, requestKey: frozen.idempotencyKey, orderId: null, startedAt: new Date().toISOString() });
     await sendDurable(frozen);
   };
 
   const startNewRequest = () => {
-    clearCheckoutResume();
+    clearCheckoutResume(cartScope);
     setIdempotencyKey(newIdempotencyKey());
     setDurable({ kind: "idle" });
     setSubmitError(null);
     setSubmitDenial(null);
+  };
+
+  /**
+   * "Start a new order request" from the FROZEN state, where the outcome of the
+   * request already sent is unknown. Minting a new key here is how a buyer pays
+   * twice, so the server is asked about the key first: anything it knows is
+   * shown instead, and only an owner-checked not_found mints a new one.
+   */
+  const startNewRequestAfterFrozen = async () => {
+    const token = memberToken;
+    const key = idempotencyKey;
+    setSubmitBusy(true);
+    setSubmitError(null);
+    const result = await loadCheckoutContinuation(token, key);
+    if (!stillCurrent(token)) return;
+    setSubmitBusy(false);
+    if (result.kind === "ok") {
+      const view = result.data.continuation;
+      applyOutcome({
+        requestKey: key,
+        orderId: view.orderId,
+        state: view.state,
+        idempotent: true,
+        ...(view.cancellation ? { cancellation: view.cancellation } : {}),
+      });
+      return;
+    }
+    if (result.kind === "unauthorized") {
+      setState("unauthorized");
+      return;
+    }
+    if (result.kind === "denied" && result.code === "not_found") {
+      // The server has no execution for this key: nothing was created.
+      startNewRequest();
+      return;
+    }
+    setSubmitError("We could not check that request just now. Nothing was charged twice; please try again in a moment.");
   };
 
   // ------------------------------ render -----------------------------------
@@ -534,6 +613,32 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
           </p>
           <div className="mt-4 flex gap-3" style={{ flexWrap: "wrap" }}>
             <Link href={MEMBER_ROUTES.order.replace(":id", encodeURIComponent(phase.orderId))} className="btn btn-primary" data-testid="checkout-paid-order">
+              View this order
+            </Link>
+            <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
+              View your orders
+            </Link>
+          </div>
+        </section>
+      </ResearchMemberShell>
+    );
+  }
+
+  if (phase.kind === "order_exists") {
+    return (
+      <ResearchMemberShell title="Checkout" lead="This order already exists.">
+        <section role="status" className="card" data-testid="checkout-order-exists">
+          <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
+            <p className="mono-label text-ink-mute">Order on file</p>
+            <ResearchStatusBadge label="Already submitted" tone="info" />
+          </div>
+          <p className="body-m font-700 mt-2">Order {phase.orderId} is on your account.</p>
+          <p className="body-s text-ink-2 mt-2 max-w-[60ch]">
+            This request was already turned into an order, so nothing was submitted again. Open the order to see its
+            current payment and review state.
+          </p>
+          <div className="mt-4 flex gap-3" style={{ flexWrap: "wrap" }}>
+            <Link href={MEMBER_ROUTES.order.replace(":id", encodeURIComponent(phase.orderId))} className="btn btn-primary" data-testid="checkout-order-exists-link">
               View this order
             </Link>
             <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
@@ -628,13 +733,22 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
               if (!stillCurrent(memberToken)) return;
               applyOutcome({ requestKey: execution.requestKey, orderId, state: "completed", idempotent: true });
             }}
-            onCancelled={(orderId) => {
+            onCancelled={(orderId, reason) => {
               if (!stillCurrent(memberToken)) return;
-              applyOutcome({ requestKey: execution.requestKey, orderId, state: "cancelled", idempotent: true });
+              applyOutcome({ requestKey: execution.requestKey, orderId, state: "cancelled", idempotent: true, cancellation: { reason } });
             }}
             onMissing={() => {
               if (!stillCurrent(memberToken)) return;
-              // The server does not know this reference for this account: it is not ours to resume.
+              if (execution.source === "durable" && execution.orderId) {
+                // The durable door named this order but no execution owns it: an
+                // order placed through the ordering door under this key. It
+                // EXISTS, so this page must not offer to pay for it again.
+                clearCheckoutResume(cartScope);
+                setPhase({ kind: "order_exists", orderId: execution.orderId });
+                setDurable({ kind: "idle" });
+                return;
+              }
+              // A stale pointer: the server knows no execution for this account.
               startNewRequest();
             }}
           />
@@ -726,13 +840,15 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
               </p>
             )}
             {durable.kind === "cancelled" && (
-              <section role="status" className="card" data-testid="checkout-cancelled">
+              <section role="status" className="card" data-testid="checkout-cancelled" data-reason={durable.reason}>
                 <div className="flex items-center justify-between gap-3" style={{ flexWrap: "wrap", rowGap: 6 }}>
-                  <p className="mono-label text-ink-mute">Payment cancelled</p>
+                  <p className="mono-label text-ink-mute">{durable.reason === "declined" ? "Card declined" : "Payment cancelled"}</p>
                   <ResearchStatusBadge label="Nothing charged" tone="neutral" />
                 </div>
                 <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
-                  That checkout was cancelled and nothing was charged. Your cart and details are kept; start a new order request when you are ready.
+                  {durable.reason === "declined"
+                    ? "Your card was declined and nothing was charged. Your cart and details are kept; start a new order request to try another card."
+                    : "That checkout was cancelled and nothing was charged. Your cart and details are kept; start a new order request when you are ready."}
                 </p>
                 <div className="mt-3">
                   <button type="button" className="btn btn-secondary" onClick={startNewRequest} data-testid="co-new-request">
@@ -950,8 +1066,8 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   to change anything, start a new order request.
                 </p>
                 <div className="mt-3">
-                  <button type="button" className="btn btn-ghost" onClick={startNewRequest} disabled={submitBusy} data-testid="co-new-request">
-                    Start a new order request
+                  <button type="button" className="btn btn-ghost" onClick={() => void startNewRequestAfterFrozen()} disabled={submitBusy} data-testid="co-new-request">
+                    {submitBusy ? "Checking..." : "Start a new order request"}
                   </button>
                 </div>
               </section>
@@ -977,17 +1093,23 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <dt className="body-s text-ink-2">Shipping (once per order)</dt>
-                  <dd className="body-s tabular">{money(cart.shippingCents)}</dd>
+                  <dd className="body-s tabular">{cardDoor ? (quote ? money(quote.amountCents) : PRICE_PENDING_COPY) : money(cart.shippingCents)}</dd>
                 </div>
-                {cart.storeCreditAppliedCents > 0 && (
+                {(cardDoor ? creditCents : cart.storeCreditAppliedCents) > 0 && (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="body-s text-ink-2">Store credit applied</dt>
-                    <dd className="body-s tabular">-{money(cart.storeCreditAppliedCents)}</dd>
+                    <dd className="body-s tabular">-{money(cardDoor ? creditCents : cart.storeCreditAppliedCents)}</dd>
                   </div>
                 )}
+                {/* On the card door the figure below is the amount the card is
+                    charged, computed from the same inputs the request carries.
+                    Anything else would take consent for one number and charge
+                    another. */}
                 <div className="flex items-center justify-between gap-4">
-                  <dt className="body-m font-700">Estimated total</dt>
-                  <dd className="body-m font-700 tabular">{money(cart.estimatedTotalCents)}</dd>
+                  <dt className="body-m font-700">{cardDoor ? "Charged to your card" : "Estimated total"}</dt>
+                  <dd className="body-m font-700 tabular" data-testid="co-total">
+                    {cardDoor ? (quote ? money(estimatedChargeCents) : PRICE_PENDING_COPY) : money(cart.estimatedTotalCents)}
+                  </dd>
                 </div>
               </dl>
               {cart.shipmentGroups.length > 1 && (
@@ -1008,12 +1130,25 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={submitBusy || (cardDoor && durable.kind !== "frozen" && !cardComplete)}
+                disabled={submitBusy || (cardDoor && durable.kind !== "frozen" && (!cardComplete || quoteRequired))}
                 onClick={() => void submit()}
                 data-testid="co-submit"
               >
-                {submitBusy ? (cardDoor ? "Paying..." : "Placing order...") : durable.kind === "frozen" ? "Retry the same request" : cardDoor ? "Pay and place order" : "Place order"}
+                {submitBusy
+                  ? cardDoor
+                    ? "Paying..."
+                    : "Placing order..."
+                  : durable.kind === "frozen"
+                    ? "Retry the same request"
+                    : cardDoor
+                      ? `Pay ${money(estimatedChargeCents)} and place order`
+                      : "Place order"}
               </button>
+              {quoteRequired && durable.kind !== "frozen" && (
+                <p className="body-s text-ink-mute mt-2" data-testid="co-quote-required">
+                  Get a shipping quote for the service you chose so you can see the exact amount before paying.
+                </p>
+              )}
             </div>
 
             <ResearchSecureNotice>

@@ -128,35 +128,58 @@ export function createDurableCheckoutExecutor(
   async function cancel(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> {
     const r = await store.getForMember(memberId, requestKey);
     if (!r || r.memberId !== memberId) return { kind: "missing" };
-    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorized", "action_required", "reconciliation_required"];
+    // `authorizing` is cancellable: an execution parked there (a worker died
+    // mid-create, or a claim was lost) is exactly what a buyer sees as
+    // "pending", and falling through to run() would RECONCILE and then CAPTURE
+    // the payment the buyer asked to cancel. The claim is a version
+    // compare-and-swap, so a still-live authorize worker simply loses its write
+    // and answers pending. `capturing` deliberately stays on run(): the capture
+    // was already decided and the provider's answer is the only truth left.
+    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorizing", "authorized", "action_required", "reconciliation_required"];
     if (!cancellable.includes(r.phase)) return run(memberId, requestKey);
-    const owned = await store.claim(r.executionId, r.version, "cancelling");
+    let owned = await store.claim(r.executionId, r.version, "cancelling");
     if (!owned) return { kind: "pending", orderId: r.orderId };
     let proof: ProviderExecutionResult;
     let reference = owned.providerReference;
     if (reference === null && owned.authorizationAttemptedAt === null) {
-      // No authorization was ever attempted: no payment can exist. Cancelled
+      // No authorization was ever attempted, so no payment can exist. Cancelled
       // without a provider call.
       proof = { kind: "cancelled", providerReference: null, capturedAmountCents: 0 };
     } else if (reference === null) {
       // An attempt was made but no reference was learned: the creation response
       // may have been lost. Inside the provider's retention the port retrieves
-      // the original payment by its key; a definitive "nothing was created" is
-      // the only answer that lets the cancellation stand without a provider
-      // effect.
+      // the original payment by its key.
       let learned: ProviderExecutionResult;
       try {
         learned = await payment.reconcile(owned);
       } catch {
         learned = { kind: "unknown" };
       }
-      if (learned.kind === "authorized" || learned.kind === "captured" || learned.kind === "action_required") {
+      if (learned.kind === "captured") {
+        // The money is already taken. Record it and let run() commit; a
+        // cancellation cannot undo an external capture.
+        const recorded = await store.recordProvider(owned.executionId, owned.version, learned);
+        if (!recorded) return { kind: "pending", orderId: r.orderId };
+        return run(memberId, requestKey);
+      }
+      if (learned.kind === "authorized" || learned.kind === "action_required") {
+        // Persist the reference BEFORE attempting the cancel. A cancel that then
+        // fails leaves a row that names the payment, so every later attempt is a
+        // read-back by reference instead of a replay bounded by the retention
+        // window.
+        const recorded = await store.recordProvider(owned.executionId, owned.version, learned);
+        if (!recorded) return { kind: "pending", orderId: r.orderId };
+        const reclaimed = await store.claim(recorded.executionId, recorded.version, "cancelling");
+        if (!reclaimed) return { kind: "pending", orderId: r.orderId };
+        owned = reclaimed;
         reference = learned.providerReference;
-      } else if (learned.kind === "cancelled" || (learned.kind === "refused" && learned.definitiveNoEffect)) {
-        proof = { kind: "cancelled", providerReference: null, capturedAmountCents: 0 };
+      } else if (learned.kind === "cancelled") {
+        proof = { kind: "cancelled", providerReference: learned.providerReference, capturedAmountCents: 0 };
       } else {
-        // Uncertain: neither cancelled nor charged can be claimed. The execution
-        // stays in reconciliation until the provider's truth is known.
+        // A REFUSED replay says the replay call had no effect; it says NOTHING
+        // about the original attempt whose response was lost. Declaring
+        // "cancelled" here would release the holds and cancel the order while an
+        // authorization may still stand at the provider. Stay uncertain.
         proof = { kind: "unknown" };
       }
     }
@@ -176,6 +199,7 @@ export function createDurableCheckoutExecutor(
       if (proof.kind === "cancelled" && proof.providerReference !== reference) proof = { kind: "unknown" };
       if (proof.kind === "action_required" && proof.providerReference !== reference) proof = { kind: "unknown" };
     }
+    if (proof!.kind === "cancelled" && proof!.reason === undefined) proof = { ...proof!, reason: "customer" };
     const saved = await store.recordProvider(owned.executionId, owned.version, proof!);
     if (!saved) return { kind: "pending", orderId: r.orderId };
     return run(memberId, requestKey);

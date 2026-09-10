@@ -59,7 +59,12 @@ export interface DurableCheckoutCompositionInput {
   reservationAudit?: { record(event: ReservationAuditEvent): Promise<void> | void };
   isFraudFlagged?: (memberId: string) => boolean;
   priceVersion?: (cart: CartDto) => string | null;
-  /** Expected provider account for webhook binding; null means platform events only. */
+  /**
+   * Expected provider account for webhook binding. Omit to use the provider's
+   * own binding, which is the single source of truth; supplying a value that
+   * disagrees with the provider is refused rather than silently isolating every
+   * event.
+   */
   expectedProviderAccountId?: string | null;
   /** Downstream after a committed order (the canonical outbox). Absent means no notification. */
   onCommitted?: (order: OrderRecord) => Promise<void> | void;
@@ -74,7 +79,11 @@ export interface DurableCheckoutCompositionInput {
   allowInMemoryStores?: boolean;
 }
 
-export type DurableCheckoutUnavailableReason = "provider_not_durable" | "execution_store_not_durable" | "webhook_inbox_not_durable";
+export type DurableCheckoutUnavailableReason =
+  | "provider_not_durable"
+  | "execution_store_not_durable"
+  | "webhook_inbox_not_durable"
+  | "provider_account_mismatch";
 
 export type DurableCheckoutComposition =
   | {
@@ -116,16 +125,40 @@ export function resolveDurableCheckoutStores(
 }
 
 /**
- * The NOT READY composition for a deployment state that composes no commerce
- * repositories at all (flag off, database not provisioned). Every door refuses
- * and the browser is told payment_disabled; nothing is constructed.
+ * Wraps the execution store so the downstream hook fires exactly once, at the
+ * moment an execution's phase actually becomes committed. Every path that
+ * commits (submission, continuation, webhook recovery) goes through
+ * commitCaptured, and a repeat call on an already-committed record does not
+ * fire again.
  */
-export function unavailableDurableCheckout(reason: DurableCheckoutUnavailableReason): DurableCheckoutComposition {
-  return { ready: false, reason, clientConfig: () => ({ ok: false, code: "payment_disabled" }) };
+function withCommitNotification(
+  store: CheckoutExecutionRepository,
+  orders: Pick<OrderRepository, "get">,
+  onCommitted: (order: OrderRecord) => Promise<void> | void,
+): CheckoutExecutionRepository {
+  return {
+    ...store,
+    async commitCaptured(executionId, expected) {
+      const after = await store.commitCaptured(executionId, expected);
+      // A real commit advances the version past the one it claimed; an
+      // already-committed record is returned at the SAME version by both the
+      // SQL function and the in-memory reference. That difference is what makes
+      // this fire exactly once.
+      if (after && after.phase === "committed" && after.version === expected + 1) {
+        const order = await orders.get(after.orderId);
+        if (order && order.memberId === after.memberId) await onCommitted(order);
+      }
+      return after;
+    },
+  };
 }
 
 export function composeDurableCheckout(input: DurableCheckoutCompositionInput): DurableCheckoutComposition {
-  const disabled = unavailableDurableCheckout;
+  const disabled = (reason: DurableCheckoutUnavailableReason): DurableCheckoutComposition => ({
+    ready: false,
+    reason,
+    clientConfig: () => ({ ok: false, code: "payment_disabled" }),
+  });
   const { provider, env } = input;
   // The Disabled provider implements the durable interface structurally (it
   // refuses every call); readiness is about a provider that can actually pay.
@@ -134,9 +167,20 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
   if (!input.executions.durable && !memoryAllowed) return disabled("execution_store_not_durable");
   if (!input.webhookInbox.durable && !memoryAllowed) return disabled("webhook_inbox_not_durable");
 
+  // The account the webhook binding expects is the provider's own. A supplied
+  // value that disagrees would isolate every genuine event, so it is refused.
+  const providerAccount = provider.providerAccountId ?? null;
+  if (input.expectedProviderAccountId !== undefined && input.expectedProviderAccountId !== providerAccount) {
+    return disabled("provider_account_mismatch");
+  }
+
   const now = input.now ?? (() => new Date());
   const newId = input.newId ?? (() => randomUUID());
-  const executions = input.executions.store;
+  // Downstream fires on the COMMIT TRANSITION rather than from any one door, so
+  // an order committed through the continuation (3DS) or a webhook notifies
+  // exactly like a synchronous one, and a retried submit of an already
+  // committed execution notifies nothing.
+  const executions = input.onCommitted ? withCommitNotification(input.executions.store, input.orders, input.onCommitted) : input.executions.store;
   const port = createProviderVerifiedPaymentPort(provider, {
     now: () => now().getTime(),
     ...(input.creationKeyRetentionMs !== undefined ? { creationKeyRetentionMs: input.creationKeyRetentionMs } : {}),
@@ -153,14 +197,14 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     priceVersion: input.priceVersion,
     now,
     newId,
-    onCommitted: input.onCommitted,
+    // Not here: the store wrapper above owns the notification for every door.
   });
   const continuation = createCheckoutContinuationService({ store: executions, provider, executor });
   const webhookProcessor = createWebhookExecutionProcessor({
     providerName: provider.name,
     inbox: input.webhookInbox.store,
     executions,
-    expectedProviderAccountId: input.expectedProviderAccountId ?? null,
+    expectedProviderAccountId: providerAccount,
   });
   return {
     ready: true,

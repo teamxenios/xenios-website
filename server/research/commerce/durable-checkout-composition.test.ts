@@ -218,12 +218,32 @@ describe("durable checkout surface over HTTP", () => {
     expect(c.committed).toEqual(["00000001-0000-4000-8000-000000000000"]);
   });
 
+  it("a declined card is a definitive, truthful outcome: cancelled with reason declined, intent released, order cancelled, hold released, nothing charged; a retry says the same", async () => {
+    const c = build();
+    const call = await serve(c.composition);
+    const declined = await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request({ paymentMethodReference: "pm_card_chargeDeclined" }));
+    expect(declined.status).toBe(200);
+    expect(declined.body).toEqual({ ok: true, checkout: { requestKey: "req_composed_0001", orderId: "00000001-0000-4000-8000-000000000000", state: "cancelled", idempotent: false, cancellation: { reason: "declined" } } });
+    expect(c.model.intents.get("pi_0001")).toMatchObject({ status: "canceled", amount_received: 0 });
+    expect((await c.orders.get("00000001-0000-4000-8000-000000000000"))?.state).toBe("cancelled");
+    expect(c.inventory.events).toEqual(["reserve:res-1", "release:res-1"]);
+    expect(c.committed).toEqual([]);
+    // The identical retry replays the creation key, meets the same decline, and reports the same settled truth without a second intent.
+    const again = await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request({ paymentMethodReference: "pm_card_chargeDeclined" }));
+    expect(again.body).toMatchObject({ ok: true, checkout: { state: "cancelled", idempotent: true, cancellation: { reason: "declined" } } });
+    expect(c.model.intents.size).toBe(1);
+    expect(c.inventory.events).toEqual(["reserve:res-1", "release:res-1"]);
+    const status = await call("GET", at(DURABLE_CHECKOUT_SURFACE_PATHS.status), "token-owner");
+    expect(status.body).toMatchObject({ continuation: { state: "cancelled", cancellation: { reason: "declined" } } });
+    expect(status.text).not.toContain("secret");
+  });
+
   it("cancels an unpaid checkout: the provider authorization is released, the order is cancelled and the hold settles once", async () => {
     const c = build({ requiresAction: true });
     const call = await serve(c.composition);
     await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request());
     const cancelled = await call("POST", at(DURABLE_CHECKOUT_SURFACE_PATHS.cancel), "token-owner");
-    expect(cancelled.body).toEqual({ ok: true, continuation: { requestKey: "req_composed_0001", orderId: "00000001-0000-4000-8000-000000000000", state: "cancelled", amountCents: 21_000, currency: "usd" } });
+    expect(cancelled.body).toEqual({ ok: true, continuation: { requestKey: "req_composed_0001", orderId: "00000001-0000-4000-8000-000000000000", state: "cancelled", amountCents: 21_000, currency: "usd", cancellation: { reason: "customer" } } });
     expect(c.model.intents.get("pi_0001")?.status).toBe("canceled");
     expect((await c.orders.get("00000001-0000-4000-8000-000000000000"))?.state).toBe("cancelled");
     expect(c.inventory.events).toEqual(["reserve:res-1", "release:res-1"]);

@@ -61,7 +61,10 @@ export function stripeModel(options: { requiresAction?: boolean; now?: () => num
       const id = `pi_${String(++counter).padStart(4, "0")}`;
       const amount = Number(form.amount);
       const confirmed = form.confirm === "true";
-      const status = !confirmed ? "requires_confirmation" : options.requiresAction ? "requires_action" : "requires_capture";
+      // Stripe's documented test method for a decline: the intent is created
+      // and confirmation answers 402 card_error with the intent in the error.
+      const declined = confirmed && form.payment_method === "pm_card_chargeDeclined";
+      const status = !confirmed ? "requires_confirmation" : declined ? "requires_payment_method" : options.requiresAction ? "requires_action" : "requires_capture";
       const intent: ModelIntent = {
         id,
         status,
@@ -73,7 +76,9 @@ export function stripeModel(options: { requiresAction?: boolean; now?: () => num
         client_secret: `${id}_secret_fixture`,
       };
       intents.set(id, intent);
-      const response = { status: 200, body: { ...intent } };
+      const response = declined
+        ? { status: 402, body: { error: { type: "card_error", code: "card_declined", decline_code: "generic_decline", message: "Your card was declined.", payment_intent: { ...intent } } } }
+        : { status: 200, body: { ...intent } };
       byKey.set(key, { body, response });
       return response;
     }
