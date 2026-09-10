@@ -5,6 +5,6 @@
   "branch": "claude/durable-payment-port-20260909",
   "state": "active",
   "startedAt": "2026-09-09T15:40:59.285Z",
-  "heartbeatAt": "2026-09-10T03:23:56.944Z",
-  "note": "CORRECTION: pushes had been going to a stale ref from a detached HEAD; branch now genuinely at 0819c7d with all three review rounds + operations read"
+  "heartbeatAt": "2026-09-10T04:30:03.666Z",
+  "note": "4b2e093: runner gap closed, recovery sweep + distinct discovery candidate; outbox half handed to A"
 }

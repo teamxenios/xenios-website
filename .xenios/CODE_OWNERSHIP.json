@@ -1659,7 +1659,23 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-09T15:40:59.423Z",
-      "heartbeatAt": "2026-09-10T03:23:56.944Z"
+      "heartbeatAt": "2026-09-10T04:30:03.666Z"
+    },
+    {
+      "id": "680b7c3e-22fc-4e9e-9ed9-c257c41695d8",
+      "task": "DURABLE-CHECKOUT-RECOVERY-SWEEP-20260910",
+      "session": "fable-durable-payment-20260909",
+      "paths": [
+        "server/research/commerce/checkout-recovery-sweep.ts",
+        "server/research/commerce/checkout-recovery-sweep.test.ts",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.precheck.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.postcheck.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.rollback.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-10T04:17:09.393Z",
+      "heartbeatAt": "2026-09-10T04:30:03.666Z"
     }
   ],
   "rules": [

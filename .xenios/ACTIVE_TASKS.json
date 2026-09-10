@@ -1732,6 +1732,25 @@
       "dependsOn": [],
       "baseSha": "70ab791b9bfacff41f8387b8ee9d2b11ab9a0c8d",
       "scopeNote": "Composition-root paths (server/research/commerce/production-deps.ts, server/index.ts) are inside codex-seth-revenue-launch-20260905 active lease: A applies the exact patch proposal in docs/research-commerce/DURABLE_CHECKOUT_COMPOSITION_PATCH_20260909.md (Fable-authored, not applied). No provider resolver change; no flag flip; production answers 503 on every durable door until a durable provider is composed under the standing authorization."
+    },
+    {
+      "id": "DURABLE-CHECKOUT-RECOVERY-SWEEP-20260910",
+      "title": "Bounded restart-safe recovery sweep for stranded checkout executions: a distinct additive SQL candidate for discovery, and a conservative sweep that resolves or releases but never completes an abandoned purchase",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "fable-durable-payment-20260909",
+      "paths": [
+        "server/research/commerce/checkout-recovery-sweep.ts",
+        "server/research/commerce/checkout-recovery-sweep.test.ts",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.precheck.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.postcheck.sql",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery.rollback.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "84a8a6a9a90000747328f7e90bfe8d143dbd9dd1",
+      "scopeNote": "DISTINCT candidate; never an edit to 20260909150000 which is frozen for rehearsal and whose authorization excludes additional migrations. Sends nothing: the downstream notification reuses the existing research_notification_outbox and stays with its owner (server/research/outbox.ts is in A lease).",
+      "claimedAt": "2026-09-10T04:17:09.390Z"
     }
   ]
 }
