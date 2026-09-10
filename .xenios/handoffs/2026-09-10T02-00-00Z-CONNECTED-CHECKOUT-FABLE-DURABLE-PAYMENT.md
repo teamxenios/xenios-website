@@ -4,11 +4,11 @@ Session `fable-durable-payment-20260909` (Claude, optional capacity, not the
 production executor). Branch `claude/durable-payment-port-20260909`, worktree
 `C:/Users/sboad/projects/fable-probes-20260908`, pinned Node 20.19.0.
 
-**Take `b7f91ad3e8be085c1eca7a7490fb0ff9d5217d92` or later.** The integration
+**Take `fbe513cbe0f114c4f8fba5389ec8cd59747d85c4` or later.** The integration
 owner cherry-picked this lane at `df5396b11b863322fd513c3691e5b3fd5279bdb0`.
 Three adversarial rounds have run since, and each found real money defects,
 including two rounds where a fix introduced a narrower version of the defect it
-was closing. Do not qualify `df5396b`, `316a67c` or `7fb98d8`.
+was closing. Do not qualify `df5396b`, `316a67c`, `7fb98d8` or `b7f91ad`.
 
 ## The chain
 
@@ -28,7 +28,8 @@ was closing. Do not qualify `df5396b`, `316a67c` or `7fb98d8`.
 | `fbdd08f` | SQL-faithful zero-capture evidence check |
 | `7fb98d8` | Two self-introduced regressions closed; connected-journey runner |
 | `af0743f` | The journey skips a customer challenge it cannot complete |
-| `b7f91ad` | Second review round: fifteen defects closed (read this one) |
+| `b7f91ad` | Second review round: fifteen defects closed |
+| `fbe513c` | Third review round: nine defects closed (read this one) |
 
 ## What a buyer actually gets
 
@@ -89,7 +90,7 @@ touched a managed project.
    local commit, webhook redelivery and out-of-order events, cancellation and
    settlement, owner-only reads, account-switch isolation.
 4. **Independent acceptance** (a non-author reviewer). Scope
-   `5c52abb..b7f91ad`. Nothing here is self-accepted.
+   `5c52abb..fbe513c`. Nothing here is self-accepted.
 5. **Recovery sweep and downstream outbox** (open). A scheduler that calls
    `executor.recover` for old parked executions needs a member-agnostic list
    function the SQL does not yet have. `onCommitted` now fires on the commit
@@ -159,8 +160,33 @@ credit the buyer typed while the server deducts the cart's; and that two paths
 minted a new idempotency key on a continuation 404, which is not proof nothing
 was created because the durable door persists the execution last.
 
-A third pass over `b7f91ad` is running. Anything it confirms lands on this
-branch, and the pattern so far says to expect something.
+A third pass found nine more. Two could take money that was not owed. The
+second round had fixed cancel-from-`authorizing` and argued `capturing` was safe
+because the capture was already decided; that is false when a worker dies
+between claiming the phase and its request ever leaving, and the reviewer
+reproduced a buyer being charged after pressing Cancel with no cancel request
+ever sent. Both in-flight phases are cancellable now.
+
+The other was invisible to every local test. The managed store's column
+projection had drifted from its row mapper and omitted
+`authorization_first_attempted_at`. PostgREST returns only what is projected, so
+every record read from the real database claimed no payment attempt had ever
+been made, which is exactly the condition that permits replaying a payment
+creation key outside the provider's retention window. The in-memory reference
+hands back whole rows, so nothing local could see it. That is the clearest
+argument in this handoff for why the staging rehearsal and an independent review
+are not formalities: this lane can hold a defect that no local test can reach.
+
+Consent is also now bound to the charge. `CheckoutRequest` gained an optional
+`expectedTotalCents`; when present the durable door refuses rather than charging
+an amount the page never showed.
+
+## Three rounds, and what that means
+
+Each round found real money defects in the round before it, and two of the three
+found that a fix had introduced a narrower version of the defect it was closing.
+Read that as a statement about the difficulty of this path, not as a claim that
+the fourth round would find nothing.
 
 ## Next command
 
