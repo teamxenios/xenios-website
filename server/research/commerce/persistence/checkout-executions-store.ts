@@ -101,6 +101,8 @@ export function rowToExecution(row: CheckoutExecutionRow): CheckoutExecutionReco
     authorizationAttemptedAt: row.authorization_first_attempted_at ?? null,
     settledAt: row.settled_at ?? null,
     lastProviderResult: ((row as { last_provider_result?: unknown }).last_provider_result as ProviderExecutionResult | null | undefined) ?? null,
+    localCommitFailure: row.local_commit_failure ?? null,
+    committedAt: row.committed_at ?? null,
   };
 }
 

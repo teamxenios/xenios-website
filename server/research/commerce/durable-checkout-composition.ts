@@ -26,6 +26,7 @@ import type { CartDto } from "@shared/research/commerce-api";
 import { supportsDurableExecution, type DurablePaymentProvider, type PaymentProvider } from "../providers/payment";
 import type { CheckoutService, ReservationAuditEvent, ReservationSeam } from "./checkout";
 import { createCheckoutContinuationService, registerCheckoutContinuationApi, CHECKOUT_CONTINUATION_PATHS, type CheckoutContinuationService } from "./checkout-continuation";
+import { createCheckoutExecutionAdminService, registerCheckoutExecutionAdminApi, CHECKOUT_EXECUTION_ADMIN_PATH, type CheckoutExecutionAdminService } from "./checkout-execution-admin";
 import { createDurableCheckoutExecutor } from "./durable-checkout-executor";
 import { createDurableCheckoutSubmission, registerDurableCheckoutApi, DURABLE_CHECKOUT_PATH, type DurableCheckoutSubmission } from "./durable-checkout-submission";
 import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
@@ -95,6 +96,8 @@ export type DurableCheckoutComposition =
       continuation: CheckoutContinuationService;
       /** Pass as `executions` to createWebhookHandler so verified events bind to executions first. */
       webhookProcessor: WebhookExecutionProcessor;
+      /** The operations read: what a customer's payment is doing, for the order an admin is looking at. */
+      adminExecutions: CheckoutExecutionAdminService;
       clientConfig: () => PaymentClientConfigResult;
     }
   | {
@@ -210,6 +213,7 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     // Not here: the store wrapper above owns the notification for every door.
   });
   const continuation = createCheckoutContinuationService({ store: executions, provider, executor });
+  const adminExecutions = createCheckoutExecutionAdminService({ findByOrder: (orderId) => executions.findByOrder(orderId) });
   const webhookProcessor = createWebhookExecutionProcessor({
     providerName: provider.name,
     inbox: input.webhookInbox.store,
@@ -224,18 +228,25 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     submission,
     continuation,
     webhookProcessor,
+    adminExecutions,
     clientConfig: () => resolvePaymentClientConfig(provider, env),
   };
 }
 
 export interface DurableCheckoutGuards {
   requireActiveMember: (req: Request, res: Response, next: () => void) => void | Promise<void>;
+  /**
+   * Supplying this mounts the operations read, so the person who can act on a
+   * parked payment can see it. Omitting it mounts only the customer doors.
+   */
+  requireAdmin?: (req: Request, res: Response, next: () => void) => void | Promise<void>;
 }
 
 /** Every durable door. The surface that is not ready answers each with a precise refusal, never an unpublished path. */
 export const DURABLE_CHECKOUT_SURFACE_PATHS = {
   submit: DURABLE_CHECKOUT_PATH,
   config: PAYMENT_CLIENT_CONFIG_PATH,
+  adminExecution: CHECKOUT_EXECUTION_ADMIN_PATH,
   ...CHECKOUT_CONTINUATION_PATHS,
 } as const;
 
@@ -251,6 +262,9 @@ export function registerDurableCheckoutSurface(app: Express, guards: DurableChec
   if (composition.ready) {
     registerDurableCheckoutApi(app, guards, { submission: composition.submission, now: options.now ?? (() => new Date()) });
     registerCheckoutContinuationApi(app, guards, { service: composition.continuation });
+    if (guards.requireAdmin) {
+      registerCheckoutExecutionAdminApi(app, { requireAdmin: guards.requireAdmin }, { service: composition.adminExecutions });
+    }
     return;
   }
   const refuse = (_req: Request, res: Response) => {

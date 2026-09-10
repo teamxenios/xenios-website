@@ -50,7 +50,9 @@ describe("row mapping", () => {
     const { requestBodySha256: _d, priceVersion: _p, ...record } = base;
     // The row also carries the last provider evidence, which the cancellation
     // settlement reads to know WHY nothing was charged.
-    expect(back).toEqual({ ...record, lastProviderResult: null });
+    // The record also carries the two fields an operations view needs: why a
+    // local commit failed, and when the commit completed.
+    expect(back).toEqual({ ...record, lastProviderResult: null, localCommitFailure: null, committedAt: null });
     const cancelled = rowToExecution({ ...row, last_provider_result: { kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" } } as unknown as CheckoutExecutionRow);
     expect(cancelled?.lastProviderResult).toEqual({ kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" });
   });
