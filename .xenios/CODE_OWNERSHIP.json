@@ -1784,6 +1784,7 @@
         "docs/research-launch/PROVIDER_READINESS.md",
         "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
         "docs/native-finish/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/CODE_OWNERSHIP.json",
         ".xenios/SESSION_REGISTRY.json",
