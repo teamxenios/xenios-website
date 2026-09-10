@@ -49,6 +49,15 @@ export interface CheckoutExecutionRecord extends CheckoutMoneyBinding {
   authorizationAttemptedAt: string | null;
   /** When the local settlement of a cancelled execution completed (order cancelled, holds released). */
   settledAt: string | null;
+  /**
+   * Set when the provider captured but the local transaction could not complete
+   * (an incomplete reservation set, for example). The external charge stands and
+   * the execution waits for a person: this is the one field an operations view
+   * must never lose.
+   */
+  localCommitFailure?: string | null;
+  /** When the local commit completed. */
+  committedAt?: string | null;
   /** The last provider evidence recorded, when the store keeps it (the SQL row does). */
   lastProviderResult?: ProviderExecutionResult | null;
 }
