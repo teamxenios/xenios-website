@@ -100,6 +100,7 @@ export function rowToExecution(row: CheckoutExecutionRow): CheckoutExecutionReco
     createdAt: row.created_at,
     authorizationAttemptedAt: row.authorization_first_attempted_at ?? null,
     settledAt: row.settled_at ?? null,
+    lastProviderResult: ((row as { last_provider_result?: unknown }).last_provider_result as ProviderExecutionResult | null | undefined) ?? null,
   };
 }
 
@@ -173,6 +174,16 @@ export interface InMemoryCheckoutExecutionEffects {
   inventory?: Pick<ReservationSeam, "release" | "finalize">;
 }
 
+/**
+ * An order-level violation of the commit's preconditions. The SQL function
+ * RAISES for these (aborting the transaction and changing nothing), so the
+ * reference throws too; only a reservation-set failure parks the execution in
+ * reconciliation_required with the capture evidence retained.
+ */
+export class CheckoutCommitPrecondition extends Error {}
+
+const CAPTURABLE_ORDER_STATES = ["checkout_pending", "payment_authorized", "manual_review", "approved", "payment_captured"];
+
 export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date; effects?: InMemoryCheckoutExecutionEffects } = {}): CheckoutExecutionRepository & { snapshot(): CheckoutExecutionRecord[] } {
   const rows = new Map<string, CheckoutExecutionCreate>();
   const now = options.now ?? (() => new Date());
@@ -181,7 +192,17 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
   const applyCaptured = async (record: CheckoutExecutionCreate) => {
     if (effects.orders) {
       const order = await effects.orders.get(record.orderId);
-      if (!order || order.memberId !== record.memberId) throw new Error(`execution ${record.executionId} names an order that is not the member's`);
+      // The SQL commit's order preconditions, in the same order, each raising.
+      if (!order || order.memberId !== record.memberId) throw new CheckoutCommitPrecondition(`execution ${record.executionId} names an order that is not the member's`);
+      if (order.totals.totalCents !== record.amountCents) {
+        throw new CheckoutCommitPrecondition(`order total ${order.totals.totalCents} does not match captured amount ${record.amountCents}`);
+      }
+      if (order.providerReference !== null && order.providerReference !== record.providerReference) {
+        throw new CheckoutCommitPrecondition(`order ${record.orderId} already carries another payment reference`);
+      }
+      if (!CAPTURABLE_ORDER_STATES.includes(order.state)) {
+        throw new CheckoutCommitPrecondition(`order ${record.orderId} cannot be captured from ${order.state}`);
+      }
       if (order.state !== "payment_captured") {
         await effects.orders.save({
           ...order,
@@ -198,13 +219,18 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
   };
   // Mirrors research_checkout_execution_commit_cancelled's order and reservation writes.
   const applyCancelled = async (record: CheckoutExecutionCreate) => {
+    // The SQL requires zero-capture evidence before any local settlement.
+    const evidence = record.lastProviderResult;
+    if (evidence && evidence.kind === "cancelled" && evidence.capturedAmountCents !== 0) {
+      throw new CheckoutCommitPrecondition(`execution ${record.executionId} lacks zero-capture evidence`);
+    }
     if (effects.orders) {
       const order = await effects.orders.get(record.orderId);
-      if (!order || order.memberId !== record.memberId) throw new Error(`execution ${record.executionId} names an order that is not the member's`);
+      if (!order || order.memberId !== record.memberId) throw new CheckoutCommitPrecondition(`execution ${record.executionId} names an order that is not the member's`);
       if (["checkout_pending", "payment_authorized", "manual_review", "approved"].includes(order.state)) {
         await effects.orders.save({ ...order, state: "cancelled", lastIdempotencyKey: record.cancelKey, updatedAt: now().toISOString() });
       } else if (order.state !== "cancelled") {
-        throw new Error(`order ${record.orderId} cannot be cancelled from ${order.state}`);
+        throw new CheckoutCommitPrecondition(`order ${record.orderId} cannot be cancelled from ${order.state}`);
       }
     }
     if (effects.inventory && record.reservationIds.length > 0) await effects.inventory.release(record.reservationIds);
@@ -271,7 +297,7 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
       return cas(executionId, expected, (current) => {
         const reference = "providerReference" in result ? result.providerReference : null;
         if (current.providerReference !== null && reference !== null && reference !== current.providerReference) return null;
-        return { phase: PHASE_FOR_RESULT[result.kind], providerReference: current.providerReference ?? reference };
+        return { phase: PHASE_FOR_RESULT[result.kind], providerReference: current.providerReference ?? reference, lastProviderResult: result };
       });
     },
     async commitCaptured(executionId, expected) {
@@ -283,8 +309,11 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
       // while keeping the capture evidence; the reference does the same.
       try {
         await applyCaptured(current);
-      } catch {
-        // The capture evidence stays on the record; only the local commit failed.
+      } catch (error) {
+        // An order-level violation raises, exactly as the SQL does: nothing is
+        // written and the execution keeps its captured evidence for an operator.
+        if (error instanceof CheckoutCommitPrecondition) throw error;
+        // A reservation-set failure parks the execution and keeps the evidence.
         return cas(executionId, expected, () => ({ phase: "reconciliation_required" }));
       }
       return cas(executionId, expected, () => ({ phase: "committed" }));

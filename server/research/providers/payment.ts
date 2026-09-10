@@ -91,6 +91,12 @@ export interface PaymentPending {
   providerStatus: "requires_action" | "requires_confirmation" | "requires_payment_method" | "processing";
   /** Present when the customer's client must finish the action. Never logged or persisted by xenios. */
   clientSecret: string | null;
+  /**
+   * Present when the provider processed the attached method and refused it (a
+   * card decline): the intent exists in requires_payment_method with no money
+   * moved. Only the provider's decline code and human message are carried.
+   */
+  declined?: { code: string | null; message: string };
 }
 
 /** The provider's current, verified truth about one payment reference. */
@@ -98,6 +104,8 @@ export interface PaymentSnapshot {
   providerReference: string;
   /** Domain vocabulary: pending, processing, authorized, captured, cancelled. */
   status: string;
+  /** The provider's own status word when it reports one (Stripe: the intent status). Absent for providers without one. */
+  providerStatus?: string;
   amountCents: number;
   amountCapturableCents: number;
   amountReceivedCents: number;
@@ -134,6 +142,13 @@ export interface PaymentProvider {
  * reference can be read back with exact amounts and server-authored metadata.
  */
 export interface DurablePaymentProvider extends PaymentProvider {
+  /**
+   * The provider account this adapter is bound to, when it binds one (Stripe
+   * Connect). Null means platform events only. The webhook execution binding
+   * derives its expected account from HERE, so a composition cannot hold a
+   * second, disagreeing copy.
+   */
+  readonly providerAccountId?: string | null;
   createAuthorizationOrPending(
     input: CreateAuthorizationInput,
   ): Promise<ProviderResult<PaymentAuthorization | PaymentPending>>;
@@ -633,6 +648,28 @@ export function verifyStripeSignature(
  * requests) is REJECTED. Only Stripe's human-readable error message is
  * carried; never the raw body, never a header, never a key.
  */
+/**
+ * A 402 card_error whose body carries the PaymentIntent in requires_payment_method
+ * is a decline WITH evidence: the intent id, amounts and metadata are the
+ * intent's own, and the decline code/message are the only error fields kept.
+ */
+export function declinedIntentEvidence(
+  status: number,
+  body: unknown,
+): { intent: Record<string, unknown>; declined: { code: string | null; message: string } } | null {
+  if (status !== 402 || !body || typeof body !== "object" || Array.isArray(body)) return null;
+  const error = (body as Record<string, unknown>).error;
+  if (!error || typeof error !== "object" || Array.isArray(error)) return null;
+  const record = error as Record<string, unknown>;
+  if (record.type !== "card_error") return null;
+  const intent = asJsonObject(record.payment_intent);
+  const id = readString(intent, "id");
+  if (!intent || !id || !id.startsWith("pi_") || intent.status !== "requires_payment_method") return null;
+  const code = typeof record.decline_code === "string" ? record.decline_code : typeof record.code === "string" ? record.code : null;
+  const message = typeof record.message === "string" && record.message.length > 0 ? record.message : "The card was declined.";
+  return { intent, declined: { code, message } };
+}
+
 export function mapStripeFailure<T>(status: number, body: unknown): ProviderResult<T> {
   let type: string | undefined;
   let message: string | undefined;
@@ -787,7 +824,7 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
 
   private readonly transport: StripeTransport;
   private readonly webhookSecret: string;
-  private readonly providerAccountId: string | null;
+  readonly providerAccountId: string | null;
   private readonly now: () => number;
   private readonly toleranceSeconds: number;
 
@@ -880,9 +917,18 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
       idempotencyKey: input.idempotencyKey,
     });
     if (!response) return stripeTransportFailure();
-    if (response.status !== 200) return mapStripeFailure(response.status, response.body);
-
-    const intent = asJsonObject(response.body);
+    // A card decline on confirmation answers 402 with the intent inside the
+    // error: the payment object exists (requires_payment_method) with no money
+    // moved. That is pending evidence with a decline attached, not a bare
+    // refusal, so the durable port can end the attempt against the real intent.
+    let declined: PaymentPending["declined"] | undefined;
+    let intent = asJsonObject(response.body);
+    if (response.status !== 200) {
+      const evidence = declinedIntentEvidence(response.status, response.body);
+      if (!evidence) return mapStripeFailure(response.status, response.body);
+      intent = evidence.intent;
+      declined = evidence.declined;
+    }
     const reference = readString(intent, "id");
     const status = intent?.status;
     if (!reference) return unrecognizedProviderStatus("authorization", "response without an id");
@@ -947,6 +993,7 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
           status: "pending",
           providerStatus: status,
           clientSecret: clientSecret ?? null,
+          ...(declined ? { declined } : {}),
         },
         reference,
       );
@@ -1215,6 +1262,7 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
       {
         providerReference: ref,
         status: mapped,
+        providerStatus: String(intent.status),
         amountCents: amount as number,
         amountCapturableCents: capturable,
         amountReceivedCents: received,

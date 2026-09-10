@@ -47,7 +47,11 @@ describe("row mapping", () => {
     expect(rowToExecution({ ...row, last_provider_result: null, authorization_first_attempted_at: "2026-09-09T12:00:00+00:00", settled_at: "2026-09-09T13:00:00+00:00" } as CheckoutExecutionRow)).toMatchObject({ authorizationAttemptedAt: "2026-09-09T12:00:00+00:00", settledAt: "2026-09-09T13:00:00+00:00" });
     const back = rowToExecution({ ...row, last_provider_result: null } as CheckoutExecutionRow);
     const { requestBodySha256: _d, priceVersion: _p, ...record } = base;
-    expect(back).toEqual(record);
+    // The row also carries the last provider evidence, which the cancellation
+    // settlement reads to know WHY nothing was charged.
+    expect(back).toEqual({ ...record, lastProviderResult: null });
+    const cancelled = rowToExecution({ ...row, last_provider_result: { kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" } } as unknown as CheckoutExecutionRow);
+    expect(cancelled?.lastProviderResult).toEqual({ kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" });
   });
   it("refuses a row with an unknown phase or currency", () => {
     const row = { ...executionToInsertRow(base), last_provider_result: null } as CheckoutExecutionRow;

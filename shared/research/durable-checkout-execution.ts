@@ -49,14 +49,22 @@ export interface CheckoutExecutionRecord extends CheckoutMoneyBinding {
   authorizationAttemptedAt: string | null;
   /** When the local settlement of a cancelled execution completed (order cancelled, holds released). */
   settledAt: string | null;
+  /** The last provider evidence recorded, when the store keeps it (the SQL row does). */
+  lastProviderResult?: ProviderExecutionResult | null;
 }
+
+export type CancellationReason = "declined" | "customer" | "provider";
 
 export type ProviderExecutionResult =
   | { kind: "authorized"; providerReference: string; amountCents: number; currency: "usd"; memberId: string; orderId: string }
   | { kind: "captured"; providerReference: string; amountCents: number; currency: "usd"; memberId: string; orderId: string }
   | { kind: "action_required"; providerReference: string }
-  /** providerReference is null only when no provider payment ever existed for the execution. */
-  | { kind: "cancelled"; providerReference: string | null; capturedAmountCents: 0 }
+  /**
+   * providerReference is null only when no provider payment ever existed for
+   * the execution. `reason` names why nothing was charged: the card was
+   * declined, the customer (or an operator) asked, or the provider ended it.
+   */
+  | { kind: "cancelled"; providerReference: string | null; capturedAmountCents: 0; reason?: CancellationReason }
   | { kind: "refused"; definitiveNoEffect: boolean }
   | { kind: "unknown" };
 

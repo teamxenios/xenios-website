@@ -35,6 +35,12 @@ afterEach(() => {
 
 const SCOPE = "a".repeat(64);
 const OTHER_SCOPE = "b".repeat(64);
+/** The resume pointer's slot for one account scope. */
+const RESUME_SLOT = (scope: string) => `xenios.research.checkoutResume.v1.${scope}`;
+const resumePointer = (scope = SCOPE) => {
+  const raw = window.sessionStorage.getItem(RESUME_SLOT(scope));
+  return raw ? (JSON.parse(raw) as { scope: string; requestKey: string; orderId: string | null }) : null;
+};
 const ORDER = "00000001-0000-4000-8000-000000000000";
 const SECRET = "pi_0001_secret_fixture";
 
@@ -77,6 +83,8 @@ function server(routes: Record<string, Answer>, options: { config?: Answer; dela
     "GET /api/research/cart": { status: 200, body: { ok: true, cart: readyCart } },
     "GET /api/research/store-credit": { status: 200, body: { ok: true, storeCredit } },
     "GET /api/research/checkout/payment-config": options.config ?? { status: 200, body: { ok: true, config: { provider: "stripe", publishableKey: "pk_test_abcdefgh12345678", mode: "test" } } },
+    // The card door will not let a buyer pay before the exact amount is quoted.
+    "POST /api/research/shipping/quote": { status: 200, body: { ok: true, quote: { kind: "configured_standard", service: "standard", amountCents: 1295, estimatedDeliveryRange: null, disclosure: "fixture" } } },
     ...routes,
   };
   vi.stubGlobal(
@@ -163,6 +171,20 @@ async function fillForm(view: HTMLElement) {
     byTestId<HTMLInputElement>(view, "co-attest").click();
   });
 }
+
+/** Fill the form and quote, i.e. everything the card door requires before Pay. */
+async function fillFormAndQuote(view: HTMLElement) {
+  await fillForm(view);
+  await quoteShipping(view);
+}
+/** The card door requires a quote for the chosen service before the amount can be consented to. */
+async function quoteShipping(view: HTMLElement) {
+  await act(async () => {
+    byTestId<HTMLButtonElement>(view, "co-quote").click();
+  });
+  await flush();
+}
+
 async function click(view: HTMLElement, id: string) {
   await act(async () => {
     byTestId<HTMLButtonElement>(view, id).click();
@@ -222,10 +244,19 @@ describe("checkout page over the durable card door", () => {
     const view = await render(<Checkout paymentMethodClient={card} authenticator={authenticate} />);
     expect(has(view, "co-payment")).toBe(true);
     expect(byTestId(view, "pm-test-mode").textContent).toContain("Test mode");
-    expect(byTestId(view, "co-submit").textContent).toBe("Pay and place order");
     await fillForm(view);
+    // Before a quote the exact amount is unknown, so paying is withheld.
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(true);
+    expect(has(view, "co-quote-required")).toBe(true);
+    await quoteShipping(view);
+    // The button names the amount the card is charged, and the summary agrees.
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay $150.95 and place order");
+    expect(byTestId(view, "co-total").textContent).toBe("$150.95");
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(false);
     await click(view, "co-submit");
     const key = keyOf(calls);
+    // The resume pointer was written BEFORE the answer came back.
+    expect(resumePointer()?.requestKey).toBe(key);
     expect(card.collects).toBe(1);
     expect(submitted(calls)).toHaveLength(1);
     expect(submitted(calls)[0]!.body).toMatchObject({ paymentMethodReference: "pm_fixture_card", idempotencyKey: key, acceptedAgreementKeys: ["research_terms_v1"], researchAttestation: true });
@@ -246,7 +277,7 @@ describe("checkout page over the durable card door", () => {
     expect(byTestId<HTMLAnchorElement>(view, "checkout-paid-order").getAttribute("href")).toBe(`/research/member/orders/${ORDER}`);
     expect(view.innerHTML).not.toContain(SECRET);
     // The resume pointer is cleared once the order is settled.
-    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+    expect(resumePointer()).toBeNull();
   });
 
   it("a lost answer keeps the request frozen: retry resends the identical body under the identical key and never collects a second card", async () => {
@@ -260,9 +291,13 @@ describe("checkout page over the durable card door", () => {
     });
     const card = cardClient();
     const view = await render(<Checkout paymentMethodClient={card} />);
-    await fillForm(view);
+    await fillFormAndQuote(view);
     await click(view, "co-submit");
     expect(byTestId(view, "co-submit-error").textContent).toContain("Retry sends the same request");
+    // The pointer exists even though no answer ever arrived: a refresh resumes
+    // THIS key instead of minting a new one and paying twice.
+    expect(resumePointer()?.requestKey).toBe(keyOf(calls));
+    expect(resumePointer()?.orderId).toBeNull();
     expect(has(view, "co-payment-frozen")).toBe(true);
     expect(has(view, "co-payment")).toBe(false);
     expect(byTestId(view, "co-submit").textContent).toBe("Retry the same request");
@@ -275,15 +310,24 @@ describe("checkout page over the durable card door", () => {
   });
 
   it("a cancelled checkout says nothing was charged and only an explicit new request mints a new key", async () => {
-    const { calls } = server({ "POST /api/research/checkout/durable": durableAnswer("cancelled") });
+    const { calls } = server({
+      "POST /api/research/checkout/durable": (call) => {
+        const answer = durableAnswer("cancelled")(call);
+        (answer.body as { checkout: Record<string, unknown> }).checkout.cancellation = { reason: "declined" };
+        return answer;
+      },
+    });
     const view = await render(<Checkout paymentMethodClient={cardClient()} />);
-    await fillForm(view);
+    await fillFormAndQuote(view);
     await click(view, "co-submit");
     expect(has(view, "checkout-cancelled")).toBe(true);
+    expect(byTestId(view, "checkout-cancelled").getAttribute("data-reason")).toBe("declined");
+    expect(byTestId(view, "checkout-cancelled").textContent).toContain("Your card was declined");
     expect(byTestId(view, "checkout-cancelled").textContent).toContain("nothing was charged");
     const first = keyOf(calls);
-    await click(view, "co-new-request");
-    expect(has(view, "checkout-cancelled")).toBe(false);
+    expect(resumePointer()).toBeNull();
+    // Cancelled is settled and terminal, so the key rotates on its own: the form
+    // below can never re-submit the spent key and collect an idempotency_conflict.
     await click(view, "co-submit");
     const keys = submitted(calls).map((c) => String(c.body!.idempotencyKey));
     expect(keys).toHaveLength(2);
@@ -295,11 +339,13 @@ describe("checkout page over the durable card door", () => {
       "POST /api/research/checkout/durable": { status: 400, body: { ok: false, code: "payment_method_required", codes: ["payment_method_required"] } },
     });
     const view = await render(<Checkout paymentMethodClient={cardClient()} />);
-    await fillForm(view);
+    await fillFormAndQuote(view);
     await click(view, "co-submit");
     expect(view.textContent).toContain("Add a payment method to continue.");
     expect(has(view, "co-payment")).toBe(true);
-    expect(byTestId(view, "co-submit").textContent).toBe("Pay and place order");
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay $150.95 and place order");
+    // A denial persisted nothing, so no pointer is left behind to resume.
+    expect(resumePointer()).toBeNull();
     const first = keyOf(calls);
     await click(view, "co-submit");
     expect(keyOf(calls)).toBe(first);
@@ -311,7 +357,7 @@ describe("checkout page over the durable card door", () => {
     });
     act(() => root!.unmount());
     const review = await render(<Checkout paymentMethodClient={cardClient()} />);
-    await fillForm(review);
+    await fillFormAndQuote(review);
     await click(review, "co-submit");
     expect(has(review, "checkout-held")).toBe(true);
     const legacy = held.calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout");
@@ -337,7 +383,7 @@ describe("checkout page over the durable card door", () => {
   });
 
   it("resumes an unfinished checkout after a refresh through the owner-checked lookup, and discards a pointer the server does not own", async () => {
-    window.sessionStorage.setItem("xenios.research.checkoutResume.v1", JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
+    window.sessionStorage.setItem(RESUME_SLOT(SCOPE), JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
     const paths = continuationPaths("req_resume_0001");
     const { calls } = server({ [paths.status]: { status: 200, body: continuation("reconciliation_required") } });
     const view = await render(<Checkout paymentMethodClient={cardClient()} />);
@@ -356,11 +402,11 @@ describe("checkout page over the durable card door", () => {
 
     // The server disowns the reference: the pointer is dropped and the form returns.
     act(() => root!.unmount());
-    window.sessionStorage.setItem("xenios.research.checkoutResume.v1", JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: ORDER, startedAt: "2026-09-09T00:00:00Z" }));
+    window.sessionStorage.setItem(RESUME_SLOT(SCOPE), JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0001", orderId: null, startedAt: "2026-09-09T00:00:00Z" }));
     server({ [paths.status]: { status: 404, body: { ok: false, code: "not_found" } } });
     const dropped = await render(<Checkout paymentMethodClient={cardClient()} />);
     expect(has(dropped, "co-submit")).toBe(true);
-    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+    expect(resumePointer()).toBeNull();
   });
 
   it("abandonment: the buyer cancels from the bank step; the page shows cancelled and nothing charged", async () => {
@@ -376,13 +422,13 @@ describe("checkout page over the durable card door", () => {
       },
     );
     const view = await render(<Checkout paymentMethodClient={cardClient()} authenticator={async () => "cancelled"} />);
-    await fillForm(view);
+    await fillFormAndQuote(view);
     await click(view, "co-submit");
     expect(has(view, "payment-cancel")).toBe(true);
     await click(view, "payment-cancel");
     expect(calls.some((c) => c.method === "POST" && c.url.endsWith("/cancel"))).toBe(true);
     expect(has(view, "checkout-cancelled")).toBe(true);
-    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+    expect(resumePointer()).toBeNull();
   });
 
   it("an account switch discards the execution in progress and a late answer never renders under the new account", async () => {
@@ -399,7 +445,7 @@ describe("checkout page over the durable card door", () => {
       },
     });
     const view = await render(<Checkout paymentMethodClient={cardClient()} />);
-    await fillForm(view);
+    await fillFormAndQuote(view);
     await act(async () => {
       byTestId<HTMLButtonElement>(view, "co-submit").click();
     });
@@ -413,6 +459,94 @@ describe("checkout page over the durable card door", () => {
     expect(submitted(calls)[0]!.token).toBe("member-jwt");
     expect(has(view, "checkout-execution")).toBe(false);
     expect(has(view, "checkout-paid")).toBe(false);
-    expect(window.sessionStorage.getItem("xenios.research.checkoutResume.v1")).toBeNull();
+    // The first account's pointer stays in ITS OWN slot for its owner to resume;
+    // the new account sees nothing of it and is not offered a payment.
+    expect(resumePointer(OTHER_SCOPE)).toBeNull();
+    expect(has(view, "co-submit")).toBe(true);
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(false);
+    expect(byTestId(view, "co-submit").textContent).not.toContain("Paying");
+  });
+
+  it("a refresh while the answer is unknown resumes the SAME key instead of minting a new one", async () => {
+    // The buyer pays; the answer never arrives; the buyer refreshes the page.
+    let held: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      held = resolve;
+    });
+    const first = server({
+      "POST /api/research/checkout/durable": async (call) => {
+        await gate;
+        return durableAnswer("authentication_required")(call);
+      },
+    });
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillFormAndQuote(view);
+    await act(async () => {
+      byTestId<HTMLButtonElement>(view, "co-submit").click();
+    });
+    await settle(10);
+    const key = keyOf(first.calls);
+    expect(resumePointer()?.requestKey).toBe(key);
+    held();
+    await settle(10);
+
+    // The refresh: a brand-new mount, same tab, same account.
+    act(() => root!.unmount());
+    const paths = continuationPaths(key);
+    const second = server({ [paths.status]: { status: 200, body: continuation("authentication_required", true) } });
+    const reopened = await render(<Checkout paymentMethodClient={cardClient()} />);
+    // It resumes the original key through the owner-checked door; no new submission.
+    expect(has(reopened, "checkout-execution")).toBe(true);
+    expect(submitted(second.calls)).toHaveLength(0);
+    expect(second.calls.some((c) => c.method === "GET" && c.url === `/api/research/checkout/executions/${encodeURIComponent(key)}/continuation`)).toBe(true);
+  });
+
+  it("from the frozen state, starting over asks the server about the key first and never mints a new one over a live execution", async () => {
+    const { calls } = server(
+      {
+        "POST /api/research/checkout/durable": () => {
+          throw new TypeError("socket hang up");
+        },
+      },
+      {
+        // The server DOES know this key: the execution is live.
+        dynamic: (method, url) =>
+          method === "GET" && url.endsWith("/continuation") ? { status: 200, body: continuation("authentication_required", true) } : undefined,
+      },
+    );
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillFormAndQuote(view);
+    await click(view, "co-submit");
+    expect(has(view, "co-payment-frozen")).toBe(true);
+    const key = keyOf(calls);
+    await click(view, "co-new-request");
+    expect(has(view, "checkout-execution")).toBe(true);
+    expect(has(view, "co-submit")).toBe(false);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(String(submitted(calls)[0]!.body!.idempotencyKey)).toBe(key);
+  });
+
+  it("an order the continuation door does not own is shown as an existing order, never as a new payment", async () => {
+    // The durable door answers for a LEGACY order placed under this key; the
+    // continuation door knows no execution for it.
+    const { calls } = server(
+      { "POST /api/research/checkout/durable": durableAnswer("processing", true) },
+      {
+        // No execution owns this order: the continuation door disowns the key.
+        dynamic: (method, url) =>
+          url.includes("/checkout/executions/") ? { status: 404, body: { ok: false, code: "not_found" } } : undefined,
+      },
+    );
+    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    await fillFormAndQuote(view);
+    await click(view, "co-submit");
+    await settle(10);
+    expect(has(view, "checkout-order-exists")).toBe(true);
+    expect(byTestId(view, "checkout-order-exists").textContent).toContain(`Order ${ORDER} is on your account.`);
+    expect(byTestId<HTMLAnchorElement>(view, "checkout-order-exists-link").getAttribute("href")).toBe(`/research/member/orders/${ORDER}`);
+    // No new key, no card form, no second submission.
+    expect(has(view, "co-submit")).toBe(false);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(resumePointer()).toBeNull();
   });
 });

@@ -149,18 +149,57 @@ describe("durable checkout coordinator", () => {
     }
   });
 
-  it("cancel with no provider reference asks the provider first: a definitive no-payment answer settles as cancelled", async () => {
-    const h = harness({ attempted: true, reconcileAnswer: { kind: "refused", definitiveNoEffect: true } });
+  it("cancel after an attempt NEVER settles on a refused replay: a refusal of the replay is not evidence about the original payment", async () => {
+    // definitiveNoEffect means "this replay call had no effect", not "no payment
+    // was ever created". Rotated credentials or a disabled provider answer this
+    // way, and settling would release the holds while an authorization stands.
+    for (const definitiveNoEffect of [true, false]) {
+      const h = harness({ attempted: true, reconcileAnswer: { kind: "refused", definitiveNoEffect } });
+      expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
+      // Recorded as UNKNOWN, not cancelled: the truth about the original payment is still unknown.
+      expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:unknown"]);
+      expect(h.calls.some((c) => c === "settle")).toBe(false);
+      expect(h.snapshot().settledAt).toBeNull();
+    }
+    // Only the provider's own cancelled read-back settles it.
+    const settled = harness({ attempted: true, reconcileAnswer: { kind: "cancelled", providerReference: "pi_learned", capturedAmountCents: 0 } });
+    expect((await settled.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(settled.calls).toEqual(["claim:cancelling", "reconcile", "record:cancelled", "settle"]);
+    expect(settled.snapshot().providerReference).toBe("pi_learned");
+  });
+
+  it("cancel on an authorizing execution releases the payment and NEVER captures it", async () => {
+    // The buyer sees `authorizing` as "pending" and is offered Cancel. Falling
+    // through to run() would reconcile, authorize and capture the very payment
+    // the buyer asked to release.
+    const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_inflight", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
+    const h = harness({ initial: "authorizing", attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "cancelled", providerReference: "pi_inflight", capturedAmountCents: 0 } });
     expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
-    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:cancelled", "settle"]);
-    expect(h.calls.some((c) => c.startsWith("cancel:"))).toBe(false);
+    expect(h.calls).not.toContain("capture");
+    expect(h.calls).not.toContain("commit");
+    expect(h.calls.some((c) => c === "cancel:pi_inflight")).toBe(true);
+    expect(h.snapshot().phase).toBe("cancelled");
+    // A payment the provider reports captured still commits: cancellation cannot undo an external capture.
+    const captured = harness({ initial: "authorizing", attempted: true, reconcileAnswer: { kind: "captured", providerReference: "pi_taken", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" } });
+    expect((await captured.cancel(base.memberId, base.requestKey)).kind).toBe("committed");
+    expect(captured.calls).toContain("commit");
   });
   it("cancel with no provider reference cancels the payment the provider reveals, never a guess", async () => {
     const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
     const h = harness({ attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "cancelled", providerReference: "pi_learned", capturedAmountCents: 0 } });
     expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
-    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "cancel:pi_learned", "record:cancelled", "settle"]);
+    // The learned reference is PERSISTED before the cancel is attempted, so a
+    // failed cancel still leaves a row that names the payment.
+    expect(h.calls).toEqual(["claim:cancelling", "reconcile", "record:authorized", "claim:cancelling", "cancel:pi_learned", "record:cancelled", "settle"]);
     expect(h.snapshot().providerReference).toBe("pi_learned");
+  });
+
+  it("a cancel that fails after learning the reference still leaves the reference on the record, so later attempts read back instead of replaying", async () => {
+    const learned: ProviderExecutionResult = { kind: "authorized", providerReference: "pi_learned", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" };
+    const h = harness({ attempted: true, reconcileAnswer: learned, cancelAnswer: { kind: "unknown" } });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
+    expect(h.snapshot().providerReference).toBe("pi_learned");
+    expect(h.snapshot().settledAt).toBeNull();
   });
   it("cancel with no provider reference and an uncertain provider answer stays in reconciliation: neither cancelled nor charged is claimed", async () => {
     const h = harness({ attempted: true, reconcileAnswer: { kind: "unknown" } });

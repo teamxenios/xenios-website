@@ -40,11 +40,15 @@ function executionStore(initial: CheckoutExecutionRecord) {
   const store: CanonicalCheckoutExecutionStore = {
     authority: "canonical_checkout_transaction_v1",
     getForMember: async (memberId, requestKey) => (current.memberId === memberId && current.requestKey === requestKey ? structuredClone(current) : null),
-    claim: async (_id, expected, phase) => cas(expected, { phase, authorizationAttemptedAt: phase === "authorizing" ? (current.authorizationAttemptedAt ?? "2026-09-09T00:00:01Z") : current.authorizationAttemptedAt }),
+    // Mirrors the SQL claim: the first authorizing claim stamps the attempt with
+    // the database clock. A fixed past stamp would put the record outside the
+    // port's creation-key retention window and make every replay uncertain.
+    claim: async (_id, expected, phase) => cas(expected, { phase, authorizationAttemptedAt: phase === "authorizing" ? (current.authorizationAttemptedAt ?? new Date().toISOString()) : current.authorizationAttemptedAt }),
     recordProvider: async (_id, expected, result) =>
       cas(expected, {
         phase: result.kind === "unknown" || result.kind === "refused" ? "reconciliation_required" : result.kind,
         providerReference: "providerReference" in result ? result.providerReference : current.providerReference,
+        lastProviderResult: result,
       }),
     commitCaptured: async (_id, expected) => cas(expected, { phase: "committed" }),
     commitCancelled: async (_id, expected) => cas(expected, { phase: "cancelled", settledAt: "2026-09-09T00:00:02Z" }),
@@ -158,7 +162,7 @@ describe("checkout continuation service", () => {
     await c.executor.run(record.memberId, record.requestKey);
     expect(c.snapshot().phase).toBe("action_required");
     const result = await c.service.cancel(record.memberId, record.requestKey);
-    expect(result).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd" } });
+    expect(result).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd", cancellation: { reason: "customer" } } });
     expect(c.model.intents.get("pi_0001")!.status).toBe("canceled");
     expect(c.snapshot().phase).toBe("cancelled");
     expect(c.model.captures()).toHaveLength(0);
@@ -207,6 +211,24 @@ describe("checkout continuation service", () => {
     expect(result.ok && result.continuation.state).toBe("completed");
     expect(c.model.intents.size).toBe(1);
     expect(c.model.captures()).toHaveLength(1);
+  });
+
+  it("a declined card ends the attempt: the intent is released at the provider and the buyer is told declined, nothing charged", async () => {
+    const model = stripeModel({ requiresAction: false });
+    const { store, snapshot } = executionStore({ ...record, paymentMethodReference: "pm_card_chargeDeclined" });
+    const port = createProviderVerifiedPaymentPort(model.adapter);
+    const executor = createDurableCheckoutExecutor(store, port);
+    const service = createCheckoutContinuationService({ store, provider: model.adapter, executor });
+    expect((await executor.run(record.memberId, record.requestKey)).kind).toBe("cancelled");
+    expect(model.intents.get("pi_0001")).toMatchObject({ status: "canceled", amount_received: 0 });
+    expect(snapshot()).toMatchObject({ phase: "cancelled", providerReference: "pi_0001", lastProviderResult: { kind: "cancelled", reason: "declined" } });
+    const status = await service.status(record.memberId, record.requestKey);
+    expect(status).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd", cancellation: { reason: "declined" } } });
+    // A customer cancel carries its own reason.
+    const c = composition();
+    await c.executor.run(record.memberId, record.requestKey);
+    const cancelled = await c.service.cancel(record.memberId, record.requestKey);
+    expect(cancelled.ok && cancelled.continuation.cancellation).toEqual({ reason: "customer" });
   });
 
   it("reports the plain phases for executions that never needed authentication", async () => {
@@ -288,7 +310,7 @@ describe("checkout continuation routes", () => {
     const cancelled = await call("POST", path, "token-owner");
     expect(cancelled.status).toBe(200);
     expect(cancelled.headers.get("cache-control")).toBe("private, no-store");
-    expect(cancelled.body).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd" } });
+    expect(cancelled.body).toEqual({ ok: true, continuation: { requestKey: record.requestKey, orderId: record.orderId, state: "cancelled", amountCents: 33_999, currency: "usd", cancellation: { reason: "customer" } } });
     expect(c.snapshot().phase).toBe("cancelled");
   });
 

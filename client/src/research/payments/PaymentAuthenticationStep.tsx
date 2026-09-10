@@ -20,7 +20,7 @@
 // it, and unmount or a token change invalidates pending work, so a late answer
 // can never render under a different account.
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cancelCheckout, continueCheckout, loadCheckoutContinuation, type CheckoutContinuationView } from "../adapters/checkoutContinuation";
+import { cancelCheckout, continueCheckout, loadCheckoutContinuation, type CheckoutCancellationReason, type CheckoutContinuationView } from "../adapters/checkoutContinuation";
 import { ResearchErrorState, ResearchLoadingState, ResearchStatusBadge } from "../ui/kit";
 import { formatPaymentCents } from "./payment-presentation";
 import { stripeClient } from "./stripe-client";
@@ -46,8 +46,8 @@ export interface PaymentAuthenticationStepProps {
   authenticate: PaymentAuthenticator;
   /** Called once when the server reports the order completed. */
   onCompleted?: (orderId: string) => void;
-  /** Called once when the server reports the checkout cancelled (nothing charged). */
-  onCancelled?: (orderId: string) => void;
+  /** Called once when the server reports the checkout cancelled (nothing charged), with the recorded reason. */
+  onCancelled?: (orderId: string, reason: CheckoutCancellationReason) => void;
   /** Called with every view the server answers, so a page can mirror the truthful state. */
   onView?: (view: CheckoutContinuationView) => void;
   /** Offer the buyer the cancel door while the checkout is unpaid. Default true. */
@@ -97,7 +97,7 @@ export function PaymentAuthenticationStep({ memberToken, requestKey, authenticat
         }
         if (view.state === "cancelled" && !cancelledOnce.current) {
           cancelledOnce.current = true;
-          on.onCancelled?.(view.orderId);
+          on.onCancelled?.(view.orderId, view.cancellation?.reason ?? "provider");
         }
         return;
       }
@@ -147,7 +147,26 @@ export function PaymentAuthenticationStep({ memberToken, requestKey, authenticat
     const token = memberToken;
     setState({ kind: "view", view: state.view, busy: true, note: null });
     const result = await cancelCheckout(token, requestKey);
-    apply(token, result, result.kind === "ok" && result.data.continuation.state !== "cancelled" ? "This payment could not be cancelled because the provider had already completed it. The order stands." : null);
+    // The note must match the state the server answered. "The provider already
+    // completed it" is true ONLY for a completed payment; pending, processing
+    // and reconciliation_required mean the outcome is still unknown, and saying
+    // a charge stands would be a false claim about the buyer's money.
+    let note: string | null = null;
+    if (result.kind === "ok") {
+      switch (result.data.continuation.state) {
+        case "cancelled":
+          break;
+        case "completed":
+          note = "This payment could not be cancelled because the provider had already completed it. The order stands.";
+          break;
+        case "processing":
+          note = "The provider is finalising this payment, so it could not be cancelled. This page will show the outcome.";
+          break;
+        default:
+          note = "The cancellation could not be confirmed yet. We are still verifying the result with the provider; nothing has been charged twice.";
+      }
+    }
+    apply(token, result, note);
   };
 
   if (state.kind === "loading") return <ResearchLoadingState label="Checking your payment" />;
@@ -174,7 +193,13 @@ export function PaymentAuthenticationStep({ memberToken, requestKey, authenticat
         </p>
       ) : null}
       {view.state === "completed" ? <p className="text-sm">Your order has been placed.</p> : null}
-      {view.state === "cancelled" ? <p className="text-sm">This payment was cancelled and nothing was charged.</p> : null}
+      {view.state === "cancelled" ? (
+        <p className="text-sm" data-testid="payment-cancelled" data-reason={view.cancellation?.reason ?? "provider"}>
+          {view.cancellation?.reason === "declined"
+            ? "Your card was declined and nothing was charged. You can start a new order with another card."
+            : "This payment was cancelled and nothing was charged."}
+        </p>
+      ) : null}
       {note ? <p className="text-sm text-amber-700" data-testid="payment-note">{note}</p> : null}
       {needsCustomer || uncertain || cancellable ? (
         <div className="flex flex-wrap gap-3">

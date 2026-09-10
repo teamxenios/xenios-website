@@ -14,7 +14,7 @@
 // nothing and answers authentication_required again, so an uncertain moment
 // never turns into a second payment.
 import type { Express, Request, Response } from "express";
-import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
+import type { CancellationReason, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
 import type { DurablePaymentProvider } from "../providers/payment";
 import type { CanonicalCheckoutExecutionStore, DurableExecutionOutcome } from "./durable-checkout-executor";
 import { subjectOf } from "./routes";
@@ -36,6 +36,14 @@ export interface CheckoutContinuationView {
   currency: "usd";
   /** Present only in authentication_required: the provider-supported client flow inputs. */
   authentication?: { providerReference: string; clientSecret: string };
+  /** Present only in cancelled: why nothing was charged. */
+  cancellation?: { reason: CancellationReason };
+}
+
+/** The recorded reason a cancelled execution carries; "provider" when the store kept none. */
+export function cancellationOf(record: CheckoutExecutionRecord): { reason: CancellationReason } {
+  const last = record.lastProviderResult;
+  return { reason: last && last.kind === "cancelled" && last.reason ? last.reason : "provider" };
 }
 
 export type CheckoutContinuationResult =
@@ -82,6 +90,7 @@ function view(record: CheckoutExecutionRecord, state: CheckoutContinuationState,
     amountCents: record.amountCents,
     currency: "usd",
     ...(authentication ? { authentication } : {}),
+    ...(state === "cancelled" ? { cancellation: cancellationOf(record) } : {}),
   };
 }
 
@@ -110,7 +119,11 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
       return { state: "reconciliation_required" };
     }
     if (payment.status === "pending") {
-      return payment.clientSecret
+      // A secret is offered only for a payment the customer can actually
+      // finish (requires_action); a declined or unconfirmed intent has nothing
+      // for the customer to do.
+      const actionable = payment.providerStatus === undefined || payment.providerStatus === "requires_action";
+      return payment.clientSecret && actionable
         ? { state: "authentication_required", authentication: { providerReference: record.providerReference, clientSecret: payment.clientSecret } }
         : { state: "pending" };
     }

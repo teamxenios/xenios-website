@@ -142,9 +142,32 @@ export function createProviderVerifiedPaymentPort(
     };
   }
 
-  function pendingEvidence(record: CheckoutExecutionRecord, value: PaymentPending): ProviderExecutionResult {
+  async function pendingEvidence(record: CheckoutExecutionRecord, value: PaymentPending): Promise<ProviderExecutionResult> {
     if (record.providerReference !== null && value.providerReference !== record.providerReference) return UNKNOWN;
-    return { kind: "action_required", providerReference: value.providerReference };
+    switch (value.providerStatus) {
+      case "requires_action":
+      case "processing":
+        return { kind: "action_required", providerReference: value.providerReference };
+      case "requires_payment_method": {
+        // The method this execution was created with did not authorize (a
+        // decline). The execution's method is fixed, so this attempt is over:
+        // release the intent at the provider so nothing can confirm it later,
+        // then let the read-back state the truth. A replay of the creation key
+        // lands here again and finds the intent already released.
+        const reference = value.providerReference;
+        try {
+          await durable.cancelAuthorization(reference);
+        } catch {
+          // The read-back decides.
+        }
+        const truth = await readBack(record, reference);
+        if (truth.kind === "cancelled") return { ...truth, reason: "declined" };
+        return truth.kind === "authorized" || truth.kind === "captured" ? truth : UNKNOWN;
+      }
+      default:
+        // requires_confirmation: every creation confirms; a bare intent is not an outcome.
+        return UNKNOWN;
+    }
   }
 
   /** The provider's read-back truth mapped against the record. Metadata, when present, must agree. */
@@ -200,7 +223,7 @@ export function createProviderVerifiedPaymentPort(
     });
     if (!result.ok) return failureOf(result, true);
     return result.value.status === "pending"
-      ? pendingEvidence(record, result.value)
+      ? await pendingEvidence(record, result.value)
       : authorizedEvidence(record, result.value);
   }
 
