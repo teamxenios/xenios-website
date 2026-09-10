@@ -128,6 +128,20 @@ export function resolveDurableCheckoutStores(
 }
 
 /**
+ * Explicit fail-closed composition for disabled or unprovisioned states.
+ * No commerce repository or provider is constructed by this helper.
+ */
+export function unavailableDurableCheckout(
+  reason: DurableCheckoutUnavailableReason,
+): DurableCheckoutComposition {
+  return {
+    ready: false,
+    reason,
+    clientConfig: () => ({ ok: false, code: "payment_disabled" }),
+  };
+}
+
+/**
  * Wraps the execution store so the downstream hook fires exactly once, at the
  * moment an execution's phase actually becomes committed. Every path that
  * commits (submission, continuation, webhook recovery) goes through
