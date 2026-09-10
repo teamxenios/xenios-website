@@ -276,7 +276,18 @@ describe("checkout page over the durable card door", () => {
     expect(byTestId(view, "checkout-paid").textContent).toContain("Payment received is not shipment");
     expect(byTestId<HTMLAnchorElement>(view, "checkout-paid-order").getAttribute("href")).toBe(`/research/member/orders/${ORDER}`);
     expect(view.innerHTML).not.toContain(SECRET);
-    // The resume pointer is cleared once the order is settled.
+    // The purchase leaves a SETTLED marker rather than nothing: a token refresh
+    // remounts the member area, and without it the buyer would come back to an
+    // empty checkout page with their cart still in it and a live card field.
+    expect(resumePointer()).toMatchObject({ requestKey: key, orderId: ORDER, settled: true });
+    // A remount shows what they bought, and offers a way on.
+    act(() => root!.unmount());
+    server({});
+    const remounted = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(remounted, "checkout-paid")).toBe(true);
+    expect(has(remounted, "co-submit")).toBe(false);
+    await click(remounted, "checkout-paid-new-order");
+    expect(has(remounted, "co-submit")).toBe(true);
     expect(resumePointer()).toBeNull();
   });
 
@@ -420,20 +431,25 @@ describe("checkout page over the durable card door", () => {
     const other = await render(<Checkout paymentMethodClient={cardClient()} />, fixtureContext("other-jwt", OTHER_SCOPE));
     expect(has(other, "checkout-execution")).toBe(false);
     expect(has(other, "co-submit")).toBe(true);
-    // And the first account's pointer is still there for its owner.
     expect(resumePointer(SCOPE)?.requestKey).toBe("req_resume_0001");
 
-    // The server does not know the reference. That is NOT proof nothing was
-    // created (the durable door persists the execution last), so the page keeps
-    // the key, says so, and points the buyer at their orders.
+    // The server disowns a reference that names an ORDER: the order is evidence
+    // enough, so the buyer is shown it rather than an uncertain state.
     act(() => root!.unmount());
     server({ [paths.status]: { status: 404, body: { ok: false, code: "not_found" } } });
+    const known = await render(<Checkout paymentMethodClient={cardClient()} />);
+    expect(has(known, "checkout-order-exists")).toBe(true);
+    expect(byTestId(known, "checkout-order-exists").textContent).toContain(`Order ${ORDER}`);
+
+    // A reference with NO order is genuinely unresolved: the key is kept, the
+    // buyer is told not to pay again, and only their explicit choice mints one.
+    act(() => root!.unmount());
+    window.sessionStorage.setItem(RESUME_SLOT(SCOPE), JSON.stringify({ scope: SCOPE, requestKey: "req_resume_0002", orderId: null, startedAt: "2026-09-09T00:00:00Z" }));
+    server({ [continuationPaths("req_resume_0002").status]: { status: 404, body: { ok: false, code: "not_found" } } });
     const unresolved = await render(<Checkout paymentMethodClient={cardClient()} />);
     expect(has(unresolved, "checkout-unresolved")).toBe(true);
     expect(byTestId(unresolved, "checkout-unresolved").textContent).toContain("do not pay again yet");
-    expect(byTestId<HTMLAnchorElement>(unresolved, "co-unresolved-orders").getAttribute("href")).toBe("/research/member/orders");
-    expect(resumePointer(SCOPE)?.requestKey).toBe("req_resume_0001");
-    // Only the buyer's explicit choice mints a new key.
+    expect(resumePointer(SCOPE)?.requestKey).toBe("req_resume_0002");
     await click(unresolved, "co-new-request");
     expect(has(unresolved, "checkout-unresolved")).toBe(false);
     expect(resumePointer(SCOPE)).toBeNull();

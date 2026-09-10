@@ -340,8 +340,13 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
 
 const EXECUTIONS = "research_checkout_executions";
 const INBOX = "research_payment_webhook_inbox";
-const EXECUTION_COLUMNS =
-  "id, member_id, request_key, request_body_sha256, order_id, phase, version, provider_reference, amount_cents, currency, payment_method_reference, quote_fingerprint, price_version, authorization_key, capture_key, cancel_key, reservation_ids, last_provider_result, created_at, updated_at, committed_at, settled_at";
+// Every column rowToExecution reads. PostgREST returns ONLY what is projected,
+// so an omission here does not fail: it silently answers null. Leaving out
+// authorization_first_attempted_at disabled the port's creation-key retention
+// guard against the real database while every local test still passed, because
+// a null stamp reads as "no attempt was ever made" and permits a replay.
+export const EXECUTION_COLUMNS =
+  "id, member_id, request_key, request_body_sha256, order_id, phase, version, provider_reference, amount_cents, currency, payment_method_reference, quote_fingerprint, price_version, authorization_key, capture_key, cancel_key, reservation_ids, last_provider_result, authorization_first_attempted_at, local_commit_failure, created_at, updated_at, committed_at, settled_at";
 const UNIQUE_VIOLATION = "23505";
 
 type Row = Record<string, unknown>;

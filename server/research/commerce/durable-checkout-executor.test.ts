@@ -241,6 +241,34 @@ describe("durable checkout coordinator", () => {
     expect(uncertain.calls).not.toContain("capture");
   });
 
+  it("cancel from an in-flight capture whose request never left NEVER captures: the authorization is released", async () => {
+    // A worker claimed `capturing` and died before the capture request went out.
+    // The buyer sees an unfinished payment and presses Cancel. Falling through
+    // to run() would reconcile to `authorized` and capture the very payment they
+    // asked to release.
+    const h = harness({
+      initial: "capturing",
+      attempted: true,
+      reference: "pi_inflight",
+      cancelAnswer: { kind: "cancelled", providerReference: "pi_inflight", capturedAmountCents: 0 },
+    });
+    expect((await h.cancel(base.memberId, base.requestKey)).kind).toBe("cancelled");
+    expect(h.calls).not.toContain("capture");
+    expect(h.calls).not.toContain("commit");
+    expect(h.snapshot().phase).toBe("cancelled");
+    expect(h.snapshot().settledAt).not.toBeNull();
+    // But a capture that DID land is still the truth: the provider refuses the
+    // cancel, the read-back reports captured, and the order commits.
+    const landed = harness({
+      initial: "capturing",
+      attempted: true,
+      reference: "pi_taken",
+      cancelAnswer: { kind: "captured", providerReference: "pi_taken", memberId: base.memberId, orderId: base.orderId, amountCents: base.amountCents, currency: "usd" },
+    });
+    expect((await landed.cancel(base.memberId, base.requestKey)).kind).toBe("committed");
+    expect(landed.calls).toContain("commit");
+  });
+
   it("resumes a cancellation whose worker died instead of stranding the order, the holds and the money", async () => {
     // The record was claimed into `cancelling` and the worker never came back.
     const h = harness({

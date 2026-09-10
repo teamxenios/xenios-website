@@ -156,6 +156,20 @@ describe("durable checkout submission", () => {
     expect(c.model.creates()).toHaveLength(2);
   });
 
+  it("refuses to charge an amount the buyer did not approve", async () => {
+    const c = composition();
+    // The page approved a figure that this fresh revalidation does not price.
+    const stale = await c.submission.submit(MEMBER, request({ expectedTotalCents: 30_000 }), NOW);
+    expect(stale).toMatchObject({ ok: false, code: "cart_revalidation_failed" });
+    // Nothing was held, created or charged on the refusal.
+    expect(c.executions.snapshot()).toEqual([]);
+    expect(c.model.requests).toHaveLength(0);
+    expect(c.holds.events).toEqual([]);
+    // The approved figure goes through, and an absent figure behaves as before.
+    expect(await c.submission.submit(MEMBER, request({ expectedTotalCents: 33_999 }), NOW)).toMatchObject({ ok: true, state: "completed" });
+    expect(await c.submission.submit(MEMBER, request({ idempotencyKey: "req_durable_0002" }), NOW)).toMatchObject({ ok: true, state: "completed" });
+  });
+
   it("denies before anything is held, created or charged", async () => {
     const denied = composition({ denials: ["agreement_required", "address_invalid"] });
     expect(await denied.submission.submit(MEMBER, request(), NOW)).toEqual({ ok: false, code: "agreement_required", codes: ["agreement_required", "address_invalid"] });

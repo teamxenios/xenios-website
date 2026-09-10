@@ -547,22 +547,15 @@ describe("Checkout page", () => {
     expect(view.querySelector('[data-testid="co-quote-result"]')).toBeNull();
   });
 
-  it("surfaces store credit with the canonical labels and bounds the applied amount", async () => {
-    stubFetch([
-      { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
-      { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
-    ]);
-    const view = await renderPage(<Checkout />);
-    expect(view.textContent).toContain("Available now");
-    expect(view.textContent).toContain("$25.00");
-    expect(view.textContent).toContain("Pending review");
-    expect(view.textContent).toContain("$5.00");
-
-    // An entry above the spendable balance is clamped to it.
-    await act(async () => {
-      setValue(byTestId<HTMLInputElement>(view, "co-credit"), "100");
-    });
-    expect(view.textContent).toContain("Applying $25.00");
+  it("states the credit this order applies rather than asking for an amount the server ignores", async () => {
+    // Both doors charge from cart.storeCreditAppliedCents and neither reads a
+    // requested amount, so an input here would offer a choice that does not
+    // exist and print an "applying" figure that is never applied.
+    const { view } = await renderCheckoutWithSubmit({ status: 403, body: { ok: false, code: "commerce_disabled" } });
+    expect(view.querySelector('[data-testid="co-credit"]')).toBeNull();
+    const applied = byTestId(view, "co-credit-applied");
+    expect(applied.textContent).toContain("Applied to this order");
+    expect(applied.textContent).toContain("used automatically");
   });
 
   it("shows the designed empty state for an empty cart when commerce is enabled", async () => {

@@ -128,18 +128,23 @@ export function createDurableCheckoutExecutor(
   async function cancel(memberId: string, requestKey: string): Promise<DurableExecutionOutcome> {
     const r = await store.getForMember(memberId, requestKey);
     if (!r || r.memberId !== memberId) return { kind: "missing" };
-    // `authorizing` is cancellable: an execution parked there (a worker died
-    // mid-create, or a claim was lost) is exactly what a buyer sees as
-    // "pending", and falling through to run() would RECONCILE and then CAPTURE
-    // the payment the buyer asked to cancel. The claim is a version
-    // compare-and-swap, so a still-live authorize worker simply loses its write
-    // and answers pending. `capturing` deliberately stays on run(): the capture
-    // was already decided and the provider's answer is the only truth left.
-    // `cancelling` is included so a cancellation whose worker died is RESUMABLE:
-    // claiming it again is a version compare-and-swap that takes it over. Without
-    // that, run(), cancel() and recover() all answered "pending" forever and the
-    // order, the holds and any provider authorization were stranded.
-    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorizing", "authorized", "action_required", "reconciliation_required", "cancelling"];
+    // Every phase a cancellation can legitimately act from, including the two
+    // in-flight ones. A worker can die after claiming `authorizing` or
+    // `capturing` and before its request ever leaves, and both of those rows
+    // are shown to the buyer as an unfinished payment with a Cancel button.
+    // Falling through to run() from either would RECONCILE and then CAPTURE the
+    // payment the buyer just asked to release: "the capture was already
+    // decided" is false when nothing was ever sent. Each claim is a version
+    // compare-and-swap, so a still-live worker simply loses its write and
+    // answers pending; and if the capture really did land, the provider's
+    // refusal to cancel resolves to a read-back that commits, so a captured
+    // payment is still never reported as cancelled.
+    //
+    // `cancelling` is included so a cancellation whose own worker died is
+    // RESUMABLE: claiming it again takes it over. Without that, run(), cancel()
+    // and recover() all answered "pending" forever and the order, the holds and
+    // any provider authorization were stranded.
+    const cancellable: CheckoutExecutionPhase[] = ["reserved", "authorizing", "capturing", "authorized", "action_required", "reconciliation_required", "cancelling"];
     if (!cancellable.includes(r.phase)) return run(memberId, requestKey);
     let owned = await store.claim(r.executionId, r.version, "cancelling");
     if (!owned) return { kind: "pending", orderId: r.orderId };

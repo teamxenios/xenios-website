@@ -15,6 +15,7 @@ import {
   type CheckoutExecutionClient,
   type CheckoutExecutionCreate,
   type CheckoutExecutionRow,
+  EXECUTION_COLUMNS,
 } from "./checkout-executions-store";
 
 const base: CheckoutExecutionCreate = {
@@ -52,6 +53,19 @@ describe("row mapping", () => {
     expect(back).toEqual({ ...record, lastProviderResult: null });
     const cancelled = rowToExecution({ ...row, last_provider_result: { kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" } } as unknown as CheckoutExecutionRow);
     expect(cancelled?.lastProviderResult).toEqual({ kind: "cancelled", providerReference: "pi_1", capturedAmountCents: 0, reason: "declined" });
+  });
+  it("projects every column rowToExecution reads, so the retention guard is not silently disabled", () => {
+    // PostgREST answers only what is projected. A column missing from the
+    // select reads as null, and a null first-attempt stamp tells the payment
+    // port that no authorization was ever attempted, which permits a creation
+    // replay outside the provider's retention window. Every field the mapper
+    // reads must therefore be requested.
+    const row = { ...executionToInsertRow(base), last_provider_result: null, local_commit_failure: null, updated_at: base.createdAt, committed_at: null } as unknown as Record<string, unknown>;
+    const projected = EXECUTION_COLUMNS.split(",").map((c) => c.trim());
+    for (const column of Object.keys(row)) {
+      expect(projected, `EXECUTION_COLUMNS must request ${column}`).toContain(column);
+    }
+    expect(projected).toContain("authorization_first_attempted_at");
   });
   it("refuses a row with an unknown phase or currency", () => {
     const row = { ...executionToInsertRow(base), last_provider_result: null } as CheckoutExecutionRow;
@@ -246,10 +260,18 @@ function fakeClient(options: { existing?: CheckoutExecutionRow | null; rpc?: (fn
       return {
         select(_columns) {
           const filters: [string, unknown][] = [];
+          // PostgREST returns ONLY the projected columns. Projecting here the
+          // same way makes an omission in EXECUTION_COLUMNS fail a test instead
+          // of silently answering null in production.
+          const project = (row: Record<string, unknown> | null) => {
+            if (!row) return null;
+            const wanted = String(_columns).split(",").map((c) => c.trim());
+            return Object.fromEntries(Object.entries(row).filter(([key]) => wanted.includes(key)));
+          };
           const answer = async () => {
             calls.push({ kind: "select", table, filters: [...filters] });
-            if (table === "research_payment_webhook_inbox") return { data: (options.inboxExisting ?? null) as unknown as Record<string, unknown> | null, error: null };
-            return { data: (options.existing ?? null) as unknown as Record<string, unknown> | null, error: null };
+            if (table === "research_payment_webhook_inbox") return { data: project((options.inboxExisting ?? null) as Record<string, unknown> | null), error: null };
+            return { data: project((options.existing ?? null) as Record<string, unknown> | null), error: null };
           };
           const chain = {
             eq(column: string, value: unknown) {

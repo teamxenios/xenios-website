@@ -185,9 +185,6 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   const [accepted, setAccepted] = useState<Record<string, boolean>>({});
   const [attestation, setAttestation] = useState(false);
 
-  // Store credit input, entered in dollars, bounded by spendable credit.
-  const [creditInput, setCreditInput] = useState("");
-
   // Generated once on mount; stable across retries; regenerated only after an
   // order is placed (or a durable checkout ends cancelled) so a retried submit
   // can never create two orders.
@@ -294,6 +291,12 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     if (paymentConfig.kind !== "ok" || durable.kind !== "idle" || phase.kind !== "form") return;
     const record = readCheckoutResume(cartScope);
     if (!record) return;
+    if (record.settled && record.orderId) {
+      // A purchase that already completed in this tab. Show what they bought,
+      // never a fresh card field over the same cart.
+      setPhase({ kind: "paid", orderId: record.orderId });
+      return;
+    }
     setIdempotencyKey(record.requestKey);
     setDurable({ kind: "execution", requestKey: record.requestKey, orderId: record.orderId, state: "pending", note: "Picking up the checkout you started.", source: "resume" });
   }, [paymentConfig, cartScope, durable.kind, phase.kind]);
@@ -322,11 +325,18 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   const allAgreed = requiredAgreements.every((key) => accepted[key]);
 
   const spendableCents = storeCredit?.spendableCents ?? 0;
-  const creditCents = useMemo(() => {
-    const parsed = Number.parseFloat(creditInput);
-    if (!Number.isFinite(parsed) || parsed <= 0) return 0;
-    return Math.min(Math.round(parsed * 100), spendableCents);
-  }, [creditInput, spendableCents]);
+  /**
+   * The credit this order actually applies, as the SERVER computed it.
+   *
+   * Both doors charge from `cart.storeCreditAppliedCents`, which the cart sets
+   * to the whole spendable balance up to the subtotal; neither reads a
+   * requested amount when computing money. The page used to send the figure a
+   * buyer typed and print "Applying $X" for an amount that was never applied,
+   * and the request's own payment-method gate then disagreed with the charge.
+   * Sending the cart's figure makes the gate, the display and the charge one
+   * number.
+   */
+  const creditCents = cart?.storeCreditAppliedCents ?? 0;
 
   // The door for THIS request. A fully credit-covered order has no provider
   // effect and stays on the ordering door; the server re-checks all of it.
@@ -344,7 +354,11 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   // the cart's standing estimate. When the quote door itself is unavailable the
   // server prices the order and answers its own denial: blocking here would
   // leave the buyer with a disabled button and no way to complete anything.
-  const quoteRequired = cardDoor && quote === null && !quoteUnavailable;
+  // The gate exists so the buyer sees the exact amount before paying. When the
+  // quote door itself cannot answer (unpublished, or a refusal the buyer cannot
+  // fix here), holding the button hostage would leave them with an impossible
+  // instruction; the server prices the order and answers its own denial.
+  const quoteRequired = cardDoor && quote === null && !quoteUnavailable && quoteDenial === null;
   // While a request is frozen the button resends it byte for byte, so every
   // input that would change it is withheld. Otherwise the page would show
   // figures computed from edits the retry will not carry.
@@ -367,6 +381,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     if (quoteBinding.current === binding) return;
     quoteBinding.current = binding;
     setQuote(null);
+    // The verdict that shipping could not be priced belongs to the destination
+    // and service it was observed for, exactly like the quote itself.
+    setQuoteUnavailable(false);
+    setQuoteDenial(null);
   }, [destination, service]);
 
   const requestQuote = async () => {
@@ -381,8 +399,11 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     setQuoteUnavailable(false);
     setQuote(null);
     const result = await quoteShipping(token, { destination, service });
-    if (!stillCurrent(token) || quoteBinding.current !== binding) return;
+    // The flag belongs to the page, not to the answer: clearing it after the
+    // fence left the quote button disabled and reading "Getting quote..."
+    // forever as soon as the buyer edited the address mid-request.
     setQuoteBusy(false);
+    if (!stillCurrent(token) || quoteBinding.current !== binding) return;
     if (result.kind === "ok") {
       setQuote(result.data.quote);
       return;
@@ -410,6 +431,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     acceptedAgreementKeys: requiredAgreements.filter((key) => accepted[key]),
     researchAttestation: attestation,
     idempotencyKey,
+    // Only when a card is about to be charged, and only when the exact figure
+    // is known: the server refuses rather than charging an amount this page
+    // never showed. Nothing else about the request changes.
+    ...(cardDoor && quote !== null ? { expectedTotalCents: estimatedChargeCents } : {}),
   });
 
   // ------------------------- the ordering door ------------------------------
@@ -455,7 +480,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
 
   const applyOutcome = (checkout: DurableCheckoutResult) => {
     if (checkout.state === "completed") {
-      clearCheckoutResume(cartScope);
+      // NOT cleared: this is the only trace of a payment that succeeded, and a
+      // token refresh remounts the member area. Without it the buyer came back
+      // to an empty checkout page with their cart still in it.
+      if (cartScope) writeCheckoutResume({ scope: cartScope, requestKey: checkout.requestKey, orderId: checkout.orderId, startedAt: new Date().toISOString(), settled: true });
       setPhase({ kind: "paid", orderId: checkout.orderId });
       setIdempotencyKey(newIdempotencyKey());
       setDurable({ kind: "idle" });
@@ -519,6 +547,9 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       clearCheckoutResume(cartScope);
       setSubmitDenial({ code: result.code, message: result.message });
       setDurable({ kind: "idle" });
+      // The price moved under the buyer. Re-read the cart so the figure they
+      // are asked to approve next is the current one.
+      if (result.code === "cart_revalidation_failed") void load();
       return;
     }
     // Unavailable or a failed connection AFTER the request left the page: the
@@ -649,6 +680,19 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
             <Link href={MEMBER_ROUTES.orders} className="btn btn-ghost">
               View your orders
             </Link>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                clearCheckoutResume(cartScope);
+                setIdempotencyKey(newIdempotencyKey());
+                setDurable({ kind: "idle" });
+                setPhase({ kind: "form" });
+              }}
+              data-testid="checkout-paid-new-order"
+            >
+              Start another order
+            </button>
           </div>
         </section>
       </ResearchMemberShell>
@@ -770,7 +814,11 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
             }}
             onMissing={() => {
               if (!stillCurrent(memberToken)) return;
-              if (execution.source === "durable" && execution.orderId) {
+              // An order id is EVIDENCE that an order exists, whether it came
+              // from the durable door's answer or from a pointer the server
+              // itself filled in. Only a reference with no order at all is
+              // genuinely unresolved.
+              if (execution.orderId) {
                 // The durable door named this order but no execution owns it: an
                 // order placed through the ordering door under this key. It
                 // EXISTS, so this page must not offer to pay for it again.
@@ -1048,29 +1096,15 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     </>
                   )}
                 </p>
+{/* No amount is asked for here. Both checkout doors apply the available
+                    credit to the order themselves and charge from THAT figure, so an
+                    input would be a choice the server does not honour, and the page
+                    would print an "applying" amount that is never applied. */}
                 {spendableCents > 0 ? (
-                  <div className="mt-3" style={{ maxWidth: 240 }}>
-                    <Field id="co-credit" label="Apply store credit (USD)" optional>
-                      <input
-                        id="co-credit"
-                        className="input-field"
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        max={spendableCents / 100}
-                        value={creditInput}
-                        onChange={(e) => setCreditInput(e.target.value)}
-                        disabled={frozen}
-                        data-testid="co-credit"
-                      />
-                    </Field>
-                    {creditCents > 0 && (
-                      <p className="body-s text-ink-2 mt-2">
-                        Applying <span className="tabular">{money(creditCents)}</span>. Only credit that is available
-                        now can be spent; credit pending review cannot.
-                      </p>
-                    )}
-                  </div>
+                  <p className="body-s text-ink-2 mt-2" data-testid="co-credit-applied">
+                    Applied to this order: <span className="tabular">{money(creditCents)}</span>. Your available credit is
+                    used automatically; credit still pending review cannot be spent yet.
+                  </p>
                 ) : (
                   <p className="body-s text-ink-mute mt-2">No spendable credit right now.</p>
                 )}
@@ -1087,6 +1121,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                       type="checkbox"
                       checked={Boolean(accepted[key])}
                       onChange={(e) => setAccepted((prev) => ({ ...prev, [key]: e.target.checked }))}
+                      disabled={frozen}
                       data-testid={`co-agree-${key}`}
                     />
                     <span>I accept the {agreementLabel(key)} agreement.</span>
@@ -1097,6 +1132,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     type="checkbox"
                     checked={attestation}
                     onChange={(e) => setAttestation(e.target.checked)}
+                    disabled={frozen}
                     data-testid="co-attest"
                   />
                   <span>I confirm these materials are for research purposes.</span>

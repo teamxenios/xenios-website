@@ -216,6 +216,16 @@ export interface CheckoutRequest {
    * order that can never settle.
    */
   paymentMethodReference?: string;
+  /**
+   * The exact total the buyer was shown and approved, in cents.
+   *
+   * Additive and optional: a caller that omits it behaves exactly as before.
+   * When present, the durable door compares it with the total it computes from
+   * its own fresh revalidation and REFUSES rather than charging a different
+   * amount than the one consented to. That is the difference between quoting a
+   * price and honouring it.
+   */
+  expectedTotalCents?: number;
 }
 
 /**
