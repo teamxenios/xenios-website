@@ -1502,7 +1502,7 @@
         "server/research/e2e/managed-resource-hub-qa.test.ts",
         "server/research/partners/portal.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-05T17:49:32.211Z",
       "heartbeatAt": "2026-09-08T18:21:57.099Z",
       "delegatedPaths": {
@@ -1766,6 +1766,33 @@
       "state": "active",
       "claimedAt": "2026-09-09T13:05:13.405Z",
       "heartbeatAt": "2026-09-09T13:06:45.865Z"
+    },
+    {
+      "id": "4f6f5a15-3d86-4230-8ece-5df25ee4d5fe",
+      "task": "XENIOS-NATIVE-FINISH-20260910",
+      "session": "codex-native-finish-20260910",
+      "paths": [
+        "server/index.ts",
+        "server/release-control-plane.test.ts",
+        "server/research/commerce/**",
+        "server/research/outbox.ts",
+        "server/research/outbox.test.ts",
+        "shared/research/checkout-credit-policy*",
+        "supabase/candidates/20260909150000_research_checkout_executions*",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery*",
+        ".env.example",
+        "docs/research-launch/PROVIDER_READINESS.md",
+        "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+        "docs/native-finish/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-native-finish-20260910.json",
+        ".xenios/handoffs/*NATIVE-FINISH*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-10T17:38:07.827Z",
+      "heartbeatAt": "2026-09-10T17:38:07.827Z"
     }
   ],
   "rules": [

@@ -3,6 +3,35 @@
   "updatedAt": "2026-09-08T18:21:57.005137Z",
   "tasks": [
     {
+      "id": "XENIOS-NATIVE-FINISH-20260910",
+      "title": "Single-owner native payment composition and managed qualification",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-native-finish-20260910",
+      "paths": [
+        "server/index.ts",
+        "server/release-control-plane.test.ts",
+        "server/research/commerce/**",
+        "server/research/outbox.ts",
+        "server/research/outbox.test.ts",
+        "shared/research/checkout-credit-policy*",
+        "supabase/candidates/20260909150000_research_checkout_executions*",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery*",
+        ".env.example",
+        "docs/research-launch/PROVIDER_READINESS.md",
+        "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+        "docs/native-finish/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-native-finish-20260910.json",
+        ".xenios/handoffs/*NATIVE-FINISH*"
+      ],
+      "dependsOn": [],
+      "note": "Founder requested one integration owner in task 01a04df5-16b2-79d3-8fbd-c4f5cf1e9a35. A27f and Claude246 preserved in original clean worktrees. Prior A task observed idle; no heavy qualification process found. Review worker is read-only. This lease authorizes local integration only, not new production effects.",
+      "claimedAt": "2026-09-10T17:38:07.823Z"
+    },
+    {
       "id": "XENIOS-HEALTH-CONTACT-SENDER-CONTEXT-20260904",
       "title": "Preserve the Xenios Health sender through the Care-linked public support journey",
       "priority": "P0",
@@ -1296,8 +1325,8 @@
       "id": "XENIOS-SETH-REVENUE-LAUNCH-TO-PRODUCTION-20260905",
       "title": "Universal approved-user and partner launch with first real acceptance journey",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "codex-seth-revenue-launch-20260905",
+      "state": "ready",
+      "owner": null,
       "paths": [
         ".xenios/ACTIVE_TASKS.json",
         ".xenios/SESSION_REGISTRY.json",
@@ -1546,7 +1575,7 @@
       "claimedAt": "2026-09-05T17:49:32.208Z",
       "blockedAt": "2026-09-04T23:45:09.67476-05:00",
       "lastOwner": "codex-seth-revenue-launch-20260905",
-      "releasedAt": "2026-09-04T23:49:58.516244-05:00",
+      "releasedAt": "2026-09-10T17:37:35.349Z",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
         "sha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",

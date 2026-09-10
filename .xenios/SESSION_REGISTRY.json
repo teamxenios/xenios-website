@@ -422,6 +422,16 @@
       "startedAt": "2026-09-09T19:55:16.550Z",
       "heartbeatAt": "2026-09-09T19:55:16.551Z",
       "note": "Recovered Fable durable checkout units; payment remains disabled pending staging/provider qualification"
+    },
+    {
+      "id": "codex-native-finish-20260910",
+      "tool": "Codex",
+      "lane": "sole-integration-owner",
+      "branch": "codex/xenios-native-finish-20260910",
+      "state": "active",
+      "startedAt": "2026-09-10T17:37:35.272Z",
+      "heartbeatAt": "2026-09-10T17:37:35.279Z",
+      "note": "Founder selected this task as sole integration owner; isolated A27f plus Claude246 integration. Prior A is idle and source preserved. No production authority expanded."
     }
   ],
   "updatedAt": "2026-09-08T16:02:50.489072Z"
