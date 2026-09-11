@@ -461,15 +461,15 @@ export interface CheckoutExecutionClient {
   from(table: string): {
     select(columns: string): {
       eq(column: string, value: unknown): {
-        eq(column: string, value: unknown): { maybeSingle(): Promise<{ data: Row | null; error: ProviderError }> };
-        maybeSingle(): Promise<{ data: Row | null; error: ProviderError }>;
-        order(column: string, options: { ascending: boolean }): { limit(count: number): Promise<{ data: Row[] | null; error: ProviderError }> };
+        eq(column: string, value: unknown): { maybeSingle(): PromiseLike<{ data: Row | null; error: ProviderError }> };
+        maybeSingle(): PromiseLike<{ data: Row | null; error: ProviderError }>;
+        order(column: string, options: { ascending: boolean }): { limit(count: number): PromiseLike<{ data: Row[] | null; error: ProviderError }> };
       };
     };
-    insert(row: Row): Promise<{ error: ProviderError }>;
-    update(patch: Row): { eq(column: string, value: unknown): { eq(column: string, value: unknown): Promise<{ error: ProviderError }> } };
+    insert(row: Row): PromiseLike<{ error: ProviderError }>;
+    update(patch: Row): { eq(column: string, value: unknown): { eq(column: string, value: unknown): PromiseLike<{ error: ProviderError }> } };
   };
-  rpc(fn: string, args: Row): Promise<{ data: Row[] | Row | null; error: ProviderError }>;
+  rpc(fn: string, args: Row): PromiseLike<{ data: Row[] | Row | null; error: ProviderError }>;
 }
 
 const MANAGED_UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
