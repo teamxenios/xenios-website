@@ -115,3 +115,16 @@ No worker retains a write lease. Local PostgreSQL is stopped with its committed
 synthetic recovery and older credit QA data preserved. No remote or production
 authority was delegated. Main owns the next one-pass composition and real
 executor contact; no timer or provider effect has been enabled.
+
+Main now owns checkout-recovery-pass.ts and its adjacent unit test, connecting
+the real raw canonical repository/executor to the durable operation. Worker
+product_review_filters owns only the new qualification/recovery-pass-contact.mjs
+for a local exact-SQL/actual-executor contact proof. No SQL source edits, managed
+database/provider effects, notifications or competing heavy run are delegated.
+Native_finish_review remains the read-only independent reviewer of final source.
+
+The contact assignment is now returned to main. Main reviewed the driver and its
+exact existing-SQL setup correction; native_finish_review independently accepted
+the corrected runtime, tests and local result. All 17 contact input LF hashes
+match current source. No worker retains a write lease, provider capability or
+heavy run. Main owns qualification and the next ready integration slice.
