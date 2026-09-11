@@ -428,6 +428,8 @@ describe("shipping quotes over HTTP", () => {
     expect(res.body.quote.service).toBe("standard");
     // The quote a member sees is the quote checkout charges.
     expect(res.body.quote.amountCents).toBe(SHIPPING);
+    expect(res.body).toMatchObject({ subtotalCents: SUBTOTAL_2X,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: SUBTOTAL_2X + SHIPPING, appliedCents: 0 } });
     // 15 minutes past the injected clock, so a stale quote cannot be presented.
     expect(res.body.expiresAt).toBe("2026-07-22T00:15:00.000Z");
 
@@ -440,6 +442,8 @@ describe("shipping quotes over HTTP", () => {
       });
     expect(cold.status).toBe(200);
     expect(cold.body.quote.amountCents).toBe(6495);
+    expect(cold.body).toMatchObject({ subtotalCents: SUBTOTAL_2X,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: SUBTOTAL_2X + 6495, appliedCents: 0 } });
   });
 
   it("refuses to quote another member's cart: B's empty cart answers cart_empty", async () => {

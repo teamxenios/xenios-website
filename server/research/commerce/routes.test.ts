@@ -683,7 +683,9 @@ describe("shipping quote route", () => {
         shippingQuotes: {
           quoteFor: async (memberId, req) => {
             seen.push({ memberId, state: req.destination.state });
-            return { ok: true, quote: { amountCents: 1295 }, expiresAt: "2026-07-21T00:15:00Z" };
+            return { ok: true, quote: { amountCents: 1295 }, subtotalCents: 5000,
+              checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 5795, appliedCents: 500 },
+              expiresAt: "2026-07-21T00:15:00Z" };
           },
         },
       }),
@@ -692,7 +694,9 @@ describe("shipping quote route", () => {
     const forged = reqWith({ id: "mem_real" }, { body: { ...GOOD_BODY, memberId: "mem_victim" } } as Partial<Request>);
     await route(routes, "post", PATH).handler(forged, res);
     expect(seen).toEqual([{ memberId: "mem_real", state: "TX" }]);
-    expect(captured.body).toMatchObject({ ok: true, quote: { amountCents: 1295 }, expiresAt: "2026-07-21T00:15:00Z" });
+    expect(captured.body).toMatchObject({ ok: true, quote: { amountCents: 1295 }, subtotalCents: 5000,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 5795, appliedCents: 500 },
+      expiresAt: "2026-07-21T00:15:00Z" });
   });
 
   it("relays a precise provider denial", async () => {

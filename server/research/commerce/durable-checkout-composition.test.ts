@@ -39,6 +39,7 @@ const request = (overrides: Partial<CheckoutRequest> = {}): CheckoutRequest => (
   acceptedAgreementKeys: ["research-use"],
   researchAttestation: true,
   idempotencyKey: "req_composed_0001",
+  checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 21_000, appliedCents: 0 },
   paymentMethodReference: "pm_fixture_card",
   ...overrides,
 });

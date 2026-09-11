@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   evaluateCreditQuote,
+  CURRENT_CHECKOUT_CREDIT_POLICY,
+  isCreditConsent,
+  creditConsentFor,
   validateCreditConsent,
   type CreditPolicy,
   type CreditQuote,
@@ -188,18 +191,18 @@ describe("consent is checked against the same numbers that would be charged", ()
   const agreed = ok(quote(ALL, { spendableCents: 10_000 }));
 
   it("accepts consent that still matches", () => {
-    expect(validateCreditConsent(agreed, { policyVersion: agreed.policyVersion, totalCents: agreed.payableCents })).toEqual({ ok: true });
+    expect(validateCreditConsent(agreed, creditConsentFor(agreed))).toEqual({ ok: true });
   });
 
   it("refuses when the amount payable moved", () => {
-    expect(validateCreditConsent(agreed, { policyVersion: agreed.policyVersion, totalCents: agreed.payableCents - 1 })).toMatchObject({
+    expect(validateCreditConsent(agreed, { ...creditConsentFor(agreed), totalCents: agreed.payableCents - 1 })).toMatchObject({
       ok: false,
       code: "consent_total_changed",
     });
   });
 
   it("refuses when the terms changed underneath the customer", () => {
-    expect(validateCreditConsent(agreed, { policyVersion: "credit-2026-10-b", totalCents: agreed.payableCents })).toMatchObject({
+    expect(validateCreditConsent(agreed, { ...creditConsentFor(agreed), policyVersion: "credit-2026-10-b" })).toMatchObject({
       ok: false,
       code: "consent_policy_changed",
     });
@@ -234,9 +237,25 @@ describe("consent is checked against the same numbers that would be charged", ()
     // By the time they pay, another order has spent some of it.
     const now = ok(quote(ALL, { spendableCents: 4_000 }));
     expect(now.payableCents).not.toBe(shown.payableCents);
-    expect(validateCreditConsent(now, { policyVersion: shown.policyVersion, totalCents: shown.payableCents })).toMatchObject({
+    expect(validateCreditConsent(now, creditConsentFor(shown))).toMatchObject({
       ok: false,
       code: "consent_total_changed",
     });
+  });
+});
+
+describe("complete new-intent consent", () => {
+  const agreed = ok(evaluateCreditQuote(CURRENT_CHECKOUT_CREDIT_POLICY, { ...order, spendableCents: 500_000 }));
+  it("pins existing items-only all-available behavior with shipping still payable", () => {
+    expect(creditConsentFor(agreed)).toEqual({ policyVersion: "all-available-items-v1", totalCents: 2_000, appliedCents: 39_250 });
+    expect(Object.isFrozen(CURRENT_CHECKOUT_CREDIT_POLICY)).toBe(true);
+  });
+  it.each([{}, [], true, 0, "consent", { totalCents: 2_000, appliedCents: 39_250 },
+    { policyVersion: "all-available-items-v1", totalCents: 2_000 },
+    ...[-1, 1.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, null, "39250"].map(appliedCents => ({ ...creditConsentFor(agreed), appliedCents })),
+    ...[-1, 1.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, null, "2000"].map(totalCents => ({ ...creditConsentFor(agreed), totalCents })),
+  ])("refuses incomplete or malformed consent: %j", value => {
+    expect(isCreditConsent(value)).toBe(false);
+    expect(validateCreditConsent(agreed, value)).toMatchObject({ ok: false, code: "consent_invalid" });
   });
 });

@@ -15,6 +15,7 @@
 // `transitionOrder`, which requires a provider reference for a paid state.
 
 import { createHash, randomUUID } from "node:crypto";
+import { CURRENT_CHECKOUT_CREDIT_POLICY, evaluateCreditQuote } from "@shared/research/checkout-credit-policy";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import {
   evaluateLargeOrderReview,
@@ -385,13 +386,16 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // order would be created and could never settle. Refuse before anything is
     // reserved or charged. A fully credit-covered order owes nothing and needs
     // no instrument, so that case is deliberately allowed through.
-    const payableCents = Math.max(
-      0,
-      cart.subtotalCents +
-        (quote === null ? 0 : orderShippingTotalCents([quote])) -
-        cart.storeCreditAppliedCents,
-    );
-    if (!req.paymentMethodReference && payableCents > 0) {
+    const creditQuote = evaluateCreditQuote(CURRENT_CHECKOUT_CREDIT_POLICY, {
+      subtotalCents: cart.subtotalCents,
+      shippingCents: quote === null ? 0 : orderShippingTotalCents([quote]),
+      // The fresh cart already selected credit from the canonical balance.
+      spendableCents: cart.storeCreditAppliedCents,
+    });
+    if (!creditQuote.ok || creditQuote.appliedCents !== cart.storeCreditAppliedCents) {
+      denials.add("cart_revalidation_failed");
+    }
+    if (!req.paymentMethodReference && creditQuote.ok && creditQuote.paymentMethodRequired) {
       denials.add("payment_method_required");
     }
 

@@ -1,6 +1,7 @@
 /** Qualification-only primitives. No production activation, network defaults or side effects. */
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
+import { isCreditConsent, type CreditConsent } from "@shared/research/checkout-credit-policy";
 
 export class QualificationBoundaryError extends Error {
   constructor(readonly code: string) { super(code); this.name = "QualificationBoundaryError"; }
@@ -106,7 +107,7 @@ export interface ApprovedCheckoutSeed {
   shippingAddress: { line1: string; line2?: string; city: string; state: string; postalCode: string; country: "US" };
   shippingService: "standard" | "expedited_2day" | "next_day" | "same_day" | "temperature_controlled";
   acceptedAgreementKeys: string[]; researchAttestation: boolean; applyStoreCreditCents: number;
-  paymentMethodReference: string; expectedTotalCents: number;
+  paymentMethodReference: string; expectedTotalCents: number; checkoutConsent: CreditConsent;
 }
 const SERVICES = ["standard", "expedited_2day", "next_day", "same_day", "temperature_controlled"] as const;
 /** This is fixture consent, not invented order data. The operator supplies the exact approved fixture quote. */
@@ -129,10 +130,15 @@ export function readApprovedCheckoutSeed(raw: string | undefined): ApprovedCheck
   if (!/^pm_[A-Za-z0-9_]+$/.test(method)) fail("request_seed_method_invalid");
   const total = cents(r!.expectedTotalCents, "request_seed_total_invalid");
   if (total === 0) fail("request_seed_total_invalid");
+  const consent = r!.checkoutConsent;
+  if (!isCreditConsent(consent)) fail("request_seed_consent_invalid");
+  const credit = cents(r!.applyStoreCreditCents, "request_seed_credit_invalid");
+  if (consent.totalCents !== total || consent.appliedCents !== credit) fail("request_seed_consent_mismatch");
   return {
     shippingAddress: address, shippingService: r!.shippingService as ApprovedCheckoutSeed["shippingService"],
     acceptedAgreementKeys: [...r!.acceptedAgreementKeys as string[]], researchAttestation: r!.researchAttestation as boolean,
-    applyStoreCreditCents: cents(r!.applyStoreCreditCents, "request_seed_credit_invalid"),
+    applyStoreCreditCents: credit,
+    checkoutConsent: { ...consent },
     paymentMethodReference: method, expectedTotalCents: total,
   };
 }
@@ -141,6 +147,7 @@ export function createApprovedRequestFactory(raw: string | undefined, runId: str
   const run = createHash("sha256").update(runId).digest("hex").slice(0, 20);
   return (overrides: Partial<ApprovedCheckoutSeed & { idempotencyKey: string }> = {}) => ({
     ...seed, shippingAddress: { ...seed.shippingAddress }, acceptedAgreementKeys: [...seed.acceptedAgreementKeys],
+    checkoutConsent: { ...seed.checkoutConsent },
     idempotencyKey: `qualify-${run}-${++counter}`, ...overrides,
   });
 }

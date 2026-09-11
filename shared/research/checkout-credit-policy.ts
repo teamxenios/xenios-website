@@ -1,13 +1,8 @@
 // One arithmetic for store credit, and one consent to charge against.
 //
-// Why this exists: today the applied amount is computed in the cart, re-derived
-// in the assisted door, re-derived again in the durable door, computed a fourth
-// time in a candidate SQL function, and displayed from a fifth expression in the
-// browser. They agree by coincidence, and one of them disagrees on purpose: the
-// cart caps credit at the SUBTOTAL, while the request gate that decides whether
-// a payment method is needed subtracts credit from SUBTOTAL PLUS SHIPPING. That
-// is not a rounding difference. It decides whether a customer is asked for a
-// card, so it has to be a decision somebody made, not a difference nobody noticed.
+// The cart, payment-method gate and durable submission use the same versioned
+// arithmetic. The quote shown to the customer also binds credit spent, not just
+// cash payable: equal cash totals alone do not establish equal consent.
 //
 // This module is arithmetic and validation ONLY.
 //
@@ -31,13 +26,19 @@ export interface CreditPolicy {
   version: string;
   mode: CreditMode;
   /**
-   * Whether credit may pay for shipping. The repository currently contains both
-   * answers; this field is required so the question is settled by a choice.
+   * Whether credit may pay for shipping. Required, never inferred by a caller.
    */
   coversShipping: boolean;
   /** An optional per-order ceiling, beneath the balance and the order value. */
   maxPerOrderCents?: number | null;
 }
+
+/** Preserves the existing canonical behavior; this is not a new credit offer. */
+export const CURRENT_CHECKOUT_CREDIT_POLICY: Readonly<CreditPolicy> = Object.freeze({
+  version: "all-available-items-v1",
+  mode: "all_available",
+  coversShipping: false,
+});
 
 export interface CreditQuoteInput {
   subtotalCents: number;
@@ -187,12 +188,26 @@ export interface CreditConsent {
    * The credit the customer agreed to spend. Binding only the payable is not
    * enough: an order whose value rises by exactly the extra credit taken leaves
    * the payable unchanged while draining a balance the customer did not agree
-   * to spend. Optional so existing callers keep working, but supply it.
+   * to spend. New charge consent must bind both figures.
    */
-  appliedCents?: number;
+  appliedCents: number;
+}
+
+/** Wire input is unknown until every required field has been checked. */
+export function isCreditConsent(value: unknown): value is CreditConsent {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const consent = value as Record<string, unknown>;
+  return typeof consent.policyVersion === "string"
+    && consent.policyVersion.length > 0 && consent.policyVersion.trim() === consent.policyVersion
+    && wholeNonNegative(consent.totalCents) && wholeNonNegative(consent.appliedCents);
+}
+
+export function creditConsentFor(quote: CreditQuote): CreditConsent {
+  return { policyVersion: quote.policyVersion, totalCents: quote.payableCents, appliedCents: quote.appliedCents };
 }
 
 export type ConsentRefusalCode =
+  | "consent_invalid"
   | "consent_policy_changed"
   | "consent_total_changed"
   | "consent_credit_changed"
@@ -206,9 +221,12 @@ export type ConsentResult = { ok: true } | { ok: false; code: ConsentRefusalCode
  * A changed amount or a changed policy needs fresh consent. It is never a
  * reason to charge the new amount because the old one is close enough.
  */
-export function validateCreditConsent(quote: CreditQuote, consent: CreditConsent | null | undefined): ConsentResult {
-  if (!consent) {
+export function validateCreditConsent(quote: CreditQuote, consent: unknown): ConsentResult {
+  if (consent === null || consent === undefined) {
     return { ok: false, code: "consent_missing", message: "No agreed total was supplied for this charge." };
+  }
+  if (!isCreditConsent(consent)) {
+    return { ok: false, code: "consent_invalid", message: "The agreed policy, total and store credit must all be supplied as valid values." };
   }
   if (consent.policyVersion !== quote.policyVersion) {
     return {
@@ -224,7 +242,7 @@ export function validateCreditConsent(quote: CreditQuote, consent: CreditConsent
       message: "The amount payable changed since it was shown. Review the new total before paying.",
     };
   }
-  if (consent.appliedCents !== undefined && consent.appliedCents !== quote.appliedCents) {
+  if (consent.appliedCents !== quote.appliedCents) {
     return {
       ok: false,
       code: "consent_credit_changed",

@@ -2084,6 +2084,8 @@ describe("state 3: shipping quote", () => {
     expect(result.ok).toBe(true);
     expect(result.quote.kind).toBe("configured_fallback");
     expect(result.quote.amountCents).toBe(1295);
+    expect(result).toMatchObject({ subtotalCents: 5_000,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 6_295, appliedCents: 0 } });
     expect(result.expiresAt).toBe(new Date(AS_OF.getTime() + 15 * 60 * 1000).toISOString());
   });
 
@@ -2095,6 +2097,34 @@ describe("state 3: shipping quote", () => {
       AS_OF,
     )) as { ok: false; code: string };
     expect(result.code).toBe("cart_empty");
+  });
+
+  it("quotes a fresh member-bound canonical credit balance, without reading ledger history", async () => {
+    const { deps, creditLedger } = await liveSetup();
+    await deps.cart.addLine("mem_q1", { sku: "P901", quantity: 1, purchaseMode: "one_time" }, AS_OF);
+    let balance = 500;
+    const read = vi.spyOn(creditLedger, "spendableCents").mockImplementation(async (member, asOf) => {
+      expect(member).toBe("mem_q1"); expect(asOf).toBe(AS_OF); return balance;
+    });
+    const history = vi.spyOn(creditLedger, "listForMember").mockRejectedValue(new Error("history_not_a_balance"));
+    const quote = () => deps.shippingQuotes.quoteFor("mem_q1", { destination: DESTINATION, service: "standard" }, AS_OF);
+    expect(await quote()).toMatchObject({ ok: true, subtotalCents: 5_000,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 5_795, appliedCents: 500 } });
+    balance = 50_000;
+    expect(await quote()).toMatchObject({ ok: true, subtotalCents: 5_000,
+      checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 1_295, appliedCents: 5_000 } });
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(history).not.toHaveBeenCalled();
+  });
+
+  it("never emits successful consent when canonical balance is unavailable or cart no longer qualifies", async () => {
+    const { deps, creditLedger, lotStore } = await liveSetup();
+    await deps.cart.addLine("mem_q1", { sku: "P901", quantity: 1, purchaseMode: "one_time" }, AS_OF);
+    vi.spyOn(creditLedger, "spendableCents").mockRejectedValueOnce(new Error("balance_unavailable"));
+    const quote = () => deps.shippingQuotes.quoteFor("mem_q1", { destination: DESTINATION, service: "standard" }, AS_OF);
+    await expect(quote()).rejects.toThrow("balance_unavailable");
+    vi.spyOn(lotStore, "listBySku").mockResolvedValue([]);
+    expect(await quote()).toMatchObject({ ok: false, code: "cart_revalidation_failed" });
   });
 
   it("derives cold chain from the cart's product profiles and refuses honestly", async () => {

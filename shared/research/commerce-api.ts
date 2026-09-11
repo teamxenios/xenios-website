@@ -26,6 +26,7 @@ import type {
   SubscriptionState,
 } from "./commerce";
 import type { CommissionState, PartnerRole, PartnerState } from "./distribution";
+import type { CreditConsent } from "./checkout-credit-policy";
 
 // ---------------------------------------------------------------------------
 // Envelope
@@ -195,7 +196,15 @@ export interface ShippingQuoteRequest {
   destination: { line1: string; line2?: string; city: string; state: string; postalCode: string; country: "US" };
   service: ShippingQuote["service"];
 }
-export type ShippingQuoteResponse = Api<{ quote: ShippingQuote }>;
+export interface CheckoutQuoteSnapshot {
+  quote: ShippingQuote;
+  /** Fresh canonical item subtotal, to detect an obsolete displayed cart. */
+  subtotalCents: number;
+  checkoutConsent: CreditConsent;
+  /** Display lifetime only; submit always recomputes canonical amounts. */
+  expiresAt: string;
+}
+export type ShippingQuoteResponse = Api<CheckoutQuoteSnapshot>;
 
 export interface CheckoutRequest {
   shippingAddress: ShippingQuoteRequest["destination"];
@@ -216,11 +225,14 @@ export interface CheckoutRequest {
    * order that can never settle.
    */
   paymentMethodReference?: string;
+  /** Required for a NEW durable card intent. Existing exact-body retries keep
+   * their original shape; assisted and historical callers need not fabricate it. */
+  checkoutConsent?: CreditConsent;
   /**
    * The exact total the buyer was shown and approved, in cents.
    *
-   * Additive and optional: a caller that omits it behaves exactly as before.
-   * When present, the durable door compares it with the total it computes from
+   * Legacy scalar hint, not a substitute for complete checkoutConsent.
+   * When present, the durable door also compares it with the total it computes from
    * its own fresh revalidation and REFUSES rather than charging a different
    * amount than the one consented to. That is the difference between quoting a
    * price and honouring it.

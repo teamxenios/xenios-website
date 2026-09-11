@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useResearch } from "../../core";
-import { getCart, getStoreCredit, quoteShipping, submitCheckout } from "../../adapters/commerce";
+import { getCart, getStoreCredit, isCheckoutQuoteSnapshot, quoteShipping, submitCheckout } from "../../adapters/commerce";
 import { loadPaymentClientConfig, submitDurableCheckout, type DurableCheckoutResult, type DurableCheckoutState, type PaymentClientConfig } from "../../adapters/durableCheckout";
 import { loadCheckoutContinuation, type CheckoutCancellationReason, type CheckoutContinuationView } from "../../adapters/checkoutContinuation";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../../lib/capabilities";
@@ -22,7 +22,7 @@ import {
   ResearchStatusBadge,
 } from "../../ui/kit";
 import { agreementLabel, PRICE_NOT_CONFIRMED } from "./commerce-presentation";
-import type { CartDto, CheckoutRequest, OrderSummaryDto, StoreCreditDto } from "@shared/research/commerce-api";
+import type { CartDto, CheckoutQuoteSnapshot, CheckoutRequest, OrderSummaryDto, StoreCreditDto } from "@shared/research/commerce-api";
 import type { ShippingQuote } from "@shared/research/commerce";
 
 // ---------------------------------------------------------------------------
@@ -80,6 +80,17 @@ function newIdempotencyKey(): string {
     // fall through to the manual key
   }
   return `idem-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/** Consistency check only; the browser never prices or grants credit. */
+function matchesDisplayedCart(snapshot: CheckoutQuoteSnapshot, cart: CartDto): boolean {
+  let sum = 0;
+  for (const line of cart.lines) {
+    if (typeof line.lineTotalCents !== "number" || !Number.isSafeInteger(line.lineTotalCents) || line.lineTotalCents < 0) return false;
+    sum += line.lineTotalCents;
+    if (!Number.isSafeInteger(sum)) return false;
+  }
+  return snapshot.subtotalCents === cart.subtotalCents && snapshot.subtotalCents === sum;
 }
 
 const SHIPPING_SERVICES: Array<{ value: ShippingQuote["service"]; label: string }> = [
@@ -175,11 +186,12 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   const [service, setService] = useState<ShippingQuote["service"]>("standard");
 
   // On-demand shipping quote.
-  const [quote, setQuote] = useState<ShippingQuote | null>(null);
+  const [quoteRecord, setQuoteRecord] = useState<{ binding: string; snapshot: CheckoutQuoteSnapshot } | null>(null);
+  const quoteGeneration = useRef(0);
+  const [quoteCartMismatch, setQuoteCartMismatch] = useState(false);
   const [quoteBusy, setQuoteBusy] = useState(false);
   const [quoteDenial, setQuoteDenial] = useState<{ code: string; message?: string } | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
-  const [quoteUnavailable, setQuoteUnavailable] = useState(false);
 
   // Agreements and attestation.
   const [accepted, setAccepted] = useState<Record<string, boolean>>({});
@@ -200,17 +212,25 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   // The durable door's lifecycle and the provider-hosted card collector.
   const [durable, setDurable] = useState<DurableState>({ kind: "idle" });
   const collectRef = useRef<CollectPaymentMethod | null>(null);
+  const collectionInFlight = useRef<number | null>(null);
   const [cardComplete, setCardComplete] = useState(false);
 
   // Principal fence: every asynchronous answer is applied only if the token
   // that requested it is still the page's token. Unmount or an account switch
   // retires the token, so a late answer never renders under another account.
-  const principal = useRef<string | null>(memberToken);
-  principal.current = memberToken;
-  const stillCurrent = useCallback((token: string | null) => principal.current === token, []);
+  const cartScope = member?.cartScope ?? null;
+  const principal = useRef({ token: memberToken, scope: cartScope, generation: 0 });
+  if (principal.current.token !== memberToken || principal.current.scope !== cartScope) {
+    principal.current = { token: memberToken, scope: cartScope, generation: principal.current.generation + 1 };
+  }
+  const sessionGeneration = principal.current.generation;
+  const [loadedGeneration, setLoadedGeneration] = useState<number | null>(null);
+  const loadGeneration = useRef(0);
+  const stillCurrent = useCallback((token: string | null) => token !== null
+    && principal.current.token === token && principal.current.generation === sessionGeneration, [sessionGeneration]);
   useEffect(() => {
     return () => {
-      principal.current = null;
+      principal.current = { ...principal.current, token: null, generation: principal.current.generation + 1 };
     };
   }, []);
   // An account or organization switch clears every private answer this page
@@ -226,20 +246,36 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     setQuoteBusy(false);
     setSubmitUnavailable(false);
     setValidation(null);
+    setQuoteRecord(null);
+    setQuoteError(null);
+    setQuoteDenial(null);
+    setQuoteCartMismatch(false);
+    setStoreCredit(null);
+    setCart(null);
+    setAccepted({});
+    setAttestation(false);
+    setLine1(""); setLine2(""); setCity(""); setStateCode(""); setPostalCode("");
+    setService("standard");
     collectRef.current = null;
     setCardComplete(false);
-  }, [memberToken]);
-
-  const cartScope = member?.cartScope ?? null;
+  }, [sessionGeneration]);
 
   const load = useCallback(async () => {
     const token = memberToken;
+    const generation = ++loadGeneration.current;
+    quoteGeneration.current += 1;
+    setQuoteRecord(null);
+    setQuoteBusy(false);
+    setQuoteError(null);
+    setQuoteDenial(null);
+    setQuoteCartMismatch(false);
     setState("loading");
     setErrorMessage(undefined);
     setLoadDenial(null);
     setPaymentConfig({ kind: "loading" });
     const [cartResult, creditResult, configResult] = await Promise.all([getCart(token), getStoreCredit(token), loadPaymentClientConfig(token)]);
-    if (!stillCurrent(token)) return;
+    if (!stillCurrent(token) || generation !== loadGeneration.current) return;
+    setLoadedGeneration(sessionGeneration);
     // Store credit is optional context: when its endpoint is not available the
     // checkout still works, with no credit input shown.
     if (creditResult.kind === "ok") setStoreCredit(creditResult.data.storeCredit);
@@ -266,7 +302,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     }
     setErrorMessage(cartResult.message);
     setState("error");
-  }, [memberToken, stillCurrent]);
+  }, [memberToken, sessionGeneration, stillCurrent]);
 
   useEffect(() => {
     void load();
@@ -325,44 +361,32 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   const allAgreed = requiredAgreements.every((key) => accepted[key]);
 
   const spendableCents = storeCredit?.spendableCents ?? 0;
-  /**
-   * The credit this order actually applies, as the SERVER computed it.
-   *
-   * Both doors charge from `cart.storeCreditAppliedCents`, which the cart sets
-   * to the whole spendable balance up to the subtotal; neither reads a
-   * requested amount when computing money. The page used to send the figure a
-   * buyer typed and print "Applying $X" for an amount that was never applied,
-   * and the request's own payment-method gate then disagreed with the charge.
-   * Sending the cart's figure makes the gate, the display and the charge one
-   * number.
-   */
-  const creditCents = cart?.storeCreditAppliedCents ?? 0;
-
-  // The door for THIS request. A fully credit-covered order has no provider
-  // effect and stays on the ordering door; the server re-checks all of it.
-  const shippingForRequestCents = quote?.amountCents ?? cart?.shippingCents ?? 0;
-  // The server charges subtotal + shipping - THE CART'S applied credit. The
-  // amount typed into the credit box is advisory: the durable door does not
-  // read it (durable-checkout-submission.ts computes from
-  // cart.storeCreditAppliedCents). Naming the typed figure here would take
-  // consent for one amount and charge another.
-  const appliedCreditCents = cart?.storeCreditAppliedCents ?? 0;
-  const estimatedChargeCents = cart ? Math.max(0, cart.subtotalCents + shippingForRequestCents - appliedCreditCents) : 0;
-  const cardDoor = paymentConfig.kind === "ok" && estimatedChargeCents > 0;
-  // On the card door the buyer consents to a specific amount, so the shipping
-  // figure in that amount must be a quote for the service being ordered, not
-  // the cart's standing estimate. When the quote door itself is unavailable the
-  // server prices the order and answers its own denial: blocking here would
-  // leave the buyer with a disabled button and no way to complete anything.
-  // The gate exists so the buyer sees the exact amount before paying. When the
-  // quote door itself cannot answer (unpublished, or a refusal the buyer cannot
-  // fix here), holding the button hostage would leave them with an impossible
-  // instruction; the server prices the order and answers its own denial.
-  const quoteRequired = cardDoor && quote === null && !quoteUnavailable && quoteDenial === null;
   // While a request is frozen the button resends it byte for byte, so every
   // input that would change it is withheld. Otherwise the page would show
   // figures computed from edits the retry will not carry.
   const frozen = durable.kind === "frozen";
+  // Render-bound identity: no effect delay can expose an old account/cart or
+  // address quote, and A -> B -> A cannot revive an earlier asynchronous answer.
+  const binding = JSON.stringify([sessionGeneration, destination, service, cart]);
+  const quoteBinding = useRef(binding);
+  if (quoteBinding.current !== binding) {
+    quoteBinding.current = binding;
+    quoteGeneration.current += 1;
+  }
+  const snapshot = quoteRecord?.binding === binding && cart !== null
+    && isCheckoutQuoteSnapshot(quoteRecord.snapshot, service)
+    && matchesDisplayedCart(quoteRecord.snapshot, cart) ? quoteRecord.snapshot : null;
+  // A quote does not activate card checkout. The assisted door retains its cart
+  // estimate and must not claim that a customer has consented to a card charge.
+  const quotedConsent = frozen ? durable.request.checkoutConsent ?? null : snapshot?.checkoutConsent ?? null;
+  const cardDoor = paymentConfig.kind === "ok" && (quotedConsent?.totalCents ?? cart?.estimatedTotalCents ?? 0) > 0;
+  const consent = cardDoor ? quotedConsent : null;
+  const quote = snapshot?.quote ?? (frozen && quoteRecord?.binding === binding ? quoteRecord.snapshot.quote : null);
+  const creditCents = consent?.appliedCents ?? cart?.storeCreditAppliedCents ?? 0;
+  // The cart estimate selects the established assisted/card door only. It is
+  // never presented or submitted as consent for a new card charge.
+  const estimatedChargeCents = consent?.totalCents ?? cart?.estimatedTotalCents ?? 0;
+  const quoteRequired = cardDoor && snapshot === null;
   const activeConfig = paymentConfig.kind === "ok" ? paymentConfig.config : null;
 
   const authenticate = useMemo<PaymentAuthenticator>(() => {
@@ -372,40 +396,53 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     return async () => "authenticated";
   }, [authenticator, activeConfig]);
 
-  // A quote is only true for the destination and service it was asked for.
-  // Keeping a stale one made the page charge (or decide the door) on a figure
-  // the server would not compute.
-  const quoteBinding = useRef<string>("");
   useEffect(() => {
-    const binding = JSON.stringify([destination, service]);
-    if (quoteBinding.current === binding) return;
-    quoteBinding.current = binding;
-    setQuote(null);
-    // The verdict that shipping could not be priced belongs to the destination
-    // and service it was observed for, exactly like the quote itself.
-    setQuoteUnavailable(false);
+    setQuoteRecord(null);
+    setQuoteBusy(false);
     setQuoteDenial(null);
-  }, [destination, service]);
+    setQuoteError(null);
+    setQuoteCartMismatch(false);
+  }, [binding]);
+
+  useEffect(() => {
+    if (frozen || quoteRecord?.binding !== binding) return;
+    const remaining = Date.parse(quoteRecord.snapshot.expiresAt) - Date.now();
+    const timer = window.setTimeout(() => {
+      setQuoteRecord(null);
+      setQuoteError("This checkout quote expired. Get a fresh quote before paying.");
+      quoteGeneration.current += 1;
+    }, Math.min(Math.max(remaining, 0), 2_147_483_647));
+    return () => window.clearTimeout(timer);
+  }, [binding, frozen, quoteRecord]);
 
   const requestQuote = async () => {
     const token = memberToken;
-    // A quote answers for the destination and service it was ASKED for. Binding
-    // the answer the same way the token binds it to the account stops a late
-    // reply being installed as the quote for an address it never priced.
-    const binding = quoteBinding.current;
+    if (!stillCurrent(token) || !addressComplete || frozen || !cart) return;
+    const requestedBinding = quoteBinding.current;
+    const generation = ++quoteGeneration.current;
     setQuoteBusy(true);
     setQuoteDenial(null);
     setQuoteError(null);
-    setQuoteUnavailable(false);
-    setQuote(null);
-    const result = await quoteShipping(token, { destination, service });
-    // The flag belongs to the page, not to the answer: clearing it after the
-    // fence left the quote button disabled and reading "Getting quote..."
-    // forever as soon as the buyer edited the address mid-request.
+    setQuoteCartMismatch(false);
+    setQuoteRecord(null);
+    let result: Awaited<ReturnType<typeof quoteShipping>>;
+    try { result = await quoteShipping(token, { destination, service }); }
+    catch { result = { kind: "unavailable" }; }
+    if (!stillCurrent(token) || quoteBinding.current !== requestedBinding || quoteGeneration.current !== generation) return;
     setQuoteBusy(false);
-    if (!stillCurrent(token) || quoteBinding.current !== binding) return;
     if (result.kind === "ok") {
-      setQuote(result.data.quote);
+      // Re-check here as well as at the transport boundary: time can pass while
+      // a promise is suspended, and tests/alternate adapters are not authority.
+      if (!isCheckoutQuoteSnapshot(result.data, service)) {
+        setQuoteError("A complete, current checkout quote is unavailable. Please request a fresh quote.");
+        return;
+      }
+      if (!matchesDisplayedCart(result.data, cart)) {
+        setQuoteCartMismatch(true);
+        setQuoteError("Your cart prices changed. Refresh the cart, then get a new quote before paying.");
+        return;
+      }
+      setQuoteRecord({ binding: requestedBinding, snapshot: result.data });
       return;
     }
     if (result.kind === "denied") {
@@ -417,8 +454,8 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       return;
     }
     if (result.kind === "unavailable") {
-      setQuoteUnavailable(true);
-      setQuoteError("Shipping quotes are not available yet. The order can still be reviewed with the standard figure.");
+      setQuoteError(cardDoor ? "A complete checkout quote is unavailable. Nothing was submitted; request a fresh quote before paying."
+        : "Shipping quotes are not available yet. The order can still be reviewed with the standard figure.");
       return;
     }
     setQuoteError(result.kind === "error" ? result.message : "The quote did not come back. Please try again.");
@@ -431,10 +468,9 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
     acceptedAgreementKeys: requiredAgreements.filter((key) => accepted[key]),
     researchAttestation: attestation,
     idempotencyKey,
-    // Only when a card is about to be charged, and only when the exact figure
-    // is known: the server refuses rather than charging an amount this page
-    // never showed. Nothing else about the request changes.
-    ...(cardDoor && quote !== null ? { expectedTotalCents: estimatedChargeCents } : {}),
+    // The server snapshot is the buyer's expected intent, not a browser price.
+    // Assisted requests do not manufacture card consent.
+    ...(cardDoor && snapshot !== null ? { checkoutConsent: { ...snapshot.checkoutConsent }, expectedTotalCents: snapshot.checkoutConsent.totalCents } : {}),
   });
 
   // ------------------------- the ordering door ------------------------------
@@ -565,6 +601,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   };
 
   const submit = async () => {
+    if (!stillCurrent(memberToken) || loadedGeneration !== sessionGeneration || submitBusy || collectionInFlight.current === sessionGeneration) return;
     setValidation(null);
     setSubmitDenial(null);
     setSubmitUnavailable(false);
@@ -582,6 +619,11 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       setValidation("Accept the required agreements and the research attestation before placing the order.");
       return;
     }
+    if (cardDoor && (snapshot === null || !isCheckoutQuoteSnapshot(snapshot, service))) {
+      setQuoteRecord(null);
+      setValidation("Get a complete, current checkout quote and review its total and store credit before paying.");
+      return;
+    }
     const request = baseRequest();
     if (!cardDoor) {
       await submitLegacy(request);
@@ -593,9 +635,22 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
       return;
     }
     const token = memberToken;
+    const requestedBinding = quoteBinding.current;
+    const generation = quoteGeneration.current;
+    collectionInFlight.current = sessionGeneration;
     setSubmitBusy(true);
-    const collected = await collect();
+    let collected: Awaited<ReturnType<CollectPaymentMethod>>;
+    try { collected = await collect(); }
+    catch { collected = { ok: false, message: "The secure card field could not finish. Please try again." }; }
+    finally { if (collectionInFlight.current === sessionGeneration) collectionInFlight.current = null; }
     if (!stillCurrent(token)) return;
+    if (quoteBinding.current !== requestedBinding || quoteGeneration.current !== generation
+      || !isCheckoutQuoteSnapshot(snapshot, service)) {
+      setSubmitBusy(false);
+      setQuoteRecord(null);
+      setValidation("Checkout details or the quote changed while the card field was working. Get a new quote and review it before paying.");
+      return;
+    }
     if (!collected.ok) {
       setSubmitBusy(false);
       setValidation(collected.message);
@@ -659,6 +714,14 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
   };
 
   // ------------------------------ render -----------------------------------
+
+  // Hide all previous-account output synchronously, including a frozen intent
+  // or paid result, before effects clear state and load the current principal.
+  if (!memberToken || loadedGeneration !== sessionGeneration) {
+    return <ResearchMemberShell title="Checkout">
+      <ResearchRouteBoundary state={memberToken ? "loading" : "unauthorized"}>{null}</ResearchRouteBoundary>
+    </ResearchMemberShell>;
+  }
 
   if (phase.kind === "paid") {
     return (
@@ -1081,6 +1144,11 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     {quoteError}
                   </p>
                 )}
+                {quoteCartMismatch && (
+                  <button type="button" className="btn btn-secondary" onClick={() => void load()} disabled={submitBusy || frozen} data-testid="co-refresh-cart">
+                    Refresh cart
+                  </button>
+                )}
               </div>
             </section>
 
@@ -1102,7 +1170,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     would print an "applying" amount that is never applied. */}
                 {spendableCents > 0 ? (
                   <p className="body-s text-ink-2 mt-2" data-testid="co-credit-applied">
-                    Applied to this order: <span className="tabular">{money(creditCents)}</span>. Your available credit is
+                    {cardDoor && !consent ? "Get a current quote to see the credit applied to this order." : <>Applied to this order: <span className="tabular">{money(creditCents)}</span>.</>} Your available credit is
                     used automatically; credit still pending review cannot be spent yet.
                   </p>
                 ) : (
@@ -1198,10 +1266,10 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   <dt className="body-s text-ink-2">Shipping (once per order)</dt>
                   <dd className="body-s tabular">{cardDoor ? (quote ? money(quote.amountCents) : PRICE_PENDING_COPY) : money(cart.shippingCents)}</dd>
                 </div>
-                {cart.storeCreditAppliedCents > 0 && (
+                {creditCents > 0 && (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="body-s text-ink-2">Store credit applied</dt>
-                    <dd className="body-s tabular">-{money(cart.storeCreditAppliedCents)}</dd>
+                    <dd className="body-s tabular">{cardDoor && !consent ? PRICE_PENDING_COPY : `-${money(creditCents)}`}</dd>
                   </div>
                 )}
                 {/* On the card door the figure below is the amount the card is
@@ -1212,7 +1280,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   <dt className="body-m font-700">{frozen ? "Amount already submitted" : cardDoor ? "Charged to your card" : "Estimated total"}</dt>
                   <dd className="body-m font-700 tabular" data-testid="co-total">
                     {frozen
-                      ? "Awaiting the result"
+                      ? consent ? money(consent.totalCents) : "Awaiting the result"
                       : cardDoor
                         ? quote
                           ? money(estimatedChargeCents)
@@ -1221,6 +1289,12 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                   </dd>
                 </div>
               </dl>
+              {consent && (
+                <p className="body-s text-ink-2 mt-3" data-testid="co-consent-summary">
+                  {frozen ? "Submitted intent" : "By paying, you approve"}: {money(consent.totalCents)} to your card and {money(consent.appliedCents)} in store credit.
+                  {" "}Policy: {consent.policyVersion}. Credit applies to items, not shipping.
+                </p>
+              )}
               {cart.shipmentGroups.length > 1 && (
                 <p className="body-s text-ink-mute mt-3">
                   This order ships as {cart.shipmentGroups.length} shipments; shipping is charged once for the whole

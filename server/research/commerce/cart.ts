@@ -28,6 +28,7 @@ import {
   spendableStoreCreditCents,
   type StoreCreditEntry,
 } from "@shared/research/distribution";
+import { CURRENT_CHECKOUT_CREDIT_POLICY, evaluateCreditQuote } from "@shared/research/checkout-credit-policy";
 import type {
   AddCartLineRequest,
   CartDto,
@@ -301,9 +302,14 @@ function buildCart(memberId: string, stored: StoredCart, deps: CartServiceDeps, 
     throw new Error("Cart credit balance identity or amount is invalid.");
   }
   const spendableCents = balance?.spendableCents ?? spendableStoreCreditCents(memberEntries);
-  const storeCreditAppliedCents = Math.max(0, Math.min(spendableCents, subtotalCents));
-
-  const estimatedTotalCents = Math.max(0, subtotalCents + shippingCents - storeCreditAppliedCents);
+  // Negative ledger balances mean no spendable credit, never a surcharge.
+  if (!Number.isSafeInteger(spendableCents)) throw new Error("Cart credit balance amount is invalid.");
+  const creditQuote = evaluateCreditQuote(CURRENT_CHECKOUT_CREDIT_POLICY, {
+    subtotalCents, shippingCents, spendableCents: Math.max(0, spendableCents),
+  });
+  if (!creditQuote.ok) throw new Error("Cart credit quote amounts are invalid.");
+  const storeCreditAppliedCents = creditQuote.appliedCents;
+  const estimatedTotalCents = creditQuote.payableCents;
 
   const checkoutReady =
     evaluated.length > 0 &&

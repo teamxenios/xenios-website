@@ -9,7 +9,7 @@ import { createDurableCheckoutExecutor } from "./durable-checkout-executor";
 import { createDurableCheckoutSubmission, quoteFingerprint, registerDurableCheckoutApi, DURABLE_CHECKOUT_PATH } from "./durable-checkout-submission";
 import { createProviderVerifiedPaymentPort } from "./durable-payment-port";
 import type { OrderRecord } from "./orders";
-import { CheckoutCreditReservationRefused, createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
+import { CheckoutCreditReservationRefused, createInMemoryCheckoutExecutionStore, requestBodySha256 } from "./persistence/checkout-executions-store";
 import { createInMemoryOrderStore } from "./persistence/orders-store";
 import { stripeModel } from "./stripe-model.test-helper";
 
@@ -37,6 +37,7 @@ const request = (overrides: Partial<CheckoutRequest> = {}): CheckoutRequest => (
   acceptedAgreementKeys: ["research-use"],
   researchAttestation: true,
   idempotencyKey: "req_durable_0001",
+  checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 33_999, appliedCents: 0 },
   paymentMethodReference: "pm_fixture_card",
   ...overrides,
 });
@@ -62,7 +63,7 @@ function reservationSeam() {
   return { seam, events, setRefuse: (value: boolean) => { refuse = value; } };
 }
 
-function composition(options: { requiresAction?: boolean; denials?: CheckoutRequest["acceptedAgreementKeys"]; fraud?: boolean; storeCredit?: number } = {}) {
+function composition(options: { requiresAction?: boolean; denials?: CheckoutRequest["acceptedAgreementKeys"]; fraud?: boolean; storeCredit?: number; cart?: CartDto } = {}) {
   const model = stripeModel({ requiresAction: options.requiresAction ?? false });
   const orders = createInMemoryOrderStore();
   const clock = { now: NOW };
@@ -75,7 +76,7 @@ function composition(options: { requiresAction?: boolean; denials?: CheckoutRequ
   const submission = createDurableCheckoutSubmission({
     evaluate: async () => ({
       denials: (options.denials ?? []) as never,
-      cart: options.storeCredit ? { ...cart, storeCreditAppliedCents: options.storeCredit, estimatedTotalCents: 33_999 - options.storeCredit } : cart,
+      cart: options.cart ?? (options.storeCredit ? { ...cart, storeCreditAppliedCents: options.storeCredit, estimatedTotalCents: 33_999 - options.storeCredit } : cart),
       quote,
     }),
     orders,
@@ -150,7 +151,7 @@ describe("durable checkout submission", () => {
     "compensates only a confirmed rejected credit intent without contacting the provider: %s", async reason => {
       const c = composition({ storeCredit: 400 });
       c.executions.create = async () => { throw new CheckoutCreditReservationRefused(reason); };
-      const result = await c.submission.submit(MEMBER, request(), NOW);
+      const result = await c.submission.submit(MEMBER, request({ checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 33_599, appliedCents: 400 } }), NOW);
       expect(result).toMatchObject({ ok: false, code: reason === "credit_reservation_insufficient" ? "cart_revalidation_failed" : "capability_disabled" });
       expect(c.executions.snapshot()).toEqual([]);
       expect(c.model.requests).toEqual([]);
@@ -162,7 +163,7 @@ describe("durable checkout submission", () => {
     const c = composition({ storeCredit: 400 });
     c.executions.create = async () => { throw new CheckoutCreditReservationRefused("credit_reservation_insufficient"); };
     c.executions.findByOrder = async () => { throw new Error("order_intent_lookup_unavailable"); };
-    await expect(c.submission.submit(MEMBER, request(), NOW)).rejects.toThrow("order_intent_lookup_unavailable");
+    await expect(c.submission.submit(MEMBER, request({ checkoutConsent: { policyVersion: "all-available-items-v1", totalCents: 33_599, appliedCents: 400 } }), NOW)).rejects.toThrow("order_intent_lookup_unavailable");
     expect(c.holds.events).toEqual(["reserve:res-1+res-2"]);
     expect(c.model.requests).toEqual([]);
     expect((await c.orders.listByMember(MEMBER))[0].state).toBe("checkout_pending");
@@ -215,6 +216,60 @@ describe("durable checkout submission", () => {
     expect(c.model.creates()).toHaveLength(2);
   });
 
+  it.each([undefined, null, {}, [], true, "consent", 33999,
+    { totalCents: 33_999, appliedCents: 0 },
+    { policyVersion: "all-available-items-v1", totalCents: 33_999 },
+    { policyVersion: "old-policy", totalCents: 33_999, appliedCents: 0 },
+    { policyVersion: "all-available-items-v1", totalCents: 33_998, appliedCents: 0 },
+    { policyVersion: "all-available-items-v1", totalCents: 33_999, appliedCents: 1 },
+    ...["0", null, -1, 0.5, Number.MAX_SAFE_INTEGER + 1].map(appliedCents => ({ policyVersion: "all-available-items-v1", totalCents: 33_999, appliedCents })),
+  ])("requires complete current consent for every NEW intent: %j", async checkoutConsent => {
+    const c = composition();
+    const result = await c.submission.submit(MEMBER, request({ checkoutConsent: checkoutConsent as never, expectedTotalCents: 33_999 }), NOW);
+    expect(result).toMatchObject({ ok: false, code: "cart_revalidation_failed" });
+    expect(await c.orders.listByMember(MEMBER)).toEqual([]);
+    expect(c.executions.snapshot()).toEqual([]);
+    expect(c.model.requests).toEqual([]);
+    expect(c.holds.events).toEqual([]);
+    expect(c.committed).toEqual([]);
+  });
+
+  it("refuses extra credit consumption even when cash payable stays unchanged", async () => {
+    const c = composition({ cart: { ...cart, subtotalCents: 34_999, storeCreditAppliedCents: 2_000,
+      lines: [cart.lines[0], { ...cart.lines[1], unitPriceCents: 14_999, lineTotalCents: 14_999 }],
+    } });
+    expect(await c.submission.submit(MEMBER, request(), NOW)).toMatchObject({ ok: false, code: "cart_revalidation_failed" });
+    expect(c.holds.events).toEqual([]);
+    expect(c.model.requests).toEqual([]);
+    expect(c.executions.snapshot()).toEqual([]);
+    expect(await c.orders.listByMember(MEMBER)).toEqual([]);
+  });
+
+  it.each([null, "0", -1, 1.5, 400])("refuses a contradictory legacy requested-credit field: %j", async applyStoreCreditCents => {
+    const c = composition();
+    expect(await c.submission.submit(MEMBER, request({ applyStoreCreditCents: applyStoreCreditCents as never }), NOW))
+      .toMatchObject({ ok: false, code: "cart_revalidation_failed" });
+    expect(c.holds.events).toEqual([]);
+    expect(c.model.requests).toEqual([]);
+  });
+
+  it("continues an exact historical pre-consent request before fresh gates, never rewriting its body", async () => {
+    const source = composition();
+    await source.submission.submit(MEMBER, request(), NOW);
+    const record = source.executions.snapshot()[0];
+    const historical = request({ checkoutConsent: undefined });
+    const c = composition({ denials: ["cart_revalidation_failed"] });
+    await c.orders.save((await source.orders.get(record.orderId))!);
+    // Explicit historical fixture; not a new-intent qualification shortcut.
+    await c.executions.create({ ...record, requestBodySha256: requestBodySha256(historical), priceVersion: null });
+    expect(await c.submission.submit(MEMBER, historical, NOW)).toMatchObject({ ok: true, state: "completed", idempotent: true, orderId: record.orderId });
+    expect(await c.submission.submit(MEMBER, request(), NOW)).toMatchObject({ ok: false, code: "idempotency_conflict" });
+    expect(c.holds.events).toEqual([]);
+    expect(c.model.requests).toEqual([]);
+    expect(c.executions.snapshot()).toHaveLength(1);
+    expect(await c.orders.listByMember(MEMBER)).toHaveLength(1);
+  });
+
   it("refuses to charge an amount the buyer did not approve", async () => {
     const c = composition();
     // The page approved a figure that this fresh revalidation does not price.
@@ -224,7 +279,7 @@ describe("durable checkout submission", () => {
     expect(c.executions.snapshot()).toEqual([]);
     expect(c.model.requests).toHaveLength(0);
     expect(c.holds.events).toEqual([]);
-    // The approved figure goes through, and an absent figure behaves as before.
+    // Complete consent goes through; the legacy scalar is not needed when the tuple is present.
     expect(await c.submission.submit(MEMBER, request({ expectedTotalCents: 33_999 }), NOW)).toMatchObject({ ok: true, state: "completed" });
     expect(await c.submission.submit(MEMBER, request({ idempotencyKey: "req_durable_0002" }), NOW)).toMatchObject({ ok: true, state: "completed" });
   });
@@ -341,6 +396,7 @@ describe("durable checkout submission", () => {
     expect(quoteFingerprint({ ...cart, lines: [{ ...cart.lines[0]!, unitPriceCents: 9_999 }, cart.lines[1]!] }, quote, 0)).not.toBe(a);
     expect(quoteFingerprint(cart, { ...quote, amountCents: 1_500 }, 0)).not.toBe(a);
     expect(quoteFingerprint(cart, quote, 500)).not.toBe(a);
+    expect(quoteFingerprint(cart, quote, 0, "next-policy")).not.toBe(a);
   });
 });
 

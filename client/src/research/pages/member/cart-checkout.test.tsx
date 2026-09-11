@@ -21,7 +21,8 @@ import { __resetCapabilitiesCache } from "../../lib/capabilities";
 import Cart from "./Cart";
 import Checkout from "./Checkout";
 import Orders from "./Orders";
-import type { CartDto, StoreCreditDto } from "@shared/research/commerce-api";
+import type { CartDto, CheckoutQuoteSnapshot, StoreCreditDto } from "@shared/research/commerce-api";
+import { CURRENT_CHECKOUT_CREDIT_POLICY } from "@shared/research/checkout-credit-policy";
 
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
@@ -193,7 +194,7 @@ const readyCart: CartDto = {
   requiredAgreements: ["research_terms_v1"],
 };
 
-const storeCredit: StoreCreditDto = { spendableCents: 2500, pendingCents: 500, entries: [] };
+const storeCredit: StoreCreditDto = { spendableCents: 0, pendingCents: 500, entries: [] };
 
 // ---------------------------------------------------------------------------
 // Cart
@@ -295,10 +296,13 @@ describe("Cart page", () => {
 // Checkout
 // ---------------------------------------------------------------------------
 
-async function renderCheckoutWithSubmit(checkout: { status: number; body: unknown }) {
+async function renderCheckoutWithSubmit(
+  checkout: { status: number; body: unknown },
+  fixture: { cart?: CartDto; storeCredit?: StoreCreditDto } = {},
+) {
   const calls = stubFetch([
-    { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: readyCart } },
-    { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit } },
+    { method: "GET", path: "/api/research/cart", status: 200, body: { ok: true, cart: fixture.cart ?? readyCart } },
+    { method: "GET", path: "/api/research/store-credit", status: 200, body: { ok: true, storeCredit: fixture.storeCredit ?? storeCredit } },
     { method: "POST", path: "/api/research/checkout", status: checkout.status, body: checkout.body },
   ]);
   const view = await renderPage(<Checkout />);
@@ -479,12 +483,16 @@ describe("Checkout page", () => {
         body: {
           ok: true,
           quote: {
+            kind: "live_carrier_quote",
             service: "expedited_2day",
             amountCents: 2450,
             estimatedDeliveryRange: { earliestDays: 2, latestDays: 3 },
             disclosure: "Quoted for this address and service.",
           },
-        },
+          subtotalCents: readyCart.subtotalCents,
+          checkoutConsent: { policyVersion: CURRENT_CHECKOUT_CREDIT_POLICY.version, totalCents: 16250, appliedCents: 0 },
+          expiresAt: new Date(Date.now() + 300_000).toISOString(),
+        } satisfies CheckoutQuoteSnapshot & { ok: true },
       },
     ]);
     const view = await renderPage(<Checkout />);
@@ -551,10 +559,18 @@ describe("Checkout page", () => {
     // Both doors charge from cart.storeCreditAppliedCents and neither reads a
     // requested amount, so an input here would offer a choice that does not
     // exist and print an "applying" figure that is never applied.
-    const { view } = await renderCheckoutWithSubmit({ status: 403, body: { ok: false, code: "commerce_disabled" } });
+    // A balance the cart has actually applied, consistent under the current
+    // policy: all available credit, capped at the item subtotal.
+    const creditCart: CartDto = { ...readyCart, storeCreditAppliedCents: 2500, estimatedTotalCents: readyCart.estimatedTotalCents - 2500 };
+    const { view } = await renderCheckoutWithSubmit(
+      { status: 403, body: { ok: false, code: "commerce_disabled" } },
+      { cart: creditCart, storeCredit: { ...storeCredit, spendableCents: 2500 } },
+    );
     expect(view.querySelector('[data-testid="co-credit"]')).toBeNull();
     const applied = byTestId(view, "co-credit-applied");
     expect(applied.textContent).toContain("Applied to this order");
+    // The figure stated is the cart's own applied credit, not a typed amount.
+    expect(applied.textContent).toContain("$25.00");
     expect(applied.textContent).toContain("used automatically");
   });
 

@@ -1,5 +1,7 @@
 import { composeDurableCheckout, resolveDurableCheckoutStores, unavailableDurableCheckout, type DurableCheckoutComposition } from "./durable-checkout-composition";
 import { randomUUID } from "node:crypto";
+import { CURRENT_CHECKOUT_CREDIT_POLICY, creditConsentFor, evaluateCreditQuote } from "@shared/research/checkout-credit-policy";
+import { orderShippingTotalCents } from "@shared/research/commerce";
 import type {
   CommerceDependencies,
   CreateSubscriptionWireInput,
@@ -13,6 +15,7 @@ import type {
   PartnerDashboardDto,
   PartnerLinkDto,
   ShippingQuoteRequest,
+  ShippingQuoteResponse,
 } from "@shared/research/commerce-api";
 import type { InventoryLot } from "../inventory/lots";
 import { products as legacyProducts } from "../products-data";
@@ -1265,11 +1268,11 @@ const webhookHandler = createWebhookHandler({
 
   // ----- the member shipping quote -------------------------------------------
 
-  async function shippingQuoteFor(memberId: string, req: ShippingQuoteRequest, asOf: Date): Promise<unknown> {
+  async function shippingQuoteFor(memberId: string, req: ShippingQuoteRequest, asOf: Date): Promise<ShippingQuoteResponse> {
     // The quote is for THIS member's cart: temperature profile and existence
     // both come from what they are actually buying.
-    const stored = await cartStore.load(memberId);
-    const lines = stored?.lines ?? [];
+    const cart = await (await cartServiceFor(memberId, asOf)).revalidate(memberId, asOf);
+    const lines = cart.lines;
     if (lines.length === 0) {
       return {
         ok: false as const,
@@ -1277,6 +1280,8 @@ const webhookHandler = createWebhookHandler({
         message: "A shipping quote is computed for the cart, and the cart is empty.",
       };
     }
+
+    if (!cart.checkoutReady) return { ok: false, code: "cart_revalidation_failed" };
 
     // Address validation through the shipping provider. A structural rejection
     // is the member's problem (address_invalid); a provider that cannot
@@ -1312,9 +1317,19 @@ const webhookHandler = createWebhookHandler({
         message: quoted.message,
       };
     }
+    const creditQuote = evaluateCreditQuote(CURRENT_CHECKOUT_CREDIT_POLICY, {
+      subtotalCents: cart.subtotalCents,
+      shippingCents: orderShippingTotalCents([quoted.value]),
+      spendableCents: cart.storeCreditAppliedCents,
+    });
+    if (!creditQuote.ok || creditQuote.appliedCents !== cart.storeCreditAppliedCents) {
+      return { ok: false, code: "cart_revalidation_failed" };
+    }
     return {
       ok: true as const,
       quote: quoted.value,
+      subtotalCents: cart.subtotalCents,
+      checkoutConsent: creditConsentFor(creditQuote),
       expiresAt: new Date(asOf.getTime() + SHIPPING_QUOTE_TTL_MINUTES * 60 * 1000).toISOString(),
     };
   }

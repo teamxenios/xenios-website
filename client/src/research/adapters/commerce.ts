@@ -11,6 +11,7 @@ import { apiDelete, apiGet, apiPatch, apiPost, type ApiResult } from "../lib/api
 import type {
   AddCartLineRequest,
   CartDto,
+  CheckoutQuoteSnapshot,
   CheckoutRequest,
   ClaimDto,
   CreateClaimRequest,
@@ -25,6 +26,7 @@ import type {
   SubscriptionDto,
 } from "@shared/research/commerce-api";
 import type { ShippingQuote, SubscriptionFrequencyDays } from "@shared/research/commerce";
+import { CURRENT_CHECKOUT_CREDIT_POLICY } from "@shared/research/checkout-credit-policy";
 
 export type MemberToken = string | null;
 
@@ -93,8 +95,59 @@ export function removeCartLine(token: MemberToken, sku: string): Promise<ApiResu
 
 // --------------------------- shipping, checkout -----------------------------
 
-export function quoteShipping(token: MemberToken, req: ShippingQuoteRequest): Promise<ApiResult<{ quote: ShippingQuote }>> {
-  return apiPost(commercePaths.shippingQuote, req, token);
+const shippingServices: readonly ShippingQuote["service"][] = ["standard", "expedited_2day", "next_day", "same_day", "temperature_controlled"];
+const quoteObject = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === "object" && !Array.isArray(value);
+const quoteOwn = (value: Record<string, unknown>, fields: readonly string[]) => fields.every(field => Object.hasOwn(value, field));
+const quoteCents = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+
+/** Recheck after asynchronous work: a once-valid displayed quote can expire. */
+export function isCheckoutQuoteSnapshot(
+  value: unknown,
+  service?: ShippingQuote["service"],
+  now: number = Date.now(),
+): value is CheckoutQuoteSnapshot {
+  if (!Number.isFinite(now) || !Number.isFinite(new Date(now).getTime())
+    || !quoteObject(value) || !quoteOwn(value, ["quote", "subtotalCents", "checkoutConsent", "expiresAt"])
+    || (Object.hasOwn(value, "ok") && value.ok !== true)) return false;
+  const quote = value.quote;
+  const consent = value.checkoutConsent;
+  if (!quoteObject(quote) || !quoteOwn(quote, ["kind", "service", "amountCents", "estimatedDeliveryRange", "disclosure"])
+    || (quote.kind !== "configured_fallback" && quote.kind !== "live_carrier_quote")
+    || !shippingServices.includes(quote.service as ShippingQuote["service"])
+    || (service !== undefined && quote.service !== service)
+    || !quoteCents(quote.amountCents) || typeof quote.disclosure !== "string" || quote.disclosure.trim().length === 0
+    || /[\u0000-\u001f\u007f]/.test(quote.disclosure)
+    || !quoteObject(consent) || !quoteOwn(consent, ["policyVersion", "totalCents", "appliedCents"])
+    || consent.policyVersion !== CURRENT_CHECKOUT_CREDIT_POLICY.version
+    || !quoteCents(value.subtotalCents) || !quoteCents(consent.totalCents) || !quoteCents(consent.appliedCents)
+    || consent.appliedCents > value.subtotalCents) return false;
+  const range = quote.estimatedDeliveryRange;
+  if (range !== null && (quote.kind === "configured_fallback" || !quoteObject(range)
+    || !quoteOwn(range, ["earliestDays", "latestDays"])
+    || !quoteCents(range.earliestDays) || !quoteCents(range.latestDays) || range.earliestDays > range.latestDays)) return false;
+  const gross = value.subtotalCents + quote.amountCents;
+  if (!quoteCents(gross) || gross - consent.appliedCents !== consent.totalCents
+    || typeof value.expiresAt !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value.expiresAt)) return false;
+  const expiresAt = Date.parse(value.expiresAt);
+  return Number.isFinite(expiresAt) && expiresAt > now && new Date(expiresAt).toISOString() === value.expiresAt;
+}
+
+export async function quoteShipping(token: MemberToken, req: ShippingQuoteRequest): Promise<ApiResult<CheckoutQuoteSnapshot>> {
+  const result = await apiPost<unknown>(commercePaths.shippingQuote, req, token);
+  if (result.kind !== "ok") return result;
+  if (!isCheckoutQuoteSnapshot(result.data, req.service)) return { kind: "unavailable" };
+  const { quote, subtotalCents, checkoutConsent, expiresAt } = result.data;
+  // Only the reviewed snapshot crosses the boundary; extra server fields and
+  // object aliases cannot become part of the customer's later consent payload.
+  return { kind: "ok", data: {
+    quote: { kind: quote.kind, service: quote.service, amountCents: quote.amountCents,
+      estimatedDeliveryRange: quote.estimatedDeliveryRange === null ? null : {
+        earliestDays: quote.estimatedDeliveryRange.earliestDays, latestDays: quote.estimatedDeliveryRange.latestDays,
+      }, disclosure: quote.disclosure },
+    subtotalCents,
+    checkoutConsent: { policyVersion: checkoutConsent.policyVersion, totalCents: checkoutConsent.totalCents, appliedCents: checkoutConsent.appliedCents },
+    expiresAt,
+  } };
 }
 
 export function submitCheckout(token: MemberToken, req: CheckoutRequest): Promise<ApiResult<{ order: OrderSummaryDto }>> {

@@ -14,6 +14,7 @@
 // NOT MOUNTED. The composition root wires it behind the existing readiness
 // boundary; the production provider resolver still returns Disabled.
 import type { Express, Request, Response } from "express";
+import { CURRENT_CHECKOUT_CREDIT_POLICY, evaluateCreditQuote, validateCreditConsent } from "@shared/research/checkout-credit-policy";
 import type { CartDto, CheckoutRequest, CommerceDenialCode } from "@shared/research/commerce-api";
 import { evaluateLargeOrderReview, orderShippingTotalCents, transitionOrder, type ShippingQuote } from "@shared/research/commerce";
 import type { CheckoutEvaluationResult, ReservationAuditEvent, ReservationRefusalCode, ReservationSeam } from "./checkout";
@@ -61,12 +62,14 @@ const REQUEST_KEY = /^[A-Za-z0-9_-]{8,120}$/;
 const PAYMENT_METHOD = /^pm_[A-Za-z0-9_]+$/;
 
 /** The price identity a submission binds: every priced line, the shipping quote and the credit applied. */
-export function quoteFingerprint(cart: CartDto, quote: ShippingQuote | null, storeCreditAppliedCents: number): string {
+export function quoteFingerprint(cart: CartDto, quote: ShippingQuote | null, storeCreditAppliedCents: number,
+  policyVersion: string = CURRENT_CHECKOUT_CREDIT_POLICY.version): string {
   return requestBodySha256({
     lines: cart.lines.map((line) => [line.sku, line.quantity, line.unitPriceCents, line.lineTotalCents]),
     shipping: quote ? [quote.service, quote.amountCents] : null,
     subtotalCents: cart.subtotalCents,
     storeCreditAppliedCents,
+    policyVersion,
   });
 }
 
@@ -138,8 +141,18 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       const { denials, cart, quote } = await deps.evaluate(memberId, req, asOf);
       if (denials.length > 0 || quote === null) return deny(denials.length > 0 ? denials : ["shipping_unavailable"]);
       const shippingCents = orderShippingTotalCents([quote]);
-      const orderValueCents = cart.subtotalCents + shippingCents;
-      const totalCents = Math.max(0, orderValueCents - cart.storeCreditAppliedCents);
+      const creditQuote = evaluateCreditQuote(CURRENT_CHECKOUT_CREDIT_POLICY, {
+        subtotalCents: cart.subtotalCents, shippingCents, spendableCents: cart.storeCreditAppliedCents,
+      });
+      if (!creditQuote.ok || creditQuote.appliedCents !== cart.storeCreditAppliedCents
+        || !validateCreditConsent(creditQuote, req.checkoutConsent).ok) {
+        return deny(["cart_revalidation_failed"]);
+      }
+      if (req.applyStoreCreditCents !== undefined && (
+        !Number.isSafeInteger(req.applyStoreCreditCents) || req.applyStoreCreditCents !== creditQuote.appliedCents
+      )) return deny(["cart_revalidation_failed"]);
+      const orderValueCents = creditQuote.grossCents;
+      const totalCents = creditQuote.payableCents;
       // The buyer approved a specific amount. If this fresh revalidation prices
       // the order differently, the approval does not cover it: refuse before
       // anything is reserved or charged and let them approve the new figure.

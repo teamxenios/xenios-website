@@ -18,7 +18,8 @@ import { __resetCapabilitiesCache } from "../../lib/capabilities";
 import type { PaymentMethodCollectorClient } from "../../payments/PaymentMethodCollector";
 import type { PaymentAuthenticator } from "../../payments/PaymentAuthenticationStep";
 import Checkout from "./Checkout";
-import type { CartDto, StoreCreditDto } from "@shared/research/commerce-api";
+import type { CartDto, CheckoutQuoteSnapshot, StoreCreditDto } from "@shared/research/commerce-api";
+import { CURRENT_CHECKOUT_CREDIT_POLICY } from "@shared/research/checkout-credit-policy";
 
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
@@ -65,7 +66,18 @@ const readyCart: CartDto = {
   blockingReasons: [],
   requiredAgreements: ["research_terms_v1"],
 };
-const storeCredit: StoreCreditDto = { spendableCents: 20000, pendingCents: 0, entries: [] } as unknown as StoreCreditDto;
+const storeCredit: StoreCreditDto = { spendableCents: 0, pendingCents: 0, entries: [] };
+
+function quotedCart(cart: CartDto = readyCart): CheckoutQuoteSnapshot {
+  return {
+    quote: { kind: "configured_fallback", service: "standard", amountCents: cart.shippingCents,
+      estimatedDeliveryRange: null, disclosure: "Configured fixture rate; delivery is not guaranteed." },
+    subtotalCents: cart.subtotalCents,
+    checkoutConsent: { policyVersion: CURRENT_CHECKOUT_CREDIT_POLICY.version,
+      totalCents: cart.estimatedTotalCents, appliedCents: cart.storeCreditAppliedCents },
+    expiresAt: new Date(Date.now() + 300_000).toISOString(),
+  };
+}
 
 type Recorded = { method: string; url: string; token: string | null; body: Record<string, unknown> | null };
 type Reply = { status: number; body: unknown };
@@ -81,10 +93,11 @@ function server(routes: Record<string, Answer>, options: { config?: Answer; dela
   const all: Record<string, Answer> = {
     "GET /api/research/capabilities": { status: 200, body: { ok: true, capabilities: { product_commerce: { enabled: true } } } },
     "GET /api/research/cart": { status: 200, body: { ok: true, cart: options.cart ?? readyCart } },
-    "GET /api/research/store-credit": { status: 200, body: { ok: true, storeCredit } },
+    "GET /api/research/store-credit": { status: 200, body: { ok: true,
+      storeCredit: { ...storeCredit, spendableCents: (options.cart ?? readyCart).storeCreditAppliedCents } } },
     "GET /api/research/checkout/payment-config": options.config ?? { status: 200, body: { ok: true, config: { provider: "stripe", publishableKey: "pk_test_abcdefgh12345678", mode: "test" } } },
     // The card door will not let a buyer pay before the exact amount is quoted.
-    "POST /api/research/shipping/quote": { status: 200, body: { ok: true, quote: { kind: "configured_standard", service: "standard", amountCents: 1295, estimatedDeliveryRange: null, disclosure: "fixture" } } },
+    "POST /api/research/shipping/quote": () => ({ status: 200, body: { ok: true, ...quotedCart(options.cart ?? readyCart) } }),
     ...routes,
   };
   vi.stubGlobal(
@@ -259,7 +272,9 @@ describe("checkout page over the durable card door", () => {
     expect(resumePointer()?.requestKey).toBe(key);
     expect(card.collects).toBe(1);
     expect(submitted(calls)).toHaveLength(1);
-    expect(submitted(calls)[0]!.body).toMatchObject({ paymentMethodReference: "pm_fixture_card", idempotencyKey: key, acceptedAgreementKeys: ["research_terms_v1"], researchAttestation: true });
+    expect(submitted(calls)[0]!.body).toMatchObject({ paymentMethodReference: "pm_fixture_card", idempotencyKey: key,
+      acceptedAgreementKeys: ["research_terms_v1"], researchAttestation: true, expectedTotalCents: 15095,
+      checkoutConsent: { policyVersion: CURRENT_CHECKOUT_CREDIT_POLICY.version, totalCents: 15095, appliedCents: 0 } });
     // No card data, no secret anywhere in the DOM or the request.
     expect(JSON.stringify(submitted(calls)[0]!.body)).not.toMatch(/4242|cvc/i);
     // The bank step is mounted for THIS request key; the form is gone.
@@ -320,6 +335,39 @@ describe("checkout page over the durable card door", () => {
     expect(has(view, "checkout-paid")).toBe(true);
   });
 
+  it.each([
+    ["unavailable", { status: 503, body: { ok: false, code: "shipping_unavailable" } }],
+    ["denied", { status: 400, body: { ok: false, code: "address_invalid", message: "raw fixture refusal" } }],
+  ] as const)("a %s quote never falls back to a card amount; a fresh quote is required before collection or submit", async (_label, refusal) => {
+    let quoteAttempts = 0;
+    const { calls } = server({
+      "POST /api/research/shipping/quote": () => ++quoteAttempts === 1 ? refusal : { status: 200, body: { ok: true, ...quotedCart() } },
+      "POST /api/research/checkout/durable": durableAnswer("completed"),
+    });
+    const card = cardClient();
+    const view = await render(<Checkout paymentMethodClient={card} />);
+    await fillFormAndQuote(view);
+    expect(has(view, "co-quote-result")).toBe(false);
+    expect(has(view, "co-quote-required")).toBe(true);
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(true);
+    expect(byTestId(view, "co-total").textContent).not.toContain("$150.95");
+    expect(view.textContent).not.toContain("raw fixture refusal");
+    await click(view, "co-submit");
+    expect(card.collects).toBe(0);
+    expect(submitted(calls)).toHaveLength(0);
+    expect(calls.some(call => call.method === "POST" && call.url === "/api/research/checkout")).toBe(false);
+    expect(resumePointer()).toBeNull();
+
+    await quoteShipping(view);
+    expect(quoteAttempts).toBe(2);
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(false);
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay $150.95 and place order");
+    await click(view, "co-submit");
+    expect(card.collects).toBe(1);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(submitted(calls)[0]!.body?.checkoutConsent).toEqual({ policyVersion: CURRENT_CHECKOUT_CREDIT_POLICY.version, totalCents: 15095, appliedCents: 0 });
+  });
+
   it("a cancelled checkout says nothing was charged and only an explicit new request mints a new key", async () => {
     const { calls } = server({
       "POST /api/research/checkout/durable": (call) => {
@@ -377,23 +425,42 @@ describe("checkout page over the durable card door", () => {
   });
 
   it("an order the server prices as fully credit-covered takes the ordering door and asks for no card", async () => {
-    // The client reads the SERVER's applied credit, never the advisory amount
-    // typed into the box: the durable door charges subtotal + shipping minus
-    // cart.storeCreditAppliedCents, so that is the only figure the page may use
-    // to decide the door or to name an amount.
-    const covered: CartDto = { ...readyCart, storeCreditAppliedCents: 15095, estimatedTotalCents: 0 };
+    // Credit covers items only. A genuinely zero-payable cart therefore also
+    // needs zero shipping; it cannot spend item credit on the delivery charge.
+    const covered: CartDto = { ...readyCart, shippingCents: 0, storeCreditAppliedCents: 13800, estimatedTotalCents: 0 };
     const { calls } = server(
       { "POST /api/research/checkout": { status: 200, body: { ok: true, order: { orderId: ORDER, state: "checkout_pending", placedAt: "2026-09-09T00:00:00Z", totalCents: 0, shipments: [] } } } },
       { cart: covered },
     );
-    const view = await render(<Checkout paymentMethodClient={cardClient()} />);
+    const card = cardClient();
+    const view = await render(<Checkout paymentMethodClient={card} />);
     expect(has(view, "co-payment")).toBe(false);
     expect(byTestId(view, "co-submit").textContent).toBe("Place order");
     await fillForm(view);
     await click(view, "co-submit");
     expect(submitted(calls)).toHaveLength(0);
     expect(calls.filter((c) => c.method === "POST" && c.url === "/api/research/checkout")).toHaveLength(1);
+    expect(card.collects).toBe(0);
     expect(has(view, "checkout-confirmation")).toBe(true);
+  });
+
+  it("all items covered by credit still requires consent and a card for the $12.95 shipping charge", async () => {
+    const itemsCovered: CartDto = { ...readyCart, storeCreditAppliedCents: 13800, estimatedTotalCents: 1295 };
+    const { calls } = server({ "POST /api/research/checkout/durable": durableAnswer("completed") }, { cart: itemsCovered });
+    const card = cardClient();
+    const view = await render(<Checkout paymentMethodClient={card} />);
+    expect(has(view, "co-payment")).toBe(true);
+    await fillForm(view);
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(true);
+    await quoteShipping(view);
+    expect(byTestId(view, "co-submit").textContent).toBe("Pay $12.95 and place order");
+    expect(byTestId(view, "co-total").textContent).toBe("$12.95");
+    await click(view, "co-submit");
+    expect(card.collects).toBe(1);
+    expect(submitted(calls)).toHaveLength(1);
+    expect(submitted(calls)[0]!.body).toMatchObject({ expectedTotalCents: 1295, applyStoreCreditCents: 13800,
+      checkoutConsent: { policyVersion: CURRENT_CHECKOUT_CREDIT_POLICY.version, totalCents: 1295, appliedCents: 13800 } });
+    expect(calls.some(call => call.method === "POST" && call.url === "/api/research/checkout")).toBe(false);
   });
 
   it("a server payment_disabled hands the same request to the ordering door instead of dead-ending under a live card field", async () => {
@@ -509,7 +576,9 @@ describe("checkout page over the durable card door", () => {
     // the new account sees nothing of it and is not offered a payment.
     expect(resumePointer(OTHER_SCOPE)).toBeNull();
     expect(has(view, "co-submit")).toBe(true);
-    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(false);
+    expect(byTestId<HTMLButtonElement>(view, "co-submit").disabled).toBe(true);
+    expect(has(view, "co-quote-required")).toBe(true);
+    expect(has(view, "co-quote-result")).toBe(false);
     expect(byTestId(view, "co-submit").textContent).not.toContain("Paying");
   });
 
@@ -567,12 +636,13 @@ describe("checkout page over the durable card door", () => {
     // No new-request control exists here: minting a key while the outcome is
     // unknown is how a buyer ends up with two orders.
     expect(has(view, "co-new-request")).toBe(false);
-    // Every input that would change the frozen request is locked, and the page
-    // does not name an amount the retry may not charge.
+    // Every input that would change the frozen request is locked. The amount
+    // shown is its frozen consent, not a newly computed cart estimate.
     expect(byTestId<HTMLInputElement>(view, "co-line1").disabled).toBe(true);
     expect(byTestId<HTMLSelectElement>(view, "co-service").disabled).toBe(true);
     expect(byTestId<HTMLButtonElement>(view, "co-quote").disabled).toBe(true);
-    expect(byTestId(view, "co-total").textContent).toBe("Awaiting the result");
+    expect(byTestId(view, "co-total").textContent).toBe("$150.95");
+    expect(byTestId(view, "co-consent-summary").textContent).toContain("Submitted intent");
     expect(byTestId(view, "co-submit").textContent).toBe("Retry the same request");
 
     await click(view, "co-check-request");
