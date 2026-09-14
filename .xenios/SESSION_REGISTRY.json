@@ -408,10 +408,11 @@
       "tool": "Claude Fable 5.1",
       "lane": "durable-payment-unit",
       "branch": "claude/durable-payment-port-20260909",
-      "state": "active",
+      "state": "stale",
       "startedAt": "2026-09-09T13:17:43.545Z",
       "heartbeatAt": "2026-09-09T13:17:43.545Z",
-      "note": "Provider-verified idempotent payment port + additive DurablePaymentProvider extension; new files only under server/research/commerce (durable-*), shared/research/durable-checkout-execution.ts, additive change to server/research/providers/payment.ts; no composition, route, flag or schema change"
+      "note": "Superseded 2026-09-14: its branch claude/durable-payment-port-20260909 was judged superseded by the native runtime; its integrated work lives at ce0858a. Continued as claude-health-final-finish-20260914.",
+      "staleAt": "2026-09-14T15:45:51.959Z"
     },
     {
       "id": "codex-astra-a-payment-takeover-20260909",
@@ -428,10 +429,21 @@
       "tool": "Codex",
       "lane": "sole-integration-owner",
       "branch": "codex/xenios-native-finish-20260910",
-      "state": "active",
+      "state": "stale",
       "startedAt": "2026-09-10T17:37:35.272Z",
       "heartbeatAt": "2026-09-11T01:29:29.383Z",
-      "note": "7e52cb1 locally qualified; source/SQL independently accepted; next complete new-intent credit consent"
+      "note": "Usage-exhausted 2026-09-10; last heartbeat 2026-09-11T01:29:29Z. Work preserved at ce0858a/2b9b01c. Lease transferred to claude-health-final-finish-20260914 on 2026-09-14T15:45:51.959Z under continuity OS section C (emergency recovery).",
+      "staleAt": "2026-09-14T15:45:51.959Z"
+    },
+    {
+      "id": "claude-health-final-finish-20260914",
+      "tool": "Claude Opus 5",
+      "lane": "health-final-finish",
+      "branch": "codex/xenios-native-finish-20260910",
+      "state": "active",
+      "startedAt": "2026-09-14T15:45:28.164Z",
+      "heartbeatAt": "2026-09-14T15:45:28.164Z",
+      "note": "Founder takeover 2026-09-14: recover truth, reconcile stale production records, close real gaps, drive one exact release candidate. No production mutation."
     }
   ],
   "updatedAt": "2026-09-08T16:02:50.489072Z"

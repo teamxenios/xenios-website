@@ -3,8 +3,9 @@
   "tool": "Claude Fable 5.1",
   "lane": "durable-payment-unit",
   "branch": "claude/durable-payment-port-20260909",
-  "state": "active",
+  "state": "stale",
   "startedAt": "2026-09-09T13:17:43.545Z",
   "heartbeatAt": "2026-09-09T13:17:43.545Z",
-  "note": "Provider-verified idempotent payment port + additive DurablePaymentProvider extension; new files only under server/research/commerce (durable-*), shared/research/durable-checkout-execution.ts, additive change to server/research/providers/payment.ts; no composition, route, flag or schema change"
+  "note": "Superseded 2026-09-14: its branch claude/durable-payment-port-20260909 was judged superseded by the native runtime; its integrated work lives at ce0858a. Continued as claude-health-final-finish-20260914.",
+  "staleAt": "2026-09-14T15:45:51.959Z"
 }

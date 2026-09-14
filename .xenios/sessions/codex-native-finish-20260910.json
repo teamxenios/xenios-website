@@ -3,8 +3,9 @@
   "tool": "Codex",
   "lane": "sole-integration-owner",
   "branch": "codex/xenios-native-finish-20260910",
-  "state": "active",
+  "state": "stale",
   "startedAt": "2026-09-10T17:37:35.272Z",
   "heartbeatAt": "2026-09-11T01:29:29.383Z",
-  "note": "7e52cb1 locally qualified; source/SQL independently accepted; next complete new-intent credit consent"
+  "note": "Usage-exhausted 2026-09-10; last heartbeat 2026-09-11T01:29:29Z. Work preserved at ce0858a/2b9b01c. Lease transferred to claude-health-final-finish-20260914 on 2026-09-14T15:45:51.959Z under continuity OS section C (emergency recovery).",
+  "staleAt": "2026-09-14T15:45:51.959Z"
 }

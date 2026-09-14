@@ -1797,9 +1797,50 @@
         ".xenios/sessions/codex-native-finish-20260910.json",
         ".xenios/handoffs/*NATIVE-FINISH*"
       ],
-      "state": "active",
+      "state": "transferred",
       "claimedAt": "2026-09-10T17:38:07.827Z",
-      "heartbeatAt": "2026-09-11T01:29:29.383Z"
+      "heartbeatAt": "2026-09-11T01:29:29.383Z",
+      "transferredAt": "2026-09-14T15:45:51.959Z",
+      "transferredTo": "claude-health-final-finish-20260914"
+    },
+    {
+      "id": "a6bdd9ce-cd3d-403d-b965-e0512650ae58",
+      "task": "XENIOS-NATIVE-FINISH-20260910",
+      "session": "claude-health-final-finish-20260914",
+      "paths": [
+        "server/index.ts",
+        "server/release-control-plane.test.ts",
+        "server/research/commerce/**",
+        "server/research/outbox.ts",
+        "server/research/outbox.test.ts",
+        "shared/research/checkout-credit-policy*",
+        "shared/research/commerce-api.ts",
+        "client/src/research/adapters/commerce*",
+        "client/src/research/pages/member/Checkout*",
+        "client/src/research/pages/member/checkout-durable.test.tsx",
+        "client/src/research/pages/member/cart-checkout.test.tsx",
+        "supabase/candidates/20260909150000_research_checkout_executions*",
+        "supabase/candidates/20260910120000_research_checkout_execution_recovery*",
+        "supabase/candidates/20260910201400_research_checkout_credit_reservations*",
+        ".env.example",
+        "docs/research-launch/PROVIDER_READINESS.md",
+        "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
+        "docs/native-finish/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-native-finish-20260910.json",
+        ".xenios/handoffs/*NATIVE-FINISH*",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/release-candidate/**",
+        ".xenios/handoffs/*HEALTH-FINAL-FINISH*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-14T15:45:51.959Z",
+      "heartbeatAt": "2026-09-14T15:45:51.959Z",
+      "note": "Transferred from codex-native-finish-20260910 (usage-exhausted). Local integration, reconciliation and release preparation only; no production effect."
     }
   ],
   "rules": [
