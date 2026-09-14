@@ -103,12 +103,14 @@ export function CareHomePage() {
       eyebrow="XENIOS CARE · HUMAN-GUIDED ACCESS"
       title="Start your Care request today."
       description="Submit contact and routing details for Xenios Care, then receive a human follow-up and a separate secure clinical handoff when appropriate."
-      intro="Xenios Care is accepting access requests without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available."
+      intro="Xenios Care takes access requests directly, without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available."
     >
       <section className="container-x pb-16" aria-labelledby="care-current-status">
         <aside className="card max-w-[820px]" style={{ borderLeftColor: "var(--pulse)", borderLeftWidth: 3 }}>
           <p className="mono-label text-pulse mb-3">CURRENT STATUS</p>
-          <h2 id="care-current-status" className="h2 mb-4">The Care request line is verified live.</h2>
+          {/* The status below is fetched. This heading must not assert an answer
+              the fetch may contradict a line later. */}
+          <h2 id="care-current-status" className="h2 mb-4">Current status of the Care request line</h2>
           <CareAccessAvailabilitySummary />
           <p className="body-m text-ink-2 mt-6">
             A public request is not a medical intake. Clinical information moves only through a later authorized secure handoff.

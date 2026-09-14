@@ -147,7 +147,9 @@ export default function Gateway() {
           />
           <div className="rg-hero-shade" aria-hidden="true" />
           <div className="rg-hero-content">
-            <p className="rg-kicker">Care requests open · Evidence-led Research access · Human support</p>
+            {/* Static copy on an indexed page cannot claim the request line is
+                open; /care reports the live answer. */}
+            <p className="rg-kicker">Human-guided Care · Evidence-led Research access · Human support</p>
             <h1 id="rg-hero-title">Provider-guided peptide care.<br />Evidence-led Research access.</h1>
             <div className="rg-hero-rule" aria-hidden="true" />
             <p className="rg-hero-intro">

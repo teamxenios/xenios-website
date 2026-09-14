@@ -63,7 +63,11 @@ describe("Care public contact boundary", () => {
       .send(validMessage);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ success: true, message: "We have it." });
+    expect(response.body).toEqual({
+      success: true,
+      message: "We have it.",
+      autoReplySent: true,
+    });
     expect(deps.sendMessage).toHaveBeenCalledExactlyOnceWith(validMessage);
     expect(deps.sendAutoReply).toHaveBeenCalledExactlyOnceWith(validMessage);
   });
@@ -90,6 +94,43 @@ describe("Care public contact boundary", () => {
     expect(response.status).toBe(429);
     expect(deps.sendMessage).not.toHaveBeenCalled();
     expect(deps.sendAutoReply).not.toHaveBeenCalled();
+  });
+
+  it("refuses the message rather than claiming delivery when the team alert fails", async () => {
+    const deps = dependencies({
+      sendMessage: vi.fn(async () => {
+        throw new Error("provider unavailable");
+      }),
+    });
+    const response = await request(appFor(deps))
+      .post(CARE_CONTACT_PATH)
+      .send(validMessage);
+
+    // Nothing is stored behind this form, so a failed alert means the message
+    // is gone. The sender has to be told, and given another way through.
+    expect(response.status).toBe(503);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toContain("team@xeniostechnology.com");
+    expect(deps.sendAutoReply).not.toHaveBeenCalled();
+  });
+
+  it("still accepts the message when only the courtesy reply fails, and says so", async () => {
+    const deps = dependencies({
+      sendAutoReply: vi.fn(async () => {
+        throw new Error("provider unavailable");
+      }),
+    });
+    const response = await request(appFor(deps))
+      .post(CARE_CONTACT_PATH)
+      .send(validMessage);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      success: true,
+      message: "We have it.",
+      autoReplySent: false,
+    });
+    expect(deps.sendMessage).toHaveBeenCalledExactlyOnceWith(validMessage);
   });
 
   it("rejects malformed payloads without dispatching email", async () => {

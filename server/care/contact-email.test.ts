@@ -58,4 +58,26 @@ describe("Xenios Health contact email envelopes", () => {
       "wrong-sender@example.test",
     );
   });
+
+  it("treats a provider-rejected team alert as a failure, not a delivery", async () => {
+    // The provider reports a rejected send in the result rather than by
+    // throwing, so an unchecked result would read as delivered.
+    provider.send.mockResolvedValueOnce({
+      data: null,
+      error: { name: "validation_error", message: "domain is not verified" },
+    });
+
+    await expect(sendCareContactInternalAlert(message)).rejects.toThrow(
+      /rejected/,
+    );
+  });
+
+  it("reports a rejected courtesy reply too, so the route can say it was not sent", async () => {
+    provider.send.mockResolvedValueOnce({
+      data: null,
+      error: { name: "validation_error", message: "recipient rejected" },
+    });
+
+    await expect(sendCareContactAutoReply(message)).rejects.toThrow(/rejected/);
+  });
 });
