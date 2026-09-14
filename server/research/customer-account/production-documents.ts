@@ -23,6 +23,10 @@
 
 import type { DocumentSummaryDto } from "@shared/research/customer-account/contract";
 import { getSupabaseAdmin } from "../../supabase";
+import {
+  missingDocumentStoreEnv,
+  selectDocumentBytesStore,
+} from "../documents";
 import { PLAN_DOCUMENTS_TABLE, documentAccessEnabled, type PlanDocumentRow } from "../documents";
 import type { CustomerDocumentBytes, CustomerDocumentsPort } from "./ports";
 import { CUSTOMER_ACCOUNT_PATHS } from "./routes";
@@ -78,12 +82,30 @@ export function createPlanDocumentsSource(deps: PlanDocumentsSourceDeps): Custom
 }
 
 /**
- * The production wiring: Supabase-backed rows, NO byte reader — a real
- * production DocumentBytesStore adapter does not exist yet, so every listed
- * document honestly ships downloadPath "" until one is composed here.
+ * The production wiring: Supabase-backed rows and the SAME byte reader the
+ * documents module selects, so there is one production adapter rather than two
+ * that could disagree about where a document lives.
+ *
+ * When the private bucket is not configured, `selectDocumentBytesStore` hands
+ * back the refusing store; `readBytes` then reports unavailable and every
+ * listed document ships an empty downloadPath, which is what it did before an
+ * adapter existed at all. A listing that promises a download it cannot perform
+ * is the one outcome this must not produce.
  */
 export function createSupabasePlanDocumentsSource(): CustomerDocumentsPort {
+  const bytes = selectDocumentBytesStore();
+  const configured = process.env.NODE_ENV !== "production" || missingDocumentStoreEnv().length === 0;
   return createPlanDocumentsSource({
+    readBytes: configured
+      ? async (storagePath: string) => {
+          try {
+            return await bytes.get(storagePath);
+          } catch {
+            // A storage failure is not a document that does not exist.
+            return null;
+          }
+        }
+      : undefined,
     async listRows(memberId) {
       const { data, error } = await getSupabaseAdmin()
         .from(PLAN_DOCUMENTS_TABLE)

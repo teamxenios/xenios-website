@@ -580,6 +580,165 @@ describe("POST /api/research/questions/:questionId/rate", () => {
 // Samuel's answer
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// The operator read loop.
+//
+// The answer verb was mounted on its own for months: Samuel could answer a
+// question he had no way to find or open, and the command centre counted open
+// questions and linked to a screen that could never load.
+//
+// The payload shapes below are the ones the MOUNTED pages decode
+// (QuestionsAdmin and QuestionAdminDetail). Asserting them here rather than in
+// a page stub is the lesson from the commerce queue contract, which drifted
+// precisely because each side tested against its own idea of the payload.
+// ---------------------------------------------------------------------------
+
+describe("GET /api/admin/research/questions", () => {
+  it("is Samuel-only", async () => {
+    admin.allow = false;
+    seedQuestion();
+    const res = await request(makeApp()).get("/api/admin/research/questions");
+    expect(res.status).toBe(403);
+    expect(res.body.code).toBe("admin_required");
+  });
+
+  it("serves the row shape the mounted queue page decodes", async () => {
+    const row = seedQuestion();
+    const res = await request(makeApp()).get("/api/admin/research/questions");
+
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    const listed = res.body.questions.find((q: any) => q.id === row.id);
+    expect(listed).toBeTruthy();
+    expect(Object.keys(listed).sort()).toEqual(
+      ["asked_at", "id", "last_activity_at", "member_email", "sla_target_at", "status", "topic"].sort(),
+    );
+    expect(listed.member_email).toBe("ava@example.com");
+    expect(listed.topic).toBe("plan");
+    expect(listed.status).toBe("pending");
+  });
+
+  it("never carries a question body into the queue", async () => {
+    seedQuestion({ body_text: "SECRET-QUEUE-BODY-MARKER" });
+    const res = await request(makeApp()).get("/api/admin/research/questions");
+    expect(JSON.stringify(res.body)).not.toContain("SECRET-QUEUE-BODY-MARKER");
+  });
+
+  it("filters by the operator queue, not by the domain vocabulary", async () => {
+    const open = seedQuestion({ status: "pending" });
+    const reviewing = seedQuestion({ status: "being_reviewed" });
+    const answered = seedQuestion({ status: "answer_ready" });
+    const closed = seedQuestion({ status: "completed" });
+
+    const openQueue = await request(makeApp()).get("/api/admin/research/questions?status=open");
+    const ids = openQueue.body.questions.map((q: any) => q.id);
+    expect(ids).toContain(open.id);
+    expect(ids).toContain(reviewing.id);
+    expect(ids).not.toContain(answered.id);
+    expect(ids).not.toContain(closed.id);
+
+    const answeredQueue = await request(makeApp()).get("/api/admin/research/questions?status=answered");
+    expect(answeredQueue.body.questions.map((q: any) => q.id)).toEqual([answered.id]);
+
+    const all = await request(makeApp()).get("/api/admin/research/questions");
+    expect(all.body.questions).toHaveLength(4);
+  });
+
+  it("refuses a queue it does not have rather than quietly returning everything", async () => {
+    seedQuestion();
+    const res = await request(makeApp()).get("/api/admin/research/questions?status=urgent");
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe("validation_failed");
+  });
+});
+
+describe("GET /api/admin/research/questions/:questionId", () => {
+  it("is Samuel-only", async () => {
+    admin.allow = false;
+    const row = seedQuestion();
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${row.id}`);
+    expect(res.status).toBe(403);
+  });
+
+  it("serves the detail shape the mounted page decodes, with the body and the thread", async () => {
+    const row = seedQuestion();
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${row.id}`);
+
+    expect(res.status).toBe(200);
+    const q = res.body.question;
+    expect(Object.keys(q).sort()).toEqual(
+      ["asked_at", "body", "id", "member_email", "status", "thread", "topic"].sort(),
+    );
+    expect(q.body).toBe("How should I handle a travel week?");
+    expect(q.thread).toHaveLength(1);
+    expect(q.thread[0].author).toBe("ava@example.com");
+  });
+
+  it("shows the answer in the thread under the display name, never an admin email", async () => {
+    const row = seedQuestion();
+    await request(makeApp())
+      .post(`/api/admin/research/questions/${row.id}/answer`)
+      .send({ answerText: "Keep the week easy and resume Monday.", status: "answer_ready" });
+
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${row.id}`);
+    const thread = res.body.question.thread;
+    expect(thread).toHaveLength(2);
+    expect(thread[1].author).toBe("Samuel");
+    expect(thread[1].body).toBe("Keep the week easy and resume Monday.");
+    expect(JSON.stringify(res.body)).not.toContain("@xeniostechnology.com");
+  });
+
+  it("says a voice question was asked by voice rather than rendering an empty body", async () => {
+    const row = seedQuestion({ source: "telegram_voice", body_text: null, transcript_media_id: "media_1" });
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${row.id}`);
+    expect(res.body.question.body).toContain("asked by voice");
+    expect(res.body.question.thread).toHaveLength(0);
+    // The transcript reference is held separately and does not travel here.
+    expect(JSON.stringify(res.body)).not.toContain("media_1");
+  });
+
+  it("carries no member profile or health data beyond the allowlisted fields", async () => {
+    const row = seedQuestion();
+    // Anything else on the member row must not ride along.
+    MEMBER_A.shipping_address = "221B Baker Street";
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${row.id}`);
+    expect(JSON.stringify(res.body)).not.toContain("221B Baker Street");
+    expect(res.body.question.member_id).toBeUndefined();
+  });
+
+  it("answers not-found for an unknown id", async () => {
+    const res = await request(makeApp()).get(`/api/admin/research/questions/${crypto.randomUUID()}`);
+    expect(res.status).toBe(404);
+    expect(res.body.code).toBe("not_found");
+  });
+});
+
+describe("the question queue closes the loop", () => {
+  it("goes list -> detail -> answer -> reload, and the status the operator sees is the one that changed", async () => {
+    const row = seedQuestion();
+    const app = makeApp();
+
+    const open = await request(app).get("/api/admin/research/questions?status=open");
+    expect(open.body.questions.map((q: any) => q.id)).toContain(row.id);
+
+    const detail = await request(app).get(`/api/admin/research/questions/${row.id}`);
+    expect(detail.body.question.status).toBe("pending");
+
+    const answered = await request(app)
+      .post(`/api/admin/research/questions/${row.id}/answer`)
+      .send({ answerText: "Two easy sessions, nothing else.", status: "answer_ready" });
+    expect(answered.status).toBe(200);
+
+    // It leaves the open queue because the domain state moved, not because a
+    // screen dismissed it.
+    const reloadedOpen = await request(app).get("/api/admin/research/questions?status=open");
+    expect(reloadedOpen.body.questions.map((q: any) => q.id)).not.toContain(row.id);
+
+    const reloadedAnswered = await request(app).get("/api/admin/research/questions?status=answered");
+    expect(reloadedAnswered.body.questions.map((q: any) => q.id)).toContain(row.id);
+  });
+});
+
 describe("POST /api/admin/research/questions/:questionId/answer", () => {
   it("is Samuel-only", async () => {
     admin.allow = false;

@@ -136,11 +136,10 @@ export function clearMemoryDocumentBytes(): void {
   memoryDocumentBytes.clear();
 }
 
-// The production seam. The real adapter reads and writes the private Supabase
-// storage bucket named by RESEARCH_MEDIA_BUCKET (the same bucket the private
-// media capability declares), with the service-role client and no public URL
-// ever minted. It is inert until that adapter is wired: refusing is the honest
-// behavior, and callers map the refusal to capability_disabled.
+// The refusal. Kept because it is the honest answer when the private bucket is
+// not configured: a listing that says a document exists and a download that
+// cannot produce it are both true statements, and inventing bytes is not an
+// option. Callers map the refusal to capability_disabled.
 export const notConfiguredDocumentBytesStore: DocumentBytesStore = {
   async put() {
     throw new NotConfiguredStore("Document byte storage is not wired.");
@@ -157,9 +156,100 @@ class NotConfiguredStore extends Error {
   }
 }
 
+// ---------------------------------------------------------------------------
+// The production adapter
+// ---------------------------------------------------------------------------
+
+/**
+ * The narrow slice of Supabase Storage this store uses. Note what is absent:
+ * there is no getPublicUrl and no createSignedUrl here. A document's bytes are
+ * streamed back through the authenticated route that already checked ownership
+ * and the grant; no URL that outlives that check can be minted through a seam
+ * that has no method for it.
+ */
+export type DocumentBucketApi = {
+  upload(
+    path: string,
+    body: Uint8Array,
+    options: { contentType: string; upsert: boolean },
+  ): Promise<{ error: { message: string } | null }>;
+  download(path: string): Promise<{
+    data: { arrayBuffer(): Promise<ArrayBuffer>; type?: string } | null;
+    error: { message: string; statusCode?: string } | null;
+  }>;
+};
+
+export type DocumentBucketFactory = (bucket: string) => DocumentBucketApi;
+
+const DOCUMENT_STORE_ENV = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEARCH_MEDIA_BUCKET"] as const;
+
+/** Names only. A missing-configuration report never carries a value. */
+export function missingDocumentStoreEnv(): string[] {
+  return DOCUMENT_STORE_ENV.filter((name) => !process.env[name]);
+}
+
+const serviceRoleDocumentBucket: DocumentBucketFactory = (bucket) =>
+  getSupabaseAdmin().storage.from(bucket) as unknown as DocumentBucketApi;
+
+/**
+ * Reads and writes document bytes in the private bucket named by
+ * RESEARCH_MEDIA_BUCKET, through the service-role client.
+ *
+ * The path is never the caller's. Every path handed here comes from the stored
+ * `storage_path` of a row the caller was already proven to own, and this store
+ * refuses anything that does not look like one of our generated paths, so a
+ * traversal or an absolute URL cannot reach the storage API even if a row were
+ * somehow written with one.
+ */
+export function createSupabaseDocumentBytesStore(
+  bucketFactory: DocumentBucketFactory = serviceRoleDocumentBucket,
+): DocumentBytesStore {
+  function bucket(): DocumentBucketApi {
+    const missing = missingDocumentStoreEnv();
+    if (missing.length > 0) {
+      throw new NotConfiguredStore(`Document byte storage is not configured: ${missing.join(", ")}`);
+    }
+    return bucketFactory(process.env.RESEARCH_MEDIA_BUCKET as string);
+  }
+
+  function safePath(storagePath: string): string {
+    if (!/^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$/u.test(storagePath) || storagePath.includes("..")) {
+      throw new NotConfiguredStore("Document storage path is not in a readable shape.");
+    }
+    return storagePath;
+  }
+
+  return {
+    async put(storagePath, document) {
+      const { error } = await bucket().upload(safePath(storagePath), document.bytes, {
+        contentType: document.contentType,
+        upsert: true,
+      });
+      // The message carries the storage error text, never the bytes.
+      if (error) throw new Error(`document byte upload failed: ${error.message}`);
+    },
+    async get(storagePath) {
+      const { data, error } = await bucket().download(safePath(storagePath));
+      // A missing object is null: the row says a document exists and the object
+      // does not, which the caller reports as unavailable rather than as bytes.
+      if (error || !data) return null;
+      const buffer = await data.arrayBuffer();
+      return {
+        bytes: new Uint8Array(buffer),
+        contentType: data.type && data.type.length > 0 ? data.type : "application/octet-stream",
+      };
+    },
+  };
+}
+
+/**
+ * Production uses the real private bucket when it is configured, and refuses
+ * when it is not. Development keeps the deterministic in-memory store.
+ */
 export function selectDocumentBytesStore(): DocumentBytesStore {
-  if (process.env.NODE_ENV === "production") return notConfiguredDocumentBytesStore;
-  return memoryDocumentBytesStore;
+  if (process.env.NODE_ENV !== "production") return memoryDocumentBytesStore;
+  if (missingDocumentStoreEnv().length > 0) return notConfiguredDocumentBytesStore;
+  return createSupabaseDocumentBytesStore();
 }
 
 // ---------------------------------------------------------------------------

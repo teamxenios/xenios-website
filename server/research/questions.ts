@@ -191,20 +191,38 @@ async function fetchMemberQuestionById(memberId: string, questionId: string): Pr
   }
 }
 
-// By id alone. The only caller is Samuel's answer route, behind
-// requireSupabaseAdmin; no member request reaches this.
-async function fetchQuestionById(questionId: string): Promise<MemberQuestionRow | null> {
+/**
+ * By id alone, for the operator surfaces behind requireSupabaseAdmin.
+ *
+ * The three outcomes are kept apart on purpose. "found" and "missing" are
+ * facts about the question; "unavailable" is a fact about the read. Collapsing
+ * the third into the second would tell an operator a member's question does
+ * not exist because the database could not be reached.
+ */
+type QuestionRead =
+  | { status: "found"; row: MemberQuestionRow }
+  | { status: "missing" }
+  | { status: "unavailable" };
+
+async function readQuestionById(questionId: string): Promise<QuestionRead> {
   try {
     const { data, error } = await getSupabaseAdmin()
       .from(MEMBER_QUESTIONS_TABLE)
       .select("*")
       .eq("id", questionId)
       .maybeSingle();
-    if (error) return null;
-    return (data as MemberQuestionRow) ?? null;
+    if (error) return { status: "unavailable" };
+    return data ? { status: "found", row: data as MemberQuestionRow } : { status: "missing" };
   } catch {
-    return null;
+    return { status: "unavailable" };
   }
+}
+
+// The existing callers want the row or nothing. They keep that shape; the
+// answer route below distinguishes unavailable for itself.
+async function fetchQuestionById(questionId: string): Promise<MemberQuestionRow | null> {
+  const read = await readQuestionById(questionId);
+  return read.status === "found" ? read.row : null;
 }
 
 async function fetchMemberById(memberId: string): Promise<MemberRow | null> {
@@ -403,6 +421,29 @@ function sendValidation(res: Response, fieldErrors: Record<string, string[]>) {
   res.status(400).json({ ok: false, code: "validation_failed", fieldErrors });
 }
 
+/**
+ * The operator queues, mapped onto the domain statuses they mean. The screen
+ * says "Open"; the domain says pending, being_reviewed or
+ * more_information_needed. The mapping lives here so the screen never has to
+ * know the domain vocabulary and the domain never has to carry the screen's.
+ */
+const ADMIN_QUESTION_QUEUES = {
+  open: ["pending", "being_reviewed", "more_information_needed"],
+  answered: ["answer_ready"],
+  closed: ["completed"],
+} as const satisfies Record<string, readonly QuestionStatus[]>;
+
+type AdminQuestionQueue = keyof typeof ADMIN_QUESTION_QUEUES;
+
+/** A queue that could not be read is unavailable, never an empty queue. */
+function sendQuestionsUnavailable(res: Response) {
+  res.status(503).json({
+    ok: false,
+    code: "questions_source_unavailable",
+    message: "The question queue could not be read, so what is waiting in it is unknown.",
+  });
+}
+
 function sendNotFound(res: Response, message: string) {
   res.status(404).json({ ok: false, code: "not_found", message });
 }
@@ -572,6 +613,113 @@ export function registerQuestionsApi(app: Express, deps: MemberPlatformDeps) {
   // ---------------------------------------------------------------------------
   // Samuel's answer
   // ---------------------------------------------------------------------------
+
+  // ---- The operator read loop -------------------------------------------
+  //
+  // The answer verb below has been mounted on its own: an operator could answer
+  // a question they had no way to find or open. The command centre counted open
+  // questions and linked to a screen that could never load. These two reads
+  // close that loop.
+  //
+  // The boundary is the point. The LIST carries metadata only and never the
+  // question body: a queue is scanned in the open, and a body can carry
+  // anything a member chose to type. The DETAIL carries one body and its
+  // thread, allowlisted field by field, and no member profile or health data
+  // travels with it.
+  app.get("/api/admin/research/questions", requireSupabaseAdmin, async (req, res) => {
+    setPrivacyHeaders(res);
+    const requested = typeof req.query.status === "string" ? req.query.status : "";
+    if (requested !== "" && !(requested in ADMIN_QUESTION_QUEUES)) {
+      return sendValidation(res, {
+        status: [`status must be one of: ${Object.keys(ADMIN_QUESTION_QUEUES).join(", ")}`],
+      });
+    }
+    const wanted = requested === "" ? null : ADMIN_QUESTION_QUEUES[requested as AdminQuestionQueue];
+
+    let rows: MemberQuestionRow[];
+    try {
+      const { data, error } = await getSupabaseAdmin()
+        .from(MEMBER_QUESTIONS_TABLE)
+        .select("id, member_id, category, status, created_at, updated_at, answered_at, sla_target_at")
+        .order("created_at", { ascending: false });
+      if (error || !Array.isArray(data)) return sendQuestionsUnavailable(res);
+      rows = data as MemberQuestionRow[];
+    } catch {
+      return sendQuestionsUnavailable(res);
+    }
+
+    const selected = wanted
+      ? rows.filter((row) => (wanted as readonly string[]).includes(row.status))
+      : rows;
+    // One member lookup per distinct member, not per row.
+    const emails = new Map<string, string | null>();
+    for (const row of selected) {
+      if (emails.has(row.member_id)) continue;
+      const member = await fetchMemberById(row.member_id);
+      emails.set(row.member_id, member?.email ?? null);
+    }
+
+    res.json({
+      ok: true,
+      questions: selected.map((row) => ({
+        id: row.id,
+        // Admin-only surface; the member address is already part of the admin
+        // contract for every other operator queue.
+        member_email: emails.get(row.member_id) ?? "Unavailable",
+        topic: row.category ?? null,
+        status: row.status,
+        asked_at: row.created_at,
+        last_activity_at: row.answered_at ?? row.updated_at ?? null,
+        sla_target_at: row.sla_target_at ?? null,
+      })),
+    });
+  });
+
+  app.get("/api/admin/research/questions/:questionId", requireSupabaseAdmin, async (req, res) => {
+    setPrivacyHeaders(res);
+    const read = await readQuestionById(String(req.params.questionId));
+    if (read.status === "unavailable") return sendQuestionsUnavailable(res);
+    if (read.status === "missing") return sendNotFound(res, "No question with that id.");
+    const row = read.row;
+
+    const member = await fetchMemberById(row.member_id);
+
+    // The thread is this question and its answer. A follow-up is a separate
+    // question that points back here; it is named, not inlined, so one reply
+    // cannot quietly carry another member's text.
+    const thread: Array<{ id: string; author: string; body: string; at: string }> = [];
+    if (row.body_text) {
+      thread.push({
+        id: `${row.id}:question`,
+        author: member?.email ?? "Member",
+        body: row.body_text,
+        at: row.created_at,
+      });
+    }
+    if (row.answer_text && row.answered_at) {
+      thread.push({
+        id: `${row.id}:answer`,
+        author: row.answered_by ?? ANSWERER_DISPLAY_NAME,
+        body: row.answer_text,
+        at: row.answered_at,
+      });
+    }
+
+    res.json({
+      ok: true,
+      question: {
+        id: row.id,
+        member_email: member?.email ?? "Unavailable",
+        topic: row.category ?? null,
+        status: row.status,
+        asked_at: row.created_at,
+        // A voice question has no text body; say so rather than rendering an
+        // empty panel that looks like a member who wrote nothing.
+        body: row.body_text ?? "This question was asked by voice. The transcript is held separately.",
+        thread,
+      },
+    });
+  });
 
   // Answering is Samuel-only, server-enforced by requireSupabaseAdmin. The
   // stored answered_by is a DISPLAY NAME; the admin's email address never
