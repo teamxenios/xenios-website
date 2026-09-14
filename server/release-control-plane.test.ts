@@ -2088,8 +2088,35 @@ describe("route uniqueness validator", () => {
     // The owned loopback qualification child adds one source-visible page,
     // GET /api/__qualification/auth. It is not imported by production startup.
     // Count it explicitly rather than hiding qualification source from this gate.
-    expect(result.callSites).toBe(431);
-    expect(result.routes).toHaveLength(440);
+    //
+    // 435/444 with the admin order loop closed. FOUR additions, every one
+    // MEASURED by this scan rather than assumed, and each one explained because
+    // a count that moves without a reason is exactly what this pin catches:
+    //
+    //   GET  /api/admin/research/orders/:orderId
+    //
+    // The read the loop hangs on. Approve, capture and cancel had been mounted
+    // with no way to open the order they apply to, so a held customer order sat
+    // in a queue behind a link to a screen with no endpoint.
+    //
+    //   POST /api/admin/research/orders/:orderId/processing
+    //   POST /api/admin/research/orders/:orderId/fulfilled
+    //
+    // The post-payment progression, already present in the order service and in
+    // the transition table with no route to reach it.
+    //
+    //   POST /api/admin/research/orders/:orderId/shipments
+    //
+    // Carrier and tracking evidence. It records a fact and moves nothing.
+    //
+    // There is deliberately NO route for delivered: the transition table admits
+    // it only from the system or a signed provider event, so an admin door for
+    // it could not work and should not exist.
+    //
+    // All four sit under /api/admin behind the same Supabase admin guard as the
+    // three lifecycle actions they complete.
+    expect(result.callSites).toBe(435);
+    expect(result.routes).toHaveLength(444);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

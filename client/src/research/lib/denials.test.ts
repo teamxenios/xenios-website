@@ -39,6 +39,7 @@ const EXPECTED_CODES = [
   "large_order_review_required",
   "order_not_found",
   "order_state_invalid",
+  "tracking_invalid",
   "subscription_not_found",
   "subscription_action_invalid",
   "subscription_stale_version",
