@@ -1,4 +1,21 @@
-// xenios research: the signed affiliate attribution cookie.
+// xenios research: the signed affiliate attribution cookie, SUPERSEDED.
+//
+// STATUS, 2026-09-14: this module's `xa1` format is no longer a mounted
+// attribution authority. Referral V1 is, through
+// server/research/partners/referral-v1-attribution.ts.
+//
+// The two formats shared one cookie name, `xr_aff`. The only writer of this
+// format, referral-capture-routes.ts, is contractually forbidden to mount, so
+// the consumer that read it resolved null on every request while the comment
+// beside it claimed to be the only source of attribution. That is the failure
+// this note exists to stop recurring: not a wrong answer, an absent one that
+// nothing reported.
+//
+// Kept, not deleted, because the format description below is the record of
+// what a legacy cookie in a visitor's browser contains, and because the
+// version check here is what makes an `xrv1` claim unreadable as `xa1`.
+// Do not mount a new consumer of it.
+//
 //
 // The cookie is the customer-side half of a captured referral touch: the
 // durable touch row records that the visit happened, and this token lets the

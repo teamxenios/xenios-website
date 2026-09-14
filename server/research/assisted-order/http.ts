@@ -240,8 +240,11 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
           // The affiliate ref is derived HERE, from the verified attribution
           // cookie on the request headers, and nowhere else. The body cannot
           // supply one: the service ignores any body-carried value outright.
-          const affiliateAttributionRef =
-            attribution?.resolve(request.headers.cookie) ?? null;
+          // Awaited because the partner behind the cookie is re-read from the
+          // durable authority, not taken from the cookie itself.
+          const affiliateAttributionRef = attribution
+            ? await attribution.resolve(request.headers.cookie)
+            : null;
           const receipt = await service.submit(
             await viewer(request),
             request.body as AssistedOrderSubmitInput,

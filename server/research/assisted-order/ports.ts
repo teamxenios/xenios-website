@@ -380,18 +380,22 @@ export type AssistedOrderRouteViewerResolver<Request> = Readonly<{
 }>;
 
 /**
- * Verifies the signed affiliate attribution cookie on an inbound submit and
- * yields the SERVER-derived attribution ref (the attributed partner id), or
- * null. The ref never comes from the request body: the browser carries the
- * HMAC-signed cookie the referral capture door set, but it cannot name a
- * partner directly. The composition root builds this over
- * verifiedAttributionRefFromCookieHeader (server/research/partners/
- * attribution-cookie.ts) with the partner link secret; absent wiring or an
- * absent secret both resolve to null, so attribution fails closed to
- * "no partner" rather than trusting anything the client sent.
+ * Verifies the affiliate attribution cookie on an inbound submit and yields the
+ * SERVER-derived attribution ref (the attributed partner id), or null.
+ *
+ * The ref never comes from the request body. The browser carries the sealed
+ * Referral V1 capture claim the capture door set, and that claim names a TOUCH,
+ * not a partner: which partner the touch belongs to, and whether that partner
+ * may still be paid, are re-read from the durable authority on every submit.
+ * A cookie cannot choose who gets paid.
+ *
+ * It is async because that lookup is durable. Every failure — no secret, no
+ * cookie, a forged or expired claim, an unreadable authority, an ineligible
+ * partner — resolves to null, so an order is never lost to an attribution
+ * problem and never attributed on a guess.
  */
 export type AssistedOrderAttributionResolver = Readonly<{
-  resolve(cookieHeader: string | undefined): string | null;
+  resolve(cookieHeader: string | undefined): Promise<string | null>;
 }>;
 
 export type AssistedOrderStatusTransition = Readonly<{

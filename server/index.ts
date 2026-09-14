@@ -131,7 +131,7 @@ import {
 import {
   affiliatePortalEnabled,
 } from "./research/affiliates/v2/feature-flags";
-import { verifiedAttributionRefFromCookieHeader } from "./research/partners/attribution-cookie";
+import { createReferralV1AttributionResolver } from "./research/partners/referral-v1-attribution";
 import { registerPartnerPortalApi } from "./research/partners/portal-routes";
 import {
   partnerSubmissionsEnabled,
@@ -956,13 +956,17 @@ async function composeAssistedOrderBridge(): Promise<
     : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
     assistedOrderComposition.service,
     assistedOrderViewers,
-    // Server-derived affiliate attribution: the verified xr_aff cookie is the
-    // ONLY source of affiliateAttributionRef. No secret configured -> always
-    // null. The body never participates; the service ignores it outright.
-    {
-      resolve: (cookieHeader) =>
-        verifiedAttributionRefFromCookieHeader(partnerLinkSecret, cookieHeader, new Date()),
-    },
+    // Server-derived affiliate attribution, through Referral V1.
+    //
+    // This used to read the legacy xa1 format. Both formats shared the xr_aff
+    // cookie name, the only xa1 writer was never mounted, and so this seam
+    // resolved null on every request while claiming to be the only source of
+    // attribution. Referral V1 is now the one authority: the cookie names a
+    // touch, and the partner behind it is re-read durably on each submit.
+    createReferralV1AttributionResolver({
+      secret: partnerLinkSecret,
+      store: buildReferralV1Dependencies().store,
+    }),
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",

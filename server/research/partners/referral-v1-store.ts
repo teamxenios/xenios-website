@@ -56,6 +56,22 @@ export interface ReferralV1Store {
   capture(input: { tokenHashHex: string; subjectKeyHash: string; actorAuthUserId?: string }): Promise<ReferralV1Result<{ touch: ReferralV1Touch; created: boolean; availability: ReferralV1Availability }>>;
   bind(input: { actorAuthUserId: string; touchId: string; subjectKeyHash: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding | null; created: boolean; availability: ReferralV1Availability | "none" }>>;
   getBinding(input: { actorAuthUserId: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding | null; created: boolean; availability: ReferralV1Availability | "none" }>>;
+  /**
+   * Which partner a captured touch belongs to, for a visitor who is not signed
+   * in. The assisted-order and Early Access seams need this: the cookie names a
+   * touch, and only the database can say whose it is and whether that partner
+   * may still be paid.
+   *
+   * The cookie is a LOCATOR. Eligibility is re-read here, so a suspended,
+   * terminated or deleted partner attributes nothing no matter how valid the
+   * visitor's cookie is.
+   *
+   * This operation does not exist in the deployed function yet; see
+   * supabase/candidates/20260914_research_referral_v1_touch_attribution.sql.
+   * Until it is installed the RPC refuses the unknown operation and this read
+   * answers `unavailable`, which every caller treats as no attribution.
+   */
+  attributionForTouch(input: { touchId: string; subjectKeyHash: string }): Promise<ReferralV1Result<{ partnerId: string | null; eligible: boolean }>>;
   /** The HTTP caller must already have passed the canonical Supabase admin guard. */
   listAdmin(input: { adminAuthUserId: string; partnerId?: string; limit?: number }): Promise<ReferralV1Result<{ links: ReferralV1Link[]; events: ReferralV1Event[]; touches: ReferralV1AdminTouch[]; bindings: ReferralV1AdminBinding[] }>>;
 }
@@ -132,6 +148,15 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
     capture: (input) => execute("capture", input, z.object({ tokenHashHex: hex, subjectKeyHash: hex, actorAuthUserId: uuid.optional() }).strict(), z.object({ touch: touchSchema, created: z.boolean(), availability }).strict().refine((v) => v.touch.subjectKeyHash === input.subjectKeyHash && (!v.created || v.availability === "ready"))),
     bind: (input) => execute("bind", input, actorSchema.extend({ touchId: uuid, subjectKeyHash: hex }).strict(), bindingResultSchema.refine((v) => v.binding === null || v.binding.accountKey === `auth:${input.actorAuthUserId}`)),
     getBinding: (input) => execute("getBinding", input, actorSchema, bindingResultSchema.refine((v) => v.binding === null || v.binding.accountKey === `auth:${input.actorAuthUserId}`)),
+    attributionForTouch: (input) => execute(
+      "attributionForTouch",
+      input,
+      z.object({ touchId: uuid, subjectKeyHash: hex }).strict(),
+      // An eligible answer must name the partner it is eligible for. A true
+      // with a null partner would be an attribution to nobody.
+      z.object({ partnerId: uuid.nullable(), eligible: z.boolean() }).strict()
+        .refine((v) => !v.eligible || v.partnerId !== null),
+    ),
     listAdmin: ({ adminAuthUserId, ...rest }) => execute("listAdmin", { actorAuthUserId: adminAuthUserId, ...rest }, actorSchema.extend({ partnerId: uuid.optional(), limit: z.number().int().min(1).max(100).optional() }).strict(), z.object({ links: z.array(linkSchema).max(100), events: z.array(eventSchema).max(100), touches: z.array(adminTouchSchema).max(100), bindings: z.array(adminBindingSchema).max(100) }).strict()),
   };
 }

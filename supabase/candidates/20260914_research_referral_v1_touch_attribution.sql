@@ -1,0 +1,143 @@
+-- ==========================================================================
+-- Referral V1: one new READ operation, attributionForTouch.
+--
+-- CANDIDATE. NOT APPLIED. No production or staging execution is authorized by
+-- this file existing.
+--
+-- WHY IT EXISTS
+--
+-- A visitor who is not signed in can carry a sealed Referral V1 capture claim.
+-- That claim names a TOUCH; it does not name a partner, and it must not, or a
+-- browser could choose who gets paid. Every existing operation that can say
+-- which partner a touch belongs to requires an authenticated actor:
+--
+--   listOwn     the partner themselves
+--   bind        a signed-in member claiming their own binding
+--   getBinding  the same
+--   listAdmin   a canonical admin
+--
+-- So the assisted-order submit path and the Early Access grant path, both of
+-- which run for a visitor who may never sign in, have no way to ask the
+-- question they need answered. Until this operation exists, the server-side
+-- resolver in server/research/partners/referral-v1-attribution.ts receives
+-- `unavailable` from the RPC and attributes nothing. Orders still complete;
+-- they complete unattributed, for a reason that is now named rather than silent.
+--
+-- WHAT IT DOES AND DOES NOT DO
+--
+-- Reads only. It creates no row, moves no money, and records no event: a
+-- lookup is not a conversion. It re-resolves availability through the existing
+-- research_referral_v1_availability function rather than trusting the touch, so
+-- a suspended, terminated, revoked or expired link attributes nothing no matter
+-- how valid the visitor's cookie is. The subject key must match the touch, so a
+-- claim lifted into another browser resolves to nothing.
+--
+-- It answers `eligible:false` with `partnerId:null` rather than a denial for an
+-- unknown or ineligible touch, because the caller's next step is identical in
+-- every one of those cases and a denial code would only tell an anonymous
+-- caller which touch ids exist.
+--
+-- APPLY ORDER: after 20260904_research_partner_referral_v1.sql, which creates
+-- research_referral_v1_execute, research_referral_v1_availability and
+-- research_attribution_touches.
+--
+-- ROLLBACK: restore the prior body of research_referral_v1_execute. This file
+-- adds a branch to an existing function and creates no object, so reverting is
+-- a function replacement and nothing else. No data is written, so no data can
+-- be stranded by the revert.
+-- ==========================================================================
+
+-- Guard: the operation allowlist and the availability helper must already exist.
+do $$
+begin
+  if to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is null then
+    raise exception 'research_referral_v1_execute is absent; apply 20260904_research_partner_referral_v1.sql first';
+  end if;
+  if to_regprocedure('public.research_referral_v1_availability(uuid,uuid)') is null then
+    raise exception 'research_referral_v1_availability is absent; apply 20260904_research_partner_referral_v1.sql first';
+  end if;
+end
+$$;
+
+-- The branch itself, as a separate SECURITY DEFINER read the execute function
+-- delegates to. Keeping it in its own function means the existing execute body
+-- gains one allowlist entry and one delegation, which is the smallest change
+-- that can carry this behaviour, and it can be reviewed on its own.
+create or replace function public.research_referral_v1_touch_attribution(
+  p_touch_id uuid,
+  p_subject_key_hash text
+) returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  t public.research_attribution_touches%rowtype;
+  v_availability text;
+begin
+  if p_touch_id is null or coalesce(p_subject_key_hash,'') !~ '^[a-f0-9]{64}$' then
+    return jsonb_build_object('partnerId', null, 'eligible', false);
+  end if;
+
+  -- The subject key binds the claim to the browser that captured it.
+  select * into t
+    from public.research_attribution_touches
+   where id = p_touch_id
+     and subject_key = p_subject_key_hash
+     and referral_version = 1;
+  if not found then
+    return jsonb_build_object('partnerId', null, 'eligible', false);
+  end if;
+
+  -- Eligibility is re-read, never inherited from the touch. The second
+  -- argument is the acting auth user; there is none here, and self-referral is
+  -- therefore not decidable at this point, which is correct: the anonymous
+  -- submit path has no account to compare against, and the bind path re-checks
+  -- self-referral when the visitor later signs in.
+  v_availability := public.research_referral_v1_availability(t.referral_link_id, null);
+  if v_availability <> 'ready' or t.referral_expires_at <= clock_timestamp() then
+    return jsonb_build_object('partnerId', null, 'eligible', false);
+  end if;
+
+  return jsonb_build_object('partnerId', t.partner_id, 'eligible', true);
+end
+$$;
+
+revoke all on function public.research_referral_v1_touch_attribution(uuid, text) from public, anon, authenticated;
+grant execute on function public.research_referral_v1_touch_attribution(uuid, text) to service_role;
+
+-- ==========================================================================
+-- The execute-function change, stated for the reviewer rather than applied
+-- blind. Two edits to the existing body:
+--
+--   1. add 'attributionForTouch' to the operation allowlist on the line that
+--      reads: if jsonb_typeof(p_input)<>'object' or p_operation not in (...)
+--
+--   2. add this branch, which must sit BEFORE the actor resolution block,
+--      because this operation has no actor:
+--
+--        if p_operation='attributionForTouch' then
+--          return jsonb_build_object('ok',true,'value',
+--            public.research_referral_v1_touch_attribution(
+--              nullif(p_input->>'touchId','')::uuid,
+--              p_input->>'subjectKeyHash'));
+--        end if;
+--
+-- The branch is placed before actor resolution on purpose. Every other
+-- operation either requires an actorAuthUserId or accepts one; this one must
+-- refuse to take an actor at all, so that an actor cannot be smuggled in to
+-- influence an availability answer.
+--
+-- POSTCHECK, after applying:
+--
+--   select public.research_referral_v1_execute('attributionForTouch',
+--     jsonb_build_object('touchId','00000000-0000-4000-8000-000000000000',
+--                        'subjectKeyHash', repeat('a',64)));
+--   -- expect: {"ok":true,"value":{"partnerId":null,"eligible":false}}
+--
+--   select public.research_referral_v1_execute('attributionForTouch',
+--     jsonb_build_object('touchId','not-a-uuid','subjectKeyHash','short'));
+--   -- expect: an invalid_input denial, not a crash
+--
+-- Both postchecks read only and create nothing.
+-- ==========================================================================
