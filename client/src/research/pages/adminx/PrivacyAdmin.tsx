@@ -113,9 +113,6 @@ function PrivacyBody({ token }: { token: string }) {
         <Link href={ADMIN_ROUTES.security} className="body-s underline text-ink-mute">
           Security and system
         </Link>
-        <Link href={ADMIN_ROUTES.audit} className="body-s underline text-ink-mute">
-          Audit
-        </Link>
       </div>
 
       <ResearchSecureNotice>

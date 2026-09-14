@@ -225,3 +225,40 @@ describe("Care manual access reference", () => {
     expect(JSON.stringify(record)).not.toMatch(/symptom|diagnos|medication|healthHistory/i);
   });
 });
+
+describe("the spam trap", () => {
+  it("never hands back a reference for a request it did not save", async () => {
+    // It used to answer 201 with reference CARE-RECEIVED and saved:true, which
+    // the form renders as a saved request. A person whose browser filled the
+    // hidden field was told their Care request was in when nothing was stored.
+    const deps = dependencies();
+    const response = await request(appFor(deps))
+      .post(CARE_MANUAL_ACCESS_REQUEST_PATH)
+      .send({ ...validRequest, website: "https://spam.example" });
+
+    expect(response.status).toBe(422);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.saved).toBeUndefined();
+    expect(response.body.reference).toBeUndefined();
+    expect(JSON.stringify(response.body)).not.toContain("CARE-RECEIVED");
+  });
+
+  it("names a way through, because a caught human still needs one", async () => {
+    const response = await request(appFor(dependencies()))
+      .post(CARE_MANUAL_ACCESS_REQUEST_PATH)
+      .send({ ...validRequest, website: "x" });
+    expect(response.body.message).toMatch(/support/i);
+  });
+
+  it("still stores nothing and sends nothing", async () => {
+    const deps = dependencies();
+    await request(appFor(deps))
+      .post(CARE_MANUAL_ACCESS_REQUEST_PATH)
+      .send({ ...validRequest, website: "x" });
+
+    expect(deps.createRequest).not.toHaveBeenCalled();
+    expect(deps.sendInternalAlert).not.toHaveBeenCalled();
+    expect(deps.sendConfirmation).not.toHaveBeenCalled();
+    expect(deps.allowRequest).not.toHaveBeenCalled();
+  });
+});

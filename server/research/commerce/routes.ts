@@ -36,6 +36,7 @@ import type {
   SubscriptionActionRequest,
   AdminCommerceQueuesDto,
   AdminOrderDetailDto,
+  AdminOrderSummaryDto,
   AdminShipmentTrackingInput,
 } from "@shared/research/commerce-api";
 import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
@@ -120,6 +121,8 @@ export interface CommerceDependencies {
    * provider proof) are enforced by the order service beneath.
    */
   ordersAdmin: {
+    /** Every order, newest first. The roster the operator scans. */
+    roster(): Promise<AdminOrderSummaryDto[]>;
     /** Null when there is no such order. Typed, so the screen decodes what the handler serves. */
     detail(orderId: string): Promise<AdminOrderDetailDto | null>;
     approve(orderId: string, adminId: string, asOf: Date): Promise<unknown>;
@@ -862,6 +865,10 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   // rules live in the order service beneath: capture is legal only out of
   // approved, is bounded by the recorded authorization, and marks nothing paid
   // without provider proof.
+  app.get("/api/admin/research/orders", admin, async (_req, res) => {
+    ok(res, { orders: await deps.ordersAdmin.roster() });
+  });
+
   // The read the whole loop hangs on. Approve, capture and cancel were mounted
   // with no way for an operator to open the order they apply to, so a held
   // order sat in a queue behind a link to a screen with no endpoint.

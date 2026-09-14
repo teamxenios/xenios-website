@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { CARE_ALTERNATE_CONTACT_PATH } from "./CarePublicPages";
 import Turnstile from "@/components/Turnstile";
 import {
   CARE_CONTACT_METHOD_LABELS,
@@ -280,8 +281,17 @@ export default function CareAccessRequestForm() {
         <p className="body-m text-ink-2 mb-6" aria-live="polite">Checking availability…</p>
       )}
       {availability.kind === "closed" && (
-        <div role="alert" className="mb-6">
+        <div role="alert" className="mb-6" data-testid="care-access-closed">
           <p className="body-m text-ink-2">{availability.message}</p>
+          {/*
+            A retry button on its own is a loop. Someone who needs care and
+            finds this form shut needs a way through to a person, not only a
+            way to ask the same question again.
+          */}
+          <p className="body-m text-ink-2 mt-3">
+            You can still reach the team through{" "}
+            <a className="underline" href={CARE_ALTERNATE_CONTACT_PATH}>Care support</a>.
+          </p>
           <button type="button" className="btn btn-secondary min-h-11 mt-4" onClick={retry}>
             Retry availability
           </button>
@@ -301,6 +311,10 @@ export default function CareAccessRequestForm() {
       {serverError && (
         <div role="alert" className="mb-6" data-testid="care-access-server-error">
           <p className="body-m text-pulse">{serverError}</p>
+          <p className="body-m text-ink-2 mt-3">
+            You can still reach the team through{" "}
+            <a className="underline" href={CARE_ALTERNATE_CONTACT_PATH}>Care support</a>.
+          </p>
         </div>
       )}
 
@@ -448,12 +462,24 @@ export default function CareAccessRequestForm() {
         </div>
       </div>
 
+      {/*
+        The trap. It was labelled "Website" with a matching id, which is exactly
+        what a password manager or an aggressive autofill looks for, so a real
+        person could be caught by it. It is now named for nothing a filler
+        recognises, and marked off-limits to autofill in every way the platform
+        offers.
+      */}
       <div className="hidden" aria-hidden="true">
-        <label htmlFor="care-access-website">Website</label>
+        <label htmlFor="care-access-confirm-empty">Leave this field empty</label>
         <input
-          id="care-access-website"
+          id="care-access-confirm-empty"
+          name="care-access-confirm-empty"
+          type="text"
           tabIndex={-1}
           autoComplete="off"
+          data-1p-ignore="true"
+          data-lpignore="true"
+          data-form-type="other"
           value={website}
           onChange={(event) => setWebsite(event.target.value)}
         />

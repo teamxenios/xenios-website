@@ -25,12 +25,23 @@ const careNavigation = [
   ["Support", CARE_PUBLIC_PATHS.support],
 ] as const;
 
-function careRobots(path: string): "index, follow" | "noindex, follow" {
-  return path === CARE_PUBLIC_PATHS.home ||
-    path === CARE_PUBLIC_PATHS.howItWorks ||
-    path === CARE_PUBLIC_PATHS.providerReview
-    ? "index, follow"
-    : "noindex, follow";
+/** Where a blocked visitor can still reach a person. */
+export const CARE_ALTERNATE_CONTACT_PATH = CARE_PUBLIC_PATHS.support;
+
+/**
+ * Every Care path is noindex.
+ *
+ * This used to claim index for three of them while the server sent
+ * `X-Robots-Tag: noindex, nofollow` for every /care path, the raw-document
+ * policy classified them all private, and the sitemap omitted them. Three
+ * declarations against one, so the meta tag simply lost — but a reader of this
+ * file would have believed it. Agreeing here is the smaller change and the
+ * honest one: the header, the policy, the sitemap and this tag now say the same
+ * thing. Making Care indexable is a separate, deliberate decision that would
+ * start with the server.
+ */
+function careRobots(_path: string): "noindex, follow" {
+  return "noindex, follow";
 }
 
 function CareNavigation({ currentPath }: { currentPath: string }) {

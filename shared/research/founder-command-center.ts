@@ -158,8 +158,11 @@ export const FOUNDER_COMMAND_CENTER_AREA_DEFINITIONS = [
     area: "release_status",
     label: "Release status",
     scope: "Runtime and last-verified release facts available to this process.",
-    workflowLabel: "Audit and release evidence",
-    workflowHref: "/admin/research/audit",
+    // Pointed at /admin/research/audit, which has no admin read behind it in
+    // this deployment: a card that counts something and sends the operator to a
+    // permanently unavailable screen is worse than a card that does not link.
+    workflowLabel: "Security and release evidence",
+    workflowHref: "/admin/research/security",
     actionLabel: "Open release evidence",
   },
 ] as const satisfies readonly FounderCommandCenterAreaDefinition[];

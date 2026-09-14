@@ -39,7 +39,17 @@ describe("ResearchAdminShell grouped navigation", () => {
     expect(nav?.querySelectorAll("details")).toHaveLength(7);
     // Referral V1 adds one mounted destination in Content & partners.
     // 2026-09-06: +1 "Resource Hub" in Content & partners (Resource Hub V1 slice 1).
-    expect(nav?.querySelectorAll("a")).toHaveLength(30);
+    // 2026-09-14: -3. Fulfillment, Guides and Audit are gone from the nav. None
+    // of the three has an admin read behind it in this deployment, and
+    // Fulfillment's screen belongs to the independent engine that is superseded
+    // and unmounted for this release. A nav entry to a surface with no backend
+    // teaches an operator to distrust the whole nav.
+    expect(nav?.querySelectorAll("a")).toHaveLength(27);
+    for (const dead of ["/admin/research/fulfillment", "/admin/research/guides", "/admin/research/audit"]) {
+      expect(
+        Array.from(nav?.querySelectorAll("a") ?? []).filter((link) => link.getAttribute("href") === dead),
+      ).toEqual([]);
+    }
     expect(
       Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
         link.getAttribute("href") === "/admin/research/command-center",

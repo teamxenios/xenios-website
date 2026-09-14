@@ -432,6 +432,10 @@ function ordersAdminFailClosed(denial: {
     // A detail read with no commerce storage behind it has no order to report.
     // Null is the honest answer; the route turns it into a 404, and the screen
     // says the order could not be found rather than rendering an empty one.
+    // No commerce storage, so no orders to list and none to report. An empty
+    // roster here is a fact about a deployment with no order store, not a
+    // failed read pretending to be one.
+    roster: () => Promise.resolve([]),
     detail: () => Promise.resolve(null),
     approve: () => Promise.resolve(denial),
     capture: () => Promise.resolve(denial),
@@ -1575,6 +1579,7 @@ const webhookHandler = createWebhookHandler({
       // transition table. Delivery is absent on purpose: it belongs to the
       // carrier, and the table admits it only from the system or a signed
       // provider event.
+      roster: () => orderService.adminRoster(),
       detail: (orderId: string) => orderService.adminDetail(orderId),
       beginProcessing: async (orderId: string, _adminId: string, asOf: Date) =>
         adminOrderResult(await orderService.beginProcessing(orderId, "admin", asOf)),

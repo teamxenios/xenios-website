@@ -293,12 +293,17 @@ export function registerCareManualAccessApi(
   app.post(CARE_MANUAL_ACCESS_REQUEST_PATH, async (req: Request, res: Response) => {
     noStore(res);
 
+    // The trap. It used to answer with a reference and saved:true, which the
+    // form renders as a saved request — so a real person whose browser filled
+    // the hidden field was told their Care request was in when nothing had been
+    // stored. A trap may be silent; it may not lie. This says exactly what
+    // happened: nothing was saved, and here is another way through.
     if (typeof req.body?.website === "string" && req.body.website.length > 0) {
-      return res.status(201).json({
-        ok: true,
-        reference: "CARE-RECEIVED",
-        saved: true,
-        confirmationSent: true,
+      return res.status(422).json({
+        ok: false,
+        code: "care_access_not_submitted",
+        message:
+          "That form could not be submitted. Please use the Care support page to reach the team.",
       });
     }
 

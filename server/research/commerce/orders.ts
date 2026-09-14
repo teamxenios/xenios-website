@@ -20,6 +20,7 @@ import { createHash } from "node:crypto";
 import type {
   AdminOrderAction,
   AdminOrderDetailDto,
+  AdminOrderSummaryDto,
   AdminShipmentTrackingInput,
   CommerceDenialCode,
   OrderDetailDto,
@@ -175,6 +176,8 @@ export interface OrderService {
   listForMember(memberId: string): Promise<OrderSummaryDto[]>;
   getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null>;
   adminLargeOrderQueue(): Promise<LargeOrderQueueEntry[]>;
+  /** Every order, newest first, for the operator roster. */
+  adminRoster(): Promise<AdminOrderSummaryDto[]>;
   /** The operator projection of one order, or null when there is no such order. */
   adminDetail(orderId: string): Promise<AdminOrderDetailDto | null>;
   /**
@@ -685,6 +688,23 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     return actions;
   }
 
+  async function adminRoster(): Promise<AdminOrderSummaryDto[]> {
+    const orders = await deps.repository.listAll();
+    return orders
+      .slice()
+      .sort((a, b) => (a.createdAt === b.createdAt ? a.orderId.localeCompare(b.orderId) : b.createdAt.localeCompare(a.createdAt)))
+      .map((order) => ({
+        orderId: order.orderId,
+        memberId: order.memberId,
+        state: order.state,
+        placedAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        totalCents: order.totals.totalCents,
+        capturedAmountCents: order.capturedAmountCents ?? null,
+        reviewTriggers: order.reviewTriggers.slice(),
+      }));
+  }
+
   async function adminDetail(orderId: string): Promise<AdminOrderDetailDto | null> {
     const order = await deps.repository.get(orderId);
     if (!order) return null;
@@ -740,6 +760,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     listForMember,
     getForMember,
     adminLargeOrderQueue,
+    adminRoster,
     adminDetail,
     recordShipmentTracking,
   };

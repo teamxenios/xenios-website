@@ -1,3 +1,13 @@
+// PARKED, 2026-09-14. Nothing outside this module's own tests imports the third-party scheduling experience.
+//
+// Care takes access requests directly today: the public journey is the
+// manual access form and CarePortalPage, not a third-party scheduler. This
+// file is kept rather than deleted because its security and accessibility
+// tests are real coverage of a surface that may return, and deleting a
+// tested boundary to tidy a tree is how a boundary comes back untested.
+//
+// Do not mount it without re-reading those tests first.
+//
 import { useEffect, useRef, useState } from "react";
 import type {
   TebraPublicConfiguration,

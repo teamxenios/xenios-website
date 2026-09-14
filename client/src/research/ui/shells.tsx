@@ -187,7 +187,10 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: ADMIN_ROUTES.productRequests, label: "Product requests" },
       { href: ADMIN_ROUTES.inventory, label: "Inventory" },
       { href: ADMIN_ROUTES.orders, label: "Orders" },
-      { href: ADMIN_ROUTES.fulfillment, label: "Fulfillment" },
+      // Fulfillment is not listed. Its screen belongs to the independent
+      // 15-state engine that is superseded and unmounted for this release; the
+      // native order's own progression lives on the order file. A nav entry to
+      // a surface with no backend teaches an operator to distrust the nav.
       { href: ADMIN_ROUTES.commerceQueues, label: "Commerce queues" },
     ],
   },
@@ -205,7 +208,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: "Content & partners",
     items: [
-      { href: ADMIN_ROUTES.guides, label: "Guides" },
+      // Guides has no admin read behind it in this deployment.
       { href: ADMIN_ROUTES.partners, label: "Partners" },
       { href: ADMIN_ROUTES.referralLifecycle, label: "Referral lifecycle" },
       { href: ADMIN_ROUTES.resourceHub, label: "Resource Hub" },
@@ -218,7 +221,8 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: ADMIN_ROUTES.privacy, label: "Privacy" },
       { href: ADMIN_ROUTES.capabilities, label: "Capabilities" },
       { href: ADMIN_ROUTES.requiredInputs, label: "Required inputs" },
-      { href: ADMIN_ROUTES.audit, label: "Audit" },
+      // Audit has no admin read behind it in this deployment. The release and
+      // security surfaces above carry the evidence that does exist.
     ],
   },
 ];

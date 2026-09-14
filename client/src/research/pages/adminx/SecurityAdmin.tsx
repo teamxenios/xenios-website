@@ -406,9 +406,6 @@ function PostureRoadmap() {
         ))}
       </div>
       <div className="mt-4 flex gap-4 flex-wrap">
-        <Link href={ADMIN_ROUTES.audit} className="body-s underline text-ink-mute">
-          Audit
-        </Link>
         <Link href={ADMIN_ROUTES.capabilities} className="body-s underline text-ink-mute">
           Capabilities
         </Link>

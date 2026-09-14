@@ -328,6 +328,24 @@ export interface AdminOrderDetailDto extends OrderDetailDto {
 
 export type AdminOrderDetailResponse = Api<{ order: AdminOrderDetailDto }>;
 
+/**
+ * One row of the operator roster. Deliberately thinner than the detail: a
+ * roster is scanned in the open, so it carries no lines, no shipments and no
+ * addresses, only what decides whether an order needs opening.
+ */
+export interface AdminOrderSummaryDto {
+  orderId: string;
+  memberId: string;
+  state: OrderState;
+  placedAt: string;
+  updatedAt: string;
+  totalCents: number;
+  capturedAmountCents: number | null;
+  reviewTriggers: string[];
+}
+
+export type AdminOrdersResponse = Api<{ orders: AdminOrderSummaryDto[] }>;
+
 export interface AdminShipmentTrackingInput {
   owner: "mitch" | "xenios";
   carrier: string;
