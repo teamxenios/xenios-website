@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "repository": "teamxenios/xenios-website",
   "productionEvidence": {
-    "sha": "db5a2d447114c1e8a14185a9865ded50ee3f1ac6",
-    "deployId": "dep-dad08h740ujc73aprfcg",
-    "verificationStatus": "live_verified",
-    "observedAt": "2026-09-04T20:00:00Z",
-    "evidenceSource": "Read-only Render service/deploy inspection reconciled with .xenios production records; auto-deploy is off."
+    "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+    "deployId": "dep-dag8l567bikc738a1nj0",
+    "verificationStatus": "deployed_not_authenticated_smoked",
+    "observedAt": "2026-09-14T15:47:19.402Z",
+    "evidenceSource": "This registry had been pinned to db5a2d44 (2026-09-03) through two later production deploys. Corrected 2026-09-14 to the deploy the founder's authenticated Render audit reports, corroborated read-only: both production origins answered /api/health 200 at 2026-09-14T15:47:19Z with uptimeSeconds 494473-494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. Unauthenticated health only; no authenticated journey was smoked and this session holds no Render credential."
   },
   "capabilities": [
     {
