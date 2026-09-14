@@ -44,7 +44,10 @@ function gitFilteredBlobSha(path: string): string {
     encoding: "utf8",
   }).trim();
 }
-const PRODUCTION_SHA = "3814c687ef9293f84f939c372fdbc01b278a9193";
+// Moved from 3814c687 on 2026-09-14 with the coordination records: production
+// advanced to c545a70 / dep-dag8l567bikc738a1nj0 on 2026-09-08 and nothing had
+// written it down. No migration differs between the two commits.
+const PRODUCTION_SHA = "c545a70eb694d990842ad1259df4f0786dab92c9";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
@@ -2549,7 +2552,7 @@ describe("production state validator", () => {
       (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
     )).toBe(true);
     expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
-      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-3814c68" }),
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-c545a70" }),
     ]);
     for (const id of [
       "founder-decision-lock-20260730",

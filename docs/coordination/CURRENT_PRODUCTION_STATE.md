@@ -1,5 +1,26 @@
 # Current production state
 
+## Correction — 2026-09-14
+
+**Current production is `c545a70eb694d990842ad1259df4f0786dab92c9`, tree
+`76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a`, Render `dep-dag8l567bikc738a1nj0`,
+live since 2026-09-08T22:23:06Z.** It superseded `3814c687` about eight hours
+after that deploy, and nothing in this file was updated at the time, so
+everything below this block describes the superseded release unless it says
+otherwise.
+
+Identity from the founder's authenticated Render audit of 2026-09-14; this
+session held no Render credential. Corroborated read-only: both production
+origins answered `/api/health` 200 at 2026-09-14T15:47:19Z with uptimeSeconds
+494653, placing the running process 160 seconds after `c545a70` was authored,
+which excludes the superseded deploy that went live 7.74 hours earlier. Only
+`supabase/MIGRATIONS.md` differs under `supabase/` between the two commits, so
+the installed migration set is unchanged. Hub still false, auto-deploy still
+off, branch unchanged, `commerceEnabled` false.
+
+Full reconciliation: `docs/release-candidate/XENIOS_HEALTH_RC_20260914.md`.
+
+
 Current application `3814c687ef9293f84f939c372fdbc01b278a9193`, tree `62915f1f23e16610c74622723391e9692fe7c84e`, is live as Render `dep-dag1reu7bikc73e16ie0` since 2026-09-08T14:38:44.68489Z. Exact e55 migration applied once as managed version `20260908143724`; full production pre/postchecks passed. Critical endpoints: 30 SAME with zero allowances. Five-minute observation: 300,232ms, 26 healthy responses, zero matching errors/5xx. Rollback unused. Hub=false, billing absent, auto-deploy off, branch unchanged. Activation and real-user journeys remain unverified.
 
 [Actual production report and receipts](../revenue-launch/20260907/RESOURCE_HUB_INSTALLATION_PRODUCTION_REPORT_20260908.md). Corrected successor `8be5d582586217e4cf531e718c65032b79152022` passed local gates, 41 managed API checks and the actual 15-step browser journey with 45 captures. Its formal ASTRA-B source/ownership/evidence acceptance and deployment remain pending; these staging results do not qualify production activation. See the [current release packet](../revenue-launch/20260907/RESOURCE_HUB_HARDENING_RELEASE_PACKET_8be.md). Do not replay this installation or call the disabled Hub operational.

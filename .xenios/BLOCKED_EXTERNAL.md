@@ -1,5 +1,26 @@
 # Externally blocked work
 
+## Correction — 2026-09-14
+
+**Current production is `c545a70eb694d990842ad1259df4f0786dab92c9`, tree
+`76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a`, Render `dep-dag8l567bikc738a1nj0`,
+live since 2026-09-08T22:23:06Z.** It superseded `3814c687` about eight hours
+after that deploy, and nothing in this file was updated at the time, so
+everything below this block describes the superseded release unless it says
+otherwise.
+
+Identity from the founder's authenticated Render audit of 2026-09-14; this
+session held no Render credential. Corroborated read-only: both production
+origins answered `/api/health` 200 at 2026-09-14T15:47:19Z with uptimeSeconds
+494653, placing the running process 160 seconds after `c545a70` was authored,
+which excludes the superseded deploy that went live 7.74 hours earlier. Only
+`supabase/MIGRATIONS.md` differs under `supabase/` between the two commits, so
+the installed migration set is unchanged. Hub still false, auto-deploy still
+off, branch unchanged, `commerceEnabled` false.
+
+Full reconciliation: `docs/release-candidate/XENIOS_HEALTH_RC_20260914.md`.
+
+
 ## Current checkpoint — 2026-09-08
 
 Production remains exact `3814c687ef9293f84f939c372fdbc01b278a9193` / `dep-dag1reu7bikc73e16ie0`, Hub=false, billing absent, auto-deploy off. The e55 migration is already installed; never replay it. Fresh read-only SQL compatibility/postcheck and release-record/DAG checks passed. No production mutation occurred during the corrected-release qualification.
