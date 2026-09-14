@@ -145,8 +145,15 @@ export type EarlyAccessOrderHistoryDependencies = Readonly<{
         complete: boolean;
       }>>;
     }>>;
+  /**
+   * `dispatch` is OPTIONAL and reads one order at a time, so it is consulted on
+   * the DETAIL path only. A list of N orders must not become N round trips,
+   * which is why the list keeps declaring itself unconnected to shipment facts.
+   * Absent here means the detail keeps declaring the same thing, rather than
+   * rendering an empty shipment list that would read as "nothing shipped".
+   */
   store: Pick<EarlyAccessCommerceStore, "placementsForCustomers"> &
-    Partial<Pick<EarlyAccessCommerceStore, "settlement" | "refunds">>;
+    Partial<Pick<EarlyAccessCommerceStore, "settlement" | "refunds" | "dispatch">>;
   /**
    * Cart checkouts, the canonical launch order. OPTIONAL, and the absence is
    * the fail-closed state: until the founder applies the candidate read RPC
@@ -661,6 +668,79 @@ export function earlyAccessOrderSummary(
 }
 
 /**
+ * The shipment facts one Early Access order actually has, as the canonical
+ * dispatch read reports them. `null` is not "nothing shipped": it is "not
+ * asked", and the projection below keeps those two apart.
+ */
+export type EarlyAccessShipmentFacts = Readonly<{
+  carrier: string | null;
+  trackingNumber: string | null;
+  shippedAt: string | null;
+}>;
+
+/**
+ * Projects shipment facts onto an order detail.
+ *
+ * The defect this closes: an Early Access order could carry a real carrier and
+ * tracking number, visible on the Early Access order surface, while the member
+ * and account order pages said "Shipment details unavailable" for the same
+ * order. Two surfaces, one order, two different answers.
+ *
+ * Unread still means unavailable. Only a read that happened produces a
+ * connected source, and a read that happened and found nothing produces a
+ * connected source with no shipments, which is the honest "nothing has shipped
+ * yet".
+ */
+function shipmentProjection(
+  facts: EarlyAccessShipmentFacts | null,
+): Pick<OrderDetailDto, "shipmentsSource" | "shipments"> {
+  if (facts === null) return { shipmentsSource: "unavailable", shipments: [] };
+  const shipped = facts.carrier !== null || facts.trackingNumber !== null || facts.shippedAt !== null;
+  return {
+    shipmentsSource: "connected",
+    shipments: shipped
+      ? [{
+          // Early Access fulfilment is Xenios-operated; there is no second
+          // owner to distinguish here.
+          owner: "xenios",
+          status: facts.shippedAt === null ? "pending" : "shipped",
+          trackingNumber: facts.trackingNumber,
+          carrier: facts.carrier,
+        }]
+      : [],
+  };
+}
+
+/**
+ * Reads the canonical dispatch record for ONE order.
+ *
+ * Absent port, or a read that throws, both yield null: the detail then declares
+ * shipment facts unavailable, exactly as it did before this read existed. A
+ * tracking failure never costs the customer their order page.
+ */
+async function earlyAccessShipmentFacts(
+  deps: EarlyAccessOrderHistoryDependencies,
+  orderNumber: string,
+): Promise<EarlyAccessShipmentFacts | null> {
+  if (typeof deps.store.dispatch !== "function") return null;
+  try {
+    const dispatch = await deps.store.dispatch(orderNumber);
+    if (!dispatch) return null;
+    // The newest recorded tracking entry is the one a customer is following.
+    const latest = [...dispatch.tracking].sort((a, b) =>
+      a.recordedAt === b.recordedAt ? 0 : a.recordedAt < b.recordedAt ? 1 : -1,
+    )[0];
+    return {
+      carrier: latest?.carrier ?? null,
+      trackingNumber: latest?.trackingNumber ?? null,
+      shippedAt: dispatch.fulfillment === null ? null : dispatch.fulfillment.fulfilledAt,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * One placement as a member order detail.
  *
  * `displayName` carries the SKU rather than a product name, because an Early
@@ -670,10 +750,12 @@ export function earlyAccessOrderSummary(
 export function earlyAccessOrderDetail(
   placement: EarlyAccessPlacement,
   evidence: EarlyAccessHistoryPaymentEvidence = UNKNOWN_EARLY_ACCESS_PAYMENT_EVIDENCE,
+  shipments: EarlyAccessShipmentFacts | null = null,
 ): OrderDetailDto {
   const line = placement.order.order.line;
   return {
     ...earlyAccessOrderSummary(placement, evidence),
+    ...shipmentProjection(shipments),
     lines: [
       {
         sku: line.sku,
@@ -840,10 +922,13 @@ export function withEarlyAccessOrderHistory(
 
       if (own !== null) return own;
       if (placementMatch !== undefined) {
-        return earlyAccessOrderDetail(
-          placementMatch,
-          await earlyAccessHistoryPaymentEvidence(deps, placementMatch),
-        );
+        // One order, so one dispatch read: the N+1 the list avoids does not
+        // arise here, and the customer sees the tracking that exists.
+        const [evidence, shipments] = await Promise.all([
+          earlyAccessHistoryPaymentEvidence(deps, placementMatch),
+          earlyAccessShipmentFacts(deps, placementMatch.orderNumber),
+        ]);
+        return earlyAccessOrderDetail(placementMatch, evidence, shipments);
       }
 
       return cartMatch === undefined

@@ -964,3 +964,110 @@ describe("payment evidence comes from durable readers", () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Tracking the customer can actually see.
+//
+// An Early Access order could carry a real carrier and tracking number on the
+// Early Access order surface while the member and account order pages said
+// "Shipment details unavailable" for the same order. Two surfaces, one order,
+// two different answers, and the one the customer reaches first was the wrong
+// one.
+//
+// The list still declares itself unconnected on purpose: N orders must not
+// become N round trips. The DETAIL is one order, so it reads.
+// ---------------------------------------------------------------------------
+
+describe("Early Access shipment facts on the order detail", () => {
+  const ORDER_NUMBER = "XEC-0000000000000000000000AA";
+  function withDispatch(
+    dispatch:
+      | ((orderNumber: string) => Promise<unknown>)
+      | undefined,
+  ) {
+    const built = deps({ [KRIS]: [KRIS_REF] }, [placement()]);
+    const base = {
+      async listForMember() {
+        return [];
+      },
+      async getForMember() {
+        return null;
+      },
+    } as never;
+    // The cart port is present and empty so the detail path has a complete
+    // competing read; without it the service refuses to choose a detail at all.
+    const withStore = {
+      ...built.deps,
+      cartOrders: { async checkoutsForCustomers() { return []; } },
+      ...(dispatch === undefined ? {} : { store: { ...built.deps.store, dispatch } }),
+    };
+    return withEarlyAccessOrderHistory(base, withStore as never);
+  }
+
+  it("shows the carrier and tracking the dispatch record holds", async () => {
+    const service = withDispatch(async () => ({
+      tracking: [
+        { carrier: "UPS", trackingNumber: "1Z-OLD", recordedAt: "2026-09-01T00:00:00.000Z" },
+        { carrier: "FedEx", trackingNumber: "FX-NEW", recordedAt: "2026-09-05T00:00:00.000Z" },
+      ],
+      fulfillment: { fulfilledAt: "2026-09-05T12:00:00.000Z" },
+    }));
+
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    expect(detail?.shipmentsSource).toBe("connected");
+    expect(detail?.shipments).toHaveLength(1);
+    // The newest recording is the one the customer is following.
+    expect(detail?.shipments[0]).toMatchObject({
+      carrier: "FedEx",
+      trackingNumber: "FX-NEW",
+      status: "shipped",
+    });
+  });
+
+  it("says nothing has shipped yet, rather than saying it cannot tell", async () => {
+    const service = withDispatch(async () => ({ tracking: [], fulfillment: null }));
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    // The read happened and found nothing. That is a fact, and it is different
+    // from not having asked.
+    expect(detail?.shipmentsSource).toBe("connected");
+    expect(detail?.shipments).toEqual([]);
+  });
+
+  it("does not claim shipped on a tracking number alone", async () => {
+    // A tracking number exists; nothing has left. Shipped is the carrier's
+    // fact, and it is recorded separately.
+    const service = withDispatch(async () => ({
+      tracking: [{ carrier: "UPS", trackingNumber: "1Z-PENDING", recordedAt: "2026-09-05T00:00:00.000Z" }],
+      fulfillment: null,
+    }));
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    expect(detail?.shipments[0]).toMatchObject({ status: "pending", trackingNumber: "1Z-PENDING" });
+  });
+
+  it("keeps saying unavailable when the dispatch read is not wired", async () => {
+    const service = withDispatch(undefined);
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    expect(detail?.shipmentsSource).toBe("unavailable");
+    expect(detail?.shipments).toEqual([]);
+  });
+
+  it("does not cost the customer their order page when the dispatch read fails", async () => {
+    const service = withDispatch(async () => {
+      throw new Error("dispatch unavailable");
+    });
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    // The order still renders; only the shipment facts are unknown.
+    expect(detail).not.toBeNull();
+    expect(detail?.shipmentsSource).toBe("unavailable");
+  });
+
+  it("leaves the LIST unconnected, so N orders stay one round trip", async () => {
+    const service = withDispatch(async () => ({
+      tracking: [{ carrier: "UPS", trackingNumber: "1Z-LIST", recordedAt: "2026-09-05T00:00:00.000Z" }],
+      fulfillment: { fulfilledAt: "2026-09-05T12:00:00.000Z" },
+    }));
+    const rows = await service.listForMember(KRIS);
+    expect(rows[0].shipmentsSource).toBe("unavailable");
+    expect(rows[0].shipments).toEqual([]);
+  });
+});

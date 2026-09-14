@@ -2115,8 +2115,18 @@ describe("route uniqueness validator", () => {
     //
     // All four sit under /api/admin behind the same Supabase admin guard as the
     // three lifecycle actions they complete.
-    expect(result.callSites).toBe(435);
-    expect(result.routes).toHaveLength(444);
+    //
+    // 437/446 with the support read loop closed. TWO additions, MEASURED:
+    //
+    //   GET  /api/admin/research/questions
+    //   GET  /api/admin/research/questions/:questionId
+    //
+    // The answer verb had been mounted alone: Samuel could answer a question he
+    // had no way to find or open, and the command centre counted open questions
+    // and linked to a screen that could never load. Both sit under /api/admin
+    // behind requireSupabaseAdmin, beside the answer verb they complete.
+    expect(result.callSites).toBe(437);
+    expect(result.routes).toHaveLength(446);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
