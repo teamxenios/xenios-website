@@ -7,6 +7,27 @@ section. Old sessions are marked stale, not deleted.
 
 Branch `codex/xenios-native-finish-20260910`.
 
+## Exact source and gates
+
+Final SHA `51cf64f3379cafa58da52973439b8dd092088add`, tree
+`46814d019515120c9c7d9033790582e9617fb01b`, pushed and equal to
+`origin/codex/xenios-native-finish-20260910`.
+
+| Gate | Result at `51cf64f` |
+|---|---|
+| Typecheck | exit 0 |
+| Full suite | 952 files, 947 passed, 5 skipped, 0 failed; 17694 tests passed, 59 skipped |
+| Build | exit 0 |
+| Route uniqueness | accepted, 440 registrations |
+| Migration DAG | accepted, 36 nodes |
+| Production state | accepted on `c545a70` / `dep-dag8l567bikc738a1nj0` |
+| Site system of record | exit 0 (was failing before this session) |
+| Evidence suite | 15 files, 229 tests, 0 failed |
+| Browser matrix | 44 runs, 0 fail |
+| Release diff scan | not run: needs an out-of-repository PII names file |
+
+Relation to live production: 74 commits ahead of `c545a70`, 0 behind.
+
 ## Read this first
 
 `docs/release-candidate/XENIOS_HEALTH_RC_20260914.md` is the deliverable: the

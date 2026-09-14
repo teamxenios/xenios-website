@@ -349,9 +349,9 @@ Node 20.19.0 pinned at `C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64`.
 | Site system of record | `npm run site:record:check` | exits 0. It was failing before this session |
 | Focused, Care contact | `vitest run server/care/contact.test.ts server/care/contact-email.test.ts server/care/integration-wiring.test.ts` | 3 files, 15 tests, 0 failed |
 | Focused, Care and gateway client | `vitest run client/src/care client/src/research/pages/gateway` | 17 files, 134 tests, 0 failed |
-| Typecheck | `tsc --noEmit -p tsconfig.json` | exit 0 |
-| Full suite | `vitest run --maxWorkers=2` | 952 files, 17688 passed, 59 skipped, 6 failed at `2b07408` — all six the production-SHA pin inside the release control plane's own test, which the reconciliation then moved. That file re-runs 51 passed, 1 skipped |
-| Build | `node script/build.mjs` | exit 0, client and server |
+| Typecheck | `tsc --noEmit -p tsconfig.json` | exit 0 at `51cf64f` |
+| Full suite | `vitest run --maxWorkers=2` | **at `51cf64f`: 952 files, 947 passed, 5 skipped, 0 failed; 17694 tests passed, 59 skipped.** An earlier run at `2b07408` had 6 failures, all of them the production-SHA pin inside the release control plane's own test — the gate correctly refusing a baseline the records no longer agreed with — and the reconciliation then moved it |
+| Build | `node script/build.mjs` | exit 0 at `51cf64f`, client and server |
 | Evidence suite | `vitest run --config scripts/evidence/vitest.config.mjs` | 15 files, 229 tests, 0 failed |
 | Release control plane typecheck | `npm run check:release-control-plane` | exit 0 |
 | Release diff-scan unit tests | `npm run test:release-diff-scan` | 8 passed, 0 failed |
