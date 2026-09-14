@@ -385,7 +385,14 @@ describe("state 1: commerce flag off (production default)", () => {
     expect(await deps.claims.listForMember("mem_1")).toEqual([]);
     expect(await deps.storeCredit.forMember("mem_1")).toEqual({ owner: "mem_1", balanceCents: 0, entries: [] });
     expect(await deps.partners.findByMemberId("mem_1")).toBeNull();
-    expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
+    // Not provisioned means every queue is unanswerable, with no count at all.
+    // The old expectation was `{ provisioned: false, items: [] }`, a shape no
+    // consumer could read and one that invited a zero where none was known.
+    const queues = await deps.adminQueues.commerce();
+    expect(queues.provisioned).toBe(false);
+    expect(queues.degraded).toBe(true);
+    expect(queues.queues).toHaveLength(10);
+    expect(queues.queues.every((q) => q.openCount === null && q.items === null)).toBe(true);
   });
 
   it("keeps the real catalog readable, purchasable nowhere, prices null", () => {
@@ -506,7 +513,14 @@ describe("state 2: flag on, commerce database not provisioned", () => {
     expect(await deps.subscriptions.listForMember("mem_1")).toEqual([]);
     expect(await deps.claims.listForMember("mem_1")).toEqual([]);
     expect(await deps.storeCredit.forMember("mem_1")).toEqual({ owner: "mem_1", balanceCents: 0, entries: [] });
-    expect(await deps.adminQueues.commerce()).toEqual({ provisioned: false, items: [] });
+    // Not provisioned means every queue is unanswerable, with no count at all.
+    // The old expectation was `{ provisioned: false, items: [] }`, a shape no
+    // consumer could read and one that invited a zero where none was known.
+    const queues = await deps.adminQueues.commerce();
+    expect(queues.provisioned).toBe(false);
+    expect(queues.degraded).toBe(true);
+    expect(queues.queues).toHaveLength(10);
+    expect(queues.queues.every((q) => q.openCount === null && q.items === null)).toBe(true);
   });
 
   it("still serves the catalog, presents nothing purchasable, reports commerce disabled", () => {

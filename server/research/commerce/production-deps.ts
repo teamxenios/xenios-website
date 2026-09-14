@@ -429,9 +429,16 @@ function ordersAdminFailClosed(denial: {
   code: CommerceDenialCode;
 }): CommerceDependencies["ordersAdmin"] {
   return {
+    // A detail read with no commerce storage behind it has no order to report.
+    // Null is the honest answer; the route turns it into a 404, and the screen
+    // says the order could not be found rather than rendering an empty one.
+    detail: () => Promise.resolve(null),
     approve: () => Promise.resolve(denial),
     capture: () => Promise.resolve(denial),
     cancel: () => Promise.resolve(denial),
+    beginProcessing: () => Promise.resolve(denial),
+    markFulfilled: () => Promise.resolve(denial),
+    recordTracking: () => Promise.resolve(denial),
   };
 }
 
@@ -1564,6 +1571,17 @@ const webhookHandler = createWebhookHandler({
         adminOrderResult(await orderService.capture(orderId, "system", asOf)),
       cancel: async (orderId: string, _adminId: string, reason: string, asOf: Date) =>
         adminOrderResult(await orderService.cancel(orderId, "admin", reason, asOf)),
+      // The post-payment loop, on the same order authority and the same
+      // transition table. Delivery is absent on purpose: it belongs to the
+      // carrier, and the table admits it only from the system or a signed
+      // provider event.
+      detail: (orderId: string) => orderService.adminDetail(orderId),
+      beginProcessing: async (orderId: string, _adminId: string, asOf: Date) =>
+        adminOrderResult(await orderService.beginProcessing(orderId, "admin", asOf)),
+      markFulfilled: async (orderId: string, _adminId: string, asOf: Date) =>
+        adminOrderResult(await orderService.markFulfilled(orderId, "admin", asOf)),
+      recordTracking: async (orderId: string, adminId: string, input, asOf: Date) =>
+        adminOrderResult(await orderService.recordShipmentTracking(orderId, "admin", input, asOf)),
     },
     webhooks: {
       handlePayment: (rawBody, signature, asOf) => webhookHandler.handlePayment(rawBody, signature, asOf),

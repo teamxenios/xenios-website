@@ -10,6 +10,10 @@
 // ---------------------------------------------------------------------------
 
 import { apiGet, apiPost, apiPut, type ApiResult } from "../lib/api";
+import type {
+  AdminOrderDetailDto,
+  AdminShipmentTrackingInput,
+} from "@shared/research/commerce-api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
 import type { AdminCommerceQueuesDto } from "@shared/research/commerce-api";
 import {
@@ -569,4 +573,47 @@ export function activationIdentityEmergencyDelete<T>(token: string, caseId: stri
 
 export function getResearchCapabilities(token: string): Promise<Map<ResearchCapability, CapabilityStatus>> {
   return fetchCapabilities(token);
+}
+
+// ---------------------------------------------------------------------------
+// One native order, and the moves an operator may make on it.
+//
+// These reach the same order service the checkout writes through. The screen
+// offers only the actions the server reported as available, so a control is
+// never shown for a move the domain would refuse.
+// ---------------------------------------------------------------------------
+
+export function getAdminOrder(
+  token: string,
+  orderId: string,
+): Promise<ApiResult<{ ok: boolean; order: AdminOrderDetailDto }>> {
+  return apiGet(`${BASE}/orders/${enc(orderId)}`, token);
+}
+
+export function beginOrderProcessing<T>(token: string, orderId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/processing`, {}, token);
+}
+
+export function markOrderFulfilled<T>(token: string, orderId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/fulfilled`, {}, token);
+}
+
+export function recordOrderTracking<T>(
+  token: string,
+  orderId: string,
+  input: AdminShipmentTrackingInput,
+): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/shipments`, input, token);
+}
+
+export function approveOrder<T>(token: string, orderId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/approve`, {}, token);
+}
+
+export function captureOrder<T>(token: string, orderId: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/capture`, {}, token);
+}
+
+export function cancelOrder<T>(token: string, orderId: string, reason: string): Promise<ApiResult<T>> {
+  return apiPost<T>(`${BASE}/orders/${enc(orderId)}/cancel`, { reason }, token);
 }

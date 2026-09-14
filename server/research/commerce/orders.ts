@@ -18,6 +18,9 @@
 
 import { createHash } from "node:crypto";
 import type {
+  AdminOrderAction,
+  AdminOrderDetailDto,
+  AdminShipmentTrackingInput,
   CommerceDenialCode,
   OrderDetailDto,
   OrderSummaryDto,
@@ -152,6 +155,15 @@ export interface LargeOrderQueueEntry {
   heldSince: string;
 }
 
+/**
+ * Carrier and tracking shapes an operator may type. Deliberately permissive
+ * about WHICH carrier (the world has many) and strict about the shape, so a
+ * fat-fingered entry does not become a shipment fact. A provider-owned
+ * shipment is never overwritten from here.
+ */
+const TRACKING_NUMBER = /^[A-Za-z0-9][A-Za-z0-9 -]{5,48}[A-Za-z0-9]$/u;
+const CARRIER_NAME = /^[A-Za-z][A-Za-z0-9 .&-]{1,31}$/u;
+
 export interface OrderService {
   authorize(orderId: string, actor: Actor, asOf: Date, idempotencyKey?: string): Promise<OrderResult>;
   approve(orderId: string, adminId: string, asOf: Date): Promise<OrderResult>;
@@ -163,6 +175,19 @@ export interface OrderService {
   listForMember(memberId: string): Promise<OrderSummaryDto[]>;
   getForMember(memberId: string, orderId: string): Promise<OrderDetailDto | null>;
   adminLargeOrderQueue(): Promise<LargeOrderQueueEntry[]>;
+  /** The operator projection of one order, or null when there is no such order. */
+  adminDetail(orderId: string): Promise<AdminOrderDetailDto | null>;
+  /**
+   * Record a carrier and tracking number against one shipment group. This does
+   * NOT move the order: shipping is evidence, and marking an order fulfilled is
+   * a separate, deliberate act.
+   */
+  recordShipmentTracking(
+    orderId: string,
+    actor: Actor,
+    input: AdminShipmentTrackingInput,
+    asOf: Date,
+  ): Promise<OrderResult>;
 }
 
 // ---------------------------------------------------------------------------
@@ -643,6 +668,67 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     return held;
   }
 
+  function availableActions(order: OrderRecord): AdminOrderAction[] {
+    const actions: AdminOrderAction[] = [];
+    if (canTransitionOrder(order.state, "approved", "admin")) actions.push("approve");
+    // Capture is the system acting on a provider result, but an operator is the
+    // one who asks for it, so it is offered exactly where it is legal.
+    if (canTransitionOrder(order.state, "payment_captured", "system")) actions.push("capture");
+    if (canTransitionOrder(order.state, "cancelled", "admin")) actions.push("cancel");
+    if (canTransitionOrder(order.state, "processing", "admin")) actions.push("begin_processing");
+    if (canTransitionOrder(order.state, "fulfilled", "admin")) actions.push("mark_fulfilled");
+    // Tracking is evidence, not a transition. It is recordable while the order
+    // is being worked and pointless once it has left or been stopped.
+    if (["payment_captured", "processing", "partially_fulfilled", "exception"].includes(order.state)) {
+      actions.push("record_tracking");
+    }
+    return actions;
+  }
+
+  async function adminDetail(orderId: string): Promise<AdminOrderDetailDto | null> {
+    const order = await deps.repository.get(orderId);
+    if (!order) return null;
+    return {
+      ...toDetail(order),
+      memberId: order.memberId,
+      updatedAt: order.updatedAt,
+      reviewTriggers: order.reviewTriggers.slice(),
+      capturedAmountCents: order.capturedAmountCents ?? null,
+      availableActions: availableActions(order),
+    };
+  }
+
+  async function recordShipmentTracking(
+    orderId: string,
+    actor: Actor,
+    input: AdminShipmentTrackingInput,
+    asOf: Date,
+  ): Promise<OrderResult> {
+    const order = await deps.repository.get(orderId);
+    if (!order) return deny(["order_not_found"], `No order ${orderId}.`);
+    if (!availableActions(order).includes("record_tracking")) {
+      return deny(["order_state_invalid"], `Tracking cannot be recorded while the order is ${order.state}.`);
+    }
+    const carrier = input.carrier.trim();
+    const trackingNumber = input.trackingNumber.trim();
+    if (!CARRIER_NAME.test(carrier) || !TRACKING_NUMBER.test(trackingNumber)) {
+      return deny(["tracking_invalid"], "Carrier and tracking number are not in a recordable shape.");
+    }
+    const shipments = (order.shipments ?? []).slice();
+    const index = shipments.findIndex((shipment) => shipment.owner === input.owner);
+    if (index === -1) {
+      return deny(["order_state_invalid"], `This order has no ${input.owner} shipment group.`);
+    }
+    // Provider-reported truth outranks an operator note. A shipment the carrier
+    // has already spoken for is not re-described from an admin screen.
+    if (shipments[index].status === "shipped" || shipments[index].status === "delivered") {
+      return deny(["order_state_invalid"], "That shipment already carries provider-reported status.");
+    }
+    shipments[index] = { ...shipments[index], carrier, trackingNumber };
+    const saved = await persist(order, { shipments }, asOf);
+    return { ok: true, order: saved, idempotent: false };
+  }
+
   return {
     authorize,
     approve,
@@ -654,5 +740,7 @@ export function createOrderService(deps: OrderServiceDeps): OrderService {
     listForMember,
     getForMember,
     adminLargeOrderQueue,
+    adminDetail,
+    recordShipmentTracking,
   };
 }

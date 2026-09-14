@@ -154,6 +154,11 @@ const DENIAL_COPY: Record<CommerceDenialCode, Copy> = {
     body: "The order has moved past the point where this action applies.",
     tone: "error",
   },
+  tracking_invalid: {
+    title: "That carrier or tracking number was not recorded.",
+    body: "Check the carrier name and the tracking number and enter them again. Nothing about the shipment changed.",
+    tone: "error",
+  },
   subscription_not_found: {
     title: "Subscription not found.",
     body: "This subscription does not exist on your account.",

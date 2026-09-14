@@ -35,6 +35,8 @@ import type {
   ShippingQuoteRequest,
   SubscriptionActionRequest,
   AdminCommerceQueuesDto,
+  AdminOrderDetailDto,
+  AdminShipmentTrackingInput,
 } from "@shared/research/commerce-api";
 import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
 import type { WebhookResult } from "./webhooks";
@@ -118,9 +120,19 @@ export interface CommerceDependencies {
    * provider proof) are enforced by the order service beneath.
    */
   ordersAdmin: {
+    /** Null when there is no such order. Typed, so the screen decodes what the handler serves. */
+    detail(orderId: string): Promise<AdminOrderDetailDto | null>;
     approve(orderId: string, adminId: string, asOf: Date): Promise<unknown>;
     capture(orderId: string, adminId: string, asOf: Date): Promise<unknown>;
     cancel(orderId: string, adminId: string, reason: string, asOf: Date): Promise<unknown>;
+    beginProcessing(orderId: string, adminId: string, asOf: Date): Promise<unknown>;
+    markFulfilled(orderId: string, adminId: string, asOf: Date): Promise<unknown>;
+    recordTracking(
+      orderId: string,
+      adminId: string,
+      input: AdminShipmentTrackingInput,
+      asOf: Date,
+    ): Promise<unknown>;
   };
   /**
    * Inbound provider webhooks. NOT behind member auth (the provider calls it);
@@ -850,6 +862,51 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   // rules live in the order service beneath: capture is legal only out of
   // approved, is bounded by the recorded authorization, and marks nothing paid
   // without provider proof.
+  // The read the whole loop hangs on. Approve, capture and cancel were mounted
+  // with no way for an operator to open the order they apply to, so a held
+  // order sat in a queue behind a link to a screen with no endpoint.
+  app.get("/api/admin/research/orders/:orderId", admin, async (req, res) => {
+    const order = await deps.ordersAdmin.detail(String(req.params.orderId));
+    if (!order) {
+      deny(res, 404, "order_not_found", "No such order.");
+      return;
+    }
+    ok(res, { order });
+  });
+
+  app.post("/api/admin/research/orders/:orderId/processing", admin, async (req, res) => {
+    relay(res, await deps.ordersAdmin.beginProcessing(String(req.params.orderId), adminIdOf(req), deps.now()), "order");
+  });
+
+  app.post("/api/admin/research/orders/:orderId/fulfilled", admin, async (req, res) => {
+    relay(res, await deps.ordersAdmin.markFulfilled(String(req.params.orderId), adminIdOf(req), deps.now()), "order");
+  });
+
+  // Tracking is evidence, not a transition: recording it never moves the order.
+  // Delivery has no admin route at all, because the transition table admits
+  // delivered only from the system or a signed provider event.
+  app.post("/api/admin/research/orders/:orderId/shipments", admin, async (req, res) => {
+    const body = (req.body ?? {}) as { owner?: unknown; carrier?: unknown; trackingNumber?: unknown };
+    if (body.owner !== "mitch" && body.owner !== "xenios") {
+      deny(res, 400, "forbidden", "A shipment update names which shipment group it belongs to.");
+      return;
+    }
+    if (!isNonEmptyString(body.carrier) || !isNonEmptyString(body.trackingNumber)) {
+      deny(res, 400, "forbidden", "A shipment update carries a carrier and a tracking number.");
+      return;
+    }
+    relay(
+      res,
+      await deps.ordersAdmin.recordTracking(
+        String(req.params.orderId),
+        adminIdOf(req),
+        { owner: body.owner, carrier: body.carrier, trackingNumber: body.trackingNumber },
+        deps.now(),
+      ),
+      "order",
+    );
+  });
+
   app.post("/api/admin/research/orders/:orderId/approve", admin, async (req, res) => {
     relay(res, await deps.ordersAdmin.approve(String(req.params.orderId), adminIdOf(req), deps.now()), "order");
   });

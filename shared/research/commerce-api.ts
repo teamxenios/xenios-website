@@ -64,6 +64,7 @@ export type CommerceDenialCode =
   | "large_order_review_required"
   | "order_not_found"
   | "order_state_invalid"
+  | "tracking_invalid"
   | "subscription_not_found"
   | "subscription_action_invalid"
   | "subscription_stale_version"
@@ -288,6 +289,49 @@ export interface OrderDetailDto extends OrderSummaryDto {
   storeCreditAppliedCents: number;
   /** Present when the order is held for large-order review. */
   reviewReason: string | null;
+}
+
+/**
+ * What an operator may do to this order RIGHT NOW, derived from the same
+ * transition table the service enforces. The screen renders only these, so a
+ * control can never be offered for a move the domain would refuse.
+ *
+ * `delivered` is deliberately absent: the transition table admits it only from
+ * the system or a signed provider event, because delivery is the carrier's
+ * fact, not an operator's opinion.
+ */
+export const ADMIN_ORDER_ACTIONS = [
+  "approve",
+  "capture",
+  "cancel",
+  "begin_processing",
+  "mark_fulfilled",
+  "record_tracking",
+] as const;
+
+export type AdminOrderAction = (typeof ADMIN_ORDER_ACTIONS)[number];
+
+/**
+ * The admin projection of a native order. It extends the member detail rather
+ * than inventing a parallel one, so an operator and a customer are looking at
+ * the same record. It adds the operational subject and the allowed moves; it
+ * carries no card reference, no provider secret and no member contact detail.
+ */
+export interface AdminOrderDetailDto extends OrderDetailDto {
+  memberId: string;
+  updatedAt: string;
+  reviewTriggers: string[];
+  /** Present once a capture has run. Null means the fact is not recorded. */
+  capturedAmountCents: number | null;
+  availableActions: AdminOrderAction[];
+}
+
+export type AdminOrderDetailResponse = Api<{ order: AdminOrderDetailDto }>;
+
+export interface AdminShipmentTrackingInput {
+  owner: "mitch" | "xenios";
+  carrier: string;
+  trackingNumber: string;
 }
 
 export type CheckoutResponse = Api<{ order: OrderSummaryDto }>;
