@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `9d419d3185c95ec51cd50fdc3214d4924245f19c` (2026-09-14T11:26:41-05:00)
+Generated from source commit: `509f57b419035845867cd4af9125a3a2191b5597` (2026-09-14T14:18:46-05:00)
 
-Source tree: `079825f63a67a841377394d173c8c9230247a69e` on `codex/xenios-native-finish-20260910`
+Source tree: `28db9fb174d886e328f6e672bddff0cf2ee2ae3a` on `codex/xenios-native-finish-20260910`
 
 Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567bikc738a1nj0` (deployed_not_authenticated_smoked)
 
