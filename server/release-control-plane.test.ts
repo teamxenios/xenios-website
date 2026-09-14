@@ -2125,8 +2125,16 @@ describe("route uniqueness validator", () => {
     // had no way to find or open, and the command centre counted open questions
     // and linked to a screen that could never load. Both sit under /api/admin
     // behind requireSupabaseAdmin, beside the answer verb they complete.
-    expect(result.callSites).toBe(437);
-    expect(result.routes).toHaveLength(446);
+    //
+    // 438/447 with the orders roster mounted. ONE addition, MEASURED:
+    //
+    //   GET  /api/admin/research/orders
+    //
+    // The roster the operator scans, over the same research_orders authority as
+    // the queue and the order file. Mounted rather than removed from the nav
+    // because orders are launch-critical and the rest of that loop now works.
+    expect(result.callSites).toBe(438);
+    expect(result.routes).toHaveLength(447);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
