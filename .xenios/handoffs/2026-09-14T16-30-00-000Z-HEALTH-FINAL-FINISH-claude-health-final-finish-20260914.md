@@ -61,6 +61,42 @@ bearing: the support queue's reads are unmounted while its answer verb is
 mounted; no member can download a document in production; and nothing writes an
 Early Access referral grant, so every such order is permanently unattributed.
 
+## Browser evidence
+
+Run against the candidate itself, not production. The repo's own pipeline built
+it from a clean checkout with `npm ci` and pinned the result (344 dist files,
+inventory `3be4c3d8b4bf9d689310578230d1e47044d71e4bdaaf25861fdfa817b3bdf3de`),
+served that exact build on loopback, and drove Chromium 149.0.7827.55 over raw
+CDP: nine public routes at 1440, 1024, 768, 430, 390, 375, 360 and 320 CSS px,
+plus a 200 % zoom equivalent and the reduced-motion and forced-colors variants.
+
+First pass: 88 runs, 55 pass, 33 fail. **Every structural and accessibility
+assertion passed on all 88**, before any correction — overflow, clipped text,
+target size, landmarks, headings, duplicate ids, labels, alt text, aria
+references, document language, tab order, focus visibility, fonts, console,
+network and the same-origin boundary.
+
+All 33 failures were three route declarations that had drifted from the site:
+`/research` required hero copy that no longer exists anywhere in the client,
+`/research/access-hub` required a line a copy edit had shortened, and the two
+public 404 paths pinned a shared not-found document whose bytes had moved. So
+the browser gate could not have been green on those routes for some time.
+Re-pinned at `694b54d`; the rebuilt dist inventory hash is identical, so no
+application byte changed. Re-run: 44 runs, 0 fail.
+
+A caveat worth keeping: `/health` was silently absent from the first run. Git
+Bash converted the leading `/health` in the `--only` argument into a Windows
+path, so it matched nothing. It is included and green in the re-run. The same
+conversion later redirected an output directory; both are shell artifacts, not
+harness defects.
+
+Evidence: `C:/Users/sboad/xenios-recovery/claude-health-finish-20260914/`,
+403 files under a `SHA256SUMS` that verifies.
+
+Coverage limit: 9 of the inventory's 101 public routes, chosen as the
+launch-critical entry journeys. The preview's own header is explicit that its
+catalogue is not the canonical product set. No authenticated journey was run.
+
 ## Native payment, recovery, receipts
 
 Unchanged and preserved. The recovery caller stays default-off behind a

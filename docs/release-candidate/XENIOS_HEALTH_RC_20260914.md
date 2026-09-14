@@ -349,15 +349,74 @@ Node 20.19.0 pinned at `C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64`.
 | Site system of record | `npm run site:record:check` | exits 0. It was failing before this session |
 | Focused, Care contact | `vitest run server/care/contact.test.ts server/care/contact-email.test.ts server/care/integration-wiring.test.ts` | 3 files, 15 tests, 0 failed |
 | Focused, Care and gateway client | `vitest run client/src/care client/src/research/pages/gateway` | 17 files, 134 tests, 0 failed |
-| Typecheck, full suite, build | recorded in the handoff at the exact final SHA | |
+| Typecheck | `tsc --noEmit -p tsconfig.json` | exit 0 |
+| Full suite | `vitest run --maxWorkers=2` | 952 files, 17688 passed, 59 skipped, 6 failed at `2b07408` — all six the production-SHA pin inside the release control plane's own test, which the reconciliation then moved. That file re-runs 51 passed, 1 skipped |
+| Build | `node script/build.mjs` | exit 0, client and server |
+| Evidence suite | `vitest run --config scripts/evidence/vitest.config.mjs` | 15 files, 229 tests, 0 failed |
+| Release control plane typecheck | `npm run check:release-control-plane` | exit 0 |
+| Release diff-scan unit tests | `npm run test:release-diff-scan` | 8 passed, 0 failed |
+| Release diff scan itself | `npm run verify:release-diff-scan` | **not run**: it requires an out-of-repository PII names file this session does not have. A scan with no names would report a pass it had not earned |
+
+### Browser matrix
+
+Run against the candidate itself, not production: `scripts/evidence/build-candidate-preview.mjs`
+performed `npm ci` and a production build from a clean checkout and pinned the
+result, then `scripts/preview-research.mjs` served that exact build on
+127.0.0.1 and `scripts/evidence/capture-browser-matrix.mjs` drove Chromium
+149.0.7827.55 over raw CDP against it.
+
+| | |
+|---|---|
+| Candidate | `694b54dbae8d5bf92bc1839b7a6ae860c9157de6`, tree `46aacba936a567807c6a0030ce55a697ab7c9ec3` |
+| Build provenance | 344 dist files, inventory `3be4c3d8b4bf9d689310578230d1e47044d71e4bdaaf25861fdfa817b3bdf3de`, Node 20.19.0, npm 10.8.2, `npm ci` |
+| Widths | 1440, 1024, 768, 430, 390, 375, 360, 320, plus a 200 % zoom equivalent at 720 CSS px and deviceScaleFactor 2 |
+| Variants | default, `prefers-reduced-motion`, `forced-colors` |
+| Routes | `/health`, `/care`, `/care/schedule`, `/research`, `/research/access-hub`, `/research/sign-in`, `/research/support`, `/research/policies`, and an unknown path |
+| First pass | 88 runs, 55 pass, 33 fail |
+| After re-pinning three stale route contracts | 44 re-runs, 33 pass, 11 pass-with-notes, **0 fail** |
+
+Every structural and accessibility assertion passed on all 88 runs of the first
+pass, before any correction: no horizontal overflow, no clipped text, no target
+under 44×44, exactly one main landmark and one `h1` per page, no nested main,
+no duplicate ids, every form control labelled, every image with alt text, every
+aria reference resolving, a document language, the whole tab order reachable
+with visible focus, self-hosted fonts loaded, a clean console, a clean network,
+the same-origin boundary held with WebSockets disabled, and a stable service
+worker controller.
+
+All 33 first-pass failures came from three declarations that had drifted from
+the site they describe, and none of them was a page defect:
+
+- `/research` still required the hero copy "Research products." and "A clearer
+  standard.", which exists nowhere in the client. `/research` has deliberately
+  rendered the canonical Care + Research gateway since `8b53dbe`.
+- `/research/access-hub` still required "Choose the path that matches what you
+  are here to do."; a copy edit had shortened it.
+- The two public 404 paths pin one shared authoritative not-found document by
+  body hash, and those bytes had moved.
+
+So the browser gate could not have been green on those routes for some time.
+Re-pinning them changed no application bytes: the rebuilt dist inventory hash
+is identical.
+
+Evidence, hashed and verified, in
+`C:/Users/sboad/xenios-recovery/claude-health-finish-20260914/` — 403 files
+under a `SHA256SUMS` that verifies: gate logs, both build logs, both matrix
+runs with every screenshot, rendered-text capture and per-run JSON.
+
+Coverage limit, stated plainly: 9 of the inventory's 101 public routes were
+captured, chosen as the launch-critical public entry journeys. The preview's
+own header is explicit that its catalogue is not the canonical product set and
+that it is good for layout, gating and form behaviour, not for data-dependent
+verification. No authenticated journey was exercised.
 
 Read-only HTTP evidence, 2026-09-14: both production origins answered
 `/api/health` 200 with identical uptime; fourteen public paths were checked; an
 unknown path 404s. No authenticated request, account mutation, notification,
 payment or commerce action was performed.
 
-Not run: the browser matrix at the eight widths, managed or staging
-qualification, and any authenticated journey.
+Not run: managed or staging qualification, any authenticated journey, and
+the other 92 routes in the public inventory.
 
 ---
 
