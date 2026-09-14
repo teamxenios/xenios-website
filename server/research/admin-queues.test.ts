@@ -392,25 +392,41 @@ describe("GET /api/admin/research/queues/:queue", () => {
 
   // The independent-waves property: nothing is migrated yet, so every read
   // errors and every queue must still answer.
-  it("reads MISSING tables as empty queues rather than failing", async () => {
+  it("reports MISSING tables as unavailable rather than as empty queues", async () => {
+    // This used to assert the opposite: every queue answered 200 with a total
+    // of 0 when its table was absent. A permissions denial, an outage and an
+    // unarrived wave all look like that, and an operator shown "0 waiting"
+    // stops looking. The queue now refuses to answer instead.
     state.tables = {};
     for (const queue of ADMIN_QUEUE_KEYS) {
       const res = await getQueue(queue);
-      expect(res.status, queue).toBe(200);
-      expect(res.body.ok, queue).toBe(true);
-      expect(res.body.page.items, queue).toEqual([]);
-      expect(res.body.page.total, queue).toBe(0);
+      expect(res.status, queue).toBe(503);
+      expect(res.body.ok, queue).toBe(false);
+      expect(res.body.code, queue).toBe("queue_source_unavailable");
+      // Nothing that could be mistaken for a count comes back.
+      expect(res.body.page, queue).toBeUndefined();
     }
   });
 
-  it("still fills the queues that can be computed when only some tables exist", async () => {
-    // The questions wave has not landed; the members table has.
+  it("carries no provider or schema detail in the unavailable answer", async () => {
+    state.tables = {};
+    const res = await getQueue("questions");
+    const body = JSON.stringify(res.body);
+    expect(body).not.toContain("research_");
+    expect(body).not.toContain("relation");
+    expect(body).not.toContain("permission");
+  });
+
+  it("keeps answering the queues whose sources are all present", async () => {
+    // The questions wave has not landed; the members table has. The questions
+    // queue refuses, and that refusal does not cost the queues that can be read.
     delete state.tables.research_member_questions;
     const questions = await getQueue("questions");
-    expect(questions.status).toBe(200);
-    expect(questions.body.page.total).toBe(0);
+    expect(questions.status).toBe(503);
+    expect(questions.body.code).toBe("queue_source_unavailable");
 
     const blocks = await getQueue("account_blocks");
+    expect(blocks.status).toBe(200);
     expect(blocks.body.page.total).toBe(3);
   });
 });

@@ -62,7 +62,12 @@
 //
 // THE PERSISTED QUEUE-ITEM TABLE. Explicit items (payment_review, manual
 // escalations, recall acknowledgements) persist in research_admin_queue_items.
-// KNOWN SCHEMA GAP: no migration provisions that table yet; the defensive read
+// PROVISIONING: the DDL for that table exists, as TRACK B COMPLETION 1 in
+// supabase/production/research-track-b-commerce.sql. Whether it has been
+// applied to any given database is not knowable from this source, and this
+// store no longer guesses: an unreadable table reports unavailable, never an
+// empty queue. The earlier note here claimed no migration provisioned it, which
+// had stopped being true. The read
 // treats its absence as an empty queue, and enqueue or resolve against a
 // missing table fails loudly rather than dropping admin work. A resolution is
 // a terminal status transition stamped with actor and timestamp (guarded on
@@ -75,22 +80,20 @@
 // ---------------------------------------------------------------------------
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  COMMERCE_QUEUE_KINDS,
+  type AdminCommerceQueueAvailability,
+  type AdminCommerceQueueDto,
+  type AdminCommerceQueuesDto,
+  type CommerceQueueKind,
+} from "@shared/research/commerce-api";
 import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 
-export const COMMERCE_QUEUE_KINDS = [
-  "large_order_review",
-  "payment_review",
-  "refund_review",
-  "replacement_review",
-  "supplier_document_review",
-  "inventory_release",
-  "fulfillment_failure",
-  "payout_review",
-  "fraud_review",
-  "recall_response",
-] as const;
-
-export type CommerceQueueKind = (typeof COMMERCE_QUEUE_KINDS)[number];
+// The kind list is the shared wire contract's, so the server and the admin
+// screen cannot drift apart again. Re-exported because this module was its
+// original home.
+export { COMMERCE_QUEUE_KINDS };
+export type { CommerceQueueKind };
 
 /** The one kind whose derived items may be acknowledged here (see header). */
 export const ACKNOWLEDGEABLE_KINDS: readonly CommerceQueueKind[] = ["recall_response"];
@@ -127,10 +130,24 @@ export interface CommerceQueueItem {
   detail: Record<string, unknown>;
 }
 
-export interface CommerceQueuesView {
-  provisioned: boolean;
-  queues: Array<{ kind: CommerceQueueKind; openCount: number; items: CommerceQueueItem[] }>;
-}
+/**
+ * The commerce queue view IS the shared wire contract. It used to be a local
+ * shape that no client could read, while the client was built against a
+ * six-array contract no server produced; the route typed the dependency
+ * `unknown`, so nothing caught it.
+ */
+export type CommerceQueuesView = AdminCommerceQueuesDto;
+
+/**
+ * What one source read produced. A failed read is a distinct outcome, not an
+ * empty one: the difference between "nothing is waiting" and "I could not ask"
+ * is the whole point of an operator queue.
+ */
+export type SourceRead<T> =
+  | { status: "available"; rows: T[] }
+  | { status: "unavailable"; code: "source_unavailable" | "source_malformed" };
+
+const AVAILABLE: AdminCommerceQueueAvailability = { status: "available" };
 
 export interface QueueResolution {
   status: "resolved" | "dismissed";
@@ -557,13 +574,39 @@ function mergeKind(
   return sortViewItems([...visibleDerived, ...queuedOpen]);
 }
 
-function toView(itemsByKind: Map<CommerceQueueKind, CommerceQueueItem[]>): CommerceQueuesView {
+/**
+ * Assemble the wire view. A kind whose sources could not be read carries null
+ * counts and null items behind an explicit unavailable code, so no consumer can
+ * render it as a queue with nothing in it.
+ */
+function toView(
+  byKind: Map<CommerceQueueKind, SourceRead<CommerceQueueItem>>,
+): CommerceQueuesView {
+  const queues: AdminCommerceQueueDto[] = COMMERCE_QUEUE_KINDS.map((kind) => {
+    const read = byKind.get(kind) ?? { status: "unavailable" as const, code: "source_unavailable" as const };
+    if (read.status === "unavailable") {
+      return { kind, availability: { status: "unavailable", code: read.code }, openCount: null, items: null };
+    }
+    return { kind, availability: AVAILABLE, openCount: read.rows.length, items: read.rows };
+  });
   return {
     provisioned: true,
-    queues: COMMERCE_QUEUE_KINDS.map((kind) => {
-      const items = itemsByKind.get(kind) ?? [];
-      return { kind, openCount: items.length, items };
-    }),
+    degraded: queues.some((q) => q.availability.status === "unavailable"),
+    queues,
+  };
+}
+
+/** The whole view when commerce storage is not provisioned at all. */
+export function unprovisionedCommerceQueuesView(): CommerceQueuesView {
+  return {
+    provisioned: false,
+    degraded: true,
+    queues: COMMERCE_QUEUE_KINDS.map((kind) => ({
+      kind,
+      availability: { status: "unavailable", code: "source_unavailable" },
+      openCount: null,
+      items: null,
+    })),
   };
 }
 
@@ -605,9 +648,9 @@ export function createInMemoryAdminQueuesStore(): AdminQueuesRepository {
       return clone(row);
     },
     async commerce() {
-      const byKind = new Map<CommerceQueueKind, CommerceQueueItem[]>();
+      const byKind = new Map<CommerceQueueKind, SourceRead<CommerceQueueItem>>();
       for (const kind of COMMERCE_QUEUE_KINDS) {
-        byKind.set(kind, mergeKind(kind, [], items));
+        byKind.set(kind, { status: "available", rows: mergeKind(kind, [], items) });
       }
       return toView(byKind);
     },
@@ -679,35 +722,66 @@ export function queueItemRowToRecord(row: QueueItemRow): AdminQueueItemRecord {
 export function createSupabaseAdminQueuesStore(
   client: SupabaseClient = getSupabaseAdmin(),
 ): AdminQueuesRepository {
-  // Reads are defensive: a table another wave owns that does not exist yet, a
-  // permissions error, or a thrown client all read as empty, matching the
-  // member-platform admin-queues posture. Writes below are NOT defensive.
-  async function readRows<T>(table: string, columns: string, apply?: (query: any) => any): Promise<T[]> {
+  // Reads report what happened. A table that does not exist yet, a permissions
+  // error and a thrown client are all UNAVAILABLE, never empty: an operator who
+  // is told "0 waiting on a decision" when the read failed will not look again.
+  // The error itself is deliberately not carried: a raw provider message can
+  // name a table, a role or a connection. Writes below are NOT defensive.
+  async function readRows<T>(
+    table: string,
+    columns: string,
+    apply?: (query: any) => any,
+  ): Promise<SourceRead<T>> {
     try {
       let query: any = client.from(table).select(columns);
       if (apply) query = apply(query);
       const { data, error } = await query;
-      if (error || !Array.isArray(data)) return [];
-      return data as T[];
+      if (error) return { status: "unavailable", code: "source_unavailable" };
+      if (!Array.isArray(data)) return { status: "unavailable", code: "source_malformed" };
+      return { status: "available", rows: data as T[] };
     } catch {
-      return [];
+      return { status: "unavailable", code: "source_unavailable" };
     }
   }
 
-  async function allQueueItems(): Promise<AdminQueueItemRecord[]> {
-    const rows = await readRows<QueueItemRow>(QUEUE_ITEMS_TABLE, QUEUE_ITEM_COLUMNS);
-    return rows.map(queueItemRowToRecord);
+  /** Lift a pure derivation over a source read, preserving unavailability. */
+  function derive<T>(
+    read: SourceRead<T>,
+    project: (rows: T[]) => CommerceQueueItem[],
+  ): SourceRead<CommerceQueueItem> {
+    return read.status === "available"
+      ? { status: "available", rows: project(read.rows) }
+      : read;
   }
 
-  async function derivedFor(kind: CommerceQueueKind): Promise<CommerceQueueItem[]> {
+  /** Both reads must have answered before their joint derivation means anything. */
+  function derive2<A, B>(
+    a: SourceRead<A>,
+    b: SourceRead<B>,
+    project: (rowsA: A[], rowsB: B[]) => CommerceQueueItem[],
+  ): SourceRead<CommerceQueueItem> {
+    if (a.status === "unavailable") return a;
+    if (b.status === "unavailable") return b;
+    return { status: "available", rows: project(a.rows, b.rows) };
+  }
+
+  async function allQueueItems(): Promise<SourceRead<AdminQueueItemRecord>> {
+    const read = await readRows<QueueItemRow>(QUEUE_ITEMS_TABLE, QUEUE_ITEM_COLUMNS);
+    return read.status === "available"
+      ? { status: "available", rows: read.rows.map(queueItemRowToRecord) }
+      : read;
+  }
+
+  async function derivedFor(kind: CommerceQueueKind): Promise<SourceRead<CommerceQueueItem>> {
     switch (kind) {
       case "large_order_review":
-        return deriveLargeOrderReview(
+        return derive(
           await readRows<OrderReviewSourceRow>(
             ORDERS_TABLE,
             "id, state, subtotal_cents, shipping_cents, store_credit_applied_cents, review_triggers, created_at",
             (q) => q.eq("state", "manual_review"),
           ),
+          deriveLargeOrderReview,
         );
       case "refund_review":
       case "replacement_review": {
@@ -716,7 +790,7 @@ export function createSupabaseAdminQueuesStore(
           "id, order_id, sku, reason, state, resolution, submitted_at",
           (q) => q.in("state", [...OPEN_CLAIM_STATES]),
         );
-        return kind === "refund_review" ? deriveRefundReview(claims) : deriveReplacementReview(claims);
+        return derive(claims, kind === "refund_review" ? deriveRefundReview : deriveReplacementReview);
       }
       case "supplier_document_review":
       case "inventory_release":
@@ -725,46 +799,52 @@ export function createSupabaseAdminQueuesStore(
           LOTS_TABLE,
           "id, lot_id, sku, disposition, excursion, recalled, recalled_at, created_at",
         );
-        if (kind === "recall_response") return deriveRecallResponse(lots);
+        if (kind === "recall_response") return derive(lots, deriveRecallResponse);
         const docs = await readRows<LotQualityDocRow>(
           LOT_DOCS_TABLE,
           "lot_id, coa_on_file, identity_confirmed, purity_confirmed, sterility_confirmed, endotoxin_confirmed",
         );
-        return kind === "supplier_document_review"
-          ? deriveSupplierDocumentReview(lots, docs)
-          : deriveInventoryRelease(lots, docs);
+        // Both tables are required. Lots without their documents would report a
+        // release queue missing exactly the blocks it exists to show.
+        return derive2(lots, docs, kind === "supplier_document_review"
+          ? deriveSupplierDocumentReview
+          : deriveInventoryRelease);
       }
       case "fulfillment_failure":
         // Only the allowlisted columns are selected; recipient name, address,
         // and phone never leave the fulfillment table through this store.
-        return deriveFulfillmentFailure(
+        return derive(
           await readRows<FulfillmentSourceRow>(
             FULFILLMENT_TABLE,
             "id, order_id, owner, state, hold_reason, created_at",
             (q) => q.in("state", [...FAILED_FULFILLMENT_STATES]),
           ),
+          deriveFulfillmentFailure,
         );
       case "payout_review":
-        return derivePayoutReview(
+        return derive(
           await readRows<PayoutBatchSourceRow>(
             PAYOUT_BATCHES_TABLE,
             "id, partner_id, total_cents, state, excluded_reasons, built_at",
             (q) => q.in("state", [...PAYOUT_REVIEW_STATES]),
           ),
+          derivePayoutReview,
         );
       case "fraud_review":
-        return deriveFraudReview(
+        return derive(
           await readRows<FraudFlaggedCreditRow>(
             STORE_CREDIT_TABLE,
             "id, member_id, amount_cents, state, reason, created_at",
             (q) => q.eq("state", "fraud_flagged"),
           ),
+          deriveFraudReview,
         );
       case "payment_review":
-        // Queued only; no domain table encodes this open state.
-        return [];
+        // Queued only; no domain table encodes this open state. Its whole
+        // content comes from the persisted queue-items read.
+        return { status: "available", rows: [] };
       default:
-        return [];
+        return { status: "available", rows: [] };
     }
   }
 
@@ -780,7 +860,12 @@ export function createSupabaseAdminQueuesStore(
         const filtered = q.eq("kind", kind);
         return includeResolved ? filtered : filtered.eq("status", "open");
       });
-      return rows
+      // A caller asking for one kind gets an error rather than a false empty
+      // list. Silence here would be the same defect this store just removed.
+      if (rows.status === "unavailable") {
+        throw new Error(`queue read unavailable: ${rows.code}`);
+      }
+      return rows.rows
         .map(queueItemRowToRecord)
         .sort((a, b) => (a.openedAt < b.openedAt ? -1 : a.openedAt > b.openedAt ? 1 : a.id.localeCompare(b.id)));
     },
@@ -822,10 +907,19 @@ export function createSupabaseAdminQueuesStore(
     },
 
     async commerce() {
+      // The persisted queue-items table contributes to every kind, so when it
+      // cannot be read, no kind can be answered honestly.
       const persisted = await allQueueItems();
-      const byKind = new Map<CommerceQueueKind, CommerceQueueItem[]>();
+      const byKind = new Map<CommerceQueueKind, SourceRead<CommerceQueueItem>>();
       for (const kind of COMMERCE_QUEUE_KINDS) {
-        byKind.set(kind, mergeKind(kind, await derivedFor(kind), persisted));
+        if (persisted.status === "unavailable") {
+          byKind.set(kind, persisted);
+          continue;
+        }
+        const derived = await derivedFor(kind);
+        byKind.set(kind, derived.status === "available"
+          ? { status: "available", rows: mergeKind(kind, derived.rows, persisted.rows) }
+          : derived);
       }
       return toView(byKind);
     },

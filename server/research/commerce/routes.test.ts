@@ -1,6 +1,11 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import type { Request, Response } from "express";
 import {
+  COMMERCE_QUEUE_KINDS,
+  type AdminCommerceQueuesDto,
+} from "@shared/research/commerce-api";
+import { createInMemoryAdminQueuesStore } from "./persistence/admin-queues-store";
+import {
   adminIdOf,
   rawBodyOf,
   registerCommerceApi,
@@ -123,7 +128,9 @@ function deps(overrides: Partial<CommerceDependencies> = {}): CommerceDependenci
       quoteFor: async (memberId) => ({ ok: true, quote: { owner: memberId }, expiresAt: "2026-07-21T00:15:00Z" }),
     },
     capabilities: { memberVisible: () => ({ product_commerce: { enabled: false } }) },
-    adminQueues: { commerce: async () => ({}) },
+    // The real store, not a hand-written payload. A stub here is how the
+    // handler and the admin screen drifted onto different shapes unnoticed.
+    adminQueues: { commerce: () => createInMemoryAdminQueuesStore().commerce() },
     now: () => new Date("2026-07-21T00:00:00Z"),
     ...overrides,
   };
@@ -1181,5 +1188,84 @@ describe("adminIdOf", () => {
   it("falls back without ever reading the body", () => {
     const req = { body: { adminEmail: "attacker@evil.example" } } as unknown as Request;
     expect(adminIdOf(req)).toBe("admin");
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// The admin commerce queues payload.
+//
+// This is the shape the admin screen decodes. It is asserted against the real
+// handler and the real store rather than a fixture, because the previous
+// arrangement — a handler typed Promise<unknown> and a page test that stubbed
+// its own payload — let the two sides describe different things for months.
+// ---------------------------------------------------------------------------
+
+describe("GET /api/admin/research/commerce/queues", () => {
+  async function readQueues(d: CommerceDependencies = deps()): Promise<AdminCommerceQueuesDto> {
+    const routes = build(d);
+    const { res, captured } = fakeRes();
+    await route(routes, "get", "/api/admin/research/commerce/queues").handler(
+      reqWith({ id: "admin_1" }),
+      res,
+    );
+    const body = captured.body as { ok: boolean; queues: AdminCommerceQueuesDto };
+    expect(body.ok).toBe(true);
+    return body.queues;
+  }
+
+  it("serves one entry per canonical kind, in the contract's order", async () => {
+    const queues = await readQueues();
+    expect(queues.queues.map((q) => q.kind)).toEqual([...COMMERCE_QUEUE_KINDS]);
+  });
+
+  it("carries the availability, count and items the shared contract declares", async () => {
+    const queues = await readQueues();
+    expect(typeof queues.provisioned).toBe("boolean");
+    expect(typeof queues.degraded).toBe("boolean");
+    for (const queue of queues.queues) {
+      if (queue.availability.status === "available") {
+        expect(typeof queue.openCount).toBe("number");
+        expect(Array.isArray(queue.items)).toBe(true);
+      } else {
+        // The invariant the whole shape exists for.
+        expect(queue.openCount).toBeNull();
+        expect(queue.items).toBeNull();
+      }
+    }
+  });
+
+  it("does not serve the retired six-array shape any more", async () => {
+    const queues = await readQueues() as unknown as Record<string, unknown>;
+    for (const retired of [
+      "largeOrderReview",
+      "claims",
+      "supplierFactBlocks",
+      "quarantinedLots",
+      "partnerReview",
+      "commissionDisputes",
+    ]) {
+      expect(queues[retired]).toBeUndefined();
+    }
+  });
+
+  it("passes an unavailable queue through to the wire without inventing a zero", async () => {
+    const degraded: AdminCommerceQueuesDto = {
+      provisioned: true,
+      degraded: true,
+      queues: COMMERCE_QUEUE_KINDS.map((kind) =>
+        kind === "fraud_review"
+          ? { kind, availability: { status: "unavailable", code: "source_unavailable" }, openCount: null, items: null }
+          : { kind, availability: { status: "available" }, openCount: 0, items: [] },
+      ),
+    };
+    const queues = await readQueues({
+      ...deps(),
+      adminQueues: { commerce: async () => degraded },
+    });
+    const fraud = queues.queues.find((q) => q.kind === "fraud_review");
+    expect(fraud?.availability).toEqual({ status: "unavailable", code: "source_unavailable" });
+    expect(fraud?.openCount).toBeNull();
+    expect(queues.degraded).toBe(true);
   });
 });

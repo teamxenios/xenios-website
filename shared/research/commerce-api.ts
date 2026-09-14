@@ -399,13 +399,81 @@ export type PartnerLinksResponse = Api<{ links: PartnerLinkDto[] }>;
 // Admin queues (G10 surface owned by this lane's data)
 // ---------------------------------------------------------------------------
 
+/**
+ * The ten queue kinds the commerce store actually derives and persists. This
+ * list is the canonical one; the server store imports it rather than declaring
+ * its own.
+ *
+ * It replaced an earlier six-array shape (largeOrderReview, claims,
+ * supplierFactBlocks, quarantinedLots, partnerReview, commissionDisputes) that
+ * no server code ever produced. Two of those names had no producer anywhere:
+ * partner lifecycle review and commission disputes belong to the distribution
+ * lane, not to commerce operations, and are reached from their own surfaces.
+ */
+export const COMMERCE_QUEUE_KINDS = [
+  "large_order_review",
+  "payment_review",
+  "refund_review",
+  "replacement_review",
+  "supplier_document_review",
+  "inventory_release",
+  "fulfillment_failure",
+  "payout_review",
+  "fraud_review",
+  "recall_response",
+] as const;
+
+export type CommerceQueueKind = (typeof COMMERCE_QUEUE_KINDS)[number];
+
+/**
+ * Why a queue cannot be answered. These are operator-facing categories, never
+ * a provider or database error string: a raw message could carry a table name,
+ * a role name or a connection detail onto an admin screen.
+ */
+export const ADMIN_COMMERCE_QUEUE_UNAVAILABLE_CODES = [
+  /** The source answered with an error, or did not answer at all. */
+  "source_unavailable",
+  /** The source answered with something that is not a result set. */
+  "source_malformed",
+] as const;
+
+export type AdminCommerceQueueUnavailableCode =
+  (typeof ADMIN_COMMERCE_QUEUE_UNAVAILABLE_CODES)[number];
+
+export type AdminCommerceQueueAvailability =
+  | { status: "available" }
+  | { status: "unavailable"; code: AdminCommerceQueueUnavailableCode };
+
+export interface AdminCommerceQueueItemDto {
+  kind: CommerceQueueKind;
+  /** Derived from the owning domain table, or an explicitly queued item. */
+  source: "derived" | "queued";
+  /** An opaque pointer such as `order:<id>`. Never a member identity. */
+  sourceRef: string;
+  openedAt: string;
+  summary: string;
+  /** Allowlisted identifiers, states, cents and counts. Never personal data. */
+  detail: Record<string, unknown>;
+}
+
+/**
+ * One queue. The whole point of the shape is that a failed read cannot be
+ * serialized as a legitimate empty queue: when availability is unavailable both
+ * `openCount` and `items` are null, and a count of 0 is only ever a real count.
+ */
+export interface AdminCommerceQueueDto {
+  kind: CommerceQueueKind;
+  availability: AdminCommerceQueueAvailability;
+  openCount: number | null;
+  items: AdminCommerceQueueItemDto[] | null;
+}
+
 export interface AdminCommerceQueuesDto {
-  largeOrderReview: Array<{ orderId: string; totalCents: number; triggers: string[]; heldSince: string }>;
-  claims: Array<{ claimId: string; orderId: string; reason: ClaimReason; submittedAt: string }>;
-  supplierFactBlocks: Array<{ sku: string; unconfirmedFacts: string[]; disputed: boolean }>;
-  quarantinedLots: Array<{ lotId: string; sku: string; blockReasons: string[] }>;
-  partnerReview: Array<{ partnerId: string; state: PartnerState }>;
-  commissionDisputes: Array<{ ledgerId: string; partnerId: string; amountCents: number }>;
+  /** False when commerce storage is not provisioned at all. */
+  provisioned: boolean;
+  /** True when at least one queue is unavailable while others are answerable. */
+  degraded: boolean;
+  queues: AdminCommerceQueueDto[];
 }
 
 export type AdminCommerceQueuesResponse = Api<{ queues: AdminCommerceQueuesDto }>;

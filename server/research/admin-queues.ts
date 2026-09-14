@@ -259,19 +259,38 @@ export function priorityFor(now: Date, createdAt: string, slaDeadline: string | 
 
 type Row = Record<string, unknown>;
 
-// A missing table, a permissions error, or a thrown client all read as an
-// empty result. Waves land independently, so a queue whose source does not
-// exist yet must report nothing rather than break the whole admin console.
+/**
+ * Raised when a queue source cannot be read. It exists so the difference
+ * between "nothing is waiting" and "I could not ask" survives all the way to
+ * the operator.
+ */
+export class QueueSourceUnavailable extends Error {
+  readonly code = "queue_source_unavailable";
+  constructor(readonly reason: "source_unavailable" | "source_malformed") {
+    super(`queue source ${reason}`);
+    this.name = "QueueSourceUnavailable";
+  }
+}
+
+// A missing table, a permissions error, a malformed payload and a thrown client
+// are all UNAVAILABLE. This used to return an empty array for every one of
+// them, which rendered a failed read as a queue with nothing in it — an
+// operator told a queue is empty stops looking at it. Waves still land
+// independently; a queue whose source has not arrived yet now says so.
+// The provider message is deliberately dropped: it can name a table or a role.
 async function readTable(table: string, apply?: (query: any) => any): Promise<Row[]> {
+  let data: unknown;
+  let error: unknown;
   try {
     let query: any = getSupabaseAdmin().from(table).select("*");
     if (apply) query = apply(query);
-    const { data, error } = await query;
-    if (error || !Array.isArray(data)) return [];
-    return data as Row[];
+    ({ data, error } = await query);
   } catch {
-    return [];
+    throw new QueueSourceUnavailable("source_unavailable");
   }
+  if (error) throw new QueueSourceUnavailable("source_unavailable");
+  if (!Array.isArray(data)) throw new QueueSourceUnavailable("source_malformed");
+  return data as Row[];
 }
 
 // ---------------------------------------------------------------------------
@@ -926,6 +945,14 @@ export function registerAdminQueuesApi(app: Express, deps: MemberPlatformDeps) {
       };
       res.json({ ok: true, page });
     } catch (err) {
+      if (err instanceof QueueSourceUnavailable) {
+        console.error("[admin queues] list unavailable:", err.reason);
+        return res.status(503).json({
+          ok: false,
+          code: err.code,
+          message: "This queue could not be read, so what is waiting in it is unknown.",
+        });
+      }
       console.error("[admin queues] list failed:", err instanceof Error ? err.message : err);
       res.status(500).json({ ok: false, message: "The queue could not be loaded." });
     }
@@ -962,6 +989,14 @@ export function registerAdminQueuesApi(app: Express, deps: MemberPlatformDeps) {
         detail: record.detail,
       });
     } catch (err) {
+      if (err instanceof QueueSourceUnavailable) {
+        console.error("[admin queues] item read unavailable:", err.reason);
+        return res.status(503).json({
+          ok: false,
+          code: err.code,
+          message: "This queue could not be read, so whether the item is still in it is unknown.",
+        });
+      }
       console.error("[admin queues] item read failed:", err instanceof Error ? err.message : err);
       res.status(500).json({ ok: false, message: "The queue item could not be loaded." });
     }

@@ -53,7 +53,11 @@ import {
   type StoreCreditLedgerRepository,
 } from "./persistence/store-credit-store";
 import { resolveSubscriptionRepository } from "./persistence/subscriptions-store";
-import { resolveAdminQueuesStore, type AdminQueuesRepository } from "./persistence/admin-queues-store";
+import {
+  resolveAdminQueuesStore,
+  unprovisionedCommerceQueuesView,
+  type AdminQueuesRepository,
+} from "./persistence/admin-queues-store";
 import {
   resolveReservationStore,
   type ReservationRepository,
@@ -490,7 +494,7 @@ function disabledDependencies(
       }),
     },
     adminQueues: {
-      commerce: () => Promise.resolve({ provisioned: false, items: [] }),
+      commerce: () => Promise.resolve(unprovisionedCommerceQueuesView()),
     },
     now,
   };
@@ -574,7 +578,7 @@ function unprovisionedDependencies(
       }),
     },
     adminQueues: {
-      commerce: () => Promise.resolve({ provisioned: false, items: [] }),
+      commerce: () => Promise.resolve(unprovisionedCommerceQueuesView()),
     },
     now,
   };

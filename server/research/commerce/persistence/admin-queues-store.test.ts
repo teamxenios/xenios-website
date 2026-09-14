@@ -364,12 +364,89 @@ function fakeSupabase(tables: Record<string, Array<Record<string, unknown>>>): S
 }
 
 describe("createSupabaseAdminQueuesStore (fake client)", () => {
-  it("reads a missing table as an empty queue instead of failing the whole view", async () => {
-    // Only the queue-items table exists; every domain table is another wave's.
+  // Every table the ten kinds derive from. Present and empty means the source
+  // answered and there is genuinely nothing waiting.
+  const ALL_SOURCES = {
+    research_admin_queue_items: [],
+    research_orders: [],
+    research_claims: [],
+    research_inventory_lots: [],
+    research_lot_quality_documents: [],
+    research_fulfillment_orders: [],
+    research_payout_batches: [],
+    research_store_credit_ledger: [],
+  };
+
+  it("reports a missing source as unavailable, never as an empty queue", async () => {
+    // Only the queue-items table exists; every domain table is absent, which is
+    // what a permissions denial or an unprovisioned schema looks like here.
     const store = createSupabaseAdminQueuesStore(fakeSupabase({ research_admin_queue_items: [] }));
     const view = await store.commerce();
+
     expect(view.queues).toHaveLength(10);
-    expect(view.queues.every((q) => q.openCount === 0)).toBe(true);
+    expect(view.provisioned).toBe(true);
+    expect(view.degraded).toBe(true);
+
+    const unavailable = view.queues.filter((q) => q.availability.status === "unavailable");
+    expect(unavailable.length).toBeGreaterThan(0);
+    // The load-bearing assertion: an unreadable queue carries no count at all.
+    for (const queue of unavailable) {
+      expect(queue.openCount).toBeNull();
+      expect(queue.items).toBeNull();
+      expect(queue.availability).toEqual({ status: "unavailable", code: "source_unavailable" });
+    }
+    // And no queue is both unreadable and reported as zero.
+    expect(view.queues.some((q) => q.availability.status === "unavailable" && q.openCount === 0)).toBe(false);
+  });
+
+  it("reports a present but empty source as an available queue holding zero", async () => {
+    const store = createSupabaseAdminQueuesStore(fakeSupabase({ ...ALL_SOURCES }));
+    const view = await store.commerce();
+
+    expect(view.degraded).toBe(false);
+    expect(view.queues).toHaveLength(10);
+    for (const queue of view.queues) {
+      expect(queue.availability).toEqual({ status: "available" });
+      expect(queue.openCount).toBe(0);
+      expect(queue.items).toEqual([]);
+    }
+  });
+
+  it("keeps the healthy queues answerable when one source is down", async () => {
+    // Everything except the lot tables, which three kinds derive from.
+    const sources: Record<string, Array<Record<string, unknown>>> = { ...ALL_SOURCES };
+    delete sources.research_inventory_lots;
+    const store = createSupabaseAdminQueuesStore(fakeSupabase(sources));
+    const view = await store.commerce();
+
+    expect(view.degraded).toBe(true);
+    const byKind = new Map(view.queues.map((q) => [q.kind, q] as const));
+    for (const kind of ["supplier_document_review", "inventory_release", "recall_response"] as const) {
+      expect(byKind.get(kind)?.availability.status).toBe("unavailable");
+      expect(byKind.get(kind)?.openCount).toBeNull();
+    }
+    // The rest still answer, so one missing table does not cost the console.
+    for (const kind of ["large_order_review", "payout_review", "fraud_review", "payment_review"] as const) {
+      expect(byKind.get(kind)?.availability.status).toBe("available");
+      expect(byKind.get(kind)?.openCount).toBe(0);
+    }
+  });
+
+  it("answers nothing at all when the queue-items table itself cannot be read", async () => {
+    // That table contributes to every kind, so no kind can be answered.
+    const sources: Record<string, Array<Record<string, unknown>>> = { ...ALL_SOURCES };
+    delete sources.research_admin_queue_items;
+    const store = createSupabaseAdminQueuesStore(fakeSupabase(sources));
+    const view = await store.commerce();
+
+    expect(view.degraded).toBe(true);
+    expect(view.queues.every((q) => q.availability.status === "unavailable")).toBe(true);
+    expect(view.queues.every((q) => q.openCount === null && q.items === null)).toBe(true);
+  });
+
+  it("refuses a single-kind read rather than returning a false empty list", async () => {
+    const store = createSupabaseAdminQueuesStore(fakeSupabase({}));
+    await expect(store.listByKind("payment_review")).rejects.toThrow(/unavailable/);
   });
 
   it("fails an enqueue loudly when the queue table is missing (admin work must not vanish)", async () => {

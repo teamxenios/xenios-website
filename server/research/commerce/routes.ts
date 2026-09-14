@@ -34,6 +34,7 @@ import type {
   ProductSummaryDto,
   ShippingQuoteRequest,
   SubscriptionActionRequest,
+  AdminCommerceQueuesDto,
 } from "@shared/research/commerce-api";
 import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
 import type { WebhookResult } from "./webhooks";
@@ -137,7 +138,12 @@ export interface CommerceDependencies {
     memberVisible(): Record<string, MemberCapabilityStatus>;
   };
   adminQueues: {
-    commerce(): Promise<unknown>;
+    /**
+     * Typed on purpose. This was `Promise<unknown>`, which is how the handler
+     * came to serve one shape while the admin screen was built against
+     * another with nothing to catch it.
+     */
+    commerce(): Promise<AdminCommerceQueuesDto>;
   };
   /** Injected so handlers are deterministic under test. */
   now(): Date;
