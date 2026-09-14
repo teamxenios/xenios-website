@@ -124,11 +124,14 @@ focused tests exist and pass; it does not mean mounted, deployed or enabled.
 | Catalog and product detail | INTEGRATED, fail-closed | `server/research/catalog/member-catalog-routes.ts:58,80`; unavailable answers 404 or 503, never a fabricated row |
 | Cart continuity across authentication | IMPLEMENTED | `client/src/research/core.tsx:289-301,320`; the stored envelope is deliberately untouched during verification |
 | Checkout, payment authentication, credit consent | LOCALLY_QUALIFIED | `ce0858a`; not deployed, and `commerceEnabled=false` live |
-| Canonical order record | NOT_IMPLEMENTED in the running system | `server/research/orders/service.ts:118` has zero non-test callers |
-| Canonical order history | NOT_IMPLEMENTED in the running system | `server/research/orders/http.ts:61` never mounted; `client/src/research/orders/OrderHistory.tsx:36` route absent from `section.tsx` |
-| Order history actually served | INTEGRATED, not the canonical authority | `server/research/commerce/routes.ts:502`; portal projection `customer-account/orders-projection.ts` |
+| Native order record | INTEGRATED | `research_orders`. `server/research/commerce/durable-checkout-submission.ts:199-225` persists it through `OrderRepository` **before** any provider effect; the capture commit updates that same row |
+| Legacy `XO-` canonical-order lane | NOT_IMPLEMENTED, and deliberately left so | `server/research/orders/service.ts:118` has zero non-test callers. It predates the durable checkout and is **not** the native order authority; mounting it would create a second answer to "what is the order?" |
+| Order history | INTEGRATED | `GET /api/research/orders` and `/api/research/orders/:orderId` read the same `research_orders` authority the checkout wrote. Proven end to end in `server/research/commerce/admin-order-loop.test.ts` |
+| Legacy `XO-` history surface | NOT_IMPLEMENTED, and deliberately left so | `server/research/orders/http.ts:61` never mounted; the unmounted client route belongs to the same superseded lane |
 | Fulfillment status, Early Access lane | INTEGRATED | `server/research/early-access/routes/order-routes.ts:1004-1019` |
-| Fulfillment status, member and commerce lane | IMPLEMENTED, unmounted | `server/research/fulfillment/register.ts:205` has zero non-test callers |
+| Post-payment progression, member and commerce lane | INTEGRATED | `payment_captured -> processing -> fulfilled` on the native order service, reachable at `POST /api/admin/research/orders/:orderId/{processing,fulfilled}`; `delivered` stays system/provider-only |
+| Operator-recorded tracking | INTEGRATED | `POST /api/admin/research/orders/:orderId/shipments` writes `research_order_shipments` facts; shape-validated, refused on an unpaid order, and never over a provider-reported shipment |
+| Legacy fulfillment engine (`server/research/fulfillment/*`) | IMPLEMENTED, unmounted, superseded for this release | `register.ts:205` has zero non-test callers. It is an independent 15-state machine with no atomic synchronization to `research_orders`; mounting it would create a second fulfillment truth |
 | Tracking, Early Access | INTEGRATED | carrier, number and `shippedAt` are served and rendered |
 | Tracking, member and account surfaces | IMPLEMENTED but dark | the provider webhook is disabled by default and the history reader declares `shipmentsSource: "unavailable"` |
 | Documents, listing | INTEGRATED | `server/research/customer-account/routes.ts:141` |
@@ -187,15 +190,32 @@ focused tests exist and pass; it does not mean mounted, deployed or enabled.
 | Care requests, assisted orders, quotes, applications, product requests | INTEGRATED | |
 | Early Access payment review, per-order dispatch, tracking, exceptions | INTEGRATED | the one revenue lane whose loop is closed end to end |
 | Customer-access approval | INTEGRATED | |
-| Order roster, support queue, audit trail, CRM workspace | NOT_IMPLEMENTED | client adapters target admin paths registered nowhere in `server/` |
-| Held-order approve, capture, cancel | IMPLEMENTED, unreachable | the three verbs are mounted; no client calls them, and the detail screen they link to has no read endpoint |
-| Commerce queues page | defective, see P0-1 | |
+| Order roster, support queue, audit trail, CRM workspace | NOT_IMPLEMENTED | client adapters target admin paths registered nowhere in `server/`. The roster is now the only one of the four that the order loop needs |
+| Held-order approve, capture, cancel | INTEGRATED | reachable from the order file, offered only where the transition table admits them |
+| Commerce queues page | INTEGRATED | ten canonical kinds; an unreadable source renders unavailable, never zero |
 
 ---
 
 ## 3. Gaps
 
-### Closed in this session
+### Closed in the P0 closeout (2026-09-14, second pass)
+
+1. **The commerce queue contract.** The canonical shape is the backend's ten
+   kinds, declared once in `shared/research/commerce-api.ts`. The route
+   dependency is typed with it instead of `Promise<unknown>`, the page renders
+   all ten, and the retired six-array names are gone. `partnerReview` and
+   `commissionDisputes` are not preserved as empty commerce queues: they had no
+   producer, and they belong to the distribution lane.
+2. **Failed reads.** A source that errors, returns a non-array or throws is now
+   unavailable, in both the commerce store and the member-platform queues. An
+   unavailable queue carries null count and null items, so the shape itself
+   makes "0 waiting" unrepresentable for a failed read. One source going down
+   costs that queue, not the console.
+3. **The order authority question.** Corrected below, and proven by test.
+4. **The post-payment loop and the admin action loop.** Both closed on the
+   native order authority. See the two rows above and section 4.
+
+### Closed in the first pass
 
 1. The public Care support form reported delivery it had not achieved. The team
    alert now has to succeed before the route reports success, and a failure
@@ -208,75 +228,57 @@ focused tests exist and pass; it does not mean mounted, deployed or enabled.
 3. Production identity records, stale by one deploy; the system-of-record
    registry, stale by two.
 
-### P0
+### P0 — all four closed
 
-**P0-1 — the commerce queues admin page cannot work: server and client speak
-different shapes.** `GET /api/admin/research/commerce/queues` returns the
-store's internal `CommerceQueuesView`, which is `{provisioned, queues:[{kind,
-openCount, items}]}` over ten kinds
-(`server/research/commerce/persistence/admin-queues-store.ts:130`). The client
-is built against the frozen `AdminCommerceQueuesDto`, six named arrays
-(`shared/research/commerce-api.ts:402`), and reads
-`queues.largeOrderReview.length`
-(`client/src/research/pages/adminx/CommerceQueues.tsx:153`). No server code
-anywhere produces those six field names: grep for `largeOrderReview`,
-`supplierFactBlocks` or `commissionDisputes` across `server/` and `shared/`
-matches only the type declaration. The route's dependency is typed
-`commerce(): Promise<unknown>` (`server/research/commerce/routes.ts:139-141`),
-so the compiler never saw the divergence, and the page's own test stubs `fetch`
-with a hand-written DTO, so the suite cannot see it either.
+**P0-1, the commerce queue contract — CLOSED.** The handler served the store's
+ten-kind view while the page decoded six named arrays no server code produced.
+Resolved toward the backend model, as the founder directed. The route
+dependency is typed, a route test asserts the handler's own payload against the
+shared type, and the page test is built from that contract rather than from a
+stub of its own.
 
-*Acceptance:* one shape wins. Either the handler maps the ten-kind view onto the
-frozen DTO — noting that `partnerReview` and `commissionDisputes` have no
-producer at all today and must be reported unavailable rather than empty — or
-the DTO and the page move to the ten-kind view. Either way the route dependency
-stops being `unknown`, and a test asserts the handler's own payload against the
-shared type rather than against a stub.
+**P0-2, failed reads rendering as zero — CLOSED.** Both stores now report
+availability per source. The member-platform route answers 503 with a named
+code and no table, role or provider string. A single-kind read throws rather
+than returning a false empty list. The store's "no migration provisions
+`research_admin_queue_items`" note had stopped being true — the DDL is TRACK B
+COMPLETION 1 in `supabase/production/research-track-b-commerce.sql` — and
+whether any given database has it is not knowable from source, which is exactly
+why the read no longer guesses.
 
-**P0-2 — two mounted admin queue stores turn a failed read into a clean zero.**
-`server/research/commerce/persistence/admin-queues-store.ts:686-694` and
-`server/research/admin-queues.ts:262-275` both return `[]` on an error, on a
-non-array, and on a thrown client. A missing table, an RLS denial or a
-connection failure renders "0 waiting on a decision". Both carry comments
-explaining the intent — a queue whose source has not landed yet should not break
-the whole console — and that intent is reasonable; the implementation is what is
-wrong, because its output is indistinguishable from real emptiness. Every other
-authority in this codebase refuses exactly this.
+**P0-3, the order authority — CORRECTED, then CLOSED.** The first pass said
+"nothing mints a canonical order". That was wrong about the thing that matters.
+`createDurableCheckoutSubmission` persists a `research_orders` row **before**
+any provider effect, and `research_checkout_execution_commit_captured` locks
+and updates that same row; `research_checkout_executions.order_id` references
+it. The accurate statement is narrower: the older `XO-` lane
+(`server/research/orders/*`) has no callers. It is a superseded lane, not the
+missing authority, and mounting it would have created a second answer to "what
+is the order?". `server/research/commerce/admin-order-loop.test.ts` proves the
+same row reads back through member history, member detail and the admin file,
+that a replay finds one record, and that another member cannot see it.
 
-*Acceptance:* the read returns a distinguishable unavailable result per source;
-the endpoint reports it per queue kind, as a 503 or an availability field; and a
-test asserts that an erroring source never yields a zero-length queue alongside
-a healthy state.
+**P0-4, the post-payment loop — CLOSED on the native authority.** The gap was
+never that an old module lacked a caller; it was that a paid order could not be
+worked. `payment_captured -> processing -> fulfilled` is now reachable, and a
+carrier and tracking number can be recorded against `research_order_shipments`.
+`delivered` has no admin route: the transition table admits it only from the
+system or a signed provider event.
 
-**P0-3 — nothing mints a canonical order, and the canonical order lane is
-unreachable from both ends.** `createCanonicalOrderService`
-(`server/research/orders/service.ts:118`), `createCanonicalOrderRouteTable`
-(`server/research/orders/http.ts:61`) and `adjudicateAssistedRequestConversion`
-(`server/research/assisted-order/conversion/gate.ts:182`) each have zero
-non-test callers, verified by grep across `server/`, `client/`, `shared/` and
-`scripts/`. The assisted-order lane runs its own status machine to shipped and
-delivered without producing a canonical record, and order attribution is
-therefore never bound to a canonical order.
+**P0-5, the admin action loop — CLOSED.** `GET /api/admin/research/orders/:id`
+exists, the queue link resolves, and the order file offers only the moves the
+server reported as available.
 
-*Acceptance:* a settled payment adjudicates conversion and creates the canonical
-order; the canonical route table is mounted behind the member resolver; the two
-client routes are registered; and the resulting order number is readable by the
-customer who paid.
+### Authority decisions recorded
 
-**P0-4 — the canonical fulfillment engine is never mounted, so the member and
-commerce lane has no customer fulfillment surface.** `registerFulfillmentRoutes`
-(`server/research/fulfillment/register.ts:205`) has zero non-test callers, and
-its own header says the composition root calls it. Consequently no code path in
-this deployment can move a member order past processing: the shipment row is
-written once as pending with a null tracking number, and the only two things
-that could advance it are a provider webhook disabled by default and this
-engine.
-
-*Acceptance:* mount it with a real actor resolver and the paid-order gate, and
-`GET /api/research/fulfillment/orders/:orderReference/status` answers for a
-signed-in member — or delete the admin route and the contract and rely on the
-Early Access lane alone. Two fulfillment stories, one of them unreachable, is
-worse than one.
+| Question | Decision |
+|---|---|
+| Commerce admin queue shape | The backend's ten kinds |
+| Native order authority | `research_orders` |
+| Legacy `XO-` order lane | Superseded, left unmounted, not deleted |
+| Fulfillment progression | The native order service and `research_order_shipments` |
+| Legacy fulfillment engine | Superseded for this release, left unmounted: an independent state machine with no atomic synchronization to `research_orders` would be a second fulfillment truth |
+| Delivery | Carrier fact. System or signed provider event only |
 
 ### P1
 
