@@ -26,10 +26,18 @@
       "backTo": "/research/about",
       "privateExpectedPath": "/research/sign-in",
       "privateExpectedReturnTo": "/research/account",
-      "publicRequiredSelectors": ["#about-purpose"],
-      "publicRequiredText": ["A more accountable way to navigate research access."],
-      "privateRequiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-      "privateRequiredText": ["Sign in."]
+      "publicRequiredSelectors": [
+        "#about-purpose"
+      ],
+      "publicRequiredText": [
+        "A more accountable way to navigate research access."
+      ],
+      "privateRequiredSelectors": [
+        "[data-testid=\"form-member-signin\"]"
+      ],
+      "privateRequiredText": [
+        "Sign in."
+      ]
     }
   ],
   "routes": [
@@ -45,8 +53,13 @@
       },
       "structuredDataTypes": [],
       "semanticContract": {
-        "requiredSelectors": ["#rg-hero-title"],
-        "requiredText": ["Provider-guided peptide care.", "Evidence-led Research access."]
+        "requiredSelectors": [
+          "#rg-hero-title"
+        ],
+        "requiredText": [
+          "Provider-guided peptide care.",
+          "Evidence-led Research access."
+        ]
       }
     },
     {
@@ -55,10 +68,19 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Xenios Research | Clear, evidence-aware research access", "description": "Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway." },
+      "metadataContract": {
+        "title": "Xenios Research | Clear, evidence-aware research access",
+        "description": "Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#rg-hero-title"],
-        "requiredText": ["Research products.", "A clearer standard."]
+        "requiredSelectors": [
+          "#rg-hero-title"
+        ],
+        "requiredText": [
+          "Provider-guided peptide care.",
+          "Evidence-led Research access."
+        ],
+        "$comment": "Re-pinned 2026-09-14. /research has rendered the canonical Care + Research gateway since 8b53dbe, so the former warm-silver hero copy no longer exists anywhere in the client and this contract had been failing every run since. The two lines pinned here are the gateway h1, the same copy /health pins, because both paths deliberately render the same component."
       }
     },
     {
@@ -67,10 +89,18 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Access Xenios Research", "description": "Choose the Xenios Research access path that matches your intended relationship or question." },
+      "metadataContract": {
+        "title": "Access Xenios Research",
+        "description": "Choose the Xenios Research access path that matches your intended relationship or question."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#access-first-question"],
-        "requiredText": ["Choose the path that matches what you are here to do."]
+        "requiredSelectors": [
+          "#access-first-question"
+        ],
+        "requiredText": [
+          "Choose the path that matches what you need."
+        ],
+        "$comment": "Re-pinned 2026-09-14 after a copy edit shortened the lead line; the contract had kept the earlier wording."
       }
     },
     {
@@ -81,8 +111,13 @@
       "public": true,
       "fixture": "preview-placeholder-catalog",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"early-access-agreement-mount\"]"],
-        "requiredText": ["Research Catalogue", "Research Use Policy"]
+        "requiredSelectors": [
+          "[data-testid=\"early-access-agreement-mount\"]"
+        ],
+        "requiredText": [
+          "Research Catalogue",
+          "Research Use Policy"
+        ]
       },
       "expectedHttpFailures": [
         {
@@ -136,10 +171,19 @@
       "public": true,
       "fixture": "preview-placeholder-catalog-no-selection",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"order-continue-contact\"][disabled]"],
-        "forbiddenSelectors": ["[data-testid=\"order-submit\"]"],
-        "requiredText": ["No products selected yet."],
-        "forbiddenText": ["Request received", "Status: submitted"]
+        "requiredSelectors": [
+          "[data-testid=\"order-continue-contact\"][disabled]"
+        ],
+        "forbiddenSelectors": [
+          "[data-testid=\"order-submit\"]"
+        ],
+        "requiredText": [
+          "No products selected yet."
+        ],
+        "forbiddenText": [
+          "Request received",
+          "Status: submitted"
+        ]
       },
       "expectedHttpFailures": [
         {
@@ -163,9 +207,17 @@
       "public": true,
       "fixture": "no-stored-receipt",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"order-confirmation-unavailable\"]"],
-        "requiredText": ["Confirmation unavailable", "This link alone does not confirm"],
-        "forbiddenText": ["Request received", "Status: submitted"]
+        "requiredSelectors": [
+          "[data-testid=\"order-confirmation-unavailable\"]"
+        ],
+        "requiredText": [
+          "Confirmation unavailable",
+          "This link alone does not confirm"
+        ],
+        "forbiddenText": [
+          "Request received",
+          "Status: submitted"
+        ]
       },
       "$comment": "An arbitrary valid-shape reference must render the neutral, unverifiable confirmation state. It must never claim Request received or Submitted from the URL alone."
     },
@@ -216,8 +268,12 @@
       "public": true,
       "label": "apply",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"application-documentation-pending\"]"],
-        "requiredText": ["Applications are being prepared."]
+        "requiredSelectors": [
+          "[data-testid=\"application-documentation-pending\"]"
+        ],
+        "requiredText": [
+          "Applications are being prepared."
+        ]
       }
     },
     {
@@ -228,8 +284,13 @@
       "public": true,
       "label": "sign-in",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]", "[data-testid=\"button-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]",
+          "[data-testid=\"button-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -238,10 +299,17 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Support, xenios research", "description": "Contact xenios research support, check an application, claim an approved account, or reset a password." },
+      "metadataContract": {
+        "title": "Support, xenios research",
+        "description": "Contact xenios research support, check an application, claim an approved account, or reset a password."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#ra-support-contact"],
-        "requiredText": ["How to reach us"]
+        "requiredSelectors": [
+          "#ra-support-contact"
+        ],
+        "requiredText": [
+          "How to reach us"
+        ]
       }
     },
     {
@@ -251,10 +319,17 @@
       "indexable": false,
       "public": true,
       "label": "about",
-      "metadataContract": { "title": "About Xenios Research", "description": "Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations." },
+      "metadataContract": {
+        "title": "About Xenios Research",
+        "description": "Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#about-purpose"],
-        "requiredText": ["A more accountable way to navigate research access."]
+        "requiredSelectors": [
+          "#about-purpose"
+        ],
+        "requiredText": [
+          "A more accountable way to navigate research access."
+        ]
       }
     },
     {
@@ -264,10 +339,17 @@
       "indexable": false,
       "public": true,
       "label": "how-it-works",
-      "metadataContract": { "title": "How Xenios Research works", "description": "Understand the Xenios Research journey from access selection and exact product review to truthful request, order, document, and support status." },
+      "metadataContract": {
+        "title": "How Xenios Research works",
+        "description": "Understand the Xenios Research journey from access selection and exact product review to truthful request, order, document, and support status."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#pathway-choices"],
-        "requiredText": ["From first question to a defensible next action."]
+        "requiredSelectors": [
+          "#pathway-choices"
+        ],
+        "requiredText": [
+          "From first question to a defensible next action."
+        ]
       }
     },
     {
@@ -277,10 +359,17 @@
       "indexable": false,
       "public": true,
       "label": "faq",
-      "metadataContract": { "title": "Frequently asked questions | Xenios Research", "description": "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support." },
+      "metadataContract": {
+        "title": "Frequently asked questions | Xenios Research",
+        "description": "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"button-faq-0\"]"],
-        "requiredText": ["Understand the boundary before you continue."]
+        "requiredSelectors": [
+          "[data-testid=\"button-faq-0\"]"
+        ],
+        "requiredText": [
+          "Understand the boundary before you continue."
+        ]
       }
     },
     {
@@ -289,10 +378,17 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Quality system | Xenios Research", "description": "See how Xenios Research handles receiving, lot identity, quarantine, evidence review, release decisions, documents, storage, and fulfillment traceability." },
+      "metadataContract": {
+        "title": "Quality system | Xenios Research",
+        "description": "See how Xenios Research handles receiving, lot identity, quarantine, evidence review, release decisions, documents, storage, and fulfillment traceability."
+      },
       "semanticContract": {
-        "requiredSelectors": [".quality-page h1"],
-        "requiredText": ["Evidence travels with the lot."]
+        "requiredSelectors": [
+          ".quality-page h1"
+        ],
+        "requiredText": [
+          "Evidence travels with the lot."
+        ]
       }
     },
     {
@@ -302,10 +398,17 @@
       "indexable": false,
       "public": true,
       "label": "testing",
-      "metadataContract": { "title": "Testing explained | Xenios Research", "description": "Understand identity, purity, assay, microbial, contaminant, and stability evidence—and the limits of every result." },
+      "metadataContract": {
+        "title": "Testing explained | Xenios Research",
+        "description": "Understand identity, purity, assay, microbial, contaminant, and stability evidence\u2014and the limits of every result."
+      },
       "semanticContract": {
-        "requiredSelectors": [".quality-page h1"],
-        "requiredText": ["One result answers one defined question."]
+        "requiredSelectors": [
+          ".quality-page h1"
+        ],
+        "requiredText": [
+          "One result answers one defined question."
+        ]
       }
     },
     {
@@ -316,7 +419,10 @@
       "public": true,
       "expectStatus": 404,
       "semanticContract": {
-        "requiredText": ["Verification is unavailable.", "No lot status, document state, or absence has been inferred."]
+        "requiredText": [
+          "Verification is unavailable.",
+          "No lot status, document state, or absence has been inferred."
+        ]
       },
       "expectedHttpFailures": [
         {
@@ -325,11 +431,12 @@
           "status": 404,
           "count": 1,
           "resourceType": "Document",
-          "responseBodySha256": "d6af21dd629c550f698c43332827cf6660fd2c82ba198ea6b67df43f2fcbefda",
+          "responseBodySha256": "3ffb8f932b12a7a7ba1854ffa5561e6e851d2eec710f8e975a7cf8745e0d860c",
           "consoleCount": 1,
           "consoleText": "Failed to load resource: the server responded with a status of 404 (Not Found)",
           "reason": "The exact negative-lot browser document is intentionally an authoritative noindex 404 while still rendering the neutral verification-unavailable state.",
-          "productionEvidence": "server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts pin the authoritative Research not-found document policy; this declaration separately pins the preserved negative-lot response-body SHA-256."
+          "productionEvidence": "server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts pin the authoritative Research not-found document policy; this declaration separately pins the preserved negative-lot response-body SHA-256.",
+          "$comment": "Re-pinned 2026-09-14 against the candidate preview built from dbe76d831e8b4494f7684d28ef41259a56ce2326. Both public 404 paths still serve one identical authoritative not-found document; only its bytes moved."
         },
         {
           "path": "/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
@@ -364,10 +471,17 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Quality documents | Xenios Research", "description": "Find approved public lot records or sign in for secure, ownership-scoped account documents." },
+      "metadataContract": {
+        "title": "Quality documents | Xenios Research",
+        "description": "Find approved public lot records or sign in for secure, ownership-scoped account documents."
+      },
       "semanticContract": {
-        "requiredSelectors": [".quality-page h1"],
-        "requiredText": ["The right record, through the right door."]
+        "requiredSelectors": [
+          ".quality-page h1"
+        ],
+        "requiredText": [
+          "The right record, through the right door."
+        ]
       }
     },
     {
@@ -377,10 +491,17 @@
       "indexable": false,
       "public": true,
       "label": "policies",
-      "metadataContract": { "title": "Research policies | Xenios Research", "description": "Find the public Xenios Research-use, privacy, terms, shipping, and returns documents with their current publication status shown plainly." },
+      "metadataContract": {
+        "title": "Research policies | Xenios Research",
+        "description": "Find the public Xenios Research-use, privacy, terms, shipping, and returns documents with their current publication status shown plainly."
+      },
       "semanticContract": {
-        "requiredSelectors": ["section[aria-label=\"Research policy documents\"]"],
-        "requiredText": ["Read the document—and its status."]
+        "requiredSelectors": [
+          "section[aria-label=\"Research policy documents\"]"
+        ],
+        "requiredText": [
+          "Read the document\u2014and its status."
+        ]
       }
     },
     {
@@ -390,10 +511,17 @@
       "indexable": false,
       "public": true,
       "label": "contact",
-      "metadataContract": { "title": "Contact Xenios Research", "description": "Contact Xenios Research for operational support, account help, documents, organization context, or help choosing the correct Research or Care pathway." },
+      "metadataContract": {
+        "title": "Contact Xenios Research",
+        "description": "Contact Xenios Research for operational support, account help, documents, organization context, or help choosing the correct Research or Care pathway."
+      },
       "semanticContract": {
-        "requiredSelectors": ["section[aria-label=\"Research contact options\"]"],
-        "requiredText": ["Start with the team and pathway that can actually help."]
+        "requiredSelectors": [
+          "section[aria-label=\"Research contact options\"]"
+        ],
+        "requiredText": [
+          "Start with the team and pathway that can actually help."
+        ]
       }
     },
     {
@@ -403,10 +531,18 @@
       "indexable": false,
       "public": true,
       "label": "privacy",
-      "metadataContract": { "title": "Privacy Policy, xenios research", "description": "The privacy policy for the xenios research section." },
+      "metadataContract": {
+        "title": "Privacy Policy, xenios research",
+        "description": "The privacy policy for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"legal-operational-draft\"]"],
-        "requiredText": ["Privacy Policy", "Documentation pending"]
+        "requiredSelectors": [
+          "[data-testid=\"legal-operational-draft\"]"
+        ],
+        "requiredText": [
+          "Privacy Policy",
+          "Documentation pending"
+        ]
       }
     },
     {
@@ -416,10 +552,18 @@
       "indexable": false,
       "public": true,
       "label": "terms",
-      "metadataContract": { "title": "Terms of Service, xenios research", "description": "The terms of service for the xenios research section." },
+      "metadataContract": {
+        "title": "Terms of Service, xenios research",
+        "description": "The terms of service for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"legal-operational-draft\"]"],
-        "requiredText": ["Terms of Service", "Documentation pending"]
+        "requiredSelectors": [
+          "[data-testid=\"legal-operational-draft\"]"
+        ],
+        "requiredText": [
+          "Terms of Service",
+          "Documentation pending"
+        ]
       }
     },
     {
@@ -428,10 +572,17 @@
       "state": "default",
       "indexable": false,
       "public": true,
-      "metadataContract": { "title": "Business partnerships | Xenios Research", "description": "Reviewed pathways for research organizations, clinics, medical spas, providers, affiliates, collectives, suppliers, white-label teams, and strategic partners." },
+      "metadataContract": {
+        "title": "Business partnerships | Xenios Research",
+        "description": "Reviewed pathways for research organizations, clinics, medical spas, providers, affiliates, collectives, suppliers, white-label teams, and strategic partners."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#partnership-pathways-heading"],
-        "requiredText": ["The right relationship starts with the right boundary."]
+        "requiredSelectors": [
+          "#partnership-pathways-heading"
+        ],
+        "requiredText": [
+          "The right relationship starts with the right boundary."
+        ]
       }
     },
     {
@@ -441,10 +592,17 @@
       "indexable": false,
       "public": true,
       "label": "organizations",
-      "metadataContract": { "title": "Organization access | Xenios Research", "description": "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners." },
+      "metadataContract": {
+        "title": "Organization access | Xenios Research",
+        "description": "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#organization-fit-heading"],
-        "requiredText": ["Structured access for serious business relationships."]
+        "requiredSelectors": [
+          "#organization-fit-heading"
+        ],
+        "requiredText": [
+          "Structured access for serious business relationships."
+        ]
       }
     },
     {
@@ -454,10 +612,17 @@
       "indexable": false,
       "public": true,
       "label": "affiliates",
-      "metadataContract": { "title": "Affiliate access | Xenios Research", "description": "A compliance-first affiliate pathway with reviewed applications, approved resources, durable attribution, and no influence over clinical decisions." },
+      "metadataContract": {
+        "title": "Affiliate access | Xenios Research",
+        "description": "A compliance-first affiliate pathway with reviewed applications, approved resources, durable attribution, and no influence over clinical decisions."
+      },
       "semanticContract": {
-        "requiredSelectors": ["#affiliate-lifecycle-heading"],
-        "requiredText": ["Earn trust before earning attribution."]
+        "requiredSelectors": [
+          "#affiliate-lifecycle-heading"
+        ],
+        "requiredText": [
+          "Earn trust before earning attribution."
+        ]
       }
     },
     {
@@ -472,8 +637,12 @@
         "description": "Prospective supplier, laboratory, and fulfillment pathways with minimum-data boundaries, evidence requirements, and human review."
       },
       "semanticContract": {
-        "requiredSelectors": ["#supplier-types-heading"],
-        "requiredText": ["Operational access begins after evidence, not interest."]
+        "requiredSelectors": [
+          "#supplier-types-heading"
+        ],
+        "requiredText": [
+          "Operational access begins after evidence, not interest."
+        ]
       }
     },
     {
@@ -486,8 +655,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -500,8 +673,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -514,8 +691,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -528,8 +709,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -542,8 +727,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -556,8 +745,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -569,8 +762,12 @@
       "label": "member",
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-research-access\"]"],
-        "requiredText": ["This area is under review."]
+        "requiredSelectors": [
+          "[data-testid=\"form-research-access\"]"
+        ],
+        "requiredText": [
+          "This area is under review."
+        ]
       }
     },
     {
@@ -581,8 +778,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-research-access\"]"],
-        "requiredText": ["This area is under review."]
+        "requiredSelectors": [
+          "[data-testid=\"form-research-access\"]"
+        ],
+        "requiredText": [
+          "This area is under review."
+        ]
       }
     },
     {
@@ -593,8 +794,12 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-research-access\"]"],
-        "requiredText": ["This area is under review."]
+        "requiredSelectors": [
+          "[data-testid=\"form-research-access\"]"
+        ],
+        "requiredText": [
+          "This area is under review."
+        ]
       },
       "$comment": "This proves the real member-detail boundary only. Representative product-detail content is captured separately from the dev-only master-offerings component harness."
     },
@@ -605,8 +810,12 @@
       "indexable": false,
       "public": true,
       "semanticContract": {
-        "requiredSelectors": ["#care-page-title"],
-        "requiredText": ["Start your Care request today."]
+        "requiredSelectors": [
+          "#care-page-title"
+        ],
+        "requiredText": [
+          "Start your Care request today."
+        ]
       }
     },
     {
@@ -616,8 +825,14 @@
       "indexable": false,
       "public": true,
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"care-access-form\"]", "[data-testid=\"care-access-submit\"]"],
-        "requiredText": ["Start your Care request.", "This public form intentionally has no clinical free-text field."]
+        "requiredSelectors": [
+          "[data-testid=\"care-access-form\"]",
+          "[data-testid=\"care-access-submit\"]"
+        ],
+        "requiredText": [
+          "Start your Care request.",
+          "This public form intentionally has no clinical free-text field."
+        ]
       },
       "$comment": "The Xenios-owned public access survey replaces the Tebra scheduling dependency. The form collects bounded contact and routing fields only; the live status API separately proves whether durable storage and human notifications are ready."
     },
@@ -628,7 +843,10 @@
       "indexable": false,
       "public": false,
       "semanticContract": {
-        "requiredText": ["Clinician-guided scheduling is being prepared.", "Care is not available."]
+        "requiredText": [
+          "Clinician-guided scheduling is being prepared.",
+          "Care is not available."
+        ]
       },
       "expectedHttpFailures": [
         {
@@ -661,8 +879,13 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-adminx-signin\"]"],
-        "requiredText": ["SIGN IN REQUIRED", "Research operations requires an admin account."]
+        "requiredSelectors": [
+          "[data-testid=\"form-adminx-signin\"]"
+        ],
+        "requiredText": [
+          "SIGN IN REQUIRED",
+          "Research operations requires an admin account."
+        ]
       }
     },
     {
@@ -673,8 +896,13 @@
       "public": false,
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-adminx-signin\"]"],
-        "requiredText": ["SIGN IN REQUIRED", "Research operations requires an admin account."]
+        "requiredSelectors": [
+          "[data-testid=\"form-adminx-signin\"]"
+        ],
+        "requiredText": [
+          "SIGN IN REQUIRED",
+          "Research operations requires an admin account."
+        ]
       }
     },
     {
@@ -691,11 +919,12 @@
           "status": 404,
           "count": 1,
           "resourceType": "Document",
-          "responseBodySha256": "d6af21dd629c550f698c43332827cf6660fd2c82ba198ea6b67df43f2fcbefda",
+          "responseBodySha256": "3ffb8f932b12a7a7ba1854ffa5561e6e851d2eec710f8e975a7cf8745e0d860c",
           "consoleCount": 1,
           "consoleText": "Failed to load resource: the server responded with a status of 404 (Not Found)",
           "reason": "The exact unknown browser document is intentionally an authoritative noindex 404 while rendering the reviewed not-found state.",
-          "productionEvidence": "server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts pin the authoritative not-found document policy; this declaration separately pins the preserved response-body SHA-256."
+          "productionEvidence": "server/static.test.ts and server/research/seo/raw-http-document-policy.test.ts pin the authoritative not-found document policy; this declaration separately pins the preserved response-body SHA-256.",
+          "$comment": "Re-pinned 2026-09-14 against the candidate preview built from dbe76d831e8b4494f7684d28ef41259a56ce2326. The status, the noindex policy and the rendered not-found state are unchanged; only the document bytes moved."
         },
         {
           "path": "/this-route-does-not-exist-xr-evidence",
@@ -711,7 +940,10 @@
         }
       ],
       "semanticContract": {
-        "requiredText": ["404", "That page is not here."]
+        "requiredText": [
+          "404",
+          "That page is not here."
+        ]
       }
     },
     {
@@ -722,8 +954,18 @@
       "public": true,
       "label": "product",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Product, xenios", "description": "See how xenios works across one inbox, one client record, AI drafting, weekly check-ins, and the Client Attention Queue." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["One operating system for the coach's day."] }
+      "metadataContract": {
+        "title": "Product, xenios",
+        "description": "See how xenios works across one inbox, one client record, AI drafting, weekly check-ins, and the Client Attention Queue."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "One operating system for the coach's day."
+        ]
+      }
     },
     {
       "path": "/how-it-works",
@@ -733,8 +975,18 @@
       "public": true,
       "label": "how-it-works",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "How it works, xenios", "description": "Connect your stack. Teach your voice. Approve the first batch. Move the autonomy dial. The xenios agent runs the back office. The xenios client agent runs the in-between." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Five steps. One operating system. Your voice on every surface."] }
+      "metadataContract": {
+        "title": "How it works, xenios",
+        "description": "Connect your stack. Teach your voice. Approve the first batch. Move the autonomy dial. The xenios agent runs the back office. The xenios client agent runs the in-between."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Five steps. One operating system. Your voice on every surface."
+        ]
+      }
     },
     {
       "path": "/for-coaches",
@@ -744,8 +996,18 @@
       "public": true,
       "label": "for-coaches",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "For Coaches, xenios", "description": "xenios helps high-touch coaches manage more clients without losing the human relationship. The AI drafts, the coach decides." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Scale the relationship, not the admin."] }
+      "metadataContract": {
+        "title": "For Coaches, xenios",
+        "description": "xenios helps high-touch coaches manage more clients without losing the human relationship. The AI drafts, the coach decides."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Scale the relationship, not the admin."
+        ]
+      }
     },
     {
       "path": "/waitlist",
@@ -755,8 +1017,18 @@
       "public": true,
       "label": "waitlist",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Join the waitlist, xenios", "description": "550+ coaches, trainers, and practitioners are already in line for the founding cohort." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Apply for the founding group."] }
+      "metadataContract": {
+        "title": "Join the waitlist, xenios",
+        "description": "550+ coaches, trainers, and practitioners are already in line for the founding cohort."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Apply for the founding group."
+        ]
+      }
     },
     {
       "path": "/about",
@@ -766,8 +1038,18 @@
       "public": true,
       "label": "about",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "About, xenios", "description": "Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating layer for proactive health relationships."] }
+      "metadataContract": {
+        "title": "About, xenios",
+        "description": "Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating layer for proactive health relationships."
+        ]
+      }
     },
     {
       "path": "/careers",
@@ -776,9 +1058,21 @@
       "indexable": true,
       "public": true,
       "label": "careers",
-      "structuredDataTypes": ["JobPosting"],
-      "metadataContract": { "title": "Careers, xenios", "description": "Open founding roles and the founding coach cohort at xenios." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Build the operating system behind proactive health."] }
+      "structuredDataTypes": [
+        "JobPosting"
+      ],
+      "metadataContract": {
+        "title": "Careers, xenios",
+        "description": "Open founding roles and the founding coach cohort at xenios."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Build the operating system behind proactive health."
+        ]
+      }
     },
     {
       "path": "/careers/founding-designer",
@@ -787,9 +1081,21 @@
       "indexable": true,
       "public": true,
       "label": "career-founding-designer",
-      "structuredDataTypes": ["JobPosting"],
-      "metadataContract": { "title": "Founding Designer, xenios", "description": "Set the visual identity and design system for the operating system behind proactive-health professionals." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Founding Designer"] }
+      "structuredDataTypes": [
+        "JobPosting"
+      ],
+      "metadataContract": {
+        "title": "Founding Designer, xenios",
+        "description": "Set the visual identity and design system for the operating system behind proactive-health professionals."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Founding Designer"
+        ]
+      }
     },
     {
       "path": "/careers/founding-senior-ai-software-engineer",
@@ -798,9 +1104,21 @@
       "indexable": true,
       "public": true,
       "label": "career-founding-senior-ai-software-engineer",
-      "structuredDataTypes": ["JobPosting"],
-      "metadataContract": { "title": "Founding Senior AI Software Engineer, xenios", "description": "Own an AI-native platform module from problem framing to production, building with Claude Code as a core tool." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Founding Senior AI Software Engineer"] }
+      "structuredDataTypes": [
+        "JobPosting"
+      ],
+      "metadataContract": {
+        "title": "Founding Senior AI Software Engineer, xenios",
+        "description": "Own an AI-native platform module from problem framing to production, building with Claude Code as a core tool."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Founding Senior AI Software Engineer"
+        ]
+      }
     },
     {
       "path": "/careers/founding-coach-cohort",
@@ -810,8 +1128,18 @@
       "public": true,
       "label": "career-founding-coach-cohort",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Founding Coach Cohort, xenios", "description": "Help build the coaching OS. Free early access, a direct line to the founder, and your name among the first coaches on it." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Founding Coach Cohort"] }
+      "metadataContract": {
+        "title": "Founding Coach Cohort, xenios",
+        "description": "Help build the coaching OS. Free early access, a direct line to the founder, and your name among the first coaches on it."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Founding Coach Cohort"
+        ]
+      }
     },
     {
       "path": "/security",
@@ -821,8 +1149,18 @@
       "public": true,
       "label": "security",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Security, xenios", "description": "xenios treats client context and AI boundaries as product responsibilities, with scoped access, approval gates, and a security-first posture." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Trust is a product requirement."] }
+      "metadataContract": {
+        "title": "Security, xenios",
+        "description": "xenios treats client context and AI boundaries as product responsibilities, with scoped access, approval gates, and a security-first posture."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Trust is a product requirement."
+        ]
+      }
     },
     {
       "path": "/compliance",
@@ -832,8 +1170,18 @@
       "public": true,
       "label": "compliance",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Compliance, xenios", "description": "xenios keeps compliance language honest, with clear AI boundaries, scope of practice rules, and a roadmap for trust documentation." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Honest posture. Clear boundaries."] }
+      "metadataContract": {
+        "title": "Compliance, xenios",
+        "description": "xenios keeps compliance language honest, with clear AI boundaries, scope of practice rules, and a roadmap for trust documentation."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Honest posture. Clear boundaries."
+        ]
+      }
     },
     {
       "path": "/investors",
@@ -843,8 +1191,18 @@
       "public": true,
       "label": "investors",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Investors, xenios", "description": "xenios is building the AI-native operating layer for proactive health professionals, starting with coaches and the client attention workflow." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating layer for proactive health."] }
+      "metadataContract": {
+        "title": "Investors, xenios",
+        "description": "xenios is building the AI-native operating layer for proactive health professionals, starting with coaches and the client attention workflow."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating layer for proactive health."
+        ]
+      }
     },
     {
       "path": "/contact",
@@ -854,8 +1212,18 @@
       "public": true,
       "label": "contact",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Contact, xenios", "description": "Founding cohort, partnership, press, investor, careers, security, compliance. A human reads every message." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Talk to us."] }
+      "metadataContract": {
+        "title": "Contact, xenios",
+        "description": "Founding cohort, partnership, press, investor, careers, security, compliance. A human reads every message."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Talk to us."
+        ]
+      }
     },
     {
       "path": "/book",
@@ -865,7 +1233,10 @@
       "public": true,
       "label": "book",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Book a call with xenios", "description": "Book a call with the xenios team." },
+      "metadataContract": {
+        "title": "Book a call with xenios",
+        "description": "Book a call with the xenios team."
+      },
       "semanticContract": {
         "requiredSelectors": [
           "main h1",
@@ -877,7 +1248,9 @@
           "[data-testid=\"embed-calendly\"]",
           "script[src=\"https://assets.calendly.com/assets/external/widget.js\"]"
         ],
-        "requiredText": ["Book a call"]
+        "requiredText": [
+          "Book a call"
+        ]
       }
     },
     {
@@ -888,8 +1261,18 @@
       "public": true,
       "label": "early-interest",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Early interest in xenios", "description": "Share your interest in the founding group of coaches." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Early interest"] }
+      "metadataContract": {
+        "title": "Early interest in xenios",
+        "description": "Share your interest in the founding group of coaches."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Early interest"
+        ]
+      }
     },
     {
       "path": "/for-clients",
@@ -899,8 +1282,18 @@
       "public": true,
       "label": "for-clients",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "For clients, xenios", "description": "The xenios client agent is a pocket coach that knows your program, your data, your goals, and the way your coach actually talks to you." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["A pocket coach that knows you."] }
+      "metadataContract": {
+        "title": "For clients, xenios",
+        "description": "The xenios client agent is a pocket coach that knows your program, your data, your goals, and the way your coach actually talks to you."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "A pocket coach that knows you."
+        ]
+      }
     },
     {
       "path": "/for-practitioners",
@@ -910,8 +1303,18 @@
       "public": true,
       "label": "for-practitioners",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "For practitioners, xenios", "description": "Twenty-five categories of coaches, trainers, and practitioners across performance, longevity, recovery, and clinical care. Find your fit." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Built for the people doing the work upstream of disease."] }
+      "metadataContract": {
+        "title": "For practitioners, xenios",
+        "description": "Twenty-five categories of coaches, trainers, and practitioners across performance, longevity, recovery, and clinical care. Find your fit."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Built for the people doing the work upstream of disease."
+        ]
+      }
     },
     {
       "path": "/for/strength-coaches",
@@ -921,8 +1324,18 @@
       "public": true,
       "label": "for-strength-coaches",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Strength coaches, xenios", "description": "The operating system for strength coaches who run programming, check-ins, and meet prep on five disconnected tools." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating system for strength coaches who run programming, check-ins, and meet prep on five disconnected tools."] }
+      "metadataContract": {
+        "title": "Strength coaches, xenios",
+        "description": "The operating system for strength coaches who run programming, check-ins, and meet prep on five disconnected tools."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating system for strength coaches who run programming, check-ins, and meet prep on five disconnected tools."
+        ]
+      }
     },
     {
       "path": "/for/personal-trainers",
@@ -932,8 +1345,18 @@
       "public": true,
       "label": "for-personal-trainers",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Personal trainers, xenios", "description": "The operating system for personal trainers who deserve more than a programming app and a billing tool stapled together." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating system for personal trainers who deserve more than a programming app and a billing tool stapled together."] }
+      "metadataContract": {
+        "title": "Personal trainers, xenios",
+        "description": "The operating system for personal trainers who deserve more than a programming app and a billing tool stapled together."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating system for personal trainers who deserve more than a programming app and a billing tool stapled together."
+        ]
+      }
     },
     {
       "path": "/for/sports-performance",
@@ -943,8 +1366,18 @@
       "public": true,
       "label": "for-sports-performance",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Sports performance coaches, xenios", "description": "The operating system for sports performance coaches across DIII, DI, and pro." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating system for sports performance coaches across DIII, DI, and pro."] }
+      "metadataContract": {
+        "title": "Sports performance coaches, xenios",
+        "description": "The operating system for sports performance coaches across DIII, DI, and pro."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating system for sports performance coaches across DIII, DI, and pro."
+        ]
+      }
     },
     {
       "path": "/for/functional-medicine",
@@ -954,8 +1387,18 @@
       "public": true,
       "label": "for-functional-medicine",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Functional medicine, xenios", "description": "Functional medicine practices without the legacy EMR drag." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Functional medicine practices without the legacy EMR drag."] }
+      "metadataContract": {
+        "title": "Functional medicine, xenios",
+        "description": "Functional medicine practices without the legacy EMR drag."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Functional medicine practices without the legacy EMR drag."
+        ]
+      }
     },
     {
       "path": "/for/longevity-clinics",
@@ -965,8 +1408,18 @@
       "public": true,
       "label": "for-longevity-clinics",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Longevity clinics, xenios", "description": "The operations layer for longevity clinics that want to deliver care, not data entry." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operations layer for longevity clinics that want to deliver care, not data entry."] }
+      "metadataContract": {
+        "title": "Longevity clinics, xenios",
+        "description": "The operations layer for longevity clinics that want to deliver care, not data entry."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operations layer for longevity clinics that want to deliver care, not data entry."
+        ]
+      }
     },
     {
       "path": "/for/concierge-medicine",
@@ -976,8 +1429,18 @@
       "public": true,
       "label": "for-concierge-medicine",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Concierge medicine, xenios", "description": "Concierge medicine with an agent on the practitioner side and a pocket physician on the patient side." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Concierge medicine with an agent on the practitioner side and a pocket physician on the patient side."] }
+      "metadataContract": {
+        "title": "Concierge medicine, xenios",
+        "description": "Concierge medicine with an agent on the practitioner side and a pocket physician on the patient side."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Concierge medicine with an agent on the practitioner side and a pocket physician on the patient side."
+        ]
+      }
     },
     {
       "path": "/for/performance-labs",
@@ -987,8 +1450,18 @@
       "public": true,
       "label": "for-performance-labs",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Performance labs, xenios", "description": "The performance lab operating system. Testing, protocol, and follow-up on one rail." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The performance lab operating system. Testing, protocol, and follow-up on one rail."] }
+      "metadataContract": {
+        "title": "Performance labs, xenios",
+        "description": "The performance lab operating system. Testing, protocol, and follow-up on one rail."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The performance lab operating system. Testing, protocol, and follow-up on one rail."
+        ]
+      }
     },
     {
       "path": "/for/recovery-studios",
@@ -998,8 +1471,18 @@
       "public": true,
       "label": "for-recovery-studios",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Recovery studios, xenios", "description": "The recovery studio operations layer. Memberships, modalities, outcomes." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The recovery studio operations layer. Memberships, modalities, outcomes."] }
+      "metadataContract": {
+        "title": "Recovery studios, xenios",
+        "description": "The recovery studio operations layer. Memberships, modalities, outcomes."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The recovery studio operations layer. Memberships, modalities, outcomes."
+        ]
+      }
     },
     {
       "path": "/for/virtual-coaching",
@@ -1009,8 +1492,18 @@
       "public": true,
       "label": "for-virtual-coaching",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Virtual coaching businesses, xenios", "description": "The proactive-care operations layer for virtual coaching businesses." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The proactive-care operations layer for virtual coaching businesses."] }
+      "metadataContract": {
+        "title": "Virtual coaching businesses, xenios",
+        "description": "The proactive-care operations layer for virtual coaching businesses."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The proactive-care operations layer for virtual coaching businesses."
+        ]
+      }
     },
     {
       "path": "/for/preventive-care",
@@ -1020,8 +1513,18 @@
       "public": true,
       "label": "for-preventive-care",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Preventive care, xenios", "description": "The operations layer for preventive care, finally." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operations layer for preventive care, finally."] }
+      "metadataContract": {
+        "title": "Preventive care, xenios",
+        "description": "The operations layer for preventive care, finally."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operations layer for preventive care, finally."
+        ]
+      }
     },
     {
       "path": "/for/nutrition-companies",
@@ -1031,8 +1534,18 @@
       "public": true,
       "label": "for-nutrition-companies",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Nutrition companies, xenios", "description": "The operations rail under modern nutrition companies." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operations rail under modern nutrition companies."] }
+      "metadataContract": {
+        "title": "Nutrition companies, xenios",
+        "description": "The operations rail under modern nutrition companies."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operations rail under modern nutrition companies."
+        ]
+      }
     },
     {
       "path": "/for/supplement-brands",
@@ -1042,8 +1555,18 @@
       "public": true,
       "label": "for-supplement-brands",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Supplement brands, xenios", "description": "Supplement brands, with native practitioner distribution." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Supplement brands, with native practitioner distribution."] }
+      "metadataContract": {
+        "title": "Supplement brands, xenios",
+        "description": "Supplement brands, with native practitioner distribution."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Supplement brands, with native practitioner distribution."
+        ]
+      }
     },
     {
       "path": "/for/athlete-brands",
@@ -1053,8 +1576,18 @@
       "public": true,
       "label": "for-athlete-brands",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Athlete brands, xenios", "description": "The athlete brand operating system. Programs, audience, commerce, outcomes." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The athlete brand operating system. Programs, audience, commerce, outcomes."] }
+      "metadataContract": {
+        "title": "Athlete brands, xenios",
+        "description": "The athlete brand operating system. Programs, audience, commerce, outcomes."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The athlete brand operating system. Programs, audience, commerce, outcomes."
+        ]
+      }
     },
     {
       "path": "/for/corporate-wellness",
@@ -1064,8 +1597,18 @@
       "public": true,
       "label": "for-corporate-wellness",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Corporate wellness, xenios", "description": "Corporate wellness that delivers outcomes, not engagement screenshots." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Corporate wellness that delivers outcomes, not engagement screenshots."] }
+      "metadataContract": {
+        "title": "Corporate wellness, xenios",
+        "description": "Corporate wellness that delivers outcomes, not engagement screenshots."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Corporate wellness that delivers outcomes, not engagement screenshots."
+        ]
+      }
     },
     {
       "path": "/for/healthcare-systems",
@@ -1075,8 +1618,18 @@
       "public": true,
       "label": "for-healthcare-systems",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Healthcare systems, xenios", "description": "The proactive health layer healthcare systems have been missing." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The proactive health layer healthcare systems have been missing."] }
+      "metadataContract": {
+        "title": "Healthcare systems, xenios",
+        "description": "The proactive health layer healthcare systems have been missing."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The proactive health layer healthcare systems have been missing."
+        ]
+      }
     },
     {
       "path": "/for/military",
@@ -1086,8 +1639,18 @@
       "public": true,
       "label": "for-military",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Military, xenios", "description": "The operations system for military performance and tactical readiness programs." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operations system for military performance and tactical readiness programs."] }
+      "metadataContract": {
+        "title": "Military, xenios",
+        "description": "The operations system for military performance and tactical readiness programs."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operations system for military performance and tactical readiness programs."
+        ]
+      }
     },
     {
       "path": "/for/biohacking-clinics",
@@ -1097,8 +1660,18 @@
       "public": true,
       "label": "for-biohacking-clinics",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Biohacking clinics, xenios", "description": "Biohacking clinics on one operating system, not seven." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Biohacking clinics on one operating system, not seven."] }
+      "metadataContract": {
+        "title": "Biohacking clinics, xenios",
+        "description": "Biohacking clinics on one operating system, not seven."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Biohacking clinics on one operating system, not seven."
+        ]
+      }
     },
     {
       "path": "/for/physical-therapists",
@@ -1108,8 +1681,18 @@
       "public": true,
       "label": "for-physical-therapists",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Physical therapists, xenios", "description": "Physical therapy without the EMR tax." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Physical therapy without the EMR tax."] }
+      "metadataContract": {
+        "title": "Physical therapists, xenios",
+        "description": "Physical therapy without the EMR tax."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Physical therapy without the EMR tax."
+        ]
+      }
     },
     {
       "path": "/for/chiropractors",
@@ -1119,8 +1702,18 @@
       "public": true,
       "label": "for-chiropractors",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Chiropractors, xenios", "description": "Chiropractic care with a real client app and real outcomes." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Chiropractic care with a real client app and real outcomes."] }
+      "metadataContract": {
+        "title": "Chiropractors, xenios",
+        "description": "Chiropractic care with a real client app and real outcomes."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Chiropractic care with a real client app and real outcomes."
+        ]
+      }
     },
     {
       "path": "/for/hormone-clinics",
@@ -1130,8 +1723,18 @@
       "public": true,
       "label": "for-hormone-clinics",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Hormone clinics, xenios", "description": "Hormone clinics with protocol versioning, lab review, and patient follow-through native." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Hormone clinics with protocol versioning, lab review, and patient follow-through native."] }
+      "metadataContract": {
+        "title": "Hormone clinics, xenios",
+        "description": "Hormone clinics with protocol versioning, lab review, and patient follow-through native."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Hormone clinics with protocol versioning, lab review, and patient follow-through native."
+        ]
+      }
     },
     {
       "path": "/for/wellness-clinics",
@@ -1141,8 +1744,18 @@
       "public": true,
       "label": "for-wellness-clinics",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Wellness clinics, xenios", "description": "Wellness clinics with compliance, protocol, and member engagement on one rail." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Wellness clinics with compliance, protocol, and member engagement on one rail."] }
+      "metadataContract": {
+        "title": "Wellness clinics, xenios",
+        "description": "Wellness clinics with compliance, protocol, and member engagement on one rail."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Wellness clinics with compliance, protocol, and member engagement on one rail."
+        ]
+      }
     },
     {
       "path": "/for/self-insured-employers",
@@ -1152,8 +1765,18 @@
       "public": true,
       "label": "for-self-insured-employers",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Self-insured employers, xenios", "description": "The proactive health operating layer for self-insured employers." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The proactive health operating layer for self-insured employers."] }
+      "metadataContract": {
+        "title": "Self-insured employers, xenios",
+        "description": "The proactive health operating layer for self-insured employers."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The proactive health operating layer for self-insured employers."
+        ]
+      }
     },
     {
       "path": "/for/elite-athletes",
@@ -1163,8 +1786,18 @@
       "public": true,
       "label": "for-elite-athletes",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Elite athletes, xenios", "description": "The operating system for elite athletes and the teams around them." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating system for elite athletes and the teams around them."] }
+      "metadataContract": {
+        "title": "Elite athletes, xenios",
+        "description": "The operating system for elite athletes and the teams around them."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating system for elite athletes and the teams around them."
+        ]
+      }
     },
     {
       "path": "/for/creators",
@@ -1174,8 +1807,18 @@
       "public": true,
       "label": "for-creators",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Creators, xenios", "description": "The operating system for health creators who want a real coaching business, not a link page." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The operating system for health creators who want a real coaching business, not a link page."] }
+      "metadataContract": {
+        "title": "Creators, xenios",
+        "description": "The operating system for health creators who want a real coaching business, not a link page."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The operating system for health creators who want a real coaching business, not a link page."
+        ]
+      }
     },
     {
       "path": "/for/sports-agencies",
@@ -1185,8 +1828,18 @@
       "public": true,
       "label": "for-sports-agencies",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Sports agencies, xenios", "description": "The performance, recovery, and care operations layer for sports agencies." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The performance, recovery, and care operations layer for sports agencies."] }
+      "metadataContract": {
+        "title": "Sports agencies, xenios",
+        "description": "The performance, recovery, and care operations layer for sports agencies."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The performance, recovery, and care operations layer for sports agencies."
+        ]
+      }
     },
     {
       "path": "/storefront",
@@ -1196,8 +1849,18 @@
       "public": true,
       "label": "storefront",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Storefront, xenios", "description": "Native subscriptions, packages, one-offs, supplements, equipment, and gift cards. The commerce rail your practice deserves." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The commerce rail your practice deserves."] }
+      "metadataContract": {
+        "title": "Storefront, xenios",
+        "description": "Native subscriptions, packages, one-offs, supplements, equipment, and gift cards. The commerce rail your practice deserves."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The commerce rail your practice deserves."
+        ]
+      }
     },
     {
       "path": "/network",
@@ -1207,8 +1870,18 @@
       "public": true,
       "label": "network",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "xenios Network, refer between coaches", "description": "Refer between coaches, and the trainers, clinicians, and practitioners on the network. The xenios agent handles the handoff in your voice." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Coordination, not capture."] }
+      "metadataContract": {
+        "title": "xenios Network, refer between coaches",
+        "description": "Refer between coaches, and the trainers, clinicians, and practitioners on the network. The xenios agent handles the handoff in your voice."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Coordination, not capture."
+        ]
+      }
     },
     {
       "path": "/ecosystem",
@@ -1218,8 +1891,18 @@
       "public": true,
       "label": "ecosystem",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Ecosystem, xenios", "description": "Eighteen categories of partners and integrations across the proactive health stack. Wearables, labs, recovery, nutrition, supplements, and more." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Connected to the proactive health stack."] }
+      "metadataContract": {
+        "title": "Ecosystem, xenios",
+        "description": "Eighteen categories of partners and integrations across the proactive health stack. Wearables, labs, recovery, nutrition, supplements, and more."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Connected to the proactive health stack."
+        ]
+      }
     },
     {
       "path": "/manifesto",
@@ -1229,8 +1912,18 @@
       "public": true,
       "label": "manifesto",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Manifesto, xenios", "description": "We build for the people doing the work upstream of disease. Coaches, trainers, and practitioners deserve infrastructure as serious as the work." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Infrastructure as serious as the work."] }
+      "metadataContract": {
+        "title": "Manifesto, xenios",
+        "description": "We build for the people doing the work upstream of disease. Coaches, trainers, and practitioners deserve infrastructure as serious as the work."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Infrastructure as serious as the work."
+        ]
+      }
     },
     {
       "path": "/press",
@@ -1240,8 +1933,18 @@
       "public": true,
       "label": "press",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Press, xenios", "description": "Press, media, podcast, and creator inquiries. Brand assets on request." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Press, media, podcast, and creator inquiries."] }
+      "metadataContract": {
+        "title": "Press, xenios",
+        "description": "Press, media, podcast, and creator inquiries. Brand assets on request."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Press, media, podcast, and creator inquiries."
+        ]
+      }
     },
     {
       "path": "/concepts",
@@ -1251,8 +1954,18 @@
       "public": true,
       "label": "concepts",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Early concepts from xenios", "description": "A look at early concepts in development at xenios." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Early concepts"] }
+      "metadataContract": {
+        "title": "Early concepts from xenios",
+        "description": "A look at early concepts in development at xenios."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Early concepts"
+        ]
+      }
     },
     {
       "path": "/mvps",
@@ -1262,8 +1975,18 @@
       "public": true,
       "label": "mvps",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "xenios MVP Lab", "description": "Functional synthetic demos for testing the xenios product system. Synthetic data only." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["xenios MVP Lab."] }
+      "metadataContract": {
+        "title": "xenios MVP Lab",
+        "description": "Functional synthetic demos for testing the xenios product system. Synthetic data only."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "xenios MVP Lab."
+        ]
+      }
     },
     {
       "path": "/privacy",
@@ -1273,8 +1996,18 @@
       "public": true,
       "label": "privacy",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Privacy, xenios", "description": "Privacy policy. We send the email you would want to receive. Nothing else." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["We send the email you would want to receive. Nothing else."] }
+      "metadataContract": {
+        "title": "Privacy, xenios",
+        "description": "Privacy policy. We send the email you would want to receive. Nothing else."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "We send the email you would want to receive. Nothing else."
+        ]
+      }
     },
     {
       "path": "/terms",
@@ -1284,8 +2017,18 @@
       "public": true,
       "label": "terms",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Terms, xenios", "description": "Terms of service for xenios." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Terms of service."] }
+      "metadataContract": {
+        "title": "Terms, xenios",
+        "description": "Terms of service for xenios."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Terms of service."
+        ]
+      }
     },
     {
       "path": "/disclosures",
@@ -1295,8 +2038,18 @@
       "public": true,
       "label": "disclosures",
       "structuredDataTypes": [],
-      "metadataContract": { "title": "Disclosures - xenios", "description": "Cookie and tracking, AI disclosure, medical disclaimer, and data deletion for xenios." },
-      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The things we want you to know, in plain language."] }
+      "metadataContract": {
+        "title": "Disclosures - xenios",
+        "description": "Cookie and tracking, AI disclosure, medical disclaimer, and data deletion for xenios."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "The things we want you to know, in plain language."
+        ]
+      }
     },
     {
       "path": "/",
@@ -1305,11 +2058,21 @@
       "indexable": true,
       "public": true,
       "label": "root-home",
-      "structuredDataTypes": ["Organization", "WebSite"],
-      "metadataContract": { "title": "xenios | The operating system for proactive health", "description": "The professional stays in front. Xen and Athena carry the work behind them." },
+      "structuredDataTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "metadataContract": {
+        "title": "xenios | The operating system for proactive health",
+        "description": "The professional stays in front. Xen and Athena carry the work behind them."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"text-headline\"]"],
-        "requiredText": ["The AI workspace for serious coaches."]
+        "requiredSelectors": [
+          "[data-testid=\"text-headline\"]"
+        ],
+        "requiredText": [
+          "The AI workspace for serious coaches."
+        ]
       }
     },
     {
@@ -1320,8 +2083,13 @@
       "public": true,
       "expectedBrowserPath": "/hino/",
       "semanticContract": {
-        "requiredSelectors": [".home-hero h1"],
-        "requiredText": ["Built in the ring.", "Proven in the room."]
+        "requiredSelectors": [
+          ".home-hero h1"
+        ],
+        "requiredText": [
+          "Built in the ring.",
+          "Proven in the room."
+        ]
       },
       "$comment": "Static Hino microsite served as files at /hino/ (301 from /hino), byte-identical to production 3daa3f4a and outside the raw HTTP document policy. Its own index.html carries meta robots noindex,nofollow,nocache and its own JSON-LD (production content, not a candidate decision): status and robots are asserted; sitemap parity and structured-data scope are not applicable.",
       "externalMicrosite": true,
@@ -1358,10 +2126,18 @@
       "indexable": false,
       "public": true,
       "label": "accessibility-statement",
-      "metadataContract": { "title": "Accessibility Statement, xenios research", "description": "Accessibility Statement for the xenios research section." },
+      "metadataContract": {
+        "title": "Accessibility Statement, xenios research",
+        "description": "Accessibility Statement for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"policy-operational-draft\"]"],
-        "requiredText": ["Accessibility Statement", "Documentation pending"]
+        "requiredSelectors": [
+          "[data-testid=\"policy-operational-draft\"]"
+        ],
+        "requiredText": [
+          "Accessibility Statement",
+          "Documentation pending"
+        ]
       }
     },
     {
@@ -1371,10 +2147,17 @@
       "indexable": false,
       "public": true,
       "label": "policy-research-use",
-      "metadataContract": { "title": "Research Use Policy, xenios research", "description": "Research Use Policy for the xenios research section." },
+      "metadataContract": {
+        "title": "Research Use Policy, xenios research",
+        "description": "Research Use Policy for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"policy-served-document\"]"],
-        "requiredText": ["Research Use Policy"]
+        "requiredSelectors": [
+          "[data-testid=\"policy-served-document\"]"
+        ],
+        "requiredText": [
+          "Research Use Policy"
+        ]
       }
     },
     {
@@ -1384,10 +2167,18 @@
       "indexable": false,
       "public": true,
       "label": "policy-shipping",
-      "metadataContract": { "title": "Shipping Policy, xenios research", "description": "Shipping Policy for the xenios research section." },
+      "metadataContract": {
+        "title": "Shipping Policy, xenios research",
+        "description": "Shipping Policy for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"policy-operational-draft\"]"],
-        "requiredText": ["Shipping Policy", "Publication status unconfirmed"]
+        "requiredSelectors": [
+          "[data-testid=\"policy-operational-draft\"]"
+        ],
+        "requiredText": [
+          "Shipping Policy",
+          "Publication status unconfirmed"
+        ]
       }
     },
     {
@@ -1397,10 +2188,18 @@
       "indexable": false,
       "public": true,
       "label": "policy-returns",
-      "metadataContract": { "title": "Returns and Replacements, xenios research", "description": "Returns and Replacements for the xenios research section." },
+      "metadataContract": {
+        "title": "Returns and Replacements, xenios research",
+        "description": "Returns and Replacements for the xenios research section."
+      },
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"policy-operational-draft\"]"],
-        "requiredText": ["Returns and Replacements", "Publication status unconfirmed"]
+        "requiredSelectors": [
+          "[data-testid=\"policy-operational-draft\"]"
+        ],
+        "requiredText": [
+          "Returns and Replacements",
+          "Publication status unconfirmed"
+        ]
       }
     },
     {
@@ -1414,8 +2213,12 @@
       "label": "account-profile-denied",
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -1429,8 +2232,12 @@
       "label": "account-security-denied",
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     },
     {
@@ -1444,8 +2251,12 @@
       "label": "account-interests-denied",
       "coverageScope": "boundary-only",
       "semanticContract": {
-        "requiredSelectors": ["[data-testid=\"form-member-signin\"]"],
-        "requiredText": ["Sign in."]
+        "requiredSelectors": [
+          "[data-testid=\"form-member-signin\"]"
+        ],
+        "requiredText": [
+          "Sign in."
+        ]
       }
     }
   ]

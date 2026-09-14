@@ -245,11 +245,11 @@ describe("public evidence topology", () => {
     ])).toEqual([
       [
         "/research/lots/XR-EVIDENCE-NEGATIVE-LOT",
-        "d6af21dd629c550f698c43332827cf6660fd2c82ba198ea6b67df43f2fcbefda",
+        "3ffb8f932b12a7a7ba1854ffa5561e6e851d2eec710f8e975a7cf8745e0d860c",
       ],
       [
         "/this-route-does-not-exist-xr-evidence",
-        "d6af21dd629c550f698c43332827cf6660fd2c82ba198ea6b67df43f2fcbefda",
+        "3ffb8f932b12a7a7ba1854ffa5561e6e851d2eec710f8e975a7cf8745e0d860c",
       ],
     ]);
     for (const pathname of [
