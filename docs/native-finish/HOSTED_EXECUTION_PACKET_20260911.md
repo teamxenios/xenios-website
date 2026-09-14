@@ -168,3 +168,47 @@ Only what this session can evidence. "Not examined" means exactly that, not
 | Fulfillment and support | not examined | | | | |
 
 Checkout completing locally is not full-platform completion.
+
+---
+
+## Refresh — 2026-09-14, after the P0 operational closeout
+
+The application identity moved. The SQL did not.
+
+| | |
+|---|---|
+| Application commit | `329799cf5abec816bcac53a1891c6f9fe6ef8f0d` |
+| Application tree | `9af57ee319b1b44a8f36d7f3d15b259f5bbdfa60` |
+| Supersedes | `ce0858aba29113b87c061ea8deb20b67991c1357` |
+| Relation to live production `c545a70` | 80 commits ahead, 0 behind |
+| Typecheck | exit 0 |
+| Full suite | 954 files, 949 passed, 5 skipped, 0 failed; 17721 tests passed, 59 skipped; `--maxWorkers=2`, Node 20.19.0 |
+| Build | `node script/build.mjs` exit 0 |
+
+**No SQL candidate changed.** `git diff --name-only ce0858a..329799c -- supabase/`
+is empty, so all four candidate files, their hashes, their order and their
+prechecks, postchecks and rollback notes stand exactly as recorded above. The
+existing staging authorization still covers candidate #1 as the same blob, and
+the amendment requested above is unchanged in scope.
+
+What did change is the runtime, and it changes the qualification in one way
+worth stating: the admin side of the checkout journey is now reachable. A held
+order can be opened, approved, captured or cancelled from a screen, and a paid
+order can be moved `payment_captured -> processing -> fulfilled` with carrier
+and tracking recorded against `research_order_shipments`. A hosted run can
+therefore exercise the operator half of the journey, not just the customer
+half.
+
+Three additions to the recommended scope, all synthetic and all already
+enforced fail-closed in source:
+
+1. Confirm a held synthetic order can be approved and captured from
+   `/admin/research/orders/:id`, and that the commerce queue reflects the
+   change only because the domain state changed.
+2. Confirm `processing` and `fulfilled` move the same `research_orders` row the
+   checkout wrote, and that the customer's own order detail shows the tracking
+   that was recorded.
+3. Confirm no delivered action exists anywhere in the operator surface.
+
+Unchanged: no production, no real customers, no customer email, no live money,
+no auto-deploy. Receipt queue mode and the recovery caller both stay off.
