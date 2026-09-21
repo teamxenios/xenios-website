@@ -1,5 +1,28 @@
 # Externally blocked work
 
+## Native closeout — 2026-09-21
+
+The local continuation is recorded in `docs/release-candidate/LOCAL_CLOSEOUT_20260921.md`.
+Managed release is not complete: the executable Referral V1 touch-attribution
+and XRR history/status SQL candidates remain unapplied. XRR status must not
+fall back to the legacy NULL-authorization function; the candidate includes
+the locally reproduced denial fix. Qualify the exact managed predecessor and
+approved SQL with a named executor before installation and hosted smoke.
+The production-state verifier also fails closed on absent trusted release and
+ownership inputs plus stale dated evidence; fresh observations are required.
+
+The separate hosted checkout packet still requires its candidate-2 amendment
+and test-provider/staging qualification. The EA grant writer still needs the
+canonical partner-to-partner's-own-EA-customer mapping and server-owned
+hold-rate/idempotence contract. Do not invent identifiers or accept browser
+money inputs. Clinical/provider activation remains separately gated.
+
+The private V3 scan input has now been found and its approved hash verified;
+do not repeat the stale claim that no input file exists. The final closeout
+records the current scan outcome and bounded coverage. No production state
+was freshly observed or changed during this continuation; the following
+production observations retain their original dates.
+
 ## Correction — 2026-09-14
 
 **Current production is `c545a70eb694d990842ad1259df4f0786dab92c9`, tree

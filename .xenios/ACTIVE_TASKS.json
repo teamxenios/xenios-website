@@ -1,13 +1,22 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08T18:21:57.005137Z",
+  "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
       "id": "XENIOS-NATIVE-FINISH-20260910",
       "title": "Single-owner native payment composition and managed qualification",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "codex-native-closeout-20260921",
+      "state": "blocked_external",
+      "owner": null,
+      "localQualification": "PASS: application 6d1792c, test successor c559c4e; 17,896 tests and 204 browser captures passed. Managed release is not qualified.",
+      "blockedAt": "2026-09-21T16:38:05.000Z",
+      "blocker": "Fresh trusted release/ownership inputs and production evidence; exact managed SQL and hosted checkout qualification; canonical EA grant mapping and hold-rate/idempotence authority.",
+      "handoff": {
+        "session": "codex-native-closeout-20260921",
+        "sha": "c559c4e7795fb211b082cf12bd791f93c1cd3851",
+        "file": ".xenios/handoffs/2026-09-21-XENIOS-NATIVE-FINISH-LOCAL-CLOSEOUT.md",
+        "at": "2026-09-21T16:38:05.000Z"
+      },
       "paths": [
         "server/index.ts",
         "server/release-control-plane.test.ts",

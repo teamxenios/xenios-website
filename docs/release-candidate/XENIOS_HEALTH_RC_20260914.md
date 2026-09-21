@@ -1,5 +1,12 @@
 # Xenios Health release candidate — 2026-09-14
 
+> Historical checkpoint. The P1/P2 source work continued through `2b776f9`
+> after this document was written. The 2026-09-21 continuation, corrections,
+> exact-candidate local evidence, and remaining release prerequisites are
+> recorded in [LOCAL_CLOSEOUT_20260921.md](LOCAL_CLOSEOUT_20260921.md).
+> The production observations below remain dated 2026-09-14; they are not a
+> fresh production verification.
+
 One document: what is true now, what each journey's real state is, which gaps
 are real, what was qualified, and what a production release would consist of.
 Nothing here has been deployed, enabled or executed against a managed database.

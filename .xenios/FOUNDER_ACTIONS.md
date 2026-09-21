@@ -4,6 +4,13 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
+- Native closeout (2026-09-21): designate the executor and confirm the exact
+  managed qualification scope for the new Referral touch/XRR SQL candidates
+  and the separate checkout candidate-2 amendment. Supply the canonical EA
+  partner/customer mapping and program hold-rate authority before the grant
+  writer can be wired. This is not a request to repeat completed migrations
+  or a general production GO; see `docs/release-candidate/LOCAL_CLOSEOUT_20260921.md`.
+
 - Any real-user verification needs separate approval naming the account and
   notification effects. No such action was performed for release smoke.
 - The standing conditional directive covers qualified in-scope staged releases. A must pin and independently qualify each source/configuration/migration plan. Do not request the same general GO again. The prior account/partner release is already live; do not replay it.

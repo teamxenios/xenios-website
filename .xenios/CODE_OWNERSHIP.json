@@ -1919,9 +1919,11 @@
         ".xenios/sessions/codex-native-finish-20260910.json",
         ".xenios/handoffs/*NATIVE-FINISH*"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-21T14:38:50.597Z",
-      "heartbeatAt": "2026-09-21T15:32:39.939Z"
+      "heartbeatAt": "2026-09-21T16:38:05.000Z",
+      "releasedAt": "2026-09-21T16:38:05.000Z",
+      "releaseReason": "Local engineering qualified; task remains blocked_external for managed release and authoritative EA policy inputs. No active source writer remains."
     }
   ],
   "rules": [

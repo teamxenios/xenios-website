@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "task": "XENIOS-NATIVE-FINISH-20260910",
+  "session": "codex-native-closeout-20260921",
+  "status": "FINAL_RECORD_GATES_PENDING",
+  "branch": "codex/xenios-native-closeout-20260921",
+  "applicationSha": "6d1792c82a681b7537b6fefa3581b2c95a224bb4",
+  "applicationTree": "2e03bcf6cf103cd4aa6d99351ad7f2301b66ea2c",
+  "regressionSha": "c559c4e7795fb211b082cf12bd791f93c1cd3851",
+  "runtimeEquivalence": "The regression successor changes only a cleanup test and two independent exact-fixture review records; no runtime bytes changed above the qualified application build.",
+  "build": {
+    "status": "PASS",
+    "node": "20.19.0",
+    "npm": "10.8.2",
+    "files": 346,
+    "inventorySha256": "263e6945bdac3647c971cab8092f36dd5eaa4c9b8e4e9f2e82caaa51c539a9a5"
+  },
+  "fullSuite": {
+    "status": "PASS",
+    "passedFiles": 957,
+    "skippedFiles": 6,
+    "passedTests": 17896,
+    "skippedTests": 71,
+    "failedTests": 0,
+    "durationSeconds": 792.15,
+    "log": "full-suite-c559c4e.log",
+    "logSha256": "eb8d6a5089f3975eff69bfb6169b4e399fac83c49d9f8bd33369a9342f2904dd"
+  },
+  "browser": {
+    "nativeCapturesPassed": 84,
+    "publicSignedOutCapturesPassed": 120,
+    "failedCaptures": 0,
+    "journeyCheckpoints": 5,
+    "externalMutations": 0,
+    "nativeReceiptSha256": "4114b088b3f70f85998b096939fe22da914f757282dec0b8fcec19ad42257036",
+    "publicReceiptSha256": "16d01441ef9eea3075990c78958915f42c3b8b166a81da1f8c8993f84296831e"
+  },
+  "strictRegressionScan": {
+    "status": "PASS",
+    "baseSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+    "candidateSha": "c559c4e7795fb211b082cf12bd791f93c1cd3851",
+    "addedLines": 41666,
+    "files": 268,
+    "rawSyntheticMatches": 10,
+    "independentlyReviewedExactMatches": 10,
+    "unresolvedSecrets": 0,
+    "boundedPiiNameMatches": 0,
+    "log": "strict-scan-c559c4e.log",
+    "logSha256": "673ff0e52e45cf19d7160f6f55db644284aea78a9415c81cb8b70a865868470a"
+  },
+  "sourceGates": [
+    { "gate": "app_typecheck", "status": "PASS", "log": "final-c559c4e-typecheck.log", "sha256": "1d6ec1c668f1eb3f4995c3cec4a566c8c3f7b54b8705d4faad65bbb9308ff4c8" },
+    { "gate": "release_control_plane_typecheck", "status": "PASS", "log": "final-c559c4e-release-control-plane-tsc.log", "sha256": "0f55d0c02034e3d60aa6c594f502c0020268d3554d89e133dee3b105a762d6ef" },
+    { "gate": "route_uniqueness", "status": "PASS", "log": "final-c559c4e-route-uniqueness.log", "sha256": "c7394f43855ee2e8979e5cbd04f5508eb3b383629434683ef620407dd76eb06d" },
+    { "gate": "migration_dag", "status": "PASS", "log": "final-c559c4e-migration-dag.log", "sha256": "ed2192ba2d9e6c39e377db6fcd315640cd695e4246c93f56b48a391b5a3f8ffa" },
+    { "gate": "protected_seams", "status": "PASS", "log": "final-c559c4e-core-site-protection.log", "sha256": "70bd9e96c682022b4510837d210c81723390d1e996b901d6cb3a7ab0c4391fc7" },
+    { "gate": "strict_scanner_unit", "status": "PASS_8_OF_8", "log": "final-c559c4e-release-diff-scan-unit.log", "sha256": "512764b1f418649d417e5201ee58474346a25ce9cba3970b192f4fbebfadce7e" },
+    { "gate": "site_record_unit", "status": "PASS_12_OF_12", "log": "final-c559c4e-site-record-unit.log", "sha256": "560019fd9a2dc605a45aece7fbe29466f5ab61f155b229c746bce8004926b73d" },
+    { "gate": "production_state_release_verifier", "status": "FAIL_CLOSED_EXTERNAL_PREREQUISITES", "log": "final-c559c4e-production-state.log", "sha256": "357448d7a7eb731f296f3eeaad8fdd02fbda114f80b0d695ee61293e4083afca" }
+  ],
+  "evidenceRoot": "C:/Users/sboad/xenios-recovery/codex-native-closeout-20260921",
+  "report": "docs/release-candidate/LOCAL_CLOSEOUT_20260921.md",
+  "managedSqlApplied": false,
+  "deployed": false,
+  "productionMutated": false,
+  "productionReobserved": false,
+  "releasePrerequisites": [
+    "Fresh trusted release/ownership inputs and current production observations",
+    "Named authorized executor and exact SQL predecessor/install/postcheck qualification",
+    "Separate hosted checkout candidate-2 amendment and staging/test-provider qualification",
+    "Canonical partner-to-own-EA-customer mapping and server-owned hold-rate/idempotence authority",
+    "Separately gated clinical/provider activation"
+  ]
+}

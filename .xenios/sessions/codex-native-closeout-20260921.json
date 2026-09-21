@@ -1,10 +1,10 @@
 {
   "id": "codex-native-closeout-20260921",
-  "tool": "Codex",
+  "tool": "codex",
   "lane": "native-closeout",
   "branch": "codex/xenios-native-closeout-20260921",
-  "state": "active",
+  "state": "complete",
   "startedAt": "2026-09-21T14:38:16.503Z",
-  "heartbeatAt": "2026-09-21T15:32:39.939Z",
-  "note": "XRR history and SQL authorization patch frozen, local PostgreSQL 13/13 and focused tests pass. Final navigation trim and exact candidate gates in progress; no production effects."
+  "heartbeatAt": "2026-09-21T16:38:05.000Z",
+  "note": "Local closeout complete: application 6d1792c build and 204 browser captures passed; test-only successor c559c4e passed 17,896 tests, zero failed, 71 explicit skips. Typechecks, route/DAG/protection and strict scan pass. Production-state verifier remains blocked by absent trusted inputs and stale evidence; managed SQL, hosted checkout and authoritative EA grant policy remain external. No managed writes or deployment."
 }

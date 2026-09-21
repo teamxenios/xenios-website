@@ -2,6 +2,17 @@
 
 **Date:** 2026-09-14. **Status:** blocked on a schema contract, not on effort.
 
+**2026-09-21 local continuation:** the first candidate gap is now executable,
+not just a helper plus dispatcher-edit instructions. It guards and updates
+the existing dispatcher, preserves its owner/ACL, adds the actorless read,
+and checks malformed inputs, privileges and authority invariants. Twelve
+tests passed against a fresh disposable PostgreSQL instance, including the
+actual service-role RPC and fail-closed cases. The candidate is still
+**UNAPPLIED to managed databases**. The partner-to-Early-Access-customer mapping
+and canonical hold-rate contract in gap 2 are still missing; no grant writer,
+commission accrual or money-bearing mutation was enabled. See the
+[2026-09-21 closeout](LOCAL_CLOSEOUT_20260921.md) for exact evidence.
+
 The writer exists and is tested. The reader is wired. Nothing calls the writer,
 so every Early Access order is permanently unattributed and every commission
 hold is null. This document says exactly why it was not wired today, so the next
