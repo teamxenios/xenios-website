@@ -9,6 +9,7 @@
   "globalDirectBuyBlockers": [
     "exact_live_439_variant_snapshot_not_supplied_to_catalog_lane",
     "no_completed_vendor_rfq_response",
+    "actual_landed_cost_not_verified",
     "supplier_fulfillment_entity_not_verified",
     "inventory_or_capacity_not_verified",
     "quality_lot_coa_documentation_not_verified",
@@ -19,7 +20,7 @@
     "approved_active_retail_not_verified_by_source_set"
   ],
   "action": "assisted_order",
-  "rowCount": 96,
+  "rowCount": 102,
   "productionMutated": false,
   "rows": [
     {
@@ -41,10 +42,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -55,11 +57,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -82,10 +86,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -96,11 +101,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -123,10 +130,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -137,11 +145,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -164,10 +174,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -178,11 +189,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -205,10 +218,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -219,11 +233,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -246,10 +262,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -260,11 +277,101 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_0c4a5438cc87ab9d85b6",
+      "action": "assisted_order",
+      "candidateSku": "EXP-041",
+      "productName": "Retatrutide",
+      "configuration": "10 mg",
+      "canonicalOfferingId": "mo_f7fecc82508964efe3aa",
+      "canonicalVariantId": "mov_0c4a5438cc87ab9d85b6",
+      "productControlSku": "GEN-GRP-0323",
+      "candidateRetailAmount": "150",
+      "candidateRetailCents": 15000,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!31",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_0d00b80820b69cc39796",
+      "action": "assisted_order",
+      "candidateSku": "EXP-046",
+      "productName": "CJC-1295 No DAC",
+      "configuration": "10 mg",
+      "canonicalOfferingId": "mo_c464ca523cda95adb8a6",
+      "canonicalVariantId": "mov_0d00b80820b69cc39796",
+      "productControlSku": "GEN-GRP-0270",
+      "candidateRetailAmount": "99",
+      "candidateRetailCents": 9900,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!110",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
       ],
       "directBuyEligible": false
     },
@@ -287,10 +394,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -301,11 +409,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -328,10 +438,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -342,11 +453,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -369,10 +482,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -383,11 +497,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -410,10 +526,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -424,11 +541,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -451,10 +570,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -465,11 +585,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -492,10 +614,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -506,11 +629,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -533,10 +658,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -547,11 +673,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -574,10 +702,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -588,11 +717,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -615,10 +746,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -629,11 +761,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -656,10 +790,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -670,11 +805,57 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_257330ea83ecbfc45fae",
+      "action": "assisted_order",
+      "candidateSku": "EXP-044",
+      "productName": "BPC-157",
+      "configuration": "15 mg",
+      "canonicalOfferingId": "mo_9a755fa72de0409cd937",
+      "canonicalVariantId": "mov_257330ea83ecbfc45fae",
+      "productControlSku": "GEN-GRP-0263",
+      "candidateRetailAmount": "79",
+      "candidateRetailCents": 7900,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!44",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
       ],
       "directBuyEligible": false
     },
@@ -697,10 +878,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -711,11 +893,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -738,10 +922,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -752,11 +937,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -779,10 +966,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -793,11 +981,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -820,10 +1010,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -834,11 +1025,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -861,10 +1054,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -875,11 +1069,57 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_35b19a790d7a247210c9",
+      "action": "assisted_order",
+      "candidateSku": "EXP-054",
+      "productName": "GHK-Cu",
+      "configuration": "100 mg",
+      "canonicalOfferingId": "mo_b06b77a95d5dd5bf8cd7",
+      "canonicalVariantId": "mov_35b19a790d7a247210c9",
+      "productControlSku": "GEN-GRP-0287",
+      "candidateRetailAmount": "89",
+      "candidateRetailCents": 8900,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!49",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
       ],
       "directBuyEligible": false
     },
@@ -902,10 +1142,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -916,11 +1157,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -943,10 +1186,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -957,11 +1201,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -984,10 +1230,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -998,11 +1245,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1025,10 +1274,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1039,11 +1289,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1066,10 +1318,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1080,11 +1333,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1107,10 +1362,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1121,11 +1377,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1148,10 +1406,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1162,11 +1421,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1189,10 +1450,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1203,11 +1465,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1230,10 +1494,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1244,11 +1509,57 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_50c16caf05daa93ef289",
+      "action": "assisted_order",
+      "candidateSku": "EXP-056",
+      "productName": "IGF-1 LR3",
+      "configuration": "1 mg",
+      "canonicalOfferingId": "mo_d3a60ea0a358aef218f8",
+      "canonicalVariantId": "mov_50c16caf05daa93ef289",
+      "productControlSku": "GEN-GRP-0301",
+      "candidateRetailAmount": "99",
+      "candidateRetailCents": 9900,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!98",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
       ],
       "directBuyEligible": false
     },
@@ -1271,10 +1582,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1285,11 +1597,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1312,10 +1626,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1326,11 +1641,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1353,10 +1670,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1367,11 +1685,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1394,10 +1714,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1408,11 +1729,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1435,10 +1758,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1449,11 +1773,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1476,10 +1802,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1490,11 +1817,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1517,10 +1846,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1531,11 +1861,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1558,10 +1890,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1572,11 +1905,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1599,10 +1934,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1613,11 +1949,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1640,10 +1978,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1654,11 +1993,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1681,10 +2022,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1695,11 +2037,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1722,10 +2066,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1736,11 +2081,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1763,10 +2110,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1777,11 +2125,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1804,10 +2154,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1818,11 +2169,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1845,10 +2198,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1859,11 +2213,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1886,10 +2242,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1900,11 +2257,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1927,10 +2286,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1941,11 +2301,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -1968,10 +2330,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -1982,11 +2345,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2009,10 +2374,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2023,11 +2389,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2050,10 +2418,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2064,11 +2433,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2091,10 +2462,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2105,11 +2477,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2132,10 +2506,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2146,11 +2521,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2173,10 +2550,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2187,11 +2565,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2214,10 +2594,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2228,11 +2609,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2255,10 +2638,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2269,11 +2653,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2296,10 +2682,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2310,11 +2697,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2337,10 +2726,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2351,11 +2741,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2378,10 +2770,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2392,11 +2785,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2419,10 +2814,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2433,11 +2829,57 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
+      ],
+      "directBuyEligible": false
+    },
+    {
+      "unitId": "canonical:mov_95104bb0edee8e97a3a6",
+      "action": "assisted_order",
+      "candidateSku": "EXP-057",
+      "productName": "LL-37 (CAP-18)",
+      "configuration": "5 mg",
+      "canonicalOfferingId": "mo_839d9f0cb2ab74e094ee",
+      "canonicalVariantId": "mov_95104bb0edee8e97a3a6",
+      "productControlSku": "GEN-GRP-0312",
+      "candidateRetailAmount": "99",
+      "candidateRetailCents": 9900,
+      "candidateRetailAuthority": "seth_recommended_retail",
+      "candidateRetailStatus": "pending_approval",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!57",
+      "evidence": {
+        "canonicalIdentityVerified": true,
+        "productControlBindingPresent": true,
+        "researchLaneExplicit": true,
+        "carePathwayExplicit": false,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
+        "candidateRetailPresent": true,
+        "approvedActiveRetailVerified": false,
+        "marginOnWholesaleProxyAtOrAboveFloor": false,
+        "supplierFulfillmentEntityVerified": false,
+        "inventoryOrCapacityVerified": false,
+        "qualityLotCoaDocumentationVerified": false,
+        "storageShippingClassVerified": false,
+        "geographyVerified": false,
+        "returnReplacementRecallPolicyVerified": false,
+        "supportedPaymentVerified": false,
+        "downstreamOrderFlowVerified": false
+      },
+      "reasonCodes": [
+        "candidate_retail_pending_approval",
+        "exact_canonical_identity",
+        "explicit_ruo_research_lane",
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_below_floor_requires_review"
       ],
       "directBuyEligible": false
     },
@@ -2460,10 +2902,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2474,11 +2917,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2501,10 +2946,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2515,11 +2961,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2542,10 +2990,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2556,11 +3005,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2583,10 +3034,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2597,11 +3049,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2624,10 +3078,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2638,11 +3093,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2665,10 +3122,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2679,11 +3137,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2706,10 +3166,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2720,11 +3181,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2747,10 +3210,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2761,11 +3225,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2788,10 +3254,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2802,11 +3269,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2829,10 +3298,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2843,11 +3313,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2870,10 +3342,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2884,11 +3357,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2911,10 +3386,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2925,11 +3401,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2952,10 +3430,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -2966,11 +3445,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -2993,10 +3474,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3007,11 +3489,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3034,10 +3518,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3048,11 +3533,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3075,10 +3562,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3089,11 +3577,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3116,10 +3606,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3130,11 +3621,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3157,10 +3650,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3171,11 +3665,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3198,10 +3694,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3212,11 +3709,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3239,10 +3738,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3253,11 +3753,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3280,10 +3782,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3294,11 +3797,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3321,10 +3826,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3335,11 +3841,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3362,10 +3870,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3376,11 +3885,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3403,10 +3914,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3417,11 +3929,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3444,10 +3958,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3458,11 +3973,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3485,10 +4002,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3499,11 +4017,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3526,10 +4046,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3540,11 +4061,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3567,10 +4090,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3581,11 +4105,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3608,10 +4134,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3622,11 +4149,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3649,10 +4178,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3663,11 +4193,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3690,10 +4222,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3704,11 +4237,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3731,10 +4266,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3745,11 +4281,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3772,10 +4310,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3786,11 +4325,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3813,10 +4354,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3827,11 +4369,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3854,10 +4398,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3868,11 +4413,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3895,10 +4442,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3909,11 +4457,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     },
@@ -3936,10 +4486,11 @@
         "productControlBindingPresent": true,
         "researchLaneExplicit": true,
         "carePathwayExplicit": false,
-        "landedCostPresent": true,
+        "wholesaleCostProxyPresent": true,
+        "landedCostVerified": false,
         "candidateRetailPresent": true,
         "approvedActiveRetailVerified": false,
-        "grossMarginAtOrAboveFloor": true,
+        "marginOnWholesaleProxyAtOrAboveFloor": true,
         "supplierFulfillmentEntityVerified": false,
         "inventoryOrCapacityVerified": false,
         "qualityLotCoaDocumentationVerified": false,
@@ -3950,11 +4501,13 @@
         "downstreamOrderFlowVerified": false
       },
       "reasonCodes": [
-        "candidate_price_and_margin_pass_floor",
+        "candidate_retail_pending_approval",
         "exact_canonical_identity",
         "explicit_ruo_research_lane",
-        "manual_supplier_and_fulfillment_confirmation_required",
-        "product_control_binding_present"
+        "operator_review_required_before_order",
+        "product_control_binding_present",
+        "wholesale_cost_proxy_present_not_landed_cost",
+        "wholesale_proxy_margin_at_or_above_floor"
       ],
       "directBuyEligible": false
     }

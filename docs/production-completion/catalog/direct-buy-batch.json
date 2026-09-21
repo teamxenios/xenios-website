@@ -9,6 +9,7 @@
   "globalDirectBuyBlockers": [
     "exact_live_439_variant_snapshot_not_supplied_to_catalog_lane",
     "no_completed_vendor_rfq_response",
+    "actual_landed_cost_not_verified",
     "supplier_fulfillment_entity_not_verified",
     "inventory_or_capacity_not_verified",
     "quality_lot_coa_documentation_not_verified",

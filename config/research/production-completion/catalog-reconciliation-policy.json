@@ -14,6 +14,20 @@
     "metric": "Low margin below 35%",
     "meaning": "Requires commercial review before activation"
   },
+  "retailPricePrecedence": [
+    "seth_recommended_retail",
+    "seth_current_retail",
+    "current_master_retail",
+    "provisional_2_5x_verified_wholesale",
+    "retail_pending"
+  ],
+  "wholesaleEvidence": {
+    "sourceField": "Current Wholesale / Unit",
+    "semantics": "wholesale_cost_proxy_not_landed_cost",
+    "verifiedWholesaleSources": [],
+    "provisionalRetailMultiple": "2.5",
+    "actualLandedCostVerifiedBySourceSet": false
+  },
   "sourceFiles": {
     "septemberCatalog": {
       "filename": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx",
@@ -43,10 +57,10 @@
     }
   },
   "classification": {
-    "direct_buy": "Never emitted by this evidence set: no row has a completed supplier response, current inventory/capacity, quality and lot documentation, geography, policy, payment, and downstream order evidence.",
-    "assisted_order": "Exact canonical variant and Product Control binding, explicit RUO Research lane, positive candidate retail, canonical request-access state, and gross margin at or above the configured floor. Price remains a pending candidate, never an active-price assertion.",
+    "direct_buy": "Never emitted by this evidence set: actual landed cost is not verified, and no row has a completed supplier response, current inventory/capacity, quality and lot documentation, geography, policy, payment, and downstream order evidence.",
+    "assisted_order": "Exact canonical variant and Product Control binding, explicit RUO Research lane, and canonical request-access state. Candidate price, wholesale-cost proxy, and proxy margin may require operator review; missing price remains Price on request.",
     "care_required": "Existing canonical 503A clinical formulation only. A legacy care_pathway display flag on a shipping or supply row is not sufficient.",
-    "unavailable": "Everything else, including unresolved canonical identity, approval-required state, missing Product Control binding, price/cost gap, sub-floor economics, nonclinical canonical rows absent from current intake, and non-product service rows."
+    "unavailable": "Everything else, including unresolved canonical identity, approval-required state, missing Product Control binding, nonclinical canonical rows absent from current intake, and non-product service rows."
   },
   "privacy": {
     "excludeSupplierIdentity": true,

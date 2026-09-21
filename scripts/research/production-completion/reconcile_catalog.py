@@ -210,9 +210,9 @@ def decimal_text(value) -> str | None:
     return text
 
 
-def gross_margin(retail, wholesale) -> Decimal | None:
+def margin_on_wholesale_proxy(retail, wholesale_proxy) -> Decimal | None:
     retail_value = as_decimal(retail)
-    wholesale_value = as_decimal(wholesale)
+    wholesale_value = as_decimal(wholesale_proxy)
     if retail_value is None or wholesale_value is None or retail_value <= 0:
         return None
     return (retail_value - wholesale_value) / retail_value
@@ -231,6 +231,7 @@ def exact_catalog_match(candidate: dict, label_index: dict[str, list[dict]]) -> 
         (entry["offeringId"], entry["variantId"]): entry
         for key in keys
         for entry in label_index.get(key, [])
+        if normalize_key(candidate["Product / Blend"]) == normalize_key(entry["productName"])
     }
     if len(matches) > 1:
         form = normalize_key(candidate["Form"])
@@ -242,20 +243,39 @@ def exact_catalog_match(candidate: dict, label_index: dict[str, list[dict]]) -> 
     return sorted(matches.values(), key=lambda entry: (entry["offeringId"], entry["variantId"]))
 
 
-def price_from_seth_review(row: dict) -> tuple[object, str]:
-    if is_positive(row.get("Seth Recommended Retail")):
-        return row["Seth Recommended Retail"], "seth_recommended_retail"
-    if is_positive(row.get("Current Retail")):
-        return row["Current Retail"], "seth_current_retail"
+def select_retail_price(
+    *,
+    seth_recommended=None,
+    seth_current=None,
+    current_master=None,
+    verified_wholesale=None,
+    wholesale_supported: bool = False,
+    wholesale_multiple: Decimal = Decimal("2.5"),
+) -> tuple[object, str]:
+    """Apply the full approved precedence without inferring source support."""
+    if is_positive(seth_recommended):
+        return seth_recommended, "seth_recommended_retail"
+    if is_positive(seth_current):
+        return seth_current, "seth_current_retail"
+    if is_positive(current_master):
+        return current_master, "current_master_retail"
+    if wholesale_supported and is_positive(verified_wholesale):
+        return as_decimal(verified_wholesale) * wholesale_multiple, "provisional_2_5x_verified_wholesale"
     return None, "retail_pending"
+
+
+def price_from_seth_review(row: dict) -> tuple[object, str]:
+    return select_retail_price(
+        seth_recommended=row.get("Seth Recommended Retail"),
+        current_master=row.get("Current Retail"),
+    )
 
 
 def price_from_seth_missing(row: dict) -> tuple[object, str]:
-    if is_positive(row.get("Recommended Xenios Retail")):
-        return row["Recommended Xenios Retail"], "seth_recommended_retail"
-    if is_positive(row.get("What Seth Sells It For")):
-        return row["What Seth Sells It For"], "seth_current_retail"
-    return None, "retail_pending"
+    return select_retail_price(
+        seth_recommended=row.get("Recommended Xenios Retail"),
+        seth_current=row.get("What Seth Sells It For"),
+    )
 
 
 def classify_unit(unit: dict, margin_floor: Decimal) -> str:
@@ -269,10 +289,6 @@ def classify_unit(unit: dict, margin_floor: Decimal) -> str:
         evidence["canonicalIdentityVerified"]
         and evidence["productControlBindingPresent"]
         and evidence["researchLaneExplicit"]
-        and evidence["candidateRetailPresent"]
-        and evidence["landedCostPresent"]
-        and evidence["grossMargin"] is not None
-        and evidence["grossMargin"] >= margin_floor
         and unit["canonicalDisplayState"] == "request_access"
     ):
         return "assisted_order"
@@ -291,9 +307,25 @@ def sanitized_row(unit: dict) -> dict:
             "exact_canonical_identity",
             "product_control_binding_present",
             "explicit_ruo_research_lane",
-            "candidate_price_and_margin_pass_floor",
-            "manual_supplier_and_fulfillment_confirmation_required",
+            "operator_review_required_before_order",
         ]
+        if evidence["candidateRetailPresent"]:
+            reasons.append("candidate_retail_pending_approval")
+        else:
+            reasons.append("price_on_request")
+        if evidence["wholesaleCostProxyPresent"]:
+            reasons.append("wholesale_cost_proxy_present_not_landed_cost")
+        else:
+            reasons.append("wholesale_cost_proxy_review_required")
+        proxy_margin = evidence["marginOnWholesaleProxy"]
+        if proxy_margin is None:
+            reasons.append("wholesale_proxy_margin_not_computable")
+        elif proxy_margin < 0:
+            reasons.append("negative_margin_on_wholesale_proxy_requires_review")
+        elif proxy_margin < unit["marginFloor"]:
+            reasons.append("wholesale_proxy_margin_below_floor_requires_review")
+        else:
+            reasons.append("wholesale_proxy_margin_at_or_above_floor")
     else:
         if candidate is None:
             reasons.append("not_present_in_current_september_intake")
@@ -305,10 +337,10 @@ def sanitized_row(unit: dict) -> dict:
             reasons.append("research_lane_requires_verification")
         if candidate is not None and not evidence["candidateRetailPresent"]:
             reasons.append("candidate_retail_missing")
-        if candidate is not None and not evidence["landedCostPresent"]:
-            reasons.append("landed_cost_missing")
-        if evidence["grossMargin"] is not None and evidence["grossMargin"] < unit["marginFloor"]:
-            reasons.append("launch_margin_floor_not_met")
+        if candidate is not None and not evidence["wholesaleCostProxyPresent"]:
+            reasons.append("wholesale_cost_proxy_missing")
+        if evidence["marginOnWholesaleProxy"] is not None and evidence["marginOnWholesaleProxy"] < unit["marginFloor"]:
+            reasons.append("wholesale_proxy_margin_below_floor_requires_review")
         if unit["canonicalDisplayState"] == "approval_required":
             reasons.append("canonical_approval_required")
         if unit["canonicalFamily"] == "shipping_and_fulfillment":
@@ -332,10 +364,11 @@ def sanitized_row(unit: dict) -> dict:
             "productControlBindingPresent": evidence["productControlBindingPresent"],
             "researchLaneExplicit": evidence["researchLaneExplicit"],
             "carePathwayExplicit": unit["canonicalFamily"] == "clinical_formulations_503a",
-            "landedCostPresent": evidence["landedCostPresent"],
+            "wholesaleCostProxyPresent": evidence["wholesaleCostProxyPresent"],
+            "landedCostVerified": False,
             "candidateRetailPresent": evidence["candidateRetailPresent"],
             "approvedActiveRetailVerified": False,
-            "grossMarginAtOrAboveFloor": evidence["grossMargin"] is not None and evidence["grossMargin"] >= unit["marginFloor"],
+            "marginOnWholesaleProxyAtOrAboveFloor": evidence["marginOnWholesaleProxy"] is not None and evidence["marginOnWholesaleProxy"] >= unit["marginFloor"],
             "supplierFulfillmentEntityVerified": False,
             "inventoryOrCapacityVerified": False,
             "qualityLotCoaDocumentationVerified": False,
@@ -379,13 +412,13 @@ def conflicts_for(unit: dict, margin_floor: Decimal) -> list[dict]:
             result.append(conflict("retail_price_missing", unit, "blocking", "Keep Price on request; obtain and approve a supported retail price."))
         elif cents(candidate.get("_selectedRetail")) is None:
             result.append(conflict("retail_amount_not_cent_exact", unit, "review_required", "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."))
-        if not evidence["landedCostPresent"]:
-            result.append(conflict("wholesale_quote_required", unit, "blocking", "Obtain a supported current landed cost; do not invent wholesale."))
-        margin = evidence["grossMargin"]
+        if not evidence["wholesaleCostProxyPresent"]:
+            result.append(conflict("wholesale_quote_required", unit, "blocking", "Obtain a supported wholesale cost or quote proxy. Verify actual landed cost separately; do not invent either value."))
+        margin = evidence["marginOnWholesaleProxy"]
         if margin is not None and margin < 0:
-            result.append(conflict("negative_gross_margin", unit, "blocking", "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."))
+            result.append(conflict("negative_margin_on_wholesale_proxy", unit, "review_required", "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."))
         elif margin is not None and margin < margin_floor:
-            result.append(conflict("below_launch_margin_floor", unit, "blocking", "Obtain explicit commercial approval or revise supported cost/retail evidence."))
+            result.append(conflict("below_launch_margin_floor_on_wholesale_proxy", unit, "review_required", "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."))
         verification_text = " ".join(str(candidate.get(key) or "") for key in ("Strength / Configuration", "Form", "Channel"))
         if re.search(r"\b(assumed|pending|verify)\b", verification_text, flags=re.IGNORECASE):
             result.append(conflict("identity_or_lane_verification_required", unit, "blocking", "Confirm exact formulation, unit of sale, and lane."))
@@ -407,6 +440,22 @@ def verify_source(path: Path, expected: dict, label: str) -> None:
 
 
 def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]]:
+    expected_precedence = [
+        "seth_recommended_retail",
+        "seth_current_retail",
+        "current_master_retail",
+        "provisional_2_5x_verified_wholesale",
+        "retail_pending",
+    ]
+    if policy.get("retailPricePrecedence") != expected_precedence:
+        raise ReconciliationRefused("retail price precedence policy drifted")
+    wholesale_policy = policy.get("wholesaleEvidence", {})
+    if (
+        wholesale_policy.get("sourceField") != "Current Wholesale / Unit"
+        or wholesale_policy.get("semantics") != "wholesale_cost_proxy_not_landed_cost"
+        or wholesale_policy.get("actualLandedCostVerifiedBySourceSet") is not False
+    ):
+        raise ReconciliationRefused("wholesale-cost proxy policy drifted")
     for key, path in paths.items():
         verify_source(path, policy["sourceFiles"][key], key)
     catalog_path = REPO_ROOT / policy["canonicalArtifacts"]["catalog"]["path"]
@@ -473,13 +522,30 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             selected, authority = price_from_seth_missing(evidence)
             row["_priceSourcePointer"] = source_pointer(paths["sethPricing"].name, "MISSING PRODUCTS", evidence["_row"])
         else:
-            selected = row.get("Retail Price") if is_positive(row.get("Retail Price")) else None
-            authority = "current_master_retail" if selected is not None else "retail_pending"
+            supported_sources = {
+                normalize_key(source) for source in policy["wholesaleEvidence"]["verifiedWholesaleSources"]
+            }
+            wholesale_supported = normalize_key(row.get("Wholesale Source")) in supported_sources
+            selected, authority = select_retail_price(
+                current_master=row.get("Retail Price"),
+                verified_wholesale=row.get("Current Wholesale / Unit"),
+                wholesale_supported=wholesale_supported,
+                wholesale_multiple=Decimal(policy["wholesaleEvidence"]["provisionalRetailMultiple"]),
+            )
             row["_priceSourcePointer"] = row["_pointer"]
         if as_decimal(selected) != as_decimal(row.get("Retail Price")):
             raise ReconciliationRefused(f"{sku} retail differs from the source precedence result")
         row["_selectedRetail"] = selected
         row["_priceAuthority"] = authority
+
+    price_authority_counts = Counter(str(row["_priceAuthority"]) for row in master)
+    expected_price_authorities = Counter({
+        "seth_recommended_retail": 106,
+        "current_master_retail": 68,
+        "retail_pending": 2,
+    })
+    if price_authority_counts != expected_price_authorities:
+        raise ReconciliationRefused(f"retail price precedence drifted: {dict(price_authority_counts)}")
 
     catalog = read_json(catalog_path)
     bindings = read_json(bindings_path)
@@ -531,12 +597,19 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         for row in master
         if (match := provisional_matches[row["SKU"]]) is not None
     }
+    exact_match_name_mismatches = sum(
+        normalize_key(row["Product / Blend"]) != normalize_key(match["productName"])
+        for row in master
+        if (match := provisional_matches[row["SKU"]]) is not None
+    )
+    if exact_match_name_mismatches != 0:
+        raise ReconciliationRefused("an exact canonical match crossed a product-name boundary")
     margin_floor = Decimal(policy["launchMarginFloor"])
     units = []
     for entry in canonical_entries:
         key = (entry["offeringId"], entry["variantId"])
         candidate = candidate_by_variant.get(key)
-        margin = gross_margin(candidate.get("_selectedRetail"), candidate.get("Current Wholesale / Unit")) if candidate else None
+        proxy_margin = margin_on_wholesale_proxy(candidate.get("_selectedRetail"), candidate.get("Current Wholesale / Unit")) if candidate else None
         unit = {
             "unitId": f"canonical:{entry['variantId']}",
             "offeringId": entry["offeringId"],
@@ -553,8 +626,8 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
                 "productControlBindingPresent": key in binding_index,
                 "researchLaneExplicit": candidate is not None and candidate.get("Channel") == "RUO Research",
                 "candidateRetailPresent": candidate is not None and is_positive(candidate.get("_selectedRetail")),
-                "landedCostPresent": candidate is not None and is_positive(candidate.get("Current Wholesale / Unit")),
-                "grossMargin": margin,
+                "wholesaleCostProxyPresent": candidate is not None and is_positive(candidate.get("Current Wholesale / Unit")),
+                "marginOnWholesaleProxy": proxy_margin,
             },
         }
         unit["action"] = classify_unit(unit, margin_floor)
@@ -563,7 +636,7 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
     for row in master:
         if provisional_matches[row["SKU"]] is not None:
             continue
-        margin = gross_margin(row.get("_selectedRetail"), row.get("Current Wholesale / Unit"))
+        proxy_margin = margin_on_wholesale_proxy(row.get("_selectedRetail"), row.get("Current Wholesale / Unit"))
         unit = {
             "unitId": f"intake:{row['SKU']}",
             "offeringId": None,
@@ -580,8 +653,8 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
                 "productControlBindingPresent": False,
                 "researchLaneExplicit": row.get("Channel") == "RUO Research",
                 "candidateRetailPresent": is_positive(row.get("_selectedRetail")),
-                "landedCostPresent": is_positive(row.get("Current Wholesale / Unit")),
-                "grossMargin": margin,
+                "wholesaleCostProxyPresent": is_positive(row.get("Current Wholesale / Unit")),
+                "marginOnWholesaleProxy": proxy_margin,
             },
         }
         unit["action"] = classify_unit(unit, margin_floor)
@@ -602,7 +675,14 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         key=lambda item: (item["code"], item["unitId"], item["sourcePointer"] or ""),
     )
     action_counts = Counter(row["action"] for row in sanitized)
-    if sum(action_counts.values()) != 491 or action_counts.get("direct_buy", 0) != 0:
+    expected_action_counts = {
+        "direct_buy": 0,
+        "assisted_order": 102,
+        "care_required": 242,
+        "unavailable": 147,
+    }
+    observed_action_counts = {action: action_counts.get(action, 0) for action in expected_action_counts}
+    if sum(action_counts.values()) != 491 or observed_action_counts != expected_action_counts:
         raise ReconciliationRefused(f"union/action invariant failed: {dict(action_counts)}")
     declared_live_variants = int(policy["declaredLiveProductionVariantCount"])
     live_variant_delta = declared_live_variants - len(canonical_entries)
@@ -637,6 +717,10 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             "sethPricingReviewRows": len(seth_review),
             "sethMissingProductRows": len(seth_missing),
             "sethReviewStatuses": dict(sorted(review_statuses.items())),
+            "retailPriceAuthorityCounts": dict(sorted(price_authority_counts.items())),
+            "wholesaleCostProxyField": "Current Wholesale / Unit",
+            "wholesaleCostProxyIsLandedCost": False,
+            "actualLandedCostRowsVerified": 0,
             "financialProductRows": len(financial_products),
             "financialOpenBlockingLaunchGates": len(open_blocking_gates),
             "vendorRfqRows": len(rfq),
@@ -647,6 +731,7 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             "repoCanonicalToDeclaredLiveVariantDelta": live_variant_delta,
             "septemberRowsWithExactCanonicalVariant": len(candidate_by_variant),
             "septemberRowsWithoutExactCanonicalVariant": len(master) - len(candidate_by_variant),
+            "exactCanonicalMatchProductNameMismatches": exact_match_name_mismatches,
         },
         "counts": {
             "unionUnits": len(sanitized),
@@ -660,6 +745,7 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         "globalDirectBuyBlockers": [
             "exact_live_439_variant_snapshot_not_supplied_to_catalog_lane",
             "no_completed_vendor_rfq_response",
+            "actual_landed_cost_not_verified",
             "supplier_fulfillment_entity_not_verified",
             "inventory_or_capacity_not_verified",
             "quality_lot_coa_documentation_not_verified",
@@ -727,8 +813,63 @@ def serialized_json(value: dict) -> bytes:
     return (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
 
 
+FORBIDDEN_OUTPUT_KEYS = {
+    "selectedreferencesupplier",
+    "currentwholesaleunit",
+    "wholesalesource",
+    "wholesalecost",
+    "supplier",
+    "supplieridentity",
+    "suppliername",
+    "sethnotes",
+    "vendornotes",
+    "historicalclients",
+    "historicalrecords",
+    "currentpipelinementions",
+    "rawnotes",
+}
+
+
+def collect_sensitive_source_terms(paths: dict[str, Path]) -> set[str]:
+    fields_by_table = (
+        (paths["septemberCatalog"], "Master Peptide Catalog", 3, ("Selected / Reference Supplier", "Wholesale Source", "Notes")),
+        (paths["septemberCatalog"], "Supplier Alternatives", 3, ("Supplier", "Source")),
+        (paths["sethPricing"], "PRICING REVIEW", 4, ("Seth Notes",)),
+        (paths["sethPricing"], "MISSING PRODUCTS", 4, ("Notes",)),
+        (paths["financialModel"], "Product Catalog", 3, ("Source",)),
+        (paths["vendorRfq"], "Peptide Sourcing RFQ", 3, ("Vendor Notes",)),
+    )
+    terms = set()
+    for path, sheet, header_row, fields in fields_by_table:
+        for row in table_records(path, sheet, header_row):
+            for field in fields:
+                value = row.get(field)
+                if isinstance(value, str) and len(value.strip()) >= 4:
+                    terms.add(value.strip())
+    return terms
+
+
+def validate_output_privacy(documents: dict[str, dict], sensitive_terms: set[str] | None = None) -> None:
+    def visit(value):
+        if isinstance(value, dict):
+            for key, nested in value.items():
+                if normalize_key(key) in FORBIDDEN_OUTPUT_KEYS:
+                    raise ReconciliationRefused(f"private source key escaped into output: {key}")
+                visit(nested)
+        elif isinstance(value, list):
+            for nested in value:
+                visit(nested)
+
+    for document in documents.values():
+        visit(document)
+    serialized = "\n".join(json.dumps(document, ensure_ascii=False).lower() for document in documents.values())
+    for term in sensitive_terms or set():
+        if term.lower() in serialized:
+            raise ReconciliationRefused("a populated supplier/source/notes cell escaped into output")
+
+
 def output_documents(report: dict, conflicts: list[dict]) -> dict[str, dict]:
-    return {
+    documents = {
         "catalog-reconciliation.json": report,
         "direct-buy-batch.json": batch_document(report, "direct_buy"),
         "assisted-order-batch.json": batch_document(report, "assisted_order"),
@@ -736,23 +877,29 @@ def output_documents(report: dict, conflicts: list[dict]) -> dict[str, dict]:
         "unavailable-batch.json": batch_document(report, "unavailable"),
         "conflicts.json": conflict_document(report, conflicts),
     }
+    validate_output_privacy(documents)
+    return documents
 
 
-def write_outputs(output: Path, report: dict, conflicts: list[dict]) -> None:
+def write_outputs(output: Path, report: dict, conflicts: list[dict], sensitive_terms: set[str]) -> None:
     resolved = output.resolve()
     allowed = DEFAULT_OUTPUT.resolve()
     if resolved != allowed:
         raise ReconciliationRefused(f"output must be exactly {allowed}")
     output.mkdir(parents=True, exist_ok=True)
-    for filename, document in output_documents(report, conflicts).items():
+    documents = output_documents(report, conflicts)
+    validate_output_privacy(documents, sensitive_terms)
+    for filename, document in documents.items():
         (output / filename).write_bytes(serialized_json(document))
 
 
-def verify_outputs(output: Path, report: dict, conflicts: list[dict]) -> None:
+def verify_outputs(output: Path, report: dict, conflicts: list[dict], sensitive_terms: set[str]) -> None:
     if output.resolve() != DEFAULT_OUTPUT.resolve():
         raise ReconciliationRefused(f"output must be exactly {DEFAULT_OUTPUT.resolve()}")
     differences = []
-    for filename, document in output_documents(report, conflicts).items():
+    documents = output_documents(report, conflicts)
+    validate_output_privacy(documents, sensitive_terms)
+    for filename, document in documents.items():
         path = output / filename
         expected = serialized_json(document)
         if not path.is_file():
@@ -784,10 +931,11 @@ def main() -> None:
         "vendorRfq": args.vendor_rfq.resolve(),
     }
     report, conflicts = build_report(paths, policy)
+    sensitive_terms = collect_sensitive_source_terms(paths)
     if args.check:
-        verify_outputs(args.output, report, conflicts)
+        verify_outputs(args.output, report, conflicts, sensitive_terms)
     else:
-        write_outputs(args.output, report, conflicts)
+        write_outputs(args.output, report, conflicts, sensitive_terms)
     print(json.dumps({"counts": report["counts"], "sourceObservations": report["sourceObservations"]}, sort_keys=True))
 
 

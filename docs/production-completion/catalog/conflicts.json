@@ -18,12 +18,12 @@
   "conflictEventCount": 310,
   "affectedUnitCount": 158,
   "countsByCode": {
-    "below_launch_margin_floor": 26,
+    "below_launch_margin_floor_on_wholesale_proxy": 26,
     "canonical_approval_required": 2,
     "canonical_identity_missing": 71,
     "identity_or_lane_verification_required": 52,
     "lane_requires_verification": 49,
-    "negative_gross_margin": 23,
+    "negative_margin_on_wholesale_proxy": 23,
     "non_product_service_row": 2,
     "not_in_current_september_intake": 73,
     "product_control_binding_missing": 1,
@@ -36,212 +36,212 @@
   "containsRawNotes": false,
   "conflicts": [
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_0c4a5438cc87ab9d85b6",
       "candidateSku": "EXP-041",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!31",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_0d00b80820b69cc39796",
       "candidateSku": "EXP-046",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!110",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_257330ea83ecbfc45fae",
       "candidateSku": "EXP-044",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!44",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_35b19a790d7a247210c9",
       "candidateSku": "EXP-054",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!49",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_50c16caf05daa93ef289",
       "candidateSku": "EXP-056",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!98",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "canonical:mov_95104bb0edee8e97a3a6",
       "candidateSku": "EXP-057",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!57",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-048",
       "candidateSku": "EXP-048",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!61",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-051",
       "candidateSku": "EXP-051",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!96",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-060",
       "candidateSku": "EXP-060",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!149",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-062",
       "candidateSku": "EXP-062",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!68",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-063",
       "candidateSku": "EXP-063",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!174",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-066",
       "candidateSku": "EXP-066",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!40",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-071",
       "candidateSku": "EXP-071",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!14",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-073",
       "candidateSku": "EXP-073",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!175",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-074",
       "candidateSku": "EXP-074",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!66",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-075",
       "candidateSku": "EXP-075",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!65",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-076",
       "candidateSku": "EXP-076",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!53",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-077",
       "candidateSku": "EXP-077",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!25",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-080",
       "candidateSku": "EXP-080",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!10",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-081",
       "candidateSku": "EXP-081",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!119",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-083",
       "candidateSku": "EXP-083",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!167",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-084",
       "candidateSku": "EXP-084",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!176",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-088",
       "candidateSku": "EXP-088",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!170",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-089",
       "candidateSku": "EXP-089",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!102",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-097",
       "candidateSku": "EXP-097",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!123",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
-      "code": "below_launch_margin_floor",
-      "severity": "blocking",
+      "code": "below_launch_margin_floor_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-099",
       "candidateSku": "EXP-099",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!100",
-      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+      "remediation": "Obtain explicit commercial approval or revise supported wholesale-cost proxy or retail evidence. Actual landed cost remains unverified."
     },
     {
       "code": "canonical_approval_required",
@@ -1636,188 +1636,188 @@
       "remediation": "Confirm the lawful RUO or licensed clinical pathway."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-040",
       "candidateSku": "EXP-040",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!163",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-047",
       "candidateSku": "EXP-047",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!60",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-050",
       "candidateSku": "EXP-050",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!95",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-059",
       "candidateSku": "EXP-059",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!148",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-064",
       "candidateSku": "EXP-064",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!173",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-067",
       "candidateSku": "EXP-067",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!41",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-070",
       "candidateSku": "EXP-070",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!26",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-072",
       "candidateSku": "EXP-072",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!29",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-079",
       "candidateSku": "EXP-079",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!30",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-086",
       "candidateSku": "EXP-086",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!74",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-087",
       "candidateSku": "EXP-087",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!104",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-090",
       "candidateSku": "EXP-090",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!69",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-091",
       "candidateSku": "EXP-091",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!55",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-092",
       "candidateSku": "EXP-092",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!51",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-093",
       "candidateSku": "EXP-093",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!46",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-094",
       "candidateSku": "EXP-094",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!47",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-095",
       "candidateSku": "EXP-095",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!11",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-098",
       "candidateSku": "EXP-098",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!122",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-100",
       "candidateSku": "EXP-100",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!99",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-104",
       "candidateSku": "EXP-104",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!101",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-105",
       "candidateSku": "EXP-105",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!103",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-106",
       "candidateSku": "EXP-106",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!52",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
-      "code": "negative_gross_margin",
-      "severity": "blocking",
+      "code": "negative_margin_on_wholesale_proxy",
+      "severity": "review_required",
       "unitId": "intake:EXP-107",
       "candidateSku": "EXP-107",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!124",
-      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+      "remediation": "Review the wholesale-cost proxy and candidate retail. Actual landed cost remains unverified; do not silently activate the recommendation."
     },
     {
       "code": "non_product_service_row",
@@ -2489,7 +2489,7 @@
       "unitId": "canonical:mov_038386172c35c2ad8cca",
       "candidateSku": "MASTER-109",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!109",
-      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+      "remediation": "Obtain a supported wholesale cost or quote proxy. Verify actual landed cost separately; do not invent either value."
     },
     {
       "code": "wholesale_quote_required",
@@ -2497,7 +2497,7 @@
       "unitId": "intake:EXP-043",
       "candidateSku": "EXP-043",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!84",
-      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+      "remediation": "Obtain a supported wholesale cost or quote proxy. Verify actual landed cost separately; do not invent either value."
     },
     {
       "code": "wholesale_quote_required",
@@ -2505,7 +2505,7 @@
       "unitId": "intake:EXP-061",
       "candidateSku": "EXP-061",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!158",
-      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+      "remediation": "Obtain a supported wholesale cost or quote proxy. Verify actual landed cost separately; do not invent either value."
     },
     {
       "code": "wholesale_quote_required",
@@ -2513,7 +2513,7 @@
       "unitId": "intake:EXP-085",
       "candidateSku": "EXP-085",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
-      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+      "remediation": "Obtain a supported wholesale cost or quote proxy. Verify actual landed cost separately; do not invent either value."
     }
   ]
 }
